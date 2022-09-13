@@ -1,12 +1,12 @@
+import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 
 export type DetailsCardProps = {
 	domain: ResponseDomain;
 	isLoadingPurchase: boolean;
 	purchase: Purchase | null;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 };
 
 export type NameServersCardProps = {
@@ -16,7 +16,7 @@ export type NameServersCardProps = {
 	loadingNameserversError: boolean;
 	nameservers: string[] | null;
 	selectedDomainName: string;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	updateNameservers: ( nameServers: string[] ) => void;
 };
 

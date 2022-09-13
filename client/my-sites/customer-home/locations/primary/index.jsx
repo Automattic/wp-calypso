@@ -24,6 +24,7 @@ import {
 	TASK_VERIFY_EMAIL,
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
+	TASK_PROMOTE_POST,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -37,6 +38,7 @@ import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
+import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
@@ -59,6 +61,7 @@ const cardComponents = {
 	[ TASK_GO_MOBILE_IOS ]: GoMobile,
 	[ TASK_MARKETPLACE ]: Marketplace,
 	[ TASK_PODCASTING ]: Podcasting,
+	[ TASK_PROMOTE_POST ]: PromotePost,
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
@@ -102,7 +105,7 @@ const Primary = ( { cards, trackCard } ) => {
 				( card, index ) =>
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
-						key: index,
+						key: card + index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 						card,
 					} )

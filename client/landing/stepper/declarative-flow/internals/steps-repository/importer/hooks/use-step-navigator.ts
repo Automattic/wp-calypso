@@ -10,11 +10,11 @@ import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
 	navigation: NavigationControls,
-	siteId: number,
-	siteSlug: string,
-	fromSite: string
+	siteId: number | undefined | null,
+	siteSlug: string | undefined | null,
+	fromSite: string | undefined | null
 ): StepNavigator {
-	const checkoutUrl = useCheckoutUrl( siteId as number, siteSlug as string );
+	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
 
 	function navigator( path: string ) {
 		const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
@@ -46,14 +46,17 @@ export function useStepNavigator(
 	function goToWpAdminImportPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/import/${ siteSlug }`,
+			url: `/import/${ siteSlug || '' }`,
 		} );
 	}
 
 	function goToWpAdminWordPressPluginPage() {
+		if ( ! siteSlug ) {
+			throw new Error( 'Cannot go to wp-admin plugin page without a site slug' );
+		}
 		navigation.submit?.( {
 			type: 'redirect',
-			url: getWpOrgImporterUrl( siteSlug as string, 'wordpress' ),
+			url: getWpOrgImporterUrl( siteSlug, 'wordpress' ),
 		} );
 	}
 

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useBreakpoint } from '@automattic/viewport-react';
 import styled from '@emotion/styled';
 import { Fragment } from 'react';
@@ -11,6 +12,7 @@ const Container = styled( FoldableCard )`
 	width: 100%;
 	margin-bottom: 0;
 	box-shadow: none;
+	${ ( props ) => props.showAsAccordion && ! props.legacy && 'border-bottom: 1px solid #eeeeee' };
 	${ ( props ) => props.showAsAccordion && 'border-top: 1px solid var( --studio-gray-5)' };
 	${ ( props ) => props.showAsAccordion && props.first && 'border-top: 0' };
 	.foldable-card__content {
@@ -41,21 +43,38 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-size: 16px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 12px;' };
+	${ ( props ) => ! props.showAsAccordion && ! props.legacy && 'margin-bottom: 4px;' };
+	${ ( props ) => ! props.showAsAccordion && props.legacy && 'margin-bottom: 12px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
 	margin-bottom: 12px;
 `;
 
-const PluginDetailsSidebarUSP = ( { id, icon, title, description, links, first } ) => {
+const PluginDetailsSidebarUSP = ( {
+	id,
+	title,
+	description,
+	icon = undefined,
+	links = undefined,
+	first = false,
+} ) => {
+	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
+
 	const isNarrow = useBreakpoint( '<1040px' );
 	const Header = () => {
 		return (
 			<>
-				<Icon src={ icon.src } showAsAccordion={ isNarrow } />
-				&nbsp;
-				<Title showAsAccordion={ isNarrow }>{ title }</Title>
+				{ icon && (
+					<>
+						<Icon src={ icon.src } showAsAccordion={ isNarrow } />
+						&nbsp;
+					</>
+				) }
+
+				<Title showAsAccordion={ isNarrow } legacy={ legacyVersion }>
+					{ title }
+				</Title>
 			</>
 		);
 	};

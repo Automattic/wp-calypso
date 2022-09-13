@@ -50,6 +50,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
+	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
@@ -535,7 +536,15 @@ class ThemeSheet extends Component {
 	};
 
 	getDefaultOptionLabel = () => {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, translate } = this.props;
+		const {
+			defaultOption,
+			isActive,
+			isLoggedIn,
+			isPremium,
+			isPurchased,
+			translate,
+			isBundledSoftwareSet,
+		} = this.props;
 		if ( isActive ) {
 			// Customize site
 			return (
@@ -545,10 +554,17 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn ) {
-			if ( isPremium && ! isPurchased ) {
+			if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 				// purchase
 				return translate( 'Pick this design' );
-			} // else: activate
+			} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+				// upgrade plan
+				return translate( 'Upgrade to activate', {
+					comment:
+						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+				} );
+			}
+			// else: activate
 			return translate( 'Activate this design' );
 		}
 		return defaultOption.label;
@@ -585,7 +601,7 @@ class ThemeSheet extends Component {
 
 	renderPrice = () => {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive ) {
+		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
 			price = this.props.translate( 'Free' );
@@ -642,6 +658,7 @@ class ThemeSheet extends Component {
 			hasUnlimitedPremiumThemes,
 			isAtomic,
 			isPremium,
+			isBundledSoftwareSet,
 			isJetpack,
 			isWpcomTheme,
 			isVip,
@@ -695,13 +712,22 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
-			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+			! isJetpack &&
+			isPremium &&
+			! isBundledSoftwareSet &&
+			! hasUnlimitedPremiumThemes &&
+			! isVip &&
+			! retired;
 		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
 			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic =
-			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
+			isAtomic &&
+			isPremium &&
+			! isBundledSoftwareSet &&
+			! canUserUploadThemes &&
+			! hasUnlimitedPremiumThemes;
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -811,6 +837,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
+		isBundledSoftwareSet,
 	} = props;
 
 	let defaultOption;
@@ -828,8 +855,10 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
-	} else if ( isPremium && ! isPurchased ) {
+	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
+	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
 	}
@@ -881,6 +910,7 @@ export default connect(
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
+			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),

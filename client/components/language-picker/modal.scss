@@ -1,77 +1,77 @@
 .language-picker__modal-search {
-    position: relative;
-    width: 250px;
+	position: relative;
+	width: 250px;
 }
 
 .language-picker__dialog {
-    &.dialog.card {
-        width: 90%;
-        height: 80%;
-        justify-content: space-between;
-    }
+	&.dialog.card {
+		width: 90%;
+		height: 80%;
+		justify-content: space-between;
+	}
 
-    .dialog__content {
-        flex: 1 1 auto;
-    }
+	.dialog__content {
+		flex: 1 1 auto;
+	}
 
-    .dialog__action-buttons {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        position: relative;
-        margin: 0;
-        padding: 0;
-        // prevent buttons div from covering language options
-        margin-top: 1.5rem;
+	.dialog__action-buttons {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		position: relative;
+		margin: 0;
+		padding: 0;
+		// prevent buttons div from covering language options
+		margin-top: 1.5rem;
 
-        .components-button {
-            margin-left: 1rem;
-        }
-    }
+		.components-button {
+			margin-left: 1rem;
+		}
+	}
 
-    .language-picker-component .language-picker-component__heading {
-        margin: 6px 0 24px;
-    }
+	.language-picker-component .language-picker-component__heading {
+		margin: 6px 0 24px;
+	}
 }
 
 .language-picker__modal-empathy-mode {
-    display: flex;
-    align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .language-picker__modal-checkboxes {
-    border-bottom: 1px solid var( --color-neutral-0 );
-    width: 100%;
-    padding: 24px;
-    text-align: left;
+	border-bottom: 1px solid var(--color-neutral-0);
+	width: 100%;
+	padding: 24px;
+	text-align: left;
 }
 
 .language-picker__modal-buttons {
-    padding: 24px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
+	padding: 24px;
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
 }
 
 .language-picker__modal-incomplete-locale-notice {
-    color: var( --color-text-subtle );
-    fill: var( --color-text-subtle );
-    display: inline-block;
+	color: var(--color-text-subtle);
+	fill: var(--color-text-subtle);
+	display: inline-block;
 
-    &-info {
-        display: flex;
-        align-items: flex-end;
-    }
+	&-info {
+		display: flex;
+		align-items: flex-end;
+	}
 }
 
 .language-picker__modal-incomplete-locale-text {
-    margin-right: 8px;
+	margin-right: 8px;
 }
 
 .language-picker__modal-incomplete-locale-tooltip-text {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }

@@ -1,5 +1,5 @@
 import { createSelector } from '@automattic/state-utils';
-import { withoutHttp } from 'calypso/lib/url';
+import { getJetpackSiteCollisions } from 'calypso/lib/site/utils';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 
 /**
@@ -11,16 +11,5 @@ import getSitesItems from 'calypso/state/selectors/get-sites-items';
  */
 export default createSelector( ( state ) => {
 	const sitesItems = Object.values( getSitesItems( state ) );
-	return sitesItems
-		.filter( ( site ) => {
-			const siteUrlSansProtocol = withoutHttp( site.URL );
-			return (
-				! site.jetpack &&
-				sitesItems.some(
-					( jetpackSite ) =>
-						jetpackSite.jetpack && siteUrlSansProtocol === withoutHttp( jetpackSite.URL )
-				)
-			);
-		} )
-		.map( ( site ) => site.ID );
+	return getJetpackSiteCollisions( sitesItems );
 }, getSitesItems );

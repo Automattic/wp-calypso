@@ -1,6 +1,8 @@
+import fs from 'fs';
+import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, Invite } from './types';
+import { BearerTokenErrorResponse, TestFile } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -18,6 +20,10 @@ import type {
 	NewInviteResponse,
 	AllInvitesResponse,
 	DeleteInvitesResponse,
+	NewPostParams,
+	NewMediaResponse,
+	NewPostResponse,
+	Invite,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -55,6 +61,9 @@ export class RestAPIClient {
 
 	/**
 	 * Constructs an instance of the API client.
+	 *
+	 * @param {AccountCredentials} credentials User credentials.
+	 * @param {string} [bearerToken] BearerToken for the user.
 	 */
 	constructor( credentials: AccountCredentials, bearerToken?: string ) {
 		this.credentials = credentials;
@@ -153,7 +162,7 @@ export class RestAPIClient {
 	 * @returns {Promise<any>} Decoded JSON response.
 	 */
 	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
-		const response = await fetch( url, params as RequestInit );
+		const response = await fetch( url.toString(), params as RequestInit );
 		return response.json();
 	}
 
@@ -226,6 +235,9 @@ export class RestAPIClient {
 			);
 		}
 
+		// Covert the `blogid` attribute to number, which is how
+		// it is used elsewhre in the REST API.
+		response[ 'blog_details' ][ 'blogid' ] = parseInt( response[ 'blog_details' ][ 'blogid' ] );
 		return response;
 	}
 
@@ -249,54 +261,26 @@ export class RestAPIClient {
 		}
 
 		const mySites = await this.getAllSites();
+		const myAccountInformation = await this.getMyAccountInformation();
 
 		// Start from tail end of the array since
 		// the target of site deletion is likely the
 		// most recently created site.
 		for ( const site of mySites.sites.reverse() ) {
-			const myAccountInformation = await this.getMyAccountInformation();
+			if ( site.ID === expectedSiteDetails.id && site.site_owner === myAccountInformation.ID ) {
+				const params: RequestParams = {
+					method: 'post',
+					headers: {
+						Authorization: await this.getAuthorizationHeader( 'bearer' ),
+						'Content-Type': this.getContentTypeHeader( 'json' ),
+					},
+				};
 
-			if ( site.site_owner !== myAccountInformation.ID ) {
-				console.info(
-					`Aborting site deletion: site owner ID did not match.\nExpected: ${ site.site_owner }, Got: ${ myAccountInformation.ID } `
+				return await this.sendRequest(
+					this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
+					params
 				);
-				break;
 			}
-
-			// Normalize URL to ensure equal comparison.
-			if ( new URL( site.URL ).href !== new URL( expectedSiteDetails.url ).href ) {
-				console.info(
-					`Aborting site deletion: site URL did not match.\nExpected: ${ site.URL }, Got: ${ expectedSiteDetails.url } `
-				);
-				break;
-			}
-
-			if ( site.ID !== parseInt( expectedSiteDetails.id ) ) {
-				console.info(
-					`Aborting site deletion: site ID did not match.\nExpected: ${ site.ID }, Got: ${ expectedSiteDetails.id } `
-				);
-				break;
-			}
-
-			if ( site.name !== expectedSiteDetails.name ) {
-				console.info(
-					`Aborting site deletion: site name did not match.\nExpected: ${ site.name }, Got: ${ expectedSiteDetails.name } `
-				);
-				break;
-			}
-
-			const params: RequestParams = {
-				method: 'post',
-				headers: {
-					Authorization: await this.getAuthorizationHeader( 'bearer' ),
-					'Content-Type': this.getContentTypeHeader( 'json' ),
-				},
-			};
-
-			return await this.sendRequest(
-				this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
-				params
-			);
 		}
 		// If nothing matches, return that no action was performed.
 		return null;
@@ -551,5 +535,97 @@ export class RestAPIClient {
 		};
 
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
+	}
+
+	/* Posts */
+
+	/**
+	 * Creates a post on the site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {NewPostParams} details Details of the new post.
+	 */
+	async createPost( siteID: number, details: NewPostParams ): Promise< NewPostResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Media */
+
+	/**
+	 * Uploads a media file.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param param1 Optional object parameter.
+	 * @param {TestFile} param1.media Local media file to be uploaded.
+	 * @param {string} param1.mediaURL URL to the media file to be uploaded.
+	 * @throws {Error} If neither media nor mediaURL are defined.
+	 */
+	async uploadMedia(
+		siteID: number,
+		{ media, mediaURL }: { media?: TestFile; mediaURL?: string }
+	): Promise< NewMediaResponse > {
+		let params: RequestParams | undefined;
+
+		if ( ! media && ! mediaURL ) {
+			throw new Error( 'Either `media` or `mediaURL` parameter must be defined.' );
+		}
+
+		if ( media ) {
+			const data = new FormData();
+			data.append( 'media[]', fs.createReadStream( media.fullpath ) );
+
+			params = {
+				method: 'post',
+				headers: {
+					// Important: include the boundary
+					Authorization: await this.getAuthorizationHeader( 'bearer' ),
+					...data.getHeaders(),
+				},
+				body: data,
+			};
+		}
+		if ( mediaURL ) {
+			params = {
+				method: 'post',
+				headers: {
+					Authorization: await this.getAuthorizationHeader( 'bearer' ),
+					'Content-Type': this.getContentTypeHeader( 'json' ),
+				},
+				body: JSON.stringify( { media_urls: mediaURL } ),
+			};
+		}
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/media/new` ),
+			params as RequestParams
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 }

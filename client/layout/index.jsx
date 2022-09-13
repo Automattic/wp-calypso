@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
-import { shouldShowHelpCenterToUser } from '@automattic/help-center';
+import { HelpCenter } from '@automattic/data-stores';
+import { shouldShowHelpCenterToUser, shouldLoadInlineHelp } from '@automattic/help-center';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useEffect, Component } from 'react';
@@ -37,7 +39,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
-	getSectionName,
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
@@ -46,7 +47,10 @@ import LayoutLoader from './loader';
 import { handleScroll } from './utils';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
+
 import './style.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 function SidebarScrollSynchronizer() {
 	const isNarrow = useBreakpoint( '<660px' );
@@ -71,6 +75,27 @@ function SidebarScrollSynchronizer() {
 	}, [ active ] );
 
 	return null;
+}
+
+function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const isDesktop = useBreakpoint( '>760px' );
+
+	// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
+	if ( ! loadHelpCenter ) {
+		return null;
+	}
+
+	return (
+		<AsyncLoad
+			require="@automattic/help-center"
+			placeholder={ null }
+			handleClose={ () => {
+				setShowHelpCenter( false );
+			} }
+			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
+		/>
+	);
 }
 
 function SidebarOverflowDelay( { layoutFocus } ) {
@@ -171,34 +196,7 @@ class Layout extends Component {
 		);
 	}
 
-	shouldLoadInlineHelp() {
-		if ( ! config.isEnabled( 'inline-help' ) ) {
-			return false;
-		}
-
-		if ( isWpMobileApp() ) {
-			return false;
-		}
-
-		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help', 'home' ];
-		const exemptedRoutes = [ '/log-in/jetpack' ];
-		const exemptedRoutesStartingWith = [
-			'/start/p2',
-			'/start/setup-site',
-			'/plugins/domain',
-			'/plugins/marketplace/setup',
-		];
-
-		return (
-			! exemptedSections.includes( this.props.sectionName ) &&
-			! exemptedRoutes.includes( this.props.currentRoute ) &&
-			! exemptedRoutesStartingWith.some( ( startsWithString ) =>
-				this.props.currentRoute.startsWith( startsWithString )
-			)
-		);
-	}
-
-	renderMasterbar() {
+	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
 		}
@@ -211,6 +209,7 @@ class Layout extends Component {
 				section={ this.props.sectionGroup }
 				isCheckout={ this.props.sectionName === 'checkout' }
 				isCheckoutPending={ this.props.sectionName === 'checkout-pending' }
+				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
 		);
 	}
@@ -243,11 +242,19 @@ class Layout extends Component {
 			};
 		};
 
-		const loadInlineHelp = this.shouldLoadInlineHelp() && ! this.props.disableFAB;
+		const loadHelpCenter =
+			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
+			this.props.userAllowedToHelpCenter;
+
+		const loadInlineHelp =
+			config.isEnabled( 'inline-help' ) &&
+			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
+			! loadHelpCenter;
 
 		return (
 			<div className={ sectionClass }>
-				<SidebarScrollSynchronizer />
+				<HelpCenterLoader sectionName={ this.props.sectioName } loadHelpCenter={ loadHelpCenter } />
+				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
@@ -267,7 +274,7 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ this.renderMasterbar() }
+				{ this.renderMasterbar( loadHelpCenter ) }
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -313,7 +320,6 @@ class Layout extends Component {
 						withOffset={ loadInlineHelp }
 					/>
 				) }
-
 				{ config.isEnabled( 'layout/support-article-dialog' ) && (
 					<AsyncLoad require="calypso/blocks/support-article-dialog" placeholder={ null } />
 				) }
@@ -369,14 +375,9 @@ export default withCurrentRoute(
 		const sidebarIsHidden = ! secondary || isWcMobileApp();
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
-		const isEditor = getSectionName( state ) === 'gutenberg-editor';
-		const isCheckout = getSectionName( state ) === 'checkout';
-		const userAllowedToHelpCenter = shouldShowHelpCenterToUser( getCurrentUserId( state ) );
-
-		const disableFAB =
-			( ( isEditor && config.isEnabled( 'editor/help-center' ) ) ||
-				( isCheckout && config.isEnabled( 'checkout/help-center' ) ) ) &&
-			userAllowedToHelpCenter;
+		const userAllowedToHelpCenter =
+			config.isEnabled( 'calypso/help-center' ) &&
+			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
 
 		return {
 			masterbarIsHidden,
@@ -407,7 +408,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
-			disableFAB,
+			userAllowedToHelpCenter,
 		};
 	} )( Layout )
 );

@@ -92,18 +92,23 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"
 			>
-				{ articles.map( ( article ) => (
-					<li key={ article.link }>
-						<ConfigurableLink
-							to={ getPostUrl( article as Article, message ) }
-							external={ 'en' !== locale }
-							fullUrl={ article.link }
-						>
-							<Icon icon={ page } />
-							{ article.title }
-						</ConfigurableLink>
-					</li>
-				) ) }
+				{ articles.map( ( article ) => {
+					if ( 'type' in article && [ 'video', 'tour' ].includes( article.type ) ) {
+						return;
+					}
+					return (
+						<li key={ article.link }>
+							<ConfigurableLink
+								to={ getPostUrl( article as Article, message ) }
+								external={ 'en' !== locale }
+								fullUrl={ article.link }
+							>
+								<Icon icon={ page } />
+								{ article.title }
+							</ConfigurableLink>
+						</li>
+					);
+				} ) }
 			</ul>
 		</div>
 	);

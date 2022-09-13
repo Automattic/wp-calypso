@@ -21,7 +21,7 @@ export * from './payment-methods/google-pay';
 export { isWpComProductRenewal } from './is-wpcom-product-renewal';
 export { isValueTruthy } from './is-value-truthy';
 export * from './checkout-labels';
-export * from './get-introductory-offer-interval-display';
+export * from './introductory-offer';
 export * from './join-classes';
 export * from './checkout-line-items';
 export * from './get-country-postal-code-support';

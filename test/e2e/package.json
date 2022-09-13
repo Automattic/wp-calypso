@@ -14,7 +14,11 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"scripts": {
 		"encrypt-secrets": "yarn workspace @automattic/calypso-e2e run encrypt-secrets",
-		"decrypt-secrets": "yarn workspace @automattic/calypso-e2e run decrypt-secrets"
+		"decrypt-secrets": "yarn workspace @automattic/calypso-e2e run decrypt-secrets",
+		"clean": "yarn clean:packages && yarn clean:output && rm -rf ./cookies && rm -rf ./node_modules",
+		"clean:packages": "yarn workspace @automattic/jest-circus-allure-reporter clean && yarn workspace @automattic/calypso-e2e clean",
+		"clean:output": "rm -rf ./allure-results && rm -rf ./results",
+		"build": "yarn workspace @automattic/jest-circus-allure-reporter build && yarn workspace @automattic/calypso-e2e build"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
@@ -26,6 +30,7 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-e2e": "workspace:^",
+		"@automattic/jest-circus-allure-reporter": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@types/archiver": "^5.3.1",
 		"@types/jest": "^27.0.2",

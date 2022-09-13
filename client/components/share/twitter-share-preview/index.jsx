@@ -19,6 +19,7 @@ export class TwitterSharePreview extends PureComponent {
 				<div className="twitter-share-preview__content">
 					<div className="twitter-share-preview__profile-picture-part">
 						<img
+							alt="Preview of Twitter profile"
 							className="twitter-share-preview__profile-picture"
 							src={ externalProfilePicture }
 						/>
@@ -40,7 +41,11 @@ export class TwitterSharePreview extends PureComponent {
 						</div>
 						{ imageUrl && (
 							<div className="twitter-share-preview__image-wrapper">
-								<img className="twitter-share-preview__image" src={ imageUrl } />
+								<img
+									alt="Preview when shared to Twitter"
+									className="twitter-share-preview__image"
+									src={ imageUrl }
+								/>
 							</div>
 						) }
 					</div>

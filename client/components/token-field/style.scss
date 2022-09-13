@@ -5,24 +5,24 @@
 	width: 100%;
 	margin: 0;
 	padding: 0;
-	background-color: var( --color-surface );
-	border: 1px solid var( --color-neutral-10 );
-	color: var( --color-neutral-70 );
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-neutral-10);
+	color: var(--color-neutral-70);
 	cursor: text;
 	transition: all 0.15s ease-in-out;
 
 	&:hover {
-		border-color: var( --color-neutral-20 );
+		border-color: var(--color-neutral-20);
 	}
 
 	&.is-disabled {
-		background: var( --color-neutral-0 );
-		border-color: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
+		border-color: var(--color-neutral-0);
 	}
 
 	&.is-active {
-		border-color: var( --color-primary );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 }
 
@@ -34,7 +34,7 @@
 }
 
 // Token input
-input[type='text'].form-text-input.token-field__input {
+input[type="text"].form-text-input.token-field__input {
 	display: inline-block;
 	flex-grow: 1;
 	width: auto;
@@ -47,7 +47,7 @@ input[type='text'].form-text-input.token-field__input {
 	outline: none;
 	font-family: inherit;
 	font-size: $font-body-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	&:focus,
 	&:focus:hover {
@@ -60,27 +60,27 @@ input[type='text'].form-text-input.token-field__input {
 	font-size: $font-body-small;
 	display: flex;
 	margin: 2px 0 2px 8px;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	overflow: hidden;
 
 	&.is-success {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: var( --color-success );
+			background: var(--color-success);
 		}
 	}
 
 	&.is-error {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: var( --color-error );
+			background: var(--color-error);
 		}
 	}
 
 	&.is-validating {
 		.token-field__token-text,
 		.token-field__remove-token {
-			background: var( --color-neutral-light );
+			background: var(--color-neutral-light);
 		}
 	}
 
@@ -90,12 +90,12 @@ input[type='text'].form-text-input.token-field__input {
 
 		.token-field__token-text {
 			background: transparent;
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		.token-field__remove-token {
 			background: transparent;
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			position: absolute;
 			top: 1px;
 			right: 0;
@@ -103,13 +103,13 @@ input[type='text'].form-text-input.token-field__input {
 
 		&.is-success {
 			.token-field__token-text {
-				color: var( --color-success );
+				color: var(--color-success);
 			}
 		}
 
 		&.is-error {
 			.token-field__token-text {
-				color: var( --color-error );
+				color: var(--color-error);
 				border-radius: 2px 0 0 2px;
 				padding: 0 4px 0 6px;
 			}
@@ -117,7 +117,7 @@ input[type='text'].form-text-input.token-field__input {
 
 		&.is-validating {
 			.token-field__token-text {
-				color: var( --color-neutral-70 );
+				color: var(--color-neutral-70);
 			}
 		}
 	}
@@ -133,8 +133,8 @@ input[type='text'].form-text-input.token-field__input {
 .token-field__remove-token {
 	display: inline-block;
 	line-height: 24px;
-	background: var( --color-neutral-50 );
-	transition: all 0.2s cubic-bezier( 0.4, 1, 0.4, 1 );
+	background: var(--color-neutral-50);
+	transition: all 0.2s cubic-bezier(0.4, 1, 0.4, 1);
 }
 
 .token-field__token-text {
@@ -148,17 +148,17 @@ input[type='text'].form-text-input.token-field__input {
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 2px 2px 0;
-	color: var( --color-neutral-10 );
+	color: var(--color-neutral-10);
 
 	&:hover {
 		color: white;
-		background: var( --color-neutral-40 );
+		background: var(--color-neutral-40);
 	}
 }
 
 // Suggestion list
 .token-field__suggestions-list {
-	background: var( --color-surface );
+	background: var(--color-surface);
 	max-height: 0;
 	overflow-y: scroll;
 	transition: all 0.15s ease-in-out;
@@ -166,31 +166,31 @@ input[type='text'].form-text-input.token-field__input {
 	margin: 0;
 
 	&.is-expanded {
-		background: var( --color-surface );
-		border-top: 1px solid var( --color-neutral-10 );
+		background: var(--color-surface);
+		border-top: 1px solid var(--color-neutral-10);
 		max-height: 9em;
 		padding-top: 3px;
 	}
 }
 
 .token-field__suggestion {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	display: block;
 	font-size: $font-body-small;
 	padding: 4px 8px;
 	cursor: pointer;
 
 	&.is-selected {
-		background: var( --color-accent );
-		color: var( --color-text-inverted );
+		background: var(--color-accent);
+		color: var(--color-text-inverted);
 	}
 	&.is-label {
 		font-size: $font-body-small;
 		font-weight: 600;
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 }
 
 .token-field__suggestion-match {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }

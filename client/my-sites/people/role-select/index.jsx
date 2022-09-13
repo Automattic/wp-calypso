@@ -13,7 +13,15 @@ import { ROLES_LIST } from './constants';
 
 import './style.scss';
 
-export default function RoleSelect( { includeFollower, siteId, id, explanation, value, ...rest } ) {
+export default function RoleSelect( {
+	includeFollower,
+	includeSubscriber,
+	siteId,
+	id,
+	explanation,
+	value,
+	...rest
+} ) {
 	const translate = useTranslate();
 	const { data } = useSiteRolesQuery( siteId );
 	const isSitePrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
@@ -27,6 +35,12 @@ export default function RoleSelect( { includeFollower, siteId, id, explanation, 
 		if ( includeFollower ) {
 			const wpcomFollowerRole = getWpcomFollowerRole( isSitePrivate, translate );
 			siteRoles = siteRoles.concat( wpcomFollowerRole );
+		}
+
+		if ( ! includeSubscriber ) {
+			// Remove subscriber role from the roles list
+			// https://github.com/Automattic/wp-calypso/issues/65776
+			siteRoles = siteRoles.filter( ( x ) => x.name !== 'subscriber' );
 		}
 	}
 

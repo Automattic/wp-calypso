@@ -4,6 +4,10 @@ import {
 	getPlan,
 	PLAN_WPCOM_PRO,
 	PLAN_PREMIUM,
+	isBusiness,
+	isPremium,
+	isEcommerce,
+	isPro,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -12,15 +16,17 @@ import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableFAQComponent from 'calypso/components/foldable-faq';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getProductCost, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { incrementCounter } from 'calypso/state/persistent-counter/actions';
+import { requestProductsList } from 'calypso/state/products-list/actions';
+import { getProductCost } from 'calypso/state/products-list/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
 const Placeholder = styled.span`
@@ -231,17 +237,22 @@ export default function DIFMLanding( {
 	onSubmit,
 	onSkip,
 	isInOnboarding = true,
+	siteId,
 }: {
 	onSubmit: () => void;
 	onSkip?: () => void;
 	isInOnboarding: boolean;
+	siteId?: number | null;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const hasPriceDataLoaded = productCost && currencyCode;
-	const isLoading = useSelector( isProductsListFetching );
+
+	const [ isLoading, setIsLoading ] = useState( true );
+
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
 		: '';
@@ -261,6 +272,14 @@ export default function DIFMLanding( {
 		}
 	}, [ isFAQSectionOpen ] );
 
+	useEffect( () => {
+		( async () => {
+			await dispatch( incrementCounter( 'VIEWED_DIFM_LANDING' ) );
+			await dispatch( requestProductsList( { type: 'all' } ) );
+			setIsLoading( false );
+		} )();
+	}, [ dispatch ] );
+
 	const planTitle = isEnabled( 'plans/pro-plan' )
 		? getPlan( PLAN_WPCOM_PRO )?.getTitle()
 		: getPlan( PLAN_PREMIUM )?.getTitle();
@@ -278,27 +297,45 @@ export default function DIFMLanding( {
 		}
 	);
 
+	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
+	const hasPremiumOrHigherPlan = currentPlan?.product_slug
+		? [ isPremium, isBusiness, isEcommerce, isPro ].some( ( planMatcher ) =>
+				planMatcher( {
+					productSlug: currentPlan.product_slug,
+				} )
+		  )
+		: false;
+
+	const subHeaderText = hasPremiumOrHigherPlan
+		? translate(
+				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				{
+					args: {
+						freePages: 5,
+					},
+					components: {
+						sup: <sup />,
+					},
+				}
+		  )
+		: translate(
+				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				{
+					args: {
+						plan: planTitle,
+						freePages: 5,
+					},
+					components: {
+						sup: <sup />,
+					},
+				}
+		  );
+
 	return (
 		<>
-			{ ! hasPriceDataLoaded && <QueryProductsList /> }
 			<Wrapper>
 				<ContentSection>
-					<Header
-						align={ 'left' }
-						headerText={ headerText }
-						subHeaderText={ translate(
-							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
-							{
-								args: {
-									plan: planTitle,
-									freePages: 5,
-								},
-								components: {
-									sup: <sup />,
-								},
-							}
-						) }
-					/>
+					<Header align={ 'left' } headerText={ headerText } subHeaderText={ subHeaderText } />
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -345,7 +382,7 @@ export default function DIFMLanding( {
 						</NextButton>
 						{ isInOnboarding && (
 							<SkipButton isLink={ true } onClick={ onSkip }>
-								{ translate( 'Skip for now' ) }
+								{ translate( "I'll do it myself" ) }
 							</SkipButton>
 						) }
 					</CTASectionWrapper>
@@ -444,7 +481,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus one year of the %(planTitle)s hosting plan. If you choose to use an existing site that already has the plan, you will only be charged for the website design service.',
+									'The service costs %(displayCost)s, plus an additional purchase of the %(planTitle)s hosting plan.',
 									{
 										args: {
 											displayCost,

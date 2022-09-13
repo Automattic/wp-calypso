@@ -232,7 +232,7 @@ class PurchasesListing extends Component {
 			>
 				{ label }
 				&nbsp;
-				<OwnerInfo purchaseId={ purchase?.id } />
+				<OwnerInfo purchase={ purchase } />
 			</Button>
 		);
 	}

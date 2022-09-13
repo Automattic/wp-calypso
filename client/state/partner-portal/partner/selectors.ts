@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import find from 'lodash/find';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import type {
 	APIError,
 	Partner,
@@ -50,9 +51,18 @@ export function getPartnerRequestError( state: PartnerPortalStore ): APIError | 
 	return state.partnerPortal.partner.error;
 }
 
+export function hasJetpackPartnerAccess( state: PartnerPortalStore ): boolean {
+	const currentUser = getCurrentUser( state );
+	return currentUser?.has_jetpack_partner_access ?? false;
+}
+
 export function isAgencyUser( state: PartnerPortalStore ): boolean {
-	const partner = getCurrentPartner( state );
-	return partner?.partner_type === 'agency' || partner?.partner_type === 'agency_beta';
+	const currentUser = getCurrentUser( state );
+	return (
+		( currentUser?.jetpack_partner_types?.includes( 'agency' ) ||
+			currentUser?.jetpack_partner_types?.includes( 'agency_beta' ) ) ??
+		false
+	);
 }
 
 export function showAgencyDashboard( state: PartnerPortalStore ): boolean {

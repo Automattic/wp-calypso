@@ -1,19 +1,26 @@
-import { ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { ToolbarGroup, ToolbarButton as BaseToolbarButton } from '@wordpress/components';
 import classnames from 'classnames';
 import { ReactChild, useState, useRef, useEffect } from 'react';
+import type { Button } from '@wordpress/components';
 
 import './style.scss';
+
+const ToolbarButton = BaseToolbarButton as React.ComponentType<
+	( BaseToolbarButton.Props & { href?: string } ) | Button.Props
+>;
 
 export default function SwipeGroup( {
 	children,
 	className = '',
 	onClick = () => null,
 	initialActiveIndex = -1,
+	hrefList = [],
 }: {
 	children: ReactChild[];
 	className?: string;
 	onClick?: ( index: number ) => void;
 	initialActiveIndex?: number;
+	hrefList?: string[];
 } ) {
 	const classes = classnames( 'responsive-toolbar-group__swipe', className );
 
@@ -23,7 +30,7 @@ export default function SwipeGroup( {
 	useEffect( () => {
 		setActiveIndex( initialActiveIndex );
 	}, [ initialActiveIndex ] );
-	const ref = useRef< HTMLButtonElement | null >( null );
+	const ref = useRef< HTMLAnchorElement >( null );
 
 	// Scroll to category on load
 	useEffect( () => {
@@ -47,10 +54,15 @@ export default function SwipeGroup( {
 						key={ `button-item-${ index }` }
 						id={ `button-item-${ index }` }
 						isActive={ activeIndex === index }
+						href={ hrefList[ index ] }
 						ref={ activeIndex === index ? ref : null }
-						onClick={ () => {
+						onClick={ ( event: React.MouseEvent ) => {
 							setActiveIndex( index );
 							onClick( index );
+
+							if ( typeof hrefList[ index ] === 'string' ) {
+								event.preventDefault();
+							}
 						} }
 						className="responsive-toolbar-group__swipe-item"
 					>

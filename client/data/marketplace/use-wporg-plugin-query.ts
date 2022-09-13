@@ -75,7 +75,9 @@ export const useWPORGInfinitePlugins = (
 				author,
 			} ),
 		{
-			select: ( data: InfiniteData< { plugins: Plugin[]; info: { page: number } } > ) => {
+			select: (
+				data: InfiniteData< { plugins: Plugin[]; info: { page: number; pages: number } } >
+			) => {
 				return {
 					...data,
 					plugins: extractPages( data.pages ),
@@ -83,6 +85,12 @@ export const useWPORGInfinitePlugins = (
 				};
 			},
 			getNextPageParam: ( lastPage ) => {
+				// When on last page, the next page is undefined, according to docs.
+				// @see: https://tanstack.com/query/v4/docs/reference/useInfiniteQuery
+				if ( lastPage.info.pages <= lastPage.info.page ) {
+					return undefined;
+				}
+
 				return ( lastPage.info.page || 0 ) + 1;
 			},
 			enabled: enabled,

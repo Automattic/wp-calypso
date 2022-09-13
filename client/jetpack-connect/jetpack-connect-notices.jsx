@@ -25,6 +25,7 @@ import {
 	USER_IS_ALREADY_CONNECTED_TO_SITE,
 	WORDPRESS_DOT_COM,
 	XMLRPC_ERROR,
+	NOT_CONNECTED_USER,
 } from './connection-notice-types';
 
 export class JetpackConnectNotices extends Component {
@@ -55,6 +56,7 @@ export class JetpackConnectNotices extends Component {
 			USER_IS_ALREADY_CONNECTED_TO_SITE,
 			WORDPRESS_DOT_COM,
 			XMLRPC_ERROR,
+			NOT_CONNECTED_USER,
 		] ).isRequired,
 		translate: PropTypes.func.isRequired,
 		url: PropTypes.string,
@@ -85,7 +87,7 @@ export class JetpackConnectNotices extends Component {
 					"This site can't be connected to WordPress.com because it violates our {{a}}Terms of Service{{/a}}.",
 					{
 						components: {
-							a: <a href="https://wordpress.com/tos" rel="noopener noreferrer" target="_blank" />,
+							a: <a href="https://wordpress.com/tos/" rel="noopener noreferrer" target="_blank" />,
 						},
 					}
 				);

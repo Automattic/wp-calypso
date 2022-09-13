@@ -17,8 +17,8 @@
 	display: inline-block;
 
 	&.is-active > * {
-		box-shadow: 0 0 0 2px white, 0 0 0 4px var( --color-accent );
-		z-index: z-index( 'root', '.sortable-list__item.is-draggable.is-active' );
+		box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-accent);
+		z-index: z-index("root", ".sortable-list__item.is-draggable.is-active");
 	}
 
 	&.is-draggable.is-active {
@@ -26,8 +26,8 @@
 	}
 
 	&.is-shadow {
-		filter: url( "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale" );
-		filter: grayscale( 100% );
+		filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
+		filter: grayscale(100%);
 		opacity: 0.5;
 	}
 
@@ -44,13 +44,13 @@
 
 .sortable-list__navigation-button {
 	padding: 8px;
-	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-10 );
-	color: var( --color-neutral-light );
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-10);
+	color: var(--color-neutral-light);
 
-	&:not( :disabled ):hover {
+	&:not(:disabled):hover {
 		cursor: pointer;
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	&:disabled {
@@ -77,7 +77,7 @@
 }
 
 .sortable-list.is-horizontal .sortable-list__navigation-button .gridicon {
-	transform: rotate( 90deg ) translateX( 1px );
+	transform: rotate(90deg) translateX(1px);
 }
 
 .sortable-list.is-vertical .sortable-list__navigation-button {
@@ -97,5 +97,5 @@
 }
 
 .sortable-list.is-vertical .sortable-list__navigation-button .gridicon {
-	transform: rotate( 180deg ) translateX( 1px );
+	transform: rotate(180deg) translateX(1px);
 }

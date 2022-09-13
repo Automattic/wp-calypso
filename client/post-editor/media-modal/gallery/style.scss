@@ -4,10 +4,10 @@
 	flex-direction: column;
 	flex: 2 0 0%;
 	margin: 80px 0 0;
-	background-color: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-10 );
+	background-color: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-10);
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: block;
 		margin: 16px 0 16px 24px;
 	}
@@ -32,15 +32,15 @@
 	position: absolute;
 	top: -28px;
 	right: 15px;
-	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-gallery__preview-toggle' );
+	z-index: z-index(".dialog__backdrop", ".editor-media-modal-gallery__preview-toggle");
 	width: 200px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		right: -1px;
 	}
 
 	.segmented-control__item .segmented-control__link {
-		border-color: var( --color-neutral-10 );
+		border-color: var(--color-neutral-10);
 	}
 
 	.segmented-control__item:first-of-type .segmented-control__link {
@@ -49,11 +49,11 @@
 
 	.segmented-control__item:last-of-type .segmented-control__link {
 		border-bottom-right-radius: 0;
-		border-left-color: var( --color-neutral-10 );
+		border-left-color: var(--color-neutral-10);
 	}
 
 	.segmented-control__item.is-selected .segmented-control__link {
-		border-bottom-color: var( --color-neutral-0 );
+		border-bottom-color: var(--color-neutral-0);
 	}
 }
 
@@ -65,7 +65,7 @@
 	width: 44%;
 	margin: 3%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: 160px;
 		margin: 16px 0 0 16px;
 	}
@@ -83,11 +83,11 @@
 	width: 28px;
 	height: 28px;
 	/*!rtl:ignore*/
-	transform: translate( 25%, -25% );
-	border: 1px solid var( --color-neutral-20 );
+	transform: translate(25%, -25%);
+	border: 1px solid var(--color-neutral-20);
 	border-radius: 50%;
-	background-color: var( --color-neutral-0 );
-	color: var( --color-neutral-20 );
+	background-color: var(--color-neutral-0);
+	color: var(--color-neutral-20);
 	cursor: pointer;
 }
 
@@ -95,7 +95,7 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate( -50%, -50% );
+	transform: translate(-50%, -50%);
 }
 
 .editor-media-modal-gallery .media-library__list-item {
@@ -114,15 +114,15 @@
 }
 
 .editor-media-modal-gallery .sortable-list__navigation-button {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	&:disabled {
 		opacity: 0.9;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
-input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
+input.editor-media-modal-gallery__caption.form-text-input[type="text"] {
 	font-size: $font-body-extra-small;
 
 	&:focus {
@@ -131,14 +131,14 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 }
 
 .popover.gallery__order-popover {
-	z-index: z-index( 'root', '.popover.gallery__order-popover' );
+	z-index: z-index("root", ".popover.gallery__order-popover");
 }
 
 .editor-media-modal-gallery__sidebar {
 	flex: 1 0 0%;
 	padding: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-top: 0;
 		padding-right: 24px;
 		overflow-y: auto;
@@ -170,16 +170,16 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 
 	&::before,
 	&::after {
-		content: '';
+		content: "";
 		position: absolute;
 		left: 50%;
 		display: block;
 		width: 90%;
 		margin-left: -45%;
-		transition: 0.2s opacity cubic-bezier( 0.25, 0.5, 0.5, 0.9 );
+		transition: 0.2s opacity cubic-bezier(0.25, 0.5, 0.5, 0.9);
 		opacity: 0;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			width: 75%;
 			margin-left: -37.5%;
 		}
@@ -188,20 +188,13 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 	&::before {
 		top: 16px;
 		height: 130px;
-		background: linear-gradient(
-			to right,
-			var( --color-neutral-5 ),
-			var( --color-neutral-5 ) 40%,
-			transparent 40%,
-			transparent 42%,
-			var( --color-neutral-10 ) 42%
-		);
+		background: linear-gradient(to right, var(--color-neutral-5), var(--color-neutral-5) 40%, transparent 40%, transparent 42%, var(--color-neutral-10) 42%);
 	}
 
 	&::after {
-		top: calc( 146px + 2% );
+		top: calc(146px + 2%);
 		height: 240px;
-		background: var( --color-neutral-20 );
+		background: var(--color-neutral-20);
 	}
 
 	&.is-loading::before,
@@ -216,7 +209,7 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 	left: 16px;
 	right: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		position: static;
 	}
 }
@@ -224,7 +217,7 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 .editor-media-modal-gallery__fields .for-setting-type .editor-media-modal__fieldset-legend {
 	display: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		display: block;
 	}
 }
@@ -232,7 +225,7 @@ input.editor-media-modal-gallery__caption.form-text-input[type='text'] {
 .editor-media-modal-gallery__fields .for-setting-type .select-dropdown__container {
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: auto;
 	}
 }
@@ -244,12 +237,12 @@ input[type].editor-media-modal-gallery__input-width-auto {
 .editor-media-modal-gallery__preview-individual-content {
 	padding-top: 8px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		max-width: 75%;
 		margin: 0 auto;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		max-width: 50%;
 	}
 }
@@ -284,14 +277,14 @@ input[type].editor-media-modal-gallery__input-width-auto {
 	overflow: hidden;
 }
 
-.editor-media-modal-gallery__preview-individual .wp-caption img[class*='wp-image-'] {
+.editor-media-modal-gallery__preview-individual .wp-caption img[class*="wp-image-"] {
 	display: block;
 	margin: 0;
 }
 
 .editor-media-modal-gallery__preview-individual .wp-caption-dd {
-	background: var( --color-neutral-0 );
-	color: var( --color-neutral-50 );
+	background: var(--color-neutral-0);
+	color: var(--color-neutral-50);
 	font-size: $font-body-small;
 	line-height: 1.7;
 	padding: 16px;
@@ -300,7 +293,7 @@ input[type].editor-media-modal-gallery__input-width-auto {
 .editor-media-modal-gallery__content {
 	margin-top: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 0;
 	}
 }

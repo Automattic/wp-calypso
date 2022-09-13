@@ -54,6 +54,7 @@ class DomainSearchResults extends Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	renderDomainAvailability() {
@@ -274,6 +275,7 @@ class DomainSearchResults extends Component {
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
 					isReskinned={ this.props.isReskinned }
+					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 				/>
 			);
 
@@ -302,6 +304,7 @@ class DomainSearchResults extends Component {
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
 						isReskinned={ this.props.isReskinned }
+						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					/>
 				);
 			} );

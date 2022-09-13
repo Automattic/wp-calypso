@@ -12,11 +12,17 @@ const selectors = {
 
 	listTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
 	listSubtitle: ( section: string ) => `.plugins-browser-list__subtitle:text("${ section }")`,
+	headerTitle: ( section: string ) => `.plugin-category-results-header__title:text("${ section }")`,
+	pluginTitle: ( plugin: string ) => `.plugins-browser-item__title:text("${ plugin }")`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
 		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
 	sectionTitles: '.plugins-browser-list__title',
-	browseAllPopular: 'a[href^="/plugins/browse/popular"]',
-	breadcrumb: ( section: string ) => `.plugins-browser__header a:text("${ section }") `,
+	browseAllFree: 'a[href^="/plugins/browse/popular"]',
+	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
+	browseFirstCategory: 'button:has-text("Search Engine Optimization")',
+	categoryButton: ( section: string ) =>
+		`button:has-text("${ section }"),a:has-text("${ section }")`,
+	breadcrumb: ( section: string ) => `.fixed-navigation-header__header a:text("${ section }") `,
 	pricingToggle: ':text("Monthly Price"), :text("Annual Price")',
 	monthlyPricingSelect: 'a[data-bold-text^="Monthly price"]',
 	annualPricingSelect: 'a[data-bold-text^="Annual price"]',
@@ -39,6 +45,10 @@ const selectors = {
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
+
+	// Plugin details view
+	pluginDetailsHeaderTitle: ( section: string ) =>
+		`.plugin-details-header__name:text("${ section }")`,
 };
 
 /**
@@ -101,6 +111,20 @@ export class PluginsPage {
 	}
 
 	/**
+	 * Validate page has a header title containing text
+	 */
+	async validateHasHeaderTitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.headerTitle( section ) );
+	}
+
+	/**
+	 * Validate plugin details page has a header title containing text
+	 */
+	async validatePluginDetailsHasHeaderTitle( section: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.pluginDetailsHeaderTitle( section ) );
+	}
+
+	/**
 	 * Validate section is not present on page
 	 */
 	async validateNotHasSection( section: string ): Promise< void > {
@@ -122,24 +146,59 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Click Browse All
+	 * Validate category has the plugin
 	 */
-	async clickBrowseAllPopular(): Promise< void > {
-		await this.page.click( selectors.browseAllPopular );
+	async validateHasPluginInCategory( section: string, plugin: string ): Promise< void > {
+		await this.page.waitForSelector( selectors.headerTitle( section ) );
+		await this.page.waitForSelector( selectors.pluginTitle( plugin ) );
 	}
 
 	/**
-	 * Click the Back breadcrumb
+	 * Click Browse All Free Plugins
+	 */
+	async clickBrowseAllFreePlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllFree );
+	}
+
+	/**
+	 * Click Browse All Paid Plugins
+	 */
+	async clickBrowseAllPaidPlugins(): Promise< void > {
+		await this.page.click( selectors.browseAllPaid );
+	}
+
+	/**
+	 * Validate Category Button
+	 */
+	async validateCategoryButton( category: string, isDesktop: boolean ): Promise< void > {
+		const categoryLocator = this.page.locator( selectors.categoryButton( category ) );
+		if ( isDesktop ) {
+			await categoryLocator.nth( 1 ).click();
+		} else {
+			await categoryLocator.click();
+		}
+		await this.page.waitForSelector( selectors.headerTitle( category ) );
+	}
+
+	/**
+	 * Click the "Back" breadcrumb
 	 */
 	async clickBackBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Back' ) );
 	}
 
 	/**
-	 * Click the Plugins breadcrumb
+	 * Click the "Plugins" breadcrumb
 	 */
 	async clickPluginsBreadcrumb(): Promise< void > {
 		await this.page.click( selectors.breadcrumb( 'Plugins' ) );
+	}
+
+	/**
+	 * Click the "Search Results" breadcrumb
+	 */
+	async clickSearchResultsBreadcrumb(): Promise< void > {
+		await this.page.click( selectors.breadcrumb( 'Search Results' ) );
 	}
 
 	/**

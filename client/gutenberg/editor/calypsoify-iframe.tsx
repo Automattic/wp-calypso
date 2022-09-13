@@ -54,7 +54,6 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isAppBannerDismissed from 'calypso/state/ui/selectors/app-banner-is-dismissed';
-import isHelpCenterVisible from 'calypso/state/ui/selectors/help-center-is-visible';
 import * as T from 'calypso/types';
 import Iframe from './iframe';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
@@ -97,7 +96,6 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	checkoutModalOptions?: CheckoutModalOptions;
-	helpCenterVisible: boolean;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -126,7 +124,6 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
-	GetIsHelpCenterShown = 'getIsHelpCenterShown',
 }
 
 type ComponentProps = Props &
@@ -142,7 +139,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		isIframeLoaded: false,
 		currentIFrameUrl: '',
 		checkoutModalOptions: undefined,
-		helpCenterVisible: false,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -152,7 +148,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 	revisionsPort: MessagePort | null = null;
 	checkoutPort: MessagePort | null = null;
 	appBannerPort: MessagePort | null = null;
-	helpCenterPort: MessagePort | null = null;
 
 	componentDidMount() {
 		window.addEventListener( 'message', this.onMessage, false );
@@ -180,11 +175,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 
 		if ( this.props.appBannerDismissed ) {
 			this.handleAppBannerDismiss();
-		}
-
-		//We check to not sending messages if value has not changed
-		if ( this.state.helpCenterVisible !== this.props.isHelpCenterVisible ) {
-			this.handleHelpCenterShowing();
 		}
 	}
 
@@ -498,15 +488,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.appBannerPort = ports[ 0 ];
 			}
 		}
-
-		if ( EditorActions.GetIsHelpCenterShown === action ) {
-			const isHelpCenterVisible = this.props.isHelpCenterVisible;
-			ports[ 0 ].postMessage( {
-				isHelpCenterVisible: isHelpCenterVisible,
-			} );
-
-			this.helpCenterPort = ports[ 0 ];
-		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -689,15 +670,6 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 	};
 
-	handleHelpCenterShowing = () => {
-		if ( this.helpCenterPort ) {
-			this.setState( { helpCenterVisible: this.props.isHelpCenterVisible } );
-			this.helpCenterPort.postMessage( {
-				isHelpCenterVisible: this.props.isHelpCenterVisible,
-			} );
-		}
-	};
-
 	render() {
 		const { iframeUrl, shouldLoadIframe, isNew7DUser, currentUserCountryCode } = this.props;
 		const {
@@ -858,7 +830,7 @@ const mapStateToProps = (
 
 	const siteAdminUrl =
 		editorType === 'site'
-			? getSiteAdminUrl( state, siteId, 'themes.php?page=gutenberg-edit-site' )
+			? getSiteAdminUrl( state, siteId, 'site-editor.php' )
 			: getSiteAdminUrl( state, siteId, postId ? 'post.php' : 'post-new.php' );
 
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl ?? '' );
@@ -897,7 +869,6 @@ const mapStateToProps = (
 		shouldDisplayAppBanner: displayAppBanner,
 		appBannerDismissed: isAppBannerDismissed( state ),
 		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
-		isHelpCenterVisible: isHelpCenterVisible( state ),
 	};
 };
 

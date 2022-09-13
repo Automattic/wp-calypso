@@ -4,8 +4,8 @@
 
 .conversations__stream .reader-post-card.card.is-compact .reader-post-options-menu {
 	position: absolute;
-		right: -2px;
-		top: -16px;
+	right: -2px;
+	top: -16px;
 }
 
 .conversations__stream .reader-post-card.card.is-compact {
@@ -57,7 +57,7 @@
 		top: 5px;
 	}
 
-	&:not( :first-child ) {
+	&:not(:first-child) {
 		margin-top: 16px;
 	}
 
@@ -86,7 +86,7 @@
 	margin-top: 30px;
 	max-width: 650px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 70px;
 	}
 }

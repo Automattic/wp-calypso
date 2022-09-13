@@ -25,7 +25,7 @@ import { getUserInfo } from './getUserInfo';
 
 import './happychat.scss';
 
-const parentTarget = window.opener || window.parent;
+const parentTarget = window.parent;
 
 function getReceivedMessagesOlderThan( timestamp, messages ) {
 	if ( ! timestamp ) {
@@ -34,78 +34,54 @@ function getReceivedMessagesOlderThan( timestamp, messages ) {
 	return messages.filter( ( m ) => m.timestamp >= timestamp && m.source !== 'customer' );
 }
 
-function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation } ) {
+function ParentConnection( { chatStatus, timeline, geoLocation } ) {
 	const dispatch = useDispatch();
-	const [ blurredAt, setBlurredAt ] = useState( Date.now() );
+	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
+	const [ windowState, setWindowState ] = useState();
 
 	// listen to messages from parent window
 	useEffect( () => {
 		function onMessage( e ) {
 			const message = e.data;
 			switch ( message.type ) {
-				case 'route':
-					dispatch( sendEvent( `Looking at ${ message.route }` ) );
+				case 'happy-chat-introduction-data':
+					if ( ! introMessage && message !== introMessage ) {
+						dispatch(
+							setChatCustomFields( {
+								calypsoSectionName: 'gutenberg-editor',
+								wpcomSiteId: message.siteId?.toString(),
+								wpcomSitePlan: message.planSlug,
+							} )
+						);
+						dispatch(
+							sendUserInfo(
+								getUserInfo(
+									message.message,
+									message.siteUrl,
+									message.siteId?.toString(),
+									geoLocation
+								)
+							)
+						);
+						dispatch( sendMessage( message.message, { includeInSummary: true } ) );
+						setIntroMessage( message );
+					}
 					break;
-				case 'happy-chat-introduction-data': {
-					setIntroMessage( message );
+
+				case 'window-state-change':
+					setWindowState( message.state );
 					break;
-				}
 			}
 		}
-
 		window.addEventListener( 'message', onMessage );
+
 		return () => window.removeEventListener( 'message', onMessage );
-	}, [ dispatch ] );
+	}, [ dispatch, introMessage, geoLocation ] );
 
+	// notify parent window about chat closing
 	useEffect( () => {
-		if ( connectionStatus === 'connected' && introMessage ) {
-			dispatch(
-				setChatCustomFields( {
-					calypsoSectionName: 'gutenberg-editor',
-					wpcomSiteId: introMessage.siteId?.toString(),
-					wpcomSitePlan: introMessage.planSlug,
-				} )
-			);
-			// forward the message from the form
-			if ( introMessage.message ) {
-				dispatch(
-					sendUserInfo(
-						getUserInfo(
-							introMessage.message,
-							introMessage.siteUrl,
-							introMessage.siteId?.toString(),
-							geoLocation
-						)
-					)
-				);
-				dispatch( sendMessage( introMessage.message, { includeInSummary: true } ) );
-			}
-		}
-	}, [ connectionStatus, introMessage, dispatch, geoLocation ] );
-
-	// notify parent window about chat status changes
-	useEffect( () => {
-		window.parent.postMessage( { chatStatus }, '*' );
-	}, [ chatStatus ] );
-
-	useEffect( () => {
-		function visibilityHandler() {
-			if ( document.visibilityState === 'hidden' ) {
-				setBlurredAt( Date.now() );
-			} else {
-				setBlurredAt( 0 );
-			}
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: document.visibilityState === 'visible' ? 'open' : 'blurred',
-				},
-				'*'
-			);
-		}
-
-		function closeHandler() {
+		if ( chatStatus === 'closed' ) {
 			parentTarget?.postMessage(
 				{
 					type: 'window-state-change',
@@ -113,31 +89,37 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 				},
 				'*'
 			);
-			dispatch( closeChat() );
 		}
-		window.addEventListener( 'visibilitychange', visibilityHandler );
-		window.addEventListener( 'beforeunload', closeHandler );
+	}, [ chatStatus ] );
 
-		// send open state on load
-		parentTarget?.postMessage(
-			{
-				type: 'window-state-change',
-				state: 'open',
-			},
-			'*'
-		);
+	// handle window status
+	useEffect( () => {
+		switch ( windowState ) {
+			case 'minimized':
+				setBlurredAt( Date.now() );
+				dispatch( sendEvent( 'User minimized HelpCenter' ) );
+				break;
 
-		// request intro data
+			case 'maximized':
+				setBlurredAt( 0 );
+				dispatch( sendEvent( 'User maximized HelpCenter' ) );
+				break;
+
+			case 'closed':
+				dispatch( sendEvent( 'User closed HelpCenter' ) );
+				dispatch( closeChat() );
+				break;
+		}
+	}, [ dispatch, windowState ] );
+
+	// request intro data
+	useEffect( () => {
 		parentTarget?.postMessage(
 			{
 				type: 'happy-chat-introduction-data',
 			},
 			'*'
 		);
-
-		return () => {
-			window.removeEventListener( 'visibilitychange', visibilityHandler );
-		};
 	}, [ dispatch ] );
 
 	useEffect( () => {
@@ -150,15 +132,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 			'*'
 		);
 	}, [ blurredAt, timeline ] );
-
-	useEffect( () => {
-		// blurredAt is 0 when the user is looking
-		if ( blurredAt ) {
-			dispatch( sendEvent( `Stopped looking at Happychat` ) );
-		} else {
-			dispatch( sendEvent( `Started looking at Happychat` ) );
-		}
-	}, [ blurredAt, dispatch ] );
 
 	return null;
 }

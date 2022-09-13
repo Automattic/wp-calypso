@@ -383,7 +383,7 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 					// pricing page is outside of Calypso, needs a full page load
 					window.location = isJetpackCloud()
 						? JETPACK_PRICING_PAGE
-						: 'https://wordpress.com/pricing';
+						: 'https://wordpress.com/pricing/';
 				}
 				return;
 			}

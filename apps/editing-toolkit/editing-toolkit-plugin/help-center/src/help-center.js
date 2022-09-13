@@ -23,7 +23,9 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
+
 	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
+
 	useEffect( () => {
 		if ( ! isLoading && data ) {
 			setShowHelpIconDot( ! data.has_seen_whats_new_modal );
@@ -31,7 +33,7 @@ function HelpCenterContent() {
 	}, [ data, isLoading ] );
 
 	const handleToggleHelpCenter = () => {
-		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'open' }`, {
+		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -64,7 +66,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
+			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
 		</>
 	);
 }

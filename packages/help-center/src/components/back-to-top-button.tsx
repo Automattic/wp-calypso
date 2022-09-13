@@ -1,5 +1,5 @@
-import { Button } from '@automattic/components';
-import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
+import { Button, useScrollToTop } from '@automattic/components';
+import { useCallback, useRef } from '@wordpress/element';
 import { Icon, arrowUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -7,53 +7,29 @@ import type { FC } from 'react';
 import './back-to-top-button.scss';
 
 export const BackToTopButton: FC = () => {
-	const elementRef = useRef< HTMLButtonElement | null >( null );
-	const scrollParentRef = useRef< HTMLElement | null >( null );
+	const elementRef = useRef< HTMLElement | null >( null );
 	const { __ } = useI18n();
 
-	const SCROLL_THRESHOLD = 400;
-	const [ visible, setVisible ] = useState( false );
+	const isBelowThreshold = useCallback( ( containerNode: HTMLElement ) => {
+		const SCROLL_THRESHOLD = 400;
 
-	const scrollCallback = useCallback( () => {
-		const containerNode = scrollParentRef.current;
+		return containerNode.scrollTop > SCROLL_THRESHOLD;
+	}, [] );
 
-		if ( containerNode ) {
-			if ( containerNode.scrollTop > SCROLL_THRESHOLD ) {
-				setVisible( true );
-			} else {
-				setVisible( false );
-			}
-		}
-	}, [ scrollParentRef ] );
-
-	useEffect( () => {
-		if ( elementRef.current ) {
-			scrollParentRef.current = elementRef.current.parentElement;
-		}
-	}, [ elementRef ] );
-
-	useEffect( () => {
-		const containerNode = scrollParentRef.current;
-
-		if ( containerNode ) {
-			containerNode.addEventListener( 'scroll', scrollCallback );
-
-			return () => {
-				containerNode.removeEventListener( 'scroll', scrollCallback );
-			};
-		}
-	}, [ scrollParentRef, scrollCallback ] );
-
-	const scrollToTop = () => {
-		if ( scrollParentRef.current ) {
-			scrollParentRef.current.scrollTop = 0;
-		}
-	};
+	const { isButtonVisible, scrollToTop } = useScrollToTop( {
+		scrollTargetRef: elementRef,
+		isBelowThreshold,
+		smoothScrolling: false,
+	} );
 
 	return (
 		<Button
-			ref={ elementRef }
-			className={ classnames( 'back-to-top-button__help-center', { 'is-visible': visible } ) }
+			ref={ ( element ) => {
+				elementRef.current = element?.parentElement ?? null;
+			} }
+			className={ classnames( 'back-to-top-button__help-center', {
+				'is-visible': isButtonVisible,
+			} ) }
 			onClick={ scrollToTop }
 		>
 			<Icon icon={ arrowUp } size={ 16 } />

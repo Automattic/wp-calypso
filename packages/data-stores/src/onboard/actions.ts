@@ -8,7 +8,7 @@ import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair } from '@automattic/design-picker/src/types';
+import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 
 // copied from design picker to avoid a circular dependency
 function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
@@ -25,6 +25,10 @@ type Language = {
 export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
+} );
+export const setPatternContent = ( patternContent: string ) => ( {
+	type: 'SET_SITE_PATTERN_CONTENT' as const,
+	patternContent,
 } );
 
 export interface CreateSiteActionParameters {
@@ -173,6 +177,13 @@ export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	selectedDesign,
 } );
 
+export const setSelectedStyleVariation = (
+	selectedStyleVariation: StyleVariation | undefined
+) => ( {
+	type: 'SET_SELECTED_STYLE_VARIATION' as const,
+	selectedStyleVariation,
+} );
+
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
@@ -186,6 +197,21 @@ export const setShowSignupDialog = ( showSignup: boolean ) => ( {
 export const setSiteTitle = ( siteTitle: string ) => ( {
 	type: 'SET_SITE_TITLE' as const,
 	siteTitle,
+} );
+
+export const setSiteDescription = ( siteDescription: string ) => ( {
+	type: 'SET_SITE_DESCRIPTION' as const,
+	siteDescription,
+} );
+
+export const setSiteLogo = ( siteLogo: string | null ) => ( {
+	type: 'SET_SITE_LOGO' as const,
+	siteLogo,
+} );
+
+export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
+	type: 'SET_SITE_ACCENT_COLOR' as const,
+	siteAccentColor,
 } );
 
 export const setAnchorPodcastId = ( anchorPodcastId: string | null ) => ( {
@@ -306,8 +332,10 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanProductId
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
+	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
+	| typeof setPatternContent
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
@@ -327,4 +355,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setSiteDescription
+	| typeof setSiteLogo
+	| typeof setSiteAccentColor
 >;

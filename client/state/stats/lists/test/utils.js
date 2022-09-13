@@ -572,6 +572,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 0,
 						label: 'Home Page / Archives',
 						value: 3939,
 						page: '/stats/post/0/en.blog.wordpress.com',
@@ -620,6 +621,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 777,
 						label: 'New WordPress.com for Lightroom Makes Publishing Your Photos Easy',
 						value: 774,
 						page: '/stats/post/777/en.blog.wordpress.com',
@@ -667,6 +669,7 @@ describe( 'utils', () => {
 					)
 				).toEqual( [
 					{
+						id: 0,
 						label: 'Home Page / Archives',
 						value: 3939,
 						page: '/stats/post/0/en.blog.wordpress.com',
@@ -1697,7 +1700,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
+						link: 'https://wordpress.com/support/stats/#search-engine-terms',
 						value: 221,
 					},
 				] );
@@ -1743,7 +1746,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
+						link: 'https://wordpress.com/support/stats/#search-engine-terms',
 						value: 400,
 					},
 				] );

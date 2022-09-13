@@ -2,12 +2,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	margin-bottom: 8px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		padding-top: 8px;
 	}
 }

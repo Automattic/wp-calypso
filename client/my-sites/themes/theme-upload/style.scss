@@ -28,10 +28,10 @@
 .theme-upload__screenshot {
 	float: right;
 	width: 300px;
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	margin-left: 24px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		float: none;
 		margin-left: 0;
 		margin-bottom: 24px;
@@ -45,7 +45,7 @@
 .theme-upload__action-buttons {
 	clear: both;
 	overflow: hidden;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	padding: 16px;
 	margin: 24px -24px -24px;
 

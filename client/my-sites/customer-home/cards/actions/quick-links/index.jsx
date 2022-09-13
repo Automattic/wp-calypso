@@ -1,15 +1,19 @@
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import {
+	recordDSPEntryPoint,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -29,7 +33,6 @@ import ActionBox from './action-box';
 import './style.scss';
 
 export const QuickLinks = ( {
-	siteId,
 	canEditPages,
 	canCustomize,
 	canSwitchThemes,
@@ -42,6 +45,7 @@ export const QuickLinks = ( {
 	menusUrl,
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -58,18 +62,15 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
+	isFSEActive,
 } ) => {
-	const userLoggedIn = useSelector( isUserLoggedIn );
-	const activeThemeQueryResult = useActiveThemeQuery( siteId, userLoggedIn );
-	const isFSEActive =
-		activeThemeQueryResult?.data?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
-
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -102,6 +103,15 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
+			{ isPromotePostActive && (
+				<ActionBox
+					href={ `/advertising/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackPromotePostAction }
+					label={ translate( 'Promote post' ) }
+					gridicon="speaker"
+				/>
+			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
@@ -257,6 +267,10 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 	);
 };
 
+const trackPromotePostAction = () => ( dispatch ) => {
+	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
+};
+
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
 	dispatch(
 		composeAnalytics(
@@ -407,6 +421,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = {
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -429,6 +444,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...dispatchProps,
 		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
 		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackPromotePostAction: () => dispatchProps.trackPromotePostAction( isStaticHomePage ),
 		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
 		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
@@ -447,6 +463,6 @@ const ConnectedQuickLinks = connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( QuickLinks );
+)( withIsFSEActive( QuickLinks ) );
 
 export default ConnectedQuickLinks;

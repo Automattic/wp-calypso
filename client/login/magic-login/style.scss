@@ -1,6 +1,6 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 @media ( max-height: 450px ) {
 	.magic-login__handle-link,
@@ -39,12 +39,12 @@
 
 	.logged-out-form {
 		border-radius: 0;
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin: 0 auto;
 		max-width: 400px;
 		padding: 16px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding: 24px;
 		}
 
@@ -61,7 +61,7 @@
 	text-align: center;
 
 	body.is-section-signup & {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
@@ -85,7 +85,7 @@
 .magic-login__footer {
 	a {
 		border-bottom: 1px solid #c8d7e1;
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 		display: block;
 		line-height: 4em;
 		font-size: $font-body-small;
@@ -95,14 +95,14 @@
 		text-decoration: none;
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 		&:last-of-type {
 			border-bottom: none;
 		}
 
 		body.is-section-signup & {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 	.gridicon {
@@ -133,7 +133,7 @@
 		box-shadow: none;
 	}
 
-	.magic-login__form-action .button.is-primary:not( [disabled] ) {
+	.magic-login__form-action .button.is-primary:not([disabled]) {
 		// Match primary button color in Gutenboarding and
 		// change border color to remove 3D effect
 		background-color: #007cba;

@@ -33,7 +33,6 @@ import {
 	isSpaceUpgrade,
 	isStarter,
 	isTitanMail,
-	isTrafficGuide,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
@@ -197,10 +196,6 @@ export function hasOnlyRenewalItems( cart: ResponseCart ): boolean {
 
 export function hasConciergeSession( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isConciergeSession );
-}
-
-export function hasTrafficGuide( cart: ResponseCart ): boolean {
-	return getAllCartItems( cart ).some( isTrafficGuide );
 }
 
 /**
@@ -810,7 +805,8 @@ export function getDomainPriceRule(
 		is_premium?: boolean;
 	},
 	isDomainOnly: boolean,
-	flowName: string
+	flowName: string,
+	domainAndPlanUpsellFlow: boolean
 ): string {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -822,6 +818,10 @@ export function getDomainPriceRule(
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
+	}
+
+	if ( domainAndPlanUpsellFlow ) {
+		return 'FREE_WITH_PLAN';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {

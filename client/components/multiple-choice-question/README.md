@@ -153,3 +153,11 @@ If the answer is selected, should a text input be shown.
 - **Default:** `''`
 
 The prompt to display in the text input referenced above.
+
+##### `shouldShuffleAnswers`
+
+- **Type:** `Boolean`
+- **Required:** `no`
+- **Default:** `true`
+
+Whether the answers should be shuffled.

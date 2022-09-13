@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -79,8 +80,13 @@ export const SquarespaceImporter: React.FunctionComponent< ImporterBaseProps > =
 	}
 
 	function onSiteViewClick() {
-		recordTracksEvent( 'calypso_site_importer_view_site' );
-		stepNavigator?.goToSiteViewPage?.();
+		if ( isEnabled( 'onboarding/import-redirect-to-themes' ) ) {
+			recordTracksEvent( 'calypso_site_importer_pick_a_design' );
+			stepNavigator?.navigate?.( 'designSetup' );
+		} else {
+			recordTracksEvent( 'calypso_site_importer_view_site' );
+			stepNavigator?.goToSiteViewPage?.();
+		}
 	}
 
 	return (

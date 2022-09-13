@@ -10,8 +10,8 @@ import {
 	WPCOM_DIFM_LITE,
 	isDIFMProduct,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
-import DIFMLiteThankYou from 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you';
+import { render, screen } from '@testing-library/react';
+import CheckoutThankYouHeader from '../header';
 import { CheckoutThankYou } from '../index';
 
 jest.unmock( '@automattic/calypso-products' );
@@ -25,13 +25,26 @@ jest.mock( '@automattic/calypso-products', () => ( {
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( '../domain-registration-details', () => 'component--domain-registration-details' );
-jest.mock( '../google-apps-details', () => 'component--google-apps-details' );
-jest.mock( '../jetpack-plan-details', () => 'component--jetpack-plan-details' );
-jest.mock( '../atomic-store-thank-you-card', () => 'component--AtomicStoreThankYouCard' );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( '../header', () => 'CheckoutThankYouHeader' );
-jest.mock( 'calypso/components/happiness-support', () => 'HappinessSupport' );
+jest.mock( '../domain-registration-details', () => () => 'component--domain-registration-details' );
+jest.mock( '../google-apps-details', () => () => 'component--google-apps-details' );
+jest.mock( '../jetpack-plan-details', () => () => 'component--jetpack-plan-details' );
+jest.mock( '../atomic-store-thank-you-card', () => () => (
+	<div data-testid="atomic-store-thank-you-card" />
+) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
+jest.mock( '../header', () =>
+	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
+);
+jest.mock( 'calypso/components/happiness-support', () => () => (
+	<div data-testid="happiness-support" />
+) );
+jest.mock( 'calypso/components/wordpress-logo', () => () => <div data-testid="wordpress-logo" /> );
+jest.mock( '../premium-plan-details', () => () => 'premium-plan-details' );
+jest.mock( '../business-plan-details', () => () => <div data-testid="business-plan-details" /> );
+jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+jest.mock( 'calypso/my-sites/checkout/checkout-thank-you/difm/difm-lite-thank-you', () => () => (
+	<div data-testid="difm-lite-thank-you" />
+) );
 
 const translate = ( x ) => x;
 
@@ -42,27 +55,35 @@ const defaultProps = {
 	},
 	loadTrackingTool: () => {},
 	fetchReceipt: () => {},
+	siteHomeUrl: '',
+	domainOnlySiteFlow: false,
 };
 
 describe( 'CheckoutThankYou', () => {
+	let originalScrollTo;
+
 	beforeAll( () => {
-		global.window = {
-			scrollTo: () => null,
-		};
+		originalScrollTo = window.scrollTo;
+		window.scrollTo = () => null;
 	} );
+
+	beforeEach( () => {
+		CheckoutThankYouHeader.mockClear();
+	} );
+
 	afterAll( () => {
-		delete global.window;
+		window.scrollTo = originalScrollTo;
 	} );
 
 	describe( 'Basic tests', () => {
 		test( 'should not blow up and have proper CSS class', () => {
-			const comp = shallow( <CheckoutThankYou { ...defaultProps } /> );
-			expect( comp.find( '.checkout-thank-you' ) ).toHaveLength( 1 );
+			const { container } = render( <CheckoutThankYou { ...defaultProps } /> );
+			expect( container.firstChild ).toHaveClass( 'checkout-thank-you' );
 		} );
 
 		test( 'Show WordPressLogo when there are no purchase but a receipt is present', () => {
-			const comp = shallow( <CheckoutThankYou { ...defaultProps } receiptId={ 12 } /> );
-			expect( comp.find( 'WordPressLogo' ) ).toHaveLength( 1 );
+			render( <CheckoutThankYou { ...defaultProps } receiptId={ 12 } /> );
+			expect( screen.getByTestId( 'wordpress-logo' ) ).toBeVisible();
 		} );
 	} );
 
@@ -85,20 +106,29 @@ describe( 'CheckoutThankYou', () => {
 			refreshSitePlans: ( selectedSite ) => selectedSite,
 			planSlug: PLAN_BUSINESS,
 		};
+
 		test( 'Should display a full version when isSimplified is missing', () => {
-			const comp = shallow( <CheckoutThankYou { ...props } /> );
-			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 1 );
-			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 1 );
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBeFalsy();
+			render( <CheckoutThankYou { ...props } /> );
+			expect( screen.queryByTestId( 'business-plan-details' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'happiness-support' ) ).toBeVisible();
+			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
+				expect.objectContaining( { isSimplified: undefined } ),
+				expect.anything()
+			);
 		} );
+
 		test( 'Should display a simplified version when isSimplified is set to true', () => {
-			const comp = shallow( <CheckoutThankYou { ...props } isSimplified={ true } /> );
-			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 0 );
-			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 0 );
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBe( true );
+			render( <CheckoutThankYou { ...props } isSimplified /> );
+			expect( screen.queryByTestId( 'business-plan-details' ) ).not.toBeInTheDocument();
+			expect( screen.queryByTestId( 'happiness-support' ) ).not.toBeInTheDocument();
+			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
+				expect.objectContaining( { isSimplified: true } ),
+				expect.anything()
+			);
 		} );
+
 		test( 'Should pass props down to CheckoutThankYou', () => {
-			const comp = shallow(
+			render(
 				<CheckoutThankYou
 					{ ...props }
 					isSimplified={ true }
@@ -106,10 +136,13 @@ describe( 'CheckoutThankYou', () => {
 					upgradeIntent={ 'plugins' }
 				/>
 			);
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().siteUnlaunchedBeforeUpgrade ).toBe(
-				true
+			expect( CheckoutThankYouHeader ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					siteUnlaunchedBeforeUpgrade: true,
+					upgradeIntent: 'plugins',
+				} ),
+				expect.anything()
 			);
-			expect( comp.find( 'CheckoutThankYouHeader' ).props().upgradeIntent ).toBe( 'plugins' );
 		} );
 	} );
 
@@ -138,19 +171,18 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should be there for AT', () => {
-			const comp = shallow( <CheckoutThankYou { ...props } transferComplete={ true } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
+			render( <CheckoutThankYou { ...props } transferComplete={ true } /> );
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
 		} );
 
 		test( 'Should not be there for AT', () => {
-			let comp;
-			comp = shallow( <CheckoutThankYou { ...props } transferComplete={ false } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
+			const { rerender } = render( <CheckoutThankYou { ...props } transferComplete={ false } /> );
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 
 			isDotComPlan.mockImplementation( () => true );
 
-			comp = shallow( <CheckoutThankYou { ...props } /> );
-			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 0 );
+			rerender( <CheckoutThankYou { ...props } /> );
+			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -175,15 +207,15 @@ describe( 'CheckoutThankYou', () => {
 		};
 		test( 'Should be there with DIFM product', () => {
 			isDIFMProduct.mockImplementation( () => true );
-			const comp = shallow( <CheckoutThankYou { ...props } /> );
+			render( <CheckoutThankYou { ...props } /> );
 
-			expect( comp.find( DIFMLiteThankYou ) ).toHaveLength( 1 );
+			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).toBeVisible();
 		} );
 
 		test( 'Should not be there when no DIFM product', () => {
 			isDIFMProduct.mockImplementation( () => false );
 
-			const comp = shallow(
+			render(
 				<CheckoutThankYou
 					{ ...{
 						...props,
@@ -196,7 +228,7 @@ describe( 'CheckoutThankYou', () => {
 					} }
 				/>
 			);
-			expect( comp.find( DIFMLiteThankYou ) ).toHaveLength( 0 );
+			expect( screen.queryByTestId( 'difm-lite-thank-you' ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

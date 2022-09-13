@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-faq {
 	max-width: 750px;
@@ -17,5 +17,16 @@
 
 	@include break-mobile {
 		font-size: 2.25rem;
+	}
+}
+
+// Make sure FAQ's are visible below the sticky header when linked to
+.jetpack-faq__section {
+	button {
+		scroll-margin-top: 74px;
+
+		@include break-large {
+			scroll-margin-top: 52px;
+		}
 	}
 }

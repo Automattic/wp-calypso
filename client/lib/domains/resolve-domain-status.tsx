@@ -135,27 +135,14 @@ export function resolveDomainStatus(
 						: translate( 'Expiring soon' );
 				}
 
-				if ( isExpiringSoon( domain, 7 ) ) {
-					return {
-						statusText: expiresMessage,
-						statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
-						status: status,
-						icon: 'info',
-						listStatusText: expiresMessage,
-						listStatusClass: domain.autoRenewing ? 'info' : 'alert',
-						listStatusWeight: 1000,
-						noticeText,
-					};
-				}
-
 				return {
 					statusText: expiresMessage,
-					statusClass: 'status-warning',
+					statusClass: `status-${ domain.autoRenewing ? 'success' : 'error' }`,
 					status: status,
 					icon: 'info',
 					listStatusText: expiresMessage,
-					listStatusClass: 'warning',
-					listStatusWeight: 800,
+					listStatusClass: domain.autoRenewing ? 'info' : 'alert',
+					listStatusWeight: isExpiringSoon( domain, 7 ) ? 1000 : 800,
 					noticeText,
 				};
 			}
@@ -238,7 +225,7 @@ export function resolveDomainStatus(
 					status: statusMessage,
 					icon: 'info',
 					noticeText: translate(
-						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(renewableUntil)s{{/strong}}. {{a}}Learn more{{/a}}',
+						'This domain expired more than 30 days ago and is no longer available to manage or renew. We may be able to restore it after {{strong}}%(aftermarketAuctionEnd)s{{/strong}}. {{a}}Learn more{{/a}}',
 						{
 							components: {
 								strong: <strong />,
@@ -251,7 +238,7 @@ export function resolveDomainStatus(
 								),
 							},
 							args: {
-								renewableUntil: moment.utc( domain.renewableUntil ).format( 'LL' ),
+								aftermarketAuctionEnd: moment.utc( domain.aftermarketAuctionEnd ).format( 'LL' ),
 							},
 						}
 					),

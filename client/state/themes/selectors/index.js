@@ -1,6 +1,8 @@
 export { arePremiumThemesEnabled } from 'calypso/state/themes/selectors/are-premium-themes-enabled';
 export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-recommended-themes-loading';
 export { areTrendingThemesLoading } from 'calypso/state/themes/selectors/are-trending-themes-loading';
+export { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
+export { doesThemeBundleUsableSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-usable-software-set';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';
@@ -8,6 +10,7 @@ export { getJetpackUpgradeUrlIfPremiumTheme } from 'calypso/state/themes/selecto
 export { getLastThemeQuery } from 'calypso/state/themes/selectors/get-last-theme-query';
 export { getPreActivateThemeId } from 'calypso/state/themes/selectors/get-pre-activate-theme-id';
 export { getPremiumThemePrice } from 'calypso/state/themes/selectors/get-premium-theme-price';
+export { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 export { getRecommendedThemes } from 'calypso/state/themes/selectors/get-recommended-themes';
 export { getTrendingThemes } from 'calypso/state/themes/selectors/get-trending-themes';
 export { getTheme } from 'calypso/state/themes/selectors/get-theme';
@@ -47,6 +50,7 @@ export { isRequestingActiveTheme } from 'calypso/state/themes/selectors/is-reque
 export { isRequestingTheme } from 'calypso/state/themes/selectors/is-requesting-theme';
 export { isRequestingThemesForQuery } from 'calypso/state/themes/selectors/is-requesting-themes-for-query';
 export { isRequestingThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors/is-requesting-themes-for-query-ignoring-page';
+export { isSiteEligibleForBundledSoftware } from 'calypso/state/themes/selectors/is-site-eligible-for-bundled-software';
 export { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
 export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-gutenberg-first';
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';

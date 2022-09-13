@@ -3,6 +3,9 @@ import {
 	getJetpackProductTagline,
 	getJetpackProductCallToAction,
 	getJetpackProductDescription,
+	getJetpackProductShortDescription,
+	getJetpackProductFeaturedText,
+	getJetpackProductDisclaimer,
 	getJetpackProductShortName,
 	getMonthlyPlanByYearly,
 	getPlan,
@@ -21,6 +24,9 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	getJetpackProductWhatIsIncluded,
+	getJetpackProductBenefits,
+	getJetpackProductRecommendedFor,
 } from '@automattic/calypso-products';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
@@ -28,6 +34,8 @@ import {
 	EXTERNAL_PRODUCTS_SLUG_MAP,
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_PLAN,
+	MOST_POPULAR_PRODUCTS,
+	MOST_POPULAR_BUNDLES,
 } from './constants';
 import { getForCurrentCROIteration } from './iterations';
 import objectIsPlan from './object-is-plan';
@@ -73,6 +81,39 @@ function slugToItem( slug: string ): Plan | Product | SelectorProduct | null | u
 	return null;
 }
 
+function getDisclaimerLink() {
+	const backupStorageFaqId = 'backup-storage-limits-faq';
+
+	const urlParams = new URLSearchParams( window.location.search );
+	const calypsoEnv = urlParams.get( 'calypso_env' );
+	// Check to see if FAQ is on the current page
+	// This is so we can anchor link to it instead of opening a new window if it is on the page already
+	const backupStorageFaq = document.getElementById( backupStorageFaqId );
+
+	if ( backupStorageFaq ) {
+		return `#${ backupStorageFaqId }`;
+	}
+
+	return calypsoEnv === 'development'
+		? `http://jetpack.cloud.localhost:3000/pricing#${ backupStorageFaqId }`
+		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
+}
+
+function getFeaturedProductText( item: Product ) {
+	if ( ! MOST_POPULAR_PRODUCTS.includes( item.product_slug ) ) {
+		return '';
+	}
+
+	return getJetpackProductFeaturedText( item ) ?? '';
+}
+
+function getFeaturedPlanText( item: Plan, productSlug: string ) {
+	if ( ! MOST_POPULAR_BUNDLES.includes( productSlug ) || ! item.getFeaturedText ) {
+		return '';
+	}
+
+	return getForCurrentCROIteration( item.getFeaturedText ) ?? '';
+}
 /**
  * Converts data from a product, plan, or selector product to selector product.
  *
@@ -107,6 +148,7 @@ function itemToSelectorProduct(
 		}
 
 		const iconSlug = `${ yearlyProductSlug || item.product_slug }_v2_dark`;
+		const features = buildCardFeaturesFromItem( item );
 
 		return {
 			productSlug: item.product_slug,
@@ -117,7 +159,12 @@ function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
+			shortDescription: getJetpackProductShortDescription( item ),
+			featuredDescription: getFeaturedProductText( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			benefits: getJetpackProductBenefits( item ),
+			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
 			categories: item.categories,
@@ -125,8 +172,9 @@ function itemToSelectorProduct(
 				item.product_slug
 			),
 			features: {
-				items: buildCardFeaturesFromItem( item ),
+				items: features,
 			},
+			disclaimer: getJetpackProductDisclaimer( item.product_slug, features, getDisclaimerLink() ),
 		};
 	}
 
@@ -141,6 +189,7 @@ function itemToSelectorProduct(
 		}
 		const isResetPlan = ( JETPACK_RESET_PLANS as ReadonlyArray< string > ).includes( productSlug );
 		const iconAppend = isResetPlan ? '_v2' : '';
+		const features = buildCardFeaturesFromItem( item );
 		return {
 			productSlug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
@@ -150,11 +199,20 @@ function itemToSelectorProduct(
 			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
+			featuredDescription: getFeaturedPlanText( item, productSlug ),
+			whatIsIncluded: item.getWhatIsIncluded
+				? getForCurrentCROIteration( item.getWhatIsIncluded )
+				: [],
+			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			recommendedFor: item.getRecommendedFor
+				? getForCurrentCROIteration( item.getRecommendedFor )
+				: [],
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {
 				items: buildCardFeaturesFromItem( item ),
 			},
+			disclaimer: getJetpackProductDisclaimer( item.getStoreSlug(), features, getDisclaimerLink() ),
 			legacy: ! isResetPlan,
 		};
 	}

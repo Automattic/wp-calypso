@@ -45,6 +45,7 @@ export interface Theme {
 	tags: string[];
 	taxonomies?: {
 		theme_feature?: ThemeFeature[];
+		theme_software_set?: ThemeSoftwareSet[];
 	};
 	template: string;
 	theme_uri: string;
@@ -59,6 +60,12 @@ interface ThemeCost {
 }
 
 interface ThemeFeature {
+	name: string;
+	slug: string;
+	term_id: string;
+}
+
+interface ThemeSoftwareSet {
 	name: string;
 	slug: string;
 	term_id: string;

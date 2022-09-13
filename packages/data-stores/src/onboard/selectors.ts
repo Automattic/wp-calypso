@@ -8,6 +8,7 @@ export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getLastLocation = ( state: State ) => state.lastLocation;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
+export const getSelectedStyleVariation = ( state: State ) => state.selectedStyleVariation;
 export const getSelectedDomain = ( state: State ) => state.domain;
 export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
@@ -21,6 +22,7 @@ export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
 export const getStepProgress = ( state: State ) => state.stepProgress;
 export const getGoals = ( state: State ) => state.goals;
+export const getPatternContent = ( state: State ) => state.patternContent;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
 	if ( ! state.selectedDesign ) {

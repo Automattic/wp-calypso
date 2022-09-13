@@ -79,8 +79,9 @@ project {
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
 		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22", "credentialsJSON:5631ff82-dd5d-4eb7-bb08-bdb7e51d4ff6", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_22_22", "credentialsJSON:e74f4821-2033-4ef2-b9f9-95c1d7c3898a", display = ParameterDisplay.HIDDEN)
 		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_AUG_22_22%", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
@@ -207,6 +208,11 @@ object CheckCodeStyle : BuildType({
 		checkstyle_results => checkstyle_results
 	""".trimIndent()
 
+	params {
+		param("env.NODE_ENV", "test")
+		param("env.TIMING", "1")
+	}
+
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
@@ -216,8 +222,6 @@ object CheckCodeStyle : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
-				export NODE_ENV="test"
-
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -226,8 +230,6 @@ object CheckCodeStyle : BuildType({
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				export NODE_ENV="test"
-
 				# Lint files
 				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 			"""

@@ -20,9 +20,9 @@
 .blogs-settings__header,
 .notification-settings-blog-settings-placeholder__header {
 	display: flex;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		cursor: pointer;
 	}
 
@@ -38,10 +38,10 @@
 
 .blogs-settings__header-expand {
 	position: relative;
-		top: 4px;
+	top: 4px;
 
 	@extend %notification-settings-blog-settings-flexbox;
-	color: var( --color-neutral-0 );
+	color: var(--color-neutral-0);
 }
 
 .notification-settings-blog-settings-placeholder__blog {
@@ -65,9 +65,9 @@
 
 .notification-settings-blog-settings-placeholder__blog__content__icon {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	position: relative;
-	background: var( --color-neutral-10 );
+	background: var(--color-neutral-10);
 	border: 1px solid white;
 	height: 32px;
 	width: 32px;
@@ -90,7 +90,7 @@
 
 .notification-settings-blog-settings-placeholder__blog__info__title {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	width: 150px;
 	display: block;
 	font-weight: 400;
@@ -99,7 +99,7 @@
 
 .notification-settings-blog-settings-placeholder__blog__info__domain {
 	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	display: block;
 	width: 250px;
 	font: {
@@ -118,7 +118,7 @@
 
 	em {
 		animation: loading-fade 1.6s ease-in-out infinite;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		width: 160px;
 		height: 22px;
 	}

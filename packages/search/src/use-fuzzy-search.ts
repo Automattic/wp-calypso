@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 const defaultOptions = {
 	threshold: 0.4,
-	distance: 20,
+	ignoreLocation: true,
 };
 
 type KeysProp< T > = T extends string
@@ -18,7 +18,7 @@ export type UseFuzzySearchOptions< T > = {
 	data: T[];
 	options?: Partial< Fuse.IFuseOptions< T > >;
 	query?: string;
-} & KeysProp< T >;
+} & Pick< KeysProp< T >, 'keys' >;
 
 export const useFuzzySearch = < T >( {
 	data,

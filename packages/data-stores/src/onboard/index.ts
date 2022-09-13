@@ -41,6 +41,10 @@ export function register(): typeof STORE_KEY {
 			'selectedFonts',
 			'selectedSite',
 			'siteTitle',
+			'patternContent',
+			'siteDescription',
+			'siteLogo',
+			'siteAccentColor',
 			'storeType',
 		],
 	} );

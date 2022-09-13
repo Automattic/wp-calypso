@@ -9,7 +9,7 @@ import {
 	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -50,16 +50,15 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover' ), function () {
 
 		it( 'Search results are shown', async function () {
 			const results = await supportComponent.getResults( 'article' );
-			expect( results.length ).toBeGreaterThan( 0 );
+			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Click on first search result', async function () {
 			await supportComponent.clickResult( 'article', 1 );
-			await supportComponent.clickReadMore();
 		} );
 
 		it( 'Close popover', async function () {
-			await supportComponent.closePopover;
+			await supportComponent.closePopover();
 		} );
 	} );
 } );

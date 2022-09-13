@@ -88,7 +88,7 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
+	await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
 
 	// Final verification.
 	const newSelectedTabLocator = page.locator(

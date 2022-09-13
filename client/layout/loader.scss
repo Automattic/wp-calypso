@@ -2,13 +2,13 @@
 .layout__loader {
 	background: transparent;
 	border-bottom: 1px solid transparent;
-	height: var( --masterbar-height );
+	height: var(--masterbar-height);
 	margin-left: -10%;
 	position: fixed;
 	left: 50%;
 	top: 0;
 	width: 20%;
-	z-index: z-index( 'root', '.layout__loader' );
+	z-index: z-index("root", ".layout__loader");
 
 	// The transition-delay avoids showing the loader
 	// too often on faster connections.

@@ -55,8 +55,8 @@ export class WebPreviewModal extends Component {
 		frontPageMetaDescription: PropTypes.string,
 		// A post object used to override the selected post in the SEO preview
 		overridePost: PropTypes.object,
-		// iframe's fetchPriority.
-		fetchPriority: PropTypes.string,
+		// iframe's fetchpriority.
+		fetchpriority: PropTypes.string,
 		// Set height based on page content. This requires the page to post it's dimensions as message.
 		autoHeight: PropTypes.bool,
 		// Fixes the viewport width of the iframe if provided.

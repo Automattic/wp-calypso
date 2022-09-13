@@ -1,4 +1,4 @@
-import i18n, { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -7,14 +7,13 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { type, translate } = this.props;
+		const { flowName, translate, type } = this.props;
 
 		let title;
 		let freeTitle;
 		let paidTitle;
 		let subtitle;
 		let freeSubtitle;
-		let hasFreeSubtitle;
 		let paidSubtitle;
 		let subtitle2;
 		let ctaText;
@@ -27,9 +26,9 @@ class ReskinSideExplainer extends Component {
 			'business',
 			'ecommerce',
 			'domain',
-		].includes( this.props.flowName );
+		].includes( flowName );
 
-		const isEnLocale = [ 'en', 'en-gb' ].includes( getLocaleSlug() );
+		const hideChooseDomainLater = [ 'launch-site', 'onboarding-with-email' ].includes( flowName );
 
 		switch ( type ) {
 			case 'free-domain-explainer':
@@ -49,16 +48,13 @@ class ReskinSideExplainer extends Component {
 
 				title = isPaidPlan ? paidTitle : freeTitle;
 
-				hasFreeSubtitle =
-					i18n.hasTranslation(
-						'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-					) || isEnLocale;
-
-				freeSubtitle = hasFreeSubtitle
-					? translate(
+				freeSubtitle = (
+					<span>
+						{ translate(
 							'Use the search tool on this page to find a domain you love, then select any paid annual plan.'
-					  )
-					: null;
+						) }
+					</span>
+				);
 
 				paidSubtitle = translate( 'Use the search tool on this page to find a domain you love.' );
 
@@ -73,10 +69,9 @@ class ReskinSideExplainer extends Component {
 					subtitle2 = null;
 				}
 
-				ctaText =
-					i18n.hasTranslation( 'Choose my domain later' ) || isEnLocale
-						? translate( 'Choose my domain later' )
-						: false;
+				ctaText = hideChooseDomainLater ? null : (
+					<span>{ translate( 'Choose my domain later' ) }</span>
+				);
 				break;
 
 			case 'use-your-domain':

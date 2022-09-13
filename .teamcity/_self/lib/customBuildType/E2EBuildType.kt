@@ -89,7 +89,7 @@ open class E2EBuildType(
 			param("env.TEAMCITY_VERSION", "2021")
 			param("env.HEADLESS", "false")
 			param("env.LOCALE", "en")
-			param("env.DEBUG", "pw:api")
+			param("env.DEBUG", "")
 			buildParams()
 		}
 

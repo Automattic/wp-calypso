@@ -13,7 +13,12 @@ const plugisApiBase = '/marketplace/products';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
-const getCacheKey = ( key: string ): QueryKey => [ 'wpcom-plugins', key ];
+const WPCOM_PLUGINS_CACHE_VERSION = 1;
+const getCacheKey = ( key: string ): QueryKey => [
+	WPCOM_PLUGINS_CACHE_VERSION.toString(),
+	'wpcom-plugins',
+	key,
+];
 
 const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 	const [ search, author ] = extractSearchInformation( searchTerm );

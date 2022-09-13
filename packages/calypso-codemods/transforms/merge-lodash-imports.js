@@ -9,7 +9,6 @@
  *
  * // output
  * import { map, pick, zip } from 'lodash'
- *
  * @param file
  * @param api
  * @returns {string}

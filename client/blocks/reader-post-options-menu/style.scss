@@ -1,11 +1,11 @@
 .reader-post-options-menu,
 .reader-post-options-menu .ellipsis-menu {
 	.button.is-borderless {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		&:hover,
 		&:active {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		&:focus {
@@ -18,13 +18,13 @@
 	}
 
 	&.is-menu-visible .button.is-borderless {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
 .reader-post-options-menu__hr {
 	margin: 8px 0;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 }
 
 .reader-post-options-menu__popover {
@@ -34,7 +34,7 @@
 
 	.popover__menu .follow-button,
 	.popover__menu .conversation-follow-button {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		padding: 9px 16px;
 
 		.gridicon {
@@ -43,28 +43,28 @@
 			padding-right: 0;
 
 			&:hover {
-				fill: var( --color-text-inverted );
+				fill: var(--color-text-inverted);
 			}
 		}
 
 		&:hover,
 		&:focus {
-			background-color: var( --color-primary );
+			background-color: var(--color-primary);
 			color: white;
 
 			.gridicon {
-				fill: var( --color-text-inverted );
+				fill: var(--color-text-inverted);
 			}
 
 			.follow-button__label,
 			.conversation-follow-button__label {
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 			}
 		}
 
 		.follow-button__label,
 		.conversation-follow-button__label {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: inline-block;
 			}
 		}
@@ -80,19 +80,19 @@
 	}
 
 	&.has-sticker {
-		color: var( --color-error );
+		color: var(--color-error);
 
 		.gridicon {
-			fill: var( --color-error );
+			fill: var(--color-error);
 		}
 
 		&:hover,
 		&:focus {
-			color: var( --color-text-inverted );
-			background: var( --color-error );
+			color: var(--color-text-inverted);
+			background: var(--color-error);
 
 			.gridicon {
-				fill: var( --color-text-inverted );
+				fill: var(--color-text-inverted);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { ReactElement, useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -19,20 +20,11 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const { submit } = props.navigation;
 
 	const { __ } = useI18n();
-	const loadingMessages = [
-		{ title: __( 'Laying the foundations' ), duration: 2000 },
-		{ title: __( 'Turning on the lights' ), duration: 3000 },
-		{ title: __( 'Making it beautiful' ), duration: 2000 },
-		{ title: __( 'Personalizing your site' ), duration: 4000 },
-		{ title: __( 'Sprinkling some magic' ), duration: 4000 },
-		{ title: __( 'Securing your data' ), duration: 5000 },
-		{ title: __( 'Enabling encryption' ), duration: 3000 },
-		{ title: __( 'Optimizing your content' ), duration: 6000 },
-		{ title: __( 'Applying a shiny top coat' ), duration: 4000 },
-		{ title: __( 'Closing the loop' ), duration: 5000 },
-	];
+	const loadingMessages = useProcessingLoadingMessages();
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
+	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );
+	const [ destinationState, setDestinationState ] = useState( {} );
 
 	useInterval( () => {
 		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
@@ -51,15 +43,34 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		( async () => {
 			if ( typeof action === 'function' ) {
 				try {
-					await action();
-					submit?.( {}, ProcessingResult.SUCCESS );
+					const destination = await action();
+					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+					// that is frozen from before we called action().
+					// We can now get the most up to date values from hooks inside the flow creating submit(),
+					// including the values that were updated during the action() running.
+					setDestinationState( destination );
+					setHasActionSuccessfullyRun( true );
 				} catch ( e ) {
+					// eslint-disable-next-line no-console
+					console.error( 'ProcessingStep failed:', e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
-			} else submit?.( {}, ProcessingResult.NO_ACTION );
+			} else {
+				submit?.( {}, ProcessingResult.NO_ACTION );
+			}
 		} )();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
+
+	// When the hasActionSuccessfullyRun flag turns on, run submit().
+	useEffect( () => {
+		if ( hasActionSuccessfullyRun ) {
+			submit?.( destinationState, ProcessingResult.SUCCESS );
+		}
+		// A change in submit() doesn't cause this effect to rerun.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ hasActionSuccessfullyRun ] );
 
 	// Progress smoothing, works out to be around 40seconds unless step polling dictates otherwise
 	const [ simulatedProgress, setSimulatedProgress ] = useState( 0 );
@@ -85,6 +96,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 
 		return () => clearTimeout( timeoutReference );
 	}, [ simulatedProgress, progress, __ ] );
+
+	const flowName = props.flow || '';
+	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 
 	return (
 		<StepContainer
@@ -113,6 +127,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
+			showJetpackPowered={ isJetpackPowered }
 		/>
 	);
 };

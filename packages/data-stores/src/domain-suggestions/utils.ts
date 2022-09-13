@@ -31,7 +31,6 @@ export function getFormattedPrice( price: number, currencyCode: string ): string
  *
  * @see client/state/domains/suggestions/utils.js
  * @see client/components/data/query-domains-suggestions/index.jsx
- *
  * @param search       Domain search string
  * @param queryOptions Optional paramaters for the query
  * @returns Normalized query object

@@ -1,4 +1,4 @@
-$follow-button-gray-disabled: var( --color-neutral-10 );
+$follow-button-gray-disabled: var(--color-neutral-10);
 
 .follow-button,
 button.follow-button {
@@ -6,19 +6,19 @@ button.follow-button {
 	padding: 0;
 
 	.gridicons-reader-follow {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 		pointer-events: auto;
 	}
 
 	.follow-button__label {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 
 	&:hover {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		.gridicons-reader-follow {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 	}
 
@@ -35,12 +35,12 @@ button.follow-button {
 	&.is-following {
 		.gridicons-reader-following {
 			display: inline-block;
-			fill: var( --color-success );
+			fill: var(--color-success);
 			pointer-events: auto;
 		}
 
 		.follow-button__label {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 
 		// Hides Follow icon if already following
@@ -50,10 +50,10 @@ button.follow-button {
 		}
 
 		&:hover {
-			color: var( --color-success );
+			color: var(--color-success);
 
 			.gridicons-reader-following {
-				fill: var( --color-success );
+				fill: var(--color-success);
 			}
 		}
 	}
@@ -99,12 +99,12 @@ button.follow-button {
 }
 
 .follow-button__label {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }
 
 // Override .button style
-.button.follow-button .gridicon:not( :last-child ) {
+.button.follow-button .gridicon:not(:last-child) {
 	margin-right: 0;
 }

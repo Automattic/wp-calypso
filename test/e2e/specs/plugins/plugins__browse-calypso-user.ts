@@ -30,16 +30,16 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit();
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ 'Top premium plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
 			}
 		);
 
-		it( 'Can browse all popular plugins', async function () {
-			await pluginsPage.clickBrowseAllPopular();
-			await pluginsPage.validateHasSubtitle( 'Top free plugins' );
+		it( 'Can browse all free plugins', async function () {
+			await pluginsPage.clickBrowseAllFreePlugins();
+			await pluginsPage.validateHasHeaderTitle( 'Top free plugins' );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
@@ -48,7 +48,20 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
+			await pluginsPage.validateHasSection( 'Top premium plugins' );
+		} );
+		it( 'Can browse all premium plugins', async function () {
+			await pluginsPage.clickBrowseAllPaidPlugins();
+			await pluginsPage.validateHasHeaderTitle( 'Top premium plugins' );
+		} );
+
+		it( 'Can return via breadcrumb from premium plugins', async function () {
+			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
+				await pluginsPage.clickPluginsBreadcrumb();
+			} else {
+				await pluginsPage.clickBackBreadcrumb();
+			}
+			await pluginsPage.validateHasSection( 'Top premium plugins' );
 		} );
 
 		it.each( [
@@ -61,6 +74,20 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
 			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
 		} );
+
+		it( 'Can browse SEO category', async function () {
+			await pluginsPage.validateCategoryButton(
+				'Search Engine Optimization',
+				envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
+			);
+		} );
+
+		it.each( [ 'Yoast SEO' ] )(
+			'SEO category should show the %s plugin',
+			async function ( plugin: string ) {
+				await pluginsPage.validateHasPluginInCategory( 'Search Engine Optimization', plugin );
+			}
+		);
 	} );
 
 	describe( 'Plugins page /plugins/:wpcom-site', function () {
@@ -69,7 +96,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit( credentials.testSites?.primary.url as string );
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ 'Top premium plugins', 'Editor’s pick', 'Top free plugins' ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );

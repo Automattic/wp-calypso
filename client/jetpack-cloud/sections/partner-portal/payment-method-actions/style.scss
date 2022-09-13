@@ -4,15 +4,15 @@
 		.popover__menu-item {
 			margin: 8px 0;
 		}
-		
+
 		.popover__menu-item.is-selected,
 		.popover__menu-item:hover,
 		.popover__menu-item:focus,
 		.popover__menu-item.button.is-selected,
 		.popover__menu-item.button:hover,
 		.popover__menu-item.button:focus {
-			background-color: var( --studio-gray-5 );
-			color: var( --studio-black );
+			background-color: var(--studio-gray-5);
+			color: var(--studio-black);
 		}
 	}
 }

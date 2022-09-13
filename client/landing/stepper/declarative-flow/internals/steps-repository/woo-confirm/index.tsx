@@ -268,7 +268,7 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	if ( site === null || ! site.ID || ! isDataReady || isReadyToStart ) {
 		return (
-			<div className="woo-confirm__info-section">
+			<div className="woo-confirm__loading-container">
 				<LoadingEllipsis />
 			</div>
 		);

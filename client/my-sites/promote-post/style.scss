@@ -1,0 +1,23 @@
+.promote-post__loading-container {
+	text-align: center;
+}
+
+.promote-post__header-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+
+	.promote-post__heading {
+		flex: 1;
+	}
+}
+
+.promote-post__footer {
+	text-align: center;
+	margin: 24px 0;
+
+	a {
+		color: var(--studio-gray-60);
+		text-decoration: underline;
+	}
+}

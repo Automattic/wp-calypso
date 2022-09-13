@@ -544,6 +544,7 @@ export interface ResponseCartProductExtra {
 	email_users?: TitanProductUser[];
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
+	receipt_for_domain?: number;
 	purchaseType?: string;
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
@@ -557,6 +558,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
 	privacy_available?: boolean;
+	signup_flow?: string;
 }
 
 export interface GSuiteProductUser {

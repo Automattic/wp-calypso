@@ -8,11 +8,11 @@
 }
 
 .backup__last-backup-status {
-	background: var( --studio-white );
+	background: var(--studio-white);
 	padding: 16px 16px 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		background: var( --color-surface-backdrop );
+	@include breakpoint-deprecated( ">660px" ) {
+		background: var(--color-surface-backdrop);
 		padding: 0;
 		margin: 0;
 	}
@@ -20,7 +20,7 @@
 .backup__page .main {
 	overflow-y: auto;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		overflow-y: visible;
 	}
 }
@@ -28,7 +28,7 @@
 .backup__main .formatted-header.is-left-align {
 	margin-top: 20px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 4px;
 		margin-bottom: 18px;
 	}
@@ -37,11 +37,11 @@
 .backup__main-wrap {
 	display: flex;
 	flex-direction: column;
-	height: calc( 100vh - 120px );
+	height: calc(100vh - 120px);
 	margin-left: -16px;
 	margin-right: -16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		height: auto;
 	}
 }
@@ -67,7 +67,7 @@
 	@extend .wp-brand-font;
 	font-size: $font-title-small;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 36px 0 4px;
 	}
 }
@@ -79,7 +79,7 @@
 		@include banner-color( var( --color-jetpack ) );
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-bottom: 16px;
 	}
 }
@@ -97,22 +97,22 @@
 	}
 
 	.button {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 
 		&.is-borderless {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 
 		&.is-primary {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 
 		&.is-primary.is-borderless {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 
 		&[disabled] {
-			color: var( --color-neutral-20 );
+			color: var(--color-neutral-20);
 		}
 	}
 }
@@ -125,7 +125,7 @@
 	.what-is-jetpack {
 		margin-top: 32px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-top: 64px;
 		}
 	}
@@ -148,8 +148,8 @@
 
 	.promo-section__promos {
 		.promo-card {
-			@include breakpoint-deprecated( '>1280px' ) {
-				flex: 1 1 calc( 50% - 1em );
+			@include breakpoint-deprecated( ">1280px" ) {
+				flex: 1 1 calc(50% - 1em);
 			}
 		}
 	}

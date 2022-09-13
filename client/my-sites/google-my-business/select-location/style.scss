@@ -7,26 +7,26 @@
 	.gmb-select-location__status {
 		align-self: stretch;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			text-align: center;
 		}
 
-		@include breakpoint-deprecated( '480px-960px' ) {
+		@include breakpoint-deprecated( "480px-960px" ) {
 			align-self: flex-start;
 		}
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin-top: 10px;
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			align-self: center;
 			flex-shrink: 0;
 			margin-left: 15px;
 		}
 
 		.gmb-select-location__connected-icon {
-			color: var( --color-success );
+			color: var(--color-success);
 			vertical-align: text-bottom;
 		}
 	}

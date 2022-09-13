@@ -4,6 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -14,6 +15,7 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
+	SHOW_ALL_SLUG,
 } from '../constants';
 import {
 	getDesignPreviewUrl,
@@ -22,11 +24,13 @@ import {
 	filterDesignsByCategory,
 	sortDesigns,
 } from '../utils';
-import BadgeContainer from './badge-container';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
+import PatternAssemblerCta from './pattern-assembler-cta';
+import PremiumBadge from './premium-badge';
+import StyleVariationBadges from './style-variation-badges';
 import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
-import type { Design } from '../types';
+import type { Design, StyleVariation } from '../types';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -50,7 +54,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: verticalId,
+				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
@@ -64,14 +68,14 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
-	onSelect: ( design: Design ) => void;
-	premiumBadge?: React.ReactNode;
+	onSelect: ( design: Design, variation?: StyleVariation ) => void;
 	highRes: boolean;
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
 	hideDesignTitle?: boolean;
 	hasDesignOptionHeader?: boolean;
 	isPremiumThemeAvailable?: boolean;
+	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
 }
@@ -80,61 +84,86 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
-	premiumBadge = null,
 	highRes,
 	disabled,
 	hideDesignTitle,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable = false,
+	hasPurchasedTheme = false,
 	onCheckout,
 	verticalId,
 } ) => {
 	const { __ } = useI18n();
-
-	const badgeType = design.is_premium ? 'premium' : 'none';
-
-	const badgeContainer = ! isEnabled( 'signup/theme-preview-screen' ) ? (
-		design.is_premium && premiumBadge
-	) : (
-		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
-	);
-
-	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable;
+	const { style_variations = [], is_premium: isPremium = false } = design;
+	const isEnableThemePreviewScreen = isEnabled( 'signup/theme-preview-screen' );
+	const isEnableThemeStyleVariations =
+		isEnabled( 'signup/design-picker-style-selection' ) && isEnableThemePreviewScreen;
+	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
-		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
+		if ( ! isEnableThemePreviewScreen ) {
 			return null;
 		}
 
-		let text: any = __( 'Free' );
-
-		if ( design.is_premium ) {
-			text = shouldUpgrade ? (
-				<Button
-					isLink={ true }
-					className="design-picker__button-link"
-					onClick={ ( e: any ) => {
-						e.stopPropagation();
-						onCheckout?.();
-					} }
-				>
-					{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-						? __( 'Included in WordPress.com Premium' )
-						: __( 'Upgrade to Premium' ) }
-				</Button>
-			) : (
-				__( 'Included in your plan' )
-			);
+		let text: React.ReactNode = null;
+		if ( isPremium && shouldUpgrade ) {
+			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
+				text = createInterpolateElement(
+					sprintf(
+						/* translators: %(price)s - the price of the theme */
+						__( '%(price)s per year or <button>included in WordPress.com Premium</button>' ),
+						{
+							price: design.price,
+						}
+					),
+					{
+						button: (
+							<Button
+								isLink={ true }
+								className="design-picker__button-link"
+								onClick={ ( e: any ) => {
+									e.stopPropagation();
+									onCheckout?.();
+								} }
+							/>
+						),
+					}
+				);
+			} else {
+				text = (
+					<Button isLink={ true } className="design-picker__button-link">
+						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
+							? __( 'Included in WordPress.com Premium' )
+							: __( 'Upgrade to Premium' ) }
+					</Button>
+				);
+			}
+		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
+			text = __( 'Purchased on an annual subscription' );
+		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
+			text = __( 'Included in your plan' );
+		} else if ( ! isPremium ) {
+			text = __( 'Free' );
 		}
 
-		return <div className="design-picker__pricing-description">{ text }</div>;
+		return (
+			<div className="design-picker__pricing-description">
+				{ isPremium && (
+					<PremiumBadge
+						tooltipPosition="bottom right"
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					/>
+				) }
+				<span>{ text }</span>
+			</div>
+		);
 	}
 
 	return (
 		<div className="design-picker__design-option">
 			<button
 				disabled={ disabled }
-				data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
 				onClick={ () => onSelect( design ) }
 			>
 				{ hasDesignOptionHeader && (
@@ -172,11 +201,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						{ ! hideDesignTitle && (
 							<span className="design-picker__option-name">{ design.title }</span>
 						) }
-						{ badgeContainer }
+						{ ! isEnableThemePreviewScreen && isPremium && (
+							<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+						) }
+						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
+							<div className="design-picker__options-style-variations">
+								<StyleVariationBadges
+									variations={ style_variations }
+									onClick={ ( variation ) => onSelect( design, variation ) }
+								/>
+							</div>
+						) }
 					</span>
 				</span>
+				{ getPricingDescription() }
 			</button>
-			{ getPricingDescription() }
 		</div>
 	);
 };
@@ -231,7 +270,8 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 
 interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
-	onPreview?: ( design: Design ) => void;
+	hasPurchasedTheme?: boolean;
+	onPreview?: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	previewOnly?: boolean;
 }
@@ -258,15 +298,19 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	if ( ! isDesktop ) {
 		return (
 			<div className="design-button-container">
-				<DesignButton { ...props } onSelect={ onPreview } />
+				<DesignButton
+					{ ...props }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					onSelect={ onPreview }
+				/>
 			</div>
 		);
 	}
 
 	// We don't need preview for blank canvas
-	return (
+	return ! isBlankCanvas ? (
 		<div className="design-button-container">
-			{ ! isBlankCanvas && ! previewOnly && (
+			{ ! previewOnly && (
 				<DesignButtonCover
 					design={ props.design }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -279,42 +323,52 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				{ ...props }
 				isPremiumThemeAvailable={ isPremiumThemeAvailable }
 				onSelect={ previewOnly ? onPreview : noop }
-				disabled={ ! isBlankCanvas && ! previewOnly }
+				disabled={ ! previewOnly }
 			/>
 		</div>
+	) : (
+		<PatternAssemblerCta
+			key={ props.design.slug }
+			onButtonClick={ () => props.onSelect( props.design ) }
+		/>
 	);
 };
+
+const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Design ) =>
+	purchasedThemes
+		? purchasedThemes.some( ( themeId ) => design?.recipe?.stylesheet?.endsWith( '/' + themeId ) )
+		: false;
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
-	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	purchasedThemes?: string[];
 }
 
 interface StaticDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
-	premiumBadge?: React.ReactNode;
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	previewOnly?: boolean;
 	hasDesignOptionHeader?: boolean;
 	onCheckout?: any;
+	purchasedThemes?: string[];
 }
 
 interface GeneratedDesignPickerProps {
@@ -330,23 +384,40 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onPreview,
 	onUpgrade,
 	designs,
-	premiumBadge,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
 	verticalId,
+	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
+
 	const filteredDesigns = useMemo( () => {
 		const result = categorization?.selection
 			? filterDesignsByCategory( designs, categorization.selection )
 			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
 
 		result.sort( sortDesigns );
+
+		if (
+			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+			categorization?.selection === SHOW_ALL_SLUG
+		) {
+			const blankCanvasDesign = {
+				recipe: {
+					stylesheet: 'pub/blank-canvas-blocks',
+				},
+				slug: 'blank-canvas-blocks',
+				title: 'Blank Canvas',
+			} as Design;
+			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		}
+
 		return result;
 	}, [ designs, categorization?.selection ] );
+
 	return (
 		<div>
 			{ categorization && hasCategories && (
@@ -365,7 +436,6 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						onSelect={ onSelect }
 						onPreview={ onPreview }
 						onUpgrade={ onUpgrade }
-						premiumBadge={ premiumBadge }
 						highRes={ false }
 						hideFullScreenPreview={ false }
 						hideDesignTitle={ false }
@@ -374,6 +444,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						hasDesignOptionHeader={ hasDesignOptionHeader }
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
+						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 					/>
 				) ) }
 			</div>
@@ -407,6 +478,7 @@ const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
 									<ThemePreview
 										url={ previewUrl }
 										viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
+										isFitHeight
 									/>
 								</span>
 							</button>
@@ -426,16 +498,18 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	verticalId,
 	staticDesigns,
 	generatedDesigns,
-	premiumBadge,
 	heading,
 	categorization,
 	previewOnly = false,
 	hasDesignOptionHeader = true,
 	isPremiumThemeAvailable,
 	onCheckout,
+	purchasedThemes,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
+	const hasGeneratedDesigns = generatedDesigns.length > 0;
+
 	return (
 		<div
 			className={ classnames(
@@ -448,8 +522,8 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			) }
 		>
 			{ heading }
-			{ generatedDesigns.length > 0 && (
-				<>
+			{ hasGeneratedDesigns && (
+				<div className="unified-design-picker__generated-designs">
 					<div>
 						<h3> { translate( 'Custom designs for your site' ) } </h3>
 						<p className="unified-design-picker__subtitle">
@@ -462,28 +536,32 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						onPreview={ onPreview }
 						verticalId={ verticalId }
 					/>
+				</div>
+			) }
+			<div className="unified-design-picker__standard-designs">
+				{ hasGeneratedDesigns && (
 					<div>
 						<h3> { translate( 'Selected themes for you' ) } </h3>
 						<p className="unified-design-picker__subtitle">
 							{ translate( 'Choose a starting theme. You can change it later.' ) }
 						</p>
 					</div>
-				</>
-			) }
-			<StaticDesignPicker
-				locale={ locale }
-				onSelect={ onSelect }
-				onPreview={ onPreview }
-				onUpgrade={ onUpgrade }
-				designs={ staticDesigns }
-				premiumBadge={ premiumBadge }
-				categorization={ categorization }
-				verticalId={ isEnabled( 'signup/standard-theme-v13n' ) ? verticalId : undefined }
-				previewOnly={ previewOnly }
-				hasDesignOptionHeader={ hasDesignOptionHeader }
-				isPremiumThemeAvailable={ isPremiumThemeAvailable }
-				onCheckout={ onCheckout }
-			/>
+				) }
+				<StaticDesignPicker
+					locale={ locale }
+					onSelect={ onSelect }
+					onPreview={ onPreview }
+					onUpgrade={ onUpgrade }
+					designs={ staticDesigns }
+					categorization={ categorization }
+					verticalId={ verticalId }
+					previewOnly={ previewOnly }
+					hasDesignOptionHeader={ hasDesignOptionHeader }
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					onCheckout={ onCheckout }
+					purchasedThemes={ purchasedThemes }
+				/>
+			</div>
 		</div>
 	);
 };

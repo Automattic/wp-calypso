@@ -32,6 +32,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PluginManagementV2 from '../plugin-management-v2';
 
 import './style.scss';
 
@@ -82,11 +83,19 @@ export class PluginsList extends Component {
 			return true;
 		}
 
+		if ( this.props.searchTerm !== nextProps.searchTerm ) {
+			return true;
+		}
+
 		if ( this.state.bulkManagementActive !== nextState.bulkManagementActive ) {
 			return true;
 		}
 
 		if ( this.state.disconnectJetpackNotice !== nextState.disconnectJetpackNotice ) {
+			return true;
+		}
+
+		if ( this.state.removeJetpackNotice !== nextState.removeJetpackNotice ) {
 			return true;
 		}
 
@@ -103,10 +112,12 @@ export class PluginsList extends Component {
 
 	componentDidUpdate() {
 		this.maybeShowDisconnectNotice();
+		this.maybeShowRemoveNotice();
 	}
 
 	state = {
 		disconnectJetpackNotice: false,
+		removeJetpackNotice: false,
 		bulkManagementActive: false,
 		selectedPlugins: {},
 	};
@@ -150,7 +161,7 @@ export class PluginsList extends Component {
 
 	filterSelection = {
 		active( plugin ) {
-			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
+			if ( this.isSelected( plugin ) ) {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
 					const sitePlugin = this.getSitePlugin( plugin, siteId );
 					return sitePlugin?.active;
@@ -219,15 +230,17 @@ export class PluginsList extends Component {
 		this.props.removePluginStatuses( 'completed', 'error' );
 	}
 
-	doActionOverSelected( actionName, action ) {
-		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
-			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
+	doActionOverSelected( actionName, action, selectedPlugins ) {
+		if ( ! selectedPlugins ) {
+			selectedPlugins = this.props.plugins.filter( this.isSelected );
+		}
+		const isDeactivatingOrRemovingAndJetpackSelected = ( { slug } ) =>
+			[ 'deactivating', 'activating', 'removing' ].includes( actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
-		this.props.plugins
-			.filter( this.isSelected ) // only use selected sites
-			.filter( ( plugin ) => ! isDeactivatingAndJetpackSelected( plugin ) ) // ignore sites that are deactiving or activating jetpack
+		selectedPlugins
+			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
@@ -256,65 +269,92 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateAllPlugins = () => {
+	handleUpdatePlugins = ( plugins ) => {
 		this.removePluginStatuses();
-		this.props.plugins.forEach( ( plugin ) => {
-			Object.keys( plugin.sites ).forEach( ( siteId ) => {
-				const sitePlugin = this.getSitePlugin( plugin, siteId );
-				return this.props.updatePlugin( siteId, sitePlugin );
+		plugins
+			// only consider plugins needing an update
+			.filter( ( plugin ) => plugin.update )
+			.forEach( ( plugin ) => {
+				Object.entries( plugin.sites )
+					// only consider the sites where the those plugins are installed
+					.filter( ( [ , sitePlugin ] ) => sitePlugin.update?.new_version )
+					.forEach( ( [ siteId ] ) => {
+						const sitePlugin = this.getSitePlugin( plugin, siteId );
+						return this.props.updatePlugin( siteId, sitePlugin );
+					} );
 			} );
-		} );
+	};
+
+	updateAllPlugins = () => {
+		this.handleUpdatePlugins( this.props.plugins );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	};
 
-	updateSelected = () => {
-		this.doActionOverSelected( 'updating', this.props.updatePlugin );
+	updateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'updating', this.props.updatePlugin );
+			this.recordEvent( 'Clicked Update Plugin(s)', true );
+		}
+	};
+
+	updatePlugin = ( selectedPlugin ) => {
+		this.handleUpdatePlugins( [ selectedPlugin ] );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
-	activateSelected = () => {
-		this.doActionOverSelected( 'activating', this.props.activatePlugin );
-		this.recordEvent( 'Clicked Activate Plugin(s)', true );
-	};
-
-	deactivateSelected = () => {
-		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
-		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
-	};
-
-	deactiveAndDisconnectSelected = () => {
-		let waitForDeactivate = false;
-
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			this.props.deactivatePlugin( site, plugin );
-		} );
-
-		if ( waitForDeactivate && this.props.selectedSite ) {
-			this.setState( { disconnectJetpackNotice: true } );
+	activateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'activating', this.props.activatePlugin );
+			this.recordEvent( 'Clicked Activate Plugin(s)', true );
 		}
-
-		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 	};
 
-	setAutoupdateSelected = () => {
-		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
-		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
+	deactivateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin );
+			this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
+		}
 	};
 
-	unsetAutoupdateSelected = () => {
-		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
-		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
+	deactiveAndDisconnectSelected = ( accepted ) => {
+		if ( accepted ) {
+			let waitForDeactivate = false;
+
+			this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+				waitForDeactivate = true;
+				this.props.deactivatePlugin( site, plugin );
+			} );
+
+			if ( waitForDeactivate && this.props.selectedSite ) {
+				this.setState( { disconnectJetpackNotice: true } );
+			}
+
+			this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
+		}
 	};
 
-	getConfirmationText() {
+	setAutoupdateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin );
+			this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
+		}
+	};
+
+	unsetAutoupdateSelected = ( accepted ) => {
+		if ( accepted ) {
+			this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin );
+			this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
+		}
+	};
+
+	getConfirmationText( selectedPlugins, actionText, actionPreposition ) {
 		const pluginsList = {};
 		const sitesList = {};
 		let pluginName;
 		let siteName;
-		const { plugins, translate } = this.props;
+		const { translate } = this.props;
 
-		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
+		selectedPlugins.forEach( ( plugin ) => {
 			pluginsList[ plugin.slug ] = true;
 			pluginName = plugin.name || plugin.slug;
 
@@ -337,14 +377,14 @@ export class PluginsList extends Component {
 		switch ( combination ) {
 			case '1 site 1 plugin':
 				return translate(
-					'You are about to remove {{em}}%(plugin)s from %(site)s{{/em}}.{{p}}' +
-						'This will deactivate the plugin and delete all associated files and data.{{/p}}',
+					'You are about to %(actionText)s {{em}}%(plugin)s %(actionPreposition)s %(site)s{{/em}}.',
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							plugin: pluginName,
 							site: siteName,
 						},
@@ -353,14 +393,14 @@ export class PluginsList extends Component {
 
 			case '1 site n plugins':
 				return translate(
-					'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.{{p}}' +
-						'This will deactivate the plugins and delete all associated files and data.{{/p}}',
+					'You are about to %(actionText)s {{em}}%(numberOfPlugins)d plugins %(actionPreposition)s %(site)s{{/em}}.',
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							numberOfPlugins: pluginsListSize,
 							site: siteName,
 						},
@@ -369,14 +409,14 @@ export class PluginsList extends Component {
 
 			case 'n sites 1 plugin':
 				return translate(
-					'You are about to remove {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.{{p}}' +
-						'This will deactivate the plugin and delete all associated files and data.{{/p}}',
+					'You are about to %(actionText)s {{em}}%(plugin)s %(actionPreposition)s %(numberOfSites)d sites{{/em}}.',
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							plugin: pluginName,
 							numberOfSites: siteListSize,
 						},
@@ -385,14 +425,14 @@ export class PluginsList extends Component {
 
 			case 'n sites n plugins':
 				return translate(
-					'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.{{p}}' +
-						'This will deactivate the plugins and delete all associated files and data.{{/p}}',
+					'You are about to %(actionText)s {{em}}%(numberOfPlugins)d plugins %(actionPreposition)s %(numberOfSites)d sites{{/em}}.',
 					{
 						components: {
 							em: <em />,
-							p: <p />,
 						},
 						args: {
+							actionText: actionText,
+							actionPreposition: actionPreposition,
 							numberOfPlugins: pluginsListSize,
 							numberOfSites: siteListSize,
 						},
@@ -401,27 +441,148 @@ export class PluginsList extends Component {
 		}
 	}
 
-	removePluginDialog = () => {
-		const { translate } = this.props;
+	bulkActionDialog = ( actionName, selectedPlugin ) => {
+		const { plugins, translate } = this.props;
+		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
+		const pluginsCount = selectedPlugins.length;
+
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
+
+		const translationArgs = {
+			args: { pluginsCount },
+			count: pluginsCount,
+		};
+
+		switch ( actionName ) {
+			case 'activate':
+				acceptDialog(
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'activate', 'on' ) }</span>
+					</div>,
+					( accepted ) => this.activateSelected( accepted ),
+					translate(
+						'Activate %(pluginsCount)d plugin',
+						'Activate %(pluginsCount)d plugins',
+						translationArgs
+					)
+				);
+				break;
+			case 'deactivate':
+				acceptDialog(
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'deactivate', 'on' ) }</span>
+					</div>,
+					isJetpackIncluded
+						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
+						: ( accepted ) => this.deactivateSelected( accepted ),
+					translate(
+						'Deactivate %(pluginsCount)d plugin',
+						'Deactivate %(pluginsCount)d plugins',
+						translationArgs
+					)
+				);
+				break;
+			case 'enableAutoupdates':
+				acceptDialog(
+					<div>
+						<span>
+							{ this.getConfirmationText( selectedPlugins, 'enable autoupdates for', 'on' ) }
+						</span>
+					</div>,
+					( accepted ) => this.setAutoupdateSelected( accepted ),
+					translate(
+						'Enable autoupdates for %(pluginsCount)d plugin',
+						'Enable autoupdates for %(pluginsCount)d plugins',
+						translationArgs
+					)
+				);
+				break;
+			case 'disableAutoupdates':
+				acceptDialog(
+					<div>
+						<span>
+							{ this.getConfirmationText( selectedPlugins, 'disable autoupdates for', 'on' ) }
+						</span>
+					</div>,
+					( accepted ) => this.unsetAutoupdateSelected( accepted ),
+					translate(
+						'Disable autoupdates for %(pluginsCount)d plugin',
+						'Disable autoupdates for %(pluginsCount)d plugins',
+						translationArgs
+					)
+				);
+				break;
+			case 'update':
+				acceptDialog(
+					<div>
+						<span>{ this.getConfirmationText( selectedPlugins, 'update', 'on' ) }</span>
+					</div>,
+					( accepted ) => this.updateSelected( accepted ),
+					translate(
+						'Update %(pluginsCount)d plugin',
+						'Update %(pluginsCount)d plugins',
+						translationArgs
+					)
+				);
+		}
+	};
+
+	removePluginDialog = ( selectedPlugin ) => {
+		const { plugins, translate } = this.props;
+
+		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
+		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
 		const message = (
 			<div>
-				<span>{ this.getConfirmationText() }</span>
+				<span>{ this.getConfirmationText( selectedPlugins, 'remove', 'from' ) }</span>
+				<span>
+					{ translate(
+						'{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}',
+						{
+							components: {
+								p: <p />,
+							},
+						}
+					) }
+				</span>
 				<span>{ translate( 'Do you want to continue?' ) }</span>
 			</div>
 		);
 
 		acceptDialog(
 			message,
-			this.removeSelected,
+			isJetpackIncluded
+				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
+				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
 	};
 
-	removeSelected = ( accepted ) => {
+	removeSelected = ( accepted, selectedPlugins ) => {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', this.props.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, selectedPlugins );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
+		}
+	};
+
+	removeSelectedWithJetpack = ( accepted, selectedPlugins ) => {
+		if ( accepted ) {
+			if ( selectedPlugins.length === 1 ) {
+				this.setState( { removeJetpackNotice: true } );
+				this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+			} else {
+				let waitForRemove = false;
+				this.doActionOverSelected( 'removing', ( site, plugin ) => {
+					waitForRemove = true;
+					this.props.removePlugin( site, plugin );
+				} );
+
+				if ( waitForRemove && this.props.selectedSite ) {
+					this.setState( { removeJetpackNotice: true } );
+					this.recordEvent( 'Clicked Remove Plugin(s) and Remove Jetpack', true );
+				}
+			}
 		}
 	};
 
@@ -443,6 +604,18 @@ export class PluginsList extends Component {
 					}
 				)
 			);
+		}
+	}
+
+	maybeShowRemoveNotice() {
+		const { translate } = this.props;
+
+		if ( this.state.removeJetpackNotice && ! this.props.inProgressStatuses.length ) {
+			this.setState( {
+				removeJetpackNotice: false,
+			} );
+
+			this.props.warningNotice( translate( 'Jetpack must be removed via wp-admin.' ) );
 		}
 	}
 
@@ -468,7 +641,7 @@ export class PluginsList extends Component {
 
 		const selectedSiteSlug = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : '';
 
-		if ( this.props.isPlaceholder ) {
+		if ( this.props.isPlaceholder && ! this.props.isJetpackCloud ) {
 			return (
 				<div className="plugins-list">
 					<SectionHeader
@@ -481,17 +654,20 @@ export class PluginsList extends Component {
 			);
 		}
 
-		if ( isEmpty( this.props.plugins ) ) {
+		if ( isEmpty( this.props.plugins ) && ! this.props.isJetpackCloud ) {
 			return null;
 		}
 
 		return (
 			<div className="plugins-list">
 				<QueryProductsList />
-				<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				{ ! this.props.isJetpackCloud && (
+					<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
+				) }
 				<PluginsListHeader
 					label={ this.props.header }
 					isBulkManagementActive={ this.state.bulkManagementActive }
+					isWpcom={ ! this.props.isJetpackCloud }
 					selectedSiteSlug={ selectedSiteSlug }
 					plugins={ this.props.plugins }
 					selected={ this.getSelected() }
@@ -504,8 +680,13 @@ export class PluginsList extends Component {
 					deactivateSelected={ this.deactivateSelected }
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
-					removePluginNotice={ this.removePluginDialog }
+					removePluginNotice={ () => this.removePluginDialog() }
 					setSelectionState={ this.setBulkSelectionState }
+					activatePluginNotice={ () => this.bulkActionDialog( 'activate' ) }
+					deactivatePluginNotice={ () => this.bulkActionDialog( 'deactivate' ) }
+					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
+					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
+					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some(
 						this.filterSelection.inactive.bind( this )
@@ -514,11 +695,43 @@ export class PluginsList extends Component {
 						this.filterSelection.updates.bind( this )
 					) }
 				/>
-				<Card className={ itemListClasses }>
-					{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
-				</Card>
+				{ this.props.isJetpackCloud ? (
+					<PluginManagementV2
+						plugins={ this.getPlugins() }
+						isLoading={ this.props.isLoading }
+						selectedSite={ this.props.selectedSite }
+						searchTerm={ this.props.searchTerm }
+						isBulkManagementActive={ this.state.bulkManagementActive }
+						pluginUpdateCount={ this.props.pluginUpdateCount }
+						toggleBulkManagement={ this.toggleBulkManagement }
+						updateAllPlugins={ this.updateAllPlugins }
+						removePluginNotice={ this.removePluginDialog }
+						updatePlugin={ this.updatePlugin }
+					/>
+				) : (
+					<>
+						<Card className={ itemListClasses }>
+							{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
+						</Card>
+					</>
+				) }
 			</div>
 		);
+	}
+
+	getPlugins() {
+		return this.props.plugins.map( ( plugin ) => {
+			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+			const allowedPluginActions = this.getAllowedPluginActions( plugin );
+			const isSelectable =
+				this.state.bulkManagementActive &&
+				( allowedPluginActions.autoupdate || allowedPluginActions.activation );
+
+			return {
+				...plugin,
+				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
+			};
+		} );
 	}
 
 	getAllowedPluginActions( plugin ) {
@@ -583,7 +796,6 @@ export class PluginsList extends Component {
 export default connect(
 	( state, { plugins } ) => {
 		const selectedSite = getSelectedSite( state );
-
 		return {
 			allSites: getSites( state ),
 			pluginsOnSites: getPluginsOnSites( state, plugins ),

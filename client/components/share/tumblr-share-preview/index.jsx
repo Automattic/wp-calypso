@@ -23,7 +23,11 @@ export class TumblrSharePreview extends PureComponent {
 			<div className="tumblr-share-preview">
 				<div className="tumblr-share-preview__content">
 					<div className="tumblr-share-preview__profile-picture-part">
-						<img className="tumblr-share-preview__profile-picture" src={ externalProfilePicture } />
+						<img
+							alt="Preview of Tumblr profile"
+							className="tumblr-share-preview__profile-picture"
+							src={ externalProfilePicture }
+						/>
 					</div>
 					<div className="tumblr-share-preview__content-part">
 						<div className="tumblr-share-preview__profile-line">
@@ -42,7 +46,11 @@ export class TumblrSharePreview extends PureComponent {
 						</div>
 						{ imageUrl && (
 							<div className="tumblr-share-preview__image-wrapper">
-								<img className="tumblr-share-preview__image" src={ imageUrl } />
+								<img
+									alt="Preview when shared to Tumblr"
+									className="tumblr-share-preview__image"
+									src={ imageUrl }
+								/>
 							</div>
 						) }
 						<div className="tumblr-share-preview__summery-part">

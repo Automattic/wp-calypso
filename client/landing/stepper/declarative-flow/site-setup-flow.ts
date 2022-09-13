@@ -1,14 +1,15 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useDesignsBySite } from '@automattic/design-picker';
+import { Design, useDesignsBySite } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useTranslate } from 'i18n-calypso';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -43,6 +44,7 @@ export const siteSetupFlow: Flow = {
 			'intent',
 			'options',
 			'designSetup',
+			'patternAssembler',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
@@ -72,12 +74,12 @@ export const siteSetupFlow: Flow = {
 		] as StepPath[];
 	},
 	useSideEffect() {
+		// Prefetch designs for a smooth design picker UX.
+		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
 		const site = useSite();
-		// prefetch designs for a smooth design picker UX
-		useDesignsBySite( site );
+		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
 	},
 	useStepNavigation( currentStep, navigate ) {
-		const translate = useTranslate();
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -85,9 +87,15 @@ export const siteSetupFlow: Flow = {
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
+		const currentTheme = useSelector( ( state ) =>
+			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
+		);
+
 		const isEnglishLocale = useIsEnglishLocale();
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
+		const isPluginBundleEligible = useIsPluginBundleEligible();
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -105,8 +113,7 @@ export const siteSetupFlow: Flow = {
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteTitle } =
-			useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
@@ -135,29 +142,11 @@ export const siteSetupFlow: Flow = {
 					if ( goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
-
-					if ( intent === SiteIntent.Write && ! selectedDesign ) {
+					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
 					}
 
-					// Set a default site title in case users have not set one during the onboarding flow.
-					if ( site && site.name?.trim() === '' ) {
-						let siteTitle = '';
-						switch ( intent ) {
-							case SiteIntent.Write:
-								siteTitle = translate( 'My blog' );
-								break;
-							case SiteIntent.Sell:
-								siteTitle = translate( 'My store' );
-								break;
-							default:
-								siteTitle = translate( 'My site' );
-						}
-
-						pendingActions.push( saveSiteTitle( site.ID, siteTitle ) );
-					}
-
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
@@ -173,12 +162,27 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
+						/**
+						 * Part of the theme/plugin bundling is simplyfing the seller flow.
+						 *
+						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
+						 */
+						if ( isEnabled( 'themes/plugin-bundling' ) ) {
+							return navigate( 'designSetup' );
+						}
+
 						return navigate( 'storeFeatures' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
 
 				case 'designSetup':
+					if (
+						( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+					) {
+						return navigate( 'patternAssembler' );
+					}
+
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -209,6 +213,19 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'wooVerifyEmail' );
 						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+					}
+
+					// Check current theme: Does it have a plugin bundled?
+					// If so, send them to the plugin-bundle flow.
+					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
+					if (
+						isEnabled( 'themes/plugin-bundling' ) &&
+						theme_software_set &&
+						theme_software_set.length > 0 &&
+						isPluginBundleEligible &&
+						siteSlug
+					) {
+						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
@@ -418,11 +435,19 @@ export const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if ( intent === 'sell' ) {
+						// For theme/plugin bundling, we skip the store features step because we use the theme to decide if they're going through "Start simple" or "More power"
+						if ( isEnabled( 'themes/plugin-bundling' ) ) {
+							return navigate( 'options' );
+						}
+
 						// this means we came from sell => store-features => start simple, we go back to store features
 						return navigate( 'storeFeatures' );
 					} else if ( intent === 'write' ) {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
+					} else if ( intent === 'import' ) {
+						// this means we came from non-WP transfers => complete screen => click Pick a design button, we go back to goals
+						return navigate( 'goals' );
 					}
 
 					if ( goalsStepEnabled ) {
@@ -433,6 +458,9 @@ export const siteSetupFlow: Flow = {
 					}
 
 					return navigate( 'intent' );
+
+				case 'patternAssembler':
+					return navigate( 'designSetup' );
 
 				case 'editEmail':
 					return navigate( 'wooVerifyEmail' );

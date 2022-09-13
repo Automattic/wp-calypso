@@ -350,9 +350,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
  * What's New section of the Tools menu.
  */
 function load_whats_new() {
-	if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
-		return;
-	}
 	require_once __DIR__ . '/whats-new/class-whats-new.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_whats_new' );
@@ -383,16 +380,17 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_tags_education' );
 
 /**
  * Help center
- * At the moment we're showing only to 10% of the users. And to all proxied requests.
+ * At the moment we're disabling the help center.
  */
 function load_help_center() {
-	// enable help center for all proxied users.
-	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
+		// enable help center for all proxied users.
+		$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
-	$current_segment = 10; // segment of existing users that will get the help center in %.
-	$user_segment    = get_current_user_id() % 100;
+		// phpcs:disable Squiz.PHP.CommentedOutCode.Found
+		// $current_segment = 30; // segment of existing users that will get the help center in %.
+		// $user_segment    = get_current_user_id() % 100;
 
-	if ( $is_proxied || $user_segment < $current_segment ) {
+	if ( $is_proxied ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
 	}
 }

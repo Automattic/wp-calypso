@@ -1,6 +1,7 @@
 import { getTracksAnonymousUserId } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import QRCode from 'qrcode.react';
 import { useEffect, useState } from 'react';
@@ -184,11 +185,17 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 	// Send the user to the login state.
 	useEffect( () => {
 		if ( authState?.auth_url ) {
+			// if redirect URL is set, append to to the response URL as a query param.
+			if ( redirectToAfterLoginUrl ) {
+				authState.auth_url = addQueryArgs( authState.auth_url, {
+					redirect_to: redirectToAfterLoginUrl,
+				} );
+			}
 			// Clear the data.
 			setStoredItem( LOCALE_STORAGE_KEY, null );
 			window.location.replace( authState.auth_url );
 		}
-	}, [ authState ] );
+	}, [ authState, redirectToAfterLoginUrl ] );
 
 	useEffect( () => {
 		getStoredItem( LOCALE_STORAGE_KEY ).then( ( storedTokenData ) =>

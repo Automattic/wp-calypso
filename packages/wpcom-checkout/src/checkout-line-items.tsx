@@ -13,6 +13,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
 	isTitanMail,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -22,11 +23,12 @@ import {
 	Theme,
 	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
-import { getSublabel, getLabel } from './checkout-labels';
-import { getIntroductoryOfferIntervalDisplay } from './get-introductory-offer-interval-display';
+import { getLabel, getSublabel } from './checkout-labels';
+import { getItemIntroductoryOfferDisplay } from './introductory-offer';
 import { isWpComProductRenewal } from './is-wpcom-product-renewal';
 import { joinClasses } from './join-classes';
 import { getPartnerCoupon } from './partner-coupon';
@@ -565,7 +567,7 @@ function ProductTier( { product }: { product: ResponseCartProduct } ) {
 	return null;
 }
 
-function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
+export function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productSlug = product.product_slug;
 	const sublabel = getSublabel( product );
@@ -647,6 +649,46 @@ function LineItemSublabelAndPrice( { product }: { product: ResponseCartProduct }
 		);
 	}
 
+	if ( isDIFMProduct( product ) ) {
+		const numberOfExtraPages =
+			product.quantity && product.price_tier_maximum_units
+				? product.quantity - product.price_tier_maximum_units
+				: 0;
+
+		if ( numberOfExtraPages > 0 ) {
+			const costOfExtraPages = formatCurrency(
+				product.item_original_cost_integer - product.item_original_cost_for_quantity_one_integer,
+				product.currency,
+				{
+					stripZeros: true,
+					isSmallestUnit: true,
+				}
+			);
+
+			return (
+				<>
+					{ translate( 'Service: %(productCost)s one-time fee', {
+						args: {
+							productCost: product.item_original_cost_for_quantity_one_display,
+						},
+					} ) }
+					<br></br>
+					{ translate(
+						'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+						'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+						{
+							args: {
+								numberOfExtraPages,
+								costOfExtraPages,
+							},
+							count: numberOfExtraPages,
+						}
+					) }
+				</>
+			);
+		}
+	}
+
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
 
@@ -717,26 +759,17 @@ function FirstTermDiscountCallout( { product }: { product: ResponseCartProduct }
 
 function IntroductoryOfferCallout( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	if ( product.introductory_offer_terms?.reason ) {
-		return (
-			<NotApplicableCallout>
-				{ translate( 'Order not eligible for introductory discount' ) }
-			</NotApplicableCallout>
-		);
-	}
-	if ( ! product.introductory_offer_terms?.enabled ) {
+	const introductoryOffer = getItemIntroductoryOfferDisplay( translate, product );
+
+	if ( ! introductoryOffer ) {
 		return null;
 	}
-	const isFreeTrial = product.item_subtotal_integer === 0;
-	const text = getIntroductoryOfferIntervalDisplay(
-		translate,
-		product.introductory_offer_terms.interval_unit,
-		product.introductory_offer_terms.interval_count,
-		isFreeTrial,
-		'checkout',
-		product.introductory_offer_terms.transition_after_renewal_count
-	);
-	return <DiscountCallout>{ text }</DiscountCallout>;
+
+	if ( ! introductoryOffer.enabled ) {
+		return <NotApplicableCallout>{ introductoryOffer.text }</NotApplicableCallout>;
+	}
+
+	return <DiscountCallout>{ introductoryOffer.text }</DiscountCallout>;
 }
 
 function PartnerLogo( { className }: { className?: string } ) {
@@ -936,7 +969,9 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProductFromCart( product.uuid );
+							removeProductFromCart( product.uuid ).catch( () => {
+								// Nothing needs to be done here. CartMessages will display the error to the user.
+							} );
 							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {

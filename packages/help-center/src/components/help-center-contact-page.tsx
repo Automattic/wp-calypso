@@ -4,12 +4,14 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
-import { Icon, comment } from '@wordpress/icons';
+import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -19,6 +21,7 @@ import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-optio
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import Mail from '../icons/mail';
+import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -33,8 +36,10 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+	const email = useSelector( getCurrentUserEmail );
+	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email );
 
-	if ( renderChat.isLoading ) {
+	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
 			<div className="help-center-contact-page__loading">
 				<Spinner baseClassName="" />
@@ -47,6 +52,7 @@ export const HelpCenterContactPage: React.FC = () => {
 			<BackButton />
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				<HelpCenterActiveTicketNotice tickets={ tickets } />
 				<div
 					className={ classnames( 'help-center-contact-page__boxes', {
 						'is-reversed': ! renderChat.render || renderChat.state !== 'AVAILABLE',
@@ -104,7 +110,7 @@ export const HelpCenterContactPage: React.FC = () => {
 
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
-	const url = useStillNeedHelpURL();
+	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
@@ -115,9 +121,15 @@ export const HelpCenterContactButton: React.FC = () => {
 		} );
 	};
 
+	let to = redirectToWpcom ? { pathname: url } : url;
+
+	if ( isLoading ) {
+		to = '';
+	}
+
 	return (
 		<Link
-			to={ redirectToWpcom ? { pathname: url } : url }
+			to={ to }
 			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"

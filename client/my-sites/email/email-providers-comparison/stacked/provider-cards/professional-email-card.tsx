@@ -1,10 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate, useTranslate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanProductName } from 'calypso/lib/titan';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,6 +16,7 @@ import {
 	HiddenFieldNames,
 	NewMailBoxList,
 } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import {
 	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_NAME,
@@ -64,46 +64,6 @@ const professionalEmailCardInformation: ProviderCardProps = {
 	get features() {
 		return getTitanFeatures();
 	},
-};
-
-const PasswordResetTipField = ( {
-	userEmail,
-	showAlternateEmailField,
-	hiddenFieldNames,
-}: {
-	hiddenFieldNames: string[];
-	showAlternateEmailField: ( event: MouseEvent< HTMLElement > ) => void;
-	userEmail: string;
-} ) => {
-	const translate = useTranslate();
-
-	if ( ! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ) {
-		return null;
-	}
-
-	return (
-		<FormSettingExplanation>
-			{ translate(
-				'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
-				{
-					args: {
-						userEmail,
-					},
-					components: {
-						strong: <strong />,
-						a: (
-							<Button
-								href="#"
-								className="professional-email-card__change-it-button"
-								onClick={ showAlternateEmailField }
-								plain
-							/>
-						),
-					},
-				}
-			) }
-		</FormSettingExplanation>
-	);
 };
 
 const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactElement => {
@@ -177,11 +137,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 			submitActionText={ translate( 'Purchase' ) }
 			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
-			<PasswordResetTipField
-				hiddenFieldNames={ hiddenFieldNames }
-				showAlternateEmailField={ showAlternateEmailField }
-				userEmail={ userEmail }
-			/>
+			{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
+				<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
+			) }
 		</NewMailBoxList>
 	);
 

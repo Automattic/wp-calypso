@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -43,6 +44,7 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
+import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -60,8 +62,6 @@ import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/prog
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
-import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -130,9 +130,7 @@ class Signup extends Component {
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
-		setSurvey: PropTypes.func.isRequired,
 		submitSiteType: PropTypes.func.isRequired,
-		submitSiteVertical: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -617,6 +615,10 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
+		}
+
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
@@ -756,6 +758,10 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
+							progressBar={ {
+								flowName: this.props.flowName,
+								stepName: this.props.stepName,
+							} }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={
@@ -823,9 +829,7 @@ export default connect(
 		};
 	},
 	{
-		setSurvey,
 		submitSiteType,
-		submitSiteVertical,
 		submitSignupStep,
 		removeStep,
 		loadTrackingTool,

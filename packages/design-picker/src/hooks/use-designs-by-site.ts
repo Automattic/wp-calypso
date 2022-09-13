@@ -9,7 +9,7 @@ import { useThemeDesignsQuery } from './use-theme-designs-query';
  *
  * @param site the site
  */
-export function useDesignsBySite( site: SiteDetails | null ) {
+export function useDesignsBySite( site: SiteDetails | null, queryOptions = {} ) {
 	const sitePlanSlug = site?.plan?.product_slug;
 
 	const isPremiumThemeAvailable = Boolean(
@@ -29,6 +29,9 @@ export function useDesignsBySite( site: SiteDetails | null ) {
 	return useThemeDesignsQuery(
 		{ filter: themeFilters, tier },
 		// Wait until FSS eligibility is loaded to load themes
-		{ enabled: !! site }
+		{
+			enabled: !! site,
+			...queryOptions,
+		}
 	);
 }

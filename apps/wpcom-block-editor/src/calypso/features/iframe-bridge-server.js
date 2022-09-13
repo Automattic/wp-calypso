@@ -1,4 +1,4 @@
-/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
+/* global calypsoifyGutenberg, Image, requestAnimationFrame */
 
 import { parse } from '@wordpress/blocks';
 import {
@@ -712,6 +712,13 @@ async function openLinksInParentFrame( calypsoPort ) {
 
 		for ( const record of mutations ) {
 			for ( const node of record.addedNodes ) {
+				// For some reason, some nodes might be `undefined`, see:
+				// https://sentry.io/organizations/a8c/issues/3216750319/?project=5876245.
+				// We skip the iteration if that's the case.
+				if ( ! node ) {
+					continue;
+				}
+
 				if ( isComponentsPopover( node ) ) {
 					const manageReusableBlocksAnchorElem = node.querySelector(
 						'a[href$="edit.php?post_type=wp_block"]'
@@ -1090,23 +1097,6 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
-function handleHelpCenterShowing( calypsoPort ) {
-	const { port1, port2 } = new MessageChannel();
-
-	calypsoPort.postMessage(
-		{
-			action: 'getIsHelpCenterShown',
-			payload: {},
-		},
-		[ port2 ]
-	);
-
-	port1.onmessage = ( { data } ) => {
-		const { isHelpCenterVisible } = data;
-		dispatch( 'automattic/help-center' )?.setShowHelpCenter?.( isHelpCenterVisible );
-	};
-}
-
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1209,8 +1199,6 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
-
-		handleHelpCenterShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

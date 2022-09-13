@@ -4,18 +4,18 @@
 	.gridicon {
 		display: inline;
 		vertical-align: middle;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 
 	&.is-open .gridicon {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 
 	&:hover,
 	&.is-open {
 		.gridicon,
 		.editor-author__name {
-			color: var( --color-text );
+			color: var(--color-text);
 		}
 	}
 }
@@ -47,13 +47,13 @@
 }
 
 .author-selector__popover.popover {
-	z-index: z-index( 'root', '.author-selector__popover.popover' );
+	z-index: z-index("root", ".author-selector__popover.popover");
 }
 
 .author-selector__popover {
 	.search {
 		border-top: 0;
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var(--color-neutral-0);
 		border-radius: 2px;
 		margin-bottom: 0;
 
@@ -72,5 +72,5 @@
 	width: 168px;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

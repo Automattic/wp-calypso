@@ -4,16 +4,16 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import type { ReactChild } from 'react';
 
 import './style.scss';
 
 type RenewButtonProps = {
 	purchase: Purchase | null;
-	selectedSite: SiteData;
+	selectedSite: SiteDetails;
 	subscriptionId: number;
 	compact?: boolean;
 	customLabel?: ReactChild;

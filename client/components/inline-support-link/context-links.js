@@ -3,6 +3,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/account-settings/',
 		post_id: 80368,
 	},
+	advertising: {
+		link: 'https://wordpress.com/advertising/',
+		post_id: 213203,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,

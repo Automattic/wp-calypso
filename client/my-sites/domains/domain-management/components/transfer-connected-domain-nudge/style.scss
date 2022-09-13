@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .transfer-connected-domain-nudge {
 	display: flex;
@@ -8,11 +8,11 @@
 	padding: 5px;
 	margin: 12px 0 0;
 	gap: 8px;
-	background-color: var( --studio-gray-0 );
+	background-color: var(--studio-gray-0);
 	border-radius: 2px;
 	font-weight: 400;
 	font-size: $font-body-small;
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 
 	@include break-mobile {
 		margin: 8px 0 0;
@@ -22,6 +22,6 @@
 		min-width: 18px;
 		position: relative;
 		top: 2px;
-		fill: var( --color-accent );
+		fill: var(--color-accent);
 	}
 }

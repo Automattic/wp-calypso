@@ -30,7 +30,11 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 	isP2Flow,
+	isVideoPressFlow,
+	getVideoPressOnboardingTotalSteps,
+	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
+import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -102,6 +106,11 @@ export class UserStep extends Component {
 	};
 
 	componentDidUpdate() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
@@ -115,6 +124,11 @@ export class UserStep extends Component {
 	}
 
 	componentDidMount() {
+		if ( this.props.step?.status === 'completed' ) {
+			this.props.goToNextStep();
+			return;
+		}
+
 		if ( flows.getFlow( this.props.flowName, this.props.userLoggedIn )?.showRecaptcha ) {
 			this.initGoogleRecaptcha();
 		}
@@ -263,8 +277,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		this.props.goToNextStep();
 	};
 
 	submitForm = async ( form, userData, analyticsData ) => {
@@ -406,6 +418,10 @@ export class UserStep extends Component {
 			return translate( 'Continue' );
 		}
 
+		if ( isVideoPressFlow( flowName ) ) {
+			return translate( 'Continue' );
+		}
+
 		if ( this.userCreationPending() ) {
 			return translate( 'Creating Your Account…' );
 		}
@@ -455,9 +471,33 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
+					shouldDisplayUserExistsError
 				/>
 				<div id="g-recaptcha"></div>
 			</>
+		);
+	}
+
+	renderVideoPressSignupStep() {
+		return (
+			<VideoPressStepWrapper
+				flowName={ this.props.flowName }
+				stepName={ this.props.stepName }
+				positionInFlow={ this.props.positionInFlow }
+				headerText={ this.props.translate( "Let's get started" ) }
+				subHeaderText={ this.props.translate(
+					"We'll build your site with Videomaker, our premium theme for video creators. First, let's create your account.",
+					{}
+				) }
+				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
+					args: {
+						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
+						totalSteps: getVideoPressOnboardingTotalSteps(),
+					},
+				} ) }
+			>
+				{ this.renderSignupForm() }
+			</VideoPressStepWrapper>
 		);
 	}
 
@@ -489,6 +529,10 @@ export class UserStep extends Component {
 	render() {
 		if ( isP2Flow( this.props.flowName ) ) {
 			return this.renderP2SignupStep();
+		}
+
+		if ( isVideoPressFlow( this.props.flowName ) ) {
+			return this.renderVideoPressSignupStep();
 		}
 
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {

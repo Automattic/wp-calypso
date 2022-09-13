@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 .license-preview {
 	margin: 0;
 	font-size: 0.875rem;
 	line-height: 1.25rem;
-	color: var( --studio-gray-70 );
+	color: var(--studio-gray-70);
 	transition: margin 0.2s ease;
 
 	// Matching bottom margin of Card component.
@@ -14,7 +14,7 @@
 		margin-top: 10px;
 		margin-bottom: 10px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			margin-top: 16px;
 			margin-bottom: 16px;
 		}
@@ -33,11 +33,11 @@
 		}
 
 		&--is-detached.card.is-compact {
-			border-left: 3px solid var( --studio-orange-40 );
+			border-left: 3px solid var(--studio-orange-40);
 		}
 
 		&--is-revoked.card.is-compact {
-			border-left: 3px solid var( --studio-red-60 );
+			border-left: 3px solid var(--studio-red-60);
 		}
 	}
 
@@ -52,7 +52,7 @@
 		font-size: 1.25rem;
 		font-weight: normal;
 		line-height: 1.75rem;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		overflow: hidden;
 		word-break: break-all;
 
@@ -78,17 +78,17 @@
 
 		&--is-just-issued,
 		&--is-assigned {
-			color: var( --studio-green-50 );
+			color: var(--studio-green-50);
 			opacity: 0;
 			animation: hide-just-issued-tag 5s linear;
 		}
 
 		&--is-detached {
-			color: var( --studio-orange-40 );
+			color: var(--studio-orange-40);
 		}
 
 		&--is-revoked {
-			color: var( --studio-red-60 );
+			color: var(--studio-red-60);
 		}
 
 		svg {
@@ -120,8 +120,8 @@
 	&__copy-license-key {
 		&.button {
 			font-weight: 600;
-			color: var( --studio-gray-80 );
-			border-color: var( --color-text-subtle );
+			color: var(--studio-gray-80);
+			border-color: var(--color-text-subtle);
 		}
 	}
 

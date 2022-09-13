@@ -26,6 +26,7 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -102,6 +103,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			flowName,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -111,6 +113,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isCondensedFeaturesExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -144,12 +147,14 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isCondensedFeaturesExperiment={ isCondensedFeaturesExperiment }
 				/>
 			</div>
 		);
@@ -176,10 +181,11 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
-			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
+			domainAndPlanPackage,
 			translate,
 			locale,
+			flowName,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -226,6 +232,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
+					domainAndPlanPackage={ domainAndPlanPackage }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -233,7 +240,6 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
-					isProfessionalEmailPromotionAvailable={ isProfessionalEmailPromotionAvailable }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
@@ -244,6 +250,7 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,
@@ -275,6 +282,7 @@ export class PlansFeaturesMain extends Component {
 			hidePremiumPlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
+			flowName,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -307,6 +315,12 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+			plans = plans.filter(
+				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
+			);
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) ) {
@@ -437,7 +451,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	render() {
-		const { siteId, redirectToAddDomainFlow, shouldShowPlansFeatureComparison } = this.props;
+		const {
+			siteId,
+			redirectToAddDomainFlow,
+			domainAndPlanPackage,
+			shouldShowPlansFeatureComparison,
+		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
@@ -449,7 +468,7 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined ) {
+		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
 			hidePlanSelector = true;
 		}
 
@@ -488,6 +507,7 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
+	domainAndPlanPackage: PropTypes.string,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
@@ -498,7 +518,7 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	isProfessionalEmailPromotionAvailable: PropTypes.bool,
+
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
@@ -520,7 +540,6 @@ PlansFeaturesMain.defaultProps = {
 	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
-	isProfessionalEmailPromotionAvailable: false,
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',

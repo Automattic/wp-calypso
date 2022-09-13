@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
-import { urlToSlug } from 'calypso/lib/url';
+import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
+import { urlToSlug, withoutHttp } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
@@ -27,17 +28,13 @@ export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
 	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
-		staleTime: 1000 * 60 * 5, // 5 minutes
-		select: ( data ) => data?.sites.map( computeFields ),
+		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we
 			// only want to get the initial state. We don't want to be updated when the
 			// data from `getSites` changes.
 			const reduxData = getSites( store.getState() ).filter( notNullish );
 			return reduxData.length ? { sites: reduxData } : undefined;
-		},
-		placeholderData: {
-			sites: [],
 		},
 	} );
 };
@@ -48,12 +45,32 @@ function notNullish< T >( t: T | null | undefined ): t is T {
 	return t !== null && t !== undefined;
 }
 
-function computeFields( data: SiteExcerptNetworkData ): SiteExcerptData {
-	return {
-		...data,
-		// TODO: The algorithm Calypso uses to compute slugs is more sophisticated
-		// because it deals with comflicting URLs (see /client/state/sites/selectors/get-site-slug.js)
-		// We may need to request more site options to properly compute the slug.
-		slug: urlToSlug( data.URL ),
+// Gets the slug for a site, it also considers the unmapped URL,
+// if the site is a redirect or the domain has a jetpack collision.
+function getSiteSlug( site: SiteExcerptNetworkData, conflictingSites: number[] = [] ) {
+	if ( ! site ) {
+		return '';
+	}
+
+	const isSiteConflicting = conflictingSites.includes( site.ID );
+
+	if ( site.options?.is_redirect || isSiteConflicting ) {
+		return withoutHttp( getUnmappedUrl( site ) || '' );
+	}
+
+	return urlToSlug( site.URL );
+}
+
+function computeFields( allSites: SiteExcerptNetworkData[] ) {
+	const conflictingSites = getJetpackSiteCollisions( allSites );
+	return function computeFieldsSite( data: SiteExcerptNetworkData ): SiteExcerptData {
+		const trimmedName = data.name?.trim() ?? '';
+		const slug = getSiteSlug( data, conflictingSites );
+
+		return {
+			...data,
+			name: trimmedName.length > 0 ? trimmedName : slug,
+			slug,
+		};
 	};
 }

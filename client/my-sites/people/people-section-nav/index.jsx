@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { find, get, includes } from 'lodash';
 import { Component } from 'react';
@@ -61,7 +62,9 @@ class PeopleSectionNav extends Component {
 				id: 'followers',
 			},
 			{
-				title: translate( 'Email Followers', { context: 'Filter label for people list' } ),
+				title: isEnabled( 'subscriber-importer' )
+					? translate( 'Email Subscribers', { context: 'Filter label for people list' } )
+					: translate( 'Email Followers', { context: 'Filter label for people list' } ),
 				path: '/people/email-followers/' + siteFilter,
 				id: 'email-followers',
 			},

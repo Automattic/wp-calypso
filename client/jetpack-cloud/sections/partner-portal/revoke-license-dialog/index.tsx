@@ -77,7 +77,7 @@ export default function RevokeLicenseDialog( {
 				&nbsp;
 				<a
 					className="revoke-license-dialog__learn-more"
-					href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
 					target="_blank"
 					rel="noreferrer noopener"
 				>

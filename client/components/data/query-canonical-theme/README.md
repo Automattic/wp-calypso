@@ -16,7 +16,7 @@ function MyTheme( { theme } ) {
 	return (
 		<div>
 			<QueryCanonicalTheme siteId={ 3584907 } themeId={ 'twentysixteen' } />
-			<Theme theme={ theme } />} }
+			<Theme theme={ theme } />
 		</div>
 	);
 }

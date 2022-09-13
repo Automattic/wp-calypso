@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/variables';
-@import '@automattic/color-studio/dist/color-variables';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
 
 .help-center-contact-form__site-picker-hes-tray {
 	margin-top: 16px;
@@ -15,7 +15,7 @@
 	img {
 		width: 32px;
 		height: 32px;
-		border: 2px solid white;
+		border: 2px solid #fff;
 		border-radius: 50%; // stylelint-disable-line declaration-property-unit-allowed-list
 	}
 
@@ -25,7 +25,7 @@
 
 	.help-center-contact-form__site-picker-hes-tray-text {
 		font-size: $font-body-extra-small;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		margin: 0;
 		margin-left: 8px;
 	}
@@ -46,8 +46,9 @@
 			&.components-text-control__input {
 				// they have very high specificity
 				padding: 15.5px !important;
-				border: 1px solid var( --studio-gray-10 ) !important;
+				border: 1px solid var(--studio-gray-10) !important;
 				border-radius: 4px !important;
+				box-sizing: border-box;
 			}
 		}
 	}
@@ -55,54 +56,87 @@
 	.site-picker__site-item {
 		padding: 12px 8px;
 	}
+
+	.popover.is-top-left {
+		z-index: 9999;
+
+		.popover__arrow {
+			z-index: 1;
+		}
+
+		.popover__inner span {
+			display: block;
+			padding: 16px;
+		}
+	}
+
 }
 
 .help-center-contact-form__message,
 .help-center-contact-form__subject input.components-text-control__input {
 	padding: 15.5px;
-	border: 1px solid var( --studio-gray-10 );
+	border: 1px solid var(--studio-gray-10);
 	border-radius: 4px;
 	width: 100%;
 	display: block;
+	box-sizing: border-box;
 
 	&:focus {
 		box-shadow: none;
 		outline: none;
-		border-color: var( --studio-gray-10 );
+		border-color: var(--studio-gray-10);
 	}
 }
 
-.button.help-center-contact-form__site-picker-cta.is-primary {
-	background-color: var( --color-accent );
-	border-color: var( --color-accent );
-	color: var( --color-text-inverted );
+section.contact-form-submit {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #fff;
+	padding: 16px;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
 
-	&:hover {
-		color: var( --color-text-inverted );
-		background-color: var( --color-accent-60 );
-		border-color: var( --color-accent-60 );
-	}
+	.button.help-center-contact-form__site-picker-cta.is-primary {
+		background-color: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-text-inverted);
 
-	&:disabled {
-		background-color: var( --color-surface ) !important;
-		border-color: var( --color-neutral-5 ) !important;
-		color: var( --color-neutral-20 ) !important;
+		&:hover,
+		&:focus {
+			color: var(--color-text-inverted);
+			background-color: var(--color-accent-60);
+			border-color: var(--color-accent-60);
+		}
+
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var(--color-accent-60);
+			outline-offset: 2px;
+		}
+
+		&:disabled {
+			background-color: var(--color-surface) !important;
+			border-color: var(--color-neutral-5) !important;
+			color: var(--color-neutral-20) !important;
+		}
 	}
 }
 
 .help-center .help-center-contact-form .site-picker__site-item-site-logo svg {
-	fill: var( --studio-gray-30 );
+	fill: var(--studio-gray-30);
 }
 
 .help-center-contact-form__site-picker-title {
 	font-size: $root-font-size;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	margin-top: 20px;
 }
 
 .help-center-contact-form__site-picker-form-warning,
 .help-center-contact-form__site-picker-form-subtitle {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 }
 
 .help-center-contact-form__site-picker-cta {
@@ -111,14 +145,14 @@
 }
 
 .help-center-contact-form__label {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	margin-bottom: 8px;
 	display: block;
 }
 
 .help-center-notice__positive-feedback {
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	max-width: 100%;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -126,7 +160,7 @@
 }
 
 .help-center-notice__container {
-	background-color: var( --studio-gray-0 );
+	background-color: var(--studio-gray-0);
 	border-radius: 4px;
 	color: $studio-gray-80;
 	padding: 16px 21px;
@@ -141,26 +175,11 @@
 
 	.dashicon {
 		display: block;
-		color: var( --studio-orange-40 );
+		color: var(--studio-orange-40);
 		margin-top: 2px;
 	}
 	.components-external-link__icon {
 		display: none;
-	}
-}
-
-.help-center-contact-form {
-	.popover.is-top-left {
-		z-index: 9999;
-
-		.popover__arrow {
-			z-index: 1;
-		}
-
-		.popover__inner span {
-			display: block;
-			padding: 16px;
-		}
 	}
 }
 
@@ -172,13 +191,13 @@
 		padding-left: 8px;
 
 		svg {
-			fill: var( --studio-gray-50 );
+			fill: var(--studio-gray-50);
 		}
 	}
 }
 
 .form-input-validation {
-	line-height: 1.5rem;
+	line-height: 1.5;
 
 	.gridicon {
 		fill: currentColor;

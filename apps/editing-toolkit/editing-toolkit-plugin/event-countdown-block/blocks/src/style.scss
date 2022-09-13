@@ -21,7 +21,7 @@
 
 	.event-countdown__day {
 		line-height: 1;
-		font-weight: 900;
+		font-weight: 900; /* stylelint-disable-line scales/font-weights */
 		display: block;
 	}
 
@@ -121,7 +121,8 @@ $ecf_color6: #b82806;
 		border-radius: 50%;
 		animation: 1s event_countdown_bang ease-out infinite backwards, 1s event_countdown_gravity ease-in infinite backwards, 5s event_countdown_position linear infinite backwards;
 		mix-blend-mode: overlay;
-		box-shadow: -120px -218.66667px $ecf_color1,
+		box-shadow:
+			-120px -218.66667px $ecf_color1,
 			248px -16.66667px $ecf_color3,
 			190px 16.33333px $ecf_color1,
 			-113px -308.66667px $ecf_color5,
@@ -189,34 +190,39 @@ $ecf_color6: #b82806;
 
 @keyframes event_countdown_gravity {
 	to {
-		transform: translateY( 200px );
-		-webkit-transform: translateY( 200px );
+		transform: translateY(200px);
+		-webkit-transform: translateY(200px);
 		opacity: 0;
 	}
 }
 
 @keyframes event_countdown_position {
-	0%, 19.9% {
+	0%,
+	19.9% {
 		margin-top: 10%;
 		margin-left: 40%;
 	}
 
-	20%, 39.9% {
+	20%,
+	39.9% {
 		margin-top: 40%;
 		margin-left: 30%;
 	}
 
-	40%, 59.9% {
+	40%,
+	59.9% {
 		margin-top: 20%;
 		margin-left: 70%;
 	}
 
-	60%, 79.9% {
+	60%,
+	79.9% {
 		margin-top: 30%;
 		margin-left: 20%;
 	}
 
-	80%, 99.9% {
+	80%,
+	99.9% {
 		margin-top: 30%;
 		margin-left: 80%;
 	}

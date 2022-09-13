@@ -155,7 +155,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Get social, and share your blog posts where the people are' ) }
 					description={ translate(
-						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
+						"Use your site's Jetpack Social tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
 					) }
 					imagePath="/calypso/images/marketing/social-media-logos.svg"
 				>

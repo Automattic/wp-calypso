@@ -12,9 +12,8 @@ import * as ProductsList from './products-list';
 import * as Reader from './reader';
 import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
+import * as Subscriber from './subscriber';
 import * as User from './user';
-import * as Verticals from './verticals';
-import * as VerticalsTemplates from './verticals-templates';
 import * as WPCOMFeatures from './wpcom-features';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
@@ -22,11 +21,15 @@ export { useSiteAnalysis } from './queries/use-site-analysis';
 export type { AnalysisReport } from './queries/use-site-analysis';
 export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
 export { useSiteIntent } from './queries/use-site-intent';
+export { useSiteLogoMutation } from './queries/use-site-logo-mutation';
+export type { SetSiteLogoResponse } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
+export { useStarterDesignBySlug } from './starter-designs-queries/use-starter-design-by-slug';
 export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
 export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
+export { isThemeVerticalizable } from './starter-designs-queries/utils';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
@@ -38,8 +41,6 @@ export {
 	HelpCenter,
 	I18n,
 	Site,
-	Verticals,
-	VerticalsTemplates,
 	Plans,
 	Launch,
 	WPCOMFeatures,
@@ -49,6 +50,7 @@ export {
 	ProductsList,
 	AutomatedTransferEligibility,
 	StepperInternal,
+	Subscriber,
 };
 
 /**

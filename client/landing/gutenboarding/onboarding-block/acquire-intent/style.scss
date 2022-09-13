@@ -1,13 +1,13 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../mixins';
-@import '../../variables.scss';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "../../mixins";
+@import "../../variables.scss";
 
 .acquire-intent {
 	@include onboarding-heading-text-mobile;
-	background-color: var( --contrastColor );
-	color: var( --mainColor );
+	background-color: var(--contrastColor);
+	color: var(--mainColor);
 	tab-size: 4;
-	min-height: calc( 100vh - 2 * #{$onboarding-header-height} );
+	min-height: calc(100vh - 2 * #{$onboarding-header-height});
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -67,7 +67,7 @@
 
 .site-title__input-hint {
 	display: flex;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	font-family: $default-font;
 	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	font-size: 14px;
@@ -86,7 +86,7 @@
 	}
 
 	svg {
-		fill: var( --studio-yellow-30 );
+		fill: var(--studio-yellow-30);
 		margin-right: $grid-unit-10;
 		margin-top: -2px;
 	}

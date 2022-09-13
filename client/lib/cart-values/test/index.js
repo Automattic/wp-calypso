@@ -26,7 +26,7 @@ describe( 'index', () => {
 				blog_id: TEST_BLOG_ID,
 				products: [ DOMAIN_REGISTRATION_PRODUCT ],
 			};
-			assert( ! cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) );
+			expect( cartItems.hasProduct( cartWithoutPremium, PREMIUM_PRODUCT ) ).toBe( false );
 		} );
 	} );
 } );

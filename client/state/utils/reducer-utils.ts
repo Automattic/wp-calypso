@@ -106,7 +106,6 @@ export function addReducer(
  * ```
  *
  * Persistence must be enabled explicitly with the `withPersistence` helper.
- *
  * @example
  * ```js
  * const date = withPersistence(
@@ -139,7 +138,6 @@ export function addReducer(
  * serialize( combinedReducer, { date: new Date( 6 ), height: 123 } ); // { date: 6 };
  * combinedReducer( { date: new Date( 6 ), height: 123 } ), { type: GROW } ); // { date: new Date( 7 ), height: 124 };
  * ```
- *
  * @param reducers - object containing the reducers to merge
  * @returns - Returns the combined reducer function
  */

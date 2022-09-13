@@ -1,6 +1,6 @@
 # Promo Card
 
-A [`Card` component](../../components/card) based on [`ActionPanel'](../../components/action-panel) designed to promote plan features and partnerships.
+A [`Card` component](../../components/card) based on [`ActionPanel`](../../components/action-panel) designed to promote plan features and partnerships.
 
 ## Usage
 

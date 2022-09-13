@@ -230,6 +230,9 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 						collapseFeaturesOnMobile={ collapseFeaturesOnMobile }
 					/>
 				) }
+				{ item.disclaimer && (
+					<span className="jetpack-product-card__disclaimer">{ item.disclaimer }</span>
+				) }
 			</div>
 		</div>
 	);

@@ -1,22 +1,22 @@
-@import '@automattic/onboarding/styles/variables';
+@import "@automattic/onboarding/styles/variables";
 
 .nux-launch-step__input {
 	position: relative;
 	margin-bottom: 20px;
 
-	input[type='text'].components-text-control__input {
+	input[type="text"].components-text-control__input {
 		padding: 6px 40px 6px 16px;
 		height: 38px;
 		background: $gray-100;
 		border: none;
 
 		&::placeholder {
-			color: var( --studio-black );
+			color: var(--studio-black);
 		}
 
 		&:focus {
-			box-shadow: 0 0 0 2px var( --studio-blue-30 );
-			background: var( --studio-white );
+			box-shadow: 0 0 0 2px var(--studio-blue-30);
+			background: var(--studio-white);
 		}
 	}
 
@@ -30,7 +30,7 @@
 .nux-launch-step__input-hint {
 	display: flex;
 	align-items: center;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	font-family: $default-font;
 	font-size: 14px;
 	line-height: 14px;

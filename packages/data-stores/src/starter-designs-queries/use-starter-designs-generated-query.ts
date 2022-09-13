@@ -48,5 +48,6 @@ function apiStarterDesignsGeneratedToDesign( design: StarterDesignsGenerated ): 
 		template: '',
 		theme: '',
 		design_type: 'vertical',
+		verticalizable: true,
 	};
 }

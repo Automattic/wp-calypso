@@ -11,25 +11,24 @@ import {
 	RestAPIClient,
 	CartCheckoutPage,
 	TestAccount,
-	DomainSearchComponent,
+	SignupDomainPage,
 	MediaPage,
+	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import { apiDeleteSite } from '../shared';
-import type { SiteDetails } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
 
 describe(
 	DataHelper.createSuiteTitle( 'Plans: Create a WordPress.com Business site as exising user' ),
 	function () {
-		const blogName = DataHelper.getBlogName();
 		const planName = 'Business';
 
 		let testAccount: TestAccount;
 		let page: Page;
 		let siteCreatedFlag = false;
-		let siteDetails: SiteDetails;
+		let newSiteDetails: NewSiteResponse;
 
 		beforeAll( async function () {
 			page = await browser.newPage();
@@ -49,15 +48,14 @@ describe(
 				await page.goto( DataHelper.getCalypsoURL( 'start' ) );
 			} );
 
-			it( 'Select a .wordpres.com domain name', async function () {
-				const domainSearchComponent = new DomainSearchComponent( page );
-				await domainSearchComponent.search( blogName );
-				await domainSearchComponent.selectDomain( '.wordpress.com' );
+			it( 'Skip domain selection', async function () {
+				const signupDomainPage = new SignupDomainPage( page );
+				await signupDomainPage.skipDomainSelection();
 			} );
 
 			it( `Select WordPress.com ${ planName } plan`, async function () {
 				const signupPickPlanPage = new SignupPickPlanPage( page );
-				siteDetails = await signupPickPlanPage.selectPlan( planName );
+				newSiteDetails = await signupPickPlanPage.selectPlan( planName );
 
 				siteCreatedFlag = true;
 			} );
@@ -110,7 +108,11 @@ describe(
 				password: testAccount.credentials.password,
 			} );
 
-			await apiDeleteSite( restAPIClient, siteDetails );
+			await apiDeleteSite( restAPIClient, {
+				url: newSiteDetails.blog_details.url,
+				id: newSiteDetails.blog_details.blogid,
+				name: newSiteDetails.blog_details.blogname,
+			} );
 		} );
 	}
 );

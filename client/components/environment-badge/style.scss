@@ -3,7 +3,7 @@
 	position: fixed;
 	bottom: 27px;
 	right: 86px;
-	z-index: z-index( 'root', '.environment-badge' );
+	z-index: z-index("root", ".environment-badge");
 
 	&:hover .environment {
 		display: inline-block;
@@ -24,14 +24,14 @@
 		display: inline-block;
 		width: 26px;
 		height: 26px;
-		background-color: var( --color-surface );
-		border: solid 1px var( --color-neutral-70 );
+		background-color: var(--color-surface);
+		border: solid 1px var(--color-neutral-70);
 		border-radius: 50%;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		margin-left: -4px;
 		text-decoration: none;
 		text-align: center;
-		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
+		z-index: z-index(".environment-badge", ".environment-badge .bug-report");
 		transition: border-radius 0.2s ease-out;
 
 		.gridicon {
@@ -49,8 +49,8 @@
 		padding: 4px 7px 4px 6px;
 		vertical-align: middle;
 		transition: all 0.2s ease-out;
-		background-color: var( --color-surface );
-		box-shadow: 0 0 0 1px var( --color-neutral-70 );
+		background-color: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--color-neutral-70);
 
 		&.is-env {
 			display: inline-block;
@@ -58,40 +58,40 @@
 		a {
 			text-decoration: none;
 			display: inline-block;
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 
 			&:hover {
-				transform: scale( 1.1 );
+				transform: scale(1.1);
 			}
 		}
 
 		@mixin env-bug-style( $color-name ) {
-			background-color: var( --studio-#{$color-name}-20 );
-			color: var( --studio-#{$color-name}-90 );
+			background-color: var(--studio-#{$color-name}-20);
+			color: var(--studio-#{$color-name}-90);
 		}
 
 		&.is-staging {
-			@include env-bug-style( 'orange' );
+			@include env-bug-style( "orange" );
 		}
 		&.is-wpcalypso {
-			@include env-bug-style( 'celadon' );
+			@include env-bug-style( "celadon" );
 		}
 		&.is-dev {
-			@include env-bug-style( 'purple' );
+			@include env-bug-style( "purple" );
 		}
 		&.is-horizon,
 		&.is-feedback {
-			@include env-bug-style( 'blue' );
+			@include env-bug-style( "blue" );
 		}
 		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {
-			@include env-bug-style( 'jetpack-green' );
+			@include env-bug-style( "jetpack-green" );
 		}
 
 		&.branch-name {
 			text-transform: inherit;
-			background-color: var( --color-neutral-70 );
-			color: var( --color-text-inverted );
+			background-color: var(--color-neutral-70);
+			color: var(--color-text-inverted);
 		}
 	}
 
@@ -104,7 +104,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '<960px' ) {
+@include breakpoint-deprecated( "<960px" ) {
 	// Don't show environment badge on smaller screens. It just gets in the way.
 	.environment-badge {
 		display: none;

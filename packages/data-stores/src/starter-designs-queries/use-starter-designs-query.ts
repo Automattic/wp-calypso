@@ -1,11 +1,18 @@
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { isThemeVerticalizable } from './utils';
 import type { StarterDesigns } from './types';
-import type { Category, Design, DesignRecipe } from '@automattic/design-picker/src/types';
+import type {
+	Category,
+	Design,
+	DesignRecipe,
+	StyleVariation,
+} from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
 	vertical_id: string;
+	intent: string;
 	seed?: string;
 	_locale: string;
 }
@@ -23,8 +30,10 @@ interface StaticDesign {
 	recipe: DesignRecipe;
 	slug: string;
 	title: string;
+	description: string;
 	categories: Category[];
 	price?: string;
+	style_variations?: StyleVariation[];
 }
 
 interface GeneratedDesign {
@@ -65,18 +74,21 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, recipe, categories, price } = design;
+	const { slug, title, description, recipe, categories, price, style_variations } = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
 	return {
 		slug,
 		title,
+		description,
 		recipe,
 		categories,
 		is_premium,
 		price,
 		design_type: is_premium ? 'premium' : 'standard',
+		style_variations,
+		verticalizable: isThemeVerticalizable( recipe.stylesheet ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
@@ -97,5 +109,6 @@ function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
 		template: '',
 		theme: '',
 		design_type: 'vertical',
+		verticalizable: true,
 	};
 }

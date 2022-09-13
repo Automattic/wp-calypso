@@ -12,6 +12,7 @@ import type {
 	JETPACK_PRODUCT_CATEGORIES,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 export type Feature = string;
 
@@ -33,6 +34,12 @@ export interface WPComPlan extends Plan {
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
+	getNewsletterDescription?: () => string;
+	getNewsletterSignupFeatures?: () => Feature[];
+	getNewsletterHighlightedFeatures?: () => Feature[];
+	getLinkInBioDescription?: () => string;
+	getLinkInBioSignupFeatures?: () => Feature[];
+	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -53,11 +60,29 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+export type SelectorProductFeaturesItem = {
+	slug: string;
+	icon?:
+		| string
+		| {
+				icon: string;
+				component?: ReactElement;
+		  };
+	text: TranslateResult;
+	description?: TranslateResult;
+	subitems?: SelectorProductFeaturesItem[];
+	isHighlighted?: boolean;
+	isDifferentiator?: boolean;
+};
+
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
 	getPathSlug: () => string;
+	getWhatIsIncluded: () => Array< TranslateResult >;
+	getBenefits: () => Array< TranslateResult >;
+	getRecommendedFor: () => Array< TranslateResult >;
 }
 
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
@@ -92,6 +117,8 @@ export type Plan = BillingTerm & {
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
+	getCondensedExperimentFeatures?: () => string[];
+	getCondensedExperimentUniqueFeatures?: () => string[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
@@ -117,6 +144,10 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getFeaturedText?: () => TranslateResult;
+	getWhatIsIncluded?: () => Array< TranslateResult >;
+	getBenefits?: () => Array< TranslateResult >;
+	getRecommendedFor?: () => Array< TranslateResult >;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

@@ -71,7 +71,7 @@ module.exports = {
 			// basic recommended rules config from the TypeScript plugin
 			{ rules: require( '@typescript-eslint/eslint-plugin' ).configs.recommended.rules },
 			// disables rules that are already checked by the TypeScript compiler
-			// see https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin/src/configs#eslint-recommended
+			// see https://github.com/typescript-eslint/typescript-eslint/tree/main/packages/eslint-plugin/src/configs#eslint-recommended
 			{
 				rules: require( '@typescript-eslint/eslint-plugin' ).configs[ 'eslint-recommended' ]
 					.overrides[ 0 ].rules,
@@ -83,7 +83,7 @@ module.exports = {
 				files: [ '**/*.ts', '**/*.tsx' ],
 				rules: {
 					// Disable vanilla eslint rules that have a Typescript implementation
-					// See https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/README.md#extension-rules
+					// See https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/README.md#extension-rules
 					'brace-style': 'off',
 					'comma-dangle': 'off',
 					'comma-spacing': 'off',
@@ -138,8 +138,7 @@ module.exports = {
 		{
 			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
 			// See:
-			// eslint-disable-next-line inclusive-language/use-inclusive-words
-			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://github.com/highlightjs/highlight.js/blob/main/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
 			files: [
 				'*.md.js',
@@ -193,6 +192,12 @@ module.exports = {
 						'@automattic/json/valid-values-license': [ 'error', [ 'GPL-2.0-or-later' ] ],
 						'@automattic/json/valid-values-name-scope': [ 'error', [ '@automattic' ] ],
 						'@automattic/json/valid-values-publishConfig': [ 'error', [ { access: 'public' } ] ],
+					},
+				},
+				{
+					files: [ './config/*.json' ],
+					rules: {
+						'sort-keys': 'warn',
 					},
 				},
 				{
@@ -388,12 +393,7 @@ module.exports = {
 		'react/forbid-foreign-prop-types': 'error',
 
 		// enforce our classname namespacing rules
-		'wpcalypso/jsx-classname-namespace': [
-			2,
-			{
-				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
-			},
-		],
+		'wpcalypso/jsx-classname-namespace': 'error',
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls

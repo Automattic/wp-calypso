@@ -52,6 +52,10 @@ export function isRequestingForSites( state, sites ) {
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
 }
 
+export function isRequestingForAllSites( state ) {
+	return state.plugins.installed.isRequestingAll;
+}
+
 export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
@@ -60,9 +64,15 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 				return memo;
 			}
 
+			// We currently support fetching plugins per site and also fetching all plugins
+			// in bulk, aiming to optimize the UX in some flows.
+			if ( isRequestingForAllSites( state ) ) {
+				return memo;
+			}
+
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
-				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
 
 				memo[ item.slug ] = {
 					...memo[ item.slug ],

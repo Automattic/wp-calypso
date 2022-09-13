@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '../../../assets/stylesheets/shared/mixins/_placeholder';
-@import '@automattic/typography/styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../../assets/stylesheets/shared/mixins/_placeholder";
+@import "@automattic/typography/styles/variables";
 
 .help-results {
 	margin-bottom: 16px;
@@ -25,15 +25,15 @@
 .help-result {
 	&:hover {
 		.help-result__wrapper {
-			background-color: var( --color-primary-0 );
+			background-color: var(--color-primary-0);
 		}
 		.help-result__title {
-			color: var( --color-primary-dark );
+			color: var(--color-primary-dark);
 		}
 
 		.help-result__icon-wrapper {
-			fill: var( --color-primary-dark );
-			background-color: var( --color-primary-10 );
+			fill: var(--color-primary-dark);
+			background-color: var(--color-primary-10);
 		}
 	}
 }
@@ -45,7 +45,7 @@
 }
 
 .help-result__icon-wrapper {
-	background: var( --color-primary-0 );
+	background: var(--color-primary-0);
 	width: 160px;
 	height: 120px;
 	display: none;
@@ -71,7 +71,7 @@
 }
 
 .help-result__icon {
-	fill: var( --color-primary );
+	fill: var(--color-primary);
 }
 
 .help-result__content-wrapper {
@@ -84,14 +84,14 @@
 }
 
 .help-result__title {
-	color: var( --color-text );
+	color: var(--color-text);
 	font-size: $font-body;
 	font-weight: 600;
 	margin: 0 0 8px;
 }
 
 .help-result__description {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body;
 	line-height: 24px;
 	margin: 0 0 8px;
