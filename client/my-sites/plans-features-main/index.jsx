@@ -24,6 +24,7 @@ import {
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
+	TITAN_MAIL_MONTHLY_SLUG,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -47,6 +48,7 @@ import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -438,10 +440,10 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost } = this.props;
 
 		if ( isInSignup ) {
-			return <PlanFAQ />;
+			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
 		}
 
 		return <WpcomFAQ />;
@@ -557,6 +559,7 @@ export default connect(
 		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
+		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -586,6 +589,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
+			titanMonthlyRenewalCost,
 		};
 	},
 	{
