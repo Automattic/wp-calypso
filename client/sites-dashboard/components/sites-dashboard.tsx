@@ -90,18 +90,19 @@ const sitesMargin = css( {
 	marginBlockEnd: '1.5em',
 } );
 
-const DashboardPagination = styled( Pagination )( {
+const PageBodyBottomContainer = styled.div( {
 	color: 'var( --color-text-subtle )',
 	paddingBlockStart: '16px',
 	paddingBlockEnd: '24px',
+	gap: '24px',
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		paddingBlockEnd: '48px',
+	},
 } );
 
 const HiddenSitesMessageContainer = styled.div( {
-	color: 'var( --color-text-subtle )',
 	fontSize: '14px',
 	paddingInline: 0,
-	paddingBlockStart: '16px',
-	paddingBlockEnd: '24px',
 	textAlign: 'center',
 } );
 
@@ -211,36 +212,41 @@ export function SitesDashboard( {
 									className={ sitesMargin }
 								/>
 							) }
-							{ ( displayMode === 'list' || displayMode === 'tile' ) && (
-								<DashboardPagination
-									page={ page }
-									perPage={ perPage }
-									total={ filteredSites.length }
-									pageClick={ ( newPage ) => {
-										handleQueryParamChange( { page: newPage } );
-									} }
-								/>
-							) }
-							{ selectedStatus.hiddenCount > 0 && 'none' !== displayMode && (
-								<HiddenSitesMessageContainer>
-									<HiddenSitesMessage>
-										{ sprintf(
-											/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-											_n(
-												'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-												'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-												selectedStatus.hiddenCount
-											),
-											{
-												hiddenSitesCount: selectedStatus.hiddenCount,
-											}
+							{ ( selectedStatus.hiddenCount > 0 || filteredSites.length > perPage ) &&
+								'none' !== displayMode && (
+									<PageBodyBottomContainer>
+										<Pagination
+											page={ page }
+											perPage={ perPage }
+											total={ filteredSites.length }
+											pageClick={ ( newPage ) => {
+												handleQueryParamChange( { page: newPage } );
+											} }
+										/>
+										{ selectedStatus.hiddenCount > 0 && (
+											<HiddenSitesMessageContainer>
+												<HiddenSitesMessage>
+													{ sprintf(
+														/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+														_n(
+															'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+															'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+															selectedStatus.hiddenCount
+														),
+														{
+															hiddenSitesCount: selectedStatus.hiddenCount,
+														}
+													) }
+												</HiddenSitesMessage>
+												<Button
+													href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }
+												>
+													{ __( 'Show all' ) }
+												</Button>
+											</HiddenSitesMessageContainer>
 										) }
-									</HiddenSitesMessage>
-									<Button href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }>
-										{ __( 'Show all' ) }
-									</Button>
-								</HiddenSitesMessageContainer>
-							) }
+									</PageBodyBottomContainer>
+								) }
 						</>
 					) : (
 						<NoSitesMessage
