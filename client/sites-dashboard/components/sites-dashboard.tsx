@@ -186,6 +186,7 @@ export function SitesDashboard( {
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
 					<SplitButton
 						primary
+						whiteSeparator
 						label={ __( 'Add new site' ) }
 						href="/start?source=sites-dashboard&ref=sites-dashboard"
 					>
