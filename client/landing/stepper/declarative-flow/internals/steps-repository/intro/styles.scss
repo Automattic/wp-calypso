@@ -14,7 +14,7 @@
 		background-size: auto 30%, auto 50%;
 
 
-		@include break-xlarge {
+		@include break-huge {
 			background-size: auto 55%, auto 80%;
 			background-position-y: 100%, 136px;
 			background-image:
@@ -34,7 +34,7 @@
 		background-attachment: fixed;
 		background-size: auto 15%, auto 15%;
 
-		@include break-xlarge {
+		@include break-huge {
 			background-size: auto 25%, auto 25%;
 			background-position-y: 85%, 10%;
 			background-image:
