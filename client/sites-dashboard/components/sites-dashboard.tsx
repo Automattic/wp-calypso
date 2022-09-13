@@ -33,6 +33,8 @@ interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
 
+const TRACK_SOURCE_NAME = 'sites-dashboard';
+
 const MAX_PAGE_WIDTH = '1280px';
 
 // Two wrappers are necessary (both pagePadding _and_ wideCentered) because we
@@ -189,9 +191,11 @@ export function SitesDashboard( {
 						primary
 						whiteSeparator
 						label={ __( 'Add new site' ) }
-						href="/start?source=sites-dashboard&ref=sites-dashboard"
+						href={ `/start?source=${ TRACK_SOURCE_NAME }&ref=${ TRACK_SOURCE_NAME }` }
 					>
-						<PopoverMenuItem href="/jetpack/connect">
+						<PopoverMenuItem
+							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+						>
 							<JetpackLogo className="gridicon" size={ 18 } />
 							<span>{ __( 'Connect a Jetpack site' ) }</span>
 						</PopoverMenuItem>
