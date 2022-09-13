@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import { getLocaleSlug } from 'i18n-calypso';
 import type { WPElement } from '@wordpress/element';
 
 interface Props {
@@ -16,7 +17,7 @@ interface IntroContent {
 }
 
 const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 
 	const introContent: IntroContent = {
 		newsletter: {
@@ -31,7 +32,11 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Set up your Link in Bio' ),
+			buttonText:
+				hasTranslation( 'Set up your Link in Bio' ) ||
+				[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+					? __( 'Set up your Link in Bio' )
+					: __( 'Setup your Link in Bio' ),
 		},
 	};
 
