@@ -18,9 +18,6 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import MappedDomainType from './domain-types/mapped-domain-type';
 import RegisteredDomainType from './domain-types/registered-domain-type';
-import SiteRedirectType from './domain-types/site-redirect-type';
-import TransferInDomainType from './domain-types/transfer-in-domain-type';
-import WpcomDomainType from './domain-types/wpcom-domain-type';
 
 import './style.scss';
 
@@ -62,15 +59,6 @@ class Edit extends Component {
 
 			case domainTypes.REGISTERED:
 				return RegisteredDomainType;
-
-			case domainTypes.SITE_REDIRECT:
-				return SiteRedirectType;
-
-			case domainTypes.TRANSFER:
-				return TransferInDomainType;
-
-			case domainTypes.WPCOM:
-				return WpcomDomainType;
 
 			default:
 				return null;
