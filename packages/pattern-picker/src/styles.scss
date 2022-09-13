@@ -60,12 +60,30 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	padding-left: 50%;
 	padding-right: 50%;
 	overflow: hidden;
+	/*!rtl:ignore*/
+	direction: ltr;
 
 	// transform transitions during dragging make it laggy
 	&.is-dragging {
 		.pattern-picker__item {
 			transition: opacity 0.3s ease-in-out;
 		}
+	}
+}
+
+.pattern-picker__controls {
+	display: none;
+	position: absolute;
+	width: 100%;
+	top: calc(50% - 20px);
+	/*!rtl:ignore*/
+	direction: ltr;
+	padding: 20px;
+	box-sizing: border-box;
+
+	@include break-small {
+		display: flex;
+		justify-content: space-between;
 	}
 }
 
@@ -79,28 +97,19 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	border-radius: 50%;
 	opacity: 0.5;
-	position: absolute;
-	top: 50%;
+	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
 	transition: opacity 0.3s ease-in-out;
-	display: none;
+
 	cursor: pointer;
-
-	&--back {
-		left: 20px;
-	}
-
-	&--next {
-		right: 20px;
-	}
 
 	&:hover {
 		opacity: 1;
 		fill: var(--studio-blue-50);
 	}
 
-	@include break-small {
-		display: flex;
+	&.is-hidden {
+		visibility: hidden;
 	}
 }
 
