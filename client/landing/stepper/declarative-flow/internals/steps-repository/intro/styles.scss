@@ -17,6 +17,9 @@
 		@include break-xlarge {
 			background-size: auto 55%, auto 80%;
 			background-position-y: 100%, 136px;
+			background-image:
+				url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
 		}
 	}
 

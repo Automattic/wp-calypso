@@ -79,6 +79,9 @@
 			@include break-large {
 				background-size: auto 80%, auto 45%;
 				background-position-y: 70%, 100%;
+				background-image:
+					url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.png),
+					url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.png);
 			}
 		}
 	}
