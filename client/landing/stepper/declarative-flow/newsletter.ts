@@ -10,6 +10,7 @@ import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow } from './internals/types';
+import wpcomRequest from 'wpcom-proxy-request';
 
 export const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -40,6 +41,13 @@ export const newsletter: Flow = {
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`;
 		};
+
+		// trigger guides on step movement, we don't care about failures or response
+		wpcomRequest( {
+			path: `guides/trigger?flow=${ name }&step=${ _currentStep }`,
+			apiNamespace: 'wpcom/v2/',
+			apiVersion: '2',
+		} );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
