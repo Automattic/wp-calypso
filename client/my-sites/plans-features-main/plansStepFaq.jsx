@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
@@ -148,10 +147,6 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 			</FoldableFAQ>
 		</div>
 	);
-};
-
-PlanFAQ.propTypes = {
-	price: PropTypes.string,
 };
 
 export default PlanFAQ;
