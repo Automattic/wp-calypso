@@ -11,7 +11,7 @@ ENV PERSISTENT_CACHE=true
 ENV READONLY_CACHE=false
 ENV PROFILE=true
 ENV SKIP_TSC=true
-ENV NVM_DIR=/calypso/.nvm
+# ENV NVM_DIR=/calypso/.nvm
 ENV CALYPSO_ENV=production
 ENV BUILD_TRANSLATION_CHUNKS=true
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
@@ -37,7 +37,7 @@ RUN cd / \
 ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
-#### This image can be used as a base image for other builds, or to uni test and build calypso.
+#### This image can be used as a base image for other builds, or to unit test and build calypso.
 FROM node:16.17.0-alpine as base
 
 ARG node_memory=8192
@@ -46,7 +46,7 @@ ARG UID=1003
 
 WORKDIR /calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
-ENV NVM_DIR=/calypso/.nvm
+# ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 ENV SKIP_TSC=true
@@ -55,7 +55,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apk update \
-	&& apk add sudo zip jq \
+	&& apk add --no-cache sudo zip jq \
 	&& adduser --uid $UID --disabled-password $user \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
@@ -65,10 +65,10 @@ RUN apk update \
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
-COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
+# COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
-COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
+# COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
 ENTRYPOINT [ "/bin/bash" ]
