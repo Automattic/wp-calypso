@@ -19,10 +19,10 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
-const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
+const SiteOptions: Step = function SiteOptions( { navigation, flow, data } ) {
 	const { goBack, goNext, submit } = navigation;
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
-	const [ tagline, setTagline ] = React.useState( '' );
+	const [ siteTitle, setSiteTitle ] = React.useState( ( data?.siteTitle ?? '' ) as string );
+	const [ tagline, setTagline ] = React.useState( ( data?.tagline ?? '' ) as string );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
