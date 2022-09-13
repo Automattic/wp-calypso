@@ -1,5 +1,6 @@
 import { filter, flow } from 'lodash';
 import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import detectCrowdsignal from 'calypso/lib/post-normalizer/rule-content-detect-crowdsignal';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
 import detectSurveys from 'calypso/lib/post-normalizer/rule-content-detect-surveys';
@@ -104,6 +105,7 @@ const fastPostNormalizationRules = flow( [
 		detectMedia,
 		detectPolls,
 		detectSurveys,
+		detectCrowdsignal,
 		linkJetpackCarousels,
 	] ),
 	createBetterExcerpt,
