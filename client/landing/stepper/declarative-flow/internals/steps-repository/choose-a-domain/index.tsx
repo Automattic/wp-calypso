@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,6 +13,7 @@ import './style.scss';
 
 const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
+	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
 	const [ siteTitle, domain ] = useSelect( ( select ) => {
 		return [
@@ -84,12 +86,12 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				headerText="Choose a domain"
 				subHeaderText={
 					<>
-						Make your video site shine with a custom domain. Not sure yet ?{ ' ' }
+						{ __( 'Make your video site shine with a custom domain. Not sure yet ?' ) }
 						<button
 							className="button navigation-link step-container__navigation-link has-underline is-borderless"
 							onClick={ onSkip }
 						>
-							Decide later.
+							{ __( 'Decide later.' ) }
 						</button>
 					</>
 				}
