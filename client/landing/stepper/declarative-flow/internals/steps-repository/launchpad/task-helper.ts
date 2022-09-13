@@ -68,7 +68,7 @@ export function getEnhancedTasks(
 							hasTranslation( 'Set up Link in Bio' ) ||
 							[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
 								? translate( 'Set up Link in Bio' )
-								: translate( 'Setup Link in Bio' ),
+								: translate( 'Setup your Link in Bio' ),
 					};
 					break;
 				case 'links_added':
