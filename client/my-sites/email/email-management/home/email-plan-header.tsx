@@ -14,10 +14,10 @@ type EmailPlanHeaderProps = {
 	domain: ResponseDomain;
 	emailAccount: EmailAccount;
 	isLoadingEmails: boolean;
-	hasEmailSubscription?: boolean;
+	hasEmailSubscription: boolean;
 	isLoadingPurchase: boolean;
 	purchase?: Purchase;
-	selectedSite?: SiteDetails;
+	selectedSite: SiteDetails;
 };
 
 const EmailPlanHeader = ( {
