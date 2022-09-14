@@ -27,7 +27,6 @@ export default function detectCrowdsignal( post, dom ) {
 				return;
 			}
 			const noscriptText = domForHtml( noscript.innerHTML ).innerText;
-
 			const p = document.createElement( 'p' );
 			const a = document.createElement( 'a' );
 			try {
