@@ -29,6 +29,15 @@ import {
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	JETPACK_TAG_FOR_VIDEOGRAPHERS,
+	JETPACK_TAG_FOR_ALL_SITES,
+	JETPACK_TAG_FOR_BLOGGERS,
+	JETPACK_TAG_FOR_BLOGS,
+	JETPACK_TAG_FOR_EDUCATORS,
+	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+	JETPACK_TAG_FOR_ONLINE_FORUMS,
+	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -504,39 +513,45 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const prioritySupport = translate( 'Priority support' );
 
 	const backupIncludesInfoT1Storage = translate( '10GB of cloud storage' );
-	const backupIncludesInfoT2Storage = translate( '1TB (1,000GB) of cloud storage' );
+	const backupIncludesInfoT2Storage = translate(
+		'{{strong}}1TB (1,000GB){{/strong}} of cloud storage',
+		{
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
 
-	const backupIncludesInfoMonthlyLog = translate( '30-day activity log archive' );
-	const backupIncludesInfoYearlyLog = translate( '1 year activity log archive' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
+	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
+		components: {
+			strong: <strong />,
+		},
+	} );
 
-	const oneClickRestoreMonthly = translate( 'Unlimited one-click restores from the last 30 days' );
-	const oneClickRestoreYearly = translate( 'Unlimited one-click restores from the last 1 year' );
+	const oneClickRestoreT1 = translate( 'Unlimited one-click restores from the last 30 days' );
+	const oneClickRestoreT2 = translate(
+		'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}',
+		{
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
 
 	const otherIncludes = [ orderBackups, cloudBackups, prioritySupport ];
-	const backupIncludesInfoT1Monthly = [
+	const backupIncludesInfoT1 = [
 		realTimeBackup,
 		backupIncludesInfoT1Storage,
-		backupIncludesInfoMonthlyLog,
-		oneClickRestoreMonthly,
+		backupIncludesInfoT1Log,
+		oneClickRestoreT1,
 		...otherIncludes,
 	];
-	const backupIncludesInfoT1Yearly = [
-		realTimeBackup,
-		backupIncludesInfoT1Storage,
-		backupIncludesInfoYearlyLog,
-		oneClickRestoreYearly,
-		...otherIncludes,
-	];
-	const backupIncludesInfoT2Monthly = [
+	const backupIncludesInfoT2 = [
 		realTimeBackup,
 		backupIncludesInfoT2Storage,
-		backupIncludesInfoMonthlyLog,
-		...otherIncludes,
-	];
-	const backupIncludesInfoT2Yearly = [
-		realTimeBackup,
-		backupIncludesInfoT1Storage,
-		backupIncludesInfoMonthlyLog,
+		backupIncludesInfoT2Log,
+		oneClickRestoreT2,
 		...otherIncludes,
 	];
 
@@ -584,14 +599,14 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1Yearly,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1Yearly,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2Yearly,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2Monthly,
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamIncludesInfo,
@@ -658,7 +673,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 
 	const socialBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
-		translate( 'Unlock your growth potential by building a following on social' ),
+		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 	];
@@ -689,79 +704,17 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	};
 };
 
-export const getJetpackProductsRecommendedFor = (): Record< string, Array< TranslateResult > > => {
-	const wooCommerceStores = translate( 'WooCommerce stores' );
-	const newsOrganizations = translate( 'News organizations' );
-	const membershipSites = translate( 'Membership sites' );
-	const onlineForums = translate( 'Online forums' );
-	const blogs = translate( 'Blogs' );
-	const videographers = translate( 'Videographers' );
-	const educators = translate( 'Educators' );
-	const bloggers = translate( 'Bloggers' );
-	const allSites = translate( 'All sites' );
-
-	const backupRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-
-	const scanRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-	const antiSpamBenefits = [
-		blogs,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-		wooCommerceStores,
-	];
-	const videoPressRecommendedFor = [ wooCommerceStores, videographers, educators, bloggers ];
-
-	const searchRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-
-	const boostRecommendedFor = [ allSites ];
-
-	const socialRecommendedFor = [
-		blogs,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-		wooCommerceStores,
-	];
-
+export const getJetpackProductsRecommendedFor = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressRecommendedFor,
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressRecommendedFor,
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamBenefits,
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamBenefits,
-		[ PRODUCT_JETPACK_SCAN ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SEARCH ]: searchRecommendedFor,
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchRecommendedFor,
-		[ PRODUCT_JETPACK_BOOST ]: boostRecommendedFor,
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostRecommendedFor,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialRecommendedFor,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialRecommendedFor,
+		[ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ]: translate( 'WooCommerce stores' ),
+		[ JETPACK_TAG_FOR_NEWS_ORGANISATIONS ]: translate( 'News organizations' ),
+		[ JETPACK_TAG_FOR_MEMBERSHIP_SITES ]: translate( 'Membership sites' ),
+		[ JETPACK_TAG_FOR_ONLINE_FORUMS ]: translate( 'Online forums' ),
+		[ JETPACK_TAG_FOR_BLOGS ]: translate( 'Blogs' ),
+		[ JETPACK_TAG_FOR_VIDEOGRAPHERS ]: translate( 'Videographers' ),
+		[ JETPACK_TAG_FOR_EDUCATORS ]: translate( 'Educators' ),
+		[ JETPACK_TAG_FOR_BLOGGERS ]: translate( 'Bloggers' ),
+		[ JETPACK_TAG_FOR_ALL_SITES ]: translate( 'All sites' ),
 	};
 };
 

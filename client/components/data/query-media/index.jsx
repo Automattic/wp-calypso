@@ -2,7 +2,7 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { requestMedia, requestMediaItem } from 'calypso/state/media/actions';
+import { requestMedia, requestMediaItem, setQuery } from 'calypso/state/media/actions';
 
 /**
  * Module variables
@@ -10,6 +10,7 @@ import { requestMedia, requestMediaItem } from 'calypso/state/media/actions';
 const mapDispatchToProps = {
 	requestMedia,
 	requestMediaItem,
+	setQuery,
 };
 
 class QueryMedia extends Component {
@@ -25,6 +26,7 @@ class QueryMedia extends Component {
 	};
 
 	componentDidMount() {
+		this.props.setQuery( this.props.siteId, this.props.query );
 		this.request();
 	}
 

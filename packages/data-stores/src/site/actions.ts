@@ -334,6 +334,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
 			}
 
+			if ( options?.pageTemplate ) {
+				themeSetupOptions.page_template = options?.pageTemplate;
+			}
+
 			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',

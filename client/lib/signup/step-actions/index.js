@@ -151,7 +151,7 @@ function getNewSiteParams( {
 
 	const newSiteParams = {
 		blog_title: siteTitle,
-		public: Visibility.PublicNotIndexed,
+		public: launchAsComingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
 		options: {
 			designType: designType || undefined,
 			theme,

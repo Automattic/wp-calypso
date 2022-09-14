@@ -6,7 +6,6 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
 import {
 	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
@@ -224,7 +223,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_optimize_202208_v1"
+					name="calypso_signup_plans_step_faq_202209_v1"
 					options={ {
 						isEligible:
 							[ 'en-gb', 'en' ].includes( locale ) &&
@@ -257,8 +256,12 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								isCondensedFeaturesExperiment={
-									experimentAssignment?.variationName === 'treatment'
+								isFAQCondensedExperiment={
+									experimentAssignment?.variationName === 'treatment_condensed'
+								}
+								isFAQExperiment={
+									experimentAssignment?.variationName === 'treatment_expanded' ||
+									experimentAssignment?.variationName === 'treatment_condensed'
 								}
 							/>
 						);
@@ -393,10 +396,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText =
-				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-					? translate( 'Back to Sites' )
-					: translate( 'Back to My Sites' );
+			backLabelText = translate( 'Back to Sites' );
 		}
 
 		let queryParams;

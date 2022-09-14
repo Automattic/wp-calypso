@@ -68,6 +68,7 @@
 			background-position: left bottom, right top;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
+			/*!rtl:ignore*/
 			background-position-x: 0%, 100%;
 			background-position-y: 30%, 100%;
 			background-size: auto 55%, auto 25%;
@@ -92,7 +93,8 @@
 			background-image:
 				url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
 				url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
-			background-position-y: 92%, 8%;
+			background-position-y: 92%, 15%;
+			/*!rtl:ignore*/
 			background-position-x: 0, 100%;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
