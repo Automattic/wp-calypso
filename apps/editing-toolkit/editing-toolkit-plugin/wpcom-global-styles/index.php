@@ -46,7 +46,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
  */
 function wpcom_maybe_limit_site_editor_global_styles() {
 	$screen = get_current_screen();
-	if ( ! $screen || $screen->id !== 'site-editor' ) {
+	if ( ! $screen || 'site-editor' !== $screen->id ) {
 		return;
 	}
 
