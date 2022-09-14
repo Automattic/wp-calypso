@@ -4,6 +4,7 @@ import type {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	JetpackProductCategory,
+	JetpackTag,
 } from '@automattic/calypso-products';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -124,7 +125,7 @@ export interface SelectorProduct extends SelectorProductCost {
 	featuredDescription?: TranslateResult | string;
 	whatIsIncluded?: Array< TranslateResult >;
 	benefits?: Array< TranslateResult >;
-	recommendedFor?: Array< TranslateResult >;
+	recommendedFor?: Array< JetpackTag >;
 }
 
 export type SiteProduct = {

@@ -29,6 +29,15 @@ import {
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	JETPACK_TAG_FOR_VIDEOGRAPHERS,
+	JETPACK_TAG_FOR_ALL_SITES,
+	JETPACK_TAG_FOR_BLOGGERS,
+	JETPACK_TAG_FOR_BLOGS,
+	JETPACK_TAG_FOR_EDUCATORS,
+	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+	JETPACK_TAG_FOR_ONLINE_FORUMS,
+	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -695,79 +704,17 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	};
 };
 
-export const getJetpackProductsRecommendedFor = (): Record< string, Array< TranslateResult > > => {
-	const wooCommerceStores = translate( 'WooCommerce stores' );
-	const newsOrganizations = translate( 'News organizations' );
-	const membershipSites = translate( 'Membership sites' );
-	const onlineForums = translate( 'Online forums' );
-	const blogs = translate( 'Blogs' );
-	const videographers = translate( 'Videographers' );
-	const educators = translate( 'Educators' );
-	const bloggers = translate( 'Bloggers' );
-	const allSites = translate( 'All sites' );
-
-	const backupRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-
-	const scanRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-	const antiSpamBenefits = [
-		blogs,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-		wooCommerceStores,
-	];
-	const videoPressRecommendedFor = [ wooCommerceStores, videographers, educators, bloggers ];
-
-	const searchRecommendedFor = [
-		wooCommerceStores,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-	];
-
-	const boostRecommendedFor = [ allSites ];
-
-	const socialRecommendedFor = [
-		blogs,
-		newsOrganizations,
-		membershipSites,
-		onlineForums,
-		wooCommerceStores,
-	];
-
+export const getJetpackProductsRecommendedFor = (): Record< string, TranslateResult > => {
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupRecommendedFor,
-		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressRecommendedFor,
-		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressRecommendedFor,
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamBenefits,
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamBenefits,
-		[ PRODUCT_JETPACK_SCAN ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanRecommendedFor,
-		[ PRODUCT_JETPACK_SEARCH ]: searchRecommendedFor,
-		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchRecommendedFor,
-		[ PRODUCT_JETPACK_BOOST ]: boostRecommendedFor,
-		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostRecommendedFor,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialRecommendedFor,
-		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialRecommendedFor,
+		[ JETPACK_TAG_FOR_WOOCOMMERCE_STORES ]: translate( 'WooCommerce stores' ),
+		[ JETPACK_TAG_FOR_NEWS_ORGANISATIONS ]: translate( 'News organizations' ),
+		[ JETPACK_TAG_FOR_MEMBERSHIP_SITES ]: translate( 'Membership sites' ),
+		[ JETPACK_TAG_FOR_ONLINE_FORUMS ]: translate( 'Online forums' ),
+		[ JETPACK_TAG_FOR_BLOGS ]: translate( 'Blogs' ),
+		[ JETPACK_TAG_FOR_VIDEOGRAPHERS ]: translate( 'Videographers' ),
+		[ JETPACK_TAG_FOR_EDUCATORS ]: translate( 'Educators' ),
+		[ JETPACK_TAG_FOR_BLOGGERS ]: translate( 'Bloggers' ),
+		[ JETPACK_TAG_FOR_ALL_SITES ]: translate( 'All sites' ),
 	};
 };
 
