@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 export interface SiteDetailsForSorting {
 	name: string;
-	user_interactions: string[];
+	user_interactions?: string[];
 	options?: {
 		updated_at?: string;
 	};
@@ -42,11 +42,17 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesTableSortOrder
 ) {
-	const interactedItems: T[] = sites.filter( ( site ) => site.user_interactions.length > 0 );
-	const remainingItems: T[] = sites.filter( ( site ) => site.user_interactions.length === 0 );
+	const interactedItems = sites.filter(
+		( site ) => site.user_interactions && site.user_interactions.length > 0
+	);
+	const remainingItems = sites.filter( ( site ) => site.user_interactions?.length === 0 );
 
 	return [
 		...interactedItems.sort( ( a, b ) => {
+			if ( ! a.user_interactions || ! b.user_interactions ) {
+				return 0;
+			}
+
 			// Interactions are sorted in descending order.
 			const lastInteractionA = a.user_interactions[ 0 ];
 			const lastInteractionB = b.user_interactions[ 0 ];
