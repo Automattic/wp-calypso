@@ -61,62 +61,36 @@ export const useMshotsImg = (
 
 	const timeout = useRef< ReturnType< typeof setTimeout > >();
 
-	const onLoad = useCallback(
-		( event: React.SyntheticEvent< HTMLImageElement, Event > ) => {
-			if ( ! mshotUrl.length ) {
-				return;
-			}
-
-			setIsLoading( true );
-
-			// Loaded image natural width should conform to sizes passed in.
-			const hasExpectedImageDimensions = sizes.some(
-				( size ) => size.width === event.currentTarget.naturalWidth
-			);
-
-			// mShot Loading image is 400x300px.
-			// mShot 404 image is 748×561px
-			// So we use the image dimensions to determine whether mShot is still
-			// generating an image.
-			const hasMshotLoadingImageDimensions =
-				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
-
-			// JSDOM environment doesn't have a real rendering engine and so can't
-			// simulate image dimensions. The `a8cIsLoading` hack is only there
-			// for unit testing purposes.
-			const loading =
-				( sizes.length && ! hasExpectedImageDimensions ) ||
-				hasMshotLoadingImageDimensions ||
-				'a8cIsLoading' in event.currentTarget;
-
-			if ( ! loading ) {
-				setIsLoading( false );
-			} else if ( retryCount < MAXTRIES ) {
-				// Only refresh 10 times
-				timeout.current = setTimeout(
-					() => setRetryCount( ( retryCount ) => retryCount + 1 ),
-					retryCount * 500
-				);
-			}
-		},
-		[ retryCount, mshotUrl.length, sizes ]
-	);
-
 	const onError = useCallback( () => {
 		setIsError( true );
 	}, [] );
 
 	useEffect( () => {
+		async function checkRedirectImage() {
+			const response = await fetch( mshotUrl, { method: 'HEAD', redirect: 'manual' } );
+			// 307 is the status code for a temporary redirect used by mshots.
+			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
+			// and the `response.headers.get('content-type)` will be 'image/gif'
+			const isLoading = response.status !== 200;
+			setIsLoading( isLoading );
+		}
+
+		if ( isLoading && retryCount < MAXTRIES ) {
+			// Only refresh 10 times
+			timeout.current = setTimeout( () => {
+				setRetryCount( ( retryCount ) => retryCount + 1 );
+				checkRedirectImage();
+			}, retryCount * 500 );
+		}
 		return () => {
 			clearTimeout( timeout.current );
 		};
-	}, [] );
+	}, [ isLoading, mshotUrl, retryCount ] );
 
 	return {
 		isLoading,
 		isError,
 		imgProps: {
-			onLoad,
 			onError,
 			srcSet,
 			src: mshotUrl,
