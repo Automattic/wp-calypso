@@ -1,10 +1,11 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useUploadSiteIcon } from 'calypso/data/media/use-upload-site-icon';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -17,6 +18,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
+	const uploadSiteIcon = useUploadSiteIcon();
 
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
@@ -42,13 +44,14 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 			} );
 		}
 
-		// Still need to handle updating site icon here
 		if ( selectedFile && base64Image ) {
-			try {
-				// update site icon here
-			} catch ( _error ) {
-				// or communicate the error to the user
-			}
+			await uploadSiteIcon(
+				base64ImageToBlob( base64Image ),
+				'site-logo.png',
+				site?.ID,
+				site?.icon?.media_id,
+				site
+			);
 		}
 
 		if ( siteTitle.trim().length ) {
