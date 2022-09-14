@@ -42,10 +42,10 @@ const Cart = styled.div`
 	@media ( max-width: 600px ) {
 		padding: 5px 15px 5px;
 		width: 100%;
-		border-top: 1px solid #dcdcde;
+		border-top: 1px solid var( --studio-gray-5 );
 	}
 	.page-picker__disclaimer {
-		color: #646970;
+		color: var( --studio-gray-50 );
 		font-size: 12px;
 
 		@media ( max-width: 600px ) {
@@ -58,10 +58,10 @@ const DummyLineItemContainer = styled.div`
 	flex-wrap: wrap;
 	justify-content: space-between;
 	font-weight: 400;
-	color: #2c3338;
+	color: var( --studio-gray-80 );
 	font-size: 14px;
 	padding: 16px 0;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var( --studio-gray-5 );
 	position: relative;
 	.page-picker__title {
 		flex: 1;
@@ -75,7 +75,7 @@ const DummyLineItemContainer = styled.div`
 		font-weight: 500;
 	}
 	.page-picker__sub-label {
-		color: #646970;
+		color: var( --studio-gray-50 );
 		font-size: 12px;
 		width: 100%;
 		display: flex;
@@ -92,7 +92,7 @@ const DummyLineItemContainer = styled.div`
 
 	@media ( max-width: 600px ) {
 		padding: 10px 0px 10px 0px;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid var( --studio-gray-10 );
 		.page-picker__sub-label {
 		}
 	}
@@ -107,7 +107,7 @@ const LineItemsWrapper = styled.div`
 	max-height: 75vh;
 	width: 100%;
 	max-width: 365px;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var( --studio-gray-5 );
 	@media ( max-width: 600px ) {
 		margin: 0 0px;
 		border: none;
@@ -138,7 +138,7 @@ const Total = styled.div`
 		font-size: 16px;
 		margin-top: 6px;
 		padding: 5px 0px;
-		border-bottom: 1px solid #eee;
+		border-bottom: 1px solid var( --studio-gray-5 );
 	}
 `;
 

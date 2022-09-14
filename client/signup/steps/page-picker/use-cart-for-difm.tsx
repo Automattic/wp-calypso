@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	PLAN_PREMIUM,
 	PLAN_WPCOM_PRO,
@@ -243,19 +242,16 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const signupDependencies = useSelector( getSignupDependencyStore );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const proPlan = useSelector( ( state ) => getProductBySlug( state, PLAN_WPCOM_PRO ) );
 	const premiumPlan = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
-	const activePremiumPlanScheme = isEnabled( 'plans/pro-plan' ) ? proPlan : premiumPlan;
 	const { newOrExistingSiteChoice, siteId, siteSlug } = signupDependencies;
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 	const isProductsLoading = useSelector( isProductsListFetching );
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	const userCurrencyCode = useSelector( getCurrentUserCurrencyCode );
 	const site = useSelector( ( state ) => getSite( state, siteSlug ?? siteId ) );
-	const cartKey = getCartKey( { selectedSite: site } );
-	const { replaceProductsInCart, responseCart, isLoading, isPendingUpdate } = useShoppingCart(
-		cartKey ?? undefined
-	);
+	const cartKey = site ? getCartKey( { selectedSite: site } ) : undefined;
+	const { replaceProductsInCart, responseCart, isLoading, isPendingUpdate } =
+		useShoppingCart( cartKey );
 
 	const getEffectiveCurrencyCode = useCallback( () => {
 		if ( isExistingSite ) {
@@ -316,7 +312,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 	const effectiveCurrencyCode = getEffectiveCurrencyCode();
 	let displayedCartItems: CartItem[] = [];
 	let totalCostFormatted = null;
-	if ( difmLiteProduct && activePremiumPlanScheme && effectiveCurrencyCode ) {
+	if ( difmLiteProduct && premiumPlan && effectiveCurrencyCode ) {
 		if ( isExistingSite ) {
 			displayedCartItems = getSiteCartProducts( {
 				responseCart,
@@ -328,7 +324,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 				selectedPages,
 				currencyCode: effectiveCurrencyCode,
 				translate,
-				activePlanScheme: activePremiumPlanScheme,
+				activePlanScheme: premiumPlan,
 				difmLiteProduct,
 			} );
 		}
