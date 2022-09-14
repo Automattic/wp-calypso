@@ -31,6 +31,7 @@ export type {
 	StyleVariationSettingsColorPalette,
 	StyleVariationPreview,
 	StyleVariationPreviewColorPalette,
+	StyleVariationStylesColor,
 } from './types';
 export { useCategorization } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

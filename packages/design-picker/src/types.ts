@@ -49,6 +49,11 @@ export interface StyleVariationPreviewColorPalette {
 	tertiary?: string;
 }
 
+export interface StyleVariationStylesColor {
+	background?: string;
+	text?: string;
+}
+
 export interface DesignRecipe {
 	stylesheet?: string;
 	pattern_ids?: number[] | string[];
