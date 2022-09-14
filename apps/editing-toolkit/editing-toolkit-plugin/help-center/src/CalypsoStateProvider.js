@@ -38,9 +38,9 @@ const store = createStore(
 setStore( store );
 
 const helpCenterData = window.helpCenterData;
-
+helpCenterData && store.dispatch( setSelectedSiteId( helpCenterData.currentSiteId ) );
 store.dispatch( setSection( { name: 'gutenberg-editor' } ) );
-store.dispatch( setSelectedSiteId( helpCenterData.currentSiteId ) );
+
 i18n.configure( { defaultLocaleSlug: window.helpCenterLocale } );
 
 rawCurrentUserFetch()
