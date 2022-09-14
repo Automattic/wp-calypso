@@ -506,22 +506,36 @@ export class PluginsList extends Component {
 	};
 
 	updateAllPluginsDialog = () => {
-		const { translate } = this.props;
+		const { pluginUpdateCount, translate } = this.props;
 
 		const siteDetails = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : 'all sites';
+
+		const translationArgs = {
+			args: { pluginUpdateCount },
+			count: pluginUpdateCount,
+		};
 
 		acceptDialog(
 			<div>
 				<span>
-					{ translate( 'You are about to update all plugins on %(siteDetails)s', {
-						args: {
-							siteDetails: siteDetails,
-						},
-					} ) }
+					{ translate(
+						'You are about to update %(pluginUpdateCount)d plugin on %(siteDetails)s',
+						'You are about to update %(pluginUpdateCount)d plugins on %(siteDetails)s',
+						{
+							args: {
+								pluginUpdateCount: pluginUpdateCount,
+								siteDetails: siteDetails,
+							},
+						}
+					) }
 				</span>
 			</div>,
 			( accepted ) => this.updateAllPlugins( accepted ),
-			translate( 'Update all plugins' )
+			translate(
+				'Update %(pluginUpdateCount)d plugin',
+				'Update %(pluginUpdateCount)d plugins',
+				translationArgs
+			)
 		);
 	};
 
