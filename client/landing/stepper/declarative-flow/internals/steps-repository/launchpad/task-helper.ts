@@ -38,7 +38,6 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a Plan' ),
 						keepActive: true,
-						hideChevron: true,
 						actionUrl: `/plans/${ siteSlug }`,
 						badgeText: translatedPlanName,
 					};
