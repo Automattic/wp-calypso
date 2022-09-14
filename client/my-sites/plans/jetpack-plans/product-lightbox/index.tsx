@@ -2,7 +2,7 @@ import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-pr
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import Modal from 'react-modal';
 import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
@@ -22,6 +22,7 @@ type Props = ProductStoreBaseProps & {
 	isVisible: boolean;
 	duration: Duration;
 	onClose: () => void;
+	onProductChange: ( product: SelectorProduct | null ) => void;
 	siteId: number | null;
 };
 
@@ -50,28 +51,33 @@ const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
 	</>
 );
 
-const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, siteId } ) => {
+const ProductLightbox: React.FC< Props > = ( {
+	product,
+	isVisible,
+	onClose,
+	onProductChange,
+	siteId,
+} ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const translate = useTranslate();
 
-	const [ currentProduct, setCurrentProduct ] = useState< SelectorProduct >( product );
-
 	const onChangeOption = useCallback(
 		( productSlug: string ) => {
-			setCurrentProduct( slugToSelectorProduct( productSlug ) || product );
+			onProductChange( slugToSelectorProduct( productSlug ) );
 		},
-		[ product ]
+		[ onProductChange ]
 	);
+
 	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
 	const isMobile = useMobileBreakpoint();
 
 	const variantOptions = useMemo( () => {
-		const variants = JETPACK_RELATED_PRODUCTS_MAP[ currentProduct.productSlug ] || [];
+		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
 		return variants.map( ( itemSlug ) => ( {
 			id: itemSlug,
 			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
 		} ) );
-	}, [ currentProduct.productSlug ] );
+	}, [ product.productSlug ] );
 
 	const shouldShowOptions = variantOptions.length > 1;
 
@@ -94,25 +100,25 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						<div className="product-lightbox__product-icon">
 							<img alt="" src={ getProductIcon( { productSlug: product.productSlug } ) } />
 						</div>
-						<h2>{ currentProduct.displayName }</h2>
+						<h2>{ product.displayName }</h2>
 					</div>
 					<div className="product-lightbox__detail-desc">{ product.featuredDescription }</div>
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">
 							{ translate( 'Great for:' ) }
 						</span>
-						{ currentProduct.recommendedFor && <TagItems tags={ currentProduct.recommendedFor } /> }
+						{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
 					</div>
 
 					<div className="product-lightbox__detail-list">
 						{ isMobile ? (
 							<FoldableCard hideSummary header={ translate( 'Includes' ) } expanded={ false }>
-								<DescriptionList items={ currentProduct.whatIsIncluded } />
+								<DescriptionList items={ product.whatIsIncluded } />
 							</FoldableCard>
 						) : (
 							<>
 								<p>{ translate( 'Includes' ) }</p>
-								<DescriptionList items={ currentProduct.whatIsIncluded } />
+								<DescriptionList items={ product.whatIsIncluded } />
 							</>
 						) }
 					</div>
@@ -120,12 +126,12 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 					<div className="product-lightbox__detail-list">
 						{ isMobile ? (
 							<FoldableCard hideSummary header={ translate( 'Benefits' ) } expanded={ false }>
-								<DescriptionList items={ currentProduct.benefits } />
+								<DescriptionList items={ product.benefits } />
 							</FoldableCard>
 						) : (
 							<>
 								<p>{ translate( 'Benefits' ) }</p>
-								<DescriptionList items={ currentProduct.benefits } />
+								<DescriptionList items={ product.benefits } />
 							</>
 						) }
 					</div>
@@ -135,9 +141,9 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						{ shouldShowOptions && (
 							<div className="product-lightbox__variants-options">
 								<MultipleChoiceQuestion
-									question={ PRODUCT_OPTIONS_HEADER[ currentProduct?.productSlug ] }
+									question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
 									answers={ variantOptions }
-									selectedAnswerId={ currentProduct?.productSlug }
+									selectedAnswerId={ product?.productSlug }
 									onAnswerChange={ onChangeOption }
 									shouldShuffleAnswers={ false }
 								/>
@@ -146,12 +152,12 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 						<PaymentPlan
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							siteId={ siteId }
-							product={ currentProduct }
+							product={ product }
 						/>
 						<Button
 							primary
 							className="jetpack-product-card__button product-lightbox__checkout-button"
-							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( currentProduct ) }
+							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 							disabled={ isMultiSiteIncompatible }
 						>
 							{ translate( 'Checkout' ) }

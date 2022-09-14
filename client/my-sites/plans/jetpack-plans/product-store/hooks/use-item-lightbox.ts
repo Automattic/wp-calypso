@@ -10,9 +10,9 @@ export const useItemLightbox = () => {
 		slugToSelectorProduct( sanitizeLocationHash( window.location.hash ) )
 	);
 
-	const clearCurrentItem = useCallback( () => {
-		setCurrentItem( null );
-		window.location.hash = '';
+	const setCurrentItemAndLocationHash = useCallback( ( item: SelectorProduct | null ) => {
+		setCurrentItem( item );
+		window.location.hash = item ? item.productSlug : '';
 	}, [] );
 
 	const onClickMoreInfoFactory = useCallback( ( item: SelectorProduct ): VoidFunction => {
@@ -30,9 +30,9 @@ export const useItemLightbox = () => {
 	return useMemo(
 		() => ( {
 			currentItem,
-			clearCurrentItem,
+			setCurrentItem: setCurrentItemAndLocationHash,
 			onClickMoreInfoFactory,
 		} ),
-		[ currentItem, onClickMoreInfoFactory, clearCurrentItem ]
+		[ currentItem, onClickMoreInfoFactory, setCurrentItemAndLocationHash ]
 	);
 };

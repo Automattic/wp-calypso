@@ -12,7 +12,7 @@ const components: Record< ViewType, React.ComponentType< ProductsListProps > > =
 };
 
 export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, siteId } ) => {
-	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
+	const { currentItem, setCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
 	const Component = components[ currentView ];
 
 	if ( ! Component ) {
@@ -27,7 +27,8 @@ export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, 
 					duration={ duration }
 					product={ currentItem }
 					isVisible={ !! currentItem }
-					onClose={ clearCurrentItem }
+					onClose={ () => setCurrentItem( null ) }
+					onProductChange={ setCurrentItem }
 				/>
 			) }
 
