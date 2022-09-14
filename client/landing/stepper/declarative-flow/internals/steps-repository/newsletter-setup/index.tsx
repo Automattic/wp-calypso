@@ -12,7 +12,6 @@ import { createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -144,10 +143,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 	};
 
-	const getBackgroundImage = ( fieldValue: string | undefined ) => {
-		return fieldValue && fieldValue.trim() ? `url( ${ greenCheckmarkImg } )` : '';
-	};
-
 	const stepContent = (
 		<form className="newsletter-setup__form" onSubmit={ onSubmit }>
 			<SiteIconWithPicker
@@ -181,9 +176,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					placeholder={ __( 'My newsletter' ) }
 					name="siteTitle"
 					id="siteTitle"
-					style={ {
-						backgroundImage: getBackgroundImage( siteTitle ),
-					} }
 					isError={ invalidSiteTitle }
 					onChange={ onChange }
 				/>
@@ -204,10 +196,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					enableAutoFocus={ false }
 					onChange={ onChange }
 					style={ {
-						backgroundImage: getBackgroundImage( tagline ),
-						backgroundRepeat: 'no-repeat',
-						backgroundPosition: '95%',
-						paddingRight: ' 40px',
 						paddingLeft: '14px',
 					} }
 				/>
@@ -218,10 +206,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					inputRef={ accentColorRef }
 					className="newsletter-setup__accent-color"
 					style={ {
-						backgroundImage: [
-							generateSwatchSVG( accentColor.hex ),
-							...( ! accentColor.default ? [ getBackgroundImage( accentColor.hex ) ] : [] ),
-						].join( ', ' ),
+						backgroundImage: [ generateSwatchSVG( accentColor.hex ) ].join( ', ' ),
 						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
 					} }
 					name="accentColor"

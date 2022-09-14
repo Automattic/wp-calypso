@@ -6,7 +6,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -117,12 +116,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					value={ siteTitle }
 					onChange={ onChange }
 					placeholder={ __( 'My Link in Bio' ) }
-					style={ {
-						backgroundImage: siteTitle.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
-						backgroundRepeat: 'no-repeat',
-						backgroundPosition: '95%',
-						paddingRight: ' 40px',
-					} }
 					isError={ invalidSiteTitle }
 				/>
 				{ invalidSiteTitle && (
@@ -143,10 +136,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					enableAutoFocus={ false }
 					onChange={ onChange }
 					style={ {
-						backgroundImage: tagline.trim() ? `url(${ greenCheckmarkImg })` : 'unset',
-						backgroundRepeat: 'no-repeat',
-						backgroundPosition: '95%',
-						paddingRight: ' 40px',
 						paddingLeft: '14px',
 					} }
 				/>
