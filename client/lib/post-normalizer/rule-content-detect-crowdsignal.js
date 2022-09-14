@@ -1,16 +1,16 @@
 import { forEach } from 'lodash';
 import { domForHtml } from './utils';
 
-export default function detectCrowdsignal( post, dom ) {
+export default function detectCrowdsignalEmbeds( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
 
-	const crowdsignal = dom.querySelectorAll( '.embed-crowdsignal' );
-	if ( ! crowdsignal ) {
+	const crowdsignalEmbeds = dom.querySelectorAll( '.embed-crowdsignal' );
+	if ( ! crowdsignalEmbeds ) {
 		return post;
 	}
-	forEach( crowdsignal, ( crowdsignalElement ) => {
+	forEach( crowdsignalEmbeds, ( crowdsignalElement ) => {
 		const authoritativeURL = crowdsignalElement.firstElementChild.getAttribute( 'src' );
 		if ( ! authoritativeURL ) {
 			return;
