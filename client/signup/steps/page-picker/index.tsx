@@ -356,7 +356,7 @@ function DIFMPagePicker( props: StepProps ) {
 						{ translate( 'Go to Checkout' ) }
 					</StyledButton>
 				) : (
-					<StyledButton primary onClick={ submitPickedPages }>
+					<StyledButton primary busy={ isCheckoutPressed } onClick={ submitPickedPages }>
 						{ translate( 'Go to Checkout' ) }
 					</StyledButton>
 				)
