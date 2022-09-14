@@ -47,7 +47,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 
-	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
