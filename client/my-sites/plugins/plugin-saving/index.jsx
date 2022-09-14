@@ -1,11 +1,21 @@
 import formatCurrency from '@automattic/format-currency';
 import { useSelector } from 'react-redux';
-import { getProductBySlug, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import {
+	getProductBySlug,
+	isProductsListFetching,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
 
 export const PluginAnnualSaving = ( { plugin, children } ) => {
-	const priceSlugYearly = plugin?.variations?.yearly?.product_slug;
+	const productList = useSelector( getProductsList );
+
+	const variationYearly = plugin?.variations?.yearly;
+	const priceSlugYearly = getProductSlugByPeriodVariation( variationYearly, productList );
 	const productYearly = useSelector( ( state ) => getProductBySlug( state, priceSlugYearly ) );
-	const priceSlugMonthly = plugin?.variations?.monthly?.product_slug;
+
+	const variationMonthly = plugin?.variations?.monthly;
+	const priceSlugMonthly = getProductSlugByPeriodVariation( variationMonthly, productList );
 	const productMonthly = useSelector( ( state ) => getProductBySlug( state, priceSlugMonthly ) );
 	const isFetching = useSelector( isProductsListFetching );
 
