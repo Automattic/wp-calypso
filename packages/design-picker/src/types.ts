@@ -108,6 +108,7 @@ export interface Design {
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	verticalId?: string;
+	pageTemplate?: string;
 }
 
 export interface DesignPreviewOptions {
