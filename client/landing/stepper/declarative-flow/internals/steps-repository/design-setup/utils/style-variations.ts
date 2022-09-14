@@ -8,7 +8,7 @@ export function removeLegacyDesignVariations( designs: Design[] ) {
 	const designsWithVariations = designs.filter(
 		( design ) => design.style_variations && design.style_variations.length > 0
 	);
-	const isVariationOfAnotherDesign = ( design ) =>
+	const isVariationOfAnotherDesign = ( design: Design ) =>
 		designsWithVariations.some( ( designWithVariations ) =>
 			design.slug.startsWith( designWithVariations.slug + '-' )
 		);
