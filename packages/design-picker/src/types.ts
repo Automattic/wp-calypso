@@ -24,9 +24,9 @@ export interface StyleVariation {
 				theme: StyleVariationSettingsColorPalette[];
 			};
 		};
-		styles: {
-			color: StyleVariationStylesColor;
-		};
+	};
+	styles: {
+		color: StyleVariationStylesColor;
 	};
 	inline_css?: string;
 }
