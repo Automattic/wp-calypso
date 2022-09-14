@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { WPCOM_FEATURES_MANAGE_PLUGINS } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -240,7 +241,8 @@ export class PluginsList extends Component {
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
-		selectedPlugins
+
+		const pluginAndSiteObjects = selectedPlugins
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
 				return Object.keys( p.sites ).map( ( siteId ) => {
@@ -251,8 +253,23 @@ export class PluginsList extends Component {
 					};
 				} );
 			} ) // list of plugins -> list of plugin+site objects
-			.reduce( flattenArrays, [] ) // flatten the list into one big list of plugin+site objects
-			.forEach( ( { plugin, site } ) => action( site.ID, plugin ) );
+			.reduce( flattenArrays, [] ); // flatten the list into one big list of plugin+site objects
+
+		pluginAndSiteObjects.forEach( ( { plugin, site } ) => action( site.ID, plugin ) );
+
+		const pluginSlugs = [
+			...new Set( pluginAndSiteObjects.map( ( { plugin } ) => plugin.slug ) ),
+		].join( ',' );
+
+		const siteIds = [ ...new Set( pluginAndSiteObjects.map( ( { site } ) => site.ID ) ) ].join(
+			','
+		);
+
+		recordTracksEvent( 'calypso_plugins_edit_action_click', {
+			action: actionName,
+			plugins: pluginSlugs,
+			sites: siteIds,
+		} );
 	}
 
 	getSitePlugin = ( plugin, siteId ) => {
@@ -272,6 +289,10 @@ export class PluginsList extends Component {
 
 	handleUpdatePlugins = ( plugins ) => {
 		this.removePluginStatuses();
+
+		const updatedPlugins = new Set();
+		const updatedSites = new Set();
+
 		plugins
 			// only consider plugins needing an update
 			.filter( ( plugin ) => plugin.update )
@@ -280,10 +301,19 @@ export class PluginsList extends Component {
 					// only consider the sites where the those plugins are installed
 					.filter( ( [ , sitePlugin ] ) => sitePlugin.update?.new_version )
 					.forEach( ( [ siteId ] ) => {
+						updatedPlugins.add( plugin.slug );
+						updatedSites.add( siteId );
+
 						const sitePlugin = this.getSitePlugin( plugin, siteId );
 						return this.props.updatePlugin( siteId, sitePlugin );
 					} );
 			} );
+
+		recordTracksEvent( 'calypso_plugins_edit_action_click', {
+			action: 'updating',
+			plugins: [ ...updatedPlugins ].join( ',' ),
+			sites: [ ...updatedSites ].join( ',' ),
+		} );
 	};
 
 	updateAllPlugins = () => {
