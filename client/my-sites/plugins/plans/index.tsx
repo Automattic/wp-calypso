@@ -3,11 +3,14 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+
+import './style.scss';
 
 const Plans = () => {
 	const translate = useTranslate();
@@ -42,6 +45,12 @@ const Plans = () => {
 			<PageViewTracker path="/plugins/plans/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
 			<FixedNavigationHeader navigationItems={ breadcrumbs } />
+			<FormattedHeader
+				className="plugin-plans-header"
+				headerText={ `Your current plan doesn't support plugins` }
+				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
+				brandFont
+			/>
 		</MainComponent>
 	);
 };
