@@ -25,9 +25,6 @@ export interface StyleVariation {
 			};
 		};
 	};
-	styles: {
-		color: StyleVariationStylesColor;
-	};
 	inline_css?: string;
 }
 
@@ -45,13 +42,6 @@ export interface StyleVariationPreviewColorPalette {
 	background?: string;
 	foreground?: string;
 	primary?: string;
-	secondary?: string;
-	tertiary?: string;
-}
-
-export interface StyleVariationStylesColor {
-	background?: string;
-	text?: string;
 }
 
 export interface DesignRecipe {
