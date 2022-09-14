@@ -19,6 +19,7 @@ const InlineChat: React.FC = () => {
 			className="help-center-inline-chat__iframe"
 			title="Happychat"
 			src={ `https://widgets.wp.com/calypso-happychat/?env=${ env }` }
+			scrolling="no"
 		/>
 	);
 };
