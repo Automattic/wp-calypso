@@ -34,7 +34,7 @@ RUN cd / \
 	# Prime webpack caches, including sourcemaps.
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/ash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to unit test and build calypso.
@@ -55,7 +55,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apk update \
-	&& apk add --no-cache sudo zip jq \
+	&& apk add --no-cache sudo zip jq bash \
 	&& adduser --uid $UID --disabled-password $user \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
@@ -71,7 +71,7 @@ COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 # COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/ash" ]
 
 #### ci-e2e image
 #### This image is used to run E2E tests.
@@ -83,7 +83,7 @@ ENV DISPLAY=:99
 
 RUN apk update && apk upgrade --no-cache --available \
 	&& apk add --no-cache \
-		ttf-liberation \
+		# ttf-liberation \
 		font-noto \
 		# git-restore-mtime \
 		gdk-pixbuf \
@@ -108,11 +108,12 @@ RUN apk update && apk upgrade --no-cache --available \
 		# xfonts-base \
 		# xfonts-cyrillic \
 		# xfonts-scalable \
-		xvfb && apk add --no-cache \
-      --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
-      font-wqy-zenhei
+		xvfb
+	# 	&& apk add --no-cache \
+    #   --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    #   font-wqy-zenhei
 
-ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/ash" ]
 
 # #### ci-wpcom image
 # #### This image is used to test and build WPCOM plugins in Calypso repo.
