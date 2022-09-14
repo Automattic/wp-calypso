@@ -64,10 +64,6 @@ const sectionPatterns: Pattern[] = [
 		name: 'About me',
 	},
 	{
-		id: 2993,
-		name: 'Full-width Image with Text and Button Overlay',
-	},
-	{
 		id: 857,
 		name: 'Image and text side by side',
 	},
@@ -98,10 +94,6 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 3856,
 		name: 'Organic Gallery With Intro Text',
-	},
-	{
-		id: 1930,
-		name: 'Intro Section With Text and Spot Images',
 	},
 	{
 		id: 3862,

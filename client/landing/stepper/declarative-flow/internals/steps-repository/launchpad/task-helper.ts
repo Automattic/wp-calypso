@@ -37,6 +37,8 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						keepActive: true,
+						actionUrl: `/plans/${ siteSlug }`,
 						badgeText: translatedPlanName,
 					};
 					break;
@@ -75,6 +77,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						keepActive: true,
 						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;

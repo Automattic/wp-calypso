@@ -1,6 +1,5 @@
-import { englishLocales } from '@automattic/i18n-utils';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -683,7 +682,7 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName );
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	renderContent() {
@@ -775,10 +774,7 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText =
-			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-				? translate( 'Back to Sites' )
-				: translate( 'Back to My Sites' );
+		const sitesBackLabelText = translate( 'Back to Sites' );
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -829,6 +825,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
+				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }

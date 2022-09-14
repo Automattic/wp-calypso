@@ -55,7 +55,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate, isCondensedFeaturesExperiment } = this.props;
+		const { isInSignup, planProperties, translate, isFAQCondensedExperiment } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -80,7 +80,7 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ isCondensedFeaturesExperiment
+									{ isFAQCondensedExperiment
 										? this.renderPlanFeatureRowsTest()
 										: this.renderPlanFeatureRows() }
 								</tbody>
@@ -424,7 +424,7 @@ export default connect(
 			siteId,
 			visiblePlans,
 			popularPlanSpec,
-			isCondensedFeaturesExperiment,
+			isFAQCondensedExperiment,
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
@@ -459,7 +459,7 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
 
-				if ( isCondensedFeaturesExperiment && planConstantObj.getCondensedExperimentFeatures ) {
+				if ( isFAQCondensedExperiment && planConstantObj.getCondensedExperimentFeatures ) {
 					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 

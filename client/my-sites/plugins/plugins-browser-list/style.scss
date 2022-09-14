@@ -19,7 +19,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( "<660px" ) {
+	@include breakpoint-deprecated("<660px") {
 		padding: 0 16px;
 	}
 }
@@ -31,7 +31,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 
-	padding-top: 48px;
+	padding-top: 32px;
 	.plugins-browser-list__titles {
 		padding-bottom: 10px;
 
