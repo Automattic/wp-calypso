@@ -1,4 +1,3 @@
-import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
 	getWPCOMPluginsQueryParams,
@@ -19,9 +18,7 @@ function getProps( context ) {
 function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 	const queryType = infinite ? 'prefetchInfiniteQuery' : 'prefetchQuery';
 
-	return queryClient[ queryType ]( ...fetchParams, {
-		staleTime: BASE_STALE_TIME,
-	} );
+	return queryClient[ queryType ]( ...fetchParams );
 }
 
 const prefetchPaidPlugins = ( queryClient, options ) =>
