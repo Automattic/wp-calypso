@@ -21,12 +21,7 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import {
-	getTitanProductName,
-	getTitanProductSlug,
-	getTitanSubscriptionId,
-	hasTitanMailWithUs,
-} from 'calypso/lib/titan';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -95,9 +90,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const currentRoute = useSelector( getCurrentRoute );
 
 	const canAddMailboxes =
-		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
-		canCurrentUserAddEmail( domain );
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended' && canCurrentUserAddEmail( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
@@ -117,6 +110,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
+				disabled: ! canAddMailboxes,
 				path: emailManagementAddGSuiteUsers(
 					selectedSite.slug,
 					domain.name,
@@ -150,11 +144,13 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 			return {
 				external: showExternalControlPanelLink,
+				disabled: ! canAddMailboxes,
 				path: controlPanelUrl,
 			};
 		}
 
 		return {
+			disabled: ! canAddMailboxes,
 			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
 		};
 	}
@@ -185,18 +181,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	}
 
 	function renderViewBillingAndPaymentSettingsNavItem() {
-		if ( ! hasSubscription || ! purchase ) {
-			return (
-				<VerticalNavItem disabled>
-					{ translate( 'View billing and payment settings' ) }
-				</VerticalNavItem>
-			);
-		}
-
-		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+		const managePurchaseUrl = purchase
+			? getManagePurchaseUrlFor( selectedSite.slug, purchase.id )
+			: '';
 
 		return (
-			<VerticalNavItem path={ managePurchaseUrl }>
+			<VerticalNavItem path={ managePurchaseUrl } disabled={ ! hasSubscription || ! purchase }>
 				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
@@ -233,7 +223,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		}
 
 		return (
-			<VerticalNavItem { ...manageAllNavItemProps } disabled={ ! hasSubscription || ! purchase }>
+			<VerticalNavItem { ...manageAllNavItemProps } disabled={ ! purchase }>
 				{ translate( 'Manage all mailboxes', {
 					comment:
 						'This is the text for a link to manage all email accounts/mailboxes for a subscription',
@@ -243,14 +233,6 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	}
 
 	function renderAddNewMailboxesOrRenewNavItem() {
-		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
-			return (
-				<VerticalNavItem { ...getAddMailboxProps() }>
-					{ translate( 'Add new mailboxes' ) }
-				</VerticalNavItem>
-			);
-		}
-
 		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
 			if ( purchase && isExpired( purchase ) ) {
 				return (
@@ -261,7 +243,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			}
 
 			return (
-				<VerticalNavItem { ...getAddMailboxProps() } disabled={ ! canAddMailboxes }>
+				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
