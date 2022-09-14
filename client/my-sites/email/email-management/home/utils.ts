@@ -122,7 +122,7 @@ export function resolveEmailPlanStatus(
 		text: isLoadingEmails ? translate( 'Loading details' ) : translate( 'Active' ),
 	};
 
-	const actionRequiredStatus = {
+	const errorStatus = {
 		statusClass: 'error',
 		icon: 'info',
 		text: translate( 'Action required' ),
@@ -131,7 +131,7 @@ export function resolveEmailPlanStatus(
 	const cannotManageStatus = {
 		statusClass: 'warning',
 		icon: 'info',
-		text: translate( 'Can’t manage subscription' ),
+		text: translate( 'You can’t manage this subscription' ),
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -140,7 +140,7 @@ export function resolveEmailPlanStatus(
 			isPendingGSuiteTOSAcceptance( domain ) ||
 			( emailAccount && hasGoogleAccountTOSWarning( emailAccount ) )
 		) {
-			return actionRequiredStatus;
+			return errorStatus;
 		}
 
 		// When users have registered a domain with us, we let them purchase Google Workspace
@@ -175,13 +175,13 @@ export function resolveEmailPlanStatus(
 			startOfToday.setUTCHours( 0, 0, 0, 0 );
 
 			if ( titanExpiryDate < startOfToday ) {
-				return actionRequiredStatus;
+				return errorStatus;
 			}
 		}
 
 		// Check for unused mailboxes
 		if ( emailAccount && hasUnusedMailboxWarning( emailAccount ) ) {
-			return actionRequiredStatus;
+			return errorStatus;
 		}
 
 		// Fallback logic if we don't have an emailAccount - this will initially be the case for the email home page
@@ -190,7 +190,7 @@ export function resolveEmailPlanStatus(
 			! emailAccount &&
 			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
 		) {
-			return actionRequiredStatus;
+			return errorStatus;
 		}
 
 		if ( ! canCurrentUserAddEmail( domain ) ) {
@@ -201,7 +201,7 @@ export function resolveEmailPlanStatus(
 	}
 
 	if ( hasEmailForwards( domain ) && emailAccount && hasUnverifiedEmailForward( emailAccount ) ) {
-		return actionRequiredStatus;
+		return errorStatus;
 	}
 
 	return activeStatus;
