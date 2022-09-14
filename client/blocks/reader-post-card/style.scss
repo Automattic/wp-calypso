@@ -661,14 +661,93 @@
 }
 
 .reader-post-card__featured-images {
+	align-items: stretch;
 	display: flex;
 	flex-wrap: wrap;
 	padding: 0;
 	margin: 0;
 	flex-direction: row;
+	gap: 2px;
 
 	&.column {
 		flex-direction: column;
+	}
+
+	&.four-images {
+		border-radius: 6px;
+
+		.reader-post-card__featured-images-item {
+			width: calc(50% - 1px);
+  height: 100%;
+  object-fit: cover;
+		}
+		.reader-featured-image img {
+			border-radius: 0;
+		}
+		.reader-post-card__featured-images-item:first-child img {
+			border-top-left-radius: 6px;
+		}
+		.reader-post-card__featured-images-item:nth-child(2) img {
+			border-top-right-radius: 6px;
+		}
+		.reader-post-card__featured-images-item:nth-child(3) img {
+			border-bottom-left-radius: 6px;
+		}
+		.reader-post-card__featured-images-item:last-child img {
+			border-bottom-right-radius: 6px;
+		}
+	}
+
+	&.three-images {
+		border-radius: 6px;
+
+		.reader-featured-image img {
+			border-radius: 0;
+		}
+		/* First image */
+		.reader-post-card__featured-images-item:first-child {
+			width: calc(66% - 1px);
+		}
+		.reader-post-card__featured-images-item:first-child img {
+			border-bottom-left-radius: 6px;
+			border-top-left-radius: 6px;
+			width: 100%;
+		}
+		/* Second and third images */
+		.reader-post-card__featured-images-item.column-two {
+			width: calc(33% - 1px);
+		} 
+		.reader-post-card__featured-images-item.column-two .reader-post-card__featured-images.column {
+			.reader-post-card__featured-images-item {
+				width: auto;
+			}
+			.reader-post-card__featured-images-item:first-child img {
+				border-radius: 0;
+				border-top-right-radius: 6px;
+			}
+			.reader-post-card__featured-images-item:last-child img {
+				border-bottom-right-radius: 6px;
+			}
+		}
+	}
+
+	&.two-images {
+		border-radius: 6px;
+
+		.reader-post-card__featured-images-item {
+			width: calc(50% - 1px);
+		}
+		.reader-featured-image img {
+			border-radius: 0;
+		}
+		.reader-post-card__featured-images-item:first-child img {
+			border-bottom-left-radius: 6px;
+			border-top-left-radius: 6px;
+		}
+		.reader-post-card__featured-images-item:last-child img {
+			border-bottom-right-radius: 6px;
+			border-top-right-radius: 6px;
+		}
 	}
 }
 
