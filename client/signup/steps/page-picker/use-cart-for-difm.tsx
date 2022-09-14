@@ -1,6 +1,5 @@
 import {
 	PLAN_PREMIUM,
-	PLAN_WPCOM_PRO,
 	WPCOM_DIFM_LITE,
 	getDIFMTieredPriceDetails,
 } from '@automattic/calypso-products';
@@ -161,7 +160,6 @@ function getSiteCartProducts( {
 } ): Array< CartItem > {
 	const cartItems: Array< CartItem | null > = responseCart.products.map( ( product ) => {
 		switch ( product.product_slug ) {
-			case PLAN_WPCOM_PRO:
 			case PLAN_PREMIUM:
 				return {
 					productSlug: product.product_slug,
@@ -215,9 +213,7 @@ function getSiteCartProducts( {
 	// Enforce order of display, so that the DIFM product is visible first
 	const difmRelatedCartItems = cartItems.filter( ( e ) => e !== null );
 	const difmProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === WPCOM_DIFM_LITE );
-	const planProduct = difmRelatedCartItems.find(
-		( e ) => e?.productSlug === PLAN_WPCOM_PRO || e?.productSlug === PLAN_PREMIUM
-	);
+	const planProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === PLAN_PREMIUM );
 	if ( difmProduct && planProduct ) {
 		//Enforce order
 		return [ difmProduct, planProduct ];
