@@ -197,7 +197,7 @@ export function SitesDashboard( {
 							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
 						>
 							<JetpackLogo className="gridicon" size={ 18 } />
-							<span>{ __( 'Connect a Jetpack site' ) }</span>
+							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>
