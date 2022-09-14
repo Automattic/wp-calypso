@@ -7,7 +7,7 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const isRtl = useRtl();
-	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
+	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch, hideChevron } = task;
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
 
@@ -40,7 +40,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				{ task.displayBadge && task.badgeText ? (
 					<Badge type="info-blue">{ task.badgeText }</Badge>
 				) : null }
-				{ ! taskDisabled && (
+				{ ! taskDisabled && ! hideChevron && (
 					<Gridicon
 						aria-label={ translate( 'Task enabled' ) }
 						className="launchpad__checklist-item-chevron"
