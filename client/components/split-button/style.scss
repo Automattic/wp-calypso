@@ -1,6 +1,7 @@
 .split-button {
 	// So both buttons drop together
 	display: inline-block;
+	--white-separator-color: rgba(255, 255, 255, 0.3);
 }
 .split-button__main {
 	border-top-right-radius: 0;
@@ -20,7 +21,7 @@
 	&,
 	&:hover,
 	&:focus {
-		border-left-color: var(--studio-white);
+		border-left-color: var( --white-separator-color );
 	}
 }
 .gridicon.split-button__toggle-icon {
