@@ -27,6 +27,7 @@ import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getMessagePathForJITM } from 'calypso/lib/route';
 import UserVerificationChecker from 'calypso/lib/user/verification-checker';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
@@ -36,6 +37,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
+import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
 	getSelectedSiteId,
@@ -339,6 +341,7 @@ class Layout extends Component {
 
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
+		const isA12n = isAutomatticTeamMember( getReaderTeams( state ) );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 		const siteId = getSelectedSiteId( state );
@@ -377,9 +380,10 @@ export default withCurrentRoute(
 
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) &&
-			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
+			shouldShowHelpCenterToUser( getCurrentUserId( state ), isA12n );
 
 		return {
+			isA12n,
 			masterbarIsHidden,
 			sidebarIsHidden,
 			isJetpack,
