@@ -12,9 +12,17 @@
 	background: #9b5c8f;
 	z-index: 1;
 
-	img {
+	svg {
 		height: 20px;
 		margin-right: 5px;
+
+		.cls-1 {
+			fill: #9b5c8f;
+		}
+
+		.cls-2 {
+			fill: #fff;
+		}
 	}
 
 	.design-picker .design-picker__option-meta & {

@@ -85,10 +85,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isEnableThemeStyleVariations = isEnabled( 'signup/design-picker-style-selection' );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
-	// const theme = useThemeDetails( design.slug );
-	// const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
-	// Just for testing
-	const showBundledBadge = isEnabled( 'themes/plugin-bundling' ) && design.slug === 'baxter';
+	const showBundledBadge =
+		isEnabled( 'themes/plugin-bundling' ) && design?.taxonomies?.theme_software_set?.length;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
