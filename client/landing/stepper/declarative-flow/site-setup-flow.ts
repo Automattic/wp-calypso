@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, useDesignsBySite } from '@automattic/design-picker';
+import { Design, useDesignsBySite, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
@@ -177,9 +177,7 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
-					if (
-						( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas-blocks'
-					) {
+					if ( isBlankCanvasDesign( providedDependencies?.selectedDesign as Design ) ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -198,7 +196,7 @@ export const siteSetupFlow: Flow = {
 					// End of Pattern Assembler flow
 					if (
 						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						( selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
 					) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
