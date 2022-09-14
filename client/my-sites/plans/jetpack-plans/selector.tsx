@@ -219,7 +219,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					path={ viewTrackerPath }
 					properties={ viewTrackerProps }
 					title="Plans"
-					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+					options={ { useJetpackGoogleAnalytics: isJetpackCloud() } }
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
