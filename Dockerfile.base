@@ -34,7 +34,7 @@ RUN cd / \
 	# Prime webpack caches, including sourcemaps.
 	&& NODE_ENV=production SOURCEMAP=hidden-source-map yarn build-client
 
-ENTRYPOINT [ "/bin/ash" ]
+ENTRYPOINT [ "/bin/bash" ]
 
 #### base image
 #### This image can be used as a base image for other builds, or to unit test and build calypso.
@@ -63,7 +63,7 @@ RUN apk update \
 	&& rm -rf /var/lib/apt/lists/*
 
 # Set bash as the default shell
-RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+# RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
 # COPY --from=cache --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
@@ -71,7 +71,7 @@ COPY --from=cache --chown=$UID /calypso/.cache /calypso/.cache
 # COPY --from=cache --chown=$UID /calypso/.bashrc /calypso/.bashrc
 COPY --from=cache --chown=$UID /calypso/.yarn /calypso/.yarn
 
-ENTRYPOINT [ "/bin/ash" ]
+ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-e2e image
 #### This image is used to run E2E tests.
@@ -122,7 +122,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositorie
     #   --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
     #   font-wqy-zenhei
 
-ENTRYPOINT [ "/bin/ash" ]
+ENTRYPOINT [ "/bin/bash" ]
 
 #### ci-wpcom image
 #### This image is used to test and build WPCOM plugins in Calypso repo.
