@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-restricted-imports */
 import wpcomRequest from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
