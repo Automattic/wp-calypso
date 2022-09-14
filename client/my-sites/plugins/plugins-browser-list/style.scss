@@ -1,5 +1,5 @@
-@import "@automattic/onboarding/styles/base-styles.scss";
-@import "@automattic/onboarding/styles/mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugins-browser-list {
 	margin-bottom: 8px; // 32 + 8 = 40 gap
@@ -39,7 +39,7 @@
 		margin-bottom: 4px; // +20 from elements = 24 gap
 
 		.plugins-browser-list__title {
-			@include onboarding-font-recoleta;
+			@extend .wp-brand-font;
 			font-size: $font-title-medium;
 			font-weight: 500;
 
@@ -49,6 +49,7 @@
 		}
 
 		.plugins-browser-list__subtitle {
+			margin-top: 4px;
 			font-size: $font-body-small;
 		}
 	}

@@ -3,7 +3,7 @@
 
 .plugin-category-results-header {
 	position: relative;
-	padding: 32px 16px 0 16px;
+	padding: 32px 16px 4px 16px;
 
 	@include breakpoint-deprecated(">660px") {
 		padding-left: 0;
@@ -13,17 +13,19 @@
 
 .plugin-category-results-header__title {
 	@extend .wp-brand-font;
-	font-size: $font-title-large;
+	font-size: $font-title-medium;
 }
 
 .plugin-category-results-header__count {
 	color: var(--studio-gray-60);
-	margin-top: 8px;
+	font-size: $font-body-small;
+	margin-top: 4px;
 }
 
 .plugin-category-results-header__subtitle {
 	color: var(--studio-gray-80);
-	margin: 8px 0;
+	font-size: $font-body-small;
+	margin-top: 4px;
 
 	@include break-small {
 		width: 527px;
