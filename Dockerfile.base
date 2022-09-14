@@ -92,6 +92,7 @@ RUN apk update && apk upgrade --no-cache --available \
 		ttf-freefont \
 		font-noto-emoji \
 		openssl \
+		curl \
 		# libatk-bridge2.0-0 \
 		# libatspi2.0-0 \
 		# libdbus-glib-1-2 \
