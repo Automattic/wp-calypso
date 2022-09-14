@@ -33,7 +33,7 @@ const DescriptionList: React.FC< { items?: TranslateResult[] } > = ( { items } )
 	return (
 		<ul>
 			{ items.map( ( item ) => (
-				<li key={ item.toString() }>{ item }</li>
+				<li key={ `${ JSON.stringify( item ) }` }>{ item }</li>
 			) ) }
 		</ul>
 	);
