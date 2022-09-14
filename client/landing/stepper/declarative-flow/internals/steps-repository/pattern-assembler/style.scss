@@ -19,6 +19,10 @@ $font-family: "SF Pro Text", $sans;
 		border-radius: 4px;
 	}
 
+	.step-container {
+		max-width: 1440px;
+	}
+
 	.step-container__content {
 		display: flex;
 		width: 100%;

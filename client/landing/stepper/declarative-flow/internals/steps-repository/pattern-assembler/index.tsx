@@ -8,7 +8,6 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
-import { STYLE_SHEET } from './constants';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
@@ -37,9 +36,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const getDesign = () =>
 		( {
 			...selectedDesign,
-			verticalizable: false,
 			recipe: {
-				stylesheet: STYLE_SHEET,
+				...selectedDesign?.recipe,
 				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
 				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
 				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
@@ -173,7 +171,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
 			hideSkip={ true }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
