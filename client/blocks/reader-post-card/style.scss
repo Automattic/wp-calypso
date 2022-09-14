@@ -57,7 +57,7 @@
 		}
 
 		.reader-post-card__post-details {
-			margin-top: 15px;
+			margin-top: 18px;
 		}
 
 		&.is-photo {
@@ -132,7 +132,7 @@
 	}
 
 	.reader-post-actions {
-		margin: 4px 0 0;
+		margin: 10px 0 0;
 	}
 
 	&.is-compact {
@@ -438,6 +438,7 @@
 	font-size: $font-title-small;
 	font-weight: 600;
 	display: block;
+	line-height: 29px;
 
 	&:hover {
 		color: var(--color-neutral-70);
@@ -447,9 +448,10 @@
 .reader-post-card .reader-excerpt {
 	font-family: $sans;
 	font-size: $font-body;
-	line-height: 1.55;
+	letter-spacing: -0.24px;
+	line-height: 22px;
 	font-weight: 400;
-	margin-top: 9px;
+	margin-top: 7px;
 	word-break: break-word;
 	position: relative;
 
