@@ -1864,17 +1864,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '{em}1TB (1,000GB){/em} of cloud storage', {
+			translate( '{{em}}1TB (1,000GB){{/em}} of cloud storage', {
 				components: {
 					em: <em />,
 				},
 			} ),
-			translate( '{em}1-year{/em} activity log archive', {
+			translate( '{{em}}1-year{{/em}} activity log archive', {
 				components: {
 					em: <em />,
 				},
 			} ),
-			translate( 'Unlimited one-click restores from the last {em}1 year{/em}', {
+			translate( 'Unlimited one-click restores from the last {{em}}1 year{{/em}}', {
 				components: {
 					em: <em />,
 				},
@@ -1892,17 +1892,17 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '{em}1TB (1,000GB){/em} of cloud storage', {
+			translate( '{{em}}1TB (1,000GB){{/em}} of cloud storage', {
 				components: {
 					em: <em />,
 				},
 			} ),
-			translate( '{em}1-year{/em} activity log archive', {
+			translate( '{{em}}1-year{{/em}} activity log archive', {
 				components: {
 					em: <em />,
 				},
 			} ),
-			translate( 'Unlimited one-click restores from the last {em}1 year{/em}', {
+			translate( 'Unlimited one-click restores from the last {{em}}1 year{{/em}}', {
 				components: {
 					em: <em />,
 				},
