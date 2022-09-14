@@ -213,6 +213,13 @@
 	font-weight: 600;
 }
 
+// change badge color on hover (Choose a Plan step)
+.launchpad__task:hover {
+	.launchpad__checklist-item .badge {
+		background: var(--studio-blue-10);
+	}
+}
+
 // completed tasks
 .launchpad__task.is-completed {
 	.launchpad__checklist-item-text {
