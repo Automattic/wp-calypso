@@ -246,7 +246,7 @@ export function updatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.update ) {
+		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
 			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
 		}
 
