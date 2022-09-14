@@ -403,7 +403,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ isMobile ? actionButtons : undefined }
+				customizedActionButtons={ actionButtons }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (
