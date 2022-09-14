@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
@@ -6,19 +5,16 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
 import { setRoute } from 'calypso/state/route/actions';
 
-const calypsoEnv = config( 'env_id' );
 const debug = debugFactory( 'calypso:pages' );
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
 		expressApp.get(
 			route,
-			calypsoEnv === 'development'
-				? ( req, res, next ) => {
-						debug( `Using SSR pipeline for path: ${ req.path } with matcher ${ route }` );
-						next();
-				  }
-				: undefined,
+			( req, res, next ) => {
+				debug( `Using SSR pipeline for path: ${ req.path } with matcher ${ route }` );
+				next();
+			},
 			setUpRoute,
 			combineMiddlewares(
 				setSectionMiddleware( section ),
