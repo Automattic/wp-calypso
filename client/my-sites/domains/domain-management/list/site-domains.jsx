@@ -22,6 +22,7 @@ import EmptyDomainsListCard from 'calypso/my-sites/domains/domain-management/lis
 import FreeDomainItem from 'calypso/my-sites/domains/domain-management/list/free-domain-item';
 import OptionsDomainButton from 'calypso/my-sites/domains/domain-management/list/options-domain-button';
 import { domainManagementList, domainManagementRoot } from 'calypso/my-sites/domains/paths';
+import BannerPromoTitanVia2fa from 'calypso/my-sites/email/banners/promo-titan-via-2fa';
 import GoogleSaleBanner from 'calypso/my-sites/email/google-sale-banner';
 import {
 	composeAnalytics,
@@ -177,6 +178,14 @@ export class SiteDomains extends Component {
 
 				{ ! this.isLoading() && <GoogleSaleBanner domains={ domains } /> }
 
+				{ ! this.isLoading() && (
+					<BannerPromoTitanVia2fa
+						domains={ domains }
+						selectedSiteSlug={ selectedSite.slug }
+						currentRoute={ currentRoute }
+					/>
+				) }
+
 				<div className="domain-management-list__items">
 					<div className="domain-management-list__filter">
 						{ this.renderDomainTableFilterButton() }
@@ -196,7 +205,6 @@ export class SiteDomains extends Component {
 						hasLoadedPurchases={ ! isFetchingPurchases }
 					/>
 				</div>
-
 				{ ! this.isLoading() && nonWpcomDomains.length === 0 && ! selectedFilter && (
 					<EmptyDomainsListCard
 						selectedSite={ selectedSite }

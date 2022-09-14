@@ -23,6 +23,7 @@ import {
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
 import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
+import BannerSetupTitan2fa from 'calypso/my-sites/email/banners/setup-titan-2fa';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
 import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
@@ -271,6 +272,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
+			<BannerSetupTitan2fa domain={ domain } />
 			<MailPoetUpsell />
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
 			<EmailPlanHeader
