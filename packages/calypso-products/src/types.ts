@@ -1,3 +1,4 @@
+import { PriceTierEntry } from './get-price-tier-for-units';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -101,6 +102,7 @@ export interface Product {
 	type: ProductSlug;
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
+	price_tier_list?: Array< PriceTierEntry >;
 	categories: JetpackProductCategory[];
 	getFeatures?: () => Feature[];
 	getProductId: () => number;

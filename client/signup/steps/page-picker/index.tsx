@@ -1,9 +1,13 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
+import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
 	HOME_PAGE,
@@ -22,7 +26,12 @@ import {
 } from 'calypso/signup/difm/constants';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSiteId } from 'calypso/state/sites/selectors';
+import ShoppingCartForDIFM from './shopping-cart-for-difm';
+import useCartForDIFM from './use-cart-for-difm';
+import type { Dependencies } from 'calypso/signup/types';
 
 import './style.scss';
 
@@ -43,6 +52,10 @@ const PageGrid = styled.div`
 		grid-template-columns: 1fr 1fr 1fr;
 		row-gap: 40px;
 		column-gap: 35px;
+	}
+
+	@media ( max-width: 600px ) {
+		margin: 0 0 145px;
 	}
 `;
 
@@ -102,9 +115,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 	const totalSelections = selectedPages.length;
 	const isSelected = Boolean( selectedIndex > -1 );
 	const isDisabled =
-		! isEnabled( 'difm/allow-extra-pages' ) &&
-		selectedIndex === -1 &&
-		totalSelections >= PAGE_LIMIT;
+		! config.isEnabled( 'difm/allow-extra-pages' ) && PAGE_LIMIT <= totalSelections;
 	const title = useTranslatedPageTitles()[ pageId ];
 
 	return (
@@ -133,12 +144,17 @@ function PageSelector( {
 	setSelectedPages: ( pages: string[] ) => void;
 } ) {
 	const onPageClick = ( pageId: string ) => {
-		const foundIndex = selectedPages.indexOf( pageId );
-		// The home page cannot be touched
+		const isPageSelected = selectedPages.includes( pageId );
+		const numberOfPagesSelected = selectedPages.length;
+		// The home page cannot be touched and is always included
 		if ( pageId !== HOME_PAGE ) {
-			if ( foundIndex > -1 ) {
-				setSelectedPages( selectedPages.filter( ( page, index ) => index !== foundIndex ) );
-			} else if ( isEnabled( 'difm/allow-extra-pages' ) || selectedPages.length !== PAGE_LIMIT ) {
+			if ( isPageSelected ) {
+				// Unselect selected page
+				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
+			} else if (
+				config.isEnabled( 'difm/allow-extra-pages' ) ||
+				numberOfPagesSelected < PAGE_LIMIT
+			) {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
 		}
@@ -201,6 +217,7 @@ interface StepProps {
 	stepName: string;
 	goToStep: () => void;
 	goToNextStep: () => void;
+	signupDependencies: Dependencies;
 }
 
 const StyledButton = styled( Button )`
@@ -209,35 +226,105 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-export default function DIFMPagePicker( props: StepProps ) {
-	const { stepName, goToNextStep } = props;
+const Placeholder = styled.div`
+	animation: pulse-light 2s ease-in-out infinite;
+	background-color: var( --color-neutral-10 );
+	color: transparent;
+	min-height: 16px;
+	display: inline-block;
+	min-width: 32px;
+`;
 
+function DIFMPagePicker( props: StepProps ) {
+	const {
+		stepName,
+		goToNextStep,
+		signupDependencies: { siteId, siteSlug, newOrExistingSiteChoice },
+	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
 	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
 		HOME_PAGE,
 		ABOUT_PAGE,
 		CONTACT_PAGE,
 	] );
+	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
+
+	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
+	const {
+		isCartLoading,
+		isCartPendingUpdate,
+		isCartUpdateStarted,
+		isProductsLoading,
+		isFormattedCurrencyLoading,
+		effectiveCurrencyCode,
+	} = useCartForDIFM( selectedPages );
+
+	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
+	let difmTieredPriceDetails = null;
+	if ( difmLiteProduct ) {
+		difmTieredPriceDetails = getDIFMTieredPriceDetails( difmLiteProduct, selectedPages.length );
+	}
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const submitPickedPages = () => {
-		dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
-		goToNextStep();
+	const submitPickedPages = async () => {
+		if ( ! isCheckoutPressed ) {
+			setIsCheckoutPressed( true );
+			if ( cartKey ) {
+				//Empty cart so that the sign up flow can add products to the cart
+				await replaceProductsInCart( [] );
+			}
+			dispatch( submitSignupStep( { stepName }, { selectedPageTitles: selectedPages } ) );
+			goToNextStep();
+		}
 	};
 
 	const headerText = translate( 'Add pages to your {{wbr}}{{/wbr}}website', {
 		components: { wbr: <wbr /> },
 	} );
-	const subHeaderText = translate(
+
+	let subHeaderText = translate(
 		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}You can select up to 5 pages.',
 		{
 			components: { br: <br /> },
 		}
 	);
+
+	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
+		subHeaderText = translate(
+			'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
+			{
+				components: {
+					br: <br />,
+					PriceWrapper:
+						difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+							<span />
+						) : (
+							<Placeholder />
+						),
+				},
+				args: {
+					freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+					extraPagePrice: formatCurrency(
+						difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+						effectiveCurrencyCode ?? '',
+						{
+							stripZeros: true,
+							isSmallestUnit: true,
+						}
+					),
+				},
+			}
+		);
+	}
+
+	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
+
 	return (
 		<StepWrapper
 			headerText={ headerText }
@@ -252,11 +339,42 @@ export default function DIFMPagePicker( props: StepProps ) {
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
 			headerButton={
-				<StyledButton primary onClick={ submitPickedPages }>
-					{ translate( 'Go to Checkout' ) }
-				</StyledButton>
+				config.isEnabled( 'difm/allow-extra-pages' ) ? (
+					<StyledButton
+						disabled={ isFormattedCurrencyLoading }
+						busy={
+							( isExistingSite &&
+								( isProductsLoading ||
+									isCartPendingUpdate ||
+									isCartLoading ||
+									isCartUpdateStarted ) ) ||
+							isCheckoutPressed
+						}
+						primary
+						onClick={ submitPickedPages }
+					>
+						{ translate( 'Go to Checkout' ) }
+					</StyledButton>
+				) : (
+					<StyledButton primary busy={ isCheckoutPressed } onClick={ submitPickedPages }>
+						{ translate( 'Go to Checkout' ) }
+					</StyledButton>
+				)
+			}
+			headerContent={
+				config.isEnabled( 'difm/allow-extra-pages' ) && (
+					<ShoppingCartForDIFM selectedPages={ selectedPages } />
+				)
 			}
 			{ ...props }
 		/>
+	);
+}
+
+export default function ShoppingCartWrappedPagePicker( props: StepProps ) {
+	return (
+		<CalypsoShoppingCartProvider>
+			<DIFMPagePicker { ...props } />
+		</CalypsoShoppingCartProvider>
 	);
 }
