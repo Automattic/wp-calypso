@@ -49,10 +49,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 		if ( header ) {
 			pageTemplate = 'header-footer-only';
-		} else if ( footer ) {
-			pageTemplate = 'footer-only';
-		} else if ( sections.length ) {
-			pageTemplate = 'blank';
 		}
 
 		return pageTemplate;
