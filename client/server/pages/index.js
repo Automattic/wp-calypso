@@ -815,11 +815,17 @@ export default function pages() {
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {
 		const lastPathSegment = req.path.substr( req.path.lastIndexOf( '/' ) + 1 );
 		const languageSlugs = getLanguageSlugs();
+		let redirectUrl = '/start';
+
 		if ( languageSlugs.includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment ) ) {
-			res.redirect( 301, `/start/${ lastPathSegment }` );
-		} else {
-			res.redirect( 301, '/start' );
+			redirectUrl += `/${ lastPathSegment }`;
 		}
+
+		if ( Object.keys( req.query ) > 0 ) {
+			redirectUrl += `?${ stringify( req.query ) }`;
+		}
+
+		res.redirect( 301, redirectUrl );
 	} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
