@@ -80,7 +80,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 			<FoldableFAQ id="faq-5" question={ 'Can I host multiple sites?' } onToggle={ onFaqToggle }>
 				Yes, you can host as many sites as you like, but they each need a separate plan. You can
 				choose the appropriate plan for each site individually so you’ll pay for only the features
-				you need. <br />
+				you need. <br /> <br />
 				We have a dashboard that helps you manage all your WordPress.com and Jetpack-connected
 				websites, all from one simple and centralized admin tool.
 			</FoldableFAQ>
@@ -100,7 +100,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 			>
 				No it won’t! You’re welcome to create your new site with us before pointing the domain here.
 				That way your current site can stay “live” until your new one is ready.
-				<br />
+				<br /> <br />
 				We recommend getting a plan now because they have other features you might find useful,
 				including direct live chat and email support. Just avoid using the domain options until
 				you’re ready, and then you can connect or transfer the domain.
@@ -110,7 +110,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 				Professional Email service is the smart choice. This robust hosted email solution is
 				available for any domain hosted with WordPress.com and starts at just{ ' ' }
 				{ titanMonthlyRenewalCost }/mo per mailbox.
-				<br />
+				<br /> <br />
 				We also offer a Google Workspace integration, and for users who need something simpler, you
 				can set up email forwarding for free.
 			</FoldableFAQ>
@@ -140,7 +140,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 				We’d love to chat with you! All paid plans include access to one-on-one support from our
 				team of WordPress experts (we call them Happiness Engineers). The Personal plan includes
 				email support while the Premium plan and above all include live chat support.
-				<br />
+				<br /> <br />
 				If you have pre-purchase questions, we offer live chat on the checkout page. Select the plan
 				that looks like the best fit for you and click the “Questions? Ask a Happiness Engineer”
 				link on the next page.
