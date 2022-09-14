@@ -37,8 +37,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 	);
 };
 
-export const getFetchWPCOMPlugins = (
-	enabled: boolean,
+export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
@@ -63,7 +62,7 @@ export const useWPCOMPlugins = (
 	tag?: string,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	return useQuery( ...getFetchWPCOMPlugins( enabled, type, searchTerm, tag ), {
+	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
 		select: ( data ) => normalizePluginsList( data.results ),
 		enabled: enabled,
 		staleTime: staleTime,
@@ -97,7 +96,7 @@ export const useWPCOMPlugin = (
 	} );
 };
 
-export const getFetchWPCOMFeaturedPlugins = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
 	const cacheKey = 'plugins-featured-list';
 	const fetchFn = () =>
 		wpcom.req.get( {
@@ -118,7 +117,7 @@ export const useWPCOMFeaturedPlugins = ( {
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
 }: UseQueryOptions = {} ): UseQueryResult => {
-	return useQuery( ...getFetchWPCOMFeaturedPlugins(), {
+	return useQuery( ...getWPCOMFeaturedPluginsQueryParams(), {
 		select: ( data ) => normalizePluginsList( data ),
 		enabled,
 		staleTime,

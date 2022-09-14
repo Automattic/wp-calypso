@@ -1,9 +1,9 @@
 import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import {
-	getFetchWPCOMFeaturedPlugins,
-	getFetchWPCOMPlugins,
+	getWPCOMFeaturedPluginsQueryParams,
+	getWPCOMPluginsQueryParams,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { getFetchWPORGPlugins } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
@@ -27,14 +27,17 @@ function prefetchPluginsData( queryClient, fetchParams, infinite ) {
 const prefetchPaidPlugins = ( queryClient, options ) =>
 	prefetchPluginsData(
 		queryClient,
-		getFetchWPCOMPlugins( true, 'all', options.search, options.tag )
+		getWPCOMPluginsQueryParams( 'all', options.search, options.tag )
 	);
 
 const prefetchPopularPlugins = ( queryClient, options ) =>
-	prefetchPluginsData( queryClient, getFetchWPORGPlugins( { ...options, category: 'popular' } ) );
+	prefetchPluginsData(
+		queryClient,
+		getWPORGPluginsQueryParams( { ...options, category: 'popular' } )
+	);
 
 const prefetchFeaturedPlugins = ( queryClient ) =>
-	prefetchPluginsData( queryClient, getFetchWPCOMFeaturedPlugins() );
+	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );
 
 const prefetchProductList = ( store ) => {
 	const productsList = getProductsList( store.getState() );

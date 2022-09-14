@@ -20,7 +20,7 @@ import { BASE_STALE_TIME, WPORG_CACHE_KEY } from './constants';
 import { Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
 
-export const getFetchWPORGPlugins = (
+export const getWPORGPluginsQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
 ): [ QueryKey, QueryFunction< { plugins: Plugin[]; info: { page: number } }, QueryKey > ] => {
@@ -46,7 +46,7 @@ export const useWPORGPlugins = (
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
-	return useQuery( ...getFetchWPORGPlugins( options, locale ), {
+	return useQuery( ...getWPORGPluginsQueryParams( options, locale ), {
 		select: ( { plugins = [], info = {} } ) => ( {
 			plugins: normalizePluginsList( plugins ),
 			pagination: info,
