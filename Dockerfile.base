@@ -115,12 +115,12 @@ RUN apk update && apk upgrade --no-cache --available \
 
 ENTRYPOINT [ "/bin/ash" ]
 
-# #### ci-wpcom image
-# #### This image is used to test and build WPCOM plugins in Calypso repo.
-# FROM base as ci-wpcom
+#### ci-wpcom image
+#### This image is used to test and build WPCOM plugins in Calypso repo.
+FROM base as ci-wpcom
 
-# COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-# COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 
 # RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && dpkg -i libffi6_3.2.1-8_amd64.deb
 
@@ -136,4 +136,4 @@ ENTRYPOINT [ "/bin/ash" ]
 # # Install sentry-cli.
 # RUN wget -O - https://sentry.io/get-cli/ | bash
 
-# ENTRYPOINT [ "/bin/bash" ]
+ENTRYPOINT [ "/bin/ash" ]
