@@ -21,10 +21,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 	}
 
 	const listItems = imagesToDisplay.map( ( image, index, [ imageWidth, imageHeight ] ) => {
-		const border = 2;
-
-		imageWidth = READER_CONTENT_WIDTH - border;
-		imageHeight = READER_FEATURED_MAX_IMAGE_HEIGHT - border;
+		imageWidth = READER_CONTENT_WIDTH;
+		imageHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
 
 		if ( imagesToDisplay.length === 4 ) {
 			imageWidth = imageWidth / 2;
