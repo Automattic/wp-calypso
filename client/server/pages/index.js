@@ -789,7 +789,6 @@ export default function pages() {
 			setupDefaultContext( entrypoint ),
 			( req, res, next ) => {
 				req.context.sectionName = section.name;
-				req.context.section = section;
 
 				if ( ! entrypoint ) {
 					req.context.chunkFiles = req.getFilesForChunk( section.name );
