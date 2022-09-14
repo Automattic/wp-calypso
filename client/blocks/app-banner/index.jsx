@@ -262,6 +262,13 @@ function BannerIcon( { icon } ) {
 			autoplay: true,
 			path: icon,
 		} );
+
+		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		if ( reducedMotion ) {
+			animation.goToAndStop( 145, true );
+		}
+
 		return () => animation.destroy();
 	}, [ icon ] );
 
