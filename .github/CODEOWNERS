@@ -115,8 +115,8 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @WunderBart @Automattic/kitkat @worldomonation
-/packages/calypso-e2e @Automattic/kitkat @worldomonation
+/test/e2e @WunderBart @Automattic/KitKat @worldomonation
+/packages/calypso-e2e @Automattic/KitKat @worldomonation
 
 # Node updates
 /.nvmrc @Automattic/ground-control
