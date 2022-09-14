@@ -96,10 +96,6 @@ const sectionPatterns: Pattern[] = [
 		name: 'Organic Gallery With Intro Text',
 	},
 	{
-		id: 1930,
-		name: 'Intro Section With Text and Spot Images',
-	},
-	{
 		id: 3862,
 		name: 'Alternating Image and Text',
 	},
