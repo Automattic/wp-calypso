@@ -664,7 +664,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 
 	const socialBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
-		translate( 'Unlock your growth potential by building a following on social media' ),
+		translate( 'Unlock your growth potential by building a following on social media media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 	];
