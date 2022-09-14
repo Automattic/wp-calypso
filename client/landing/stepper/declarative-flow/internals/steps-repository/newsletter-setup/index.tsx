@@ -1,5 +1,11 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
-import { hasMinContrast, StepContainer, RGB, base64ImageToBlob } from '@automattic/onboarding';
+import {
+	hasMinContrast,
+	hexToRgb,
+	StepContainer,
+	RGB,
+	base64ImageToBlob,
+} from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -72,10 +78,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	useEffect( () => {
 		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
-		if ( defaultAccentColor.hex === siteAccentColor ) {
-			setAccentColor( defaultAccentColor );
+		if ( siteAccentColor && siteAccentColor !== '' && siteAccentColor !== defaultAccentColor.hex ) {
+			setAccentColor( { hex: siteAccentColor, rgb: hexToRgb( siteAccentColor ) } );
 		} else {
-			setAccentColor( { ...defaultAccentColor, hex: siteAccentColor } );
+			setAccentColor( defaultAccentColor );
 		}
 
 		setTagline( siteDescription );
@@ -155,6 +161,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			/>
 			<Popover
 				isVisible={ colorPickerOpen }
+				className="newsletter-setup__accent-color-popover"
 				context={ accentColorRef.current }
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }

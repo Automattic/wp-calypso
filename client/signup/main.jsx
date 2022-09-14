@@ -728,6 +728,11 @@ class Signup extends Component {
 		}
 	}
 
+	getPageTitle() {
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			return this.props.pageTitle;
+		}
+	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -762,6 +767,7 @@ class Signup extends Component {
 								flowName: this.props.flowName,
 								stepName: this.props.stepName,
 							} }
+							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={

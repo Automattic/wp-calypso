@@ -59,6 +59,7 @@
 		"layout/query-selected-editor": true,
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": true,
+		"limit-global-styles": true,
 		"mailchimp": true,
 		"marketplace-jetpack-plugin-search": true,
 		"marketplace-personal-premium": false,

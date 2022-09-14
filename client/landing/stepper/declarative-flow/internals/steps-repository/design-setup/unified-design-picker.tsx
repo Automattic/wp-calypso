@@ -32,7 +32,8 @@ import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
-import getThemeIdFromDesign from './util/get-theme-id-from-design';
+import getThemeIdFromDesign from './utils/get-theme-id-from-design';
+import { removeLegacyDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design, StyleVariation } from '@automattic/design-picker';
@@ -89,7 +90,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	const generatedDesigns = allDesigns?.generated?.designs || [];
-	const staticDesigns = allDesigns?.static?.designs || [];
+
+	let staticDesigns = allDesigns?.static?.designs || [];
+	if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
+		staticDesigns = removeLegacyDesignVariations( staticDesigns );
+	}
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {

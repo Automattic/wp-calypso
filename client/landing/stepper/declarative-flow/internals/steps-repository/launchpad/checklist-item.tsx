@@ -42,6 +42,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				) : null }
 				{ ! taskDisabled && (
 					<Gridicon
+						aria-label={ translate( 'Task enabled' ) }
 						className="launchpad__checklist-item-chevron"
 						icon={ `chevron-${ isRtl ? 'left' : 'right' }` }
 						size={ 18 }

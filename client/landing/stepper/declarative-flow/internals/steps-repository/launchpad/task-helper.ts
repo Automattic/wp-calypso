@@ -1,6 +1,6 @@
 import { dispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
-import { translate } from 'i18n-calypso';
+import { __, hasTranslation } from '@wordpress/i18n';
+import { translate, getLocaleSlug } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -37,6 +37,8 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						keepActive: true,
+						actionUrl: `/plans/${ siteSlug }`,
 						badgeText: translatedPlanName,
 					};
 					break;
@@ -64,13 +66,18 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
-						title: translate( 'Setup Link in bio' ),
+						title:
+							hasTranslation( 'Set up Link in Bio' ) ||
+							[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' )
+								? translate( 'Set up Link in Bio' )
+								: translate( 'Setup your Link in Bio' ),
 					};
 					break;
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						keepActive: true,
 						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;

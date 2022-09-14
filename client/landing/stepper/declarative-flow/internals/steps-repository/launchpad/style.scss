@@ -353,8 +353,11 @@
 		background-position-x: 0%, 100%;
 		background-position-y: 90%, 10%;
 
-		@include break-large {
+		@include break-huge {
 			background-size: auto 50%, auto 50%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
 		}
 	}
 

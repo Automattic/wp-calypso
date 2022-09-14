@@ -3,7 +3,25 @@
 ## Building
 
 This section lists known problems you can encounter while building the project.
-If you have a problem when running `yarn start` - this is the proper section to look for a solution.
+If you have a problem when running `yarn` or `yarn start` - this is the proper section to look for a solution.
+
+### Puppeteer throws a fatal error
+
+If running `yarn` fails and the log file for `Puppeteer` show an error like this: 
+
+```
+The chromium binary is not available for arm64:
+If you are on Ubuntu, you can install with:
+
+ apt-get install chromium-browser
+
+path-to-project/node_modules/puppeteer/lib/cjs/puppeteer/node/BrowserFetcher.js:112
+            throw new Error();
+```
+
+#### Solution
+
+You may need to manually install `Chromium`. There are instructons on how to do that via `Homebrew` here: <https://linguinecode.com/post/how-to-fix-m1-mac-puppeteer-chromium-arm64-bug>
 
 ### EMFILE - too many open files
 

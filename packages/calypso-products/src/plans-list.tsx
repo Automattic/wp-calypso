@@ -1818,8 +1818,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '30-day activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1-year' ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (60k API calls/mo)' ),
 			translate( 'VideoPress with 1TB of ad-free video hosting' ),
@@ -1837,8 +1837,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
-			translate( '1-year activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
@@ -1868,11 +1868,23 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '1-year activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1884,9 +1896,21 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '30-day activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
