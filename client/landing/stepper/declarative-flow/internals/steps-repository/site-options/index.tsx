@@ -183,6 +183,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };

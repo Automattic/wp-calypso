@@ -18,7 +18,7 @@ body {
 				border-radius: 0;
 			}
 		}
-	
+
 		.signup-header {
 			padding: 24px;
 
@@ -60,6 +60,11 @@ body {
 			button.is-primary {
 				color: #000;
 				background-color: $videopress-theme-yellow;
+			}
+
+			.step-container__videopress-powered {
+				line-height: 24px;
+				font-size: 12px;
 			}
 		}
 	}

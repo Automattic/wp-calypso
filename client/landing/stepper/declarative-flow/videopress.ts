@@ -11,7 +11,7 @@ import './internals/videopress.scss';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
-	title: 'VideoPress',
+	title: 'Video',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
