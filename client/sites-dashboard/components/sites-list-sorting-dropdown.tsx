@@ -64,6 +64,9 @@ export const SitesListSortingDropdown = ( {
 		}
 
 		switch ( sitesListSorting ) {
+			case `lastInteractedWith${ SEPARATOR }desc`:
+				return __( 'Sorted automagically' );
+
 			case `alphabetically${ SEPARATOR }asc`:
 				return __( 'Sorted alphabetically' );
 
@@ -101,6 +104,14 @@ export const SitesListSortingDropdown = ( {
 						} }
 					>
 						{ __( 'Alphabetically' ) }
+					</MenuItem>
+					<MenuItem
+						onClick={ () => {
+							onSitesListSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
+							onClose();
+						} }
+					>
+						{ __( 'Automagically' ) }
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
