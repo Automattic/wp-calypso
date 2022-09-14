@@ -133,8 +133,8 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
 ```scss
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .class-name {
 	margin-bottom: 8px;
@@ -242,7 +242,7 @@ Note for either of the above that because of the SCSS build process, if you're n
 ```scss
 .rtl {
 	.onlyinrtl {
-		margin-right: 5px #{'/*rtl:ignore*/'};
+		margin-right: 5px #{"/*rtl:ignore*/"};
 	}
 }
 ```
@@ -251,7 +251,7 @@ You can also define specific values for RTL like so:
 
 ```scss
 .class {
-	margin-right: 5px #{'/*rtl:2px*/'};
+	margin-right: 5px #{"/*rtl:2px*/"};
 }
 ```
 
@@ -275,9 +275,9 @@ selector {
 - DO use a single space before an opening brace
 
 ```scss
-@include breakpoint-deprecated( '>480px' ) {
-	color: rgb( 0, 0, 0 );
-	transform: translate( -50%, -50% ) scale( 1 );
+@include breakpoint-deprecated( ">480px" ) {
+	color: rgb(0, 0, 0);
+	transform: translate(-50%, -50%) scale(1);
 }
 ```
 
@@ -371,21 +371,21 @@ values sorted from lowest to highest within a stacking context:
 
 ```scss
 $z-layers: (
-	'root': (
-		'.modal': 1,
-		'.masterbar': 2,
+	"root": (
+		".modal": 1,
+		".masterbar": 2,
 	),
-	'.modal': (
-		'.modal__icon': 100,
-		'.modal__header': 200,
-		'.modal__content': 300,
+	".modal": (
+		".modal__icon": 100,
+		".modal__header": 200,
+		".modal__content": 300,
 	),
 );
 ```
 
 ```scss
 .modal__icon {
-	z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+	z-index: z-index(".modal", ".modal__icon"); // returns 100
 }
 ```
 
