@@ -18,6 +18,8 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import SingleListView from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 
+import './style.scss';
+
 /**
  * Module variables
  */
@@ -83,6 +85,9 @@ const UpgradeNudge = ( {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
+				className={ 'plugins-discovery-page__upsell' }
+				callToAction={ translate( 'Upgrade now' ) }
+				icon={ 'notice-outline' }
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }` }
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
@@ -103,6 +108,9 @@ const UpgradeNudge = ( {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
+				className={ 'plugins-discovery-page__upsell' }
+				callToAction={ translate( 'Upgrade now' ) }
+				icon={ 'notice-outline' }
 				showIcon={ true }
 				href={ `/checkout/${ siteSlug }/pro` }
 				feature={ FEATURE_INSTALL_PLUGINS }
@@ -116,6 +124,9 @@ const UpgradeNudge = ( {
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
+			className={ 'plugins-discovery-page__upsell' }
+			callToAction={ translate( 'Upgrade now' ) }
+			icon={ 'notice-outline' }
 			showIcon={ true }
 			href={ `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }
