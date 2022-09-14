@@ -141,6 +141,9 @@ class SocialSignupForm extends Component {
 								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
 								isWpccFlow( this.props.flowName ) ? window.location.pathname : null
 							}
+							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
+							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
+							queryString={ isWpccFlow( this.props.flowName ) ? window.location.search : null }
 						/>
 
 						{ ! this.props.disableTosText && <SocialSignupToS /> }
