@@ -894,6 +894,8 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	position: relative;
 
 	.is-section-signup & {
+		position: absolute;
+		width: 100%;
 		left: 50%;
 		transform: translateX(-50%);
 

@@ -336,6 +336,8 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	.is-section-signup & {
+		position: absolute;
+		width: 100%;
 		left: 50%;
 		transform: translateX(-50%);
 
