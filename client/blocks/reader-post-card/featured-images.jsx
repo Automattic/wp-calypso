@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import {
@@ -7,6 +8,7 @@ import {
 } from 'calypso/state/reader/posts/sizes';
 
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
+	let classNames = 'reader-post-card__featured-images';
 	const imagesToDisplay = getImagesFromPostToDisplay( post, 4 );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
@@ -27,13 +29,16 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 		if ( imagesToDisplay.length === 4 ) {
 			imageWidth = imageWidth / 2;
 			imageHeight = imageHeight / 2;
+			classNames = classnames( 'reader-post-card__featured-images', 'four-images' );
 		} else if ( imagesToDisplay.length === 3 ) {
 			imageWidth = imageWidth / 2;
 			if ( index !== 0 ) {
 				imageHeight = imageHeight / 2;
 			}
+			classNames = classnames( 'reader-post-card__featured-images', 'three-images' );
 		} else if ( imagesToDisplay.length === 2 ) {
 			imageWidth = imageWidth / 2;
+			classNames = classnames( 'reader-post-card__featured-images', 'two-images' );
 		}
 
 		const featuredImage = (
@@ -58,16 +63,16 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 
 	if ( listItems.length === 3 ) {
 		return (
-			<ul className="reader-post-card__featured-images">
+			<ul className={ classNames }>
 				{ listItems.slice( 0, 1 ) }
-				<li className="reader-post-card__featured-images-item">
+				<li className="reader-post-card__featured-images-item column-two">
 					<ul className="reader-post-card__featured-images column">{ listItems.slice( 1 ) }</ul>
 				</li>
 			</ul>
 		);
 	}
 
-	return <ul className="reader-post-card__featured-images">{ listItems }</ul>;
+	return <ul className={ classNames }>{ listItems }</ul>;
 };
 
 ReaderFeaturedImages.propTypes = {
