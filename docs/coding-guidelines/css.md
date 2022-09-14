@@ -271,11 +271,10 @@ selector {
 
 ## Spacing
 
-- DO use spaces around parenthesis
-- DO use a single space before an opening brace
+- DO NOT use spaces around parenthesis
 
 ```scss
-@include breakpoint-deprecated( ">480px" ) {
+@include breakpoint-deprecated(">480px") {
 	color: rgb(0, 0, 0);
 	transform: translate(-50%, -50%) scale(1);
 }
