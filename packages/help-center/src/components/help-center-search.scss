@@ -17,6 +17,10 @@
 .help-center .help-center__container-content {
 	scroll-behavior: smooth;
 
+	svg {
+		box-sizing: content-box;
+	}
+
 	/**
  	 * SEARCH
  	 */
@@ -80,7 +84,7 @@
 			}
 
 			.help-center-search-results__item {
-				margin: 0;
+				margin: 0 0 16px 0;
 				font-size: $font-body-small;
 
 				@media screen and ( min-width: 661px ) {
@@ -124,10 +128,6 @@
 						}
 					}
 				}
-			}
-
-			.help-center-search-results__item {
-				margin-bottom: 16px;
 
 				.help-center-search-results__cell a {
 					display: flex;
@@ -216,6 +216,7 @@
 			.inline-help__resource-cell a,
 			.inline-help__resource-cell button {
 				display: flex;
+
 
 				svg:first-of-type {
 					margin-right: 15px;
@@ -349,6 +350,15 @@
 
 				.help-center-contact-page__box-icon {
 					border-radius: 2px 0 0 2px;
+					display: flex;
+					background-color: var(--studio-blue-70);
+					width: 56px;
+
+					svg {
+						fill: #fff;
+						display: block;
+						margin: auto;
+					}
 				}
 
 				h2 {
@@ -402,19 +412,6 @@
 						font-size: $font-body;
 					}
 				}
-
-				// Icon box
-				.help-center-contact-page__box-icon {
-					display: flex;
-					background-color: var(--studio-blue-70);
-					width: 56px;
-
-					svg {
-						fill: white;
-						display: block;
-						margin: auto;
-					}
-				}
 			}
 		}
 
@@ -422,7 +419,7 @@
 			h3 {
 				margin-bottom: 16px;
 
-				// stylelint-disable-next-line selector-max-id
+				// stylelint-disable-next-line selector-id-pattern
 				&#inline-search--admin_section {
 					margin-top: 40px;
 				}
