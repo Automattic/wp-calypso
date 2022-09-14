@@ -339,17 +339,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (
-			<div>
-				{ shouldUpgrade ? (
-					<Button primary borderless={ false } onClick={ upgradePlan }>
-						{ translate( 'Unlock theme' ) }
-					</Button>
-				) : (
-					<Button primary borderless={ false } onClick={ () => pickDesign() }>
-						{ pickDesignText }
-					</Button>
+			<>
+				{ isEnabledStyleSelection && (
+					<div className="action-buttons__title">{ headerDesignTitle }</div>
 				) }
-			</div>
+				<div>
+					{ shouldUpgrade ? (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Unlock theme' ) }
+						</Button>
+					) : (
+						<Button primary borderless={ false } onClick={ () => pickDesign() }>
+							{ pickDesignText }
+						</Button>
+					) }
+				</div>
+			</>
 		);
 
 		const stepContent = (

@@ -581,6 +581,16 @@ $break-design-preview: 1024px;
 		padding-inline-start: 0;
 		padding-inline-end: 0;
 
+		.action-buttons__title {
+			font-size: 0.875rem;
+			font-weight: 500;
+			line-height: 20px;
+
+			@include break-design-preview {
+				display: none;
+			}
+		}
+
 		.step-container__navigation {
 			&.action-buttons {
 				bottom: 0;
@@ -590,6 +600,10 @@ $break-design-preview: 1024px;
 				position: fixed;
 				top: auto;
 
+				.navigation-link {
+					margin-top: -2px;
+				}
+
 				@include break-design-preview {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
@@ -597,7 +611,11 @@ $break-design-preview: 1024px;
 					position: absolute;
 					top: 8px;
 
-					.is-primary {
+					.navigation-link {
+						margin-top: 0;
+					}
+
+					button.is-primary {
 						display: none;
 					}
 				}
