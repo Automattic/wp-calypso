@@ -131,7 +131,9 @@ export function resolveEmailPlanStatus(
 	const cannotManageStatus = {
 		statusClass: 'warning',
 		icon: 'info',
-		text: translate( 'You can’t manage this subscription' ),
+		text: translate( 'Can’t manage subscription', {
+			comment: 'Current user is not allowed to manage email subscription',
+		} ),
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
