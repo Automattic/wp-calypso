@@ -68,6 +68,9 @@
 		font-weight: 700;
 	}
 
+	.plan-price.is-discounted .plan-price__fraction {
+		font-weight: inherit;
+	}
 	.display-price__billing-time-frame {
 		margin-top: 3px;
 	}
@@ -83,8 +86,17 @@
 	.display-price__billing-time-frame {
 		line-height: 20px;
 	}
-}
 
+}
+/*
+Hack to fix line-through not showing in the middle of the text in firefox browser.
+1.4rem seems to be rigth value to have the line in the middle of the text. But stylelint rule set in the project won't allow this value
+*/
+@-moz-document url-prefix() {
+	.plan-price {
+		font-size: 1.5rem;
+	}
+}
 .item-price.is-compact .display-price .display-price__billing-time-frame .normal {
 	display: none;
 }
