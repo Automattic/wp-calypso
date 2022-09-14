@@ -504,39 +504,42 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const prioritySupport = translate( 'Priority support' );
 
 	const backupIncludesInfoT1Storage = translate( '10GB of cloud storage' );
-	const backupIncludesInfoT2Storage = translate( '1TB (1,000GB) of cloud storage' );
+	const backupIncludesInfoT2Storage = translate( '{em}1TB (1,000GB){/em} of cloud storage', {
+		components: {
+			em: <em />,
+		},
+	} );
 
-	const backupIncludesInfoMonthlyLog = translate( '30-day activity log archive' );
-	const backupIncludesInfoYearlyLog = translate( '1 year activity log archive' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
+	const backupIncludesInfoT2Log = translate( '{em}1 year{/em} activity log archive', {
+		components: {
+			em: <em />,
+		},
+	} );
 
-	const oneClickRestoreMonthly = translate( 'Unlimited one-click restores from the last 30 days' );
-	const oneClickRestoreYearly = translate( 'Unlimited one-click restores from the last 1 year' );
+	const oneClickRestoreT1 = translate( 'Unlimited one-click restores from the last 30 days' );
+	const oneClickRestoreT2 = translate(
+		'Unlimited one-click restores from the last {em}1 year{/em}',
+		{
+			components: {
+				em: <em />,
+			},
+		}
+	);
 
 	const otherIncludes = [ orderBackups, cloudBackups, prioritySupport ];
-	const backupIncludesInfoT1Monthly = [
+	const backupIncludesInfoT1 = [
 		realTimeBackup,
 		backupIncludesInfoT1Storage,
-		backupIncludesInfoMonthlyLog,
-		oneClickRestoreMonthly,
+		backupIncludesInfoT1Log,
+		oneClickRestoreT1,
 		...otherIncludes,
 	];
-	const backupIncludesInfoT1Yearly = [
-		realTimeBackup,
-		backupIncludesInfoT1Storage,
-		backupIncludesInfoYearlyLog,
-		oneClickRestoreYearly,
-		...otherIncludes,
-	];
-	const backupIncludesInfoT2Monthly = [
+	const backupIncludesInfoT2 = [
 		realTimeBackup,
 		backupIncludesInfoT2Storage,
-		backupIncludesInfoMonthlyLog,
-		...otherIncludes,
-	];
-	const backupIncludesInfoT2Yearly = [
-		realTimeBackup,
-		backupIncludesInfoT1Storage,
-		backupIncludesInfoMonthlyLog,
+		backupIncludesInfoT2Log,
+		oneClickRestoreT2,
 		...otherIncludes,
 	];
 
@@ -584,14 +587,14 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	];
 
 	return {
-		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1Yearly,
-		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1Yearly,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1Monthly,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2Yearly,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2Monthly,
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupIncludesInfoT1,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupIncludesInfoT2,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupIncludesInfoT2,
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressIncludesInfo,
 		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamIncludesInfo,
@@ -658,7 +661,7 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 
 	const socialBenefits = [
 		translate( 'Save time by sharing your posts automatically' ),
-		translate( 'Unlock your growth potential by building a following on social' ),
+		translate( 'Unlock your growth potential by building a following on social media' ),
 		translate( 'Easy-to-use interface' ),
 		translate( 'No developer required' ),
 	];
