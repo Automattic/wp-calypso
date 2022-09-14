@@ -35,10 +35,10 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 		},
 		videopress: {
 			title: createInterpolateElement(
-				__( 'A place to showcase your <br />video creations, in just<br />a few clicks.' ),
+				__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Create your Video Portfolio' ),
+			buttonText: __( 'Create your Video Site' ),
 		},
 	};
 

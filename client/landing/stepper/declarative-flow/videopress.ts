@@ -9,7 +9,7 @@ import type { Flow, ProvidedDependencies } from './internals/types';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
-	title: 'Video Portfolio',
+	title: 'Video',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
