@@ -355,10 +355,10 @@
 
 	.gravatar {
 		float: left;
-		height: 32px;
+		height: 40px;
 		margin: 4px 6px 0 0;
 		vertical-align: text-top;
-		width: 32px;
+		width: 40px;
 	}
 
 	&.has-site-icon {
@@ -395,7 +395,7 @@
 	clear: both;
 	display: flex;
 	flex-direction: column;
-	margin-left: 44px;
+	margin-left: 52px;
 	margin-top: 14px;
 
 	.reader-post-card__post-details {
