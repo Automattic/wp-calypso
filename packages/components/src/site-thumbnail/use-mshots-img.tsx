@@ -67,12 +67,11 @@ export const useMshotsImg = (
 
 	useEffect( () => {
 		async function checkRedirectImage() {
-			const response = await fetch( mshotUrl, { method: 'HEAD', redirect: 'manual' } );
+			const response = await fetch( mshotUrl, { method: 'HEAD' } );
 			// 307 is the status code for a temporary redirect used by mshots.
 			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
 			// and the `response.headers.get('content-type)` will be 'image/gif'
-			const isLoading = response.status !== 200;
-			setIsLoading( isLoading );
+			setIsLoading( response.redirected );
 		}
 
 		if ( isLoading && retryCount < MAXTRIES ) {
