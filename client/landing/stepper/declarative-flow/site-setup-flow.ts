@@ -196,7 +196,7 @@ export const siteSetupFlow: Flow = {
 					// End of Pattern Assembler flow
 					if (
 						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
+						isBlankCanvasDesign( selectedDesign as Design )
 					) {
 						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
