@@ -30,7 +30,6 @@ import {
 	getPreviousStepName,
 	getStepUrl,
 	isP2Flow,
-	isWpccFlow,
 	isVideoPressFlow,
 	getVideoPressOnboardingTotalSteps,
 	getVideoPressOnboardingStepNumber,
@@ -435,12 +434,12 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, wccomFrom, isReskinned, flowName } = this.props;
+		const { oauth2Client, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWooOAuth2Client( oauth2Client ) && ( isWpccFlow( flowName ) || wccomFrom ) ) {
+		if ( isWooOAuth2Client( oauth2Client ) ) {
 			isSocialSignupEnabled = true;
 		}
 

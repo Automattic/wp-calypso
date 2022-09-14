@@ -63,7 +63,7 @@ class SocialSignupForm extends Component {
 
 		if ( isWpccFlow( this.props.flowName ) && this.props.redirectToAfterLoginUrl ) {
 			try {
-				// Persist the redirect URL for the redirect flow so that we can redirect the user back to woocommerce.com after login. See ./client/blocks/login for more details.
+				// Persist the redirect URL for the redirect flow so that we can redirect the user back to original page after login. See ./client/blocks/login for more details.
 				window.sessionStorage.setItem( 'login_redirect_to', this.props.redirectToAfterLoginUrl );
 			} catch ( e ) {
 				debug( 'Set login_redirect_to session error', e );
