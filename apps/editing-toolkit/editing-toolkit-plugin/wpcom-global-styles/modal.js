@@ -2,6 +2,7 @@ import { Button, Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
+import image from './image.svg';
 
 import './modal.scss';
 
@@ -12,25 +13,51 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
+	let calypsoDomain = 'https://wordpress.com';
+	const searchParams = new URLSearchParams( window.location.search );
+	const params = Object.fromEntries( searchParams.entries() );
+	const { origin } = params;
+	switch ( origin ) {
+		case 'http://calypso.localhost:3000':
+		case 'https://wpcalypso.wordpress.com':
+		case 'https://horizon.wordpress.com':
+		case 'https://wordpress.com':
+			calypsoDomain = origin;
+			break;
+	}
+
 	return (
 		<Modal
 			className="wpcom-global-styles-modal"
 			open={ isVisible }
-			title={ __( 'A powerful new way to style your site', 'full-site-editing' ) }
 			onRequestClose={ () => setIsVisible( false ) }
 		>
-			<p>
-				{ __(
-					"Change all of your site's fonts, colors and more. Available on any paid plan.",
-					'full-site-editing'
-				) }
-				<Button variant="secondary" onClick={ () => setIsVisible( false ) }>
-					{ __( 'Try it out', 'full-site-editing' ) }
-				</Button>
-				<Button variant="primary" href="#" target="_top">
-					{ __( 'Upgrade plan', 'full-site-editing' ) }
-				</Button>
-			</p>
+			<div className="wpcom-global-styles-modal__text">
+				<h1 className="wpcom-global-styles-modal__heading">
+					{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
+				</h1>
+				<p className="wpcom-global-styles-modal__description">
+					{ __(
+						"Change all of your site's fonts, colors and more. Available on any paid plan.",
+						'full-site-editing'
+					) }
+				</p>
+				<div className="wpcom-global-styles-modal__actions">
+					<Button variant="secondary" onClick={ () => setIsVisible( false ) }>
+						{ __( 'Try it out', 'full-site-editing' ) }
+					</Button>
+					<Button
+						variant="primary"
+						href={ `${ calypsoDomain }/plans/${ window._currentSiteId }` }
+						target="_top"
+					>
+						{ __( 'Upgrade plan', 'full-site-editing' ) }
+					</Button>
+				</div>
+			</div>
+			<div className="wpcom-global-styles-modal__image">
+				<img src={ image } alt="" />
+			</div>
 		</Modal>
 	);
 };
