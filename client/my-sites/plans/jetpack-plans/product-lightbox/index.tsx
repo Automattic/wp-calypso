@@ -22,7 +22,7 @@ type Props = ProductStoreBaseProps & {
 	isVisible: boolean;
 	duration: Duration;
 	onClose: () => void;
-	onProductChange: ( product: SelectorProduct | null ) => void;
+	onChangeProduct: ( product: SelectorProduct | null ) => void;
 	siteId: number | null;
 };
 
@@ -55,17 +55,15 @@ const ProductLightbox: React.FC< Props > = ( {
 	product,
 	isVisible,
 	onClose,
-	onProductChange,
+	onChangeProduct,
 	siteId,
 } ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const translate = useTranslate();
 
 	const onChangeOption = useCallback(
-		( productSlug: string ) => {
-			onProductChange( slugToSelectorProduct( productSlug ) );
-		},
-		[ onProductChange ]
+		( productSlug: string ) => onChangeProduct( slugToSelectorProduct( productSlug ) ),
+		[ onChangeProduct ]
 	);
 
 	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
