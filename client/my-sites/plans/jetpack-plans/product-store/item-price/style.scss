@@ -91,11 +91,11 @@
 
 /*
 Hack to fix line-through not showing in the middle of the text in firefox browser.
-1.4rem seems to be rigth value to have the line in the middle of the text. But stylelint rule set in the project won't allow this value
 */
 @-moz-document url-prefix() {
 	.plan-price {
-		font-size: 1.5rem;
+		/* stylelint-disable-next-line scales/font-sizes */
+		font-size: 1.4rem;
 	}
 }
 
