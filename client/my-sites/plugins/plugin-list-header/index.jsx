@@ -132,7 +132,6 @@ export class PluginsListHeader extends PureComponent {
 			return buttons;
 		}
 
-		const isJetpackSelected = this.isJetpackSelected();
 		const needsRemoveButton = this.needsRemoveButton();
 		const rightSideButtons = [];
 		const leftSideButtons = [];
@@ -212,13 +211,11 @@ export class PluginsListHeader extends PureComponent {
 				</Button>
 			);
 
-			if ( ! ( isJetpackSelected && this.props.selected.length === 1 ) ) {
-				leftSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-activate-buttons">
-						{ activateButtons }
-					</ButtonGroup>
-				);
-			}
+			leftSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-activate-buttons">
+					{ activateButtons }
+				</ButtonGroup>
+			);
 
 			autoupdateButtons.push(
 				<Button

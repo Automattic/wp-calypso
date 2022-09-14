@@ -316,20 +316,27 @@ export class PluginsList extends Component {
 		}
 	};
 
-	deactiveAndDisconnectSelected = ( accepted ) => {
+	deactiveAndDisconnectSelected = ( accepted, selectedPlugins ) => {
 		if ( accepted ) {
-			let waitForDeactivate = false;
+			if (
+				selectedPlugins.length === 1 &&
+				selectedPlugins.some( ( { slug } ) => slug === 'jetpack' )
+			) {
+				this.showDisconnectionNotice();
+			} else {
+				let waitForDeactivate = false;
 
-			this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-				waitForDeactivate = true;
-				this.props.deactivatePlugin( site, plugin );
-			} );
+				this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
+					waitForDeactivate = true;
+					this.props.deactivatePlugin( site, plugin );
+				} );
 
-			if ( waitForDeactivate && this.props.selectedSite ) {
-				this.setState( { disconnectJetpackNotice: true } );
+				if ( waitForDeactivate && this.props.selectedSite ) {
+					this.setState( { disconnectJetpackNotice: true } );
+				}
+
+				this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 			}
-
-			this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
 		}
 	};
 
@@ -473,7 +480,7 @@ export class PluginsList extends Component {
 						<span>{ this.getConfirmationText( selectedPlugins, 'deactivate', 'on' ) }</span>
 					</div>,
 					isJetpackIncluded
-						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted )
+						? ( accepted ) => this.deactiveAndDisconnectSelected( accepted, selectedPlugins )
 						: ( accepted ) => this.deactivateSelected( accepted ),
 					translate(
 						'Deactivate %(pluginsCount)d plugin',
@@ -587,24 +594,28 @@ export class PluginsList extends Component {
 	};
 
 	maybeShowDisconnectNotice() {
-		const { translate } = this.props;
-
 		if ( this.state.disconnectJetpackNotice && ! this.props.inProgressStatuses.length ) {
 			this.setState( {
 				disconnectJetpackNotice: false,
 			} );
 
-			this.props.warningNotice(
-				translate(
-					'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
-					{
-						components: {
-							link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
-						},
-					}
-				)
-			);
+			this.showDisconnectionNotice();
 		}
+	}
+
+	showDisconnectionNotice() {
+		const { translate } = this.props;
+
+		this.props.warningNotice(
+			translate(
+				'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
+				{
+					components: {
+						link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
+					},
+				}
+			)
+		);
 	}
 
 	maybeShowRemoveNotice() {
