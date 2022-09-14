@@ -157,7 +157,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
-						if ( isEnabled( 'marketplace-plans-page' ) && shouldUpgrade ) {
+						if ( isEnabled( 'plugins-plans-page' ) && shouldUpgrade ) {
 							return page( `/plugins/plans/${ selectedSite?.slug }` );
 						}
 						return setShowEligibility( true );
