@@ -70,15 +70,23 @@
 	justify-content: flex-start;
 	margin-bottom: 1rem;
 
-	svg {
-		margin-right: 1rem;
-	}
-
 	h2 {
 		font-size: 1.5rem;
 		font-weight: 700;
 		color: #101517;
 	}
+}
+
+.product-lightbox__product-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 3.25rem;
+	height: 3.25rem;
+	background: linear-gradient(159.87deg, #f6f6f4 7.24%, #f7f4ea 64.73%, #ddedd5 116.53%);
+	border-radius: 4px;
+	margin-right: 1rem;
 }
 
 .product-lightbox__detail-desc {
@@ -196,7 +204,7 @@
 
 	.multiple-choice-question__answers {
 		margin-top: 1rem;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1rem;
 		display: flex;
 		flex-direction: row;
 	}
@@ -299,10 +307,25 @@
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
+
+	div {
+		display: inline-block;
+	}
+
+	&.is-placeholder {
+		.product-lightbox__variants-plan-card-price {
+			@include placeholder( --color-neutral-10 );
+		}
+	}
+
+	.display-price__billing-time-frame {
+		font-size: 0.75rem;
+		color: #646970;
+	}
 }
 
 
-@media screen and (max-width: 768px) and (orientation: portrait) {
+@media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
 		display: flex;
 		justify-content: center;
@@ -333,12 +356,11 @@
 	}
 
 	.product-lightbox__variants-options {
-		margin-top: 0;
-		margin-bottom: 1rem;
+		margin: 0;
 	}
 }
 
-@media screen and (max-height: 630px) and (orientation: landscape) {
+@media screen and ( max-height: 630px ) and ( orientation: landscape ) {
 	.product-lightbox__modal {
 		display: flex;
 		border-radius: 0;
@@ -353,7 +375,7 @@
 	}
 }
 
-@media screen and (max-height: 365px) and (orientation: landscape) {
+@media screen and ( max-height: 365px ) and ( orientation: landscape ) {
 	.product-lightbox__variants-options {
 		margin-top: 0.25rem;
 		margin-bottom: 0.5rem;
