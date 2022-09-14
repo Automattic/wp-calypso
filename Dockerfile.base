@@ -110,6 +110,7 @@ RUN apk update && apk upgrade --no-cache --available \
 		# xfonts-base \
 		# xfonts-cyrillic \
 		# xfonts-scalable \
+		x11vnc \
 		xvfb
 	# 	&& apk add --no-cache \
     #   --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
