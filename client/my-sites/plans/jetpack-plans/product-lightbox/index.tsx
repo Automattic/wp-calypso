@@ -100,7 +100,7 @@ const ProductLightbox: React.FC< Props > = ( {
 						</div>
 						<h2>{ product.displayName }</h2>
 					</div>
-					<div className="product-lightbox__detail-desc">{ product.featuredDescription }</div>
+					<div className="product-lightbox__detail-desc">{ product.lightboxDescription }</div>
 					<div className="product-lightbox__detail-tags">
 						<span className="product-lightbox__detail-tags-label">
 							{ translate( 'Great for:' ) }
