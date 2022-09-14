@@ -1,8 +1,10 @@
 .reader-featured-image {
 	border: 1px solid var( --color-neutral-0 );
-	border-radius: 6px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+	img {
+		border-radius: 6px;
+	}
 }

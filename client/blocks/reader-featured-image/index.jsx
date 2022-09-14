@@ -30,20 +30,22 @@ const ReaderFeaturedImage = ( {
 		? featuredImageUrl
 		: resizeImageUrl( featuredImageUrl, { w: imageWidth || READER_CONTENT_WIDTH } );
 	const safeCssUrl = cssSafeUrl( resizedUrl );
-
+	const newHeight = imageHeight || READER_FEATURED_MAX_IMAGE_HEIGHT;
 	let featuredImageStyle = { background: 'none' };
 	if ( safeCssUrl ) {
-		featuredImageStyle = {
-			backgroundImage: 'url(' + safeCssUrl + ')',
-			backgroundSize: 'cover',
-			backgroundPosition: '50% 50%',
-			backgroundRepeat: 'no-repeat',
-		};
+		if ( children ) {
+			featuredImageStyle = {
+				backgroundImage: 'url(' + safeCssUrl + ')',
+				backgroundSize: 'cover',
+				backgroundPosition: '50% 50%',
+				backgroundRepeat: 'no-repeat',
+				height: newHeight,
+				width: imageWidth || READER_CONTENT_WIDTH,
+			};
+		} else {
+			children = <img src={ safeCssUrl } />;
+		}
 	}
-	const newHeight = imageHeight || READER_FEATURED_MAX_IMAGE_HEIGHT;
-
-	featuredImageStyle.height = newHeight;
-	featuredImageStyle.width = imageWidth || READER_CONTENT_WIDTH;
 
 	const classNames = classnames( className, 'reader-featured-image' );
 
