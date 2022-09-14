@@ -10,6 +10,6 @@ export function getJetpackProductRecommendedFor( product: Product ) {
 	const jetpackProductsRecommendedForTranslations = getJetpackProductsRecommendedFor();
 	return jetpackProductsRecommendedFor.map( ( tag ) => ( {
 		tag,
-		translation: jetpackProductsRecommendedForTranslations[ tag ],
+		label: jetpackProductsRecommendedForTranslations[ tag ],
 	} ) );
 }

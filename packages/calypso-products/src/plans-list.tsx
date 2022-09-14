@@ -277,10 +277,10 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
-		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, translation: translate( 'WooCommerce stores' ) },
-		{ tag: JETPACK_TAG_FOR_NEWS_ORGANISATIONS, translation: translate( 'News organizations' ) },
-		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, translation: translate( 'Membership sites' ) },
-		{ tag: JETPACK_TAG_FOR_ONLINE_FORUMS, translation: translate( 'Online forums' ) },
+		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce stores' ) },
+		{ tag: JETPACK_TAG_FOR_NEWS_ORGANISATIONS, label: translate( 'News organizations' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+		{ tag: JETPACK_TAG_FOR_ONLINE_FORUMS, label: translate( 'Online forums' ) },
 	],
 } );
 const getDotcomPlanDetails = () => ( {

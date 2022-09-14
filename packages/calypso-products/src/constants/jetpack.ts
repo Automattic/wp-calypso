@@ -213,18 +213,6 @@ export const JETPACK_PRODUCT_UPGRADE_MAP: Record< string, string[] > = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: [ PRODUCT_JETPACK_BACKUP_DAILY ],
 };
 
-// Key/value maps related products to a given one
-export const JETPACK_RELATED_PRODUCTS_MAP: Record< string, string[] > = {
-	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: [
-		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	],
-	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: [
-		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	],
-};
-
 // Plans
 export const PLAN_JETPACK_FREE = 'jetpack_free';
 export const PLAN_JETPACK_PERSONAL = 'jetpack_personal';
@@ -366,6 +354,26 @@ export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/u
 export const JETPACK_REDIRECT_CHECKOUT_TO_WPADMIN = true;
 export const JETPACK_REDIRECT_URL =
 	'https://jetpack.com/redirect/?source=jetpack-checkout-thankyou';
+
+// Key/value maps related products to a given one
+export const JETPACK_RELATED_PRODUCTS_MAP: Record< string, string[] > = {
+	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: [
+		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	],
+	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: [
+		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
+		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	],
+	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+		PLAN_JETPACK_SECURITY_T2_YEARLY,
+	],
+	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
+		PLAN_JETPACK_SECURITY_T1_YEARLY,
+		PLAN_JETPACK_SECURITY_T2_YEARLY,
+	],
+};
 
 // Tags, 'Recommended for'
 export const JETPACK_TAG_FOR_WOOCOMMERCE_STORES = 'jetpack_tag_for_woocommerce_stores';

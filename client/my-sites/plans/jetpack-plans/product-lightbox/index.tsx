@@ -26,7 +26,9 @@ type Props = ProductStoreBaseProps & {
 };
 
 const DescriptionList: React.FC< { items?: TranslateResult[] } > = ( { items } ) => {
-	if ( ! items || ! items.length ) return null;
+	if ( ! items || ! items.length ) {
+		return null;
+	}
 
 	return (
 		<ul>
@@ -42,7 +44,7 @@ const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
 		{ tags.map( ( tag ) => (
 			<div className="product-lightbox__detail-tags-tag" key={ tag.tag }>
 				<span>{ Tags[ tag.tag ] }</span>
-				<p>{ tag.translation }</p>
+				<p>{ tag.label }</p>
 			</div>
 		) ) }
 	</>
@@ -67,7 +69,7 @@ const ProductLightbox: React.FC< Props > = ( { product, isVisible, onClose, site
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ currentProduct.productSlug ] || [];
 		return variants.map( ( itemSlug ) => ( {
 			id: itemSlug,
-			answerText: PRODUCT_OPTIONS[ itemSlug ],
+			answerText: PRODUCT_OPTIONS[ itemSlug ].toString(),
 		} ) );
 	}, [ currentProduct.productSlug ] );
 

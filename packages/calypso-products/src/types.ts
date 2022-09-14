@@ -77,7 +77,7 @@ export type SelectorProductFeaturesItem = {
 
 export interface JetpackTag {
 	tag: string;
-	translation: TranslateResult;
+	label: TranslateResult;
 }
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
