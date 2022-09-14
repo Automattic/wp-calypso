@@ -17,7 +17,6 @@
 		"source.fixAll.tslint": true,
 		"source.fixAll.stylelint": true
 	},
-	"editor.unicodeHighlight.ambiguousCharacters": false,
 	// Use prettier for formatting JS/TS
 	"[javascript][javascriptreact][typescript][typescriptreact]": {
 		// auto format on save will be done by ESLint
