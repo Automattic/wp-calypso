@@ -504,25 +504,28 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 	const prioritySupport = translate( 'Priority support' );
 
 	const backupIncludesInfoT1Storage = translate( '10GB of cloud storage' );
-	const backupIncludesInfoT2Storage = translate( '{{em}}1TB (1,000GB){{/em}} of cloud storage', {
-		components: {
-			em: <em />,
-		},
-	} );
+	const backupIncludesInfoT2Storage = translate(
+		'{{strong}}1TB (1,000GB){{/strong}} of cloud storage',
+		{
+			components: {
+				strong: <strong />,
+			},
+		}
+	);
 
 	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
-	const backupIncludesInfoT2Log = translate( '{{em}}1 year{{/em}} activity log archive', {
+	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
-			em: <em />,
+			strong: <strong />,
 		},
 	} );
 
 	const oneClickRestoreT1 = translate( 'Unlimited one-click restores from the last 30 days' );
 	const oneClickRestoreT2 = translate(
-		'Unlimited one-click restores from the last {{em}}1 year{{/em}}',
+		'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}',
 		{
 			components: {
-				em: <em />,
+				strong: <strong />,
 			},
 		}
 	);

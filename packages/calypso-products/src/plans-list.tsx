@@ -1835,7 +1835,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '10GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Real-time malware scanning and one-click fixes ' ),
+			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
@@ -1864,19 +1864,19 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '{{em}}1TB (1,000GB){{/em}} of cloud storage', {
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
-			translate( '{{em}}1-year{{/em}} activity log archive', {
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
-			translate( 'Unlimited one-click restores from the last {{em}}1 year{{/em}}', {
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
@@ -1892,19 +1892,19 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '{{em}}1TB (1,000GB){{/em}} of cloud storage', {
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
-			translate( '{{em}}1-year{{/em}} activity log archive', {
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
-			translate( 'Unlimited one-click restores from the last {{em}}1 year{{/em}}', {
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
 				components: {
-					em: <em />,
+					strong: <strong />,
 				},
 			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
