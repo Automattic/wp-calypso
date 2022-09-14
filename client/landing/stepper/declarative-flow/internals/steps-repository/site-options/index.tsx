@@ -21,9 +21,16 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
+	const [ currentSiteTitle, currentTagling ] = useSelect( ( select ) => {
+		return [
+			select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			select( ONBOARD_STORE ).getSelectedSiteDescription(),
+		];
+	} );
+
 	const { goBack, goNext, submit } = navigation;
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
-	const [ tagline, setTagline ] = React.useState( '' );
+	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
+	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
