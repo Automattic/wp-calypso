@@ -767,34 +767,61 @@ export default function pages() {
 		wpcomPages( app );
 	}
 
+	/**
+	 * Given information about a section, register the given path as an express
+	 * route and define a basic middleware chain. The chain sets up any request
+	 * context and renders the basic DOM structure, ultimately resolving the request.
+	 *
+	 * For SSR requests -- e.g. the section is compatible with SSR and the request
+	 * is logged out -- it skips the rendering portion of the chain, because that
+	 * is explicitly handled by the serverRouter. In SSR contexts, this chain is
+	 * still responsible for setting up some basic info like the context and the
+	 * bootstrapped user, but not for resolving the request.
+	 *
+	 * This approach allows requests to an SSR section to skip any section-specific
+	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
+	 */
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
-			req.context.sectionName = section.name;
+		app.get(
+			pathRegex,
+			setupDefaultContext( entrypoint ),
+			( req, res, next ) => {
+				req.context.sectionName = section.name;
+				req.context.section = section;
 
-			if ( ! entrypoint ) {
-				req.context.chunkFiles = req.getFilesForChunk( section.name );
-			} else {
-				req.context.chunkFiles = req.getEmptyAssets();
-			}
+				if ( ! entrypoint ) {
+					req.context.chunkFiles = req.getFilesForChunk( section.name );
+				} else {
+					req.context.chunkFiles = req.getEmptyAssets();
+				}
 
-			if ( section.group && req.context ) {
-				req.context.sectionGroup = section.group;
-			}
+				if ( section.group && req.context ) {
+					req.context.sectionGroup = section.group;
+				}
 
-			if ( Array.isArray( section.links ) ) {
-				section.links.forEach( ( link ) =>
-					req.context.store.dispatch( setDocumentHeadLink( link ) )
-				);
-			}
-
-			next();
-		} );
-
-		if ( ! section.isomorphic ) {
-			app.get( pathRegex, setUpRoute, serverRender );
-		}
+				if ( Array.isArray( section.links ) ) {
+					section.links.forEach( ( link ) =>
+						req.context.store.dispatch( setDocumentHeadLink( link ) )
+					);
+				}
+				next();
+			},
+			// Skip the rest of the middleware chain if SSR compatible. Further
+			// SSR checks aren't accounted for here, but happen in the SSR pipeline
+			// itself (see serverRouter). But if we know at a basic level that SSR
+			// won't be used, we can boost performance by rendering the page here.
+			( req, res, next ) => {
+				if ( ! req.context.isLoggedIn && section.isomorphic ) {
+					return next( 'route' );
+				}
+				debug( `Using non-SSR pipeline for path ${ req.path } with matcher ${ pathRegex }` );
+				next();
+			},
+			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			serverRender
+		);
 	}
 
 	sections
