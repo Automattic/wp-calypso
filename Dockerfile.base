@@ -81,7 +81,12 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
-RUN apk update && apk upgrade --no-cache --available \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/main" > /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/main" >> /etc/apk/repositories \
+    && apk upgrade -U -a \
+	&& apk update && apk upgrade --no-cache --available \
 	&& apk add --no-cache \
 		# ttf-liberation \
 		font-noto \
@@ -93,6 +98,7 @@ RUN apk update && apk upgrade --no-cache --available \
 		font-noto-emoji \
 		openssl \
 		curl \
+		xvfb-run \
 		# libatk-bridge2.0-0 \
 		# libatspi2.0-0 \
 		# libdbus-glib-1-2 \
@@ -110,7 +116,7 @@ RUN apk update && apk upgrade --no-cache --available \
 		# xfonts-base \
 		# xfonts-cyrillic \
 		# xfonts-scalable \
-		x11vnc \
+
 		xvfb
 	# 	&& apk add --no-cache \
     #   --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing \
