@@ -50,7 +50,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins search' ), function () {
 		await pluginsPage.clickSearchResult( 'Royal Mail' );
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			await pluginsPage.clickPluginsBreadcrumb();
-			await pluginsPage.validateHasSection( 'Top premium plugins' );
+			await pluginsPage.validateHasSection( 'Must-have premium plugins' );
 		} else {
 			await pluginsPage.clickBackBreadcrumb();
 			await pluginsPage.validateExpectedSearchResultFound( 'Royal Mail' );
