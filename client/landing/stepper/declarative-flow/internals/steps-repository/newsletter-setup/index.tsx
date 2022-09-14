@@ -195,9 +195,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
 					enableAutoFocus={ false }
 					onChange={ onChange }
-					style={ {
-						paddingLeft: '14px',
-					} }
 				/>
 			</FormFieldset>
 			<FormFieldset>
@@ -206,7 +203,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					inputRef={ accentColorRef }
 					className="newsletter-setup__accent-color"
 					style={ {
-						backgroundImage: [ generateSwatchSVG( accentColor.hex ) ].join( ', ' ),
+						backgroundImage: generateSwatchSVG( accentColor.hex ),
 						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
 					} }
 					name="accentColor"

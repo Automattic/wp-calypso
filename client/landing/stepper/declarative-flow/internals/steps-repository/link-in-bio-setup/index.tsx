@@ -135,9 +135,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					placeholder={ __( 'Add a short biography here' ) }
 					enableAutoFocus={ false }
 					onChange={ onChange }
-					style={ {
-						paddingLeft: '14px',
-					} }
 				/>
 			</FormFieldset>
 
