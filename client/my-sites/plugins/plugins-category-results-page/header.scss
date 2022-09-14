@@ -3,10 +3,9 @@
 
 .plugin-category-results-header {
 	position: relative;
-	top: 36px;
-	padding: 12px 16px 0;
+	padding: 32px 16px 0 16px;
 
-	@include breakpoint-deprecated( ">660px" ) {
+	@include breakpoint-deprecated(">660px") {
 		padding-left: 0;
 		padding-right: 0;
 	}
