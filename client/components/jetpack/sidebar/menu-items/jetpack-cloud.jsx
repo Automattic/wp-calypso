@@ -33,7 +33,7 @@ export default ( { path } ) => {
 	);
 	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
 
-	const onNavigate = ( event ) => {
+	const onNavigate = ( event ) => () => {
 		dispatch( recordTracksEvent( event ) );
 
 		setNextLayoutFocus( 'content' );
