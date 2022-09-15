@@ -19,8 +19,8 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			translatedStrings.sidebarTitle = translate( 'Your Link in Bio is ready to launch!' );
 			break;
 		case VIDEOPRESS_FLOW:
-			translatedStrings.flowName = translate( 'Video Portfolio' );
-			translatedStrings.sidebarTitle = translate( 'Your Video Portfolio is ready to launch!' );
+			translatedStrings.flowName = translate( 'Video' );
+			translatedStrings.sidebarTitle = translate( 'Your Video Site is ready to launch!' );
 			break;
 		case 'podcast':
 			translatedStrings.flowName = translate( 'Podcast' );
