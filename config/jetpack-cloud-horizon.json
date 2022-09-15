@@ -72,5 +72,6 @@
 		"site-purchases": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud"
+	"theme": "jetpack-cloud",
+	"hotjar_enabled": true
 }
