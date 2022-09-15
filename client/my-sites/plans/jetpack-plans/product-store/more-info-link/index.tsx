@@ -8,11 +8,12 @@ import './style.scss';
 export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } ) => {
 	const translate = useTranslate();
 
-	const isExternalProduct = EXTERNAL_PRODUCTS_LIST.includes( item.productSlug );
+	const isExternalProductLink =
+		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) && item.externalUrl;
 
-	const href = isExternalProduct && item.externalUrl ? item.externalUrl : `#${ item.productSlug }`;
+	const href = isExternalProductLink ? item.externalUrl : `#${ item.productSlug }`;
 
-	const target = isExternalProduct ? '_blank' : '_self';
+	const target = isExternalProductLink ? '_blank' : '_self';
 
 	return (
 		<Button className="more-info-link" onClick={ onClick } href={ href } target={ target } plain>
@@ -20,7 +21,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } )
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
 
-			{ isExternalProduct && <Gridicon icon="external" size={ 16 } /> }
+			{ isExternalProductLink && <Gridicon icon="external" size={ 16 } /> }
 		</Button>
 	);
 };
