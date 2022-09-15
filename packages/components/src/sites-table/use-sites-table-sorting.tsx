@@ -67,7 +67,7 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 
 			return 0;
 		} ),
-		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, sortOrder ) ),
+		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
 }
 
