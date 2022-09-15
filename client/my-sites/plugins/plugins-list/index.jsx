@@ -355,22 +355,24 @@ export class PluginsList extends Component {
 
 		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
 
-		const translationArgs = {
-			args: { pluginsCount },
-			count: pluginsCount,
-		};
-
 		const dialogOptions = {
 			additionalClassNames: 'plugins__confirmation-modal',
+			...( actionName === 'remove' && { isScary: true } ),
 		};
+
+		let pluginName;
+		const hasOnePlugin = pluginsCount === 1;
+
+		if ( hasOnePlugin ) {
+			const [ { name, slug } ] = selectedPlugins;
+			pluginName = name || slug;
+		}
 
 		switch ( actionName ) {
 			case 'activate': {
-				const heading = translate(
-					'Activate %(pluginsCount)d plugin',
-					'Activate %(pluginsCount)d plugins',
-					translationArgs
-				);
+				const heading = hasOnePlugin
+					? translate( 'Activate %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Activate %(pluginsCount)d plugins', { args: { pluginsCount } } );
 				acceptDialog(
 					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'activate' ),
 					( accepted ) => this.activateSelected( accepted ),
@@ -381,11 +383,9 @@ export class PluginsList extends Component {
 				break;
 			}
 			case 'deactivate': {
-				const heading = translate(
-					'Deactivate %(pluginsCount)d plugin',
-					'Deactivate %(pluginsCount)d plugins',
-					translationArgs
-				);
+				const heading = hasOnePlugin
+					? translate( 'Deactivate %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Deactivate %(pluginsCount)d plugins', { args: { pluginsCount } } );
 				acceptDialog(
 					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'deactivate' ),
 					isJetpackIncluded
@@ -398,11 +398,11 @@ export class PluginsList extends Component {
 				break;
 			}
 			case 'enableAutoupdates': {
-				const heading = translate(
-					'Enable autoupdates for %(pluginsCount)d plugin',
-					'Enable autoupdates for %(pluginsCount)d plugins',
-					translationArgs
-				);
+				const heading = hasOnePlugin
+					? translate( 'Enable autoupdate for %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Enable autoupdates for %(pluginsCount)d plugins', {
+							args: { pluginsCount },
+					  } );
 				acceptDialog(
 					getPluginActionDailogMessage(
 						allSites,
@@ -418,11 +418,11 @@ export class PluginsList extends Component {
 				break;
 			}
 			case 'disableAutoupdates': {
-				const heading = translate(
-					'Disable autoupdates for %(pluginsCount)d plugin',
-					'Disable autoupdates for %(pluginsCount)d plugins',
-					translationArgs
-				);
+				const heading = hasOnePlugin
+					? translate( 'Disable autoupdate for %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Disable autoupdates for %(pluginsCount)d plugins', {
+							args: { pluginsCount },
+					  } );
 				acceptDialog(
 					getPluginActionDailogMessage(
 						allSites,
@@ -438,11 +438,11 @@ export class PluginsList extends Component {
 				break;
 			}
 			case 'update': {
-				const heading = translate(
-					'Update %(pluginsCount)d plugin',
-					'Update %(pluginsCount)d plugins',
-					translationArgs
-				);
+				const heading = hasOnePlugin
+					? translate( 'Update %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Update %(pluginsCount)d plugins', {
+							args: { pluginsCount },
+					  } );
 				acceptDialog(
 					getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'update' ),
 					( accepted ) => this.updateSelected( accepted ),
@@ -450,43 +450,35 @@ export class PluginsList extends Component {
 					null,
 					dialogOptions
 				);
+				break;
+			}
+			case 'remove': {
+				const heading = hasOnePlugin
+					? translate( 'Remove %(pluginName)s', { args: { pluginName } } )
+					: translate( 'Remove %(pluginsCount)d plugins', {
+							args: { pluginsCount },
+					  } );
+				acceptDialog(
+					getPluginActionDailogMessage(
+						allSites,
+						selectedPlugins,
+						heading,
+						'deactivate and delete'
+					),
+					isJetpackIncluded
+						? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
+						: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
+					heading,
+					null,
+					dialogOptions
+				);
+				break;
 			}
 		}
 	};
 
 	removePluginDialog = ( selectedPlugin ) => {
-		const { plugins, translate, allSites } = this.props;
-
-		const selectedPlugins = selectedPlugin ? [ selectedPlugin ] : plugins.filter( this.isSelected );
-		const isJetpackIncluded = selectedPlugins.some( ( { slug } ) => slug === 'jetpack' );
-
-		const dialogOptions = {
-			additionalClassNames: 'plugins__confirmation-modal',
-			isScary: true,
-		};
-
-		const pluginsCount = selectedPlugins.length;
-
-		const translationArgs = {
-			args: { pluginsCount },
-			count: pluginsCount,
-		};
-
-		const heading = translate(
-			'Remove %(pluginsCount)d plugin',
-			'Remove %(pluginsCount)d plugins',
-			translationArgs
-		);
-
-		acceptDialog(
-			getPluginActionDailogMessage( allSites, selectedPlugins, heading, 'deactivate and delete' ),
-			isJetpackIncluded
-				? ( accepted ) => this.removeSelectedWithJetpack( accepted, selectedPlugins )
-				: ( accepted ) => this.removeSelected( accepted, selectedPlugins ),
-			heading,
-			null,
-			dialogOptions
-		);
+		this.bulkActionDialog( 'remove', selectedPlugin );
 	};
 
 	removeSelected = ( accepted, selectedPlugins ) => {
