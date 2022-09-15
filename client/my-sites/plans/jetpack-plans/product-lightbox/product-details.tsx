@@ -1,4 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { SelectorProduct } from '../types';
@@ -10,10 +11,12 @@ type ProductDetailsProps = {
 
 const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	const isMobile = useMobileBreakpoint();
+	const translate = useTranslate();
 	const [ expandedDetailType, setExpandedDetailType ] = useState( '' );
+
 	const productDetails = [
-		{ type: 'includes', title: 'Includes', items: product.whatIsIncluded },
-		{ type: 'benefits', title: 'Benefits', items: product.benefits },
+		{ type: 'includes', title: translate( 'Includes' ), items: product.whatIsIncluded },
+		{ type: 'benefits', title: translate( 'Benefits' ), items: product.benefits },
 	];
 
 	return (
