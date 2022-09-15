@@ -57,11 +57,11 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 			const lastInteractionA = a.user_interactions[ 0 ];
 			const lastInteractionB = b.user_interactions[ 0 ];
 
-			if ( new Date( lastInteractionA ) > new Date( lastInteractionB ) ) {
+			if ( lastInteractionA > lastInteractionB ) {
 				return sortOrder === 'asc' ? 1 : -1;
 			}
 
-			if ( new Date( lastInteractionA ) < new Date( lastInteractionB ) ) {
+			if ( lastInteractionA < lastInteractionB ) {
 				return sortOrder === 'asc' ? -1 : 1;
 			}
 
