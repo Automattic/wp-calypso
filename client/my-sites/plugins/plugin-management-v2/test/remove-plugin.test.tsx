@@ -93,7 +93,7 @@ describe( '<RemovePlugin>', () => {
 		// Test to check if modal is open and has `Remove Button`
 		const [ removeButtonOnModal ] = document.getElementsByClassName( 'button is-primary' );
 		expect( removeButtonOnModal ).toBeInTheDocument();
-		expect( removeButtonOnModal.textContent ).toEqual( 'Remove' );
+		expect( removeButtonOnModal.textContent ).toEqual( `Remove ${ plugin.name }` );
 		// Simulate click which triggers API call to remove plugin
 		await userEvent.click( removeButtonOnModal );
 		// Test to check if modal is closed after the API is triggered
