@@ -8,6 +8,11 @@
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
+	transform: translateY(20px);
+
+	&.ReactModal__Content--after-open {
+		transform: translateY(0);
+	}
 
 	p {
 		margin-bottom: 0.5rem;
@@ -303,7 +308,6 @@
 	}
 }
 
-
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
@@ -323,7 +327,6 @@
 		color: #646970;
 	}
 }
-
 
 @media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
