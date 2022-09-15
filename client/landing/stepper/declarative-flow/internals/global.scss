@@ -179,7 +179,18 @@ button {
 
 					span {
 						font-size: $font-body-extra-small;
-						color: var(--studio-blue-50);
+
+						&.add {
+							color: var(--studio-blue-50);
+						}
+
+						&.replace {
+							color: var(--studio-gray-60);
+
+							&:hover {
+								color: var(--studio-blue-50);
+							}
+						}
 					}
 				}
 			}
