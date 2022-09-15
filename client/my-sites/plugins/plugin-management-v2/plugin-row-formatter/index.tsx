@@ -67,6 +67,13 @@ export default function PluginRowFormatter( {
 			);
 		};
 
+	const trackPluginSiteCountButtonClick =
+		( siteId: number | undefined, pluginSlug: string ) => () => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugin_site_count_click', { site: siteId, plugin: pluginSlug } )
+			);
+		};
+
 	const moment = useLocalizedMoment();
 	const state = useSelector( ( state ) => state );
 
@@ -177,7 +184,10 @@ export default function PluginRowFormatter( {
 					}
 				)
 			) : (
-				<PluginDetailsButton className="plugin-row-formatter__sites-count-button">
+				<PluginDetailsButton
+					className="plugin-row-formatter__sites-count-button"
+					onClick={ trackPluginSiteCountButtonClick( selectedSite?.ID, item.slug ) }
+				>
 					{ siteCount }
 				</PluginDetailsButton>
 			);

@@ -41,7 +41,7 @@ export class PluginAutoUpdateToggle extends Component {
 			recordEvent( 'calypso_plugin_autoupdate_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-				state: 'deactivate',
+				state: 'inactive',
 			} );
 		} else {
 			recordGAEvent(
@@ -53,7 +53,7 @@ export class PluginAutoUpdateToggle extends Component {
 			recordEvent( 'calypso_plugin_autoupdate_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
-				state: 'activate',
+				state: 'active',
 			} );
 		}
 	};
