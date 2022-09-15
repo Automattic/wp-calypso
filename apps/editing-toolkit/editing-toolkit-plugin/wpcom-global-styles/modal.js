@@ -13,18 +13,16 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
-	let calypsoDomain = 'https://wordpress.com';
 	const searchParams = new URLSearchParams( window.location.search );
 	const params = Object.fromEntries( searchParams.entries() );
 	const { origin } = params;
-	switch ( origin ) {
-		case 'http://calypso.localhost:3000':
-		case 'https://wpcalypso.wordpress.com':
-		case 'https://horizon.wordpress.com':
-		case 'https://wordpress.com':
-			calypsoDomain = origin;
-			break;
-	}
+	const calypsoDomain = [
+		'http://calypso.localhost:3000',
+		'https://wpcalypso.wordpress.com',
+		'https://horizon.wordpress.com',
+	].includes( origin )
+		? origin
+		: 'https://wordpress.com';
 
 	return (
 		<Modal
