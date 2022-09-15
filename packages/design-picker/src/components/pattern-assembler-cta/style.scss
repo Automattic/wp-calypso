@@ -11,7 +11,7 @@
 	background-color: #f6f7f7;
 	color: #50575e;
 
-	@include break-mobile {
+	@include break-medium {
 		display: flex;
 	}
 
@@ -28,6 +28,6 @@
 	}
 
 	.pattern-assembler-cta__image {
-		mix-blend-mode: multiply;
+		width: 200px;
 	}
 }

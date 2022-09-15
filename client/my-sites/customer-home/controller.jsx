@@ -44,6 +44,7 @@ export function maybeRedirect( context, next ) {
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
 		redirectToLaunchpad( slug, options?.site_intent );
+		return;
 	}
 	next();
 }

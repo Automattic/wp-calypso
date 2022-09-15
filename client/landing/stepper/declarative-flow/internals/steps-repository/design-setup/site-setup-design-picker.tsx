@@ -39,7 +39,7 @@ import GeneratedDesignPickerWebPreview from './generated-design-picker-web-previ
 import PreviewToolbar from './preview-toolbar';
 import StickyPositioner from './sticky-positioner';
 import UpgradeModal from './upgrade-modal';
-import getThemeIdFromDesign from './util/get-theme-id-from-design';
+import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { Design } from '@automattic/design-picker';

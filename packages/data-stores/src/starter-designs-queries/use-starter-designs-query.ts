@@ -19,6 +19,7 @@ interface StarterDesignsQueryParams {
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 	enabled?: boolean;
+	select?: ( response: StarterDesigns ) => StarterDesigns;
 }
 
 interface StarterDesignsResponse {
@@ -44,18 +45,20 @@ interface GeneratedDesign {
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
-	queryOptions: Options = {}
+	{ select, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
-			return {
+			const allDesigns = {
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
 				static: {
 					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
 				},
-			} as StarterDesigns;
+			};
+
+			return select ? select( allDesigns ) : allDesigns;
 		},
 		refetchOnMount: 'always',
 		staleTime: Infinity,

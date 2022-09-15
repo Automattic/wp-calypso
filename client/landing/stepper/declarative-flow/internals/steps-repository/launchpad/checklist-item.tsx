@@ -40,8 +40,10 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				{ task.displayBadge && task.badgeText ? (
 					<Badge type="info-blue">{ task.badgeText }</Badge>
 				) : null }
-				{ ! taskDisabled && (
+				{ /* don't display chevron and badge at the same time */ }
+				{ ! taskDisabled && ! task.displayBadge && ! task.badgeText && (
 					<Gridicon
+						aria-label={ translate( 'Task enabled' ) }
 						className="launchpad__checklist-item-chevron"
 						icon={ `chevron-${ isRtl ? 'left' : 'right' }` }
 						size={ 18 }

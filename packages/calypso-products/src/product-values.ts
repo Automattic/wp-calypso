@@ -1,9 +1,11 @@
 export { getDomain } from './get-domain';
 export * from './get-jetpack-item-term-variants';
+export { getDIFMTieredPriceDetails } from './get-difm-tiered-price-details';
 export { getJetpackProductCallToAction } from './get-jetpack-product-call-to-action';
 export { getJetpackProductDescription } from './get-jetpack-product-description';
 export { getJetpackProductShortDescription } from './get-jetpack-product-short-description';
-export { getJetpackProductFeaturedText } from './get-jetpack-product-featured-text';
+export { getJetpackProductFeaturedDescription } from './get-jetpack-product-featured-description';
+export { getJetpackProductLightboxDescription } from './get-jetpack-product-lightbox-description';
 export { getJetpackProductDisclaimer } from './get-jetpack-product-disclaimer';
 export { getJetpackProductDisplayName } from './get-jetpack-product-display-name';
 export { getJetpackProductShortName } from './get-jetpack-product-short-name';

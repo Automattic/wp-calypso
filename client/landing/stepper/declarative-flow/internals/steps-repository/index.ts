@@ -39,7 +39,6 @@ export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
-export { default as promote } from './promote';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 
 export type StepPath =
@@ -84,5 +83,4 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'promote'
 	| 'getCurrentThemeSoftwareSets';

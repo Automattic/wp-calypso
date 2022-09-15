@@ -76,8 +76,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	);
 
 	const pluginRequiresCustomPrimaryDomain =
-		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) &&
-		plugin?.requirements?.required_primary_domain;
+		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) && !! plugin?.tags?.seo;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
 
 	const updatedKeepMeUpdatedPreference = useCallback(
