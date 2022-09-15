@@ -1,6 +1,5 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
