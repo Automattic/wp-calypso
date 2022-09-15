@@ -25,6 +25,10 @@
 	@include breakpoint-deprecated("<660px") {
 		padding: 0 16px;
 	}
+
+	.spotlight {
+		margin-top: 20px;
+	}
 }
 
 .plugins-browser-list__header {
@@ -35,6 +39,7 @@
 	flex-wrap: wrap;
 
 	padding-top: 32px;
+
 	.plugins-browser-list__titles {
 		margin-bottom: 4px; // +20 from elements = 24 gap
 
