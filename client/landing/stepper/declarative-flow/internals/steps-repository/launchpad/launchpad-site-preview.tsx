@@ -1,26 +1,35 @@
-import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useState } from 'react';
 import WebPreview from 'calypso/components/web-preview/component';
+import wp from 'calypso/lib/wp';
 import PreviewToolbar from 'calypso/signup/steps/design-picker/preview-toolbar';
 
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
-	const previewUrl = siteSlug
-		? `https://public-api.wordpress.com/wpcom/v2/web-previews/site/${ siteSlug }`
-		: null;
 	const defaultDevice = 'phone';
 
-	function formatPreviewUrl() {
-		if ( ! previewUrl ) {
-			return null;
-		}
+	const [ previewContent, setPreviewContent ] = useState( '' );
+	const [ webPreviewLoadingStatus, setWebPreviewLoadingStatus ] = useState(
+		translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+			components: { strong: <strong /> },
+		} )
+	);
 
-		return addQueryArgs( previewUrl, {
-			iframe: true,
-			// hide the "Create your website with WordPress.com" banner
-			hide_banners: true,
-		} );
-	}
+	useEffect( () => {
+		if ( siteSlug ) {
+			const previewUrl = siteSlug ? `/sites/${ siteSlug }/web-previews?hide_banners=true` : null;
+			const errorWebPreviewMessage = translate(
+				'{{strong}}Error{{/strong}} There was an issue loading the site preview.',
+				{
+					components: { strong: <strong /> },
+				}
+			);
+			wp.req
+				.get( { path: previewUrl, apiNamespace: 'wpcom/v2' } )
+				.then( ( response: string ) => setPreviewContent( response ) )
+				.catch( () => setWebPreviewLoadingStatus( errorWebPreviewMessage ) );
+		}
+	}, [ siteSlug, translate ] );
 
 	return (
 		<div className={ 'launchpad__site-preview-wrapper' }>
@@ -31,14 +40,12 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 				showSEO={ true }
 				isContentOnly
 				externalUrl={ siteSlug }
-				previewUrl={ formatPreviewUrl() }
+				previewMarkup={ previewContent }
 				toolbarComponent={ PreviewToolbar }
 				showClose={ false }
 				showEdit={ false }
 				showExternal={ false }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
+				loadingMessage={ webPreviewLoadingStatus }
 				translate={ translate }
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ [ 'computer', 'phone' ] }
