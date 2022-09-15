@@ -1,6 +1,7 @@
 import { useMutation } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
+import { FIELD_PASSWORD_RESET_EMAIL } from "calypso/my-sites/email/form/mailboxes/constants";
 
 /**
  * Creates a mailbox for a Professional Email (Titan) account
@@ -9,7 +10,7 @@ import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/c
  */
 export const useCreateTitanMailboxMutation = () => {
 	return useMutation< unknown, unknown, TitanMailboxFields >(
-		( { alternativeEmail, domain, isAdmin, mailbox, name, password } ) => {
+		( { passwordResetEmail, domain, isAdmin, mailbox, name, password } ) => {
 			return wpcom.req.post( {
 				path: `/emails/titan/${ encodeURIComponent( domain ) }/mailbox/create`,
 				apiNamespace: 'wpcom/v2',
@@ -17,7 +18,7 @@ export const useCreateTitanMailboxMutation = () => {
 					name,
 					mailbox,
 					password,
-					alternate_email_address: alternativeEmail,
+					alternate_email_address: passwordResetEmail,
 					is_admin: isAdmin,
 				},
 			} );

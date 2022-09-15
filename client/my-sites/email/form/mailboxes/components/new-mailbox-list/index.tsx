@@ -10,14 +10,13 @@ import useGetExistingMailboxNames from 'calypso/my-sites/email/form/mailboxes/co
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_RECOVERY_EMAIL,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
@@ -38,9 +37,8 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 	FIELD_NAME,
 	FIELD_FIRSTNAME,
 	FIELD_LASTNAME,
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_IS_ADMIN,
-	FIELD_RECOVERY_EMAIL,
+	FIELD_PASSWORD_RESET_EMAIL,
 ];
 
 const setFieldsVisibilities = (

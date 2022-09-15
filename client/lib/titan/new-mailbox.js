@@ -37,12 +37,12 @@ import wp from 'calypso/lib/wp';
  * A Titan mailbox object
  *
  * @typedef {Object} TitanMailbox
- * @property {TitanMailboxStringValue} alternativeEmail
  * @property {TitanMailboxStringValue} domain
  * @property {TitanMailboxBooleanValue} isAdmin
  * @property {TitanMailboxStringValue} mailbox
  * @property {TitanMailboxStringValue} name
  * @property {TitanMailboxStringValue} password
+ * @property {TitanMailboxStringValue} passwordResetEmail
  * @property {string} uuid
  */
 
@@ -60,12 +60,12 @@ const valueIsNonEmpty = ( value ) => value !== '';
 const valueIsOptional = () => true;
 
 const MAILBOX_FIELDS = {
-	alternativeEmail: valueIsNonEmpty,
 	domain: valueIsNonEmpty,
 	isAdmin: valueIsBoolean,
 	mailbox: valueIsNonEmpty,
 	name: valueIsNonEmpty,
 	password: valueIsNonEmpty,
+	passwordResetEmail: valueIsNonEmpty,
 };
 
 const getMailboxRequiredBooleanValue = () =>
@@ -95,12 +95,12 @@ const getMailboxRequiredStringValueWithTranslatedError = () =>
 const getMailboxPropTypeShape = () =>
 	PropTypes.shape( {
 		uuid: PropTypes.string.isRequired,
-		alternativeEmail: getMailboxOptionalStringValueWithTranslatedError(),
 		domain: getMailboxRequiredStringValue(),
 		isAdmin: getMailboxRequiredBooleanValue(),
 		mailbox: getMailboxRequiredStringValueWithTranslatedError(),
 		name: getMailboxRequiredStringValue(),
 		password: getMailboxRequiredStringValue(),
+		passwordResetEmail: getMailboxOptionalStringValueWithTranslatedError(),
 	} );
 
 const sanitizeEmailSuggestion = ( emailSuggestion ) =>
@@ -230,7 +230,7 @@ const validateFullEmailAddress = ( { value, error }, allowEmpty = false ) => {
  * @param {boolean} allowEmpty Whether an empty email address is permitted.
  * @returns {TitanMailboxStringValue} The validated email address value object.
  */
-const validateAlternativeEmailAddress = ( { value, error }, domainName, allowEmpty = false ) => {
+const validatePasswordResetEmailAddress = ( { value, error }, domainName, allowEmpty = false ) => {
 	if ( ! error && value && domainName ) {
 		const parts = `${ value }`.split( '@' );
 		if ( parts.length > 1 && parts[ 1 ].toLowerCase() === domainName.toLowerCase() ) {
@@ -301,19 +301,19 @@ const validatePassword = ( { value, error } ) => validatePasswordField( { value,
  */
 const validateMailbox = ( mailbox, optionalFields = [] ) => {
 	const {
-		alternativeEmail,
 		domain,
 		mailbox: mailboxName,
 		name,
 		password,
+		passwordResetEmail,
 	} = validateRequiredMailboxFields( mailbox, optionalFields );
 
 	return {
 		uuid: mailbox.uuid,
-		alternativeEmail: validateAlternativeEmailAddress(
-			alternativeEmail,
+		passwordResetEmail: validatePasswordResetEmailAddress(
+			passwordResetEmail,
 			domain.value,
-			optionalFields.includes( 'alternativeEmail' )
+			optionalFields.includes( 'passwordResetEmail' )
 		),
 		domain,
 		isAdmin: mailbox.isAdmin,
@@ -346,12 +346,12 @@ const validateMailboxes = ( mailboxes, optionalFields = [] ) => {
 const buildNewTitanMailbox = ( domain, isAdmin = false ) => {
 	return {
 		uuid: uuidv4(),
-		alternativeEmail: { value: '', error: null },
 		domain: { value: domain, error: null },
 		isAdmin: { value: isAdmin, error: null },
 		mailbox: { value: '', error: null },
 		name: { value: '', error: null },
 		password: { value: '', error: null },
+		passwordResetEmail: { value: '', error: null },
 	};
 };
 
@@ -404,14 +404,14 @@ const areAllMailboxesValid = ( mailboxes, optionalFields = [] ) =>
 	mailboxes.every( ( mailbox ) => isMailboxValid( mailbox, optionalFields ) );
 
 const transformMailboxForCart = ( {
-	alternativeEmail: { value: alternativeEmail },
+	passwordResetEmail: { value: passwordResetEmail },
 	domain: { value: domain },
 	isAdmin: { value: isAdmin },
 	mailbox: { value: mailbox },
 	name: { value: name },
 	password: { value: password },
 } ) => ( {
-	alternative_email: alternativeEmail,
+	alternative_email: passwordResetEmail,
 	email: `${ mailbox }@${ domain }`,
 	is_admin: isAdmin,
 	name,

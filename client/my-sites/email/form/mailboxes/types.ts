@@ -1,6 +1,5 @@
 import { v4 as uuid_v4 } from 'uuid';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
@@ -8,7 +7,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_RECOVERY_EMAIL,
+	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { TranslateResult } from 'i18n-calypso';
@@ -98,13 +97,13 @@ interface IBaseMailboxFormFields {
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	firstName?: TextMailboxFormField;
 	lastName?: TextMailboxFormField;
-	recoveryEmail?: TextMailboxFormField;
+	passwordResetEmail?: TextMailboxFormField;
 }
 
 interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
-	alternativeEmail?: TextMailboxFormField;
-	name?: TextMailboxFormField;
 	isAdmin?: BooleanMailboxFormField;
+	name?: TextMailboxFormField;
+	passwordResetEmail?: TextMailboxFormField;
 }
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
@@ -121,11 +120,11 @@ abstract class MailboxFormFields implements IBaseMailboxFormFields {
 class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailboxFormFields {
 	firstName? = new TextMailboxFormField( FIELD_FIRSTNAME );
 	lastName? = new TextMailboxFormField( FIELD_LASTNAME );
-	recoveryEmail? = new TextMailboxFormField( FIELD_RECOVERY_EMAIL );
+	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
-	alternativeEmail? = new TextMailboxFormField( FIELD_ALTERNATIVE_EMAIL );
+	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 	isAdmin? = new BooleanMailboxFormField( FIELD_IS_ADMIN, false );
 	name? = new TextMailboxFormField( FIELD_NAME );
 }

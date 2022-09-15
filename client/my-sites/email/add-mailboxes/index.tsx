@@ -35,9 +35,8 @@ import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utili
 import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_NAME,
-	FIELD_RECOVERY_EMAIL,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
@@ -241,16 +240,14 @@ const MailboxesForm = ( {
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
 
-	const isAlternateOrRecoveryEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test(
-		userEmail
-	);
+	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isAlternateOrRecoveryEmailValid && isTitan( provider ) ) {
-		defaultHiddenFields.push( FIELD_ALTERNATIVE_EMAIL );
+	if ( isPasswordResetEmailValid && isTitan( provider ) ) {
+		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
 	}
 
-	if ( isAlternateOrRecoveryEmailValid && isGoogle( provider ) ) {
-		defaultHiddenFields.push( FIELD_RECOVERY_EMAIL );
+	if ( isPasswordResetEmailValid && isGoogle( provider ) ) {
+		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
 	}
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] =
@@ -263,7 +260,7 @@ const MailboxesForm = ( {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
 
-	const showAlternateEmailField = ( event: MouseEvent< HTMLElement > ) => {
+	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
 		setHiddenFieldNames( [ FIELD_NAME ] );
 	};
@@ -323,13 +320,9 @@ const MailboxesForm = ( {
 			} );
 	};
 
-	const alternativeOrRecoveryEmailDefaultValue = isTitan( provider )
-		? {
-				[ FIELD_ALTERNATIVE_EMAIL ]: isAlternateOrRecoveryEmailValid ? userEmail : '',
-		  }
-		: {
-				[ FIELD_RECOVERY_EMAIL ]: isAlternateOrRecoveryEmailValid ? userEmail : '',
-		  };
+	const passwordResetEmailDefaultValue = {
+		[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
+	};
 
 	return (
 		<>
@@ -339,7 +332,7 @@ const MailboxesForm = ( {
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
 					hiddenFieldNames={ hiddenFieldNames }
-					initialFieldValues={ alternativeOrRecoveryEmailDefaultValue }
+					initialFieldValues={ passwordResetEmailDefaultValue }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -348,9 +341,8 @@ const MailboxesForm = ( {
 					showCancelButton
 					submitActionText={ translate( 'Continue' ) }
 				>
-					{ ( hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ||
-						hiddenFieldNames.includes( FIELD_RECOVERY_EMAIL ) ) && (
-						<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
+					{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
+						<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
 					) }
 				</NewMailBoxList>
 			</Card>

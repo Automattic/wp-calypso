@@ -1,13 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
-	FIELD_RECOVERY_EMAIL,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import type { MutableFormFieldNames } from 'calypso/my-sites/email/form/mailboxes/types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -18,10 +17,7 @@ export const useGetDefaultFieldLabelText = (
 	const translate = useTranslate();
 
 	const textMap: Record< MutableFormFieldNames, TranslateResult > = {
-		[ FIELD_ALTERNATIVE_EMAIL ]: translate( 'Password reset email address', {
-			comment: 'This is the email address we will send password reset emails to',
-		} ),
-		[ FIELD_RECOVERY_EMAIL ]: translate( 'Password reset email address', {
+		[ FIELD_PASSWORD_RESET_EMAIL ]: translate( 'Password reset email address', {
 			comment: 'This is the email address we will send password reset emails to',
 		} ),
 		[ FIELD_FIRSTNAME ]: translate( 'First name' ),
