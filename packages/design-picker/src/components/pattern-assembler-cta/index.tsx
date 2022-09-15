@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import blankCanvasImage from 'calypso/assets/images/onboarding/blank-canvas-cta.svg'; // eslint-disable-line no-restricted-imports
+import blankCanvasImage from '../assets/images/blank-canvas-cta.svg';
 import './style.scss';
 
 type PatternAssemblerCtaProps = {
