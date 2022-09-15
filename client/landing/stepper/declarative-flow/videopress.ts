@@ -7,9 +7,11 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+import './internals/videopress.scss';
+
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
-	title: 'VideoPress',
+	title: 'Video',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
