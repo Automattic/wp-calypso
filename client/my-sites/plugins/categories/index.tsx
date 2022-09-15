@@ -37,10 +37,6 @@ const Categories = ( { selected }: { selected?: string } ) => {
 		page( getCategoryUrl( category.slug ) );
 	};
 
-	if ( selected && ! displayCategories.includes( selected ) ) {
-		return <div></div>;
-	}
-
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
 
 	return (
