@@ -6,9 +6,9 @@ import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
-import { SitesListSortingDropdown } from './sites-list-sorting-dropdown';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
+import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
 export interface SitesDashboardQueryParams {
 	page?: number;
@@ -83,7 +83,7 @@ type SitesContentControlsProps = {
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
-	ComponentPropsWithoutRef< typeof SitesListSortingDropdown >;
+	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
 /**
  * Updates one or more query param used by the sites dashboard, causing a page navigation.
@@ -112,8 +112,8 @@ export const SitesContentControls = ( {
 	selectedStatus,
 	displayMode,
 	onDisplayModeChange,
-	sitesListSorting,
-	onSitesListSortingChange,
+	sitesSorting,
+	onSitesSortingChange,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -146,9 +146,9 @@ export const SitesContentControls = ( {
 					) ) }
 				</ControlsSelectDropdown>
 				<VisibilityControls>
-					<SitesListSortingDropdown
-						sitesListSorting={ sitesListSorting }
-						onSitesListSortingChange={ onSitesListSortingChange }
+					<SitesSortingDropdown
+						sitesSorting={ sitesSorting }
+						onSitesSortingChange={ onSitesSortingChange }
 					/>
 					<SitesDisplayModeSwitcher
 						displayMode={ displayMode }
