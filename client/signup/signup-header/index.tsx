@@ -1,9 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { useFlowProgress } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import './style.scss';
 
 interface ProgressBarData {
@@ -39,13 +37,8 @@ const SignupHeader = ( {
 	const variationTitle = variationName && VARIATION_TITLES[ variationName ];
 	const showPageTitle = ( params.has( 'pageTitle' ) && variationTitle ) || Boolean( pageTitle );
 	const variablePageTitle = variationTitle || pageTitle;
-	const userStartedLoggedIn = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getUserStartedLoggedIn()
-	);
 	const flowProgress = useFlowProgress(
-		variationName
-			? { flowName: variationName, stepName: progressBar.stepName, userStartedLoggedIn }
-			: { ...progressBar, userStartedLoggedIn }
+		variationName ? { flowName: variationName, stepName: progressBar.stepName } : progressBar
 	);
 
 	return (

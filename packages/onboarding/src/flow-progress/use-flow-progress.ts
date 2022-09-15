@@ -1,7 +1,10 @@
+/* eslint-disable no-restricted-imports */
+import { useSelect } from '@wordpress/data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+
 interface FlowProgress {
 	stepName?: string;
 	flowName?: string;
-	userStartedLoggedIn?: boolean;
 }
 
 const flows: Record< string, { [ step: string ]: number } > = {
@@ -14,14 +17,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		subscribers: 5,
 		launchpad: 6,
 	},
-	'newsletter-logged-in': {
-		intro: 0,
-		newsletterSetup: 1,
-		domains: 2,
-		'plans-newsletter': 3,
-		subscribers: 4,
-		launchpad: 5,
-	},
 	'link-in-bio': {
 		intro: 0,
 		user: 1,
@@ -31,32 +26,23 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		plans: 5,
 		launchpad: 6,
 	},
-	'link-in-bio-logged-in': {
-		intro: 0,
-		patterns: 1,
-		linkInBioSetup: 2,
-		domains: 3,
-		plans: 4,
-		launchpad: 5,
-	},
 };
 
-export const useFlowProgress = ( {
-	stepName,
-	flowName,
-	userStartedLoggedIn,
-}: FlowProgress = {} ) => {
+export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {
+	const userStartedLoggedIn = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getUserStartedLoggedIn()
+	);
+
 	if ( ! stepName || ! flowName ) {
 		return;
 	}
 
-	const name = userStartedLoggedIn ? `${ flowName }-logged-in` : flowName;
-	const flowProgress = flows[ name ];
+	const flow = flows[ flowName ];
 
 	return (
-		flowProgress && {
-			progress: flowProgress[ stepName ],
-			count: Object.keys( flowProgress ).length,
+		flow && {
+			progress: flow[ stepName ] - Number( userStartedLoggedIn ),
+			count: Object.keys( flow ).length - Number( userStartedLoggedIn ),
 		}
 	);
 };
