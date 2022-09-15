@@ -50,7 +50,7 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 			<span
 				style={ {
 					backgroundColor: styles.color.background,
-					color: styles.color.foreground,
+					color: styles.color.foreground || styles.color.primary,
 				} }
 			>
 				A
