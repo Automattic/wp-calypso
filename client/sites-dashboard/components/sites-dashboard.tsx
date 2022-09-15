@@ -199,6 +199,9 @@ export function SitesDashboard( {
 							<JetpackLogo className="gridicon" size={ 18 } />
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
+						<PopoverMenuItem href="/start?source=sites-dashboard&ref=smp-import" icon="arrow-down">
+							<span>{ __( 'Import an existing site' ) }</span>
+						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>
 			</PageHeader>
