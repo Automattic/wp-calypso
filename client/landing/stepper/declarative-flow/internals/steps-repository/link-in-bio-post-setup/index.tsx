@@ -1,11 +1,10 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
+import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useUploadSiteIcon } from 'calypso/data/media/use-upload-site-icon';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -18,7 +17,6 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
-	const uploadSiteIcon = useUploadSiteIcon();
 
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
@@ -36,22 +34,18 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		setInvalidSiteTitle( ! siteTitle.trim().length );
-
 		if ( site ) {
 			await saveSiteSettings( site.ID, {
 				blogname: siteTitle,
 				blogdescription: tagline,
 			} );
-		}
 
-		if ( selectedFile && base64Image ) {
-			await uploadSiteIcon(
-				base64ImageToBlob( base64Image ),
-				'site-logo.png',
-				site?.ID,
-				site?.icon?.media_id,
-				site
-			);
+			if ( base64Image ) {
+				await uploadAndSetSiteLogo(
+					site.ID,
+					new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
+				);
+			}
 		}
 
 		if ( siteTitle.trim().length ) {
