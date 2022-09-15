@@ -85,9 +85,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
 		}
 
-		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( ( design ) =>
-			isBlankCanvasDesign( design )
-		);
+		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build and write intent
 			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
