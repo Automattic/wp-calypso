@@ -94,7 +94,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								<iframe
 									className="intro__video"
 									title="Video"
-									src="https://video.wordpress.com/v/l9GrBaPw?autoPlay=true&amp;controls=false&amp;muted=true&amp;loop=true&amp;cover=true"
+									src="https://video.wordpress.com/v/l9GrBaPw?autoPlay=true&amp;controls=false&amp;muted=true&amp;loop=true&amp;cover=true&amp;playsinline=true"
 								></iframe>
 							) }
 							<ProgressBar
