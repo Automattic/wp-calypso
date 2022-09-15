@@ -221,21 +221,6 @@ export default function CompanyDetailsForm( {
 					/>
 				</FormFieldset>
 
-				{ showCountryFields && stateOptions && (
-					<FormFieldset>
-						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<SelectDropdown
-							className="company-details-form__dropdown"
-							initialSelected={ addressState }
-							options={ stateOptions }
-							onSelect={ ( option: any ) => {
-								setAddressState( option.value );
-							} }
-							disabled={ isLoading }
-						/>
-					</FormFieldset>
-				) }
-
 				<FormFieldset>
 					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
 					<FormTextInput
