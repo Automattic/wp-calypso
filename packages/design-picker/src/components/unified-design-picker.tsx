@@ -15,14 +15,12 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
-	SHOW_ALL_SLUG,
 } from '../constants';
 import {
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
-	sortDesigns,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta from './pattern-assembler-cta';
@@ -286,6 +284,10 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
+	if ( isBlankCanvas ) {
+		return <PatternAssemblerCta onButtonClick={ () => props.onSelect( props.design ) } />;
+	}
+
 	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
 			<div className="design-button-container design-button-container--without-preview">
@@ -307,8 +309,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 		);
 	}
 
-	// We don't need preview for blank canvas
-	return ! isBlankCanvas ? (
+	return (
 		<div className="design-button-container">
 			{ ! previewOnly && (
 				<DesignButtonCover
@@ -326,11 +327,6 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				disabled={ ! previewOnly }
 			/>
 		</div>
-	) : (
-		<PatternAssemblerCta
-			key={ props.design.slug }
-			onButtonClick={ () => props.onSelect( props.design ) }
-		/>
 	);
 };
 
@@ -395,27 +391,11 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	const hasCategories = !! categorization?.categories.length;
 
 	const filteredDesigns = useMemo( () => {
-		const result = categorization?.selection
-			? filterDesignsByCategory( designs, categorization.selection )
-			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
-
-		result.sort( sortDesigns );
-
-		if (
-			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-			categorization?.selection === SHOW_ALL_SLUG
-		) {
-			const blankCanvasDesign = {
-				recipe: {
-					stylesheet: 'pub/blank-canvas-blocks',
-				},
-				slug: 'blank-canvas-blocks',
-				title: 'Blank Canvas',
-			} as Design;
-			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		if ( categorization?.selection ) {
+			return filterDesignsByCategory( designs, categorization.selection );
 		}
 
-		return result;
+		return designs;
 	}, [ designs, categorization?.selection ] );
 
 	return (
