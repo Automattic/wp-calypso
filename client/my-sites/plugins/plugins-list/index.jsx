@@ -265,7 +265,7 @@ export class PluginsList extends Component {
 			','
 		);
 
-		recordTracksEvent( 'calypso_plugins_edit_action_click', {
+		recordTracksEvent( 'calypso_plugins_bulk_action_execute', {
 			action: actionName,
 			plugins: pluginSlugs,
 			sites: siteIds,
@@ -309,7 +309,7 @@ export class PluginsList extends Component {
 					} );
 			} );
 
-		recordTracksEvent( 'calypso_plugins_edit_action_click', {
+		recordTracksEvent( 'calypso_plugins_bulk_action_execute', {
 			action: 'updating',
 			plugins: [ ...updatedPlugins ].join( ',' ),
 			sites: [ ...updatedSites ].join( ',' ),
@@ -319,6 +319,7 @@ export class PluginsList extends Component {
 	updateAllPlugins = () => {
 		this.handleUpdatePlugins( this.props.plugins );
 		this.recordEvent( 'Clicked Update all Plugins', true );
+		recordTracksEvent( 'calypso_plugins_update_all_click' );
 	};
 
 	updateSelected = ( accepted ) => {
