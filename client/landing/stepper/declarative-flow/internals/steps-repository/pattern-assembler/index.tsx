@@ -1,11 +1,20 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useState } from 'react';
+import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { requestActiveTheme } from 'calypso/state/themes/actions';
+import { useSite } from '../../../../hooks/use-site';
+import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
+import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
+import { encodePatternId } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
+import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation } ) => {
@@ -14,7 +23,36 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
-	const { goNext, goBack } = navigation;
+	const { goBack, goNext, submit } = navigation;
+	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const reduxDispatch = useReduxDispatch();
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const site = useSite();
+	const siteSlug = useSiteSlugParam();
+	const siteId = useSiteIdParam();
+	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+
+	const getDesign = () =>
+		( {
+			...selectedDesign,
+			recipe: {
+				...selectedDesign?.recipe,
+				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
+				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
+				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
+			} as DesignRecipe,
+		} as Design );
+
+	const getPageTemplate = () => {
+		let pageTemplate = 'footer-only';
+
+		if ( header ) {
+			pageTemplate = 'header-footer-only';
+		}
+
+		return pageTemplate;
+	};
 
 	const addSection = ( pattern: Pattern ) => {
 		if ( sectionPosition ) {
@@ -61,6 +99,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		setShowPatternSelectorType( null );
 	};
 
+	const onBack = () => {
+		if ( showPatternSelectorType ) {
+			setShowPatternSelectorType( null );
+		} else {
+			goBack();
+		}
+	};
+
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
 			<div className="pattern-assembler__sidebar">
@@ -99,7 +145,18 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setFooter( null );
 						} }
 						onContinueClick={ () => {
-							// TODO
+							if ( siteSlugOrId ) {
+								const design = getDesign();
+								const pageTemplate = getPageTemplate();
+
+								setPendingAction( () =>
+									setDesignOnSite( siteSlugOrId, design, { pageTemplate } ).then( () =>
+										reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+									)
+								);
+
+								submit?.();
+							}
 						} }
 					/>
 				) }
@@ -111,10 +168,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName={ 'pattern-assembler' }
-			goBack={ goBack }
+			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
-			isWideLayout={ true }
 			hideSkip={ true }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }

@@ -219,8 +219,6 @@ $plan-features-sidebar-width: 272px;
 
 	@include breakpoint-deprecated( "<1040px" ) {
 		border-spacing: 0;
-		margin-left: 15px;
-		margin-right: 15px;
 		width: calc(100% - 30px);
 	}
 }
@@ -735,6 +733,29 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	padding: 20px 0 10px;
 	transform: translateY(-20px);
 	overflow-x: auto;
+
+	.plan-features__item-annual-plan {
+		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
+		text-transform: uppercase;
+	}
+
+	.plan-features__item-info.is-annual-plan-feature {
+		&.is-available {
+			.plan-features__item-annual-plan {
+				color: var(--color-success);
+			}
+		}
+
+		&:not(.is-available) {
+			.plan-features__item-annual-plan {
+				color: var(--color-error);
+			}
+			.plan-features__item-title {
+				text-decoration: line-through;
+				color: var(--color-neutral-30);
+			}
+		}
+	}
 }
 
 .plan-features--signup {
@@ -873,12 +894,13 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	position: relative;
 
 	.is-section-signup & {
-		width: 100vw;
-		margin-left: calc(50% - 50vw);
+		position: absolute;
+		width: 100%;
+		left: 50%;
+		transform: translateX(-50%);
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
-			margin-left: -280px;
 		}
 
 		@include breakpoint-deprecated( "<1040px" ) {
@@ -1221,31 +1243,6 @@ button.plan-features__scroll-button {
 @include breakpoint-deprecated( "<480px" ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
-	}
-}
-
-.plans-wrapper {
-	.plan-features__item-annual-plan {
-		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
-		text-transform: uppercase;
-	}
-
-	.plan-features__item-info.is-annual-plan-feature {
-		&.is-available {
-			.plan-features__item-annual-plan {
-				color: var(--color-success);
-			}
-		}
-
-		&:not(.is-available) {
-			.plan-features__item-annual-plan {
-				color: var(--color-error);
-			}
-			.plan-features__item-title {
-				text-decoration: line-through;
-				color: var(--color-neutral-30);
-			}
-		}
 	}
 }
 

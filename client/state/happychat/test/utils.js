@@ -41,7 +41,7 @@ describe( 'auth promise', () => {
 				url: config( 'happychat_url' ),
 				user: {
 					signer_user_id: state.currentUser.user.ID,
-					locale: state.currentUser.user.localeSlug,
+					skills: { language: [ state.currentUser.user.localeSlug ] },
 					groups: [ 'jpop' ],
 					jwt: 'jwt',
 					geoLocation: { city: 'Lugo' },

@@ -4,6 +4,7 @@ import {
 	useSitesTableFiltering,
 	useSitesTableSorting,
 	useScrollToTop,
+	JetpackLogo,
 } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -12,17 +13,27 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import Pagination from 'calypso/components/pagination';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
-import { SitesDashboardQueryParams, SitesContentControls } from './sites-content-controls';
+import {
+	SitesDashboardQueryParams,
+	SitesContentControls,
+	handleQueryParamChange,
+} from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
+import { parseSorting, useSitesListSorting } from './sites-list-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
+
+const TRACK_SOURCE_NAME = 'sites-dashboard';
 
 const MAX_PAGE_WIDTH = '1280px';
 
@@ -84,12 +95,21 @@ const sitesMargin = css( {
 	marginBlockEnd: '1.5em',
 } );
 
-const HiddenSitesMessageContainer = styled.div( {
+const PageBodyBottomContainer = styled.div( {
 	color: 'var( --color-text-subtle )',
-	fontSize: '14px',
-	paddingInline: 0,
 	paddingBlockStart: '16px',
 	paddingBlockEnd: '24px',
+	gap: '24px',
+	display: 'flex',
+	flexDirection: 'column',
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		paddingBlockEnd: '48px',
+	},
+} );
+
+const HiddenSitesMessageContainer = styled.div( {
+	fontSize: '14px',
+	paddingInline: 0,
 	textAlign: 'center',
 } );
 
@@ -120,26 +140,32 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 `;
 
 export function SitesDashboard( {
-	queryParams: { search, showHidden, status = 'all' },
+	queryParams: { page = 1, perPage = 96, search, showHidden, status = 'all' },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
-	const { sortedSites } = useSitesTableSorting( allSites, {
-		sortKey: 'updated-at',
-		sortOrder: 'desc',
-	} );
-
-	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesTableFiltering( allSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,
 	} );
 
+	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
+
+	const { sortedSites } = useSitesTableSorting(
+		sitesListSorting === 'none' ? [] : filteredSites,
+		parseSorting( sitesListSorting )
+	);
+
+	const paginatedSites = sortedSites.slice( ( page - 1 ) * perPage, page * perPage );
+
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
+
+	const userPreferencesLoaded = 'none' !== sitesListSorting && 'none' !== displayMode;
 
 	const elementRef = useRef( window );
 
@@ -161,9 +187,19 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<span>{ __( 'Add new site' ) }</span>
-					</Button>
+					<SplitButton
+						primary
+						whiteSeparator
+						label={ __( 'Add new site' ) }
+						href={ `/start?source=${ TRACK_SOURCE_NAME }&ref=${ TRACK_SOURCE_NAME }` }
+					>
+						<PopoverMenuItem
+							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+						>
+							<JetpackLogo className="gridicon" size={ 18 } />
+							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
@@ -175,50 +211,72 @@ export function SitesDashboard( {
 							selectedStatus={ selectedStatus }
 							displayMode={ displayMode }
 							onDisplayModeChange={ setDisplayMode }
+							sitesListSorting={ sitesListSorting }
+							onSitesListSortingChange={ onSitesListSortingChange }
 						/>
 					) }
-					{ filteredSites.length > 0 || isLoading ? (
+					{ userPreferencesLoaded && (
 						<>
-							{ displayMode === 'list' && (
-								<SitesTable
-									isLoading={ isLoading }
-									sites={ filteredSites }
-									className={ sitesMargin }
+							{ paginatedSites.length > 0 || isLoading ? (
+								<>
+									{ displayMode === 'list' && (
+										<SitesTable
+											isLoading={ isLoading }
+											sites={ paginatedSites }
+											className={ sitesMargin }
+										/>
+									) }
+									{ displayMode === 'tile' && (
+										<SitesGrid
+											isLoading={ isLoading }
+											sites={ paginatedSites }
+											className={ sitesMargin }
+										/>
+									) }
+									{ ( selectedStatus.hiddenCount > 0 || filteredSites.length > perPage ) && (
+										<PageBodyBottomContainer>
+											<Pagination
+												page={ page }
+												perPage={ perPage }
+												total={ filteredSites.length }
+												pageClick={ ( newPage: number ) => {
+													handleQueryParamChange( { page: newPage } );
+												} }
+											/>
+											{ selectedStatus.hiddenCount > 0 && (
+												<HiddenSitesMessageContainer>
+													<HiddenSitesMessage>
+														{ sprintf(
+															/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+															_n(
+																'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+																'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+																selectedStatus.hiddenCount
+															),
+															{
+																hiddenSitesCount: selectedStatus.hiddenCount,
+															}
+														) }
+													</HiddenSitesMessage>
+													<Button
+														href={ addQueryArgs( window.location.href, {
+															'show-hidden': 'true',
+														} ) }
+													>
+														{ __( 'Show all' ) }
+													</Button>
+												</HiddenSitesMessageContainer>
+											) }
+										</PageBodyBottomContainer>
+									) }
+								</>
+							) : (
+								<NoSitesMessage
+									status={ selectedStatus.name }
+									statusSiteCount={ selectedStatus.count }
 								/>
-							) }
-							{ displayMode === 'tile' && (
-								<SitesGrid
-									isLoading={ isLoading }
-									sites={ filteredSites }
-									className={ sitesMargin }
-								/>
-							) }
-							{ selectedStatus.hiddenCount > 0 && 'none' !== displayMode && (
-								<HiddenSitesMessageContainer>
-									<HiddenSitesMessage>
-										{ sprintf(
-											/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-											_n(
-												'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-												'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-												selectedStatus.hiddenCount
-											),
-											{
-												hiddenSitesCount: selectedStatus.hiddenCount,
-											}
-										) }
-									</HiddenSitesMessage>
-									<Button href={ addQueryArgs( window.location.href, { 'show-hidden': 'true' } ) }>
-										{ __( 'Show all' ) }
-									</Button>
-								</HiddenSitesMessageContainer>
 							) }
 						</>
-					) : (
-						<NoSitesMessage
-							status={ selectedStatus.name }
-							statusSiteCount={ selectedStatus.count }
-						/>
 					) }
 				</>
 			</PageBodyWrapper>

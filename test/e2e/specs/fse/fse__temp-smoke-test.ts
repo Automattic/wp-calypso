@@ -10,7 +10,6 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -43,18 +42,18 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await sidebarComponent.navigate( 'Appearance', 'Editor' );
 	} );
 
-	it( 'Editor content loads', async function () {
+	it( 'Editor endpoint loads', async function () {
+		await page.waitForURL( /.*site-editor.*/ );
+	} );
+
+	it( 'Editor canvas loads', async function () {
 		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
 		// spinning up a POM class that we will later needed to redo.
 		// This should ensure the editor hasn't done a WSoD.
-		const editorLoadedClosure = async () => {
-			const locator = page
-				.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
-				.frameLocator( 'iframe[name="editor-canvas"]' )
-				.locator( '[aria-label="Block: Post Title"]:has-text("Home"):visible' );
-			await locator.waitFor( { timeout: 90 * 1000 } );
-		};
+		const topFrameLocator = page.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' );
+		await topFrameLocator.locator( '[aria-label="Editor top bar"]' ).waitFor();
 
-		await ElementHelper.reloadAndRetry( page, editorLoadedClosure );
+		const editorFrameLocator = topFrameLocator.frameLocator( 'iframe[title="Editor canvas"]' );
+		await editorFrameLocator.locator( '.edit-site-block-editor__block-list' ).waitFor();
 	} );
 } );

@@ -1,5 +1,8 @@
 /* eslint-disable no-restricted-imports */
+import config from '@automattic/calypso-config';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+
+const isNonProdEnv = [ 'stage', 'development', 'horizon' ].includes( config( 'env_id' ) );
 
 // function that tells us if we want to show the Help Center to the user, given that we're showing it to
 // only a certain percentage of users.
@@ -7,7 +10,7 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 export function shouldShowHelpCenterToUser( userId: number ) {
 	const currentSegment = 30; //percentage of users that will see the Help Center, not the FAB
 	const userSegment = userId % 100;
-	return userSegment < currentSegment;
+	return isNonProdEnv || userSegment < currentSegment;
 }
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {

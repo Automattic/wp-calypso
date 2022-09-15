@@ -82,5 +82,6 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "UA-52447-43"
+	"google_analytics_key": "UA-52447-43",
+	"hotjar_enabled": true
 }

@@ -114,8 +114,6 @@ $plan-features-sidebar-width: 272px;
 
 		@include breakpoint-deprecated( "<1040px" ) {
 			border-spacing: 0;
-			margin-left: 15px;
-			margin-right: 15px;
 			width: calc(100% - 30px);
 		}
 
@@ -338,12 +336,13 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	.is-section-signup & {
-		width: 100vw;
-		margin-left: calc(50% - 50vw);
+		position: absolute;
+		width: 100%;
+		left: 50%;
+		transform: translateX(-50%);
 
 		@media ( min-width: 1600px ) {
 			max-width: 1600px;
-			margin-left: -280px;
 		}
 
 		@include breakpoint-deprecated( "<1040px" ) {
@@ -471,7 +470,7 @@ body.is-section-signup.is-white-signup {
 		font-size: 0.75rem;
 		font-weight: 500;
 		letter-spacing: 0.2px;
-		line-height: 1.25rem;
+		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		padding: 0 8px;
 	}
 
@@ -480,8 +479,7 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.plan-features-comparison__item.plan-features-comparison__item-available {
-		.plan-features-comparison__item-annual-plan-container
-		.plan-features-comparison__item-annual-plan {
+		.plan-features-comparison__item-annual-plan-container .plan-features-comparison__item-annual-plan {
 			color: var(--studio-orange-40);
 		}
 	}

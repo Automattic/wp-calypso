@@ -21,7 +21,6 @@ import {
 	domainManagementManageConsent,
 	domainManagementDomainConnectMapping,
 	domainManagementRoot,
-	domainManagementAllEditContactInfo,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagement } from 'calypso/my-sites/email/paths';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -51,20 +50,6 @@ export default {
 				analyticsTitle="Domain Management > All Domains"
 				component={ DomainManagement.AllDomains }
 				context={ pageContext }
-			/>
-		);
-		next();
-	},
-
-	domainManagementBulkEditContactInfo( pageContext, next ) {
-		pageContext.primary = (
-			<DomainManagementData
-				analyticsPath={ domainManagementAllEditContactInfo() }
-				analyticsTitle="Domain Management > All Domains > Edit Contact Info"
-				component={ DomainManagement.BulkEditContactInfo }
-				context={ pageContext }
-				needsDomains
-				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
 		next();

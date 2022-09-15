@@ -6,7 +6,7 @@ import * as HelpCenter from './help-center';
 import * as I18n from './i18n';
 import * as Launch from './launch';
 import * as Onboard from './onboard';
-import persistenceConfigFactory from './persistence-config-factory';
+import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
@@ -26,10 +26,7 @@ export type { SetSiteLogoResponse } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useStarterDesignBySlug } from './starter-designs-queries/use-starter-design-by-slug';
-export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
-export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
-export { isThemeVerticalizable } from './starter-designs-queries/utils';
+export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 
@@ -46,7 +43,7 @@ export {
 	WPCOMFeatures,
 	Reader,
 	Onboard,
-	persistenceConfigFactory,
+	oneWeekPersistenceConfig,
 	ProductsList,
 	AutomatedTransferEligibility,
 	StepperInternal,

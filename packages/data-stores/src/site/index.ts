@@ -1,8 +1,8 @@
 import { plugins, use, registerStore } from '@wordpress/data';
+import persistOptions from '../one-week-persistence-config';
 import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
-import persistOptions from './persist';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';

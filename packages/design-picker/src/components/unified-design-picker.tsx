@@ -15,14 +15,12 @@ import {
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
-	SHOW_ALL_SLUG,
 } from '../constants';
 import {
 	getDesignPreviewUrl,
 	getMShotOptions,
 	isBlankCanvasDesign,
 	filterDesignsByCategory,
-	sortDesigns,
 } from '../utils';
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta from './pattern-assembler-cta';
@@ -30,7 +28,7 @@ import PremiumBadge from './premium-badge';
 import StyleVariationBadges from './style-variation-badges';
 import ThemePreview from './theme-preview';
 import type { Categorization } from '../hooks/use-categorization';
-import type { Design } from '../types';
+import type { Design, StyleVariation } from '../types';
 import './style.scss';
 
 const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name__${ slug }`;
@@ -68,7 +66,7 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
-	onSelect: ( design: Design ) => void;
+	onSelect: ( design: Design, variation?: StyleVariation ) => void;
 	highRes: boolean;
 	disabled?: boolean;
 	hideFullScreenPreview?: boolean;
@@ -206,7 +204,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 						) }
 						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
-								<StyleVariationBadges variations={ style_variations } />
+								<StyleVariationBadges
+									variations={ style_variations }
+									onClick={ ( variation ) => onSelect( design, variation ) }
+								/>
 							</div>
 						) }
 					</span>
@@ -268,7 +269,7 @@ const DesignButtonCover: React.FC< DesignButtonCoverProps > = ( {
 interface DesignButtonContainerProps extends DesignButtonProps {
 	isPremiumThemeAvailable?: boolean;
 	hasPurchasedTheme?: boolean;
-	onPreview?: ( design: Design ) => void;
+	onPreview?: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	previewOnly?: boolean;
 }
@@ -282,6 +283,10 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 } ) => {
 	const isDesktop = useViewportMatch( 'large' );
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
+
+	if ( isBlankCanvas ) {
+		return <PatternAssemblerCta onButtonClick={ () => props.onSelect( props.design ) } />;
+	}
 
 	if ( ! onPreview || props.hideFullScreenPreview ) {
 		return (
@@ -304,8 +309,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 		);
 	}
 
-	// We don't need preview for blank canvas
-	return ! isBlankCanvas ? (
+	return (
 		<div className="design-button-container">
 			{ ! previewOnly && (
 				<DesignButtonCover
@@ -323,11 +327,6 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 				disabled={ ! previewOnly }
 			/>
 		</div>
-	) : (
-		<PatternAssemblerCta
-			key={ props.design.slug }
-			onButtonClick={ () => props.onSelect( props.design ) }
-		/>
 	);
 };
 
@@ -340,7 +339,7 @@ export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
@@ -357,7 +356,7 @@ interface StaticDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onUpgrade?: () => void;
 	designs: Design[];
 	categorization?: Categorization;
@@ -392,27 +391,11 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	const hasCategories = !! categorization?.categories.length;
 
 	const filteredDesigns = useMemo( () => {
-		const result = categorization?.selection
-			? filterDesignsByCategory( designs, categorization.selection )
-			: designs.slice(); // cloning because otherwise .sort() would mutate the original prop
-
-		result.sort( sortDesigns );
-
-		if (
-			isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-			categorization?.selection === SHOW_ALL_SLUG
-		) {
-			const blankCanvasDesign = {
-				recipe: {
-					stylesheet: 'pub/blank-canvas-blocks',
-				},
-				slug: 'blank-canvas-blocks',
-				title: 'Blank Canvas',
-			} as Design;
-			result.splice( Math.min( result.length, 3 ), 0, blankCanvasDesign );
+		if ( categorization?.selection ) {
+			return filterDesignsByCategory( designs, categorization.selection );
 		}
 
-		return result;
+		return designs;
 	}, [ designs, categorization?.selection ] );
 
 	return (

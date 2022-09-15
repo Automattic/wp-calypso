@@ -285,11 +285,11 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string ) {
+	function* setThemeOnSite( siteSlug: string, theme: string, styleVariationSlug?: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: theme, dont_change_homepage: true },
+			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: true },
 			method: 'POST',
 		} );
 	}
@@ -332,6 +332,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 			if ( recipe?.footer_pattern_ids ) {
 				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
+			}
+
+			if ( options?.pageTemplate ) {
+				themeSetupOptions.page_template = options?.pageTemplate;
 			}
 
 			const response: { blog: string } = yield wpcomRequest( {

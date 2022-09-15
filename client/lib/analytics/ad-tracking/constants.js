@@ -81,6 +81,7 @@ export const TRACKING_IDS = {
 	wpcomGoogleAdsGtagSignup: 'AW-946162814/5-NnCKy3xZQBEP6YlcMD', // "All Calypso Signups (WordPress.com)"
 	wpcomGoogleAdsGtagAddToCart: 'AW-946162814/MF4yCNi_kZYBEP6YlcMD', // "WordPress.com AddToCart"
 	wpcomGoogleAdsGtagPurchase: 'AW-946162814/taG8CPW8spQBEP6YlcMD', // "WordPress.com Purchase Gtag"
+	wpcomGoogleGA4Gtag: 'G-1H4VG5F5JF',
 	jetpackGoogleAnalyticsGtag: 'UA-52447-43', // Jetpack Gtag (Analytics) for use in Jetpack x WordPress.com Flows
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',

@@ -19,17 +19,20 @@ import React, {
 } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
+import { RecordTrackEvents, useRecordAddFormEvents } from '../../hooks/use-record-add-form-events';
 import { SUBSCRIBER_STORE } from '../../store';
 import { tip } from './icon';
 import './style.scss';
 
 interface Props {
 	siteId: number;
+	flowName?: string;
 	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
 	allowEmptyFormSubmit?: boolean;
+	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
 }
@@ -38,17 +41,23 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const __ = useTranslate();
 	const {
 		siteId,
+		flowName,
 		showTitleEmoji,
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName,
 		allowEmptyFormSubmit,
+		recordTracksEvent,
 		onSkipBtnClick,
 		onImportFinished,
 	} = props;
 
-	const { addSubscribers, importCsvSubscribers, getSubscribersImports } =
-		useDispatch( SUBSCRIBER_STORE );
+	const {
+		addSubscribers,
+		importCsvSubscribers,
+		importCsvSubscribersUpdate,
+		getSubscribersImports,
+	} = useDispatch( SUBSCRIBER_STORE );
 
 	/**
 	 * ↓ Fields
@@ -59,7 +68,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		__( 'parents@example.com' ),
 		__( 'friend@example.com' ),
 	];
-	const inProgress = useInProgressState( 0 );
+	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
 	const [ selectedFile, setSelectedFile ] = useState< File >();
 	const [ isSelectedFileValid, setIsSelectedFileValid ] = useState( true );
@@ -91,6 +100,8 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
+
+	useRecordAddFormEvents( recordTracksEvent, flowName );
 
 	/**
 	 * ↓ Functions
@@ -151,6 +162,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		setIsSelectedFileValid( isValid );
 		isValid && setSelectedFile( file );
+	}
+
+	function onFileRemoveClick() {
+		setSelectedFile( undefined );
+		importCsvSubscribersUpdate( undefined );
 	}
 
 	function extendEmailFormControls() {
@@ -254,7 +270,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 									uploadBtn: formFileUploadElement,
 									removeBtn: createElement( Button, {
 										isLink: true,
-										onClick: () => setSelectedFile( undefined ),
+										onClick: onFileRemoveClick,
 									} ),
 								}
 							) }

@@ -62,7 +62,7 @@ $border-radius: 4px;
 			color: var(--studio-gray-100);
 			font-size: $font-body-small;
 			padding: 12px 16px;
-			height: $input-height;
+			min-height: $input-height;
 			border-radius: $border-radius;
 			background-repeat: no-repeat;
 			background-position: 95%;
@@ -103,5 +103,12 @@ $border-radius: 4px;
 .components-color-picker {
 	.components-h-stack {
 		width: unset !important;
+	}
+}
+
+.newsletter-setup__accent-color-popover {
+	&:focus,
+	&:focus-visible {
+		outline: none;
 	}
 }
