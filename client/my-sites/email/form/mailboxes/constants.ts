@@ -18,5 +18,5 @@ export type TitanMailboxFields = {
 	[ FIELD_MAILBOX ]: string;
 	[ FIELD_PASSWORD ]: string;
 	[ FIELD_IS_ADMIN ]: boolean;
-
+	[ FIELD_PASSWORD_RESET_EMAIL ]: string;
 };

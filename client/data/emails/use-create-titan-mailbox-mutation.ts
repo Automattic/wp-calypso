@@ -1,7 +1,6 @@
 import { useMutation } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
-import { FIELD_PASSWORD_RESET_EMAIL } from "calypso/my-sites/email/form/mailboxes/constants";
 
 /**
  * Creates a mailbox for a Professional Email (Titan) account
