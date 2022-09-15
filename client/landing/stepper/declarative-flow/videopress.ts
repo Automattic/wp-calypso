@@ -1,15 +1,17 @@
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+import './internals/videopress.scss';
+
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
-	title: 'VideoPress',
+	title: 'Video',
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
@@ -19,9 +21,7 @@ export const videopress: Flow = {
 			'intro',
 			'options',
 			'chooseADomain',
-			// 'videopressSetup',
-			// 'patterns',
-			'completingPurchase',
+			'chooseAPlan',
 			'processing',
 			'launchpad',
 		] as StepPath[];
@@ -29,13 +29,11 @@ export const videopress: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const name = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const [ _siteTitle, setSiteTitle ] = useState( '' );
-		const [ _tagline, setTagline ] = useState( '' );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -44,20 +42,21 @@ export const videopress: Flow = {
 						return navigate( 'options' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/options?flow=${ name }`
+						`/start/account/user?variationName=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/options?flow=${ name }`
 					);
 
 				case 'options': {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
-					setTagline( tagline as string );
+					setSiteDescription( tagline as string );
 					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain':
-					return navigate( 'completingPurchase' );
+				case 'chooseADomain': {
+					return navigate( 'chooseAPlan' );
+				}
 
-				case 'completingPurchase':
+				case 'chooseAPlan':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -72,6 +71,10 @@ export const videopress: Flow = {
 		}
 
 		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'chooseADomain':
+					return navigate( 'options' );
+			}
 			return;
 		};
 
@@ -86,7 +89,7 @@ export const videopress: Flow = {
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
+			return navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
