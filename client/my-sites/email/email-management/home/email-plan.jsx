@@ -131,6 +131,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		if ( hasTitanMailWithUs( domain ) ) {
 			if ( getTitanSubscriptionId( domain ) ) {
 				return {
+					disabled: ! canAddMailboxes,
 					path: emailManagementNewTitanAccount(
 						selectedSite.slug,
 						domain.name,
