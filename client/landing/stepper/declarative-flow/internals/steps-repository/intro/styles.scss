@@ -2,6 +2,10 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
+	&.videopress {
+		padding: 0px;
+	}
+
 	&.newsletter {
 		background-color: rgb(162 218 254);
 

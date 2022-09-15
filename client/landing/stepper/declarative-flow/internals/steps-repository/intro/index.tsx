@@ -66,6 +66,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const introContent = useIntroContent( flow );
 	const showNewNewsletterIntro = flow === NEWSLETTER_FLOW && 'text' in introContent;
+	const isVideoPressFlow = 'videopress' === flow;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -82,6 +83,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ showNewNewsletterIntro }
 			showJetpackPowered={ flow === NEWSLETTER_FLOW && ! showNewNewsletterIntro }
+			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };

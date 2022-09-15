@@ -62,6 +62,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			submit?.( { siteTitle, tagline } );
 		}
 	};
+
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 		if ( isVideoPressFlow || site ) {
 			setFormTouched( true );
@@ -107,7 +108,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 		}
 	};
 
-	const isSiteTitleRequired = false;
+	const isSiteTitleRequired = isVideoPressFlow;
 	const isTaglineRequired = false;
 	const siteTitleError = null;
 	const taglineError = null;
@@ -182,6 +183,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };
