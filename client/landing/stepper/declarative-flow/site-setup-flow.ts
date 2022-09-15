@@ -28,6 +28,7 @@ import {
 import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
+const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -143,7 +144,13 @@ export const siteSetupFlow: Flow = {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+						pendingActions.push(
+							setThemeOnSite(
+								siteSlug,
+								WRITE_INTENT_DEFAULT_THEME,
+								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
+							)
+						);
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );

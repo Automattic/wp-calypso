@@ -111,9 +111,9 @@ export default function CampaignItem( { campaign }: Props ) {
 		campaignStatus === 'active' ? __( 'Stop the campaign' ) : __( 'Cancel the campaign' );
 	const cancelCampaignMessage =
 		campaignStatus === 'active'
-			? __( 'If you continue your campaign will immediately stop running.' )
+			? __( 'If you continue, your campaign will immediately stop running.' )
 			: __(
-					"If you continue an approval request for your ad will be canceled, and the campaign won't start."
+					"If you continue, an approval request for your ad will be canceled, and the campaign won't start."
 			  );
 
 	const buttons = [
