@@ -46,7 +46,7 @@ const GlobalStylesModal = () => {
 					</Button>
 					<Button
 						variant="primary"
-						href={ `${ calypsoDomain }/plans/${ window._currentSiteId }` }
+						href={ `${ calypsoDomain }/plans/${ window._currentSiteId ?? '' }` }
 						target="_top"
 					>
 						{ __( 'Upgrade plan', 'full-site-editing' ) }
