@@ -4,7 +4,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
@@ -15,10 +15,11 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
-	const [ siteTitle, domain ] = useSelect( ( select ) => {
+	const [ siteTitle, domain, productsList ] = useSelect( ( select ) => {
 		return [
 			select( ONBOARD_STORE ).getSelectedSiteTitle(),
 			select( ONBOARD_STORE ).getSelectedDomain(),
+			select( PRODUCTS_LIST_STORE ).getProductsList(),
 		];
 	} );
 	const { setDomain } = useDispatch( ONBOARD_STORE );
@@ -62,14 +63,16 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				<RegisterDomainStep
 					basePath={ '' }
 					suggestion={ domainSuggestion }
-					domainsWithPlansOnly={ false }
+					domainsWithPlansOnly={ true }
 					isSignupStep={ true }
 					includeWordPressDotCom={ true }
-					includeDotBlogSubdomain={ true }
-					showAlreadyOwnADomain={ false }
+					includeDotBlogSubdomain={ false }
+					showAlreadyOwnADomain={ true }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
 					promoTlds={ promoTlds }
+					products={ productsList }
+					useProvidedProductsList={ true }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
