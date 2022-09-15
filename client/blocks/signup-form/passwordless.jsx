@@ -116,6 +116,7 @@ class PasswordlessSignupForm extends Component {
 		};
 
 		const marketing_price_group = response?.marketing_price_group ?? '';
+		const redirect = this.props.queryArgs?.redirect_to;
 
 		recordRegistration( {
 			userData,
@@ -127,6 +128,7 @@ class PasswordlessSignupForm extends Component {
 			username,
 			marketing_price_group,
 			bearer_token: response.bearer_token,
+			redirect,
 		} );
 	};
 

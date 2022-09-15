@@ -453,7 +453,7 @@ export const getJetpackProductsShortDescriptions = (): Record< string, Translate
 	};
 };
 
-export const getJetpackProductsFeaturedText = (): Record< string, TranslateResult > => {
+export const getJetpackProductsFeaturedDescription = (): Record< string, TranslateResult > => {
 	const backupDailyFeaturedText = translate(
 		'Never lose a word, image, page, or time worrying about your site with automated daily backups & one-click restores.'
 	);
@@ -502,6 +502,57 @@ export const getJetpackProductsFeaturedText = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialFeaturedText,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialFeaturedText,
+	};
+};
+export const getJetpackProductsLightboxDescription = (): Record< string, TranslateResult > => {
+	const backupDailyLightboxDescription = translate(
+		'Protect your site or store with automated daily cloud backups, and restore in one click from anywhere.'
+	);
+	const backupLightboxDescription = translate(
+		'Protect your site or store. Save every change with real-time cloud backups, and restore in one click from anywhere.'
+	);
+	const videoPressLightboxDescription = translate(
+		'Own your content: High-quality, ad-free video built specifically for WordPress.'
+	);
+	const antiSpamLightboxDescription = translate(
+		'Automatically clear spam from your comments and forms.'
+	);
+	const scanLightboxDescription = translate(
+		'Keep your site or store ahead of security threats with automated malware scanning; including one-click fixes.'
+	);
+	const searchLightboxDescription = translate(
+		'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content - right when they need it.'
+	);
+	const boostLightboxDescription = translate(
+		'Jetpack Boost gives your site the same performance advantages as the world’s leading websites, no developer required.'
+	);
+	const socialLightboxDescription = translate(
+		'Easily share your website content on your social media channels from one place.'
+	);
+
+	return {
+		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDailyLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupLightboxDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS ]: videoPressLightboxDescription,
+		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: videoPressLightboxDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: antiSpamLightboxDescription,
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpamLightboxDescription,
+		[ PRODUCT_JETPACK_SCAN ]: scanLightboxDescription,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanLightboxDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME ]: scanLightboxDescription,
+		[ PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY ]: scanLightboxDescription,
+		[ PRODUCT_JETPACK_SEARCH ]: searchLightboxDescription,
+		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: searchLightboxDescription,
+		[ PRODUCT_JETPACK_BOOST ]: boostLightboxDescription,
+		[ PRODUCT_JETPACK_BOOST_MONTHLY ]: boostLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: socialLightboxDescription,
+		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialLightboxDescription,
 	};
 };
 
