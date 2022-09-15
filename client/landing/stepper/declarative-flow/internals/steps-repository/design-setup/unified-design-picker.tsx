@@ -6,6 +6,7 @@ import {
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
+	isBlankCanvasDesign,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -36,6 +37,7 @@ import getThemeIdFromDesign from './utils/get-theme-id-from-design';
 import { removeLegacyDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
+import type { StarterDesigns } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -78,6 +80,27 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	// ********** Logic for fetching designs
+	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
+			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
+		}
+
+		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( ( design ) =>
+			isBlankCanvasDesign( design )
+		);
+		if ( blankCanvasDesignOffset !== -1 ) {
+			// Extract the blank canvas design first and then insert it into 4th position for the build and write intent
+			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
+			if (
+				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+				( intent === SiteIntent.Build || intent === SiteIntent.Write )
+			) {
+				allDesigns.static.designs.splice( 3, 0, ...blankCanvasDesign );
+			}
+		}
+
+		return allDesigns;
+	};
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
@@ -86,15 +109,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 		},
-		{ enabled: true }
+		{
+			enabled: true,
+			select: selectStarterDesigns,
+		}
 	);
 
 	const generatedDesigns = allDesigns?.generated?.designs || [];
-
-	let staticDesigns = allDesigns?.static?.designs || [];
-	if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
-		staticDesigns = removeLegacyDesignVariations( staticDesigns );
-	}
+	const staticDesigns = allDesigns?.static?.designs || [];
 
 	const hasTrackedView = useRef( false );
 	useEffect( () => {

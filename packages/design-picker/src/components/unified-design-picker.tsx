@@ -285,9 +285,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
 
 	if ( isBlankCanvas ) {
-		return isEnabled( 'signup/design-picker-pattern-assembler' ) ? (
-			<PatternAssemblerCta onButtonClick={ () => props.onSelect( props.design ) } />
-		) : null;
+		return <PatternAssemblerCta onButtonClick={ () => props.onSelect( props.design ) } />;
 	}
 
 	if ( ! onPreview || props.hideFullScreenPreview ) {
