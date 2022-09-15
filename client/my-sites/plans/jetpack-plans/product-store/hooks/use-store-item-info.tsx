@@ -20,6 +20,7 @@ import {
 	getSiteProducts,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
@@ -104,6 +105,11 @@ export const useStoreItemInfo = ( {
 			);
 		},
 		[ getIsIncludedInPlan, getIsOwned, sitePlan ]
+	);
+
+	const getIsExternal = useCallback(
+		( item: SelectorProduct ) => EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ),
+		[]
 	);
 
 	const getIsIncludedInPlanOrSuperseded = useCallback(
@@ -192,6 +198,7 @@ export const useStoreItemInfo = ( {
 			getCheckoutURL,
 			getCtaLabel,
 			getIsDeprecated,
+			getIsExternal,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsMultisiteCompatible,
@@ -207,6 +214,7 @@ export const useStoreItemInfo = ( {
 		[
 			getCheckoutURL,
 			getCtaLabel,
+			getIsExternal,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,
