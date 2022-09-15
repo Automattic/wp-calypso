@@ -2,35 +2,31 @@
 .manage-purchase > a.card {
 	--icon-size: 16px;
 
-	padding-inline-start: calc( var( --icon-size ) * 2.5 );
-	padding-inline-end: var( --icon-size );
+	padding-inline-start: calc(var(--icon-size) * 2.5);
+	padding-inline-end: var(--icon-size);
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		--icon-size: 24px;
 	}
 
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	.card__icon {
 		position: absolute;
-		left: var( --icon-size );
+		left: var(--icon-size);
 		top: 0;
-		width: var( --icon-size );
+		width: var(--icon-size);
 		height: 100%;
 		fill: currentcolor;
 	}
 
 	.card__link-indicator {
-		right: var( --icon-size );
+		right: var(--icon-size);
 	}
 }
 
-.manage-purchase > button.remove-purchase__card {
-	color: var( --studio-red-50 );
-}
-
-.purchases.manage-purchase > button.remove-purchase__card {
-	color: var( --studio-red-50 );
+.manage-purchase > .remove-purchase__card.is-clickable {
+	color: var(--studio-red-50);
 }
 
 .manage-purchase__info {
@@ -439,7 +435,7 @@
 	input.form-text-input.manage-purchase__jetpack-user-license-input {
 		font-size: $font-body-small;
 		margin-right: 16px;
-		background-color: var( --studio-gray-0 );
+		background-color: var(--studio-gray-0);
 		border: none;
 
 		@include breakpoint-deprecated( ">480px" ) {

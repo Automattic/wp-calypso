@@ -364,12 +364,16 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		let iconName;
 		let buttonText;
+
 		if ( isExpired( purchase ) ) {
+			iconName = 'view_carousel';
 			buttonText = isUpgradeablePlan
-				? translate( 'Pick Another Plan' )
-				: translate( 'Pick Another Product' );
+				? translate( 'Pick another plan' )
+				: translate( 'Pick another product' );
 		} else {
+			iconName = 'upload';
 			buttonText = translate( 'Upgrade plan' );
 		}
 
@@ -382,7 +386,7 @@ class ManagePurchase extends Component {
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
-				<MaterialIcon icon="upload" className="card__icon" />
+				<MaterialIcon icon={ iconName } className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -434,6 +438,10 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
+		const text = isPlan( purchase )
+			? translate( 'Remove plan' )
+			: translate( 'Remove subscription' );
+
 		return (
 			<RemovePurchase
 				hasLoadedSites={ hasLoadedSites }
@@ -447,7 +455,7 @@ class ManagePurchase extends Component {
 				linkIcon={ 'chevron-right' }
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
-				{ translate( 'Cancel subscription' ) }
+				{ text }
 			</RemovePurchase>
 		);
 	}
@@ -497,33 +505,22 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		let text;
 		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const canRefund = hasAmountAvailableToRefund( purchase );
+		let text;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
-			}
+		if ( ! canRefund && isDomainTransfer( purchase ) ) {
+			return null;
+		}
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
-			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel' );
-			}
-		} else {
-			if ( isDomainTransfer( purchase ) ) {
-				return null;
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
-			}
+		if ( isDomainRegistration( purchase ) ) {
+			text = translate( 'Cancel domain' );
+		} else if ( isPlan( purchase ) ) {
+			text = translate( 'Cancel plan' );
+		} else if ( isSubscription( purchase ) ) {
+			text = translate( 'Cancel subscription' );
+		} else if ( isOneTimePurchase( purchase ) ) {
+			text = translate( 'Cancel' );
 		}
 
 		const onClick = ( event ) => {
@@ -541,6 +538,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
+				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
 			</CompactCard>
 		);
