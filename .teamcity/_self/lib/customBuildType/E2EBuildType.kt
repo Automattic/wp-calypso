@@ -100,6 +100,8 @@ open class E2EBuildType(
 					# Install deps
 					yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
 
+					npx playwright install
+
 					# Decrypt secrets
 					# Must do before build so the secrets are in the dist output
 					E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
