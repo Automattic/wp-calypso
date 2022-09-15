@@ -40,11 +40,11 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 }
 
 /**
- * Customizes the Global Styles feature in the site editor on sites missing the required paid plan.
+ * Enqueues the WP.com Global Styles scripts and styles.
  *
  * @return void
  */
-function wpcom_maybe_limit_site_editor_global_styles() {
+function wpcom_global_styles_enqueue_scripts_and_styles() {
 	$screen = get_current_screen();
 	if ( ! $screen || 'site-editor' !== $screen->id ) {
 		return;
@@ -80,4 +80,4 @@ function wpcom_maybe_limit_site_editor_global_styles() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.css' )
 	);
 }
-add_action( 'enqueue_block_editor_assets', 'wpcom_maybe_limit_site_editor_global_styles' );
+add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
