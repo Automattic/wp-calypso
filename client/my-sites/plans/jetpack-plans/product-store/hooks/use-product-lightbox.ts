@@ -12,7 +12,8 @@ export const useProductLightbox = () => {
 
 	const setCurrentProductAndLocationHash = useCallback( ( product: SelectorProduct | null ) => {
 		setCurrentProduct( product );
-		window.location.hash = product ? product.productSlug : '';
+		const hash = `#${ product?.productSlug || '' }`;
+		window.history.pushState( null, '', hash );
 	}, [] );
 
 	const onClickMoreInfoFactory = useCallback( ( product: SelectorProduct ): VoidFunction => {
