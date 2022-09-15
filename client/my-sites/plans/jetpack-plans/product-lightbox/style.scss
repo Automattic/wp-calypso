@@ -8,7 +8,10 @@
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
-	transform: translateY(20px);
+
+	@media ( prefers-reduced-motion: no-preference ) {
+		transform: translateY(20px);
+	}
 
 	&.ReactModal__Content--after-open {
 		transform: translateY(0);
