@@ -20,16 +20,16 @@ const SortingButtonIcon = styled( Gridicon )( {
 
 const SEPARATOR = '-' as const;
 
-type SitesListSorting = `${ SitesTableSortKey }${ typeof SEPARATOR }${ SitesTableSortOrder }`;
+type SitesSorting = `${ SitesTableSortKey }${ typeof SEPARATOR }${ SitesTableSortOrder }`;
 
-const DEFAULT_LIST_SORTING = {
+const DEFAULT_SITES_SORTING = {
 	sortKey: 'updatedAt',
 	sortOrder: 'desc',
 } as const;
 
-export const parseSorting = ( sorting: SitesListSorting | 'none' ) => {
+export const parseSitesSorting = ( sorting: SitesSorting | 'none' ) => {
 	if ( sorting === 'none' ) {
-		return DEFAULT_LIST_SORTING;
+		return DEFAULT_SITES_SORTING;
 	}
 
 	const [ sortKey, sortOrder ] = sorting.split( SEPARATOR );
@@ -40,30 +40,30 @@ export const parseSorting = ( sorting: SitesListSorting | 'none' ) => {
 	};
 };
 
-export const useSitesListSorting = () =>
-	useAsyncPreference< SitesListSorting >( {
-		defaultValue: `${ DEFAULT_LIST_SORTING.sortKey }-${ DEFAULT_LIST_SORTING.sortOrder }`,
-		preferenceName: 'sites-list-sorting',
+export const useSitesSortingPreference = () =>
+	useAsyncPreference< SitesSorting >( {
+		defaultValue: `${ DEFAULT_SITES_SORTING.sortKey }-${ DEFAULT_SITES_SORTING.sortOrder }`,
+		preferenceName: 'sites-sorting',
 	} );
 
-interface SitesListSortingDropdownProps {
-	onSitesListSortingChange( newValue: SitesListSorting ): void;
-	sitesListSorting: ReturnType< typeof useSitesListSorting >[ 0 ];
+interface SitesSortingDropdownProps {
+	onSitesSortingChange( newValue: SitesSorting ): void;
+	sitesSorting: ReturnType< typeof useSitesSortingPreference >[ 0 ];
 }
 
-export const SitesListSortingDropdown = ( {
-	onSitesListSortingChange,
-	sitesListSorting,
-}: SitesListSortingDropdownProps ) => {
+export const SitesSortingDropdown = ( {
+	onSitesSortingChange,
+	sitesSorting,
+}: SitesSortingDropdownProps ) => {
 	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
 	const label = useMemo( () => {
-		if ( sitesListSorting === 'none' ) {
+		if ( sitesSorting === 'none' ) {
 			return null;
 		}
 
-		switch ( sitesListSorting ) {
+		switch ( sitesSorting ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
 				return __( 'Sorted automagically' );
 
@@ -74,11 +74,11 @@ export const SitesListSortingDropdown = ( {
 				return __( 'Sorted by last published' );
 
 			default:
-				throw new Error( `invalid sort value ${ sitesListSorting }` );
+				throw new Error( `invalid sort value ${ sitesSorting }` );
 		}
-	}, [ __, sitesListSorting ] );
+	}, [ __, sitesSorting ] );
 
-	if ( sitesListSorting === 'none' ) {
+	if ( sitesSorting === 'none' ) {
 		return null;
 	}
 
@@ -99,7 +99,7 @@ export const SitesListSortingDropdown = ( {
 				<MenuGroup>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( `alphabetically${ SEPARATOR }asc` );
+							onSitesSortingChange( `alphabetically${ SEPARATOR }asc` );
 							onClose();
 						} }
 					>
@@ -107,7 +107,7 @@ export const SitesListSortingDropdown = ( {
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
+							onSitesSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
 							onClose();
 						} }
 					>
@@ -115,7 +115,7 @@ export const SitesListSortingDropdown = ( {
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
-							onSitesListSortingChange( `updatedAt${ SEPARATOR }desc` );
+							onSitesSortingChange( `updatedAt${ SEPARATOR }desc` );
 							onClose();
 						} }
 					>
