@@ -26,9 +26,11 @@ const flows: Record< string, { [ step: string ]: number } > = {
 	videopress: {
 		intro: 0,
 		user: 1,
-		domains: 2,
-		plans: 3,
-		launchpad: 4,
+		options: 2,
+		chooseADomain: 3,
+		chooseAPlan: 4,
+		processing: 5,
+		launchpad: 6,
 	},
 };
 

@@ -1,0 +1,71 @@
+@import './global';
+
+$videopress-theme-base-text-color: #fff;
+$videopress-theme-yellow: #ffe61c;
+
+body {
+	background-color: #010101;
+	color: $videopress-theme-base-text-color;
+
+	.videopress {
+		.flow-progress {
+			display: block;
+			border-radius: 0;
+			background-color: #fff3;
+
+			.progress-bar__progress {
+				background-color: $videopress-theme-yellow;
+				border-radius: 0;
+			}
+		}
+
+		.signup-header {
+			padding: 24px;
+
+			.wordpress-logo {
+				transform: none;
+				margin: 0;
+				height: 24px;
+				width: 24px;
+				inset-block-start: 0;
+				inset-inline-start: 0;
+				position: relative;
+				fill: $videopress-theme-base-text-color;
+			}
+
+			h1 {
+				color: $videopress-theme-base-text-color;
+				font-size: 18px;
+				font-weight: 400;
+				line-height: 24px;
+				top: 24px;
+			}
+		}
+
+		.step-container {
+			margin-top: 96px;
+
+			.step-container__header {
+				header {
+					.formatted-header__title {
+						color: $videopress-theme-base-text-color;
+					}
+				}
+			}
+
+			.form-label {
+				color: $videopress-theme-base-text-color !important;
+			}
+
+			button.is-primary {
+				color: #000;
+				background-color: $videopress-theme-yellow;
+			}
+
+			.step-container__videopress-powered {
+				line-height: 24px;
+				font-size: 12px;
+			}
+		}
+	}
+}
