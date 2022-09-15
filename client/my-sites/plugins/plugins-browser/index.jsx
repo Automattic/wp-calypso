@@ -147,7 +147,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
-				title={ translate( 'Plugins you need to get your projects done' ) }
+				title={ translate( 'Flex your site’s features with plugins' ) }
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 			/>
 
