@@ -21,7 +21,12 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getTitanProductName,
+	getTitanProductSlug,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -90,7 +95,9 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	const currentRoute = useSelector( getCurrentRoute );
 
 	const canAddMailboxes =
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended' && canCurrentUserAddEmail( domain );
+		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
+		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
+		canCurrentUserAddEmail( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
