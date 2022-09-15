@@ -50,6 +50,7 @@ export function register(): typeof STORE_KEY {
 			'siteLogo',
 			'siteAccentColor',
 			'storeType',
+			'userStartedLoggedIn',
 		],
 	} );
 	isRegistered = true;

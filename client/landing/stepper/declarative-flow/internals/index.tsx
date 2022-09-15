@@ -69,7 +69,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:

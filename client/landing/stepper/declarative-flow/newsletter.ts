@@ -24,9 +24,16 @@ export const newsletter: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const name = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userStartedLoggedIn = useSelect( ( select ) =>
+			select( ONBOARD_STORE ).getUserStartedLoggedIn()
+		);
 		const siteSlug = useSiteSlug();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		const { setStepProgress, setUserStartedLoggedIn } = useDispatch( ONBOARD_STORE );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStep,
+			flowName: name,
+			userStartedLoggedIn,
+		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
 
@@ -43,8 +50,11 @@ export const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
+						setUserStartedLoggedIn( true );
 						return navigate( 'newsletterSetup' );
 					}
+
+					setUserStartedLoggedIn( false );
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':

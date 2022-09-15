@@ -377,6 +377,14 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const userStartedLoggedIn: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_USER_STARTED_LOGGED_IN' ) {
+		return action.userStartedLoggedIn;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -411,6 +419,7 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
+	userStartedLoggedIn,
 } );
 
 export type State = ReturnType< typeof reducer >;
