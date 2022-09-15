@@ -12,8 +12,10 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } )
 
 	const href = isExternalProduct && item.externalUrl ? item.externalUrl : `#${ item.productSlug }`;
 
+	const target = isExternalProduct ? '_blank' : '_self';
+
 	return (
-		<Button className="more-info-link" onClick={ onClick } href={ href } plain>
+		<Button className="more-info-link" onClick={ onClick } href={ href } plain target={ target }>
 			{ translate( 'More about {{productName/}}', {
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
