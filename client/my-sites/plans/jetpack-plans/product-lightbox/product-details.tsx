@@ -12,7 +12,6 @@ type ProductDetailsProps = {
 const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
-	const [ expandedDetailType, setExpandedDetailType ] = useState( '' );
 
 	const productDetails = [
 		{ type: 'includes', title: translate( 'Includes' ), items: product.whatIsIncluded },
@@ -24,13 +23,7 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 			{ productDetails.map( ( { type, title, items }, index, infoList ) => (
 				<div className="product-lightbox__detail-list" key={ type }>
 					{ isMobile ? (
-						<FoldableCard
-							hideSummary
-							header={ title }
-							clickableHeader={ true }
-							expanded={ expandedDetailType === type }
-							onOpen={ () => setExpandedDetailType( type ) }
-						>
+						<FoldableCard hideSummary header={ title } clickableHeader={ true }>
 							<DescriptionList items={ items } />
 						</FoldableCard>
 					) : (
