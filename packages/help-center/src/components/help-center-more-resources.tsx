@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
+export const SITE_STORE = 'automattic/site';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -29,6 +30,7 @@ export const HelpCenterMoreResources = () => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 		const siteId = getSelectedSiteId( state );
+
 		return {
 			isBusinessOrEcomPlanUser: !! (
 				purchaseSlugs &&
@@ -91,6 +93,21 @@ export const HelpCenterMoreResources = () => {
 						>
 							<Icon icon={ video } size={ 24 } />
 							<span>{ __( 'Video tutorials', __i18n_text_domain__ ) }</span>
+							<Icon icon={ external } size={ 20 } />
+						</a>
+					</div>
+				</li>
+				<li className="inline-help__resource-item">
+					<div className="inline-help__resource-cell">
+						<a
+							href={ `https://wordpress.com/home/${ window.location.host }?myHomeCoursePaymentsModal=payments-features` }
+							rel="noreferrer"
+							target="_blank"
+							className="inline-help__video"
+							onClick={ () => trackMoreResourcesButtonClick( 'payments-features-video' ) }
+						>
+							<Icon icon={ video } size={ 24 } />
+							<span>{ __( 'Payments Features Videos', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
