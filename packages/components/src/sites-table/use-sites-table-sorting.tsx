@@ -45,7 +45,9 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	const interactedItems = sites.filter(
 		( site ) => site.user_interactions && site.user_interactions.length > 0
 	);
-	const remainingItems = sites.filter( ( site ) => site.user_interactions?.length === 0 );
+	const remainingItems = sites.filter(
+		( site ) => ! site.user_interactions || site.user_interactions.length === 0
+	);
 
 	return [
 		...interactedItems.sort( ( a, b ) => {
