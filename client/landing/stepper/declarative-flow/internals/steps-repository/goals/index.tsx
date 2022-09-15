@@ -48,6 +48,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 		useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 
+	console.log( 'Hello Workshop Friends!' );
+
 	useEffect( () => {
 		if ( ! displayAllGoals ) {
 			clearDIFMGoal();
