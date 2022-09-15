@@ -2,7 +2,7 @@
 import config from '@automattic/calypso-config';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
-const isNonProdEnv = [ 'staging', 'development', 'horizon' ].includes( config( 'env_id' ) );
+const isNonProdEnv = [ 'stage', 'development', 'horizon' ].includes( config( 'env_id' ) );
 
 // function that tells us if we want to show the Help Center to the user, given that we're showing it to
 // only a certain percentage of users.
