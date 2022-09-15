@@ -78,7 +78,6 @@ interface AddMailboxesAdditionalProps {
 }
 
 const isTitan = ( provider: EmailProvider ): boolean => provider === EmailProvider.Titan;
-const isGoogle = ( provider: EmailProvider ): boolean => provider === EmailProvider.Google;
 
 const useAdditionalProps = ( {
 	provider = EmailProvider.Titan,
@@ -242,11 +241,7 @@ const MailboxesForm = ( {
 
 	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
 	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
-	if ( isPasswordResetEmailValid && isTitan( provider ) ) {
-		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
-	}
-
-	if ( isPasswordResetEmailValid && isGoogle( provider ) ) {
+	if ( isPasswordResetEmailValid ) {
 		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
 	}
 

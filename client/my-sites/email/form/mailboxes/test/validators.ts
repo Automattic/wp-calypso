@@ -98,10 +98,10 @@ const createTestDataForGoogle = ( overrides: GoogleTestDataType = {} ): GoogleTe
 const createTestDataForTitan = ( overrides: TitanTestDataType = {} ): TitanTestDataType => {
 	return {
 		...{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: 'email.000@gmail.com',
 			[ FIELD_NAME ]: 'Name',
 			[ FIELD_MAILBOX ]: 'info',
 			[ FIELD_PASSWORD ]: '--password',
+			[ FIELD_PASSWORD_RESET_EMAIL ]: 'email.000@gmail.com',
 		},
 		...overrides,
 	};

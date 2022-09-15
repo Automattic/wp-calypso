@@ -9,7 +9,7 @@ import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/c
  */
 export const useCreateTitanMailboxMutation = () => {
 	return useMutation< unknown, unknown, TitanMailboxFields >(
-		( { passwordResetEmail, domain, isAdmin, mailbox, name, password } ) => {
+		( { domain, isAdmin, mailbox, name, password, passwordResetEmail } ) => {
 			return wpcom.req.post( {
 				path: `/emails/titan/${ encodeURIComponent( domain ) }/mailbox/create`,
 				apiNamespace: 'wpcom/v2',
