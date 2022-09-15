@@ -1,19 +1,17 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
 import { MoreInfoLinkProps } from '../types';
 
 import './style.scss';
 
-export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } ) => {
+export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick, isExternal } ) => {
 	const translate = useTranslate();
 
-	const isExternalProductLink =
-		EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ) && item.externalUrl;
+	const isExternalLink = isExternal && item.externalUrl;
 
-	const href = isExternalProductLink ? item.externalUrl : `#${ item.productSlug }`;
+	const href = isExternalLink ? item.externalUrl : `#${ item.productSlug }`;
 
-	const target = isExternalProductLink ? '_blank' : undefined;
+	const target = isExternalLink ? '_blank' : undefined;
 
 	return (
 		<Button className="more-info-link" onClick={ onClick } href={ href } target={ target } plain>
@@ -21,7 +19,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } )
 				components: { productName: <>{ item.shortName }</> },
 			} ) }
 
-			{ isExternalProductLink && <Gridicon icon="external" size={ 16 } /> }
+			{ isExternalLink && <Gridicon icon="external" size={ 16 } /> }
 		</Button>
 	);
 };
