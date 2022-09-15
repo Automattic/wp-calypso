@@ -4,7 +4,6 @@ import { ReactChild, useCallback, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import SearchableDropdown from './components/searchable-dropdown';
@@ -17,6 +16,12 @@ const defaultCountry: CountryOption = {
 	isLabel: false,
 };
 
+interface StateOption {
+	value: string;
+	label: string;
+	isLabel: false;
+}
+
 function getCountry( country: string, options: CountryOption[] ): CountryOption {
 	if ( options.length < 1 ) {
 		return defaultCountry;
@@ -24,6 +29,16 @@ function getCountry( country: string, options: CountryOption[] ): CountryOption 
 
 	for ( let i = 0; i < options.length; i++ ) {
 		if ( options[ i ].value === country ) {
+			return options[ i ];
+		}
+	}
+
+	return options[ 0 ];
+}
+
+function getState( state: string, options: StateOption[] ): StateOption {
+	for ( let i = 0; i < options.length; i++ ) {
+		if ( options[ i ].value === state ) {
 			return options[ i ];
 		}
 	}
@@ -72,8 +87,10 @@ export default function CompanyDetailsForm( {
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap.hasOwnProperty( country.value )
-		? stateOptionsMap[ country.value ]
+		? ( stateOptionsMap[ country.value ] as StateOption[] )
 		: false;
+	const state = stateOptions ? getState( addressState, stateOptions ) : false;
+
 	const payload: PartnerDetailsPayload = {
 		name,
 		contactPerson,
@@ -157,6 +174,21 @@ export default function CompanyDetailsForm( {
 
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
+
+				{ showCountryFields && stateOptions && state && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
+						<SearchableDropdown
+							className="company-details-form__dropdown"
+							value={ state! }
+							options={ stateOptions }
+							onChange={ ( option: any ) => {
+								setAddressState( option.value );
+							} }
+							isDisabled={ isLoading }
+						/>
+					</FormFieldset>
+				) }
 
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
