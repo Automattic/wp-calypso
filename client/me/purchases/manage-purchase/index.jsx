@@ -656,17 +656,18 @@ class ManagePurchase extends Component {
 				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
 				return (
 					<>
-						{ translate(
-							'A professionally built %(numberOfIncludedPages)s page website in 4 business days or less.',
-							'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
-							{
-								count: numberOfIncludedPages,
-								args: {
-									numberOfIncludedPages:
-										numberOfIncludedPages === 1 ? 'single' : `${ numberOfIncludedPages }`,
-								},
-							}
-						) }{ ' ' }
+						{ numberOfIncludedPages === 1
+							? translate(
+									'A professionally built single page website in 4 business days or less.'
+							  )
+							: translate(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
+									{
+										args: {
+											numberOfIncludedPages,
+										},
+									}
+							  ) }{ ' ' }
 						{ translate(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
