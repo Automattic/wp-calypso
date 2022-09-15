@@ -119,7 +119,7 @@ const ProductLightbox: React.FC< Props > = ( {
 							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 							disabled={ isMultiSiteIncompatible }
 						>
-							{ translate( 'Checkout' ) }
+							{ translate( 'Proceed to checkout' ) }
 						</Button>
 					</div>
 				</div>
