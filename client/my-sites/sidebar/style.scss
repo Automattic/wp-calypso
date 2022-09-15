@@ -42,14 +42,14 @@ $font-size: rem(14px);
 }
 
 .sidebar__actions {
-	--transparent-button-text-color: var( --color-sidebar-text );
-	--transparent-button-text-color-hover: var( --color-sidebar-menu-hover-text );
+	--transparent-button-text-color: var(--color-sidebar-text);
+	--transparent-button-text-color-hover: var(--color-sidebar-menu-hover-text);
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	justify-content: flex-end;
 	margin-top: auto;
-	padding: 8px 8px 0 8px ;
+	padding: 8px 8px 0 8px;
 }
 
 .sidebar__action--collapsed {

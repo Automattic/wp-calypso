@@ -6,7 +6,7 @@
 
 	.theme-preview__frame-message {
 		bottom: 0;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: none;
 		font-size: $font-body;
 		left: 0;
@@ -16,7 +16,7 @@
 		z-index: 1;
 
 		strong {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			display: block;
 			font-size: $font-title-medium;
 			margin-bottom: 5px;
@@ -78,19 +78,19 @@
 				@include break-small {
 					$frame-border-width: 10px;
 
-					border: $frame-border-width solid var( --color-print );
+					border: $frame-border-width solid var(--color-print);
 					border-radius: 40px; /* stylelint-disable-line scales/radii */
 					box-sizing: border-box;
 					box-shadow:
-						0 5px 15px rgb( 0 0 0 / 7% ),
-						0 3px 10px rgb( 0 0 0 / 4% );
+						0 5px 15px rgb(0 0 0 / 7%),
+						0 3px 10px rgb(0 0 0 / 4%);
 
 					@include break-large {
 						border-radius: 20px; /* stylelint-disable-line scales/radii */
 						box-shadow:
-							0 15px 20px rgb( 0 0 0 / 4% ),
-							0 13px 10px rgb( 0 0 0 / 3% ),
-							0 6px 6px rgb( 0 0 0 / 2% );
+							0 15px 20px rgb(0 0 0 / 4%),
+							0 13px 10px rgb(0 0 0 / 3%),
+							0 6px 6px rgb(0 0 0 / 2%);
 						margin-top: 0;
 					}
 				}
