@@ -106,6 +106,9 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
+						if ( isEnabled( 'plugins-plans-page' ) && shouldUpgrade ) {
+							return page( `/plugins/plans/${ selectedSite?.slug }` );
+						}
 						return setShowEligibility( true );
 					}
 					onClickInstallPlugin( {
