@@ -127,7 +127,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 			}
 			stepProgress={ stepProgress }
 			recordTracksEvent={ recordTracksEvent }
-			showPoweredBy={ isJetpackPowered }
+			showJetpackPowered
 		/>
 	);
 };

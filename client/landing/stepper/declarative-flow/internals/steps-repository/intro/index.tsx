@@ -8,6 +8,7 @@ import './styles.scss';
 
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
+	const isVideoPressFlow = 'videopress' === flow;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -23,7 +24,8 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep flowName={ flow as string } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showPoweredBy
+			showJetpackPowered={ ! isVideoPressFlow }
+			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };

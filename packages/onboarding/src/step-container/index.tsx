@@ -40,7 +40,8 @@ interface Props {
 	intent?: string;
 	stepProgress?: { count: number; progress: number };
 	recordTracksEvent: ( eventName: string, eventProperties: object ) => void;
-	showPoweredBy?: boolean;
+	showJetpackPowered?: boolean;
+	showVideoPressPowered?: boolean;
 }
 
 const StepContainer: React.FC< Props > = ( {
@@ -74,7 +75,8 @@ const StepContainer: React.FC< Props > = ( {
 	intent,
 	stepSectionName,
 	recordTracksEvent,
-	showPoweredBy,
+	showJetpackPowered,
+	showVideoPressPowered,
 } ) => {
 	const translate = useTranslate();
 
@@ -197,7 +199,7 @@ const StepContainer: React.FC< Props > = ( {
 					{ <SkipButton /> }
 				</div>
 			) }
-			{ showPoweredBy && (
+			{ showJetpackPowered && (
 				<div className="step-container__powered-by">
 					{ 'videopress' === flowName ? (
 						<>
@@ -208,6 +210,11 @@ const StepContainer: React.FC< Props > = ( {
 							<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 						</>
 					) }
+				</div>
+			) }
+			{ showVideoPressPowered && (
+				<div className="step-container__videopress-powered">
+					<VideoPressLogo size={ 24 } /> <span>Powered by VideoPress</span>
 				</div>
 			) }
 		</div>

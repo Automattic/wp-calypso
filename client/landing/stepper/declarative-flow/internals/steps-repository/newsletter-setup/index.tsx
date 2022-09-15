@@ -214,7 +214,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
-			showPoweredBy
+			showJetpackPowered
 		/>
 	);
 };

@@ -7,6 +7,8 @@ import { USER_STORE, ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
+import './internals/videopress.scss';
+
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
 	title: 'Video',
@@ -17,9 +19,9 @@ export const videopress: Flow = {
 
 		return [
 			'intro',
-			// 'videopressSetup',
-			// 'patterns',
-			'completingPurchase',
+			'options',
+			'chooseADomain',
+			'chooseAPlan',
 			'processing',
 			'launchpad',
 		] as StepPath[];
@@ -27,7 +29,7 @@ export const videopress: Flow = {
 
 	useStepNavigation( _currentStep, navigate ) {
 		const name = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
@@ -37,13 +39,24 @@ export const videopress: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
-						return navigate( 'patterns' );
+						return navigate( 'options' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
+						`/start/account/user?variationName=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/options?flow=${ name }`
 					);
 
-				case 'completingPurchase':
+				case 'options': {
+					const { siteTitle, tagline } = providedDependencies;
+					setSiteTitle( siteTitle as string );
+					setSiteDescription( tagline as string );
+					return navigate( 'chooseADomain' );
+				}
+
+				case 'chooseADomain': {
+					return navigate( 'chooseAPlan' );
+				}
+
+				case 'chooseAPlan':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -58,6 +71,10 @@ export const videopress: Flow = {
 		}
 
 		const goBack = () => {
+			switch ( _currentStep ) {
+				case 'chooseADomain':
+					return navigate( 'options' );
+			}
 			return;
 		};
 
@@ -72,7 +89,7 @@ export const videopress: Flow = {
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {
-			navigate( step );
+			return navigate( step );
 		};
 
 		return { goNext, goBack, goToStep, submit };
