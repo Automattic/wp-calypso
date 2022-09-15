@@ -1,10 +1,8 @@
 import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { TranslateResult, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import Modal from 'react-modal';
-import FoldableCard from 'calypso/components/foldable-card';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 import { useStoreItemInfoContext } from '../product-store/context/store-item-info-context';
 import { ProductStoreBaseProps } from '../product-store/types';
@@ -15,6 +13,8 @@ import { PRODUCT_OPTIONS, PRODUCT_OPTIONS_HEADER } from './constants';
 import { Icons } from './icons/icons';
 import { Tags } from './icons/tags';
 import PaymentPlan from './payment-plan';
+import ProductDetails from './product-details';
+
 import './style.scss';
 
 type Props = ProductStoreBaseProps & {
@@ -24,20 +24,6 @@ type Props = ProductStoreBaseProps & {
 	onClose: () => void;
 	onChangeProduct: ( product: SelectorProduct | null ) => void;
 	siteId: number | null;
-};
-
-const DescriptionList: React.FC< { items?: TranslateResult[] } > = ( { items } ) => {
-	if ( ! items || ! items.length ) {
-		return null;
-	}
-
-	return (
-		<ul>
-			{ items.map( ( item, index ) => (
-				<li key={ index }>{ item }</li>
-			) ) }
-		</ul>
-	);
 };
 
 const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
@@ -67,7 +53,6 @@ const ProductLightbox: React.FC< Props > = ( {
 	);
 
 	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite } = useStoreItemInfoContext();
-	const isMobile = useMobileBreakpoint();
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
@@ -108,31 +93,7 @@ const ProductLightbox: React.FC< Props > = ( {
 						{ product.recommendedFor && <TagItems tags={ product.recommendedFor } /> }
 					</div>
 
-					<div className="product-lightbox__detail-list">
-						{ isMobile ? (
-							<FoldableCard hideSummary header={ translate( 'Includes' ) } expanded={ false }>
-								<DescriptionList items={ product.whatIsIncluded } />
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ translate( 'Includes' ) }</p>
-								<DescriptionList items={ product.whatIsIncluded } />
-							</>
-						) }
-					</div>
-					<hr />
-					<div className="product-lightbox__detail-list">
-						{ isMobile ? (
-							<FoldableCard hideSummary header={ translate( 'Benefits' ) } expanded={ false }>
-								<DescriptionList items={ product.benefits } />
-							</FoldableCard>
-						) : (
-							<>
-								<p>{ translate( 'Benefits' ) }</p>
-								<DescriptionList items={ product.benefits } />
-							</>
-						) }
-					</div>
+					<ProductDetails product={ product } />
 				</div>
 				<div className="product-lightbox__variants">
 					<div className="product-lightbox__variants-content">
@@ -158,7 +119,7 @@ const ProductLightbox: React.FC< Props > = ( {
 							href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 							disabled={ isMultiSiteIncompatible }
 						>
-							{ translate( 'Checkout' ) }
+							{ translate( 'Proceed to checkout' ) }
 						</Button>
 					</div>
 				</div>
