@@ -21,7 +21,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	min-height: calc(65vh - 50px);
+	height: calc(65vh - 50px);
 	outline: none;
 
 	@media ( max-height: 375px ) {
@@ -30,16 +30,11 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	// needed for iOS Safari. iOS has
 	@supports ( min-height: 65svh ) {
-		min-height: calc(65svh - 50px);
+		height: calc(65svh - 50px);
 	}
 
 	opacity: 0.5;
 	filter: blur(3px);
-
-	&.is-active {
-		opacity: 1;
-		filter: blur(0);
-	}
 
 	.mshots-image__container {
 		display: block;
@@ -53,20 +48,16 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 }
 
 .pattern-picker__carousel {
-	display: flex;
-	gap: 20px;
-	box-sizing: border-box;
-	padding-left: 50%;
-	padding-right: 50%;
-	overflow: hidden;
 	/*!rtl:ignore*/
 	direction: ltr;
 
-	// transform transitions during dragging make it laggy
-	&.is-dragging {
-		.pattern-picker__item {
-			transition: opacity 0.3s ease-in-out;
-		}
+	.pattern-picker__slide {
+		width: auto;
+	}
+
+	.swiper-slide-active .pattern-picker__item {
+		opacity: 1;
+		filter: blur(0);
 	}
 }
 
@@ -101,6 +92,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
 	transition: opacity 0.3s ease-in-out;
 	pointer-events: all;
+	z-index: 2;
 
 	cursor: pointer;
 
@@ -109,7 +101,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		fill: var(--studio-blue-50);
 	}
 
-	&.is-hidden {
+	&.swiper-button-disabled {
 		visibility: hidden;
 		pointer-events: none;
 	}
