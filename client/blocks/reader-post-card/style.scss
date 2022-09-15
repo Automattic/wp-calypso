@@ -715,7 +715,9 @@
 		}
 		/* First image */
 		.reader-post-card__featured-images-item:first-child {
-			height: 200px;
+			border-bottom-left-radius: 6px;
+			max-height: 202px;
+			overflow-y: hidden;
 			width: calc(66% - 1px);
 		}
 		.reader-post-card__featured-images-item:first-child img {
@@ -740,7 +742,7 @@
 				.reader-featured-image {
 					border-radius: 0;
 					border-top-right-radius: 6px;
-					max-height: 102px;
+					max-height: 100px;
 					overflow-y: hidden;
 				}
 			}
@@ -750,7 +752,7 @@
 				}
 				.reader-featured-image {
 					border-bottom-right-radius: 6px;
-					max-height: 102px;
+					max-height: 100px;
 					overflow-y: hidden;
 				}
 			}
