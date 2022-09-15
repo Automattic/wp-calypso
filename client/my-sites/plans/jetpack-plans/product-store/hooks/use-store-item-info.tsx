@@ -27,6 +27,9 @@ import { UseStoreItemInfoProps } from '../types';
 
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
 
+const getIsExternal = ( item: SelectorProduct ) =>
+	EXTERNAL_PRODUCTS_LIST.includes( item.productSlug );
+
 const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
 	if ( isJetpackPlanSlug( item.productSlug ) ) {
 		// plans containing Jetpack Backup and/or Jetpack Scan are incompatible with multisite installs
@@ -105,11 +108,6 @@ export const useStoreItemInfo = ( {
 			);
 		},
 		[ getIsIncludedInPlan, getIsOwned, sitePlan ]
-	);
-
-	const getIsExternal = useCallback(
-		( item: SelectorProduct ) => EXTERNAL_PRODUCTS_LIST.includes( item.productSlug ),
-		[]
 	);
 
 	const getIsIncludedInPlanOrSuperseded = useCallback(
@@ -214,7 +212,6 @@ export const useStoreItemInfo = ( {
 		[
 			getCheckoutURL,
 			getCtaLabel,
-			getIsExternal,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsOwned,
