@@ -279,17 +279,18 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		const refParameter = query && query.ref;
+		// If the flow has siteId or siteSlug as query dependencies or is initiated from calypso site selector, we should not clear selected site id
 		if (
 			! providesDependenciesInQuery?.includes( 'siteId' ) &&
 			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			'calypso-selector' !== refParameter &&
 			! isManageSiteFlow
 		) {
 			context.store.dispatch( setSelectedSiteId( null ) );
 		}
 
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
-		const refParameter = query && query.ref;
 		if ( refParameter ) {
 			context.store.dispatch( updateDependencies( { refParameter } ) );
 		}
