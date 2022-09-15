@@ -13,7 +13,7 @@ export const MoreInfoLink: React.FC< MoreInfoLinkProps > = ( { item, onClick } )
 
 	const href = isExternalProductLink ? item.externalUrl : `#${ item.productSlug }`;
 
-	const target = isExternalProductLink ? '_blank' : '_self';
+	const target = isExternalProductLink ? '_blank' : undefined;
 
 	return (
 		<Button className="more-info-link" onClick={ onClick } href={ href } target={ target } plain>
