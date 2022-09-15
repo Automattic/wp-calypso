@@ -1089,6 +1089,7 @@ class SignupForm extends Component {
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
+						queryArgs={ this.props.queryArgs }
 					/>
 
 					{ ! config.isEnabled( 'desktop' ) &&
