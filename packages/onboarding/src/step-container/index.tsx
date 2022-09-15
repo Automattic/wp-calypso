@@ -200,16 +200,8 @@ const StepContainer: React.FC< Props > = ( {
 				</div>
 			) }
 			{ showJetpackPowered && (
-				<div className="step-container__powered-by">
-					{ 'videopress' === flowName ? (
-						<>
-							<VideoPressLogo /> <span>Powered by VideoPress</span>
-						</>
-					) : (
-						<>
-							<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
-						</>
-					) }
+				<div className="step-container__jetpack-powered">
+					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
 				</div>
 			) }
 			{ showVideoPressPowered && (
