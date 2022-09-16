@@ -33,14 +33,14 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 	} );
 }
 
-export function useHappychatAvailable() {
+export function useHappychatAvailable( enabled = true ) {
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
 	return useQuery(
 		'happychat-available' + key,
 		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
 		{
-			enabled: ! isLoadingAuth && !! dataAuth,
+			enabled: ! isLoadingAuth && !! dataAuth && enabled,
 			staleTime: Infinity,
 		}
 	);
