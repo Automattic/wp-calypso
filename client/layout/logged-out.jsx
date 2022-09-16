@@ -159,7 +159,10 @@ export default withCurrentRoute(
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const noMasterbarForSection =
+			! isWooOAuth2Client( oauth2Client ) &&
+			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
@@ -177,7 +180,7 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionTitle,
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
 			isPartnerSignupStart,
