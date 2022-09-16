@@ -13,6 +13,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -296,7 +297,8 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		}
 		if ( noDirectAccessError && ! directInstallationAllowed ) {
 			const variationPeriod = 'monthly';
-			const marketplaceProductSlug = wpComPluginData?.variations?.[ variationPeriod ]?.product_slug;
+			const variation = wpComPluginData?.variations?.[ variationPeriod ];
+			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
 
 			return (
 				<>

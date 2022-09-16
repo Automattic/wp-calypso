@@ -57,7 +57,7 @@
 	padding: 40px;
 	height: 100%;
 	width: 60%;
-	overflow-y: scroll;
+	overflow-y: auto;
 
 	hr {
 		margin: 0.75rem 0;
@@ -221,6 +221,7 @@
 		font-weight: 600;
 		font-size: 1rem;
 		margin-inline-start: 1.75rem;
+		white-space: nowrap;
 	}
 
 	.form-radio {
@@ -321,6 +322,16 @@
 	.display-price__billing-time-frame {
 		font-size: 0.75rem;
 		color: #646970;
+	}
+
+	.product-lightbox__variants-timeframe {
+		&.is-compact .normal {
+			display: none;
+		}
+
+		&.is-compact .compact {
+			display: inline-block;
+		}
 	}
 }
 

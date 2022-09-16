@@ -44,7 +44,11 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 
 	if ( isMobile ) {
 		return (
-			<FoldableCard header={ translate( 'View all features' ) } hideSummary expanded={ ! isMobile }>
+			<FoldableCard
+				header={ translate( 'View all features' ) }
+				clickableHeader={ true }
+				hideSummary
+			>
 				{ output }
 			</FoldableCard>
 		);

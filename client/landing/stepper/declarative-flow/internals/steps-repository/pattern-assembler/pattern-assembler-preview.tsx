@@ -78,6 +78,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 					hasSelectedPatterns
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
+								disable_viewport_height: true,
 						  } )
 						: 'about:blank'
 				}

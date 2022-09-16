@@ -29,7 +29,9 @@ export const getDesignPreviewUrl = (
 		vertical_id: options.vertical_id,
 		language: options.language,
 		...( options.viewport_width && { viewport_width: options.viewport_width } ),
-		viewport_height: options.viewport_height || DEFAULT_VIEWPORT_HEIGHT,
+		viewport_height: ! options.disable_viewport_height
+			? options.viewport_height || DEFAULT_VIEWPORT_HEIGHT
+			: undefined,
 		source_site: 'patternboilerplates.wordpress.com',
 		use_screenshot_overrides: options.use_screenshot_overrides,
 	} );

@@ -1,11 +1,24 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
-import PropTypes from 'prop-types';
 import MaterialIcon from 'calypso/components/material-icon';
 import EmailPlanSubscription from 'calypso/my-sites/email/email-management/home/email-plan-subscription';
 import EmailPlanWarnings from 'calypso/my-sites/email/email-management/home/email-plan-warnings';
 import EmailTypeIcon from 'calypso/my-sites/email/email-management/home/email-type-icon';
 import { resolveEmailPlanStatus } from 'calypso/my-sites/email/email-management/home/utils';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { EmailAccount } from 'calypso/data/emails/types';
+import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { Purchase } from 'calypso/lib/purchases/types';
+
+type EmailPlanHeaderProps = {
+	domain: ResponseDomain;
+	emailAccount: EmailAccount;
+	isLoadingEmails: boolean;
+	hasEmailSubscription: boolean;
+	isLoadingPurchase: boolean;
+	purchase?: Purchase;
+	selectedSite: SiteDetails;
+};
 
 const EmailPlanHeader = ( {
 	domain,
@@ -15,7 +28,7 @@ const EmailPlanHeader = ( {
 	isLoadingPurchase,
 	purchase,
 	selectedSite,
-} ) => {
+}: EmailPlanHeaderProps ) => {
 	if ( ! domain ) {
 		return null;
 	}
@@ -58,16 +71,6 @@ const EmailPlanHeader = ( {
 			) }
 		</>
 	);
-};
-
-EmailPlanHeader.propTypes = {
-	domain: PropTypes.object.isRequired,
-	emailAccount: PropTypes.object,
-	isLoadingEmails: PropTypes.bool.isRequired,
-	hasEmailSubscription: PropTypes.bool.isRequired,
-	isLoadingPurchase: PropTypes.bool.isRequired,
-	purchase: PropTypes.object,
-	selectedSite: PropTypes.object.isRequired,
 };
 
 export default EmailPlanHeader;
