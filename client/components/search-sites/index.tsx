@@ -1,3 +1,4 @@
+import { SITES_TABLE_SEARCH_INDEX_KEYS } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { useFuzzySearch } from '@automattic/search';
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -18,7 +19,7 @@ const searchSites = createHigherOrderComponent(
 
 			const results = useFuzzySearch( {
 				data: props.sites,
-				keys: [ 'name', 'slug', 'title', 'URL' ],
+				keys: SITES_TABLE_SEARCH_INDEX_KEYS,
 				query: term ?? '',
 			} );
 
