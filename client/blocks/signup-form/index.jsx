@@ -21,9 +21,10 @@ import {
 } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component, useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
 import ContinueAsUser from 'calypso/blocks/login/continue-as-user';
+import Divider from 'calypso/blocks/login/divider';
 import FormButton from 'calypso/components/forms/form-button';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
@@ -676,12 +677,12 @@ class SignupForm extends Component {
 	}
 
 	recordWooCommerceSignupTracks( method ) {
-		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
+		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
 		if ( isJetpackWooCommerceFlow ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_create_jetpack_account', {
 				signup_method: method,
 			} );
-		} else if ( isWooOAuth2Client( oauth2Client ) && 'cart' === wccomFrom ) {
+		} else if ( isWoo && 'cart' === wccomFrom ) {
 			recordTracksEvent( 'wcadmin_storeprofiler_payment_create_account', {
 				signup_method: method,
 			} );
@@ -788,6 +789,28 @@ class SignupForm extends Component {
 	};
 
 	termsOfServiceLink = () => {
+		if ( this.props.isWoo ) {
+			return (
+				<p className="signup-form__terms-of-service-link">
+					{ this.props.translate(
+						'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}}',
+						{
+							components: {
+								tosLink: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+										onClick={ this.handleTosClick }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							},
+						}
+					) }
+				</p>
+			);
+		}
+
 		const tosText = this.props.translate(
 			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
 				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
@@ -907,6 +930,10 @@ class SignupForm extends Component {
 		return false;
 	}
 
+	hasFilledInputValues = () => {
+		return Object.values( this.getUserData() ).every( ( value ) => value.trim().length > 0 );
+	};
+
 	formFooter() {
 		if ( this.userCreationComplete() ) {
 			return (
@@ -923,7 +950,10 @@ class SignupForm extends Component {
 				<FormButton
 					className="signup-form__submit"
 					disabled={
-						this.state.submitting || this.props.disabled || this.props.disableSubmitButton
+						this.state.submitting ||
+						this.props.disabled ||
+						this.props.disableSubmitButton ||
+						( this.props.isWoo && ! this.hasFilledInputValues() )
 					}
 				>
 					{ this.props.submitButtonText }
@@ -933,7 +963,7 @@ class SignupForm extends Component {
 	}
 
 	footerLink() {
-		const { flowName, translate } = this.props;
+		const { flowName, translate, isWoo } = this.props;
 
 		if ( this.props.isP2Flow ) {
 			return (
@@ -946,6 +976,10 @@ class SignupForm extends Component {
 					</LoggedOutFormLinks>
 				</div>
 			);
+		}
+
+		if ( isWoo ) {
+			return null;
 		}
 
 		return (
@@ -1018,7 +1052,7 @@ class SignupForm extends Component {
 		if (
 			this.props.isJetpackWooCommerceFlow ||
 			this.props.isJetpackWooDnaFlow ||
-			( isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom )
+			( this.props.isWoo && this.props.wccomFrom )
 		) {
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
@@ -1139,13 +1173,17 @@ class SignupForm extends Component {
 					) }
 
 				{ this.props.isSocialSignupEnabled && ! this.userCreationComplete() && (
-					<SocialSignupForm
-						handleResponse={ this.props.handleSocialResponse }
-						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse }
-						isReskinned={ this.props.isReskinned }
-						flowName={ this.props.flowName }
-					/>
+					<Fragment>
+						{ this.props.isWoo && <Divider>{ this.props.translate( 'or' ) }</Divider> }
+						<SocialSignupForm
+							handleResponse={ this.props.handleSocialResponse }
+							socialService={ this.props.socialService }
+							socialServiceResponse={ this.props.socialServiceResponse }
+							isReskinned={ this.props.isReskinned }
+							flowName={ this.props.flowName }
+							compact={ this.props.isWoo }
+						/>
+					</Fragment>
 				) }
 
 				{ this.props.footerLink || this.footerLink() }
@@ -1163,18 +1201,22 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state, props ) => ( {
-		currentUser: getCurrentUser( state ),
-		oauth2Client: getCurrentOAuth2Client( state ),
-		sectionName: getSectionName( state ),
-		isJetpackWooCommerceFlow:
-			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-		from: get( getCurrentQueryArguments( state ), 'from' ),
-		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-		isP2Flow:
-			isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
-	} ),
+	( state, props ) => {
+		const oauth2Client = getCurrentOAuth2Client( state );
+		return {
+			currentUser: getCurrentUser( state ),
+			oauth2Client,
+			sectionName: getSectionName( state ),
+			isJetpackWooCommerceFlow:
+				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+			from: get( getCurrentQueryArguments( state ), 'from' ),
+			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+			isWoo: isWooOAuth2Client( oauth2Client ),
+			isP2Flow:
+				isP2Flow( props.flowName ) || get( getCurrentQueryArguments( state ), 'from' ) === 'p2',
+		};
+	},
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,
