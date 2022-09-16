@@ -8,9 +8,9 @@ const isNonProdEnv = [ 'stage', 'development', 'horizon' ].includes( config( 'en
 // only a certain percentage of users.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function shouldShowHelpCenterToUser( userId: number ) {
-	const currentSegment = 30; //percentage of users that will see the Help Center, not the FAB
-	const userSegment = userId % 100;
-	return isNonProdEnv || userSegment < currentSegment;
+	// const currentSegment = 30; //percentage of users that will see the Help Center, not the FAB
+	// const userSegment = userId % 100;
+	return isNonProdEnv; // || userSegment < currentSegment;
 }
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {
