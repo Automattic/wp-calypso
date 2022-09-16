@@ -12,6 +12,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
@@ -20,9 +21,16 @@ import type { Step } from '../../types';
 import './style.scss';
 
 const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
+	const [ currentSiteTitle, currentTagling ] = useSelect( ( select ) => {
+		return [
+			select( ONBOARD_STORE ).getSelectedSiteTitle(),
+			select( ONBOARD_STORE ).getSelectedSiteDescription(),
+		];
+	} );
+
 	const { goBack, goNext, submit } = navigation;
-	const [ siteTitle, setSiteTitle ] = React.useState( '' );
-	const [ tagline, setTagline ] = React.useState( '' );
+	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
+	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 	const translate = useTranslate();
@@ -83,6 +91,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			siteTitleLabel: translate( 'Site name' ),
 			taglineLabel: translate( 'Brief description' ),
 			taglineExplanation: translate( 'Add a short description of your video site here.' ),
+			subHeaderText: translate( 'Customize some details about your new site.' ),
 		};
 	};
 
@@ -95,6 +104,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 					siteTitleLabel: translate( 'Store name' ),
 					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
+					subHeaderText: undefined,
 				};
 			case 'write':
 			default:
@@ -104,12 +114,13 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 					siteTitleLabel: translate( 'Blog name' ),
 					taglineLabel: translate( 'Tagline' ),
 					taglineExplanation: translate( 'In a few words, explain what your blog is about.' ),
+					subHeaderText: undefined,
 				};
 		}
 	};
 
 	const isSiteTitleRequired = isVideoPressFlow;
-	const isTaglineRequired = false;
+	const isTaglineRequired = isVideoPressFlow;
 	const siteTitleError = null;
 	const taglineError = null;
 
@@ -117,8 +128,14 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 		? getTextsForVideoPressFlow()
 		: getTextsFromIntent( intent );
 
-	const { headerText, headerImage, siteTitleLabel, taglineLabel, taglineExplanation } =
-		textsForFlow;
+	const {
+		headerText,
+		headerImage,
+		siteTitleLabel,
+		taglineLabel,
+		taglineExplanation,
+		subHeaderText,
+	} = textsForFlow;
 
 	const isFormDisabled = ! isVideoPressFlow && ! site;
 
@@ -134,6 +151,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 					value={ siteTitle }
 					isError={ siteTitleError }
 					onChange={ onChange }
+					placeholder={ isVideoPressFlow ? translate( 'My Video Site' ) : null }
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
@@ -141,14 +159,26 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				<FormLabel htmlFor="tagline" optional={ ! isTaglineRequired }>
 					{ taglineLabel }
 				</FormLabel>
-				<FormInput
-					name="tagline"
-					id="tagline"
-					value={ tagline }
-					isError={ taglineError }
-					onChange={ onChange }
-					placeholder={ isVideoPressFlow ? taglineExplanation : null }
-				/>
+				{ ! isVideoPressFlow && (
+					<FormInput
+						name="tagline"
+						id="tagline"
+						value={ tagline }
+						isError={ taglineError }
+						onChange={ onChange }
+						placeholder={ null }
+					/>
+				) }
+				{ isVideoPressFlow && (
+					<FormTextarea
+						name="tagline"
+						id="tagline"
+						value={ tagline }
+						isError={ taglineError ?? undefined }
+						onChange={ onChange }
+						placeholder={ taglineExplanation }
+					/>
+				) }
 				{ taglineError && <FormInputValidation isError text={ taglineError } /> }
 				{ ! isVideoPressFlow && (
 					<FormSettingExplanation>
@@ -179,7 +209,12 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 			goNext={ goNext }
 			isHorizontalLayout={ ! isVideoPressFlow }
 			formattedHeader={
-				<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />
+				<FormattedHeader
+					id="site-options-header"
+					headerText={ headerText }
+					align="left"
+					subHeaderText={ subHeaderText }
+				/>
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }

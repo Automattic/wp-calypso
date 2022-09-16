@@ -2,6 +2,7 @@
 
 $videopress-theme-base-text-color: #fff;
 $videopress-theme-yellow: #ffe61c;
+$videopress-theme-header-subtitle-text-color: #a7aaad;
 
 body {
 	background-color: #010101;
@@ -48,7 +49,13 @@ body {
 			.step-container__header {
 				header {
 					.formatted-header__title {
+						text-align: center;
 						color: $videopress-theme-base-text-color;
+					}
+
+					.formatted-header__subtitle {
+						text-align: center;
+						color: $videopress-theme-header-subtitle-text-color;
 					}
 				}
 			}
