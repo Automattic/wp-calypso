@@ -16,11 +16,11 @@ import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
 import './pattern-assembler-preview.scss';
 
+// Footer alignment
 const inlineCss = `
 	.site-footer-container {
 		margin-block-start: auto;
 	}
-
 	.wp-site-blocks {
 		min-height: 100vh;
 	}
