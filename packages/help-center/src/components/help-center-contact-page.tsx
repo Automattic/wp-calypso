@@ -85,7 +85,14 @@ export const HelpCenterContactPage: React.FC = () => {
 						</ConditionalLink>
 					) }
 					{ renderEmail && (
-						<Link to="/contact-form?mode=EMAIL">
+						<Link
+							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+							to={ `/contact-form?mode=EMAIL&overflow=${ (
+								renderChat.eligible &&
+								renderChat.state !== 'CLOSED' &&
+								renderChat.state !== 'AVAILABLE'
+							).toString() }` }
+						>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
