@@ -90,12 +90,7 @@ export default function ( router ) {
 		clientRender
 	);
 
-	router(
-		`/${ langParam }/plugins/plans`,
-		redirectWithoutLocaleParamIfLoggedIn,
-		notFound,
-		makeLayout
-	);
+	router( `/${ langParam }/plugins/plans`, notFound, makeLayout );
 
 	router(
 		`/${ langParam }/plugins/plans/:site`,
