@@ -18,7 +18,7 @@ import './pattern-assembler-preview.scss';
 
 const inlineCss = `
 	.site-footer-container {
-		margin-block-start: auto !important;
+		margin-block-start: auto;
 	}
 
 	.wp-site-blocks {
