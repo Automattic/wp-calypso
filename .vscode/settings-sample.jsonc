@@ -12,10 +12,7 @@
 	// Editor settings
 	"editor.formatOnSave": false,
 	"editor.codeActionsOnSave": {
-		"source.fixAll": true,
-		"source.fixAll.eslint": true,
-		"source.fixAll.tslint": true,
-		"source.fixAll.stylelint": true
+		"source.fixAll": true
 	},
 	// Use prettier for formatting JS/TS
 	"[javascript][javascriptreact][typescript][typescriptreact]": {
