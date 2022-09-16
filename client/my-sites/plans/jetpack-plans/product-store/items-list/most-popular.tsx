@@ -22,6 +22,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getCheckoutURL,
 		getCtaLabel,
 		getIsDeprecated,
+		getIsExternal,
 		getIsIncludedInPlan,
 		getIsIncludedInPlanOrSuperseded,
 		getIsMultisiteCompatible,
@@ -41,6 +42,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const isOwned = getIsOwned( item );
 					const isSuperseded = getIsSuperseded( item );
 					const isDeprecated = getIsDeprecated( item );
+					const isExternal = getIsExternal( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
 					const isIncludedInPlan = getIsIncludedInPlan( item );
 					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
@@ -69,7 +71,11 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 							<br />
 
 							{ ! hideMoreInfoLink && (
-								<MoreInfoLink item={ item } onClick={ onClickMoreInfoFactory( item ) } />
+								<MoreInfoLink
+									item={ item }
+									isExternal={ isExternal }
+									onClick={ onClickMoreInfoFactory( item ) }
+								/>
 							) }
 						</p>
 					);
@@ -85,6 +91,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
 								isCtaDisabled={ isCtaDisabled }
+								isCtaExternal={ isExternal }
 								onClickCta={ getOnClickPurchase( item ) }
 								price={ price }
 								title={ item.displayName }

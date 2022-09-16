@@ -187,8 +187,8 @@
 }
 
 .site-selector__actions {
-	--transparent-button-text-color: var( --color-sidebar-text );
-	--transparent-button-text-color-hover: var( --color-sidebar-menu-hover-text );
+	--transparent-button-text-color: var(--color-sidebar-text);
+	--transparent-button-text-color-hover: var(--color-sidebar-menu-hover-text);
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
