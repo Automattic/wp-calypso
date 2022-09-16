@@ -49,10 +49,14 @@
 	}
 }
 
-// center twitter widgets. these use a fancy custom element on modern browsers
-.reader-full-post twitterwidget {
+// center twitter embeds
+.reader-full-post .twitter-tweet {
 	margin: 0 auto;
-	margin-bottom: 24px !important; // override element style from twitter
+}
+
+// add standard paragraph margin to twitter embeds
+.reader-full-post .wp-block-embed-twitter {
+	margin-bottom: 24px;
 }
 
 // Hides Jetpack RP in Reader
