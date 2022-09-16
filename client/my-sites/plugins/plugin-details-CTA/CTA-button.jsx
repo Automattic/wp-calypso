@@ -101,13 +101,16 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 
 	const productsList = useSelector( getProductsList );
 
+	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
+	const pluginsPlansPage = `/plugins/plans/${ selectedSite?.slug }`;
+
 	return (
 		<>
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
-						if ( isEnabled( 'plugins-plans-page' ) && shouldUpgrade ) {
-							return page( `/plugins/plans/${ selectedSite?.slug }` );
+						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
 					}
@@ -160,8 +163,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
-						if ( isEnabled( 'plugins-plans-page' ) && shouldUpgrade ) {
-							return page( `/plugins/plans/${ selectedSite?.slug }` );
+						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
 					}
