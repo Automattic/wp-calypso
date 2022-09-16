@@ -130,7 +130,7 @@ function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
 	}
 
 	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
-	if ( ! wpcom_should_limit_global_styles( $blog_id ) ) {
+	if ( wpcom_should_limit_global_styles( $blog_id ) ) {
 		global $wp_styles;
 		$wp_styles->add_data( 'global-styles', 'after', array( wpcom_get_free_global_stylesheet() ) );
 	}
