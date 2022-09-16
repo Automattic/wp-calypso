@@ -48,7 +48,6 @@ export const newsletter: Flow = {
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
-
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
