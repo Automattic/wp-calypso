@@ -146,4 +146,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .pattern-picker__cta {
 	text-align: center;
 	margin: 10px 20px;
+
+	button {
+		display: inline-flex;
+	}
 }
