@@ -9,12 +9,14 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
 import { connect, useSelector } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import ExternalLink from 'calypso/components/external-link';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -151,6 +153,16 @@ export const EligibilityWarnings = ( {
 			) }
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
+					<div className="support-block">
+						<span>{ translate( 'Need help?' ) }</span>
+						<ExternalLink
+							href={ localizeUrl( 'https://wordpress.com/support' ) }
+							icon={ false }
+							target="_blank"
+						>
+							{ translate( 'Contact support' ) }
+						</ExternalLink>
+					</div>
 					<Button
 						primary={ true }
 						disabled={
