@@ -9,13 +9,55 @@
 }
 
 .woo .two-factor-authentication__verification-code-form {
+	margin-bottom: 52px;
+	padding-bottom: 0;
 	text-align: center;
+
+	@media screen and ( max-width: 660px ) {
+		text-align: left;
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	strong {
+		color: #50575e;
+	}
+
+	button {
+		text-transform: inherit;
+	}
+
+	.form-label {
+		font-weight: 500;
+		text-align: left;
+		margin-bottom: 8px;
+	}
+
+	.form-fieldset {
+		margin: 40px 85px -8px;
+		width: calc(100% - 170px);
+	}
+
+	.form-button {
+		float: none;
+		margin: 40px 85px 0;
+		width: calc(100% - 85px * 2);
+	}
+
+	.form-fieldset,
+	.form-button {
+		@media screen and ( max-width: 617px ) {
+			margin-left: 0;
+			margin-right: 0;
+			width: 100%;
+		}
+	}
 }
 
-.woo .two-factor-authentication__verification-code-form .form-button {
-	float: none;
-	margin: 0;
-}
 
 .security-key-form__add-wait-for-key {
 	text-align: center;
