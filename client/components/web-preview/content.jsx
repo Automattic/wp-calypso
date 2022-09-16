@@ -94,7 +94,7 @@ export default class WebPreviewContent extends Component {
 			}
 		}
 
-		if ( ! prevState.loaded && loaded ) {
+		if ( inlineCss && ! prevState.loaded && loaded ) {
 			this.iframe.contentWindow?.postMessage(
 				{
 					channel: `preview-${ this.previewId }`,
