@@ -1,3 +1,6 @@
+/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
+import './public-path';
+
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import GlobalStylesModal from './modal';
