@@ -93,7 +93,7 @@ RUN apt update \
 		xfonts-base \
 		xfonts-cyrillic \
 		xfonts-scalable \
-		xvfb && \
+		xvfb \
 	&& apt autoremove --purge \
 	&& apt autoclean \
 	&& rm -rf /var/lib/apt/lists/*
