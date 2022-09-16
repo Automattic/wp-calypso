@@ -389,8 +389,8 @@ class ThemeShowcase extends Component {
 						</SectionNav>
 					) }
 					{ this.props.upsellBanner }
+					{ 'my-themes' !== this.state.tabFilter.key && this.expertsBanner() }
 					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
-					{ 'all' === this.state.tabFilter.key && this.expertsBanner() }
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
