@@ -79,9 +79,8 @@ function SidebarScrollSynchronizer() {
 
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const isDesktop = useBreakpoint( '>760px' );
+	const isDesktop = useBreakpoint( '>782px' );
 
-	// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
@@ -93,6 +92,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 			handleClose={ () => {
 				setShowHelpCenter( false );
 			} }
+			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
 	);
