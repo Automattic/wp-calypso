@@ -21,9 +21,6 @@ const inlineCss = `
 	.site-footer-container {
 		margin-block-start: auto;
 	}
-	.wp-site-blocks {
-		min-height: 100vh;
-	}
 `;
 
 interface Props {
@@ -88,6 +85,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 					hasSelectedPatterns
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
+								disable_viewport_height: true,
 						  } )
 						: 'about:blank'
 				}
