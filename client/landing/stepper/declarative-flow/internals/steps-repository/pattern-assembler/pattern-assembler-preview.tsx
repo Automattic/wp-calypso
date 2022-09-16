@@ -16,13 +16,6 @@ import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
 import './pattern-assembler-preview.scss';
 
-// Footer alignment
-const inlineCss = `
-	.site-footer-container {
-		margin-block-start: auto;
-	}
-`;
-
 interface Props {
 	header: Pattern | null;
 	sections?: Pattern[];
@@ -98,7 +91,6 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 				url={ site?.URL }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
-				inlineCss={ inlineCss }
 			/>
 		</div>
 	);
