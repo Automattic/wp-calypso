@@ -6,8 +6,8 @@ import { connect } from 'react-redux';
 import FormButton from 'calypso/components/forms/form-button';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
+import Divider from '../divider';
 import TwoFactorActions from './two-factor-actions';
-
 import './verification-code-form.scss';
 
 class SecurityKeyForm extends Component {
@@ -18,6 +18,11 @@ class SecurityKeyForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		showOrDivider: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showOrDivider: false,
 	};
 
 	state = {
@@ -75,6 +80,7 @@ class SecurityKeyForm extends Component {
 					</FormButton>
 				</Card>
 
+				{ this.props.showOrDivider && <Divider>{ this.props.translate( 'or' ) }</Divider> }
 				<TwoFactorActions
 					twoFactorAuthType="webauthn"
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
