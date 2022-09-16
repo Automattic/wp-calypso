@@ -208,7 +208,6 @@ class SignupForm extends Component {
 		}
 
 		const userExistsError = this.getUserExistsError( this.props );
-
 		if ( userExistsError ) {
 			const { service, id_token, access_token } = this.props.step;
 			const socialInfo = { service, id_token, access_token };
@@ -634,7 +633,7 @@ class SignupForm extends Component {
 				{ this.props.displayUsernameInput && (
 					<>
 						<FormLabel htmlFor="username">
-							{ this.props.isReskinned
+							{ this.props.isReskinned || this.props.isWoo
 								? this.props.translate( 'Username' )
 								: this.props.translate( 'Choose a username' ) }
 						</FormLabel>
@@ -944,6 +943,7 @@ class SignupForm extends Component {
 				</LoggedOutFormFooter>
 			);
 		}
+
 		return (
 			<LoggedOutFormFooter isBlended={ this.props.isSocialSignupEnabled }>
 				{ this.termsOfServiceLink() }
@@ -953,7 +953,8 @@ class SignupForm extends Component {
 						this.state.submitting ||
 						this.props.disabled ||
 						this.props.disableSubmitButton ||
-						( this.props.isWoo && ! this.hasFilledInputValues() )
+						( this.props.isWoo &&
+							( ! this.hasFilledInputValues() || formState.hasErrors( this.state.form ) ) )
 					}
 				>
 					{ this.props.submitButtonText }

@@ -464,7 +464,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError
+					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
