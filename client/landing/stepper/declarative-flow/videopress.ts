@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { redirect } from './internals/steps-repository/import/util';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -17,14 +18,7 @@ export const videopress: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'options',
-			'chooseADomain',
-			'chooseAPlan',
-			'processing',
-			'launchpad',
-		] as StepPath[];
+		return [ 'intro', 'options', 'completingPurchase', 'processing', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -54,7 +48,12 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
-					return navigate( 'chooseADomain' );
+					// return navigate( 'chooseADomain' );
+					return window.location.replace(
+						`/start/${ name }/domains?new=${ encodeURIComponent(
+							siteTitle as string
+						) }&search=yes&hide_initial_query=yes`
+					);
 				}
 
 				case 'chooseADomain': {
@@ -62,6 +61,9 @@ export const videopress: Flow = {
 				}
 
 				case 'chooseAPlan':
+					return navigate( 'chooseAPlan' );
+
+				case 'completingPurchase':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -69,7 +71,7 @@ export const videopress: Flow = {
 				}
 
 				case 'launchpad': {
-					return navigate( 'processing' );
+					return redirect( `/page/${ siteSlug }/home` );
 				}
 			}
 			return providedDependencies;

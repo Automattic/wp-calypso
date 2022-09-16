@@ -1,4 +1,4 @@
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -612,7 +612,7 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+		if ( isNewsletterOrLinkInBioFlow( flowName ) || VIDEOPRESS_FLOW === flowName ) {
 			const components = {
 				span: (
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
@@ -623,6 +623,13 @@ class DomainsStep extends Component {
 					/>
 				),
 			};
+			if ( VIDEOPRESS_FLOW === flowName ) {
+				return translate(
+					'Set your Video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+					{ components }
+				);
+			}
+
 			return flowName === 'newsletter'
 				? translate(
 						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
@@ -683,7 +690,7 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+		return isNewsletterOrLinkInBioFlow( this.props.flowName ) || VIDEOPRESS_FLOW === this.props.flowName;
 	}
 
 	renderContent() {
