@@ -65,13 +65,13 @@ export const SitesSortingDropdown = ( {
 
 		switch ( sitesSorting ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sorted automagically' );
+				return __( 'Sorting by: Automagically' );
 
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorted alphabetically' );
+				return __( 'Sorting by: Name' );
 
 			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sorted by last published' );
+				return __( 'Sorting by: Last published' );
 
 			default:
 				throw new Error( `invalid sort value ${ sitesSorting }` );
@@ -99,19 +99,19 @@ export const SitesSortingDropdown = ( {
 				<MenuGroup>
 					<MenuItem
 						onClick={ () => {
-							onSitesSortingChange( `alphabetically${ SEPARATOR }asc` );
-							onClose();
-						} }
-					>
-						{ __( 'Alphabetically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
 							onSitesSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
 							onClose();
 						} }
 					>
 						{ __( 'Automagically' ) }
+					</MenuItem>
+					<MenuItem
+						onClick={ () => {
+							onSitesSortingChange( `alphabetically${ SEPARATOR }asc` );
+							onClose();
+						} }
+					>
+						{ __( 'Name' ) }
 					</MenuItem>
 					<MenuItem
 						onClick={ () => {
