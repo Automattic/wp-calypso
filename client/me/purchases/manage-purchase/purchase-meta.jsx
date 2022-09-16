@@ -242,7 +242,7 @@ function PurchaseMetaPrice( { purchase } ) {
 				return (
 					<div>
 						<div>
-							{ translate( 'Service : %(oneTimeFee)s (one-time)', {
+							{ translate( 'Service: %(oneTimeFee)s (one-time)', {
 								args: {
 									oneTimeFee,
 								},
@@ -250,8 +250,8 @@ function PurchaseMetaPrice( { purchase } ) {
 						</div>
 						<div>
 							{ translate(
-								'%(extraPageCount)d extra page : %(costOfExtraPages)s (one-time)',
-								'%(extraPageCount)d extra pages : %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra page: %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra pages: %(costOfExtraPages)s (one-time)',
 								{
 									count: extraPageCount,
 									args: {
