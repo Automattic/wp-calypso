@@ -107,6 +107,8 @@
 	line-height: 48px;
 	margin: 32px 0;
 	padding: 0 20px;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .launchpad__url-box-top-level-domain {
