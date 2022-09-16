@@ -343,9 +343,9 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	page( '*', function ( context, next ) {
 		const path = context.pathname;
 
-		// Bypass this global handler for legacy routes
+		// Bypass this global handler for legacy routes and site management pages
 		// to avoid bumping stats and changing focus to the content
-		if ( isLegacyRoute( path ) ) {
+		if ( isLegacyRoute( path ) || context.section?.group === 'sites-dashboard' ) {
 			return next();
 		}
 
