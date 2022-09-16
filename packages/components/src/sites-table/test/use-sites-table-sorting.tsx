@@ -17,6 +17,7 @@ describe( 'useSitesTableSorting', () => {
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
+			user_interactions: [ '2022-09-13' ],
 		},
 		{
 			ID: 2,
@@ -24,6 +25,7 @@ describe( 'useSitesTableSorting', () => {
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 			},
+			user_interactions: [ '2022-09-14' ],
 		},
 		{
 			ID: 3,
@@ -74,6 +76,34 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 0 ].name ).toBe( 'C' );
 		expect( result.current.sortedSites[ 1 ].name ).toBe( 'B' );
 		expect( result.current.sortedSites[ 2 ].name ).toBe( 'A' );
+	} );
+
+	test( 'should sort sites by last interaction descending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'desc',
+			} )
+		);
+
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].name ).toBe( 'A' );
+		expect( result.current.sortedSites[ 1 ].name ).toBe( 'B' );
+		expect( result.current.sortedSites[ 2 ].name ).toBe( 'C' );
+	} );
+
+	test( 'should sort sites by last interaction ascending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( filteredSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].name ).toBe( 'B' );
+		expect( result.current.sortedSites[ 1 ].name ).toBe( 'A' );
+		expect( result.current.sortedSites[ 2 ].name ).toBe( 'C' );
 	} );
 
 	test( 'should sort sites by updatedAt descending', () => {

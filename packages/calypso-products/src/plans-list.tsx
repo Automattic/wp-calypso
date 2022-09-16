@@ -22,6 +22,7 @@ import {
 	FEATURE_ALL_PREMIUM_FEATURES,
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_ANTISPAM_V2,
+	FEATURE_WAF,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_AUTOMATED_RESTORES,
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
@@ -237,6 +238,10 @@ import {
 	FEATURE_COLLECT_PAYMENTS_V3,
 	FEATURE_FREE_THEMES_V2,
 	FEATURE_VIDEO_UPLOADS_V2,
+	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
+	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_ONLINE_FORUMS,
 	/* END - condensed_plan_features_v1 test */
 } from './constants';
 import type {
@@ -273,10 +278,10 @@ const getMonthlyTimeframe = (): BillingTerm => ( {
 } );
 const getJetpackCommonPlanDetails = () => ( {
 	getRecommendedFor: () => [
-		translate( 'WooCommerce stores' ),
-		translate( 'News organizations' ),
-		translate( 'Membership sites' ),
-		translate( 'Online forums' ),
+		{ tag: JETPACK_TAG_FOR_WOOCOMMERCE_STORES, label: translate( 'WooCommerce stores' ) },
+		{ tag: JETPACK_TAG_FOR_NEWS_ORGANISATIONS, label: translate( 'News organizations' ) },
+		{ tag: JETPACK_TAG_FOR_MEMBERSHIP_SITES, label: translate( 'Membership sites' ) },
+		{ tag: JETPACK_TAG_FOR_ONLINE_FORUMS, label: translate( 'Online forums' ) },
 	],
 } );
 const getDotcomPlanDetails = () => ( {
@@ -1099,6 +1104,7 @@ const getPlanJetpackSecurityDailyDetails = (): IncompleteJetpackPlan => ( {
 		FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		FEATURE_PRODUCT_SCAN_DAILY_V2,
 		FEATURE_ANTISPAM_V2,
+		FEATURE_WAF,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_DAILY,
@@ -1183,7 +1189,11 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
-	getFeaturedText: () =>
+	getFeaturedDescription: () =>
+		translate(
+			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
+		),
+	getLightboxDescription: () =>
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
 		),
@@ -1191,6 +1201,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		FEATURE_JETPACK_PRODUCT_BACKUP,
 		FEATURE_JETPACK_REAL_TIME_MALWARE_SCANNING,
 		FEATURE_ANTISPAM_V2,
+		FEATURE_WAF,
 	],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T1_YEARLY,
@@ -1268,9 +1279,13 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Get the full power of Jetpack with all Security, Performance, Growth, and Design tools.'
 		),
-	getFeaturedText: () =>
+	getFeaturedDescription: () =>
 		translate(
 			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
+		),
+	getLightboxDescription: () =>
+		translate(
+			'Full Jetpack suite with real-time security, instant site search, ad-free video, all CRM extensions, and extra storage for backups and video.'
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCardFeatures: () => [
@@ -1814,8 +1829,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
 			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '30-day activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( '1-year activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 1-year' ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (60k API calls/mo)' ),
 			translate( 'VideoPress with 1TB of ad-free video hosting' ),
@@ -1833,8 +1848,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
 			translate( '10GB of cloud storage' ),
-			translate( '1-year activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
@@ -1864,11 +1879,23 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2019,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '1-year activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 1 year' ),
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
-			translate( 'Comment and form spam protection (60k API calls/mo)' ),
+			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
 
@@ -1880,9 +1907,21 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 2020,
 		getWhatIsIncluded: () => [
 			translate( 'Real-time backups as you edit' ),
-			translate( '1TB (1,000GB) of cloud storage' ),
-			translate( '30-day activity log archive' ),
-			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( '{{strong}}1TB (1,000GB){{/strong}} of cloud storage', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( '{{strong}}1-year{{/strong}} activity log archive', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+			translate( 'Unlimited one-click restores from the last {{strong}}1 year{{/strong}}', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 			translate( 'Real-time malware scanning and one-click fixes' ),
 			translate( 'Comment and form spam protection (10k API calls/mo)' ),
 		],

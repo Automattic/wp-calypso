@@ -1,23 +1,19 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import type { FC } from 'react';
+import blankCanvasImage from '../assets/images/blank-canvas-cta.svg';
 import './style.scss';
 
-type Props = {
-	onButtonClick?: () => void;
+type PatternAssemblerCtaProps = {
+	onButtonClick: () => void;
 };
 
-const PatternAssemblerCta: FC< Props > = ( { onButtonClick } ) => {
+const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 	const translate = useTranslate();
 
 	return (
 		<div className="pattern-assembler-cta-wrapper">
 			<div className="pattern-assembler-cta__image-wrapper">
-				<img
-					className="pattern-assembler-cta__image"
-					src="/calypso/images/onboarding/blank-canvas.png"
-					alt="Blank Canvas Header"
-				/>
+				<img className="pattern-assembler-cta__image" src={ blankCanvasImage } alt="Blank Canvas" />
 			</div>
 			<h3 className="pattern-assembler-cta__title">{ translate( 'Start with a blank canvas' ) }</h3>
 			<p className="pattern-assembler-cta__subtitle">

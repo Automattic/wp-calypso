@@ -4,6 +4,7 @@ import {
 	useSitesTableFiltering,
 	useSitesTableSorting,
 	useScrollToTop,
+	JetpackLogo,
 } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -13,6 +14,8 @@ import { addQueryArgs } from '@wordpress/url';
 import { useCallback, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Pagination from 'calypso/components/pagination';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
@@ -23,12 +26,14 @@ import {
 } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
-import { parseSorting, useSitesListSorting } from './sites-list-sorting-dropdown';
+import { parseSitesSorting, useSitesSortingPreference } from './sites-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
 	queryParams: SitesDashboardQueryParams;
 }
+
+const TRACK_SOURCE_NAME = 'sites-dashboard';
 
 const MAX_PAGE_WIDTH = '1280px';
 
@@ -147,11 +152,11 @@ export function SitesDashboard( {
 		status,
 	} );
 
-	const [ sitesListSorting, onSitesListSortingChange ] = useSitesListSorting();
+	const [ sitesSorting, onSitesSortingChange ] = useSitesSortingPreference();
 
 	const { sortedSites } = useSitesTableSorting(
-		sitesListSorting === 'none' ? [] : filteredSites,
-		parseSorting( sitesListSorting )
+		sitesSorting === 'none' ? [] : filteredSites,
+		parseSitesSorting( sitesSorting )
 	);
 
 	const paginatedSites = sortedSites.slice( ( page - 1 ) * perPage, page * perPage );
@@ -160,7 +165,7 @@ export function SitesDashboard( {
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
-	const userPreferencesLoaded = 'none' !== sitesListSorting && 'none' !== displayMode;
+	const userPreferencesLoaded = 'none' !== sitesSorting && 'none' !== displayMode;
 
 	const elementRef = useRef( window );
 
@@ -182,9 +187,19 @@ export function SitesDashboard( {
 			<PageHeader>
 				<HeaderControls>
 					<DashboardHeading>{ __( 'Sites' ) }</DashboardHeading>
-					<Button primary href="/start?source=sites-dashboard&ref=sites-dashboard">
-						<span>{ __( 'Add new site' ) }</span>
-					</Button>
+					<SplitButton
+						primary
+						whiteSeparator
+						label={ __( 'Add new site' ) }
+						href={ `/start?source=${ TRACK_SOURCE_NAME }&ref=${ TRACK_SOURCE_NAME }` }
+					>
+						<PopoverMenuItem
+							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+						>
+							<JetpackLogo className="gridicon" size={ 18 } />
+							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+						</PopoverMenuItem>
+					</SplitButton>
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
@@ -196,8 +211,8 @@ export function SitesDashboard( {
 							selectedStatus={ selectedStatus }
 							displayMode={ displayMode }
 							onDisplayModeChange={ setDisplayMode }
-							sitesListSorting={ sitesListSorting }
-							onSitesListSortingChange={ onSitesListSortingChange }
+							sitesSorting={ sitesSorting }
+							onSitesSortingChange={ onSitesSortingChange }
 						/>
 					) }
 					{ userPreferencesLoaded && (

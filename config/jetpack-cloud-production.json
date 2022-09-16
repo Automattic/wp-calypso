@@ -38,7 +38,7 @@
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
 		"jetpack/partner-portal-payment": true,
-		"jetpack/plugin-management": false,
+		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
@@ -66,7 +66,7 @@
 		"jetpack-cloud-agency-signup": true,
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-partner-portal": true,
-		"jetpack-cloud-plugin-management": false,
+		"jetpack-cloud-plugin-management": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-search": true,
@@ -78,5 +78,6 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "UA-52447-43"
+	"google_analytics_key": "UA-52447-43",
+	"hotjar_enabled": true
 }

@@ -59,6 +59,7 @@ class AcceptDialog extends Component {
 				onClose={ this.onClose }
 				className="accept__dialog"
 				isVisible
+				additionalClassNames={ this.props?.options?.additionalClassNames }
 			>
 				{ this.props.message }
 			</Dialog>

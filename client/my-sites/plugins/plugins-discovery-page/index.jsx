@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	findFirstSimilarPlanKey,
@@ -51,6 +52,10 @@ const UpgradeNudge = ( {
 		isEligibleForProPlan( state, selectedSite?.ID )
 	);
 
+	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
+
+	const pluginsPlansPage = `/plugins/plans/${ selectedSite?.slug }`;
+
 	const translate = useTranslate();
 
 	if (
@@ -89,7 +94,11 @@ const UpgradeNudge = ( {
 				callToAction={ translate( 'Upgrade now' ) }
 				icon={ 'notice-outline' }
 				showIcon={ true }
-				href={ `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }` }
+				href={
+					pluginsPlansPageFlag
+						? pluginsPlansPage
+						: `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }`
+				}
 				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
 				plan={ requiredPlan.getStoreSlug() }
 				title={ title }
@@ -112,7 +121,7 @@ const UpgradeNudge = ( {
 				callToAction={ translate( 'Upgrade now' ) }
 				icon={ 'notice-outline' }
 				showIcon={ true }
-				href={ `/checkout/${ siteSlug }/pro` }
+				href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/pro` }
 				feature={ FEATURE_INSTALL_PLUGINS }
 				plan={ plan }
 				title={ translate( 'Upgrade to the Pro plan to install plugins.' ) }
@@ -128,7 +137,7 @@ const UpgradeNudge = ( {
 			callToAction={ translate( 'Upgrade now' ) }
 			icon={ 'notice-outline' }
 			showIcon={ true }
-			href={ `/checkout/${ siteSlug }/business` }
+			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
 			title={ translate( 'Upgrade to the Business plan to install plugins.' ) }

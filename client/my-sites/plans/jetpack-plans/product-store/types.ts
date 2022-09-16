@@ -95,6 +95,7 @@ export type FeaturedItemCardProps = {
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
+	isCtaExternal?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
@@ -107,4 +108,5 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
+	isExternal?: boolean;
 };

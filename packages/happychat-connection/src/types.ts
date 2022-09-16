@@ -1,5 +1,6 @@
 export interface User {
 	ID: number;
+	language: string;
 }
 
 export interface GeoLocation {
@@ -16,10 +17,10 @@ export interface HappychatSession {
 
 export interface HappychatUser {
 	signer_user_id: number;
-	locale: string | null;
 	groups?: string[];
 	skills?: {
 		product: string[];
+		language: string[];
 	};
 	geoLocation?: GeoLocation;
 }

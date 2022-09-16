@@ -24,6 +24,7 @@ import {
 	FEATURE_ALL_PREMIUM_FEATURES,
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_ANTISPAM_V2,
+	FEATURE_WAF,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_AUTOMATED_RESTORES,
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
@@ -1149,6 +1150,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
 		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
+	},
+
+	[ FEATURE_WAF ]: {
+		getSlug: () => FEATURE_WAF,
+		getTitle: () =>
+			i18n.translate( 'Website firewall (WAF beta)', {
+				comment: 'WAF stands for Web Application Firewall',
+			} ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {

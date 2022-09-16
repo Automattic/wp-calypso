@@ -26,10 +26,7 @@ export type { SetSiteLogoResponse } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
-export { useStarterDesignBySlug } from './starter-designs-queries/use-starter-design-by-slug';
-export { useStarterDesignsGeneratedQuery } from './starter-designs-queries/use-starter-designs-generated-query';
-export { useStarterDesignsQuery } from './starter-designs-queries/use-starter-designs-query';
-export { isThemeVerticalizable } from './starter-designs-queries/utils';
+export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 

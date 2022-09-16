@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { getLocaleSlug } from 'i18n-calypso';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
@@ -13,14 +12,13 @@ export async function requestHappyChatAuth() {
 	} );
 
 	const url: string = config( 'happychat_url' );
-	const locale = getLocaleSlug();
 
 	const happychatUser: HappychatUser = {
 		signer_user_id: user.ID,
-		locale,
 		groups: [ 'WP.com' ],
 		skills: {
 			product: [ 'WP.com' ],
+			language: [ user.language ],
 		},
 	};
 	const session: HappychatSession = await wpcomRequest( {
