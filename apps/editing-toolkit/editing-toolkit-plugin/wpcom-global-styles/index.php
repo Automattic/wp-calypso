@@ -76,6 +76,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.css' )
 	);
 }
+add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
 
 /**
  * Returns the stylesheet resulting of merging core and theme data.
@@ -135,6 +136,4 @@ function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
 		$wp_styles->add_data( 'global-styles', 'after', array( wpcom_get_free_global_stylesheet() ) );
 	}
 }
-
 add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
-add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
