@@ -66,12 +66,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const cancelDialogButtons = [
 		{
 			action: 'cancel',
-			label: __( 'No' ),
+			isPrimary: true,
+			label: __( 'No, let me finish' ),
 		},
 		{
 			action: 'close',
-			isPrimary: true,
-			label: __( 'Yes, cancel' ),
+			label: __( 'Yes, quit' ),
 			onClick: async () => {
 				setShowCancelDialog( false );
 				onClose();
@@ -111,12 +111,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
-							<h1>{ __( 'Cancel the campaign' ) }</h1>
-							<p>
-								{ __(
-									'If you cancel now, you will lose any progress you have made. Are you sure you want to cancel?'
-								) }
-							</p>
+							<h1>{ __( 'Are you sure you want to quit?' ) }</h1>
+							<p>{ __( 'All progress in this session will be lost.' ) }</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
 						<div className={ 'blazepress-widget__widget-container' } ref={ widgetContainer }></div>
