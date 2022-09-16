@@ -4,7 +4,7 @@
 	width: 85%;
 	height: auto;
 	background-color: #fff;
-	transition: all 0.2s ease-out;
+	transition: all 0.35s ease-out;
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
@@ -27,7 +27,7 @@
 }
 
 .product-lightbox__modal-overlay {
-	background-color: rgb(0 0 0 / 70%);
+	background-color: transparent;
 	align-items: center;
 	display: flex;
 	justify-content: center;
@@ -36,9 +36,13 @@
 	bottom: 0;
 	right: 0;
 	left: 0;
-	transition: background-color 0.2s ease-in;
+	transition: background-color 0.35s ease-out;
 	z-index: 100200;
 	box-sizing: border-box;
+
+	&.ReactModal__Overlay--after-open {
+		background-color: rgb(0 0 0 / 70%);
+	}
 }
 
 .product-lightbox__content-wrapper {
