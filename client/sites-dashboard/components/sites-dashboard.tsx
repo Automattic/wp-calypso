@@ -191,13 +191,28 @@ export function SitesDashboard( {
 						primary
 						whiteSeparator
 						label={ __( 'Add new site' ) }
-						href={ `/start?source=${ TRACK_SOURCE_NAME }&ref=${ TRACK_SOURCE_NAME }` }
+						href={ addQueryArgs( '/start', {
+							source: TRACK_SOURCE_NAME,
+							ref: TRACK_SOURCE_NAME,
+						} ) }
 					>
 						<PopoverMenuItem
-							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+							href={ addQueryArgs( '/jetpack/connect', {
+								cta_from: TRACK_SOURCE_NAME,
+								cta_id: 'add-site',
+							} ) }
 						>
 							<JetpackLogo className="gridicon" size={ 18 } />
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							href={ addQueryArgs( '/start', {
+								source: TRACK_SOURCE_NAME,
+								ref: 'smp-import',
+							} ) }
+							icon="arrow-down"
+						>
+							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>
