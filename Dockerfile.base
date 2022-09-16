@@ -68,7 +68,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
 RUN apt update \
-	&& apt install -y \
+	&& apt install -y --no-install-recommends \
 		fonts-liberation \
 		fonts-noto \
 		git-restore-mtime \
@@ -87,6 +87,7 @@ RUN apt update \
 		libxss1 \
 		libxtst6 \
 		openssl \
+		xauth \
 		xdg-utils \
 		xfonts-100dpi \
 		xfonts-75dpi \
