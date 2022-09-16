@@ -274,9 +274,11 @@ export default class WebPreviewContent extends Component {
 		if ( this.props.previewMarkup ) {
 			debug( 'preview loaded with markup' );
 			this.props.onLoad( this.iframe.contentDocument );
-		} else {
-			debug( 'preview loaded for url:', this.state.iframeUrl );
+			this.setState( { loaded: true, isLoadingSubpage: false } );
+			return;
 		}
+		debug( 'preview loaded for url:', this.state.iframeUrl );
+
 		if ( this.checkForIframeLoadFailure( caller ) ) {
 			debug( `preview not loaded yet, waiting ${ loadingTimeout }ms` );
 			clearTimeout( this.loadingTimeoutTimer );
