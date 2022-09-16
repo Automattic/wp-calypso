@@ -44,9 +44,9 @@ class JetpackBackupCredsBanner extends Component {
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
 								: `${ settingsPath( siteSlug ) }#credentials`
 						}
-						title={ translate( 'Add your server credentials' ) }
+						title={ translate( 'Set up your server credentials to get back online quickly' ) }
 						description={ translate(
-							"Enter your site's server credentials to set up site restores from your backups."
+							'Add SSH, SFTP or FTP credentials to enable one-click site restores.'
 						) }
 					/>
 				) }
