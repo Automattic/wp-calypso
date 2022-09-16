@@ -163,6 +163,24 @@ $videopress-mobile-layout-width: 1200px;
 		}
 	}
 
+	.domain-suggestion.is-placeholder,
+	.featured-domain-suggestion--is-placeholder {
+		background: none;
+		box-shadow: none;
+		border: solid 1px rgba(255, 255, 255, 0.2);
+
+		.domain-registration-suggestion__badges,
+		.domain-registration-suggestion__match-reasons {
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	.domain-suggestion.is-placeholder {
+		.domain-suggestion__content {
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
 	.featured-domain-suggestions {
 		.domain-suggestion {
 			margin-bottom: 12px;
