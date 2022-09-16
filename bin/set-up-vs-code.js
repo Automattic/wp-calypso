@@ -17,12 +17,14 @@ const yargs = require( 'yargs' );
 const settingsPath = path.resolve( __dirname, '../.vscode/settings.json' );
 const settingsSamplePath = path.resolve( __dirname, '../.vscode/settings-sample.jsonc' );
 
+const stat = fs.lstatSync( settingsPath, { throwIfNoEntry: false } );
+
 function symlinkExists() {
-	return fs.existsSync( settingsPath ) && fs.lstatSync( settingsPath ).isSymbolicLink();
+	return stat && stat.isSymbolicLink();
 }
 
 function fileExists() {
-	return fs.existsSync( settingsPath ) && fs.lstatSync( settingsPath ).isFile();
+	return stat && stat.isFile();
 }
 
 function link() {
@@ -42,7 +44,7 @@ function link() {
 		return;
 	}
 	try {
-		fs.symlinkSync( settingsSamplePath, settingsPath, 'file' );
+		fs.symlinkSync( settingsSamplePath, settingsPath, 'junction' );
 		console.log( chalk.green( `Successfully created a symlink for .vscode/settings.json ✅\n` ) );
 	} catch ( error ) {
 		console.log( chalk.red( 'Error creating a symlink for .vscode/settings.json' ), error, `\n` );
