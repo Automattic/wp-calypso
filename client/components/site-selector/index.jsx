@@ -4,7 +4,7 @@ import SearchRestyled from '@automattic/search';
 import classNames from 'classnames';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { filter, find, flow, get, includes, isEmpty } from 'lodash';
+import { flow } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -20,7 +20,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { getPreference } from 'calypso/state/preferences/selectors';
 import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
@@ -52,8 +51,6 @@ export class SiteSelector extends Component {
 		groups: PropTypes.bool,
 		onSiteSelect: PropTypes.func,
 		searchPlaceholder: PropTypes.string,
-		showRecentSites: PropTypes.bool,
-		recentSites: PropTypes.array,
 		selectedSite: PropTypes.object,
 		visibleSites: PropTypes.arrayOf( PropTypes.object ),
 		allSitesPath: PropTypes.string,
@@ -312,10 +309,6 @@ export class SiteSelector extends Component {
 		return sites;
 	}
 
-	shouldRenderRecentSites() {
-		return this.props.showRecentSites && this.shouldShowGroups() && ! this.props.sitesFound;
-	}
-
 	renderAllSites() {
 		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
 			return null;
@@ -361,37 +354,9 @@ export class SiteSelector extends Component {
 		);
 	}
 
-	renderRecentSites( sites ) {
-		if ( ! this.shouldRenderRecentSites() ) {
-			return null;
-		}
-
-		const recentSites = [];
-		for ( const siteId of this.props.recentSites ) {
-			const site = find( sites, { ID: siteId } );
-			if ( site ) {
-				recentSites.push( site );
-			}
-		}
-
-		if ( isEmpty( recentSites ) ) {
-			return null;
-		}
-
-		const renderedRecentSites = recentSites.map( this.renderSite, this );
-
-		return <div className="site-selector__recent">{ renderedRecentSites }</div>;
-	}
-
 	renderSites( sites ) {
 		if ( ! this.props.hasAllSitesList ) {
 			return <SitePlaceholder key="site-placeholder" />;
-		}
-
-		// Filter recentSites
-		if ( this.shouldRenderRecentSites() ) {
-			const recentSites = this.props.recentSites;
-			sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 		}
 
 		// Render sites
@@ -471,7 +436,6 @@ export class SiteSelector extends Component {
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
-					{ this.renderRecentSites( sites ) }
 					{ this.renderSites( sites ) }
 					{ hiddenSitesCount > 0 && ! this.props.sitesFound && (
 						<span className="site-selector__hidden-sites-message">
@@ -616,8 +580,6 @@ const mapState = ( state ) => {
 	return {
 		hasLoadedSites: hasLoadedSites( state ),
 		sites: getSites( state ),
-		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
-		recentSites: getPreference( state, 'recentSites' ),
 		siteCount: getUserSiteCountForPlatform( user ),
 		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),
