@@ -129,6 +129,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
+				showCloseIcon={ true }
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
