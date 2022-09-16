@@ -38,8 +38,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		console.log( await context.cookies() );
 	} );
 
 	it( 'Go to the new post page', async function () {
