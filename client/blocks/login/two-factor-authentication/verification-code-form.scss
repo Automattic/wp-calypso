@@ -15,8 +15,6 @@
 
 	@media screen and ( max-width: 660px ) {
 		text-align: left;
-		padding-left: 20px;
-		padding-right: 20px;
 	}
 
 	p {
@@ -29,6 +27,7 @@
 
 	button {
 		text-transform: inherit;
+		padding: 12px 24px;
 	}
 
 	.form-label {
@@ -38,14 +37,11 @@
 	}
 
 	.form-fieldset {
-		margin: 40px 85px -8px;
-		width: calc(100% - 170px);
+		margin: 40px 0 -8px;
 	}
 
 	.form-button {
-		float: none;
-		margin: 40px 85px 0;
-		width: calc(100% - 85px * 2);
+		margin: 40px 0 0;
 	}
 
 	.form-fieldset,
