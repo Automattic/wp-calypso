@@ -67,13 +67,39 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					isSignupStep={ true }
 					includeWordPressDotCom={ true }
 					includeDotBlogSubdomain={ false }
-					showAlreadyOwnADomain={ true }
+					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
 					promoTlds={ promoTlds }
 					products={ productsList }
 					useProvidedProductsList={ true }
 				/>
+				<div className="aside-sections">
+					<div className="aside-section">
+						<h2>{ __( 'Get a free one-year domain with any paid plan.' ) }</h2>
+						<span>
+							{ __( "You can claim your free custom domain later if you aren't ready yet." ) }
+						</span>
+						<button
+							className="button navigation-link step-container__navigation-link has-underline is-borderless"
+							onClick={ onSkip }
+						>
+							{ __( 'View plans' ) }
+						</button>
+					</div>
+					<span className="aside-spacer"></span>
+					<div className="aside-section">
+						<h2>{ __( 'Already own a domain?' ) }</h2>
+						<span>
+							{ __(
+								'A domain name is the site address people type in their browser to visit your site.'
+							) }
+						</span>
+						<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+							{ __( 'Use a domain I own' ) }
+						</button>
+					</div>
+				</div>
 			</CalypsoShoppingCartProvider>
 		);
 	};

@@ -7,28 +7,81 @@
 	}
 
 	.step-container__content {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-
-		.register-domain-step {
-			width: 800px;
+		@media (min-width: 1200px) {
+			flex-direction: row;
+			padding: 0;
 		}
 
-		.already-own-a-domain {
-			max-width: 280px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 80px;
+		padding: 8px;
+
+		.register-domain-step {
+			@media (min-width: 1200px) {
+				width: 800px;
+			}
+			width: 100%;
+
+			.register-domain-step__search {
+				padding-top: 8px;
+			}
+		}
+
+		.aside-sections {
+			@media (min-width: 1200px) {
+				width: 280px;
+			}
+			width: 100%;
+
+			display: flex;
+			flex-direction: column;
+			gap: 40px;
+
+			.aside-spacer {
+				display: block;
+				height: 1px;
+				width: 100%;
+				background-color: rgba(255, 255, 255, 0.2);
+			}
+
+			.aside-section {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				font-size: 14px;
+				font-weight: normal;
+				gap: 12px;
+	
+				h2 {
+					color: #fff;
+					font-size: 20px;
+					font-weight: normal;
+				}
+
+				span {
+					color: #a7aaad;
+				}
+
+				button {
+					font-weight: normal;
+					padding: 0;
+					margin: 0;
+				}
+			}
 		}
 	}
 
 	.formatted-header__subtitle {
 		text-align: center !important;
+	}
 
-		button {
-			font-size: 1rem;
-			line-height: 1.55;
-			color: #fff;
-			margin-left: 5px;
-		}
+	.step-container__navigation-link {
+		font-size: 1rem;
+		line-height: 1.55;
+		color: #fff;
+		margin-left: 5px;
 	}
 
 	.register-domain-step__search-card {
