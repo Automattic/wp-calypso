@@ -271,7 +271,10 @@ export function generateFlows( {
 		{
 			name: 'videopress',
 			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
-			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
+			destination: ( dependencies ) =>
+				`/setup/completingPurchase?flow=videopress&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
 			description: 'VideoPress signup flow',
 			lastModified: '2022-07-06',
 			showRecaptcha: true,
