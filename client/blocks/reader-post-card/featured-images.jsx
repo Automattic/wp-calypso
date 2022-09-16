@@ -37,6 +37,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 		} else if ( imagesToDisplay.length === 2 ) {
 			imageWidth = imageWidth / 2;
 			classNames = classnames( 'reader-post-card__featured-images', 'two-images' );
+		} else {
+			classNames = classnames( 'reader-post-card__featured-images', 'one-image' );
 		}
 
 		const featuredImage = (

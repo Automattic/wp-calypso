@@ -1,8 +1,11 @@
 .reader-featured-image {
-	display: flex;
 	align-items: center;
-	justify-content: center;
+	border-radius: 6px;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	max-height: 300px;
+	overflow-y: hidden;
 	img {
 		border-radius: 6px;
 	}
