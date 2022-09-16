@@ -11,7 +11,7 @@ export interface SiteDetailsForSorting {
 export type SitesTableSortKey = 'lastInteractedWith' | 'updatedAt' | 'alphabetically';
 export type SitesTableSortOrder = 'asc' | 'desc';
 
-interface SitesTableSortOptions {
+export interface SitesTableSortOptions {
 	sortKey?: SitesTableSortKey;
 	sortOrder?: SitesTableSortOrder;
 }
