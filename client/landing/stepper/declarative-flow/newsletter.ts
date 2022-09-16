@@ -25,7 +25,7 @@ export const newsletter: Flow = {
 		const name = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
-		const { setStepProgress, setUserStartedLoggedIn } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName: name,
@@ -46,11 +46,9 @@ export const newsletter: Flow = {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
-						setUserStartedLoggedIn( true );
 						return navigate( 'newsletterSetup' );
 					}
 
-					setUserStartedLoggedIn( false );
 					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':

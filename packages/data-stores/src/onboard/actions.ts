@@ -314,11 +314,6 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
-export const setUserStartedLoggedIn = ( userStartedLoggedIn: boolean ) => ( {
-	type: 'SET_USER_STARTED_LOGGED_IN' as const,
-	userStartedLoggedIn,
-} );
-
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -363,5 +358,4 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
-	| typeof setUserStartedLoggedIn
 >;
