@@ -15,7 +15,7 @@ import 'swiper/css/navigation';
 
 type Props = { onPick: ( pattern: Pattern ) => void };
 
-export function PatternPicker( { onPick }: Props ) {
+export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
 	const [ swiper, setSwiper ] = useState< SwiperClass | null >( null );
