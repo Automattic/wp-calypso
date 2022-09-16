@@ -113,7 +113,7 @@ function wpcom_get_free_global_stylesheet() {
 		// This cache can be long since it only applies to customers that can't load global styles.
 		// Once the customer is on a paid plan this code isn't executed and will use the default
 		// Gutenberg global styles loading mechanism instead.
-		set_transient( $transient_name, $stylesheet, DAY_IN_SECONDS );
+		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
 	}
 
 	return $stylesheet;
