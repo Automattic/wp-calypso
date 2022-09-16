@@ -22,12 +22,10 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 	val result = ScriptBuildStep(init)
 	result.scriptContent = """
 		#!/bin/bash
-		# Update node
-		#. "${'$'}NVM_DIR/nvm.sh" --no-use
-		#nvm install
-		#set -o errexit
-		#set -o nounset
-		#set -o pipefail
+		# Set bash options.
+		set -o errexit
+		set -o nounset
+		set -o pipefail
 
 		# Existing script content set by caller:
 		${result.scriptContent}
