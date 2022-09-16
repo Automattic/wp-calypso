@@ -103,9 +103,11 @@ export function SiteIconWithPicker( {
 					} }
 				>
 					{ selectedFileUrl || siteIconUrl ? (
-						// eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+						// eslint-disable-next-line jsx-a11y/click-events-have-key-events
 						<span
-							title={ 'Edit' }
+							role="button"
+							tabIndex={ 0 }
+							title={ __( 'Edit' ) }
 							onClick={ ( event ) => {
 								event.stopPropagation();
 								setImageEditorOpen( true );
