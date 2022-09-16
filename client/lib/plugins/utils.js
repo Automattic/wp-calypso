@@ -399,3 +399,28 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 		yearly: { product_slug: yearly },
 	};
 }
+
+/**
+ * Returns the product slug of periodVariation passed filtering the productsList passed only if required
+ *
+ * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param {Record<string, object>} productsList The list of products
+ * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
+ * it will find the product slug in the productsList filtering by the variation.product_id.
+ * It additionally returns:
+ *  - null|undefined if periodVariation is null|undefined
+ * - null|undefined if variation.product_id is null|undefined
+ * - undefined product is not found by productId in productsList
+ */
+export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
+	if ( ! periodVariation ) return periodVariation;
+
+	const productSlug = periodVariation.product_slug;
+	if ( productSlug ) return productSlug;
+
+	const productId = periodVariation.product_id;
+	if ( productId === undefined || productId === null ) return productId;
+
+	return Object.values( productsList ).find( ( product ) => product.product_id === productId )
+		?.product_slug;
+}

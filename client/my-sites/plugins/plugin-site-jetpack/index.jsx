@@ -39,7 +39,9 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 		plugin.isMarketplaceProduct &&
 		purchases.find( ( purchase ) =>
 			Object.values( plugin?.variations ).some(
-				( variation ) => variation.product_slug === purchase.productSlug
+				( variation ) =>
+					variation.product_slug === purchase.productSlug ||
+					variation.product_id === purchase.productId
 			)
 		);
 
