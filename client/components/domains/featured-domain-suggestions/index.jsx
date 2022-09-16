@@ -20,6 +20,7 @@ export class FeaturedDomainSuggestions extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		products: PropTypes.object,
 	};
 
 	getChildProps() {
@@ -117,6 +118,7 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( suggestion ) }
 						buttonStyles={ { primary: true } }
 						isReskinned={ this.props.isReskinned }
+						products={ this.props.products ?? undefined }
 						{ ...childProps }
 					/>
 				) ) }
