@@ -968,7 +968,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.57.0":
+"@automattic/newspack-blocks@npm:^1.37.1":
   version: 1.57.0
   resolution: "@automattic/newspack-blocks@npm:1.57.0"
   dependencies:
@@ -1645,7 +1645,7 @@ __metadata:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launch": "workspace:^"
-    "@automattic/newspack-blocks": ^1.57.0
+    "@automattic/newspack-blocks": ^1.37.1
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
