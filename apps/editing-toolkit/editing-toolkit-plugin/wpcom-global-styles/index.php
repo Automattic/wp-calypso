@@ -58,12 +58,8 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 	$asset        = file_exists( $asset_file )
 		? require $asset_file
 		: null;
-	$dependencies = isset( $asset['dependencies'] ) ?
-		$asset['dependencies'] :
-		array();
-	$version      = isset( $asset['version'] ) ?
-		$asset['version'] :
-		filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.min.js' );
+	$dependencies = $asset['dependencies'] ?? array();
+	$version      = $asset['version'] ?? filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.min.js' );
 
 	wp_enqueue_script(
 		'wpcom-global-styles-editor',
