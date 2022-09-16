@@ -42,8 +42,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		console.log( await page.context().cookies() );
 	} );
 
 	it( 'Go to the new post page', async function () {
