@@ -28,6 +28,11 @@ export const videopress: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
+		// Make sure we only target videopress stepper for body css
+		if ( document.body && ! document.body.classList.contains( 'is-videopress-stepper' ) ) {
+			document.body.classList.add( 'is-videopress-stepper' );
+		}
+
 		const name = this.name;
 		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
