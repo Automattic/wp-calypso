@@ -113,22 +113,27 @@
 	}
 
 	.videopress & {
-		max-width: 400px;
+		max-width: 425px;
 
-		#site-options-header {
-			text-align: center;
+		.site-options__form {
+			padding-left: 24px;
+			padding-right: 24px;
 		}
 
 		input#siteTitle,
-		input#tagline {
+		textarea#tagline {
 			border: solid 1px #c3c4c7;
+			font-family: $default-font;
 		}
 
-		input#tagline {
-			height: 64px;
+		textarea#tagline {
+			height: 84px;
+			resize: none;
+			border-radius: 4px;
 		}
 
 		.site-options__submit-button {
+			margin-top: 24px;
 			width: 100%;
 			background-color: #0675c4;
 			border: 0px none;
