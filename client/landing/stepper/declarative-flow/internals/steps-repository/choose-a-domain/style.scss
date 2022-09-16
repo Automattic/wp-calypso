@@ -1,3 +1,5 @@
+$videopress-mobile-layout-width: 1200px;
+
 .videopress.choose-adomain {
 	--color-text-subtle: #a7aaad;
 	--studio-green-60: #1ed15a;
@@ -6,31 +8,50 @@
 		max-width: 1160px;
 	}
 
-	.step-container__content {
-		@media (min-width: 1200px) {
-			flex-direction: row;
+	.step-container__header {
+		@media (min-width: $videopress-mobile-layout-width) {
 			padding: 0;
+			margin-bottom: 40px;
+		}
+
+		padding: 20px;
+		margin-bottom: 0px;
+	}
+
+	.register-domain-step__search {
+		@media (min-width: $videopress-mobile-layout-width) {
+			padding-top: 8px;
+			padding-left: 0px;
+			padding-right: 0px;
+		}
+
+		padding: 20px;
+		padding-bottom: 24px;
+	}
+
+	.step-container__content {
+		@media (min-width: $videopress-mobile-layout-width) {
+			flex-direction: row;
 		}
 
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
 		gap: 80px;
-		padding: 8px;
 
 		.register-domain-step {
-			@media (min-width: 1200px) {
+			@media (min-width: $videopress-mobile-layout-width) {
 				width: 800px;
 			}
 			width: 100%;
+		}
 
-			.register-domain-step__search {
-				padding-top: 8px;
-			}
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			display: none;
 		}
 
 		.aside-sections {
-			@media (min-width: 1200px) {
+			@media (min-width: $videopress-mobile-layout-width) {
 				width: 280px;
 			}
 			width: 100%;
@@ -47,6 +68,11 @@
 			}
 
 			.aside-section {
+				@media (min-width: $videopress-mobile-layout-width) {
+					padding: 0;
+				}
+
+				padding: 20px;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
