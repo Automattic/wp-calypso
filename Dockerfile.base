@@ -47,7 +47,9 @@ RUN apt-get update \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
 	&& chown $UID /calypso \
-	&& rm -rf /var/lib/apt/lists/*
+	&& rm -rf /var/lib/apt/lists/* \
+	&& apt autoremove --purge \
+	&& apt autoclean
 
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -66,7 +68,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
 RUN apt update \
-	&& apt-get install -y \
+	&& apt install -y \
 		fonts-liberation \
 		fonts-noto \
 		git-restore-mtime \
@@ -91,7 +93,10 @@ RUN apt update \
 		xfonts-base \
 		xfonts-cyrillic \
 		xfonts-scalable \
-		xvfb
+		xvfb && \
+	&& apt autoremove --purge \
+	&& apt autoclean \
+	&& rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/bin/bash" ]
 
