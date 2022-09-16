@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 export interface SiteDetailsForSorting {
-	name: string;
+	title: string;
 	user_interactions?: string[];
 	options?: {
 		updated_at?: string;
@@ -78,8 +78,8 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 	b: T,
 	sortOrder: SitesTableSortOrder
 ) {
-	const normalizedA = a.name.toLocaleLowerCase();
-	const normalizedB = b.name.toLocaleLowerCase();
+	const normalizedA = a.title.toLocaleLowerCase();
+	const normalizedB = b.title.toLocaleLowerCase();
 
 	if ( normalizedA > normalizedB ) {
 		return sortOrder === 'asc' ? 1 : -1;
