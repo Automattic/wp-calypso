@@ -17,12 +17,12 @@ import {
 	MailboxFormFieldsFactory,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
-	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameAvailabilityValidator,
 	MailboxNameValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
+	PasswordResetEmailValidator,
 	PreviouslySpecifiedMailboxNamesValidator,
 	RequiredIfVisibleValidator,
 	RequiredValidator,
@@ -73,7 +73,7 @@ class MailboxForm< T extends EmailProvider > {
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
-			[ FIELD_PASSWORD_RESET_EMAIL, new AlternateEmailValidator( domainName ) ],
+			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
 	}

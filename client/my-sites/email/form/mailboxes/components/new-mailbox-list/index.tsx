@@ -134,7 +134,7 @@ const NewMailBoxList = (
 			setFieldsVisibilities( mailboxes, hiddenFieldNames );
 			return [ ...mailboxes ];
 		} );
-	}, [ hiddenFieldNames ] );
+	}, [ hiddenFieldNames.join( '' ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const addMailbox = () => {
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];

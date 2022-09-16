@@ -14,12 +14,12 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
-	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
 	MailboxNameAvailabilityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
+	PasswordResetEmailValidator,
 	RequiredValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
@@ -124,7 +124,8 @@ const finalTestDataForAllCases = [
 		'Alternative email on the same domain should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: AlternateEmailValidator.getSameDomainError( 'example.com' ),
+			[ FIELD_PASSWORD_RESET_EMAIL ]:
+				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
 		}
 	),
 	provideTitanTestData(
@@ -192,14 +193,15 @@ const finalTestDataForAllCases = [
 		'Invalid Alternative email should fail validation',
 		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@me-again@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: AlternateEmailValidator.getInvalidEmailError(),
+			[ FIELD_PASSWORD_RESET_EMAIL ]: PasswordResetEmailValidator.getInvalidEmailError(),
 		}
 	),
 	provideTitanTestData(
 		'Alternative email on the same domain should fail validation',
 		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_PASSWORD_RESET_EMAIL ]: AlternateEmailValidator.getSameDomainError( 'example.com' ),
+			[ FIELD_PASSWORD_RESET_EMAIL ]:
+				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
 		}
 	),
 	provideGoogleTestData(

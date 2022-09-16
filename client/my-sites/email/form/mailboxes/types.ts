@@ -91,19 +91,18 @@ interface IBaseMailboxFormFields {
 	readonly domain: DataMailboxFormField;
 	mailbox: TextMailboxFormField;
 	password: TextMailboxFormField;
+	passwordResetEmail?: TextMailboxFormField;
 	readonly uuid: DataMailboxFormField;
 }
 
 interface IGoogleMailboxFormFields extends IBaseMailboxFormFields {
 	firstName?: TextMailboxFormField;
 	lastName?: TextMailboxFormField;
-	passwordResetEmail?: TextMailboxFormField;
 }
 
 interface ITitanMailboxFormFields extends IBaseMailboxFormFields {
 	isAdmin?: BooleanMailboxFormField;
 	name?: TextMailboxFormField;
-	passwordResetEmail?: TextMailboxFormField;
 }
 
 abstract class MailboxFormFields implements IBaseMailboxFormFields {
@@ -124,9 +123,9 @@ class GoogleMailboxFormFields extends MailboxFormFields implements IGoogleMailbo
 }
 
 class TitanMailboxFormFields extends MailboxFormFields implements ITitanMailboxFormFields {
-	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 	isAdmin? = new BooleanMailboxFormField( FIELD_IS_ADMIN, false );
 	name? = new TextMailboxFormField( FIELD_NAME );
+	passwordResetEmail? = new TextMailboxFormField( FIELD_PASSWORD_RESET_EMAIL );
 }
 
 const MailboxFormFieldsMap = {
