@@ -4,10 +4,18 @@
 	width: 85%;
 	height: auto;
 	background-color: #fff;
-	transition: all 0.2s ease-out;
+	transition: all 0.25s ease;
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
+
+	@media ( prefers-reduced-motion: no-preference ) {
+		transform: translateY(20px);
+	}
+
+	&.ReactModal__Content--after-open {
+		transform: translateY(0);
+	}
 
 	p {
 		margin-bottom: 0.5rem;
@@ -19,7 +27,7 @@
 }
 
 .product-lightbox__modal-overlay {
-	background-color: rgb(0 0 0 / 70%);
+	background-color: transparent;
 	align-items: center;
 	display: flex;
 	justify-content: center;
@@ -28,9 +36,13 @@
 	bottom: 0;
 	right: 0;
 	left: 0;
-	transition: background-color 0.2s ease-in;
+	transition: background-color 0.35s ease-out;
 	z-index: 100200;
 	box-sizing: border-box;
+
+	&.ReactModal__Overlay--after-open {
+		background-color: rgb(0 0 0 / 70%);
+	}
 }
 
 .product-lightbox__content-wrapper {
@@ -304,7 +316,6 @@
 	}
 }
 
-
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
@@ -334,7 +345,6 @@
 		}
 	}
 }
-
 
 @media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {
