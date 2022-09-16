@@ -47,3 +47,7 @@ const isPreviewable = isSitePreviewable( state, siteId );
 ```
 
 [function-as-children]: https://medium.com/merrickchristensen/function-as-child-components-5f3920a9ace9
+
+
+### Features
+See the descriptions in the `WebPreviewContent.propTypes` of [content.jsx](https://github.com/Automattic/wp-calypso/blob/trunk/client/components/web-preview/content.jsx).

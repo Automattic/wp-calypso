@@ -16,6 +16,16 @@ import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
 import './pattern-assembler-preview.scss';
 
+const inlineCss = `
+	.site-footer-container {
+		margin-block-start: auto !important;
+	}
+
+	.wp-site-blocks {
+		min-height: 100vh;
+	}
+`;
+
 interface Props {
 	header: Pattern | null;
 	sections?: Pattern[];
@@ -90,6 +100,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 				url={ site?.URL }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
+				inlineCss={ inlineCss }
 			/>
 		</div>
 	);
