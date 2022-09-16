@@ -10,9 +10,12 @@
 /**
  * General onboarding styling
  */
+body {
+	background-color: #fdfdfd;
+}
+
 body,
 button {
-	background-color: #fdfdfd;
 	font-family: $sans;
 	text-rendering: optimizelegibility;
 	-moz-osx-font-smoothing: grayscale;
