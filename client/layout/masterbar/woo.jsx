@@ -1,6 +1,6 @@
-import { Button } from '@wordpress/components';
+import { Gridicon } from '@automattic/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
@@ -25,13 +25,11 @@ const WooOauthMasterbar = () => {
 					</li>
 
 					<li className="masterbar__woo-nav-item">
-						<Button
-							className="masterbar__go-back"
-							href="https://woocommerce.com"
-							icon={ chevronLeft }
-						>
-							{ __( 'Back' ) }
-						</Button>
+						<a className="masterbar__login-back-link" href="https://woocommerce.com">
+							{ createInterpolateElement( __( '<arrow/> Back' ), {
+								arrow: <Gridicon icon="chevron-left" size={ 18 } />,
+							} ) }
+						</a>
 					</li>
 				</ul>
 			</nav>
