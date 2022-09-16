@@ -67,7 +67,8 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 				return sortOrder === 'asc' ? -1 : 1;
 			}
 
-			return 0;
+			// If the interaction date is equal, sort alphabetically.
+			return sortAlphabetically( a, b, 'asc' );
 		} ),
 		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
