@@ -100,7 +100,7 @@
 		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.json --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
-		"postinstall": "yarn run build-packages && husky install",
+		"postinstall": "yarn run build-packages && husky install && yarn vscode:link",
 		"reformat-files": "./node_modules/.bin/prettier --ignore-path .eslintignore --write \"**/*.{js,jsx,json,ts,tsx}\"",
 		"search:storybook:start": "echo 'Deprecated, run `yarn workspace @automattic/search run storybook` instead'",
 		"start": "npx check-node-version --package && node bin/welcome.js && yarn run build && yarn run start-build",
@@ -127,6 +127,8 @@
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
 		"update-deps": "rm -rf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
+		"vscode:link": "node bin/set-up-vs-code.js",
+		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
 		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
 	},
