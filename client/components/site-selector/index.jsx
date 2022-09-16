@@ -11,7 +11,6 @@ import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
-import Site from 'calypso/blocks/site';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
 import searchSites from 'calypso/components/search-sites';
@@ -27,6 +26,7 @@ import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteSelectorAddSite from './add-site';
+import SitesList from './sites-list';
 import { getUserSiteCountForPlatform, getUserVisibleSiteCountForPlatform } from './utils';
 
 import './style.scss';
@@ -266,7 +266,7 @@ export class SiteSelector extends Component {
 		}
 	};
 
-	isSelected( site ) {
+	isSelected = ( site ) => {
 		const selectedSite = this.props.selected || this.props.selectedSite;
 		return (
 			( site === ALL_SITES && selectedSite === null ) ||
@@ -274,14 +274,14 @@ export class SiteSelector extends Component {
 			selectedSite === site.domain ||
 			selectedSite === site.slug
 		);
-	}
+	};
 
-	isHighlighted( siteId ) {
+	isHighlighted = ( siteId ) => {
 		return (
 			this.state.isKeyboardEngaged &&
 			this.visibleSites.indexOf( siteId ) === this.state.highlightedIndex
 		);
-	}
+	};
 
 	shouldShowGroups() {
 		return this.props.groups;
@@ -359,10 +359,9 @@ export class SiteSelector extends Component {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
-		// Render sites
-		const siteElements = sites.map( this.renderSite, this );
+		const existingSites = sites.filter( Boolean );
 
-		if ( ! siteElements.length ) {
+		if ( ! existingSites.length ) {
 			return (
 				<div className="site-selector__no-results">
 					{ this.props.translate( 'No sites found' ) }
@@ -370,27 +369,15 @@ export class SiteSelector extends Component {
 			);
 		}
 
-		return siteElements;
-	}
-
-	renderSite( site ) {
-		if ( ! site ) {
-			return null;
-		}
-
-		this.visibleSites.push( site.ID );
-
-		const isHighlighted = this.isHighlighted( site.ID );
-
 		return (
-			<Site
-				site={ site }
-				key={ 'site-' + site.ID }
+			<SitesList
+				addToVisibleSites={ ( siteId ) => this.visibleSites.push( siteId ) }
+				sites={ existingSites }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
 				onMouseEnter={ this.onSiteHover }
-				isHighlighted={ isHighlighted }
-				isSelected={ this.isSelected( site ) }
+				isHighlighted={ this.isHighlighted }
+				isSelected={ this.isSelected }
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
