@@ -58,6 +58,7 @@ class DomainRegistrationSuggestion extends Component {
 		productSaleCost: PropTypes.string,
 		isReskinned: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		products: PropTypes.object,
 	};
 
 	componentDidMount() {
@@ -398,7 +399,7 @@ class DomainRegistrationSuggestion extends Component {
 
 const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
-	const productsList = getProductsList( state );
+	const productsList = props.products ?? getProductsList( state );
 	const currentUserCurrencyCode =
 		props.suggestion.currency_code || getCurrentUserCurrencyCode( state );
 	const stripZeros = props.showStrikedOutPrice ? true : false;
