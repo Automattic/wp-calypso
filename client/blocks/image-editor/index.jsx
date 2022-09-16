@@ -254,6 +254,7 @@ class ImageEditor extends Component {
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
+							displayOnlyIcon={ true }
 						/>
 						<ImageEditorButtons
 							onCancel={ this.props.onCancel && this.onCancel }

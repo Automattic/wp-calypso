@@ -27,6 +27,7 @@ export class ImageEditorToolbar extends Component {
 		allowedAspectRatios: PropTypes.array,
 		onShowNotice: PropTypes.func,
 		isAspectRatioDisabled: PropTypes.bool,
+		displayOnlyIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -36,6 +37,7 @@ export class ImageEditorToolbar extends Component {
 		allowedAspectRatios: objectValues( AspectRatios ),
 		onShowNotice: noop,
 		isAspectRatioDisabled: false,
+		displayOnlyIcon: false,
 	};
 
 	constructor( props ) {
@@ -165,7 +167,7 @@ export class ImageEditorToolbar extends Component {
 			{
 				tool: 'rotate',
 				icon: 'rotate',
-				text: translate( 'Rotate' ),
+				text: this.props.displayOnlyIcon ? '' : translate( 'Rotate' ),
 				onClick: this.rotate,
 			},
 			allowedAspectRatios.length === 1
@@ -174,14 +176,14 @@ export class ImageEditorToolbar extends Component {
 						tool: 'aspect',
 						ref: this.setAspectMenuContext,
 						icon: 'crop',
-						text: translate( 'Crop' ),
+						text: this.props.displayOnlyIcon ? '' : translate( 'Crop' ),
 						onClick: this.onAspectOpen,
 						disabled: isAspectRatioDisabled,
 				  },
 			{
 				tool: 'flip-vertical',
-				icon: 'flip-vertical',
-				text: translate( 'Flip' ),
+				icon: 'flip-horizontal',
+				text: this.props.displayOnlyIcon ? '' : translate( 'Flip' ),
 				onClick: this.flip,
 			},
 		];

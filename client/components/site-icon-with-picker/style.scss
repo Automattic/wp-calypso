@@ -1,14 +1,82 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $icon-size: 80px;
 $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
-.site-icon-with-picker__image-editor {
-	position: absolute;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 2;
-	min-width: 50vw;
 
+.site-icon-with-picker__background {
+	width: 100vw;
+	height: 100%;
+	background: #fff;
+	position: absolute;
+	z-index: 2;
+	display: flex;
+	justify-content: center;
+}
+.site-icon-with-picker__image-editor {
+	height: 220px;
+	z-index: 2;
+
+	@include break-medium {
+		width: 895px;
+		height: 525px;
+	}
+
+	.image-editor__buttons {
+		position: absolute;
+		top: 100%;
+		right: 0;
+		display: flex;
+		padding: 0;
+		margin-top: 20px;
+		border: none;
+		padding-right: 14px;
+
+		&.image-editor__buttons-button {
+			width: 78px;
+		}
+		button:nth-child(1) {
+			order: 1;
+			width: 85px;
+		}
+		button:nth-child(2) {
+			order: 0;
+		}
+		button:nth-child(3) {
+			order: 2;
+		}
+		button:enabled {
+			font-weight: 500;
+			background-color: #fff;
+			border: 1px solid #c3c4c7;
+			color: #101517;
+		}
+	}
+
+	.image-editor__toolbar {
+		position: absolute;
+		top: 100%;
+		text-align: left;
+		display: unset;
+		left: 0;
+		margin-top: 20px;
+
+		.image-editor__toolbar-button {
+			svg {
+				display: none;
+			}
+		}
+		button:nth-child(1) {
+			background-image: url(./images/rotate-right.svg);
+			width: 24px;
+			height: 24px;
+		}
+		button:nth-child(2) {
+			background-image: url(./images/flip-horizontal.svg);
+			width: 24px;
+			height: 24px;
+		}
 	use {
 		fill: #fff;
 	}
