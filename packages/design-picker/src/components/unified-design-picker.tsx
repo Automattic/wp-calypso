@@ -132,7 +132,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 		return (
 			<div className="design-picker__pricing-description">
-				{ isPremium && (
+				{ ! showBundledBadge && isPremium && (
 					<PremiumBadge
 						tooltipPosition="bottom right"
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
