@@ -42,7 +42,7 @@ ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 
 # Add user calypso with uid 1003, give it sudo permissions
 RUN apt-get update \
-	&& apt-get install -y sudo zip jq curl \
+	&& apt-get install -y sudo zip jq curl git \
 	&& adduser --uid $UID --disabled-password $user \
 	&& echo "$user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$user \
 	&& chmod 0440 /etc/sudoers.d/$user \
