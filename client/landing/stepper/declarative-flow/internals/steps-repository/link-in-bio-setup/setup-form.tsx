@@ -22,6 +22,7 @@ interface SetupFormProps {
 	setSelectedFile: Dispatch< SetStateAction< File | undefined > >;
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
 	handleSubmit: ( event: FormEvent< Element > ) => void;
+	isLoading?: boolean;
 }
 
 const SetupForm = ( {
@@ -36,6 +37,7 @@ const SetupForm = ( {
 	setSelectedFile,
 	setBase64Image,
 	handleSubmit,
+	isLoading = false,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
@@ -103,9 +105,13 @@ const SetupForm = ( {
 					onChange={ onChange }
 				/>
 			</FormFieldset>
-
-			<Button className="link-in-bio-setup-form__submit" primary type="submit">
-				{ __( 'Continue' ) }
+			<Button
+				className="link-in-bio-setup-form__submit"
+				disabled={ isLoading }
+				primary
+				type="submit"
+			>
+				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
 			</Button>
 		</form>
 	);

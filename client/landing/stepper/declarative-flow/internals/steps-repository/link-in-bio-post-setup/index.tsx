@@ -23,6 +23,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = useState< string | null >();
+	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
@@ -31,8 +32,13 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 		setTagline( site?.description || '' );
 	}, [ site ] );
 
+	useEffect( () => {
+		setIsLoading( false );
+	}, [ siteTitle, tagline, invalidSiteTitle, selectedFile, base64Image ] );
+
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
+		setIsLoading( true );
 		setInvalidSiteTitle( ! siteTitle.trim().length );
 		if ( site ) {
 			await saveSiteSettings( site.ID, {
@@ -81,6 +87,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
+					isLoading={ isLoading }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
