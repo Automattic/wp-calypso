@@ -35,11 +35,8 @@ export function maybeRedirect( context, next ) {
 	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
 	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
 	// will avoid a redirect.
-	const shouldRedirectToLaunchpad =
-		options?.launchpad_screen === 'full' &&
-		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
 
-	if ( shouldRedirectToLaunchpad ) {
+	if ( options?.launchpad_screen === 'full' ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
