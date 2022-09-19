@@ -11,6 +11,7 @@ import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import EligibilityDialog from './eligibility-dialog';
 
 import './style.scss';
 
@@ -29,6 +30,8 @@ const Plans = () => {
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const dispatch = useDispatch();
 	const [ intervalType, setIntervalType ] = useState( getIntervalType() );
+	const [ showEligibility, setShowEligibility ] = useState( false );
+
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
@@ -57,7 +60,7 @@ const Plans = () => {
 	}, [ currentQuery ] );
 
 	const onSelectPlan = () => {
-		// show eligibility warnings
+		setShowEligibility( true );
 	};
 
 	return (
@@ -84,6 +87,10 @@ const Plans = () => {
 					isReskinned
 				/>
 			</div>
+			<EligibilityDialog
+				isVisible={ showEligibility }
+				onClose={ () => setShowEligibility( false ) }
+			/>
 		</MainComponent>
 	);
 };
