@@ -1,16 +1,33 @@
+import { Popover } from '@automattic/components';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import { FunctionComponent, useRef } from 'react';
+import { FunctionComponent, useRef, useState } from 'react';
 
 import './style.scss';
 
 interface Props {
 	className?: string;
+	tooltipPosition?: string;
 }
 
-const WooCommerceBundledBadge: FunctionComponent< Props > = ( { className } ) => {
+const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
+	className,
+	tooltipPosition = 'bottom left',
+} ) => {
+	const { __ } = useI18n();
+
+	const tooltipText = __( 'Placeholder text', __i18n_text_domain__ );
+
 	const divRef = useRef( null );
+	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
+
 	return (
-		<div className={ classNames( 'woocommerce-bundled-badge', className ) } ref={ divRef }>
+		<div
+			className={ classNames( 'woocommerce-bundled-badge', className ) }
+			ref={ divRef }
+			onMouseEnter={ () => setIsPopoverVisible( true ) }
+			onMouseLeave={ () => setIsPopoverVisible( false ) }
+		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				id="Layer_1"
@@ -32,6 +49,14 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( { className } ) =>
 				/>
 			</svg>
 			<span>WooCommerce</span>
+			<Popover
+				className="woocommerce-bundled-badge__popover"
+				context={ divRef.current }
+				isVisible={ isPopoverVisible }
+				position={ tooltipPosition }
+			>
+				{ tooltipText }
+			</Popover>
 		</div>
 	);
 };
