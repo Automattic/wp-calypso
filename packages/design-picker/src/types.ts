@@ -119,6 +119,7 @@ export interface DesignPreviewOptions {
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
+	disable_viewport_height?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

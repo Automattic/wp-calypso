@@ -26,7 +26,10 @@ export const newsletter: Flow = {
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStep,
+			flowName: name,
+		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
 

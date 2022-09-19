@@ -12,6 +12,7 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -94,9 +95,11 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	);
 	const currentRoute = useSelector( getCurrentRoute );
 
+	const domainIsNotProvisioning = getGSuiteProductSlug( domain ) || getTitanProductSlug( domain );
+	const isAwaitingGoogleTosAcceptance = getGSuiteSubscriptionStatus( domain ) === 'suspended';
 	const canAddMailboxes =
-		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
+		( domainIsNotProvisioning || hasEmailForwards( domain ) ) &&
+		! isAwaitingGoogleTosAcceptance &&
 		canCurrentUserAddEmail( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 

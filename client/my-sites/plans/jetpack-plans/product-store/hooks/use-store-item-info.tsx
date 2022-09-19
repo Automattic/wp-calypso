@@ -20,11 +20,15 @@ import {
 	getSiteProducts,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import { EXTERNAL_PRODUCTS_LIST } from '../../constants';
 import productButtonLabel from '../../product-card/product-button-label';
 import { SelectorProduct } from '../../types';
 import { UseStoreItemInfoProps } from '../types';
 
 const getIsDeprecated = ( item: SelectorProduct ) => Boolean( item.legacy );
+
+const getIsExternal = ( item: SelectorProduct ) =>
+	EXTERNAL_PRODUCTS_LIST.includes( item.productSlug );
 
 const getIsMultisiteCompatible = ( item: SelectorProduct ) => {
 	if ( isJetpackPlanSlug( item.productSlug ) ) {
@@ -192,6 +196,7 @@ export const useStoreItemInfo = ( {
 			getCheckoutURL,
 			getCtaLabel,
 			getIsDeprecated,
+			getIsExternal,
 			getIsIncludedInPlan,
 			getIsIncludedInPlanOrSuperseded,
 			getIsMultisiteCompatible,
