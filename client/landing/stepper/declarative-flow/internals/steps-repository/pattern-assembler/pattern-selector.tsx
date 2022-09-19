@@ -1,6 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
@@ -15,12 +14,7 @@ type PatternSelectorProps = {
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const locale = useLocale();
-	const translate = useTranslate();
 	const patternSelectorRef = useRef( null );
-
-	const handleBackClick = () => {
-		onSelect( null );
-	};
 
 	useEffect( () => {
 		show && patternSelectorRef.current?.focus();
