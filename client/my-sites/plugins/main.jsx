@@ -507,12 +507,12 @@ export class PluginsMain extends Component {
 							</div>
 						</div>
 
-						<div className={ classNames( 'plugins__main plugins__jetpack-cloud' ) }>
+						<div className="plugins__main plugins__main-updated">
 							<div className="plugins__main-header">
 								<SectionNav
 									applyUpdatedStyles
 									selectedText={ selectedTextContent }
-									className={ classNames( 'is-jetpack-cloud' ) }
+									className="plugins-section-nav"
 								>
 									<NavTabs selectedText={ title } selectedCount={ count }>
 										{ navItems }
