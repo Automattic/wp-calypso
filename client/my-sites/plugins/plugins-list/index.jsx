@@ -582,13 +582,6 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
-					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
-					haveInactiveSelected={ this.props.plugins.some(
-						this.filterSelection.inactive.bind( this )
-					) }
-					haveUpdatesSelected={ this.props.plugins.some(
-						this.filterSelection.updates.bind( this )
-					) }
 				/>
 				<PluginManagementV2
 					plugins={ this.getPlugins() }

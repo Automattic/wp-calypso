@@ -40,7 +40,6 @@ export class PluginsListHeader extends PureComponent {
 		toggleBulkManagement: PropTypes.func.isRequired,
 		updateAllPlugins: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
-		haveUpdatesSelected: PropTypes.bool,
 		pluginUpdateCount: PropTypes.number.isRequired,
 		activateSelected: PropTypes.func.isRequired,
 		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
@@ -54,8 +53,6 @@ export class PluginsListHeader extends PureComponent {
 		autoupdateEnablePluginNotice: PropTypes.func.isRequired,
 		autoupdateDisablePluginNotice: PropTypes.func.isRequired,
 		updatePluginNotice: PropTypes.func.isRequired,
-		haveActiveSelected: PropTypes.bool,
-		haveInactiveSelected: PropTypes.bool,
 		plugins: PropTypes.array.isRequired,
 		selected: PropTypes.array.isRequired,
 	};
@@ -104,19 +101,6 @@ export class PluginsListHeader extends PureComponent {
 
 	isJetpackSelected() {
 		return this.props.selected.some( ( plugin ) => 'jetpack' === plugin.slug );
-	}
-
-	canUpdatePlugins() {
-		const { selected, allSites } = this.props;
-		return selected.some( ( plugin ) =>
-			Object.values( allSites )
-				.filter( ( { ID } ) => plugin.sites.hasOwnProperty( ID ) )
-				.some( ( site ) => site.canUpdateFiles )
-		);
-	}
-
-	needsRemoveButton() {
-		return this.props.selected.length && this.canUpdatePlugins();
 	}
 
 	hasSelectedPlugins() {
