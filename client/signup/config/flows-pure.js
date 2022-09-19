@@ -21,6 +21,7 @@ export function generateFlows( {
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
+	getPluginInstallDestination = noop,
 } = {} ) {
 	const flows = [
 		{
@@ -513,6 +514,14 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
+		},
+		{
+			name: 'with-plugin',
+			steps: [ 'domains-plugin-preselected', 'plans-plugin', 'user' ],
+			destination: getPluginInstallDestination,
+			description: 'A flow for adding a plugin preselected from the logged-out plugins page',
+			providesDependenciesInQuery: [ 'pluginSlug' ],
+			lastModified: '2022-09-22',
 		},
 	];
 

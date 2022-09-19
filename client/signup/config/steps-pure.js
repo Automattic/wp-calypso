@@ -384,6 +384,19 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-plugin': {
+			stepName: 'plans-plugin',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug', 'pluginSlug', 'pluginItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'pluginItem', 'themeSlugWithRepo' ],
+			props: {
+				hideFreePlan: true,
+				planTypes: [ TYPE_BUSINESS, TYPE_ECOMMERCE ],
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
@@ -479,6 +492,24 @@ export function generateSteps( {
 				'shouldHideFreePlan',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
+			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'domains-plugin-preselected': {
+			stepName: 'domains-plugin-preselected',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'pluginItem',
+				'themeItem',
+				'shouldHideFreePlan',
+			],
+			optionalDependencies: [ 'pluginItem' ],
 			props: {
 				isDomainOnly: false,
 			},

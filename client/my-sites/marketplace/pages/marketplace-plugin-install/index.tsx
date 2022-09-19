@@ -53,14 +53,18 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
+const MarketplacePluginInstall = ( {
+	productSlug,
+	auto = false,
+}: MarketplacePluginInstallProps ) => {
 	const isUploadFlow = ! productSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
 	const [ nonInstallablePlanError, setNonInstallablePlanError ] = useState( false );
 	const [ noDirectAccessError, setNoDirectAccessError ] = useState( false );
-	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState( false );
+	const [ directInstallationAllowed, setDirectInstallationAllowed ] = useState( auto );
+	const [ waitingForSetup, setWaitingForSetup ] = useState( auto );
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -131,6 +135,12 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	useEffect( () => {
 		supportsAtomicUpgrade.current = hasAtomicFeature;
 	}, [ hasAtomicFeature ] );
+
+	// wait for the site to be setup before proceeding with the installation
+	useEffect( () => {
+		// FIX: 5 seconds is just a magic number.
+		setTimeout( () => setWaitingForSetup( false ), 5000 );
+	} );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -272,6 +282,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const renderError = () => {
+		if ( auto && ( atomicFlow || waitingForSetup ) ) {
+			return null;
+		}
+
 		// Evaluate error causes in priority order
 		if ( nonInstallablePlanError ) {
 			return (

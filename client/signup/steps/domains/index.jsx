@@ -46,7 +46,10 @@ import {
 	recordAddDomainButtonClickInTransferDomain,
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import {
+	getAvailableProductsList,
+	getMarketplaceProducts,
+} from 'calypso/state/products-list/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import {
@@ -273,6 +276,8 @@ class DomainsStep extends Component {
 			  } )
 			: undefined;
 
+		const pluginItem = this.props.marketplacePlugin;
+
 		suggestion && this.props.submitDomainStepSelection( suggestion, this.getAnalyticsSection() );
 
 		maybeExcludeEmailsStep( {
@@ -291,6 +296,7 @@ class DomainsStep extends Component {
 				{
 					stepName: this.props.stepName,
 					domainItem,
+					pluginItem,
 					googleAppsCartItem,
 					isPurchasingItem,
 					siteUrl,
@@ -301,6 +307,7 @@ class DomainsStep extends Component {
 			),
 			Object.assign(
 				{ domainItem },
+				{ pluginItem },
 				this.isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
 				useThemeHeadstartItem
 			)
@@ -798,10 +805,11 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
+		const { isAllDomains, translate, isReskinned, stepName, userSiteCount } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
+		const pluginSlug = this.props.queryObject?.pluginSlug;
 		let backUrl;
 		let backLabelText;
 		let isExternalBackUrl = false;
@@ -817,6 +825,9 @@ class DomainsStep extends Component {
 		} else if ( isAllDomains ) {
 			backUrl = domainManagementRoot();
 			backLabelText = translate( 'Back to All Domains' );
+		} else if ( pluginSlug && 'domains-plugin-preselected' === stepName ) {
+			backUrl = `/plugins/${ pluginSlug }`;
+			backLabelText = translate( 'Back to Plugins' );
 		} else {
 			backUrl = getStepUrl( this.props.flowName, this.props.stepName, null, this.getLocale() );
 
@@ -911,13 +922,31 @@ const submitDomainStepSelection = ( suggestion, section ) => {
 	);
 };
 
+function findMarketplacePlugin( state, pluginSlug, billingPeriod = '' ) {
+	const plugins = getMarketplaceProducts( state, pluginSlug );
+	const billingPeriodToTerm = {
+		MONTHLY: 'month',
+		YEARLY: 'year',
+	};
+	const term = ( billingPeriod && billingPeriodToTerm[ billingPeriod ] ) || '';
+
+	if ( ! term ) {
+		return plugins?.[ 0 ] || null;
+	}
+
+	return plugins?.find( ( plugin ) => plugin.product_term === term ) || null;
+}
+
 export default connect(
-	( state, { steps, flowName } ) => {
+	( state, { steps, flowName, queryObject } ) => {
 		const productsList = getAvailableProductsList( state );
 		const productsLoaded = ! isEmpty( productsList );
 		const isPlanStepSkipped = isPlanStepExistsAndSkipped( state );
 		const selectedSite = getSelectedSite( state );
 		const eligibleForProPlan = isEligibleForProPlan( state, selectedSite?.ID );
+		const marketplacePlugin = productsLoaded
+			? findMarketplacePlugin( state, queryObject?.pluginSlug, queryObject?.billingPeriod )
+			: null;
 
 		return {
 			designType: getDesignType( state ),
@@ -927,6 +956,7 @@ export default connect(
 			selectedSite,
 			sites: getSitesItems( state ),
 			userSiteCount: getCurrentUserSiteCount( state ),
+			marketplacePlugin,
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),

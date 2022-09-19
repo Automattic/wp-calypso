@@ -17,6 +17,12 @@ export function renderPluginsInstallPage( context, next ) {
 	next();
 }
 
+export function renderPluginsAutoInstallPage( context, next ) {
+	const { productSlug } = context.params;
+	context.primary = <MarketplacePluginInstall productSlug={ productSlug } auto={ true } />;
+	next();
+}
+
 export function renderMarketplaceThankYou( context, next ) {
 	const { productSlug } = context.params;
 

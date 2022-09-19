@@ -77,6 +77,10 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 				propValue = propValue.slug;
 			}
 
+			if ( propName === 'plugin_item' && propValue ) {
+				propValue = `product_slug:${ propValue.product_slug }`;
+			}
+
 			return {
 				...props,
 				[ propName ]: propValue,

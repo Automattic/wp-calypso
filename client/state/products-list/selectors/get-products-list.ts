@@ -19,6 +19,7 @@ export interface ProductListItem {
 	product_slug: string;
 	description: string;
 	product_type: string;
+	billing_product_slug: string;
 	available: boolean;
 	is_domain_registration: boolean;
 	cost_display: string;

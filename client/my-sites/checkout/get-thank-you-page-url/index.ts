@@ -46,6 +46,7 @@ import {
 	hasProPlan,
 	hasStarterPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
@@ -629,6 +630,11 @@ function getProfessionalEmailUpsellUrl( {
 	domains: ResponseDomain[] | undefined;
 	isDomainOnly?: boolean;
 } ): string | undefined {
+	if ( isE2ETest() ) {
+		// Do not show the upsell in e2e tests.
+		return;
+	}
+
 	if ( ! cart ) {
 		return;
 	}
