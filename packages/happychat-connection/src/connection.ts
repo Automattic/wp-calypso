@@ -47,7 +47,7 @@ export class Connection {
 	}
 
 	/**
-	 * Init the SockeIO connection: check user authorization and bind socket events
+	 * Init the SocketIO connection: check user authorization and bind socket events
 	 *
 	 * @param dispatch Redux dispatch function
 	 * @param auth Authentication promise, will return the user info upon fulfillment
@@ -65,7 +65,7 @@ export class Connection {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
-					socket
+					return socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
 						.on(
 							'token',
