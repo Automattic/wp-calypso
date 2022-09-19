@@ -65,7 +65,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 						) }
 					>
 						{ ! hasSelectedPatterns && (
-							<span>{ translate( 'Your page is blank. Start adding content on the left' ) }</span>
+							<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
 						) }
 					</div>,
 					webPreviewFrameContainer

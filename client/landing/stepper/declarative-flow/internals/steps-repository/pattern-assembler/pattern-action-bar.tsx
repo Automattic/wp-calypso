@@ -53,7 +53,7 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Replace"
+				label={ translate( 'Replace' ) }
 				onClick={ onReplace }
 				icon={ edit }
 				iconSize={ 20 }
@@ -61,7 +61,7 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Delete"
+				label={ translate( 'Delete' ) }
 				onClick={ onDelete }
 				icon={ closeSmall }
 				iconSize={ 23 }
