@@ -5,14 +5,16 @@ import { getTitanProductSlug } from 'calypso/lib/titan';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 /**
- * Determines whether a domain has email provider and is everything set up to add new mailboxes
+ * Determines if a domain has a provisioned email subscription and if the current user can add new mailboxes.
  */
 export function canAddMailboxesToEmailSubscription( domain?: ResponseDomain ): boolean {
-	const domainIsNotProvisioning = getGSuiteProductSlug( domain ) || getTitanProductSlug( domain );
+	const emailSubscriptionIsProvisioned = Boolean(
+		getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) || hasEmailForwards( domain )
+	);
 	const isAwaitingGoogleTosAcceptance = getGSuiteSubscriptionStatus( domain ) === 'suspended';
 
 	return (
-		( domainIsNotProvisioning || hasEmailForwards( domain ) ) &&
+		emailSubscriptionIsProvisioned &&
 		! isAwaitingGoogleTosAcceptance &&
 		canCurrentUserAddEmail( domain )
 	);
