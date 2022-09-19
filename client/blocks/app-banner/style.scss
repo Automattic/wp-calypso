@@ -96,6 +96,9 @@ body.app-banner-is-visible {
 		max-width: 18em;
 		margin-left: auto;
 		margin-right: auto;
+		-webkit-font-smoothing: auto;
+		-moz-osx-font-smoothing: initial;
+		text-rendering: auto;
 		@extend .wp-brand-font;
 	}
 }
