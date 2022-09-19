@@ -27,3 +27,13 @@
 	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	background-color: var(--color-neutral-100);
 }
+
+.plan-pill.is-in-marketplace {
+	top: unset;
+	bottom: unset;
+	right: unset;
+	left: 50%;
+	transform: translateX(-50%);
+	text-transform: none;
+	padding: 4px 10px;
+}
