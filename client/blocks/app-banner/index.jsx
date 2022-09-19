@@ -255,18 +255,20 @@ export class AppBanner extends Component {
 
 function BannerIcon( { icon } ) {
 	useEffect( () => {
+		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
 		const animation = lottie.loadAnimation( {
 			container: document.querySelector( '.app-banner__icon' ),
 			renderer: 'svg',
 			loop: false,
-			autoplay: true,
+			autoplay: ! reducedMotion,
 			path: icon,
 		} );
 
-		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
-
 		if ( reducedMotion ) {
-			animation.goToAndStop( 145, true );
+			animation.addEventListener( 'config_ready', () => {
+				animation.goToAndPlay( animation.totalFrames, true );
+			} );
 		}
 
 		return () => animation.destroy();
