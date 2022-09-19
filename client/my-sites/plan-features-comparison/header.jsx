@@ -1,4 +1,9 @@
-import { getPlans, getPlanClass } from '@automattic/calypso-products';
+import {
+	getPlans,
+	getPlanClass,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+} from '@automattic/calypso-products';
 import { getCurrencyObject } from '@automattic/format-currency';
 import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
@@ -9,11 +14,17 @@ import { connect } from 'react-redux';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PLANS_LIST = getPlans();
 
 export class PlanFeaturesComparisonHeader extends Component {
 	render() {
+		const { isInMarketplace } = this.props;
+		if ( isInMarketplace ) {
+			return this.renderPlanHeaderMarketplace();
+		}
 		return this.renderPlansHeaderNoTabs();
 	}
 
@@ -53,6 +64,42 @@ export class PlanFeaturesComparisonHeader extends Component {
 					{ this.getBillingTimeframe() }
 				</div>
 				{ this.getAnnualDiscount() }
+			</span>
+		);
+	}
+
+	renderPlanHeaderMarketplace() {
+		const { planType, title, translate, current } = this.props;
+
+		const headerClasses = classNames(
+			'plan-features-comparison__header',
+			getPlanClass( planType )
+		);
+
+		return (
+			<span>
+				{ current && (
+					<PlanPill isInMarketplace backgroundColor="#DCDCDE" color="var(--studio-gray-70)">
+						{ translate( 'Your current plan' ) }
+					</PlanPill>
+				) }
+				{ ( planType === PLAN_BUSINESS || planType === PLAN_BUSINESS_MONTHLY ) && (
+					<PlanPill
+						isInMarketplace
+						backgroundColor="var(--studio-green-5)"
+						color="var(--studio-green-80)"
+					>
+						{ translate( 'Ideal for you' ) }
+					</PlanPill>
+				) }
+				<header className={ headerClasses }>
+					<h4 className="plan-features-comparison__header-title">{ title }</h4>
+				</header>
+				<div className="plan-features-comparison__pricing">
+					{ this.renderPriceGroup() }
+					{ this.getBillingTimeframe() }
+				</div>
+				{ ! current && this.getAnnualDiscount() }
 			</span>
 		);
 	}
@@ -165,6 +212,9 @@ PlanFeaturesComparisonHeader.propTypes = {
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
 
+	// connected props
+	currentSitePlan: PropTypes.object,
+
 	// For Monthly Pricing test
 	annualPricePerMonth: PropTypes.number,
 	flow: PropTypes.string,
@@ -175,7 +225,10 @@ PlanFeaturesComparisonHeader.defaultProps = {
 };
 
 export default connect( ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
+	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
 	return {
 		flow: getCurrentFlowName( state ),
+		currentSitePlan,
 	};
 } )( localize( PlanFeaturesComparisonHeader ) );
