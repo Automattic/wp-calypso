@@ -6,10 +6,10 @@ import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-p
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
-function getProps( context ) {
+function getQueryOptions( { path, lang } ) {
 	const props = {
-		path: context.path,
-		locale: context.lang,
+		path,
+		locale: lang,
 		tag: '',
 	};
 	return props;
@@ -51,7 +51,7 @@ export async function fetchPlugins( context, next ) {
 	}
 
 	const options = {
-		...getProps( context ),
+		...getQueryOptions( context ),
 	};
 
 	await Promise.all( [
