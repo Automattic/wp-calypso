@@ -196,7 +196,6 @@ export class PlanFeaturesComparison extends Component {
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
 					/>
-					{ isInMarketplace && <h1>Placeholder for bottom text</h1> }
 				</td>
 			);
 		} );
