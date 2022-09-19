@@ -19,8 +19,13 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 	z-index: 2;
 
 	@include break-medium {
-		width: 895px;
-		height: 525px;
+		width: 800px;
+		height: 400px;
+	}
+
+	.image-editor__content,
+	.image-editor__crop-background {
+		background-color: #fff;
 	}
 
 	.image-editor__buttons {
@@ -42,9 +47,15 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 		}
 		button:nth-child(2) {
 			order: 0;
+			@include break-medium {
+				width: 85px;
+			}
 		}
 		button:nth-child(3) {
 			order: 2;
+			@include break-medium {
+				width: 85px;
+			}
 		}
 		button:enabled {
 			font-weight: 500;
