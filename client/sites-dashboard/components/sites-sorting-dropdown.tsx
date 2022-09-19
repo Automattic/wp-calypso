@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
@@ -23,6 +24,8 @@ const SortingButtonIcon = styled( Gridicon )( {
 } );
 
 type SitesSortingDropdownProps = ReturnType< typeof useSitesSorting >;
+
+const isTruthy = < T, >( x: T | false ): x is T => !! x;
 
 export const SitesSortingDropdown = ( {
 	onSitesSortingChange,
@@ -55,6 +58,32 @@ export const SitesSortingDropdown = ( {
 		}
 	}, [ __, sitesSorting, hasSitesSortingPreferenceLoaded ] );
 
+	const choices = useMemo( () => {
+		return [
+			{
+				value: stringifySitesSorting( {
+					sortKey: 'alphabetically',
+					sortOrder: 'asc',
+				} ),
+				label: __( 'Alphabetically' ),
+			},
+			config.isEnabled( 'sites/automagical-sorting' ) && {
+				value: stringifySitesSorting( {
+					sortKey: 'lastInteractedWith',
+					sortOrder: 'desc',
+				} ),
+				label: __( 'Automagically' ),
+			},
+			{
+				value: stringifySitesSorting( {
+					sortKey: 'updatedAt',
+					sortOrder: 'desc',
+				} ),
+				label: __( 'Last published' ),
+			},
+		].filter( isTruthy );
+	}, [ __ ] );
+
 	if ( ! hasSitesSortingPreferenceLoaded ) {
 		return null;
 	}
@@ -79,29 +108,7 @@ export const SitesSortingDropdown = ( {
 						onSitesSortingChange( parseSitesSorting( value ) );
 						onClose();
 					} }
-					choices={ [
-						{
-							value: stringifySitesSorting( {
-								sortKey: 'alphabetically',
-								sortOrder: 'asc',
-							} ),
-							label: __( 'Alphabetically' ),
-						},
-						{
-							value: stringifySitesSorting( {
-								sortKey: 'lastInteractedWith',
-								sortOrder: 'desc',
-							} ),
-							label: __( 'Automagically' ),
-						},
-						{
-							value: stringifySitesSorting( {
-								sortKey: 'updatedAt',
-								sortOrder: 'desc',
-							} ),
-							label: __( 'Last published' ),
-						},
-					] }
+					choices={ choices }
 				/>
 			) }
 		/>
