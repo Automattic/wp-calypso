@@ -52,7 +52,11 @@
 	cursor: pointer;
 
 	&.hide {
-		display: none;
+		visibility: hidden;
+
+		.plugin-action__label-text {
+			display: none;
+		}
 	}
 
 	.is-disabled & {
@@ -67,6 +71,7 @@
 }
 
 .plugin-action__disabled-info.info-popover {
+	visibility: visible;
 	flex: none;
 	margin: 0 4px -1px;
 
@@ -79,6 +84,11 @@
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}
+
+}
+
+.plugin-action__disabled-info.info-popover__tooltip {
+	z-index: z-index("root", ".popover.info-popover__tooltip.plugin-action__disabled-info");
 }
 
 .plugin-action__disabled-info-list {
