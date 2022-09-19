@@ -345,6 +345,12 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
+				get headerText() {
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Empower your online presence' )
+						? i18n.translate( 'Empower your online presence' )
+						: '';
+				},
 				useEmailOnboardingSubheader: true,
 			},
 		},
@@ -439,7 +445,10 @@ export function generateSteps( {
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				get headerText() {
-					return i18n.translate( 'Choose a domain for your Professional Email' );
+					return i18n.getLocaleSlug() === 'en' ||
+						i18n.hasTranslation( 'Choose a domain for your Professional Email' )
+						? i18n.translate( 'Choose a domain for your Professional Email' )
+						: '';
 				},
 				includeWordPressDotCom: false,
 				isDomainOnly: false,
