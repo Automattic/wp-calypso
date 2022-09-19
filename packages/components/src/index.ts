@@ -34,7 +34,6 @@ export type {
 	SitesTableSortKey,
 	SitesTableSortOrder,
 } from './sites-table/use-sites-table-sorting';
-export { sitesTableSortKeys, sitesTableSortOrders } from './sites-table/use-sites-table-sorting';
 export { withSitesTableSorting } from './sites-table/with-sites-table-sorting';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';

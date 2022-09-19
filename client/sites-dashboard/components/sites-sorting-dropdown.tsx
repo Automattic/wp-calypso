@@ -75,7 +75,7 @@ export const SitesSortingDropdown = ( {
 			renderContent={ ( { onClose } ) => (
 				<MenuItemsChoice
 					value={ stringifySitesSorting( sitesSorting ) }
-					onSelect={ ( value ) => {
+					onSelect={ ( value: Parameters< typeof parseSitesSorting >[ 0 ] ) => {
 						onSitesSortingChange( parseSitesSorting( value ) );
 						onClose();
 					} }

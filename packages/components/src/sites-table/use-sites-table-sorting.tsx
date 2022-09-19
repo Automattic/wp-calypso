@@ -8,10 +8,8 @@ export interface SiteDetailsForSorting {
 	};
 }
 
-export const sitesTableSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ];
-export type SitesTableSortKey = typeof sitesTableSortKeys[ number ];
-export const sitesTableSortOrders = [ 'asc', 'desc' ];
-export type SitesTableSortOrder = typeof sitesTableSortOrders[ number ];
+export type SitesTableSortKey = 'lastInteractedWith' | 'updatedAt' | 'alphabetically';
+export type SitesTableSortOrder = 'asc' | 'desc';
 
 export interface SitesTableSortOptions {
 	sortKey?: SitesTableSortKey;
