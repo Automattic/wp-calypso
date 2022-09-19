@@ -86,7 +86,8 @@ $plan-features-sidebar-width: 272px;
 	overflow-x: auto;
 }
 
-.plan-features--signup {
+.plan-features--signup,
+.plan-features--marketplace {
 	margin: 0 auto;
 
 	.signup__steps & {
@@ -332,6 +333,31 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features--marketplace {
+	.plan-features-comparison__table {
+		width: 100%;
+	}
+	.plan-features-comparison__actions::after {
+		content: "";
+		position: absolute;
+		height: 1px;
+		width: 80%;
+		left: 0;
+		right: 0;
+		border-bottom: 1px solid rgba(220, 220, 222, 0.64);
+		bottom: 0;
+		transform: translateX(20%);
+	}
+	.plan-features-comparison__table-item {
+		border: none;
+	}
+	.plan-features-comparison__header,
+	.plan-features-comparison__pricing,
+	.plan-features-comparison__table-item.is-top-buttons {
+		border-right: 1px solid rgba(220, 220, 222, 0.64);
+	}
+}
+
 .plans-features-main__group.is-scrollable {
 	position: relative;
 
@@ -486,7 +512,8 @@ body.is-section-signup.is-white-signup {
 }
 
 .notouch body.is-section-signup.is-white-signup .signup__step .segmented-control.price-toggle,
-.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle {
+.notouch body.is-section-plans.is-section-plans .plans .segmented-control.price-toggle,
+.notouch body.is-section-plugins.is-section-plugins .plans .segmented-control.price-toggle {
 	background-color: #f2f2f2;
 	margin-top: 0;
 

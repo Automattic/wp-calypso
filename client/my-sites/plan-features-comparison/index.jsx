@@ -55,13 +55,15 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate, isFAQCondensedExperiment } = this.props;
+		const { isInSignup, planProperties, translate, isFAQCondensedExperiment, isInMarketplace } =
+			this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
+			'plan-features--marketplace': isInMarketplace,
 		} );
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
@@ -93,7 +95,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties, isReskinned } = this.props;
+		const { basePlansPath, planProperties, isReskinned, isInMarketplace } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
