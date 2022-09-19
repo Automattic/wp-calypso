@@ -438,9 +438,12 @@ class ManagePurchase extends Component {
 			translate,
 		} = this.props;
 
-		const text = isPlan( purchase )
-			? translate( 'Remove plan' )
-			: translate( 'Remove subscription' );
+		let text = translate( 'Remove subscription' );
+		if ( isPlan( purchase ) ) {
+			text = translate( 'Remove plan' );
+		} else if ( isDomainRegistration( purchase ) ) {
+			text = translate( 'Remove domain' );
+		}
 
 		return (
 			<RemovePurchase
