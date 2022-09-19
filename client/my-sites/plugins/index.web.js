@@ -1,6 +1,7 @@
 import { getLanguageRouteParam } from '@automattic/i18n-utils';
 import {
 	makeLayout,
+	notFound,
 	redirectLoggedOut,
 	redirectWithoutLocaleParamIfLoggedIn,
 	render as clientRender,
@@ -89,8 +90,11 @@ export default function ( router ) {
 		clientRender
 	);
 
+	router( `/${ langParam }/plugins/plans`, notFound, makeLayout );
+
 	router(
-		'/plugins/plans/:site',
+		`/${ langParam }/plugins/plans/:site`,
+		redirectWithoutLocaleParamIfLoggedIn,
 		redirectLoggedOut,
 		scrollTopIfNoHash,
 		siteSelection,
