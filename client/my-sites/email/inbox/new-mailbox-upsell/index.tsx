@@ -2,7 +2,7 @@ import { Button, Ribbon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { canAddMailboxesToDomain } from 'calypso/lib/emails';
+import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
 import { hasTitanMailWithUs, isUserOnTitanFreeTrial } from 'calypso/lib/titan';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
@@ -20,7 +20,7 @@ const NewMailboxUpsell = ( { domains }: { domains: ResponseDomain[] } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug;
 
-	const canAddMailboxes = domains.some( canAddMailboxesToDomain );
+	const canAddMailboxes = domains.some( canAddMailboxesToEmailSubscription );
 	if ( ! canAddMailboxes ) {
 		return null;
 	}

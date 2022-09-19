@@ -11,7 +11,7 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
-import { canAddMailboxesToDomain } from 'calypso/lib/emails';
+import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
@@ -87,7 +87,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 	const currentRoute = useSelector( getCurrentRoute );
-	const canAddMailboxes = canAddMailboxesToDomain( domain );
+	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {

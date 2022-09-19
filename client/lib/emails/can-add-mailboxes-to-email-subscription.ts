@@ -7,7 +7,7 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 /**
  * Determines whether a domain has email provider and is everything set up to add new mailboxes
  */
-export function canAddMailboxesToDomain( domain?: ResponseDomain ): boolean {
+export function canAddMailboxesToEmailSubscription( domain?: ResponseDomain ): boolean {
 	const domainIsNotProvisioning = getGSuiteProductSlug( domain ) || getTitanProductSlug( domain );
 	const isAwaitingGoogleTosAcceptance = getGSuiteSubscriptionStatus( domain ) === 'suspended';
 
