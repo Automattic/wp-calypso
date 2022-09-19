@@ -96,7 +96,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
+									window.location.replace( `/home/${ siteSlug }` );
 								} );
 
 								submit?.();
