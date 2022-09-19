@@ -36,6 +36,7 @@ type Props = {
 	selectedPlan?: string;
 	selectedFeature?: string;
 	isInSignup: boolean;
+	isInMarketplace: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 };
@@ -55,7 +56,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 		plan: props.selectedPlan,
 	};
 
-	if ( props.isInSignup || 'customerType' in additionalArgs ) {
+	if ( props.isInSignup || 'customerType' in additionalArgs || props.isInMarketplace ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,

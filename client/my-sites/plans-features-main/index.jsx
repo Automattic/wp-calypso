@@ -117,6 +117,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isReskinned,
 			isFAQCondensedExperiment,
+			isInMarketplace,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -149,6 +150,7 @@ export class PlansFeaturesMain extends Component {
 					withDiscount={ withDiscount }
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
+					flowName={ flowName }
 					popularPlanSpec={ getPopularPlanSpec( {
 						flowName,
 						customerType,
@@ -158,6 +160,7 @@ export class PlansFeaturesMain extends Component {
 					siteId={ siteId }
 					isReskinned={ isReskinned }
 					isFAQCondensedExperiment={ isFAQCondensedExperiment }
+					isInMarketplace={ isInMarketplace }
 				/>
 			</div>
 		);
@@ -359,7 +362,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
-		const { customerType, selectedPlan, plansWithScroll, isAllPaidPlansShown } = this.props;
+		const {
+			customerType,
+			selectedPlan,
+			plansWithScroll,
+			isAllPaidPlansShown,
+			isInMarketplace,
+			sitePlanSlug,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
@@ -391,6 +401,13 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
+
+		if ( isInMarketplace ) {
+			return plans.filter(
+				( plan ) =>
+					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+			);
+		}
 
 		if ( isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
@@ -440,7 +457,10 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment, showFAQ } = this.props;
+		if ( ! showFAQ ) {
+			return;
+		}
 
 		if ( isInSignup ) {
 			if ( isFAQExperiment ) {
@@ -524,7 +544,7 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-
+	isInMarketplace: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
