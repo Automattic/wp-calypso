@@ -1,3 +1,5 @@
+$videopress-mobile-layout-width: 700px;
+
 .videopress {
 	.segmented-control {
 		background: transparent;
@@ -19,6 +21,11 @@
 	}
 
 	.plans-table {
+		@media (max-width: $videopress-mobile-layout-width) {
+			flex-direction: column;
+			align-content: center;
+		}
+
 		justify-content: center;
 		gap: 24px;
 
@@ -28,6 +35,11 @@
 		}
 
 		.plan-item {
+			@media (max-width: $videopress-mobile-layout-width) {
+				border: solid 1px rgba(255, 255, 255, 0.2);
+				padding: 20px;
+			}
+
 			min-width: auto;
 			flex-grow: unset;
 			margin-top: 46px;
