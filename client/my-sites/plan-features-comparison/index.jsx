@@ -41,9 +41,11 @@ import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
+import { isCurrentSitePlan } from 'calypso/state/sites/selectors';
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
+
 import './style.scss';
 
 const noop = () => {};
@@ -143,6 +145,7 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						isInMarketplace={ isInMarketplace }
 					/>
 				</th>
 			);
@@ -162,7 +165,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderTopButtons() {
-		const { isInSignup, isLaunchPage, planProperties } = this.props;
+		const { isInSignup, isLaunchPage, planProperties, isInMarketplace } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -187,11 +190,13 @@ export class PlanFeaturesComparison extends Component {
 						isPopular={ popular }
 						isInSignup={ isInSignup }
 						isLaunchPage={ isLaunchPage }
+						isInMarketplace={ isInMarketplace }
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
 					/>
+					{ isInMarketplace && <h1>Placeholder for bottom text</h1> }
 				</td>
 			);
 		} );
@@ -235,10 +240,10 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderAnnualPlansFeatureNotice( feature ) {
-		const { translate, isInSignup } = this.props;
+		const { translate, isInSignup, isInMarketplace } = this.props;
 
 		if (
-			! isInSignup ||
+			! ( isInSignup || isInMarketplace ) ||
 			! feature.availableOnlyForAnnualPlans ||
 			feature.availableForCurrentPlan
 		) {
@@ -420,6 +425,7 @@ export default connect(
 	( state, ownProps ) => {
 		const {
 			isInSignup,
+			isInMarketplace,
 			placeholder,
 			plans,
 			isLandingPage,
@@ -427,10 +433,12 @@ export default connect(
 			visiblePlans,
 			popularPlanSpec,
 			isFAQCondensedExperiment,
+			flowName: flow,
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const flowName = getCurrentFlowName( state );
+		const flowName = getCurrentFlowName( state ) || flow;
+		const selectedSiteId = siteId;
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -494,7 +502,7 @@ export default connect(
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
 				const planUniqueFeatures = planConstantObj.getCondensedExperimentUniqueFeatures?.() || [];
-				if ( annualPlansOnlyFeatures.length > 0 ) {
+				if ( isInMarketplace || annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
@@ -521,7 +529,7 @@ export default connect(
 				}
 
 				// Strip annual-only features out for the site's /plans page
-				if ( ! isInSignup || isPlaceholder ) {
+				if ( ! ( isInSignup || isInMarketplace ) || isPlaceholder ) {
 					planFeatures = planFeatures.filter(
 						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
 					);
@@ -536,6 +544,7 @@ export default connect(
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
 					currencyCode: getCurrentUserCurrencyCode( state ),
+					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
 					isLandingPage,
