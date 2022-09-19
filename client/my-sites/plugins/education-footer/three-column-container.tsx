@@ -11,7 +11,7 @@ const ThreeColumnContainer = styled.div`
 
 	display: grid;
 	grid-template-columns: repeat( 3, 1fr );
-	column-gap: 29px;
+	column-gap: 22px;
 	row-gap: 10px;
 `;
 

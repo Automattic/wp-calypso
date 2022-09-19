@@ -4,13 +4,21 @@ import Section from 'calypso/components/section';
 import { preventWidows } from 'calypso/lib/formatting';
 import ThreeColumnContainer from './three-column-container';
 
-const StaticInfoFooter = () => {
+const HeaderContent = () => {
 	const { __ } = useI18n();
 	return (
-		<Section
-			header={ preventWidows( __( 'Add additional features to your WordPress site. Risk free.' ) ) }
-			dark
-		>
+		<>
+			{ preventWidows( __( 'You pick the plugin.' ) ) }
+			<br />
+			{ preventWidows( __( "We'll take care of the rest." ) ) }
+		</>
+	);
+};
+
+const StaticInfoSection = () => {
+	const { __ } = useI18n();
+	return (
+		<Section header={ <HeaderContent /> } dark>
 			<ThreeColumnContainer>
 				<FeatureItem header={ __( 'Fully Managed' ) }>
 					{ __(
@@ -19,12 +27,12 @@ const StaticInfoFooter = () => {
 				</FeatureItem>
 				<FeatureItem header={ __( 'Thousands of plugins' ) }>
 					{ __(
-						'Along with our hand curated collection of premium plugins, you also have thousands of community developed plugins at your disposal.'
+						"From WordPress.com premium plugins to thousands more community-authored plugins, we've got you covered."
 					) }
 				</FeatureItem>
 				<FeatureItem header={ __( 'Flexible pricing' ) }>
 					{ __(
-						'WordPress.com offers monthly and annual premium plugin pricing for extra flexibility.'
+						"Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It's entirely up to you."
 					) }
 				</FeatureItem>
 			</ThreeColumnContainer>
@@ -32,4 +40,4 @@ const StaticInfoFooter = () => {
 	);
 };
 
-export default StaticInfoFooter;
+export default StaticInfoSection;

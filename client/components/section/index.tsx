@@ -28,9 +28,9 @@ const SectionContainer = styled.div< SectionContainerProps >`
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		margin-top: -96px;
+		margin-top: -60px;
 	}
-	padding: 96px 0;
+	padding: 60px 0;
 `;
 
 const SectionHeader = styled.div< SectionHeaderProps >`
@@ -45,7 +45,7 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	margin-bottom: 25px;
 	font-size: var( --scss-font-title-large );
 	max-width: 377px;
-	line-height: 40px;
+	line-height: 35px;
 `;
 
 const SectionContent = styled.div``;

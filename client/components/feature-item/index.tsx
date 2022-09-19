@@ -9,7 +9,7 @@ interface FeatureItemProps {
 }
 
 const FeatureItemContainer = styled.div`
-	margin-top: calc( 64px - 25px ); // adds the margin needed for 64px
+	margin-top: calc( 30px - 25px ); // adds the margin needed for 30px
 `;
 
 const FeatureItemHeader = styled.div`
@@ -24,7 +24,8 @@ const FeatureItemContent = styled.p`
 	font-size: var( --scss-font-body-small );
 	font-weight: 400;
 	line-height: 22px;
-	color: var( --color-neutral-20 );
+	color: var( --color-text-inverted );
+	margin-bottom: 0;
 `;
 
 const FeatureItem = ( props: FeatureItemProps ) => {
