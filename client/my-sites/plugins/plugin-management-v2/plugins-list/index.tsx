@@ -41,7 +41,7 @@ export default function PluginsList( {
 
 	const trackManagePlugin = ( pluginSlug: string ) => () => {
 		recordTracksEvent( 'calypso_plugin_manage_click', {
-			site: selectedSite.ID,
+			site: selectedSite?.ID,
 			plugin: pluginSlug,
 		} );
 	};
