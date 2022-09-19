@@ -360,9 +360,7 @@ export class PluginsListHeader extends PureComponent {
 
 	render() {
 		const { label, selected, plugins, isBulkManagementActive, translate } = this.props;
-		const sectionClasses = classNames( {
-			'plugin-list-header': true,
-			'plugin-list-header-new': true,
+		const sectionClasses = classNames( 'plugin-list-header plugin-list-header-new', {
 			'is-bulk-editing': isBulkManagementActive,
 			'is-action-bar-visible': this.state.actionBarVisible,
 		} );
