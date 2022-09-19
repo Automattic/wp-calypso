@@ -14,7 +14,7 @@ type PatternSelectorProps = {
 
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const locale = useLocale();
-	const patternSelectorRef = useRef( null );
+	const patternSelectorRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		show && patternSelectorRef.current?.focus();
