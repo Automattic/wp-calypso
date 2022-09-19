@@ -49,8 +49,9 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
+	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
 
-	if ( getSiteOptions( state, siteId )?.launchpad_screen !== 'off' ) {
+	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption !== 'off' ) {
 		await refetchLaunchpadScreenOption( siteId, context );
 	}
 
