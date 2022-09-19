@@ -342,19 +342,22 @@ $plan-features-sidebar-width: 272px;
 		position: absolute;
 		height: 1px;
 		width: 80%;
-		left: 0;
-		right: 0;
 		border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 		bottom: 0;
-		transform: translateX(20%);
+		left: 10%;
 	}
 	.plan-features-comparison__table-item {
 		border: none;
 	}
-	.plan-features-comparison__header,
-	.plan-features-comparison__pricing,
+	.plan-features-comparison__table tr:first-of-type .plan-features-comparison__table-item:not(:last-child) {
+		border-right: 1px solid rgba(220, 220, 222, 0.64);
+	}
+
 	.plan-features-comparison__table-item.is-top-buttons {
 		border-right: 1px solid rgba(220, 220, 222, 0.64);
+		&:last-of-type {
+			border: none;
+		}
 	}
 }
 
