@@ -41,8 +41,8 @@ const noop = () => {};
 interface ExternalProps {
 	isEligible?: boolean;
 	backUrl: string;
-	onProceed: () => void;
-	standaloneProceed: boolean;
+	onProceed?: () => void;
+	standaloneProceed?: boolean;
 	className?: string;
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
