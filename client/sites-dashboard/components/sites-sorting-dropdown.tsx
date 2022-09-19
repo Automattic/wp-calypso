@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -69,41 +69,36 @@ export const SitesSortingDropdown = ( {
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<MenuGroup>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( {
+				<MenuItemsChoice
+					value={ sitesSorting }
+					onSelect={ ( value: SitesSorting ) => {
+						onSitesSortingChange( value );
+						onClose();
+					} }
+					choices={ [
+						{
+							value: {
 								sortKey: 'alphabetically',
 								sortOrder: 'asc',
-							} );
-							onClose();
-						} }
-					>
-						{ __( 'Alphabetically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( {
+							},
+							label: __( 'Alphabetically' ),
+						},
+						{
+							value: {
 								sortKey: 'lastInteractedWith',
 								sortOrder: 'desc',
-							} );
-							onClose();
-						} }
-					>
-						{ __( 'Automagically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( {
+							},
+							label: __( 'Automagically' ),
+						},
+						{
+							value: {
 								sortKey: 'updatedAt',
 								sortOrder: 'desc',
-							} );
-							onClose();
-						} }
-					>
-						{ __( 'Last published' ) }
-					</MenuItem>
-				</MenuGroup>
+							},
+							label: __( 'Last published' ),
+						},
+					] }
+				/>
 			) }
 		/>
 	);
