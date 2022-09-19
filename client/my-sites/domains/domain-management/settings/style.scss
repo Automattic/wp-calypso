@@ -2,6 +2,10 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+body.edit__body-white.theme-default.color-scheme {
+	--color-surface-backdrop: var(--studio-white);
+}
+
 .settings-header__children {
 	white-space: nowrap;
 	overflow: hidden;
@@ -27,7 +31,7 @@
 				.formatted-header__title {
 					font-weight: 400;
 					margin: 0;
-					line-height: 100%;
+					line-height: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 					@include break-zoomed-in {
 						font-size: $font-title-medium;
