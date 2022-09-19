@@ -38,11 +38,6 @@
 	animation: fadein 1.5s;
 }
 
-.site-thumbnail__mshot_default_hidden {
-	height: 0;
-	visibility: hidden;
-}
-
 .site-thumbnail-loader::before {
 	content: "";
 	animation-duration: 2.4s;
