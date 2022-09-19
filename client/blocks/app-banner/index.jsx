@@ -26,6 +26,7 @@ import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	GUTENBERG,
+	HOME,
 	NOTES,
 	READER,
 	STATS,
@@ -134,6 +135,8 @@ export class AppBanner extends Component {
 			switch ( currentSection ) {
 				case GUTENBERG:
 					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
+				case HOME:
+					return `intent://home/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case NOTES:
 					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case READER:

@@ -18,13 +18,14 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const { isDesktop, isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
 	const isDesktopApp = config.isEnabled( 'desktop' );
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+	const displayJetpackAppBranding =
+		config.isEnabled( 'jetpack/app-branding' ) && ( isAndroid || isIos );
 
 	const emailLogin = () => {
 		sendMobileLoginEmail( email );
 	};
 
-	if ( displayJetpackAppBranding && ( isAndroid || isIos ) ) {
+	if ( displayJetpackAppBranding ) {
 		const showIosBadge = ! isAndroid && ! isDesktop;
 		const showAndroidBadge = ! isIos && ! isDesktop;
 

@@ -7,6 +7,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './apps-badge.scss';
@@ -86,7 +87,10 @@ export class AppsBadge extends PureComponent {
 			this.loadImage();
 		}
 
-		this.displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
+		this.displayJetpackAppBranding =
+			config.isEnabled( 'jetpack/app-branding' ) && ( isIos || isAndroid );
 	}
 
 	loadImage() {
