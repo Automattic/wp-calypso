@@ -98,7 +98,7 @@ export const useMshotsImg = (
 		return () => {
 			clearTimeout( timeout.current );
 		};
-	}, [ isLoading, mshotUrl, previousSrc, retryCount, src, srcHasChanged ] );
+	}, [ isLoading, mshotUrl, retryCount, src ] );
 
 	useEffect( () => {
 		// Reset state when the image src changes. e.g. When the site is updated
