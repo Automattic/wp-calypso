@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { TranslateResult } from 'i18n-calypso';
-import type { MouseEventHandler, ReactElement } from 'react';
+import type { MouseEventHandler } from 'react';
 
 import './style.scss';
 
@@ -10,9 +10,7 @@ export interface EmailProviderStackedFeatureProps {
 	title: TranslateResult;
 }
 
-const EmailProviderStackedFeature = ( {
-	title,
-}: EmailProviderStackedFeatureProps ): ReactElement => {
+const EmailProviderStackedFeature = ( { title }: EmailProviderStackedFeatureProps ) => {
 	const size = 18;
 	return (
 		<div className="email-provider-stacked-features__feature">
@@ -37,7 +35,7 @@ export interface EmailProviderStackedFeaturesProps {
 export const EmailProviderStackedFeatures = ( {
 	features,
 	appLogos,
-}: EmailProviderStackedFeaturesProps ): ReactElement | null => {
+}: EmailProviderStackedFeaturesProps ) => {
 	const translate = useTranslate();
 
 	if ( ! features ) {
@@ -73,7 +71,7 @@ interface EmailProviderStackedFeaturesToggleButtonProps {
 export const EmailProviderStackedFeaturesToggleButton = ( {
 	handleClick,
 	isRelatedContentExpanded,
-}: EmailProviderStackedFeaturesToggleButtonProps ): ReactElement => {
+}: EmailProviderStackedFeaturesToggleButtonProps ) => {
 	const translate = useTranslate();
 
 	return (

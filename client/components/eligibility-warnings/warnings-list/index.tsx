@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
-import { ReactElement } from 'react';
 import Card from '../card';
 
 const WarningsList = styled.ul`
@@ -28,7 +27,7 @@ type WarningListProps = {
 	} >;
 };
 
-const WarningList = ( { warnings }: WarningListProps ): ReactElement => (
+const WarningList = ( { warnings }: WarningListProps ) => (
 	<Card icon="notice-outline" title={ __( 'Things you should be aware of' ) }>
 		<WarningsList>
 			{ warnings?.map( ( { name, description }, index ) => (

@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import { ReactElement } from 'react';
 import { CurrentSiteStatus, PluginActionStatus } from '../types';
 import { getPluginActionStatusMessages } from '../utils/get-plugin-action-status-messages';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -18,7 +17,7 @@ export default function RenderStatusMessage( {
 	currentStatus,
 	groupedStatues,
 	hasOneStatus,
-}: Props ): ReactElement | null {
+}: Props ) {
 	const currentGroupStatuses = groupedStatues[ currentStatus ];
 	const currentStatusAction = currentGroupStatuses[ 0 ].action;
 

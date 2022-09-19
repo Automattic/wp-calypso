@@ -2,7 +2,7 @@
 
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
@@ -59,14 +59,13 @@ function renderFeedError( err: FeedError ) {
 	);
 }
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function FeedItem( props: {
 	hideIfInList?: boolean;
 	isFollowed?: boolean;
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement | null {
+} ) {
 	const { list, owner, item } = props;
 	const feed = useSelector( ( state ) => {
 		let feed = props.item.meta?.data?.feed;
@@ -83,7 +82,7 @@ export default function FeedItem( props: {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () => dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );

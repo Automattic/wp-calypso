@@ -5,7 +5,7 @@ import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
-import { FormEvent, ReactElement, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -322,7 +322,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	);
 };
 
-function ControlError( { error }: { error: string } ): ReactElement | null {
+function ControlError( { error }: { error: string } ) {
 	if ( error ) {
 		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
 	}

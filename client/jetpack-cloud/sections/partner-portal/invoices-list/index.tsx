@@ -1,6 +1,6 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { memo, ReactElement, useCallback, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import Pagination from 'calypso/components/pagination';
 import { useCursorPagination } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import InvoicesListCard from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-card';
@@ -10,7 +10,7 @@ import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-in
 
 import './style.scss';
 
-const InvoicePlaceholderCard = memo( (): ReactElement => {
+const InvoicePlaceholderCard = memo( () => {
 	return (
 		<InvoicesListRow>
 			<div>
@@ -36,7 +36,7 @@ const InvoicePlaceholderCard = memo( (): ReactElement => {
 	);
 } );
 
-export default function InvoicesList(): ReactElement {
+export default function InvoicesList() {
 	const translate = useTranslate();
 	const [ pagination, setPagination ] = useState( { starting_after: '', ending_before: '' } );
 	const invoices = useInvoicesQuery( pagination );

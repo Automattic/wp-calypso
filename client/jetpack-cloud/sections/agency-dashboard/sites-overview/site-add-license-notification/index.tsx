@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -11,7 +11,7 @@ export default function SiteAddLicenseNotification( {
 	purchasedLicense,
 }: {
 	purchasedLicense: PurchasedProduct;
-} ): ReactElement | null {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

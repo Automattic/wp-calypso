@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { ReactElement, ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 const CardTitle = styled.span`
 	display: flex;
@@ -41,13 +41,12 @@ const Icon = styled( Gridicon )`
 	}
 `;
 
-interface Card {
+type CardProps = PropsWithChildren< {
 	title: string;
 	icon?: string;
-	children: ReactNode;
-}
+} >;
 
-export default function Card( { title, icon = 'domains', children }: Card ): ReactElement | null {
+export default function Card( { title, icon = 'domains', children }: CardProps ) {
 	return (
 		<>
 			<CardTitle>

@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import type { ReactChild, ReactElement } from 'react';
+import type { ReactChild } from 'react';
 import './style.scss';
 
 function getStepClassName( currentStep: number, step: number ): any {
@@ -16,13 +16,7 @@ function getStepClassName( currentStep: number, step: number ): any {
 	} );
 }
 
-function CheckMarkOrNumber( {
-	currentStep,
-	step,
-}: {
-	currentStep: number;
-	step: number;
-} ): ReactElement {
+function CheckMarkOrNumber( { currentStep, step }: { currentStep: number; step: number } ) {
 	if ( currentStep > step ) {
 		return (
 			<span className="assign-license-step-progress__step-circle">
@@ -49,7 +43,7 @@ interface Props {
 	currentStep: StepKey;
 }
 
-export default function AssignLicenseStepProgress( { currentStep }: Props ): ReactElement | null {
+export default function AssignLicenseStepProgress( { currentStep }: Props ) {
 	const translate = useTranslate();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
