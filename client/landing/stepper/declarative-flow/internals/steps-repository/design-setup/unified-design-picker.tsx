@@ -143,15 +143,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const hasStyleVariations =
-		selectedDesign &&
-		selectedDesign.design_type !== 'vertical' &&
-		selectedDesign.style_variations &&
-		selectedDesign.style_variations.length > 0 &&
-		isEnabled( 'signup/design-picker-style-selection' );
+	const isEnabledStyleSelection = isEnabled( 'signup/design-picker-style-selection' );
+	const selectedDesignHasStyleVariations =
+		isEnabledStyleSelection &&
+		selectedDesign?.style_variations &&
+		selectedDesign?.style_variations.length > 0;
 
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign && hasStyleVariations,
+		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
 
 	const selectedStyleVariation = useSelect( ( select ) =>
@@ -178,7 +177,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: hasStyleVariations,
+			has_style_variations:
+				isEnabledStyleSelection && design.style_variations && design.style_variations.length > 0,
 		};
 	}
 
@@ -322,7 +322,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			flow,
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations: hasStyleVariations,
+			has_style_variations:
+				isEnabledStyleSelection &&
+				_selectedDesign.style_variations &&
+				_selectedDesign.style_variations.length > 0,
 		} );
 
 		submit?.( providedDependencies );
@@ -380,7 +383,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		} );
 
 		const pickDesignText =
-			selectedDesign?.design_type === 'vertical' || hasStyleVariations
+			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
 				? translate( 'Select and continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
@@ -406,7 +409,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
 				/>
-				{ hasStyleVariations ? (
+				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
@@ -443,7 +446,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		return hasStyleVariations ? (
+		return selectedDesignHasStyleVariations ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
