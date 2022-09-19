@@ -383,7 +383,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
-			<StaticInfoSection />
+			{ isMarketplaceProduct && <StaticInfoSection /> }
 		</MainComponent>
 	);
 }
