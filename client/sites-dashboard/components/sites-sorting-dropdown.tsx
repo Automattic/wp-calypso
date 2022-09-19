@@ -4,7 +4,11 @@ import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
-import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
+import {
+	stringifySitesSorting,
+	parseSitesSorting,
+	useSitesSorting,
+} from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
 const SortingButton = styled( Button )( {
@@ -70,31 +74,31 @@ export const SitesSortingDropdown = ( {
 			) }
 			renderContent={ ( { onClose } ) => (
 				<MenuItemsChoice
-					value={ sitesSorting }
-					onSelect={ ( value: SitesSorting ) => {
-						onSitesSortingChange( value );
+					value={ stringifySitesSorting( sitesSorting ) }
+					onSelect={ ( value ) => {
+						onSitesSortingChange( parseSitesSorting( value ) );
 						onClose();
 					} }
 					choices={ [
 						{
-							value: {
+							value: stringifySitesSorting( {
 								sortKey: 'alphabetically',
 								sortOrder: 'asc',
-							},
+							} ),
 							label: __( 'Alphabetically' ),
 						},
 						{
-							value: {
+							value: stringifySitesSorting( {
 								sortKey: 'lastInteractedWith',
 								sortOrder: 'desc',
-							},
+							} ),
 							label: __( 'Automagically' ),
 						},
 						{
-							value: {
+							value: stringifySitesSorting( {
 								sortKey: 'updatedAt',
 								sortOrder: 'desc',
-							},
+							} ),
 							label: __( 'Last published' ),
 						},
 					] }
