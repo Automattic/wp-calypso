@@ -105,7 +105,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					title={
 						<ListTileTitle>
 							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-								{ site.name }
+								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						</ListTileTitle>

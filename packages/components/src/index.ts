@@ -29,7 +29,12 @@ export {
 } from './sites-table/use-sites-table-filtering';
 export type { FilterableSiteLaunchStatuses } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
-export type { SitesTableSortKey, SitesTableSortOrder } from './sites-table/use-sites-table-sorting';
+export type {
+	SitesTableSortOptions,
+	SitesTableSortKey,
+	SitesTableSortOrder,
+} from './sites-table/use-sites-table-sorting';
+export { withSitesTableSorting } from './sites-table/with-sites-table-sorting';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './sites-table/site-status';
 export { SitesTableTabPanel } from './sites-table/sites-table-tab-panel';
 export { LoadingPlaceholder } from './loading-placeholder';
