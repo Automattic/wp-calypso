@@ -8,6 +8,8 @@ import {
 	useTranslatedSiteLaunchStatuses,
 } from './site-status';
 
+export const SITES_TABLE_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
+
 export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
 
 export const siteLaunchStatusFilterValues = [
@@ -39,6 +41,7 @@ type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 	URL: string;
 	name: string | undefined;
 	slug: string;
+	title: string;
 	visible?: boolean;
 };
 
@@ -102,7 +105,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 
 	const filteredSites = useFuzzySearch( {
 		data: groupedByStatus[ status ],
-		keys: [ 'URL', 'name', 'slug' ],
+		keys: SITES_TABLE_SEARCH_INDEX_KEYS,
 		query: search,
 	} );
 

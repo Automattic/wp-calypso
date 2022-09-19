@@ -27,10 +27,13 @@ function createMockSite( {
 		unmapped_url?: string;
 	};
 } = {} ) {
+	const slug = `site${ ID }.io`;
+
 	return {
 		name: name ?? `site ${ ID }`,
 		URL: URL ?? `https://site${ ID }.io`,
-		slug: `site${ ID }.io`,
+		slug,
+		title: name ?? slug,
 		is_private,
 		is_coming_soon,
 		visible,

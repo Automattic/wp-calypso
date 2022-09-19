@@ -26,6 +26,7 @@ export {
 	useSitesTableFiltering,
 	siteLaunchStatusFilterValues,
 	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
+	SITES_TABLE_SEARCH_INDEX_KEYS,
 } from './sites-table/use-sites-table-filtering';
 export type { FilterableSiteLaunchStatuses } from './sites-table/use-sites-table-filtering';
 export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
