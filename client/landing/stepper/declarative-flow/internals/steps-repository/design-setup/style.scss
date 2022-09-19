@@ -1,18 +1,11 @@
 @import "@wordpress/components/build-style/style";
 @import "@automattic/onboarding/styles/mixins";
-@import "@wordpress/base-styles/breakpoints.scss";
-@import "@wordpress/base-styles/mixins.scss";
+@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/_mixins.scss";
 
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
-$break-design-preview: 1024px;
-
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
-		@content;
-	}
-}
 
 .design-setup {
 	.step-container {
@@ -142,8 +135,6 @@ $break-design-preview: 1024px;
 		// Grid
 		.design-picker__grid {
 			.design-picker__design-option {
-				background: transparent;
-				border: none;
 				padding: 0;
 			}
 
@@ -177,6 +168,11 @@ $break-design-preview: 1024px;
 						}
 					}
 				}
+			}
+
+			.design-picker__design-option {
+				background: transparent;
+				border: none;
 			}
 
 			.design-button-cover__button:not(.is-primary) {
@@ -542,7 +538,7 @@ $break-design-preview: 1024px;
 	.generated-design-picker__view-more {
 		border-radius: 4px;
 		font-weight: 500;
-		line-height: 20px;
+		line-height: 1.25rem;
 		margin: 8px 0 -6px;
 		width: 100%;
 		flex-shrink: 0;
@@ -581,47 +577,6 @@ $break-design-preview: 1024px;
 		padding-inline-start: 0;
 		padding-inline-end: 0;
 
-		.action-buttons__title {
-			font-size: 0.875rem;
-			font-weight: 500;
-			line-height: 20px;
-
-			@include break-design-preview {
-				display: none;
-			}
-		}
-
-		.step-container__navigation {
-			&.action-buttons {
-				bottom: 0;
-				inset-inline-start: 0;
-				inset-inline-end: 0;
-				padding: 0 20px;
-				position: fixed;
-				top: auto;
-
-				.navigation-link {
-					margin-top: -2px;
-				}
-
-				@include break-design-preview {
-					inset-inline-start: 72px;
-					inset-inline-end: 24px;
-					padding: 1px 0 0;
-					position: absolute;
-					top: 8px;
-
-					.navigation-link {
-						margin-top: 0;
-					}
-
-					button.is-primary {
-						display: none;
-					}
-				}
-			}
-		}
-
 		.step-container__header {
 			display: none;
 		}
@@ -630,11 +585,9 @@ $break-design-preview: 1024px;
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
 			height: calc(100vh - 156px);
 			margin-top: 36px;
-			position: relative;
-			z-index: 1;
 		}
 
-		@include break-design-preview {
+		@include break-small {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;

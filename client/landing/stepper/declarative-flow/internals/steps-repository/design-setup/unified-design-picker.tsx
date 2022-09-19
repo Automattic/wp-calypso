@@ -50,6 +50,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 
+	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -363,22 +364,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (
-			<>
-				{ isEnabledStyleSelection && (
-					<div className="action-buttons__title">{ headerDesignTitle }</div>
+			<div>
+				{ shouldUpgrade ? (
+					<Button primary borderless={ false } onClick={ upgradePlan }>
+						{ translate( 'Unlock theme' ) }
+					</Button>
+				) : (
+					<Button primary borderless={ false } onClick={ () => pickDesign() }>
+						{ pickDesignText }
+					</Button>
 				) }
-				<div>
-					{ shouldUpgrade ? (
-						<Button primary borderless={ false } onClick={ upgradePlan }>
-							{ translate( 'Unlock theme' ) }
-						</Button>
-					) : (
-						<Button primary borderless={ false } onClick={ () => pickDesign() }>
-							{ pickDesignText }
-						</Button>
-					) }
-				</div>
-			</>
+			</div>
 		);
 
 		const stepContent = (
@@ -432,7 +428,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
-				customizedActionButtons={ actionButtons }
+				customizedActionButtons={ isMobile ? actionButtons : undefined }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (
