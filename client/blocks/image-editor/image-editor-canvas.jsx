@@ -82,7 +82,7 @@ export class ImageEditorCanvas extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.src !== prevProps.src || ! this.image ) {
+		if ( this.props.src !== prevProps.src ) {
 			this.getImage( this.props.src );
 		}
 

@@ -183,18 +183,7 @@ button {
 
 					span {
 						font-size: $font-body-extra-small;
-
-						&.add {
-							color: var(--studio-blue-50);
-						}
-
-						&.replace {
-							color: var(--studio-gray-60);
-
-							&:hover {
-								color: var(--studio-blue-50);
-							}
-						}
+						color: var(--studio-blue-50);
 					}
 				}
 			}
