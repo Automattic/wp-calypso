@@ -82,11 +82,9 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ imgProps.src && ! isError && (
+			{ imgProps.src && ! isLoading && (
 				<img
-					className={ classnames( 'site-thumbnail__image', {
-						'site-thumbnail__mshot_default_hidden': isLoading,
-					} ) }
+					className="site-thumbnail__image"
 					alt={ alt }
 					sizes={ sizesAttr || `${ width }px` }
 					{ ...imgProps }
