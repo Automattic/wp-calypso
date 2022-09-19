@@ -115,7 +115,7 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const { localizePath } = useLocalizedPlugins();
 
 	useEffect( () => {
-		if ( breadcrumbs.length === 0 || ( ! category && ! search ) ) {
+		if ( breadcrumbs?.length === 0 || ( ! category && ! search ) ) {
 			dispatch( resetBreadcrumbs() );
 			dispatch(
 				appendBreadcrumb( {

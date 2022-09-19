@@ -217,7 +217,7 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		if ( breadcrumbs.length === 0 ) {
+		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
