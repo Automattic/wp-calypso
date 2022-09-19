@@ -1,6 +1,10 @@
-import { getQueryArg } from '@wordpress/url';
 import page from 'page';
-import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import {
+	canCurrentUserUseCustomerHome,
+	isRequestingSite,
+	getSiteOptions,
+} from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -19,7 +23,23 @@ export default async function ( context, next ) {
 	next();
 }
 
-export function maybeRedirect( context, next ) {
+const refetchLaunchpadScreenOption = async ( siteId, context ) => {
+	return new Promise( ( resolve ) => {
+		const unsubscribe = context.store.subscribe( () => {
+			if ( isRequestingSite( context.store.getState(), siteId ) ) {
+				return;
+			}
+
+			unsubscribe();
+			resolve();
+		} );
+
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( requestSite( siteId ) );
+	} );
+};
+
+export async function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
 
@@ -29,21 +49,20 @@ export function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const options = getSiteOptions( state, siteId );
 
-	// Normally, checking the launchpad_screen option in redux state would be enough to decide whether
-	// or not to redirect to launchpad. The option, however, is loading stale data in horizon, and presumably,
-	// in production as well. The forceLoadLaunchpadData query param is a temporary patch to circumvent stale data, and
-	// will avoid a redirect.
-	const shouldRedirectToLaunchpad =
-		options?.launchpad_screen === 'full' &&
-		! getQueryArg( window.location.href, 'forceLoadLaunchpadData' );
+	if ( getSiteOptions( state, siteId )?.launchpad_screen !== 'off' ) {
+		await refetchLaunchpadScreenOption( siteId, context );
+	}
+
+	// TODO: Write explanation for refetching launchpad site options
+	const refetchedOptions = getSiteOptions( context.store.getState(), siteId );
+	const shouldRedirectToLaunchpad = refetchedOptions?.launchpad_screen === 'full';
 
 	if ( shouldRedirectToLaunchpad ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
-		redirectToLaunchpad( slug, options?.site_intent );
+		redirectToLaunchpad( slug, refetchedOptions?.site_intent );
 		return;
 	}
 	next();
