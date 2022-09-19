@@ -247,7 +247,7 @@ export class PluginsListHeader extends PureComponent {
 					<Button
 						compact
 						scary
-						disabled={ this.hasSelectedPlugins() }
+						disabled={ ! this.hasSelectedPlugins() }
 						onClick={ this.props.removePluginNotice }
 					>
 						{ translate( 'Remove' ) }
