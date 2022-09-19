@@ -19,7 +19,6 @@ import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import Main from 'calypso/components/main';
 import Search from 'calypso/components/search';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
@@ -453,9 +452,11 @@ export class PluginsMain extends Component {
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
 
-		const pageTitle = this.props.translate( 'Plugins', { textOnly: true } );
-
 		const { isJetpackCloud, selectedSite } = this.props;
+
+		const pageTitle = isJetpackCloud
+			? this.props.translate( 'Plugins', { textOnly: true } )
+			: this.props.translate( 'Installed Plugins', { textOnly: true } );
 
 		const { title, count } = this.getSelectedText();
 
