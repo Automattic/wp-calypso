@@ -5,15 +5,6 @@ import PropTypes from 'prop-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const noop = () => {};
-const PlanFeaturesComparisonActions = ( props ) => {
-	return (
-		<div className="plan-features-comparison__actions">
-			<div className="plan-features-comparison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -29,6 +20,7 @@ const PlanFeaturesActionsButton = ( {
 	planType,
 	primaryUpgrade = false,
 	translate,
+	isInMarketplace,
 } ) => {
 	const classes = classNames(
 		'plan-features__actions-button',
@@ -51,6 +43,29 @@ const PlanFeaturesActionsButton = ( {
 
 		onUpgradeClick();
 	};
+
+	if ( isInMarketplace ) {
+		if ( current ) {
+			return (
+				<Button className={ classes } disabled>
+					{ translate( 'Current Plan', {
+						args: {
+							plan: planName,
+						},
+					} ) }
+				</Button>
+			);
+		}
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ translate( 'Upgrade to %(plan)s', {
+					args: {
+						plan: planName,
+					},
+				} ) }
+			</Button>
+		);
+	}
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
@@ -91,6 +106,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesComparisonActions = ( props ) => {
+	return (
+		<div className="plan-features-comparison__actions">
+			<div className="plan-features-comparison__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesComparisonActions.propTypes = {
