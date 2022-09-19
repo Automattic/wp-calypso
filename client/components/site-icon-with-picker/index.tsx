@@ -65,14 +65,11 @@ export function SiteIconWithPicker( {
 					onDone={ ( _error: Error | null, image: Blob ) => {
 						onSelect( new File( [ image ], editingFileName || 'site-logo.png' ) );
 						setSelectedFileUrl( URL.createObjectURL( image ) );
-						setEditingFile( URL.createObjectURL( image ) );
 						setImageEditorOpen( false );
 					} }
 					onCancel={ () => {
-						if ( ! selectedFileUrl ) {
-							setEditingFile( undefined );
-							setEditingFileName( undefined );
-						}
+						setEditingFile( undefined );
+						setEditingFileName( undefined );
 						setImageEditorOpen( false );
 					} }
 					widthLimit={ 512 }
@@ -103,26 +100,15 @@ export function SiteIconWithPicker( {
 					} }
 				>
 					{ selectedFileUrl || siteIconUrl ? (
-						// eslint-disable-next-line jsx-a11y/click-events-have-key-events
-						<span
-							role="button"
-							tabIndex={ 0 }
-							title={ __( 'Edit' ) }
-							onClick={ ( event ) => {
-								event.stopPropagation();
-								setImageEditorOpen( true );
-							} }
-						>
-							<img src={ selectedFileUrl || siteIconUrl } alt={ site?.name } />
-						</span>
+						<img src={ selectedFileUrl || siteIconUrl } alt={ site?.name } />
 					) : (
 						<Icon icon={ upload } />
 					) }
-					{ selectedFileUrl || siteIconUrl ? (
-						<span className="replace">{ __( 'Replace' ) }</span>
-					) : (
-						<span className="add"> { placeholderText || __( 'Add a site icon' ) } </span>
-					) }
+					<span>
+						{ selectedFileUrl || siteIconUrl
+							? __( 'Replace' )
+							: placeholderText || __( 'Add a site icon' ) }
+					</span>
 				</FormFileUpload>
 			</FormFieldset>
 		</>
