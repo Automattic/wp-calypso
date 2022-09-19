@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
@@ -133,7 +134,7 @@ const replacementFor = ( node ) => {
  */
 export const sanitizeSectionContent = ( content ) => {
 	// @TODO: replace with server-side sanitizer
-	if ( 'undefined' === typeof DOMParser ) {
+	if ( isEnabled( 'plugins/ssr-landing' ) && 'undefined' === typeof DOMParser ) {
 		return content;
 	}
 	const parser = new DOMParser();
