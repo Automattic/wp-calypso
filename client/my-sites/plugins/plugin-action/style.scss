@@ -70,6 +70,10 @@
 	}
 }
 
+.plugin-action__label-disabled-info {
+	display: flex;
+}
+
 .plugin-action__disabled-info.info-popover {
 	visibility: visible;
 	flex: none;
