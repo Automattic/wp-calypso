@@ -1,6 +1,6 @@
 import { Gridicon, SitesTableSortKey, SitesTableSortOrder } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -96,32 +96,27 @@ export const SitesSortingDropdown = ( {
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<MenuGroup>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `alphabetically${ SEPARATOR }asc` );
-							onClose();
-						} }
-					>
-						{ __( 'Alphabetically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
-							onClose();
-						} }
-					>
-						{ __( 'Automagically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `updatedAt${ SEPARATOR }desc` );
-							onClose();
-						} }
-					>
-						{ __( 'Last published' ) }
-					</MenuItem>
-				</MenuGroup>
+				<MenuItemsChoice
+					value={ sitesSorting }
+					onSelect={ ( value: SitesSorting ) => {
+						onSitesSortingChange( value );
+						onClose();
+					} }
+					choices={ [
+						{
+							value: `alphabetically${ SEPARATOR }asc`,
+							label: __( 'Alphabetically' ),
+						},
+						{
+							value: `lastInteractedWith${ SEPARATOR }desc`,
+							label: __( 'Automagically' ),
+						},
+						{
+							value: `updatedAt${ SEPARATOR }desc`,
+							label: __( 'Last published' ),
+						},
+					] }
+				/>
 			) }
 		/>
 	);
