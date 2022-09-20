@@ -1,3 +1,4 @@
+import { isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -79,7 +80,7 @@ const Plans = () => {
 					intervalType={ intervalType }
 					onUpgradeClick={ onSelectPlan }
 					flowName={ 'marketplace' }
-					shouldShowPlansFeatureComparison
+					shouldShowPlansFeatureComparison={ isDesktop() }
 					showFAQ={ false }
 					isReskinned
 				/>
