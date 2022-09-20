@@ -9,7 +9,6 @@ import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-di
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 
@@ -27,7 +26,7 @@ function getHoldMessages(
 					return translate( 'Upgrade to a Personal plan' );
 				}
 
-				return translate( 'Upgrade to a Business plan' );
+				return false;
 			} )(),
 			description: ( function () {
 				if ( context === 'themes' ) {
@@ -42,14 +41,8 @@ function getHoldMessages(
 					);
 				}
 
-				if ( billingPeriod === IntervalLength.MONTHLY ) {
-					return translate(
-						"You'll also get to install custom themes, have more storage, and access email support."
-					);
-				}
-
 				return translate(
-					"You'll also get to install custom themes, have more storage, and access live support."
+					"You need to upgrade to a Business Plan to install plugins. You'll get access to more than 50,000 WordPress plugins to extend functionality for your site."
 				);
 			} )(),
 			supportUrl: null,
@@ -221,6 +214,9 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 	const blockingHold = holds.find( ( h ) => isHardBlockingHoldType( h, blockingMessages ) );
 	const hasValidBlockingHold = blockingHold && ! isAtomicSiteWithoutBusinessPlan( holds );
 
+	// If we only have NO_BUSINESS_PLAN hold, we should hide the eligibility-warnings__box
+	const showWarningBox = holds.length > 1 || holds.indexOf( 'NO_BUSINESS_PLAN' ) === -1;
+
 	return (
 		<>
 			{ ! isPlaceholder && (
@@ -236,11 +232,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				} ) }
 				data-testid="HoldList-Card"
 			>
-				<CardHeading>
-					<span className="eligibility-warnings__hold-heading">
-						{ getCardHeading( context, translate ) }
-					</span>
-				</CardHeading>
+				<CardHeading>{ getCardHeading( context, translate ) }</CardHeading>
 				{ isPlaceholder && (
 					<div>
 						<div className="eligibility-warnings__hold">
@@ -253,33 +245,49 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 						</div>
 					</div>
 				) }
-				{ ! isPlaceholder &&
-					map( holds, ( hold ) =>
-						! isKnownHoldType( hold, holdMessages ) ? null : (
-							<div className="eligibility-warnings__hold" key={ hold }>
-								<div className="eligibility-warnings__message">
-									<div className="eligibility-warnings__message-title">
-										{ holdMessages[ hold ].title }
+				{
+					// NO_BUSINESS_PLAN hold should be at the top
+					holds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1 && (
+						<span className="eligibility-warnings__message-description">
+							{ holdMessages[ 'NO_BUSINESS_PLAN' ].description }
+						</span>
+					)
+				}
+				{ showWarningBox && (
+					<div className="eligibility-warnings__box">
+						<h2>{ translate( "To continue you'll need to:" ) }</h2>
+
+						{ ! isPlaceholder &&
+							map( holds, ( hold ) =>
+								! isKnownHoldType( hold, holdMessages ) ? null : (
+									<div className="eligibility-warnings__hold" key={ hold }>
+										<div className="eligibility-warnings__message">
+											{ holdMessages[ hold ].title && (
+												<div className="eligibility-warnings__message-title">
+													{ holdMessages[ hold ].title }
+												</div>
+											) }
+											<div className="eligibility-warnings__message-description">
+												{ holdMessages[ hold ].description }
+											</div>
+										</div>
+										{ holdMessages[ hold ].supportUrl && (
+											<div className="eligibility-warnings__hold-action">
+												<Button
+													compact
+													disabled={ !! hasValidBlockingHold }
+													href={ holdMessages[ hold ].supportUrl ?? '' }
+													rel="noopener noreferrer"
+												>
+													{ translate( 'Help' ) }
+												</Button>
+											</div>
+										) }
 									</div>
-									<div className="eligibility-warnings__message-description">
-										{ holdMessages[ hold ].description }
-									</div>
-								</div>
-								{ holdMessages[ hold ].supportUrl && (
-									<div className="eligibility-warnings__hold-action">
-										<Button
-											compact
-											disabled={ !! hasValidBlockingHold }
-											href={ holdMessages[ hold ].supportUrl ?? '' }
-											rel="noopener noreferrer"
-										>
-											{ translate( 'Help' ) }
-										</Button>
-									</div>
-								) }
-							</div>
-						)
-					) }
+								)
+							) }
+					</div>
+				) }
 			</div>
 		</>
 	);
@@ -288,7 +296,8 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 function getCardHeading( context: string | null, translate: LocalizeProps[ 'translate' ] ) {
 	switch ( context ) {
 		case 'plugins':
-			return translate( "To install plugins you'll need to:" );
+		case 'plugin-details':
+			return translate( 'Flex your site with plugins' );
 		case 'themes':
 			return translate( "To install themes you'll need to:" );
 		case 'hosting':
@@ -304,6 +313,8 @@ function isKnownHoldType(
 	hold: string,
 	holdMessages: ReturnType< typeof getHoldMessages >
 ): hold is keyof ReturnType< typeof getHoldMessages > {
+	// As we already have NO_BUSINESS_PLAN at the top, we don't need to render it again
+	if ( hold === 'NO_BUSINESS_PLAN' ) return false;
 	return holdMessages.hasOwnProperty( hold );
 }
 

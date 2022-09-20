@@ -13,11 +13,17 @@ export { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 export { isAutomatedTransferFailed } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-failed';
 export { default as isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/is-fetching-automated-transfer-status';
 
+export interface DomainNames {
+	current: string;
+	new: string;
+}
+
 export interface EligibilityWarning {
 	description: string;
 	name: string;
 	id: string;
 	supportUrl?: string;
+	domainNames?: DomainNames;
 }
 
 export interface EligibilityData {
