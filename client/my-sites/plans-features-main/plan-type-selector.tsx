@@ -56,13 +56,28 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 		plan: props.selectedPlan,
 	};
 
-	if ( props.isInSignup || 'customerType' in additionalArgs || props.isInMarketplace ) {
+	if ( props.isInSignup || 'customerType' in additionalArgs ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,
 				...additionalArgs,
 			},
 			document.location?.search
+		);
+	}
+
+	if ( props.isInMarketplace ) {
+		return addQueryArgs(
+			{
+				...omit( defaultArgs, [ 'feature', 'plan' ] ),
+				...omit( additionalArgs, 'intervalType' ),
+			},
+			plansLink(
+				props.basePlansPath || '/plans',
+				props.siteSlug,
+				intervalType ? String( intervalType ) : '',
+				true
+			)
 		);
 	}
 
