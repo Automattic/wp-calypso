@@ -510,6 +510,25 @@ function setUpRoute( req, res, next ) {
 	);
 }
 
+const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
+	req.context.sectionName = section.name;
+
+	if ( ! entrypoint ) {
+		req.context.chunkFiles = req.getFilesForChunk( section.name );
+	} else {
+		req.context.chunkFiles = req.getEmptyAssets();
+	}
+
+	if ( section.group && req.context ) {
+		req.context.sectionGroup = section.group;
+	}
+
+	if ( Array.isArray( section.links ) ) {
+		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
+	}
+	next();
+};
+
 const render404 =
 	( entrypoint = 'entry-main' ) =>
 	( req, res ) => {
@@ -787,26 +806,7 @@ export default function pages() {
 		app.get(
 			pathRegex,
 			setupDefaultContext( entrypoint ),
-			( req, res, next ) => {
-				req.context.sectionName = section.name;
-
-				if ( ! entrypoint ) {
-					req.context.chunkFiles = req.getFilesForChunk( section.name );
-				} else {
-					req.context.chunkFiles = req.getEmptyAssets();
-				}
-
-				if ( section.group && req.context ) {
-					req.context.sectionGroup = section.group;
-				}
-
-				if ( Array.isArray( section.links ) ) {
-					section.links.forEach( ( link ) =>
-						req.context.store.dispatch( setDocumentHeadLink( link ) )
-					);
-				}
-				next();
-			},
+			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
 			// SSR checks aren't accounted for here, but happen in the SSR pipeline
 			// itself (see serverRouter). But if we know at a basic level that SSR
@@ -815,7 +815,7 @@ export default function pages() {
 				if ( ! req.context.isLoggedIn && section.isomorphic ) {
 					return next( 'route' );
 				}
-				debug( `Using non-SSR pipeline for path ${ req.path } with matcher ${ pathRegex }` );
+				debug( `Using non-SSR pipeline for path ${ req.path } with handler ${ pathRegex }` );
 				next();
 			},
 			setUpRoute, // For SSR requests, this will happen in the serverRouter.

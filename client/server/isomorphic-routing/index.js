@@ -12,7 +12,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			( req, res, next ) => {
-				debug( `Using SSR pipeline for path: ${ req.path } with matcher ${ route }` );
+				debug( `Using SSR pipeline for path: ${ req.path } with handler ${ route }` );
 				next();
 			},
 			setUpRoute,
