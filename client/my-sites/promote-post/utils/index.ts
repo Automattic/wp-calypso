@@ -118,8 +118,14 @@ export const getCampaignDurationFormatted = ( start_date: string, end_date: stri
 	return durationFormatted;
 };
 
-export const getCampaignBudgetData = ( budget_cents: number, spent_budget_cents: number ) => {
-	const totalBudget = budget_cents / 100;
+export const getCampaignBudgetData = (
+	budget_cents: number,
+	start_date: string,
+	end_date: string,
+	spent_budget_cents: number
+) => {
+	const totalBudget =
+		( budget_cents * moment( end_date ).diff( moment( start_date ), 'days' ) ) / 100;
 	const totalBudgetUsed = spent_budget_cents / 100;
 	const totalBudgetLeft = totalBudget - totalBudgetUsed;
 	return {
