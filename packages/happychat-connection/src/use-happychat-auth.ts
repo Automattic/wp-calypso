@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { HappychatSession, HappychatUser, User, HappychatAuth } from './types';
@@ -11,7 +10,9 @@ export async function requestHappyChatAuth() {
 		apiVersion: '1.1',
 	} );
 
-	const url: string = config( 'happychat_url' );
+	const url = ( await wpcomRequest( { path: '/am-i/proxied', apiNamespace: 'wpcom/v2' } ) )
+		? 'https://happychat-io-staging.go-vip.co/customer'
+		: 'https://happychat.io/customer';
 
 	const happychatUser: HappychatUser = {
 		signer_user_id: user.ID,
@@ -21,6 +22,7 @@ export async function requestHappyChatAuth() {
 			language: [ user.language ],
 		},
 	};
+
 	const session: HappychatSession = await wpcomRequest( {
 		path: '/happychat/session',
 		apiVersion: '1.1',
