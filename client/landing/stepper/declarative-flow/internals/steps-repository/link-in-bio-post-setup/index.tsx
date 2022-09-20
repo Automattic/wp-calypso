@@ -38,14 +38,18 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setIsLoading( true );
+
 		setInvalidSiteTitle( ! siteTitle.trim().length );
+		if ( ! siteTitle.trim().length ) {
+			return;
+		}
+
+		setIsLoading( true );
 		if ( site ) {
 			await saveSiteSettings( site.ID, {
 				blogname: siteTitle,
 				blogdescription: tagline,
 			} );
-
 			if ( base64Image ) {
 				await uploadAndSetSiteLogo(
 					site.ID,
@@ -54,9 +58,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 			}
 		}
 
-		if ( siteTitle.trim().length ) {
-			submit?.();
-		}
+		submit?.();
 	};
 
 	return (
