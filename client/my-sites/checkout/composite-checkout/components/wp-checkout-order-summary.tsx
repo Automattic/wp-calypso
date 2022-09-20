@@ -3,11 +3,9 @@ import {
 	getYearlyPlanByMonthly,
 	isDomainProduct,
 	isDomainTransfer,
-	isGoogleWorkspace,
 	isMonthly,
 	isNoAds,
 	isPlan,
-	isTitanMail,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
@@ -38,8 +36,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import getRefundDays from '../lib/get-refund-days';
-import getRefundText from '../lib/get-refund-text';
+import { getRefundPolicies } from './refund-policies';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -173,13 +170,10 @@ function CheckoutSummaryFeaturesList( props: {
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
+	const hasRefundableProductsInCart = Boolean( getRefundPolicies( responseCart ).length );
 
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
-
-	const refundableProducts = responseCart.products.filter(
-		( product ) => product.cost && getRefundDays( product )
-	);
 
 	const translate = useTranslate();
 
@@ -207,25 +201,12 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ refundableProducts.map( ( product ) => {
-				let productName = product.product_name;
-
-				if ( isDomainProduct( product ) ) {
-					productName = product.meta;
-				} else if ( isGoogleWorkspace( product ) || isTitanMail( product ) ) {
-					if ( product.extra?.email_users?.length ) {
-						const emailUsers = product.extra?.email_users?.map( ( user ) => user.email );
-						productName = emailUsers.join( ', ' );
-					}
-				}
-
-				return (
-					<CheckoutSummaryFeaturesListItem key={ product.uuid }>
-						<WPCheckoutCheckIcon id="features-list-refund-text" />
-						{ getRefundText( getRefundDays( product ), productName, translate ) }
-					</CheckoutSummaryFeaturesListItem>
-				);
-			} ) }
+			{ hasRefundableProductsInCart && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-refund-text" />
+					{ translate( 'Money back guarantee' ) }
+				</CheckoutSummaryFeaturesListItem>
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
