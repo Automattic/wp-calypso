@@ -190,9 +190,13 @@ describe( 'useSitesTableSorting', () => {
 		// Object equality is important for memoizing the site table row
 
 		const { result, rerender } = renderHook(
-			( { sortOrder } ) =>
-				useSitesTableSorting( filteredSites, { sortKey: 'updatedAt', sortOrder } ),
-			{ initialProps: { sortOrder: 'asc' as SitesTableSortOrder } }
+			( { sortKey, sortOrder } ) => useSitesTableSorting( filteredSites, { sortKey, sortOrder } ),
+			{
+				initialProps: {
+					sortKey: 'updatedAt' as SitesTableSortKey,
+					sortOrder: 'asc' as SitesTableSortOrder,
+				},
+			}
 		);
 
 		expect( result.current.sortedSites ).toHaveLength( 3 );
@@ -200,11 +204,26 @@ describe( 'useSitesTableSorting', () => {
 		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 2 ] );
 		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 1 ] );
 
-		rerender( { sortOrder: 'desc' } );
+		rerender( { sortKey: 'updatedAt', sortOrder: 'desc' } );
 
+		// A (1) -> C (2) -> B (0)
 		expect( result.current.sortedSites ).toHaveLength( 3 );
 		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
 		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 2 ] );
 		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 0 ] );
+
+		// A (1) -> B (0) -> C (2)
+		rerender( { sortKey: 'alphabetically', sortOrder: 'asc' } );
+		expect( result.current.sortedSites ).toHaveLength( 3 );
+		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 2 ] );
+
+		// A (1) -> B (0) -> C (2)
+		rerender( { sortKey: 'lastInteractedWith', sortOrder: 'desc' } );
+		expect( result.current.sortedSites ).toHaveLength( 3 );
+		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 2 ] );
 	} );
 } );
