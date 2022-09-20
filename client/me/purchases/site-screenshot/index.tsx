@@ -40,12 +40,14 @@ export const SiteScreenshot = ( { site, ...props }: SiteScreenshotProps ) => {
 		screen_height: 2120,
 	};
 
+	const siteName = site.name ? site.name : '';
+
 	return (
 		<SiteThumbnail
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
 			className={ `site-screenshot` }
-			alt={ site.name }
+			alt={ siteName }
 			bgColorImgUrl={ site.icon?.img }
 			mshotsOption={ MShotsOptions }
 		>

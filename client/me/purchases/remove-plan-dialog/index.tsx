@@ -47,6 +47,7 @@ export const RemovePlanDialog = ( {
 	/**
 	 * Istantiate site's plan variables.
 	 */
+	const siteName = site.name ? site.name : '';
 	const productSlug = site.plan?.product_slug;
 	const planLabel = site.plan?.product_name_short;
 	const isComingSoon = site.is_coming_soon;
@@ -121,7 +122,7 @@ export const RemovePlanDialog = ( {
 							<SiteScreenshot
 								className="remove-plan-dialog__site-screenshot"
 								site={ site }
-								size={ 'medium' }
+								alt={ siteName }
 							/>
 						</div>
 					) }
