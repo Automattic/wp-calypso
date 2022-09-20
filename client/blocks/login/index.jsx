@@ -71,6 +71,7 @@ class Login extends Component {
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		loginEmailAddress: PropTypes.string,
 	};
 
 	state = {
@@ -118,6 +119,7 @@ class Login extends Component {
 			fromSite,
 			currentUser,
 			twoFactorEnabled,
+			loginEmailAddress,
 		} = this.props;
 
 		return (
@@ -129,6 +131,7 @@ class Login extends Component {
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
+			! loginEmailAddress &&
 			currentUser &&
 			! this.state.continueAsAnotherUser
 		);
@@ -540,6 +543,7 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 	} ),
 	{
 		rebootAfterLogin,
