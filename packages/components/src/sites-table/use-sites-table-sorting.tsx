@@ -78,10 +78,7 @@ const subtractDays = ( date: string, days: number ) => {
 	return `${ year }-${ month }-${ day }`;
 };
 
-const sortInteractedItems = (
-	interactedItems: SiteDetailsForSortingWithUserInteractions[],
-	sortOrder: SitesTableSortOrder
-) => {
+const sortInteractedItems = ( interactedItems: SiteDetailsForSortingWithUserInteractions[] ) => {
 	const [ mostRecentInteraction ] = interactedItems
 		.map( ( site ) => site.user_interactions )
 		.flat()
@@ -139,7 +136,7 @@ const sortInteractedItems = (
 		return sortAlphabetically( a, b, 'asc' );
 	} );
 
-	return 'desc' === sortOrder ? sortedInteractions : sortedInteractions.reverse();
+	return sortedInteractions;
 };
 
 const hasInteractions = (
@@ -158,10 +155,12 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 		( site ) => ! site.user_interactions || site.user_interactions.length === 0
 	);
 
-	return [
-		...( sortInteractedItems( interactedItems, sortOrder ) as T[] ),
+	const sortedItems = [
+		...( sortInteractedItems( interactedItems ) as T[] ),
 		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
+
+	return sortOrder === 'desc' ? sortedItems : sortedItems.reverse();
 }
 
 function sortAlphabetically< T extends SiteDetailsForSorting >(
