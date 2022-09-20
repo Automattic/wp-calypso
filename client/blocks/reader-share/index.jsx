@@ -173,7 +173,7 @@ class ReaderShare extends Component {
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 				>
-					<Gridicon aria-hidden="true" icon="share" />
+					<Gridicon aria-hidden="true" icon="reader-share" />
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>
