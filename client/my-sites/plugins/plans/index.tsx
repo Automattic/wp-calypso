@@ -54,6 +54,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			/>
 			<div className="plans">
 				<PlansFeaturesMain
+					basePlansPath="/plugins/plans"
 					site={ selectedSite }
 					intervalType={ intervalType }
 					shouldShowPlansFeatureComparison
