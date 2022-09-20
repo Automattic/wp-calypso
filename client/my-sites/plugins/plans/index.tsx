@@ -30,6 +30,7 @@ const Plans = () => {
 	const currentQuery = useSelector( getCurrentQueryArguments );
 	const dispatch = useDispatch();
 	const [ intervalType, setIntervalType ] = useState( getIntervalType() );
+	const [ isDesktopDevice, setIsDesktopDevice ] = useState( false );
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
@@ -57,9 +58,20 @@ const Plans = () => {
 		setIntervalType( getIntervalType( currentQuery?.intervalType as string ) );
 	}, [ currentQuery ] );
 
-	const onSelectPlan = () => {
+	useEffect( () => {
+		const onResize = () => {
+			setIsDesktopDevice( isDesktop() || false );
+		};
+
+		onResize();
+		window.addEventListener( 'resize', onResize );
+
+		return () => window.removeEventListener( 'resize', onResize );
+	}, [] );
+
+	function onSelectPlan() {
 		// show eligibility warnings
-	};
+	}
 
 	return (
 		<MainComponent wideLayout>
@@ -80,7 +92,7 @@ const Plans = () => {
 					intervalType={ intervalType }
 					onUpgradeClick={ onSelectPlan }
 					flowName={ 'marketplace' }
-					shouldShowPlansFeatureComparison={ isDesktop() }
+					shouldShowPlansFeatureComparison={ isDesktopDevice }
 					showFAQ={ false }
 					isReskinned
 				/>
