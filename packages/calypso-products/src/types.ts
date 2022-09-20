@@ -118,6 +118,11 @@ export interface BillingTerm {
 	getBillingTimeFrame: () => TranslateResult;
 }
 
+export interface CancellationFlowFeatures {
+	monthly?: Feature[];
+	yearly?: Feature[];
+}
+
 export type Plan = BillingTerm & {
 	group: typeof GROUP_WPCOM | typeof GROUP_JETPACK;
 	type: string;
@@ -153,6 +158,7 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getCancellationFlowFeatures?: () => CancellationFlowFeatures;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
