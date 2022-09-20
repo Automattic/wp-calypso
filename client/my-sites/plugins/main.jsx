@@ -203,24 +203,6 @@ export class PluginsMain extends Component {
 		return '';
 	}
 
-	getSearchPlaceholder() {
-		const { translate } = this.props;
-
-		switch ( this.props.filter ) {
-			case 'active':
-				return translate( 'Search All…', { textOnly: true } );
-
-			case 'inactive':
-				return translate( 'Search Inactive…', { textOnly: true } );
-
-			case 'updates':
-				return translate( 'Search Updates…', { textOnly: true } );
-
-			case 'all':
-				return translate( 'Search All…', { textOnly: true } );
-		}
-	}
-
 	getEmptyContentUpdateData() {
 		const { translate } = this.props;
 		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' };

@@ -6,7 +6,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import acceptDialog from 'calypso/lib/accept';
-import PluginNotices from 'calypso/my-sites/plugins/notices';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { warningNotice } from 'calypso/state/notices/actions';
@@ -557,9 +556,6 @@ export class PluginsList extends Component {
 		return (
 			<div className="plugins-list">
 				<QueryProductsList />
-				{ ! this.props.isJetpackCloud && (
-					<PluginNotices sites={ this.getPluginsSites() } plugins={ this.props.plugins } />
-				) }
 				<PluginsListHeader
 					label={ this.props.header }
 					isBulkManagementActive={ this.state.bulkManagementActive }
