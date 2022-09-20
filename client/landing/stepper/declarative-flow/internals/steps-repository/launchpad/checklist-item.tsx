@@ -11,9 +11,8 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
 
-	// Display chevron if task is enabled and incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron =
-		! taskDisabled && ! isCompleted && ! task.displayBadge && ! task.badgeText;
+	// Display chevron if task incomplete. Don't display chevron and badge at the same time.
+	const shouldDisplayChevron = ! isCompleted && ! task.displayBadge && ! task.badgeText;
 
 	return (
 		<li
