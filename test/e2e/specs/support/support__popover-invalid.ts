@@ -56,7 +56,6 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 
 		// Invalid keyword search often takes more than 30s to resolve.
 		// See: https://github.com/Automattic/wp-calypso/issues/55478
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'Enter invalid search keyword and expect no results to be shown', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
