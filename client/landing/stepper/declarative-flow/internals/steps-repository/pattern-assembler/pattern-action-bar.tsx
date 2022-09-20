@@ -57,7 +57,6 @@ const PatternActionBar = ( {
 				onClick={ onReplace }
 				icon={ edit }
 				iconSize={ 20 }
-				tabIndex={ 0 }
 			/>
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
@@ -66,7 +65,6 @@ const PatternActionBar = ( {
 				onClick={ onDelete }
 				icon={ closeSmall }
 				iconSize={ 23 }
-				tabIndex={ 0 }
 			/>
 		</div>
 	);
