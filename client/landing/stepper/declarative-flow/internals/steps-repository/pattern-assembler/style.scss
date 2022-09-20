@@ -7,6 +7,69 @@
 
 $font-family: "SF Pro Text", $sans;
 
+@keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	0% {
+		opacity: 1;
+	}
+	99% {
+		opacity: 0;
+	}
+	100% {
+		height: 0;
+		overflow: hidden;
+	}
+}
+
+@keyframes fadeInShort {
+	0% {
+		opacity: 0.5;
+	}
+
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes slideIn {
+	0.00% {
+		transform: translateX(250px);
+	}
+	16.53% {
+		transform: translateX(-8.66px);
+	}
+	37.40% {
+		transform: translateX(2.29px);
+	}
+	58.26% {
+		transform: translateX(-0.7px);
+	}
+	79.13% {
+		transform: translateX(0.02px);
+	}
+	100.00% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes slideInShort {
+	from {
+		transform: translateX(15%);
+	}
+	to {
+		transform: translateX(0%);
+	}
+}
+
 .pattern-assembler {
 	display: flex;
 	height: calc(100vh - 60px);
@@ -40,19 +103,8 @@ $font-family: "SF Pro Text", $sans;
 		box-sizing: border-box;
 		margin-top: 50px;
 		margin-bottom: 32px;
-	}
-
-	.pattern-assembler__preview {
-		flex-basis: 100%;
-		margin-inline-start: 32px;
-		background: #f6f6f6;
-		box-shadow: 0 0 2px rgba(0, 0, 0, 10%);
-		border-radius: 4px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin-bottom: 32px;
-		margin-top: -25px;
+		position: relative;
+		z-index: 0;
 	}
 
 	.pattern-layout {
@@ -87,6 +139,7 @@ $font-family: "SF Pro Text", $sans;
 			opacity: 0;
 			align-items: center;
 			position: absolute;
+			z-index: 1;
 			background: #fff;
 			height: 27px;
 			right: 0;
@@ -104,6 +157,12 @@ $font-family: "SF Pro Text", $sans;
 
 				svg {
 					fill: #2c3338;
+
+					&:hover {
+						transform: scale(1.05);
+						transition: transform 0.1s ease-in-out;
+						transform-origin: center;
+					}
 				}
 
 				&:not(:disabled):hover svg {
@@ -145,15 +204,30 @@ $font-family: "SF Pro Text", $sans;
 					white-space: nowrap;
 				}
 
+				button {
+					display: flex;
+					align-items: center;
+					border: 0;
+					padding: 0;
+					font-family: inherit;
+					color: #0675c4;
+				}
+
 				&:hover,
 				&:focus,
 				&:focus-within {
+					button {
+						color: var(--color-accent-60);
+						transition: color 0.2s ease-in;
+					}
+
 					.pattern-layout__list-item-text {
 						max-width: 154px;
 					}
 
 					.pattern-action-bar {
-						opacity: 1;
+						animation: slideInShort 0.2s forwards, fadeIn 0.3s forwards;
+						animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
 					}
 				}
 
@@ -164,15 +238,6 @@ $font-family: "SF Pro Text", $sans;
 				&:first-child {
 					margin-top: auto;
 				}
-
-				button {
-					display: flex;
-					align-items: center;
-					border: 0;
-					padding: 0;
-					font-family: inherit;
-					color: #0675c4;
-				}
 			}
 
 			.pattern-layout__list-item {
@@ -180,12 +245,12 @@ $font-family: "SF Pro Text", $sans;
 				display: flex;
 				align-items: center;
 
-				&--section {
-					background: url(./images/icon-section.svg) no-repeat 5px center;
-				}
-
 				&--header {
 					background: url(./images/icon-header.svg) no-repeat 5px center;
+				}
+
+				&--section {
+					background: url(./images/icon-section.svg) no-repeat 5px center;
 				}
 
 				&--footer {
@@ -214,9 +279,19 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	.pattern-selector {
-		height: 100%;
 		display: flex;
 		flex-direction: column;
+
+		&--active {
+			height: 100%;
+			overflow: initial;
+			animation: 1.5s slideIn cubic-bezier(0.445, 0.05, 0.55, 0.95), fadeIn 0.3s ease-in;
+		}
+
+		&--hide {
+			animation: 0.25s fadeOut forwards;
+			pointer-events: none;
+		}
 
 		.pattern-selector__header h1 {
 			font-family: $font-family;
