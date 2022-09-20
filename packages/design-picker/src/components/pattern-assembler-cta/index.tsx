@@ -22,7 +22,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 				) }
 			</p>
 			<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
-				{ translate( 'Get Started' ) }
+				{ translate( 'Get started' ) }
 			</Button>
 		</div>
 	);

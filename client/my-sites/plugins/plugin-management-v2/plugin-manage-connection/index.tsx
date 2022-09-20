@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getManageConnectionHref } from 'calypso/lib/plugins/utils';
@@ -17,11 +18,19 @@ export default function PluginManageConnection( { site, plugin }: Props ): React
 
 	const isJetpackPlugin = plugin && 'jetpack' === plugin.slug;
 
+	const trackManageConnection = () => {
+		recordTracksEvent( 'calypso_plugin_manage_connection_click', {
+			site: site.ID,
+			plugin: plugin.slug,
+		} );
+	};
+
 	return isJetpackPlugin ? (
 		<PopoverMenuItem
 			className="plugin-management-v2__actions"
 			icon="cog"
 			href={ getManageConnectionHref( site.slug ) }
+			onClick={ trackManageConnection }
 		>
 			{ translate( 'Manage Connection', {
 				comment: 'manage Jetpack connnection settings link',

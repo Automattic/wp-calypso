@@ -11,8 +11,8 @@ import {
 } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_NAME,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { emailManagementTitanSetUpThankYou } from 'calypso/my-sites/email/paths';
@@ -118,14 +118,14 @@ const TitanSetUpMailboxForm = ( {
 	const handleCompleteSetup = useHandleCompleteSetup( selectedDomainName, setIsValidating );
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
 		FIELD_NAME,
-		FIELD_ALTERNATIVE_EMAIL,
+		FIELD_PASSWORD_RESET_EMAIL,
 	] );
 
 	if ( ! areSiteDomainsLoaded ) {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
 
-	const showAlternateEmailField = ( event: MouseEvent< HTMLElement > ) => {
+	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
 		setHiddenFieldNames( [ FIELD_NAME ] );
 	};
@@ -135,15 +135,15 @@ const TitanSetUpMailboxForm = ( {
 			<NewMailBoxList
 				areButtonsBusy={ isValidating }
 				hiddenFieldNames={ hiddenFieldNames }
-				initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
+				initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
 				isAutoFocusEnabled
 				onSubmit={ handleCompleteSetup }
 				provider={ EmailProvider.Titan }
 				selectedDomainName={ selectedDomainName }
 				submitActionText={ translate( 'Complete setup' ) }
 			>
-				{ hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) && (
-					<PasswordResetTipField tipClickHandler={ showAlternateEmailField } />
+				{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
+					<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
 				) }
 			</NewMailBoxList>
 		</Card>

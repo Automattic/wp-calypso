@@ -113,7 +113,7 @@
 
 	&-label {
 		font-weight: 600;
-		font-size: 0.75rem;
+		font-size: $font-body-small;
 		margin-right: 6px;
 		color: #000;
 	}
@@ -134,7 +134,7 @@
 
 		p {
 			color: #3c434a;
-			font-size: 0.75rem;
+			font-size: $font-body-small;
 			margin: 0;
 			position: relative;
 			top: 2px;
@@ -144,7 +144,7 @@
 
 .product-lightbox__detail-list {
 	p {
-		font-size: 0.875rem;
+		font-size: $font-body;
 		font-weight: 700;
 		width: 100%;
 		padding: 0.5rem 0;
@@ -162,7 +162,7 @@
 		background: url(./icons/check.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		font-weight: 400;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		color: #3c434a;
 	}
 
@@ -176,7 +176,7 @@
 
 	.foldable-card__header {
 		min-height: 0;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		font-weight: 600;
 		font-family: Inter, $sans;
 		padding: 0.5rem 0;
@@ -206,7 +206,7 @@
 .product-lightbox__variants-options {
 	.form-legend {
 		font-weight: 600;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		margin-bottom: 0.5rem;
 	}
 
@@ -269,7 +269,7 @@
 
 	p {
 		font-weight: 600;
-		font-size: 0.875rem;
+		font-size: $font-body;
 	}
 }
 

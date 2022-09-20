@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,21 +15,13 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const Plans = () => {
-	const getIntervalType = ( intervalType = '' ) => {
-		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
-			return intervalType;
-		}
-
-		// Default value
-		return 'yearly';
-	};
+const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
-	const currentQuery = useSelector( getCurrentQueryArguments );
+
 	const dispatch = useDispatch();
-	const [ intervalType, setIntervalType ] = useState( getIntervalType() );
+
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
@@ -46,11 +39,11 @@ const Plans = () => {
 		dispatch(
 			appendBreadcrumb( {
 				label: translate( 'Plan Upgrade' ),
-				href: `/plugins/plans/${ selectedSite?.slug || '' }`,
+				href: `/plugins/plans/${ intervalType }/${ selectedSite?.slug || '' }`,
 				id: `plugin-plans`,
 			} )
 		);
-	}, [ dispatch, translate, selectedSite, breadcrumbs.length ] );
+	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
 	useEffect( () => {
 		setIntervalType( getIntervalType( currentQuery?.intervalType as string ) );
@@ -62,7 +55,7 @@ const Plans = () => {
 
 	return (
 		<MainComponent wideLayout>
-			<PageViewTracker path="/plugins/plans/:site" title="Plugins > Plan Upgrade" />
+			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
 			<FixedNavigationHeader navigationItems={ breadcrumbs } />
 			<FormattedHeader
@@ -73,12 +66,14 @@ const Plans = () => {
 			/>
 			<div className="plans">
 				<PlansFeaturesMain
+					basePlansPath="/plugins/plans"
 					site={ selectedSite }
-					isInSignup={ false }
 					isInMarketplace
 					intervalType={ intervalType }
 					onUpgradeClick={ onSelectPlan }
 					flowName={ 'marketplace' }
+					selectedFeature={ FEATURE_INSTALL_PLUGINS }
+					selectedPlan={ PLAN_BUSINESS }
 					shouldShowPlansFeatureComparison
 					showFAQ={ false }
 					isReskinned

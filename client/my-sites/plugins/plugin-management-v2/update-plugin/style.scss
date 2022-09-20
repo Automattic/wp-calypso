@@ -22,7 +22,6 @@
 }
 
 button.update-plugin__new-version {
-	color: var(--studio-jetpack-green-50) !important;
 	text-decoration: underline;
 	font-weight: 600;
 	position: relative;
@@ -30,6 +29,12 @@ button.update-plugin__new-version {
 
 	a {
 		display: inline !important;
+	}
+}
+
+.theme-jetpack-cloud {
+	button.update-plugin__new-version {
+		color: var(--studio-jetpack-green-50) !important;
 	}
 }
 
