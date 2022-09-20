@@ -12,6 +12,7 @@ interface PreviewProps {
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
+	recordDeviceClick: ( device: string ) => void;
 }
 
 const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
@@ -25,6 +26,7 @@ const Preview: React.FC< PreviewProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 	actionButtons,
+	recordDeviceClick,
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
@@ -47,7 +49,11 @@ const Preview: React.FC< PreviewProps > = ( {
 				onSelectVariation={ onSelectVariation }
 				actionButtons={ actionButtons }
 			/>
-			<SitePreview url={ previewUrl } inlineCss={ sitePreviewInlineCss } />
+			<SitePreview
+				url={ previewUrl }
+				inlineCss={ sitePreviewInlineCss }
+				recordDeviceClick={ recordDeviceClick }
+			/>
 		</div>
 	);
 };

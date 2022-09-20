@@ -16,10 +16,10 @@ import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -190,7 +190,7 @@ const ProfessionalEmailUpsell = ( {
 							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
 							[ FIELD_PASSWORD ]: translate( 'Set password' ),
 						} }
-						hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL ] }
+						hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
 						isInitialMailboxPurchase
 						onCancel={ handleClickDecline }
 						onSubmit={ onSubmit }

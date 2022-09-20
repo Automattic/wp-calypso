@@ -13,7 +13,7 @@ const Header = ( {
 		<div className="plugin-category-results-header">
 			<h1 className="plugin-category-results-header__title">{ title }</h1>
 			{ subtitle && <h2 className="plugin-category-results-header__subtitle">{ subtitle }</h2> }
-			<p className="plugin-category-results-header__count">{ count }</p>
+			<div className="plugin-category-results-header__count">{ count }</div>
 		</div>
 	);
 };

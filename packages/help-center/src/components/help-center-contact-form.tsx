@@ -122,6 +122,7 @@ export const HelpCenterContactForm = () => {
 	const sectionName = useSelector( getSectionName );
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
+	const overflow = params.get( 'overflow' ) === 'true';
 	const history = useHistory();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
@@ -235,7 +236,7 @@ export const HelpCenterContactForm = () => {
 						message: kayakoMessage,
 						locale,
 						client: 'browser:help-center',
-						is_chat_overflow: false,
+						is_chat_overflow: overflow,
 						blog_url: supportSite.URL,
 					} )
 						.then( () => {

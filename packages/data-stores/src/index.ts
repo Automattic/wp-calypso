@@ -21,8 +21,6 @@ export { useSiteAnalysis } from './queries/use-site-analysis';
 export type { AnalysisReport } from './queries/use-site-analysis';
 export { useHasSeenWhatsNewModalQuery } from './queries/use-has-seen-whats-new-modal-query';
 export { useSiteIntent } from './queries/use-site-intent';
-export { useSiteLogoMutation } from './queries/use-site-logo-mutation';
-export type { SetSiteLogoResponse } from './queries/use-site-logo-mutation';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';

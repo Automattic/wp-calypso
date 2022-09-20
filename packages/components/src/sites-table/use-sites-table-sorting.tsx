@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 export interface SiteDetailsForSorting {
-	name: string;
+	title: string;
 	user_interactions?: string[];
 	options?: {
 		updated_at?: string;
@@ -11,7 +11,7 @@ export interface SiteDetailsForSorting {
 export type SitesTableSortKey = 'lastInteractedWith' | 'updatedAt' | 'alphabetically';
 export type SitesTableSortOrder = 'asc' | 'desc';
 
-interface SitesTableSortOptions {
+export interface SitesTableSortOptions {
 	sortKey?: SitesTableSortKey;
 	sortOrder?: SitesTableSortOrder;
 }
@@ -67,7 +67,8 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 				return sortOrder === 'asc' ? -1 : 1;
 			}
 
-			return 0;
+			// If the interaction date is equal, sort alphabetically.
+			return sortAlphabetically( a, b, 'asc' );
 		} ),
 		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
@@ -78,8 +79,8 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 	b: T,
 	sortOrder: SitesTableSortOrder
 ) {
-	const normalizedA = a.name.toLocaleLowerCase();
-	const normalizedB = b.name.toLocaleLowerCase();
+	const normalizedA = a.title.toLocaleLowerCase();
+	const normalizedB = b.title.toLocaleLowerCase();
 
 	if ( normalizedA > normalizedB ) {
 		return sortOrder === 'asc' ? 1 : -1;
