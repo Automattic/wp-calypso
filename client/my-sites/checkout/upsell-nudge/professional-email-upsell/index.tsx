@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
 import Badge from 'calypso/components/badge';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { titanMailMonthly, titanMailYearly } from 'calypso/lib/cart-values/cart-items';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
@@ -156,7 +157,11 @@ const ProfessionalEmailUpsell = ( {
 	);
 
 	return (
-		<div>
+		<>
+			<PageViewTracker
+				path="/checkout/offer-professional-email/:domain/:receiptId/:site"
+				title={ translate( 'Post Checkout - Professional Email Upsell' ) }
+			/>
 			<header className="professional-email-upsell__header">
 				<h3 className="professional-email-upsell__small-title">
 					{ isDomainOnlySite
@@ -224,7 +229,7 @@ const ProfessionalEmailUpsell = ( {
 					/>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
 
