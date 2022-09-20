@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import PatternListItem from './pattern-list-item';
+import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
 
 type PatternLayoutProps = {
@@ -38,43 +38,74 @@ const PatternLayout = ( {
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
 				<h2>{ translate( 'Design your page' ) }</h2>
-				<p>{ translate( 'Kick start the content on your page by picking patterns.' ) }</p>
+				<p>
+					{ translate(
+						'Kick start the content on your page by picking your patterns. First choose a header for your page layout, then choose at least one section pattern, and finally choose your footer.'
+					) }
+				</p>
 			</div>
 			<div className="pattern-layout__body">
 				<ul>
-					<PatternListItem
-						patternType={ 'header' }
-						header={ header }
-						onSelectHeader={ onSelectHeader }
-						onDeleteHeader={ onDeleteHeader }
-					/>
+					{ header ? (
+						<li className="pattern-layout__list-item pattern-layout__list-item--header">
+							<span className="pattern-layout__list-item-text" title={ header.name }>
+								{ header.name }
+							</span>
+							<PatternActionBar onReplace={ onSelectHeader } onDelete={ onDeleteHeader } />
+						</li>
+					) : (
+						<li className="pattern-layout__list-item pattern-layout__list-item--header">
+							<Button onClick={ onSelectHeader }>
+								<span className="pattern-layout__add-icon">+</span>{ ' ' }
+								{ translate( 'Choose a header' ) }
+							</Button>
+						</li>
+					) }
 					{ sections?.map( ( section, index ) => {
-						const { id } = section;
+						const { id, name } = section;
 						return (
-							<PatternListItem
-								patternType={ 'section' }
-								section={ section }
+							<li
 								key={ `${ index }-${ id }` }
-								onSelectSection={ () => onSelectSection( index ) }
-								onDeleteSection={ () => onDeleteSection( index ) }
-								onMoveUpSection={ () => onMoveUpSection( index ) }
-								onMoveDownSection={ () => onMoveDownSection( index ) }
-								disableMoveUp={ index === 0 }
-								disableMoveDown={ sections?.length === index + 1 }
-							/>
+								className="pattern-layout__list-item pattern-layout__list-item--section"
+							>
+								<span className="pattern-layout__list-item-text" title={ name }>
+									{ name }
+								</span>
+								<PatternActionBar
+									onReplace={ () => onSelectSection( index ) }
+									onDelete={ () => onDeleteSection( index ) }
+									onMoveUp={ () => onMoveUpSection( index ) }
+									onMoveDown={ () => onMoveDownSection( index ) }
+									enableMoving={ true }
+									disableMoveUp={ index === 0 }
+									disableMoveDown={ sections?.length === index + 1 }
+								/>
+							</li>
 						);
 					} ) }
-					<PatternListItem
-						patternType={ 'sections' }
-						sections={ sections }
-						onSelectSection={ () => onSelectSection( null ) }
-					/>
-					<PatternListItem
-						patternType={ 'footer' }
-						footer={ footer }
-						onSelectFooter={ onSelectFooter }
-						onDeleteFooter={ onDeleteFooter }
-					/>
+					<li className="pattern-layout__list-item pattern-layout__list-item--section">
+						<Button onClick={ () => onSelectSection( null ) }>
+							<span className="pattern-layout__add-icon">+</span>{ ' ' }
+							{ sections?.length
+								? translate( 'Add another section' )
+								: translate( 'Add a first section' ) }
+						</Button>
+					</li>
+					{ footer ? (
+						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
+							<span className="pattern-layout__list-item-text" title={ footer.name }>
+								{ footer.name }
+							</span>
+							<PatternActionBar onReplace={ onSelectFooter } onDelete={ onDeleteFooter } />
+						</li>
+					) : (
+						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
+							<Button onClick={ onSelectFooter }>
+								<span className="pattern-layout__add-icon">+</span>{ ' ' }
+								{ translate( 'Choose a footer' ) }
+							</Button>
+						</li>
+					) }
 				</ul>
 			</div>
 			<div className="pattern-layout__footer">
