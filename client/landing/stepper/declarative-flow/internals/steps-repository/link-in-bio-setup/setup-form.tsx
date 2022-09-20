@@ -23,6 +23,7 @@ interface SetupFormProps {
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
 	handleSubmit: ( event: FormEvent< Element > ) => void;
 	isLoading?: boolean;
+	isSubmitError?: boolean;
 }
 
 const SetupForm = ( {
@@ -38,6 +39,7 @@ const SetupForm = ( {
 	setBase64Image,
 	handleSubmit,
 	isLoading = false,
+	isSubmitError = false,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
@@ -93,7 +95,6 @@ const SetupForm = ( {
 					/>
 				) }
 			</FormFieldset>
-
 			<FormFieldset>
 				<FormLabel htmlFor="link-in-bio-input-description">{ __( 'Brief description' ) }</FormLabel>
 				<ForwardedAutoresizingFormTextarea
@@ -113,6 +114,12 @@ const SetupForm = ( {
 			>
 				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
 			</Button>
+			{ isSubmitError && (
+				<FormInputValidation
+					isError={ isSubmitError }
+					text={ __( 'Oops, there was an issue! Please try again.' ) }
+				/>
+			) }
 		</form>
 	);
 };

@@ -24,6 +24,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
+	const [ isSubmitError, setIsSubmitError ] = useState< boolean >( false );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
@@ -33,32 +34,38 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	}, [ site ] );
 
 	useEffect( () => {
-		setIsLoading( false );
-	}, [ siteTitle, tagline, invalidSiteTitle, selectedFile, base64Image ] );
+		setIsSubmitError( false );
+	}, [ siteTitle, tagline, selectedFile, base64Image ] );
 
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 
-		setInvalidSiteTitle( ! siteTitle.trim().length );
 		if ( ! siteTitle.trim().length ) {
+			setInvalidSiteTitle( true );
 			return;
 		}
 
 		setIsLoading( true );
-		if ( site ) {
-			await saveSiteSettings( site.ID, {
-				blogname: siteTitle,
-				blogdescription: tagline,
-			} );
-			if ( base64Image ) {
-				await uploadAndSetSiteLogo(
-					site.ID,
-					new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
-				);
-			}
-		}
 
-		submit?.();
+		try {
+			if ( site ) {
+				await saveSiteSettings( site.ID, {
+					blogname: siteTitle,
+					blogdescription: tagline,
+				} );
+				if ( base64Image ) {
+					await uploadAndSetSiteLogo(
+						site.ID,
+						new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
+					);
+				}
+			}
+			setIsLoading( false );
+			submit?.();
+		} catch {
+			setIsSubmitError( true );
+			setIsLoading( false );
+		}
 	};
 
 	return (
@@ -90,6 +97,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					isLoading={ isLoading }
+					isSubmitError={ isSubmitError }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
