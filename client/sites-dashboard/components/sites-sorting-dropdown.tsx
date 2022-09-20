@@ -45,7 +45,7 @@ export const SitesSortingDropdown = ( {
 
 		switch ( `${ sortKey }${ SEPARATOR }${ sortOrder }` ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sorting by: Automagically' );
+				return __( 'Sorting by: Magic' );
 
 			case `alphabetically${ SEPARATOR }asc`:
 				return __( 'Sorting by: Name' );
