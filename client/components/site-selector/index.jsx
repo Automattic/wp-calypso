@@ -23,6 +23,7 @@ import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-
 import getSites from 'calypso/state/selectors/get-sites';
 import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
 import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import SiteSelectorAddSite from './add-site';
@@ -201,6 +202,8 @@ export class SiteSelector extends Component {
 				position: visibleSites.indexOf( siteId ) + 1,
 				list_item_count: visibleSites.length,
 				is_searching: this.state.searchTerm.length > 0,
+				sort_key: this.props.sitesSorting.sortKey,
+				sort_order: this.props.sitesSorting.sortOrder,
 			} );
 		}
 
@@ -579,5 +582,6 @@ const mapState = ( state ) => {
 export default flow(
 	localize,
 	searchSites,
+	withSitesSortingPreference,
 	connect( mapState, { navigateToSite, recordTracksEvent } )
 )( SiteSelector );
