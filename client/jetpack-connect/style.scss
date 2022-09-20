@@ -1071,11 +1071,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-body.is-section-jetpack-connect .layout {
-	&.is-jetpack-woocommerce-flow,
-	&.is-jetpack-woo-dna-flow {
-		.wpcom-site__logo {
-			display: none;
+body.is-section-jetpack-connect {
+	background-color: var(--color-surface);
+	.layout {
+		&.is-jetpack-woocommerce-flow,
+		&.is-jetpack-woo-dna-flow {
+			.wpcom-site__logo {
+				display: none;
+			}
 		}
 	}
 }
