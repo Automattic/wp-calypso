@@ -125,8 +125,12 @@
 	padding: 80px 20px 10px;
 	display: none;
 
-	button {
+	.button.navigation-link {
 		text-decoration: underline;
+
+		&:hover {
+			color: var(--studio-blue-50);
+		}
 	}
 
 	@include break-large {
