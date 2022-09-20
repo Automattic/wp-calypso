@@ -111,7 +111,7 @@ export const getCampaignDurationFormatted = ( start_date: string, end_date: stri
 
 	const dateStartFormatted = moment( start_date ).format( 'MMM D' );
 	const dateEndFormatted = moment( end_date ).format( 'MMM D' );
-	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
+	const durationFormatted = `$${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
 		'days'
 	) })`;
 
