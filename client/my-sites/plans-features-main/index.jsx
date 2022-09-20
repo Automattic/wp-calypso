@@ -440,13 +440,17 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment, showFAQ } = this.props;
 
 		if ( isInSignup ) {
 			if ( isFAQExperiment ) {
 				return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
 			}
 			return null;
+		}
+
+		if ( ! showFAQ ) {
+			return;
 		}
 
 		return <WpcomFAQ />;
