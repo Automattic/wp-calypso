@@ -57,8 +57,8 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 
 	useEffect( () => {
-		const launchTask = enhancedTasks?.filter( ( task ) => task.isLaunchTask === true );
-		if ( launchTask && launchTask?.length > 0 && ! isTaskDisabled( launchTask[ 0 ] ) ) {
+		const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
+		if ( launchTask && ! isTaskDisabled( launchTask ) ) {
 			setShowLaunchTitle( true );
 		}
 	}, [ enhancedTasks ] );
