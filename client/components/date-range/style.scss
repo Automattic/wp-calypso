@@ -269,6 +269,7 @@
 	}
 
 	.DayPicker-Day--start.DayPicker-Day--end {
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 200px !important;
 	}
 }
