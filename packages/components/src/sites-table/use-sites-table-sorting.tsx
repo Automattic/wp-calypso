@@ -8,8 +8,23 @@ export interface SiteDetailsForSorting {
 	};
 }
 
-export type SitesTableSortKey = 'lastInteractedWith' | 'updatedAt' | 'alphabetically';
-export type SitesTableSortOrder = 'asc' | 'desc';
+const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ] as const;
+const validSortOrders = [ 'asc', 'desc' ] as const;
+
+export type SitesTableSortKey = typeof validSortKeys[ number ];
+export type SitesTableSortOrder = typeof validSortOrders[ number ];
+
+export const isValidSorting = ( input: {
+	sortKey: string;
+	sortOrder: string;
+} ): input is Required< SitesTableSortOptions > => {
+	const { sortKey, sortOrder } = input;
+
+	return (
+		validSortKeys.includes( sortKey as SitesTableSortKey ) &&
+		validSortOrders.includes( sortOrder as SitesTableSortOrder )
+	);
+};
 
 export interface SitesTableSortOptions {
 	sortKey?: SitesTableSortKey;
