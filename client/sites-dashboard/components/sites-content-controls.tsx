@@ -115,6 +115,7 @@ export const SitesContentControls = ( {
 	onDisplayModeChange,
 	sitesSorting,
 	onSitesSortingChange,
+	hasSitesSortingPreferenceLoaded,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -153,6 +154,7 @@ export const SitesContentControls = ( {
 				</ControlsSelectDropdown>
 				<VisibilityControls>
 					<SitesSortingDropdown
+						hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>

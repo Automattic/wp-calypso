@@ -11,23 +11,16 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
-import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
 	getGSuiteProductSlug,
-	getGSuiteSubscriptionStatus,
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import {
-	getTitanProductName,
-	getTitanProductSlug,
-	getTitanSubscriptionId,
-	hasTitanMailWithUs,
-} from 'calypso/lib/titan';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -94,13 +87,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 	const currentRoute = useSelector( getCurrentRoute );
-
-	const domainIsNotProvisioning = getGSuiteProductSlug( domain ) || getTitanProductSlug( domain );
-	const isAwaitingGoogleTosAcceptance = getGSuiteSubscriptionStatus( domain ) === 'suspended';
-	const canAddMailboxes =
-		( domainIsNotProvisioning || hasEmailForwards( domain ) ) &&
-		! isAwaitingGoogleTosAcceptance &&
-		canCurrentUserAddEmail( domain );
+	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
