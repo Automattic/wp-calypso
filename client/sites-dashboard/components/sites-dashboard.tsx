@@ -146,16 +146,16 @@ export function SitesDashboard( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
-	const { filteredSites, statuses } = useSitesTableFiltering( allSites, {
+	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const { sortedSites } = useSitesTableSorting( allSites, sitesSorting );
+
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,
 	} );
 
-	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { sortedSites } = useSitesTableSorting( filteredSites, sitesSorting );
-
-	const paginatedSites = sortedSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
