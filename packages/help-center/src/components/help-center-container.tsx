@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { useSupportAvailability } from '@automattic/data-stores/dist/types';
+import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
