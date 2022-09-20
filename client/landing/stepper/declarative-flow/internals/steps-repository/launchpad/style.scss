@@ -128,7 +128,8 @@
 	.button.navigation-link {
 		text-decoration: underline;
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--studio-blue-50);
 		}
 	}
@@ -230,13 +231,6 @@
 	font-weight: 600;
 }
 
-// change badge color on hover (Choose a Plan step)
-.launchpad__task:hover {
-	.launchpad__checklist-item .badge {
-		background: var(--studio-blue-10);
-	}
-}
-
 // completed tasks
 .launchpad__task.is-completed {
 	.launchpad__checklist-item-text {
@@ -251,7 +245,8 @@
 }
 
 // completed tasks that are kept active
-.launchpad__task.keep-active:hover {
+.launchpad__task.keep-active:hover,
+.launchpad__task.keep-active > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
@@ -259,6 +254,11 @@
 	.launchpad__checklist-item-chevron,
 	.launchpad__checklist-item-checkmark {
 		fill: var(--studio-blue-50);
+	}
+
+	// change badge color on hover (Choose a Plan step)
+	.badge {
+		background: var(--studio-blue-10);
 	}
 }
 
