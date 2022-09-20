@@ -57,6 +57,10 @@ const selectors = {
 export class PluginsPage {
 	private page: Page;
 
+	static paidSection = 'Must-have premium plugins';
+	static featuredSection = 'Our developers’ favorites';
+	static freeSection = 'The free essentials';
+
 	/**
 	 * Constructs an instance.
 	 */

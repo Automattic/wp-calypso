@@ -57,7 +57,7 @@ const Spotlight: React.FunctionComponent< SpotlightProps > = ( props: SpotlightP
 	const { taglineText, illustrationSrc, onClick, titleText, ctaText } = props;
 
 	return (
-		<SpotlightContainer onClick={ onClick }>
+		<SpotlightContainer onClick={ onClick } className={ 'spotlight' }>
 			<SpotlightContent>
 				<SpotlightIllustration alt="Spotlight Logo" src={ illustrationSrc } />
 				<SpotlightTextContainer>
