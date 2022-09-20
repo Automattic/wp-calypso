@@ -10,7 +10,7 @@ type Result = {
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data, isLoading } = useHappychatAvailable();
+	const { data, isLoading } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
 
 	if ( ! chatStatus?.is_user_eligible ) {
 		return {
