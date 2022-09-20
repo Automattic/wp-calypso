@@ -1,5 +1,4 @@
 import { useLocale } from '@automattic/i18n-utils';
-import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
@@ -17,15 +16,15 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
-		show && patternSelectorRef.current?.focus();
-		show && patternSelectorRef.current?.removeAttribute( 'tabindex' );
+		if ( show ) {
+			patternSelectorRef.current?.focus();
+			patternSelectorRef.current?.removeAttribute( 'tabindex' );
+		}
 	}, [ show ] );
 
 	return (
 		<div
-			className={ classnames( 'pattern-selector', {
-				'pattern-selector--active': show,
-			} ) }
+			className="pattern-selector"
 			style={ show ? {} : { height: 0, overflow: 'hidden' } }
 			// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 			tabIndex={ show ? 0 : -1 }

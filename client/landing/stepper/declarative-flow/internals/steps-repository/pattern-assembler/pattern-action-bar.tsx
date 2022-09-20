@@ -38,7 +38,6 @@ const PatternActionBar = ( {
 						onClick={ onMoveUp }
 						icon={ chevronUp }
 						iconSize={ 23 }
-						tabIndex={ disableMoveUp ? -1 : 0 }
 					/>
 					<Button
 						className="pattern-action-bar__action pattern-action-bar__action--move-down"
@@ -48,7 +47,6 @@ const PatternActionBar = ( {
 						onClick={ onMoveDown }
 						icon={ chevronDown }
 						iconSize={ 23 }
-						tabIndex={ disableMoveDown ? -1 : 0 }
 					/>
 				</div>
 			) }
