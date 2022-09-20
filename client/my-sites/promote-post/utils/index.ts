@@ -97,7 +97,7 @@ export const getCampaignOverallSpending = (
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
 	/* translators: %1$s: Amount, %2$s: Days. eg: $3 over 2 days */
-	const overallSpending = sprintf( __( '%1$s over %2$s days' ), totalBudgetUsed, daysRun );
+	const overallSpending = sprintf( __( '$%1$s over %2$s days' ), totalBudgetUsed, daysRun );
 	return overallSpending;
 };
 
@@ -111,7 +111,7 @@ export const getCampaignDurationFormatted = ( start_date: string, end_date: stri
 
 	const dateStartFormatted = moment( start_date ).format( 'MMM D' );
 	const dateEndFormatted = moment( end_date ).format( 'MMM D' );
-	const durationFormatted = `$${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
+	const durationFormatted = `${ dateStartFormatted } - ${ dateEndFormatted } (${ campaignDays } ${ __(
 		'days'
 	) })`;
 
