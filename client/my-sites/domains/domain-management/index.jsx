@@ -4,7 +4,6 @@ import ContactsPrivacy from './contacts-privacy';
 import AddDnsRecord from './dns/add-dns-record';
 import DnsRecords from './dns/dns-records';
 import DomainConnectMapping from './domain-connect-mapping';
-import Edit from './edit';
 import EditContactInfoPage from './edit-contact-info-page';
 import ManageConsent from './manage-consent';
 import Security from './security';
@@ -20,7 +19,6 @@ export default {
 	ContactsPrivacy,
 	DnsRecords,
 	DomainConnectMapping,
-	Edit,
 	EditContactInfoPage,
 	ManageConsent,
 	AllDomains,
