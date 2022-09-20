@@ -380,7 +380,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const actionButtons = (
 			<>
-				{ isEnabledStyleSelection && (
+				{ selectedDesignHasStyleVariations && (
 					<div className="action-buttons__title">{ headerDesignTitle }</div>
 				) }
 				<div>
