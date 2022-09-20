@@ -140,6 +140,12 @@ export function isTaskDisabled( task: Task ) {
 	}
 
 	if ( task.dependencies ) {
+		return hasIncompleteDependencies( task );
+	}
+}
+
+export function hasIncompleteDependencies( task: Task ) {
+	if ( 'dependencies' in task ) {
 		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
 	}
 }

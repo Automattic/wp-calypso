@@ -2,7 +2,7 @@ import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate, useRtl } from 'i18n-calypso';
 import Badge from 'calypso/components/badge';
-import { isTaskDisabled } from './task-helper';
+import { isTaskDisabled, hasIncompleteDependencies } from './task-helper';
 import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
@@ -10,9 +10,11 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
+	const hasBadgeText = task.displayBadge && task.badgeText;
 
-	// Display chevron if task incomplete. Don't display chevron and badge at the same time.
-	const shouldDisplayChevron = ! isCompleted && ! task.displayBadge && ! task.badgeText;
+	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
+	const shouldDisplayChevron =
+		! hasIncompleteDependencies( task ) && ! isCompleted && ! hasBadgeText;
 
 	return (
 		<li
@@ -40,9 +42,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 					</div>
 				) }
 				<p className={ `launchpad__checklist-item-text` }>{ title }</p>
-				{ task.displayBadge && task.badgeText ? (
-					<Badge type="info-blue">{ task.badgeText }</Badge>
-				) : null }
+				{ hasBadgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 				{ shouldDisplayChevron && (
 					<Gridicon
 						aria-label={ translate( 'Task enabled' ) }
