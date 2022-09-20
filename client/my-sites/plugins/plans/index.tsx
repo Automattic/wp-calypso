@@ -5,6 +5,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
+import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
@@ -51,6 +52,36 @@ const Plans = () => {
 				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
 				brandFont
 			/>
+
+			<div className="plugin-plans-step-hints">
+				<section>
+					<Gridicon icon="plugins" />
+					<h3>{ translate( 'Flex your site with plugins' ) }</h3>
+					<p>
+						{ translate(
+							'Install plugins and extend functionality for your site with access to more than 50,000 plugins.'
+						) }
+					</p>
+				</section>
+				<section>
+					<Gridicon icon="money" />
+					<h3>{ translate( 'Money back guarantee' ) }</h3>
+					<p>
+						{ translate(
+							'Try WordPress.com for 14 days and if you are not 100% satisfied, get your money back.'
+						) }
+					</p>
+				</section>
+				<section>
+					<Gridicon icon="plans" />
+					<h3>{ translate( 'Essential features' ) }</h3>
+					<p>
+						{ translate(
+							"We guarantee site's performance and protect it from spammers detailing all activity records."
+						) }
+					</p>
+				</section>
+			</div>
 		</MainComponent>
 	);
 };

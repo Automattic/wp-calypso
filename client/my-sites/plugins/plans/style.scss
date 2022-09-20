@@ -1,8 +1,56 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .plugin-plans-header {
 	.formatted-header__title {
 		font-size: $font-title-large;
 	}
 	.formatted-header__subtitle {
 		font-size: $font-body;
+	}
+}
+
+.plugin-plans-step-hints {
+	overflow: auto;
+	white-space: nowrap;
+	max-width: 800px;
+	margin: auto;
+	margin-top: 50px;
+	margin-bottom: 50px;
+
+	@media ( max-width: $break-mobile ) {
+		padding-left: 20px;
+	}
+
+	section:not(:last-child) {
+		padding-right: 15px;
+	}
+
+	section {
+		vertical-align: top;
+		display: inline-block;
+		width: 255px;
+		padding-bottom: 20px;
+	}
+
+	svg {
+		height: 25px;
+		width: 25px;
+		padding: 10px;
+		background: #f0f7fc;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
+	}
+
+	h3 {
+		margin-top: 10px;
+		margin-bottom: 15px;
+		font-weight: normal;
+		font-size: $font-body;
+		color: var(--studio-gray-100);
+	}
+
+	p {
+		color: var(--color-neutral-50);
+		margin: 0;
+		white-space: pre-wrap;
 	}
 }
