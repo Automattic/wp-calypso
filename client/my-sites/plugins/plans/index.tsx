@@ -71,7 +71,6 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					site={ selectedSite }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
-					showFAQ={ null }
 					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
 				/>
 			</div>
