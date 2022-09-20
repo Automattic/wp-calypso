@@ -1,6 +1,6 @@
 @import "../../../customer-home/grid-mixins.scss";
-@import "@wordpress/base-styles/_mixins.scss";
-@import "@wordpress/base-styles/_breakpoints.scss";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .edit__container {
 	@include break-xlarge {
