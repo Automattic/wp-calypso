@@ -343,6 +343,8 @@ body.is-section-plugins header .select-dropdown__item {
 .plugins__page-title {
 	color: var(--studio-gray-80);
 	font-weight: 400;
+	font-size: 2.25rem;
+	line-height: 40px;
 }
 .plugins__page-subtitle {
 	font-size: 0.875rem;
@@ -355,7 +357,7 @@ body.is-section-plugins header .select-dropdown__item {
 		display: block;
 	}
 }
-.plugins__jetpack-cloud {
+.plugins__main-updated {
 	.plugins__main-header .section-nav {
 		border-width: 1px;
 		@include breakpoint-deprecated( ">660px" ) {
@@ -380,6 +382,15 @@ body.is-section-plugins header .select-dropdown__item {
 		padding: 6px 48px 0;
 	}
 }
+
+.plugins__top-container-wp {
+	padding-top: 4rem;
+	border-bottom: none;
+	@include break-large {
+		padding-top: 3rem;
+	}
+}
+
 .plugins__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
