@@ -12,7 +12,7 @@
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"olark_chat_identity": "7089-503-10-5123",
-	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSgKblr83WK7rNUtB2d3ZWo2Xii87EUfdmGV6Ap0OeWH15PzUgEE3Q6s4fWCXzYNsgu4n9G28K00ODec4RxO",
+	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
 		"ad-tracking": false,
