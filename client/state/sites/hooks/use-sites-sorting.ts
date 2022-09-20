@@ -17,13 +17,13 @@ const DEFAULT_SITES_SORTING = {
 } as const;
 
 export const parseSitesSorting = ( sorting: SitesSorting | 'none' ) => {
-	const separated = sorting.split( SEPARATOR );
+	const sortingElements = sorting.split( SEPARATOR );
 
-	if ( ! isValidSorting( separated ) ) {
+	if ( ! isValidSorting( sortingElements ) ) {
 		return DEFAULT_SITES_SORTING;
 	}
 
-	const [ sortKey, sortOrder ] = separated;
+	const [ sortKey, sortOrder ] = sortingElements;
 
 	if ( sortKey === 'lastInteractedWith' && ! config.isEnabled( 'sites/automagical-sorting' ) ) {
 		return DEFAULT_SITES_SORTING;
