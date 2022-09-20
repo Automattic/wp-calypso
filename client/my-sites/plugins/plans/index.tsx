@@ -1,3 +1,4 @@
+import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +18,9 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
+
 	const dispatch = useDispatch();
+
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
 			dispatch(
@@ -57,6 +60,8 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					basePlansPath="/plugins/plans"
 					site={ selectedSite }
 					intervalType={ intervalType }
+					selectedFeature={ FEATURE_INSTALL_PLUGINS }
+					selectedPlan={ PLAN_BUSINESS }
 					shouldShowPlansFeatureComparison
 					isReskinned
 				/>
