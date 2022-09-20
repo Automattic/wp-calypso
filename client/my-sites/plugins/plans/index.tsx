@@ -6,13 +6,14 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
-const Plans = () => {
+const Plans = ( { intervalType = 'yearly' }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
@@ -34,15 +35,15 @@ const Plans = () => {
 		dispatch(
 			appendBreadcrumb( {
 				label: translate( 'Plan Upgrade' ),
-				href: `/plugins/plans/${ selectedSite?.slug || '' }`,
+				href: `/plugins/plans/${ intervalType }/${ selectedSite?.slug || '' }`,
 				id: `plugin-plans`,
 			} )
 		);
-	}, [ dispatch, translate, selectedSite, breadcrumbs.length ] );
+	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
 	return (
 		<MainComponent wideLayout>
-			<PageViewTracker path="/plugins/plans/:site" title="Plugins > Plan Upgrade" />
+			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
 			<FixedNavigationHeader navigationItems={ breadcrumbs } />
 			<FormattedHeader
@@ -51,6 +52,14 @@ const Plans = () => {
 				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
 				brandFont
 			/>
+			<div className="plans">
+				<PlansFeaturesMain
+					site={ selectedSite }
+					intervalType={ intervalType }
+					shouldShowPlansFeatureComparison
+					isReskinned
+				/>
+			</div>
 		</MainComponent>
 	);
 };
