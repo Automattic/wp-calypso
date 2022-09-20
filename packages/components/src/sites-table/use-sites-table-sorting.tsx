@@ -57,6 +57,38 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	sites: T[],
 	sortOrder: SitesTableSortOrder
 ) {
+	const mostRecentInteraction = [
+		...( sites
+			.map( ( site ) => site.user_interactions )
+			.flat( 1 )
+			.sort()
+			.reverse() || [] ),
+	].pop();
+	let threeDaysAgo = '';
+	let sevenDaysAgo = '';
+	let twoWeeksAgo = '';
+	if ( mostRecentInteraction ) {
+		const date = new Date( mostRecentInteraction );
+		date.setDate( date.getDate() - 3 );
+		threeDaysAgo = [
+			date.getFullYear(),
+			( '0' + ( date.getMonth() + 1 ) ).slice( -2 ),
+			( '0' + date.getDate() ).slice( -2 ),
+		].join( '-' );
+		date.setDate( date.getDate() - 4 );
+		sevenDaysAgo = [
+			date.getFullYear(),
+			( '0' + ( date.getMonth() + 1 ) ).slice( -2 ),
+			( '0' + date.getDate() ).slice( -2 ),
+		].join( '-' );
+		date.setDate( date.getDate() - 7 );
+		twoWeeksAgo = [
+			date.getFullYear(),
+			( '0' + ( date.getMonth() + 1 ) ).slice( -2 ),
+			( '0' + date.getDate() ).slice( -2 ),
+		].join( '-' );
+	}
+
 	const interactedItems = sites.filter(
 		( site ) => site.user_interactions && site.user_interactions.length > 0
 	);
@@ -64,22 +96,49 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 		( site ) => ! site.user_interactions || site.user_interactions.length === 0
 	);
 
-	return [
+	const scoreInteractions = ( interactions: string[] ) => {
+		let score = 0;
+		interactions.forEach( ( interaction: string ) => {
+			if ( interaction >= threeDaysAgo ) {
+				score += 3;
+			} else if ( interaction >= sevenDaysAgo ) {
+				score += 2;
+			} else if ( interaction >= twoWeeksAgo ) {
+				score += 1;
+			}
+		} );
+		return score;
+	};
+
+	const sortedItems = [
 		...interactedItems.sort( ( a, b ) => {
 			if ( ! a.user_interactions || ! b.user_interactions ) {
 				return 0;
 			}
 
-			// Interactions are sorted in descending order.
-			const lastInteractionA = a.user_interactions[ 0 ];
-			const lastInteractionB = b.user_interactions[ 0 ];
+			const lastInteractionA = a.user_interactions.sort().reverse()[ 0 ] || 0;
+			const lastInteractionB = b.user_interactions.sort().reverse()[ 0 ] || 0;
+
+			// If one of these interactions is within fourteen days of the most recent
+			// interaction, sort by the frequency of interactions in that time period.
+			if ( twoWeeksAgo && ( lastInteractionA > twoWeeksAgo || lastInteractionB > twoWeeksAgo ) ) {
+				const scoreA = scoreInteractions( a.user_interactions );
+				const scoreB = scoreInteractions( b.user_interactions );
+				if ( scoreA > scoreB ) {
+					return -1;
+				}
+				if ( scoreA < scoreB ) {
+					return 1;
+				}
+				// Fall through to comparing the most recent.
+			}
 
 			if ( lastInteractionA > lastInteractionB ) {
-				return sortOrder === 'asc' ? 1 : -1;
+				return -1;
 			}
 
 			if ( lastInteractionA < lastInteractionB ) {
-				return sortOrder === 'asc' ? -1 : 1;
+				return 1;
 			}
 
 			// If the interaction date is equal, sort alphabetically.
@@ -87,6 +146,7 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 		} ),
 		...remainingItems.sort( ( a, b ) => sortAlphabetically( a, b, 'asc' ) ),
 	];
+	return 'desc' === sortOrder ? sortedItems : sortedItems.reverse();
 }
 
 function sortAlphabetically< T extends SiteDetailsForSorting >(

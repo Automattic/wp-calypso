@@ -35,6 +35,32 @@ describe( 'useSitesTableSorting', () => {
 			},
 		},
 	];
+	const frequentSites = [
+		{
+			ID: 1,
+			title: 'B',
+			options: {
+				updated_at: '2022-05-27T07:19:20+00:00',
+			},
+			user_interactions: [ '2022-09-20' ],
+		},
+		{
+			ID: 2,
+			title: 'A',
+			options: {
+				updated_at: '2022-07-13T17:17:12+00:00',
+			},
+			user_interactions: [ '2022-09-19' ],
+		},
+		{
+			ID: 3,
+			title: 'C',
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+			user_interactions: [ '2022-09-19', '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+	];
 
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
@@ -101,9 +127,35 @@ describe( 'useSitesTableSorting', () => {
 		);
 
 		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'A' );
+		expect( result.current.sortedSites[ 0 ].title ).toBe( 'C' );
+		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
+		expect( result.current.sortedSites[ 2 ].title ).toBe( 'A' );
+	} );
+
+	test( 'should pick the site more frequently interacted with ascending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( frequentSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].title ).toBe( 'A' );
+		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
 		expect( result.current.sortedSites[ 2 ].title ).toBe( 'C' );
+	} );
+
+	test( 'should pick the site more frequently interacted with descending', () => {
+		const { result } = renderHook( () =>
+			useSitesTableSorting( frequentSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'desc',
+			} )
+		);
+		expect( result.current.sortedSites.length ).toBe( 3 );
+		expect( result.current.sortedSites[ 0 ].title ).toBe( 'C' );
+		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
+		expect( result.current.sortedSites[ 2 ].title ).toBe( 'A' );
 	} );
 
 	test( 'should sort sites by updatedAt descending', () => {
