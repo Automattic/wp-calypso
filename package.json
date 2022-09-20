@@ -291,7 +291,7 @@
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.5"
 	},
-	"packageManager": "yarn@3.1.1",
+	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
