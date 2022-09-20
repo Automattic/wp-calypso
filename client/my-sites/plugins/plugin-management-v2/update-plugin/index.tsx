@@ -141,6 +141,7 @@ export default function UpdatePlugin( {
 					<Icon size={ 24 } icon={ arrowRight } />
 				</span>
 				<Button
+					primary
 					onClick={ () => updatePlugin && updatePlugin( plugin ) }
 					className="update-plugin__new-version"
 					borderless
