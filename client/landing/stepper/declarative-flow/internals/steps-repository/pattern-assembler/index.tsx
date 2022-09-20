@@ -55,7 +55,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		if ( sectionPosition ) {
+		if ( sectionPosition !== null ) {
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
 				pattern,
