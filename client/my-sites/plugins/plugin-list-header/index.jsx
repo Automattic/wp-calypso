@@ -223,11 +223,19 @@ export class PluginsListHeader extends PureComponent {
 			);
 
 			leftSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup>
+				<ButtonGroup
+					key="plugin-list-header__buttons-update-button"
+					className="plugin-management-v2__table-button-group"
+				>
+					{ updateButton }
+				</ButtonGroup>
 			);
 
 			leftSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-remove-button">
+				<ButtonGroup
+					key="plugin-list-header__buttons-remove-button"
+					className="plugin-management-v2__table-button-group"
+				>
 					<Button
 						compact
 						scary
