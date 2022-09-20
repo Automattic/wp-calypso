@@ -54,7 +54,7 @@ const UpgradeNudge = ( {
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 
-	const pluginsPlansPage = `/plugins/plans/${ selectedSite?.slug }`;
+	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
 
 	const translate = useTranslate();
 

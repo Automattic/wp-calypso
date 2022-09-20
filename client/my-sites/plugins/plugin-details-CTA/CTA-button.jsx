@@ -102,7 +102,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const productsList = useSelector( getProductsList );
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
-	const pluginsPlansPage = `/plugins/plans/${ selectedSite?.slug }`;
+	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
 
 	return (
 		<>
