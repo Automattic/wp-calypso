@@ -14,18 +14,15 @@ const validSortOrders = [ 'asc', 'desc' ] as const;
 export type SitesTableSortKey = typeof validSortKeys[ number ];
 export type SitesTableSortOrder = typeof validSortOrders[ number ];
 
-export const isValidSorting = (
-	input: string[]
-): input is [ SitesTableSortKey, SitesTableSortOrder ] => {
-	if ( input.length !== 2 ) {
-		return false;
-	}
-
-	const [ key, order ] = input;
+export const isValidSorting = ( input: {
+	sortKey: string;
+	sortOrder: string;
+} ): input is Required< SitesTableSortOptions > => {
+	const { sortKey, sortOrder } = input;
 
 	return (
-		validSortKeys.includes( key as SitesTableSortKey ) &&
-		validSortOrders.includes( order as SitesTableSortOrder )
+		validSortKeys.includes( sortKey as SitesTableSortKey ) &&
+		validSortOrders.includes( sortOrder as SitesTableSortOrder )
 	);
 };
 

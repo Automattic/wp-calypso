@@ -16,23 +16,23 @@ const DEFAULT_SITES_SORTING = {
 	sortOrder: 'desc',
 } as const;
 
-export const parseSitesSorting = ( sorting: SitesSorting | 'none' ) => {
-	const sortingElements = sorting.split( SEPARATOR );
+export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) => {
+	const [ sortKey, sortOrder ] = serializedSorting.split( SEPARATOR );
 
-	if ( ! isValidSorting( sortingElements ) ) {
+	const sorting = { sortKey, sortOrder };
+
+	if ( ! isValidSorting( sorting ) ) {
 		return DEFAULT_SITES_SORTING;
 	}
 
-	const [ sortKey, sortOrder ] = sortingElements;
-
-	if ( sortKey === 'lastInteractedWith' && ! config.isEnabled( 'sites/automagical-sorting' ) ) {
+	if (
+		sorting.sortKey === 'lastInteractedWith' &&
+		! config.isEnabled( 'sites/automagical-sorting' )
+	) {
 		return DEFAULT_SITES_SORTING;
 	}
 
-	return {
-		sortKey,
-		sortOrder,
-	};
+	return sorting;
 };
 
 export const stringifySitesSorting = (
