@@ -1,3 +1,7 @@
+.step-container.subscribers {
+	padding: 0 1.5rem;
+}
+
 .add-subscriber {
 	.components-notice {
 		margin: 0 0 1rem;
@@ -80,7 +84,7 @@
 		display: inline-block;
 		width: 100%;
 		font-size: 0.875rem;
-		line-height: 1.25rem;
+		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin: 0.75rem 0 1.5rem;
 
 		&.add-subscriber__form-label-links {
@@ -166,7 +170,7 @@
 
 	.add-subscriber__form--disclaimer {
 		font-size: 0.875rem;
-		line-height: 1.25rem;
+		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		color: var(--studio-gray-50);
 		margin-bottom: 1.5rem;
 
