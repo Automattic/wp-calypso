@@ -24,7 +24,7 @@
 	}
 }
 
-.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item .segmented-control__link {
+.jetpack-product-store .jetpack-product-store__view-filter :is(.jetpack-product-store__view-filter--toggle.segmented-control, .jetpack-product-store__view-filter--toggle.segmented-control.is-primary) .segmented-control__item .segmented-control__link {
 	color: var(--color-text);
 	padding: 6px 11px;
 	border: 1px solid #f2f2f2;
@@ -42,7 +42,7 @@
 	}
 }
 
-.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item.is-selected .segmented-control__link {
+.jetpack-product-store .jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control .segmented-control__item.is-selected .segmented-control__link {
 	background-color: var(--studio-white);
 	border-color: var(--studio-white);
 	color: var(--color-text);
