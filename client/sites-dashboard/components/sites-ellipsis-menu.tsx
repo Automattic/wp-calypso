@@ -146,6 +146,7 @@ export const SitesEllipsisMenu = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
+	const isNotAtomicJetpack = site.jetpack && ! site?.is_wpcom_atomic;
 	const props: SitesMenuItemProps = {
 		site,
 		recordTracks: ( eventName, extraProps = {} ) => {
@@ -164,7 +165,7 @@ export const SitesEllipsisMenu = ( {
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
-					<HostingConfigItem { ...props } />
+					{ ! isNotAtomicJetpack && <HostingConfigItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }

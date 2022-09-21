@@ -80,7 +80,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isAtomicSite = site?.is_wpcom_atomic;
+	const isNotAtomicJetpack = site.jetpack && ! site?.is_wpcom_atomic;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -121,7 +121,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 			<Column mobileHidden>
 				<SitePlan>
-					{ site.jetpack && ! isAtomicSite && (
+					{ isNotAtomicJetpack && (
 						<SitePlanIcon>
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
