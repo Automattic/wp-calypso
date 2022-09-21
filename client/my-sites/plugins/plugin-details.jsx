@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
@@ -34,7 +34,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
@@ -77,7 +77,6 @@ function PluginDetails( props ) {
 	const translate = useTranslate();
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
-	const [ initialBreadcrumbs ] = useState( breadcrumbs );
 
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
@@ -218,27 +217,28 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		const items = initialBreadcrumbs ? [ ...initialBreadcrumbs ] : [];
-		if ( ! items.length ) {
-			items.push( {
-				label: translate( 'Plugins' ),
-				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-				id: 'plugins',
-				helpBubble: translate(
-					'Add new functionality and integrations to your site with plugins.'
-				),
-			} );
+		if ( breadcrumbs?.length === 0 ) {
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
+				} )
+			);
 		}
 
 		if ( fullPlugin.name && props.pluginSlug ) {
-			items.push( {
-				label: fullPlugin.name,
-				href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-				id: `plugin-${ props.pluginSlug }`,
-			} );
+			dispatch(
+				appendBreadcrumb( {
+					label: fullPlugin.name,
+					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
+					id: `plugin-${ props.pluginSlug }`,
+				} )
+			);
 		}
-
-		dispatch( updateBreadcrumbs( items ) );
 	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
 
 	const getPageTitle = () => {
