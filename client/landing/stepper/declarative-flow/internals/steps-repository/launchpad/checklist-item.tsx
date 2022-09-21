@@ -10,11 +10,10 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
 	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
 	const taskDisabled = isTaskDisabled( task );
-	const hasBadgeText = task.displayBadge && task.badgeText;
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
 	const shouldDisplayChevron =
-		! hasIncompleteDependencies( task ) && ! isCompleted && ! hasBadgeText;
+		! hasIncompleteDependencies( task ) && ! isCompleted && ! task.badgeText;
 
 	return (
 		<li
@@ -42,7 +41,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 					</div>
 				) }
 				<p className={ `launchpad__checklist-item-text` }>{ title }</p>
-				{ hasBadgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
+				{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 				{ shouldDisplayChevron && (
 					<Gridicon
 						aria-label={ translate( 'Task enabled' ) }
