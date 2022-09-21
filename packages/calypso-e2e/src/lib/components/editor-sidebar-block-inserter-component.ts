@@ -1,7 +1,7 @@
 import { Page, Locator } from 'playwright';
 import envVariables from '../../env-variables';
 
-const sidebarParentSelector = '.block-editor-inserter__content';
+const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
 	closeBlockInserterButton: 'button[aria-label="Close block inserter"]',
 	blockSearchInput: `${ sidebarParentSelector } input[type="search"]`,

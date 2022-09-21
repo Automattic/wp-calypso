@@ -164,8 +164,8 @@ const contextLinks = {
 		post_id: 1507,
 	},
 	publicize: {
-		link: 'https://wordpress.com/support/publicize/',
-		post_id: 4789,
+		link: 'https://wordpress.com/support/post-automatically-to-social-media/',
+		post_id: 216472,
 	},
 	purchases: {
 		link: 'https://wordpress.com/support/manage-purchases/',

@@ -1,7 +1,14 @@
-import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ActionCard from 'calypso/components/action-card';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -13,6 +20,8 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MARKETPLACE_FLOW } from '../flows';
+
 import './style.scss';
 
 const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
@@ -21,6 +30,12 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const dispatch = useDispatch();
+
+	const currentPlanSlug = selectedSite?.plan?.product_slug;
+	let currentPlanType = null;
+	if ( currentPlanSlug ) {
+		currentPlanType = getPlan( currentPlanSlug )?.type;
+	}
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -88,14 +103,34 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					basePlansPath="/plugins/plans"
 					site={ selectedSite }
 					intervalType={ intervalType }
-					selectedFeature={ FEATURE_INSTALL_PLUGINS }
 					selectedPlan={ PLAN_BUSINESS }
+					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
+					flowName={ MARKETPLACE_FLOW }
 					shouldShowPlansFeatureComparison
 					isReskinned
 				/>
 			</div>
 
 			<PromoSection { ...promos } />
+
+			<ActionCard
+				classNames="plugin-plans"
+				headerText=""
+				mainText={ translate(
+					'Need some help? Let us help you find the perfect plan for your site. {{a}}Chat now{{/a}} or {{a}}contact our support{{/a}}.',
+					{
+						components: {
+							a: <ActionPanelLink href="/help/contact" />,
+						},
+					}
+				) }
+				buttonText={ translate( 'Upgrade to Business' ) }
+				buttonPrimary={ true }
+				buttonOnClick={ () => {
+					alert( 'Connect code after merging PR 68087' );
+				} }
+				buttonDisabled={ false }
+			/>
 		</MainComponent>
 	);
 };
