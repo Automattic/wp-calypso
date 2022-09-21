@@ -16,6 +16,8 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MARKETPLACE_FLOW } from '../flows';
+
 import './style.scss';
 
 const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
@@ -72,6 +74,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
+					flowName={ MARKETPLACE_FLOW }
 				/>
 			</div>
 		</MainComponent>

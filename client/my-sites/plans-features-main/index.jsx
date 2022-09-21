@@ -61,6 +61,7 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 import PlanTypeSelector from './plan-type-selector';
 import PlanFAQ from './plansStepFaq';
 import WpcomFAQ from './wpcom-faq';
@@ -359,7 +360,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
-		const { customerType, selectedPlan, plansWithScroll, isAllPaidPlansShown } = this.props;
+		const {
+			customerType,
+			selectedPlan,
+			plansWithScroll,
+			isAllPaidPlansShown,
+			flowName,
+			sitePlanSlug,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
@@ -391,6 +399,13 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
+
+		if ( isMarketplaceFlow( flowName ) ) {
+			return plans.filter(
+				( plan ) =>
+					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+			);
+		}
 
 		if ( isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
