@@ -1,1 +1,3 @@
-export const VIDEOPRESS_ONBOARDING_FLOW_STEPS = [ 'user', 'videopress-site', 'plans-premium' ];
+export const VIDEOPRESS_ONBOARDING_FLOW_STEPS = [ 'domains', 'plans-premium' ];
+
+// steps: [ 'domains', 'plans-link-in-bio' ],

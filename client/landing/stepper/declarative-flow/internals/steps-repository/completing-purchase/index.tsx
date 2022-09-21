@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -54,6 +54,25 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 		} );
 	};
 
+	const completeVideoPressFlow = () => {
+		setPendingAction( async () => {
+			setProgress( 0 );
+			setProgressTitle( __( 'Setting up your video site' ) );
+			await siteSetup;
+
+			setProgress( 0.5 );
+			setProgressTitle( __( 'Scouting the locations' ) );
+			await wait( 1500 );
+
+			setProgress( 0.8 );
+			setProgressTitle( __( 'Kicking off the casting' ) );
+			await wait( 1500 );
+
+			setProgress( 1 );
+			await wait( 1500 );
+			return { destination: 'launchpad' };
+		} );
+	};
 	useEffect( () => {
 		if ( ! site ) {
 			return;
@@ -61,6 +80,8 @@ const CompletingPurchase: Step = function CompletingPurchase( { navigation, flow
 
 		if ( flow === LINK_IN_BIO_FLOW ) {
 			completeLinkInBioFlow();
+		} else if ( flow === VIDEOPRESS_FLOW ) {
+			completeVideoPressFlow();
 		} else {
 			completeNewsletterFlow();
 		}
