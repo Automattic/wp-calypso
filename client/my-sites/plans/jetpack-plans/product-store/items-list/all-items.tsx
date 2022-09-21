@@ -92,7 +92,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 							key={ item.productSlug }
 							onClickCta={ getOnClickPurchase( item ) }
 							price={ price }
-							title={ item.shortName }
+							title={ item.displayName }
 						/>
 					);
 				} ) }
