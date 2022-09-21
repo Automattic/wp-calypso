@@ -65,9 +65,8 @@ describe( 'WpcomLoginForm', () => {
 	} );
 
 	test( 'its action should has no subdomain when `hostname` is wpcalypso.wpcom or horizon.wpcom.', () => {
-		const { container, rerender } = render(
-			<WpcomLoginForm { ...props } redirectTo="https://foo.wordpress.com" />
-		);
+		const myProps = { ...props, redirectTo: 'https://foo.wordpress.com' };
+		const { container, rerender } = render( <WpcomLoginForm { ...myProps } /> );
 
 		// should has the same hostname with redirectTo prop.
 		expect( container.firstChild ).toHaveAttribute(
@@ -77,7 +76,7 @@ describe( 'WpcomLoginForm', () => {
 
 		// should be default url
 		config.mockReturnValueOnce( 'wpcalypso.wordpress.com' );
-		rerender( <WpcomLoginForm { ...props } /> );
+		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
 			'https://wordpress.com/wp-login.php'
@@ -85,15 +84,15 @@ describe( 'WpcomLoginForm', () => {
 
 		// should has the same hostname with redirectTo prop.
 		config.mockReturnValueOnce( 'bar.wordpress.com' );
-		rerender( <WpcomLoginForm { ...props } /> );
+		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
-			'https://test.wordpress.com/wp-login.php'
+			'https://foo.wordpress.com/wp-login.php'
 		);
 
 		// should be default url
 		config.mockReturnValueOnce( 'horizon.wordpress.com' );
-		rerender( <WpcomLoginForm { ...props } /> );
+		rerender( <WpcomLoginForm { ...myProps } /> );
 		expect( container.firstChild ).toHaveAttribute(
 			'action',
 			'https://wordpress.com/wp-login.php'
