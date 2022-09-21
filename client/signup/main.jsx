@@ -463,7 +463,7 @@ class Signup extends Component {
 	};
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
-		const { userIsLoggedIn } = this.props;
+		const userIsLoggedIn = this.props.isLoggedIn;
 
 		debug( `Logging you in to "${ destination }"` );
 
@@ -488,7 +488,7 @@ class Signup extends Component {
 			} );
 		}
 
-		if ( ! userIsLoggedIn && config.isEnabled( 'oauth' ) ) {
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
