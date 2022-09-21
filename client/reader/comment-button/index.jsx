@@ -1,9 +1,9 @@
-import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 import { connect } from 'react-redux';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
 import './style.scss';
@@ -11,7 +11,7 @@ import './style.scss';
 const noop = () => {};
 
 function ReaderCommentButton( props ) {
-	const { commentCount, href, onClick, showLabel, tagName, target } = props;
+	const { commentCount, href, onClick, showLabel, tagName, target, size } = props;
 	const translate = useTranslate();
 
 	return createElement(
@@ -25,7 +25,9 @@ function ReaderCommentButton( props ) {
 			},
 			( prop ) => prop === null
 		),
-		<Gridicon icon="reader-comment" size={ props.size } className="comment-button__icon" />,
+		ReaderCommentIcon( {
+			iconSize: size,
+		} ),
 		<span className="comment-button__label">
 			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
 			{ showLabel && commentCount > 0 && (

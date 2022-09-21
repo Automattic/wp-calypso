@@ -5,7 +5,8 @@ import './icons.scss';
 
 const LikeIcons = ( { size } ) => (
 	<span className="like-button__like-icons">
-		<Gridicon icon="reader-star" size={ size } />
+		<Gridicon icon="star" size={ size } />
+		<Gridicon icon="star-outline" size={ size } />
 	</span>
 );
 

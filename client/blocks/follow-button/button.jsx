@@ -16,6 +16,8 @@ class FollowButton extends Component {
 		disabled: PropTypes.bool,
 		followLabel: PropTypes.string,
 		followingLabel: PropTypes.string,
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -56,8 +58,12 @@ class FollowButton extends Component {
 			menuClasses.push( 'is-disabled' );
 		}
 
-		const followingIcon = <Gridicon key="following" icon="reader-following" size={ iconSize } />;
-		const followIcon = <Gridicon key="follow" icon="reader-follow" size={ iconSize } />;
+		const followingIcon = this.props.followingIcon || (
+			<Gridicon key="following" icon="reader-following" size={ iconSize } />
+		);
+		const followIcon = this.props.followIcon || (
+			<Gridicon key="follow" icon="reader-follow" size={ iconSize } />
+		);
 		const followLabelElement = (
 			<span key="label" className="follow-button__label">
 				{ label }
