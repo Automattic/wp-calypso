@@ -116,6 +116,7 @@ export const useESPluginsInfinite = (
 				query: searchTerm,
 				author,
 				groupId: 'wporg',
+				category: options.category,
 				pageHandle: pageParam,
 				pageSize,
 				locale: getWpLocaleBySlug( options.locale || locale ),
