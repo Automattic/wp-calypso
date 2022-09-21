@@ -1,7 +1,7 @@
 import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { isDesktop } from '@automattic/viewport';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
@@ -71,7 +71,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
 				brandFont
 			/>
-			<div className="plans">
+			<div className="plans plugins-plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
 					site={ selectedSite }

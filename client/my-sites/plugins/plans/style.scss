@@ -6,3 +6,17 @@
 		font-size: $font-body;
 	}
 }
+
+.plugins-plans {
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0 24px !important;
+
+		.formatted-header {
+			display: none;
+		}
+
+		.plan-features__table {
+			display: none !important;
+		}
+	}
+}
