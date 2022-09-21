@@ -145,7 +145,5 @@ export function isTaskDisabled( task: Task ) {
 }
 
 export function hasIncompleteDependencies( task: Task ) {
-	if ( 'dependencies' in task ) {
-		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
-	}
+	return task?.dependencies?.some( ( dependency: boolean ) => dependency === false );
 }
