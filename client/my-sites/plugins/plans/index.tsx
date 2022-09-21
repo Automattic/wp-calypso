@@ -15,10 +15,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
+import { MARKETPLACE_FLOW } from 'calypso/my-sites/plugins/flows';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MARKETPLACE_FLOW } from '../flows';
 
 import './style.scss';
 
@@ -99,6 +100,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				} }
 				buttonDisabled={ false }
 			/>
+			<MarketplaceFooter />
 		</MainComponent>
 	);
 };
