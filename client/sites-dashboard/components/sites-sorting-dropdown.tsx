@@ -42,13 +42,13 @@ export const SitesSortingDropdown = ( {
 
 		switch ( `${ sortKey }${ SEPARATOR }${ sortOrder }` ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sorting by: Magic' );
+				return __( 'Sort: Magic' );
 
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorting by: Name' );
+				return __( 'Sort: Name' );
 
 			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sorting by: Last published' );
+				return __( 'Sort: Last published' );
 
 			default:
 				throw new Error( `invalid sort value ${ sitesSorting }` );
@@ -62,14 +62,14 @@ export const SitesSortingDropdown = ( {
 					sortKey: 'alphabetically',
 					sortOrder: 'asc',
 				} ),
-				label: __( 'Alphabetically' ),
+				label: __( 'Name' ),
 			},
 			{
 				value: stringifySitesSorting( {
 					sortKey: 'lastInteractedWith',
 					sortOrder: 'desc',
 				} ),
-				label: __( 'Automagically' ),
+				label: __( 'Magic' ),
 			},
 			{
 				value: stringifySitesSorting( {
