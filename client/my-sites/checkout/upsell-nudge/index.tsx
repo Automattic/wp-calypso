@@ -98,7 +98,6 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	trackUpsellButtonClick: ( key: string ) => void;
 	translate: ReturnType< typeof useTranslate >;
 	cards: PaymentMethod[];
-	isFetchingStoredCards?: boolean;
 	currentPlanTerm: string;
 }
 
@@ -596,12 +595,11 @@ export default connect(
 				: undefined;
 
 		return {
-			isFetchingStoredCards: areStoredCardsLoading,
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanTerm,
 			isLoading:
-				isFetchingCards ||
+				areStoredCardsLoading ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
