@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button,
 	Gridicon,
@@ -187,12 +188,18 @@ export function SitesDashboard( {
 						primary
 						whiteSeparator
 						label={ __( 'Add new site' ) }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+						} }
 						href={ addQueryArgs( '/start', {
 							source: TRACK_SOURCE_NAME,
 							ref: TRACK_SOURCE_NAME,
 						} ) }
 					>
 						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+							} }
 							href={ addQueryArgs( '/jetpack/connect', {
 								cta_from: TRACK_SOURCE_NAME,
 								cta_id: 'add-site',
@@ -202,6 +209,9 @@ export function SitesDashboard( {
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+							} }
 							href={ addQueryArgs( '/start', {
 								source: TRACK_SOURCE_NAME,
 								ref: 'smp-import',
