@@ -92,6 +92,7 @@ export const SitesSortingDropdown = ( {
 				<SortingButton
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
+					title={ __( 'Switch sorting mode' ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 				>
