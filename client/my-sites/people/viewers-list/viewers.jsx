@@ -11,6 +11,9 @@ import accept from 'calypso/lib/accept';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
+import { includeSubscriberImporterGradually } from '../helpers';
 import InviteButton from '../invite-button';
 
 class Viewers extends Component {
@@ -77,6 +80,8 @@ class Viewers extends Component {
 
 	render() {
 		const isJetpackSite = this.props.site?.jetpack;
+		const { includeSubscriberImporter } = this.props;
+
 		let viewers;
 		let emptyContentArgs = {
 			title: isJetpackSite
@@ -87,7 +92,12 @@ class Viewers extends Component {
 		if ( ! isJetpackSite ) {
 			emptyContentArgs = {
 				...emptyContentArgs,
-				action: <InviteButton siteSlug={ this.props.site?.slug } />,
+				action: (
+					<InviteButton
+						siteSlug={ this.props.site?.slug }
+						includeSubscriberImporter={ includeSubscriberImporter }
+					/>
+				),
 			};
 		}
 
@@ -141,8 +151,17 @@ class Viewers extends Component {
 	}
 }
 
+const mapStateToProps = ( state ) => {
+	const userId = getCurrentUserId( state );
+	const a8cTeamMember = isA8cTeamMember( state );
+
+	return {
+		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+	};
+};
+
 const mapDispatchToProps = {
 	recordGoogleEvent,
 };
 
-export default connect( null, mapDispatchToProps )( localize( Viewers ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Viewers ) );
