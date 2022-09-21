@@ -75,6 +75,8 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					selectedPlan={ PLAN_BUSINESS }
 					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
 					flowName={ MARKETPLACE_FLOW }
+					shouldShowPlansFeatureComparison
+					isReskinned
 				/>
 			</div>
 		</MainComponent>
