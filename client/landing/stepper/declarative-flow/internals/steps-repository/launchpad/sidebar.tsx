@@ -1,6 +1,5 @@
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -45,7 +44,6 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
-	const [ showLaunchTitle, setShowLaunchTitle ] = useState< boolean >( false );
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
@@ -55,13 +53,8 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep );
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
-
-	useEffect( () => {
-		const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
-		if ( launchTask && ! isTaskDisabled( launchTask ) ) {
-			setShowLaunchTitle( true );
-		}
-	}, [ enhancedTasks ] );
+	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
+	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
 	if ( siteSlug ) {
 		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
