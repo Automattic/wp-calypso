@@ -31,10 +31,7 @@ export const RemovePlanDialog = ( {
 	const buttons = [
 		{
 			action: 'removePlan',
-			label: translate( 'Cancel my plan', {
-				comment:
-					'This button removes the active plan and all active Marketplace subscriptions on the site',
-			} ),
+			label: translate( 'Cancel my plan' ),
 			onClick: removePlan,
 		},
 		{
