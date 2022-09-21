@@ -123,14 +123,15 @@ export function generateFlows( {
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			steps: [ 'domains' ],
 			destination: ( dependencies ) =>
-				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+				`/setup/plansLinkInBio?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
 				) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-08-16',
-			showRecaptcha: true,
+			lastModified: '2022-09-20',
+			dependencies: [ 'siteSlug' ],
+			Recaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},

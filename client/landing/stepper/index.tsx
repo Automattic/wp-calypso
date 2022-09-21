@@ -25,6 +25,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
@@ -57,6 +58,7 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
 	reduxStore.dispatch( requestSites() );
+	reduxStore.dispatch( setCurrentFlowName( 'link-in-bio' ) ); //make it dynamic ofc.
 }
 
 interface configurableFlows {

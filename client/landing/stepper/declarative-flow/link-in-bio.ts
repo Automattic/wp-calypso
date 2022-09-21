@@ -27,6 +27,7 @@ export const linkInBio: Flow = {
 			'patterns',
 			'processing',
 			'launchpad',
+			'plans',
 		] as StepPath[];
 	},
 
@@ -83,6 +84,9 @@ export const linkInBio: Flow = {
 					//Still in development
 					//return navigate( 'plans' );
 					break;
+
+				case 'plansLinkInBio':
+					return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
