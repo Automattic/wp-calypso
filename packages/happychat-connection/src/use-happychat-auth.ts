@@ -10,10 +10,6 @@ export async function requestHappyChatAuth() {
 		apiVersion: '1.1',
 	} );
 
-	const url = ( await wpcomRequest( { path: '/am-i/proxied', apiNamespace: 'wpcom/v2' } ) )
-		? 'https://happychat-io-staging.go-vip.co/customer'
-		: 'https://happychat.io/customer';
-
 	const happychatUser: HappychatUser = {
 		signer_user_id: user.ID,
 		groups: [ 'WP.com' ],
@@ -28,7 +24,7 @@ export async function requestHappyChatAuth() {
 		apiVersion: '1.1',
 		method: 'POST',
 	} );
-	const { session_id, geo_location } = session;
+	const { session_id, geo_location, url } = session;
 	happychatUser.geoLocation = geo_location;
 
 	const sign: { jwt: string } = await wpcomRequest( {

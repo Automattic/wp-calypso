@@ -13,6 +13,7 @@ export interface GeoLocation {
 export interface HappychatSession {
 	session_id: number;
 	geo_location: GeoLocation;
+	url: string;
 }
 
 export interface HappychatUser {
