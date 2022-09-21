@@ -1,6 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { Plans } from 'calypso/../packages/data-stores/src';
@@ -10,20 +10,32 @@ import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 
+import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
+import { addDomainToCart, addPlanToCart } from 'calypso/lib/signup/step-actions';
+
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './style.scss';
+import { getDomainProductSlug } from 'calypso/lib/domains';
+import { domainRegistration, planItem } from 'calypso/lib/cart-values/cart-items';
+import { useStore } from 'react-redux';
 
 const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const isVideoPressFlow = 'videopress' === flow;
 	const { __ } = useI18n();
 	const locale = useLocale();
+
+	const visibility = useNewSiteVisibility();
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const { createSite } = useDispatch( ONBOARD_STORE );
+
+	const store = useStore();
 
 	const [ billingPeriod, setBillingPeriod ] =
 		React.useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
@@ -45,9 +57,59 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			);
 		} );
 
+		console.log( supportedPlans );
+
 		const onPlanSelect = ( planId: number | undefined ) => {
-			setSelectedPlanProductId( planId );
-			submit?.( { planId } );
+			/// @todo lock UI
+
+			//setSelectedPlanProductId( planId );
+
+			createSite( {
+				username: currentUser!.username,
+				languageSlug: locale,
+				bearerToken: undefined,
+				visibility,
+				anchorFmPodcastId: null,
+				anchorFmEpisodeId: null,
+				anchorFmSpotifyUrl: null,
+			} )
+			.then( ( newSite ) => {
+				const planObject = supportedPlans.find( ( plan ) => plan.productIds.indexOf( planId as number ) >= 0 );
+				if ( ! planObject ) {
+					///@todo whatever
+					return;
+				}
+				console.log( 'We have the plan object !' );
+				addPlanToCart(
+					() => {
+						submit?.( { newSite } );
+					},
+					{},
+					{ cartItem: { product_slug: planObject.periodAgnosticSlug } },
+					store
+				);
+				/*
+				const productSlug = getDomainProductSlug( domain );
+				const domainItem = domainRegistration( { productSlug, domain: domain!.domain_name } );
+
+				addDomainToCart(
+					( error: any ) => {
+						if (error) {
+							///@todo whatever
+							return;
+						}
+
+						const planObject = supportedPlans.find( ( plan ) => planId as number in plan.productIds );
+						if ( ! planObject ) {
+							///@todo whatever
+							return;
+						}
+
+						
+					},
+					{ domainItem }
+				);*/
+			} );
 		};
 
 		return (

@@ -9,6 +9,7 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 import './internals/videopress.scss';
+import { NewSiteBlogDetails } from 'calypso/../packages/data-stores/src';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -18,7 +19,15 @@ export const videopress: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'options', 'completingPurchase', 'processing', 'launchpad' ] as StepPath[];
+		return [
+			'intro',
+			'options',
+			'chooseADomain',
+			'chooseAPlan',
+			'completingPurchase',
+			'processing',
+			'launchpad'
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -30,11 +39,12 @@ export const videopress: Flow = {
 		const name = this.name;
 		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
+		const { createSite } = useDispatch( ONBOARD_STORE );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -48,20 +58,18 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
-					// return navigate( 'chooseADomain' );
-					return window.location.replace(
-						`/start/${ name }/domains?new=${ encodeURIComponent(
-							siteTitle as string
-						) }&search=yes&hide_initial_query=yes`
-					);
+					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain': {
+				case 'chooseADomain':
 					return navigate( 'chooseAPlan' );
-				}
 
 				case 'chooseAPlan':
-					return navigate( 'chooseAPlan' );
+					const { newSite } = providedDependencies;
+					console.log( newSite );
+
+					return window.location.replace( '/checkout/' + siteSlug );
+					//return navigate( 'completingPurchase' );
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
