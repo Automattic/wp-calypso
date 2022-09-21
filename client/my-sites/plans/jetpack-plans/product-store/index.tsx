@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StoreItemInfoContext from './context/store-item-info-context';
+import { useShowJetpackFree } from './hooks/use-show-jetpack-free';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
 import { ItemsList } from './items-list';
 import { JetpackFree } from './jetpack-free';
@@ -39,6 +40,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 		siteId,
 	} );
 
+	const showJetpackFree = useShowJetpackFree();
+
 	return (
 		<div className="jetpack-product-store">
 			{ header }
@@ -51,7 +54,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			<StoreItemInfoContext.Provider value={ storeItemInfo }>
 				<ItemsList currentView={ currentView } duration={ duration } siteId={ siteId } />
 			</StoreItemInfoContext.Provider>
-			<JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } />
+
+			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
 
