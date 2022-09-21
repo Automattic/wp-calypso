@@ -23,6 +23,9 @@
 		color: var(--color-neutral-100);
 		border: 1px solid var(--color-neutral-100);
 	}
+	.button:focus {
+		border-width: 1px;
+	}
 
 	.info-popover.owner-info__pop-over {
 		line-height: inherit;

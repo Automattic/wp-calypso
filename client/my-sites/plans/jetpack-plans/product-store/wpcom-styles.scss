@@ -17,6 +17,10 @@ $wpcom-menu-collapse: 783px;
 		background-color: var(--studio-gray-5);
 	}
 
+	:is(.button:active,	.button.is-active, .button:focus) {
+		border-width: 0;
+	}
+
 	h2 {
 		font-size: $font-title-small;
 		font-weight: 600;
