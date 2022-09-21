@@ -583,7 +583,15 @@ class TransferDomainStep extends Component {
 						case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
 							this.setState( {
 								notice: this.props.translate(
-									"This domain can't be transferred because it was registered less than 60 days ago"
+									"This domain can't be transferred because it was registered less than 60 days ago."
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred due to a domain lock."
 								),
 								noticeSeverity: 'info',
 							} );

@@ -141,6 +141,21 @@ export function getOptionInfo( {
 				),
 			};
 			break;
+		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__(
+							"<strong>%s</strong> can't be transferred due to a domain lock, but you can connect it instead."
+						),
+						domain
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
 		default: {
 			const availabilityNotice = getAvailabilityNotice( domain, availability.status );
 			transferContent = {

@@ -412,6 +412,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a domain lock.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		case 'blocked':
 			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
 			message = translate(
