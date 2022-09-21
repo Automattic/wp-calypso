@@ -65,7 +65,7 @@ function redirectToCalypso( request, response, next ) {
 		client_id: config( 'apple_oauth_client_id' ),
 		state: state.oauth2State,
 	} );
-	response.redirect( originalUrlPath + state.queryString + '#' + hashString );
+	response.redirect( originalUrlPath + '?' + state.queryString + '#' + hashString );
 }
 
 export default function ( app ) {
