@@ -38,7 +38,7 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericYearly ] );
 	} );
 
-	test( 'domain registration', () => {
+	test( 'paid domain registration', () => {
 		const cart = getCart( [ 'dotlive_domain' ] );
 		const refundPolicies = getRefundPolicies( cart );
 
@@ -52,8 +52,14 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [] );
 	} );
 
-	test( 'domain registration and plan', () => {
-		const cart = getCart( [ 'dotlive_domain', PLAN_PERSONAL ] );
+	test( 'plan and free domain registration', () => {
+		const cart = getCart( [ PLAN_PERSONAL ] );
+		cart.products.unshift( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [
@@ -62,8 +68,15 @@ describe( 'getRefundPolicies', () => {
 		] );
 	} );
 
-	test( 'domain registration, plan and professional email', () => {
-		const cart = getCart( [ 'dotlive_domain', PLAN_PERSONAL ] );
+	test( 'plan, free domain registration and professional email', () => {
+		const cart = getCart( [ PLAN_PERSONAL ] );
+
+		cart.products.unshift( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
 
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
@@ -82,7 +95,6 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
 			RefundPolicy.GenericYearly,
-			RefundPolicy.ProfessionalEmailFreeTrialYearly,
 		] );
 	} );
 

@@ -2,7 +2,6 @@ import {
 	isDomainRegistration,
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
-	isTitanMail,
 	isYearly,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -20,8 +19,6 @@ export enum RefundPolicy {
 	DomainNameRenewal,
 	GenericMonthly,
 	GenericYearly,
-	ProfessionalEmailFreeTrialYearly,
-	ProfessionalEmailFreeTrialMonthly,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
@@ -31,23 +28,19 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainRegistration( product ) ) {
-			if ( isRenewal( product ) ) {
-				return RefundPolicy.DomainNameRenewal;
-			}
-
 			if ( isDomainBeingUsedForPlan( cart, product.meta ) ) {
 				return RefundPolicy.DomainNameRegistrationForPlan;
 			}
 
-			return RefundPolicy.DomainNameRegistration;
-		}
-
-		if ( isTitanMail( product ) && product.introductory_offer_terms?.enabled ) {
-			if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.ProfessionalEmailFreeTrialMonthly;
+			if ( ! product.item_subtotal_integer ) {
+				return undefined;
 			}
 
-			return RefundPolicy.ProfessionalEmailFreeTrialYearly;
+			if ( isRenewal( product ) ) {
+				return RefundPolicy.DomainNameRenewal;
+			}
+
+			return RefundPolicy.DomainNameRegistration;
 		}
 
 		if ( ! product.item_subtotal_integer ) {
@@ -123,20 +116,6 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }
-			);
-			break;
-
-		case RefundPolicy.ProfessionalEmailFreeTrialMonthly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}Professional Email refunds{{/refundsSupportPage}} are limited to 7 days after renewal for monthly subscriptions.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
-		case RefundPolicy.ProfessionalEmailFreeTrialYearly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}Professional Email refunds{{/refundsSupportPage}} are limited to 14 days after renewal for yearly subscriptions.',
-				{ components: { refundsSupportPage } }
 			);
 			break;
 
