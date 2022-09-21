@@ -25,6 +25,7 @@ import {
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -401,6 +402,11 @@ export class PlansFeaturesMain extends Component {
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
 
 		if ( isMarketplaceFlow( flowName ) ) {
+			// workaround to show free plan on both monthly/yearly toggle
+			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
+				// elements are rendered in order, needs to be the first one
+				plans.unshift( PLAN_FREE );
+			}
 			return plans.filter(
 				( plan ) =>
 					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
