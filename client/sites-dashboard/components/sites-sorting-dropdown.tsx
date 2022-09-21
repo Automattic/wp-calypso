@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import {
@@ -32,7 +33,7 @@ export const SitesSortingDropdown = ( {
 	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
-	const label = useMemo( () => {
+	const currentSorting = useMemo( () => {
 		if ( ! hasSitesSortingPreferenceLoaded ) {
 			return null;
 		}
@@ -42,13 +43,13 @@ export const SitesSortingDropdown = ( {
 
 		switch ( `${ sortKey }${ SEPARATOR }${ sortOrder }` ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sort: Magic' );
+				return __( 'Magic' );
 
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sort: Name' );
+				return __( 'Name' );
 
 			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sort: Last published' );
+				return __( 'Last published' );
 
 			default:
 				throw new Error( `invalid sort value ${ sitesSorting }` );
@@ -92,10 +93,15 @@ export const SitesSortingDropdown = ( {
 				<SortingButton
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
+					// translators: %s is the current sorting mode.
+					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSorting ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 				>
-					{ label }
+					{
+						// translators: %s is the current sorting mode.
+						sprintf( __( 'Sort: %s' ), currentSorting )
+					}
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
