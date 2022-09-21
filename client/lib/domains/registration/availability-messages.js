@@ -414,7 +414,7 @@ function getAvailabilityNotice( domain, error, errorData ) {
 
 		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
 			message = translate(
-				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a domain lock.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a transfer lock at the registry.",
 				{
 					args: { domain },
 					components: {

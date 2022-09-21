@@ -148,7 +148,7 @@ export function getOptionInfo( {
 					sprintf(
 						/* translators: %s - the domain the user wanted to transfer */
 						__(
-							"<strong>%s</strong> can't be transferred due to a domain lock, but you can connect it instead."
+							"<strong>%s</strong> can't be transferred due to a transfer lock at the registry, but you can connect it instead."
 						),
 						domain
 					),

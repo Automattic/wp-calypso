@@ -591,7 +591,7 @@ class TransferDomainStep extends Component {
 						case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
 							this.setState( {
 								notice: this.props.translate(
-									"This domain can't be transferred due to a domain lock."
+									"This domain can't be transferred due to a transfer lock at the registry."
 								),
 								noticeSeverity: 'info',
 							} );
