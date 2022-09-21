@@ -225,7 +225,7 @@ class RemovePurchase extends Component {
 
 	shouldShowPlanWarning() {
 		const { purchase } = this.props;
-		return isPlan( purchase );
+		return isPlan( purchase ) && ! isJetpackProduct( purchase ) && ! isJetpackPlan( purchase );
 	}
 
 	renderPlanWarningDialog() {
