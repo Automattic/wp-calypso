@@ -35,7 +35,7 @@ describe( 'getRefundPolicies', () => {
 		const cart = getCart( [ PRODUCT_WPCOM_CUSTOM_DESIGN ] );
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.AddOnYearly ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericYearly ] );
 	} );
 
 	test( 'domain registration', () => {
@@ -58,7 +58,7 @@ describe( 'getRefundPolicies', () => {
 
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.PlanYearly,
+			RefundPolicy.GenericYearly,
 		] );
 	} );
 
@@ -81,7 +81,7 @@ describe( 'getRefundPolicies', () => {
 
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.PlanYearly,
+			RefundPolicy.GenericYearly,
 			RefundPolicy.ProfessionalEmailFreeTrialYearly,
 		] );
 	} );

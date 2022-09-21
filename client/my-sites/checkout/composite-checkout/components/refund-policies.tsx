@@ -1,10 +1,7 @@
 import {
-	isAddOn,
 	isDomainRegistration,
-	isGoogleWorkspace,
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
-	isPlan,
 	isTitanMail,
 	isYearly,
 } from '@automattic/calypso-products';
@@ -18,65 +15,50 @@ import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 export enum RefundPolicy {
-	AddOnYearly,
 	DomainNameRegistration,
 	DomainNameRegistrationForPlan,
 	DomainNameRenewal,
 	GenericMonthly,
 	GenericYearly,
-	GoogleWorkspaceMonthly,
-	GoogleWorkspaceYearly,
-	PlanMonthly,
-	PlanYearly,
 	ProfessionalEmailFreeTrialYearly,
 	ProfessionalEmailFreeTrialMonthly,
-	ProfessionalEmailMonthly,
-	ProfessionalEmailYearly,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	const refundPolicies = cart.products.map( ( product ) => {
-		if ( ! product.item_subtotal_integer && ! product.introductory_offer_terms?.enabled ) {
+		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return undefined;
 		}
 
-		if ( isAddOn( product ) ) {
-			return RefundPolicy.AddOnYearly;
-		} else if ( isDomainRegistration( product ) ) {
+		if ( isDomainRegistration( product ) ) {
 			if ( isRenewal( product ) ) {
 				return RefundPolicy.DomainNameRenewal;
-			} else if ( isDomainBeingUsedForPlan( cart, product.meta ) ) {
+			}
+
+			if ( isDomainBeingUsedForPlan( cart, product.meta ) ) {
 				return RefundPolicy.DomainNameRegistrationForPlan;
 			}
 
 			return RefundPolicy.DomainNameRegistration;
-		} else if ( isGoogleWorkspace( product ) && ! isGoogleWorkspaceExtraLicence( product ) ) {
+		}
+
+		if ( isTitanMail( product ) && product.introductory_offer_terms?.enabled ) {
 			if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.GoogleWorkspaceMonthly;
+				return RefundPolicy.ProfessionalEmailFreeTrialMonthly;
 			}
 
-			return RefundPolicy.GoogleWorkspaceYearly;
-		} else if ( isPlan( product ) ) {
-			if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.PlanMonthly;
-			}
+			return RefundPolicy.ProfessionalEmailFreeTrialYearly;
+		}
 
-			return RefundPolicy.PlanYearly;
-		} else if ( isTitanMail( product ) ) {
-			if ( product.introductory_offer_terms?.enabled ) {
-				if ( isMonthlyProduct( product ) ) {
-					return RefundPolicy.ProfessionalEmailFreeTrialMonthly;
-				}
+		if ( ! product.item_subtotal_integer ) {
+			return undefined;
+		}
 
-				return RefundPolicy.ProfessionalEmailFreeTrialYearly;
-			} else if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.ProfessionalEmailMonthly;
-			}
-
-			return RefundPolicy.ProfessionalEmailYearly;
-		} else if ( isMonthlyProduct( product ) ) {
+		if ( isMonthlyProduct( product ) ) {
 			return RefundPolicy.GenericMonthly;
-		} else if ( isYearly( product ) ) {
+		}
+
+		if ( isYearly( product ) ) {
 			return RefundPolicy.GenericYearly;
 		}
 	} );
@@ -109,13 +91,6 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 	let text;
 
 	switch ( refundPolicy ) {
-		case RefundPolicy.AddOnYearly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}add-on refunds{{/refundsSupportPage}} are limited to 14 days after purchase.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
 		case RefundPolicy.DomainNameRegistration:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
@@ -137,31 +112,17 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
-		case RefundPolicy.GoogleWorkspaceMonthly:
+		case RefundPolicy.GenericMonthly:
 			text = translate(
-				'You understand that {{refundsSupportPage}}Google Workspace refunds{{/refundsSupportPage}} are limited to 7 days after purchase for monthly subscriptions.',
-				{ components: { refundsSupportPage } }
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
+				{ components: { cancelDomainSupportPage, refundsSupportPage } }
 			);
 			break;
 
-		case RefundPolicy.GoogleWorkspaceYearly:
+		case RefundPolicy.GenericYearly:
 			text = translate(
-				'You understand that {{refundsSupportPage}}Google Workspace refunds{{/refundsSupportPage}} are limited to 14 days after purchase for yearly subscriptions.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
-		case RefundPolicy.PlanMonthly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 7 days after purchase for monthly subscriptions.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
-		case RefundPolicy.PlanYearly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase for yearly subscriptions.',
-				{ components: { refundsSupportPage } }
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
+				{ components: { cancelDomainSupportPage, refundsSupportPage } }
 			);
 			break;
 
@@ -179,21 +140,6 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
-		case RefundPolicy.ProfessionalEmailMonthly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}Professional Email refunds{{/refundsSupportPage}} are limited to 7 days after purchase for monthly subscriptions.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
-		case RefundPolicy.ProfessionalEmailYearly:
-			text = translate(
-				'You understand that {{refundsSupportPage}}Professional Email refunds{{/refundsSupportPage}} are limited to 14 days after purchase for yearly subscriptions.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
-		// Some RefundPolicy's are deliberately unhandled, for example when they are too generic.
 		default:
 			return null;
 	}
