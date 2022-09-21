@@ -6,13 +6,13 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
@@ -45,6 +45,32 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 		);
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: translate( 'Flex your site with plugins' ),
+				body: translate(
+					'Install plugins and extend functionality for your site with access to more than 50,000 plugins.'
+				),
+				image: <Gridicon icon="plugins" />,
+			},
+			{
+				title: translate( 'Money back guarantee' ),
+				body: translate(
+					'Try WordPress.com for 14 days and if you are not 100% satisfied, get your money back.'
+				),
+				image: <Gridicon icon="money" />,
+			},
+			{
+				title: translate( 'Essential features' ),
+				body: translate(
+					"We guarantee site's performance and protect it from spammers detailing all activity records."
+				),
+				image: <Gridicon icon="plans" />,
+			},
+		],
+	};
+
 	return (
 		<MainComponent wideLayout>
 			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
@@ -69,35 +95,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				/>
 			</div>
 
-			<div className="plugin-plans-step-hints">
-				<section>
-					<Gridicon icon="plugins" />
-					<h3>{ translate( 'Flex your site with plugins' ) }</h3>
-					<p>
-						{ translate(
-							'Install plugins and extend functionality for your site with access to more than 50,000 plugins.'
-						) }
-					</p>
-				</section>
-				<section>
-					<Gridicon icon="money" />
-					<h3>{ translate( 'Money back guarantee' ) }</h3>
-					<p>
-						{ translate(
-							'Try WordPress.com for 14 days and if you are not 100% satisfied, get your money back.'
-						) }
-					</p>
-				</section>
-				<section>
-					<Gridicon icon="plans" />
-					<h3>{ translate( 'Essential features' ) }</h3>
-					<p>
-						{ translate(
-							"We guarantee site's performance and protect it from spammers detailing all activity records."
-						) }
-					</p>
-				</section>
-			</div>
+			<PromoSection { ...promos } />
 		</MainComponent>
 	);
 };
