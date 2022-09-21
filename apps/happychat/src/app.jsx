@@ -79,6 +79,12 @@ async function AppBoot() {
 		}
 	}
 
+	if ( auth ) {
+		window.configData.env_id =
+			auth.url === 'https://happychat.io/customer' ? 'production' : 'development';
+		window.configData.happychat_url = auth.url;
+	}
+
 	initializeAnalytics( user || undefined, getSuperProps( store ) );
 	if ( user ) {
 		store.dispatch( setCurrentUser( user ) );
