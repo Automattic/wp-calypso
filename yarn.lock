@@ -395,7 +395,7 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     classnames: ^2.3.1
     enzyme: ^3.11.0
-    gridicons: ^3.4.1-alpha.1
+    gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
     prop-types: ^15.7.2
@@ -19139,14 +19139,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gridicons@npm:^3.4.1-alpha.1":
-  version: 3.4.1-alpha.1
-  resolution: "gridicons@npm:3.4.1-alpha.1"
+"gridicons@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "gridicons@npm:3.4.0"
   dependencies:
     prop-types: ^15.5.7
   peerDependencies:
     react: 15 - 17
-  checksum: 292284845d55e03157a6e94fe834a5f322d60ff3882e8233d166562baabeaa362aa45b11005c4211dbaf6423eef80b398b82fc40696f5e8bdb02544b7f7787ec
+  checksum: aa595099ffdd6a2cdbbb95271270dbdaa52877c99a5f4f034fe297c3aed60cfbd85bb6d463d0bf62268b34a3aa1feccdc2dc48dddf0c3e4b01b771114839b3ff
   languageName: node
   linkType: hard
 
