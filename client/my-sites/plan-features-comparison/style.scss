@@ -254,7 +254,6 @@ $plan-features-sidebar-width: 272px;
 
 		@include breakpoint-deprecated( "<660px" ) {
 			padding: 0 20px 20px;
-			border-bottom: solid 1px var(--color-neutral-0);
 		}
 	}
 
@@ -521,3 +520,50 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+.plan-features-comparison__mobile {
+	color: var(--color-text-subtle);
+	margin: 0 16px;
+	text-align: center;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		display: none;
+	}
+
+	.foldable-card {
+		box-shadow: none;
+		border-top: solid 1px var(--color-neutral-0);
+	}
+
+	.foldable-card.card.is-expanded {
+		//original rule has this specificity
+		margin: 0;
+	}
+
+	.foldable-card.is-expanded .foldable-card__content {
+		//original rule has this specificity
+		padding: 0;
+	}
+
+	.plan-features-comparison__item {
+		border-bottom: solid 1px var(--color-neutral-5);
+		font-size: $font-body-small;
+	}
+
+	.plan-features-comparison__header-banner {
+		display: none;
+	}
+
+	.plan-features-comparison__item:last-child {
+		border-bottom: none;
+	}
+
+}
+
+.plan-features-comparison__mobile-plan {
+	font-size: $font-body-small;
+	border: solid 1px var(--color-neutral-5);
+	background-color: var(--color-surface);
+	margin-bottom: 24px;
+}
+
