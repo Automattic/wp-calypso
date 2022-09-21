@@ -109,7 +109,7 @@
 }
 
 .product-lightbox__detail-tags {
-	margin-bottom: 0.25rem;
+	margin-bottom: 16px;
 
 	&-label {
 		font-weight: 600;
@@ -122,8 +122,7 @@
 		align-items: center;
 		display: inline-flex;
 		justify-content: center;
-		margin-bottom: 0.5rem;
-		margin-right: 1rem;
+		margin-right: 16px;
 
 		span {
 			margin-right: 4px;
