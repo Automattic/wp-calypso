@@ -26,6 +26,8 @@ class AppleLoginButton extends Component {
 		scope: PropTypes.string,
 		uxMode: PropTypes.oneOf( [ 'redirect', 'popup' ] ),
 		socialServiceResponse: PropTypes.object,
+		originalUrlPath: PropTypes.string,
+		queryString: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -86,7 +88,11 @@ class AppleLoginButton extends Component {
 			clientId: this.props.clientId,
 			scope: this.props.scope,
 			redirectURI: this.props.redirectUri,
-			state: oauth2State,
+			state: JSON.stringify( {
+				oauth2State,
+				originalUrlPath: this.props.originalUrlPath,
+				queryString: this.props.queryString,
+			} ),
 		} );
 
 		this.appleClient = window.AppleID;
