@@ -200,6 +200,13 @@ export class AppBanner extends Component {
 	getWordpressAppBanner = ( { translate, currentSection } ) => {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
+		// This conditional will be unnecessary once the 'jetpack/app-branding'
+		// feature flag is removed and its features re made the default
+		// experience, as getAppBannerData will then not include conditionals.
+		if ( ! title || ! copy ) {
+			return null;
+		}
+
 		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
 				<Card
