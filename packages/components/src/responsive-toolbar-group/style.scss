@@ -3,12 +3,13 @@
 	padding-bottom: 24px;
 
 	.responsive-toolbar-group__grouped-list {
+		background-color: transparent;
+		border-color: transparent;
 		justify-content: space-between;
 		flex-wrap: nowrap;
 		display: flex;
 		opacity: 0;
 
-		border-color: rgba(0, 0, 0, 0);
 
 		.responsive-toolbar-group__menu-item.is-selected {
 			background-color: #1e1e1e;

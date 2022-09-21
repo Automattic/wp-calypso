@@ -53,7 +53,7 @@ export default function PluginManagementV2( {
 		return (
 			<div className="plugin-common-table__bulk-actions">
 				{ !! pluginUpdateCount && (
-					<ButtonGroup>
+					<ButtonGroup className="plugin-management-v2__table-button-group">
 						<Button compact primary onClick={ updateAllPlugins }>
 							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
 								context: 'button label',
@@ -65,7 +65,7 @@ export default function PluginManagementV2( {
 						</Button>
 					</ButtonGroup>
 				) }
-				<ButtonGroup>
+				<ButtonGroup className="plugin-management-v2__table-button-group">
 					<Button compact onClick={ toggleBulkManagement }>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>

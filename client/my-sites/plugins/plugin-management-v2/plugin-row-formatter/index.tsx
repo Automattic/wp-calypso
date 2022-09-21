@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { ReactElement, ReactChild } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { INSTALL_PLUGIN, UPDATE_PLUGIN } from 'calypso/lib/plugins/constants';
@@ -10,6 +10,7 @@ import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggl
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
@@ -42,8 +43,13 @@ export default function PluginRowFormatter( {
 	updatePlugin,
 }: Props ): ReactElement | any {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
-	const PluginDetailsButton = ( props: { className: string; children: ReactChild } ) => {
+	const PluginDetailsButton = ( props: {
+		className: string;
+		children: ReactChild;
+		onClick?: React.MouseEventHandler;
+	} ) => {
 		return (
 			<Button
 				borderless
@@ -53,6 +59,20 @@ export default function PluginRowFormatter( {
 			/>
 		);
 	};
+
+	const trackPluginDetailsButtonClick =
+		( siteId: number | undefined, pluginSlug: string ) => () => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugin_details_click', { site: siteId, plugin: pluginSlug } )
+			);
+		};
+
+	const trackPluginSiteCountButtonClick =
+		( siteId: number | undefined, pluginSlug: string ) => () => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugin_site_count_click', { site: siteId, plugin: pluginSlug } )
+			);
+		};
 
 	const moment = useLocalizedMoment();
 	const state = useSelector( ( state ) => state );
@@ -107,7 +127,10 @@ export default function PluginRowFormatter( {
 		case 'plugin':
 			return isSmallScreen ? (
 				<>
-					<PluginDetailsButton className="plugin-row-formatter__plugin-name-card">
+					<PluginDetailsButton
+						className="plugin-row-formatter__plugin-name-card"
+						onClick={ trackPluginDetailsButtonClick( selectedSite?.ID, item.slug ) }
+					>
 						{ item.name }
 					</PluginDetailsButton>
 					{ pluginActionStatus }
@@ -138,7 +161,10 @@ export default function PluginRowFormatter( {
 							/>
 						) }
 						<div className="plugin-row-formatter__plugin-name-container">
-							<PluginDetailsButton className="plugin-row-formatter__plugin-name">
+							<PluginDetailsButton
+								className="plugin-row-formatter__plugin-name"
+								onClick={ trackPluginDetailsButtonClick( selectedSite?.ID, item.slug ) }
+							>
 								{ item.name }
 							</PluginDetailsButton>
 							<span className="plugin-row-formatter__overlay"></span>
@@ -158,7 +184,10 @@ export default function PluginRowFormatter( {
 					}
 				)
 			) : (
-				<PluginDetailsButton className="plugin-row-formatter__sites-count-button">
+				<PluginDetailsButton
+					className="plugin-row-formatter__sites-count-button"
+					onClick={ trackPluginSiteCountButtonClick( selectedSite?.ID, item.slug ) }
+				>
 					{ siteCount }
 				</PluginDetailsButton>
 			);

@@ -31,9 +31,10 @@ type Props = {
 
 export default function CampaignItem( { campaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 
-	const { cancelCampaign } = useCancelCampaignMutation();
+	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 
 	const {
 		impressions_total,
@@ -119,16 +120,32 @@ export default function CampaignItem( { campaign }: Props ) {
 	const buttons = [
 		{
 			action: 'cancel',
+			isPrimary: true,
 			label: __( 'No' ),
 		},
 		{
 			action: 'remove',
-			isPrimary: true,
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
 				cancelCampaign( siteId, campaign.campaign_id );
 			},
+		},
+	];
+
+	const errorDialogButtons = [
+		{
+			action: 'remove',
+			label: __( 'Contact support' ),
+			onClick: async () => {
+				setShowErrorDialog( false );
+				window.open( 'https://wordpress.com/support/', '_blank' );
+			},
+		},
+		{
+			action: 'cancel',
+			isPrimary: true,
+			label: __( 'Ok' ),
 		},
 	];
 
@@ -141,6 +158,15 @@ export default function CampaignItem( { campaign }: Props ) {
 			>
 				<h1>{ cancelCampaignTitle }</h1>
 				<p>{ cancelCampaignMessage }</p>
+			</Dialog>
+
+			<Dialog
+				isVisible={ showErrorDialog }
+				buttons={ errorDialogButtons }
+				onClose={ () => setShowErrorDialog( false ) }
+			>
+				<h1>{ __( "Something's gone wrong" ) }</h1>
+				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">

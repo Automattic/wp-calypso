@@ -287,27 +287,27 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				const contexts = this.global.browser.contexts();
 
 				if ( this.failure ) {
-					const artefactFilename = `${ this.testFilename }__${ sanitizeString(
-						this.failure.name
-					) }`;
-
 					let contextIndex = 0;
 					let pageIndex = 0;
 
-					// Save trace, screenshot and video for every open context/page.
-					for await ( const context of contexts ) {
-						const traceFilePath = path.join(
-							this.testArtifactsPath,
-							`${ artefactFilename }__${ contextIndex }.zip`
-						);
+					const artifactFilename = `${ this.testFilename }__${ sanitizeString(
+						this.failure.name
+					) }`;
+					const traceFilePath = path.join(
+						this.testArtifactsPath,
+						`${ artifactFilename }__${ contextIndex }.zip`
+					);
 
+					for await ( const context of contexts ) {
+						// Traces are saved per context.
 						await context.tracing.stop( { path: traceFilePath } );
 
 						for await ( const page of context.pages() ) {
+							// Screenshots and video are saved per page, where numerous
+							// pages may exist within a context.
 							const mediaFilePath = path.join(
 								this.testArtifactsPath,
-								'screenshots', // TODO: Remove / I don't think this subfolder is necessary?
-								`${ artefactFilename }__${ contextIndex }-${ pageIndex }`
+								`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
 							);
 
 							await page.screenshot( { path: `${ mediaFilePath }.png` } );
@@ -320,16 +320,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 					}
 				}
 
-				// Delete recorded videos from tmp folder and close all contexts.
-				for await ( const context of contexts ) {
-					for await ( const page of context.pages() ) {
-						await page.close();
-						await page.video()?.delete();
-					}
-					await context.close();
-				}
-
-				// Close the browser.
+				// Regardless of pass/fail status, close the browser instance.
 				await this.global.browser.close();
 				break;
 			}

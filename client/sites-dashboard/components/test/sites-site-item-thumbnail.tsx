@@ -4,10 +4,10 @@
 import { render, screen } from '@testing-library/react';
 import { SiteItemThumbnail } from '../sites-site-item-thumbnail';
 
-function makeTestSite( { name = 'test' } = {} ) {
+function makeTestSite( { title = 'test' } = {} ) {
 	return {
 		ID: 1,
-		name: name as string | undefined,
+		title,
 		slug: '',
 		URL: '',
 		launch_status: 'launched',
@@ -25,10 +25,10 @@ describe( '<SiteItemThumbnail>', () => {
 
 			defineCommonSiteInitialTests();
 
-			test( 'site name can be multi-codepoint emoji', () => {
+			test( 'site title can be multi-codepoint emoji', () => {
 				render(
 					<SiteItemThumbnail
-						site={ makeTestSite( { name: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
+						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
 				expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^👩‍👩‍👦‍👦$/ );
@@ -52,7 +52,7 @@ describe( '<SiteItemThumbnail>', () => {
 				// Without the Segmenter API we fall back to returning the first codepoint
 				render(
 					<SiteItemThumbnail
-						site={ makeTestSite( { name: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
+						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
 				expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^👩$/ );
@@ -62,24 +62,25 @@ describe( '<SiteItemThumbnail>', () => {
 } );
 
 function defineCommonSiteInitialTests() {
-	test( 'an English site name', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { name: 'hello' } ) } /> );
+	test( 'an English site title', () => {
+		render( <SiteItemThumbnail site={ makeTestSite( { title: 'hello' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^h$/ );
 	} );
 
 	test( 'diacritic mark on first letter', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { name: 'öwl' } ) } /> );
+		render( <SiteItemThumbnail site={ makeTestSite( { title: 'öwl' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^ö$/ );
 	} );
 
-	test( 'empty site name renders no initial', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { name: '' } ) } /> );
+	test( 'empty site title renders no initial', () => {
+		render( <SiteItemThumbnail site={ makeTestSite( { title: '' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 
-	test( 'undefined site name renders no initial', () => {
+	test( 'undefined site title renders no initial', () => {
 		const testSite = makeTestSite();
-		testSite.name = undefined;
+		// @ts-expect-error Let's artificially remove the title so it tries to render an empty string
+		testSite.title = undefined;
 
 		render( <SiteItemThumbnail site={ testSite } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();

@@ -12,3 +12,4 @@ export { isEmailForwardVerified } from './is-email-forward-verified';
 export { isEmailUserAdmin } from './is-email-user-admin';
 export { isGoogleEmailAccount } from './is-google-email-account';
 export { isTitanMailAccount } from './is-titan-mail-account';
+export { canAddMailboxesToEmailSubscription } from './can-add-mailboxes-to-email-subscription';

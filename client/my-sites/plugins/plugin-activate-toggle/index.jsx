@@ -33,22 +33,33 @@ export class PluginActivateToggle extends Component {
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_deactivate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'inactive',
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_activate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'active',
 			} );
 		}
 	};
 
 	trackManageConnectionLink = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const {
+			site,
+			plugin,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent,
+		} = this.props;
 		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+		recordEvent( 'calypso_plugin_manage_connection_click', {
+			site: site.ID,
+			plugin: plugin.slug,
+		} );
 	};
 
 	manageConnectionLink() {

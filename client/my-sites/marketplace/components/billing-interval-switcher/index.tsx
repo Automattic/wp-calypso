@@ -59,7 +59,10 @@ type Props = {
 	billingPeriod: IntervalLength;
 	compact: boolean;
 	plugin?: {
-		variations?: { yearly?: { product_slug: string }; monthly?: { product_slug: string } };
+		variations?: {
+			yearly?: { product_slug?: string; product_id?: number };
+			monthly?: { product_slug?: string; product_id?: number };
+		};
 	};
 };
 

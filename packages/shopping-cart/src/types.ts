@@ -568,6 +568,7 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
+	recoveryEmail?: string;
 }
 
 export interface TitanProductUser {

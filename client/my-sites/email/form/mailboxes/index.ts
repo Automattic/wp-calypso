@@ -1,6 +1,5 @@
 import { GSuiteProductUser, TitanProductUser } from '@automattic/shopping-cart';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_DOMAIN,
 	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
@@ -8,6 +7,7 @@ import {
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 	FIELD_UUID,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
@@ -17,15 +17,15 @@ import {
 	MailboxFormFieldsFactory,
 } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
-	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
-	MailboxNameValidator,
 	MailboxNameAvailabilityValidator,
+	MailboxNameValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
+	PasswordResetEmailValidator,
+	PreviouslySpecifiedMailboxNamesValidator,
 	RequiredIfVisibleValidator,
 	RequiredValidator,
-	PreviouslySpecifiedMailboxNamesValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
 	FormFieldNames,
@@ -57,8 +57,6 @@ class MailboxForm< T extends EmailProvider > {
 		const areApostrophesSupported = this.provider === EmailProvider.Google;
 
 		return [
-			[ FIELD_ALTERNATIVE_EMAIL, new RequiredValidator< string >() ],
-			[ FIELD_ALTERNATIVE_EMAIL, new AlternateEmailValidator( domainName ) ],
 			[ FIELD_DOMAIN, new RequiredValidator< string >() ],
 			[ FIELD_FIRSTNAME, new RequiredValidator< string >() ],
 			[ FIELD_FIRSTNAME, new MaximumStringLengthValidator( 60 ) ],
@@ -74,6 +72,8 @@ class MailboxForm< T extends EmailProvider > {
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
+			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
 		];
 	}
@@ -135,10 +135,11 @@ class MailboxForm< T extends EmailProvider > {
 					...commonFields,
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
+					recoveryEmail: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
 			  }
 			: {
 					...commonFields,
-					alternative_email: this.getFieldValue< string >( FIELD_ALTERNATIVE_EMAIL ),
+					alternative_email: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
 					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
 					name: this.getFieldValue< string >( FIELD_NAME ),
 			  };
