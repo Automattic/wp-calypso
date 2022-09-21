@@ -1,4 +1,9 @@
-import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_BUSINESS,
+	TYPE_BUSINESS,
+	TYPE_ECOMMERCE,
+} from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +18,7 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MARKETPLACE_FLOW } from '../flows';
 
 import './style.scss';
 
@@ -22,6 +28,12 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const selectedSite = useSelector( getSelectedSite );
 
 	const dispatch = useDispatch();
+
+	const currentPlanSlug = selectedSite?.plan?.product_slug;
+	let currentPlanType = null;
+	if ( currentPlanSlug ) {
+		currentPlanType = getPlan( currentPlanSlug )?.type;
+	}
 
 	useEffect( () => {
 		if ( breadcrumbs.length === 0 ) {
@@ -62,8 +74,9 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					basePlansPath="/plugins/plans"
 					site={ selectedSite }
 					intervalType={ intervalType }
-					selectedFeature={ FEATURE_INSTALL_PLUGINS }
 					selectedPlan={ PLAN_BUSINESS }
+					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
+					flowName={ MARKETPLACE_FLOW }
 					shouldShowPlansFeatureComparison
 					isReskinned
 				/>
