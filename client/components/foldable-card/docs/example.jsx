@@ -21,9 +21,9 @@ export default class FoldableCardExample extends PureComponent {
 						smooth
 						contentExpandedStyle={ { 'max-height': '112px' } }
 					>
-					    <div style={ { padding: '16px 16px 0' } }>
-						    <p>These are its contents</p>
-						    <p>And some more</p>
+						<div style={ { padding: '16px 16px 0' } }>
+							<p>These are its contents</p>
+							<p>And some more</p>
 						</div>
 					</FoldableCard>
 				</div>
