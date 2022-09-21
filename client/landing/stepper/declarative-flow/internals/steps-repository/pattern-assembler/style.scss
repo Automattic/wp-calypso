@@ -50,6 +50,10 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		width: 100%;
+		background: #fdfdfd;
+		position: absolute;
+		top: 0;
 
 		.pattern-layout__header {
 			h2 {
@@ -220,6 +224,11 @@ $font-family: "SF Pro Text", $sans;
 	.pattern-selector {
 		display: flex;
 		flex-direction: column;
+		height: 100%;
+		width: 100%;
+		background: #fdfdfd;
+		position: absolute;
+		top: 0;
 
 		&--active {
 			height: 100%;
