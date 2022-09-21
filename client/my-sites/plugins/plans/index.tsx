@@ -2,6 +2,8 @@ import { FEATURE_INSTALL_PLUGINS, PLAN_BUSINESS } from '@automattic/calypso-prod
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import ActionCard from 'calypso/components/action-card';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -66,6 +68,24 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					isReskinned
 				/>
 			</div>
+			<ActionCard
+				classNames="plugin-plans"
+				headerText=""
+				mainText={ translate(
+					'Need some help? Let us help you find the perfect plan for your site. {{a}}Chat now{{/a}} or {{a}}contact our support{{/a}}.',
+					{
+						components: {
+							a: <ActionPanelLink href="/help/contact" />,
+						},
+					}
+				) }
+				buttonText={ translate( 'Upgrade to Business' ) }
+				buttonPrimary={ true }
+				buttonOnClick={ () => {
+					alert( 'Connect code after merging PR 68087' );
+				} }
+				buttonDisabled={ false }
+			/>
 		</MainComponent>
 	);
 };

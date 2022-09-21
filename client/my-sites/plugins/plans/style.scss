@@ -6,3 +6,38 @@
 		font-size: $font-body;
 	}
 }
+
+.plugin-plans {
+	&.action-card.is-compact {
+		background: #f0f7fc;
+		box-shadow: none;
+		padding: 0;
+		min-height: 100px;
+
+		@media ( max-width: 660px ) {
+			padding: 0 25px;
+		}
+	}
+
+	&.action-card::before {
+		box-sizing: border-box;
+		content: "";
+		background-color: #f0f7fc;
+		position: absolute;
+		width: 215vw;
+		left: -100vw;
+		top: 0;
+		z-index: -1;
+		bottom: 0;
+	}
+
+	.action-card__main {
+		display: flex;
+		align-items: center;
+	}
+
+	.action-card__main p {
+		font-size: $font-body-small;
+		margin: 20px 0;
+	}
+}
