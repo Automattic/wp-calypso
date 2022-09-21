@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	SitesTableSortOptions,
 	SitesTableSortKey,
@@ -22,13 +21,6 @@ export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) =>
 	const sorting = { sortKey, sortOrder };
 
 	if ( ! isValidSorting( sorting ) ) {
-		return DEFAULT_SITES_SORTING;
-	}
-
-	if (
-		sorting.sortKey === 'lastInteractedWith' &&
-		! config.isEnabled( 'sites/automagical-sorting' )
-	) {
 		return DEFAULT_SITES_SORTING;
 	}
 
