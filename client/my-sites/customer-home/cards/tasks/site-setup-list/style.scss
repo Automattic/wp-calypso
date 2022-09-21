@@ -243,3 +243,11 @@
 		display: block;
 	}
 }
+
+.site-setup-list__task-mobile_app_installed {
+	display: none;
+
+	@include break-medium {
+		display: block;
+	}
+}

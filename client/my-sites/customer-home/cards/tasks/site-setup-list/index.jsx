@@ -272,7 +272,7 @@ const SiteSetupList = ( {
 						const isCompleted = task.isCompleted;
 
 						return (
-							<li key={ task.id }>
+							<li key={ task.id } className={ `site-setup-list__task-${ task.id }` }>
 								<NavItem
 									key={ task.id }
 									taskId={ task.id }
