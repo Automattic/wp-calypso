@@ -18,9 +18,14 @@
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
-			display: inline-flex;
+			display: flex;
 			padding: 4px 4px 4px 0;
 			position: relative;
+
+			svg {
+				position: relative;
+				top: 2px;
+			}
 		}
 	}
 
