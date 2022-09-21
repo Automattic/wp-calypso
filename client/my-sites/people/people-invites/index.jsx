@@ -63,7 +63,8 @@ class PeopleInvites extends PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, translate, includeSubscriberImporter } =
+			this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
@@ -103,6 +104,7 @@ class PeopleInvites extends PureComponent {
 					site={ site }
 					isJetpack={ isJetpack }
 					isPrivate={ isPrivate }
+					includeSubscriberImporter={ includeSubscriberImporter }
 				/>
 				{ this.renderInvitesList() }
 			</Main>
