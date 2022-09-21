@@ -444,3 +444,8 @@
 		margin-top: 0;
 	}
 }
+
+.manage-purchase__auto-renew-text button {
+	color: var(--color-link);
+	text-decoration: underline;
+}
