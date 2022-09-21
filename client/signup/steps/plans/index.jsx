@@ -223,7 +223,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_faq_202209_v1"
+					name="calypso_signup_plans_step_faq_202209_v2"
 					options={ {
 						isEligible:
 							[ 'en-gb', 'en' ].includes( locale ) &&
