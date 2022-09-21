@@ -20,9 +20,8 @@ interface Props {
 	isBulkManagementActive: boolean;
 	pluginUpdateCount: number;
 	toggleBulkManagement: () => void;
-	updateAllPlugins: () => void;
-	removePluginNotice: ( plugin: Plugin ) => void;
 	updateAllPluginsNotice: () => void;
+	removePluginNotice: ( plugin: Plugin ) => void;
 	updatePlugin: ( plugin: Plugin ) => void;
 }
 export default function PluginManagementV2( {
@@ -33,8 +32,8 @@ export default function PluginManagementV2( {
 	isBulkManagementActive,
 	pluginUpdateCount,
 	toggleBulkManagement,
-	removePluginNotice,
 	updateAllPluginsNotice,
+	removePluginNotice,
 	updatePlugin,
 }: Props ): ReactElement {
 	const translate = useTranslate();

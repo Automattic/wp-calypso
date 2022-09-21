@@ -506,57 +506,28 @@ export class PluginsList extends Component {
 	};
 
 	updateAllPluginsDialog = () => {
-		const { pluginUpdateCount, translate } = this.props;
+		const { pluginUpdateCount, translate, pluginsWithUpdates, allSites } = this.props;
 
-		const siteDetails = this.props.selectedSiteSlug ? this.props.selectedSiteSlug : 'all sites';
+		let pluginName;
+		const hasOnePlugin = pluginUpdateCount === 1;
+
+		if ( hasOnePlugin ) {
+			const [ { name, slug } ] = pluginsWithUpdates;
+			pluginName = name || slug;
+		}
 
 		const dialogOptions = {
 			additionalClassNames: 'plugins__confirmation-modal',
 		};
 
-		const heading =
-			pluginUpdateCount === 1
-				? translate( 'Update 1 plugin' )
-				: translate( 'Update %(pluginUpdateCount)d plugins', { args: { pluginUpdateCount } } );
-
-		const combination =
-			( ! siteDetails ? 'n sites' : '1 site' ) +
-			' ' +
-			( pluginUpdateCount > 1 ? 'n plugins' : '1 plugin' );
-
-		let message = 'You are about to update all plugins on all sites';
-		switch ( combination ) {
-			case '1 site 1 plugin':
-				message = translate( ' You are about to update 1 plugin on %(siteDetails)s', {
-					args: { siteDetails },
-				} );
-				break;
-			case '1 site n plugins':
-				message = translate(
-					' You are about to update %(pluginUpdateCount)d plugins on %(siteDetails)s',
-					{
-						args: {
-							pluginUpdateCount: pluginUpdateCount,
-							siteDetails: siteDetails,
-						},
-					}
-				);
-				break;
-			case 'n sites 1 plugin':
-				message = translate( ' You are about to update 1 plugin on all sites', {
-					args: { siteDetails },
-				} );
-				break;
-			case 'n sites n plugins':
-				message = translate(
-					' You are about to update %(pluginUpdateCount)d plugins on all sites',
-					{ args: { pluginUpdateCount } }
-				);
-				break;
-		}
+		const heading = hasOnePlugin
+			? translate( 'Update %(pluginName)s', { args: { pluginName } } )
+			: translate( 'Update %(pluginUpdateCount)d plugins', {
+					args: { pluginUpdateCount },
+			  } );
 
 		acceptDialog(
-			message,
+			getPluginActionDailogMessage( allSites, pluginsWithUpdates, heading, 'update' ),
 			( accepted ) => this.updateAllPlugins( accepted ),
 			heading,
 			null,

@@ -38,7 +38,7 @@ export class PluginsListHeader extends PureComponent {
 		isBulkManagementActive: PropTypes.bool,
 		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
-		updateAllPlugins: PropTypes.func.isRequired,
+		updateAllPluginsNotice: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
 		pluginUpdateCount: PropTypes.number.isRequired,
 		activateSelected: PropTypes.func.isRequired,
