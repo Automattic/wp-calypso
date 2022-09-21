@@ -13,8 +13,6 @@ import { ONBOARD_STORE } from '../../../../stores';
 import { useIntents, useIntentsAlt } from './intents';
 import type { Step } from '../../types';
 
-import './style.scss';
-
 /**
  * The intent capture step
  */

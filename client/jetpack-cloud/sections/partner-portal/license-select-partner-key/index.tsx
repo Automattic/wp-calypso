@@ -14,7 +14,6 @@ import {
 	hasFetchedPartner,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { PartnerKey } from 'calypso/state/partner-portal/types';
-import './style.scss';
 
 export default function LicenseSelectPartnerKey(): ReactElement | null {
 	const translate = useTranslate();
