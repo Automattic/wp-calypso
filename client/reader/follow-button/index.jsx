@@ -9,7 +9,7 @@ import {
 } from 'calypso/reader/stats';
 
 function ReaderFollowButton( props ) {
-	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
+	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl, iconSize } = props;
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
@@ -23,8 +23,8 @@ function ReaderFollowButton( props ) {
 		}
 	}
 
-	const followingIcon = ReaderFollowingIcon( { iconSize: props.iconSize } );
-	const followIcon = ReaderFollowIcon( { iconSize: props.iconSize } );
+	const followingIcon = ReaderFollowingIcon( { iconSize: iconSize || 24 } );
+	const followIcon = ReaderFollowIcon( { iconSize: iconSize || 24 } );
 
 	if ( isButtonOnly ) {
 		return (
