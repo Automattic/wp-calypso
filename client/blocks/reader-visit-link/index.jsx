@@ -14,7 +14,7 @@ class ReaderVisitLink extends Component {
 	};
 
 	static defaultProps = {
-		iconSize: 24,
+		iconSize: 20,
 		onClick: noop,
 	};
 
@@ -26,7 +26,7 @@ class ReaderVisitLink extends Component {
 				target="_blank"
 				icon={ true }
 				showIconFirst={ true }
-				iconSize={ this.props.iconSize }
+				iconSize="20"
 				iconClassName="reader-visit-link__icon"
 				onClick={ this.props.onClick }
 			>
