@@ -16,7 +16,14 @@ export const linkInBio: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
+		return [
+			'intro',
+			'linkInBioSetup',
+			'patterns',
+			'processing',
+			'launchpad',
+			'plansLinkInBio',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -53,6 +60,9 @@ export const linkInBio: Flow = {
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes`
 					);
+
+				case 'plansLinkInBio':
+					return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
