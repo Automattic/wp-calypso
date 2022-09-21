@@ -34,6 +34,8 @@ class AppleLoginButton extends Component {
 		onClick: noop,
 		scope: 'name email',
 		uxMode: 'popup',
+		originalUrlPath: null,
+		queryString: null,
 	};
 
 	appleClient = null;
