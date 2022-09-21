@@ -44,7 +44,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 						>
 							<div
 								aria-label={ item.name }
-								tabIndex={ 0 }
+								tabIndex={ show ? 0 : -1 }
 								role="option"
 								aria-selected={ false }
 								onClick={ () => onSelect( item ) }
