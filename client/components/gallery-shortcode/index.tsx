@@ -46,12 +46,12 @@ export default class GalleryShortcode extends Component< Props > {
 			...rendered,
 			scripts: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.js',
 				},
 			},
 			styles: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.css',
 				},
 				'gallery-styles': {
 					src: 'https://widgets.wp.com/gallery-preview/style.css',
