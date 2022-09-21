@@ -4,27 +4,28 @@ import { Component } from 'react';
 
 const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
+function getFormAction( redirectTo ) {
+	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
+	const hostname = config( 'hostname' );
+	let subdomain = '';
+
+	if (
+		subdomainRegExp.test( redirectTo ) &&
+		hostname !== 'wpcalypso.wordpress.com' &&
+		hostname !== 'horizon.wordpress.com'
+	) {
+		subdomain = redirectTo.match( subdomainRegExp )[ 1 ] + '.';
+	}
+
+	return `https://${ subdomain }wordpress.com/wp-login.php`;
+}
+
 export default class WpcomLoginForm extends Component {
 	form = null;
 
 	componentDidMount() {
 		debug( 'submit form' );
 		this.form.submit();
-	}
-
-	action() {
-		const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
-		let subdomain = '';
-
-		if (
-			subdomainRegExp.test( this.props.redirectTo ) &&
-			config( 'hostname' ) !== 'wpcalypso.wordpress.com' &&
-			config( 'hostname' ) !== 'horizon.wordpress.com'
-		) {
-			subdomain = this.props.redirectTo.match( subdomainRegExp )[ 1 ] + '.';
-		}
-
-		return `https://${ subdomain }wordpress.com/wp-login.php`;
 	}
 
 	renderExtraFields() {
@@ -34,15 +35,9 @@ export default class WpcomLoginForm extends Component {
 			return null;
 		}
 
-		return (
-			<div>
-				{ Object.keys( extraFields ).map( ( field ) => {
-					return (
-						<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
-					);
-				} ) }
-			</div>
-		);
+		return Object.keys( extraFields ).map( ( field ) => (
+			<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
+		) );
 	}
 
 	storeFormRef = ( form ) => {
@@ -50,8 +45,10 @@ export default class WpcomLoginForm extends Component {
 	};
 
 	render() {
+		const { redirectTo } = this.props;
+
 		return (
-			<form method="post" action={ this.action() } ref={ this.storeFormRef }>
+			<form method="post" action={ getFormAction( redirectTo ) } ref={ this.storeFormRef }>
 				<input type="hidden" name="log" value={ this.props.log } />
 				<input type="hidden" name="pwd" value={ this.props.pwd } />
 				<input type="hidden" name="authorization" value={ this.props.authorization } />
