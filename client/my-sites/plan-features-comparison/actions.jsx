@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import CTAButton from '../plugins/plugin-details-CTA/CTA-button';
 
 const noop = () => {};
 const PlanFeaturesComparisonActions = ( props ) => {
@@ -51,6 +52,45 @@ const PlanFeaturesActionsButton = ( {
 
 		onUpgradeClick();
 	};
+
+	if ( window.location.href.indexOf( '/plans/' ) ) {
+		const plugin = {
+			author: '<a href="https://woocommerce.com">Automattic</a>',
+			author_name: 'Automattic',
+			author_profile: 'https://profiles.wordpress.org/automattic/',
+			author_url: 'https://woocommerce.com',
+			banner_video_src: 'https://fast.wistia.net/embed/iframe/1s4yojkmo4',
+			description: '<div class="woo-sc-box normal" style="margin-t',
+			detailsFetched: 1663792348309,
+			documentation_url:
+				'https://docs.woocommerce.com/documentation/plugins/woocommerce/woocommerce-extensions/woocommerce-subscriptions/',
+			fetched: true,
+			icon: 'https://wordpress.com/wp-content/lib/marketplace-images/woocommerce-subscriptions.png',
+			id: 902,
+			isMarketplaceProduct: true,
+			last_updated: '2022-08-04',
+			name: 'WooCommerce Subscriptions',
+			rating: 68,
+			requirements: { plugins: Array( 2 ) },
+			screenshots: null,
+			sections: {
+				description:
+					'<div class="woo-sc-box normal">WooCommerce Subscri…ore revenue!</li>\n</ol>\n\n\n\n<h3>FAQs</h3>\n\n\n\n\n\n\n\n\n',
+			},
+			setup_url: null,
+			short_description:
+				'Let customers subscribe to your products or services and pay on a weekly, monthly or annual basis.',
+			slug: 'woocommerce-subscriptions-monthly',
+			tags: { Subscriptions: 'Subscriptions', eCommerce: 'eCommerce' },
+			variations: [
+				{ monthly: 'woocommerce_subscriptions_monthly' },
+				{ yearly: 'woocommerce_subscriptions_yearly' },
+			],
+			version: '4.5.0',
+		};
+
+		return <CTAButton plugin={ plugin } hasEligibilityMessages={ [] } disabled={ false } />;
+	}
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
