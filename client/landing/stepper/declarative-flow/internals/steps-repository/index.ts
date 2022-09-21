@@ -41,6 +41,7 @@ export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
+export { default as plansLinkInBio } from './plans';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as storeProfiler } from './store-profiler';
 export { default as designCarousel } from './design-carousel';
@@ -90,6 +91,7 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
+	| 'plans'
 	| 'getCurrentThemeSoftwareSets'
 	| 'designCarousel'
 	| 'storeProfiler'
