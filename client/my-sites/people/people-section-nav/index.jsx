@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { find, get, includes } from 'lodash';
 import { Component } from 'react';
@@ -49,7 +48,7 @@ class PeopleSectionNav extends Component {
 
 	getFilters() {
 		const siteFilter = get( this.props.site, 'slug', '' );
-		const { translate } = this.props;
+		const { translate, includeSubscriberImporter } = this.props;
 		const filters = [
 			{
 				title: translate( 'Team', { context: 'Filter label for people list' } ),
@@ -62,7 +61,7 @@ class PeopleSectionNav extends Component {
 				id: 'followers',
 			},
 			{
-				title: isEnabled( 'subscriber-importer' )
+				title: includeSubscriberImporter
 					? translate( 'Email Subscribers', { context: 'Filter label for people list' } )
 					: translate( 'Email Followers', { context: 'Filter label for people list' } ),
 				path: '/people/email-followers/' + siteFilter,

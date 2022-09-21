@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
@@ -25,8 +24,6 @@ const SortingButtonIcon = styled( Gridicon )( {
 
 type SitesSortingDropdownProps = ReturnType< typeof useSitesSorting >;
 
-const isTruthy = < T, >( x: T | false ): x is T => !! x;
-
 export const SitesSortingDropdown = ( {
 	onSitesSortingChange,
 	sitesSorting,
@@ -45,13 +42,13 @@ export const SitesSortingDropdown = ( {
 
 		switch ( `${ sortKey }${ SEPARATOR }${ sortOrder }` ) {
 			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sorting by: Magic' );
+				return __( 'Sort: Magic' );
 
 			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorting by: Name' );
+				return __( 'Sort: Name' );
 
 			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sorting by: Last published' );
+				return __( 'Sort: Last published' );
 
 			default:
 				throw new Error( `invalid sort value ${ sitesSorting }` );
@@ -65,14 +62,14 @@ export const SitesSortingDropdown = ( {
 					sortKey: 'alphabetically',
 					sortOrder: 'asc',
 				} ),
-				label: __( 'Alphabetically' ),
+				label: __( 'Name' ),
 			},
-			config.isEnabled( 'sites/automagical-sorting' ) && {
+			{
 				value: stringifySitesSorting( {
 					sortKey: 'lastInteractedWith',
 					sortOrder: 'desc',
 				} ),
-				label: __( 'Automagically' ),
+				label: __( 'Magic' ),
 			},
 			{
 				value: stringifySitesSorting( {
@@ -81,7 +78,7 @@ export const SitesSortingDropdown = ( {
 				} ),
 				label: __( 'Last published' ),
 			},
-		].filter( isTruthy );
+		];
 	}, [ __ ] );
 
 	if ( ! hasSitesSortingPreferenceLoaded ) {
