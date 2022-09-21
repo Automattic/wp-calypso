@@ -30,16 +30,16 @@ export const getSiteLaunchStatus = ( site: SiteObjectWithStatus ): SiteLaunchSta
 };
 
 export const useTranslatedSiteLaunchStatuses = (): { [ K in SiteLaunchStatus ]: string } => {
-	const { __ } = useI18n();
+	const { _x } = useI18n();
 
 	return useMemo(
 		() => ( {
-			'coming-soon': __( 'Coming soon' ),
-			private: __( 'Private' ),
-			public: __( 'Public' ),
-			redirect: __( 'Redirect' ),
+			'coming-soon': _x( 'Coming soon', 'site' ),
+			private: _x( 'Private', 'site' ),
+			public: _x( 'Public', 'site' ),
+			redirect: _x( 'Redirect', 'site' ),
 		} ),
-		[ __ ]
+		[ _x ]
 	);
 };
 
