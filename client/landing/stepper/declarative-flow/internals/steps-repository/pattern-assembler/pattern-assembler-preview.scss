@@ -52,11 +52,6 @@
 			}
 		}
 	}
-
-	&:not(.pattern-assembler-preview--has-selected-patterns) {
-		opacity: 0;
-		animation: fadeInShort 0.2s ease-in 0.8s forwards;
-	}
 }
 
 .pattern-assembler-preview__placeholder {
