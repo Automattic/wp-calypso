@@ -82,6 +82,7 @@ export function getEnhancedTasks(
 						title: translate( 'Launch Link in bio' ),
 						isCompleted: linkInBioSiteLaunchCompleted,
 						dependencies: [ linkInBioLinksEditCompleted ],
+						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );

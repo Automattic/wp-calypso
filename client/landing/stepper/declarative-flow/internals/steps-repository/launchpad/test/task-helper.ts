@@ -32,6 +32,14 @@ describe( 'Task Helpers', () => {
 				);
 			} );
 		} );
+		describe( 'when it is link_in_bio_launched task', () => {
+			it( 'then it receives launchtask property = true', () => {
+				const fakeTasks = [ getTask( { id: 'link_in_bio_launched' } ) ];
+				// eslint-disable-next-line @typescript-eslint/no-empty-function
+				const enhancedTasks = getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} );
+				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
+			} );
+		} );
 	} );
 
 	describe( 'getArrayOfFilteredTasks', () => {
