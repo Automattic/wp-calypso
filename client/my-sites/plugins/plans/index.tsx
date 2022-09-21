@@ -13,8 +13,8 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-
 import './style.scss';
+import { MarketplaceFooter } from '../education-footer';
 
 const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
@@ -86,6 +86,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				} }
 				buttonDisabled={ false }
 			/>
+			<MarketplaceFooter />
 		</MainComponent>
 	);
 };
