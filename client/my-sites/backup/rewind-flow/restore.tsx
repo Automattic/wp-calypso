@@ -20,7 +20,6 @@ import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
-import RewindForceRestore from './rewind-force-restore';
 import { defaultRewindConfig, RewindConfig } from './types';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -50,8 +49,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const backupCurrentlyInProgress = useSelector( ( state ) =>
 		getInProgressBackupForSite( state, siteId )
 	);
-
-	const [ forceRestore, setForceRestore ] = useState< boolean >( false );
 
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
@@ -103,19 +100,20 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
-			<RewindForceRestore
-				forceRestore={ forceRestore }
-				onConfigChange={ setForceRestore }
-				backupCurrentlyInProgress={ backupCurrentlyInProgress }
-			/>
+			<>
+				{ backupCurrentlyInProgress && (
+					<RewindFlowNotice
+						gridicon="notice"
+						title={ translate( 'There is a backup in progress. Restoring will stop it' ) }
+						type={ RewindFlowNoticeLevel.WARNING }
+					/>
+				) }
+			</>
 			<Button
 				className="rewind-flow__primary-button"
 				primary
 				onClick={ onConfirm }
-				disabled={
-					Object.values( rewindConfig ).every( ( setting ) => ! setting ) ||
-					( backupCurrentlyInProgress && ! forceRestore )
-				}
+				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
 			>
 				{ translate( 'Confirm restore' ) }
 			</Button>
