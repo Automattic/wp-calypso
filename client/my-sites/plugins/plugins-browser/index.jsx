@@ -155,6 +155,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						: __( 'Plugins you need to get your projects done' )
 				}
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				renderTitleInH1={ ! category }
 			/>
 
 			{ ! search && <Categories selected={ category } /> }

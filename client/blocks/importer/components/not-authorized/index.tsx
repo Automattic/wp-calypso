@@ -2,8 +2,6 @@ import { BackButton, NextButton, SubTitle, Title } from '@automattic/onboarding'
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 
-import './style.scss';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {
