@@ -45,10 +45,9 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 			return;
 		}
 
-		setIsLoading( true );
-
 		try {
 			if ( site ) {
+				setIsLoading( true );
 				await saveSiteSettings( site.ID, {
 					blogname: siteTitle,
 					blogdescription: tagline,
@@ -59,9 +58,9 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 						new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
 					);
 				}
+				setIsLoading( false );
+				submit?.();
 			}
-			setIsLoading( false );
-			submit?.();
 		} catch {
 			setIsSubmitError( true );
 			setIsLoading( false );
