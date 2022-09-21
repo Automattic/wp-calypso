@@ -188,7 +188,7 @@ if ( toStylelint.length ) {
 
 // then eslint
 if ( toEslint.length ) {
-	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
+	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', '--fix', ...toEslint ], {
 		shell: true,
 		stdio: 'inherit',
 	} );
