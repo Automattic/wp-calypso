@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
@@ -24,8 +23,6 @@ const SortingButtonIcon = styled( Gridicon )( {
 } );
 
 type SitesSortingDropdownProps = ReturnType< typeof useSitesSorting >;
-
-const isTruthy = < T, >( x: T | false ): x is T => !! x;
 
 export const SitesSortingDropdown = ( {
 	onSitesSortingChange,
@@ -67,7 +64,7 @@ export const SitesSortingDropdown = ( {
 				} ),
 				label: __( 'Alphabetically' ),
 			},
-			config.isEnabled( 'sites/automagical-sorting' ) && {
+			{
 				value: stringifySitesSorting( {
 					sortKey: 'lastInteractedWith',
 					sortOrder: 'desc',
@@ -81,7 +78,7 @@ export const SitesSortingDropdown = ( {
 				} ),
 				label: __( 'Last published' ),
 			},
-		].filter( isTruthy );
+		];
 	}, [ __ ] );
 
 	if ( ! hasSitesSortingPreferenceLoaded ) {
