@@ -493,15 +493,15 @@ class ManagePurchase extends Component {
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+				text = translate( 'Cancel Domain' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+				text = translate( 'Cancel' );
 			}
 		} else {
 			if ( isDomainTransfer( purchase ) ) {
