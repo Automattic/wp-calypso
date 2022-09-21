@@ -4,10 +4,10 @@ $videopress-theme-base-text-color: #fff;
 $videopress-theme-yellow: #ffe61c;
 
 body {
-	background-color: #010101;
-	color: $videopress-theme-base-text-color;
-
 	.videopress {
+		background-color: #010101;
+		color: $videopress-theme-base-text-color;
+
 		.flow-progress {
 			display: block;
 			border-radius: 0;
