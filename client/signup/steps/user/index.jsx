@@ -434,22 +434,22 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, wccomFrom, isReskinned } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
-
-		if ( isWooOAuth2Client( oauth2Client ) ) {
-			isSocialSignupEnabled = true;
-		}
-
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
-		if ( isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
+		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {
 			const clientId = hashObject.client_id;
 			socialService = getSocialServiceFromClientId( clientId );
+
 			if ( socialService ) {
 				socialServiceResponse = hashObject;
 			}
+		}
+
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
+			isSocialSignupEnabled = true;
 		}
 
 		return (

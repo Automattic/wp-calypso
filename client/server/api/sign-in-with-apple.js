@@ -58,14 +58,14 @@ function redirectToCalypso( request, response, next ) {
 		return next();
 	}
 
-	const state = JSON.parse( request.body.state );
-	const originalUrlPath = state.originalUrlPath ?? request.originalUrl.split( '#' )[ 0 ];
+	const originalUrlPath = request.originalUrl.split( '#' )[ 0 ];
 	const hashString = qs.stringify( {
 		...request.user_openid_data,
 		client_id: config( 'apple_oauth_client_id' ),
-		state: state.oauth2State,
+		state: request.body.state,
 	} );
-	response.redirect( originalUrlPath + state.queryString + '#' + hashString );
+
+	response.redirect( originalUrlPath + '#' + hashString );
 }
 
 export default function ( app ) {
