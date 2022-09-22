@@ -7,12 +7,14 @@
 	.reskin-side-explainer__title {
 		font-size: 1.25rem;
 		letter-spacing: 0.2px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.625rem;
 		color: var(--studio-gray-90);
 	}
 
 	.reskin-side-explainer__subtitle {
 		color: var(--studio-gray-60);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.25rem;
 		letter-spacing: -0.16px;
 		padding-top: 12px;

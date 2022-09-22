@@ -516,6 +516,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				@include break-small {
 					max-width: inherit;
 					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3.5rem;
 				}
 			}
@@ -533,6 +534,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				@include break-small {
 					max-width: inherit;
 					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
 				}
@@ -791,10 +793,12 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		.formatted-header {
 			.formatted-header__title {
 				font-size: 2.25rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 2.5rem;
 
 				@include break-mobile {
 					font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;
 				}
 			}

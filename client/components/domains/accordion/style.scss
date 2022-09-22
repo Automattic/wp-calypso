@@ -49,6 +49,7 @@
 	}
 	&__title {
 		margin-bottom: 0;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.5em;
 		font-weight: 600;
 		color: var(--studio-gray-80);

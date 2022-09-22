@@ -101,6 +101,7 @@ $grid-wide: 1fr 128px 128px 128px 36px;
 		h2 button {
 			justify-self: center;
 			font-size: 0.875rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25rem;
 			white-space: nowrap;
 			color: var(--studio-gray-70);
