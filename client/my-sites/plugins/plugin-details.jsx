@@ -383,7 +383,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
-			{ isMarketplaceProduct && <MarketplaceFooter /> }
+			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }
