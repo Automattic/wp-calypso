@@ -98,7 +98,7 @@ export const siteSetupFlow: Flow = {
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
-		const isMobile = useViewportMatch( 'medium', '<' );
+		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -187,7 +187,7 @@ export const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if (
-						! isMobile &&
+						isDesktop &&
 						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
 					) {
 						return navigate( 'patternAssembler' );

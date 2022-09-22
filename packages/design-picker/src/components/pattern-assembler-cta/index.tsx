@@ -10,7 +10,7 @@ type PatternAssemblerCtaProps = {
 
 const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 	const translate = useTranslate();
-	const isMobile = useViewportMatch( 'medium', '<' );
+	const isDesktop = useViewportMatch( 'large' );
 
 	return (
 		<div className="pattern-assembler-cta-wrapper">
@@ -19,7 +19,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 			</div>
 			<h3 className="pattern-assembler-cta__title">{ translate( 'Start with a blank canvas' ) }</h3>
 			<p className="pattern-assembler-cta__subtitle">
-				{ isMobile
+				{ ! isDesktop
 					? translate(
 							"Can't find something you like? Jump right into the editor to design your homepage from scratch."
 					  )
@@ -28,7 +28,7 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 					  ) }
 			</p>
 			<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
-				{ isMobile ? translate( 'Open the editor' ) : translate( 'Get started' ) }
+				{ ! isDesktop ? translate( 'Open the editor' ) : translate( 'Get started' ) }
 			</Button>
 		</div>
 	);
