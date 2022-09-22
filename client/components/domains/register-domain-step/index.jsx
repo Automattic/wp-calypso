@@ -263,19 +263,23 @@ class RegisterDomainStep extends Component {
 		this._isMounted = false;
 	}
 
+	// In the launch flow, the initial query could sometimes be missing if the user had
+	// created a site by skipping the domain step. In these cases, fire the initial search
+	// with the subdomain name.
+	getInitialQueryInLaunchFlow() {
+		if ( ! this.props.isInLaunchFlow ) {
+			return;
+		}
+
+		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
+		const [ , strippedHostname ] =
+			this.props.selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? this.props.selectedSite.domain.split( '.' )[ 0 ];
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		let query = this.state.lastQuery || storedQuery;
-
-		// In the launch flow, the initial query could sometimes be missing if the user had
-		// created a site by skipping the domain step. In these cases, fire the initial search
-		// with the subdomain name.
-		if ( this.props.isInLaunchFlow && ! query ) {
-			const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
-			const [ , strippedHostname ] =
-				this.props.selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
-			query = strippedHostname ?? this.props.selectedSite.domain.split( '.' )[ 0 ];
-		}
+		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
