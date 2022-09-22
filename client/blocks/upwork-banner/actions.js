@@ -1,10 +1,11 @@
-import { savePreference } from 'calypso/state/preferences/actions';
+import { setPreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import { UPWORK_BANNER_STATE } from './constants';
 
 export const dismissBanner = ( location ) => ( dispatch, getState ) => {
-	const preference = getPreference( getState(), 'upwork-dismissible-banner' ) || {};
+	const preference = getPreference( getState(), UPWORK_BANNER_STATE ) || {};
 	return dispatch(
-		savePreference( 'upwork-dismissible-banner', {
+		setPreference( UPWORK_BANNER_STATE, {
 			...preference,
 			...{
 				[ location ]: [
