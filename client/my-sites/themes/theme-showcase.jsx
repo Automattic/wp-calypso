@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
+import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -233,13 +234,27 @@ class ThemeShowcase extends Component {
 		this.setState( { tabFilter }, callback );
 	};
 
-	expertsBanner = () => {
+	getExpertsBanner = () => {
 		const { currentThemeId, loggedOutComponent, siteId, isLoggedIn } = this.props;
 		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
 		if ( loggedOutComponent || ! showBanners ) {
 			return;
 		}
 		return <UpworkBanner location={ 'theme-banner' } />;
+	};
+
+	renderBanner = () => {
+		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
+
+		if (
+			'my-themes' !== this.state.tabFilter.key &&
+			! isExpertBannerDissmissed &&
+			! loggedOutComponent
+		) {
+			return <UpworkBanner location={ 'theme-banner' } />;
+		}
+
+		return upsellBanner;
 	};
 
 	allThemes = ( { themeProps } ) => {
@@ -388,9 +403,8 @@ class ThemeShowcase extends Component {
 							</NavTabs>
 						</SectionNav>
 					) }
-					{ this.props.upsellBanner }
+					{ this.renderBanner() }
 					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
-					{ 'all' === this.state.tabFilter.key && this.expertsBanner() }
 					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
 					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
 					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
@@ -416,6 +430,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		currentTheme,
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
+		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
