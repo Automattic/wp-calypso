@@ -42,6 +42,7 @@ export default function CTAButton( {
 	plansPage = true,
 	// We need a way to tell which plan do we want now
 	desiredPlan,
+	buttonText = '',
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -111,6 +112,20 @@ export default function CTAButton( {
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
+
+	const getButtonText = () => {
+		if ( buttonText ) return buttonText;
+
+		if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
+			return translate( 'Purchase and activate' );
+		}
+
+		if ( shouldUpgrade ) {
+			return translate( 'Upgrade and activate' );
+		}
+
+		return translate( 'Install and activate' );
+	};
 
 	return (
 		<>
@@ -194,14 +209,7 @@ export default function CTAButton( {
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				{
-					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
-						? translate( 'Purchase and activate' )
-						: shouldUpgrade
-						? translate( 'Upgrade and activate' )
-						: translate( 'Install and activate' )
-				}
+				{ getButtonText() }
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">

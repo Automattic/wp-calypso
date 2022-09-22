@@ -155,6 +155,7 @@ const Plans = ( {
 										desiredPlan={
 											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
 										}
+										buttonText={ translate( 'Upgrade to Business' ) }
 									/>
 								) : (
 									<Button
@@ -179,6 +180,7 @@ const Plans = ( {
 										desiredPlan={
 											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
 										}
+										buttonText={ translate( 'Upgrade to Ecommerce' ) }
 									/>
 								) : (
 									<Button
@@ -207,11 +209,27 @@ const Plans = ( {
 						},
 					}
 				) }
-				buttonText={ translate( 'Upgrade to Business' ) }
+				children={
+					plugin ? (
+						<CTAButton
+							plugin={ plugin }
+							hasEligibilityMessages={ [] }
+							disabled={ false }
+							plansPage={ false }
+							desiredPlan={ intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS }
+							buttonText={ translate( 'Upgrade to Business' ) }
+						/>
+					) : (
+						<Button
+							className="button plan-features__actions-button is-business-plan"
+							primary
+							href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }
+						>
+							{ translate( 'Upgrade to Business' ) }
+						</Button>
+					)
+				}
 				buttonPrimary={ true }
-				buttonOnClick={ () => {
-					alert( 'Connect code after merging PR 68087' );
-				} }
 				buttonDisabled={ false }
 			/>
 			<MarketplaceFooter />
