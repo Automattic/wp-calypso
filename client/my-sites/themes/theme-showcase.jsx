@@ -238,7 +238,11 @@ class ThemeShowcase extends Component {
 		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
 		const tabKey = this.state.tabFilter.key;
 
-		if ( 'my-themes' !== tabKey && ! isExpertBannerDissmissed && ! loggedOutComponent ) {
+		if (
+			tabKey !== this.tabFilters.MYTHEMES.key &&
+			! isExpertBannerDissmissed &&
+			! loggedOutComponent
+		) {
 			// these are from the time we rely on the redirect.
 			// See p2-pau2Xa-4nq#comment-12480
 			let location = 'theme-banner';
@@ -249,9 +253,11 @@ class ThemeShowcase extends Component {
 				case this.tabFilters.RECOMMENDED.key:
 					location = 'recommended-theme-banner';
 					utmCampaign = 'theme-rec-tre';
+					break;
 				case this.tabFilters.TRENDING.key:
 					location = 'trending-theme-banner';
 					utmCampaign = 'theme-rec-tre';
+					break;
 				case this.tabFilters.ALL.key:
 					location = 'all-theme-banner';
 					utmCampaign = 'theme-all';
