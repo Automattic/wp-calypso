@@ -69,6 +69,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
 import usePreinstalledPremiumPlugin from './use-preinstalled-premium-plugin';
 
@@ -385,6 +386,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ isMarketplaceProduct && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }
