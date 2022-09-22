@@ -17,6 +17,7 @@ import type { Step } from '../../types';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
+import './style.scss';
 
 const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
@@ -64,30 +65,33 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 							<div className="plans-table">
 								{ filteredPlans
 									.filter( ( plan ) => !! plan )
-									.map( ( plan ) => (
-										<PlanItem
-											popularBadgeVariation={ 'ON_TOP' }
-											allPlansExpanded={ allPlansExpanded }
-											key={ plan.periodAgnosticSlug }
-											slug={ plan.periodAgnosticSlug }
-											domain={ domain }
-											tagline={ plan.description }
-											CTAVariation={ 'NORMAL' }
-											features={ plan.features ?? [] }
-											billingPeriod={ billingPeriod }
-											isPopular={ plan.isPopular }
-											isFree={ plan.isFree }
-											name={ plan?.title.toString() }
-											isSelected={
-												!! selectedPlanProductId &&
-												selectedPlanProductId ===
-													getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
-											}
-											onSelect={ onPlanSelect }
-											onPickDomainClick={ undefined }
-											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
-											disabledLabel={ undefined }
-										></PlanItem>
+									.map( ( plan, index ) => (
+										<>
+											<PlanItem
+												popularBadgeVariation={ 'ON_TOP' }
+												allPlansExpanded={ allPlansExpanded }
+												key={ plan.periodAgnosticSlug }
+												slug={ plan.periodAgnosticSlug }
+												domain={ domain }
+												CTAVariation={ 'NORMAL' }
+												features={ plan.features ?? [] }
+												billingPeriod={ billingPeriod }
+												isPopular={ 'business' === plan.periodAgnosticSlug }
+												isFree={ plan.isFree }
+												name={ plan?.title.toString() }
+												isSelected={
+													!! selectedPlanProductId &&
+													selectedPlanProductId ===
+														getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
+												}
+												onSelect={ onPlanSelect }
+												onPickDomainClick={ undefined }
+												onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+												CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }
+												popularBadgeText={ __( 'Best for Video' ) }
+											/>
+											{ index < filteredPlans.length - 1 && <div className="plan-separator"></div> }
+										</>
 									) ) }
 							</div>
 						</div>
