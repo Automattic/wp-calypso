@@ -13,17 +13,26 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import { MARKETPLACE_FLOW } from 'calypso/my-sites/plugins/flows';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import CTAButton from '../plugin-details-CTA/CTA-button';
 
 import './style.scss';
 
-const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
+const Plans = ( {
+	intervalType,
+	pluginSlug,
+}: {
+	intervalType: 'yearly' | 'monthly';
+	pluginSlug: string;
+} ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
@@ -59,6 +68,16 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 		);
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
+	const isMarketplaceProduct = true;
+
+	const productsList = useSelector( getProductsList );
+	const isProductListFetched = Object.values( productsList ).length > 0;
+	const {
+		data: plugin,
+		// isFetched: isWpComPluginFetched,
+		// isFetching: isWpComPluginFetching,
+	} = useWPCOMPlugin( pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
+
 	return (
 		<MainComponent wideLayout>
 			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
@@ -81,6 +100,34 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					flowName={ MARKETPLACE_FLOW }
 					shouldShowPlansFeatureComparison
 					isReskinned
+					customRender={ {
+						topButtons: [
+							<td className="plan-features-comparison__table-item is-top-buttons">
+								<CTAButton
+									plugin={ plugin }
+									hasEligibilityMessages={ [] }
+									disabled={ false }
+									plansPage={ false }
+								/>
+							</td>,
+							<td className="plan-features-comparison__table-item is-top-buttons">
+								<CTAButton
+									plugin={ plugin }
+									hasEligibilityMessages={ [] }
+									disabled={ false }
+									plansPage={ false }
+								/>
+							</td>,
+							<td className="plan-features-comparison__table-item is-top-buttons">
+								<CTAButton
+									plugin={ plugin }
+									hasEligibilityMessages={ [] }
+									disabled={ false }
+									plansPage={ false }
+								/>
+							</td>,
+						],
+					} }
 				/>
 			</div>
 			<ActionCard

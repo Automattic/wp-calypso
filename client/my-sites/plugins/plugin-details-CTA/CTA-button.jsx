@@ -34,7 +34,13 @@ import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
+export default function CTAButton( {
+	plugin,
+	hasEligibilityMessages,
+	disabled,
+	// just a quick flag to demonstrate reusing
+	plansPage = true,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -109,8 +115,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
-						if ( pluginsPlansPageFlag && shouldUpgrade ) {
-							return page( pluginsPlansPage );
+						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( `${ pluginsPlansPage }?pluginSlug=${ plugin.slug }` );
 						}
 						return setShowEligibility( true );
 					}
@@ -163,8 +169,8 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
-						if ( pluginsPlansPageFlag && shouldUpgrade ) {
-							return page( pluginsPlansPage );
+						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( `${ pluginsPlansPage }?pluginSlug=${ plugin.slug }` );
 						}
 						return setShowEligibility( true );
 					}

@@ -119,6 +119,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isReskinned,
 			isFAQCondensedExperiment,
+			customRender,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -160,6 +161,7 @@ export class PlansFeaturesMain extends Component {
 					siteId={ siteId }
 					isReskinned={ isReskinned }
 					isFAQCondensedExperiment={ isFAQCondensedExperiment }
+					customRender={ customRender }
 				/>
 			</div>
 		);
