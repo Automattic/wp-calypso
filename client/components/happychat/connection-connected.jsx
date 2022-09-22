@@ -12,7 +12,9 @@ export default connect(
 		getAuth: ownProps.getAuth || getHappychatAuth( state ),
 		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 		isHappychatEnabled:
-			config.isEnabled( 'happychat' ) && ! shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
+			ownProps.isHappychatEnabled ||
+			( config.isEnabled( 'happychat' ) &&
+				! shouldShowHelpCenterToUser( getCurrentUserId( state ) ) ),
 	} ),
 	{ initConnection }
 )( HappychatConnection );
