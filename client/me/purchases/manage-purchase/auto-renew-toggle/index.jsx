@@ -219,7 +219,7 @@ class AutoRenewToggle extends Component {
 				'…'
 			) : (
 				<Button
-					plain
+					link
 					className="is-link"
 					onClick={ this.onToggleAutoRenew }
 					disabled={ shouldDisable }
