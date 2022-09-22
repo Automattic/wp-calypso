@@ -121,7 +121,7 @@ const Plans = ( {
 				brandFont
 			/>
 
-			<div className="plans">
+			<div className="plugins-plans">
 				<PlansFeaturesMain
 					basePlansPath={ '/plugins/plans/' + pluginSlug }
 					showFAQ={ false }
@@ -134,8 +134,18 @@ const Plans = ( {
 					isReskinned
 					customRender={ {
 						topButtons: [
-							<td className="plan-features-comparison__table-item is-top-buttons"></td>,
-							<td className="plan-features-comparison__table-item is-top-buttons">
+							<td
+								key="current-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
+								<Button className="button plan-features__actions-button is-current" disabled>
+									{ translate( 'Your current plan' ) }
+								</Button>
+							</td>,
+							<td
+								key="business-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
 								{ plugin ? (
 									<CTAButton
 										plugin={ plugin }
@@ -147,12 +157,19 @@ const Plans = ( {
 										}
 									/>
 								) : (
-									<Button primary href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }>
-										{ translate( 'Upgrade and activate' ) }
+									<Button
+										className="button plan-features__actions-button is-business-plan"
+										primary
+										href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }
+									>
+										{ translate( 'Upgrade to Business' ) }
 									</Button>
 								) }
 							</td>,
-							<td className="plan-features-comparison__table-item is-top-buttons">
+							<td
+								key="ecommerce-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
 								{ plugin ? (
 									<CTAButton
 										plugin={ plugin }
@@ -164,8 +181,11 @@ const Plans = ( {
 										}
 									/>
 								) : (
-									<Button primary href={ `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE }` }>
-										{ translate( 'Upgrade and activate' ) }
+									<Button
+										className="button plan-features__actions-button is-ecommerce-plan"
+										href={ `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE }` }
+									>
+										{ translate( 'Upgrade to eCommerce' ) }
 									</Button>
 								) }
 							</td>,
