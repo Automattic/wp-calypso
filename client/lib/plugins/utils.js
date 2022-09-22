@@ -340,9 +340,13 @@ export function getPluginAuthorProfileKeyword( plugin ) {
 /**
  * @param currentPlan
  * @param pluginBillingPeriod
+ * @param desiredPlan
  * @returns the correct plan slug depending on current plan and pluginBillingPeriod
  */
-export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
+export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod, desiredPlan ) {
+	if ( desiredPlan ) {
+		return desiredPlan;
+	}
 	if ( isEnabled( 'marketplace-personal-premium' ) ) {
 		// Site is free - doesn't have a plan.
 		return pluginBillingPeriod === IntervalLength.ANNUALLY ? PLAN_PERSONAL : PLAN_PERSONAL_MONTHLY;

@@ -40,6 +40,8 @@ export default function CTAButton( {
 	disabled,
 	// just a quick flag to demonstrate reusing
 	plansPage = true,
+	// We need a way to tell which plan do we want now
+	desiredPlan,
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -147,7 +149,7 @@ export default function CTAButton( {
 					currentContext={ 'plugin-details' }
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
-					onProceed={ () =>
+					onProceed={ () => {
 						onClickInstallPlugin( {
 							dispatch,
 							selectedSite,
@@ -157,8 +159,9 @@ export default function CTAButton( {
 							billingPeriod,
 							eligibleForProPlan,
 							productsList,
-						} )
-					}
+							desiredPlan,
+						} );
+					} }
 				/>
 			</Dialog>
 			<Button
@@ -233,6 +236,7 @@ function onClickInstallPlugin( {
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
+	desiredPlan,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -270,7 +274,7 @@ function onClickInstallPlugin( {
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
-					eligibleForProPlan
+					desiredPlan
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`

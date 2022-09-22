@@ -1,6 +1,9 @@
 import {
 	getPlan,
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
@@ -102,12 +105,14 @@ const Plans = ( {
 					isReskinned
 					customRender={ {
 						topButtons: [
+							<td className="plan-features-comparison__table-item is-top-buttons"></td>,
 							<td className="plan-features-comparison__table-item is-top-buttons">
 								<CTAButton
 									plugin={ plugin }
 									hasEligibilityMessages={ [] }
 									disabled={ false }
 									plansPage={ false }
+									desiredPlan={ intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS }
 								/>
 							</td>,
 							<td className="plan-features-comparison__table-item is-top-buttons">
@@ -116,14 +121,9 @@ const Plans = ( {
 									hasEligibilityMessages={ [] }
 									disabled={ false }
 									plansPage={ false }
-								/>
-							</td>,
-							<td className="plan-features-comparison__table-item is-top-buttons">
-								<CTAButton
-									plugin={ plugin }
-									hasEligibilityMessages={ [] }
-									disabled={ false }
-									plansPage={ false }
+									desiredPlan={
+										intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
+									}
 								/>
 							</td>,
 						],
