@@ -71,10 +71,24 @@ export const RemovePlanDialog = ( {
 			const planFeatures = getPlanFeatures( productSlug, hasDomain, wpcomSiteURL );
 
 			if ( planFeatures.length > 0 ) {
+				const domainFeature =
+					hasDomain && wpcomSiteURL ? (
+						<p>
+							{ translate(
+								'Your custom domain as primary. Your traffic will be redirected to %(domain)s',
+								{
+									args: {
+										domain: wpcomSiteURL,
+									},
+								}
+							) }
+						</p>
+					) : null;
 				return (
 					<Fragment>
 						<p>{ subTitle }</p>
 						<ul className="remove-plan-dialog__list-plan-features">
+							{ domainFeature }
 							{ planFeatures.map( ( feature, index ) => {
 								return (
 									<li key={ index }>
