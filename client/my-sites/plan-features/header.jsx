@@ -25,13 +25,13 @@ import InfoPopover from 'calypso/components/info-popover';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import { isMarketplaceFlow } from 'calypso/my-sites/plugins/flows';
 import { getPlanBySlug } from 'calypso/state/plans/selectors';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { isMarketplaceFlow } from '../plugins/flows';
 
 const PLANS_LIST = getPlans();
 

@@ -47,6 +47,7 @@ import {
 	getPlanDescriptionForMobile,
 	getPlanFeatureAccessor,
 } from 'calypso/my-sites/plan-features-comparison/util';
+import { isMarketplaceFlow } from 'calypso/my-sites/plugins/flows';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -82,7 +83,6 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
 import './style.scss';
-import { isMarketplaceFlow } from '../plugins/flows';
 
 const noop = () => {};
 
