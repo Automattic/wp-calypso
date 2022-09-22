@@ -124,6 +124,13 @@ export class PlansStep extends Component {
 				themeSlugWithRepo: 'pub/lynx',
 			} );
 			this.props.goToNextStep();
+		} else if ( flowName === 'onboarding' && cartItem?.product_slug === 'ecommerce-bundle' ) {
+			// Buying ecommerce-bundle at signup gives you pub/twentytwentytwo
+			this.props.submitSignupStep( step, {
+				cartItem,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			} );
+			this.props.goToNextStep();
 		} else {
 			this.props.submitSignupStep( step, {
 				cartItem,
