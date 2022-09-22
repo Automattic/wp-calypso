@@ -33,10 +33,19 @@ import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
 
-const fakeFaces = Array.from(
-	{ length: 10 },
-	( _, index ) => `https://s0.wp.com/i/fake-faces/face-${ index }.jpg`
-);
+const fakeFaces = [
+	'john',
+	'joe',
+	'julia',
+	'emily',
+	'ashley',
+	'daphne',
+	'megan',
+	'omar',
+	'vivian',
+	'sam',
+	'tony',
+].map( ( name ) => `https://s0.wp.com/i/support-engineers/${ name }.jpg` );
 const randomTwoFaces = fakeFaces.sort( () => Math.random() - 0.5 ).slice( 0, 2 );
 
 const HelpCenterSitePicker: React.FC< SitePicker > = ( {
