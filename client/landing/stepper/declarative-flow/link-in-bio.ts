@@ -33,9 +33,16 @@ export const linkInBio: Flow = {
 		const locale = useLocale();
 
 		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post( `guides/trigger?flow=${ name }&step=${ _currentStep }`, {
-			apiNamespace: 'wpcom/v2/',
-		} );
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: name,
+				step: _currentStep,
+			}
+		);
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'

@@ -43,9 +43,16 @@ export const newsletter: Flow = {
 		};
 
 		// trigger guides on step movement, we don't care about failures or response
-		wpcom.req.post( `guides/trigger?flow=${ name }&step=${ _currentStep }`, {
-			apiNamespace: 'wpcom/v2/',
-		} );
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: name,
+				step: _currentStep,
+			}
+		);
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );

@@ -128,9 +128,16 @@ class DomainsStep extends Component {
 
 	componentDidMount() {
 		// trigger guides on this step, we don't care about failures or response
-		wpcom.req.post( `guides/trigger?flow=${ this.props.flowName }&step=domains `, {
-			apiNamespace: 'wpcom/v2/',
-		} );
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: this.props.flowName,
+				step: 'domains',
+			}
+		);
 	}
 
 	getLocale() {

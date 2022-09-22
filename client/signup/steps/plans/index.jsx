@@ -56,9 +56,16 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
 		// trigger guides on this step, we don't care about failures or response
-		wp.req.post( `guides/trigger?flow=${ this.props.flowName }&step=plans`, {
-			apiNamespace: 'wpcom/v2/',
-		} );
+		wp.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: this.props.flowName,
+				step: 'plans',
+			}
+		);
 	}
 
 	componentWillUnmount() {
