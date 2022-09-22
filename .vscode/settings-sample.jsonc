@@ -1,0 +1,44 @@
+{
+	// File settings
+	"files.eol": "\n",
+	"files.exclude": {
+		"**/node_modules": true,
+		".cache": true
+	},
+	"files.associations": {
+		// VS Code treats ".prettierrc" as JSON, by default
+		".prettierrc": "yaml"
+	},
+	// Editor settings
+	"editor.formatOnSave": false,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true
+	},
+	// Use prettier for formatting JS/TS
+	"[javascript][javascriptreact][typescript][typescriptreact]": {
+		// auto format on save will be done by ESLint
+		"editor.formatOnSave": false,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[jsonc][json][yaml][markdown]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	// Use stylint for formatting CSS/SCSS
+	"[css][scss][sass]": {
+		"editor.formatOnSave": false,
+		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+	},
+	// Settings for extensions
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact",
+		"json",
+		"jsonc"
+	],
+	"stylelint.validate": [ "css", "scss", "sass" ],
+	// Use the installed version of TypeScript, not the ones bundled with VS Code
+	"typescript.tsdk": "node_modules/typescript/lib"
+}

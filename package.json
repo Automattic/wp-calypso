@@ -127,6 +127,8 @@
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
 		"update-deps": "rm -rf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
+		"vscode:link": "node bin/set-up-vs-code.js",
+		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
 		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
 	},
