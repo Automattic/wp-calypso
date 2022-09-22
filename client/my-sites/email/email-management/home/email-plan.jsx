@@ -11,6 +11,7 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import {
 	getGoogleAdminUrl,
@@ -56,6 +57,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	return (
 		<VerticalNavItem
 			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
+			onClick={ () => recordTracksEvent( 'calypso_upsell_email', { context: 'email-forwarding' } ) }
 		>
 			{ translate( 'Upgrade to a hosted email' ) }
 		</VerticalNavItem>
