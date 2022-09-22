@@ -33,6 +33,7 @@ import {
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
@@ -524,6 +525,7 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
+									icon={ ReaderCommentIcon( { iconSize: 18 } ) }
 								/>
 							) }
 

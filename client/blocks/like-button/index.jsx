@@ -20,6 +20,7 @@ class LikeButtonContainer extends Component {
 		found: PropTypes.number,
 		iLike: PropTypes.bool,
 		likeSource: PropTypes.string,
+		icon: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -51,6 +52,7 @@ class LikeButtonContainer extends Component {
 					liked={ this.props.iLike }
 					animateLike={ true }
 					onLikeToggle={ this.handleLikeToggle }
+					icon={ this.props.icon }
 				/>
 			</Fragment>
 		);

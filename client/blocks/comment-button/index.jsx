@@ -11,7 +11,7 @@ import './style.scss';
 const noop = () => {};
 
 function CommentButton( props ) {
-	const { commentCount, href, onClick, showLabel, tagName, target } = props;
+	const { commentCount, href, onClick, showLabel, tagName, target, icon } = props;
 	const translate = useTranslate();
 
 	return createElement(
@@ -25,7 +25,7 @@ function CommentButton( props ) {
 			},
 			( prop ) => prop === null
 		),
-		<Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
 			{ showLabel && commentCount > 0 && (
@@ -47,6 +47,7 @@ CommentButton.propTypes = {
 	showLabel: PropTypes.bool,
 	tagName: PropTypes.string,
 	target: PropTypes.string,
+	icon: PropTypes.object,
 };
 
 CommentButton.defaultProps = {
@@ -57,6 +58,7 @@ CommentButton.defaultProps = {
 	size: 24,
 	tagName: 'li',
 	target: null,
+	icon: null,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

@@ -7,6 +7,7 @@ import PostEditButton from 'calypso/blocks/post-edit-button';
 import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import * as stats from 'calypso/reader/stats';
@@ -76,7 +77,7 @@ const ReaderPostActions = ( props ) => {
 						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
 						tagName="button"
-						size={ iconSize }
+						icon={ ReaderCommentIcon( { iconSize: iconSize } ) }
 					/>
 				</li>
 			) }

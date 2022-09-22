@@ -23,6 +23,7 @@ class ExternalLink extends Component {
 		target: PropTypes.string,
 		showIconFirst: PropTypes.bool,
 		iconClassName: PropTypes.string,
+		iconComponent: PropTypes.object,
 	};
 
 	render() {
@@ -49,7 +50,7 @@ class ExternalLink extends Component {
 			props.href = localizeUrl( props.href );
 		}
 
-		const iconComponent = (
+		const iconComponent = props.iconComponent || (
 			<Gridicon
 				className={ this.props.iconClassName }
 				icon="external"

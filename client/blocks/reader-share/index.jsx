@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { defer } from 'lodash';
@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SiteSelector from 'calypso/components/site-selector';
 import SocialLogo from 'calypso/components/social-logo';
+import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
@@ -173,7 +174,9 @@ class ReaderShare extends Component {
 					onTouchStart={ preloadEditor }
 					ref={ this.shareButton }
 				>
-					<Gridicon aria-hidden="true" icon="share" />
+					{ ReaderShareIcon( {
+						iconSize: this.props.iconSize,
+					} ) }
 					<span className="reader-share__button-label">
 						{ translate( 'Share', { comment: 'Share the post' } ) }
 					</span>

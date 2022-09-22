@@ -10,7 +10,7 @@
 }
 
 .reader-post-actions .reader-post-actions__item {
-	margin-right: 13px;
+	margin-right: 12px;
 
 	&.reader-post-actions__visit {
 		flex: 1;
@@ -18,9 +18,14 @@
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
-			display: inline-flex;
+			display: flex;
 			padding: 4px 4px 4px 0;
 			position: relative;
+
+			svg {
+				position: relative;
+				top: 2px;
+			}
 		}
 	}
 

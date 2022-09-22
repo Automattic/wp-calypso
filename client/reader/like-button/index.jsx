@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import LikeButtonContainer from 'calypso/blocks/like-button';
 import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import { getPostLikeCount } from 'calypso/state/posts/selectors/get-post-like-count';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
@@ -49,9 +50,14 @@ class ReaderLikeButton extends Component {
 	};
 
 	render() {
-		const { siteId, postId, likeCount, iLike } = this.props;
+		const { siteId, postId, likeCount, iLike, iconSize } = this.props;
 		const { showLikesPopover } = this.state;
 		const hasEnoughLikes = ( likeCount > 0 && ! iLike ) || ( likeCount > 1 && iLike );
+
+		const likeIcon = ReaderLikeIcon( {
+			liked: iLike,
+			iconSize: iconSize,
+		} );
 
 		return (
 			<Fragment>
@@ -63,6 +69,7 @@ class ReaderLikeButton extends Component {
 					onMouseLeave={ this.hideLikesPopover }
 					onLikeToggle={ this.recordLikeToggle }
 					likeSource="reader"
+					icon={ likeIcon }
 				/>
 				{ showLikesPopover && siteId && postId && hasEnoughLikes && (
 					<PostLikesPopover

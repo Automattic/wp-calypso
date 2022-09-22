@@ -1,13 +1,15 @@
 import PropTypes from 'prop-types';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
+import ReaderFollowIcon from 'calypso/reader/components/icons/follow-icon';
+import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
 import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
 } from 'calypso/reader/stats';
 
 function ReaderFollowButton( props ) {
-	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl } = props;
+	const { onFollowToggle, railcar, followSource, isButtonOnly, siteUrl, iconSize } = props;
 
 	function recordFollowToggle( isFollowing ) {
 		if ( isFollowing ) {
@@ -21,11 +23,28 @@ function ReaderFollowButton( props ) {
 		}
 	}
 
+	const followingIcon = ReaderFollowingIcon( { iconSize: iconSize || 24 } );
+	const followIcon = ReaderFollowIcon( { iconSize: iconSize || 24 } );
+
 	if ( isButtonOnly ) {
-		return <FollowButton { ...props } onFollowToggle={ recordFollowToggle } />;
+		return (
+			<FollowButton
+				{ ...props }
+				onFollowToggle={ recordFollowToggle }
+				followIcon={ followIcon }
+				followingIcon={ followingIcon }
+			/>
+		);
 	}
 
-	return <FollowButtonContainer { ...props } onFollowToggle={ recordFollowToggle } />;
+	return (
+		<FollowButtonContainer
+			{ ...props }
+			onFollowToggle={ recordFollowToggle }
+			followIcon={ followIcon }
+			followingIcon={ followingIcon }
+		/>
+	);
 }
 
 ReaderFollowButton.propTypes = {
