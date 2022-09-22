@@ -769,10 +769,12 @@
 			list-style: none;
 
 			.wpnc__todo-done::before {
+				/* stylelint-disable-next-line no-irregular-whitespace */
 				content: "◉ ";
 			}
 
 			.wpnc__todo-not-done::before {
+				/* stylelint-disable-next-line no-irregular-whitespace */
 				content: "◎ ";
 			}
 		}

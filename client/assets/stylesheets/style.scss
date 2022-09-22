@@ -12,10 +12,10 @@
 @import "./shared/loading";
 @import "main";
 
-@import "./_p2-vars.scss";
+@import "./p2-vars";
 
 // @wordpress/components stylesheet
 @import "@wordpress/components/build-style/style";
 
 // Overrides for @wordpress/components
-@import "./_wp-components-overrides.scss";
+@import "./wp-components-overrides";
