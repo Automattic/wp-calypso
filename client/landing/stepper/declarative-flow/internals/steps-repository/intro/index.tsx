@@ -27,10 +27,10 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		if ( flowName === VIDEOPRESS_FLOW ) {
 			return {
 				title: createInterpolateElement(
-					__( 'You’re 3 minutes away from<br />a stand-out Video site.<br />Ready? ' ),
+					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 					{ br: <br /> }
 				),
-				buttonText: __( 'Setup your Video Site' ),
+				buttonText: __( 'Get started' ),
 			};
 		}
 		if (
@@ -75,6 +75,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 		<StepContainer
 			stepName="intro"
 			className={ cx( { 'is-using-new-intro-design': showNewNewsletterIntro } ) }
+			flowName={ flow as string }
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }

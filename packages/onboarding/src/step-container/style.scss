@@ -259,6 +259,8 @@
 	.step-container__videopress-powered {
 		display: flex;
 		justify-content: center;
+		align-items: center;
+		width: 100%;
 		text-align: center;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-extra-small;

@@ -107,6 +107,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					return (
 						<Route key={ path } path={ `/${ path }` }>
 							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+								{ 'videopress' === flow.name && 'intro' === path && (
+									<iframe
+										className="intro__video"
+										title="Video"
+										src="https://video.wordpress.com/v/l9GrBaPw?autoPlay=true&amp;controls=false&amp;muted=true&amp;loop=true&amp;cover=true&amp;playsinline=true"
+									></iframe>
+								) }
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="flow-progress"
