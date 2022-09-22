@@ -69,7 +69,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 
 	return (
 		<MemoryRouter>
-			{ data?.status === 'assigned' && <Redirect to="/inline-chat" /> }
+			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile }
