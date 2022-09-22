@@ -18,20 +18,6 @@ export const getPostType = ( type: string ) => {
 	}
 };
 
-export const formatReachNumber = (
-	reachNumber: number,
-	isNegative: boolean,
-	deliverMargin: number
-) => {
-	const percentage = isNegative ? 2 - deliverMargin : deliverMargin;
-	const calculated = Math.round( reachNumber * percentage );
-	if ( calculated < 1000 ) {
-		return calculated.toLocaleString();
-	}
-	const formatted = Math.round( calculated / 1000 ) * 1000;
-	return ( formatted || 0 ).toLocaleString();
-};
-
 export const getCampaignStatusBadgeColor = ( status: string ) => {
 	switch ( status ) {
 		case 'created': {
@@ -98,12 +84,17 @@ export const getCampaignOverallSpending = (
 
 	/* translators: %1$s: Amount, %2$s: Days. eg: $3 over 2 days */
 	const overallSpending = sprintf( __( '%1$s over %2$s days' ), totalBudgetUsed, daysRun );
-	return overallSpending;
+	return `$${ overallSpending }`;
 };
 
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate;
+	const formattedRate = clickthroughRate.toLocaleString( undefined, {
+		useGrouping: false,
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 2,
+	} );
+	return formattedRate;
 };
 
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
@@ -129,21 +120,12 @@ export const getCampaignBudgetData = ( budget_cents: number, spent_budget_cents:
 	};
 };
 
-export const getCampaignEstimatedReach = (
-	impressions_estimated_total: number,
-	deliver_margin_multiplier: number
-) => {
-	if ( ! impressions_estimated_total ) {
+export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string ) => {
+	if ( ! displayDeliveryEstimate ) {
 		return '-';
 	}
-
-	const estimatedReach = `${ formatReachNumber(
-		impressions_estimated_total,
-		true,
-		deliver_margin_multiplier
-	) } - ${ formatReachNumber( impressions_estimated_total, false, deliver_margin_multiplier ) }`;
-
-	return estimatedReach;
+	const [ minEstimate, maxEstimate ] = displayDeliveryEstimate.split( ':' );
+	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
 };
 
 export const getCampaignAudienceString = ( audience_list: AudienceList ) => {
