@@ -13,6 +13,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
@@ -59,6 +61,32 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 		);
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
+	const promos: PromoSectionProps = {
+		promos: [
+			{
+				title: translate( 'Flex your site with plugins' ),
+				body: translate(
+					'Install plugins and extend functionality for your site with access to more than 50,000 plugins.'
+				),
+				image: <Gridicon icon="plugins" />,
+			},
+			{
+				title: translate( 'Money back guarantee' ),
+				body: translate(
+					'Try WordPress.com for 14 days and if you are not 100% satisfied, get your money back.'
+				),
+				image: <Gridicon icon="money" />,
+			},
+			{
+				title: translate( 'Essential features' ),
+				body: translate(
+					"We guarantee site's performance and protect it from spammers detailing all activity records."
+				),
+				image: <Gridicon icon="plans" />,
+			},
+		],
+	};
+
 	return (
 		<MainComponent wideLayout>
 			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
@@ -70,6 +98,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
 				brandFont
 			/>
+
 			<div className="plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
@@ -83,6 +112,9 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					isReskinned
 				/>
 			</div>
+
+			<PromoSection { ...promos } />
+
 			<ActionCard
 				classNames="plugin-plans"
 				headerText=""
