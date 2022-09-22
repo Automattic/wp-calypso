@@ -2,6 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, useDesignsBySite, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -97,6 +98,7 @@ export const siteSetupFlow: Flow = {
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
+		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -184,7 +186,10 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'designSetup':
-					if ( isBlankCanvasDesign( providedDependencies?.selectedDesign as Design ) ) {
+					if (
+						isDesktop &&
+						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
+					) {
 						return navigate( 'patternAssembler' );
 					}
 
