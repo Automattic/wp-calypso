@@ -271,6 +271,13 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
+		if (
+			typeof this.props.selectedSite !== 'object' ||
+			typeof this.props.selectedSite.domain !== 'string'
+		) {
+			return;
+		}
+
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
 			this.props.selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
