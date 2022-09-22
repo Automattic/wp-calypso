@@ -16,6 +16,8 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 
 				if ( Object.keys( result ).length === 2 ) {
 					resolve( result );
+					// close connection after we get accept and status
+					connection.openSocket?.then( ( socket ) => socket.close() );
 				}
 			},
 			receiveStatus( status ) {
@@ -23,6 +25,8 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 
 				if ( Object.keys( result ).length === 2 ) {
 					resolve( result );
+					// close connection after we get accept and status
+					connection.openSocket?.then( ( socket ) => socket.close() );
 				}
 			},
 			receiveUnauthorized: () => {
