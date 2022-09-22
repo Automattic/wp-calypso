@@ -122,7 +122,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Renders
 		 */
-		function renderStepContent() {
+		function StepContent() {
 			if ( isLoading() ) {
 				return <LoadingEllipsis />;
 			} else if ( ! siteSlug || ! siteItem || ! siteId ) {
@@ -168,7 +168,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 					hideFormattedHeader={ true }
 					goBack={ onGoBack }
 					isWideLayout={ true }
-					stepContent={ renderStepContent() }
+					stepContent={ <StepContent /> }
 					recordTracksEvent={ recordTracksEvent }
 				/>
 			</>
