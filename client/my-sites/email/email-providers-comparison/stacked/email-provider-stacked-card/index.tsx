@@ -26,7 +26,6 @@ const EmailProvidersStackedCard = ( {
 	formFields,
 	logo,
 	onExpandedChange = noop,
-	overrideToggleSelectorOnClick = null,
 	priceBadge = null,
 	productName,
 	providerKey,
@@ -38,13 +37,11 @@ const EmailProvidersStackedCard = ( {
 
 	const showFeaturesToggleButton = detailsExpanded && isViewportSizeLowerThan660px;
 
-	const onToggleVisibility = ( event: MouseEvent ): void => {
+	const toggleVisibility = ( event: MouseEvent ): void => {
 		event.preventDefault();
 
 		onExpandedChange( providerKey, ! detailsExpanded );
 	};
-
-	const toggleVisibility = overrideToggleSelectorOnClick ?? onToggleVisibility;
 
 	const header = (
 		<div className="email-provider-stacked-card__header">

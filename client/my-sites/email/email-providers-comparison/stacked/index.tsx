@@ -12,9 +12,11 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -33,17 +35,15 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	emailManagement,
-	emailManagementInDepthComparison,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { InfiniteData } from 'react-query';
 
 import './style.scss';
 
@@ -56,6 +56,14 @@ export type EmailProvidersStackedComparisonProps = {
 	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	source: string;
+};
+
+type User = {
+	login: string;
+};
+
+type UsersData = {
+	users: User[];
 };
 
 const EmailProvidersStackedComparison = ( {
