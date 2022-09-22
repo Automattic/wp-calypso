@@ -378,6 +378,11 @@
 	.product-lightbox__variants-options {
 		margin: 0;
 	}
+
+	.product-lightbox__close-button {
+		z-index: 1;
+		background-color: #fff;
+	}
 }
 
 @media screen and ( max-height: 630px ) and ( orientation: landscape ) {
