@@ -1,3 +1,5 @@
+import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
+
 export const getDashboardUrl = ( slug: string ) => {
 	return `/home/${ slug }`;
 };
@@ -20,6 +22,10 @@ export const getHostingConfigUrl = ( slug: string ) => {
 
 export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
+};
+
+export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
+	return site.jetpack && ! site?.is_wpcom_atomic;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
