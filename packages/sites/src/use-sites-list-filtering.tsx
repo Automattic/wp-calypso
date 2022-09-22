@@ -8,7 +8,7 @@ import {
 	useTranslatedSiteLaunchStatuses,
 } from './site-status';
 
-export const SITES_TABLE_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
+export const SITES_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
 
 export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
 
@@ -19,7 +19,7 @@ export const siteLaunchStatusFilterValues = [
 
 export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
 
-interface SitesTableFilterOptions {
+interface SitesFilterOptions {
 	search?: string;
 	showHidden?: boolean;
 	status: FilterableSiteLaunchStatuses;
@@ -32,7 +32,7 @@ interface Status {
 	hiddenCount: number;
 }
 
-interface UseSitesTableFilteringResult< T > {
+interface UseSitesFilteringResult< T > {
 	filteredSites: T[];
 	statuses: Status[];
 }
@@ -45,10 +45,10 @@ type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
 	visible?: boolean;
 };
 
-export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
+export function useSitesListFiltering< T extends SiteObjectWithBasicInfo >(
 	allSites: T[],
-	{ status, showHidden = false, search }: SitesTableFilterOptions
-): UseSitesTableFilteringResult< T > {
+	{ status, showHidden = false, search }: SitesFilterOptions
+): UseSitesFilteringResult< T > {
 	const { __ } = useI18n();
 	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
 
@@ -105,7 +105,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 
 	const filteredSites = useFuzzySearch( {
 		data: groupedByStatus[ status ],
-		keys: SITES_TABLE_SEARCH_INDEX_KEYS,
+		keys: SITES_SEARCH_INDEX_KEYS,
 		query: search,
 	} );
 

@@ -3,13 +3,9 @@
  */
 
 import { renderHook } from '@testing-library/react-hooks';
-import {
-	SitesTableSortKey,
-	SitesTableSortOrder,
-	useSitesTableSorting,
-} from '../use-sites-table-sorting';
+import { SitesSortKey, SitesSortOrder, useSitesListSorting } from '../src';
 
-describe( 'useSitesTableSorting', () => {
+describe( 'useSitesSorting', () => {
 	const filteredSites = [
 		{
 			ID: 1,
@@ -64,8 +60,8 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
-				sortKey: 'sort-that-is-not-supported' as SitesTableSortKey,
+			useSitesListSorting( filteredSites, {
+				sortKey: 'sort-that-is-not-supported' as SitesSortKey,
 				sortOrder: 'asc',
 			} )
 		);
@@ -78,7 +74,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites alphabetically ascending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'alphabetically',
 				sortOrder: 'asc',
 			} )
@@ -92,7 +88,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites alphabetically descending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'alphabetically',
 				sortOrder: 'desc',
 			} )
@@ -106,7 +102,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by last interaction descending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'lastInteractedWith',
 				sortOrder: 'desc',
 			} )
@@ -120,7 +116,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by last interaction ascending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'lastInteractedWith',
 				sortOrder: 'asc',
 			} )
@@ -134,7 +130,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should pick the site more frequently interacted with ascending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( frequentSites, {
+			useSitesListSorting( frequentSites, {
 				sortKey: 'lastInteractedWith',
 				sortOrder: 'asc',
 			} )
@@ -147,7 +143,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should pick the site more frequently interacted with descending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( frequentSites, {
+			useSitesListSorting( frequentSites, {
 				sortKey: 'lastInteractedWith',
 				sortOrder: 'desc',
 			} )
@@ -160,7 +156,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by updatedAt descending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'updatedAt',
 				sortOrder: 'desc',
 			} )
@@ -174,7 +170,7 @@ describe( 'useSitesTableSorting', () => {
 
 	test( 'should sort sites by updatedAt ascending', () => {
 		const { result } = renderHook( () =>
-			useSitesTableSorting( filteredSites, {
+			useSitesListSorting( filteredSites, {
 				sortKey: 'updatedAt',
 				sortOrder: 'asc',
 			} )
@@ -187,14 +183,14 @@ describe( 'useSitesTableSorting', () => {
 	} );
 
 	test( 'sorting maintains object equality', () => {
-		// Object equality is important for memoizing the site table row
+		// Object equality is important for memoizing the site row
 
 		const { result, rerender } = renderHook(
-			( { sortKey, sortOrder } ) => useSitesTableSorting( filteredSites, { sortKey, sortOrder } ),
+			( { sortKey, sortOrder } ) => useSitesListSorting( filteredSites, { sortKey, sortOrder } ),
 			{
 				initialProps: {
-					sortKey: 'updatedAt' as SitesTableSortKey,
-					sortOrder: 'asc' as SitesTableSortOrder,
+					sortKey: 'updatedAt' as SitesSortKey,
+					sortOrder: 'asc' as SitesSortOrder,
 				},
 			}
 		);

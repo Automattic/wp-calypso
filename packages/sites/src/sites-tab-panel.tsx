@@ -9,14 +9,14 @@ type OmitFromIndexedTypeWhilePreservingProperties< T, K extends PropertyKey > = 
 	[ P in keyof T as Exclude< P, K > ]: T[ P ];
 };
 
-export interface SitesTableTab
+export interface SitesTab
 	extends OmitFromIndexedTypeWhilePreservingProperties< TabPanel.Tab, 'title' > {
 	title: React.ReactChild;
 }
 
 export interface TabPanelProps extends Omit< TabPanel.Props, 'children' | 'tabs' > {
-	tabs: readonly SitesTableTab[];
-	children: ( tab: SitesTableTab ) => JSX.Element;
+	tabs: readonly SitesTab[];
+	children: ( tab: SitesTab ) => JSX.Element;
 }
 
 /**
@@ -26,7 +26,7 @@ export interface TabPanelProps extends Omit< TabPanel.Props, 'children' | 'tabs'
  * - Allows arbitrary elements in the tab titles so that we can show site counts (this is already possible
  *   with the WordPress component even though the documentation says only strings can be used).
  */
-export const SitesTableTabPanel = styled( TabPanel as ComponentType< TabPanelProps > )`
+export const SitesTabPanel = styled( TabPanel as ComponentType< TabPanelProps > )`
 	.components-tab-panel__tabs {
 		overflow-x: auto;
 	}

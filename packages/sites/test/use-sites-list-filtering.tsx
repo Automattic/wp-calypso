@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react-hooks';
-import { useSitesTableFiltering } from '../use-sites-table-filtering';
+import { useSitesListFiltering } from '../src';
 
 function createMockSite( {
 	ID = Math.round( Math.random() * 1000 ),
@@ -43,16 +43,16 @@ function createMockSite( {
 
 const status = 'all';
 
-describe( 'useSitesTableFiltering', () => {
+describe( 'useSitesListFiltering', () => {
 	test( 'no sites to filter', () => {
-		const { result } = renderHook( () => useSitesTableFiltering( [], { search: '', status } ) );
+		const { result } = renderHook( () => useSitesListFiltering( [], { search: '', status } ) );
 		expect( result.current.filteredSites ).toEqual( [] );
 	} );
 
 	test( 'empty search query returns the same list', () => {
 		const sites = [ createMockSite(), createMockSite(), createMockSite() ];
 
-		const { result } = renderHook( () => useSitesTableFiltering( sites, { search: '', status } ) );
+		const { result } = renderHook( () => useSitesListFiltering( sites, { search: '', status } ) );
 
 		expect( result.current.filteredSites ).toEqual( sites );
 	} );
@@ -62,7 +62,7 @@ describe( 'useSitesTableFiltering', () => {
 		const dogSite = createMockSite( { name: 'dog' } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
+			useSitesListFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
 		expect( result.current.filteredSites ).toEqual( [ catSite ] );
@@ -73,7 +73,7 @@ describe( 'useSitesTableFiltering', () => {
 		const dogSite = createMockSite( { URL: 'https://dog.io' } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
+			useSitesListFiltering( [ catSite, dogSite ], { search: 'c', status } )
 		);
 
 		expect( result.current.filteredSites ).toEqual( [ catSite ] );
@@ -87,7 +87,7 @@ describe( 'useSitesTableFiltering', () => {
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
+			useSitesListFiltering( [ public1, public2, private1, private2, comingSoon ], {
 				status: 'private',
 			} )
 		);
@@ -99,9 +99,7 @@ describe( 'useSitesTableFiltering', () => {
 		const visible = createMockSite( { visible: true } );
 		const hidden = createMockSite( { visible: false } );
 
-		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ visible, hidden ], { status } )
-		);
+		const { result } = renderHook( () => useSitesListFiltering( [ visible, hidden ], { status } ) );
 
 		expect( result.current.filteredSites ).toEqual( [ visible ] );
 	} );
@@ -111,7 +109,7 @@ describe( 'useSitesTableFiltering', () => {
 		const hidden = createMockSite( { visible: false } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ visible, hidden ], { status, showHidden: true } )
+			useSitesListFiltering( [ visible, hidden ], { status, showHidden: true } )
 		);
 
 		expect( result.current.filteredSites ).toEqual( [ visible, hidden ] );
@@ -131,7 +129,7 @@ describe( 'useSitesTableFiltering', () => {
 		} );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering(
+			useSitesListFiltering(
 				[ public1, public2, private1, private2, comingSoon, redirect1, redirect2 ],
 				{
 					search: '',
@@ -182,7 +180,7 @@ describe( 'useSitesTableFiltering', () => {
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
+			useSitesListFiltering( [ public1, public2, private1, private2, comingSoon ], {
 				search: '',
 				showHidden: true,
 				status,
@@ -224,12 +222,12 @@ describe( 'useSitesTableFiltering', () => {
 	} );
 
 	test( 'filtering maintains object equality', () => {
-		// Object equality is important for memoizing the site table row
+		// Object equality is important for memoizing the site row
 
 		const mockSite = createMockSite( { name: 'site title 1' } );
 
 		const { result, rerender } = renderHook(
-			( { search } ) => useSitesTableFiltering( [ mockSite ], { search, status: 'all' } ),
+			( { search } ) => useSitesListFiltering( [ mockSite ], { search, status: 'all' } ),
 			{ initialProps: { search: 'titl' } }
 		);
 
