@@ -927,18 +927,23 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 		.plan-price {
 			font-weight: 600;
 			margin-right: 10px;
-			font-size: $font-headline-large;
+			font-size: 2rem;
 			text-align: center;
 			font-family: "Helvetica Neue", helvetica, arial, sans-serif;
 
 			.plan-price__currency-symbol {
-				vertical-align: super;
-				font-size: $font-title-medium;
-				font-weight: 400;
+				color: var(--color-text);
+				font-size: 2rem;
+				vertical-align: unset;
 			}
 
 			.plan-price__integer {
 				font-weight: 600;
+			}
+
+			.plan-price__term {
+				font-size: 0.75rem;
+				font-weight: 400;
 			}
 		}
 
@@ -959,6 +964,29 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 		.plan-features__mobile-plan {
 			max-width: 408px;
+		}
+
+		.plan-features__pricing {
+			margin: 0 20px;
+		}
+
+		.plan-features__header-annual-discount {
+			color: var(--studio-green-60);
+			font-size: 1rem;
+		}
+
+		.plan-features__actions {
+			border-bottom: 0;
+		}
+
+		.plan-features__description {
+			padding: 0 20px 10px;
+			border-bottom: solid 1px var(--color-neutral-0);
+		}
+
+		.plan-features__actions-button.is-current {
+			background-color: var(--studio-gray-5);
+			color: var(--color-neutral-70);
 		}
 	}
 }

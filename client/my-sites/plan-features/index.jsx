@@ -77,6 +77,7 @@ import {
 	isCurrentSitePlan,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
@@ -377,6 +378,7 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				rawPriceAnnual,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
 			const planDescription = getPlanDescriptionForMobile( {
@@ -413,8 +415,11 @@ export class PlanFeatures extends Component {
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
 						flowName={ this.props.flowName }
+						rawPriceAnnual={ rawPriceAnnual }
 					/>
-					<p className="plan-features__description">{ planDescription }</p>
+					{ ! isMarketplaceFlow( flowName ) && (
+						<p className="plan-features__description">{ planDescription }</p>
+					) }
 					<PlanFeaturesActions
 						availableForPurchase={ availableForPurchase }
 						forceDisplayButton={ forceDisplayButton }
@@ -438,7 +443,11 @@ export class PlanFeatures extends Component {
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
+						flowName={ this.props.flowName }
 					/>
+					{ isMarketplaceFlow( flowName ) && (
+						<p className="plan-features__description">{ planDescription }</p>
+					) }
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
 						{ this.renderMobileFeatures( features ) }
 					</FoldableCard>
@@ -1028,6 +1037,10 @@ const ConnectedPlanFeatures = connect(
 						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
 					);
 				}
+				const rawPriceAnnual =
+					null !== discountPrice
+						? discountPrice * 12
+						: getPlanRawPrice( state, planProductId, false );
 
 				return {
 					availableForPurchase,
@@ -1054,6 +1067,7 @@ const ConnectedPlanFeatures = connect(
 						bestValue ||
 						plans.length === 1,
 					rawPrice,
+					rawPriceAnnual,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
 				};

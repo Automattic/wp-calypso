@@ -13,11 +13,12 @@ import {
 	PLAN_P2_PLUS,
 } from '@automattic/calypso-products';
 import { ProductIcon } from '@automattic/components';
-import formatCurrency from '@automattic/format-currency';
+import formatCurrency, { getCurrencyObject } from '@automattic/format-currency';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -172,12 +173,12 @@ export class PlanFeaturesHeader extends Component {
 			<span>
 				{ planLevelsMatch( selectedPlan, planType ) && availableForPurchase && (
 					<div>
-						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+						<PlanPill>{ translate( 'Ideal for you' ) }</PlanPill>
 					</div>
 				) }
 				{ isCurrent && (
 					<div>
-						<PlanPill isCurrentPlan>{ translate( 'Your current' ) }</PlanPill>
+						<PlanPill isCurrentPlan>{ translate( 'Your current plan' ) }</PlanPill>
 					</div>
 				) }
 				<header className="plan-features__header">
@@ -186,6 +187,7 @@ export class PlanFeaturesHeader extends Component {
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
 					{ this.getIntervalDiscount() }
+					{ this.getAnnualDiscount() }
 				</div>
 			</span>
 		);
@@ -264,7 +266,11 @@ export class PlanFeaturesHeader extends Component {
 			relatedMonthlyPlan,
 			relatedYearlyPlan,
 			eligibleForWpcomMonthlyPlans,
+			rawPrice,
+			currentSitePlan,
 		} = this.props;
+
+		const isCurrent = this.isPlanCurrent();
 
 		if (
 			isMonthlyPlan ||
@@ -272,18 +278,41 @@ export class PlanFeaturesHeader extends Component {
 			! eligibleForWpcomMonthlyPlans ||
 			! relatedYearlyPlan
 		) {
+			if ( ! rawPrice ) {
+				return (
+					<div className="plan-features__header-annual-discount">
+						<span>{ translate( `Free of charge` ) }</span>
+					</div>
+				);
+			}
+			if ( isCurrent ) {
+				const expirationDate = moment.utc( currentSitePlan.expiryDate ).format( 'LL' );
+				return (
+					<div className="plan-features__header-annual-discount">
+						<span>
+							{ translate( `Expires on %(expirationDate)s`, {
+								args: { expirationDate },
+							} ) }
+						</span>
+					</div>
+				);
+			}
 			return;
 		}
 
-		const rawPrice = relatedMonthlyPlan.raw_price;
+		const rawPriceRelated = relatedMonthlyPlan.raw_price;
 
 		const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-		const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+		const discountRate = Math.round(
+			( 100 * ( rawPriceRelated - annualPricePerMonth ) ) / rawPriceRelated
+		);
 
-		const isLoading = typeof rawPrice !== 'number';
-		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
-			args: { discountRate },
-		} );
+		const isLoading = typeof rawPriceRelated !== 'number';
+		const annualDiscountText = discountRate
+			? translate( `You're saving %(discountRate)s%% by paying annually`, {
+					args: { discountRate },
+			  } )
+			: translate( `Free of charge` );
 
 		return (
 			<div
@@ -299,8 +328,10 @@ export class PlanFeaturesHeader extends Component {
 
 	getPerMonthDescription() {
 		const {
+			currencyCode,
 			discountPrice,
 			rawPrice,
+			rawPriceAnnual,
 			translate,
 			planType,
 			currentSitePlan,
@@ -308,12 +339,25 @@ export class PlanFeaturesHeader extends Component {
 			isMonthlyPlan,
 			relatedYearlyPlan,
 			isLoggedInMonthlyPricing,
+			flowName,
 		} = this.props;
 
 		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
 			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
 			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
+		}
+
+		if ( isMarketplaceFlow( flowName ) && ! isMonthlyPlan ) {
+			const annualPriceObj = getCurrencyObject( rawPriceAnnual, currencyCode );
+			const annualPriceText = `${ annualPriceObj.symbol }${ annualPriceObj.integer }`;
+
+			if ( ! rawPrice ) {
+				return translate( 'not billed' );
+			}
+			return translate( 'billed as %(price)s annually', {
+				args: { price: annualPriceText },
+			} );
 		}
 
 		if (
@@ -387,6 +431,7 @@ export class PlanFeaturesHeader extends Component {
 			plansWithScroll,
 			isLoggedInMonthlyPricing,
 			isMonthlyPlan,
+			flowName,
 		} = this.props;
 
 		const isDiscounted = !! discountPrice;
@@ -396,7 +441,7 @@ export class PlanFeaturesHeader extends Component {
 			'is-logged-in-monthly-pricing': isLoggedInMonthlyPricing,
 		} );
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
-		if ( isInSignup || plansWithScroll ) {
+		if ( isInSignup || plansWithScroll || isMarketplaceFlow( flowName ) ) {
 			return (
 				<div className={ 'plan-features__header-billing-info' }>
 					<span>{ perMonthDescription }</span>
@@ -607,6 +652,7 @@ PlanFeaturesHeader.propTypes = {
 	planType: PropTypes.oneOf( Object.keys( PLANS_LIST ) ).isRequired,
 	popular: PropTypes.bool,
 	rawPrice: PropTypes.number,
+	rawPriceAnnual: PropTypes.number,
 	relatedMonthlyPlan: PropTypes.object,
 	showPlanCreditsApplied: PropTypes.bool,
 	siteSlug: PropTypes.string,

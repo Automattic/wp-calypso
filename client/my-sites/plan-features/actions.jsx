@@ -13,6 +13,7 @@ import { connect } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 
 const noop = () => {};
 const PlanFeaturesActions = ( props ) => {
@@ -46,6 +47,7 @@ const PlanFeaturesActionsButton = ( {
 	selectedPlan,
 	recordTracksEvent: trackTracksEvent,
 	translate,
+	flowName,
 	...props
 } ) => {
 	const classes = classNames(
@@ -72,10 +74,25 @@ const PlanFeaturesActionsButton = ( {
 		onUpgradeClick();
 	};
 
+	if ( isMarketplaceFlow( flowName ) ) {
+		if ( current ) {
+			return (
+				<Button className={ classes } disabled>
+					{ translate( 'Your current plan' ) }
+				</Button>
+			);
+		}
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ translate( 'Select' ) }
+			</Button>
+		);
+	}
+
 	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
 		return (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
-				{ canPurchase ? translate( 'Manage plan' ) : translate( 'View plan' ) }
+				{ canPurchase ? translate( 'Manageaa plan' ) : translate( 'View plan' ) }
 			</Button>
 		);
 	}
@@ -184,6 +201,7 @@ PlanFeaturesActions.propTypes = {
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
 	selectedPlan: PropTypes.string,
+	flowName: PropTypes.string,
 };
 
 export default connect(
