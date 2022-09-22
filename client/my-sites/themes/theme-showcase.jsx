@@ -236,13 +236,28 @@ class ThemeShowcase extends Component {
 
 	renderBanner = () => {
 		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
+		const tabKey = this.state.tabFilter.key;
 
-		if (
-			'my-themes' !== this.state.tabFilter.key &&
-			! isExpertBannerDissmissed &&
-			! loggedOutComponent
-		) {
-			return <UpworkBanner location={ 'theme-banner' } />;
+		if ( 'my-themes' !== tabKey && ! isExpertBannerDissmissed && ! loggedOutComponent ) {
+			// these are from the time we rely on the redirect.
+			// See p2-pau2Xa-4nq#comment-12480
+			let location = 'theme-banner';
+			let utmCampaign = 'built-by-wordpress-com-redirect';
+
+			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
+			switch ( tabKey ) {
+				case this.tabFilters.RECOMMENDED.key:
+					location = 'recommended-theme-banner';
+					utmCampaign = 'theme-rec-tre';
+				case this.tabFilters.TRENDING.key:
+					location = 'trending-theme-banner';
+					utmCampaign = 'theme-rec-tre';
+				case this.tabFilters.ALL.key:
+					location = 'all-theme-banner';
+					utmCampaign = 'theme-all';
+			}
+
+			return <UpworkBanner location={ location } utmCampaign={ utmCampaign } />;
 		}
 
 		return upsellBanner;
@@ -395,10 +410,17 @@ class ThemeShowcase extends Component {
 						</SectionNav>
 					) }
 					{ this.renderBanner() }
-					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
-					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
-					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
-					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
+					{ this.tabFilters.RECOMMENDED.key === this.state.tabFilter.key && (
+						<RecommendedThemes { ...themeProps } />
+					) }
+					{ this.tabFilters.ALL.key === this.state.tabFilter.key &&
+						this.allThemes( { themeProps } ) }
+					{ this.tabFilters.MYTHEMES.key === this.state.tabFilter.key && (
+						<ThemesSelection { ...themeProps } />
+					) }
+					{ this.tabFilters.TRENDING.key === this.state.tabFilter.key && (
+						<TrendingThemes { ...themeProps } />
+					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
