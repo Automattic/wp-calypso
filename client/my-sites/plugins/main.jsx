@@ -335,6 +335,7 @@ export class PluginsMain extends Component {
 				header={ this.props.translate( 'Installed Plugins' ) }
 				plugins={ currentPlugins }
 				pluginUpdateCount={ this.props.pluginUpdateCount }
+				pluginsWithUpdates={ this.props.pluginsWithUpdates }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
@@ -563,6 +564,7 @@ export default flow(
 				currentPlugins: getPlugins( state, siteIds, filter ),
 				currentPluginsOnVisibleSites: getPlugins( state, visibleSiteIds, filter ),
 				pluginUpdateCount: pluginsWithUpdates && pluginsWithUpdates.length,
+				pluginsWithUpdates,
 				allPluginsCount: allPlugins && allPlugins.length,
 				requestingPluginsForSites:
 					isRequestingForSites( state, siteIds ) || isRequestingForAllSites( state ),

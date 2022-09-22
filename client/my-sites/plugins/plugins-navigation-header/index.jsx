@@ -12,7 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { appendBreadcrumb, resetBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -115,34 +115,39 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const { localizePath } = useLocalizedPlugins();
 
 	useEffect( () => {
-		const items = [
-			{
-				label: translate( 'Plugins' ),
-				href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-				id: 'plugins',
-				helpBubble: translate(
-					'Add new functionality and integrations to your site with plugins.'
-				),
-			},
-		];
+		if ( breadcrumbs?.length === 0 || ( ! category && ! search ) ) {
+			dispatch( resetBreadcrumbs() );
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Plugins' ),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+					id: 'plugins',
+					helpBubble: translate(
+						'Add new functionality and integrations to your site with plugins.'
+					),
+				} )
+			);
+		}
 
 		if ( category ) {
-			items.push( {
-				label: categoryName,
-				href: localizePath( `/plugins/browse/${ category }/${ selectedSite?.slug || '' }` ),
-				id: 'category',
-			} );
+			dispatch(
+				appendBreadcrumb( {
+					label: categoryName,
+					href: localizePath( `/plugins/browse/${ category }/${ selectedSite?.slug || '' }` ),
+					id: 'category',
+				} )
+			);
 		}
 
 		if ( search ) {
-			items.push( {
-				label: translate( 'Search Results' ),
-				href: localizePath( `/plugins/${ selectedSite?.slug || '' }?s=${ search }` ),
-				id: 'plugins-search',
-			} );
+			dispatch(
+				appendBreadcrumb( {
+					label: translate( 'Search Results' ),
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }?s=${ search }` ),
+					id: 'plugins-search',
+				} )
+			);
 		}
-
-		dispatch( updateBreadcrumbs( items ) );
 	}, [ selectedSite?.slug, search, category, categoryName, dispatch, translate, localizePath ] );
 
 	return (

@@ -71,6 +71,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plugins/plugin-details-layout": true,
+		"plugins/ssr-landing": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

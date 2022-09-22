@@ -6,7 +6,7 @@
 .env
 .DS_Store
 .idea
-.vscode
+.vscode/settings.json
 .nova
 *.code-workspace
 *.iml

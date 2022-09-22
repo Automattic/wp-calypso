@@ -1,5 +1,6 @@
 import { useMutation } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import { AnalysisReport } from '../queries/use-site-analysis';
 import { SiteDetails } from '../site';
 
 type ForumTopic = {
@@ -9,6 +10,7 @@ type ForumTopic = {
 	locale: string;
 	hideInfo: boolean;
 	userDeclaredSiteUrl?: string;
+	ownershipResult: AnalysisReport;
 };
 
 type Response = {
@@ -17,7 +19,15 @@ type Response = {
 
 export function useSubmitForumsMutation() {
 	return useMutation(
-		( { site, message, subject, locale, hideInfo, userDeclaredSiteUrl }: ForumTopic ) => {
+		( {
+			ownershipResult,
+			message,
+			subject,
+			locale,
+			hideInfo,
+			userDeclaredSiteUrl,
+		}: ForumTopic ) => {
+			const site = ownershipResult.site;
 			const blogHelpMessages = [];
 
 			if ( site ) {
@@ -25,12 +35,17 @@ export function useSubmitForumsMutation() {
 					blogHelpMessages.push( 'WP.com: Unknown' );
 					blogHelpMessages.push( 'Jetpack: Yes' );
 				} else {
-					blogHelpMessages.push( 'WP.com: Yes' );
+					blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
+					blogHelpMessages.push( 'Jetpack: No' );
 				}
 
-				blogHelpMessages.push( 'Correct account: yes' );
+				blogHelpMessages.push(
+					`Correct account: ${ ownershipResult.result === 'OWNED_BY_USER' ? 'Yes' : 'No' }`
+				);
 			} else if ( userDeclaredSiteUrl ) {
 				blogHelpMessages.push( `Self-declared URL: ${ userDeclaredSiteUrl }` );
+				blogHelpMessages.push( 'Jetpack: Unknown' );
+				blogHelpMessages.push( 'WP.com: Unknown' );
 			}
 
 			const forumMessage = message + '\n\n' + blogHelpMessages.join( '\n' );

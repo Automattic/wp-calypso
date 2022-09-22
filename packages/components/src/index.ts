@@ -29,7 +29,7 @@ export {
 	SITES_TABLE_SEARCH_INDEX_KEYS,
 } from './sites-table/use-sites-table-filtering';
 export type { FilterableSiteLaunchStatuses } from './sites-table/use-sites-table-filtering';
-export { useSitesTableSorting } from './sites-table/use-sites-table-sorting';
+export { useSitesTableSorting, isValidSorting } from './sites-table/use-sites-table-sorting';
 export type {
 	SitesTableSortOptions,
 	SitesTableSortKey,

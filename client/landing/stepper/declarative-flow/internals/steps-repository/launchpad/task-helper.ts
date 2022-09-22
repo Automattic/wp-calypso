@@ -67,6 +67,8 @@ export function getEnhancedTasks(
 				case 'setup_link_in_bio':
 					taskData = {
 						title: translate( 'Set up Link in Bio' ),
+						keepActive: true,
+						actionUrl: `/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`,
 					};
 					break;
 				case 'links_added':
@@ -82,6 +84,7 @@ export function getEnhancedTasks(
 						title: translate( 'Launch Link in bio' ),
 						isCompleted: linkInBioSiteLaunchCompleted,
 						dependencies: [ linkInBioLinksEditCompleted ],
+						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -139,6 +142,10 @@ export function isTaskDisabled( task: Task ) {
 	}
 
 	if ( task.dependencies ) {
-		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
+		return hasIncompleteDependencies( task );
 	}
+}
+
+export function hasIncompleteDependencies( task: Task ) {
+	return task?.dependencies?.some( ( dependency: boolean ) => dependency === false );
 }

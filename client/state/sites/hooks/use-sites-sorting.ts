@@ -2,6 +2,7 @@ import {
 	SitesTableSortOptions,
 	SitesTableSortKey,
 	SitesTableSortOrder,
+	isValidSorting,
 } from '@automattic/components';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
@@ -14,16 +15,16 @@ const DEFAULT_SITES_SORTING = {
 	sortOrder: 'desc',
 } as const;
 
-export const parseSitesSorting = ( sorting: SitesSorting | 'none' ) => {
-	if ( 'none' === sorting ) {
+export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) => {
+	const [ sortKey, sortOrder ] = serializedSorting.split( SEPARATOR );
+
+	const sorting = { sortKey, sortOrder };
+
+	if ( ! isValidSorting( sorting ) ) {
 		return DEFAULT_SITES_SORTING;
 	}
 
-	const [ sortKey, sortOrder ] = sorting.split( SEPARATOR );
-	return {
-		sortKey: sortKey as SitesTableSortKey,
-		sortOrder: sortOrder as SitesTableSortOrder,
-	};
+	return sorting;
 };
 
 export const stringifySitesSorting = (
