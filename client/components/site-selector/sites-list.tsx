@@ -1,5 +1,5 @@
-import { withSitesTableSorting } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
+import { withSitesListSorting } from '@automattic/sites';
 import { flow } from 'lodash';
 import React from 'react';
 import Site from 'calypso/blocks/site';
@@ -48,4 +48,4 @@ const SitesList = ( {
 	);
 };
 
-export default flow( withSitesTableSorting, withSitesSortingPreference )( SitesList );
+export default flow( withSitesListSorting, withSitesSortingPreference )( SitesList );

@@ -1307,7 +1307,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/sites@workspace:packages/sites":
+"@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
   version: 0.0.0-use.local
   resolution: "@automattic/sites@workspace:packages/sites"
   dependencies:
@@ -12604,6 +12604,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"

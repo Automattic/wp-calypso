@@ -1,4 +1,4 @@
-import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
+import { FilterableSiteLaunchStatuses, useSitesListFiltering } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -77,7 +77,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	},
 } );
 
-type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
+type Statuses = ReturnType< typeof useSitesListFiltering >[ 'statuses' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;

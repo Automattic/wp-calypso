@@ -1,4 +1,5 @@
-import { SiteThumbnail, getSiteLaunchStatus } from '@automattic/components';
+import { SiteThumbnail } from '@automattic/components';
+import { getSiteLaunchStatus } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';

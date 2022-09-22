@@ -1,12 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	Button,
-	Gridicon,
-	useSitesTableFiltering,
-	useSitesTableSorting,
-	useScrollToTop,
-	JetpackLogo,
-} from '@automattic/components';
+import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
+import { useSitesListFiltering, useSitesListSorting } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -148,9 +142,9 @@ export function SitesDashboard( {
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { sortedSites } = useSitesTableSorting( allSites, sitesSorting );
+	const { sortedSites } = useSitesListSorting( allSites, sitesSorting );
 
-	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
+	const { filteredSites, statuses } = useSitesListFiltering( sortedSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,

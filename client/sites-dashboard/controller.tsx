@@ -1,7 +1,7 @@
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
 	siteLaunchStatusFilterValues,
-} from '@automattic/components';
+} from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
