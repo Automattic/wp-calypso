@@ -18,7 +18,9 @@ describe( 'PaymentInfoBlock', () => {
 
 			it( 'renders "Credits"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'Credits' );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+					'You don’t have a payment method to renew this subscription'
+				);
 			} );
 
 			it( 'does not render "will not be billed"', () => {
