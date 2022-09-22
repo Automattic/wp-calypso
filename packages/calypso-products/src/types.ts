@@ -121,6 +121,7 @@ export interface BillingTerm {
 export interface CancellationFlowFeatures {
 	monthly?: Feature[];
 	yearly?: Feature[];
+	withDomain?: Feature[];
 }
 
 export type Plan = BillingTerm & {
