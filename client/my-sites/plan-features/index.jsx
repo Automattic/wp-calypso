@@ -77,7 +77,6 @@ import {
 	isCurrentSitePlan,
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
-import { isMarketplaceFlow } from '../plugins/flows';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
