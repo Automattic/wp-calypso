@@ -2,7 +2,6 @@ import { Button, CompactCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -25,18 +24,16 @@ const EmailListInactiveItem = ( { domain, source }: EmailListInactiveItemProps )
 		<CompactCard className="email-list-inactive__mailbox">
 			<span>{ domain.name }</span>
 
-			{ canCurrentUserAddEmail( domain ) && (
-				<Button
-					href={ emailManagementPurchaseNewEmailAccount(
-						selectedSite?.slug ?? '',
-						domain.name,
-						currentRoute,
-						source
-					) }
-				>
-					{ translate( 'Add Email' ) }
-				</Button>
-			) }
+			<Button
+				href={ emailManagementPurchaseNewEmailAccount(
+					selectedSite?.slug ?? '',
+					domain.name,
+					currentRoute,
+					source
+				) }
+			>
+				{ translate( 'Add Email' ) }
+			</Button>
 		</CompactCard>
 	);
 };
