@@ -46,7 +46,7 @@
 		display: block;
 	}
 }
-/* For Jetpack Complete - medium breakpoint we are using a different image as actual image is overflowing */
+/* For Jetpack Complete - custom medium breakpoint we are using a different image as actual image is overflowing */
 @media only screen and ( min-width: 821px ) and ( max-width: 1024px ) {
 	.hero-image--container-inner-small-screen {
 		display: none;

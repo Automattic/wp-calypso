@@ -67,7 +67,7 @@ export const HeroImage: React.FC< HeroImageProps > = ( { item } ) => {
 	const smallScreenImage = HERO_IMAGES[ item.productSlug ]?.sm;
 	const largeScreenImage = HERO_IMAGES[ item.productSlug ]?.lg;
 
-	//mediumScreenImage is just only for Jetpack Complete, for other products it is same aas largeScreenImage
+	//mediumScreenImage is just only for Jetpack Complete, for other products it is same as largeScreenImage
 	const mediumScreenImage = HERO_IMAGES[ item.productSlug ]?.md ?? largeScreenImage;
 
 	if ( ! smallScreenImage || ! mediumScreenImage || ! largeScreenImage ) {
