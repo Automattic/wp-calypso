@@ -9,6 +9,23 @@
 	}
 }
 
+.plugins-plans .plan-features--signup .plan-features-comparison__table {
+	width: 100%;
+}
+
+.plugins-plans .plan-features--signup .plan-features-comparison__table-item {
+	border-left: none;
+}
+
+.plugins-plans .plan-features--signup .plan-features-comparison__table-item:last-of-type,
+.plugins-plans .plan-features--signup .plan-features-comparison__row .plan-features-comparison__table-item {
+	border-right: none;
+}
+
+.plugins-plans .plan-features--signup .plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+	border-bottom: none;
+}
+
 .promo-section {
 	.promo-section__promos {
 		overflow: auto;

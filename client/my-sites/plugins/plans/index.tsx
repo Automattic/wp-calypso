@@ -99,7 +99,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				brandFont
 			/>
 
-			<div className="plans">
+			<div className="plugins-plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
 					showFAQ={ false }
