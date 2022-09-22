@@ -463,7 +463,7 @@ class Signup extends Component {
 	};
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
-		const { userIsLoggedIn } = this.props;
+		const userIsLoggedIn = this.props.isLoggedIn;
 
 		debug( `Logging you in to "${ destination }"` );
 
