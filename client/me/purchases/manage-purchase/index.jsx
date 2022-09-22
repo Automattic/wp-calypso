@@ -65,6 +65,7 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
+	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -515,12 +516,27 @@ class ManagePurchase extends Component {
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
 			if ( isPlan( purchase ) ) {
+				if ( hasCustomDomain && isRefundable( purchase ) ) {
+					return (
+						<RemovePlanDialog
+							isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
+							closeDialog={ this.closeDialog }
+							removePlan={ this.goToCancelLink }
+							site={ site }
+							hasDomain={ hasCustomDomain }
+							wpcomSiteURL={ site.slug }
+						/>
+					);
+				}
+
 				return (
 					<RemovePlanDialog
 						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 						closeDialog={ this.closeDialog }
 						removePlan={ this.goToCancelLink }
 						site={ site }
+						hasDomain={ false }
+						wpcomSiteURL={ site.slug }
 					/>
 				);
 			}
