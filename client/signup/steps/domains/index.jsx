@@ -91,11 +91,6 @@ class DomainsStep extends Component {
 			this.searchOnInitialRender = true;
 		}
 
-		console.log(
-			'rhis.props.forceHideFreeDomainExplainerAndStrikeoutUi',
-			this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-		);
-
 		if (
 			props.isDomainOnly &&
 			domain &&
@@ -144,22 +139,21 @@ class DomainsStep extends Component {
 	};
 
 	handleAddDomain = ( suggestion ) => {
-		console.log( 'HAANDLEADDDOAIN' );
-		// const stepData = {
-		// 	stepName: this.props.stepName,
-		// 	suggestion,
-		// };
+		const stepData = {
+			stepName: this.props.stepName,
+			suggestion,
+		};
 
-		// this.props.recordAddDomainButtonClick(
-		// 	suggestion.domain_name,
-		// 	this.getAnalyticsSection(),
-		// 	suggestion?.is_premium
-		// );
-		// this.props.saveSignupStep( stepData );
+		this.props.recordAddDomainButtonClick(
+			suggestion.domain_name,
+			this.getAnalyticsSection(),
+			suggestion?.is_premium
+		);
+		this.props.saveSignupStep( stepData );
 
-		// defer( () => {
-		// 	this.submitWithDomain();
-		// } );
+		defer( () => {
+			this.submitWithDomain();
+		} );
 	};
 
 	isPurchasingTheme = () => {
@@ -296,37 +290,36 @@ class DomainsStep extends Component {
 		this.props.setDesignType( this.getDesignType() );
 		this.props.goToNextStep();
 
-		// Start the username suggestion process.
+		// // Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
 	};
 
 	handleAddMapping = ( sectionName, domain, state ) => {
-		console.log( 'HANDLEADDMAPPING' );
-		// const domainItem = domainMapping( { domain } );
-		// const isPurchasingItem = true;
-		// const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
-		// const useThemeHeadstartItem = shouldUseThemeAnnotation
-		// 	? { useThemeHeadstart: shouldUseThemeAnnotation }
-		// 	: {};
+		const domainItem = domainMapping( { domain } );
+		const isPurchasingItem = true;
+		const shouldUseThemeAnnotation = this.shouldUseThemeAnnotation();
+		const useThemeHeadstartItem = shouldUseThemeAnnotation
+			? { useThemeHeadstart: shouldUseThemeAnnotation }
+			: {};
 
-		// this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
+		this.props.recordAddDomainButtonClickInMapDomain( domain, this.getAnalyticsSection() );
 
-		// this.props.submitSignupStep(
-		// 	Object.assign(
-		// 		{
-		// 			stepName: this.props.stepName,
-		// 			[ sectionName ]: state,
-		// 			domainItem,
-		// 			isPurchasingItem,
-		// 			siteUrl: domain,
-		// 			stepSectionName: this.props.stepSectionName,
-		// 		},
-		// 		this.getThemeArgs()
-		// 	),
-		// 	Object.assign( { domainItem }, useThemeHeadstartItem )
-		// );
+		this.props.submitSignupStep(
+			Object.assign(
+				{
+					stepName: this.props.stepName,
+					[ sectionName ]: state,
+					domainItem,
+					isPurchasingItem,
+					siteUrl: domain,
+					stepSectionName: this.props.stepSectionName,
+				},
+				this.getThemeArgs()
+			),
+			Object.assign( { domainItem }, useThemeHeadstartItem )
+		);
 
-		// this.props.goToNextStep();
+		this.props.goToNextStep();
 	};
 
 	handleAddTransfer = ( { domain, authCode } ) => {
@@ -364,8 +357,6 @@ class DomainsStep extends Component {
 	};
 
 	handleSave = ( sectionName, state ) => {
-		console.log( 'ON SAVE sectionName', sectionName );
-		console.log( 'ON SAVE state', state );
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			stepSectionName: this.props.stepSectionName,

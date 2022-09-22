@@ -219,7 +219,7 @@ export function generateSteps( {
 		'plans-link-in-bio': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
+			// dependencies: [ 'siteSlug' ],
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,

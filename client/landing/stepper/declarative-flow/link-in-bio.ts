@@ -62,6 +62,9 @@ export const linkInBio: Flow = {
 				// 	) }&search=yes&hide_initial_query=yes`
 				// );
 
+				case 'domains':
+					return window.location.assign( `/start/${ name }/plans-link-in-bio` );
+
 				case 'launchpad': {
 					return navigate( 'processing' );
 				}

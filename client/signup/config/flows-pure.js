@@ -126,7 +126,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'domains', 'plans-link-in-bio' ],
+			steps: [ 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
