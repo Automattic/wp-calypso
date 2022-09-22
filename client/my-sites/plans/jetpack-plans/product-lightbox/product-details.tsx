@@ -1,5 +1,6 @@
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
+import { useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
@@ -17,13 +18,29 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 		{ type: 'benefits', title: translate( 'Benefits' ), items: product.benefits },
 	];
 
+	const ref = useRef< HTMLDivElement | null >( null );
+	const [ contentStlye, setContentStyle ] = useState( {} );
+
+	useLayoutEffect( () => {
+		const height = ref?.current?.scrollHeight || 250;
+		setContentStyle( { maxHeight: `${ height }px` } );
+	}, [ setContentStyle ] );
+
 	return (
 		<>
 			{ productDetails.map( ( { type, title, items }, index, infoList ) => (
 				<div className="product-lightbox__detail-list" key={ type }>
 					{ isMobile ? (
-						<FoldableCard hideSummary header={ title } clickableHeader={ true }>
-							<DescriptionList items={ items } />
+						<FoldableCard
+							hideSummary
+							header={ title }
+							clickableHeader={ true }
+							smooth
+							contentExpandedStyle={ contentStlye }
+						>
+							<div ref={ ref }>
+								<DescriptionList items={ items } />
+							</div>
 						</FoldableCard>
 					) : (
 						<>
