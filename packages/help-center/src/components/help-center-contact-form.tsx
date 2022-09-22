@@ -134,9 +134,9 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
-	const { data: userSites } = useUserSites();
-	const userWithNoSites = userSites?.sites.length === 0;
 	const userId = useSelector( getCurrentUserId );
+	const { data: userSites } = useUserSites( userId );
+	const userWithNoSites = userSites?.sites.length === 0;
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
