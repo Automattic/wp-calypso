@@ -474,6 +474,7 @@ $font-size: rem(14px);
 		.current-site__notices > .banner {
 			&::before {
 				content: "\f534";
+				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;

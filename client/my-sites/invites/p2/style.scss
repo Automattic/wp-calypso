@@ -45,12 +45,12 @@
 	.invite-accept-header__site-icon {
 		width: 56px;
 		height: 56px;
-		background-color: var(--p2-color-text);
 		border-radius: 2px;
 		margin-bottom: 1.5rem;
 		background:
 			url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNTYiIHZpZXdCb3g9IjAgMCA1NiA1NiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMS41QzAgMC42NzE1NzQgMC42NzE1NzMgMCAxLjUgMEg1NC41QzU1LjMyODQgMCA1NiAwLjY3MTU3MyA1NiAxLjVWNTQuNUM1NiA1NS4zMjg0IDU1LjMyODQgNTYgNTQuNSA1NkgxLjVDMC42NzE1NzQgNTYgMCA1NS4zMjg0IDAgNTQuNVYxLjVaIiBmaWxsPSIjMDAxMDFDIi8+CjxwYXRoIGQ9Ik0zOS42NjY4IDE0SDE2LjMzMzVWMjhIMzkuNjY2OFYxNFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0zMC4zMzM1IDMyLjY2NjdIMTYuMzMzNVY0MkgzMC4zMzM1VjMyLjY2NjdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4=")
 			no-repeat 0 0;
+		background-color: var(--p2-color-text);
 
 		span {
 			display: none;
