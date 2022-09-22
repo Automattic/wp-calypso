@@ -240,9 +240,9 @@
 	// Flexbox Col used for 2 column layout
 	.signup-form__anchor-col {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		flex-basis: 100%;
-		flex: 1;
 		justify-content: center;
 	}
 

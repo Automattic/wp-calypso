@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import blankCanvasImage from '../assets/images/blank-canvas-cta.svg';
 import './style.scss';
@@ -9,6 +10,7 @@ type PatternAssemblerCtaProps = {
 
 const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 	const translate = useTranslate();
+	const isDesktop = useViewportMatch( 'large' );
 
 	return (
 		<div className="pattern-assembler-cta-wrapper">
@@ -17,12 +19,16 @@ const PatternAssemblerCta = ( { onButtonClick }: PatternAssemblerCtaProps ) => {
 			</div>
 			<h3 className="pattern-assembler-cta__title">{ translate( 'Start with a blank canvas' ) }</h3>
 			<p className="pattern-assembler-cta__subtitle">
-				{ translate(
-					"Can't find something you like? Create something of your own by mixing and matching patterns."
-				) }
+				{ ! isDesktop
+					? translate(
+							"Can't find something you like? Jump right into the editor to design your homepage from scratch."
+					  )
+					: translate(
+							"Can't find something you like? Create something of your own by mixing and matching patterns."
+					  ) }
 			</p>
 			<Button className="pattern-assembler-cta__button" onClick={ onButtonClick } primary>
-				{ translate( 'Get started' ) }
+				{ ! isDesktop ? translate( 'Open the editor' ) : translate( 'Get started' ) }
 			</Button>
 		</div>
 	);

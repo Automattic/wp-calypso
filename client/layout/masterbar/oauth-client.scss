@@ -845,6 +845,11 @@
 		background: none;
 		border: none;
 		text-align: center;
+		margin: 0;
+
+		&.is-blended {
+			padding-top: 16px;
+		}
 	}
 
 	.logged-out-form__links {
@@ -895,10 +900,6 @@
 		}
 	}
 
-	.logged-out-form__footer {
-		margin: 0;
-	}
-
 	.signup-form__woo-wrapper .gridicon {
 		color: var(--color-primary);
 	}
@@ -909,6 +910,20 @@
 
 	.formatted-header__subtitle {
 		display: none;
+	}
+
+	.signup-form__social {
+		p {
+			color: var( --studio-gray-60 );
+		}
+
+		.social-buttons__button {
+			width: 100%;
+		}
+	}
+
+	.signup-form__social-buttons-tos a {
+		color: $woo-purple-60;
 	}
 }
 

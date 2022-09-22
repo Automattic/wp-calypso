@@ -231,7 +231,7 @@
 
 	// Overriding this rule specifically for backups output. ( the :not selectors add extra specificity )
 	// This is not totally ideal, but a bit better than stringing random selectors together to override specificity.
-	.DayPicker-Day.DayPicker-Day--is-selected:not( .DayPicker-Day--today ):not( .DayPicker-Day--events ) .date-picker__day,
+	.DayPicker-Day.DayPicker-Day--is-selected:not(.DayPicker-Day--today):not(.DayPicker-Day--events) .date-picker__day,
 	// When today is the active day.
 	.DayPicker-Day.DayPicker-Day--is-selected.DayPicker-Day--today .date-picker__day,
 	.DayPicker-Day--is-selected .date-picker__day {

@@ -9,13 +9,13 @@ describe( 'Translations', () => {
 			it( 'provides flow specific text', () => {
 				const newsletterTranslations = getLaunchpadTranslations( 'newsletter' );
 				expect( newsletterTranslations.flowName ).toEqual( 'Newsletter' );
-				expect( newsletterTranslations.sidebarTitle ).toEqual(
-					'Your Newsletter is ready to launch!'
-				);
+				expect( newsletterTranslations.title ).toEqual( 'Your Newsletter is ready!' );
+				expect( newsletterTranslations.launchTitle ).toBe( undefined );
 
 				const linkInBioTranslations = getLaunchpadTranslations( 'link-in-bio' );
 				expect( linkInBioTranslations.flowName ).toEqual( 'Link in Bio' );
-				expect( linkInBioTranslations.sidebarTitle ).toEqual(
+				expect( linkInBioTranslations.title ).toEqual( 'Your Link in Bio is almost ready!' );
+				expect( linkInBioTranslations.launchTitle ).toEqual(
 					'Your Link in Bio is ready to launch!'
 				);
 			} );
@@ -25,10 +25,8 @@ describe( 'Translations', () => {
 			it( 'provides generic text', () => {
 				const translations = getLaunchpadTranslations( null );
 				expect( translations.flowName ).toEqual( 'WordPress' );
-				expect( translations.sidebarTitle ).toEqual( 'Your website is ready to launch!' );
-				expect( translations.sidebarSubtitle ).toEqual(
-					'Keep up the momentum with these final steps.'
-				);
+				expect( translations.title ).toEqual( 'Your website is ready!' );
+				expect( translations.subtitle ).toEqual( 'Keep up the momentum with these final steps.' );
 			} );
 		} );
 	} );

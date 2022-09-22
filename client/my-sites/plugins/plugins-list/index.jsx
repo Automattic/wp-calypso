@@ -311,10 +311,12 @@ export class PluginsList extends Component {
 		} );
 	};
 
-	updateAllPlugins = () => {
-		this.handleUpdatePlugins( this.props.plugins );
-		this.recordEvent( 'Clicked Update all Plugins', true );
-		recordTracksEvent( 'calypso_plugins_update_all_click' );
+	updateAllPlugins = ( accepted ) => {
+		if ( accepted ) {
+			this.handleUpdatePlugins( this.props.plugins );
+			this.recordEvent( 'Clicked Update all Plugins', true );
+			recordTracksEvent( 'calypso_plugins_update_all_click' );
+		}
 	};
 
 	updateSelected = ( accepted ) => {
@@ -503,6 +505,36 @@ export class PluginsList extends Component {
 		}
 	};
 
+	updateAllPluginsDialog = () => {
+		const { pluginUpdateCount, translate, pluginsWithUpdates, allSites } = this.props;
+
+		let pluginName;
+		const hasOnePlugin = pluginUpdateCount === 1;
+
+		if ( hasOnePlugin ) {
+			const [ { name, slug } ] = pluginsWithUpdates;
+			pluginName = name || slug;
+		}
+
+		const dialogOptions = {
+			additionalClassNames: 'plugins__confirmation-modal',
+		};
+
+		const heading = hasOnePlugin
+			? translate( 'Update %(pluginName)s', { args: { pluginName } } )
+			: translate( 'Update %(pluginUpdateCount)d plugins', {
+					args: { pluginUpdateCount },
+			  } );
+
+		acceptDialog(
+			getPluginActionDailogMessage( allSites, pluginsWithUpdates, heading, 'update' ),
+			( accepted ) => this.updateAllPlugins( accepted ),
+			heading,
+			null,
+			dialogOptions
+		);
+	};
+
 	removePluginDialog = ( selectedPlugin ) => {
 		this.bulkActionDialog( 'remove', selectedPlugin );
 	};
@@ -609,6 +641,7 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					updateAllPluginsNotice={ () => this.updateAllPluginsDialog() }
 				/>
 				<PluginManagementV2
 					plugins={ this.getPlugins() }
@@ -619,6 +652,7 @@ export class PluginsList extends Component {
 					pluginUpdateCount={ this.props.pluginUpdateCount }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateAllPlugins={ this.updateAllPlugins }
+					updateAllPluginsNotice={ this.updateAllPluginsDialog }
 					removePluginNotice={ this.removePluginDialog }
 					updatePlugin={ this.updatePlugin }
 				/>
