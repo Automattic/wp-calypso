@@ -7,6 +7,7 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -135,24 +136,38 @@ const Plans = ( {
 						topButtons: [
 							<td className="plan-features-comparison__table-item is-top-buttons"></td>,
 							<td className="plan-features-comparison__table-item is-top-buttons">
-								<CTAButton
-									plugin={ plugin }
-									hasEligibilityMessages={ [] }
-									disabled={ false }
-									plansPage={ false }
-									desiredPlan={ intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS }
-								/>
+								{ plugin ? (
+									<CTAButton
+										plugin={ plugin }
+										hasEligibilityMessages={ [] }
+										disabled={ false }
+										plansPage={ false }
+										desiredPlan={
+											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+										}
+									/>
+								) : (
+									<Button primary href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }>
+										{ translate( 'Upgrade and activate' ) }
+									</Button>
+								) }
 							</td>,
 							<td className="plan-features-comparison__table-item is-top-buttons">
-								<CTAButton
-									plugin={ plugin }
-									hasEligibilityMessages={ [] }
-									disabled={ false }
-									plansPage={ false }
-									desiredPlan={
-										intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
-									}
-								/>
+								{ plugin ? (
+									<CTAButton
+										plugin={ plugin }
+										hasEligibilityMessages={ [] }
+										disabled={ false }
+										plansPage={ false }
+										desiredPlan={
+											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
+										}
+									/>
+								) : (
+									<Button primary href={ `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE }` }>
+										{ translate( 'Upgrade and activate' ) }
+									</Button>
+								) }
 							</td>,
 						],
 					} }
