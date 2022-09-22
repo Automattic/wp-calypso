@@ -93,7 +93,7 @@ export default function ( router ) {
 	router( `/${ langParam }/plugins/plans`, notFound, makeLayout );
 
 	router(
-		`/${ langParam }/plugins/plans/:intervalType(yearly|monthly)/:site`,
+		`/${ langParam }/plugins/plans/:pluginSlug?/:intervalType(yearly|monthly)/:site`,
 		redirectWithoutLocaleParamIfLoggedIn,
 		redirectLoggedOut,
 		scrollTopIfNoHash,
