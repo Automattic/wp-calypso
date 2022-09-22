@@ -33,10 +33,15 @@ export const videopress: Flow = {
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const clearOnboardingSiteOptions = () => {
+			setSiteTitle( '' );
+			setSiteDescription( '' );
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
+					clearOnboardingSiteOptions();
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
@@ -71,6 +76,7 @@ export const videopress: Flow = {
 				}
 
 				case 'launchpad': {
+					clearOnboardingSiteOptions();
 					return redirect( `/page/${ siteSlug }/home` );
 				}
 			}
