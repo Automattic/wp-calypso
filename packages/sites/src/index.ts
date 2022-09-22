@@ -1,3 +1,4 @@
+export { createSitesListComponent } from './create-sites-list-component';
 export { useSitesListFiltering, SITES_SEARCH_INDEX_KEYS } from './use-sites-list-filtering';
 export {
 	useSitesListGrouping,

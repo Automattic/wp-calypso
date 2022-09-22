@@ -1,21 +1,14 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useMemo } from 'react';
+import { MinimumSite } from './site-type';
 
-interface SiteDetailsForSortingWithOptionalUserInteractions {
-	title: string;
-	user_interactions?: string[];
-	options?: {
-		updated_at?: string;
-	};
-}
+type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
+	MinimumSite,
+	'title' | 'user_interactions' | 'options'
+>;
 
-interface SiteDetailsForSortingWithUserInteractions {
-	title: string;
-	user_interactions: string[];
-	options?: {
-		updated_at?: string;
-	};
-}
+type SiteDetailsForSortingWithUserInteractions = Pick< MinimumSite, 'title' | 'options' > &
+	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
 	| SiteDetailsForSortingWithOptionalUserInteractions

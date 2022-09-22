@@ -1,20 +1,15 @@
 import { useFuzzySearch } from '@automattic/search';
+import { MinimumSite } from './site-type';
 
 export const SITES_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
 
-interface SitesFilterOptions {
+export interface SitesFilterOptions {
 	search?: string;
 }
 
-type SiteObjectWithBasicInfo = {
-	URL: string;
-	name: string | undefined;
-	slug: string;
-	title: string;
-	visible?: boolean;
-};
+type SiteForFiltering = Pick< MinimumSite, 'URL' | 'name' | 'slug' | 'title' >;
 
-export function useSitesListFiltering< T extends SiteObjectWithBasicInfo >(
+export function useSitesListFiltering< T extends SiteForFiltering >(
 	sites: T[],
 	{ search }: SitesFilterOptions
 ) {

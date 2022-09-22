@@ -6,6 +6,7 @@ import {
 	SiteObjectWithStatus,
 	useTranslatedSiteLaunchStatuses,
 } from './site-status';
+import { MinimumSite } from './site-type';
 
 export const DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE = 'all';
 
@@ -16,21 +17,19 @@ export const siteLaunchStatusGroupValues = [
 
 export type GroupableSiteLaunchStatuses = typeof siteLaunchStatusGroupValues[ number ];
 
-interface Status {
+export interface Status {
 	title: React.ReactChild;
 	name: GroupableSiteLaunchStatuses;
 	count: number;
 	hiddenCount: number;
 }
 
-interface SitesGroupingOptions {
+export interface SitesGroupingOptions {
 	showHidden?: boolean;
 	status: GroupableSiteLaunchStatuses;
 }
 
-type SiteForGrouping = SiteObjectWithStatus & {
-	visible?: boolean;
-};
+type SiteForGrouping = Pick< MinimumSite, keyof SiteObjectWithStatus | 'visible' >;
 
 export const useSitesListGrouping = < T extends SiteForGrouping >(
 	allSites: T[],
