@@ -72,6 +72,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 		intervalLength,
 		isDomainInCart = false,
 		onExpandedChange,
+		overrideToggleSelectorOnClick,
 		selectedDomainName,
 	} = props;
 	const translate = useTranslate();
@@ -107,7 +108,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 
 	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
-
+	professionalEmail.overrideToggleSelectorOnClick = overrideToggleSelectorOnClick;
 	professionalEmail.onExpandedChange = onExpandedChange;
 	professionalEmail.priceBadge = (
 		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />

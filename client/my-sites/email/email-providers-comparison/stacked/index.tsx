@@ -14,8 +14,9 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
+import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
@@ -31,7 +32,11 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementInDepthComparison,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -86,12 +91,51 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
+
+	const isPrivacyAvailable = domain?.privacyAvailable;
+
+	const loginUrl = 'https://wordpress.com/log-in';
+
+	const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
+
+	const loginUrlWithRedirectToProfessionalEmail =
+		'http://wordpress.com/log-in?redirect_to=' +
+		encodeURIComponent(
+			emailManagementPurchaseNewEmailAccount(
+				selectedSite?.slug ?? '',
+				selectedDomainName,
+				null,
+				'login-redirect',
+				'professional-email'
+			)
+		);
+
+	const loginUrlWithRedirectToGoogleWorkspace =
+		'http://wordpress.com/log-in?redirect_to=' +
+		encodeURIComponent(
+			emailManagementPurchaseNewEmailAccount(
+				selectedSite?.slug ?? '',
+				selectedDomainName,
+				null,
+				'login-redirect',
+				'google-workspace'
+			)
+		);
+
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
 	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
+		if ( ! currentUserCanAddEmail ) {
+			return {
+				google: false,
+				titan: false,
+			};
+		}
+
 		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug ) {
 			return {
 				google: true,
@@ -179,6 +223,9 @@ const EmailProvidersStackedComparison = ( {
 			isDomainInCart={ isDomainInCart }
 			key="ProfessionalEmailCard"
 			onExpandedChange={ changeExpandedState }
+			overrideToggleSelectorOnClick={
+				currentUserCanAddEmail ? null : () => page( loginUrlWithRedirectToProfessionalEmail )
+			}
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -189,6 +236,9 @@ const EmailProvidersStackedComparison = ( {
 			isDomainInCart={ isDomainInCart }
 			key="GoogleWorkspaceCard"
 			onExpandedChange={ changeExpandedState }
+			overrideToggleSelectorOnClick={
+				currentUserCanAddEmail ? null : () => page( loginUrlWithRedirectToGoogleWorkspace )
+			}
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -254,10 +304,12 @@ const EmailProvidersStackedComparison = ( {
 				</div>
 			) }
 
-			<BillingIntervalToggle
-				intervalLength={ selectedIntervalLength }
-				onIntervalChange={ changeIntervalLength }
-			/>
+			{ currentUserCanAddEmail && (
+				<BillingIntervalToggle
+					intervalLength={ selectedIntervalLength }
+					onIntervalChange={ changeIntervalLength }
+				/>
+			) }
 
 			{ hasExistingEmailForwards && domainsWithForwards?.length && (
 				<EmailExistingForwardsNotice
@@ -269,6 +321,23 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
+				{ ! currentUserCanAddEmail && (
+					<PromoCard className="email-providers-stacked-comparison__owner-notice">
+						<p>
+							{ translate(
+								'An email solution can only be purchased by the domain owner. ' +
+									'To make a purchase, please {{link}}log in{{/link}} with the account that purchased the domain. ' +
+									"If you don't have access to that account, please {{reachOutLink}}reach out{{/reachOutLink}} to the domain owner.",
+								{
+									components: {
+										link: <a href={ loginUrl } />,
+										reachOutLink: isPrivacyAvailable ? <a href={ contactOwnerUrl } /> : <></>,
+									},
+								}
+							) }
+						</p>
+					</PromoCard>
+				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 

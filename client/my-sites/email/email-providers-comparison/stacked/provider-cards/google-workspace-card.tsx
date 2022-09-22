@@ -65,6 +65,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 		intervalLength,
 		isDomainInCart = false,
 		onExpandedChange,
+		overrideToggleSelectorOnClick,
 		selectedDomainName,
 	} = props;
 	const selectedSite = useSelector( getSelectedSite );
@@ -105,6 +106,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ): ReactElem
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = isGSuiteSupported && detailsExpanded;
 	googleWorkspace.showExpandButton = isGSuiteSupported;
+	googleWorkspace.overrideToggleSelectorOnClick = overrideToggleSelectorOnClick;
 	googleWorkspace.priceBadge = (
 		<GoogleWorkspacePrice
 			domain={ domain }
