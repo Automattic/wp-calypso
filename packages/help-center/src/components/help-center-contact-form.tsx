@@ -20,6 +20,7 @@ import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -135,6 +136,7 @@ export const HelpCenterContactForm = () => {
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
 	const { data: userSites } = useUserSites();
 	const userWithNoSites = userSites?.sites.length === 0;
+	const userId = useSelector( getCurrentUserId );
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -189,6 +191,8 @@ export const HelpCenterContactForm = () => {
 	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
+		// pass user email as query cache key
+		userId,
 		userDeclaredSiteUrl,
 		sitePickerChoice === 'OTHER_SITE'
 	);

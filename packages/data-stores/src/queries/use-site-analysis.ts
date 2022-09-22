@@ -55,12 +55,18 @@ function urlMatches( trustedURL: string, userInputUrl: string | undefined ) {
 /**
  * Analyses a site to determine whether its a WPCOM site, and if yes, it would fetch and return the site information (SiteDetails).
  *
+ * @param userId the user ID
  * @param siteURL the site URL
+ * @param enabled whether the query is enabled
  */
-export function useSiteAnalysis( siteURL: string | undefined, enabled: boolean ): AnalysisReport {
+export function useSiteAnalysis(
+	userId: number | string,
+	siteURL: string | undefined,
+	enabled: boolean
+): AnalysisReport {
 	const [ debouncedSiteUrl ] = useDebounce( siteURL, 500 );
 	const isEnabled = isHost( debouncedSiteUrl ) && enabled;
-	const { data: userSites, isLoading: userSitesLoading } = useUserSites( isEnabled );
+	const { data: userSites, isLoading: userSitesLoading } = useUserSites( userId, isEnabled );
 	const { data: wpcomSite, isLoading: wpcomSiteLoading } = useWpcomSite(
 		debouncedSiteUrl,
 		isEnabled

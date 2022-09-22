@@ -36,6 +36,7 @@ export function useSubmitForumsMutation() {
 					blogHelpMessages.push( 'Jetpack: Yes' );
 				} else {
 					blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
+					blogHelpMessages.push( 'Jetpack: No' );
 				}
 
 				blogHelpMessages.push(
@@ -43,6 +44,8 @@ export function useSubmitForumsMutation() {
 				);
 			} else if ( userDeclaredSiteUrl ) {
 				blogHelpMessages.push( `Self-declared URL: ${ userDeclaredSiteUrl }` );
+				blogHelpMessages.push( 'Jetpack: Unknown' );
+				blogHelpMessages.push( 'WP.com: Unknown' );
 			}
 
 			const forumMessage = message + '\n\n' + blogHelpMessages.join( '\n' );

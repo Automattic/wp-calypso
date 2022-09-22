@@ -2,9 +2,9 @@ import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { SiteDetails } from '../site';
 
-export function useUserSites( enabled = true ) {
+export function useUserSites( userId: number | string, enabled = true ) {
 	return useQuery(
-		'user-sites',
+		[ 'user-sites', userId ],
 		() =>
 			wpcomRequest< { sites: SiteDetails[] } >( {
 				path: '/me/sites/',
@@ -12,7 +12,7 @@ export function useUserSites( enabled = true ) {
 			} ),
 		{
 			refetchOnWindowFocus: false,
-			staleTime: Infinity,
+			staleTime: 5 * 60 * 1000,
 			enabled,
 		}
 	);
