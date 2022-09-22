@@ -64,6 +64,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 		intervalLength,
 		isDomainInCart = false,
 		onExpandedChange,
+		overrideToggleSelectorOnClick,
 		selectedDomainName,
 	} = props;
 	const selectedSite = useSelector( getSelectedSite );
