@@ -80,7 +80,7 @@ export class PlanFeaturesComparison extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									<tr>{ customRender.topButtons || this.renderTopButtons() }</tr>
+									<tr>{ customRender?.topButtons || this.renderTopButtons() }</tr>
 									{ isFAQCondensedExperiment
 										? this.renderPlanFeatureRowsTest()
 										: this.renderPlanFeatureRows() }
