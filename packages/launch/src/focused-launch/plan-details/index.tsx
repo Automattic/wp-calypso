@@ -10,8 +10,6 @@ import { useHistory } from 'react-router-dom';
 import { LAUNCH_STORE } from '../../stores';
 import GoBackButton from '../go-back-button';
 
-import './style.scss';
-
 const PlanDetails: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );

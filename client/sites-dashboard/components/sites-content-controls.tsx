@@ -1,14 +1,15 @@
 import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
-import { SitesListSortingDropdown } from './sites-list-sorting-dropdown';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
+import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
 export interface SitesDashboardQueryParams {
 	page?: number;
@@ -83,7 +84,7 @@ type SitesContentControlsProps = {
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
 } & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
-	ComponentPropsWithoutRef< typeof SitesListSortingDropdown >;
+	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
 
 /**
  * Updates one or more query param used by the sites dashboard, causing a page navigation.
@@ -112,8 +113,9 @@ export const SitesContentControls = ( {
 	selectedStatus,
 	displayMode,
 	onDisplayModeChange,
-	sitesListSorting,
-	onSitesListSortingChange,
+	sitesSorting,
+	onSitesSortingChange,
+	hasSitesSortingPreferenceLoaded,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -128,7 +130,12 @@ export const SitesContentControls = ( {
 				defaultValue={ initialSearch }
 			/>
 			<DisplayControls>
-				<ControlsSelectDropdown selectedText={ selectedStatus.title }>
+				<ControlsSelectDropdown
+					// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+					selectedText={ sprintf( __( 'Status: %(siteStatus)s' ), {
+						siteStatus: selectedStatus.title,
+					} ) }
+				>
 					{ statuses.map( ( { name, title, count } ) => (
 						<SelectDropdown.Item
 							key={ name }
@@ -146,9 +153,10 @@ export const SitesContentControls = ( {
 					) ) }
 				</ControlsSelectDropdown>
 				<VisibilityControls>
-					<SitesListSortingDropdown
-						sitesListSorting={ sitesListSorting }
-						onSitesListSortingChange={ onSitesListSortingChange }
+					<SitesSortingDropdown
+						hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+						sitesSorting={ sitesSorting }
+						onSitesSortingChange={ onSitesSortingChange }
 					/>
 					<SitesDisplayModeSwitcher
 						displayMode={ displayMode }

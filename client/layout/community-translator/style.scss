@@ -76,6 +76,7 @@ body {
 		.webui-popover-title {
 			background-color: var(--color-neutral-10);
 			border-color: var(--color-neutral-0);
+			/* stylelint-disable-next-line scales/radii */
 			border-radius: 1px 1px 0 0;
 		}
 

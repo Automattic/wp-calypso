@@ -57,7 +57,10 @@ export function useSiteSetupFlowProgress(
 		case SiteIntent.Build: {
 			switch ( currentStep ) {
 				case 'designSetup':
-					middleProgress = { progress: 1, count: 2 };
+					middleProgress = { progress: 1, count: 3 };
+					break;
+				case 'patternAssembler':
+					middleProgress = { progress: 2, count: 3 };
 					break;
 			}
 

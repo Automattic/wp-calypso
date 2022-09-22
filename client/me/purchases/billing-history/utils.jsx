@@ -1,4 +1,9 @@
-import { getPlanTermLabel, isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
+import {
+	getPlanTermLabel,
+	isDIFMProduct,
+	isGoogleWorkspace,
+	isTitanMail,
+} from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { find, map, partition, reduce, some } from 'lodash';
 import { Fragment } from 'react';
@@ -109,6 +114,18 @@ function renderTransactionQuantitySummaryForMailboxes(
 	} );
 }
 
+function renderDIFMTransactionQuantitySummary( licensed_quantity, translate ) {
+	return translate(
+		'One-time fee includes %(quantity)d page',
+		'One-time fee includes %(quantity)d pages',
+		{
+			args: { quantity: licensed_quantity },
+			count: licensed_quantity,
+			comment: '%(quantity)d is number of pages included in the purchase of the DIFM service',
+		}
+	);
+}
+
 export function renderTransactionQuantitySummary(
 	{ licensed_quantity, new_quantity, type, wpcom_product_slug },
 	translate
@@ -131,6 +148,10 @@ export function renderTransactionQuantitySummary(
 			isUpgrade,
 			translate
 		);
+	}
+
+	if ( isDIFMProduct( product ) ) {
+		return renderDIFMTransactionQuantitySummary( licensed_quantity, translate );
 	}
 
 	if ( isRenewal ) {

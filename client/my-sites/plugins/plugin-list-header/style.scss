@@ -80,6 +80,12 @@
 	flex-grow: 1;
 }
 
+.theme-jetpack-cloud .plugin-list-header-new .bulk-select .form-checkbox {
+	&:checked::before {
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+	}
+}
+
 .plugin-list-header-new {
 	height: 60px;
 	margin-block-start: 8px;
@@ -131,11 +137,6 @@
 	.bulk-select {
 		.count {
 			display: none;
-		}
-		.form-checkbox {
-			&:checked::before {
-				content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
-			}
 		}
 	}
 	.plugin-list-header__bulk-select-wrapper {

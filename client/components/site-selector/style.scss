@@ -1,7 +1,6 @@
 @import "@automattic/typography/styles/variables";
-@import "../../assets/stylesheets/shared/mixins/_long-content-fade";
-@import "../../assets/stylesheets/shared/mixins/_breakpoints";
-@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/long-content-fade";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 /**
  * Site Selector
@@ -187,8 +186,8 @@
 }
 
 .site-selector__actions {
-	--transparent-button-text-color: var( --color-sidebar-text );
-	--transparent-button-text-color-hover: var( --color-sidebar-menu-hover-text );
+	--transparent-button-text-color: var(--color-sidebar-text);
+	--transparent-button-text-color-hover: var(--color-sidebar-menu-hover-text);
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
@@ -203,14 +202,6 @@
 
 .site-selector .all-sites {
 	border-bottom: 1px solid var(--color-neutral-10);
-}
-
-.site-selector__recent {
-	border-bottom: 1px solid var(--color-neutral-0);
-
-	&:empty {
-		border-bottom-width: 0;
-	}
 }
 
 .site-selector__hidden-sites-message {

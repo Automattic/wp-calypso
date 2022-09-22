@@ -79,9 +79,8 @@ function SidebarScrollSynchronizer() {
 
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const isDesktop = useBreakpoint( '>760px' );
+	const isDesktop = useBreakpoint( '>782px' );
 
-	// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
@@ -93,6 +92,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 			handleClose={ () => {
 				setShowHelpCenter( false );
 			} }
+			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
 	);
@@ -253,7 +253,10 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<HelpCenterLoader sectionName={ this.props.sectioName } loadHelpCenter={ loadHelpCenter } />
+				<HelpCenterLoader
+					sectionName={ this.props.sectionName }
+					loadHelpCenter={ loadHelpCenter }
+				/>
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass

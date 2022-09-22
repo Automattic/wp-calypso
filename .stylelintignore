@@ -5,3 +5,5 @@
 node_modules
 vendor
 dist
+packages/calypso-color-schemes/css
+packages/calypso-color-schemes/src/__color-studio

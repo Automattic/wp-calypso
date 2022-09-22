@@ -120,6 +120,7 @@ export interface SiteDetails {
 	slug: string;
 	visible?: boolean;
 	wpcom_url?: string;
+	user_interactions?: string[];
 }
 
 export interface SiteDetailsCapabilities {

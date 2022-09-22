@@ -400,10 +400,34 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
-		case 'blocked':
-			const supportURL = 'https://wordpress.com/error-report/?url=495@' + ( site?.slug || '' );
+		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
 			message = translate(
-				"You're blocked from purchasing domains on WordPress.com. Please {{a}}contact our support{{/a}} to find out why.",
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred because it was registered less than 60 days ago.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
+		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+			message = translate(
+				"Sorry, {{strong}}%(domain)s{{/strong}} can't be transferred due to a transfer lock at the registry.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
+		case 'blocked':
+			const supportURL = 'https://wordpress.com/error-report/?url=496@' + ( site?.slug || '' );
+			message = translate(
+				'Oops! Sorry an error has occurred. Please {{a}}click here{{/a}} to contact us so that we can fix it. Please remember that you have to provide the full, complete Blog URL, otherwise we can not fix it.',
 				{
 					components: {
 						a: <a rel="noopener noreferrer" href={ supportURL } />,

@@ -65,7 +65,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 						) }
 					>
 						{ ! hasSelectedPatterns && (
-							<span>{ translate( 'Your page is blank. Start adding content on the left' ) }</span>
+							<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
 						) }
 					</div>,
 					webPreviewFrameContainer
@@ -78,6 +78,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 					hasSelectedPatterns
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
+								disable_viewport_height: true,
 						  } )
 						: 'about:blank'
 				}
