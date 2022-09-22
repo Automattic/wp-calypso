@@ -67,6 +67,8 @@ export function getEnhancedTasks(
 				case 'setup_link_in_bio':
 					taskData = {
 						title: translate( 'Set up Link in Bio' ),
+						keepActive: true,
+						actionUrl: `/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`,
 					};
 					break;
 				case 'links_added':

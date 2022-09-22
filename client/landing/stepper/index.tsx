@@ -30,6 +30,7 @@ import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
+import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
 import { newsletter } from './declarative-flow/newsletter';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
@@ -64,6 +65,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
+	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
 		: null,
