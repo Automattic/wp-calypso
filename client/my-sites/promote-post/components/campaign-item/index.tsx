@@ -70,7 +70,7 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const { totalBudget, totalBudgetLeft } = useMemo(
-		() => getCampaignBudgetData( budget_cents, spent_budget_cents ),
+		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
 	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';

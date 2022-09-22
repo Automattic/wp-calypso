@@ -82,6 +82,13 @@ export const getCampaignStatus = ( status: string ) => {
 	}
 };
 
+export const getCampaignDurationDays = ( start_date: string, end_date: string ) => {
+	const dateStart = new Date( start_date );
+	const dateEnd = new Date( end_date );
+	const diffTime = Math.abs( dateEnd.getTime() - dateStart.getTime() );
+	return Math.round( diffTime / ( 1000 * 60 * 60 * 24 ) );
+};
+
 export const getCampaignOverallSpending = (
 	spent_budget_cents: number,
 	start_date: string,
@@ -93,21 +100,21 @@ export const getCampaignOverallSpending = (
 
 	const totalBudgetUsed = spent_budget_cents / 100;
 	let daysRun = moment().diff( moment( start_date ), 'days' );
-	const campaignDays = moment( end_date ).diff( moment( start_date ), 'days' );
+	const campaignDays = getCampaignDurationDays( start_date, end_date );
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
 	/* translators: %1$s: Amount, %2$s: Days. eg: $3 over 2 days */
-	const overallSpending = sprintf( __( '%1$s over %2$s days' ), totalBudgetUsed, daysRun );
+	const overallSpending = sprintf( __( '$%1$s over %2$s days' ), totalBudgetUsed, daysRun );
 	return overallSpending;
 };
 
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
-	return clickthroughRate;
+	return clickthroughRate.toFixed( 2 );
 };
 
 export const getCampaignDurationFormatted = ( start_date: string, end_date: string ) => {
-	const campaignDays = moment( end_date ).diff( moment( start_date ), 'days' );
+	const campaignDays = getCampaignDurationDays( start_date, end_date );
 
 	const dateStartFormatted = moment( start_date ).format( 'MMM D' );
 	const dateEndFormatted = moment( end_date ).format( 'MMM D' );
@@ -118,8 +125,13 @@ export const getCampaignDurationFormatted = ( start_date: string, end_date: stri
 	return durationFormatted;
 };
 
-export const getCampaignBudgetData = ( budget_cents: number, spent_budget_cents: number ) => {
-	const totalBudget = budget_cents / 100;
+export const getCampaignBudgetData = (
+	budget_cents: number,
+	start_date: string,
+	end_date: string,
+	spent_budget_cents: number
+) => {
+	const totalBudget = ( budget_cents * getCampaignDurationDays( start_date, end_date ) ) / 100;
 	const totalBudgetUsed = spent_budget_cents / 100;
 	const totalBudgetLeft = totalBudget - totalBudgetUsed;
 	return {
