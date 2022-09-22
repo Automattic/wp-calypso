@@ -35,6 +35,7 @@ export const ManageSitePluginsDialog = ( { isVisible, onClose, plugin } ) => {
 			shouldCloseOnEsc
 		>
 			<SitesWithInstalledPluginsList
+				isWpCom
 				sites={ sitesWithPlugin }
 				isLoading={ isLoading }
 				plugin={ plugin }
