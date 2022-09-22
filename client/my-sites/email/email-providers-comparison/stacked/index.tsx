@@ -12,9 +12,11 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import useUsersQuery from 'calypso/data/users/use-users-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -32,17 +34,15 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	emailManagement,
-	emailManagementInDepthComparison,
-	emailManagementPurchaseNewEmailAccount,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import type { InfiniteData } from 'react-query';
 
 import './style.scss';
 
@@ -55,6 +55,14 @@ export type EmailProvidersStackedComparisonProps = {
 	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	source: string;
+};
+
+type User = {
+	login: string;
+};
+
+type UsersData = {
+	users: User[];
 };
 
 const EmailProvidersStackedComparison = ( {
@@ -91,37 +99,39 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
+	useQuerySitePurchases( selectedSite?.ID ?? -1 );
+
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 
 	const isPrivacyAvailable = domain?.privacyAvailable;
 
-	const loginUrl = 'https://wordpress.com/log-in';
-
 	const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
 
-	const loginUrlWithRedirectToProfessionalEmail =
-		'http://wordpress.com/log-in?redirect_to=' +
-		encodeURIComponent(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite?.slug ?? '',
-				selectedDomainName,
-				null,
-				'login-redirect',
-				'professional-email'
-			)
-		);
+	const purchses = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 
-	const loginUrlWithRedirectToGoogleWorkspace =
-		'http://wordpress.com/log-in?redirect_to=' +
-		encodeURIComponent(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite?.slug ?? '',
-				selectedDomainName,
-				null,
-				'login-redirect',
-				'google-workspace'
-			)
-		);
+	const domainSubscription = purchses.filter(
+		( purchase ) => purchase.id === parseInt( domain?.subscriptionId ?? 0 )
+	)[ 0 ];
+
+	const fetchOptions = {
+		search: domainSubscription?.userId,
+		search_columns: [ 'ID' ],
+	};
+
+	const { data } = useUsersQuery( selectedSite?.ID, fetchOptions, {
+		enabled: domainSubscription !== undefined,
+	} );
+
+	const teams = data as InfiniteData< UsersData > & UsersData;
+
+	const ownerUserName = teams ? teams.users[ 0 ].login : '';
+
+	const userNameUrlParam = `?email_address=${ ownerUserName }`;
+	const loginUrl = `https://wordpress.com/log-in${ ownerUserName ? userNameUrlParam : '' }`;
+
+	const onClickLink = ( eventType: string ) => {
+		dispatch( recordTracksEvent( `calypso_email_providers_${ eventType }_click` ) );
+	};
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -222,10 +232,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="ProfessionalEmailCard"
-			onExpandedChange={ changeExpandedState }
-			overrideToggleSelectorOnClick={
-				currentUserCanAddEmail ? null : () => page( loginUrlWithRedirectToProfessionalEmail )
-			}
+			onExpandedChange={ currentUserCanAddEmail ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -235,10 +242,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="GoogleWorkspaceCard"
-			onExpandedChange={ changeExpandedState }
-			overrideToggleSelectorOnClick={
-				currentUserCanAddEmail ? null : () => page( loginUrlWithRedirectToGoogleWorkspace )
-			}
+			onExpandedChange={ currentUserCanAddEmail ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -327,11 +331,23 @@ const EmailProvidersStackedComparison = ( {
 							{ translate(
 								'An email solution can only be purchased by the domain owner. ' +
 									'To make a purchase, please {{link}}log in{{/link}} with the account that purchased the domain. ' +
-									"If you don't have access to that account, please {{reachOutLink}}reach out{{/reachOutLink}} to the domain owner.",
+									"If you don't have access to that account, please reach out to the domain owner {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}",
 								{
 									components: {
-										link: <a href={ loginUrl } />,
-										reachOutLink: isPrivacyAvailable ? <a href={ contactOwnerUrl } /> : <></>,
+										link: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
+										reachOutLink: isPrivacyAvailable ? (
+											<a
+												href={ contactOwnerUrl }
+												target="_blank"
+												rel="noopener noreferrer"
+												onClick={ () => onClickLink( 'owner_contact' ) }
+											/>
+										) : (
+											<></>
+										),
+									},
+									args: {
+										ownerUserName,
 									},
 								}
 							) }
