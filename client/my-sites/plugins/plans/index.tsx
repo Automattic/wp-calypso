@@ -122,7 +122,7 @@ const Plans = ( {
 
 			<div className="plans">
 				<PlansFeaturesMain
-					basePlansPath="/plugins/plans"
+					basePlansPath={ '/plugins/plans/' + pluginSlug }
 					showFAQ={ false }
 					site={ selectedSite }
 					intervalType={ intervalType }
