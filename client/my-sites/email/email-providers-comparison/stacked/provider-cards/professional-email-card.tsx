@@ -71,6 +71,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 		intervalLength,
 		isDomainInCart = false,
 		onExpandedChange,
+		overrideToggleSelectorOnClick,
 		selectedDomainName,
 	} = props;
 	const translate = useTranslate();
