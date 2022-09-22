@@ -43,6 +43,7 @@ export default function CTAButton( {
 	// We need a way to tell which plan do we want now
 	desiredPlan,
 	buttonText = '',
+	buttonClassName = 'plugin-details-cta__install-button',
 } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -180,7 +181,7 @@ export default function CTAButton( {
 				/>
 			</Dialog>
 			<Button
-				className="plugin-details-cta__install-button"
+				className={ buttonClassName }
 				primary
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {

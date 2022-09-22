@@ -156,6 +156,7 @@ const Plans = ( {
 											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
 										}
 										buttonText={ translate( 'Upgrade to Business' ) }
+										buttonClassName="button plan-features__actions-button is-business-plan"
 									/>
 								) : (
 									<Button
@@ -181,6 +182,7 @@ const Plans = ( {
 											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
 										}
 										buttonText={ translate( 'Upgrade to Ecommerce' ) }
+										buttonClassName="button plan-features__actions-button is-ecommerce-plan"
 									/>
 								) : (
 									<Button
