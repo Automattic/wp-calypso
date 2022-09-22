@@ -1,4 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
+import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
@@ -24,8 +25,10 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 
 	return (
 		<div
-			className="pattern-selector"
-			style={ show ? {} : { height: 0, overflow: 'hidden' } }
+			className={ classnames( 'pattern-selector', {
+				'pattern-selector--active': show,
+				'pattern-selector--hide': ! show,
+			} ) }
 			// eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
 			tabIndex={ show ? 0 : -1 }
 			ref={ patternSelectorRef }
@@ -46,6 +49,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 								aria-label={ item.name }
 								tabIndex={ 0 }
 								role="option"
+								title={ item.name }
 								aria-selected={ false }
 								onClick={ () => onSelect( item ) }
 								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
