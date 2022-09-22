@@ -43,7 +43,6 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
-import wpcomRequest from 'wpcom-proxy-request';
 
 export class PlansStep extends Component {
 	state = {
@@ -57,10 +56,8 @@ export class PlansStep extends Component {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
 		// trigger guides on this step, we don't care about failures or response
-		wpcomRequest( {
-			path: `guides/trigger?flow=${ this.props.flowName }&step=plan`,
+		wp.req.post( `guides/trigger?flow=${ this.props.flowName }&step=plans`, {
 			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
 		} );
 	}
 

@@ -4,7 +4,7 @@ import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { parse } from 'qs';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
@@ -27,6 +27,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -59,7 +60,6 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
-import wpcomRequest from 'wpcom-proxy-request';
 
 class DomainsStep extends Component {
 	static propTypes = {
@@ -128,10 +128,8 @@ class DomainsStep extends Component {
 
 	componentDidMount() {
 		// trigger guides on this step, we don't care about failures or response
-		wpcomRequest( {
-			path: `guides/trigger?flow=${ this.props.flowName }&step=domains`,
+		wpcom.req.post( `guides/trigger?flow=${ this.props.flowName }&step=domains `, {
 			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
 		} );
 	}
 
