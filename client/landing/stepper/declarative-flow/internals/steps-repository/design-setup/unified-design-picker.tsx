@@ -13,6 +13,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { shuffle } from 'lodash';
 import { useRef, useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
@@ -29,7 +30,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
-import { STEP_NAME } from './constants';
+import { STEP_NAME, GENERATED_DESIGNS_LIMIT } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
@@ -109,7 +110,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	);
 
-	const generatedDesigns = allDesigns?.generated?.designs || [];
+	const randomizeGeneratedDesigns = ( designs: Design[] ) => {
+		const shuffledDesigns = shuffle( designs );
+
+		if ( designs.length <= GENERATED_DESIGNS_LIMIT ) {
+			return shuffledDesigns;
+		}
+
+		return shuffledDesigns.slice( 0, GENERATED_DESIGNS_LIMIT );
+	};
+
+	const generatedDesigns = randomizeGeneratedDesigns( allDesigns?.generated?.designs || [] );
 	const staticDesigns = allDesigns?.static?.designs || [];
 
 	const hasTrackedView = useRef( false );
