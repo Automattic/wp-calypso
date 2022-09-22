@@ -16,16 +16,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isMarketplaceFlow } from '../plugins/flows';
 
 const noop = () => {};
-const PlanFeaturesActions = ( props ) => {
-	return (
-		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
-
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
 	canPurchase,
@@ -183,6 +173,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesActions = ( props ) => {
+	return (
+		<div className="plan-features__actions">
+			<div className="plan-features__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesActions.propTypes = {
