@@ -44,8 +44,6 @@ body.is-videopress-stepper {
 		}
 
 		.step-container {
-			margin-top: 96px;
-
 			.step-container__header {
 				header {
 					.formatted-header__title {
@@ -72,6 +70,9 @@ body.is-videopress-stepper {
 			.step-container__videopress-powered {
 				line-height: 24px;
 				font-size: 12px;
+				svg {
+					margin-inline-end: 8px;
+				}
 			}
 		}
 	}

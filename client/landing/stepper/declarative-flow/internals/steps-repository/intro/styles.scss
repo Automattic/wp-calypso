@@ -2,10 +2,6 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .intro {
-	&.videopress {
-		padding: 0px;
-	}
-
 	&.newsletter {
 		background-color: rgb(162 218 254);
 		background-image:
@@ -46,6 +42,48 @@
 			background-image:
 				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
 				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
+		}
+	}
+
+	&.videopress {
+		padding: 0;
+		color: #fff;
+		background-image:
+			url( calypso/assets/images/onboarding/videopress-intro-left.png ),
+			url( calypso/assets/images/onboarding/videopress-intro-right.png );
+		background-position-y: 95%, -15%;
+		background-position-x: -10%, 100%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 40%, auto 40%;
+
+		@include break-medium {
+			background-size: auto 50%, auto 50%;
+		}
+
+		@include break-large {
+			background-position-y: 50%, 50%;
+			background-position-x: 0, 100%;
+		}
+
+		.signup-header {
+			h1 {
+				color: #fff;
+			}
+
+			svg {
+				fill: #fff;
+				stroke: none;
+			}
+		}
+
+		.button.is-primary {
+			background-color: #ffe61c;
+			color: #000;
+		}
+
+		.flow-progress {
+			background: #0003;
 		}
 	}
 
@@ -115,6 +153,15 @@
 		span {
 			display: block;
 		}
+	}
+
+	.intro__video {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		border: 0;
 	}
 
 	.intro__button {
