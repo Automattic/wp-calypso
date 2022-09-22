@@ -1,4 +1,3 @@
-import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
@@ -11,24 +10,19 @@ import { getBackupWarnings } from 'calypso/lib/jetpack/backup-utils';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ActionButtons from '../action-buttons';
-import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
 import cloudSuccessIcon from './icons/cloud-success.svg';
 import cloudWarningIcon from './icons/cloud-warning.svg';
 
 import './style.scss';
 
-const BackupSuccessful = ( { backup, deltas, selectedDate, lastBackupAttemptOnDate } ) => {
+const BackupSuccessful = ( { backup, selectedDate, lastBackupAttemptOnDate } ) => {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const isMultiSite = useSelector( ( state ) => isJetpackSiteMultiSite( state, siteId ) );
-	const hasRealtimeBackups = useSelector( ( state ) =>
-		siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS )
-	);
 	const warnings = getBackupWarnings( lastBackupAttemptOnDate );
 	const hasWarnings = Object.keys( warnings ).length !== 0;
 
@@ -52,9 +46,8 @@ const BackupSuccessful = ( { backup, deltas, selectedDate, lastBackupAttemptOnDa
 
 	// We should only showing the summarized ActivityCard for Real-time sites when the latest backup is not a full backup
 	const showBackupDetails =
-		hasRealtimeBackups &&
-		( 'rewind__backup_complete_full' !== backup.activityName ||
-			'rewind__backup_only_complete_full' !== backup.activityName );
+		'rewind__backup_complete_full' !== backup.activityName ||
+		'rewind__backup_only_complete_full' !== backup.activityName;
 
 	const actionableRewindId = useActionableRewindId( backup );
 
@@ -115,7 +108,6 @@ const BackupSuccessful = ( { backup, deltas, selectedDate, lastBackupAttemptOnDa
 				</div>
 			) }
 			{ hasWarnings && <BackupWarningRetry siteId={ siteId } /> }
-			{ ! hasRealtimeBackups && <BackupChanges deltas={ deltas } /* metaDiff={ metaDiff */ /> }
 		</>
 	);
 };

@@ -314,6 +314,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	background-color: var(--color-neutral-20);
 	width: 8px;
 	height: 8px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }
 
@@ -362,10 +363,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	background-color: var(--color-neutral-0);
 }
 
-.example-components__connect-jetpack {
-	background-color: var(--color-neutral-0);
-}
-
 .example-components__content-wp-admin-masterbar {
 	width: 100%;
 	padding-bottom: 6%;
@@ -388,6 +385,8 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 }
 
 .example-components__connect-jetpack {
+	background-color: var(--color-neutral-0);
+
 	.example-components__content-wp-admin-plugin-name {
 		font-size: $font-body-small;
 		margin-bottom: 8px;
@@ -1071,11 +1070,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-body.is-section-jetpack-connect .layout {
-	&.is-jetpack-woocommerce-flow,
-	&.is-jetpack-woo-dna-flow {
-		.wpcom-site__logo {
-			display: none;
+body.is-section-jetpack-connect {
+	background-color: var(--color-surface);
+	.layout {
+		&.is-jetpack-woocommerce-flow,
+		&.is-jetpack-woo-dna-flow {
+			.wpcom-site__logo {
+				display: none;
+			}
 		}
 	}
 }
@@ -1083,14 +1085,6 @@ body.is-section-jetpack-connect .layout {
 // ProductCard overrides
 
 .is-section-jetpack-connect .product-card {
-	.product-card__header {
-		padding: 12px 0;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			padding: 16px 0;
-		}
-	}
-
 	.product-card__header-primary {
 		@include breakpoint-deprecated( "<660px" ) {
 			justify-content: center;
@@ -1126,6 +1120,12 @@ body.is-section-jetpack-connect .layout {
 	}
 
 	.product-card__header {
+		padding: 12px 0;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			padding: 16px 0;
+		}
+
 		.plan-price,
 		.plan-price * {
 			font-size: $font-body;

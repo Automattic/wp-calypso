@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
@@ -9,7 +10,7 @@ import page from 'page';
 import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
-import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -18,7 +19,10 @@ import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/ac
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import {
+	isMarketplaceProduct as isMarketplaceProductSelector,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -95,11 +99,19 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const { isPreinstalledPremiumPlugin, preinstalledPremiumPluginProduct } =
 		usePreinstalledPremiumPlugin( plugin.slug );
 
+	const productsList = useSelector( getProductsList );
+
+	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
+	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
+
 	return (
 		<>
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
+						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( pluginsPlansPage );
+						}
 						return setShowEligibility( true );
 					}
 					onClickInstallPlugin( {
@@ -110,6 +122,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						isMarketplaceProduct,
 						billingPeriod,
 						eligibleForProPlan,
+						productsList,
 					} );
 				} }
 				isDialogVisible={ showAddCustomDomain }
@@ -137,6 +150,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 							isMarketplaceProduct,
 							billingPeriod,
 							eligibleForProPlan,
+							productsList,
 						} )
 					}
 				/>
@@ -149,6 +163,9 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
+						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+							return page( pluginsPlansPage );
+						}
 						return setShowEligibility( true );
 					}
 					onClickInstallPlugin( {
@@ -161,6 +178,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						eligibleForProPlan,
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
+						productsList,
 					} );
 				} }
 				disabled={
@@ -208,6 +226,7 @@ function onClickInstallPlugin( {
 	eligibleForProPlan,
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
+	productsList,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -235,7 +254,9 @@ function onClickInstallPlugin( {
 		// We need to add the product to the  cart.
 		// Plugin install is handled on the backend by activating the subscription.
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
-		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+
+		const variation = plugin?.variations?.[ variationPeriod ];
+		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
 			// We also need to add a business plan to the cart.

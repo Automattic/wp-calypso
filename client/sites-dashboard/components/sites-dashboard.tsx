@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	Button,
 	Gridicon,
@@ -17,6 +18,7 @@ import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
 import { NoSitesMessage } from './no-sites-message';
 import {
@@ -26,7 +28,6 @@ import {
 } from './sites-content-controls';
 import { useSitesDisplayMode } from './sites-display-mode-switcher';
 import { SitesGrid } from './sites-grid';
-import { parseSitesSorting, useSitesSortingPreference } from './sites-sorting-dropdown';
 import { SitesTable } from './sites-table';
 
 interface SitesDashboardProps {
@@ -146,26 +147,22 @@ export function SitesDashboard( {
 
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
-	const { filteredSites, statuses } = useSitesTableFiltering( allSites, {
+	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
+	const { sortedSites } = useSitesTableSorting( allSites, sitesSorting );
+
+	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
 		search,
 		showHidden: search ? true : showHidden,
 		status,
 	} );
 
-	const [ sitesSorting, onSitesSortingChange ] = useSitesSortingPreference();
-
-	const { sortedSites } = useSitesTableSorting(
-		sitesSorting === 'none' ? [] : filteredSites,
-		parseSitesSorting( sitesSorting )
-	);
-
-	const paginatedSites = sortedSites.slice( ( page - 1 ) * perPage, page * perPage );
+	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
 
 	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
 
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
 
-	const userPreferencesLoaded = 'none' !== sitesSorting && 'none' !== displayMode;
+	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
 
 	const elementRef = useRef( window );
 
@@ -191,13 +188,37 @@ export function SitesDashboard( {
 						primary
 						whiteSeparator
 						label={ __( 'Add new site' ) }
-						href={ `/start?source=${ TRACK_SOURCE_NAME }&ref=${ TRACK_SOURCE_NAME }` }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_add' );
+						} }
+						href={ addQueryArgs( '/start', {
+							source: TRACK_SOURCE_NAME,
+							ref: TRACK_SOURCE_NAME,
+						} ) }
 					>
 						<PopoverMenuItem
-							href={ `/jetpack/connect?cta_from=${ TRACK_SOURCE_NAME }&cta_id=add-site` }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_jetpack' );
+							} }
+							href={ addQueryArgs( '/jetpack/connect', {
+								cta_from: TRACK_SOURCE_NAME,
+								cta_id: 'add-site',
+							} ) }
 						>
 							<JetpackLogo className="gridicon" size={ 18 } />
 							<span>{ __( 'Add Jetpack to a self-hosted site' ) }</span>
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ () => {
+								recordTracksEvent( 'calypso_sites_dashboard_new_site_action_click_import' );
+							} }
+							href={ addQueryArgs( '/start', {
+								source: TRACK_SOURCE_NAME,
+								ref: 'smp-import',
+							} ) }
+							icon="arrow-down"
+						>
+							<span>{ __( 'Import an existing site' ) }</span>
 						</PopoverMenuItem>
 					</SplitButton>
 				</HeaderControls>
@@ -213,6 +234,7 @@ export function SitesDashboard( {
 							onDisplayModeChange={ setDisplayMode }
 							sitesSorting={ sitesSorting }
 							onSitesSortingChange={ onSitesSortingChange }
+							hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 						/>
 					) }
 					{ userPreferencesLoaded && (

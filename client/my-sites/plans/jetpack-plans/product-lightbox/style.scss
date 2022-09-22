@@ -4,10 +4,18 @@
 	width: 85%;
 	height: auto;
 	background-color: #fff;
-	transition: all 0.2s ease-out;
+	transition: all 0.25s ease;
 	font-family: Inter, $sans;
 	max-width: 1080px;
 	max-height: 100%;
+
+	@media ( prefers-reduced-motion: no-preference ) {
+		transform: translateY(20px);
+	}
+
+	&.ReactModal__Content--after-open {
+		transform: translateY(0);
+	}
 
 	p {
 		margin-bottom: 0.5rem;
@@ -19,7 +27,7 @@
 }
 
 .product-lightbox__modal-overlay {
-	background-color: rgb(0 0 0 / 70%);
+	background-color: transparent;
 	align-items: center;
 	display: flex;
 	justify-content: center;
@@ -28,9 +36,13 @@
 	bottom: 0;
 	right: 0;
 	left: 0;
-	transition: background-color 0.2s ease-in;
+	transition: background-color 0.35s ease-out;
 	z-index: 100200;
 	box-sizing: border-box;
+
+	&.ReactModal__Overlay--after-open {
+		background-color: rgb(0 0 0 / 70%);
+	}
 }
 
 .product-lightbox__content-wrapper {
@@ -97,11 +109,11 @@
 }
 
 .product-lightbox__detail-tags {
-	margin-bottom: 0.25rem;
+	margin-bottom: 16px;
 
 	&-label {
 		font-weight: 600;
-		font-size: 0.75rem;
+		font-size: $font-body-small;
 		margin-right: 6px;
 		color: #000;
 	}
@@ -110,8 +122,7 @@
 		align-items: center;
 		display: inline-flex;
 		justify-content: center;
-		margin-bottom: 0.5rem;
-		margin-right: 1rem;
+		margin-right: 16px;
 
 		span {
 			margin-right: 4px;
@@ -122,7 +133,7 @@
 
 		p {
 			color: #3c434a;
-			font-size: 0.75rem;
+			font-size: $font-body-small;
 			margin: 0;
 			position: relative;
 			top: 2px;
@@ -132,7 +143,7 @@
 
 .product-lightbox__detail-list {
 	p {
-		font-size: 0.875rem;
+		font-size: $font-body;
 		font-weight: 700;
 		width: 100%;
 		padding: 0.5rem 0;
@@ -150,7 +161,7 @@
 		background: url(./icons/check.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		font-weight: 400;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		color: #3c434a;
 	}
 
@@ -164,7 +175,7 @@
 
 	.foldable-card__header {
 		min-height: 0;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		font-weight: 600;
 		font-family: Inter, $sans;
 		padding: 0.5rem 0;
@@ -194,7 +205,7 @@
 .product-lightbox__variants-options {
 	.form-legend {
 		font-weight: 600;
-		font-size: 0.875rem;
+		font-size: $font-body;
 		margin-bottom: 0.5rem;
 	}
 
@@ -257,7 +268,7 @@
 
 	p {
 		font-weight: 600;
-		font-size: 0.875rem;
+		font-size: $font-body;
 	}
 }
 
@@ -304,7 +315,6 @@
 	}
 }
 
-
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
@@ -334,7 +344,6 @@
 		}
 	}
 }
-
 
 @media screen and ( max-width: 768px ) and ( orientation: portrait ) {
 	.product-lightbox__modal {

@@ -7,7 +7,7 @@
 	cursor: pointer;
 	display: block;
 	float: left;
-	margin: 10px 0;
+	margin: 20px 0 0 0;
 	position: relative;
 	overflow: hidden;
 
@@ -16,18 +16,13 @@
 	}
 
 	.plugin-icon {
-		width: 48px;
-		height: 48px;
+		width: 60px;
+		height: 60px;
 		margin-right: 0;
 
 		&.is-placeholder {
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
-	}
-
-	.plugin-icon {
-		width: 60px;
-		height: 60px;
 	}
 
 	.plugins-browser-item__title,
@@ -51,11 +46,11 @@
 		}
 	}
 
-	@include breakpoint-deprecated( ">960px" ) {
+	@include breakpoint-deprecated(">960px") {
 		width: calc(50% - 10px); // 2 column grid with 20px gutter
 	}
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated("<960px") {
 		width: 100%;
 	}
 

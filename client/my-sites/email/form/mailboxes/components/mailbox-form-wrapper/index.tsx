@@ -115,6 +115,16 @@ const GoogleFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 			) }
 
 			{ renderUserFormFields( { ...props, isRtl } ) }
+
+			{ googleFormFields.passwordResetEmail && (
+				<MailboxField
+					{ ...getCommonFieldProps(
+						googleFormFields.passwordResetEmail,
+						onFieldValueChanged,
+						mailbox
+					) }
+				/>
+			) }
 		</>
 	);
 };
@@ -134,10 +144,10 @@ const TitanFormFields = ( props: MailboxFormWrapperWithCommonProps ) => {
 
 			{ renderUserFormFields( { ...props, isRtl } ) }
 
-			{ titanFormFields.alternativeEmail && (
+			{ titanFormFields.passwordResetEmail && (
 				<MailboxField
 					{ ...getCommonFieldProps(
-						titanFormFields.alternativeEmail,
+						titanFormFields.passwordResetEmail,
 						onFieldValueChanged,
 						mailbox
 					) }

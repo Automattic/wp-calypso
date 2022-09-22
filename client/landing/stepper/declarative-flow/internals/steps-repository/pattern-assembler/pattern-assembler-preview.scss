@@ -5,6 +5,12 @@
 	margin-top: -60px;
 	margin-inline-start: 32px;
 	box-sizing: border-box;
+	position: relative;
+	z-index: 1;
+
+	.web-preview__loading-message {
+		filter: none;
+	}
 
 	.preview-toolbar__browser-header,
 	.spinner-line {
@@ -28,9 +34,19 @@
 		opacity: 0;
 	}
 
+	.web-preview__loading-message-wrapper + .web-preview__frame-wrapper iframe {
+		filter: blur(8px);
+	}
+
 	&--has-selected-patterns {
 		iframe {
 			opacity: 1;
+		}
+
+		.is-loaded .web-preview__frame-wrapper {
+			iframe {
+				animation: fadeInShort 2.2s forwards;
+			}
 		}
 	}
 }

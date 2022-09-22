@@ -1,5 +1,5 @@
 @import "@automattic/typography/styles/variables";
-@import "../../../assets/stylesheets/shared/_extends-forms";
+@import "../../../assets/stylesheets/shared/extends-forms";
 
 .form-checkbox {
 	@extend %form-field !optional;
