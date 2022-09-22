@@ -243,6 +243,7 @@ export class PlansFeaturesMain extends Component {
 					domainName={ domainName }
 					nonDotBlogDomains={ this.filterDotBlogDomains() }
 					isInSignup={ isInSignup }
+					flowName={ flowName }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }

@@ -18,13 +18,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import FoldableCard from 'calypso/components/foldable-card';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
 	getHighlightedFeatures,
-	getPlanDescriptionForMobile,
 	getPlanFeatureAccessor,
 } from 'calypso/my-sites/plan-features-comparison/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -70,16 +68,11 @@ export class PlanFeaturesComparison extends Component {
 			'plans-wrapper': isInSignup,
 		} );
 
-		const mobileView = (
-			<div className="plan-features-comparison__mobile">{ this.renderMobileView() }</div>
-		);
-
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
 					<div ref={ this.contentRef } className="plan-features-comparison__content">
-						{ mobileView }
 						<div>
 							<table className={ tableClasses }>
 								<caption className="plan-features-comparison__screen-reader-text screen-reader-text">
@@ -98,126 +91,6 @@ export class PlanFeaturesComparison extends Component {
 				</div>
 			</div>
 		);
-	}
-
-	renderMobileView() {
-		const {
-			basePlansPath,
-			planProperties,
-			translate,
-			isInVerticalScrollingPlansExperiment,
-			flowName,
-			isInSignup,
-			isLaunchPage,
-		} = this.props;
-
-		// move any free plan to last place in mobile view
-		let freePlanProperties;
-
-		// move any popular plan to the first place in the mobile view.
-		let popularPlanProperties;
-
-		const reorderedPlans = planProperties.filter( ( properties ) => {
-			if ( isFreePlan( properties.planName ) ) {
-				freePlanProperties = properties;
-				return false;
-			}
-			// remove the popular plan.
-			if ( properties.popular && ! popularPlanProperties ) {
-				popularPlanProperties = properties;
-				return false;
-			}
-
-			return true;
-		} );
-
-		if ( popularPlanProperties ) {
-			reorderedPlans.unshift( popularPlanProperties );
-		}
-
-		if ( freePlanProperties ) {
-			reorderedPlans.push( freePlanProperties );
-		}
-
-		return map( reorderedPlans, ( properties ) => {
-			const {
-				annualPricePerMonth,
-				availableForPurchase,
-				currencyCode,
-				current,
-				discountPrice,
-				planConstantObj,
-				planName,
-				popular,
-				relatedMonthlyPlan,
-				isMonthlyPlan,
-				isPlaceholder,
-				hideMonthly,
-				rawPrice,
-				rawPriceAnnual,
-				rawPriceForMonthlyPlan,
-				features,
-				primaryUpgrade,
-			} = properties;
-
-			const audience = planConstantObj.getAudience?.();
-			const billingTimeFrame = planConstantObj.getBillingTimeFrame();
-			const planDescription = getPlanDescriptionForMobile( {
-				flowName,
-				plan: planConstantObj,
-				isInVerticalScrollingPlansExperiment,
-			} );
-
-			return (
-				<div className="plan-features-comparison__mobile-plan" key={ planName }>
-					<PlanFeaturesComparisonHeader
-						audience={ audience }
-						availableForPurchase={ availableForPurchase }
-						basePlansPath={ basePlansPath }
-						billingTimeFrame={ billingTimeFrame }
-						current={ current }
-						currencyCode={ currencyCode }
-						discountPrice={ discountPrice }
-						hideMonthly={ hideMonthly }
-						isPlaceholder={ isPlaceholder }
-						planType={ planName }
-						popular={ popular }
-						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
-						rawPriceForMonthlyPlan={ rawPriceForMonthlyPlan }
-						relatedMonthlyPlan={ relatedMonthlyPlan }
-						title={ planConstantObj.getTitle() }
-						annualPricePerMonth={ annualPricePerMonth }
-						isMonthlyPlan={ isMonthlyPlan }
-					/>
-					<PlanFeaturesComparisonActions
-						availableForPurchase={ availableForPurchase }
-						className={ getPlanClass( planName ) }
-						current={ current }
-						freePlan={ isFreePlan( planName ) }
-						isPlaceholder={ isPlaceholder }
-						isPopular={ popular }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						primaryUpgrade={ primaryUpgrade }
-						key={ planName }
-					/>
-					<p className="plan-features-comparison__description">{ planDescription }</p>
-					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( features ) }
-					</FoldableCard>
-				</div>
-			);
-		} );
-	}
-
-	renderMobileFeatures( features ) {
-		return map( features, ( currentFeature, index ) => {
-			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
-		} );
 	}
 
 	renderPlanHeaders() {

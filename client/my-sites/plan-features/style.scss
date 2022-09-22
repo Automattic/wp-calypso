@@ -737,7 +737,8 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	overflow-x: auto;
 }
 
-.plan-features--signup {
+.plan-features--signup,
+.plan-features--marketplace {
 	margin: 0 auto;
 
 	.signup__steps & {
@@ -866,6 +867,99 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__header-price-group-prices {
 		display: inline-block;
+	}
+}
+
+.plan-features--marketplace {
+	.plan-features__table {
+		@media ( max-width: 1040px ) {
+			display: none;
+		}
+	}
+
+	.plan-pill {
+		top: unset;
+		bottom: unset;
+		left: unset;
+		text-transform: none;
+		padding: 4px 10px;
+		background-color: var(--studio-green-5);
+		border-radius: 4px;
+		color: var(--studio-gray-80);
+		font-size: 0.875rem;
+		right: 50%;
+		transform: translate(50%, -40px);
+		&.is-current-plan {
+			background-color: var(--studio-gray-5);
+		}
+
+	}
+
+	//To be moved to line 66 approximately
+	.plan-features__mobile {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		@media ( min-width: 660px ) and ( max-width: 1040px ) {
+			.plan-features__summary,
+			.plan-features__description {
+				padding: 16px 33px;
+
+			}
+			.plan-features--signup .plan-features__pricing {
+				padding: 0 7px;
+			}
+		}
+
+		.plan-features__header {
+			align-items: flex-start;
+			background-color: var(--color-surface);
+			display: flex;
+			font-weight: 400;
+			justify-content: center;
+			margin-top: 30px;
+			padding: 12px 24px;
+			position: relative;
+			border: 0;
+		}
+
+		.plan-price {
+			font-weight: 600;
+			margin-right: 10px;
+			font-size: $font-headline-large;
+			text-align: center;
+			font-family: "Helvetica Neue", helvetica, arial, sans-serif;
+
+			.plan-price__currency-symbol {
+				vertical-align: super;
+				font-size: $font-title-medium;
+				font-weight: 400;
+			}
+
+			.plan-price__integer {
+				font-weight: 600;
+			}
+		}
+
+		.plan-features__header-title {
+			color: var(--studio-gray-80);
+			font-size: 1.25rem;
+			font-weight: 400;
+			line-height: 0.7;
+			margin-bottom: 5px;
+		}
+
+		.plan-features__header-billing-info {
+			margin-bottom: 1.4em;
+			color: var(--color-text-subtle);
+			line-height: normal;
+			text-align: center;
+		}
+
+		.plan-features__mobile-plan {
+			max-width: 408px;
+		}
 	}
 }
 

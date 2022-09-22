@@ -31,13 +31,19 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 
 const PLANS_LIST = getPlans();
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll, planType, isInVerticalScrollingPlansExperiment } =
-			this.props;
+		const {
+			isInSignup,
+			plansWithScroll,
+			planType,
+			isInVerticalScrollingPlansExperiment,
+			flowName,
+		} = this.props;
 
 		if ( planType === PLAN_P2_FREE ) {
 			return this.renderPlansHeaderP2Free();
@@ -51,6 +57,8 @@ export class PlanFeaturesHeader extends Component {
 				return this.renderPlansHeaderNoTabs();
 			}
 			return this.renderSignupHeader();
+		} else if ( isMarketplaceFlow( flowName ) ) {
+			return this.renderPlansHeaderMarketplace();
 		}
 		return this.renderPlansHeader();
 	}
@@ -146,6 +154,34 @@ export class PlanFeaturesHeader extends Component {
 					{ bestValue && ! selectedPlan && (
 						<PlanPill isInSignup={ isPillInCorner }>{ translate( 'Best Value' ) }</PlanPill>
 					) }
+				</header>
+				<div className="plan-features__pricing">
+					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
+					{ this.getIntervalDiscount() }
+				</div>
+			</span>
+		);
+	}
+
+	renderPlansHeaderMarketplace() {
+		const { availableForPurchase, planType, selectedPlan, title, translate } = this.props;
+
+		const isCurrent = this.isPlanCurrent();
+
+		return (
+			<span>
+				{ planLevelsMatch( selectedPlan, planType ) && availableForPurchase && (
+					<div>
+						<PlanPill>{ translate( 'Suggested' ) }</PlanPill>
+					</div>
+				) }
+				{ isCurrent && (
+					<div>
+						<PlanPill isCurrentPlan>{ translate( 'Your current' ) }</PlanPill>
+					</div>
+				) }
+				<header className="plan-features__header">
+					<h4 className="plan-features__header-title">{ title }</h4>
 				</header>
 				<div className="plan-features__pricing">
 					{ this.getPlanFeaturesPrices() } { this.getBillingTimeframe() }
@@ -576,6 +612,7 @@ PlanFeaturesHeader.propTypes = {
 	siteSlug: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	translate: PropTypes.func,
+	flowName: PropTypes.string,
 
 	// Connected props
 	currentSitePlan: PropTypes.object,

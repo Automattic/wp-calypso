@@ -82,6 +82,7 @@ import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
 import './style.scss';
+import { isMarketplaceFlow } from '../plugins/flows';
 
 const noop = () => {};
 
@@ -99,13 +100,15 @@ export class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate, flowName } =
+			this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
+			'plan-features--marketplace': isMarketplaceFlow( flowName ),
 		} );
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
@@ -381,6 +384,7 @@ export class PlanFeatures extends Component {
 				plan: planConstantObj,
 				isInVerticalScrollingPlansExperiment,
 			} );
+
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -408,6 +412,7 @@ export class PlanFeatures extends Component {
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
+						flowName={ this.props.flowName }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -936,7 +941,7 @@ const ConnectedPlanFeatures = connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
-		const flowName = getCurrentFlowName( state );
+		const flowName = ownProps.flowName ? ownProps.flowName : getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
