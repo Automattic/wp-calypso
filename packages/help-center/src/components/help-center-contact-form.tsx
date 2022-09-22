@@ -8,6 +8,8 @@ import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
 	useSiteAnalysis,
+	useUserSites,
+	AnalysisReport,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
@@ -15,9 +17,10 @@ import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -84,20 +87,21 @@ const titles: {
 		trayText?: string;
 		formDisclaimer?: string;
 		buttonLabel: string;
-		buttonLoadingLabel: string;
+		buttonSubmittingLabel: string;
+		buttonLoadingLabel?: string;
 	};
 } = {
 	CHAT: {
 		formTitle: __( 'Start live chat', __i18n_text_domain__ ),
 		trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
 		buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
+		buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
 	},
 	EMAIL: {
 		formTitle: __( 'Send us an email', __i18n_text_domain__ ),
 		trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
 		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Sending email', __i18n_text_domain__ ),
+		buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
 	DIRECTLY: {
 		formTitle: __( 'Start live chat with an expert', __i18n_text_domain__ ),
@@ -111,7 +115,7 @@ const titles: {
 			__i18n_text_domain__
 		),
 		buttonLabel: __( 'Ask an expert', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Connecting you to an expert', __i18n_text_domain__ ),
+		buttonSubmittingLabel: __( 'Connecting you to an expert', __i18n_text_domain__ ),
 	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
@@ -120,7 +124,8 @@ const titles: {
 			__i18n_text_domain__
 		),
 		buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
+		buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
+		buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
 	},
 };
 
@@ -138,6 +143,9 @@ export const HelpCenterContactForm = () => {
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
 	const { isLoading: submittingTopic, mutateAsync: submitTopic } = useSubmitForumsMutation();
+	const userId = useSelector( getCurrentUserId );
+	const { data: userSites } = useUserSites( userId );
+	const userWithNoSites = userSites?.sites.length === 0;
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -164,12 +172,6 @@ export const HelpCenterContactForm = () => {
 		setMessage,
 	} = useDispatch( HELP_CENTER_STORE );
 
-	const {
-		result: ownershipResult,
-		isLoading: isAnalysisLoading,
-		site: userDeclaredSite,
-	} = useSiteAnalysis( userDeclaredSiteUrl );
-
 	useEffect( () => {
 		const supportVariation = getSupportVariationFromMode( mode );
 		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
@@ -179,12 +181,11 @@ export const HelpCenterContactForm = () => {
 		} );
 	}, [ mode, sectionName ] );
 
-	// record the resolved site
 	useEffect( () => {
-		if ( userDeclaredSite ) {
-			setUserDeclaredSite( userDeclaredSite );
+		if ( userWithNoSites ) {
+			setSitePickerChoice( 'OTHER_SITE' );
 		}
-	}, [ userDeclaredSite, setUserDeclaredSite ] );
+	}, [ userWithNoSites ] );
 
 	useEffect( () => {
 		if ( directlyData?.hasSession ) {
@@ -193,18 +194,43 @@ export const HelpCenterContactForm = () => {
 		}
 	}, [ directlyData, setShowHelpCenter ] );
 
-	const isSubmitting = submittingTicket || submittingTopic;
-
 	const formTitles = titles[ mode ];
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 
+	let ownershipResult: AnalysisReport = useSiteAnalysis(
+		// pass user email as query cache key
+		userId,
+		userDeclaredSiteUrl,
+		sitePickerChoice === 'OTHER_SITE'
+	);
+
+	const ownershipStatusLoading = ownershipResult?.result === 'LOADING';
+	const isSubmitting = submittingTicket || submittingTopic;
+
+	// if the user picked a site from the picker, we don't need to analyze the ownership
+	if ( currentSite && sitePickerChoice === 'CURRENT_SITE' ) {
+		ownershipResult = {
+			result: 'OWNED_BY_USER',
+			isWpcom: true,
+			siteURL: currentSite.URL,
+			site: currentSite,
+		};
+	}
+
+	// record the resolved site
+	useEffect( () => {
+		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
+			setUserDeclaredSite( ownershipResult?.site );
+		}
+	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
+
 	let supportSite: typeof currentSite;
 
 	// if the user picked "other site", force them to declare a site
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
-		supportSite = userDeclaredSite;
+		supportSite = ownershipResult?.site;
 	} else {
 		supportSite = selectedSite || currentSite;
 	}
@@ -266,6 +292,7 @@ export const HelpCenterContactForm = () => {
 
 			case 'FORUM': {
 				submitTopic( {
+					ownershipResult,
 					site: supportSite,
 					message: message ?? '',
 					subject: subject ?? '',
@@ -301,35 +328,39 @@ export const HelpCenterContactForm = () => {
 	}
 
 	const InfoTip = () => {
-		const [ ref, setRef ] = useState< any >();
+		const ref = useRef< any >();
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
-			<>
-				<Button
-					borderless
-					ref={ ( reference ) => ref !== reference && setRef( reference ) }
+			<div>
+				<button
+					className="help-center-contact-form__site-picker-forum-privacy-info"
+					ref={ ref }
 					aria-haspopup
 					aria-label={ __( 'More information' ) }
 					onClick={ () => setOpen( ! isOpen ) }
 				>
 					<Icon icon={ info } size={ 18 } />
-				</Button>
-				<Popover isVisible={ isOpen } context={ ref } position="top left">
-					<span>
-						This may result in a longer response time,
-						<br />
-						but WordPress.com staff in the forums will
-						<br />
-						still be able to view your site's URL.
+				</button>
+				<Popover
+					className="help-center-contact-form__site-picker-privacy-popover"
+					isVisible={ isOpen }
+					context={ ref.current }
+					position="top left"
+				>
+					<span className="help-center-contact-form__site-picker-forum-privacy-popover">
+						{ __(
+							"This may result in a longer response time, but WordPress.com staff in the forums will still be able to view your site's URL.",
+							__i18n_text_domain__
+						) }
 					</span>
 				</Popover>
-			</>
+			</div>
 		);
 	};
 
 	const isCTADisabled = () => {
-		if ( isSubmitting || ! message ) {
+		if ( isSubmitting || ! message || ownershipStatusLoading ) {
 			return true;
 		}
 
@@ -340,6 +371,21 @@ export const HelpCenterContactForm = () => {
 				return ! supportSite || ! subject;
 			case 'FORUM':
 				return ! subject;
+		}
+	};
+
+	const getCTALabel = () => {
+		switch ( mode ) {
+			case 'CHAT':
+			case 'EMAIL':
+			case 'DIRECTLY':
+				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
+			case 'FORUM': {
+				if ( ownershipStatusLoading ) {
+					return formTitles.buttonLoadingLabel;
+				}
+				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
+			}
 		}
 	};
 
@@ -357,7 +403,7 @@ export const HelpCenterContactForm = () => {
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
-			{ mode !== 'DIRECTLY' && (
+			{ mode !== 'DIRECTLY' && ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
 						enabled={ mode === 'FORUM' }
@@ -381,13 +427,7 @@ export const HelpCenterContactForm = () => {
 							onChange={ setUserDeclaredSiteUrl }
 						/>
 					</section>
-					{ ownershipResult && (
-						<HelpCenterOwnershipNotice
-							ownershipResult={ ownershipResult }
-							isAnalysisLoading={ isAnalysisLoading }
-							userDeclaredSite={ userDeclaredSite }
-						/>
-					) }
+					<HelpCenterOwnershipNotice ownershipResult={ ownershipResult } />
 				</>
 			) }
 
@@ -438,7 +478,7 @@ export const HelpCenterContactForm = () => {
 					primary
 					className="help-center-contact-form__site-picker-cta"
 				>
-					{ isSubmitting ? formTitles.buttonLoadingLabel : formTitles.buttonLabel }
+					{ getCTALabel() }
 				</Button>
 				{ hasSubmittingError && (
 					<FormInputValidation
