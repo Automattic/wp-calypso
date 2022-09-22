@@ -171,7 +171,6 @@ export const HelpCenterContactForm = () => {
 	}, [ mode, sectionName ] );
 
 	useEffect( () => {
-		// the user has no sites,
 		if ( userWithNoSites ) {
 			setSitePickerChoice( 'OTHER_SITE' );
 		}
