@@ -41,6 +41,65 @@ export interface CreateSiteActionParameters {
 	anchorFmSpotifyUrl: string | null;
 }
 
+export function* createVideoPressSite( {
+	username,
+	languageSlug,
+	bearerToken = undefined,
+	visibility = Visibility.PublicNotIndexed,
+	anchorFmPodcastId = null,
+	anchorFmEpisodeId = null,
+	anchorFmSpotifyUrl = null,
+}: CreateSiteActionParameters ) {
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
+
+	const siteUrl = domain?.domain_name || siteTitle || username;
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const defaultTheme = 'premium/videomaker';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+
+	const params: CreateSiteParams = {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: blogTitle,
+		public: visibility,
+		options: {
+			site_information: {
+				title: blogTitle,
+			},
+			lang_id: lang_id,
+			site_creation_flow: 'videopress',
+			enable_fse: true,
+			theme: defaultTheme,
+			timezone_string: guessTimezone(),
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
+			use_patterns: true,
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( anchorFmPodcastId && {
+				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
+			...( anchorFmEpisodeId && {
+				anchor_fm_episode_id: anchorFmEpisodeId,
+			} ),
+			...( anchorFmSpotifyUrl && {
+				anchor_fm_spotify_url: anchorFmSpotifyUrl,
+			} ),
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+		},
+		...( bearerToken && { authToken: bearerToken } ),
+	};
+	const success: NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
+	console.log( { success } );
+	return success;
+}
 export function* createSite( {
 	username,
 	languageSlug,

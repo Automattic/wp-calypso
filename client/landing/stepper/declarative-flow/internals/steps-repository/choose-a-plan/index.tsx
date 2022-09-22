@@ -33,7 +33,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	const visibility = useNewSiteVisibility();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const { createSite } = useDispatch( ONBOARD_STORE );
+	const { createVideoPressSite } = useDispatch( ONBOARD_STORE );
 
 	const store = useStore();
 
@@ -64,7 +64,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 			//setSelectedPlanProductId( planId );
 
-			createSite( {
+			createVideoPressSite( {
 				username: currentUser!.username,
 				languageSlug: locale,
 				bearerToken: undefined,
@@ -72,43 +72,11 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				anchorFmPodcastId: null,
 				anchorFmEpisodeId: null,
 				anchorFmSpotifyUrl: null,
-			} )
-			.then( ( newSite ) => {
-				const planObject = supportedPlans.find( ( plan ) => plan.productIds.indexOf( planId as number ) >= 0 );
-				if ( ! planObject ) {
-					///@todo whatever
-					return;
-				}
-				console.log( 'We have the plan object !' );
-				addPlanToCart(
-					() => {
-						submit?.( { newSite } );
-					},
-					{},
-					{ cartItem: { product_slug: planObject.periodAgnosticSlug } },
-					store
+			} ).then( ( newSite ) => {
+				const planObject = supportedPlans.find(
+					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
 				);
-				/*
-				const productSlug = getDomainProductSlug( domain );
-				const domainItem = domainRegistration( { productSlug, domain: domain!.domain_name } );
-
-				addDomainToCart(
-					( error: any ) => {
-						if (error) {
-							///@todo whatever
-							return;
-						}
-
-						const planObject = supportedPlans.find( ( plan ) => planId as number in plan.productIds );
-						if ( ! planObject ) {
-							///@todo whatever
-							return;
-						}
-
-						
-					},
-					{ domainItem }
-				);*/
+				submit?.( { newSite, planObject, planId, domain } );
 			} );
 		};
 

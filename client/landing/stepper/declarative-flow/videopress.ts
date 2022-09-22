@@ -26,7 +26,7 @@ export const videopress: Flow = {
 			'chooseAPlan',
 			'completingPurchase',
 			'processing',
-			'launchpad'
+			'launchpad',
 		] as StepPath[];
 	},
 
@@ -65,11 +65,13 @@ export const videopress: Flow = {
 					return navigate( 'chooseAPlan' );
 
 				case 'chooseAPlan':
-					const { newSite } = providedDependencies;
-					console.log( newSite );
+					const { planObject, domain } = providedDependencies;
+					const siteSlug = domain.domain_name;
+					const { periodAgnosticSlug } = planObject;
 
-					return window.location.replace( '/checkout/' + siteSlug );
-					//return navigate( 'completingPurchase' );
+					return window.location.replace(
+						`/checkout/${ siteSlug }/${ periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+					);
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
