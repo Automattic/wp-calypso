@@ -12,4 +12,3 @@ export {
 } from './use-sites-list-sorting';
 export type { SitesSortOptions, SitesSortKey, SitesSortOrder } from './use-sites-list-sorting';
 export { getSiteLaunchStatus, useSiteLaunchStatusLabel } from './site-status';
-export { SitesTabPanel } from './sites-tab-panel';
