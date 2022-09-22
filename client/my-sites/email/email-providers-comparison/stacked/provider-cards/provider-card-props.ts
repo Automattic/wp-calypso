@@ -14,7 +14,6 @@ export interface ProviderCardProps {
 	formFields?: ReactElement;
 	logo?: ReactElement | { path: string; className?: string };
 	onExpandedChange?: ( providerKey: string, expanded: boolean ) => void;
-	overrideToggleSelectorOnClick?: ( () => void ) | null;
 	priceBadge?: ReactElement | TranslateResult | null;
 	productName: TranslateResult;
 	providerKey: string;
