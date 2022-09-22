@@ -73,6 +73,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			<div className="plans">
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
+					showFAQ={ false }
 					site={ selectedSite }
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
