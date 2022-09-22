@@ -1,9 +1,72 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .plugin-plans-header {
 	.formatted-header__title {
 		font-size: $font-title-large;
 	}
 	.formatted-header__subtitle {
 		font-size: $font-body;
+	}
+}
+
+.promo-section {
+	.promo-section__promos {
+		overflow: auto;
+		white-space: nowrap;
+		max-width: 820px;
+		margin: auto;
+		margin-top: 50px;
+		margin-bottom: 50px;
+		display: block;
+
+		@media (max-width: 480px) {
+			padding-left: 20px;
+		}
+
+		.action-panel__figure.align-left {
+			float: none;
+		}
+
+		.action-panel__figure {
+			float: none;
+		}
+
+		.promo-card {
+			box-shadow: none;
+			padding-left: 0;
+			padding-right: 0;
+			width: 255px;
+			display: inline-block;
+			vertical-align: top;
+
+
+			.action-panel__figure {
+				text-align: left;
+			}
+
+			.action-panel__title {
+				font-weight: normal;
+				font-size: $font-body;
+				color: var(--studio-gray-100);
+
+			}
+
+			.gridicon {
+				height: 25px;
+				width: 25px;
+				padding: 10px;
+				background: #f0f7fc;
+				border-radius: 8px; /* stylelint-disable-line scales/radii */
+			}
+
+			.action-panel__body {
+				font-size: $font-body-small;
+
+				p {
+					white-space: pre-wrap;
+				}
+			}
+		}
 	}
 }
 
