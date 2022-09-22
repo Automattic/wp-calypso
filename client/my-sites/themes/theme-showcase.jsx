@@ -234,15 +234,6 @@ class ThemeShowcase extends Component {
 		this.setState( { tabFilter }, callback );
 	};
 
-	getExpertsBanner = () => {
-		const { currentThemeId, loggedOutComponent, siteId, isLoggedIn } = this.props;
-		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
-		if ( loggedOutComponent || ! showBanners ) {
-			return;
-		}
-		return <UpworkBanner location={ 'theme-banner' } />;
-	};
-
 	renderBanner = () => {
 		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
 
