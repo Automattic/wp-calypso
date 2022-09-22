@@ -1,6 +1,28 @@
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
-import LinkCardSection from './link-card-section';
-import StaticInfoSection from './static-info-section';
+import { useI18n } from '@wordpress/react-i18n';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import FeatureItem from 'calypso/components/feature-item';
+import LinkCard from 'calypso/components/link-card';
+import Section from 'calypso/components/section';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+
+const ThreeColumnContainer = styled.div`
+	@media ( max-width: 960px ) {
+		grid-template-columns: repeat( 1, 1fr );
+	}
+
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
+	}
+
+	display: grid;
+	grid-template-columns: repeat( 3, 1fr );
+	column-gap: 29px;
+	row-gap: 10px;
+`;
 
 const EducationFooterContainer = styled.div`
 	margin-top: 48px;
@@ -36,6 +58,19 @@ export const MarketplaceFooter = () => {
 };
 
 const EducationFooter = () => {
+	const { __ } = useI18n();
+	const localizeUrl = useLocalizeUrl();
+	const dispatch = useDispatch();
+
+	const onClickLinkCard = useCallback(
+		( content_type: string ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_plugins_educational_content_click', { content_type } )
+			);
+		},
+		[ dispatch ]
+	);
+
 	return (
 		<EducationFooterContainer>
 			<Section
