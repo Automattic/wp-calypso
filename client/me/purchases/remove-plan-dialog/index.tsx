@@ -14,6 +14,8 @@ interface RemovePlanDialogProps {
 	isDialogVisible: boolean;
 	isRemoving: boolean;
 	site: SiteExcerptData;
+	hasDomain: boolean;
+	wpcomSiteURL: string;
 }
 
 export const RemovePlanDialog = ( {
@@ -21,6 +23,8 @@ export const RemovePlanDialog = ( {
 	removePlan,
 	isDialogVisible,
 	site,
+	hasDomain,
+	wpcomSiteURL,
 }: RemovePlanDialogProps ) => {
 	const translate = useTranslate();
 	const siteName = site.name ?? '';
@@ -30,7 +34,7 @@ export const RemovePlanDialog = ( {
 	 */
 	const buttons = [
 		{
-			action: 'removePlan',
+			action: 'remove',
 			label: translate( 'Cancel my plan' ),
 			onClick: removePlan,
 		},
@@ -52,6 +56,10 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
+	const subTitle =
+		hasDomain && wpcomSiteURL
+			? translate( 'If you cancel your plan, once it expires, you will lose:' )
+			: translate( 'If you cancel your plan, you will lose:' );
 
 	/**
 	 * Return the list of features that the user will lose by canceling their plan.
@@ -60,12 +68,12 @@ export const RemovePlanDialog = ( {
 	 */
 	const FeaturesList = () => {
 		if ( typeof productSlug === 'string' ) {
-			const planFeatures = getPlanFeatures( productSlug );
+			const planFeatures = getPlanFeatures( productSlug, hasDomain, wpcomSiteURL );
 
 			if ( planFeatures.length > 0 ) {
 				return (
 					<Fragment>
-						<p>{ translate( 'If you cancel your plan, you will lose:' ) }</p>
+						<p>{ subTitle }</p>
 						<ul className="remove-plan-dialog__list-plan-features">
 							{ planFeatures.map( ( feature, index ) => {
 								return (

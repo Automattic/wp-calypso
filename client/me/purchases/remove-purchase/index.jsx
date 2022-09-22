@@ -23,6 +23,7 @@ import PrecancellationChatButton from 'calypso/components/marketing-survey/cance
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getName, isRemovable } from 'calypso/lib/purchases';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -230,12 +231,15 @@ class RemovePurchase extends Component {
 
 	renderPlanWarningDialog() {
 		const { site } = this.props;
+
 		return (
 			<RemovePlanDialog
 				isDialogVisible={ this.state.isShowingRemovePlanWarning }
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
+				hasDomain={ hasCustomDomain }
+				wpcomSiteURL={ site.wpcom_url }
 			/>
 		);
 	}
