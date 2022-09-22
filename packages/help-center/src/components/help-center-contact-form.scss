@@ -215,3 +215,20 @@ section.contact-form-submit {
 		fill: currentColor;
 	}
 }
+
+.help-center-contact-form__site-picker-forum-privacy-popover {
+	display: inline-block;
+	max-width: 200px;
+	padding: 5px;
+}
+
+.help-center-contact-form__site-picker-forum-privacy-info {
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+}
+
+.help-center-contact-form__site-picker-privacy-popover {
+	z-index: 10000;
+}
