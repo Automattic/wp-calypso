@@ -30,7 +30,6 @@
 	"oauth_client_id": false,
 	"protocol": "http",
 	"port": 3000,
-	"happychat_url": "https://happychat.io/customer",
 	"jetpack_support_blog": "jetpackme.wordpress.com",
 	"wpcom_support_blog": "en.support.wordpress.com",
 	"apple_pay_merchant_id": "merchant.com.wordpress",

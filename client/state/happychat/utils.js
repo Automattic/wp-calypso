@@ -38,9 +38,10 @@ export const getHappychatAuth = ( state ) => () => {
 	return startSession()
 		.then( ( { url, session_id, geo_location } ) => {
 			happychatUser.geoLocation = geo_location;
-			const { jwt } = sign( { user, session_id } );
-
-			return { url, user: { jwt, ...happychatUser } };
+			return sign( { user, session_id } ).then( ( signResponse ) => {
+				return { url, ...signResponse };
+			} );
 		} )
+		.then( ( { url, jwt } ) => ( { url, user: { jwt, ...happychatUser } } ) )
 		.catch( ( e ) => Promise.reject( 'Failed to start an authenticated Happychat session: ' + e ) );
 };

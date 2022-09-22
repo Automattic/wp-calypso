@@ -10,6 +10,10 @@ export interface GeoLocation {
 	city: string;
 }
 
+export interface Jwt {
+	jwt: string;
+}
+
 export interface HappychatSession {
 	session_id: number;
 	geo_location: GeoLocation;
