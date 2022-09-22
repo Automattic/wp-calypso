@@ -8,7 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
-import { getHostingConfigUrl, getManagePluginsUrl, getPluginsUrl, getSettingsUrl } from '../utils';
+import {
+	getHostingConfigUrl,
+	getManagePluginsUrl,
+	getPluginsUrl,
+	getSettingsUrl,
+	isNotAtomicJetpack,
+} from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SitesMenuItemProps {
@@ -146,7 +152,6 @@ export const SitesEllipsisMenu = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
-	const isNotAtomicJetpack = site.jetpack && ! site?.is_wpcom_atomic;
 	const props: SitesMenuItemProps = {
 		site,
 		recordTracks: ( eventName, extraProps = {} ) => {
@@ -165,7 +170,7 @@ export const SitesEllipsisMenu = ( {
 					{ site.launch_status === 'unlaunched' && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					<ManagePluginsItem { ...props } />
-					{ ! isNotAtomicJetpack && <HostingConfigItem { ...props } /> }
+					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
 					<WpAdminItem { ...props } />
 				</SiteMenuGroup>
 			) }
