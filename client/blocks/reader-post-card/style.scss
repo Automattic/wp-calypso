@@ -133,6 +133,10 @@
 
 	.reader-post-actions {
 		margin: 10px 0 0;
+
+		svg:hover path {
+			stroke: var(--color-link);
+		}
 	}
 
 	&.is-compact {
@@ -523,6 +527,7 @@
 			height: 18px;
 			width: 18px;
 			display: inline-block;
+			margin-right: 5px;
 			vertical-align: top;
 		}
 	}

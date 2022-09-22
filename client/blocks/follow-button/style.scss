@@ -3,6 +3,7 @@ $follow-button-gray-disabled: var(--color-neutral-10);
 .follow-button,
 button.follow-button {
 	border: 0;
+	display: flex;
 	padding: 0;
 
 	.gridicons-reader-follow {
@@ -11,7 +12,8 @@ button.follow-button {
 	}
 
 	.follow-button__label {
-		color: var(--color-primary);
+		color: var( --color-primary );
+		margin-left: 5px
 	}
 
 	&:hover {

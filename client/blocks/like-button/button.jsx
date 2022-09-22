@@ -20,6 +20,7 @@ class LikeButton extends PureComponent {
 		animateLike: PropTypes.bool,
 		postId: PropTypes.number,
 		slug: PropTypes.string,
+		icon: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -31,6 +32,7 @@ class LikeButton extends PureComponent {
 		animateLike: true,
 		postId: null,
 		slug: null,
+		icon: null,
 	};
 
 	constructor( props ) {
@@ -58,6 +60,7 @@ class LikeButton extends PureComponent {
 			translate,
 			onMouseEnter,
 			onMouseLeave,
+			icon,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -100,6 +103,7 @@ class LikeButton extends PureComponent {
 			</span>
 		);
 
+		const likeIcons = icon || <LikeIcons size={ this.props.iconSize } />;
 		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
 		return createElement(
 			containerTag,
@@ -113,7 +117,7 @@ class LikeButton extends PureComponent {
 				},
 				( prop ) => prop === null
 			),
-			<LikeIcons size={ this.props.iconSize } />,
+			likeIcons,
 			labelElement
 		);
 	}

@@ -13,10 +13,6 @@
 		color: var(--color-primary);
 	}
 
-	.comment-button__label-count {
-		margin-right: 4px;
-	}
-
 	.comment-button__label-status {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
@@ -26,10 +22,17 @@
 
 .comment-button__label {
 	font-size: $font-body-small;
-	margin-left: 4px;
+	margin-left: -1px;
+	position: relative;
 
 	&:empty {
 		display: none;
+	}
+
+	.comment-button__label-count {
+		margin-right: 4px;
+		position: relative;
+		top: 1px;
 	}
 }
 

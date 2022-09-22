@@ -6,15 +6,14 @@
 
 .reader-feed-header__seen-button {
 	cursor: pointer;
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
+	display: flex;
+	position: relative;
 
 	svg {
 		display: inline-block;
-		top: 4px;
 		margin-right: 6px;
-		width: 18px;
-		position: relative;
-		color: var(--color-neutral-20);
+		color: var( --color-neutral-20 );
 	}
 
 	&:disabled {
@@ -113,6 +112,7 @@
 	}
 
 	.reader-feed-header__follow-and-settings {
+		align-items: flex-start;
 		display: flex;
 		flex-direction: row;
 		justify-content: center;
@@ -221,6 +221,8 @@
 }
 
 .reader-feed-header__seen-button .reader-feed-header__visibility {
+	position: relative;
+	top: 2px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		display: none;

@@ -145,7 +145,7 @@ class FeedHeader extends Component {
 									className="reader-feed-header__seen-button"
 									disabled={ feed.unseen_count === 0 }
 								>
-									<Gridicon icon="visible" size={ 18 } />
+									<Gridicon icon="visible" size={ 22 } />
 									<span
 										className="reader-feed-header__visibility"
 										title={ translate( 'Mark all as seen' ) }
