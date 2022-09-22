@@ -1,10 +1,10 @@
+export { useSitesListFiltering, SITES_SEARCH_INDEX_KEYS } from './use-sites-list-filtering';
 export {
-	useSitesListFiltering,
-	siteLaunchStatusFilterValues,
-	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
-	SITES_SEARCH_INDEX_KEYS,
-} from './use-sites-list-filtering';
-export type { FilterableSiteLaunchStatuses } from './use-sites-list-filtering';
+	useSitesListGrouping,
+	siteLaunchStatusGroupValues,
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
+} from './use-sites-list-grouping';
+export type { GroupableSiteLaunchStatuses } from './use-sites-list-grouping';
 export {
 	useSitesListSorting,
 	isValidSorting,

@@ -1,4 +1,4 @@
-import { FilterableSiteLaunchStatuses, useSitesListFiltering } from '@automattic/sites';
+import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,7 +16,7 @@ export interface SitesDashboardQueryParams {
 	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
-	status?: FilterableSiteLaunchStatuses;
+	status?: GroupableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
@@ -77,7 +77,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	},
 } );
 
-type Statuses = ReturnType< typeof useSitesListFiltering >[ 'statuses' ];
+type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;

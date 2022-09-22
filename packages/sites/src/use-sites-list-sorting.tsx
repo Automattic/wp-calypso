@@ -44,24 +44,20 @@ export interface SitesSortOptions {
 	sortOrder?: SitesSortOrder;
 }
 
-interface UseSitesSortingResult< T extends SiteDetailsForSorting > {
-	sortedSites: T[];
-}
-
 export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	allSites: T[],
 	{ sortKey, sortOrder = 'asc' }: SitesSortOptions
-): UseSitesSortingResult< T > {
+) {
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return { sortedSites: sortSitesByLastInteractedWith( allSites, sortOrder ) };
+				return sortSitesByLastInteractedWith( allSites, sortOrder );
 			case 'alphabetically':
-				return { sortedSites: sortSitesAlphabetically( allSites, sortOrder ) };
+				return sortSitesAlphabetically( allSites, sortOrder );
 			case 'updatedAt':
-				return { sortedSites: sortSitesByLastPublish( allSites, sortOrder ) };
+				return sortSitesByLastPublish( allSites, sortOrder );
 			default:
-				return { sortedSites: allSites };
+				return allSites;
 		}
 	}, [ allSites, sortKey, sortOrder ] );
 }
@@ -219,7 +215,7 @@ type SitesSortingProps = {
 export const withSitesListSorting = createHigherOrderComponent(
 	< OuterProps extends SitesSortingProps >( Component: React.ComponentType< OuterProps > ) => {
 		return ( props: OuterProps ) => {
-			const { sortedSites: sites } = useSitesListSorting( props.sites, props.sitesSorting );
+			const sites = useSitesListSorting( props.sites, props.sitesSorting );
 
 			return <Component { ...props } sites={ sites } />;
 		};

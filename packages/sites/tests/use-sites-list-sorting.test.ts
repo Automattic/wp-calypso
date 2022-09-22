@@ -66,10 +66,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].ID ).toBe( 1 );
-		expect( result.current.sortedSites[ 1 ].ID ).toBe( 2 );
-		expect( result.current.sortedSites[ 2 ].ID ).toBe( 3 );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].ID ).toBe( 1 );
+		expect( result.current[ 1 ].ID ).toBe( 2 );
+		expect( result.current[ 2 ].ID ).toBe( 3 );
 	} );
 
 	test( 'should sort sites alphabetically ascending', () => {
@@ -80,10 +80,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'A' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'C' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'C' );
 	} );
 
 	test( 'should sort sites alphabetically descending', () => {
@@ -94,10 +94,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'C' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'A' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'C' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'A' );
 	} );
 
 	test( 'should sort sites by last interaction descending', () => {
@@ -108,10 +108,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'A' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'C' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'C' );
 	} );
 
 	test( 'should sort sites by last interaction ascending', () => {
@@ -122,10 +122,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'C' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'A' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'C' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'A' );
 	} );
 
 	test( 'should pick the site more frequently interacted with ascending', () => {
@@ -135,10 +135,10 @@ describe( 'useSitesSorting', () => {
 				sortOrder: 'asc',
 			} )
 		);
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'A' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'C' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'C' );
 	} );
 
 	test( 'should pick the site more frequently interacted with descending', () => {
@@ -148,10 +148,10 @@ describe( 'useSitesSorting', () => {
 				sortOrder: 'desc',
 			} )
 		);
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].title ).toBe( 'C' );
-		expect( result.current.sortedSites[ 1 ].title ).toBe( 'B' );
-		expect( result.current.sortedSites[ 2 ].title ).toBe( 'A' );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'C' );
+		expect( result.current[ 1 ].title ).toBe( 'B' );
+		expect( result.current[ 2 ].title ).toBe( 'A' );
 	} );
 
 	test( 'should sort sites by updatedAt descending', () => {
@@ -162,10 +162,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].ID ).toBe( 2 );
-		expect( result.current.sortedSites[ 1 ].ID ).toBe( 3 );
-		expect( result.current.sortedSites[ 2 ].ID ).toBe( 1 );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].ID ).toBe( 2 );
+		expect( result.current[ 1 ].ID ).toBe( 3 );
+		expect( result.current[ 2 ].ID ).toBe( 1 );
 	} );
 
 	test( 'should sort sites by updatedAt ascending', () => {
@@ -176,10 +176,10 @@ describe( 'useSitesSorting', () => {
 			} )
 		);
 
-		expect( result.current.sortedSites.length ).toBe( 3 );
-		expect( result.current.sortedSites[ 0 ].ID ).toBe( 1 );
-		expect( result.current.sortedSites[ 1 ].ID ).toBe( 3 );
-		expect( result.current.sortedSites[ 2 ].ID ).toBe( 2 );
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].ID ).toBe( 1 );
+		expect( result.current[ 1 ].ID ).toBe( 3 );
+		expect( result.current[ 2 ].ID ).toBe( 2 );
 	} );
 
 	test( 'sorting maintains object equality', () => {
@@ -195,31 +195,31 @@ describe( 'useSitesSorting', () => {
 			}
 		);
 
-		expect( result.current.sortedSites ).toHaveLength( 3 );
-		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 0 ] );
-		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 2 ] );
-		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current[ 1 ] ).toBe( filteredSites[ 2 ] );
+		expect( result.current[ 2 ] ).toBe( filteredSites[ 1 ] );
 
 		rerender( { sortKey: 'updatedAt', sortOrder: 'desc' } );
 
 		// A (1) -> C (2) -> B (0)
-		expect( result.current.sortedSites ).toHaveLength( 3 );
-		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
-		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 2 ] );
-		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current[ 1 ] ).toBe( filteredSites[ 2 ] );
+		expect( result.current[ 2 ] ).toBe( filteredSites[ 0 ] );
 
 		// A (1) -> B (0) -> C (2)
 		rerender( { sortKey: 'alphabetically', sortOrder: 'asc' } );
-		expect( result.current.sortedSites ).toHaveLength( 3 );
-		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
-		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 0 ] );
-		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 2 ] );
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current[ 1 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current[ 2 ] ).toBe( filteredSites[ 2 ] );
 
 		// A (1) -> B (0) -> C (2)
 		rerender( { sortKey: 'lastInteractedWith', sortOrder: 'desc' } );
-		expect( result.current.sortedSites ).toHaveLength( 3 );
-		expect( result.current.sortedSites[ 0 ] ).toBe( filteredSites[ 1 ] );
-		expect( result.current.sortedSites[ 1 ] ).toBe( filteredSites[ 0 ] );
-		expect( result.current.sortedSites[ 2 ] ).toBe( filteredSites[ 2 ] );
+		expect( result.current ).toHaveLength( 3 );
+		expect( result.current[ 0 ] ).toBe( filteredSites[ 1 ] );
+		expect( result.current[ 1 ] ).toBe( filteredSites[ 0 ] );
+		expect( result.current[ 2 ] ).toBe( filteredSites[ 2 ] );
 	} );
 } );

@@ -1,6 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
-import { useSitesListFiltering, useSitesListSorting } from '@automattic/sites';
+import {
+	useSitesListGrouping,
+	useSitesListFiltering,
+	useSitesListSorting,
+} from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -142,12 +146,16 @@ export function SitesDashboard( {
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
 
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { sortedSites } = useSitesListSorting( allSites, sitesSorting );
 
-	const { filteredSites, statuses } = useSitesListFiltering( sortedSites, {
-		search,
+	const { statuses, currentStatusGroup } = useSitesListGrouping( allSites, {
 		showHidden: search ? true : showHidden,
 		status,
+	} );
+
+	const sortedSites = useSitesListSorting( currentStatusGroup, sitesSorting );
+
+	const filteredSites = useSitesListFiltering( sortedSites, {
+		search,
 	} );
 
 	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
