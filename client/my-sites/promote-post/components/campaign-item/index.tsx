@@ -17,7 +17,7 @@ import {
 	getCampaignBudgetData,
 	getCampaignClickthroughRate,
 	getCampaignDurationFormatted,
-	getCampaignEstimatedReach,
+	getCampaignEstimatedImpressions,
 	getCampaignOverallSpending,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -49,8 +49,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		end_date,
 		budget_cents,
 		audience_list,
-		impressions_estimated_total,
-		deliver_margin_multiplier,
+		display_delivery_estimate,
 		display_name,
 	} = campaign;
 
@@ -60,8 +59,8 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const clickthroughRate = useMemo(
-		() => getCampaignClickthroughRate( clicks_total, impressions_total ),
-		[ clicks_total || 0, impressions_total ]
+		() => getCampaignClickthroughRate( clicks_total || 0, impressions_total || 0 ),
+		[ clicks_total, impressions_total ]
 	);
 
 	const durationFormatted = useMemo(
@@ -75,9 +74,9 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';
 
-	const estimatedReach = useMemo(
-		() => getCampaignEstimatedReach( impressions_estimated_total, deliver_margin_multiplier ),
-		[ impressions_estimated_total, deliver_margin_multiplier ]
+	const estimatedImpressions = useMemo(
+		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
+		[ display_delivery_estimate ]
 	);
 
 	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
@@ -183,7 +182,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								{ impressions_total || 0 }
+								{ impressions_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
@@ -191,7 +190,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total || 0 }
+								{ clicks_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -237,10 +236,10 @@ export default function CampaignItem( { campaign }: Props ) {
 					<div className="campaign-item__row campaign-item__goal-row2">
 						<div className="campaign-item__column campaign-item__estimated-reach">
 							<div className="campaign-item__block_label campaign-item__estimated-reach-label">
-								{ __( 'Estimated reach' ) }
+								{ __( 'Estimated impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__estimated-reach-value">
-								{ estimatedReach }
+								{ estimatedImpressions }
 							</div>
 						</div>
 

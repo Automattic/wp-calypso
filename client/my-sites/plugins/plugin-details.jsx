@@ -69,6 +69,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
 import usePreinstalledPremiumPlugin from './use-preinstalled-premium-plugin';
 
@@ -313,13 +314,11 @@ function PluginDetails( props ) {
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
-
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-
 			{ isSiteConnected === false && (
 				<Notice
 					icon="notice"
@@ -338,7 +337,6 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout">
 					<div className="plugin-details__header">
@@ -385,6 +383,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }

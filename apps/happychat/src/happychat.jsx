@@ -150,7 +150,7 @@ export default function Happychat( { auth } ) {
 	};
 	return (
 		<div className="happychat__container">
-			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } />
+			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } isHappychatEnabled />
 			<ParentConnection
 				connectionStatus={ connectionStatus }
 				timeline={ timeline }

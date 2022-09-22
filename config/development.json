@@ -23,7 +23,6 @@
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
-	"happychat_url": "https://happychat-io-staging.go-vip.co/customer",
 	"olark_chat_identity": "7089-503-10-5123",
 	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
