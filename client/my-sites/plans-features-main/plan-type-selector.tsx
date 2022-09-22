@@ -259,9 +259,11 @@ const IntervalTypeToggleWrapper = styled.div< { showingMonthly: boolean; isInSig
 	align-content: space-between;
 
 	> .segmented-control.is-compact:not( .is-signup ) {
-		margin: 8px 16px 16px;
+		margin: 8px auto 16px;
 		max-width: 480px;
-
+		@media screen and ( max-width: 960px ) {
+			margin: 8px 16px 16px;
+		}
 		.segmented-control__link {
 			padding: 8px 12px;
 		}
