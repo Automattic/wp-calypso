@@ -201,7 +201,7 @@ export class AppBanner extends Component {
 		const { title, copy } = getAppBannerData( translate, currentSection );
 
 		// This conditional will be unnecessary once the 'jetpack/app-branding'
-		// feature flag is removed and its features re made the default
+		// feature flag is removed and its features are made the default
 		// experience, as getAppBannerData will then not include conditionals.
 		if ( ! title || ! copy ) {
 			return null;
