@@ -216,7 +216,10 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		if ( ! this.props.isWoo && ! this.props.hasAccountTypeLoaded ) {
+		const isWooAndNotPartnerSignup = this.props.isWoo && ! this.props.isPartnerSignup;
+
+		// Skip this step if we're in the Woo and not the partner signup flow, and hasAccountTypeLoaded.
+		if ( ! isWooAndNotPartnerSignup && ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
