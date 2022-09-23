@@ -17,9 +17,9 @@ const ReaderExcerpt = ( { post } ) => {
 		if ( paragraph.length !== 0 ) {
 			// Remove paragraph closing tag
 			let p = paragraph.replaceAll( '</p>', '' );
-			// Remove any newline chars
+			// Clean up any newline chars
 			p = p.replaceAll( '\n', '' );
-			// Replace <br> and \n with break tag
+			// Replace <br> tags with proper break tag
 			p = p.replaceAll( '<br>', '<br />' );
 
 			// Now split this text into lines based on break tags
