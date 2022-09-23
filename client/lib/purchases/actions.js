@@ -25,6 +25,25 @@ export function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	);
 }
 
+export async function cancelPurchaseAsync( purchaseId ) {
+	try {
+		const data = await wpcom.req.post( `/upgrades/${ purchaseId }/disable-auto-renew` );
+		debug( null, data );
+		return data.success;
+	} catch ( error ) {
+		debug( error, null );
+		return false;
+	}
+}
+
+export async function cancelAndRefundPurchaseAsync( purchaseId, data ) {
+	return wpcom.req.post( {
+		path: `/purchases/${ purchaseId }/cancel`,
+		body: data,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
 export const submitSurvey = ( surveyName, siteId, surveyData ) => ( dispatch ) => {
 	return wpcom.req
 		.post( '/marketing/survey', {
