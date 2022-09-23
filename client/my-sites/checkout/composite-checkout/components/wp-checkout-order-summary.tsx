@@ -157,7 +157,7 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
 }
 
-function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
+function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 
 	const refundPolicies = getRefundPolicies( cart );
@@ -176,7 +176,7 @@ function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
 			refundPolicy === RefundPolicy.PlanBiennial
 	);
 
-	const everyRefundWindowIsForDomainOrPlan =
+	const everyRefundPolicyIsForDomainOrPlan =
 		refundPolicies.length === 2 && domainRefundWindow && planRefundWindow;
 
 	let text: TranslateResult = translate( 'Limited money back guarantee', {
@@ -184,7 +184,7 @@ function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
 			'The user is eligible for a refund during an unspecified time period after the purchase',
 	} );
 
-	if ( everyRefundWindowIsForDomainOrPlan ) {
+	if ( everyRefundPolicyIsForDomainOrPlan ) {
 		const [ refundWindow ] = getRefundWindows( [ planRefundWindow ] );
 
 		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
@@ -260,7 +260,7 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			<CheckoutSummaruRefundWindows cart={ responseCart } />
+			<CheckoutSummaryRefundWindows cart={ responseCart } />
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
