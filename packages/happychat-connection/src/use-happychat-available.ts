@@ -45,7 +45,7 @@ export function useHappychatAvailable( enabled = true ) {
 		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
 		{
 			enabled: ! isLoadingAuth && !! dataAuth && enabled,
-			staleTime: Infinity,
+			staleTime: 2 * 60 * 1000, // 2 minutes
 		}
 	);
 }
