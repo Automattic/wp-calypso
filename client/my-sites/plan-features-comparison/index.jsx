@@ -55,7 +55,8 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate, isFAQCondensedExperiment } = this.props;
+		const { isInSignup, planProperties, translate, isFAQCondensedExperiment, customRender } =
+			this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -79,7 +80,7 @@ export class PlanFeaturesComparison extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									<tr>{ this.renderTopButtons() }</tr>
+									<tr>{ customRender?.topButtons || this.renderTopButtons() }</tr>
 									{ isFAQCondensedExperiment
 										? this.renderPlanFeatureRowsTest()
 										: this.renderPlanFeatureRows() }

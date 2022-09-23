@@ -87,7 +87,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 	getAnnualDiscount() {
 		const { isMonthlyPlan, rawPriceForMonthlyPlan, annualPricePerMonth, translate } = this.props;
 
-		if ( ! isMonthlyPlan ) {
+		if ( ! isMonthlyPlan && annualPricePerMonth ) {
 			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';
 
 			const discountRate = Math.round(
