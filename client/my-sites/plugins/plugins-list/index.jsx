@@ -661,7 +661,7 @@ export class PluginsList extends Component {
 	}
 
 	getPlugins() {
-		return this.props.plugins.map( ( plugin ) => {
+		const plugins = this.props.plugins.map( ( plugin ) => {
 			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 			const allowedPluginActions = this.getAllowedPluginActions( plugin );
 			const isSelectable =
@@ -673,6 +673,15 @@ export class PluginsList extends Component {
 				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
 			};
 		} );
+
+		// Plugins which require an update sort first, otherwise the original order is kept.
+		plugins.sort( ( a, b ) => {
+			const updateA = !! a.update;
+			const updateB = !! b.update;
+			return Number( updateB ) - Number( updateA );
+		} );
+
+		return plugins;
 	}
 
 	getAllowedPluginActions( plugin ) {
