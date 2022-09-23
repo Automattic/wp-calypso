@@ -14,6 +14,7 @@ import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -35,13 +36,20 @@ import './style.scss';
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( selectedSiteId ) {
 		analyticsPath += '/:site';
 	}
 
 	if ( trackPageViews ) {
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		return (
+			<PageViewTracker
+				path={ analyticsPath }
+				title={ analyticsPageTitle }
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+		);
 	}
 
 	return null;
