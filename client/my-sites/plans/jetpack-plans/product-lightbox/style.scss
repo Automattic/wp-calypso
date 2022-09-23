@@ -315,6 +315,36 @@
 	}
 }
 
+.product-lightbox__variants-plan-card-price,
+.product-lightbox__variants-plan-card-old-price {
+	h4 {
+		display: inherit;
+	}
+	.plan-price__fraction {
+		font-weight: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+	.plan-price__integer {
+		margin: 0;
+		font-weight: inherit;
+	}
+	.plan-price__currency-symbol {
+		color: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+	.plan-price.is-original::before {
+		content: none;
+	}
+	.plan-price {
+		margin: 0 0.2rem 0 0;
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+	}
+}
+
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
