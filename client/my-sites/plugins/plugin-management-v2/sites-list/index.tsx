@@ -15,7 +15,7 @@ interface Props {
 	renderActions?: ( args: any ) => ReactElement;
 }
 
-export default function SitesList( { selectedSite, plugin, ...rest }: Props ): ReactElement {
+export default function SitesList( { selectedSite, plugin, ...rest }: Props ) {
 	const dispatch = useDispatch();
 
 	const rowFormatter = ( { item, ...rest }: SiteRowFormatterArgs ) => {

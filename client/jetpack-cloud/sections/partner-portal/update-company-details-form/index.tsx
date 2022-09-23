@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -12,7 +12,7 @@ import { translateInvalidPartnerParameterError } from 'calypso/state/partner-por
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import type { APIError } from 'calypso/state/partner-portal/types';
 
-export default function UpdateCompanyDetailsForm(): ReactElement {
+export default function UpdateCompanyDetailsForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );

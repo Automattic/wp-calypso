@@ -1,5 +1,4 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { ReactElement } from 'react';
 import Card from '../card';
 import InfoLabel from '../info-label';
 
@@ -11,7 +10,7 @@ type DomainEligibilityWarningProps = {
 const DomainEligibilityWarning = ( {
 	wpcomDomain,
 	stagingDomain,
-}: DomainEligibilityWarningProps ): ReactElement => (
+}: DomainEligibilityWarningProps ) => (
 	<Card title={ __( 'Domain change required' ) }>
 		<InfoLabel label={ __( 'New' ) }>{ stagingDomain }</InfoLabel>
 		<p>

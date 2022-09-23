@@ -3,7 +3,6 @@ import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -15,7 +14,7 @@ interface BillingIntervalToggleProps {
 export const BillingIntervalToggle = ( {
 	intervalLength,
 	onIntervalChange,
-}: BillingIntervalToggleProps ): ReactElement => {
+}: BillingIntervalToggleProps ) => {
 	const translate = useTranslate();
 	const [ payAnnuallyButtonRef, setPayAnnuallyButtonRef ] = useState< HTMLSpanElement | null >(
 		null

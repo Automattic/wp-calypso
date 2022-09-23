@@ -8,7 +8,7 @@ type PriceBadgeProps = {
 	priceInformation?: ReactElement;
 };
 
-const PriceBadge = ( { price, priceInformation }: PriceBadgeProps ): ReactElement => (
+const PriceBadge = ( { price, priceInformation }: PriceBadgeProps ) => (
 	<div className="price-badge">
 		<PromoCardPrice formattedPrice={ price } additionalPriceInformation={ priceInformation } />
 	</div>

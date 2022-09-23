@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import type { Header } from '../types';
-import type { ReactElement } from 'react';
 
 export function ArticleTitle() {
 	const location = useLocation();
@@ -19,7 +18,7 @@ export function ArticleTitle() {
 	);
 }
 
-const SupportModeTitle = (): ReactElement => {
+const SupportModeTitle = () => {
 	const { __ } = useI18n();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -44,12 +43,7 @@ const SupportModeTitle = (): ReactElement => {
 		}
 	}
 };
-const HelpCenterHeader: React.FC< Header > = ( {
-	isMinimized = false,
-	onMinimize,
-	onMaximize,
-	onDismiss,
-} ) => {
+const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
 	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();

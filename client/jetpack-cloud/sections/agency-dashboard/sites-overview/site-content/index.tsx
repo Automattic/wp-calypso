@@ -7,7 +7,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { formatSites, siteColumns } from '../utils';
-import type { ReactElement } from 'react';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -22,7 +21,7 @@ interface Props {
 	currentPage: number;
 }
 
-export default function SiteContent( { data, isLoading, currentPage }: Props ): ReactElement {
+export default function SiteContent( { data, isLoading, currentPage }: Props ) {
 	const isMobile = useMobileBreakpoint();
 
 	const sites = formatSites( data?.sites );
