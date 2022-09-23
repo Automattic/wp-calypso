@@ -137,6 +137,13 @@
 
 .launchpad__progress-bar-container {
 	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {
