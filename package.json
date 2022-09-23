@@ -190,7 +190,10 @@
 		"calypso-codemods": "workspace:^",
 		"config": "^3.3.6",
 		"debug": "^4.3.3",
+		"dom-serializer": "^2.0.0",
+		"domutils": "^3.0.1",
 		"enhanced-resolve": "5.9.3",
+		"htmlparser2": "^8.0.1",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"lodash": "^4.17.21",
@@ -293,7 +296,8 @@
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"@types/react": "^17.0.39",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
-		"lzma-native": "^8.0.5"
+		"lzma-native": "^8.0.5",
+		"domelementtype": "^2.3.0"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
