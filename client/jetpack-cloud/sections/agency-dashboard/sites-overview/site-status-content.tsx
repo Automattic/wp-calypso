@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { ReactElement, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
@@ -22,7 +22,7 @@ export default function SiteStatusContent( {
 	type,
 	isLargeScreen = false,
 	isFavorite = false,
-}: Props ): ReactElement {
+}: Props ) {
 	const dispatch = useDispatch();
 
 	const {

@@ -3,7 +3,7 @@ import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
-import React, { FormEvent, ReactElement, useState } from 'react';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -73,7 +73,7 @@ const EditEmail: Step = function EditEmail( { navigation } ) {
 							value={ email }
 							name="email"
 							id="email"
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
+							onChange={ ( e: ChangeEvent< HTMLInputElement > ) => {
 								setErrors( {} as Record< FormFields, string > );
 								setEmail( e.target.value );
 							} }
@@ -125,7 +125,7 @@ const EditEmail: Step = function EditEmail( { navigation } ) {
 	);
 };
 
-function ControlError( { error }: { error: string } ): ReactElement | null {
+function ControlError( { error }: { error: string } ) {
 	if ( error ) {
 		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
 	}

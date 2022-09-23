@@ -1,6 +1,6 @@
 import PluginCommonTable from '../plugin-common/plugin-common-table';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface Props {
 	isLoading: boolean;
@@ -11,6 +11,6 @@ interface Props {
 	primaryKey: string;
 }
 
-export default function PluginsTable( props: Props ): ReactElement {
+export default function PluginsTable( props: Props ) {
 	return <PluginCommonTable { ...props } />;
 }

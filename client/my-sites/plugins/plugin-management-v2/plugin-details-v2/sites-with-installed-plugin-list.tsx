@@ -6,7 +6,6 @@ import RemovePlugin from '../remove-plugin';
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -22,7 +21,7 @@ export default function SitesWithInstalledPluginsList( {
 	plugin,
 	selectedSite,
 	...rest
-}: Props ): ReactElement | null {
+}: Props ) {
 	const translate = useTranslate();
 	const columns = [
 		{

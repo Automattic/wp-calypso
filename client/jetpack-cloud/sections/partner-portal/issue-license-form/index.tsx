@@ -2,7 +2,7 @@ import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import sortBy from 'lodash/sortBy';
-import { ReactElement, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
@@ -22,10 +22,7 @@ function alphabeticallySortedProductOptions(
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
-export default function IssueLicenseForm( {
-	selectedSite,
-	suggestedProduct,
-}: AssignLicenceProps ): ReactElement {
+export default function IssueLicenseForm( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const products = useProductsQuery( {

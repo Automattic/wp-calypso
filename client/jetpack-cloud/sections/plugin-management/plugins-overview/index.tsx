@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
@@ -23,13 +23,7 @@ interface Props {
 	path?: string;
 }
 
-export default function PluginsOverview( {
-	filter,
-	search,
-	site,
-	pluginSlug,
-	path,
-}: Props ): ReactElement {
+export default function PluginsOverview( { filter, search, site, pluginSlug, path }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -63,7 +57,5 @@ export default function PluginsOverview( {
 		);
 	}
 
-	return (
-		<>{ isFetching ? <JetpackLogo className="plugins-overview__logo" size={ 72 } /> : null }</>
-	);
+	return isFetching ? <JetpackLogo className="plugins-overview__logo" size={ 72 } /> : null;
 }

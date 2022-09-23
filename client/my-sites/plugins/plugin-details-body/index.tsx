@@ -1,7 +1,6 @@
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import type { ReactElement } from 'react';
 
 interface Props {
 	fullPlugin: any;
@@ -9,11 +8,7 @@ interface Props {
 	isWpcom: boolean;
 }
 
-export default function PluginDetailsBody( {
-	fullPlugin,
-	isMarketplaceProduct,
-	isWpcom,
-}: Props ): ReactElement {
+export default function PluginDetailsBody( { fullPlugin, isMarketplaceProduct, isWpcom }: Props ) {
 	return (
 		<div className="plugin-details__layout plugin-details__body">
 			<div className="plugin-details__layout-col-left">

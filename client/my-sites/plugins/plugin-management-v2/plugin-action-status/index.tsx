@@ -21,7 +21,7 @@ export default function PluginActionStatus( {
 	selectedSite,
 	showMultipleStatuses = true,
 	retryButton,
-}: Props ): ReactElement | null {
+}: Props ) {
 	// Group statuses by status type(completed, error, inProgress)
 	const groupedStatues = currentSiteStatuses.reduce( ( group, plugin ) => {
 		const { status } = plugin;
