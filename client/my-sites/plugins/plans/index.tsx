@@ -88,7 +88,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	};
 
 	return (
-		<MainComponent wideLayout>
+		<MainComponent className="plugin-plans" wideLayout>
 			<PageViewTracker path="/plugins/plans/:interval/:site" title="Plugins > Plan Upgrade" />
 			<DocumentHead title={ translate( 'Plugins > Plan Upgrade' ) } />
 			<FixedNavigationHeader navigationItems={ breadcrumbs } />
