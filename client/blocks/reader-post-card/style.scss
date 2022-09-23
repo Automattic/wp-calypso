@@ -333,6 +333,7 @@
 	display: flex;
 	flex-direction: row;
 	font-family: $sans;
+	margin-bottom: 11px;
 	margin-top: -2px;
 }
 
@@ -345,7 +346,7 @@
 	display: flex;
 	flex-direction: row;
 	height: 40px;
-	margin-top: 8px;
+	margin-top: 4px;
 	overflow-y: scroll;
 	position: relative;
 	-ms-overflow-style: none; /* Internet Explorer 10+ */
@@ -643,16 +644,16 @@
 
 .reader-post-card__gallery-circle {
 	border-radius: 50%;
-	width: 5px;
-	height: 5px;
-	background: var( --color-neutral-30 );
+	width: 7px;
+	height: 7px;
+	background: var( --color-neutral-5 );
 	border: 0;
 	position: relative;
 	float: left;
-	margin-right: 5px;
+	margin-right: 9px;
 
 	&.is-selected {
-		background: var( --color-neutral-70 );
+		background: var( --color-neutral-100 );
 	}
 }
 
