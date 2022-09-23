@@ -678,16 +678,7 @@ export class PluginsList extends Component {
 		plugins.sort( ( a, b ) => {
 			const updateA = !! a.update;
 			const updateB = !! b.update;
-
-			if ( updateA && ! updateB ) {
-				return -1;
-			}
-
-			if ( ! updateA && updateB ) {
-				return 1;
-			}
-
-			return 0;
+			return Number( updateB ) - Number( updateA );
 		} );
 
 		return plugins;
