@@ -161,12 +161,14 @@ class SignupForm extends Component {
 		debug( 'Mounted the SignupForm React component.' );
 
 		this.maybeRedirectToSocialConnect();
+		this.maybeRedirectToLogin();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.step && this.props.step && prevProps.step.status !== this.props.step.status ) {
 			this.maybeRedirectToSocialConnect();
 		}
+		this.maybeRedirectToLogin();
 	}
 
 	autoFillUsername( form ) {
@@ -215,6 +217,24 @@ class SignupForm extends Component {
 			this.props.createSocialUserFailed( socialInfo, userExistsError, 'signup' );
 
 			page( login( { redirectTo: this.props.redirectToAfterLoginUrl } ) );
+		}
+	}
+
+	maybeRedirectToLogin() {
+		if ( ! this.props.isWoo ) {
+			return;
+		}
+
+		const messages = formState.getFieldErrorMessages( this.state.form, 'email' );
+		if ( ! messages ) {
+			return;
+		}
+
+		const emailExist = find( messages, ( _, error_code ) => error_code === 'taken' );
+		if ( emailExist ) {
+			page(
+				this.getLoginLink( { emailAddress: formState.getFieldValue( this.state.form, 'email' ) } )
+			);
 		}
 	}
 
