@@ -19,10 +19,12 @@ class SecurityKeyForm extends Component {
 		switchTwoFactorAuthType: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		showOrDivider: PropTypes.bool,
+		isWoo: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		showOrDivider: false,
+		isWoo: false,
 	};
 
 	state = {
@@ -41,7 +43,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate, switchTwoFactorAuthType } = this.props;
+		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form onSubmit={ this.initiateSecurityKeyAuthentication }>
@@ -56,9 +58,13 @@ class SecurityKeyForm extends Component {
 								} ) }
 							</p>
 							<p>
-								{ translate(
-									'Insert your security key into your USB port. Then tap the button or gold disc.'
-								) }
+								{ isWoo
+									? translate(
+											'Insert your security key into your USB port, then tap the button or gold disc.'
+									  )
+									: translate(
+											'Insert your security key into your USB port. Then tap the button or gold disc.'
+									  ) }
 							</p>
 						</div>
 					) }

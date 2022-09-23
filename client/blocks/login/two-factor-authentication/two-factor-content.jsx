@@ -20,6 +20,7 @@ export default function TwoFactorContent( {
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
 					showOrDivider={ isWoo && ! isPartnerSignup }
+					isWoo={ isWoo }
 				/>
 			</div>
 		);
