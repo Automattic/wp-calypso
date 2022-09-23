@@ -15,15 +15,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const noop = () => {};
-const PlanFeaturesActions = ( props ) => {
-	return (
-		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -182,6 +173,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesActions = ( props ) => {
+	return (
+		<div className="plan-features__actions">
+			<div className="plan-features__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesActions.propTypes = {
