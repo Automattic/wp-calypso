@@ -185,14 +185,15 @@ function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
 	} );
 
 	if ( everyRefundWindowIsForDomainOrPlan ) {
+		const [ refundWindow ] = getRefundWindows( [ planRefundWindow ] );
+
+		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 		text = translate(
-			'Money back guarantee – %(planDays)d days for plan and %(domainDays)d days for domain',
+			'%(days)d-day money back guarantee for plan',
+			'%(days)d-day money back guarantee for plan',
 			{
-				comment: 'The user has a paid plan and a free domain in the cart',
-				args: {
-					planDays: getRefundWindows( [ planRefundWindow ] )[ 0 ],
-					domainDays: getRefundWindows( [ domainRefundWindow ] )[ 0 ],
-				},
+				count: refundWindow,
+				args: { days: refundWindow },
 			}
 		);
 	}
@@ -200,7 +201,6 @@ function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
 	if ( refundPolicies.length === 1 ) {
 		const [ refundWindow ] = getRefundWindows( refundPolicies );
 
-		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
 			count: refundWindow,
 			args: { days: refundWindow },
