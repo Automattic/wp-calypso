@@ -484,8 +484,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
-	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
-
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
@@ -494,13 +492,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			locale={ locale }
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
-			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			previewOnly={ newDesignEnabled }
-			hasDesignOptionHeader={ ! newDesignEnabled }
 			purchasedThemes={ purchasedThemes }
 		/>
 	);
