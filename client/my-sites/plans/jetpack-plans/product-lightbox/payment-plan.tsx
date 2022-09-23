@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { getCurrencyObject } from 'calypso/../packages/format-currency/src';
 import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
+import PlanPrice from 'calypso/my-sites/plan-price';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
 import ItemPriceMessage from '../product-store/item-price/item-price-message';
@@ -29,11 +29,6 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 
 	const currentPrice = discountedPrice ? discountedPrice : originalPrice;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
-	const priceObject = getCurrencyObject( currentPrice, currencyCode );
-	const currentPriceValue = `${ priceObject?.symbol }${ priceObject?.integer }${ priceObject?.fraction }`;
-
-	const originalPriceObject = getCurrencyObject( originalPrice, currencyCode );
-	const originalPriceValue = `${ originalPriceObject?.symbol }${ originalPriceObject?.integer }${ originalPriceObject?.fraction }`;
 
 	const labelClass = classNames(
 		'product-lightbox__variants-grey-label',
@@ -55,7 +50,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 					<div className="product-lightbox__variants-plan-card">
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">
-								{ currentPriceValue }
+								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
 							</span>
 							<div
 								className={ classNames( 'product-lightbox__variants-timeframe', {
@@ -68,7 +63,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 						{ discountedPrice && (
 							<div className={ labelClass }>
 								<span className="product-lightbox__variants-plan-card-old-price">
-									{ originalPriceValue }
+									<PlanPrice original rawPrice={ originalPrice } currencyCode={ currencyCode } />
 								</span>
 								{ translate( '%(percentOff)d%% off the first year', {
 									args: {
