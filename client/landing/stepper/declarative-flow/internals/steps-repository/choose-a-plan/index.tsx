@@ -9,21 +9,16 @@ import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
 import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
 import { USER_STORE, ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 
-import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
-import { addDomainToCart, addPlanToCart } from 'calypso/lib/signup/step-actions';
-
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 import './style.scss';
-import { getDomainProductSlug } from 'calypso/lib/domains';
-import { domainRegistration, planItem } from 'calypso/lib/cart-values/cart-items';
-import { useStore } from 'react-redux';
 
 const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
@@ -33,9 +28,8 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	const visibility = useNewSiteVisibility();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const { createVideoPressSite } = useDispatch( ONBOARD_STORE );
-
-	const store = useStore();
 
 	const [ billingPeriod, setBillingPeriod ] =
 		React.useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
@@ -44,7 +38,6 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	);
 	const [ allPlansExpanded, setAllPlansExpanded ] = React.useState( true );
 
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
@@ -57,13 +50,9 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			);
 		} );
 
-		console.log( supportedPlans );
-
 		const onPlanSelect = ( planId: number | undefined ) => {
 			/// @todo lock UI
-
-			//setSelectedPlanProductId( planId );
-
+			setSelectedPlanProductId( planId );
 			createVideoPressSite( {
 				username: currentUser!.username,
 				languageSlug: locale,
@@ -72,11 +61,11 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				anchorFmPodcastId: null,
 				anchorFmEpisodeId: null,
 				anchorFmSpotifyUrl: null,
-			} ).then( ( newSite ) => {
+			} ).then( (/*newSite*/) => {
 				const planObject = supportedPlans.find(
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
 				);
-				submit?.( { newSite, planObject, planId, domain } );
+				submit?.( { planSlug: planObject?.periodAgnosticSlug } );
 			} );
 		};
 
@@ -120,7 +109,12 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 												CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }
 												popularBadgeText={ __( 'Best for Video' ) }
 											/>
-											{ index < filteredPlans.length - 1 && <div className="plan-separator"></div> }
+											{ index < filteredPlans.length - 1 && (
+												<div
+													key={ 'plan-item-separator-' + index }
+													className="plan-separator"
+												></div>
+											) }
 										</>
 									) ) }
 							</div>

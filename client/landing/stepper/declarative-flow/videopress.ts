@@ -9,7 +9,6 @@ import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
 import './internals/videopress.scss';
-import { NewSiteBlogDetails } from 'calypso/../packages/data-stores/src';
 
 export const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -39,10 +38,10 @@ export const videopress: Flow = {
 		const name = this.name;
 		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
-		const { createSite } = useDispatch( ONBOARD_STORE );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
@@ -64,14 +63,14 @@ export const videopress: Flow = {
 				case 'chooseADomain':
 					return navigate( 'chooseAPlan' );
 
-				case 'chooseAPlan':
-					const { planObject, domain } = providedDependencies;
-					const siteSlug = domain.domain_name;
-					const { periodAgnosticSlug } = planObject;
+				case 'chooseAPlan': {
+					const { planSlug } = providedDependencies;
+					const siteSlug = domain?.domain_name;
 
 					return window.location.replace(
-						`/checkout/${ siteSlug }/${ periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+						`/checkout/${ siteSlug }/${ planSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
 					);
+				}
 
 				case 'completingPurchase':
 					return navigate( 'processing' );
