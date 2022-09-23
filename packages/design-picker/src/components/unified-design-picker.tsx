@@ -86,7 +86,8 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) && design?.taxonomies?.theme_software_set?.length;
+		isEnabled( 'themes/plugin-bundling' ) &&
+		( design.taxonomies?.theme_software_set || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
