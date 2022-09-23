@@ -36,7 +36,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import { getRefundPolicies } from './refund-policies';
+import { getRefundWindows } from './refund-policies';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
@@ -170,7 +170,7 @@ function CheckoutSummaryFeaturesList( props: {
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
-	const hasRefundableProductsInCart = Boolean( getRefundPolicies( responseCart ).length );
+	const refundWindowsInCart = getRefundWindows( responseCart );
 
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
@@ -201,7 +201,20 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ hasRefundableProductsInCart && (
+			{ refundWindowsInCart.length === 1 && (
+				<CheckoutSummaryFeaturesListItem>
+					<WPCheckoutCheckIcon id="features-list-refund-text" />
+					{
+						// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+						translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+							count: refundWindowsInCart[ 0 ],
+							args: { days: refundWindowsInCart[ 0 ] },
+						} )
+					}
+				</CheckoutSummaryFeaturesListItem>
+			) }
+
+			{ refundWindowsInCart.length > 1 && (
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-refund-text" />
 					{ translate( 'Money back guarantee' ) }

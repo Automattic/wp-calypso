@@ -61,6 +61,28 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	);
 }
 
+// Get the refund windows in days for the items in the cart
+export function getRefundWindows( cart: ResponseCart ) {
+	const refundPolicies = getRefundPolicies( cart );
+
+	const refundWindowsInCart = refundPolicies.map( ( refundPolicy ) => {
+		switch ( refundPolicy ) {
+			case RefundPolicy.DomainNameRegistration:
+			case RefundPolicy.DomainNameRegistrationForPlan:
+			case RefundPolicy.DomainNameRenewal:
+				return 4;
+
+			case RefundPolicy.GenericMonthly:
+				return 7;
+
+			case RefundPolicy.GenericYearly:
+				return 14;
+		}
+	} );
+
+	return Array.from( new Set( refundWindowsInCart ) );
+}
+
 function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 	const translate = useTranslate();
 
