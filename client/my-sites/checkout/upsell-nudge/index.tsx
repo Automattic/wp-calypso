@@ -98,7 +98,6 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	trackUpsellButtonClick: ( key: string ) => void;
 	translate: ReturnType< typeof useTranslate >;
 	cards: PaymentMethod[];
-	isFetchingStoredCards?: boolean;
 	currentPlanTerm: string;
 }
 
@@ -193,7 +192,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 	};
 
 	render() {
-		const { selectedSiteId, isLoading, hasProductsList, hasSitePlans, upsellType } = this.props;
+		const { selectedSiteId, hasProductsList, hasSitePlans, upsellType } = this.props;
 
 		return (
 			<Main className={ upsellType }>
@@ -201,7 +200,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ parseInt( String( selectedSiteId ), 10 ) } /> }
-				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
+				{ this.renderContent() }
 				{ this.state.showPurchaseModal && this.renderPurchaseModal() }
 				{ this.preloadIconsForPurchaseModal() }
 			</Main>
@@ -254,50 +253,6 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		);
 	}
 
-	renderProfessionalEmailUpsellPlaceholder() {
-		return (
-			<>
-				<div className="upsell-nudge__placeholders">
-					<div>
-						<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__hold-tight-placeholder" />
-						<div className="upsell-nudge__placeholder-row is-placeholder" />
-						<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__price-placeholder" />
-					</div>
-				</div>
-				<div className="upsell-nudge__placeholders upsell-nudge__form-container-placeholder">
-					<div className="upsell-nudge__placeholders upsell-nudge__form-placeholder">
-						<div>
-							<div className="upsell-nudge__placeholder-row is-placeholder" />
-							<div className="upsell-nudge__placeholder-row is-placeholder" />
-							<div className="upsell-nudge__placeholder-button-container">
-								<div className="upsell-nudge__placeholder-button is-placeholder" />
-								<div className="upsell-nudge__placeholder-button is-placeholder" />
-							</div>
-						</div>
-					</div>
-					<div className="upsell-nudge__placeholders upsell-nudge__benefits-placeholder">
-						<div>
-							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
-							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
-							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
-							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
-							<div className="upsell-nudge__placeholder-row is-placeholder upsell-nudge__feature-placeholder" />
-						</div>
-					</div>
-				</div>
-			</>
-		);
-	}
-
-	renderPlaceholders() {
-		const { upsellType } = this.props;
-
-		if ( upsellType === 'professional-email-upsell' ) {
-			return this.renderProfessionalEmailUpsellPlaceholder();
-		}
-		return this.renderGenericPlaceholder();
-	}
-
 	renderContent() {
 		const {
 			receiptId,
@@ -311,12 +266,15 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
+			isLoading,
 		} = this.props;
 
 		switch ( upsellType ) {
 			case CONCIERGE_QUICKSTART_SESSION:
 			case CONCIERGE_SUPPORT_SESSION:
-				return (
+				return isLoading ? (
+					this.renderGenericPlaceholder()
+				) : (
 					<QuickstartSessionsRetirement
 						handleClickDecline={ this.handleClickDecline }
 						isLoggedIn={ isLoggedIn }
@@ -327,7 +285,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				);
 
 			case BUSINESS_PLAN_UPGRADE_UPSELL:
-				return (
+				return isLoading ? (
+					this.renderGenericPlaceholder()
+				) : (
 					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
@@ -355,6 +315,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						setCartItem={ ( newCartItem, callback = noop ) =>
 							this.setState( { cartItem: newCartItem }, callback )
 						}
+						isLoading={ isLoading }
 					/>
 				);
 		}
@@ -596,12 +557,11 @@ export default connect(
 				: undefined;
 
 		return {
-			isFetchingStoredCards: areStoredCardsLoading,
 			cards,
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			currentPlanTerm,
 			isLoading:
-				isFetchingCards ||
+				areStoredCardsLoading ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
