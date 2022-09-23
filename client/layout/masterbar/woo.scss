@@ -111,6 +111,7 @@
 
 	p {
 		margin-bottom: 0;
+		letter-spacing: 0;
 	}
 
 	a,
@@ -124,6 +125,7 @@
 		text-align: center;
 		color: $gray-50;
 		text-decoration: underline;
+		letter-spacing: 0;
 	}
 
 	.button:not(.social-buttons__button) {
@@ -465,7 +467,6 @@
 		line-height: 20px;
 		color: $woo-label-color;
 		margin-bottom: 8px;
-		letter-spacing: -0.16px;
 	}
 
 	.login__form-signup-link {
@@ -637,7 +638,6 @@
 
 	.signup-form__terms-of-service-link {
 		color: $gray-50;
-		letter-spacing: -0.16px;
 		text-align: left;
 		margin-bottom: 32px;
 
