@@ -1,15 +1,17 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { createSitesListComponent, SitesSortOptions } from '@automattic/sites';
+import { createSitesListComponent } from '@automattic/sites';
 import React from 'react';
 import Site from 'calypso/blocks/site';
-import { withSitesSortingPreference } from 'calypso/state/sites/hooks/with-sites-sorting';
+import {
+	SitesSortingPreferenceProps,
+	withSitesSortingPreference,
+} from 'calypso/state/sites/hooks/with-sites-sorting';
 
 // Why isn't `title` part of SiteDetails, though?
 type SiteDetailsWithTitle = SiteDetails & { title: string };
 
-interface SitesListProps {
+interface SitesListProps extends SitesSortingPreferenceProps {
 	searchTerm: string;
-	sitesSorting: SitesSortOptions;
 	addToVisibleSites( siteId: number ): void;
 	isReskinned?: boolean;
 	sites: SiteDetailsWithTitle[];

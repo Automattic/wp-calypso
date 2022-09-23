@@ -2,10 +2,12 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { ComponentType } from 'react';
 import { useSitesSorting } from './use-sites-sorting';
 
+export type SitesSortingPreferenceProps = ReturnType< typeof useSitesSorting >;
+
 export const withSitesSortingPreference = createHigherOrderComponent(
-	< OuterProps, >( Component: ComponentType< OuterProps > ) => {
+	< OuterProps extends SitesSortingPreferenceProps >( Component: ComponentType< OuterProps > ) => {
 		const ComponentWithSitesSorting: ComponentType<
-			Omit< OuterProps, keyof ReturnType< typeof useSitesSorting > >
+			Omit< OuterProps, keyof SitesSortingPreferenceProps >
 		> = ( props ) => {
 			return <Component { ...( props as OuterProps ) } { ...useSitesSorting() } />;
 		};
