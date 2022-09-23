@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
-import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
@@ -83,13 +82,13 @@ export class SiteSelector extends Component {
 	};
 
 	onSearch = ( terms ) => {
-		this.props.searchSites( terms );
+		const trimmedTerm = terms.trim();
 
 		this.setState( {
 			highlightedIndex: terms ? 0 : -1,
-			showSearch: terms ? true : this.state.showSearch,
+			showSearch: trimmedTerm ? true : this.state.showSearch,
 			isKeyboardEngaged: true,
-			searchTerm: terms,
+			searchTerm: trimmedTerm,
 		} );
 	};
 
@@ -293,13 +292,7 @@ export class SiteSelector extends Component {
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
-		let sites;
-
-		if ( this.props.sitesFound ) {
-			sites = this.props.sitesFound;
-		} else {
-			sites = this.props.visibleSites;
-		}
+		let sites = this.props.visibleSites;
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );
@@ -312,8 +305,8 @@ export class SiteSelector extends Component {
 		return sites;
 	}
 
-	renderAllSites() {
-		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+	renderAllSites( sites ) {
+		if ( ! this.props.showAllSites || sites.length > 0 || ! this.props.allSitesPath ) {
 			return null;
 		}
 
@@ -375,6 +368,7 @@ export class SiteSelector extends Component {
 		return (
 			<SitesList
 				addToVisibleSites={ ( siteId ) => this.visibleSites.push( siteId ) }
+				searchTerm={ this.state.searchTerm }
 				sites={ existingSites }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
@@ -425,9 +419,9 @@ export class SiteSelector extends Component {
 					isReskinned={ this.props.isReskinned }
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
-					{ this.renderAllSites() }
+					{ this.renderAllSites( sites ) }
 					{ this.renderSites( sites ) }
-					{ hiddenSitesCount > 0 && ! this.props.sitesFound && (
+					{ hiddenSitesCount > 0 && ! this.state.searchTerm && (
 						<span className="site-selector__hidden-sites-message">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
@@ -459,7 +453,10 @@ export class SiteSelector extends Component {
 							<Button
 								transparent
 								onClick={ this.onManageSitesClick }
-								href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
+								href={ addQueryArgs(
+									{ search: this.state.searchTerm.length > 0 ? this.state.searchTerm : null },
+									'/sites'
+								) }
 							>
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>
@@ -581,7 +578,6 @@ const mapState = ( state ) => {
 
 export default flow(
 	localize,
-	searchSites,
 	withSitesSortingPreference,
 	connect( mapState, { navigateToSite, recordTracksEvent } )
 )( SiteSelector );
