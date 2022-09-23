@@ -7,6 +7,7 @@ import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
+import { dehydrate } from 'react-query';
 import superagent from 'superagent';
 import {
 	getLanguageFileUrl,
@@ -227,6 +228,10 @@ export function serverRender( req, res ) {
 			req.error ? req.error.message : cacheKey,
 			req
 		);
+	}
+
+	if ( context.queryClient ) {
+		context.dehydratedReactQueryState = dehydrate( context.queryClient );
 	}
 
 	if ( context.store ) {
