@@ -7,6 +7,7 @@ import { ReactElement, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { fetchWooCommerceCountries } from 'calypso/state/countries/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -64,6 +65,14 @@ export default function StepStoreAddress(
 		backPath && backPath.match( /^\/(?!\/)/ ) ? backPath : `/woocommerce-installation/${ domain }`;
 
 	const { validate, clearError, getError, errors } = useAddressFormValidation( siteId );
+
+	useEffect( () => {
+		if ( siteId ) {
+			dispatch(
+				recordTracksEvent( 'calypso_woocommerce_dashboard_step_view', { step: 'store-address' } )
+			);
+		}
+	}, [ dispatch, siteId ] );
 
 	// @todo: Add a general hook to get and update multi-option data like the profile.
 	function updateProfileEmail( email: string ) {
