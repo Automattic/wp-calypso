@@ -163,7 +163,7 @@ const ProfessionalEmailUpsell = ( {
 		<>
 			<PageViewTracker
 				path="/checkout/offer-professional-email/:domain/:receiptId/:site"
-				title={ translate( 'Post Checkout - Professional Email Upsell' ) }
+				title="Post Checkout - Professional Email Upsell"
 			/>
 			{ isLoading ? (
 				<ProfessionalEmailUpsellPlaceholder />
