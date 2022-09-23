@@ -23,12 +23,6 @@ export default function useOnLogin(): void {
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	useEffect( () => {
-		console.log(isCreatingSite);
-		console.log(newSite);
-		console.log(currentUser);
-		console.log(shouldTriggerCreate);
-		console.log(isCreatingSite);
-		
 		if (
 			! isCreatingSite &&
 			! newSite &&
@@ -36,7 +30,6 @@ export default function useOnLogin(): void {
 			shouldTriggerCreate &&
 			! isAnchorFmSignup
 		) {
-			console.log('yo');
 			createSite( {
 				username: currentUser.username,
 				languageSlug: locale,
