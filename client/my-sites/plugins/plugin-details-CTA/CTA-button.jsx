@@ -278,15 +278,13 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
+			const marketplacePlan = desiredPlan
+				? desiredPlan
+				: marketplacePlanToAdd( selectedSite?.plan, billingPeriod );
+
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
-					selectedSite?.plan,
-					billingPeriod,
-					desiredPlan
-				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-				}`
+				`/checkout/${ selectedSite.slug }/${ marketplacePlan },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			);
 		}
 
