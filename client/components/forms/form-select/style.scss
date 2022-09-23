@@ -15,6 +15,7 @@
 	overflow: hidden;
 	font-size: $font-body;
 	font-weight: 400;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.4em;
 	text-overflow: ellipsis;
 	text-decoration: none;

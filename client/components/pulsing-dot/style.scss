@@ -10,6 +10,7 @@
 	height: 6px;
 	border: none;
 	box-shadow: 0 0 0 0 rgba(168, 190, 206, 0.7);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	animation: dot-pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
 	animation-play-state: paused;

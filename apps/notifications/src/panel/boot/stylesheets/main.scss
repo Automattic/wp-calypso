@@ -688,6 +688,7 @@
 		float: right;
 		color: var(--color-text-subtle);
 		margin-left: 0.25em;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1em;
 		margin-top: 0.2em;
 	}

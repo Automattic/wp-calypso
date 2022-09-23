@@ -390,6 +390,7 @@
 		fill: var(--color-text-inverted);
 		background: var(--color-neutral-light);
 		padding: 4px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 		position: absolute;
 		top: 0;

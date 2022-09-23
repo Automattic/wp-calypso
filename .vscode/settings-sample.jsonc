@@ -12,7 +12,10 @@
 	// Editor settings
 	"editor.formatOnSave": false,
 	"editor.codeActionsOnSave": {
-		"source.fixAll": true
+		"source.fixAll": true,
+		"source.fixAll.eslint": true,
+		"source.fixAll.tslint": true,
+		"source.fixAll.stylelint": true
 	},
 	// Use prettier for formatting JS/TS
 	"[javascript][javascriptreact][typescript][typescriptreact]": {
@@ -38,7 +41,9 @@
 		"json",
 		"jsonc"
 	],
-	"stylelint.validate": [ "css", "scss", "sass" ],
+	"css.validate": false,
+	"scss.validate": false,
+	"stylelint.validate": [ "css", "scss", "postcss" ],
 	// Use the installed version of TypeScript, not the ones bundled with VS Code
 	"typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -46,6 +46,7 @@ $placeholder-color: #909398;
 		font-size: 2rem;
 		font-family: $brand-serif;
 		font-weight: 400;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.1818em;
 		letter-spacing: -0.4px;
 
@@ -81,6 +82,7 @@ $placeholder-color: #909398;
 	.capture__input-error-msg {
 		color: var(--studio-red-60);
 		font-size: 0.875rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.4286em;
 		margin-top: 8px;
 	}

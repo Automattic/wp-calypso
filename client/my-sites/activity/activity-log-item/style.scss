@@ -110,6 +110,7 @@
 	padding: 12px;
 	background: var(--color-neutral-20);
 	color: var(--color-text-inverted);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -232,6 +233,7 @@
 	.social-logo {
 		fill: var(--color-text-inverted);
 		background: var(--color-wordpress-org);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
 
@@ -246,6 +248,7 @@
 		color: var(--color-text-inverted);
 		display: flex;
 		padding: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;

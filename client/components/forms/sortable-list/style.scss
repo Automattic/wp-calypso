@@ -64,14 +64,18 @@
 
 	&.is-previous {
 		padding-left: 12px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-top-left-radius: 50%;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-bottom-left-radius: 50%;
 	}
 
 	&.is-next {
 		margin-left: -1px;
 		padding-right: 12px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-top-right-radius: 50%;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-bottom-right-radius: 50%;
 	}
 }
@@ -85,13 +89,17 @@
 	margin-left: auto;
 
 	&.is-previous {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-top-right-radius: 50%;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-top-left-radius: 50%;
 	}
 
 	&.is-next {
 		margin-top: -1px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-bottom-right-radius: 50%;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-bottom-left-radius: 50%;
 	}
 }

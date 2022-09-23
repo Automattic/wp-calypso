@@ -11,9 +11,11 @@
 			max-height: 180px;
 		}
 		.empty-content__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 90%;
 		}
 		.empty-content__line {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 60%;
 			margin-bottom: 20px;
 		}
@@ -87,6 +89,7 @@
 		border-bottom: 1px solid #c8d7e1;
 		color: var(--color-neutral-50);
 		display: block;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 4em;
 		font-size: $font-body-small;
 		font-weight: 600;

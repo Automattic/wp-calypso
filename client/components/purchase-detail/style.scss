@@ -36,6 +36,7 @@
 		}
 
 		.purchase-detail__description {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 2.5em;
 			margin-top: 15px;
 		}
@@ -78,6 +79,7 @@
 
 .purchase-detail__icon {
 	background: var(--color-neutral-50);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	color: var(--color-text-inverted);
 	margin-bottom: 10px;
