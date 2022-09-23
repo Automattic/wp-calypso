@@ -3,8 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -121,11 +120,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	return (
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
