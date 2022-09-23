@@ -64,12 +64,6 @@ describe( 'Task Helpers', () => {
 		} );
 	} );
 	describe( 'isTaskDisabled', () => {
-		describe( 'when a task is complete', () => {
-			it( 'then the task is disabled', () => {
-				const task = getTask( { isCompleted: true } );
-				expect( isTaskDisabled( task ) ).toBe( true );
-			} );
-		} );
 		describe( 'when a given task has other, dependent tasks that should be completed first', () => {
 			describe( 'and the other tasks are incomplete', () => {
 				it( 'then the given task is disabled', () => {
@@ -79,10 +73,24 @@ describe( 'Task Helpers', () => {
 				} );
 			} );
 			describe( 'and the other tasks are complete', () => {
-				it( 'then the given task is enabled', () => {
-					const dependencies = [ true, true ];
-					const task = getTask( { dependencies, isCompleted: false } );
-					expect( isTaskDisabled( task ) ).toBe( false );
+				const dependencies = [ true, true ];
+				describe( 'and the task can be revisited', () => {
+					it( 'then the task is enabled', () => {
+						const task = getTask( { dependencies, keepActive: true, isCompleted: false } );
+						expect( isTaskDisabled( task ) ).toBe( false );
+					} );
+				} );
+				describe( 'and the given task complete', () => {
+					it( 'then the task is disabled', () => {
+						const task = getTask( { dependencies, keepActive: false, isCompleted: true } );
+						expect( isTaskDisabled( task ) ).toBe( true );
+					} );
+				} );
+				describe( 'and the given task is incomplete', () => {
+					it( 'then the given task is enabled', () => {
+						const task = getTask( { dependencies, keepActive: false, isCompleted: false } );
+						expect( isTaskDisabled( task ) ).toBe( false );
+					} );
 				} );
 			} );
 		} );
