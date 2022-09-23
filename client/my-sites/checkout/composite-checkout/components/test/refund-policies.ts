@@ -83,8 +83,10 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanBiennial ] );
 	} );
 
-	test( 'yearly plan and free domain registration', () => {
+	test( 'yearly plan and bundled domain registration', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
+
+		cart.bundled_domain = 'test.live';
 		cart.products.unshift( {
 			...getEmptyResponseCartProduct(),
 			is_domain_registration: true,
@@ -100,9 +102,39 @@ describe( 'getRefundPolicies', () => {
 		] );
 	} );
 
-	test( 'yearly plan, free domain registration and professional email', () => {
+	test( 'yearly plan, bundled domain registration and paid domain registration', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 
+		// Free domain
+		cart.bundled_domain = 'test.live';
+		cart.products.unshift( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		// Paid domain
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: true,
+			meta: 'test2.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [
+			RefundPolicy.DomainNameRegistrationForPlan,
+			RefundPolicy.PlanYearly,
+		] );
+	} );
+
+	test( 'yearly plan, bundled domain registration and professional email free trial', () => {
+		const cart = getCart( [ PLAN_PERSONAL ] );
+
+		cart.bundled_domain = 'test.live';
 		cart.products.unshift( {
 			...getEmptyResponseCartProduct(),
 			is_domain_registration: true,

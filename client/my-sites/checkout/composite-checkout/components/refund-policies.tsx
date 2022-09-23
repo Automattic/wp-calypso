@@ -11,7 +11,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { isDomainBeingUsedForPlan } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -36,7 +35,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainRegistration( product ) ) {
-			if ( isDomainBeingUsedForPlan( cart, product.meta ) ) {
+			if ( cart.bundled_domain ) {
 				return RefundPolicy.DomainNameRegistrationForPlan;
 			}
 
