@@ -81,33 +81,6 @@ body.is-section-plugins.theme-default.color-scheme {
 	margin: 0;
 }
 
-.plugins__main-buttons {
-	display: flex;
-	align-items: center;
-
-	@media screen and ( max-width: 1280px ) {
-		.plugins__button {
-			border: none;
-		}
-	}
-
-	.plugins__button {
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-		height: 32px;
-
-		.plugins__button-icon {
-			margin-right: 5px;
-		}
-
-		&:not(:last-child) {
-			@include breakpoint-deprecated( ">480px" ) {
-				margin-right: 10px;
-			}
-		}
-	}
-}
 
 .plugins__more-header {
 	font-size: $font-body-small;
@@ -352,11 +325,32 @@ body.is-section-plugins header .select-dropdown__item {
 	margin-bottom: 8px;
 }
 .plugins__page-title-container {
-	display: none;
-	@include breakpoint-deprecated( ">660px" ) {
-		display: block;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	.plugins__header-left-content {
+		display: none;
+		width: 40%;
+		@include breakpoint-deprecated( ">660px" ) {
+			display: block;
+		}
+	}
+	.plugins__header-right-content {
+		text-align: right;
+		width: 60%;
+		.button {
+			height: 40px;
+			display: inline-flex;
+			&:not(:last-child) {
+				margin-right: 5px;
+			}
+			.plugins__button-icon {
+				margin-right: 5px;
+			}
+		}
 	}
 }
+
 .plugins__main-updated {
 	.plugins__main-header .section-nav {
 		border-width: 1px;
@@ -419,6 +413,7 @@ body.is-section-plugins header .select-dropdown__item {
 	}
 	.search.is-open {
 		box-shadow: none;
+		z-index: 0;
 	}
 }
 
@@ -490,6 +485,27 @@ body.is-section-plugins header .select-dropdown__item {
 			padding: 7px;
 			font-size: 0.75rem;
 			line-height: 1;
+		}
+	}
+}
+
+.plugin__header {
+	border-bottom: none !important;
+	background-color: var(--color-surface-backdrop) !important;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		inset-inline-start: calc(var(--sidebar-width-min) + 1px) !important;
+	}
+
+	@include break-large {
+		inset-inline-start: calc(var(--sidebar-width-min) + 20px) !important;
+	}
+
+	@include break-xlarge {
+
+		> div {
+			max-width: 1530px;
+			margin: auto;
 		}
 	}
 }

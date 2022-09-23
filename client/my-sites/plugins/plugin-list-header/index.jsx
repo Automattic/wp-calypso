@@ -38,9 +38,7 @@ export class PluginsListHeader extends PureComponent {
 		isBulkManagementActive: PropTypes.bool,
 		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
-		updateAllPluginsNotice: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
-		pluginUpdateCount: PropTypes.number.isRequired,
 		activateSelected: PropTypes.func.isRequired,
 		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
 		deactivateSelected: PropTypes.func.isRequired,
@@ -121,34 +119,7 @@ export class PluginsListHeader extends PureComponent {
 		const autoupdateButtons = [];
 		const activateButtons = [];
 
-		if ( ! this.props.isBulkManagementActive ) {
-			if ( 0 < this.props.pluginUpdateCount ) {
-				rightSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-update-all">
-						<Button compact primary onClick={ this.props.updateAllPluginsNotice }>
-							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
-								context: 'button label',
-								count: this.props.pluginUpdateCount,
-								args: {
-									numUpdates: this.props.pluginUpdateCount,
-								},
-							} ) }
-						</Button>
-					</ButtonGroup>
-				);
-			}
-			rightSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
-					<Button
-						className="plugin-list-header__buttons-action-button"
-						compact
-						onClick={ this.toggleBulkManagement }
-					>
-						{ translate( 'Edit All', { context: 'button label' } ) }
-					</Button>
-				</ButtonGroup>
-			);
-		} else {
+		if ( this.props.isBulkManagementActive ) {
 			const updateButton = (
 				<Button
 					key="plugin-list-header__buttons-update"
