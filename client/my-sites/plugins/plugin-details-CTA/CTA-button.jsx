@@ -134,7 +134,7 @@ export default function CTAButton( {
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
 						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
-							return page( `${ pluginsPlansPage }?pluginSlug=${ plugin.slug }` );
+							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
 					}
@@ -189,7 +189,7 @@ export default function CTAButton( {
 					}
 					if ( hasEligibilityMessages ) {
 						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
-							return page( `${ pluginsPlansPage }?pluginSlug=${ plugin.slug }` );
+							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
 					}
