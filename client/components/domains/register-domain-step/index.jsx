@@ -278,10 +278,10 @@ class RegisterDomainStep extends Component {
 			return;
 		}
 
-		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
-		const [ , strippedHostname ] =
-			this.props.selectedSite.domain.match( wpcomSubdomainWithRandomNumberSuffix ) || [];
-		return strippedHostname ?? this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const hostname = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const regexHostnameWithRandomNumberSuffix = /^(.+?)([0-9]{5,})/i;
+		const [ , strippedHostname ] = hostname.match( regexHostnameWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? hostname;
 	}
 
 	componentDidMount() {
