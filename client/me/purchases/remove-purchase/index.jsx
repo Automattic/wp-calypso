@@ -24,6 +24,7 @@ import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-surve
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getName, isRemovable } from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -67,6 +68,7 @@ class RemovePurchase extends Component {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
+		isShowingRemovePlanWarning: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
 	};
 
@@ -74,6 +76,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingRemovePlanWarning: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
 		} );
 	};
@@ -82,6 +85,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingRemovePlanWarning: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -92,7 +96,14 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if (
+		if ( this.shouldShowPlanWarning() && ! this.state.isShowingRemovePlanWarning ) {
+			this.setState( {
+				isShowingRemovePlanWarning: true,
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
@@ -207,6 +218,23 @@ class RemovePurchase extends Component {
 				planName={ getName( purchase ) }
 				oldDomainName={ site.domain }
 				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
+
+	shouldShowPlanWarning() {
+		const { purchase } = this.props;
+		return isPlan( purchase );
+	}
+
+	renderPlanWarningDialog() {
+		const { site } = this.props;
+		return (
+			<RemovePlanDialog
+				isDialogVisible={ this.state.isShowingRemovePlanWarning }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				site={ site }
 			/>
 		);
 	}
@@ -352,6 +380,21 @@ class RemovePurchase extends Component {
 
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+		const getWarningDialog = () => {
+			if ( this.shouldShowPlanWarning() ) {
+				return this.renderPlanWarningDialog();
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				return this.renderNonPrimaryDomainWarningDialog();
+			}
+
+			if ( this.shouldHandleMarketplaceSubscriptions() ) {
+				return this.renderMarketplaceSubscriptionsDialog();
+			}
+
+			return null;
+		};
 
 		return (
 			<>
@@ -359,9 +402,7 @@ class RemovePurchase extends Component {
 					{ this.props.children ? this.props.children : defaultContent }
 					<Gridicon className="card__link-indicator" icon="trash" />
 				</Wrapper>
-				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
-				{ this.shouldHandleMarketplaceSubscriptions() &&
-					this.renderMarketplaceSubscriptionsDialog() }
+				{ getWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
