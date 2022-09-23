@@ -321,6 +321,16 @@ class SignupForm extends Component {
 							} );
 						}
 					}
+
+					if ( this.props.isWoo && ! fields.email.includes( '@' ) ) {
+						messages = Object.assign( {}, messages, {
+							email: {
+								invalid: this.props.translate(
+									'This email address is not valid. It must include a single @'
+								),
+							},
+						} );
+					}
 				}
 
 				// Catch this early for P2 signup flow.
