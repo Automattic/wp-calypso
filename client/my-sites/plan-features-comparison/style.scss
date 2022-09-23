@@ -1,13 +1,15 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
-.plan-pill.is-in-signup {
-	right: 52%;
-	transform: translate(50%);
-	border-radius: 4px;
-	background-color: var(--studio-green-5);
-	color: var(--studio-gray-80);
-	font-size: $font-body-small;
+.plan-features-comparison__content {
+	.plan-pill.is-in-signup {
+		right: 52%;
+		transform: translate(50%);
+		border-radius: 4px;
+		background-color: var(--studio-green-5);
+		color: var(--studio-gray-80);
+		font-size: $font-body-small;
+	}
 }
 
 .plan-features--loading-container {
