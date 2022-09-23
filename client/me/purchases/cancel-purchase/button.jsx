@@ -31,7 +31,7 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { getDowngradePlanFromPurchase } from 'calypso/state/purchases/selectors';
 import { refreshSitePlans } from 'calypso/state/sites/plans/actions';
-import { MarketPlaceCancelSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 
 class CancelPurchaseButton extends Component {
 	static propTypes = {
@@ -348,7 +348,7 @@ class CancelPurchaseButton extends Component {
 				) }
 
 				{ this.shouldHandleMarketplaceSubscriptions() && (
-					<MarketPlaceCancelSubscriptionsDialog
+					<MarketPlaceSubscriptionsDialog
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
 						removePlan={ closeDialogAndProceed }

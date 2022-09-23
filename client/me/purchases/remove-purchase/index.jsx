@@ -34,7 +34,7 @@ import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
-import { MarketPlaceRemoveSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
+import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
@@ -280,7 +280,7 @@ class RemovePurchase extends Component {
 	renderMarketplaceSubscriptionsDialog() {
 		const { purchase, activeSubscriptions } = this.props;
 		return (
-			<MarketPlaceRemoveSubscriptionsDialog
+			<MarketPlaceSubscriptionsDialog
 				isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
