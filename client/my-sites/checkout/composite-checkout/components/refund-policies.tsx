@@ -161,33 +161,51 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.GenericBiennial:
-		case RefundPolicy.PlanBiennial:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with two year subscriptions.',
-				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+				{ components: { refundsSupportPage } }
 			);
 			break;
 
 		case RefundPolicy.GenericMonthly:
-		case RefundPolicy.PlanMonthly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
-				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+				{ components: { refundsSupportPage } }
 			);
 			break;
 
 		case RefundPolicy.GenericYearly:
-		case RefundPolicy.PlanYearly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
-				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.PlanBiennial:
+			text = translate(
+				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for two year subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.PlanMonthly:
+			text = translate(
+				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for monthly subscriptions.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.PlanYearly:
+			text = translate(
+				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for yearly subscriptions.',
+				{ components: { refundsSupportPage } }
 			);
 			break;
 
 		case RefundPolicy.PremiumTheme:
 			text = translate(
 				'You understand that {{refundsSupportPage}}theme refunds{{/refundsSupportPage}} are limited to 14 days after purchase.',
-				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+				{ components: { refundsSupportPage } }
 			);
 			break;
 
