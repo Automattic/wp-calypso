@@ -24,7 +24,8 @@ import '../styles.scss';
 
 const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
-	const { data } = useHappychatAvailable();
+	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
+	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 
 	useEffect( () => {

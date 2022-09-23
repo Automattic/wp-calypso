@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
@@ -38,8 +39,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		'is-minimized': isMinimized,
 	} );
 	const show = useSelect( ( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown() );
-
-	const { data } = useHappychatAvailable();
+	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
+	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
 
 	const onDismiss = () => {
 		setIsVisible( false );
