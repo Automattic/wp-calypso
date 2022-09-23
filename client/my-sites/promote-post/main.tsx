@@ -1,5 +1,5 @@
 import './style.scss';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
@@ -33,6 +33,8 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
 	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
+
+	const translate = useTranslate();
 
 	const tabs: TabOption[] = [
 		{ id: 'posts', name: translate( 'Ready to promote' ) },
@@ -111,15 +113,17 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<div className="promote-post__footer">
 				<p>
-					By promoting your post you agree to{ ' ' }
-					<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer">
-						WordPress.com Terms
-					</a>{ ' ' }
-					and{ ' ' }
-					<a href="https://automattic.com/privacy/" target={ 'blank' }>
-						Advertising Terms
-					</a>
-					.
+					{ translate(
+						'By promoting your post you agree to {{tosLink}}WordPress.com Terms{{/tosLink}} and {{advertisingTerms}}Advertising Terms{{/advertisingTerms}}.',
+						{
+							components: {
+								tosLink: (
+									<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer" />
+								),
+								advertisingTerms: <a href="https://automattic.com/privacy/" target={ 'blank' } />,
+							},
+						}
+					) }
 				</p>
 			</div>
 		</Main>
