@@ -10,7 +10,12 @@ type Result = {
 
 export function useShouldRenderChatOption(): Result {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
-	const { data, isLoading } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
+	// when the user is looking at the help page, we want to be extra sure they don't start a chat without available operators
+	// so in this case, let's make stale time 1 minute.
+	const { data, isLoading } = useHappychatAvailable(
+		Boolean( chatStatus?.is_user_eligible ),
+		60 * 1000
+	);
 
 	if ( ! chatStatus?.is_user_eligible ) {
 		return {

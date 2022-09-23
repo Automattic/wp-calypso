@@ -50,7 +50,7 @@ export async function requestHappyChatAuth() {
 
 export default function useHappychatAuth( enabled = true ) {
 	return useQuery< HappychatAuth >( 'getHappychatAuth' + key, requestHappyChatAuth, {
-		staleTime: Infinity,
+		staleTime: 10 * 60 * 1000, // 10 minutes
 		enabled,
 	} );
 }
