@@ -36,8 +36,9 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import { getRefundWindows } from './refund-policies';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
+import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { TranslateResult } from 'i18n-calypso';
 
 // This will make converting to TS less noisy. The order of components can be reorganized later
 /* eslint-disable @typescript-eslint/no-use-before-define */
@@ -156,6 +157,64 @@ function CheckoutSummaryFeaturesWrapper( props: {
 	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
 }
 
+function CheckoutSummaruRefundWindows( { cart }: { cart: ResponseCart } ) {
+	const translate = useTranslate();
+
+	const refundPolicies = getRefundPolicies( cart );
+
+	if ( ! refundPolicies.length ) {
+		return null;
+	}
+
+	const domainRefundWindow = refundPolicies.find(
+		( refundPolicy ) => refundPolicy === RefundPolicy.DomainNameRegistrationForPlan
+	);
+	const planRefundWindow = refundPolicies.find(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.PlanMonthly ||
+			refundPolicy === RefundPolicy.PlanYearly ||
+			refundPolicy === RefundPolicy.PlanBiennial
+	);
+
+	const everyRefundWindowIsForDomainOrPlan =
+		refundPolicies.length === 2 && domainRefundWindow && planRefundWindow;
+
+	let text: TranslateResult = translate( 'Limited money back guarantee', {
+		comment:
+			'The user is eligible for a refund during an unspecified time period after the purchase',
+	} );
+
+	if ( everyRefundWindowIsForDomainOrPlan ) {
+		text = translate(
+			'Money back guarantee – %(planDays)d days for plan and %(domainDays)d days for domain',
+			{
+				comment: 'The user has a paid plan and a free domain in the cart',
+				args: {
+					planDays: getRefundWindows( [ planRefundWindow ] )[ 0 ],
+					domainDays: getRefundWindows( [ domainRefundWindow ] )[ 0 ],
+				},
+			}
+		);
+	}
+
+	if ( refundPolicies.length === 1 ) {
+		const [ refundWindow ] = getRefundWindows( refundPolicies );
+
+		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+			count: refundWindow,
+			args: { days: refundWindow },
+		} );
+	}
+
+	return (
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon id="features-list-refund-text" />
+			{ text }
+		</CheckoutSummaryFeaturesListItem>
+	);
+}
+
 function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
 	nextDomainIsFree: boolean;
@@ -170,7 +229,6 @@ function CheckoutSummaryFeaturesList( props: {
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
-	const refundWindowsInCart = getRefundWindows( responseCart );
 
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
@@ -185,6 +243,7 @@ function CheckoutSummaryFeaturesList( props: {
 				domains.map( ( domain ) => {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
+
 			{ hasPlanInCart && (
 				<CheckoutSummaryPlanFeatures
 					hasDomainsInCart={ hasDomainsInCart }
@@ -201,25 +260,7 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
 
-			{ refundWindowsInCart.length === 1 && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-refund-text" />
-					{
-						// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-						translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-							count: refundWindowsInCart[ 0 ],
-							args: { days: refundWindowsInCart[ 0 ] },
-						} )
-					}
-				</CheckoutSummaryFeaturesListItem>
-			) }
-
-			{ refundWindowsInCart.length > 1 && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-refund-text" />
-					{ translate( 'Money back guarantee' ) }
-				</CheckoutSummaryFeaturesListItem>
-			) }
+			<CheckoutSummaruRefundWindows cart={ responseCart } />
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }

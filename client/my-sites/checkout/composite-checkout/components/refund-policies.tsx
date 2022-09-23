@@ -3,6 +3,7 @@ import {
 	isDomainRegistration,
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
+	isPlan,
 	isTheme,
 	isYearly,
 } from '@automattic/calypso-products';
@@ -16,12 +17,15 @@ import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 export enum RefundPolicy {
-	DomainNameRegistration,
+	DomainNameRegistration = 1,
 	DomainNameRegistrationForPlan,
 	DomainNameRenewal,
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
+	PlanBiennial,
+	PlanMonthly,
+	PlanYearly,
 	PremiumTheme,
 }
 
@@ -55,6 +59,20 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return RefundPolicy.PremiumTheme;
 		}
 
+		if ( isPlan( product ) ) {
+			if ( isMonthlyProduct( product ) ) {
+				return RefundPolicy.PlanMonthly;
+			}
+
+			if ( isYearly( product ) ) {
+				return RefundPolicy.PlanYearly;
+			}
+
+			if ( isBiennially( product ) ) {
+				return RefundPolicy.PlanBiennial;
+			}
+		}
+
 		if ( isMonthlyProduct( product ) ) {
 			return RefundPolicy.GenericMonthly;
 		}
@@ -74,9 +92,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 }
 
 // Get the refund windows in days for the items in the cart
-export function getRefundWindows( cart: ResponseCart ) {
-	const refundPolicies = getRefundPolicies( cart );
-
+export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
 	const refundWindowsInCart = refundPolicies.map( ( refundPolicy ) => {
 		switch ( refundPolicy ) {
 			case RefundPolicy.DomainNameRegistration:
@@ -85,10 +101,13 @@ export function getRefundWindows( cart: ResponseCart ) {
 				return 4;
 
 			case RefundPolicy.GenericMonthly:
+			case RefundPolicy.PlanMonthly:
 				return 7;
 
 			case RefundPolicy.GenericBiennial:
 			case RefundPolicy.GenericYearly:
+			case RefundPolicy.PlanBiennial:
+			case RefundPolicy.PlanYearly:
 			case RefundPolicy.PremiumTheme:
 				return 14;
 		}
@@ -142,6 +161,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.GenericBiennial:
+		case RefundPolicy.PlanBiennial:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with two year subscriptions.',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }
@@ -149,6 +169,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.GenericMonthly:
+		case RefundPolicy.PlanMonthly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }
@@ -156,6 +177,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.GenericYearly:
+		case RefundPolicy.PlanYearly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }

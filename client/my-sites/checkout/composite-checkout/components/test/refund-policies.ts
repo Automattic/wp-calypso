@@ -66,7 +66,7 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericMonthly ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanMonthly ] );
 	} );
 
 	test( 'biennial plan', () => {
@@ -80,7 +80,7 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericBiennial ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanBiennial ] );
 	} );
 
 	test( 'yearly plan and free domain registration', () => {
@@ -96,7 +96,7 @@ describe( 'getRefundPolicies', () => {
 
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.GenericYearly,
+			RefundPolicy.PlanYearly,
 		] );
 	} );
 
@@ -126,7 +126,7 @@ describe( 'getRefundPolicies', () => {
 
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.GenericYearly,
+			RefundPolicy.PlanYearly,
 		] );
 	} );
 
