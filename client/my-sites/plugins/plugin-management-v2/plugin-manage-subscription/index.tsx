@@ -1,6 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { Plugin } from '../types';
@@ -31,7 +30,6 @@ export default function PluginManageSubcription( { site, plugin }: Props ): Reac
 
 	return currentPurchase?.id ? (
 		<>
-			{ plugin.isMarketplaceProduct && <QuerySitePurchases siteId={ site.ID } /> }
 			<PopoverMenuItem
 				className="plugin-management-v2__actions"
 				icon="credit-card"

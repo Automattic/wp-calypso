@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import PluginManageConnection from '../plugin-manage-connection';
@@ -95,6 +96,7 @@ export default function SitesWithInstalledPluginsList( {
 					}
 				) }
 			</div>
+			{ isWpCom && plugin.isMarketplaceProduct && <QueryUserPurchases /> }
 			<SitesList
 				{ ...rest }
 				plugin={ plugin }
