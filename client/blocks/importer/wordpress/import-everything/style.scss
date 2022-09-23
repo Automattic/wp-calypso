@@ -21,6 +21,7 @@
 		font-family: var(--font-base, var(--font-base-default));
 		color: var(--studio-gray-100);
 		font-size: 1.25rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.5rem;
 		margin-bottom: 1.5rem;
 	}
@@ -28,6 +29,7 @@
 	.onboarding-subtitle {
 		color: var(--studio-gray-50);
 		font-size: 1rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.5rem;
 		margin-bottom: 3rem;
 	}
@@ -119,7 +121,9 @@
 
 		.plan-title {
 			font-weight: 500;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 1.25em;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25em;
 			color: var(--studio-gray-60);
 		}
@@ -161,6 +165,7 @@
 
 			button {
 				color: var(--studio-gray-40);
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.5em;
 				cursor: pointer;
 			}

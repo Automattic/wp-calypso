@@ -44,6 +44,7 @@
 }
 
 .step-progress__element-button {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	font-size: 0.8rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 700;

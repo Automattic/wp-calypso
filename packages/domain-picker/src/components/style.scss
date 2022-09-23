@@ -196,6 +196,7 @@ $accent-blue: #117ac9;
 				width: 100%;
 				height: 100%;
 				border: 2px solid white;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				position: absolute;
 				margin: 0;
@@ -319,7 +320,7 @@ $accent-blue: #117ac9;
 	line-height: 20px;
 	height: 20px;
 	align-items: center;
-	// stylelint-disable-next-line scales/font-size
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px; // typography-exception smaller size needed
 	text-transform: uppercase;
 	vertical-align: middle;

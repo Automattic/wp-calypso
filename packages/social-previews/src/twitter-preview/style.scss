@@ -45,6 +45,7 @@
 
 	.twitter-preview__name {
 		font-weight: bold;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 		line-height: 19px;
 	}
@@ -52,6 +53,7 @@
 	.twitter-preview__screen-name,
 	.twitter-preview__date {
 		color: #667886;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 		line-height: 18px;
 		letter-spacing: -0.3px;
@@ -62,6 +64,7 @@
 		margin: 7px 0;
 
 		.twitter-preview__text {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			line-height: 18px;
 			letter-spacing: -0.3px;
@@ -173,6 +176,7 @@
 				font-size: $font-body-small;
 				color: black;
 				text-align: left;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.3em;
 				overflow: hidden;
 			}
@@ -181,6 +185,7 @@
 				max-height: 1.3em;
 				white-space: nowrap;
 				font-weight: bold;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 1em;
 				margin: 0 0 0.15em;
 				overflow: hidden;

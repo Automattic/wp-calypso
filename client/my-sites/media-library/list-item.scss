@@ -17,6 +17,7 @@
 		transition: color 90ms ease;
 		box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.4);
 		background: var(--color-accent);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		font-size: $font-body-small;
 		line-height: 28px;

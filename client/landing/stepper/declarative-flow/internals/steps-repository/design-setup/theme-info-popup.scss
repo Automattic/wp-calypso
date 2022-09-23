@@ -38,6 +38,7 @@
 	z-index: 2;
 	font-style: normal;
 	font-weight: 400;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 16px;
 	line-height: 24px;
 	letter-spacing: -0.1px;
@@ -74,6 +75,7 @@
 	}
 
 	h1 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 		margin-bottom: 1rem;
 
@@ -84,6 +86,7 @@
 	}
 
 	h2 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 		margin-bottom: 0.5rem;
 	}
@@ -107,6 +110,7 @@
 			border-radius: 4px;
 			color: #2c3338;
 			font-weight: 500;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 12px;
 			line-height: 20px;
 		}
