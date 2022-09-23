@@ -4,6 +4,8 @@ import {
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,7 +18,6 @@ import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
-import { MARKETPLACE_FLOW } from 'calypso/my-sites/plugins/flows';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -27,6 +28,11 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
+	const isDesktop = useDesktopBreakpoint();
+
+	const planClasses = classNames( 'plans', {
+		'in-vertically-scrolled-plans-experiment': ! isDesktop,
+	} );
 
 	const dispatch = useDispatch();
 
@@ -70,7 +76,7 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				subHeaderText={ `Choose the plan that's right for you and reimagine what's possible with plugins` }
 				brandFont
 			/>
-			<div className="plans">
+			<div className={ planClasses }>
 				<PlansFeaturesMain
 					basePlansPath="/plugins/plans"
 					showFAQ={ false }
@@ -78,8 +84,9 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					intervalType={ intervalType }
 					selectedPlan={ PLAN_BUSINESS }
 					planTypes={ [ currentPlanType, TYPE_BUSINESS, TYPE_ECOMMERCE ] }
-					flowName={ MARKETPLACE_FLOW }
-					shouldShowPlansFeatureComparison
+					isInMarketplace
+					shouldShowPlansFeatureComparison={ isDesktop }
+					isInVerticalScrollingPlansExperiment={ isDesktop }
 					isReskinned
 				/>
 			</div>

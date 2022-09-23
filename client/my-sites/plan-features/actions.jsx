@@ -46,6 +46,7 @@ const PlanFeaturesActionsButton = ( {
 	selectedPlan,
 	recordTracksEvent: trackTracksEvent,
 	translate,
+	isInMarketplace,
 	...props
 } ) => {
 	const classes = classNames(
@@ -71,6 +72,21 @@ const PlanFeaturesActionsButton = ( {
 
 		onUpgradeClick();
 	};
+
+	if ( isInMarketplace ) {
+		if ( current ) {
+			return (
+				<Button className={ classes } disabled>
+					{ translate( 'Your current plan' ) }
+				</Button>
+			);
+		}
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ translate( 'Select' ) }
+			</Button>
+		);
+	}
 
 	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
 		return (
@@ -184,6 +200,7 @@ PlanFeaturesActions.propTypes = {
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
 	selectedPlan: PropTypes.string,
+	isInMarketplace: PropTypes.bool,
 };
 
 export default connect(

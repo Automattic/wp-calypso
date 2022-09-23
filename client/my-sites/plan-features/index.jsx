@@ -99,13 +99,22 @@ export class PlanFeatures extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const {
+			isInSignup,
+			planProperties,
+			plans,
+			selectedPlan,
+			withScroll,
+			translate,
+			isInMarketplace,
+		} = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
+			'plan-features--marketplace': isInMarketplace,
 		} );
 		const planWrapperClasses = classNames( {
 			'plans-wrapper': isInSignup,
@@ -374,6 +383,7 @@ export class PlanFeatures extends Component {
 				primaryUpgrade,
 				isPlaceholder,
 				hideMonthly,
+				isInMarketplace,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
 			const planDescription = getPlanDescriptionForMobile( {
@@ -408,6 +418,7 @@ export class PlanFeatures extends Component {
 						isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 						isLoggedInMonthlyPricing={ this.props.isLoggedInMonthlyPricing }
 						isInSignup={ isInSignup }
+						isInMarketplace={ isInMarketplace }
 					/>
 					<p className="plan-features__description">{ planDescription }</p>
 					<PlanFeaturesActions
@@ -433,6 +444,7 @@ export class PlanFeatures extends Component {
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
 						selectedPlan={ selectedPlan }
+						isInMarketplace={ isInMarketplace }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
 						{ this.renderMobileFeatures( features ) }
@@ -853,6 +865,7 @@ PlanFeatures.propTypes = {
 	canPurchase: PropTypes.bool.isRequired,
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	isInSignup: PropTypes.bool,
+	isInMarketplace: PropTypes.bool,
 	isJetpack: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
@@ -873,6 +886,7 @@ PlanFeatures.propTypes = {
 PlanFeatures.defaultProps = {
 	basePlansPath: null,
 	isInSignup: false,
+	isInMarketplace: false,
 	isJetpack: false,
 	selectedSiteSlug: '',
 	siteId: null,
@@ -922,6 +936,7 @@ const ConnectedPlanFeatures = connect(
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
 			isInVerticalScrollingPlansExperiment,
+			isInMarketplace,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -1051,6 +1066,7 @@ const ConnectedPlanFeatures = connect(
 					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
+					isInMarketplace,
 				};
 			} )
 		);
