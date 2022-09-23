@@ -224,7 +224,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) && isPluginBundleEligible && hasThemeSoftwareSet );
+		( isEnabled( 'themes/plugin-bundling' ) && ! isPluginBundleEligible && hasThemeSoftwareSet );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
