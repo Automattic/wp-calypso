@@ -3,9 +3,9 @@ import { buildConnectionForCheckingAvailability } from './connection';
 import { HappychatAuth } from './types';
 import useHappychatAuth from './use-happychat-auth';
 
-const key = Date.now();
-
 type HCAvailability = { available?: boolean; status?: string };
+
+const key = Date.now();
 
 function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 	return new Promise< HCAvailability >( ( resolve ) => {
@@ -37,7 +37,14 @@ function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 	} );
 }
 
-export function useHappychatAvailable( enabled = true ) {
+/**
+ * Opens a socket connection to Happychat to check if it's available and of the user has a session. Caches the answer for 10 minutes or until page refresh.
+ *
+ * @param enabled on/off switch
+ * @param staleTime time in ms to cache the result
+ * @returns
+ */
+export function useHappychatAvailable( enabled = true, staleTime = 10 * 60 * 1000 ) {
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
 	return useQuery(
@@ -45,7 +52,7 @@ export function useHappychatAvailable( enabled = true ) {
 		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
 		{
 			enabled: ! isLoadingAuth && !! dataAuth && enabled,
-			staleTime: 2 * 60 * 1000, // 2 minutes
+			staleTime,
 		}
 	);
 }
