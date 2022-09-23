@@ -1,9 +1,21 @@
 import { throttle } from 'lodash';
-import { QueryClient } from 'react-query';
+import { QueryClient, QueryCache } from 'react-query';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
+import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
 import { shouldPersist, MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/initial-state';
 import { getPersistedStateItem, storePersistedStateItem } from 'calypso/state/persisted-state';
 import { shouldDehydrateQuery } from './should-dehydrate-query';
+
+const sharedCache = new QueryCache();
+
+export function createServerQueryClient() {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { cacheTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
+		queryCache: sharedCache,
+	} );
+
+	return queryClient;
+}
 
 export async function createQueryClient( userId: number | undefined ): Promise< QueryClient > {
 	const queryClient = new QueryClient( {
