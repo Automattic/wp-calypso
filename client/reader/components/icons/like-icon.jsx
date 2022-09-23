@@ -3,6 +3,7 @@ import classnames from 'classnames';
 export default function ReaderLikeIcon( { liked, iconSize } ) {
 	const className = classnames( {
 		'needs-offset': iconSize % 18 === 0,
+		'reader-star': true,
 	} );
 
 	return (

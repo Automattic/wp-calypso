@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -148,7 +149,7 @@ class ReaderPostEllipsisMenu extends Component {
 		}, 100 );
 	};
 
-	markAsSeen = () => {
+	markAsSeen = ( event ) => {
 		const { post, posts } = this.props;
 
 		if ( ! post ) {
@@ -187,10 +188,13 @@ class ReaderPostEllipsisMenu extends Component {
 			} );
 		}
 
+		event.stopPropagation();
+		event.preventDefault();
+
 		this.onMenuToggle();
 	};
 
-	markAsUnSeen = () => {
+	markAsUnSeen = ( event ) => {
 		const { post, posts } = this.props;
 
 		if ( ! post ) {
@@ -230,6 +234,9 @@ class ReaderPostEllipsisMenu extends Component {
 		}
 
 		this.onMenuToggle();
+
+		event.stopPropagation();
+		event.preventDefault();
 	};
 
 	render() {
@@ -298,7 +305,7 @@ class ReaderPostEllipsisMenu extends Component {
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
+						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible">
 							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
@@ -314,7 +321,10 @@ class ReaderPostEllipsisMenu extends Component {
 					) }
 
 				{ this.props.showVisitPost && post.URL && (
-					<PopoverMenuItem onClick={ this.visitPost } icon="external">
+					<PopoverMenuItem
+						onClick={ this.visitPost }
+						icon={ ReaderExternalIcon( { iconSize: 24 } ) }
+					>
 						{ translate( 'Visit post' ) }
 					</PopoverMenuItem>
 				) }

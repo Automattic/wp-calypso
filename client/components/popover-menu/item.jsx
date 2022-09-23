@@ -12,7 +12,7 @@ export default class PopoverMenuItem extends Component {
 		href: PropTypes.string,
 		className: PropTypes.string,
 		isSelected: PropTypes.bool,
-		icon: PropTypes.string,
+		icon: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
 		focusOnHover: PropTypes.bool,
 		onClick: PropTypes.func,
 		onMouseOver: PropTypes.func,
@@ -60,6 +60,11 @@ export default class PopoverMenuItem extends Component {
 			ItemComponent = 'a';
 		}
 
+		let itemIcon = icon;
+		if ( typeof icon === 'string' ) {
+			itemIcon = <Gridicon icon={ icon } size={ 18 } />;
+		}
+
 		return (
 			<ItemComponent
 				role="menuitem"
@@ -68,7 +73,7 @@ export default class PopoverMenuItem extends Component {
 				{ ...itemProps }
 				onMouseOver={ this.handleMouseOver }
 			>
-				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+				{ itemIcon }
 				{ children }
 			</ItemComponent>
 		);

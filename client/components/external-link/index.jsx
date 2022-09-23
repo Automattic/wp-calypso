@@ -12,6 +12,7 @@ class ExternalLink extends Component {
 	static defaultProps = {
 		iconSize: 18,
 		showIconFirst: false,
+		iconComponent: null,
 	};
 
 	static propTypes = {

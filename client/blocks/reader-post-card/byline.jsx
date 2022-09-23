@@ -145,12 +145,7 @@ class PostByline extends Component {
 						railcar={ post.railcar }
 					/>
 				) }
-				<ReaderPostEllipsisMenu
-					site={ site }
-					teams={ teams }
-					post={ post }
-					showFollow={ showFollow }
-				/>
+				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */

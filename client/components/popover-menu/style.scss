@@ -20,6 +20,7 @@
 	text-decoration: none;
 	line-height: normal;
 	transition: all 0.05s ease-in-out;
+	width: 100%;
 
 	&:first-child {
 		margin-top: 5px;
@@ -40,6 +41,10 @@
 
 		.gridicon {
 			color: var( --color-text-inverted );
+		}
+
+		svg path {
+			fill: var( --color-text-inverted );
 		}
 	}
 
@@ -75,8 +80,10 @@
 		position: relative;
 		top: 2px;
 	}
-	.gridicons-external {
-		top: 0;
+	.reader-external {
+		margin-right: 2px;
+		vertical-align: middle;
+		position: static;
 	}
 }
 
