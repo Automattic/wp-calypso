@@ -1,10 +1,6 @@
 import page from 'page';
 import { requestSite } from 'calypso/state/sites/actions';
-import {
-	canCurrentUserUseCustomerHome,
-	isRequestingSite,
-	getSiteOptions,
-} from 'calypso/state/sites/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
@@ -23,22 +19,6 @@ export default async function ( context, next ) {
 	next();
 }
 
-const refetchLaunchpadScreenOption = async ( siteId, context ) => {
-	return new Promise( ( resolve ) => {
-		const unsubscribe = context.store.subscribe( () => {
-			if ( isRequestingSite( context.store.getState(), siteId ) ) {
-				return;
-			}
-
-			unsubscribe();
-			resolve();
-		} );
-
-		// Trigger a `store.subscribe()` callback
-		context.store.dispatch( requestSite( siteId ) );
-	} );
-};
-
 export async function maybeRedirect( context, next ) {
 	const state = context.store.getState();
 	const slug = getSelectedSiteSlug( state );
@@ -52,7 +32,7 @@ export async function maybeRedirect( context, next ) {
 	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
 
 	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption !== 'off' ) {
-		await refetchLaunchpadScreenOption( siteId, context );
+		await context.store.dispatch( requestSite( siteId ) );
 	}
 
 	// TODO: Write explanation for refetching launchpad site options
