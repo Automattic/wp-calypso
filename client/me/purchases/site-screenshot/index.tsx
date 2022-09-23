@@ -49,6 +49,8 @@ export const SiteScreenshot = ( { site, alt, ...props }: SiteScreenshotProps ) =
 			alt={ alt }
 			bgColorImgUrl={ site.icon?.img }
 			mshotsOption={ MShotsOptions }
+			width={ 365 }
+			height={ 500 }
 		>
 			<Spinner className="site-screenshot__spinner" size={ 50 } />
 		</SiteThumbnail>
