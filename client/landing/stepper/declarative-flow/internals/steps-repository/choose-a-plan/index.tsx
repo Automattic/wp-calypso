@@ -56,11 +56,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			createVideoPressSite( {
 				username: currentUser!.username,
 				languageSlug: locale,
-				bearerToken: undefined,
 				visibility,
-				anchorFmPodcastId: null,
-				anchorFmEpisodeId: null,
-				anchorFmSpotifyUrl: null,
 			} ).then( (/*newSite*/) => {
 				const planObject = supportedPlans.find(
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0

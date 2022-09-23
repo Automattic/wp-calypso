@@ -31,11 +31,14 @@ export const setPatternId = ( patternId: number ) => ( {
 	patternId,
 } );
 
-export interface CreateSiteActionParameters {
+export interface CreateSiteBaseActionParameters {
 	username: string;
 	languageSlug: string;
-	bearerToken?: string;
 	visibility: number;
+}
+
+export interface CreateSiteActionParameters extends CreateSiteBaseActionParameters {
+	bearerToken?: string;
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
 	anchorFmSpotifyUrl: string | null;
@@ -44,12 +47,8 @@ export interface CreateSiteActionParameters {
 export function* createVideoPressSite( {
 	username,
 	languageSlug,
-	bearerToken = undefined,
 	visibility = Visibility.PublicNotIndexed,
-	anchorFmPodcastId = null,
-	anchorFmEpisodeId = null,
-	anchorFmSpotifyUrl = null,
-}: CreateSiteActionParameters ) {
+}: CreateSiteBaseActionParameters ) {
 	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
 		yield select( STORE_KEY, 'getState' );
 
@@ -79,27 +78,19 @@ export function* createVideoPressSite( {
 			use_patterns: true,
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
-			...( anchorFmPodcastId && {
-				anchor_fm_podcast_id: anchorFmPodcastId,
-			} ),
-			...( anchorFmEpisodeId && {
-				anchor_fm_episode_id: anchorFmEpisodeId,
-			} ),
-			...( anchorFmSpotifyUrl && {
-				anchor_fm_spotify_url: anchorFmSpotifyUrl,
-			} ),
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
-		...( bearerToken && { authToken: bearerToken } ),
 	};
+
 	const success: NewSiteBlogDetails | undefined = yield dispatch(
 		SITE_STORE,
 		'createSite',
 		params
 	);
-	console.log( { success } );
+
 	return success;
 }
+
 export function* createSite( {
 	username,
 	languageSlug,
