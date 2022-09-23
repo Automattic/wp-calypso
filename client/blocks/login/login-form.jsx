@@ -482,7 +482,7 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isP2Login ) {
+		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -656,7 +656,11 @@ export class LoginForm extends Component {
 								'is-hidden': isPasswordHidden,
 							} ) }
 						>
-							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
+							<FormLabel htmlFor="password">
+								{ this.props.isWoo && ! this.props.isPartnerSignup
+									? this.props.translate( 'Your password' )
+									: this.props.translate( 'Password' ) }
+							</FormLabel>
 
 							<FormPasswordInput
 								autoCapitalize="off"
