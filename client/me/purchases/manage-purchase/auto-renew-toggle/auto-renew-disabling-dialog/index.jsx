@@ -250,7 +250,9 @@ class AutoRenewDisablingDialog extends Component {
 				onClose={ this.closeAndCleanup }
 				buttons={ buttons }
 			>
-				<h2 className="auto-renew-disabling-dialog__header">{ translate( 'Before you go…' ) }</h2>
+				<h2 className="auto-renew-disabling-dialog__header">
+					{ translate( 'Turn off auto-renew' ) }
+				</h2>
 				<p>{ description }</p>
 			</Dialog>
 		);
