@@ -1,6 +1,9 @@
 import {
+	PLAN_BIENNIAL_PERIOD,
 	PLAN_MONTHLY_PERIOD,
 	PLAN_PERSONAL,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_WPCOM_CUSTOM_DESIGN,
 	TITAN_MAIL_YEARLY_SLUG,
@@ -52,7 +55,35 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [] );
 	} );
 
-	test( 'plan and free domain registration', () => {
+	test( 'monthly plan', () => {
+		const cart = getCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericMonthly ] );
+	} );
+
+	test( 'biennial plan', () => {
+		const cart = getCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_BIENNIAL_PERIOD }`,
+			item_subtotal_integer: 35,
+			product_slug: PLAN_PREMIUM_2_YEARS,
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericBiennial ] );
+	} );
+
+	test( 'yearly plan and free domain registration', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 		cart.products.unshift( {
 			...getEmptyResponseCartProduct(),
@@ -60,6 +91,7 @@ describe( 'getRefundPolicies', () => {
 			meta: 'test.live',
 			product_slug: 'dotlive_domain',
 		} );
+
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [
@@ -68,7 +100,7 @@ describe( 'getRefundPolicies', () => {
 		] );
 	} );
 
-	test( 'plan, free domain registration and professional email', () => {
+	test( 'yearly plan, free domain registration and professional email', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 
 		cart.products.unshift( {
@@ -124,5 +156,19 @@ describe( 'getRefundPolicies', () => {
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [] );
+	} );
+
+	test( 'premium theme product', () => {
+		const cart = getCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: '-1',
+			item_subtotal_integer: 50,
+			product_slug: 'premium_theme',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.PremiumTheme ] );
 	} );
 } );

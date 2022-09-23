@@ -1,7 +1,9 @@
 import {
+	isBiennially,
 	isDomainRegistration,
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
+	isTheme,
 	isYearly,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -17,8 +19,10 @@ export enum RefundPolicy {
 	DomainNameRegistration,
 	DomainNameRegistrationForPlan,
 	DomainNameRenewal,
+	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
+	PremiumTheme,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
@@ -47,12 +51,20 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return undefined;
 		}
 
+		if ( isTheme( product ) ) {
+			return RefundPolicy.PremiumTheme;
+		}
+
 		if ( isMonthlyProduct( product ) ) {
 			return RefundPolicy.GenericMonthly;
 		}
 
 		if ( isYearly( product ) ) {
 			return RefundPolicy.GenericYearly;
+		}
+
+		if ( isBiennially( product ) ) {
+			return RefundPolicy.GenericBiennial;
 		}
 	} );
 
@@ -75,7 +87,9 @@ export function getRefundWindows( cart: ResponseCart ) {
 			case RefundPolicy.GenericMonthly:
 				return 7;
 
+			case RefundPolicy.GenericBiennial:
 			case RefundPolicy.GenericYearly:
+			case RefundPolicy.PremiumTheme:
 				return 14;
 		}
 	} );
@@ -99,7 +113,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			href={ localizeUrl( DOMAIN_CANCEL ) }
 			target="_blank"
 			rel="noopener noreferrer"
-			onClick={ () => gaRecordEvent( 'Upgrades', 'Clicked Cancel Domain Support' ) }
+			onClick={ () => gaRecordEvent( 'Upgrades', 'Clicked Cancel Domain Support Link' ) }
 		/>
 	);
 
@@ -127,6 +141,13 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
+		case RefundPolicy.GenericBiennial:
+			text = translate(
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with two year subscriptions.',
+				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+			);
+			break;
+
 		case RefundPolicy.GenericMonthly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
@@ -137,6 +158,13 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 		case RefundPolicy.GenericYearly:
 			text = translate(
 				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
+				{ components: { cancelDomainSupportPage, refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.PremiumTheme:
+			text = translate(
+				'You understand that {{refundsSupportPage}}theme refunds{{/refundsSupportPage}} are limited to 14 days after purchase.',
 				{ components: { cancelDomainSupportPage, refundsSupportPage } }
 			);
 			break;
