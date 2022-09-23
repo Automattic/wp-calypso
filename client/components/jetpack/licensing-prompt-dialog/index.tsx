@@ -96,7 +96,22 @@ function LicensingPromptDialog( { siteId }: Props ) {
 					<li>
 						{ translate( 'You can find the license keys in your purchase confirmation email.' ) }
 					</li>
-					<li>{ translate( 'Or in Upgrades -> Purchases -> Active Upgrades' ) }</li>
+					<li>
+						{ translate( 'Or in {{purchases/}}', {
+							components: {
+								purchases: (
+									<Button
+										className="user-purchases-link"
+										href="/me/purchases"
+										target="_blank"
+										plain
+									>
+										{ 'https://wordpress.com/me/purchases' }
+									</Button>
+								),
+							},
+						} ) }
+					</li>
 				</ul>
 			</>
 		);
