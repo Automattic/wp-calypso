@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .product-grid__fullwidth-wrapper {
 	width: 100vw;
-	margin: 0 calc( 50% - 50vw );
+	margin: 0 calc(50% - 50vw);
 }
 
 .product-grid__section {
@@ -11,7 +11,7 @@
 	padding-left: 16px;
 	padding-right: 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 0;
 		padding-right: 0;
 	}
@@ -20,7 +20,7 @@
 // Retain horizontal padding on Jetpack Cloud,
 // otherwise the product grid reach the edge of the screen
 .is-jetpack-cloud.product-grid__section {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-left: 16px;
 		padding-right: 16px;
 	}
@@ -67,7 +67,7 @@
 	list-style-type: none;
 
 	@include break-small {
-		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 	}
 }
 
@@ -75,7 +75,7 @@
 	padding-top: 32px;
 }
 
-.product-grid__plan-grid:not( .is-wrapping ) {
+.product-grid__plan-grid:not(.is-wrapping) {
 	margin-top: 72px;
 	gap: 16px 0;
 
@@ -123,18 +123,18 @@
 }
 
 .product-grid__more-container {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	margin: 1.5rem 0;
 	padding: 1.875rem 0.9375rem 1.625rem;
-	border-radius: calc( 2 * 4px );
+	border-radius: calc(2 * 4px);
 
 	text-align: center;
 
 	@include break-small {
 		margin: 0 1.875rem;
 
-		border-radius: 0 0 calc( 2 * 4px ) calc( 2 * 4px );
+		border-radius: 0 0 calc(2 * 4px) calc(2 * 4px);
 	}
 }
 

@@ -11,25 +11,21 @@ import VerticalNav from 'calypso/components/vertical-nav';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { useGetEmailAccountsQuery } from 'calypso/data/emails/use-get-email-accounts-query';
-import { canCurrentUserAddEmail } from 'calypso/lib/domains';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canAddMailboxesToEmailSubscription } from 'calypso/lib/emails';
 import {
 	getGoogleAdminUrl,
 	getGoogleMailServiceFamily,
 	getGSuiteProductSlug,
-	getGSuiteSubscriptionStatus,
 	getProductType,
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import {
-	getTitanProductName,
-	getTitanProductSlug,
-	getTitanSubscriptionId,
-	hasTitanMailWithUs,
-} from 'calypso/lib/titan';
+import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
+import MailPoetUpsell from 'calypso/my-sites/email/email-management/home/mailpoet-upsell';
 import {
 	getEmailPurchaseByDomain,
 	hasEmailSubscription,
@@ -61,6 +57,7 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	return (
 		<VerticalNavItem
 			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
+			onClick={ () => recordTracksEvent( 'calypso_upsell_email', { context: 'email-forwarding' } ) }
 		>
 			{ translate( 'Upgrade to a hosted email' ) }
 		</VerticalNavItem>
@@ -92,11 +89,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
 	);
 	const currentRoute = useSelector( getCurrentRoute );
-
-	const canAddMailboxes =
-		( getGSuiteProductSlug( domain ) || getTitanProductSlug( domain ) ) &&
-		getGSuiteSubscriptionStatus( domain ) !== 'suspended' &&
-		canCurrentUserAddEmail( domain );
+	const canAddMailboxes = canAddMailboxesToEmailSubscription( domain );
 	const hasSubscription = hasEmailSubscription( domain );
 
 	const handleBack = () => {
@@ -116,6 +109,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	function getAddMailboxProps() {
 		if ( hasGSuiteWithUs( domain ) ) {
 			return {
+				disabled: ! canAddMailboxes,
 				path: emailManagementAddGSuiteUsers(
 					selectedSite.slug,
 					domain.name,
@@ -129,6 +123,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		if ( hasTitanMailWithUs( domain ) ) {
 			if ( getTitanSubscriptionId( domain ) ) {
 				return {
+					disabled: ! canAddMailboxes,
 					path: emailManagementNewTitanAccount(
 						selectedSite.slug,
 						domain.name,
@@ -149,11 +144,13 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 
 			return {
 				external: showExternalControlPanelLink,
+				disabled: ! canAddMailboxes,
 				path: controlPanelUrl,
 			};
 		}
 
 		return {
+			disabled: ! canAddMailboxes,
 			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
 		};
 	}
@@ -184,18 +181,12 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	}
 
 	function renderViewBillingAndPaymentSettingsNavItem() {
-		if ( ! hasSubscription ) {
-			return null;
-		}
-
-		if ( ! purchase ) {
-			return <VerticalNavItem isPlaceholder />;
-		}
-
-		const managePurchaseUrl = getManagePurchaseUrlFor( selectedSite.slug, purchase.id );
+		const managePurchaseUrl = purchase
+			? getManagePurchaseUrlFor( selectedSite.slug, purchase.id )
+			: '';
 
 		return (
-			<VerticalNavItem path={ managePurchaseUrl }>
+			<VerticalNavItem path={ managePurchaseUrl } disabled={ ! hasSubscription || ! purchase }>
 				{ translate( 'View billing and payment settings' ) }
 			</VerticalNavItem>
 		);
@@ -232,7 +223,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		}
 
 		return (
-			<VerticalNavItem { ...manageAllNavItemProps }>
+			<VerticalNavItem { ...manageAllNavItemProps } disabled={ ! purchase }>
 				{ translate( 'Manage all mailboxes', {
 					comment:
 						'This is the text for a link to manage all email accounts/mailboxes for a subscription',
@@ -242,20 +233,8 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 	}
 
 	function renderAddNewMailboxesOrRenewNavItem() {
-		if ( hasTitanMailWithUs( domain ) && ! hasSubscription ) {
-			return (
-				<VerticalNavItem { ...getAddMailboxProps() }>
-					{ translate( 'Add new mailboxes' ) }
-				</VerticalNavItem>
-			);
-		}
-
 		if ( hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain ) ) {
-			if ( ! purchase ) {
-				return <VerticalNavItem isPlaceholder />;
-			}
-
-			if ( isExpired( purchase ) ) {
+			if ( purchase && isExpired( purchase ) ) {
 				return (
 					<VerticalNavItem onClick={ handleRenew } path="#">
 						{ translate( 'Renew to add new mailboxes' ) }
@@ -264,7 +243,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			}
 
 			return (
-				<VerticalNavItem { ...getAddMailboxProps() } disabled={ ! canAddMailboxes }>
+				<VerticalNavItem { ...getAddMailboxProps() }>
 					{ translate( 'Add new mailboxes' ) }
 				</VerticalNavItem>
 			);
@@ -292,6 +271,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 		<>
 			{ selectedSite && hasSubscription && <QuerySitePurchases siteId={ selectedSite.ID } /> }
 			<DocumentHead title={ titleCase( getHeaderText() ) } />
+			<MailPoetUpsell />
 			{ ! hideHeaderCake && <HeaderCake onClick={ handleBack }>{ getHeaderText() }</HeaderCake> }
 			<EmailPlanHeader
 				domain={ domain }

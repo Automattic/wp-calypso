@@ -34,7 +34,7 @@ const WebServerSettingsCard = ( {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 	const [ selectedStaticFile404, setSelectedStaticFile404 ] = useState( '' );
 
-	const recommendedValue = '7.4';
+	const recommendedValue = '8.0';
 
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
@@ -56,16 +56,16 @@ const WebServerSettingsCard = ( {
 				disabled: true, // EOL 6th December, 2021
 			},
 			{
-				label: translate( '7.4 (recommended)', {
+				label: translate( '7.4', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '7.4',
+			},
+			{
+				label: translate( '8.0 (recommended)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
-			},
-			{
-				label: translate( '8.0', {
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '8.0',
 			},
 			{
 				label: translate( '8.1', {

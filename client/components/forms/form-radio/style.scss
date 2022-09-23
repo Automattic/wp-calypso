@@ -13,24 +13,26 @@
 	min-width: 16px;
 	appearance: none;
 
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	margin-right: 4px;
 	line-height: 10px;
 
 	&:checked::before {
 		float: left;
-		content: '\2022';
+		content: "\2022";
 		margin: 3px;
 		width: 8px;
 		height: 8px;
 		text-indent: -9999px;
-		background: var( --color-primary );
+		background: var(--color-primary);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		animation: grow 0.2s ease-in-out;
 	}
 
 	&:disabled:checked::before {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 }
 

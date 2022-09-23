@@ -21,10 +21,10 @@ const embedsToLookFor = {
 const cacheBustQuery = `?v=${ Math.floor( new Date().getTime() / ( 1000 * 60 * 60 * 24 * 10 ) ) }`; // A new query every 10 days
 
 const SLIDESHOW_URLS = {
-	CSS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
-	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js${ cacheBustQuery }`,
-	JS: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
-	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
+	CSS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css${ cacheBustQuery }`,
+	CYCLE_JS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/jquery.cycle.min.js${ cacheBustQuery }`,
+	JS: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/slideshow-shortcode.js${ cacheBustQuery }`,
+	SPINNER: `https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif${ cacheBustQuery }`,
 };
 
 function processEmbeds( domNode ) {
@@ -156,11 +156,10 @@ function createSlideshow() {
 	} );
 }
 
-let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
-
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
+	let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 	// set global variable required by JetpackSlideshow
 	window.jetpackSlideshowSettings = {
 		spinner: SLIDESHOW_URLS.SPINNER,

@@ -5,7 +5,6 @@ import { convertToFriendlyWebsiteName } from 'calypso/blocks/import/util';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteBySlug, getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { Importer, ImportJob, StepNavigator } from '../types';
@@ -53,7 +52,8 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	function installJetpack() {
 		recordTracksEvent( 'calypso_site_importer_install_jetpack' );
-		window.open( `/jetpack/connect/?url=${ fromSite }`, '_blank' );
+		const source = 'import';
+		window.open( `/jetpack/connect/?url=${ fromSite }&source=${ source }`, '_blank' );
 	}
 
 	function switchToMigrationScreen() {
@@ -127,7 +127,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 							url={ fromSite }
 							sourceSiteId={ fromSiteItem?.ID as number }
 							sourceUrlAnalyzedData={ fromSiteAnalyzedData }
-							targetSite={ siteItem as SitesItem }
+							targetSite={ siteItem ?? undefined }
 							targetSiteId={ siteId }
 							targetSiteSlug={ siteSlug }
 							stepNavigator={ stepNavigator }
@@ -138,7 +138,7 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 						<ImportContentOnly
 							job={ job }
 							importer={ importer }
-							siteItem={ siteItem as SitesItem }
+							siteItem={ siteItem }
 							siteSlug={ siteSlug }
 							siteAnalyzedData={ fromSiteAnalyzedData }
 							stepNavigator={ stepNavigator }

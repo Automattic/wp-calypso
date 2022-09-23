@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 		await pluginsPage.visit( siteUrl );
 	} );
 
-	it.each( [ 'Editor’s pick', 'Top free plugins' ] )(
+	it.each( [ PluginsPage.featuredSection, PluginsPage.freeSection ] )(
 		'Plugins page loads %s section',
 		async function ( section: string ) {
 			await pluginsPage.validateHasSection( section );
@@ -39,6 +39,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins page /plugins/:jetpack-site' ), 
 
 	// We don't support marketplace plugin purchases on self hosted sites. (Source code download restrictions)
 	it( 'Plugins page does not load premium plugins on Jetpack sites', async function () {
-		await pluginsPage.validateNotHasSection( 'Top paid plugins' );
+		await pluginsPage.validateNotHasSection( PluginsPage.paidSection );
 	} );
 } );

@@ -19,7 +19,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 
 	const themesAnswer = isEnabled( 'themes/premium' )
 		? translate(
-				"Yes! With the WordPress.com Pro plan you can install any theme you'd like." +
+				"Yes! With the WordPress.com Business or eCommerce plan you can install any theme you'd like." +
 					' All plans give you access to our {{a}}directory of free and premium themes{{/a}}.' +
 					' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 				{
@@ -27,7 +27,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				}
 		  )
 		: translate(
-				"Yes! With the WordPress.com Pro plan you can install any theme you'd like." +
+				"Yes! With the WordPress.com Business or eCommerce plan you can install any theme you'd like." +
 					' All plans give you access to our {{a}}directory of free themes{{/a}}.' +
 					' These are among the highest-quality WordPress themes, hand-picked and reviewed by our team.',
 				{
@@ -40,7 +40,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Do you sell domains?' ) }
 				answer={ translate(
-					'Yes! The Pro plan include a free custom domain for one year. ' +
+					'Yes! Annual and biannual Personal, Premium, Business, and eCommerce plans include a free custom domain for one year. ' +
 						'That includes new domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. Does not apply to premium domains. Domain name should be' +
 						' registered within one year of the purchase of the plan to use this promotion. Registered' +
@@ -62,7 +62,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 			<FAQItem
 				question={ translate( 'Can I install plugins?' ) }
 				answer={ translate(
-					'Yes! With the WordPress.com Pro plan you can search for and install external plugins.' +
+					'Yes! With the WordPress.com Business or eCommerce plan you can search for and install external plugins.' +
 						' All plans already come with a custom set of plugins tailored just for them.' +
 						' {{a}}Find out more about plugins{{/a}}.',
 					{
@@ -86,7 +86,7 @@ const WpcomFAQ = ( { isChatAvailable, siteSlug, translate } ) => {
 				answer={ translate(
 					'No. All WordPress.com sites include our specially tailored WordPress hosting to ensure' +
 						' your site stays available and secure at all times. You can even use your own domain' +
-						' when you upgrade to the Pro plan.'
+						' when you upgrade to the Personal, Premium, Business, or eCommerce plan.'
 				) }
 			/>
 

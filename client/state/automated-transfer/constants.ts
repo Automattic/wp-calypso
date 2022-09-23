@@ -13,6 +13,7 @@ export const transferStates = {
 	ACTIVE: 'active',
 	UPLOADING: 'uploading',
 	BACKFILLING: 'backfilling',
+	RELOCATING: 'relocating_switcheroo',
 	COMPLETE: 'complete',
 	/**
 	 * Similar to 'none' there is no existing transfer, but this is when the site has been already reverted from atomic

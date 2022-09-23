@@ -4,7 +4,7 @@ import { CheckboxControl, SelectControl, TextControl } from '@wordpress/componen
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
-import { FormEvent, ReactElement, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -32,7 +32,7 @@ const StyledNextButton = styled( NextButton )`
 	}
 `;
 
-const BusinessInfo: Step = function ( props ): ReactElement | null {
+const BusinessInfo: Step = function ( props ) {
 	const { goNext, goBack, submit } = props.navigation;
 
 	const { __ } = useI18n();

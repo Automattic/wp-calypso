@@ -21,6 +21,8 @@ const allowedKeys = [
 	'logout_URL',
 	'primary_blog',
 	'primary_blog_is_jetpack',
+	'has_jetpack_partner_access',
+	'jetpack_partner_types',
 	'primary_blog_url',
 	'meta',
 	'is_new_reader',

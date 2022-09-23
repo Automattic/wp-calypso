@@ -14,6 +14,8 @@ import './style.scss';
 
 type TracksGoalsSelectEventProperties = {
 	goals: string;
+	combo: string;
+	total: number;
 	write?: number;
 	promote?: number;
 	sell?: number;
@@ -30,6 +32,7 @@ const { serializeGoals, goalsToIntent } = Onboard.utils;
 const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
+	'smp-import': [ SiteGoal.Import ],
 };
 
 /**
@@ -65,6 +68,8 @@ const GoalsStep: Step = ( { navigation } ) => {
 	) => {
 		const eventProperties: TracksGoalsSelectEventProperties = {
 			goals: serializeGoals( goals ),
+			combo: goals.sort().join( ',' ),
+			total: goals.length,
 			intent,
 		};
 

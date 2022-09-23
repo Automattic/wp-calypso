@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // Content group
 .plans-features-main__group {
@@ -14,14 +14,14 @@
 
 // Required additional specificity
 .plans-features-main .plans-features-main__happychat-button {
-	color: var( --color-primary );
+	color: var(--color-primary);
 	font-weight: 400;
 	padding: 0;
 	text-decoration: underline;
 
 	&:hover,
 	&:focus {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
@@ -32,13 +32,13 @@
 
 .plans-features-main__banner-content {
 	display: inline-block;
-	background: var( --color-surface );
+	background: var(--color-surface);
 	border-radius: 2px;
 	padding: 2px 12px;
 	@include elevation( 2dp );
 
 	button.is-borderless {
-		color: var( --color-accent );
+		color: var(--color-accent);
 		text-decoration: underline;
 		vertical-align: baseline;
 		margin-left: 0.5em;
@@ -50,12 +50,12 @@
 	margin: 0 0 16px;
 	padding: 0 16px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-bottom: 28px;
 		padding: 0 24px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: auto;
 		margin-right: auto;
 		padding: 0;
@@ -65,12 +65,12 @@
 
 .plans-features-main__heading {
 	margin: 0 0 12px;
-	font-size: 17px; /* stylelint-disable-line */
+	font-size: 17px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	line-height: 1;
 	font-weight: 600;
-	color: var( --color-text );
+	color: var(--color-text);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-medium;
 		font-weight: 400;
 	}
@@ -80,7 +80,7 @@
 	margin: 0;
 	font-size: $font-body-small;
 	line-height: 1.35;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 /**
@@ -89,6 +89,12 @@
  */
 body.is-section-signup.is-white-signup {
 	.plans-features-main {
+		.plan-faq {
+			h1 {
+				margin-top: 10px;
+				margin-bottom: 30px;
+			}
+		}
 		.plans-features-main__banner-content {
 			box-shadow: none;
 			display: flex;
@@ -110,7 +116,7 @@ body.is-section-signup.is-white-signup {
 			padding: 20px;
 
 			.plan-features__header-title {
-				font-size: 18px; /* stylelint-disable-line */
+				font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			}
 
 			.plan-features__audience {
@@ -119,9 +125,9 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.plan-pill {
-				background: var( --color-text );
-				color: var( --color-text-inverted );
-				font-size: 13px; /* stylelint-disable-line */
+				background: var(--color-text);
+				color: var(--color-text-inverted);
+				font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				top: unset;
 				bottom: -10px;
 				left: 20px;
@@ -132,16 +138,16 @@ body.is-section-signup.is-white-signup {
 
 		.plan-features__scroller-container {
 			.plan-features__scroll-button {
-				background: var( --color-text );
-				color: var( --color-text-inverted );
+				background: var(--color-text);
+				color: var(--color-text-inverted);
 				&[disabled] {
 					display: none;
 				}
 			}
 			.plan-features__scroll-indicator-dot {
-				background: var( --color-neutral-5 );
+				background: var(--color-neutral-5);
 				&.is-highlighted {
-					background: var( --color-neutral-100 );
+					background: var(--color-neutral-100);
 				}
 			}
 
@@ -162,7 +168,7 @@ body.is-section-signup.is-white-signup {
 					background-clip: padding-box;
 
 					.plan-features__description {
-						color: var( --color-neutral-60-rgb );
+						color: var(--color-neutral-60-rgb);
 						padding-bottom: 42px;
 					}
 				}
@@ -173,21 +179,21 @@ body.is-section-signup.is-white-signup {
 
 					.plan-price {
 						text-align: left;
-						font-size: 32px; /* stylelint-disable-line */
-						color: var( --color-neutral-100 );
+						font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+						color: var(--color-neutral-100);
 						margin-top: 15px;
 
 						.plan-price__currency-symbol {
 							vertical-align: initial;
-							font-size: 32px; /* stylelint-disable-line */
-							color: var( --color-neutral-100 );
+							font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+							color: var(--color-neutral-100);
 						}
 					}
 
 					.plan-features__header-billing-info {
 						text-align: left;
-						font-size: 10px; /* stylelint-disable-line */
-						color: var( --color-neutral-50 );
+						font-size: 10px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+						color: var(--color-neutral-50);
 						font-weight: 400;
 					}
 				}

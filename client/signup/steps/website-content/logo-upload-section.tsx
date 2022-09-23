@@ -10,7 +10,6 @@ import {
 	logoRemoved,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/get-selected-site';
 import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
 
 export const LogoUploadSectionContainer = styled.div`
@@ -46,11 +45,13 @@ export function LogoUploadSection( {
 
 	return (
 		<LogoUploadSectionContainer>
-			<Label>{ translate( 'Upload your business logo.' ) }</Label>
+			<Label>
+				{ translate( 'Upload a logo for your website, transparent backgrounds work best.' ) }
+			</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
 					mediaIndex={ 0 }
-					site={ site as SiteData }
+					site={ site }
 					onMediaUploadStart={ () => dispatch( logoUploadStarted() ) }
 					onMediaUploadFailed={ () => dispatch( logoUploadFailed() ) }
 					onMediaUploadComplete={ onMediaUploadComplete }

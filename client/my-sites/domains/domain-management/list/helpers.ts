@@ -1,6 +1,5 @@
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
-
+import type { SiteDetails } from '@automattic/data-stores';
 type FilterDomainsByOwnerType = (
 	domains: Array< ResponseDomain >,
 	filter: 'owned-by-me' | 'owned-by-others' | undefined
@@ -8,7 +7,7 @@ type FilterDomainsByOwnerType = (
 
 type FilterDomainsDomainOnlyType = (
 	domains: Array< ResponseDomain >,
-	sites: Array< SiteData >
+	sites: Array< SiteDetails >
 ) => Array< ResponseDomain >;
 
 export const filterDomainsByOwner: FilterDomainsByOwnerType = ( domains, filter ) => {

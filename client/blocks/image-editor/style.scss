@@ -12,11 +12,11 @@
 	display: flex;
 	flex-direction: column;
 	position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-	background: var( --color-neutral-90 );
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: var(--color-neutral-90);
 }
 
 .image-editor__toolbar {
@@ -31,9 +31,9 @@
 }
 
 .image-editor__toolbar-button {
-	background: rgba( var( --color-surface-rgb ), 0 );
+	background: rgba(var(--color-surface-rgb), 0);
 	border: none;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	margin: 0 10px;
 	cursor: pointer;
 	&.is-disabled {
@@ -47,7 +47,7 @@
 }
 
 .image-editor__toolbar-button:hover {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }
 
 .image-editor__canvas-container {
@@ -61,6 +61,7 @@
 .image-editor__canvas {
 	position: absolute;
 	top: 50%;
+	/*!rtl:ignore*/
 	left: 50%;
 	&.is-placeholder {
 		@include placeholder( --color-neutral-70 );
@@ -69,14 +70,19 @@
 
 .image-editor__crop {
 	position: absolute;
-	border: 1px solid var( --color-border-inverted );
+	border: 1px solid var(--color-border-inverted);
 	cursor: move;
 	box-sizing: border-box;
 }
 
+.image-editor__crop-background-container {
+	/*!rtl:ignore*/
+	direction: ltr;
+}
+
 .image-editor__crop-background {
 	position: absolute;
-	background: var( --color-neutral-90 );
+	background: var(--color-neutral-90);
 	opacity: 0.5;
 }
 
@@ -85,14 +91,17 @@
 	width: 8px;
 	height: 8px;
 	margin-top: -4px;
+	/*!rtl:ignore*/
 	margin-left: -4px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
-	border: 2px solid var( --color-border-inverted );
-	background: var( --color-neutral-90 );
+	border: 2px solid var(--color-border-inverted);
+	background: var(--color-neutral-90);
 
 	&::before {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
-		content: ' ';
+		content: " ";
 		display: block;
 		height: 24px;
 		margin: -8px auto auto -8px;
@@ -101,19 +110,22 @@
 }
 
 .image-editor__crop-handle-nesw {
+	/*!rtl:ignore*/
 	cursor: nesw-resize;
 }
 
 .image-editor__crop-handle-nwse {
+	/*!rtl:ignore*/
 	cursor: nwse-resize;
 }
 
 .image-editor__buttons {
-	border-top: 1px solid var( --color-neutral-70 );
+	border-top: 1px solid var(--color-neutral-70);
 	padding: 16px;
 	text-align: right;
 }
 
 .image-editor__buttons-button.button {
+	/*!rtl:ignore*/
 	margin-left: 10px;
 }

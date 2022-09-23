@@ -43,6 +43,7 @@ export class ImageEditorCanvas extends Component {
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
 		showCrop: PropTypes.bool,
+		widthLimit: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -62,6 +63,7 @@ export class ImageEditorCanvas extends Component {
 		onLoadError: noop,
 		isImageLoaded: false,
 		showCrop: true,
+		widthLimit: Infinity,
 	};
 
 	// throttle the frame rate of window.resize() to circa 30fps
@@ -80,7 +82,7 @@ export class ImageEditorCanvas extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		if ( this.props.src !== prevProps.src ) {
+		if ( this.props.src !== prevProps.src || ! this.image ) {
 			this.getImage( this.props.src );
 		}
 
@@ -151,6 +153,7 @@ export class ImageEditorCanvas extends Component {
 	};
 
 	toBlob( callback ) {
+		const { widthLimit } = this.props;
 		const { leftRatio, topRatio, widthRatio, heightRatio } = this.props.crop;
 
 		const { mimeType, transform } = this.props;
@@ -175,7 +178,17 @@ export class ImageEditorCanvas extends Component {
 		const newContext = newCanvas.getContext( '2d' );
 		newContext.putImageData( imageData, 0, 0 );
 
-		canvasToBlob( newCanvas, callback, mimeType, 1 );
+		if ( Number.isFinite( widthLimit ) && widthLimit < croppedWidth ) {
+			const resizedCanvas = document.createElement( 'canvas' );
+			const scale = widthLimit / croppedWidth;
+			resizedCanvas.width = scale * croppedHeight;
+			resizedCanvas.height = scale * croppedWidth;
+			const resizedContext = resizedCanvas.getContext( '2d' );
+			resizedContext.drawImage( newCanvas, 0, 0, scale * croppedWidth, scale * croppedHeight );
+			canvasToBlob( resizedCanvas, callback, mimeType, 1 );
+		} else {
+			canvasToBlob( newCanvas, callback, mimeType, 1 );
+		}
 	}
 
 	drawImage() {

@@ -9,7 +9,6 @@ import actionLog from './action-log/reducer';
 import appBannerDismissed from './app-banner-dismissed/reducer';
 import appBannerVisibility from './app-banner-visibility/reducer';
 import checkout from './checkout/reducer';
-import helpCenterVisible from './help-center-visible/reducer';
 import language from './language/reducer';
 import layoutFocus from './layout-focus/reducer';
 import masterbarVisibility from './masterbar-visibility/reducer';
@@ -76,7 +75,6 @@ const reducer = combineReducers( {
 	actionLog,
 	appBannerVisibility,
 	appBannerDismissed,
-	helpCenterVisible,
 	checkout,
 	isSectionLoading,
 	isNotificationsOpen,

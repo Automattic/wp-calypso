@@ -22,6 +22,8 @@ function overrideCoreDocumentationLinksToWpcom( translation: string, text: strin
 			return 'https://wordpress.com/support/widgets/';
 		case 'https://wordpress.org/plugins/classic-widgets/':
 			return 'https://wordpress.com/plugins/classic-widgets';
+		case 'https://wordpress.org/support/article/styles-overview/':
+			return 'https://wordpress.com/support/using-styles/';
 	}
 
 	return translation;

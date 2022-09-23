@@ -8,7 +8,6 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getActionEventName } from '../utils';
 import type { SiteNode, AllowedActionTypes } from '../types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -18,11 +17,7 @@ interface Props {
 	siteError: boolean | undefined;
 }
 
-export default function SiteActions( {
-	isLargeScreen = false,
-	site,
-	siteError,
-}: Props ): ReactElement {
+export default function SiteActions( { isLargeScreen = false, site, siteError }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -74,7 +69,6 @@ export default function SiteActions( {
 							onClick={ () => handleClickMenuItem( 'issue_license' ) }
 							href={ `/partner-portal/issue-license/?site_id=${ siteId }&source=dashboard` }
 							className="site-actions__menu-item"
-							icon="chevron-right"
 						>
 							{ translate( 'Issue new license' ) }
 						</PopoverMenuItem>
@@ -82,7 +76,6 @@ export default function SiteActions( {
 							onClick={ () => handleClickMenuItem( 'view_activity' ) }
 							href={ `/activity-log/${ siteUrl }` }
 							className="site-actions__menu-item"
-							icon="chevron-right"
 						>
 							{ translate( 'View activity' ) }
 						</PopoverMenuItem>

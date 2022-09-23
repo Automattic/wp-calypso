@@ -1,5 +1,5 @@
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
 
 .difm-lite-in-progress__site-placeholder {
 	h2 {
@@ -13,7 +13,7 @@
 	}
 
 	.empty-content__line {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: 1rem;
 	}
 

@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/mixins";
 
 .dot-pager__page {
 	transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
-	@include reduce-motion( 'transition' );
+	@include reduce-motion( "transition" );
 	opacity: 1;
 	visibility: visible;
 
@@ -48,7 +48,7 @@
 	}
 
 	&:focus-visible {
-		box-shadow: 0 0 0 2px var( --color-primary );
+		box-shadow: 0 0 0 2px var(--color-primary);
 	}
 }
 
@@ -61,10 +61,10 @@
 		height: 18px;
 	}
 	background-color: transparent;
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 
 	&[disabled] {
-		color: var( --studio-gray-10 );
+		color: var(--studio-gray-10);
 	}
 }
 
@@ -74,13 +74,13 @@
 	border-radius: 50%;
 	width: 6px;
 	height: 6px;
-	background-color: var( --color-neutral-10 );
+	background-color: var(--color-neutral-10);
 
 	&:hover {
-		background-color: var( --studio-gray-20 );
+		background-color: var(--studio-gray-20);
 	}
 
 	&.dot-pager__control-current {
-		background-color: var( --studio-gray-80 );
+		background-color: var(--studio-gray-80);
 	}
 }

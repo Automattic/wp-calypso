@@ -28,6 +28,7 @@ import {
 	getThemeDemoUrl,
 	getThemeForumUrl,
 	getPremiumThemePrice,
+	getPurchasedThemes,
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
@@ -2224,6 +2225,68 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isPurchased ).toBe( true );
+		} );
+	} );
+
+	describe( '#getPurchasedThemes', () => {
+		test( 'given 2 purchased themes, return 2 theme names', () => {
+			const purchases = getPurchasedThemes(
+				{
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_slug: 'premium_theme',
+							},
+							{
+								ID: 1234568,
+								blog_id: 2916284,
+								meta: 'skivers',
+								product_slug: 'premium_theme',
+							},
+						],
+					},
+				},
+				2916284
+			);
+			expect( purchases ).toEqual( [ 'mood', 'skivers' ] );
+		} );
+		test( 'given 0 purchased themes, return empty array', () => {
+			const purchases = getPurchasedThemes(
+				{
+					purchases: {
+						data: [],
+					},
+				},
+				2916284
+			);
+			expect( purchases ).toEqual( [] );
+		} );
+		test( 'given 2 purchased themes and a query against a different blog, return empty array', () => {
+			const purchases = getPurchasedThemes(
+				{
+					purchases: {
+						data: [
+							{
+								ID: 1234567,
+								blog_id: 2916284,
+								meta: 'mood',
+								product_slug: 'premium_theme',
+							},
+							{
+								ID: 1234568,
+								blog_id: 2916284,
+								meta: 'skivers',
+								product_slug: 'premium_theme',
+							},
+						],
+					},
+				},
+				11111
+			);
+			expect( purchases ).toEqual( [] );
 		} );
 	} );
 

@@ -9,12 +9,12 @@
 }
 
 .billing-history__no-results-cell {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding: 24px;
 }
 
 .billing-history__transactions thead {
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 }
 
 .billing-history__transactions thead .header-row {
@@ -39,9 +39,9 @@
 	text-align: left;
 	width: 100px;
 	padding: 3px 9px;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	border-radius: 2px;
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 	transition: width 0.25s ease-out;
 	outline: 0;
 
@@ -57,10 +57,10 @@
 
 // Table Body
 .billing-history__transaction {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 	height: 66px;
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 
 	&:last-child {
 		border-bottom: none;
@@ -80,7 +80,7 @@
 }
 
 .billing-history__transaction-tax-amount {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	white-space: nowrap;
 }
@@ -120,12 +120,12 @@
 	}
 
 	small {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: block;
 		font-size: $font-body-extra-small;
 		font-style: italic;
 
-		@include breakpoint-deprecated( '660px-800px' ) {
+		@include breakpoint-deprecated( "660px-800px" ) {
 			max-width: 220px;
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -147,7 +147,7 @@
 }
 
 .billing-history__email-button {
-	color: var( --color-link );
+	color: var(--color-link);
 	cursor: pointer;
 	font-size: inherit;
 
@@ -165,7 +165,7 @@
 	padding: 10px 20px;
 	position: relative;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-wrap: nowrap;
 		padding: 10px 40px;
 	}
@@ -178,7 +178,7 @@
 	h2 {
 		padding: 0 10px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding: 0 20px;
 		}
 
@@ -188,11 +188,11 @@
 	}
 
 	.billing-history__transaction-date {
-		color: var( --color-neutral );
+		color: var(--color-neutral);
 		font-size: $font-body-small;
 		padding: 20px 0 0;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding: 5px 0 0;
 			position: absolute;
 			top: 10px;
@@ -216,24 +216,24 @@ textarea.billing-history__billing-details-editable {
 }
 
 .billing-history__billing-details-editable {
-	border: 1px solid var( --color-neutral-20 );
+	border: 1px solid var(--color-neutral-20);
 	margin-top: 5px;
 	font-size: $font-body-small;
 }
 
 .billing-history__receipt-details {
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	list-style: none;
 	padding: 20px 40px;
 	margin: 10px 0 0;
 	overflow: auto;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 20px;
 	}
 
 	li {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: $font-body-small;
 		margin: 0 0 15px;
 		padding: 0;
@@ -244,7 +244,7 @@ textarea.billing-history__billing-details-editable {
 
 		strong,
 		.form-label {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 			display: block;
 			font-size: $font-body-extra-small;
 			font-weight: 600;
@@ -253,7 +253,7 @@ textarea.billing-history__billing-details-editable {
 		}
 
 		.receipt__monospace {
-			font-family: 'Courier', 'Courier New', monospace;
+			font-family: Courier, "Courier New", monospace;
 			text-transform: uppercase;
 		}
 
@@ -275,7 +275,7 @@ textarea.billing-history__billing-details-editable {
 
 			a,
 			.receipt__email-button {
-				color: var( --color-link );
+				color: var(--color-link);
 				font-style: italic;
 				text-decoration: underline;
 			}
@@ -291,7 +291,7 @@ textarea.billing-history__billing-details-editable {
 .billing-history__receipt {
 	padding: 30px 40px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 30px 20px;
 	}
 
@@ -300,7 +300,7 @@ textarea.billing-history__billing-details-editable {
 	}
 
 	.billing-history__receipt-loading {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 
 	.billing-history__receipt-line-items {
@@ -309,8 +309,8 @@ textarea.billing-history__billing-details-editable {
 		width: 100%;
 
 		th {
-			border-bottom: 2px solid var( --color-border-subtle );
-			color: var( --color-text-subtle );
+			border-bottom: 2px solid var(--color-border-subtle);
+			color: var(--color-text-subtle);
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 			text-transform: uppercase;
@@ -334,13 +334,13 @@ textarea.billing-history__billing-details-editable {
 
 		.billing-history__receipt-item-name {
 			small {
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				font-size: $font-body-small;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
-				color: var( --color-text-subtle );
+				color: var(--color-text-subtle);
 				display: block;
 				font-size: $font-body-small;
 			}
@@ -348,8 +348,8 @@ textarea.billing-history__billing-details-editable {
 
 		tbody tr {
 			td {
-				color: var( --color-neutral );
-				border-bottom: 1px solid var( --color-border-subtle );
+				color: var(--color-neutral);
+				border-bottom: 1px solid var(--color-border-subtle);
 			}
 
 			&:last-child td {
@@ -363,7 +363,7 @@ textarea.billing-history__billing-details-editable {
 			vertical-align: bottom;
 
 			td {
-				border-top: 2px solid var( --color-border-subtle );
+				border-top: 2px solid var(--color-border-subtle);
 				padding-bottom: 0;
 			}
 		}
@@ -390,7 +390,7 @@ textarea.billing-history__billing-details-editable {
 	margin: 0;
 }
 
-.billing-history__receipts.card .card.is-compact:nth-of-type( 2 ) {
+.billing-history__receipts.card .card.is-compact:nth-of-type(2) {
 	padding-left: 0;
 	padding-right: 0;
 }
@@ -473,7 +473,7 @@ textarea.billing-history__billing-details-editable {
 	padding: 8px 12px;
 	position: absolute;
 
-	&:nth-child( 2 ) {
+	&:nth-child(2) {
 		left: 170px;
 	}
 }

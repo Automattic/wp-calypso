@@ -9,7 +9,6 @@ const noop = () => {};
 
 class SignupThemesList extends Component {
 	static propTypes = {
-		surveyQuestion: PropTypes.string,
 		designType: PropTypes.string,
 		quantity: PropTypes.number,
 		handleScreenshotClick: PropTypes.func,
@@ -17,21 +16,17 @@ class SignupThemesList extends Component {
 	};
 
 	static defaultProps = {
-		surveyQuestion: null,
 		designType: null,
 		quantity: 3,
 		handleScreenshotClick: noop,
 	};
 
 	shouldComponentUpdate( nextProps ) {
-		return (
-			nextProps.surveyQuestion !== this.props.surveyQuestion ||
-			nextProps.designType !== this.props.designType
-		);
+		return nextProps.designType !== this.props.designType;
 	}
 
 	getComputedThemes() {
-		return getThemes( this.props.surveyQuestion, this.props.designType, this.props.quantity );
+		return getThemes( this.props.designType, this.props.quantity );
 	}
 
 	getScreenshotUrl( theme ) {

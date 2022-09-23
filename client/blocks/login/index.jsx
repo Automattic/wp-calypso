@@ -71,6 +71,7 @@ class Login extends Component {
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		loginEmailAddress: PropTypes.string,
 	};
 
 	state = {
@@ -118,6 +119,7 @@ class Login extends Component {
 			fromSite,
 			currentUser,
 			twoFactorEnabled,
+			loginEmailAddress,
 		} = this.props;
 
 		return (
@@ -129,6 +131,7 @@ class Login extends Component {
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
+			! loginEmailAddress &&
 			currentUser &&
 			! this.state.continueAsAnotherUser
 		);
@@ -496,7 +499,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client } = this.props;
+		const { isJetpack, oauth2Client, locale, isGutenboarding } = this.props;
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -506,7 +509,7 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice />
+				<ErrorNotice locale={ locale } isGutenboarding={ isGutenboarding } />
 
 				{ this.renderNotice() }
 
@@ -540,6 +543,7 @@ export default connect(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 	} ),
 	{
 		rebootAfterLogin,

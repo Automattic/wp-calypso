@@ -1,7 +1,7 @@
 import { PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search-new.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,7 +29,7 @@ import JetpackSearchFooter from '../footer';
 
 import './style.scss';
 
-export default function JetpackSearchUpsell(): ReactElement {
+export default function JetpackSearchUpsell() {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';
@@ -39,7 +39,10 @@ export default function JetpackSearchUpsell(): ReactElement {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const createProductURL = getPurchaseURLCallback( selectedSiteSlug, {} );
+	const createCheckoutURL = getPurchaseURLCallback( selectedSiteSlug, {
+		// For the Search upsell in Jetpack Cloud, we want to redirect back here to the Search page after checkout.
+		redirect_to: window.location.href,
+	} );
 
 	const WPComUpgradeUrl =
 		'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
@@ -66,7 +69,7 @@ export default function JetpackSearchUpsell(): ReactElement {
 						productSlug={ PRODUCT_JETPACK_SEARCH }
 						siteId={ siteId }
 						currencyCode={ currencyCode }
-						getButtonURL={ createProductURL }
+						getButtonURL={ createCheckoutURL }
 						onCtaButtonClick={ onClick }
 					/>
 				</div>

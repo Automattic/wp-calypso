@@ -8,7 +8,7 @@
 		display: block;
 		position: relative;
 		padding: $wpnc__padding-medium;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 
 		textarea {
 			@extend %wpnc-form-field;
@@ -17,6 +17,7 @@
 			padding-right: 52px;
 			min-height: 37px;
 			width: 100%;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			font-family: inherit;
 			transition: border 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -29,18 +30,19 @@
 
 		button {
 			font-family: $sans;
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 			display: none;
 			position: absolute;
 			top: 26px;
 			right: 25px;
 			text-transform: uppercase;
 			font-weight: 600;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 12px;
 		}
 		button.active {
 			display: block;
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 		button.inactive {
 			cursor: default;
@@ -62,6 +64,7 @@
 	box-sizing: border-box;
 	cursor: pointer;
 	display: inline-block;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	max-width: 25%;
 	padding: 0 18px;
@@ -69,34 +72,34 @@
 	vertical-align: top;
 
 	&.active-action {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		&:hover {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 
 			.gridicon {
-				fill: var( --color-neutral-light );
+				fill: var(--color-neutral-light);
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 	}
 
 	&.inactive-action {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 
 		&:hover {
-			color: var( --color-primary );
+			color: var(--color-primary);
 
 			.gridicon {
-				fill: var( --color-primary );
+				fill: var(--color-primary);
 			}
 		}
 
 		.gridicon {
-			fill: var( --color-neutral-light );
+			fill: var(--color-neutral-light);
 		}
 	}
 
@@ -121,6 +124,7 @@
 	}
 
 	.wpnc__gridicon {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 24px;
 	}
 

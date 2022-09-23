@@ -29,10 +29,17 @@ import { WindowLocaleEffectManager } from '../gutenboarding/components/window-lo
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
+import { linkInBio } from './declarative-flow/link-in-bio';
+import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
+import { newsletter } from './declarative-flow/newsletter';
+import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
+import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
+import { useQuery } from './hooks/use-query';
 import { USER_STORE } from './stores';
+import type { Flow } from './declarative-flow/internals/types';
 
 function generateGetSuperProps() {
 	return () => ( {
@@ -49,12 +56,35 @@ function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	reduxStore.dispatch( requestSites() );
 }
 
-const FlowWrapper: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+interface configurableFlows {
+	flowName: string;
+	pathToFlow: Flow;
+}
+
+const availableFlows: Array< configurableFlows > = [
+	{ flowName: 'newsletter', pathToFlow: newsletter },
+	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
+	{ flowName: 'podcasts', pathToFlow: podcasts },
+	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
+	config.isEnabled( 'themes/plugin-bundling' )
+		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
+		: null,
+].filter( ( item ) => item !== null ) as Array< configurableFlows >;
+
+const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
+	const flowName = useQuery().get( 'flow' );
+
 	let flow = siteSetupFlow;
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
+	} else {
+		availableFlows.forEach( ( currentFlow ) => {
+			if ( currentFlow.flowName === flowName ) {
+				flow = currentFlow.pathToFlow;
+			}
+		} );
 	}
 
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
@@ -74,10 +104,6 @@ window.AppBoot = async () => {
 	requestAllBlogsAccess();
 
 	setupWpDataDebug();
-	// User is left undefined here because the user account will not be created
-	// until after the user has completed the flow.
-	// This also saves us from having to pull in lib/user/user and it's dependencies.
-	initializeAnalytics( undefined, generateGetSuperProps() );
 	addHotJarScript();
 	retargetFullStory();
 	// Add accessible-focus listener.
@@ -95,6 +121,8 @@ window.AppBoot = async () => {
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
+	initializeAnalytics( user, generateGetSuperProps() );
+
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
@@ -108,7 +136,10 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowWrapper user={ user as UserStore.CurrentUser } />
+						<FlowSwitch user={ user as UserStore.CurrentUser } />
+						{ config.isEnabled( 'gdpr-banner' ) && (
+							<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+						) }
 					</BrowserRouter>
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />

@@ -1,10 +1,26 @@
 import formatCurrency from '@automattic/format-currency';
 import { translate } from 'i18n-calypso';
+import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { ReactElement } from 'react';
 
 import './style.scss';
+
+const getSalePrice = ( {
+	isDiscounted,
+	product,
+}: {
+	isDiscounted: boolean;
+	product: ProductListItem | null;
+} ) => {
+	if ( hasIntroductoryOfferFreeTrial( product ) ) {
+		return 0;
+	}
+	if ( isDiscounted ) {
+		return product?.sale_cost ?? 0;
+	}
+	return product?.introductory_offer?.cost_per_interval ?? 0;
+};
 
 const SalePriceWithInterval = ( {
 	intervalLength,
@@ -14,7 +30,7 @@ const SalePriceWithInterval = ( {
 	intervalLength: IntervalLength;
 	salePrice: string | null;
 	standardPrice: string | null;
-} ): ReactElement => {
+} ) => {
 	const translateArguments = {
 		args: {
 			salePrice,
@@ -55,7 +71,7 @@ const StandardPriceWithInterval = ( {
 }: {
 	intervalLength: IntervalLength;
 	standardPrice: string | null;
-} ): ReactElement => {
+} ) => {
 	const translateArguments = {
 		args: { standardPrice },
 		comment:
@@ -78,22 +94,22 @@ const PriceWithInterval = ( {
 	currencyCode,
 	intervalLength,
 	isDiscounted = false,
-	isEligibleForFreeTrial,
+	isEligibleForIntroductoryOffer,
 	product,
 }: {
 	currencyCode: string | null;
 	intervalLength: IntervalLength;
 	isDiscounted?: boolean;
-	isEligibleForFreeTrial: boolean;
+	isEligibleForIntroductoryOffer: boolean;
 	product: ProductListItem | null;
-} ): ReactElement => {
+} ) => {
 	const standardPrice = formatCurrency( product?.cost ?? 0, currencyCode ?? '', {
 		stripZeros: true,
 	} );
 
-	if ( isDiscounted || isEligibleForFreeTrial ) {
+	if ( isDiscounted || isEligibleForIntroductoryOffer ) {
 		const salePrice = formatCurrency(
-			isEligibleForFreeTrial ? 0 : product?.sale_cost ?? 0,
+			getSalePrice( { isDiscounted, product } ),
 			currencyCode ?? '',
 			{ stripZeros: true }
 		);

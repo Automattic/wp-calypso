@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
@@ -24,6 +25,7 @@ import {
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
+import type { AppState } from 'calypso/types';
 
 export function getNumberOfMailboxesText( domain: ResponseDomain ) {
 	if ( hasGSuiteWithUs( domain ) ) {
@@ -69,7 +71,7 @@ export function getNumberOfMailboxesText( domain: ResponseDomain ) {
  * @param domain - domain object
  * @returns the corresponding email purchase, or null if not found
  */
-export function getEmailPurchaseByDomain( state: any, domain: ResponseDomain ) {
+export function getEmailPurchaseByDomain( state: AppState, domain: ResponseDomain ) {
 	const subscriptionId = getEmailSubscriptionIdByDomain( domain );
 
 	return subscriptionId ? getByPurchaseId( state, subscriptionId ) : null;
@@ -126,6 +128,14 @@ export function resolveEmailPlanStatus(
 		text: translate( 'Action required' ),
 	};
 
+	const cannotManageStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Can’t manage subscription', {
+			comment: 'Current user is not allowed to manage email subscription',
+		} ),
+	};
+
 	if ( hasGSuiteWithUs( domain ) ) {
 		// Check for pending TOS acceptance warnings at the account level
 		if (
@@ -148,6 +158,10 @@ export function resolveEmailPlanStatus(
 				icon: 'info',
 				text: translate( 'Configuring mailboxes' ),
 			};
+		}
+
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
 		}
 
 		return activeStatus;
@@ -181,6 +195,10 @@ export function resolveEmailPlanStatus(
 			return errorStatus;
 		}
 
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
+		}
+
 		return activeStatus;
 	}
 
@@ -211,20 +229,20 @@ export function recordEmailAppLaunchEvent( {
 }
 
 /**
- * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
+ * Tracks an event for the key 'calypso_{source}_upsell', where {source} defaults to "email".
  *
- */
-export function recordInboxNewMailboxUpsellClickEvent() {
-	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
-}
-
-/**
- * Tracks an event for the key 'calypso_inbox_upsell'.
+ * Events tracked:
+ * `calypso_inbox_upsell`, when upsell triggered by a CTA click from the Inbox.
+ * `calypso_email_upsell`, when upsell triggered by a CTA click from Upgrades > Emails.
  *
+ * @param source - source generating the event.
  * @param context context, where this event was logged.
  */
-export function recordInboxUpsellTracksEvent( context: string | null = null ) {
-	recordTracksEvent( 'calypso_inbox_upsell', {
+export function recordEmailUpsellTracksEvent(
+	source: string | null = 'email',
+	context: string | null = null
+) {
+	recordTracksEvent( `calypso_${ source }_upsell`, {
 		context,
 	} );
 }

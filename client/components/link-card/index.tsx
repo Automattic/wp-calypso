@@ -15,6 +15,7 @@ interface LinkCardProps {
 	background?: string;
 	url: string;
 	external?: boolean;
+	onClick?: () => void;
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
@@ -60,12 +61,12 @@ const LinkCardCta = styled.div`
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, url, external } = props;
+	const { label, title, cta, background, url, external, onClick } = props;
 
 	const Link = external ? ExternalLink : 'a';
 
 	return (
-		<Link href={ url }>
+		<Link href={ url } onClick={ onClick }>
 			<LinkCardContainer background={ background }>
 				<LinkCardLabel>{ label }</LinkCardLabel>
 				<LinkCardTitle>{ title }</LinkCardTitle>

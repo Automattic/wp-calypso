@@ -46,7 +46,7 @@ When the day comes that we decide we need proper dynamic, state-aware steps for 
 
 ```js
 // new "realtime" state-based behavior
-<Step name="…">{ ( state ) => isSomethingSomething( state ) && <p>Welcome!</p> }}</Step>;
+<Step name="…">{ ( state ) => isSomethingSomething( state ) && <p>Welcome!</p> }</Step>;
 ```
 
 ## On the nature of `actionLog`

@@ -2,7 +2,6 @@ import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
@@ -28,7 +27,7 @@ import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
 
-const BackupMultisiteBody: FunctionComponent = () => {
+const BackupMultisiteBody = () => {
 	const translate = useTranslate();
 	return (
 		<PromoCard
@@ -47,7 +46,7 @@ const BackupMultisiteBody: FunctionComponent = () => {
 	);
 };
 
-const BackupVPActiveBody: FunctionComponent = () => {
+const BackupVPActiveBody = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_vaultpress_click' );
 	const translate = useTranslate();
 	return (
@@ -71,7 +70,7 @@ const BackupVPActiveBody: FunctionComponent = () => {
 	);
 };
 
-const BackupUpsellBody: FunctionComponent = () => {
+const BackupUpsellBody = () => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const isAdmin = useSelector(
@@ -126,9 +125,9 @@ const BackupUpsellBody: FunctionComponent = () => {
 				{ isAdmin && isWPcomSite && (
 					<PromoCardCTA
 						cta={ {
-							text: translate( 'Upgrade to Pro Plan' ),
+							text: translate( 'Upgrade to Business Plan' ),
 							action: {
-								url: `/checkout/${ siteSlug }/pro`,
+								url: `/checkout/${ siteSlug }/business`,
 								onClick: onUpgradeClick,
 								selfTarget: true,
 							},
@@ -153,7 +152,9 @@ const BackupUpsellBody: FunctionComponent = () => {
 
 			{ isWPcomSite && ! hasFullActivityLogFeature && (
 				<>
-					<h2 className="backup__subheader">{ translate( 'Also included in the Pro Plan' ) }</h2>
+					<h2 className="backup__subheader">
+						{ translate( 'Also included in the Business Plan' ) }
+					</h2>
 
 					<PromoSection { ...promos } />
 				</>
@@ -164,7 +165,7 @@ const BackupUpsellBody: FunctionComponent = () => {
 	);
 };
 
-export default function WPCOMUpsellPage( { reason }: { reason: string } ): ReactElement {
+export default function WPCOMUpsellPage( { reason }: { reason: string } ) {
 	const translate = useTranslate();
 	let body;
 	switch ( reason ) {

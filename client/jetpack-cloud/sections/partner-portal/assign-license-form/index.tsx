@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
@@ -44,7 +44,7 @@ export default function AssignLicenseForm( {
 	sites: Array< any >;
 	currentPage: number;
 	search: string;
-} ): ReactElement {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ selectedSite, setSelectedSite ] = useState( false );
@@ -62,13 +62,17 @@ export default function AssignLicenseForm( {
 	const siteCards = paginate( results, currentPage ).map( ( site: any ) => {
 		if ( -1 !== site.domain.search( search ) || null === search ) {
 			return (
-				<Card key={ site.ID } className="assign-license-form__site-card">
+				<Card
+					key={ site.ID }
+					className="assign-license-form__site-card"
+					onClick={ () => onSelectSite( site.ID ) }
+				>
 					<FormRadio
 						className="assign-license-form__site-card-radio"
 						label={ site.domain }
 						name="site_select"
 						disabled={ isSubmitting }
-						onClick={ () => onSelectSite( site.ID ) }
+						checked={ selectedSite === site.ID }
 					/>
 				</Card>
 			);

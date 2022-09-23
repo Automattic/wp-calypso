@@ -15,8 +15,7 @@ export * from './site-import-page';
 export * from './invite-people-page';
 export * from './people-page';
 export * from './reader-page';
-export * from './user-signup-page';
-export * from './signup-pick-plan-page';
+export * from './signup/user-signup-page';
 export * from './account-closed-page';
 export * from './domains-page';
 export * from './use-a-domain-i-own-page';
@@ -29,6 +28,7 @@ export * from './writing-settings-page';
 export * from './shared-types';
 export * from './full-site-editor-page';
 export * from './checkout-thank-you-page';
-export * from './google-login-page';
 
 export * from './me';
+export * from './external';
+export * from './signup';

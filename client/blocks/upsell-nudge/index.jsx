@@ -3,7 +3,6 @@ import {
 	isBloggerPlan,
 	isPersonalPlan,
 	isPremiumPlan,
-	isFreePlan,
 	isBusinessPlan,
 	isEcommercePlan,
 	GROUP_JETPACK,
@@ -35,7 +34,6 @@ export const UpsellNudge = ( {
 	canUserUpgrade,
 	className,
 	compact,
-	currentPlan,
 	customerType,
 	description,
 	disableHref,
@@ -60,6 +58,7 @@ export const UpsellNudge = ( {
 	primaryButton,
 	selectedSiteHasFeature,
 	showIcon = false,
+	icon = 'star',
 	site,
 	siteSlug,
 	target,
@@ -93,21 +92,9 @@ export const UpsellNudge = ( {
 	}
 
 	if ( ! href && siteSlug && canUserUpgrade ) {
-		const currentPlanSlug = currentPlan?.productSlug;
-
-		// Redirect to the checkout page in case the Plans page can't be accessed by the plan.
-		if (
-			isFreePlan( currentPlanSlug ) ||
-			isBloggerPlan( currentPlanSlug ) ||
-			isPremiumPlan( currentPlanSlug ) ||
-			isPersonalPlan( currentPlanSlug )
-		) {
-			href = `/checkout/${ siteSlug }/pro`;
-		} else {
-			href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
-			if ( customerType ) {
-				href = `/plans/${ siteSlug }?customerType=${ customerType }`;
-			}
+		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
+		if ( customerType ) {
+			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
 		}
 	}
 
@@ -143,7 +130,7 @@ export const UpsellNudge = ( {
 			forceHref={ forceHref }
 			horizontal={ horizontal }
 			href={ href }
-			icon="star"
+			icon={ icon }
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }

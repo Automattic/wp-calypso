@@ -6,7 +6,6 @@ import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availabi
 import {
 	getMappingFreeText,
 	getTransferFreeText,
-	getTransferPriceText,
 	getTransferRestrictionMessage,
 	getTransferSalePriceText,
 	isFreeTransfer,
@@ -78,15 +77,7 @@ export function getOptionInfo( {
 		productsList,
 	} );
 
-	const transferPriceText = getTransferPriceText( {
-		cart,
-		currencyCode,
-		domain,
-		productsList,
-	} );
-
 	const transferPricing = {
-		cost: transferPriceText,
 		isFree: isFreeTransfer( { cart, domain } ),
 		sale: transferSalePriceText,
 		text: transferFreeText,
@@ -129,6 +120,36 @@ export function getOptionInfo( {
 					sprintf(
 						/* translators: %s - the domain the user wanted to transfer */
 						__( "<strong>%s</strong> can't be transferred, but you can connect it instead." ),
+						domain
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
+		case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__(
+							"<strong>%s</strong> can't be transferred because it was registered less than 60 days ago, but you can connect it instead."
+						),
+						domain
+					),
+					{ strong: createElement( 'strong' ) }
+				),
+			};
+			break;
+		case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+			transferContent = {
+				...optionInfo.transferNotSupported,
+				topText: createInterpolateElement(
+					sprintf(
+						/* translators: %s - the domain the user wanted to transfer */
+						__(
+							"<strong>%s</strong> can't be transferred due to a transfer lock at the registry, but you can connect it instead."
+						),
 						domain
 					),
 					{ strong: createElement( 'strong' ) }

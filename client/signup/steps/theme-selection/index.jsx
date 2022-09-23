@@ -11,7 +11,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
 import SignupThemesList from './signup-themes-list';
 import './style.scss';
 
@@ -57,7 +56,6 @@ class ThemeSelectionStep extends Component {
 	renderThemesList() {
 		return (
 			<SignupThemesList
-				surveyQuestion={ this.props.chosenSurveyVertical }
 				designType={ this.props.designType || this.props.signupDependencies.designType }
 				handleScreenshotClick={ this.pickTheme }
 				quantity={ this.props.quantity }
@@ -132,7 +130,6 @@ class ThemeSelectionStep extends Component {
 
 export default connect(
 	( state, props ) => ( {
-		chosenSurveyVertical: getSurveyVertical( state ),
 		currentUser: getCurrentUser( state ),
 		designType: props.designType || getDesignType( state ),
 		dependencyStore: getSignupDependencyStore( state ),

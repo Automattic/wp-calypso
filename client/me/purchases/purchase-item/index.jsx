@@ -6,6 +6,7 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -21,6 +22,7 @@ import {
 	getDisplayName,
 	isExpired,
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -32,6 +34,7 @@ import {
 	getPartnerName,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
+	hasPaymentMethod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
@@ -404,7 +407,29 @@ class PurchaseItem extends Component {
 	}
 
 	getPaymentMethod() {
-		const { purchase } = this.props;
+		const { purchase, translate } = this.props;
+
+		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+			return (
+				<div className={ 'purchase-item__no-payment-method' }>
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
+
+		if (
+			! isRechargeable( purchase ) &&
+			hasPaymentMethod( purchase ) &&
+			purchase.isAutoRenewEnabled
+		) {
+			return (
+				<div className={ 'purchase-item__no-payment-method' }>
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
@@ -461,7 +486,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchaseId={ purchase?.id } />
+						<OwnerInfo purchase={ purchase } />
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>

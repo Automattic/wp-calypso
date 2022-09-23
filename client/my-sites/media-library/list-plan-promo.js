@@ -52,7 +52,7 @@ class MediaLibraryListPlanPromo extends Component {
 						: this.props.translate( 'Uploading video requires a paid plan.' ) +
 								' ' +
 								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Pro.'
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
 								),
 					2
 				);
@@ -67,7 +67,7 @@ class MediaLibraryListPlanPromo extends Component {
 						: this.props.translate( 'Uploading audio requires a paid plan.' ) +
 								' ' +
 								this.props.translate(
-									'Contact your site administrator and ask them to upgrade this site to WordPress.com Pro.'
+									'Contact your site administrator and ask them to upgrade this site to WordPress.com Premium, Business, or eCommerce.'
 								),
 					2
 				);
@@ -96,7 +96,7 @@ class MediaLibraryListPlanPromo extends Component {
 
 	render() {
 		const action = (
-			<Button className="button is-primary" onClick={ this.viewPlansPage }>
+			<Button className="list-plan-promo__button button is-primary" onClick={ this.viewPlansPage }>
 				{ this.props.translate( 'See Plans' ) }
 			</Button>
 		);

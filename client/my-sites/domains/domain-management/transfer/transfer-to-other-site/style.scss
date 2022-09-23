@@ -1,9 +1,9 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .transfer-domain-to-other-site {
-	background: var( --studio-white );
+	background: var(--studio-white);
 
 	.formatted-header__title {
 		font-size: $font-title-medium;
@@ -41,10 +41,11 @@
 					}
 
 					& ~ .site {
-						border-top: 1px solid var( --studio-gray-5 );
+						border-top: 1px solid var(--studio-gray-5);
 					}
 
-					&__title::after, &__domain::after {
+					&__title::after,
+					&__domain::after {
 						background: none;
 					}
 				}
@@ -55,7 +56,7 @@
 	&__container {
 		margin: 16px;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0;
 		}
 	}

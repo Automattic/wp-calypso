@@ -1,7 +1,8 @@
+import { Popover } from '@automattic/components';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -13,24 +14,42 @@ interface BillingIntervalToggleProps {
 export const BillingIntervalToggle = ( {
 	intervalLength,
 	onIntervalChange,
-}: BillingIntervalToggleProps ): ReactElement => {
+}: BillingIntervalToggleProps ) => {
 	const translate = useTranslate();
+	const [ payAnnuallyButtonRef, setPayAnnuallyButtonRef ] = useState< HTMLSpanElement | null >(
+		null
+	);
+
+	const isMonthlyPlan = intervalLength === IntervalLength.MONTHLY;
+	const isAnnuallyPlan = intervalLength === IntervalLength.ANNUALLY;
 
 	return (
 		<div className="billing-interval-toggle">
 			<SegmentedControl compact primary>
 				<SegmentedControl.Item
-					selected={ intervalLength === IntervalLength.MONTHLY }
+					selected={ isMonthlyPlan }
 					onClick={ () => onIntervalChange( IntervalLength.MONTHLY ) }
 				>
 					<span>{ translate( 'Pay monthly' ) }</span>
 				</SegmentedControl.Item>
 
 				<SegmentedControl.Item
-					selected={ intervalLength === IntervalLength.ANNUALLY }
+					selected={ isAnnuallyPlan }
 					onClick={ () => onIntervalChange( IntervalLength.ANNUALLY ) }
 				>
-					<span>{ translate( 'Pay annually' ) }</span>
+					<span ref={ setPayAnnuallyButtonRef }>{ translate( 'Pay annually' ) }</span>
+					{ [ 'right', 'bottom' ].map( ( position ) => (
+						<Popover
+							isVisible={ isMonthlyPlan }
+							position={ position }
+							key={ position }
+							autoPosition={ false }
+							context={ payAnnuallyButtonRef }
+							className="emails-save-paying-annually__popover"
+						>
+							{ translate( 'Save by paying annually' ) }
+						</Popover>
+					) ) }
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		</div>

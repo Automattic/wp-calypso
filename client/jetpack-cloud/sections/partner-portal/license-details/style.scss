@@ -1,7 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-$action-assign: 2;
 
 .license-details {
 	margin: 0;
@@ -16,7 +15,7 @@ $action-assign: 2;
 		list-style-type: none;
 
 		@include break-xlarge() {
-			grid-template-columns: repeat( 2, 1fr );
+			grid-template-columns: repeat(2, 1fr);
 			grid-column-gap: 32px;
 			grid-row-gap: 32px;
 		}
@@ -40,8 +39,8 @@ $action-assign: 2;
 		flex: 0 1 auto;
 		padding: 6px;
 		font-size: 0.875rem;
-		background: var( --studio-gray-0 );
-		color: var( --studio-gray-70 );
+		background: var(--studio-gray-0);
+		color: var(--studio-gray-70);
 		overflow: hidden;
 		word-break: break-all;
 	}
@@ -54,7 +53,7 @@ $action-assign: 2;
 
 		// Overpower specificity of the button component styles.
 		&.button.button {
-			color: var( --studio-gray-70 );
+			color: var(--studio-gray-70);
 		}
 	}
 
@@ -69,11 +68,11 @@ $action-assign: 2;
 		display: flex;
 		flex-direction: row-reverse;
 		justify-content: space-between;
+	}
 
-		@include break-large {
-			> *:nth-child(#{$action-assign}) {
-				display: none;
-			}
+	&__assign-button {
+		@include break-xlarge {
+			display: none;
 		}
 	}
 }

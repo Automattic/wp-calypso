@@ -9,5 +9,9 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
-	"references": [ { "path": "../calypso-url" }, { "path": "../data-stores" } ]
+	"references": [
+		{ "path": "../calypso-url" },
+		{ "path": "../data-stores" },
+		{ "path": "../search" }
+	]
 }

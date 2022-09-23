@@ -54,10 +54,10 @@ class SocialConnectPrompt extends Component {
 			<Card className="login__social-connect-prompt">
 				<div className="login__social-connect-prompt-logos">
 					{ this.props.linkingSocialService === 'google' && (
-						<GoogleIcon className="login__social-connect-prompt-logo" />
+						<GoogleIcon className="login__social-connect-prompt-logo is-google" />
 					) }
 					{ this.props.linkingSocialService === 'apple' && (
-						<AppleIcon className="login__social-connect-prompt-logo" />
+						<AppleIcon className="login__social-connect-prompt-logo is-apple" />
 					) }
 					<svg
 						className="login__social-connect-prompt-dots"

@@ -9,6 +9,8 @@ import { sprintf, __ } from '@wordpress/i18n';
 export function translateInvalidPartnerParameterError( parameters: object ) {
 	const labels: { [ key: string ]: string } = {
 		name: __( 'Company name' ),
+		contact_person: __( 'Contact person' ),
+		company_website: __( 'Company website' ),
 		city: __( 'City' ),
 		country: __( 'Country' ),
 		line1: __( 'Address line 1' ),

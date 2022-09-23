@@ -1,19 +1,68 @@
-import { NextButton } from '@automattic/onboarding';
-import { Icon, chevronRight } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import { localize, translate } from 'i18n-calypso';
+import React, { useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
+import illustrationImg from 'calypso/assets/images/onboarding/import-1.svg';
+import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { analyzeUrl, resetError } from 'calypso/state/imports/url-analyzer/actions';
 import { isAnalyzing, getAnalyzerError } from 'calypso/state/imports/url-analyzer/selectors';
 import ScanningStep from '../scanning';
 import { GoToStep, UrlData } from '../types';
-import { CAPTURE_URL_RGX } from '../util';
-import type { ChangeEvent, FormEvent } from 'react';
+import CaptureInput from './capture-input';
+import type { OnInputEnter, OnInputChange } from './types';
+import type { FunctionComponent } from 'react';
 
 import './style.scss';
+
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+
+interface Props {
+	translate: typeof translate;
+	onInputEnter: OnInputEnter;
+	onInputChange?: OnInputChange;
+	hasError?: boolean;
+	onDontHaveSiteAddressClick?: () => void;
+}
+const Capture: FunctionComponent< Props > = ( props ) => {
+	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
+
+	return (
+		<div className={ 'import-layout__center' }>
+			<div className={ 'import-layout' }>
+				<div className={ 'import-layout__column' }>
+					<div className="import__heading">
+						<FormattedHeader
+							align={ 'left' }
+							headerText={ translate( 'Where will you import from?' ) }
+							subHeaderText={ translate(
+								'After a brief scan, we’ll prompt with what we can import from your website.'
+							) }
+						/>
+						<div className={ 'step-wrapper__header-image' }>
+							<img alt="Light import" src={ illustrationImg } aria-hidden="true" />
+						</div>
+					</div>
+				</div>
+				<div className={ 'import-layout__column' }>
+					<CaptureInput
+						onInputEnter={ onInputEnter }
+						onInputChange={ onInputChange }
+						onDontHaveSiteAddressClick={ onDontHaveSiteAddressClick }
+						hasError={ hasError }
+					/>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const LocalizedCapture = localize( Capture );
+
+export { LocalizedCapture as Capture };
+
+type StepProps = ConnectedProps< typeof connector > & {
+	goToStep: GoToStep;
+};
 
 const trackEventName = 'calypso_signup_step_start';
 const trackEventParams = {
@@ -21,15 +70,7 @@ const trackEventParams = {
 	step: 'capture',
 };
 
-const validateUrl = ( url: string ): boolean => {
-	return CAPTURE_URL_RGX.test( url );
-};
-
-type Props = ConnectedProps< typeof connector > & {
-	goToStep: GoToStep;
-};
-
-const CaptureStep: React.FunctionComponent< Props > = ( {
+const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	goToStep,
 	analyzeUrl,
 	resetError,
@@ -37,22 +78,13 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	analyzerError,
 	recordTracksEvent,
 } ) => {
-	const { __ } = useI18n();
-
-	/**
-	 ↓ Fields
-	 */
-	const [ urlValue, setUrlValue ] = useState( '' );
-	const [ isValid, setIsValid ] = useState( true );
-	const [ showError, setShowError ] = useState( false );
-	const showSubmitButton = isValid && urlValue && ! analyzerError;
-
 	/**
 	 ↓ Methods
 	 */
-	const runProcess = (): void => {
+
+	const runProcess = ( url: string ): void => {
 		// Analyze the URL and when we receive the urlData, decide where to go next.
-		analyzeUrl( urlValue ).then( ( response: UrlData ) => {
+		analyzeUrl( url ).then( ( response: UrlData ) => {
 			let stepSectionName = response.platform === 'unknown' ? 'not' : 'preview';
 
 			if ( response.platform === 'wordpress' && response.platform_data?.is_wpcom ) {
@@ -85,19 +117,6 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 		recordTracksEvent( trackEventName, trackEventParams );
 	};
 
-	const onInputChange = ( e: ChangeEvent< HTMLInputElement > ) => {
-		resetError();
-		setUrlValue( e.target.value );
-		setIsValid( validateUrl( e.target.value ) );
-	};
-
-	const onFormSubmit = ( e: FormEvent< HTMLFormElement > ) => {
-		e.preventDefault();
-
-		setShowError( true );
-		isValid && urlValue && runProcess();
-	};
-
 	/**
 	 ↓ Effects
 	 */
@@ -108,42 +127,13 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	return (
 		<>
 			{ ! isAnalyzing && (
-				<div className="import-layout__center">
-					<div className="capture__content">
-						<form
-							className={ classnames( 'capture__input-wrapper', {
-								'capture__input-wrapper-padding': showSubmitButton,
-							} ) }
-							onSubmit={ onFormSubmit.bind( this ) }
-						>
-							<input
-								className="capture__input"
-								// eslint-disable-next-line jsx-a11y/no-autofocus
-								autoFocus
-								autoComplete="off"
-								autoCorrect="off"
-								spellCheck="false"
-								placeholder={ __( 'Enter your site address' ) }
-								onChange={ onInputChange }
-								value={ urlValue }
-								dir="ltr"
-							/>
-							{ showSubmitButton && (
-								<NextButton type={ 'submit' }>
-									<Icon className="capture__next-button-icon" icon={ chevronRight } />
-								</NextButton>
-							) }
-							{ ( ! isValid && showError ) ||
-								( analyzerError && (
-									<div className="capture__input-error-msg">
-										{ __( 'The address you entered is not valid. Please try again.' ) }
-									</div>
-								) ) }
-						</form>
-					</div>
-				</div>
+				<LocalizedCapture
+					onInputEnter={ runProcess }
+					onDontHaveSiteAddressClick={ () => goToStep( 'list' ) }
+					hasError={ !! analyzerError }
+					onInputChange={ () => resetError() }
+				/>
 			) }
-
 			{ isAnalyzing && <ScanningStep /> }
 		</>
 	);

@@ -61,7 +61,8 @@ export function createExistingCardMethod( {
 
 	return {
 		id,
-		paymentProcessorId: 'existing-card',
+		paymentProcessorId:
+			paymentPartnerProcessorId === 'ebanx' ? 'existing-card-ebanx' : 'existing-card',
 		label: (
 			<ExistingCardLabel
 				last4={ last4 }

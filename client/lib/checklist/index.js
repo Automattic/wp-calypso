@@ -60,13 +60,7 @@ class WpcomTaskList {
 export const getTaskList = memoize(
 	( params ) => new WpcomTaskList( params?.taskStatuses ),
 	( params ) => {
-		const key = pick( params, [
-			'taskStatuses',
-			'designType',
-			'siteIsUnlaunched',
-			'siteSegment',
-			'siteVerticals',
-		] );
+		const key = pick( params, [ 'taskStatuses', 'designType', 'siteIsUnlaunched', 'siteSegment' ] );
 		return JSON.stringify( key );
 	}
 );

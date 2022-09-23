@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .stats-no-content-banner__banner {
 	.banner__content {
@@ -22,7 +22,7 @@
 	.dismissible-card__close-button {
 
 		@include break-mobile {
-			transform: translateY( -50% );
+			transform: translateY(-50%);
 			top: 50%;
 		}
 	}

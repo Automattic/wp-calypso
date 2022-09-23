@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form';
 import { formatApiPartner } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -12,13 +12,15 @@ import { translateInvalidPartnerParameterError } from 'calypso/state/partner-por
 import { PartnerDetailsPayload } from 'calypso/state/partner-portal/types';
 import type { APIError } from 'calypso/state/partner-portal/types';
 
-export default function UpdateCompanyDetailsForm(): ReactElement {
+export default function UpdateCompanyDetailsForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );
 	const notificationId = 'partner-portal-company-details-form';
 
 	const name = partner?.name ?? '';
+	const contactPerson = partner?.contact_person ?? '';
+	const companyWebsite = partner?.company_website ?? '';
 	const country = partner?.address.country ?? '';
 	const city = partner?.address.city ?? '';
 	const line1 = partner?.address.line1 ?? '';
@@ -57,6 +59,8 @@ export default function UpdateCompanyDetailsForm(): ReactElement {
 				recordTracksEvent( 'calypso_partner_portal_update_company_details_submit', {
 					partner_id: partner?.id,
 					name: payload.name,
+					contact_person: payload.contactPerson,
+					company_website: payload.companyWebsite,
 					city: payload.city,
 					line1: payload.line1,
 					line2: payload.line2,
@@ -73,6 +77,8 @@ export default function UpdateCompanyDetailsForm(): ReactElement {
 		<CompanyDetailsForm
 			initialValues={ {
 				name,
+				contactPerson,
+				companyWebsite,
 				country,
 				city,
 				line1,

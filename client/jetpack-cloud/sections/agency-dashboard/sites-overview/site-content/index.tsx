@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import Pagination from 'calypso/components/pagination';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -8,7 +7,6 @@ import { addQueryArgs } from 'calypso/lib/route';
 import SiteCard from '../site-card';
 import SiteTable from '../site-table';
 import { formatSites, siteColumns } from '../utils';
-import type { ReactElement } from 'react';
 import './style.scss';
 
 const addPageArgs = ( pageNumber: number ) => {
@@ -19,25 +17,14 @@ const addPageArgs = ( pageNumber: number ) => {
 
 interface Props {
 	data: { sites: Array< any >; total: number; perPage: number } | undefined;
-	isError: boolean;
 	isLoading: boolean;
 	currentPage: number;
 }
 
-export default function SiteContent( {
-	data,
-	isError,
-	isLoading,
-	currentPage,
-}: Props ): ReactElement {
-	const translate = useTranslate();
+export default function SiteContent( { data, isLoading, currentPage }: Props ) {
 	const isMobile = useMobileBreakpoint();
 
 	const sites = formatSites( data?.sites );
-
-	if ( ! isLoading && ! isError && ! sites.length ) {
-		return <div className="site-content__no-sites">{ translate( 'No active sites' ) }</div>;
-	}
 
 	const handlePageClick = ( pageNumber: number ) => {
 		addPageArgs( pageNumber );

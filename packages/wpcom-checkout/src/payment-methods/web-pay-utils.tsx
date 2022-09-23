@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect, useMemo } from 'react';
 import { getLabel } from '../checkout-labels';
 import type { StripeConfiguration, PaymentRequestOptions } from '@automattic/calypso-stripe';
 import type { LineItem } from '@automattic/composite-checkout';
-import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { PaymentRequest, Stripe } from '@stripe/stripe-js';
 
 const debug = debugFactory( 'wpcom-checkout:web-pay-utils' );
@@ -26,10 +26,11 @@ const PAYMENT_REQUEST_OPTIONS = {
 };
 
 export function usePaymentRequestOptions(
-	stripeConfiguration: StripeConfiguration
+	stripeConfiguration: StripeConfiguration,
+	cartKey: CartKey
 ): PaymentRequestOptions | null {
 	const total = useTotal();
-	const { responseCart } = useShoppingCart();
+	const { responseCart } = useShoppingCart( cartKey );
 	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = responseCart.currency;
 	const paymentRequestOptions = useMemo( () => {
@@ -45,6 +46,7 @@ export function usePaymentRequestOptions(
 			...PAYMENT_REQUEST_OPTIONS,
 		};
 	}, [ country, currency, total, responseCart.products ] );
+	debug( 'returning stripe payment request options', paymentRequestOptions );
 	return paymentRequestOptions;
 }
 

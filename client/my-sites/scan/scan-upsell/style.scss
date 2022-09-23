@@ -1,6 +1,6 @@
 .scan-upsell__content {
 	.jetpack-product-card__description {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			min-height: 55px;
 		}
 	}
@@ -17,10 +17,10 @@
 		height: 48px;
 		width: auto;
 		padding: 5px 0;
-    	box-sizing: border-box;
+		box-sizing: border-box;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: start;
 	}
 }

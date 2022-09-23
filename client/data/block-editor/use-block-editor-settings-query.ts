@@ -8,8 +8,9 @@ type HomeTemplateSettings = {
 	postId: number | null;
 };
 
+// is_fse_active property has been deprecated. Refer to the withIsFSEActive HOC to use the isFSEActive to determine if a theme is FSE enabled.
+// is_fse_eligible property has been deprecated because all sites are now FSE eligible.
 export type BlockEditorSettings = {
-	is_fse_active: boolean;
 	home_template: HomeTemplateSettings;
 };
 

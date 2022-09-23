@@ -28,7 +28,7 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	currentPage = noop,
+	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -40,7 +40,6 @@ export function generateSteps( {
 	isAddOnsFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
-	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
 	setDIFMLiteDesign = noop,
@@ -49,15 +48,6 @@ export function generateSteps( {
 	submitWebsiteContent = noop,
 } = {} ) {
 	return {
-		survey: {
-			stepName: 'survey',
-			props: {
-				surveySiteType:
-					currentPage && currentPage.toString().match( /\/start\/blog/ ) ? 'blog' : 'site',
-			},
-			providesDependencies: [ 'surveySiteType', 'surveyQuestion' ],
-		},
-
 		themes: {
 			stepName: 'themes',
 			dependencies: [ 'siteSlug' ],
@@ -110,12 +100,6 @@ export function generateSteps( {
 				showExampleSuggestions: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch, pick a domain' );
-				},
-				get subHeaderText() {
-					return i18n.translate( 'Select a domain name for your website' );
-				},
 			},
 			dependencies: [ 'siteSlug' ],
 		},
@@ -221,6 +205,25 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
+		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
+		'plans-newsletter': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		// the only unique thing about plans-link-in-bio is that it provides themeSlugWithRepo dependency
+		'plans-link-in-bio': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
 
 		'plans-new': {
 			stepName: 'plans',
@@ -324,12 +327,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				get headerText() {
-					return i18n.translate( 'Getting ready to launch your website' );
-				},
-				get subHeaderText() {
-					return i18n.translate( "Pick a plan that's right for you. Upgrade as you grow." );
-				},
 				isLaunchPage: true,
 			},
 		},
@@ -340,6 +337,18 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
+
+		'mailbox-plan': {
+			stepName: 'mailbox-plan',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug', 'emailItem' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				useEmailOnboardingSubheader: true,
+			},
+		},
+
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -360,8 +369,18 @@ export function generateSteps( {
 		emails: {
 			stepName: 'emails',
 			dependencies: [ 'domainItem', 'siteSlug' ],
-			providesDependencies: [ 'domainItem', 'emailItem', 'shouldHideFreePlan' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {
+				isDomainOnly: false,
+			},
+		},
+		mailbox: {
+			stepName: 'mailbox',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainItem', 'emailItem' ],
+			props: {
+				backUrl: 'mailbox-domain/',
+				hideSkip: true,
 				isDomainOnly: false,
 			},
 		},
@@ -408,6 +427,21 @@ export function generateSteps( {
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
+				isDomainOnly: false,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
+		'mailbox-domain': {
+			stepName: 'mailbox-domain',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+			props: {
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
+				get headerText() {
+					return i18n.translate( 'Choose a domain for your Professional Email' );
+				},
+				includeWordPressDotCom: false,
 				isDomainOnly: false,
 			},
 			delayApiRequestUntilComplete: true,
@@ -575,19 +609,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isSiteTypeFulfilled,
 		},
 
-		'site-topic': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
-		'site-topic-with-theme': {
-			stepName: 'site-topic',
-			providesDependencies: [ 'siteTopic' ],
-			fulfilledStepCallback: isSiteTopicFulfilled,
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
@@ -683,8 +704,8 @@ export function generateSteps( {
 			apiRequestFunction: setDesignOnSite,
 			delayApiRequestUntilComplete: true,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
-			optionalDependencies: [ 'isFSEActive', 'selectedDesign', 'selectedSiteCategory' ],
+			providesDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
+			optionalDependencies: [ 'selectedDesign', 'selectedSiteCategory' ],
 			props: {
 				showDesignPickerCategories: config.isEnabled( 'signup/design-picker-categories' ),
 				showDesignPickerCategoriesAllFilter: config.isEnabled( 'signup/design-picker-categories' ),
@@ -713,8 +734,18 @@ export function generateSteps( {
 			props: {
 				headerText: i18n.translate( 'Choose your site?' ),
 			},
-			providesDependencies: [ 'siteId', 'siteSlug' ],
-			optionalDependencies: [ 'siteId', 'siteSlug' ],
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'newOrExistingSiteChoice',
+				'forceAutoGeneratedBlogName',
+			],
+			optionalDependencies: [
+				'siteId',
+				'siteSlug',
+				'newOrExistingSiteChoice',
+				'forceAutoGeneratedBlogName',
+			],
 			fulfilledStepCallback: isNewOrExistingSiteFulfilled,
 		},
 
@@ -723,20 +754,13 @@ export function generateSteps( {
 			apiRequestFunction: setDIFMLiteDesign,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
-				'isFSEActive',
 				'selectedDesign',
 				'selectedSiteCategory',
 				'isLetUsChooseSelected',
 				'cartItem',
 				'siteSlug',
 			],
-			optionalDependencies: [
-				'isFSEActive',
-				'selectedDesign',
-				'isLetUsChooseSelected',
-				'cartItem',
-				'siteSlug',
-			],
+			optionalDependencies: [ 'selectedDesign', 'isLetUsChooseSelected', 'cartItem', 'siteSlug' ],
 			props: {
 				hideSkip: true,
 				hideExternalPreview: true,
@@ -799,6 +823,12 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
+		},
+
+		'videopress-site': {
+			stepName: 'videopress-site',
+			apiRequestFunction: createVideoPressSite,
+			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

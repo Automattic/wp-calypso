@@ -4,7 +4,7 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	PLAN_WPCOM_PRO,
+	PLAN_BUSINESS,
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { connect } from 'react-redux';
@@ -35,8 +35,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						className="themes__showcase-banner"
 						event="calypso_themes_list_premium_themes"
 						feature={ WPCOM_FEATURES_PREMIUM_THEMES }
-						plan={ PLAN_WPCOM_PRO }
-						title={ translate( 'Unlock ALL premium themes with our Pro plan!' ) }
+						plan={ PLAN_PREMIUM }
+						title={ translate( 'Unlock ALL premium themes with our Premium and Business plans!' ) }
 						forceHref={ true }
 						showIcon={ true }
 					/>
@@ -49,8 +49,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 						className="themes__showcase-banner"
 						event="calypso_themes_list_install_themes"
 						feature={ FEATURE_UPLOAD_THEMES }
-						plan={ PLAN_WPCOM_PRO }
-						title={ translate( 'Upload your own themes with our Pro plan!' ) }
+						plan={ PLAN_BUSINESS }
+						title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
 						forceHref={ true }
 						showIcon={ true }
 					/>
@@ -62,8 +62,8 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 					className="themes__showcase-banner"
 					event="calypso_themes_list_install_themes"
 					feature={ FEATURE_UPLOAD_THEMES }
-					plan={ PLAN_WPCOM_PRO }
-					title={ translate( 'Upload your own themes with our Pro plan!' ) }
+					plan={ PLAN_BUSINESS }
+					title={ translate( 'Upload your own themes with our Business and eCommerce plans!' ) }
 					forceHref={ true }
 					showIcon={ true }
 				/>

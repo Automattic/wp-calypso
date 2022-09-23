@@ -5,6 +5,7 @@ export interface Container {
 	handleClose: () => void;
 	defaultFooterContent?: ReactElement;
 	isLoading?: boolean;
+	hidden?: boolean;
 }
 
 export interface Header {
@@ -34,4 +35,24 @@ export interface Article {
 
 export interface FeatureFlags {
 	loadNextStepsTutorial: boolean;
+}
+
+export interface SearchResult {
+	link: string;
+	title: string | React.ReactChild;
+	content?: string;
+	icon?: string;
+	post_id?: number;
+	blog_id?: number;
+}
+
+export interface SupportTicket {
+	id?: number;
+	status: string;
+	subject: string;
+	time: Date;
+	timestamp: number;
+	type: string;
+	url: string;
+	when: string;
 }

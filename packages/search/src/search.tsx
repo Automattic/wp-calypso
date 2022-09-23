@@ -76,6 +76,7 @@ type Props = {
 	searching?: boolean;
 	value?: string;
 	searchMode?: 'when-typing' | 'on-enter';
+	searchIcon?: ReactNode;
 };
 
 //This is fix for IE11. Does not work on Edge.
@@ -143,6 +144,7 @@ const InnerSearch = (
 		hideClose = false,
 		isReskinned = false,
 		searchMode = 'when-typing',
+		searchIcon,
 	}: Props,
 	forwardedRef: Ref< ImperativeHandle >
 ) => {
@@ -409,6 +411,10 @@ const InnerSearch = (
 	const renderOpenIcon = () => {
 		const enableOpenIcon = pinned && ! isOpen;
 
+		if ( searchIcon ) {
+			return searchIcon;
+		}
+
 		if ( isReskinned ) {
 			return renderReskinSearchIcon();
 		}
@@ -417,7 +423,7 @@ const InnerSearch = (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : focus }
+				onClick={ enableOpenIcon ? openSearch : () => searchInput.current?.focus() }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }

@@ -5,7 +5,7 @@
 
 // ActionCard component
 .card.action-card {
-	box-shadow: 0 1px 0 var( --studio-gray-5 );
+	box-shadow: 0 1px 0 var(--studio-gray-5);
 
 	&.is-compact {
 		display: flex;
@@ -18,13 +18,14 @@
 
 	.action-card__heading {
 		margin: 0 0 2px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.2em;
-		color: 0 1px 0 var( --studio-gray-100 );
+		color: 0 1px 0 var(--studio-gray-100);
 	}
 
 	.action-card__main p {
-		color: var( --studio-gray-40 );
-		font-size: 0.875em; /* stylelint-disable-line */
+		color: var(--studio-gray-40);
+		font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-bottom: 0;
 	}
 
@@ -42,27 +43,28 @@
 
 	.action-card__button-container a svg,
 	.action-card__button-container button svg {
-		fill: var( --studio-gray-30 );
+		fill: var(--studio-gray-30);
 	}
 }
 
 // Modal component
 .components-modal__frame.components-modal-new__frame {
-	border-radius: 4px; /* stylelint-disable-line */
+	border-radius: 4px;
 
 	p {
-		font-size: 1rem; /* stylelint-disable-line */
-		color: var( --studio-gray-70 );
+		font-size: 1rem;
+		color: var(--studio-gray-70);
 		margin-bottom: 1em;
 
 		@include break-small {
-			font-size: 1.125rem; /* stylelint-disable-line */
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.4444em;
 		}
 	}
 
 	strong {
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 	}
 
 	.components-modal__content {
@@ -104,6 +106,7 @@
 		.components-modal__header-heading {
 			font-size: 2rem;
 			font-weight: normal;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25em;
 			margin-bottom: 0.75em;
 		}
@@ -114,7 +117,7 @@
 		text-align: right;
 		margin-top: 2.5rem;
 
-		& > button:not( :last-child ) {
+		& > button:not(:last-child) {
 			margin-right: 1rem;
 		}
 
@@ -124,7 +127,7 @@
 		}
 
 		.action-buttons__cancel {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 		}
 
 		.action-buttons__next.is-primary {

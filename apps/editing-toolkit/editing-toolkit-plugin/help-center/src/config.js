@@ -4,7 +4,6 @@ window.configData = {
 	google_analytics_key: 'UA-10673494-15',
 	client_slug: 'browser',
 	twemoji_cdn_url: 'https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/',
-	happychat_url: 'https://happychat.io/customer',
 	site_filter: [],
 	sections: {},
 	enable_all_sections: false,

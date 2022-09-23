@@ -6,7 +6,7 @@ import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-typ
  * page, you go to `/page`, which then redirects to `/block-editor/page`.
  * Matching page or post handles that case.
  */
-const editorPattern = /^\/(block-editor|page[^s]|post[^s])/;
+const editorPattern = /^\/(block-editor|site-editor|page[^s]|post[^s])/;
 
 export const lastNonEditorRouteReducer = ( state = '', action ) => {
 	const { path, type } = action;

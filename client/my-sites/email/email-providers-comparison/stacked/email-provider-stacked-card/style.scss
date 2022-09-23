@@ -1,13 +1,13 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-$width-right-panel-card:  calc( 45% - 110px );
+$width-right-panel-card:  calc(45% - 110px);
 $width-right-panel-card-expanded:  45%;
 $width-left-panel-card: 55%;
 
 .email-provider-stacked-features__whats-included {
-	color: var( --studio-gray-20 );
+	color: var(--studio-gray-20);
 	display: block;
 	font-size: 0.75rem;
 }
@@ -23,7 +23,7 @@ $width-left-panel-card: 55%;
 	}
 
 	.gridicon {
-		fill: var( --studio-gray-20 );
+		fill: var(--studio-gray-20);
 		margin-left: -28px;
 		margin-right: 5px;
 		min-width: 24px;
@@ -129,12 +129,12 @@ $width-left-panel-card: 55%;
 		display: flex;
 		flex-direction: column;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-direction: row;
 		}
 
 		.action-panel__body {
-			color: var( --color-text );
+			color: var(--color-text);
 
 			p {
 				margin-bottom: 0;
@@ -149,7 +149,7 @@ $width-left-panel-card: 55%;
 			padding-right: 12px;
 			text-align: left;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				max-width: 100%;
 				padding-right: 0;
 			}
@@ -250,7 +250,7 @@ $width-left-panel-card: 55%;
 
 .email-provider-stacked-card__title {
 	font-size: $font-title-small;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	@extend .wp-brand-font;
 }
@@ -275,7 +275,7 @@ $width-left-panel-card: 55%;
 
 	.form-text-input-with-affixes__suffix {
 		border-top-width: 0;
-		border-left: 1px solid var( --color-neutral-10 );
+		border-left: 1px solid var(--color-neutral-10);
 		display: inline-block;
 		white-space: normal;
 		word-break: break-all;

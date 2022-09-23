@@ -75,6 +75,8 @@ import {
 	isSsoApproved,
 	retrieveMobileRedirect,
 	retrievePlan,
+	retrieveSource,
+	clearSource,
 } from './persistence-utils';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -220,7 +222,7 @@ export class JetpackAuthorize extends Component {
 	}
 
 	redirect() {
-		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups } = this.props;
+		const { isMobileAppFlow, mobileAppRedirect, siteHasBackups, fromSource } = this.props;
 		const { from, homeUrl, redirectAfterAuth, scope, closeWindowAfterAuthorize } =
 			this.props.authQuery;
 		const { isRedirecting } = this.state;
@@ -240,6 +242,12 @@ export class JetpackAuthorize extends Component {
 			// In these cases, we'll want to automatically close the window when the authorization
 			// step is complete, and have the window opener detect this and re-check user authorization status.
 			debug( 'Closing window after authorize' );
+			window.close();
+		}
+
+		if ( fromSource === 'import' ) {
+			clearSource();
+			debug( 'Closing window after authorize - from migration flow' );
 			window.close();
 		}
 
@@ -269,7 +277,8 @@ export class JetpackAuthorize extends Component {
 			this.isFromJetpackConnectionManager() ||
 			this.isFromJetpackSocialPlugin() ||
 			this.isFromMyJetpack() ||
-			this.isFromJetpackSearchPlugin()
+			this.isFromJetpackSearchPlugin() ||
+			this.isFromJetpackVideoPressPlugin()
 		) {
 			debug(
 				'Going back to WP Admin.',
@@ -370,6 +379,11 @@ export class JetpackAuthorize extends Component {
 	isFromJetpackSocialPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jetpack-social' );
+	}
+
+	isFromJetpackVideoPressPlugin( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-videopress' );
 	}
 
 	isFromMyJetpack( props = this.props ) {
@@ -714,9 +728,15 @@ export class JetpackAuthorize extends Component {
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
 		const { partnerSlug, selectedPlanSlug, siteHasJetpackPaidProduct } = this.props;
+
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if ( 'pressable' === partnerSlug ) {
-			return `/start/pressable-nux?blogid=${ clientId }`;
+			const pressableTarget = `/start/pressable-nux?blogid=${ clientId }`;
+			debug(
+				'authorization-form: getRedirectionTarget -> This is a Pressable site, redirection target is: %s',
+				pressableTarget
+			);
+			return pressableTarget;
 		}
 
 		// If the redirect is part of a Jetpack plan or product go to the checkout page
@@ -724,21 +744,32 @@ export class JetpackAuthorize extends Component {
 			productSlug.includes( 'jetpack' )
 		);
 		if ( jetpackCheckoutSlugs.includes( selectedPlanSlug ) ) {
+			const checkoutTarget = `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 			// Once we decide we want to redirect the user to the checkout page and that there is a
 			// valid plan, we can safely remove it from the session storage
 			clearPlan();
+			debug(
+				'authorization-form: getRedirectionTarget -> Valid plan retrived from localStorage, redirection target is: %s',
+				checkoutTarget
+			);
 			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
 		// If the site has a Jetpack paid product send the user back to wp-admin rather than to the Plans page.
 		if ( siteHasJetpackPaidProduct ) {
+			debug(
+				'authorization-form: getRedirectionTarget -> Site already has a paid product, redirection target is: %s',
+				redirectAfterAuth
+			);
 			return redirectAfterAuth;
 		}
 
-		return addQueryArgs(
+		const jpcTarget = addQueryArgs(
 			{ redirect: redirectAfterAuth },
 			`${ JPC_PATH_PLANS }/${ urlToSlug( homeUrl ) }`
 		);
+		debug( 'authorization-form: getRedirectionTarget -> Redirection target is: %s', jpcTarget );
+		return jpcTarget;
 	}
 
 	renderFooterLinks() {
@@ -912,6 +943,7 @@ const connectComponent = connect(
 		const mobileAppRedirect = retrieveMobileRedirect();
 		const isMobileAppFlow = !! mobileAppRedirect;
 		const selectedPlanSlug = retrievePlan();
+		const fromSource = retrieveSource();
 
 		return {
 			authAttempts: getAuthAttempts( state, urlToSlug( authQuery.site ) ),
@@ -935,6 +967,7 @@ const connectComponent = connect(
 			siteHasBackups: siteHasFeature( state, authQuery.clientId, WPCOM_FEATURES_BACKUPS ),
 			user: getCurrentUser( state ),
 			userAlreadyConnected: getUserAlreadyConnected( state ),
+			fromSource,
 		};
 	},
 	{

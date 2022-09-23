@@ -5,9 +5,14 @@ import { useDebouncedCallback } from 'use-debounce';
 import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { hasPaidEmailWithUs } from 'calypso/lib/emails';
+import {
+	recordDSPEntryPoint,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
@@ -40,6 +45,7 @@ export const QuickLinks = ( {
 	menusUrl,
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -56,17 +62,15 @@ export const QuickLinks = ( {
 	siteAdminUrl,
 	editHomePageUrl,
 	siteSlug,
-	blockEditorSettings,
-	areBlockEditorSettingsLoading,
+	isFSEActive,
 } ) => {
-	const isFSEActive = blockEditorSettings?.is_fse_active ?? false;
-
 	const translate = useTranslate();
 	const [
 		debouncedUpdateHomeQuickLinksToggleStatus,
 		,
 		flushDebouncedUpdateHomeQuickLinksToggleStatus,
 	] = useDebouncedCallback( updateHomeQuickLinksToggleStatus, 1000 );
+	const isPromotePostActive = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const customizerLinks =
 		isStaticHomePage && canEditPages ? (
@@ -99,6 +103,15 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
+			{ isPromotePostActive && (
+				<ActionBox
+					href={ `/advertising/${ siteSlug }` }
+					hideLinkIndicator
+					onClick={ trackPromotePostAction }
+					label={ translate( 'Promote post' ) }
+					gridicon="speaker"
+				/>
+			) }
 			{ ! isStaticHomePage && canModerateComments && (
 				<ActionBox
 					href={ `/comments/${ siteSlug }` }
@@ -217,10 +230,6 @@ export const QuickLinks = ( {
 		};
 	}, [] );
 
-	if ( areBlockEditorSettingsLoading ) {
-		return null;
-	}
-
 	return (
 		<FoldableCard
 			className="quick-links"
@@ -256,6 +265,10 @@ const trackWritePostAction = ( isStaticHomePage ) => ( dispatch ) => {
 			bumpStat( 'calypso_customer_home', 'my_site_write_post' )
 		)
 	);
+};
+
+const trackPromotePostAction = () => ( dispatch ) => {
+	dispatch( recordDSPEntryPoint( 'myhome_quick-links' ) );
 };
 
 const trackAddPageAction = ( isStaticHomePage ) => ( dispatch ) => {
@@ -386,6 +399,7 @@ const mapStateToProps = ( state ) => {
 	const canAddEmail = getDomainsThatCanAddEmail( domains ).length > 0;
 
 	return {
+		siteId,
 		canEditPages: canCurrentUser( state, siteId, 'edit_pages' ),
 		canCustomize: canCurrentUser( state, siteId, 'customize' ),
 		canSwitchThemes: canCurrentUser( state, siteId, 'switch_themes' ),
@@ -407,6 +421,7 @@ const mapStateToProps = ( state ) => {
 const mapDispatchToProps = {
 	trackEditHomepageAction,
 	trackWritePostAction,
+	trackPromotePostAction,
 	trackAddPageAction,
 	trackManageCommentsAction,
 	trackEditMenusAction,
@@ -429,6 +444,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...dispatchProps,
 		trackEditHomepageAction: () => dispatchProps.trackEditHomepageAction( isStaticHomePage ),
 		trackWritePostAction: () => dispatchProps.trackWritePostAction( isStaticHomePage ),
+		trackPromotePostAction: () => dispatchProps.trackPromotePostAction( isStaticHomePage ),
 		trackAddPageAction: () => dispatchProps.trackAddPageAction( isStaticHomePage ),
 		trackManageCommentsAction: () => dispatchProps.trackManageCommentsAction( isStaticHomePage ),
 		trackEditMenusAction: () => dispatchProps.trackEditMenusAction( isStaticHomePage ),
@@ -447,6 +463,6 @@ const ConnectedQuickLinks = connect(
 	mapStateToProps,
 	mapDispatchToProps,
 	mergeProps
-)( QuickLinks );
+)( withIsFSEActive( QuickLinks ) );
 
-export default withBlockEditorSettings( ConnectedQuickLinks );
+export default ConnectedQuickLinks;

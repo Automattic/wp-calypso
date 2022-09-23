@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 import type { FC } from 'react';
 import '../styles.scss';
 
-type Props = { onClick?: () => void; backToRoot?: boolean };
+export type Props = { onClick?: () => void; backToRoot?: boolean };
 
 export const BackButton: FC< Props > = ( { onClick, backToRoot = false } ) => {
 	const { __ } = useI18n();

@@ -57,6 +57,7 @@ class DomainRegistrationSuggestion extends Component {
 		productCost: PropTypes.string,
 		productSaleCost: PropTypes.string,
 		isReskinned: PropTypes.bool,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -171,15 +172,23 @@ class DomainRegistrationSuggestion extends Component {
 	}
 
 	getPriceRule() {
-		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion, flowName } =
-			this.props;
+		const {
+			cart,
+			isDomainOnly,
+			domainsWithPlansOnly,
+			selectedSite,
+			suggestion,
+			flowName,
+			domainAndPlanUpsellFlow,
+		} = this.props;
 		return getDomainPriceRule(
 			domainsWithPlansOnly,
 			selectedSite,
 			cart,
 			suggestion,
 			isDomainOnly,
-			flowName
+			flowName,
+			domainAndPlanUpsellFlow
 		);
 	}
 

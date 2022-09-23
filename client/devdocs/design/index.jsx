@@ -12,6 +12,7 @@ import ProductIcon from '@automattic/components/src/product-icon/docs/example';
 import ProgressBar from '@automattic/components/src/progress-bar/docs/example';
 import Ribbon from '@automattic/components/src/ribbon/docs/example';
 import ScreenReaderTextExample from '@automattic/components/src/screen-reader-text/docs/example';
+import SiteThumbnail from '@automattic/components/src/site-thumbnail/docs/example';
 import Suggestions from '@automattic/components/src/suggestions/docs/example';
 import classnames from 'classnames';
 import { trim } from 'lodash';
@@ -268,6 +269,7 @@ export default class DesignAssets extends Component {
 					<SpinnerLine searchKeywords="loading" readmeFilePath="spinner-line" />
 					<SplitButton readmeFilePath="split-button" />
 					<Spotlight />
+					<SiteThumbnail readmeFilePath="/packages/components/src/site-thumbnail" />
 					<StepProgress readmeFilePath="step-progress" />
 					<Suggestions readmeFilePath="/packages/components/src/suggestions" />
 					<SuggestionSearchExample />

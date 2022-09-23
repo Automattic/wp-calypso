@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within, waitFor } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -12,7 +12,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getIntroOfferPrice from 'calypso/state/selectors/get-intro-offer-price';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import CompositeCheckout from '../composite-checkout';
+import CheckoutMain from '../components/checkout-main';
 import {
 	siteId,
 	domainProduct,
@@ -40,7 +40,7 @@ jest.mock( 'calypso/state/sites/selectors' );
 
 /* eslint-disable jest/no-conditional-expect */
 
-describe( 'CompositeCheckout with a variant picker', () => {
+describe( 'CheckoutMain with a variant picker', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
@@ -117,7 +117,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 						{ ...additionalCartProps }
 					>
 						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-							<CompositeCheckout
+							<CheckoutMain
 								siteId={ siteId }
 								siteSlug={ 'foo.com' }
 								getStoredCards={ async () => [] }
@@ -144,48 +144,51 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'yearly' },
 		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'two-year' },
 	] )(
-		'renders the variant picker with $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
+		'renders the variant picker with a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-			await userEvent.click( editOrderButton );
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
 
-			expect( screen.getByText( getVariantItemTextForInterval( expectedVariant ) ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'option', {
+					name: getVariantItemTextForInterval( expectedVariant ),
+				} )
+			).toBeVisible();
 		}
 	);
 
-	it.each( [
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
-	] )(
-		'does not render the $expectedVariant variant for a $cartPlan plan when the current plan is $activePlan and the order is not being edited',
+	it.each( [ { activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
+		'renders the variant picker without a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
+			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const renderedVariant = await screen.findByText(
-				getVariantItemTextForInterval( expectedVariant )
-			);
-			expect( renderedVariant ).not.toBeVisible();
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			await expect(
+				screen.findByRole( 'option', {
+					name: getVariantItemTextForInterval( expectedVariant ),
+				} )
+			).toNeverAppear();
 		}
 	);
 
-	it.each( [
-		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' },
-		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'monthly' },
-		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'yearly' },
-		{ activePlan: 'two-year', cartPlan: 'yearly', expectedVariant: 'two-year' },
-	] )(
-		'renders the variant picker without $expectedVariant for a $cartPlan plan when the current plan is $activePlan',
-		async ( { activePlan, cartPlan, expectedVariant } ) => {
+	it.each( [ { activePlan: 'two-year', cartPlan: 'yearly' } ] )(
+		'does not render the variant picker when the cart contains a $cartPlan plan and the current plan is $activePlan',
+		async ( { activePlan, cartPlan } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
@@ -193,49 +196,48 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const renderedVariant = await waitFor( () =>
-				screen.queryByText( getVariantItemTextForInterval( expectedVariant ) )
-			);
-			expect( renderedVariant ).not.toBeInTheDocument();
+			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 		}
 	);
 
-	it.each( [
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
-	] )(
+	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' } ] )(
 		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const variantItem = (
-				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
-			 ).closest( 'label' );
-			const lowestVariantItem = variantItem.closest( 'ul' ).querySelector( 'label:first-of-type' );
-			const lowestVariantSlug = lowestVariantItem.closest( 'div' ).querySelector( 'input' ).value;
-			const variantSlug = variantItem.closest( 'div' ).querySelector( 'input' ).value;
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			const currentVariantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( cartPlan ),
+			} );
+			const variantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( expectedVariant ),
+			} );
+
+			const currentVariantSlug = currentVariantItem.dataset.productSlug;
+			const variantSlug = variantItem.dataset.productSlug;
 
 			const variantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === variantSlug
 			);
 			const finalPrice = variantData.raw_price;
 			const variantInterval = variantData.bill_period;
-			const lowestVariantData = getPlansItemsState().find(
-				( plan ) => plan.product_slug === lowestVariantSlug
+			const currentVariantData = getPlansItemsState().find(
+				( plan ) => plan.product_slug === currentVariantSlug
 			);
-			const lowestVariantPrice = lowestVariantData.raw_price;
-			const lowestVariantInterval = lowestVariantData.bill_period;
-			const intervalsInVariant = Math.round( variantInterval / lowestVariantInterval );
-			const priceBeforeDiscount = lowestVariantPrice * intervalsInVariant;
+			const currentVariantPrice = currentVariantData.raw_price;
+			const currentVariantInterval = currentVariantData.bill_period;
+			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
+			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
 			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
-			expect(
-				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
-			).toBeInTheDocument();
+			expect( screen.getByText( `Save ${ discountPercentage }%` ) ).toBeInTheDocument();
 		}
 	);
 
@@ -245,25 +247,26 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			getPlansBySiteId.mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
+			const user = userEvent.setup();
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const variantItem = (
-				await screen.findByText( getVariantItemTextForInterval( expectedVariant ) )
-			 ).closest( 'label' );
+			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			const variantItem = await screen.findByRole( 'option', {
+				name: getVariantItemTextForInterval( expectedVariant ),
+			} );
+
 			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
 		}
 	);
 
-	it( 'does not render the variant picker if there are no variants after clicking into edit mode', async () => {
+	it( 'does not render the variant picker if there are no variants', async () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		await userEvent.click( editOrderButton );
 
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
 
 	it.each( [
@@ -278,9 +281,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 		}
 	);
 
@@ -288,11 +289,7 @@ describe( 'CompositeCheckout with a variant picker', () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
-		const editOrderButton = await screen.findByLabelText( 'Edit your order' );
-		await userEvent.click( editOrderButton );
 
-		expect( screen.queryByText( 'One month' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Two years' ) ).not.toBeInTheDocument();
+		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
 } );

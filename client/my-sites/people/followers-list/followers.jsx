@@ -1,19 +1,27 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
+import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import accept from 'calypso/lib/accept';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
+import { includeSubscriberImporterGradually } from '../helpers';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -92,9 +100,15 @@ class Followers extends Component {
 	}
 
 	renderInviteFollowersAction( isPrimary = true ) {
-		const { site } = this.props;
+		const { site, includeSubscriberImporter } = this.props;
 
-		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
+		return (
+			<InviteButton
+				primary={ isPrimary }
+				siteSlug={ site.slug }
+				includeSubscriberImporter={ includeSubscriberImporter }
+			/>
+		);
 	}
 
 	render() {
@@ -113,12 +127,37 @@ class Followers extends Component {
 		let emptyTitle;
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
+				if ( this.props.includeSubscriberImporter ) {
+					return (
+						<Card>
+							<EmailVerificationGate
+								noticeText={ this.props.translate(
+									'You must verify your email to add subscribers.'
+								) }
+								noticeStatus="is-info"
+							>
+								<AddSubscriberForm
+									siteId={ this.props.site.ID }
+									flowName={ 'people' }
+									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									recordTracksEvent={ recordTracksEvent }
+									onImportFinished={ () => {
+										page.redirect( `/people/invites/${ this.props.site.slug }` );
+									} }
+								/>
+							</EmailVerificationGate>
+						</Card>
+					);
+				}
 				emptyTitle = preventWidows(
 					this.props.translate( 'No one is following you by email yet.' )
 				);
 			} else {
-				emptyTitle = preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
+				emptyTitle = this.props.includeSubscriberImporter
+					? preventWidows( this.props.translate( 'No WordPress.com subscribers yet.' ) )
+					: preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 			}
+
 			return <EmptyContent title={ emptyTitle } action={ this.renderInviteFollowersAction() } />;
 		}
 
@@ -134,14 +173,22 @@ class Followers extends Component {
 			);
 
 			if ( this.props.type === 'email' ) {
-				headerText = this.props.translate(
-					'You have %(number)d follower receiving updates by email',
-					'You have %(number)d followers receiving updates by email',
-					{
-						args: { number: this.props.totalFollowers },
-						count: this.props.totalFollowers,
-					}
-				);
+				const translateArgs = {
+					args: { number: this.props.totalFollowers },
+					count: this.props.totalFollowers,
+				};
+
+				headerText = this.props.includeSubscriberImporter
+					? this.props.translate(
+							'You have %(number)d subscriber receiving updates by email',
+							'You have %(number)d subscribers receiving updates by email',
+							translateArgs
+					  )
+					: this.props.translate(
+							'You have %(number)d follower receiving updates by email',
+							'You have %(number)d followers receiving updates by email',
+							translateArgs
+					  );
 			}
 		}
 
@@ -212,4 +259,13 @@ class Followers extends Component {
 	}
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( Followers ) );
+const mapStateToProps = ( state ) => {
+	const userId = getCurrentUserId( state );
+	const a8cTeamMember = isA8cTeamMember( state );
+
+	return {
+		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+	};
+};
+
+export default connect( mapStateToProps, { recordGoogleEvent } )( localize( Followers ) );

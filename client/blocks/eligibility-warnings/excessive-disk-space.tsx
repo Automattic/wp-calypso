@@ -1,4 +1,4 @@
-import { isBusinessPlan, isEcommercePlan, isProPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isEcommercePlan } from '@automattic/calypso-products';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import PlanStorage from 'calypso/blocks/plan-storage';
@@ -15,8 +15,7 @@ const ExcessiveDiskSpace = ( { translate }: { translate: LocalizeProps[ 'transla
 	);
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, selectedSiteId ) ?? '' );
 
-	const planHasTopStorageSpace =
-		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
+	const planHasTopStorageSpace = isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug );
 	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
 
 	return (

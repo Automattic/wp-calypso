@@ -1,4 +1,4 @@
-import { isWithinBreakpoint } from '@automattic/viewport';
+import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import page from 'page';
@@ -30,6 +30,7 @@ export default class WebPreviewContent extends Component {
 		iframeScaleRatio: 1,
 		loaded: false,
 		isLoadingSubpage: false,
+		isMobile: isWithinBreakpoint( '<660px' ),
 	};
 
 	setIframeInstance = ( ref ) => {
@@ -50,15 +51,21 @@ export default class WebPreviewContent extends Component {
 		}
 
 		this.props.onDeviceUpdate( this.state.device );
+
+		this.unsubscribeMobileBreakpoint = subscribeIsWithinBreakpoint( '<660px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'message', this.handleMessage );
 		window.removeEventListener( 'resize', this.handleResize );
+		this.unsubscribeMobileBreakpoint();
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { previewUrl } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { previewUrl, inlineCss } = this.props;
+		const { loaded } = this.state;
 
 		this.setIframeUrl( previewUrl );
 
@@ -85,6 +92,17 @@ export default class WebPreviewContent extends Component {
 				this.resetResize();
 				window.removeEventListener( 'resize', this.handleResize );
 			}
+		}
+
+		if ( inlineCss && ! prevState.loaded && loaded ) {
+			this.iframe.contentWindow?.postMessage(
+				{
+					channel: `preview-${ this.previewId }`,
+					type: 'inline-css',
+					inline_css: inlineCss,
+				},
+				'*'
+			);
 		}
 	}
 
@@ -320,7 +338,7 @@ export default class WebPreviewContent extends Component {
 	}
 
 	render() {
-		const { translate, toolbarComponent: ToolbarComponent, fetchPriority, autoHeight } = this.props;
+		const { translate, toolbarComponent: ToolbarComponent, fetchpriority, autoHeight } = this.props;
 		const isLoaded = this.state.loaded && ( ! autoHeight || this.state.viewport !== null );
 
 		const className = classNames( this.props.className, 'web-preview__inner', {
@@ -349,7 +367,7 @@ export default class WebPreviewContent extends Component {
 					{ ...this.props }
 					showExternal={ this.props.previewUrl ? this.props.showExternal : false }
 					showEditHeaderLink={ this.props.showEditHeaderLink }
-					showDeviceSwitcher={ this.props.showDeviceSwitcher && isWithinBreakpoint( '>660px' ) }
+					showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this.state.isMobile }
 					showUrl={ this.props.showUrl && isWithinBreakpoint( '>960px' ) }
 					selectSeoPreview={ this.selectSEO }
 					isLoading={ this.state.isLoadingSubpage }
@@ -383,7 +401,7 @@ export default class WebPreviewContent extends Component {
 								src="about:blank"
 								onLoad={ () => this.setLoaded( 'iframe-onload' ) }
 								title={ this.props.iframeTitle || translate( 'Preview' ) }
-								fetchPriority={ fetchPriority ? fetchPriority : undefined }
+								fetchpriority={ fetchpriority ? fetchpriority : undefined }
 								scrolling={ autoHeight ? 'no' : undefined }
 							/>
 						</div>
@@ -458,14 +476,16 @@ WebPreviewContent.propTypes = {
 	overridePost: PropTypes.object,
 	// A customized Toolbar element
 	toolbarComponent: PropTypes.elementType,
-	// iframe's fetchPriority.
-	fetchPriority: PropTypes.string,
+	// iframe's fetchpriority.
+	fetchpriority: PropTypes.string,
 	// Set height based on page content. This requires the page to post it's dimensions as message.
 	autoHeight: PropTypes.bool,
 	// The toolbar should sticky or not
 	isStickyToolbar: PropTypes.bool,
 	// Fixes the viewport width of the iframe if provided.
 	fixedViewportWidth: PropTypes.number,
+	// Injects CSS in the iframe after the content is loaded.
+	inlineCss: PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
@@ -489,4 +509,5 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 	toolbarComponent: Toolbar,
 	autoHeight: false,
+	inlineCss: null,
 };

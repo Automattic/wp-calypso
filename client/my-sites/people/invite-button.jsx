@@ -1,7 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
-const InviteButton = ( { isPrimary = true, siteSlug } ) => {
+const InviteButton = ( { isPrimary = true, siteSlug, includeSubscriberImporter } ) => {
 	const translate = useTranslate();
 
 	if ( ! siteSlug ) {
@@ -11,7 +11,11 @@ const InviteButton = ( { isPrimary = true, siteSlug } ) => {
 	return (
 		<Button primary={ isPrimary } href={ `/people/new/${ siteSlug }` }>
 			<Gridicon icon="user-add" />
-			<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
+			<span>
+				{ includeSubscriberImporter
+					? translate( 'Invite User', { context: 'Verb. Button to invite more users.' } )
+					: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
+			</span>
 		</Button>
 	);
 };

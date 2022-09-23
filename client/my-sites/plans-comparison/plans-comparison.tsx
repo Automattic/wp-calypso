@@ -21,6 +21,7 @@ import { getSitePlan } from 'calypso/state/sites/selectors';
 import { SCREEN_BREAKPOINT_SIGNUP, SCREEN_BREAKPOINT_PLANS } from './constant';
 import isStarterPlanEnabled from './is-starter-plan-enabled';
 import { PlansComparisonAction } from './plans-comparison-action';
+import { PlansComparisonColCTA } from './plans-comparison-col-cta';
 import { PlansComparisonColHeader } from './plans-comparison-col-header';
 import { planComparisonFeatures } from './plans-comparison-features';
 import { PlansComparisonRow, DesktopContent, MobileContent } from './plans-comparison-row';
@@ -317,6 +318,17 @@ const ComparisonTable = styled.table< TableProps >`
 		}
 	}
 
+	thead tr:first-of-type th,
+	thead tr:first-of-type td {
+		border: none;
+		padding-bottom: 0;
+	}
+
+	thead tr:nth-of-type( 2 ) th,
+	thead tr:nth-of-type( 2 ) td {
+		padding-top: 0;
+	}
+
 	th:last-child,
 	td:last-child {
 		background: #f0f7fc;
@@ -491,6 +503,18 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 						<td className={ `is-first` }>
 							<br />
 						</td>
+						{ plans.map( ( plan ) => (
+							<PlansComparisonColHeader
+								key={ plan.getProductId() }
+								plan={ plan }
+								translate={ translate }
+							/>
+						) ) }
+					</tr>
+					<tr>
+						<td className={ `is-first` }>
+							<br />
+						</td>
 						{ plans.map( ( plan, index ) => {
 							const isDomainConnectionDisabled =
 								selectedDomainConnection && [ TYPE_FREE, TYPE_FLEXIBLE ].includes( plan.type );
@@ -498,7 +522,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 							const isMonthlyPlanDisabled = 'monthly' === intervalType && ! isMonthlyPlan;
 
 							return (
-								<PlansComparisonColHeader
+								<PlansComparisonColCTA
 									key={ plan.getProductId() }
 									plan={ plan }
 									currencyCode={ currencyCode }
@@ -517,7 +541,7 @@ export const PlansComparison: React.FunctionComponent< Props > = ( {
 										disabled={ isDomainConnectionDisabled || isMonthlyPlanDisabled }
 										onClick={ () => onSelectPlan( planToCartItem( plan ) ) }
 									/>
-								</PlansComparisonColHeader>
+								</PlansComparisonColCTA>
 							);
 						} ) }
 					</tr>

@@ -21,25 +21,23 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
-	const link = state ? state.link : params.get( 'link' );
+	const link = params.get( 'link' );
+	const query = params.get( 'query' );
 
 	useEffect( () => {
-		if ( state ) {
-			const { query, link } = state;
-			const tracksData = {
-				search_query: query,
-				location: 'help-center',
-				section: sectionName,
-				result_url: link,
-			};
+		const tracksData = {
+			search_query: query,
+			location: 'help-center',
+			section: sectionName,
+			result_url: link,
+		};
 
-			recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
-		}
-	}, [ state, sectionName ] );
+		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
+	}, [ query, link, sectionName ] );
 
 	const redirectToSearchOrHome = () => {
-		if ( state?.query ) {
-			history.push( `/?query=${ state.query }` );
+		if ( query ) {
+			history.push( `/?query=${ query }` );
 		} else {
 			history.push( '/' );
 		}

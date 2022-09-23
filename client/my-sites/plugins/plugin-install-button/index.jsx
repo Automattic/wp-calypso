@@ -12,12 +12,13 @@ import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
-import { businessPlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -25,6 +26,34 @@ import { isCompatiblePlugin } from '../plugin-compatibility';
 import { getPeriodVariationValue } from '../plugin-price';
 
 import './style.scss';
+
+const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
+	const disabledInfoLabel = useRef();
+	const infoPopover = useRef();
+	const togglePopover = ( event ) => {
+		infoPopover.current._onClick( event );
+	};
+	return (
+		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
+			<span
+				onClick={ togglePopover }
+				ref={ disabledInfoLabel }
+				className="plugin-install-button__warning"
+			>
+				{ warningText }
+			</span>
+			<InfoPopover
+				position="bottom left"
+				popoverName="Plugin Action Disabled Install"
+				gaEventCategory="Plugins"
+				ref={ infoPopover }
+				ignoreContext={ disabledInfoLabel.current }
+			>
+				{ children }
+			</InfoPopover>
+		</div>
+	);
+};
 
 export class PluginInstallButton extends Component {
 	installAction = () => {
@@ -145,13 +174,15 @@ export class PluginInstallButton extends Component {
 			billingPeriod,
 			canInstallPurchasedPlugins,
 			eligibleForProPlan,
+			productsList,
 		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
-		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+		const variation = plugin?.variations?.[ variationPeriod ];
+		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		const buttonLink = canInstallPurchasedPlugins
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
-			: `/checkout/${ selectedSite.slug }/${ businessPlanToAdd(
+			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod,
 					eligibleForProPlan
@@ -173,7 +204,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -183,8 +214,12 @@ export class PluginInstallButton extends Component {
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
 						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
+							{ ! isJetpackCloud && (
+								<>
+									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+									<Gridicon icon="plugins" size={ 18 } />
+								</>
+							) }
 							{ translate( 'Install' ) }
 						</Button>
 					) }
@@ -272,34 +307,6 @@ export class PluginInstallButton extends Component {
 	}
 }
 
-const PluginInstallNotice = ( { isEmbed, warningText, children } ) => {
-	const disabledInfoLabel = useRef();
-	const infoPopover = useRef();
-	const togglePopover = ( event ) => {
-		infoPopover.current._onClick( event );
-	};
-	return (
-		<div className={ classNames( { 'plugin-install-button__install': true, embed: isEmbed } ) }>
-			<span
-				onClick={ togglePopover }
-				ref={ disabledInfoLabel }
-				className="plugin-install-button__warning"
-			>
-				{ warningText }
-			</span>
-			<InfoPopover
-				position="bottom left"
-				popoverName="Plugin Action Disabled Install"
-				gaEventCategory="Plugins"
-				ref={ infoPopover }
-				ignoreContext={ disabledInfoLabel.current }
-			>
-				{ children }
-			</InfoPopover>
-		</div>
-	);
-};
-
 PluginInstallButton.propTypes = {
 	selectedSite: PropTypes.object.isRequired,
 	plugin: PropTypes.object.isRequired,
@@ -322,6 +329,7 @@ export default connect(
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
+			productsList: getProductsList( state ),
 		};
 	},
 	{

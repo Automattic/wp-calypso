@@ -2,6 +2,7 @@ import {
 	getPlan,
 	getProductFromSlug,
 	isConciergeSession,
+	isDIFMProduct,
 	isDomainRegistration,
 	isDomainTransfer,
 	isEmailMonthly,
@@ -28,17 +29,20 @@ import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/us
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	getName,
+	hasPaymentMethod,
 	isExpired,
 	isExpiring,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
+	isRechargeable,
 	isRenewing,
 	isSubscription,
 	isCloseToExpiration,
 	isRenewable,
 	isWithinIntroductoryOfferPeriod,
 	isIntroductoryOfferFreeTrial,
+	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -227,6 +231,41 @@ function PurchaseMetaPrice( { purchase } ) {
 	let period = translate( 'year' );
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+		if ( isDIFMProduct( purchase ) ) {
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
+			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+				const {
+					extraPageCount,
+					formattedCostOfExtraPages: costOfExtraPages,
+					formattedOneTimeFee: oneTimeFee,
+				} = difmTieredPurchaseDetails;
+				return (
+					<div>
+						<div>
+							{ translate( 'Service: %(oneTimeFee)s (one-time)', {
+								args: {
+									oneTimeFee,
+								},
+							} ) }
+						</div>
+						<div>
+							{ translate(
+								'%(extraPageCount)d extra page: %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra pages: %(costOfExtraPages)s (one-time)',
+								{
+									count: extraPageCount,
+									args: {
+										extraPageCount,
+										costOfExtraPages,
+									},
+								}
+							) }
+						</div>
+					</div>
+				);
+			}
+		}
+
 		// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10")
 		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {
@@ -245,22 +284,6 @@ function PurchaseMetaPrice( { purchase } ) {
 		return translate( 'Free with Plan' );
 	}
 
-	if ( plan && plan.term ) {
-		switch ( plan.term ) {
-			case TERM_BIENNIALLY:
-				period = translate( 'two years' );
-				break;
-
-			case TERM_MONTHLY:
-				period = translate( 'month' );
-				break;
-		}
-	}
-
-	if ( isEmailMonthly( purchase ) ) {
-		period = translate( 'month' );
-	}
-
 	if ( purchase.billPeriodLabel ) {
 		switch ( purchase.billPeriodLabel ) {
 			case 'per year':
@@ -276,6 +299,22 @@ function PurchaseMetaPrice( { purchase } ) {
 				period = translate( 'day' );
 				break;
 		}
+	}
+
+	if ( plan && plan.term ) {
+		switch ( plan.term ) {
+			case TERM_BIENNIALLY:
+				period = translate( 'two years' );
+				break;
+
+			case TERM_MONTHLY:
+				period = translate( 'month' );
+				break;
+		}
+	}
+
+	if ( isEmailMonthly( purchase ) ) {
+		period = translate( 'month' );
 	}
 
 	// translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
@@ -455,7 +494,7 @@ function PurchaseMetaExpiration( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
-	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
+	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
@@ -468,24 +507,31 @@ function PurchaseMetaExpiration( {
 		const subsRenewText = isAutorenewalEnabled
 			? translate( 'Auto-renew is ON' )
 			: translate( 'Auto-renew is OFF' );
-		const subsBillingText =
-			isAutorenewalEnabled && ! hideAutoRenew
-				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
-						args: {
-							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } )
-				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-						args: {
-							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-						},
-						components: {
-							dateSpan,
-						},
-				  } );
+		let subsBillingText;
+		if (
+			isAutorenewalEnabled &&
+			! hideAutoRenew &&
+			hasPaymentMethod( purchase ) &&
+			isRechargeable( purchase )
+		) {
+			subsBillingText = translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+				args: {
+					renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+			} );
+		} else {
+			subsBillingText = translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+				args: {
+					expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+				},
+				components: {
+					dateSpan,
+				},
+			} );
+		}
 
 		const shouldRenderToggle = site && isProductOwner;
 

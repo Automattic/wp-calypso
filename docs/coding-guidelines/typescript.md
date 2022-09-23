@@ -35,7 +35,7 @@ Graph built with [`typescript-dev-flow.dot`](https://github.com/Automattic/wp-ca
   and prefer specific and meaningful types when things are otherwise ambiguous. Give tolerance to weaker typings
   when code is already clear. Remember to look at the types of what you write in your IDE to get an impression of
   how the annotations are communicating the types and adjust if necessary. In addition to knowing just the
-  fundamental data types that a function expects, our types shoud communicate the purpose of the values we're sending.
+  fundamental data types that a function expects, our types should communicate the purpose of the values we're sending.
 - We are _gradually_ typing code in Calypso where it's most helpful. Don't worry about fixing all the warnings and
   errors and typing everything in a module. Consider the effort involved, the complexity of the type signatures
   relative to the experience shared globally around the project, and the payoff for adding those types.
@@ -83,7 +83,7 @@ type of data and supplying _what you want_.
 
 ---
 
-Because TypeScript infers most types don't feel obligated to add types to everthing, especially literal values.
+Because TypeScript infers most types don't feel obligated to add types to everything, especially literal values.
 
 #### Avoid
 
@@ -119,7 +119,7 @@ const directions = [ LEFT, RIGHT ]; // type here is `string[]`
 
 #### Prefer
 
-```ts
+```typescript
 const LEFT = 'left' as const;
 const RIGHT = 'right' as const;
 
@@ -247,7 +247,7 @@ type Props = ExternalProps & ReturnType< typeof mapStateToProps > & typeof mapDi
 #### Avoid
 
 ```ts
-const handleUpdate = ( { items }: { items: { name: string; count: number }[] } ) => {
+const handleUpdate = ( { items }: { items: { name: string, count: number }[] } ) => {
 	items.forEach( doSomethingUnknown );
 };
 ```

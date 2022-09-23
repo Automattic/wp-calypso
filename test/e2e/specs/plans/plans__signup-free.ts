@@ -1,4 +1,5 @@
 /**
+ * @group calypso-release
  */
 
 import {
@@ -7,12 +8,12 @@ import {
 	SignupPickPlanPage,
 	StartSiteFlow,
 	SidebarComponent,
-	PlansPage,
 	RestAPIClient,
 	UserSignupPage,
 	LoginPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
+import { apiCloseAccount } from '../shared';
 import type { NewUserResponse } from '@automattic/calypso-e2e';
 
 declare const browser: Browser;
@@ -27,6 +28,7 @@ describe(
 		let page: Page;
 		let userDetails: NewUserResponse;
 		let userCreatedFlag = false;
+		let selectedFreeDomain: string;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
@@ -55,7 +57,7 @@ describe(
 			it( 'Select a free .wordpress.com domain', async function () {
 				const domainSearchComponent = new DomainSearchComponent( page );
 				await domainSearchComponent.search( testUser.siteName );
-				await domainSearchComponent.selectDomain( '.wordpress.com' );
+				selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 			} );
 
 			it( 'Select WordPress.com Free plan', async function () {
@@ -75,20 +77,15 @@ describe(
 		describe( 'Validate WordPress.com Free functionality', function () {
 			let sidebarComponent: SidebarComponent;
 
+			it( 'User has the selected free domain', async function () {
+				const urlRegex = `/home/${ selectedFreeDomain }`;
+				expect( page.url() ).toMatch( urlRegex );
+			} );
+
 			it( 'User is on WordPress.com Free plan', async function () {
 				sidebarComponent = new SidebarComponent( page );
 				const plan = await sidebarComponent.getCurrentPlanName();
 				expect( plan ).toBe( 'Free' );
-			} );
-
-			it( 'Navigate to Upgrades > Plans', async function () {
-				sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Upgrade', 'Plans' );
-			} );
-
-			it( 'View plan comparison', async function () {
-				const plansPage = new PlansPage( page, 'current' );
-				await plansPage.showPlanComparison();
 			} );
 		} );
 
@@ -102,18 +99,11 @@ describe(
 				userDetails.body.bearer_token
 			);
 
-			const response = await restAPIClient.closeAccount( {
+			await apiCloseAccount( restAPIClient, {
 				userID: userDetails.body.user_id,
-				username: testUser.username,
+				username: userDetails.body.username,
 				email: testUser.email,
 			} );
-
-			if ( response.success !== true ) {
-				console.warn( `Failed to delete user ID ${ userDetails.body.user_id }` );
-			} else {
-				console.log( `Successfully deleted user ID ${ userDetails.body.user_id }` );
-			}
-			return response;
 		} );
 	}
 );

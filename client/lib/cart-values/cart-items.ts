@@ -31,8 +31,8 @@ import {
 	isRenewable,
 	isSiteRedirect,
 	isSpaceUpgrade,
+	isStarter,
 	isTitanMail,
-	isTrafficGuide,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
@@ -54,7 +54,7 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
-export function getAllCartItems( cart: ResponseCart ): ResponseCartProduct[] {
+export function getAllCartItems( cart?: ResponseCart ): ResponseCartProduct[] {
 	return ( cart && cart.products ) || [];
 }
 
@@ -115,6 +115,10 @@ export function hasProPlan( cart: ResponseCart ): boolean {
 
 export function hasBusinessPlan( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
+}
+
+export function hasStarterPlan( cart: ResponseCart ): boolean {
+	return getAllCartItems( cart ).some( isStarter );
 }
 
 export function hasDomainCredit( cart: ResponseCart ): boolean {
@@ -192,10 +196,6 @@ export function hasOnlyRenewalItems( cart: ResponseCart ): boolean {
 
 export function hasConciergeSession( cart: ResponseCart ): boolean {
 	return getAllCartItems( cart ).some( isConciergeSession );
-}
-
-export function hasTrafficGuide( cart: ResponseCart ): boolean {
-	return getAllCartItems( cart ).some( isTrafficGuide );
 }
 
 /**
@@ -805,7 +805,8 @@ export function getDomainPriceRule(
 		is_premium?: boolean;
 	},
 	isDomainOnly: boolean,
-	flowName: string
+	flowName: string,
+	domainAndPlanUpsellFlow: boolean
 ): string {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -817,6 +818,10 @@ export function getDomainPriceRule(
 
 	if ( isMonthlyOrFreeFlow( flowName ) ) {
 		return 'PRICE';
+	}
+
+	if ( domainAndPlanUpsellFlow ) {
+		return 'FREE_WITH_PLAN';
 	}
 
 	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {

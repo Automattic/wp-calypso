@@ -13,6 +13,7 @@ export type Plugin = {
 	slug: string;
 	version?: string;
 	author?: string;
+	author_name?: string;
 	author_profile?: string;
 	tested?: string;
 	rating?: number;
@@ -25,6 +26,10 @@ export type Plugin = {
 	download_link?: string;
 	icon?: string;
 	railcar: Railcar;
+	variations?: {
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
+	};
 };
 
 export type ESIndexResult = {
@@ -36,24 +41,26 @@ export type ESIndexResult = {
 	like_count: number;
 	modified_gmt: string;
 	author: string;
-	excerpt_html: string;
-	'title.default': string;
 	'permalink.url.raw': string;
 	post_id: number;
 	title_html: string;
 	blog_icon_url: string;
 	modified: string;
 	post_type: string;
-	'excerpt.default': string;
 	date_gmt: string;
 	'plugin.stable_tag'?: string;
 	'plugin.tested'?: string;
-	'plugin.rating'?: number;
-	'plugin.num_ratings'?: number;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
-	'plugin.icons'?: string;
+	plugin: {
+		author: string;
+		title: string;
+		excerpt: string;
+		icons: string;
+		rating: number;
+		num_ratings: number;
+	};
 };
 
 export type Icon = {

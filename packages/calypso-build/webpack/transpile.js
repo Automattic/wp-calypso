@@ -10,7 +10,6 @@
  * @param {RegExp|Function} _.exclude  Directories to exclude when looking for files to transpile
  * @param {RegExp|Function} _.include  Directories to inclued when looking for files to transpile
  * @param {string[]} _.presets         Babel presets
- *
  * @returns {object} Webpack loader object
  */
 module.exports.loader = ( {

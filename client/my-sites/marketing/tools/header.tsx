@@ -24,7 +24,7 @@ const MarketingToolsHeader: FunctionComponent< Props > = ( { handleButtonClick }
 
 				<h2 className="tools__header-description">
 					{ translate(
-						"We've added premium plugins to boost your site's capabilities. From bookings and subscriptions to email marketing and shipment tracking, we have you covered."
+						"We've added premium plugins to boost your site's capabilities. From bookings and subscriptions to email marketing and SEO tools, we have you covered."
 					) }
 				</h2>
 

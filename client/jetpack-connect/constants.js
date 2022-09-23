@@ -13,7 +13,7 @@ export const REMOTE_PATH_AUTH =
 	'/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&jetpack_connect_login_redirect=true';
 export const REMOTE_PATH_INSTALL =
 	'/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
-export const ALLOWED_MOBILE_APP_REDIRECT_URL_LIST = [ /^wordpress:\/\// ];
+export const ALLOWED_MOBILE_APP_REDIRECT_URL_LIST = [ /^wordpress:\/\//, /^woocommerce:\/\// ];
 export const JPC_PATH_CHECKOUT = '/checkout';
 export const JETPACK_COUPON_PARTNERS = [ 'JPTST', 'IONOS', 'APK', 'AAD', 'RDCO', 'HMOU' ];
 export const JETPACK_COUPON_PRESET_MAPPING = {

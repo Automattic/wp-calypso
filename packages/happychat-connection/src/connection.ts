@@ -47,7 +47,7 @@ export class Connection {
 	}
 
 	/**
-	 * Init the SockeIO connection: check user authorization and bind socket events
+	 * Init the SocketIO connection: check user authorization and bind socket events
 	 *
 	 * @param dispatch Redux dispatch function
 	 * @param auth Authentication promise, will return the user info upon fulfillment
@@ -63,21 +63,19 @@ export class Connection {
 
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
-				.then( ( { url, user: { signer_user_id, jwt, locale, groups, skills, geoLocation } } ) => {
+				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
 					const socket = buildConnection( url );
-					socket
+					return socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )
 						.on(
 							'token',
 							( handler: ( happychatUser: HappychatUser & { jwt: string } ) => void ) => {
 								dispatch( this.receiveToken?.() );
-								handler( { signer_user_id, jwt, locale, groups, skills } );
+								handler( { signer_user_id, jwt, groups, skills } );
 							}
 						)
 						.on( 'init', () => {
-							dispatch(
-								this.receiveInit?.( { signer_user_id, locale, groups, skills, geoLocation } )
-							);
+							dispatch( this.receiveInit?.( { signer_user_id, groups, skills, geoLocation } ) );
 							dispatch( this.requestTranscript?.() );
 							resolve( socket );
 						} )
@@ -213,6 +211,6 @@ export class Connection {
 // Used by the Help Center, it closes the socket after receiving 'accept' or 'unauthorized'
 export const buildConnectionForCheckingAvailability = (
 	connectionProps: AvailabilityConnectionProps
-) => new Connection( connectionProps, true );
+) => new Connection( connectionProps, false );
 
 export default ( connectionProps: ConnectionProps ) => new Connection( connectionProps );

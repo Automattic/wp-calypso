@@ -1,6 +1,5 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -8,7 +7,7 @@ import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sid
 import UpdateCompanyDetailsForm from 'calypso/jetpack-cloud/sections/partner-portal/update-company-details-form';
 import './style.scss';
 
-export default function CompanyDetailsDashboard(): ReactElement {
+export default function CompanyDetailsDashboard() {
 	const translate = useTranslate();
 
 	return (

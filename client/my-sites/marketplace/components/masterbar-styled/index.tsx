@@ -47,15 +47,19 @@ const ItemStyled = styled( Item )`
 const MasterbarStyled = ( {
 	onClick,
 	backText,
+	canGoBack = true,
 }: {
 	onClick: () => void;
 	backText: ReactChild;
+	canGoBack: boolean;
 } ) => (
 	<MasterbarStyledBlock>
 		<WordPressLogoStyled />
-		<ItemStyled icon="chevron-left" onClick={ onClick }>
-			{ backText }
-		</ItemStyled>
+		{ canGoBack && (
+			<ItemStyled icon="chevron-left" onClick={ onClick }>
+				{ backText }
+			</ItemStyled>
+		) }
 	</MasterbarStyledBlock>
 );
 

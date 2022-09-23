@@ -1,6 +1,6 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .site-options {
 	@include break-small {
@@ -40,21 +40,21 @@
 			.form-label {
 				line-height: 1.5;
 				margin-bottom: 8px;
-				font-weight: 500; /* stylelint-disable-line scales/font-weights */
-				color: var( --studio-gray-60 );
-				border-radius: 4px; /* stylelint-disable-line scales/radii */
+				font-weight: 500;
+				color: var(--studio-gray-60);
+				border-radius: 4px;
 
 				.form-label__optional {
 					font-size: inherit;
-					color: var( --studio-gray-40 );
+					color: var(--studio-gray-40);
 					text-transform: lowercase;
 
 					&::before {
-						content: '(';
+						content: "(";
 					}
 
 					&::after {
-						content: ')';
+						content: ")";
 					}
 				}
 
@@ -66,11 +66,11 @@
 			input.form-text-input {
 				height: 44px;
 				line-height: 44px;
-				border-radius: 4px; /* stylelint-disable-line scales/radii */
+				border-radius: 4px;
 
 				&:focus,
 				&:focus:hover {
-					border-color: var( --studio-gray-50 );
+					border-color: var(--studio-gray-50);
 					box-shadow: 0 0 0 2px #e2eaf1;
 				}
 			}
@@ -81,7 +81,7 @@
 				align-items: center;
 				margin: 16px 0;
 				font-style: normal;
-				color: var( --studio-gray-40 );
+				color: var(--studio-gray-40);
 
 				.site-options__form-icon {
 					margin-right: 8px;
@@ -100,15 +100,15 @@
 
 	.button.site-options__submit-button.is-primary {
 		padding: 9px 48px;
-		border-radius: 4px; /* stylelint-disable-line scales/radii */
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		border-radius: 4px;
+		font-weight: 500;
 
 		// override unnecessary super specificity added by another class
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 		&:disabled {
 			color: #fff;
-			background-color: var( --studio-gray-5 );
+			background-color: var(--studio-gray-5);
 		}
 	}
 }

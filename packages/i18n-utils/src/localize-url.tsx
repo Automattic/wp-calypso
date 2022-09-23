@@ -1,6 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { getLocaleSlug } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, ComponentType } from 'react';
 import { useLocale } from './locale-context';
 import {
 	localesWithBlog,
@@ -110,7 +110,7 @@ interface UrlLocalizationMapping {
 	[ key: string ]: LinkLocalizer;
 }
 
-const urlLocalizationMapping: UrlLocalizationMapping = {
+export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
@@ -148,6 +148,9 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/themes/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
+	'wordpress.com/plugins/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
+		return isLoggedIn ? url : prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
+	},
 	'wordpress.com/log-in/': ( url: URL, localeSlug: Locale, isLoggedIn: boolean ) => {
 		return isLoggedIn ? url : suffixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
@@ -172,8 +175,6 @@ export function localizeUrl(
 
 	// Let's unify the URL.
 	url.protocol = 'https:';
-	// Let's use `host` for everything.
-	url.hostname = '';
 
 	if ( ! url.pathname.endsWith( '.php' ) ) {
 		// Essentially a trailingslashit.
@@ -217,12 +218,17 @@ export function useLocalizeUrl() {
 	);
 }
 
-export const withLocalizeUrl = createHigherOrderComponent< {
-	localizeUrl: ReturnType< typeof useLocalizeUrl >;
-} >( ( InnerComponent ) => {
-	return ( props ) => {
-		const localizeUrl = useLocalizeUrl();
-		const innerProps = { ...props, localizeUrl } as React.ComponentProps< typeof InnerComponent >;
-		return <InnerComponent { ...innerProps } />;
-	};
-}, 'withLocalizeUrl' );
+export const withLocalizeUrl = createHigherOrderComponent(
+	< OuterProps, >(
+		InnerComponent: ComponentType<
+			OuterProps & { localizeUrl: ReturnType< typeof useLocalizeUrl > }
+		>
+	) => {
+		return ( props: OuterProps ) => {
+			const localizeUrl = useLocalizeUrl();
+			const innerProps = { ...props, localizeUrl };
+			return <InnerComponent { ...innerProps } />;
+		};
+	},
+	'withLocalizeUrl'
+);

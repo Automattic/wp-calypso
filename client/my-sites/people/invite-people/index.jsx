@@ -35,7 +35,7 @@ import ContractorSelect from 'calypso/my-sites/people/contractor-select';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import RoleSelect from 'calypso/my-sites/people/role-select';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { generateInviteLinks, disableInviteLinks } from 'calypso/state/invites/actions';
 import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
@@ -46,7 +46,9 @@ import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { includeSubscriberImporterGradually } from '../helpers';
 
 import './style.scss';
 
@@ -73,13 +75,19 @@ class InvitePeople extends Component {
 	};
 
 	getInitialState = () => {
-		const { isAtomic, isWPForTeamsSite } = this.props;
+		let defaultRole;
+		const { isAtomic, isWPForTeamsSite, includeSubscriberImporter } = this.props;
 
-		let defaultRole = 'follower';
-		if ( isWPForTeamsSite ) {
+		if ( includeSubscriberImporter ) {
 			defaultRole = 'editor';
-		} else if ( isAtomic ) {
-			defaultRole = 'subscriber';
+		} else {
+			defaultRole = 'follower';
+
+			if ( isWPForTeamsSite ) {
+				defaultRole = 'editor';
+			} else if ( isAtomic ) {
+				defaultRole = 'subscriber';
+			}
 		}
 
 		return {
@@ -380,7 +388,7 @@ class InvitePeople extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="http://wordpress.com/support/user-roles/"
+				href="https://wordpress.com/support/user-roles/"
 				onClick={ this.onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }
@@ -396,11 +404,22 @@ class InvitePeople extends Component {
 	};
 
 	renderInviteForm = () => {
-		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
+		const {
+			site,
+			translate,
+			needsVerification,
+			isJetpack,
+			showSSONotice,
+			includeSubscriberImporter,
+		} = this.props;
+		let includeFollower;
+		const includeSubscriber = ! includeSubscriberImporter;
 
-		// Atomic private sites don't support Viewers/Followers.
-		// @see https://github.com/Automattic/wp-calypso/issues/43919
-		const includeFollower = ! this.props.isAtomic;
+		if ( ! includeSubscriberImporter ) {
+			// Atomic private sites don't support Viewers/Followers.
+			// @see https://github.com/Automattic/wp-calypso/issues/43919
+			includeFollower = ! this.props.isAtomic;
+		}
 
 		const inviteForm = (
 			<Card>
@@ -434,12 +453,13 @@ class InvitePeople extends Component {
 						<RoleSelect
 							id="role"
 							name="role"
-							includeFollower={ includeFollower }
 							siteId={ this.props.siteId }
 							onChange={ this.onRoleChange }
 							onFocus={ this.onFocusRoleSelect }
 							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
+							includeFollower={ includeFollower }
+							includeSubscriber={ includeSubscriber }
 							explanation={ this.renderRoleExplanation() }
 						/>
 
@@ -748,9 +768,11 @@ class InvitePeople extends Component {
 }
 
 const mapStateToProps = ( state ) => {
+	const userId = getCurrentUserId( state );
 	const siteId = getSelectedSiteId( state );
 	const activating = isActivatingJetpackModule( state, siteId, 'sso' );
 	const active = isJetpackModuleActive( state, siteId, 'sso' );
+	const a8cTeamMember = isA8cTeamMember( state );
 
 	return {
 		siteId,
@@ -761,6 +783,7 @@ const mapStateToProps = ( state ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
 		isPrivateSite: isPrivateSite( state, siteId ),
+		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
 	};
 };
 

@@ -5,10 +5,11 @@ const selectors = {
 	// Generic
 	button: ( text: string ) => `button:text("${ text }")`,
 	backLink: '.navigation-link:text("Back")',
-	dontHaveASiteButton: '.navigation-link:text("I don\'t have a site address")',
+	dontHaveASiteButton: 'button:text-matches("don\'t have a site address", "i")',
 
 	// Inputs
 	urlInput: 'input.capture__input',
+	goalsCaptureUrlInput: 'input.form-text-input[value]',
 
 	// The "content only" "continue" button of '/start/from/importing/wordpress'
 	wpContentOnlyContinueButton:
@@ -18,7 +19,7 @@ const selectors = {
 	importerDrag: ( text: string ) => `div.importer-wrapper__${ text }`,
 
 	// Errors
-	analyzeError: ( text: string ) => `div.capture__input-error-msg:text("${ text }")`,
+	analyzeError: ( text: string ) => `:text("${ text }")`,
 
 	// Headers
 	setupHeader: 'h1:text("Themes")',
@@ -28,6 +29,7 @@ const selectors = {
 	checkUrlButton: 'form.capture__input-wrapper button.action-buttons__next',
 	startBuildingButton: 'div.import__onboarding-page button.action-buttons__next',
 	startImportButton: 'button:text("Import your site content")',
+	startImportGoalButton: 'span:has-text("Import my existing website content")',
 	// And entry of the list of selectable importers
 	importerListButton: ( index: number ) =>
 		`div.list__importers-primary:nth-child(${ index + 1 }) .action-card__button-container button`,
@@ -61,14 +63,16 @@ export class StartImportFlow {
 	 * Validates that we've landed on the setup page.
 	 */
 	async validateSetupPage(): Promise< void > {
-		await this.page.waitForSelector( selectors.startImportButton );
+		await this.page.locator(
+			`${ selectors.startImportButton }, ${ selectors.startImportGoalButton }`
+		);
 	}
 
 	/**
 	 * Validates that we've landed on the URL capture page.
 	 */
 	async validateURLCapturePage(): Promise< void > {
-		await this.page.waitForSelector( selectors.urlInput );
+		await this.page.waitForURL( /.*setup\/import.*/ );
 	}
 
 	/**
@@ -137,10 +141,31 @@ export class StartImportFlow {
 	 * Enter the URL to import from on the "Enter your site address" input form.
 	 *
 	 * @param {string} url The source URL.
+	 * @throws {Error} If no URL input is found.
 	 */
 	async enterURL( url: string ): Promise< void > {
-		await this.page.fill( selectors.urlInput, url );
-		await this.page.click( selectors.checkUrlButton );
+		await this.page.waitForLoadState( 'load' );
+
+		const legacyURLInputLocator = this.page.locator( selectors.urlInput );
+		const goalsCaptureURLInputLocator = this.page.locator( selectors.goalsCaptureUrlInput );
+
+		// Support both Legacy and Goals Capture versions
+		// of the URL input for importer.
+		// See https://github.com/Automattic/wp-calypso/issues/65792
+		const element = await Promise.race( [
+			legacyURLInputLocator.elementHandle(),
+			goalsCaptureURLInputLocator.elementHandle(),
+		] );
+
+		if ( ! element ) {
+			throw new Error( `No matching URL input found at Site Importer.` );
+		}
+		await element.fill( url );
+		const continueLocator = this.page.locator(
+			`${ selectors.checkUrlButton }, ${ selectors.button( 'Continue' ) }`
+		);
+
+		await continueLocator.click();
 	}
 
 	/**

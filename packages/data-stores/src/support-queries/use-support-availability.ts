@@ -14,7 +14,7 @@ export function useSupportAvailability< SUPPORT_TYPE extends 'CHAT' | 'OTHER' >(
 		supportType === 'OTHER' ? 'otherSupportAvailability' : 'chatSupportAvailability',
 		async () =>
 			await wpcomRequest( {
-				path: `help-center/support-availability/${ supportType === 'OTHER' ? 'all' : 'chat' }`,
+				path: `help/eligibility/${ supportType === 'OTHER' ? 'all' : 'chat' }/mine`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 			} ),

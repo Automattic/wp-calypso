@@ -19,7 +19,7 @@ declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
 	const blogName = 'e2eflowtestingtos1.wordpress.com';
-	const cartItemForProPlan = 'WordPress.com Pro';
+	const cartItemForBusinessPlan = 'WordPress.com Business';
 	let page: Page;
 	let plansPage: PlansPage;
 
@@ -76,17 +76,17 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 		} );
 
 		it( 'Click on the "Plans" navigation tab', async function () {
-			plansPage = new PlansPage( page, 'legacy' );
+			plansPage = new PlansPage( page );
 			await plansPage.clickTab( 'Plans' );
 		} );
 
-		it( 'Click on "Upgrade" button for WordPress.com Pro plan', async function () {
-			await plansPage.selectPlan( 'Pro' );
+		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
+			await plansPage.selectPlan( 'Business' );
 		} );
 
-		it( 'WordPress.com Pro is added to cart', async function () {
+		it( 'WordPress.com Business is added to cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( cartItemForProPlan );
+			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
 		} );
 
 		it( 'Screenshot checkout page for all en and non-en locales', async function () {
@@ -106,7 +106,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					type: 'jpeg',
 					quality: 20,
 				} );
-				page.setViewportSize( { width: 410, height: 820 } );
+				page.setViewportSize( { width: 410, height: 1620 } );
 				await page.screenshot( {
 					path: `tos_checkout_mobile_${ locale }.png`,
 					fullPage: true,

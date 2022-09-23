@@ -16,11 +16,11 @@ import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
-import wpcomTemplatePartChooseExisting from './wpcom-template-part-choose-existing';
 import {
-	wpcomTemplatePartReplaceCapture,
+	wpcomTemplatePartChooseCapture,
+	wpcomTemplatePartChooseBubble,
 	wpcomTemplatePartReplaceBubble,
-} from './wpcom-template-part-replace';
+} from './wpcom-template-part-choose';
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
@@ -58,9 +58,9 @@ const EVENTS_MAPPING = [
 	wpcomBlockDonationsStripeConnect(),
 	wpcomBlockPremiumContentPlanUpgrade(),
 	wpcomBlockPremiumContentStripeConnect(),
-	wpcomTemplatePartReplaceCapture(),
+	wpcomTemplatePartChooseCapture(),
+	wpcomTemplatePartChooseBubble(),
 	wpcomTemplatePartReplaceBubble(),
-	wpcomTemplatePartChooseExisting(),
 	wpcomBlockEditorListViewSelect(),
 	wpcomBlockEditorTemplatePartDetachBlocks(),
 	wpcomBlockEditorPostPublishAddNewClick(),

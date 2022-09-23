@@ -2,21 +2,11 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { ItemVariantPrice } from './variant-price';
-import type { ItemVariationPickerProps } from './types';
-
-const VariantLabel = styled.span`
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-`;
-
-const VariantPrice = styled.span`
-	font-size: ${ ( props ) => props.theme.fontSize.small };
-	font-weight: ${ ( props ) => props.theme.weights.normal };
-	color: #646970;
-`;
+import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 interface CurrentOptionProps {
 	open: boolean;
@@ -54,22 +44,23 @@ const Option = styled.li< OptionProps >`
 	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
+	color: #646970;
 	display: flex;
 	flex-direction: row;
+	font-size: ${ ( props ) => props.theme.fontSize.small };
+	font-weight: ${ ( props ) => props.theme.weights.normal };
 	justify-content: space-between;
 	/* the calc aligns the price with the price in CurrentOption */
 	padding: 10px calc( 14px + 24px + 16px ) 10px 16px;
 	cursor: pointer;
 
-	${ ( props ) =>
-		props.selected &&
-		css`
-			background: #055d9c;
+	&:hover {
+		background: #e9f0f5;
+	}
 
-			${ VariantLabel }, ${ VariantPrice } {
-				color: white;
-			}
-		` }
+	&.item-variant-option--selected {
+		background: #055d9c;
+	}
 `;
 
 const Dropdown = styled.div`
@@ -110,14 +101,11 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
 
-	const selectedVariantIndex = useMemo( () => {
-		for ( let i = 0; i < variants.length; ++i ) {
-			if ( variants[ i ].productId === selectedItem.product_id ) {
-				return i;
-			}
-		}
-		return null;
-	}, [ selectedItem.product_id, variants ] );
+	const selectedVariantIndexRaw = variants.findIndex(
+		( variant ) => variant.productId === selectedItem.product_id
+	);
+	// findIndex returns -1 if it fails and we want null.
+	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
 
 	// reset the dropdown highlight when the selected product changes
 	useEffect( () => {
@@ -205,6 +193,7 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	return (
 		<Dropdown aria-expanded={ open } aria-haspopup="listbox" onKeyDown={ handleKeyDown }>
 			<CurrentOption
+				aria-label={ translate( 'Pick a product term' ) }
 				disabled={ isDisabled }
 				onClick={ () => setOpen( ! open ) }
 				open={ open }
@@ -218,23 +207,69 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 				<Gridicon icon={ open ? 'chevron-up' : 'chevron-down' } />
 			</CurrentOption>
 			{ open && (
-				<OptionList role="listbox" tabIndex={ -1 }>
-					{ variants.map(
-						( { variantLabel, formattedCurrentPrice, productId, productSlug }, index ) => (
-							<Option
-								id={ productId.toString() }
-								role="option"
-								key={ productSlug + variantLabel }
-								onClick={ () => handleChange( selectedItem.uuid, productSlug, productId ) }
-								selected={ index === highlightedVariantIndex }
-							>
-								<VariantLabel>{ variantLabel }</VariantLabel>
-								<VariantPrice>{ formattedCurrentPrice }</VariantPrice>
-							</Option>
-						)
-					) }
-				</OptionList>
+				<ItemVariantOptionList
+					variants={ variants }
+					highlightedVariantIndex={ highlightedVariantIndex }
+					selectedItem={ selectedItem }
+					handleChange={ handleChange }
+				/>
 			) }
 		</Dropdown>
 	);
 };
+
+function ItemVariantOptionList( {
+	variants,
+	highlightedVariantIndex,
+	selectedItem,
+	handleChange,
+}: {
+	variants: WPCOMProductVariant[];
+	highlightedVariantIndex: number | null;
+	selectedItem: ResponseCartProduct;
+	handleChange: ( uuid: string, productSlug: string, productId: number ) => void;
+} ) {
+	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
+	return (
+		<OptionList role="listbox" tabIndex={ -1 }>
+			{ variants.map( ( variant, index ) => (
+				<ItemVariantOption
+					key={ variant.productSlug + variant.variantLabel }
+					isSelected={ index === highlightedVariantIndex }
+					onSelect={ () =>
+						handleChange( selectedItem.uuid, variant.productSlug, variant.productId )
+					}
+					compareTo={ compareTo }
+					variant={ variant }
+				/>
+			) ) }
+		</OptionList>
+	);
+}
+
+function ItemVariantOption( {
+	isSelected,
+	onSelect,
+	compareTo,
+	variant,
+}: {
+	isSelected: boolean;
+	onSelect: () => void;
+	compareTo?: WPCOMProductVariant;
+	variant: WPCOMProductVariant;
+} ) {
+	const { variantLabel, productId, productSlug } = variant;
+	return (
+		<Option
+			id={ productId.toString() }
+			className={ isSelected ? 'item-variant-option--selected' : undefined }
+			aria-label={ variantLabel }
+			data-product-slug={ productSlug }
+			role="option"
+			onClick={ onSelect }
+			selected={ isSelected }
+		>
+			<ItemVariantPrice variant={ variant } compareTo={ compareTo } />
+		</Option>
+	);
+}

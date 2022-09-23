@@ -11,19 +11,23 @@ export default function ModalTemplate( {
 	disclaimer,
 	featureClass,
 	icon,
+	iconPath,
 	message,
 	onClick,
 	onDismiss,
 	title,
 	trackImpression,
 } ) {
-	trackImpression && trackImpression();
-
 	// technically, non-dismissable jitms are authorable, however, that doesn't make any sense as a modal.
 	const [ isDismissed, setDismissed ] = useState( [] );
 	const translate = useTranslate();
 
 	const getModalImage = () => {
+		// If a direct path is provided, use the referenced image as the JITM artwork.
+		if ( iconPath ) {
+			return iconPath;
+		}
+
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return Inbox;
@@ -43,7 +47,7 @@ export default function ModalTemplate( {
 		}
 	};
 
-	const getModalClassName = () => {
+	const getModalImageClassName = () => {
 		switch ( icon ) {
 			case 'embedded-inbox':
 				return 'modal__embedded-inbox';
@@ -52,9 +56,13 @@ export default function ModalTemplate( {
 		}
 	};
 
+	const getModalClassName = () => {
+		return `modal__main modal--${ featureClass }`;
+	};
+
 	return isDismissed.includes( featureClass ) ? null : (
 		<Guide
-			className="modal__main"
+			className={ getModalClassName() }
 			contentLabel={ message }
 			onFinish={ () => {
 				onDismiss();
@@ -64,6 +72,7 @@ export default function ModalTemplate( {
 				{
 					content: (
 						<>
+							{ trackImpression && trackImpression() }
 							<div className="modal__container">
 								{ /* todo: allow specifying this text via jitm configuration */ }
 								<p className="modal__limited-offer">{ title }</p>
@@ -77,7 +86,7 @@ export default function ModalTemplate( {
 											onClick();
 											setDismissed( isDismissed.concat( [ featureClass ] ) );
 										} }
-										tabindex={ -2 }
+										tabIndex={ -2 }
 									>
 										{ CTA.message }
 									</Button>
@@ -88,7 +97,7 @@ export default function ModalTemplate( {
 							</div>
 							<div className="modal__sidebar">
 								<img
-									className={ getModalClassName() }
+									className={ getModalImageClassName() }
 									src={ getModalImage() }
 									alt={ getModalAltText() }
 								/>

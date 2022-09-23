@@ -21,7 +21,7 @@
 
 .card.activity-log-tasklist__task {
 	align-items: center;
-	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
+	box-shadow: 0 -1px 0 rgba(var(--color-neutral-10-rgb), 0.5);
 	display: flex;
 	justify-content: flex-end;
 	padding: 16px 0;
@@ -35,6 +35,7 @@
 	flex-grow: 1;
 
 	& > div {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 100%;
 	}
 }
@@ -47,15 +48,16 @@
 	}
 }
 .activity-log-tasklist__update-text .activity-log-tasklist__update-version {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .activity-log-tasklist__update-bullet,
 .activity-log-tasklist__update-type {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .activity-log-tasklist__update-bullet {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 7px;
 	margin: 0 7px;
 	vertical-align: middle;
@@ -77,9 +79,9 @@
 .activity-log-tasklist__footer {
 	display: flex;
 	justify-content: space-between;
-	box-shadow: 0 -1px 0 rgba( var( --color-neutral-10-rgb ), 0.5 );
+	box-shadow: 0 -1px 0 rgba(var(--color-neutral-10-rgb), 0.5);
 	padding: 16px 0;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	a {
 		text-decoration: underline;

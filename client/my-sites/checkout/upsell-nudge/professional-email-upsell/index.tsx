@@ -16,14 +16,15 @@ import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductCost } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -85,6 +86,9 @@ const ProfessionalEmailUpsell = ( {
 
 		return getProductCost( state, TITAN_MAIL_MONTHLY_SLUG );
 	} );
+
+	const selectedSite = useSelector( getSelectedSite );
+	const isDomainOnlySite = selectedSite?.options?.is_domain_only ?? false;
 
 	const isMobileView = useBreakpoint( MOBILE_BREAKPOINT );
 
@@ -155,7 +159,9 @@ const ProfessionalEmailUpsell = ( {
 		<div>
 			<header className="professional-email-upsell__header">
 				<h3 className="professional-email-upsell__small-title">
-					{ translate( "Hold tight, we're getting your site ready." ) }
+					{ isDomainOnlySite
+						? translate( "Hold tight, we're getting your domain ready." )
+						: translate( "Hold tight, we're getting your site ready." ) }
 				</h3>
 				<h1 className="professional-email-upsell__title wp-brand-font">
 					{ translate( 'Add Professional Email @%(domain)s', {
@@ -184,7 +190,7 @@ const ProfessionalEmailUpsell = ( {
 							[ FIELD_MAILBOX ]: translate( 'Enter email address' ),
 							[ FIELD_PASSWORD ]: translate( 'Set password' ),
 						} }
-						hiddenFieldNames={ [ FIELD_NAME, FIELD_ALTERNATIVE_EMAIL ] }
+						hiddenFieldNames={ [ FIELD_NAME, FIELD_PASSWORD_RESET_EMAIL ] }
 						isInitialMailboxPurchase
 						onCancel={ handleClickDecline }
 						onSubmit={ onSubmit }

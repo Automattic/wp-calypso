@@ -1,7 +1,7 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 .contact-form-notice {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body-small;
 	&.card.is-compact {
 		margin: 0 0 16px;

@@ -27,6 +27,7 @@ export const TEST_ACCOUNT_NAMES = [
 	'commentingUser',
 	'notificationsUser',
 	'googleLoginUser',
+	'appleLoginUser',
 ] as const;
 
 /**
@@ -150,7 +151,12 @@ export class SecretsManager {
 				totpUserInboxId: 'FAKE_VALUE',
 			},
 			testAccounts: {
-				defaultUser: { ...fakeAccount },
+				defaultUser: {
+					...fakeAccount,
+					userID: 0,
+					testSites: { primary: { id: 0, url: 'FAKE_VALUE' } },
+					email: 'FAKE_VALUE',
+				},
 				eCommerceUser: { ...fakeAccount },
 				simpleSiteFreePlanUser: { ...fakeAccount },
 				simpleSitePersonalPlanUser: { ...fakeAccount },
@@ -178,6 +184,9 @@ export class SecretsManager {
 					...fakeAccount,
 					smsNumber: { code: 'FAKE_VALUE', number: 'FAKE_VALUE' },
 					totpKey: 'FAKE_VALUE',
+				},
+				appleLoginUser: {
+					...fakeAccount,
 				},
 			},
 			otherTestSites: {

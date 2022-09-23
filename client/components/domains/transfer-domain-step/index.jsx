@@ -1,4 +1,4 @@
-import { PLAN_WPCOM_PRO, isPlan } from '@automattic/calypso-products';
+import { PLAN_PERSONAL, isPlan } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { withShoppingCart } from '@automattic/shopping-cart';
@@ -408,10 +408,10 @@ class TransferDomainStep extends Component {
 				<div>
 					<UpsellNudge
 						description={ translate(
-							'Only .blog domains are included with your plan, to use a different tld upgrade to a Pro plan.'
+							'Only .blog domains are included with your plan, to use a different tld upgrade to a Personal plan.'
 						) }
-						plan={ PLAN_WPCOM_PRO }
-						title={ translate( 'Pro plan required' ) }
+						plan={ PLAN_PERSONAL }
+						title={ translate( 'Personal plan required' ) }
 						showIcon={ true }
 					/>
 					{ content }
@@ -580,6 +580,22 @@ class TransferDomainStep extends Component {
 							} );
 							break;
 						}
+						case domainAvailability.RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred because it was registered less than 60 days ago."
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
+						case domainAvailability.SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE:
+							this.setState( {
+								notice: this.props.translate(
+									"This domain can't be transferred due to a transfer lock at the registry."
+								),
+								noticeSeverity: 'info',
+							} );
+							break;
 						case domainAvailability.UNKNOWN: {
 							const mappableStatus = get( result, 'mappable', error );
 

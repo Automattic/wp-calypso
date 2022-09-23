@@ -27,6 +27,7 @@ import {
 	isP2Plus,
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -69,6 +70,7 @@ import {
 	purchaseType,
 	getName,
 	shouldRenderMonthlyRenewalOption,
+	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -583,7 +585,6 @@ class ManagePurchase extends Component {
 
 	getPurchaseDescription() {
 		const { plan, purchase, theme, translate } = this.props;
-
 		if ( isPlan( purchase ) ) {
 			return plan.getDescription();
 		}
@@ -598,11 +599,15 @@ class ManagePurchase extends Component {
 
 		if ( isDomainMapping( purchase ) || isDomainRegistration( purchase ) ) {
 			return translate(
-				"Replaces your site's free address, %(domain)s, with the domain, " +
-					'making it easier to remember and easier to share.',
+				"When used with a paid plan, your custom domain can replace your site's free address, {{strong}}%(wpcom_url)s{{/strong}}, " +
+					'with {{strong}}%(domain)s{{/strong}}, making it easier to remember and easier to share.',
 				{
 					args: {
-						domain: purchase.domain,
+						domain: purchase.meta,
+						wpcom_url: purchase.domain,
+					},
+					components: {
+						strong: <strong />,
 					},
 				}
 			);
@@ -642,8 +647,40 @@ class ManagePurchase extends Component {
 					</>
 				);
 			}
-
 			return description;
+		}
+
+		if ( isDIFMProduct( purchase ) ) {
+			const difmTieredPurchaseDetails = getDIFMTieredPurchaseDetails( purchase );
+			if ( difmTieredPurchaseDetails && difmTieredPurchaseDetails.extraPageCount > 0 ) {
+				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
+				return (
+					<>
+						{ numberOfIncludedPages === 1
+							? translate(
+									'A professionally built single page website in 4 business days or less.'
+							  )
+							: translate(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
+									{
+										args: {
+											numberOfIncludedPages,
+										},
+									}
+							  ) }{ ' ' }
+						{ translate(
+							'This purchase includes %(numberOfPages)d extra page.',
+							'This purchase includes %(numberOfPages)d extra pages.',
+							{
+								count: extraPageCount,
+								args: {
+									numberOfPages: extraPageCount,
+								},
+							}
+						) }
+					</>
+				);
+			}
 		}
 
 		return purchaseType( purchase );

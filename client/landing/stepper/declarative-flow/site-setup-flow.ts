@@ -1,16 +1,21 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useDesignsBySite } from '@automattic/design-picker';
+import { Design, useDesignsBySite, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
+import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { useCanUserManageOptions } from '../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { redirect } from './internals/steps-repository/import/util';
@@ -23,6 +28,8 @@ import {
 } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
 
+const WRITE_INTENT_DEFAULT_THEME = 'livro';
+const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -39,6 +46,7 @@ export const siteSetupFlow: Flow = {
 			'intent',
 			'options',
 			'designSetup',
+			'patternAssembler',
 			'bloggerStartingPoint',
 			'courses',
 			'storeFeatures',
@@ -68,20 +76,29 @@ export const siteSetupFlow: Flow = {
 		] as StepPath[];
 	},
 	useSideEffect() {
+		// Prefetch designs for a smooth design picker UX.
+		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
 		const site = useSite();
-		// prefetch designs for a smooth design picker UX
-		useDesignsBySite( site );
+		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
+		const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
+		const currentTheme = useSelector( ( state ) =>
+			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
+		);
+
 		const isEnglishLocale = useIsEnglishLocale();
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
+		const isPluginBundleEligible = useIsPluginBundleEligible();
+		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -97,31 +114,17 @@ export const siteSetupFlow: Flow = {
 			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
 		);
 		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetGoals, resetIntent, resetSelectedDesign } =
+		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
-		// Set up Step progress for Woo flow - "Step 2 of 4"
-		if ( intent === 'sell' && storeType === 'power' ) {
-			switch ( currentStep ) {
-				case 'storeAddress':
-					setStepProgress( { progress: 1, count: 4 } );
-					break;
-				case 'businessInfo':
-					setStepProgress( { progress: 2, count: 4 } );
-					break;
-				case 'wooConfirm':
-					setStepProgress( { progress: 3, count: 4 } );
-					break;
-				case 'processing':
-					setStepProgress( { progress: 4, count: 4 } );
-					break;
-			}
-		} else {
-			setStepProgress( undefined );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+
+		if ( flowProgress ) {
+			setStepProgress( flowProgress );
 		}
 
 		const exitFlow = ( to: string ) => {
@@ -135,20 +138,31 @@ export const siteSetupFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					const pendingActions = [ setIntentOnSite( siteSlug as string, intent ) ];
-					if ( siteSlug && goalsStepEnabled ) {
+					if ( ! siteSlug ) return;
+
+					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
+
+					if ( goalsStepEnabled ) {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+						pendingActions.push(
+							setThemeOnSite(
+								siteSlug,
+								WRITE_INTENT_DEFAULT_THEME,
+								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
+							)
+						);
+					}
+
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetGoals();
-			resetIntent();
-			resetSelectedDesign();
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction' ] );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -157,12 +171,31 @@ export const siteSetupFlow: Flow = {
 			switch ( currentStep ) {
 				case 'options': {
 					if ( intent === 'sell' ) {
+						/**
+						 * Part of the theme/plugin bundling is simplyfing the seller flow.
+						 *
+						 * Instead of having the user manually choose between "Start simple" and "More power", we let them select a theme and use the theme choice to determine which path to take.
+						 */
+						if ( isEnabled( 'themes/plugin-bundling' ) ) {
+							return navigate( 'designSetup' );
+						}
+
 						return navigate( 'storeFeatures' );
 					}
 					return navigate( 'bloggerStartingPoint' );
 				}
 
 				case 'designSetup':
+					if (
+						isDesktop &&
+						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
+					) {
+						return navigate( 'patternAssembler' );
+					}
+
+					return navigate( 'processing' );
+
+				case 'patternAssembler':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -170,6 +203,14 @@ export const siteSetupFlow: Flow = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
+					}
+
+					// End of Pattern Assembler flow
+					if (
+						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+						isBlankCanvasDesign( selectedDesign as Design )
+					) {
+						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -193,6 +234,19 @@ export const siteSetupFlow: Flow = {
 							return navigate( 'wooVerifyEmail' );
 						}
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
+					}
+
+					// Check current theme: Does it have a plugin bundled?
+					// If so, send them to the plugin-bundle flow.
+					const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
+					if (
+						isEnabled( 'themes/plugin-bundling' ) &&
+						theme_software_set &&
+						theme_software_set.length > 0 &&
+						isPluginBundleEligible &&
+						siteSlug
+					) {
+						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
@@ -402,11 +456,19 @@ export const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if ( intent === 'sell' ) {
+						// For theme/plugin bundling, we skip the store features step because we use the theme to decide if they're going through "Start simple" or "More power"
+						if ( isEnabled( 'themes/plugin-bundling' ) ) {
+							return navigate( 'options' );
+						}
+
 						// this means we came from sell => store-features => start simple, we go back to store features
 						return navigate( 'storeFeatures' );
 					} else if ( intent === 'write' ) {
 						// this means we came from write => blogger staring point => choose a design
 						return navigate( 'bloggerStartingPoint' );
+					} else if ( intent === 'import' ) {
+						// this means we came from non-WP transfers => complete screen => click Pick a design button, we go back to goals
+						return navigate( 'goals' );
 					}
 
 					if ( goalsStepEnabled ) {
@@ -417,6 +479,9 @@ export const siteSetupFlow: Flow = {
 					}
 
 					return navigate( 'intent' );
+
+				case 'patternAssembler':
+					return navigate( 'designSetup' );
 
 				case 'editEmail':
 					return navigate( 'wooVerifyEmail' );
@@ -523,10 +588,11 @@ export const siteSetupFlow: Flow = {
 		const fetchingSiteError = useSelect( ( select ) =>
 			select( SITE_STORE ).getFetchingSiteError()
 		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		if ( ! userIsLoggedIn ) {
 			redirect( '/start' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup requires a logged in user',
 			};
@@ -534,7 +600,7 @@ export const siteSetupFlow: Flow = {
 
 		if ( ! siteSlug && ! siteId ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: 'site-setup did not provide the site slug or site id it is configured to.',
 			};
@@ -542,12 +608,26 @@ export const siteSetupFlow: Flow = {
 
 		if ( fetchingSiteError ) {
 			redirect( '/' );
-			return {
+			result = {
 				state: AssertConditionState.FAILURE,
 				message: fetchingSiteError.message,
 			};
 		}
 
-		return { state: AssertConditionState.SUCCESS };
+		const canManageOptions = useCanUserManageOptions();
+		if ( canManageOptions === 'requesting' ) {
+			result = {
+				state: AssertConditionState.CHECKING,
+			};
+		} else if ( canManageOptions === false ) {
+			redirect( '/start' );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message:
+					'site-setup the user needs to have the manage_options capability to go through the flow.',
+			};
+		}
+
+		return result;
 	},
 };

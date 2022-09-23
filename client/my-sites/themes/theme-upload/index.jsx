@@ -95,14 +95,10 @@ class Upload extends Component {
 	};
 
 	componentDidMount() {
-		const { siteId, inProgress, noticeType } = this.props;
+		const { siteId, inProgress } = this.props;
 		! inProgress && this.props.clearThemeUpload( siteId );
 		if ( this.props.isAtomic && this.props.canUploadThemesOrPlugins ) {
 			this.redirectToWpAdmin();
-		}
-
-		if ( 'purchase-success' === noticeType ) {
-			this.purchaseSuccessMessage();
 		}
 	}
 
@@ -148,11 +144,6 @@ class Upload extends Component {
 			} ),
 			{ duration: 5000 }
 		);
-	}
-
-	purchaseSuccessMessage() {
-		const { translate } = this.props;
-		this.props.successNotice( translate( 'Your purchase has been completed!' ) );
 	}
 
 	failureMessage() {
@@ -215,7 +206,7 @@ class Upload extends Component {
 
 	renderUpgradeBanner() {
 		const { siteId, eligibleForProPlan, translate } = this.props;
-		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }?notice=purchase-success` );
+		const redirectTo = encodeURIComponent( `/themes/upload/${ siteId }` );
 
 		const upsellPlan = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
 		const title = eligibleForProPlan

@@ -1,70 +1,175 @@
 import configureStore from 'redux-mock-store';
-import { getDomainOrProductFromContext } from '../utils';
+import { getProductSlugFromContext } from '../utils';
 
 const mockStore = configureStore();
 
-describe( 'getDomainOrProductFromContext', () => {
-	const siteId = 1;
-	const siteSlug = 'example.com';
-	const newDomain = 'mydomain.com';
+describe( 'getProductSlugFromContext', () => {
+	const domainSiteId = 1;
+	const wpcomSiteId = 2;
+	const subdomainSiteId = 3;
+	const domainSiteSlug = 'example.com';
+	const wpcomSiteSlug = 'example.wordpress.com';
+	const subdomainSiteSlug = 'example.com::blog';
+	const wpcomStagingSiteSlug = 'example.wpcomstaging.com';
 	const newProduct = 'jetpack-product';
-	const store = mockStore( {
-		ui: {
-			selectedSiteId: siteId,
+	const newProductWithDomain = 'domain-mapping:example.com';
+	// Note that `%25` decodes to a slash for product slugs because of how
+	// calypso routing predecodes urls. See `decodeProductFromUrl()`.
+	const newProductWithDot = 'no-adverts%25no-adverts.php';
+	const sites = {
+		items: {
+			[ domainSiteId ]: {
+				id: domainSiteId,
+				slug: domainSiteSlug,
+			},
+			[ wpcomSiteId ]: {
+				id: wpcomSiteId,
+				slug: wpcomStagingSiteSlug,
+			},
+			[ subdomainSiteId ]: {
+				id: subdomainSiteId,
+				slug: subdomainSiteSlug,
+			},
 		},
-		sites: {
-			items: {
-				[ siteId ]: {
-					slug: siteSlug,
+	};
+	function getSiteIdFromDomain( domain ) {
+		return Object.values( sites.items ).find( ( item ) => item.slug === domain )?.id;
+	}
+
+	it.each( [
+		{
+			product: newProduct,
+			domainOrProduct: wpcomSiteSlug,
+			selectedSite: wpcomStagingSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: undefined,
+			domainOrProduct: wpcomSiteSlug,
+			selectedSite: wpcomStagingSiteSlug,
+			expected: '',
+		},
+		{
+			product: newProduct,
+			domainOrProduct: domainSiteSlug,
+			selectedSite: domainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: domainSiteSlug,
+			domainOrProduct: newProduct,
+			selectedSite: domainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: newProductWithDomain,
+			domainOrProduct: undefined,
+			selectedSite: domainSiteSlug,
+			expected: newProductWithDomain,
+		},
+		{
+			product: undefined,
+			domainOrProduct: newProductWithDomain,
+			selectedSite: domainSiteSlug,
+			expected: newProductWithDomain,
+		},
+		{
+			product: newProductWithDot,
+			domainOrProduct: undefined,
+			selectedSite: domainSiteSlug,
+			expected: newProductWithDot,
+		},
+		{
+			product: undefined,
+			domainOrProduct: newProductWithDot,
+			selectedSite: domainSiteSlug,
+			expected: newProductWithDot,
+		},
+		{
+			product: newProduct,
+			domainOrProduct: undefined,
+			selectedSite: undefined,
+			expected: '',
+		},
+		{
+			product: undefined,
+			domainOrProduct: newProduct,
+			selectedSite: undefined,
+			expected: newProduct,
+		},
+		{
+			product: undefined,
+			domainOrProduct: domainSiteSlug,
+			selectedSite: domainSiteSlug,
+			expected: '',
+		},
+		{
+			product: domainSiteSlug,
+			domainOrProduct: undefined,
+			selectedSite: domainSiteSlug,
+			expected: '',
+		},
+		{
+			product: newProduct,
+			domainOrProduct: undefined,
+			selectedSite: domainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: undefined,
+			domainOrProduct: newProduct,
+			selectedSite: domainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: subdomainSiteSlug,
+			domainOrProduct: newProduct,
+			selectedSite: subdomainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: newProduct,
+			domainOrProduct: subdomainSiteSlug,
+			selectedSite: subdomainSiteSlug,
+			expected: newProduct,
+		},
+		{
+			product: undefined,
+			domainOrProduct: subdomainSiteSlug,
+			selectedSite: subdomainSiteSlug,
+			expected: '',
+		},
+		{
+			product: undefined,
+			domainOrProduct: subdomainSiteSlug,
+			selectedSite: domainSiteSlug,
+			expected: '',
+		},
+		{
+			product: undefined,
+			domainOrProduct: undefined,
+			selectedSite: domainSiteSlug,
+			expected: '',
+		},
+	] )(
+		`returns '$expected' when :product is '$product' and :domainOrProduct is '$domainOrProduct' and selected site is '$selectedSite'`,
+		( { product, domainOrProduct, selectedSite, expected } ) => {
+			const store = mockStore( {
+				ui: {
+					selectedSiteId: getSiteIdFromDomain( selectedSite ),
 				},
-			},
-		},
-	} );
+				sites,
+			} );
 
-	it( "should return the `domainOrProduct` parameter if it's not the selected site slug", () => {
-		const product = getDomainOrProductFromContext( {
-			store,
-			params: {
-				domainOrProduct: newDomain,
-			},
-		} );
+			const actual = getProductSlugFromContext( {
+				store,
+				params: {
+					domainOrProduct,
+					product,
+				},
+			} );
 
-		expect( product ).toEqual( newDomain );
-	} );
-
-	it( 'should return the `product` parameter if `domainOrProduct` is the selected site slug', () => {
-		const product = getDomainOrProductFromContext( {
-			store,
-			params: {
-				domainOrProduct: siteSlug,
-				product: newProduct,
-			},
-		} );
-
-		expect( product ).toEqual( newProduct );
-	} );
-
-	it( "should return the `product` parameter if there's no selected site", () => {
-		const product = getDomainOrProductFromContext( {
-			store: mockStore( {
-				ui: {},
-			} ),
-			params: {
-				product: newProduct,
-			},
-		} );
-
-		expect( product ).toEqual( newProduct );
-	} );
-
-	it( "should return the `product` parameter if there's no `domainOrProduct` parameter", () => {
-		const product = getDomainOrProductFromContext( {
-			store,
-			params: {
-				product: newProduct,
-			},
-		} );
-
-		expect( product ).toEqual( newProduct );
-	} );
+			expect( actual ).toEqual( expected );
+		}
+	);
 } );

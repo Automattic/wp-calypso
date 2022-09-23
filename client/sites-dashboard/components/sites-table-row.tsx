@@ -1,130 +1,140 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import SiteIcon from 'calypso/blocks/site-icon';
-import EllipsisMenu from 'calypso/components/ellipsis-menu';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import SitesLaunchStatusBadge from './sites-launch-status-badge';
+import { memo } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import TimeSince from 'calypso/components/time-since';
+import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
+import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import { SiteItemThumbnail } from './sites-site-item-thumbnail';
+import { SiteName } from './sites-site-name';
+import { SiteUrl, Truncated } from './sites-site-url';
+import { ThumbnailLink } from './thumbnail-link';
+import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
-	site: SiteData;
+	site: SiteExcerptData;
 }
 
 const Row = styled.tr`
 	line-height: 2em;
-	border-bottom: 1px solid #eee;
-	td {
-		padding-top: 12px;
-		padding-bottom: 12px;
-		padding-right: 24px;
-		vertical-align: middle;
-		font-size: 14px;
-		line-height: 20px;
-		letter-spacing: -0.24px;
-		color: var( --studio-gray-60 );
-	}
-	@media only screen and ( max-width: 781px ) {
-		.sites-table-row__mobile-hidden {
-			display: none;
-		}
-	}
+	border-block-end: 1px solid #eee;
 `;
 
-const SiteName = styled.h2`
-	font-weight: 500;
-	font-size: 16px;
-	letter-spacing: -0.4px;
-	color: var( --studio-gray-100 );
-	a {
-		color: inherit;
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-`;
-
-const SiteUrl = styled.a`
+const Column = styled.td< { mobileHidden?: boolean } >`
+	padding-block-start: 12px;
+	padding-block-end: 12px;
+	padding-inline-end: 24px;
+	vertical-align: middle;
+	font-size: 14px;
+	line-height: 20px;
+	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
-	&:visited {
-		color: var( --studio-gray-60 );
+	white-space: nowrap;
+
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		${ ( props ) => props.mobileHidden && 'display: none;' };
+		padding-inline-end: 0;
 	}
 `;
 
-const getDashboardUrl = ( slug: string ) => {
-	return '/home/' + slug;
-};
+const SiteListTile = styled( ListTile )`
+	line-height: initial;
+	margin-inline-end: 0;
 
-const displaySiteUrl = ( siteUrl: string ) => {
-	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
-};
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		margin-inline-end: 12px;
+	}
+`;
 
-const VisitDashboardItem = ( { site }: { site: SiteData } ) => {
+const ListTileLeading = styled( ThumbnailLink )`
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		margin-inline-end: 12px;
+	}
+`;
+
+const ListTileTitle = styled.div`
+	display: flex;
+	align-items: center;
+	margin-block-end: 8px;
+`;
+
+const ListTileSubtitle = styled.div`
+	display: flex;
+	align-items: center;
+`;
+
+const SitePlan = styled.div`
+	display: flex;
+	line-height: 16px;
+`;
+
+const SitePlanIcon = styled.div`
+	margin-inline-end: 6px;
+`;
+
+export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
-	return (
-		<PopoverMenuItem href={ getDashboardUrl( site.slug ) }>
-			{ __( 'Visit Dashboard' ) }
-		</PopoverMenuItem>
-	);
-};
+	const translatedStatus = useSiteLaunchStatusLabel( site );
 
-export default function SitesTableRow( { site }: SiteTableRowProps ) {
-	const { __ } = useI18n();
-
-	const isComingSoon =
-		site.is_coming_soon || ( site.is_private && site.launch_status === 'unlaunched' );
 	const isP2Site = site.options?.is_wpforteams_site;
+
+	let siteUrl = site.URL;
+	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
+		siteUrl = site.options?.unmapped_url;
+	}
 
 	return (
 		<Row>
-			<td>
-				<ListTile
+			<Column>
+				<SiteListTile
+					contentClassName={ css`
+						min-width: 0;
+					` }
 					leading={
-						<a
-							style={ { display: 'block' } }
+						<ListTileLeading
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteIcon siteId={ site.ID } size={ 50 } />
-						</a>
+							<SiteItemThumbnail site={ site } />
+						</ListTileLeading>
 					}
 					title={
-						<div style={ { display: 'flex', alignItems: 'center', marginBottom: '8px' } }>
-							<SiteName style={ { marginRight: '8px' } }>
-								<a href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-									{ site.name ? site.name : __( '(No Site Title)' ) }
-								</a>
+						<ListTileTitle>
+							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
+								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						</div>
+						</ListTileTitle>
 					}
 					subtitle={
-						<div>
-							<SiteUrl
-								href={ site.URL }
-								target="_blank"
-								rel="noreferrer"
-								title={ __( 'Visit Site' ) }
-								style={ { marginRight: '8px' } }
-							>
-								{ displaySiteUrl( site.URL ) }
+						<ListTileSubtitle>
+							<SiteUrl href={ siteUrl } title={ siteUrl }>
+								<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
 							</SiteUrl>
-							{ site.is_private && ! isComingSoon && (
-								<SitesLaunchStatusBadge>Private</SitesLaunchStatusBadge>
-							) }
-							{ isComingSoon && <SitesLaunchStatusBadge>Coming soon</SitesLaunchStatusBadge> }
-						</div>
+						</ListTileSubtitle>
 					}
 				/>
-			</td>
-			<td className="sites-table-row__mobile-hidden">{ site.plan.product_name_short }</td>
-			<td className="sites-table-row__mobile-hidden">July 16, 1969</td>
-			<td style={ { width: '20px' } }>
-				<EllipsisMenu>
-					<VisitDashboardItem site={ site } />
-				</EllipsisMenu>
-			</td>
+			</Column>
+			<Column mobileHidden>
+				<SitePlan>
+					{ isNotAtomicJetpack( site ) && (
+						<SitePlanIcon>
+							<JetpackLogo size={ 16 } />
+						</SitePlanIcon>
+					) }
+					{ site.plan?.product_name_short }
+				</SitePlan>
+			</Column>
+			<Column mobileHidden>
+				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
+			</Column>
+			<Column mobileHidden>{ translatedStatus }</Column>
+			<Column style={ { width: '24px' } }>
+				<SitesEllipsisMenu site={ site } />
+			</Column>
 		</Row>
 	);
-}
+} );

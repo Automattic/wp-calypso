@@ -5,7 +5,7 @@
 }
 .site-card__header {
 	position: relative;
-	padding: 16px;
+	padding: 16px 16px 16px 8px;
 	height: 50px;
 	box-sizing: border-box;
 	display: flex;
@@ -34,8 +34,8 @@
 }
 .site-card__content-list-no-error {
 	opacity: 1;
-	&:nth-child( odd ) {
-		background: var( --studio-gray-0 );
+	&:nth-child(odd) {
+		background: var(--studio-gray-0);
 	}
 }
 .site-card__expanded-content-key {
@@ -46,7 +46,7 @@
 	position: absolute;
 	right: 16px;
 	top: 50%;
-	transform: translateY( -50% );
+	transform: translateY(-50%);
 	display: flex;
 }
 .site-card__actions-small-screen {

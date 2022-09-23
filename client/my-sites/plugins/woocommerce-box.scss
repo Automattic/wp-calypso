@@ -1,0 +1,183 @@
+// partially copied from https://github.com/Automattic/woocommerce.com/blob/trunk/themes/woo/css/global/misc.scss
+
+// Color palette support
+$woo-lilac: #96588a;
+$woo-green: #73ae39;
+$woo-gray-background: #e6e6e6;
+$woo-gray-light: #f7f7f7;
+$woo-text-gray: #333;
+
+// Woo colors
+$c-woocommerce-purple-0: #f7edf7 !default;
+$c-woocommerce-purple-5: #e5cfe8 !default;
+$c-woocommerce-purple-10: #d6b4e0 !default;
+$c-woocommerce-purple-20: #c792e0 !default;
+$c-woocommerce-purple-30: #af7dd1 !default;
+$c-woocommerce-purple-40: #9a69c7 !default;
+$c-woocommerce-purple-50: #7f54b3 !default;
+$c-woocommerce-purple-60: #674399 !default;
+$c-woocommerce-purple-70: #533582 !default;
+$c-woocommerce-purple-80: #3c2861 !default;
+$c-woocommerce-purple-90: #271b3d !default;
+$c-woocommerce-purple-100: #140e1f !default;
+
+// Neutral colors
+$c-white: #fff;
+$c-black: #000;
+$c-gray-0: #f6f7f7 !default;
+$c-gray-5: #dcdcde !default;
+$c-gray-10: #c3c4c7 !default;
+$c-gray-20: #a7aaad !default;
+$c-gray-30: #8c8f94 !default;
+$c-gray-40: #787c82 !default;
+$c-gray-50: #646970 !default;
+$c-gray-60: #50575e !default;
+$c-gray-70: #2c3337 !default;
+$c-gray-80: #2c3338 !default; // rgb(44, 51, 56);
+$c-gray-90: #1d2327 !default;
+$c-gray-100: #101517 !default;
+
+/* INFO BOXES & WOOCOMMERCE NOTICES */
+.woo-sc-box,
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error,
+.post-theme-info,
+.wcpv-shortcode-registration-form-errors {
+
+	* {
+		vertical-align: baseline;
+	}
+	background: $c-woocommerce-purple-5;
+	border: 1px solid $c-woocommerce-purple-10;
+	border-left-width: 1px !important;
+	border-radius: 5px; /* stylelint-disable-line scales/radii */
+	color: $c-woocommerce-purple-90;
+	margin: 2em 0;
+	padding: 20px;
+
+	p {
+		margin: 0 0 1.618em;
+		padding: 0;
+
+		&:last-child {
+			margin: 0;
+		}
+	}
+
+	a {
+		font-weight: bold;
+		text-decoration: underline;
+
+		&:hover {
+			text-decoration: none;
+		}
+	}
+
+	.button {
+		margin: 0;
+	}
+
+	ul {
+		margin: 0.5em 0 0.8em;
+
+		li {
+			list-style: disc;
+			list-style-position: inside;
+		}
+	}
+
+	.size-thumbnail {
+		background-color: #fff;
+		border: 1px dotted #ada465 !important;
+		padding: 5px;
+	}
+
+	&.large {
+		font-size: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		padding: 25px 20px;
+	}
+
+	&.alert,
+	&.woocommerce-error,
+	&.wcpv-shortcode-registration-form-errors {
+		background: $c-woocommerce-purple-5;
+		border-color: $c-woocommerce-purple-10;
+		color: #444;
+		margin: 2em auto;
+		max-width: 1000px;
+	}
+
+	&.tick,
+	&.woocommerce-message,
+	&.woocommerce-info,
+	&.woocommerce-error {
+		background-color: #eff8e6;
+		border-color: #c9e8a9;
+		color: #424242;
+
+		a {
+			color: #424242;
+		}
+	}
+	&.woocommerce-error {
+		background: $c-woocommerce-purple-5;
+		border-color: $c-woocommerce-purple-10;
+	}
+
+	&.download {
+		background: lighten($c-gray-70, 60%);
+		border-color: lighten($c-gray-70, 50%);
+	}
+
+	&.note {
+		background: lighten(#f1d413, 40%);
+		border-color: lighten(#f1d413, 13%);
+
+		a {
+			color: darken(#f1d413, 20%);
+		}
+	}
+
+	&:hover {
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 1), 0 0 10px 0 rgba(0, 0, 0, 0.05);
+		transition: all ease-in-out 0.2s;
+	}
+
+	&.coupon {
+		background: $woo-gray-light !important;
+		border: none;
+		border-radius: 0;
+		margin: 1.5em 0 1.758em 4em !important;
+		padding: 20px 20px 20px 12px !important;
+		position: relative;
+	}
+
+	&.coupon span.coupon-title {
+		overflow: hidden;
+		text-indent: 100%;
+		white-space: nowrap;
+	}
+
+	&.coupon p {
+		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		margin: 10px 0 10px 70px;
+	}
+
+	&.post-theme-info {
+		margin: 0 0 20px;
+		padding: 0;
+
+		.fl {
+			float: none;
+			padding: 15px 0 5px;
+			text-align: center;
+		}
+
+		.fr {
+			float: none;
+			padding: 5px 0 15px;
+			text-align: center;
+		}
+	}
+}

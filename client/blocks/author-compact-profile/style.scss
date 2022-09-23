@@ -21,30 +21,30 @@
 		padding: 0;
 
 		.gridicons-reader-follow {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 
 		.follow-button__label {
-			color: var( --color-primary );
+			color: var(--color-primary);
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				display: inline-block;
 			}
 		}
 
 		&.is-following .follow-button__label {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 
 		// No hover if already following
 		&.is-following {
 			&:hover {
 				.gridicons-reader-follow {
-					fill: var( --color-success );
+					fill: var(--color-success);
 				}
 
 				.follow-button__label {
-					color: var( --color-success );
+					color: var(--color-success);
 				}
 			}
 		}
@@ -63,12 +63,12 @@
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
 	align-items: center;
-	color: var( --color-primary );
+	color: var(--color-primary);
 	display: flex;
 	justify-content: center;
 
 	&:hover {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
@@ -88,7 +88,7 @@
 }
 
 .author-compact-profile__follow-count {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	padding: 5px;
 }
 
@@ -99,7 +99,7 @@
 }
 
 .author-compact-profile__site-link.is-placeholder {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: 50px;
 		margin-right: 50px;
 	}

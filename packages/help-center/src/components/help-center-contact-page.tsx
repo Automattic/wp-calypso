@@ -4,12 +4,14 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
-import { Icon, comment } from '@wordpress/icons';
+import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
+import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -19,6 +21,7 @@ import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-optio
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import Mail from '../icons/mail';
+import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
 const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
@@ -33,8 +36,10 @@ export const HelpCenterContactPage: React.FC = () => {
 
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
+	const email = useSelector( getCurrentUserEmail );
+	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email );
 
-	if ( renderChat.isLoading ) {
+	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
 			<div className="help-center-contact-page__loading">
 				<Spinner baseClassName="" />
@@ -46,7 +51,8 @@ export const HelpCenterContactPage: React.FC = () => {
 		<div className="help-center-contact-page">
 			<BackButton />
 			<div className="help-center-contact-page__content">
-				<h3>{ __( 'Contact our WordPress.com experts' ) }</h3>
+				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
+				<HelpCenterActiveTicketNotice tickets={ tickets } />
 				<div
 					className={ classnames( 'help-center-contact-page__boxes', {
 						'is-reversed': ! renderChat.render || renderChat.state !== 'AVAILABLE',
@@ -68,18 +74,25 @@ export const HelpCenterContactPage: React.FC = () => {
 									<Icon icon={ comment } />
 								</div>
 								<div>
-									<h2>{ __( 'Live chat' ) }</h2>
+									<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
 									<p>
 										{ renderChat.state !== 'AVAILABLE'
-											? __( 'Chat is unavailable right now' )
-											: __( 'Get an immediate reply' ) }
+											? __( 'Chat is unavailable right now', __i18n_text_domain__ )
+											: __( 'Get an immediate reply', __i18n_text_domain__ ) }
 									</p>
 								</div>
 							</div>
 						</ConditionalLink>
 					) }
 					{ renderEmail && (
-						<Link to="/contact-form?mode=EMAIL">
+						<Link
+							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+							to={ `/contact-form?mode=EMAIL&overflow=${ (
+								renderChat.eligible &&
+								renderChat.state !== 'CLOSED' &&
+								renderChat.state !== 'AVAILABLE'
+							).toString() }` }
+						>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
@@ -89,8 +102,8 @@ export const HelpCenterContactPage: React.FC = () => {
 									<Icon icon={ <Mail /> } />
 								</div>
 								<div>
-									<h2>{ __( 'Email' ) }</h2>
-									<p>{ __( 'An expert will get back to you soon' ) }</p>
+									<h2>{ __( 'Email', __i18n_text_domain__ ) }</h2>
+									<p>{ __( 'An expert will get back to you soon', __i18n_text_domain__ ) }</p>
 								</div>
 							</div>
 						</Link>
@@ -104,7 +117,7 @@ export const HelpCenterContactPage: React.FC = () => {
 
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
-	const url = useStillNeedHelpURL();
+	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
@@ -115,15 +128,21 @@ export const HelpCenterContactButton: React.FC = () => {
 		} );
 	};
 
+	let to = redirectToWpcom ? { pathname: url } : url;
+
+	if ( isLoading ) {
+		to = '';
+	}
+
 	return (
 		<Link
-			to={ redirectToWpcom ? { pathname: url } : url }
+			to={ to }
 			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"
 		>
 			<Icon icon={ comment } />
-			<span>{ __( 'Still need help?' ) }</span>
+			<span>{ __( 'Still need help?', __i18n_text_domain__ ) }</span>
 		</Link>
 	);
 };

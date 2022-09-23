@@ -49,10 +49,10 @@ class Help extends PureComponent {
 				image: helpWebsite,
 			},
 			{
-				link: 'https://wordpress.com/support/pro-plan/',
+				link: 'https://wordpress.com/support/business-plan/',
 				title: this.props.translate( 'Uploading custom plugins and themes' ),
 				description: this.props.translate(
-					'Learn more about installing a custom theme or plugin using the Pro plan.'
+					'Learn more about installing a custom theme or plugin using the Business plan.'
 				),
 				image: helpPlugins,
 			},
@@ -198,7 +198,7 @@ class Help extends PureComponent {
 		return (
 			<CompactCard
 				className="help__support-link"
-				href={ localizeUrl( 'https://wordpress.com/webinars' ) }
+				href={ localizeUrl( 'https://wordpress.com/webinars/' ) }
 				onClick={ this.trackCoursesButtonClick }
 				target="__blank"
 			>

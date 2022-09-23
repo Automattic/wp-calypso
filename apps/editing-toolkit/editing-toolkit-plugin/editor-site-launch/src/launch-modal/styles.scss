@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/z-index';
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/z-index";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
 
 body.has-nux-launch-modal {
 	overflow: hidden;
@@ -24,7 +24,7 @@ body.has-nux-launch-modal {
 		top: 0;
 		left: 0;
 		display: flex;
-		background: var( --studio-white );
+		background: var(--studio-white);
 		width: 100%;
 		height: 100%;
 		padding: 0;
@@ -47,8 +47,8 @@ body.has-nux-launch-modal {
 	width: 100%;
 	height: $onboarding-header-height;
 	border-bottom: 1px solid $gray-200;
-	background: var( --studio-white );
-	z-index: z-index( '.components-modal__header' );
+	background: var(--studio-white);
+	z-index: z-index(".components-modal__header");
 
 	// On desktop, do not show bottom border.
 	@include break-medium {
@@ -112,8 +112,8 @@ body.has-nux-launch-modal {
 	left: -200%;
 	width: 100%;
 	height: 100%;
-	background: var( --studio-white );
-	z-index: z-index( '.components-modal__header' ) + 2;
+	background: var(--studio-white);
+	z-index: z-index(".components-modal__header") + 2;
 
 	@media ( max-width: $break-medium ) {
 		// This brings the sidebar that is hiding offscreen into view.
@@ -132,7 +132,7 @@ body.has-nux-launch-modal {
 		width: $sidebar-width;
 		min-width: $sidebar-width;
 		max-width: $sidebar-width;
-		border-left: 1px solid var( --studio-gray-5 );
+		border-left: 1px solid var(--studio-gray-5);
 	}
 }
 
@@ -140,7 +140,7 @@ body.has-nux-launch-modal {
 	// This keeps the button on the top right corner even when scrolled down
 	position: sticky;
 	top: 0;
-	z-index: z-index( '.components-modal__header' ) + 3;
+	z-index: z-index(".components-modal__header") + 3;
 
 	// Give it no dimension so it doesn't take any flex space
 	// but overflow it so the close button is visible
@@ -153,9 +153,9 @@ body.has-nux-launch-modal {
 	align-items: flex-start;
 
 	// Close button icon color
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	&:hover {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 	}
 
 	> span {

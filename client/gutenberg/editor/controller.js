@@ -10,7 +10,6 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
@@ -193,10 +192,9 @@ export const redirect = async ( context, next ) => {
 	if ( ! shouldLoadGutenframe( state, siteId, postType ) ) {
 		const postId = getPostID( context );
 
-		const url =
-			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getEditorUrl( state, siteId, postId, postType )
-				: getSiteEditorUrl( state, siteId );
+		const url = postType
+			? getEditorUrl( state, siteId, postId, postType )
+			: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}

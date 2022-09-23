@@ -14,7 +14,7 @@
 .validation-fieldset + .logged-out-form__footer {
 	margin-top: 0;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: 20px;
 	}
 }

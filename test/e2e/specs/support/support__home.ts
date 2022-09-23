@@ -4,11 +4,11 @@
 
 import {
 	DataHelper,
-	TestAccount,
 	SupportComponent,
+	TestAccount,
 	TestAccountName,
 } from '@automattic/calypso-e2e';
-import { Page, Browser } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -41,7 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 		it( 'Search results are shown with a valid search keyword', async function () {
 			const results = await supportComponent.getResults( 'article' );
-			expect( results.length ).toBeGreaterThan( 0 );
+			expect( await results.count() ).toBeGreaterThan( 0 );
 		} );
 
 		it( 'Clear keyword', async function () {
@@ -54,13 +54,11 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 		// Invalid keyword search often takes more than 30s to resolve.
 		// See: https://github.com/Automattic/wp-calypso/issues/55478
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'Enter invalid search keyword', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 		} );
 
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'No search results are shown', async function () {
 			await supportComponent.noResultsShown();
 		} );

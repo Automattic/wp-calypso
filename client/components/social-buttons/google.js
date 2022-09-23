@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { loadScript } from '@automattic/load-script';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -15,13 +14,11 @@ import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/uti
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 
-let auth2InitDone = false;
-
 import './style.scss';
 
 const noop = () => {};
 
-class GoogleLoginButton extends Component {
+class GoogleSocialButton extends Component {
 	static propTypes = {
 		clientId: PropTypes.string.isRequired,
 		fetchBasicProfile: PropTypes.bool,
@@ -31,14 +28,13 @@ class GoogleLoginButton extends Component {
 		redirectUri: PropTypes.string,
 		responseHandler: PropTypes.func.isRequired,
 		scope: PropTypes.string,
+		startingPoint: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		uxMode: PropTypes.string,
 	};
 
 	static defaultProps = {
-		scope: config.isEnabled( 'migration/sign-in-with-google' )
-			? 'openid profile email'
-			: 'https://www.googleapis.com/auth/userinfo.profile',
+		scope: 'openid profile email',
 		fetchBasicProfile: true,
 		onClick: noop,
 	};
@@ -54,28 +50,20 @@ class GoogleLoginButton extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.initialized = null;
-
 		this.handleClick = this.handleClick.bind( this );
 		this.showError = this.showError.bind( this );
 		this.hideError = this.hideError.bind( this );
 	}
 
 	componentDidMount() {
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
-			if ( this.props.authCodeFromRedirect ) {
-				this.handleAuthorizationCode( {
-					auth_code: this.props.authCodeFromRedirect,
-					redirect_uri: this.props.redirectUri,
-				} );
-			}
-
-			this.initializeGoogleSignIn();
-
-			return;
+		if ( this.props.authCodeFromRedirect ) {
+			this.handleAuthorizationCode( {
+				auth_code: this.props.authCodeFromRedirect,
+				redirect_uri: this.props.redirectUri,
+			} );
 		}
 
-		this.initialize();
+		this.initializeGoogleSignIn();
 	}
 
 	async initializeGoogleSignIn() {
@@ -88,8 +76,9 @@ class GoogleLoginButton extends Component {
 			redirect_uri: this.props.redirectUri,
 			callback: ( response ) => {
 				if ( response.error ) {
-					this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
+					this.props.recordTracksEvent( 'calypso_social_button_failure', {
 						social_account_type: 'google',
+						starting_point: this.props.startingPoint,
 						error_code: response.error,
 					} );
 
@@ -111,86 +100,6 @@ class GoogleLoginButton extends Component {
 		return window.google.accounts.oauth2;
 	}
 
-	async loadDependency() {
-		if ( ! window.gapi ) {
-			await loadScript( 'https://apis.google.com/js/platform.js' );
-		}
-
-		return window.gapi;
-	}
-
-	async initializeAuth2( gapi ) {
-		if ( auth2InitDone ) {
-			return;
-		}
-
-		await gapi.auth2.init( {
-			fetch_basic_profile: this.props.fetchBasicProfile,
-			client_id: this.props.clientId,
-			scope: this.props.scope,
-			ux_mode: this.props.uxMode,
-			redirect_uri: this.props.redirectUri,
-		} );
-		auth2InitDone = true;
-	}
-
-	initialize() {
-		if ( this.initialized ) {
-			return this.initialized;
-		}
-
-		this.setState( { error: '' } );
-
-		const { translate } = this.props;
-
-		this.initialized = this.loadDependency()
-			.then( ( gapi ) =>
-				new Promise( ( resolve ) => gapi.load( 'auth2', resolve ) ).then( () => gapi )
-			)
-			.then( ( gapi ) =>
-				this.initializeAuth2( gapi ).then( () => {
-					this.setState( { isDisabled: false } );
-
-					const googleAuth = gapi.auth2.getAuthInstance();
-					const currentUser = googleAuth.currentUser.get();
-
-					// handle social authentication response from a redirect-based oauth2 flow
-					if ( currentUser && this.props.uxMode === 'redirect' ) {
-						this.props.responseHandler( currentUser, false );
-					}
-
-					return gapi; // don't try to return googleAuth here, it's a thenable but not a valid promise
-				} )
-			)
-			.catch( ( error ) => {
-				this.initialized = null;
-
-				if ( 'idpiframe_initialization_failed' === error.error ) {
-					// This error is caused by 3rd party cookies being blocked.
-					this.setState( {
-						error: translate(
-							'Please enable "third-party cookies" to connect your Google account. To learn how to do this, {{learnMoreLink}}click here{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: (
-										<a
-											target="_blank"
-											rel="noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
-										/>
-									),
-								},
-							}
-						),
-					} );
-				}
-
-				return Promise.reject( error );
-			} );
-
-		return this.initialized;
-	}
-
 	async handleAuthorizationCode( { auth_code, redirect_uri } ) {
 		let response;
 
@@ -206,8 +115,9 @@ class GoogleLoginButton extends Component {
 			const { code: error_code } = getErrorFromHTTPError( httpError );
 
 			if ( error_code ) {
-				this.props.recordTracksEvent( 'calypso_login_social_auth_code_exchange_failure', {
+				this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_failure', {
 					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
 					error_code,
 				} );
 			}
@@ -220,6 +130,11 @@ class GoogleLoginButton extends Component {
 
 			return;
 		}
+
+		this.props.recordTracksEvent( 'calypso_social_button_auth_code_exchange_success', {
+			social_account_type: 'google',
+			starting_point: this.props.startingPoint,
+		} );
 
 		const { access_token, id_token } = response.body.data;
 
@@ -248,24 +163,7 @@ class GoogleLoginButton extends Component {
 			return;
 		}
 
-		if ( config.isEnabled( 'migration/sign-in-with-google' ) ) {
-			this.client.requestCode();
-			return;
-		}
-
-		const { responseHandler } = this.props;
-
-		// Options are documented here:
-		// https://developers.google.com/api-client-library/javascript/reference/referencedocs#gapiauth2signinoptions
-		window.gapi.auth2
-			.getAuthInstance()
-			.signIn( { prompt: 'select_account' } )
-			.then( responseHandler, ( error ) => {
-				this.props.recordTracksEvent( 'calypso_login_social_button_failure', {
-					social_account_type: 'google',
-					error_code: error.error,
-				} );
-			} );
+		this.client.requestCode();
 	}
 
 	showError( event ) {
@@ -357,4 +255,4 @@ export default connect(
 		recordTracksEvent,
 		showErrorNotice: errorNotice,
 	}
-)( localize( GoogleLoginButton ) );
+)( localize( GoogleSocialButton ) );

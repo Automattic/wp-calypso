@@ -1,8 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
-import { useCallback } from '@wordpress/element';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
@@ -11,13 +10,13 @@ import useGetExistingMailboxNames from 'calypso/my-sites/email/form/mailboxes/co
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
 import { sanitizeMailboxValue } from 'calypso/my-sites/email/form/mailboxes/components/utilities/sanitize-mailbox-value';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_FIRSTNAME,
 	FIELD_IS_ADMIN,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import {
 	EmailProvider,
@@ -25,6 +24,7 @@ import {
 	MailboxFormFieldBase,
 	MutableFormFieldNames,
 } from 'calypso/my-sites/email/form/mailboxes/types';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -37,8 +37,8 @@ const possibleHiddenFieldNames: HiddenFieldNames[] = [
 	FIELD_NAME,
 	FIELD_FIRSTNAME,
 	FIELD_LASTNAME,
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_IS_ADMIN,
+	FIELD_PASSWORD_RESET_EMAIL,
 ];
 
 const setFieldsVisibilities = (
@@ -80,7 +80,7 @@ interface MailboxListProps {
 }
 
 const NewMailBoxList = (
-	props: MailboxListProps & { children?: JSX.Element }
+	props: MailboxListProps & { children?: ReactNode }
 ): JSX.Element | null => {
 	const translate = useTranslate();
 
@@ -130,15 +130,11 @@ const NewMailBoxList = (
 	}, [ mailboxes ] );
 
 	useEffect( () => {
-		if ( hiddenFieldNames.length < 1 ) {
-			return;
-		}
-
 		setMailboxes( ( mailboxes ) => {
 			setFieldsVisibilities( mailboxes, hiddenFieldNames );
 			return [ ...mailboxes ];
 		} );
-	}, [ hiddenFieldNames ] );
+	}, [ hiddenFieldNames.join( '' ) ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const addMailbox = () => {
 		const newMailboxes = [ ...mailboxes, createNewMailbox() ];

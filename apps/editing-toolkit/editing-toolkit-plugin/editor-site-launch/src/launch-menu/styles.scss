@@ -1,4 +1,4 @@
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
 
 .nux-launch-menu {
 	h4 {
@@ -14,7 +14,7 @@
 .nux-launch-menu__item.components-button.is-link {
 	@include onboarding-medium-text;
 	display: flex;
-	color: var( --studio-gray-30 );
+	color: var(--studio-gray-30);
 	width: 100%;
 	text-align: left;
 	text-decoration: none;
@@ -30,7 +30,7 @@
 
 	svg {
 		margin-right: 10px;
-		color: var( --studio-gray-10 );
+		color: var(--studio-gray-10);
 		// cosmetic alignment
 		position: relative;
 		top: 1px;
@@ -40,7 +40,7 @@
 	// This is only highlighted when sidebar is not fullscreen
 	@include break-medium {
 		&.is-current {
-			background: var( --studio-blue-0 );
+			background: var(--studio-blue-0);
 			color: initial;
 
 			svg {
@@ -51,7 +51,7 @@
 
 	&.is-completed {
 		svg {
-			color: var( --studio-green-40 );
+			color: var(--studio-green-40);
 			top: 0;
 			left: 0;
 		}

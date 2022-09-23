@@ -11,5 +11,7 @@ export { getTitanSubscriptionId } from './get-titan-subscription-id';
 export { getTitanEmailUrl } from './get-titan-urls';
 export { hasTitanMailWithUs } from './has-titan-mail-with-us';
 export { isDomainEligibleForTitanFreeTrial } from './is-domain-eligible-for-titan-free-trial';
+export { isDomainEligibleForTitanIntroductoryOffer } from './is-domain-eligible-for-titan-introductory-offer';
 export { isTitanMonthlyProduct } from './is-titan-monthly-product';
 export { useTitanAppsUrlPrefix } from './hooks/use-titan-apps-url-prefix';
+export { isUserOnTitanFreeTrial } from './is-user-on-titan-free-trial';

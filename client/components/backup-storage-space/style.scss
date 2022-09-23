@@ -2,7 +2,7 @@
 	margin-top: 1rem;
 	padding: 16px 32px;
 	background: #fff;
-	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
 
 	&__loading {
 		@include placeholder( --color-neutral-10 );
@@ -22,20 +22,18 @@
  * .progress-bar__progress: the filled part of the bar
 **/
 
-/* stylelint-disable scales/radii --
-   We need to be able to define a border-radius of 1/2 the parent height
-*/
 .backup-storage-space__progress-bar {
 	height: 24px;
 
 	.progress-bar {
 		height: 100%;
-		border-radius: 12px;
-		background-color: var( --studio-gray-0 );
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
+		background-color: var(--studio-gray-0);
 
 		.progress-bar__progress {
 			// Unless we're 100% full, the left side of the bar
 			// is rounded and the right side is flat
+			/* stylelint-disable-next-line scales/radii */
 			border-radius: 12px 0 0 12px;
 
 			// We always expect some amount of used storage,
@@ -46,24 +44,24 @@
 			// Only allow full width if storage is full;
 			// otherwise, leave a border-radius sized buffer,
 			// so the right side looks okay without a radius
-			max-width: calc( 100% - 12px );
+			max-width: calc(100% - 12px);
 		}
 
 		&.no-warning {
 			.progress-bar__progress {
-				background-color: var( --studio-gray-80 );
+				background-color: var(--studio-gray-80);
 			}
 		}
 
 		&.yellow-warning {
 			.progress-bar__progress {
-				background-color: var( --studio-yellow-20 );
+				background-color: var(--studio-yellow-20);
 			}
 		}
 
 		&.red-warning {
 			.progress-bar__progress {
-				background-color: var( --studio-red-40 );
+				background-color: var(--studio-red-40);
 			}
 		}
 
@@ -72,17 +70,16 @@
 		&.full-warning {
 			.progress-bar__progress {
 				max-width: initial;
-				background-color: var( --studio-red-40 );
-				border-radius: 12px;
+				background-color: var(--studio-red-40);
+				border-radius: 12px; /* stylelint-disable-line scales/radii */
 			}
 		}
 	}
 }
-/* stylelint-enable scales/radii */
 
 .backup-storage-space__divider {
 	margin: 16px -32px;
-	border-bottom: 1px solid var( --color-neutral-10 );
+	border-bottom: 1px solid var(--color-neutral-10);
 }
 
 .backup-storage-space__progress-heading {
@@ -98,7 +95,7 @@
 	white-space: nowrap;
 
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	a {
 		text-decoration: underline;

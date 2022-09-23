@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 /* eslint-disable no-restricted-imports */
-import { useState, useCallback } from '@wordpress/element';
+import { useState, useCallback, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useHistory, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
@@ -17,6 +18,14 @@ export const HelpCenterSearch = () => {
 
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 
+	// Search query can be a query param, if the user searches or clears the search field
+	// we need to keep the query param up-to-date with that
+	useEffect( () => {
+		if ( query ) {
+			history.push( '/?query=' + searchQuery );
+		}
+	}, [ searchQuery, query, history ] );
+
 	const redirectToArticle = useCallback(
 		( event, result ) => {
 			event.preventDefault();
@@ -25,7 +34,18 @@ export const HelpCenterSearch = () => {
 				title: preventWidows( decodeEntities( result.title ) ),
 				query: searchQuery,
 			};
-			history.push( `/post/?${ result.slug }`, searchResult );
+			const params = new URLSearchParams( {
+				link: result.link,
+				postId: result.post_id,
+				query: searchQuery,
+				title: preventWidows( decodeEntities( result.title ) ),
+			} );
+
+			if ( result.blog_id ) {
+				params.set( 'blogId', result.blog_id );
+			}
+
+			history.push( `/post/?${ params }`, searchResult );
 		},
 		[ history, searchQuery ]
 	);
@@ -37,6 +57,7 @@ export const HelpCenterSearch = () => {
 				onSearch={ setSearchQuery }
 				location="help-center"
 				isVisible
+				placeholder={ __( 'Search for help', __i18n_text_domain__ ) }
 			/>
 			{ searchQuery && (
 				<HelpCenterSearchResults

@@ -1,13 +1,15 @@
+import config from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
+import lottie from 'lottie-web/build/player/lottie_light';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useEffect, useRef } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { ProvideExperimentData } from 'calypso/lib/explat';
 import versionCompare from 'calypso/lib/version-compare';
 import {
 	bumpStat,
@@ -106,11 +108,11 @@ export class AppBanner extends Component {
 		return this.isiOS() || this.isAndroid();
 	}
 
-	dismiss = ( experimentIsControl, event ) => {
+	dismiss = ( event ) => {
 		event.preventDefault();
 
 		const { currentSection, dismissedUntil } = this.props;
-		this.props.saveDismissTime( currentSection, dismissedUntil, experimentIsControl );
+		this.props.saveDismissTime( currentSection, dismissedUntil );
 		this.props.dismissAppBanner();
 	};
 
@@ -122,16 +124,22 @@ export class AppBanner extends Component {
 		const { currentRoute, currentSection } = this.props;
 
 		if ( this.isAndroid() ) {
+			const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+			const scheme = displayJetpackAppBranding ? 'jetpack' : 'wordpress';
+			const packageName = displayJetpackAppBranding
+				? 'com.jetpack.android'
+				: 'org.wordpress.android';
+
 			//TODO: update when section deep links are available.
 			switch ( currentSection ) {
 				case GUTENBERG:
-					return 'intent://post/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case NOTES:
-					return 'intent://notifications/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case READER:
-					return 'intent://read/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://read/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case STATS:
-					return 'intent://stats/#Intent;scheme=wordpress;package=org.wordpress.android;end';
+					return `intent://stats/#Intent;scheme=${ scheme };package=${ packageName };end`;
 			}
 		}
 
@@ -142,72 +150,133 @@ export class AppBanner extends Component {
 		return null;
 	}
 
+	getJetpackAppBanner = ( { translate, currentSection, isRtl } ) => {
+		const { title, copy, icon } = getAppBannerData( translate, currentSection, isRtl );
+
+		return (
+			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+				<Card
+					className={ classNames( 'app-banner', 'is-compact', currentSection, 'jetpack' ) }
+					ref={ this.preventNotificationsClose }
+				>
+					<TrackComponentView
+						eventName="calypso_mobile_app_banner_impression"
+						eventProperties={ {
+							page: currentSection,
+						} }
+						statGroup="calypso_mobile_app_banner"
+						statName="impression"
+					/>
+					<BannerIcon icon={ icon } />
+					<div className="app-banner__text-content jetpack">
+						<div className="app-banner__title jetpack">
+							<span> { title } </span>
+						</div>
+						<div className="app-banner__copy jetpack">
+							<span> { copy } </span>
+						</div>
+					</div>
+					<div className="app-banner__buttons jetpack">
+						<Button
+							primary
+							className="app-banner__open-button jetpack"
+							onClick={ this.openApp }
+							href={ this.getDeepLink() }
+						>
+							{ translate( 'Open in the Jetpack app' ) }
+						</Button>
+						<Button className="app-banner__no-thanks-button jetpack" onClick={ this.dismiss }>
+							{ translate( 'Continue in browser' ) }
+						</Button>
+					</div>
+				</Card>
+			</div>
+		);
+	};
+
+	getWordpressAppBanner = ( { translate, currentSection } ) => {
+		const { title, copy } = getAppBannerData( translate, currentSection );
+
+		return (
+			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
+				<Card
+					className={ classNames( 'app-banner', 'is-compact', currentSection ) }
+					ref={ this.preventNotificationsClose }
+				>
+					<TrackComponentView
+						eventName="calypso_mobile_app_banner_impression"
+						eventProperties={ {
+							page: currentSection,
+						} }
+						statGroup="calypso_mobile_app_banner"
+						statName="impression"
+					/>
+					<div className="app-banner__circle is-top-left is-yellow" />
+					<div className="app-banner__circle is-top-right is-blue" />
+					<div className="app-banner__circle is-bottom-right is-red" />
+					<div className="app-banner__text-content">
+						<div className="app-banner__title">
+							<span> { title } </span>
+						</div>
+						<div className="app-banner__copy">
+							<span> { copy } </span>
+						</div>
+					</div>
+					<div className="app-banner__buttons">
+						<Button
+							primary
+							className="app-banner__open-button"
+							onClick={ this.openApp }
+							href={ this.getDeepLink() }
+						>
+							{ translate( 'Open in app' ) }
+						</Button>
+						<Button className="app-banner__no-thanks-button" onClick={ this.dismiss }>
+							{ translate( 'No thanks' ) }
+						</Button>
+					</div>
+				</Card>
+			</div>
+		);
+	};
+
 	render() {
-		const { translate, currentSection } = this.props;
 		if ( ! this.props.shouldDisplayAppBanner || this.state.isDraftPostModalShown ) {
 			return null;
 		}
 
-		const { title, copy } = getAppBannerData( translate, currentSection );
+		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
-		return (
-			<ProvideExperimentData name="calypso_mobileweb_appbanner_frequency_20220128_v2">
-				{ ( isLoading, experimentAssignment ) => {
-					if ( isLoading ) {
-						return null;
-					}
-
-					return (
-						<div
-							className={ classNames( 'app-banner-overlay' ) }
-							ref={ this.preventNotificationsClose }
-						>
-							<Card
-								className={ classNames( 'app-banner', 'is-compact', currentSection ) }
-								ref={ this.preventNotificationsClose }
-							>
-								<TrackComponentView
-									eventName="calypso_mobile_app_banner_impression"
-									eventProperties={ {
-										page: currentSection,
-									} }
-									statGroup="calypso_mobile_app_banner"
-									statName="impression"
-								/>
-								<div className="app-banner__circle is-top-left is-yellow" />
-								<div className="app-banner__circle is-top-right is-blue" />
-								<div className="app-banner__circle is-bottom-right is-red" />
-								<div className="app-banner__text-content">
-									<div className="app-banner__title">
-										<span> { title } </span>
-									</div>
-									<div className="app-banner__copy">
-										<span> { copy } </span>
-									</div>
-								</div>
-								<div className="app-banner__buttons">
-									<Button
-										primary
-										className="app-banner__open-button"
-										onClick={ this.openApp }
-										href={ this.getDeepLink() }
-									>
-										{ translate( 'Open in app' ) }
-									</Button>
-									<Button
-										className="app-banner__no-thanks-button"
-										onClick={ this.dismiss.bind( null, ! experimentAssignment?.variationName ) }
-									>
-										{ translate( 'No thanks' ) }
-									</Button>
-								</div>
-							</Card>
-						</div>
-					);
-				} }
-			</ProvideExperimentData>
-		);
+		return displayJetpackAppBranding
+			? this.getJetpackAppBanner( this.props )
+			: this.getWordpressAppBanner( this.props );
 	}
+}
+
+function BannerIcon( { icon } ) {
+	const iconEl = useRef();
+
+	useEffect( () => {
+		const reducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
+
+		const animation = lottie.loadAnimation( {
+			container: iconEl.current,
+			renderer: 'svg',
+			loop: false,
+			autoplay: ! reducedMotion,
+			path: icon,
+		} );
+
+		if ( reducedMotion ) {
+			animation.addEventListener( 'config_ready', () => {
+				animation.goToAndPlay( animation.totalFrames, true );
+			} );
+		}
+
+		return () => animation.destroy();
+	}, [ icon ] );
+
+	return <div ref={ iconEl } className="app-banner__icon"></div>;
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {
@@ -277,7 +346,7 @@ const mapDispatchToProps = {
 			recordTracksEvent( 'calypso_mobile_app_banner_open', { page: sectionName } ),
 			bumpStat( 'calypso_mobile_app_banner', 'banner_open' )
 		),
-	saveDismissTime: ( sectionName, currentDimissTimes, isControl ) =>
+	saveDismissTime: ( sectionName, currentDimissTimes ) =>
 		withAnalytics(
 			composeAnalytics(
 				recordTracksEvent( 'calypso_mobile_app_banner_dismiss', { page: sectionName } ),
@@ -285,10 +354,14 @@ const mapDispatchToProps = {
 			),
 			savePreference(
 				APP_BANNER_DISMISS_TIMES_PREFERENCE,
-				getNewDismissTimes( sectionName, currentDimissTimes, isControl )
+				getNewDismissTimes( sectionName, currentDimissTimes )
 			)
 		),
 	dismissAppBanner,
 };
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppBanner ) );
+export default compose(
+	connect( mapStateToProps, mapDispatchToProps ),
+	withRtl,
+	localize
+)( AppBanner );

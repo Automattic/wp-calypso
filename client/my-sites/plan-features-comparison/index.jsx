@@ -9,6 +9,7 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
+	FEATURE_CUSTOM_DOMAIN,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -20,6 +21,10 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import {
+	getHighlightedFeatures,
+	getPlanFeatureAccessor,
+} from 'calypso/my-sites/plan-features-comparison/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -31,6 +36,7 @@ import {
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
@@ -38,7 +44,6 @@ import {
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
-
 import './style.scss';
 
 const noop = () => {};
@@ -50,7 +55,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate } = this.props;
+		const { isInSignup, planProperties, translate, isFAQCondensedExperiment } = this.props;
 		const tableClasses = classNames(
 			'plan-features-comparison__table',
 			`has-${ planProperties.length }-cols`
@@ -75,7 +80,9 @@ export class PlanFeaturesComparison extends Component {
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
 									<tr>{ this.renderTopButtons() }</tr>
-									{ this.renderPlanFeatureRows() }
+									{ isFAQCondensedExperiment
+										? this.renderPlanFeatureRowsTest()
+										: this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
@@ -212,6 +219,19 @@ export class PlanFeaturesComparison extends Component {
 		} );
 	}
 
+	renderPlanFeatureRowsTest() {
+		return (
+			<>
+				<tr className="plan-features-comparison__row">
+					{ this.renderPlanUniqueFeatureColumnsTest() }
+				</tr>
+				<tr className="plan-features-comparison__row">
+					{ this.renderPlanCommonFeatureColumnsTest() }
+				</tr>
+			</>
+		);
+	}
+
 	renderAnnualPlansFeatureNotice( feature ) {
 		const { translate, isInSignup } = this.props;
 
@@ -261,7 +281,6 @@ export class PlanFeaturesComparison extends Component {
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
-
 			const classes = classNames(
 				'plan-features-comparison__table-item',
 				getPlanClass( planName ),
@@ -269,7 +288,7 @@ export class PlanFeaturesComparison extends Component {
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-					'is-bold': rowIndex === 0,
+					'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
 				}
 			);
 
@@ -279,6 +298,76 @@ export class PlanFeaturesComparison extends Component {
 				</td>
 			) : (
 				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
+			);
+		} );
+	}
+
+	renderPlanFeatures( features, planName, mapIndex ) {
+		const { selectedFeature } = this.props;
+
+		return map( features, ( currentFeature, featureIndex ) => {
+			const classes = classNames( '', getPlanClass( planName ), {
+				'is-last-feature': featureIndex + 1 === features.length,
+				'is-highlighted':
+					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
+				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
+			} );
+
+			if ( currentFeature.isUniqueFeature ) {
+				return (
+					<li key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
+						{ this.renderFeatureItem( currentFeature, mapIndex ) }
+					</li>
+				);
+			}
+
+			return (
+				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
+					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+				</div>
+			);
+		} );
+	}
+
+	renderPlanUniqueFeatureColumnsTest() {
+		const { planProperties } = this.props;
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { planName } = properties;
+			const features = properties.features.filter( ( feature ) => feature.isUniqueFeature );
+
+			return (
+				<td
+					key={ `${ planName }-unique-${ mapIndex }` }
+					className="plan-features-comparison__table-item plan-features-comparison__unique-features"
+				>
+					<ul>{ this.renderPlanFeatures( features, planName, mapIndex ) }</ul>
+				</td>
+			);
+		} );
+	}
+
+	renderPlanCommonFeatureColumnsTest() {
+		const { planProperties } = this.props;
+		let previousPlanName = 'Free';
+		let currentPlanName = 'Free';
+
+		return map( planProperties, ( properties, mapIndex ) => {
+			const { planName, planObject } = properties;
+			previousPlanName = currentPlanName;
+			currentPlanName = planObject.product_name_short;
+			const features = properties.features.filter( ( feature ) => ! feature.isUniqueFeature );
+			const planFeatureTitle =
+				mapIndex === 0
+					? `Get basic features with ${ currentPlanName }:`
+					: `Everything in ${ previousPlanName }, plus:`;
+
+			return (
+				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-comparison__table-item">
+					<div className="plan-features-comparison__item plan-features-comparison__common-title is-bold">
+						{ planFeatureTitle }
+					</div>
+					{ this.renderPlanFeatures( features, planName, mapIndex ) }
+				</td>
 			);
 		} );
 	}
@@ -327,10 +416,19 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+			isFAQCondensedExperiment,
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
+		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -348,16 +446,21 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
+
 				const features = planConstantObj.getPlanCompareFeatures();
+
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
-				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
-					planFeatures = getPlanFeaturesObject(
-						planConstantObj.getSignupCompareAvailableFeatures()
-					);
+				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
+				if ( featureAccessor ) {
+					planFeatures = getPlanFeaturesObject( featureAccessor() );
+				}
+
+				if ( isFAQCondensedExperiment && planConstantObj.getCondensedExperimentFeatures ) {
+					planFeatures = getPlanFeaturesObject( planConstantObj.getCondensedExperimentFeatures() );
 				}
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
@@ -388,16 +491,29 @@ export default connect(
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				const planUniqueFeatures = planConstantObj.getCondensedExperimentUniqueFeatures?.() || [];
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
 						);
+						const isUniqueFeature = planUniqueFeatures.includes( feature.getSlug() );
 
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+							isUniqueFeature,
+						};
+					} );
+				}
+
+				const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
+				if ( highlightedFeatures.length ) {
+					planFeatures = planFeatures.map( ( feature ) => {
+						return {
+							...feature,
+							isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
 						};
 					} );
 				}
@@ -456,5 +572,4 @@ export default connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeaturesComparison ) );
-
 /* eslint-enable wpcalypso/redux-no-bound-selectors */

@@ -1,0 +1,94 @@
+.site-thumbnail {
+	background-color: #f5f7f7;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+	overflow: hidden;
+	transition: background-color 1s ease-out;
+	border: 1px solid rgb(238, 238, 238);
+	box-sizing: content-box;
+	border-radius: 4px;
+}
+
+.site-thumbnail__image {
+	align-self: start;
+	width: 100%;
+}
+
+.site-thumbnail__image-bg {
+	animation: fadein 1s ease-out;
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 150%;
+	height: 150%;
+	will-change: opacity;
+}
+
+.site-thumbnail__image-blur-small {
+	filter: blur(50px);
+}
+
+.site-thumbnail__image-blur-medium {
+	filter: blur(150px);
+}
+
+.site-thumbnail-visible {
+	animation: fadein 1.5s;
+}
+
+.site-thumbnail-loader::before {
+	content: "";
+	animation-duration: 2.4s;
+	animation-fill-mode: forwards;
+	animation-iteration-count: infinite;
+	animation-name: shimmer;
+	animation-timing-function: linear;
+	background: linear-gradient(to top, transparent 8%, #f0f0f066 18%, transparent 33%);
+	background-size: 100% 1200px;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	z-index: 1;
+	display: inline-table;
+}
+
+.site-thumbnail-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+
+@-webkit-keyframes shimmer {
+	0% {
+		background-position: 0 -100%;
+	}
+	100% {
+		background-position: 0 100%;
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: 0 -1200px;
+	}
+	100% {
+		background-position: 0 1200px;
+	}
+}
+
+@keyframes fadein {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

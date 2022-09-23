@@ -10,7 +10,6 @@ import store from 'store';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
-import { bumpStat } from 'calypso/lib/analytics/mc';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { tracksEvents } from 'calypso/lib/analytics/tracks';
 import Logger from 'calypso/lib/catch-js-errors';
@@ -341,21 +340,6 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	} );
 
 	page( '*', function ( context, next ) {
-		const path = context.pathname;
-
-		// Bypass this global handler for legacy routes
-		// to avoid bumping stats and changing focus to the content
-		if ( isLegacyRoute( path ) ) {
-			return next();
-		}
-
-		// Bump general stat tracking overall Newdash usage
-		bumpStat( { newdash_pageviews: 'route' } );
-
-		next();
-	} );
-
-	page( '*', function ( context, next ) {
 		if ( '/me/account' !== context.path && currentUser.phone_account ) {
 			page( '/me/account' );
 		}
@@ -383,7 +367,7 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 					// pricing page is outside of Calypso, needs a full page load
 					window.location = isJetpackCloud()
 						? JETPACK_PRICING_PAGE
-						: 'https://wordpress.com/pricing';
+						: 'https://wordpress.com/pricing/';
 				}
 				return;
 			}

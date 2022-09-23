@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -8,10 +8,7 @@ import IssueLicenseForm from 'calypso/jetpack-cloud/sections/partner-portal/issu
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import { AssignLicenceProps } from '../../types';
 
-export default function IssueLicense( {
-	selectedSite,
-	suggestedProduct,
-}: AssignLicenceProps ): ReactElement {
+export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
 
 	useEffect( () => {

@@ -1,6 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactChild, ReactElement, useCallback, useState } from 'react';
+import { ReactChild, useCallback, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -30,6 +30,8 @@ interface Props {
 	onSubmit: ( payload: PartnerDetailsPayload ) => void;
 	initialValues?: {
 		name?: string;
+		contactPerson?: string;
+		companyWebsite?: string;
 		city?: string;
 		line1?: string;
 		line2?: string;
@@ -46,7 +48,7 @@ export default function CompanyDetailsForm( {
 	initialValues = {},
 	onSubmit,
 	submitLabel,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
 	const showCountryFields = countryOptions.length > 0;
@@ -58,6 +60,8 @@ export default function CompanyDetailsForm( {
 	const [ line2, setLine2 ] = useState( initialValues.line2 ?? '' );
 	const [ postalCode, setPostalCode ] = useState( initialValues.postalCode ?? '' );
 	const [ addressState, setAddressState ] = useState( initialValues.state ?? '' );
+	const [ contactPerson, setContactPerson ] = useState( initialValues.contactPerson ?? '' );
+	const [ companyWebsite, setCompanyWebsite ] = useState( initialValues.companyWebsite ?? '' );
 
 	const country = getCountry( countryValue, countryOptions );
 	const stateOptions = stateOptionsMap.hasOwnProperty( country )
@@ -65,6 +69,8 @@ export default function CompanyDetailsForm( {
 		: false;
 	const payload: PartnerDetailsPayload = {
 		name,
+		contactPerson,
+		companyWebsite,
 		city,
 		line1,
 		line2,
@@ -102,6 +108,30 @@ export default function CompanyDetailsForm( {
 				</FormFieldset>
 
 				<FormFieldset>
+					<FormLabel htmlFor="contactPerson">
+						{ translate( 'Contact first and last name' ) }
+					</FormLabel>
+					<FormTextInput
+						id="contactPerson"
+						name="contactPerson"
+						value={ contactPerson }
+						onChange={ ( event: any ) => setContactPerson( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
+					<FormLabel htmlFor="companyWebsite">{ translate( 'Company website' ) }</FormLabel>
+					<FormTextInput
+						id="companyWebsite"
+						name="companyWebsite"
+						value={ companyWebsite }
+						onChange={ ( event: any ) => setCompanyWebsite( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				<FormFieldset>
 					<FormLabel>{ translate( 'Country' ) }</FormLabel>
 					{ showCountryFields && (
 						<SelectDropdown
@@ -120,21 +150,6 @@ export default function CompanyDetailsForm( {
 
 					{ ! showCountryFields && <TextPlaceholder /> }
 				</FormFieldset>
-
-				{ showCountryFields && stateOptions && (
-					<FormFieldset>
-						<FormLabel>{ translate( 'State' ) }</FormLabel>
-						<SelectDropdown
-							className="company-details-form__dropdown"
-							initialSelected={ addressState }
-							options={ stateOptions }
-							onSelect={ ( option: any ) => {
-								setAddressState( option.value );
-							} }
-							disabled={ isLoading }
-						/>
-					</FormFieldset>
-				) }
 
 				<FormFieldset className="company-details-form__business-address">
 					<FormLabel>{ translate( 'Business address' ) }</FormLabel>
@@ -157,23 +172,38 @@ export default function CompanyDetailsForm( {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
-					<FormTextInput
-						id="postalCode"
-						name="postalCode"
-						value={ postalCode }
-						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
-						disabled={ isLoading }
-					/>
-				</FormFieldset>
-
-				<FormFieldset>
 					<FormLabel htmlFor="city">{ translate( 'City' ) }</FormLabel>
 					<FormTextInput
 						id="city"
 						name="city"
 						value={ city }
 						onChange={ ( event: any ) => setCity( event.target.value ) }
+						disabled={ isLoading }
+					/>
+				</FormFieldset>
+
+				{ showCountryFields && stateOptions && (
+					<FormFieldset>
+						<FormLabel>{ translate( 'State' ) }</FormLabel>
+						<SelectDropdown
+							className="company-details-form__dropdown"
+							initialSelected={ addressState }
+							options={ stateOptions }
+							onSelect={ ( option: any ) => {
+								setAddressState( option.value );
+							} }
+							disabled={ isLoading }
+						/>
+					</FormFieldset>
+				) }
+
+				<FormFieldset>
+					<FormLabel htmlFor="postalCode">{ translate( 'Postal code' ) }</FormLabel>
+					<FormTextInput
+						id="postalCode"
+						name="postalCode"
+						value={ postalCode }
+						onChange={ ( event: any ) => setPostalCode( event.target.value ) }
 						disabled={ isLoading }
 					/>
 				</FormFieldset>

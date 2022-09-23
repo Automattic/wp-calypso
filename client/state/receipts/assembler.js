@@ -18,6 +18,8 @@ import { flatten } from 'lodash';
  * @property {string} [registrar_support_url]
  * @property {boolean} [is_email_verified]
  * @property {boolean} [is_root_domain_with_us]
+ * @property {boolean} [is_renewal]
+ * @property {boolean} [will_auto_renew]
  */
 
 /**
@@ -45,6 +47,8 @@ import { flatten } from 'lodash';
  * @property {string} registrarSupportUrl
  * @property {boolean} isEmailVerified
  * @property {boolean} isRootDomainWithUs
+ * @property {boolean} isRenewal
+ * @property {boolean} willAutoRenew
  */
 
 /**
@@ -62,6 +66,9 @@ import { flatten } from 'lodash';
  * @type {object}
  * @property {string} receipt_id
  * @property {string} display_price
+ * @property {number} price_float
+ * @property {number} price_integer
+ * @property {string} currency
  * @property {RawPurchases|string[]} purchases - will only be an array if it is empty
  * @property {RawFailedPurchases|string[]} failed_purchases - will only be an array if it is empty
  */
@@ -81,6 +88,9 @@ import { flatten } from 'lodash';
  * @type {object}
  * @property {string} receiptId
  * @property {string} displayPrice
+ * @property {string} currency
+ * @property {number} priceFloat
+ * @property {number} priceInteger
  * @property {Purchase[]} purchases
  * @property {FailedPurchase[]} failedPurchases
  */
@@ -95,6 +105,9 @@ export function createReceiptObject( data ) {
 	return {
 		receiptId: data.receipt_id,
 		displayPrice: data.display_price,
+		currency: data.currency,
+		priceInteger: data.price_integer,
+		priceFloat: data.price_float,
 		purchases: flattenPurchases( data.purchases || {} ).map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
@@ -110,6 +123,8 @@ export function createReceiptObject( data ) {
 				registrarSupportUrl: purchase.registrar_support_url ?? '',
 				isEmailVerified: Boolean( purchase.is_email_verified ),
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
+				isRenewal: Boolean( purchase.is_renewal ),
+				willAutoRenew: Boolean( purchase.will_auto_renew ),
 			};
 		} ),
 		failedPurchases: flattenFailedPurchases( data.failed_purchases || {} ).map( ( purchase ) => {

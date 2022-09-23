@@ -1,3 +1,4 @@
+import { PriceTierEntry } from './get-price-tier-for-units';
 import type {
 	GROUP_JETPACK,
 	GROUP_WPCOM,
@@ -12,6 +13,7 @@ import type {
 	JETPACK_PRODUCT_CATEGORIES,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
+import type { ReactElement } from 'react';
 
 export type Feature = string;
 
@@ -33,6 +35,12 @@ export interface WPComPlan extends Plan {
 	getSignupFeatures?: () => Feature[];
 	getBlogSignupFeatures?: () => Feature[];
 	getPortfolioSignupFeatures?: () => Feature[];
+	getNewsletterDescription?: () => string;
+	getNewsletterSignupFeatures?: () => Feature[];
+	getNewsletterHighlightedFeatures?: () => Feature[];
+	getLinkInBioDescription?: () => string;
+	getLinkInBioSignupFeatures?: () => Feature[];
+	getLinkInBioHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
@@ -53,11 +61,33 @@ export type JetpackPurchasableItemSlug =
 	| JetpackProductSlug
 	| Exclude< JetpackPlanSlug, typeof PLAN_JETPACK_FREE >;
 
+export type SelectorProductFeaturesItem = {
+	slug: string;
+	icon?:
+		| string
+		| {
+				icon: string;
+				component?: ReactElement;
+		  };
+	text: TranslateResult;
+	description?: TranslateResult;
+	subitems?: SelectorProductFeaturesItem[];
+	isHighlighted?: boolean;
+	isDifferentiator?: boolean;
+};
+
+export interface JetpackTag {
+	tag: string;
+	label: TranslateResult;
+}
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
 	getPlanCardFeatures?: () => Feature[];
 	getPathSlug: () => string;
+	getWhatIsIncluded: () => Array< TranslateResult >;
+	getBenefits: () => Array< TranslateResult >;
+	getRecommendedFor: () => Array< JetpackTag >;
 }
 
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
@@ -76,6 +106,7 @@ export interface Product {
 	type: ProductSlug;
 	term: typeof TERMS_LIST[ number ];
 	bill_period: typeof PERIOD_LIST[ number ];
+	price_tier_list?: Array< PriceTierEntry >;
 	categories: JetpackProductCategory[];
 	getFeatures?: () => Feature[];
 	getProductId: () => number;
@@ -92,12 +123,19 @@ export type Plan = BillingTerm & {
 	type: string;
 	availableFor?: ( plan: PlanSlug ) => boolean;
 	getSignupCompareAvailableFeatures?: () => string[];
+	getCondensedExperimentFeatures?: () => string[];
+	getCondensedExperimentUniqueFeatures?: () => string[];
 	getProductId: () => number;
 	getPathSlug?: () => string;
 	getStoreSlug: () => PlanSlug;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getShortDescription?: () => TranslateResult;
+	getFeaturedDescription?: () => TranslateResult;
+	getLightboxDescription?: () => TranslateResult;
+	getWhatIsIncluded?: () => Array< TranslateResult >;
+	getBenefits?: () => Array< TranslateResult >;
+	getRecommendedFor?: () => Array< JetpackTag >;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];
 

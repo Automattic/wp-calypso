@@ -20,7 +20,7 @@ export default function ProfileLinks( wpcom ) {
 /**
  * Get profile links of the current user.
  *
- * *Example:*
+ * Example:
  *   // Get profile links of the current user
  *    wpcom
  *    .me()
@@ -44,7 +44,7 @@ ProfileLinks.prototype.mine = ProfileLinks.prototype.get;
 /**
  * Add a profile link to current user.
  *
- * *Example:*
+ * Example:
  *    // Add profile link to current user
  *    wpcom
  *    .me()
@@ -84,7 +84,7 @@ ProfileLinks.prototype.add = function ( links, query, fn ) {
 /**
  * Remove your ProfileLinks from a Post.
  *
- * *Example:*
+ * Example:
  *    // Remove profile link from current user
  *    wpcom
  *    .me()

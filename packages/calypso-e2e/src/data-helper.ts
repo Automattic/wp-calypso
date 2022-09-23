@@ -214,6 +214,9 @@ export function getTosUploadDestination(): string {
 /**
  * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
  *
+ * Examples:
+ * 	e2eflowtestingpaid1600000@inboxID.mailosaur.net
+ *
  * @param param0 Keyed parameter object.
  * @param {string} param0.inboxId Existing inbox ID on mailosaur.
  * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
@@ -226,8 +229,8 @@ export function getTestEmailAddress( {
 	inboxId: string;
 	prefix: string;
 } ): string {
-	const domain = 'mailosaur.io';
-	return `${ prefix }.${ inboxId }@${ domain }`;
+	const domain = 'mailosaur.net';
+	return `${ prefix }@${ inboxId }.${ domain }`;
 }
 
 /**

@@ -301,7 +301,7 @@ class CancelPurchaseButton extends Component {
 		}
 
 		const disableButtons = this.state.disabled || this.props.disabled;
-		const { isJetpack, activeSubscriptions } = this.props;
+		const { isJetpack, purchaseListUrl, activeSubscriptions } = this.props;
 		const closeDialogAndProceed = () => {
 			this.closeDialog();
 			return onClick();
@@ -339,6 +339,7 @@ class CancelPurchaseButton extends Component {
 					<CancelJetpackForm
 						disableButtons={ disableButtons }
 						purchase={ purchase }
+						purchaseListUrl={ purchaseListUrl }
 						isVisible={ this.state.showDialog }
 						onClose={ this.closeDialog }
 						onClickFinalConfirm={ this.submitCancelAndRefundPurchase }

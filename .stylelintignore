@@ -1,0 +1,9 @@
+# Any build output should be added to this file.
+.cache
+/build
+/public
+node_modules
+vendor
+dist
+packages/calypso-color-schemes/css
+packages/calypso-color-schemes/src/__color-studio

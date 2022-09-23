@@ -24,7 +24,7 @@
 	font-weight: 600;
 	margin: 32px 0 0.5rem;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 16px;
 	}
 }
@@ -53,7 +53,7 @@
 /* Jetpack.com-only changes */
 .is_jetpackcom {
 	.backup-delta {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-right: 0;
 			margin-left: 0;
 		}

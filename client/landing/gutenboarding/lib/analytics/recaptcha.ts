@@ -97,7 +97,6 @@ export async function recordGoogleRecaptchaAction( clientId: number, action: str
  *
  * @param elementId - a DOM id in which to render the reCAPTCHA client
  * @param siteKey - reCAPTCHA site key
- *
  * @returns either the reCAPTCHA token and clientId, or null if the function fails
  */
 export async function initGoogleRecaptcha(

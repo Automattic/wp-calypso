@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/typography/styles/variables';
-@import '../variables.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/typography/styles/variables";
+@import "../variables.scss";
 
 .plans-accordion__actions {
 	text-align: center;
@@ -23,13 +23,13 @@
 }
 
 .plans-accordion__recommend-hint {
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 	font-size: $font-body-small;
 	text-align: right;
 	margin-bottom: 16px;
 
 	svg {
-		fill: var( --studio-yellow-30 );
+		fill: var(--studio-yellow-30);
 		margin-right: $grid-unit-10;
 		position: relative;
 		top: 2px;

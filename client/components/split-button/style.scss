@@ -1,6 +1,7 @@
 .split-button {
 	// So both buttons drop together
 	display: inline-block;
+	--white-separator-color: rgba(255, 255, 255, 0.3);
 }
 .split-button__main {
 	border-top-right-radius: 0;
@@ -15,10 +16,18 @@
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
+.button.split-button__toggle--white-separator,
+.split-button__toggle--white-separator {
+	&,
+	&:hover,
+	&:focus {
+		border-left-color: var(--white-separator-color);
+	}
+}
 .gridicon.split-button__toggle-icon {
-	transition: transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 	.split-button.is-menu-visible & {
-		transform: rotate( 180deg );
+		transform: rotate(180deg);
 	}
 }

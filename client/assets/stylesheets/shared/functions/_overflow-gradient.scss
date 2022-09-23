@@ -16,7 +16,7 @@
 @function overflow-gradient( $color, $stop: 90%, $direction: to right ) {
 	@return linear-gradient(
 		$direction,
-		#{'rgba('} $color #{', 0 )'},
-		#{'rgba('} $color #{', 1 )'} $stop
+		transparent,
+		$color $stop
 	);
 }

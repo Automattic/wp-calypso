@@ -1,5 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import { isMobile } from '@automattic/viewport';
+import { withDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -14,6 +16,8 @@ import isHappychatConnectionUninitialized from 'calypso/state/happychat/selector
 import { openChat } from 'calypso/state/happychat/ui/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
 import './button.scss';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 const noop = () => {};
 
@@ -32,6 +36,7 @@ export class HappychatButton extends Component {
 		onClick: PropTypes.func,
 		openChat: PropTypes.func,
 		translate: PropTypes.func,
+		openHelpCenter: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -47,10 +52,13 @@ export class HappychatButton extends Component {
 		isConnectionUninitialized: false,
 		onClick: noop,
 		openChat: noop,
+		openHelpCenter: false,
 	};
 
 	onClick = ( event ) => {
-		if ( this.props.allowMobileRedirect && isMobile() ) {
+		if ( this.props.openHelpCenter ) {
+			this.props.setHelpCenterVisible( true );
+		} else if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
 			// page component instead of the sidebar.
 			page( '/me/chat' );
@@ -105,16 +113,21 @@ export class HappychatButton extends Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		hasUnread: hasUnreadMessages( state ),
-		getAuth: getHappychatAuth( state ),
-		isChatAvailable: isHappychatAvailable( state ),
-		isChatActive: hasActiveHappychatSession( state ),
-		isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
-	} ),
-	{
-		openChat,
-		initConnection,
-	}
-)( localize( HappychatButton ) );
+export default withDispatch( ( dataStoresDispatch ) => {
+	return { dataStoresDispatch };
+} )(
+	connect(
+		( state, ownProps ) => ( {
+			hasUnread: hasUnreadMessages( state ),
+			getAuth: getHappychatAuth( state ),
+			isChatAvailable: isHappychatAvailable( state ),
+			isChatActive: hasActiveHappychatSession( state ),
+			isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
+			setHelpCenterVisible: ownProps.dataStoresDispatch( HELP_CENTER_STORE ).setShowHelpCenter,
+		} ),
+		{
+			openChat,
+			initConnection,
+		}
+	)( localize( HappychatButton ) )
+);

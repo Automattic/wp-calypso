@@ -12,6 +12,7 @@ interface productButtonLabelProps {
 	isSuperseded: boolean;
 	isDeprecated: boolean;
 	currentPlan?: SitePlan | null;
+	fallbackLabel?: TranslateResult;
 }
 
 export default function productButtonLabel( {
@@ -21,6 +22,7 @@ export default function productButtonLabel( {
 	isDeprecated,
 	isSuperseded,
 	currentPlan,
+	fallbackLabel,
 }: productButtonLabelProps ): TranslateResult {
 	if ( isDeprecated ) {
 		return translate( 'No longer available' );
@@ -38,6 +40,10 @@ export default function productButtonLabel( {
 		return product.type !== ITEM_TYPE_PRODUCT
 			? translate( 'Manage Plan' )
 			: translate( 'Manage Subscription' );
+	}
+
+	if ( fallbackLabel ) {
+		return fallbackLabel;
 	}
 
 	const { buttonLabel, displayName } = product;

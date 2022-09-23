@@ -7,12 +7,12 @@
 
 	thead .table-heading,
 	thead .table-item {
-		border-bottom: 1px solid var( --color-neutral-10 );
+		border-bottom: 1px solid var(--color-neutral-10);
 	}
 
 	tbody .table-heading,
 	tbody .table-item {
-		border-bottom: 1px solid var( --color-neutral-0 );
+		border-bottom: 1px solid var(--color-neutral-0);
 	}
 
 	// Remove the border from the last item in the body of the table.
@@ -42,14 +42,10 @@
 			}
 
 			&:hover {
-				background: var( --color-neutral-0 );
+				background: var(--color-neutral-0);
 
 				.table-item__cell-title::after {
-					background-image: linear-gradient(
-						to right,
-						rgba( 255, 255, 255, 0 ) 0%,
-						var( --color-neutral-0 ) 90%
-					);
+					background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, var(--color-neutral-0) 90%);
 				}
 			}
 		}
@@ -87,13 +83,13 @@
 			overflow: hidden;
 
 			&::after {
-				background-image: linear-gradient( to right, rgba( var( --color-surface-rgb ), 0 ) 0%, var( --color-surface ) 90% );
+				background-image: linear-gradient(to right, rgba(var(--color-surface-rgb), 0) 0%, var(--color-surface) 90%);
 				position: absolute;
 				z-index: 1;
 				right: 0;
 				top: 0;
 				bottom: 0;
-				content: '';
+				content: "";
 				width: 48px;
 			}
 		}
@@ -105,22 +101,17 @@
 			overflow: hidden;
 
 			&::after {
-				content: '';
+				content: "";
 				display: block;
 				width: 24px;
 				height: 100%;
 				position: absolute;
 				right: -12px;
 				top: 0;
-				background: radial-gradient(
-					ellipse at center,
-					rgba( var( --color-neutral-70-rgb ), 0.125 ) 0%,
-					rgba( var( --color-surface-rgb ), 0 ) 75%,
-					rgba( var( --color-surface-rgb ), 0 ) 90%
-				);
+				background: radial-gradient(ellipse at center, rgba(var(--color-neutral-70-rgb), 0.125) 0%, rgba(var(--color-surface-rgb), 0) 75%, rgba(var(--color-surface-rgb), 0) 90%);
 			}
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				&::after {
 					display: none;
 				}
@@ -142,7 +133,7 @@
 
 .table-row {
 	&:hover {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 
 		&.is-header {
 			background-color: initial;
@@ -150,7 +141,7 @@
 	}
 
 	&.is-header {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-weight: 600;
 	}
 
@@ -159,7 +150,7 @@
 
 		&:focus,
 		&:active {
-			box-shadow: inset 2px 0 0 var( --color-primary );
+			box-shadow: inset 2px 0 0 var(--color-primary);
 		}
 	}
 }

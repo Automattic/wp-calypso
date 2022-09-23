@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import page from 'page';
+import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
 import MagicLogin from './magic-login';
@@ -14,7 +15,30 @@ const enhanceContextWithLogin = ( context ) => {
 		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
+		isServerSide,
 	} = context;
+
+	// Process a social login handoff from /start/user.
+	if ( query?.email_address && query?.service && query?.access_token && query?.id_token ) {
+		context.store.dispatch( {
+			type: SOCIAL_HANDOFF_CONNECT_ACCOUNT,
+			email: query.email_address,
+			authInfo: {
+				service: query.service,
+				access_token: query.access_token,
+				id_token: query.id_token,
+			},
+		} );
+
+		// Remove state-related data from URL but leave 'email_address'.
+		if ( ! isServerSide ) {
+			const params = new URLSearchParams( new URL( window.location.href ).search );
+			params.delete( 'service' );
+			params.delete( 'access_token' );
+			params.delete( 'id_token' );
+			page.redirect( window.location.pathname + '?' + params.toString() );
+		}
+	}
 
 	const previousHash = context.state || {};
 	const { client_id, user_email, user_name, id_token, state } = previousHash;

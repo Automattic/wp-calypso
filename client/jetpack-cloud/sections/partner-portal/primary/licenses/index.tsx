@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -34,7 +33,7 @@ export default function Licenses( {
 	currentPage,
 	sortDirection,
 	sortField,
-}: Props ): ReactElement {
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isAgencyUser = useSelector( showAgencyDashboard );

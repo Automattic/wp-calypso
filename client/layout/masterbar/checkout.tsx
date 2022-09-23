@@ -1,9 +1,12 @@
-import config from '@automattic/calypso-config';
 import { checkoutTheme, CheckoutModal } from '@automattic/composite-checkout';
-import { useHasSeenWhatsNewModalQuery } from '@automattic/data-stores';
-import HelpCenter, { HelpIcon } from '@automattic/help-center';
+import { useHasSeenWhatsNewModalQuery, HelpCenter } from '@automattic/data-stores';
+import { HelpIcon } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
+import {
+	useSelect as useDataStoreSelect,
+	useDispatch as useDataStoreDispatch,
+} from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -18,12 +21,15 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Item from './item';
 import Masterbar from './masterbar';
 
+const HELP_CENTER_STORE = HelpCenter.register();
+
 interface Props {
 	title: string;
 	isJetpackNotAtomic?: boolean;
 	previousPath?: string;
 	siteSlug?: string;
 	isLeavingAllowed?: boolean;
+	loadHelpCenterIcon?: boolean;
 }
 
 const CheckoutMasterbar = ( {
@@ -32,11 +38,11 @@ const CheckoutMasterbar = ( {
 	previousPath,
 	siteSlug,
 	isLeavingAllowed,
+	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
 	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 	const siteId = useSelector( getSelectedSiteId );
-
 	const { isLoading, data } = useHasSeenWhatsNewModalQuery( siteId );
 
 	const isJetpackCheckout = window.location.pathname.startsWith( '/checkout/jetpack' );
@@ -44,7 +50,11 @@ const CheckoutMasterbar = ( {
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductsInCart } = useShoppingCart( cartKey );
 	const [ isModalVisible, setIsModalVisible ] = useState( false );
-	const [ isHelpCenterVisible, setIsHelpCenterVisible ] = useState( false );
+	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+
+	const isShowingHelpCenter = useDataStoreSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).isHelpCenterShown()
+	);
 
 	const closeAndLeave = () =>
 		leaveCheckout( {
@@ -73,13 +83,13 @@ const CheckoutMasterbar = ( {
 		closeAndLeave();
 	};
 
-	const isHelpCenterEnabled = config.isEnabled( 'checkout/help-center' );
-
 	const newItems = ! isLoading && ! data?.has_seen_whats_new_modal;
 	const showCloseButton = isLeavingAllowed && ! isJetpack;
 
 	return (
-		<Masterbar>
+		<Masterbar
+			className={ classnames( 'masterbar--is-checkout', { 'masterbar--is-jetpack': isJetpack } ) }
+		>
 			<div className="masterbar__secure-checkout">
 				{ showCloseButton && (
 					<Item
@@ -94,15 +104,17 @@ const CheckoutMasterbar = ( {
 				{ isJetpack && <JetpackLogo className="masterbar__jetpack-wordmark" full /> }
 				<span className="masterbar__secure-checkout-text">{ translate( 'Secure checkout' ) }</span>
 			</div>
-			<Item className="masterbar__item-title">{ title }</Item>
-			{ isHelpCenterEnabled && (
+			{ title && <Item className="masterbar__item-title">{ title }</Item> }
+			{ loadHelpCenterIcon && (
 				<Item
-					onClick={ () => setIsHelpCenterVisible( ! isHelpCenterVisible ) }
+					onClick={ () => setShowHelpCenter( ! isShowingHelpCenter ) }
 					className={ classnames( 'masterbar__item-help', {
-						'is-active': isHelpCenterVisible,
+						'is-active': isShowingHelpCenter,
 					} ) }
 					icon={ <HelpIcon newItems={ newItems } /> }
-				/>
+				>
+					{ translate( 'Help' ) }
+				</Item>
 			) }
 			<CheckoutModal
 				title={ modalTitleText }
@@ -114,9 +126,6 @@ const CheckoutMasterbar = ( {
 				secondaryButtonCTA={ modalSecondaryText }
 				secondaryAction={ clearCartAndLeave }
 			/>
-			{ isHelpCenterEnabled && isHelpCenterVisible && (
-				<HelpCenter handleClose={ () => setIsHelpCenterVisible( false ) } />
-			) }
 		</Masterbar>
 	);
 };

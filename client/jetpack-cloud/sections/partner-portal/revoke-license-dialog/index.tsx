@@ -1,6 +1,6 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -23,7 +23,7 @@ export default function RevokeLicenseDialog( {
 	siteUrl,
 	onClose,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	let close = noop;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -77,7 +77,7 @@ export default function RevokeLicenseDialog( {
 				&nbsp;
 				<a
 					className="revoke-license-dialog__learn-more"
-					href="https://github.com/Automattic/jetpack-licensing-api/tree/master/integration-docs#glossary"
+					href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/"
 					target="_blank"
 					rel="noreferrer noopener"
 				>

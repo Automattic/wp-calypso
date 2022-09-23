@@ -7,13 +7,13 @@ h6,
 .editor-post-title .editor-post-title__block .editor-post-title__input,
 h1.entry-title.entry-title,
 .entry-title.entry-title {
-	font-family: var( --font-headings, var( --font-headings-default ) );
+	font-family: var(--font-headings, var(--font-headings-default));
 }
 
 body,
 p,
 li {
-	font-family: var( --font-base, var( --font-base-default ) );
+	font-family: var(--font-base, var(--font-base-default));
 }
 
 /*

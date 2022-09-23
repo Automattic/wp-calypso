@@ -1,10 +1,9 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { translate, useTranslate } from 'i18n-calypso';
 import { MouseEvent, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import poweredByTitanLogo from 'calypso/assets/images/email-providers/titan/powered-by-titan-caps.svg';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import { getTitanProductName } from 'calypso/lib/titan';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,16 +16,16 @@ import {
 	HiddenFieldNames,
 	NewMailBoxList,
 } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_NAME,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
-import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
 
@@ -66,47 +65,7 @@ const professionalEmailCardInformation: ProviderCardProps = {
 	},
 };
 
-const PasswordResetTipField = ( {
-	userEmail,
-	showAlternateEmailField,
-	hiddenFieldNames,
-}: {
-	hiddenFieldNames: string[];
-	showAlternateEmailField: ( event: MouseEvent< HTMLElement > ) => void;
-	userEmail: string;
-} ) => {
-	const translate = useTranslate();
-
-	if ( ! hiddenFieldNames.includes( FIELD_ALTERNATIVE_EMAIL ) ) {
-		return null;
-	}
-
-	return (
-		<FormSettingExplanation>
-			{ translate(
-				'Your password reset email is {{strong}}%(userEmail)s{{/strong}}. {{a}}Change it{{/a}}.',
-				{
-					args: {
-						userEmail,
-					},
-					components: {
-						strong: <strong />,
-						a: (
-							<Button
-								href="#"
-								className="professional-email-card__change-it-button"
-								onClick={ showAlternateEmailField }
-								plain
-							/>
-						),
-					},
-				}
-			) }
-		</FormSettingExplanation>
-	);
-};
-
-const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactElement => {
+const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const {
 		detailsExpanded,
 		intervalLength,
@@ -135,12 +94,12 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 
 	const [ hiddenFieldNames, setHiddenFieldNames ] = useState< HiddenFieldNames[] >( [
 		FIELD_NAME,
-		FIELD_ALTERNATIVE_EMAIL,
+		FIELD_PASSWORD_RESET_EMAIL,
 	] );
 
 	const userEmail = useSelector( getCurrentUserEmail );
 
-	const showAlternateEmailField = ( event: MouseEvent< HTMLElement > ) => {
+	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
 		event.preventDefault();
 		setHiddenFieldNames( [ FIELD_NAME ] );
 	};
@@ -168,7 +127,7 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 		<NewMailBoxList
 			areButtonsBusy={ addingToCart }
 			hiddenFieldNames={ hiddenFieldNames }
-			initialFieldValues={ { [ FIELD_ALTERNATIVE_EMAIL ]: userEmail } }
+			initialFieldValues={ { [ FIELD_PASSWORD_RESET_EMAIL ]: userEmail } }
 			isInitialMailboxPurchase
 			onSubmit={ handleSubmit }
 			provider={ provider }
@@ -177,11 +136,9 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 			submitActionText={ translate( 'Purchase' ) }
 			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
 		>
-			<PasswordResetTipField
-				hiddenFieldNames={ hiddenFieldNames }
-				showAlternateEmailField={ showAlternateEmailField }
-				userEmail={ userEmail }
-			/>
+			{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
+				<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
+			) }
 		</NewMailBoxList>
 	);
 

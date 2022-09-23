@@ -7,7 +7,7 @@ import settingsImage from 'calypso/assets/images/marketplace/settings.svg';
 import shoppingCartImage from 'calypso/assets/images/marketplace/shopping-cart.svg';
 import submissionSuccessImage from 'calypso/assets/images/marketplace/submission-success.png';
 import theme from 'calypso/my-sites/marketplace/theme';
-import { getCurrentUserName } from 'calypso/state/current-user/selectors';
+import { getCurrentUserDisplayName } from 'calypso/state/current-user/selectors';
 import { getCurrentQueryArguments } from 'calypso/state/selectors/get-current-query-arguments';
 import MasterbarLogo from '../../components/masterbar-logo';
 import './style.scss';
@@ -15,7 +15,7 @@ import './style.scss';
 const SignupSuccess = () => {
 	const translate = useTranslate();
 	const currentQuery = useSelector( getCurrentQueryArguments );
-	const userName = useSelector( getCurrentUserName );
+	const userDisplayName = useSelector( getCurrentUserDisplayName );
 
 	return (
 		<ThemeProvider theme={ theme }>
@@ -31,7 +31,7 @@ const SignupSuccess = () => {
 			<div className="signup-success">
 				{ currentQuery?.returning !== 'true' ? (
 					<div className="signup-success__header">
-						<img src={ submissionSuccessImage } alt="Submission success" />
+						<img src={ submissionSuccessImage } alt="" />
 						<h1 className="signup-success__header-title wp-brand-font">
 							{ translate( 'We’ll be in touch' ) }
 						</h1>
@@ -43,11 +43,11 @@ const SignupSuccess = () => {
 					</div>
 				) : (
 					<div className="signup-success__header">
-						<img src={ submissionSuccessImage } alt="Submission success" />
+						<img src={ submissionSuccessImage } alt="" />
 						<h1 className="signup-success__header-title wp-brand-font">
-							{ translate( 'Hello, %(username)s', {
+							{ translate( 'Hello, %(userDisplayName)s', {
 								args: {
-									username: userName,
+									userDisplayName,
 								},
 							} ) }
 						</h1>

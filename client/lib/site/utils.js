@@ -122,3 +122,25 @@ export function getUnmappedUrl( site ) {
 
 	return site.options.main_network_site || site.options.unmapped_url;
 }
+
+/**
+ * Returns a filtered array of WordPress.com site IDs where a Jetpack site
+ * exists in the set of sites with the same URL.
+ *
+ * @param {Array} siteList Array of site objects
+ * @returns {number[]} Array of site IDs with URL collisions
+ */
+export function getJetpackSiteCollisions( siteList ) {
+	return siteList
+		.filter( ( siteItem ) => {
+			const siteUrlSansProtocol = withoutHttp( siteItem.URL );
+			return (
+				! siteItem.jetpack &&
+				siteList.some(
+					( jetpackSite ) =>
+						jetpackSite.jetpack && siteUrlSansProtocol === withoutHttp( jetpackSite.URL )
+				)
+			);
+		} )
+		.map( ( siteItem ) => siteItem.ID );
+}

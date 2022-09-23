@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .import__onboarding-page {
 	.import__preview {
@@ -9,14 +9,14 @@
 		padding-left: 0;
 
 		@include break-wide {
-			width: calc( 100% - 163px );
+			width: calc(100% - 163px);
 			margin: 100px auto 0;
 		}
 
 		.import__preview-wrapper {
-			background: var( --studio-white );
-			border: 1px solid rgba( 0, 0, 0, 0.12 );
-			border-radius: 6px; /* stylelint-disable-line */
+			background: var(--studio-white);
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			overflow: hidden;
 			position: relative;
 
@@ -39,8 +39,8 @@
 			width: 100%;
 			height: 15px;
 			box-sizing: border-box;
-			background: var( --studio-white );
-			border-bottom: 1px solid var( --studio-gray-5 );
+			background: var(--studio-white);
+			border-bottom: 1px solid var(--studio-gray-5);
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -53,10 +53,10 @@
 		}
 
 		.import__preview-bar-dot {
-			background: var( --studio-gray-5 );
+			background: var(--studio-gray-5);
 			width: 4px;
 			height: 4px;
-			border-radius: 50%; /* stylelint-disable-line */
+			border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 			margin: 0 2px;
 
 			@include break-small {
@@ -77,17 +77,18 @@
 				padding: 2px;
 				margin: 0 auto;
 				font-size: $font-body-extra-small;
-				font-weight: 500; /* stylelint-disable-line */
+				font-weight: 500;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.6667em;
-				background: var( --studio-gray-0 );
-				border-radius: 8px; /* stylelint-disable-line */
+				background: var(--studio-gray-0);
+				border-radius: 8px; /* stylelint-disable-line scales/radii */
 
 				@include break-small {
 					display: block;
 				}
 
 				span {
-					color: var( --studio-gray-40 );
+					color: var(--studio-gray-40);
 					font-weight: 400;
 				}
 			}
@@ -122,10 +123,10 @@
 
 	.import__details-learn-more {
 		display: inline-block;
-		font-size: 1.125em; /* stylelint-disable-line */
-		font-weight: 500; /* stylelint-disable-line */
+		font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 500;
 		text-decoration: underline;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		margin-bottom: 2em;
 
 		&:hover {
@@ -135,18 +136,18 @@
 
 	.import__details-features {
 		p {
-			font-size: 1em; /* stylelint-disable-line */
+			font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 
 		strong {
-			font-weight: 500; /* stylelint-disable-line */
-			color: var( --studio-gray-100 );
+			font-weight: 500;
+			color: var(--studio-gray-100);
 		}
 	}
 
 	.import__details-footer {
-		font-weight: 300; /* stylelint-disable-line */
-		font-size: 0.875em; /* stylelint-disable-line */
-		color: var( --studio-gray-80 );
+		font-weight: 300; /* stylelint-disable-line scales/font-weights */
+		font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		color: var(--studio-gray-80);
 	}
 }

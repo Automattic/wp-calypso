@@ -16,7 +16,6 @@ import SharingConnections from './connections/connections';
 import Sharing from './main';
 import MarketingTools from './tools';
 import Traffic from './traffic/';
-import UltimateTrafficGuide from './ultimate-traffic-guide';
 
 export const redirectConnections = ( context ) => {
 	const serviceParam = context.params.service ? `?service=${ context.params.service }` : '';
@@ -120,12 +119,6 @@ export const sharingButtons = ( context, next ) => {
 
 export const traffic = ( context, next ) => {
 	context.contentComponent = createElement( Traffic );
-
-	next();
-};
-
-export const ultimateTrafficGuide = ( context, next ) => {
-	context.contentComponent = createElement( UltimateTrafficGuide );
 
 	next();
 };

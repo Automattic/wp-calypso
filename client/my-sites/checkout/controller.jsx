@@ -7,7 +7,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
-import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
@@ -31,7 +30,7 @@ import {
 	LEGACY_TO_RECOMMENDED_MAP,
 } from '../plans/jetpack-plans/plan-upgrade/constants';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
-import CheckoutSystemDecider from './checkout-system-decider';
+import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
@@ -41,7 +40,7 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getDomainOrProductFromContext } from './utils';
+import { getProductSlugFromContext } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -65,7 +64,7 @@ export function checkoutSiteless( context, next ) {
 		<>
 			<CheckoutSitelessDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -118,7 +117,7 @@ export function checkout( context, next ) {
 
 	const product = isJetpackCheckout
 		? context.params.productSlug
-		: getDomainOrProductFromContext( context );
+		: getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -158,7 +157,7 @@ export function checkout( context, next ) {
 		<>
 			<CheckoutDocumentTitle />
 
-			<CheckoutSystemDecider
+			<CheckoutMainWrapper
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				purchaseId={ purchaseId }
@@ -182,7 +181,7 @@ export function checkout( context, next ) {
 }
 
 export function redirectJetpackLegacyPlans( context, next ) {
-	const product = getDomainOrProductFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( isJetpackLegacyItem( product ) ) {
 		const state = context.store.getState();
@@ -216,10 +215,19 @@ export function checkoutPending( context, next ) {
 	 */
 	const redirectTo = context.query.redirectTo;
 
+	const receiptId = Number.isInteger( Number( context.query.receiptId ) )
+		? Number( context.query.receiptId )
+		: undefined;
+
 	setSectionMiddleware( { name: 'checkout-pending' } )( context );
 
 	context.primary = (
-		<CheckoutPending orderId={ orderId } siteSlug={ siteSlug } redirectTo={ redirectTo } />
+		<CheckoutPending
+			orderId={ orderId }
+			siteSlug={ siteSlug }
+			redirectTo={ redirectTo }
+			receiptId={ receiptId }
+		/>
 	);
 
 	next();
@@ -301,6 +309,8 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
 		upgradeItem = context.params.domain;
+	} else {
+		upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -484,7 +494,6 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
-		...TRUENAME_COUPONS,
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

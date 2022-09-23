@@ -42,7 +42,7 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
 	const { platform, onClose, fromSite } = data;
-	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import' );
+	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import/' );
 
 	const translatedFeatureList: FeatureList = {
 		tags: __( 'Tags' ),
@@ -194,7 +194,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 										) ) }
 								</ul>
 								<div className={ 'import__details-footer' }>
-									<i>*{ __( 'Requires a Pro plan.' ) }</i>
+									<i>*{ __( 'Requires a Business plan.' ) }</i>
 								</div>
 							</>
 						) }

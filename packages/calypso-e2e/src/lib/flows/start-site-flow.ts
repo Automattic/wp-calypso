@@ -1,5 +1,4 @@
-import { Frame, Page } from 'playwright';
-import envVariables from '../../env-variables';
+import { Page } from 'playwright';
 
 /**
  * Step name in site setup flow.
@@ -7,6 +6,7 @@ import envVariables from '../../env-variables';
  * @see client/landing/stepper/declarative-flow/site-setup-flow.ts for all step names
  */
 export type StepName = 'goals' | 'vertical' | 'intent' | 'designSetup' | 'options';
+type Goals = 'Write' | 'Promote' | 'Import Site' | 'Sell' | 'DIFM' | 'Other';
 
 const selectors = {
 	// Generic
@@ -17,16 +17,13 @@ const selectors = {
 	blogNameInput: 'input[name="siteTitle"]:not(:disabled)',
 	taglineInput: 'input[name="tagline"]:not(:disabled)',
 	verticalInput: '.select-vertical__suggestion-input input',
+	verticalSelectItem: ( target: string ) => `.suggestions__item :text("${ target }")`,
 
 	// Themes
 	individualThemeContainer: ( name: string ) => `.design-button-container:has-text("${ name }")`,
-	previewThemeButtonDesktop: ( name: string ) => `button:has-text("Preview ${ name }")`,
-	previewThemeButtonMobile: ( name: string ) =>
-		`button.design-picker__design-option:has-text("${ name }")`,
-	themePreviewIframe: 'iframe[title=Preview]',
 
 	// Goals
-	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal }")`,
+	goalButton: ( goal: string ) => `.select-card__container:has-text("${ goal.toLowerCase() }")`,
 	selectedGoalButton: ( goal: string ) => `.select-card__container.selected:has-text("${ goal }")`,
 
 	// Step containers
@@ -89,7 +86,7 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} goal The goal to select
 	 */
-	async selectGoal( goal: string ): Promise< void > {
+	async selectGoal( goal: Goals ): Promise< void > {
 		await this.page.click( selectors.goalButton( goal ) );
 		await this.page.waitForSelector( selectors.selectedGoalButton( goal ) );
 	}
@@ -104,6 +101,9 @@ export class StartSiteFlow {
 
 		const input = this.page.locator( selectors.verticalInput );
 		await input.fill( vertical );
+
+		const targetVerticalLocator = this.page.locator( selectors.verticalSelectItem( vertical ) );
+		await targetVerticalLocator.click();
 
 		const readBack = await input.inputValue();
 		if ( readBack !== vertical ) {
@@ -166,22 +166,8 @@ export class StartSiteFlow {
 	 *
 	 * @param {string} themeName Name of theme, e.g. "Zoologist".
 	 */
-	async previewTheme( themeName: string ): Promise< void > {
-		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
-			await this.page.hover( selectors.individualThemeContainer( themeName ) );
-			await this.page.click( selectors.previewThemeButtonDesktop( themeName ) );
-		} else {
-			await this.page.click( selectors.previewThemeButtonMobile( themeName ) );
-		}
-	}
-
-	/**
-	 * Get a Frame handle for the iframe holding the theme preview.
-	 *
-	 * @returns The Frame handle for the theme preview iframe.
-	 */
-	async getThemePreviewIframe(): Promise< Frame > {
-		const elementHandle = await this.page.waitForSelector( selectors.themePreviewIframe );
-		return ( await elementHandle.contentFrame() ) as Frame;
+	async selectTheme( themeName: string ): Promise< void > {
+		const locator = this.page.locator( selectors.individualThemeContainer( themeName ) );
+		await locator.click();
 	}
 }

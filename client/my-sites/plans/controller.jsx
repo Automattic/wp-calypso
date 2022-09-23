@@ -1,21 +1,16 @@
-import { isPro } from '@automattic/calypso-products';
 import page from 'page';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { productSelect } from 'calypso/my-sites/plans/jetpack-plans/controller';
 import setJetpackPlansHeader from 'calypso/my-sites/plans/jetpack-plans/plans-header';
 import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
-import { getSite } from 'calypso/state/sites/selectors';
-import { default as getIsJetpackProductSite } from 'calypso/state/sites/selectors/is-jetpack-product-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import Plans from './plans';
 
 function showJetpackPlans( context ) {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-	const isJetpackProductSite = getIsJetpackProductSite( state, siteId );
 	const isWpcom = isSiteWpcom( state, siteId );
-	return ! isWpcom || isJetpackProductSite;
+	return ! isWpcom;
 }
 
 export function plans( context, next ) {
@@ -25,17 +20,6 @@ export function plans( context, next ) {
 		}
 		setJetpackPlansHeader( context );
 		return productSelect( '/plans' )( context, next );
-	}
-
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	const selectedSite = getSite( state, siteId );
-	const eligibleForProPlan = isEligibleForProPlan( state, siteId );
-
-	if ( eligibleForProPlan && isPro( selectedSite.plan ) ) {
-		page.redirect( `/plans/my-plan/${ selectedSite.slug }` );
-
-		return null;
 	}
 
 	context.primary = (
@@ -53,6 +37,7 @@ export function plans( context, next ) {
 					? context.query.addDomainFlow === 'true'
 					: undefined
 			}
+			domainAndPlanPackage={ context.query.domainAndPlanPackage }
 		/>
 	);
 	next();

@@ -38,6 +38,7 @@ import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -52,6 +53,7 @@ import CheckoutNextSteps from './checkout-next-steps';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
+import ThirdPartyDevsAccount from './third-party-plugins-developer-account';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
@@ -128,7 +130,6 @@ export default function WPCheckout( {
 	countriesList,
 	createUserAndSiteBeforeTransaction,
 	infoMessage,
-	isJetpackNotAtomic,
 	isLoggedOutCart,
 	onPageLoadError,
 	removeProductFromCart,
@@ -145,7 +146,6 @@ export default function WPCheckout( {
 	countriesList: CountryListItem[];
 	createUserAndSiteBeforeTransaction: boolean;
 	infoMessage?: JSX.Element;
-	isJetpackNotAtomic: boolean;
 	isLoggedOutCart: boolean;
 	onPageLoadError: CheckoutPageErrorCallback;
 	removeProductFromCart: RemoveProductFromCart;
@@ -179,9 +179,6 @@ export default function WPCheckout( {
 		sel( 'wpcom-checkout' ).getContactInfo()
 	);
 
-	const isJetpackCheckout =
-		isJetpackNotAtomic || window.location.pathname.startsWith( '/checkout/jetpack' );
-
 	const {
 		touchContactFields,
 		applyDomainContactValidationResults,
@@ -196,31 +193,6 @@ export default function WPCheckout( {
 	// starts collapsed and can be expanded; at wider widths (as a sidebar) it is
 	// always visible. It is not a step and its visibility is managed manually.
 	const [ isSummaryVisible, setIsSummaryVisible ] = useState( false );
-
-	// The "Order review" step is not managed by Composite Checkout and is shown/hidden manually.
-	// If the page includes a 'order-review=true' query string, then start with
-	// the order review step visible.
-	const [ isOrderReviewActive, setIsOrderReviewActive ] = useState( () => {
-		if ( isJetpackCheckout ) {
-			return false;
-		}
-
-		try {
-			const shouldInitOrderReviewStepActive =
-				window?.location?.search.includes( 'order-review=true' ) ?? false;
-			if ( shouldInitOrderReviewStepActive ) {
-				return true;
-			}
-		} catch ( error ) {
-			// If there's a problem loading the query string, just default to false.
-			debug(
-				'Error loading query string to determine if we should see the order review step at load',
-				error
-			);
-		}
-		return false;
-	} );
-
 	const { formStatus } = useFormStatus();
 
 	const onReviewError = useCallback(
@@ -254,6 +226,21 @@ export default function WPCheckout( {
 		} );
 
 	const { transactionStatus } = useTransactionStatus();
+
+	const hasMarketplaceProduct = useSelector( ( state ) => {
+		return responseCart?.products?.some( ( p ) => isMarketplaceProduct( state, p.product_slug ) );
+	} );
+
+	const [ is3PDAccountConsentAccepted, setIs3PDAccountConsentAccepted ] = useState( false );
+	const [ isSubmitted, setIsSubmitted ] = useState( false );
+
+	const validateForm = async () => {
+		setIsSubmitted( true );
+		if ( hasMarketplaceProduct && ! is3PDAccountConsentAccepted ) {
+			return false;
+		}
+		return true;
+	};
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
 		debug( 'rendering post-checkout redirecting page' );
@@ -301,7 +288,6 @@ export default function WPCheckout( {
 
 	return (
 		<CheckoutStepGroup
-			areStepsActive={ ! isOrderReviewActive }
 			stepAreaHeader={
 				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 					<CheckoutErrorBoundary
@@ -341,65 +327,19 @@ export default function WPCheckout( {
 				onError={ onReviewError }
 				className="wp-checkout__review-order-step"
 				stepId="review-order-step"
-				isStepActive={ isOrderReviewActive }
+				isStepActive={ false }
 				isStepComplete={ true }
-				goToThisStep={
-					isJetpackCheckout ? undefined : () => setIsOrderReviewActive( ! isOrderReviewActive )
-				}
-				goToNextStep={
-					isJetpackCheckout
-						? undefined
-						: () => {
-								setIsOrderReviewActive( ! isOrderReviewActive );
-								reduxDispatch(
-									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
-										step: 0,
-										step_name: 'review-order-step',
-									} )
-								);
-						  }
-				}
 				titleContent={ <OrderReviewTitle /> }
-				activeStepContent={
-					isJetpackCheckout ? null : (
-						<WPCheckoutOrderReview
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							onChangePlanLength={ changePlanLength }
-							siteUrl={ siteUrl }
-							siteId={ siteId }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-							isJetpackCheckout={ isJetpackCheckout }
-						/>
-					)
-				}
 				completeStepContent={
-					isJetpackCheckout ? (
-						<WPCheckoutOrderReview
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							onChangePlanLength={ changePlanLength }
-							siteUrl={ siteUrl }
-							siteId={ siteId }
-							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-							isJetpackCheckout={ isJetpackCheckout }
-						/>
-					) : (
-						<WPCheckoutOrderReview
-							isSummary
-							removeProductFromCart={ removeProductFromCart }
-							couponFieldStateProps={ couponFieldStateProps }
-							siteUrl={ siteUrl }
-							isJetpackCheckout={ isJetpackCheckout }
-						/>
-					)
+					<WPCheckoutOrderReview
+						removeProductFromCart={ removeProductFromCart }
+						couponFieldStateProps={ couponFieldStateProps }
+						onChangePlanLength={ changePlanLength }
+						siteUrl={ siteUrl }
+						siteId={ siteId }
+						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					/>
 				}
-				editButtonText={ String( translate( 'Edit' ) ) }
-				editButtonAriaLabel={ String( translate( 'Edit your order' ) ) }
-				nextStepButtonText={ String( translate( 'Save order' ) ) }
-				nextStepButtonAriaLabel={ String( translate( 'Save your order' ) ) }
-				validatingButtonText={ validatingButtonText }
-				validatingButtonAriaLabel={ validatingButtonText }
 				formStatus={ formStatus }
 			/>
 			{ contactDetailsType !== 'none' && (
@@ -484,10 +424,17 @@ export default function WPCheckout( {
 				validatingButtonAriaLabel={ validatingButtonText }
 				isCompleteCallback={ () => false }
 			/>
+			{ hasMarketplaceProduct && (
+				<ThirdPartyDevsAccount
+					isAccepted={ is3PDAccountConsentAccepted }
+					onChange={ setIs3PDAccountConsentAccepted }
+					isSubmitted={ isSubmitted }
+				/>
+			) }
 			<CheckoutFormSubmit
+				validateForm={ validateForm }
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				submitButtonFooter={ <SubmitButtonFooter /> }
-				disableSubmitButton={ isOrderReviewActive }
 			/>
 		</CheckoutStepGroup>
 	);

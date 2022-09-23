@@ -50,8 +50,8 @@ describe( 'Design Picker designs utils', () => {
 		it( 'should append the preview options to the query params', () => {
 			const options: DesignPreviewOptions = {
 				language: 'id',
-				verticalId: '3',
-				siteTitle: 'Design Title',
+				vertical_id: '3',
+				site_title: 'Design Title',
 				viewport_width: 1280,
 				viewport_height: 700,
 			};
@@ -65,7 +65,7 @@ describe( 'Design Picker designs utils', () => {
 		// in a `background-url: url( ... )` CSS rule the parentheses will break it.
 		it( 'should escape parentheses within the site title', () => {
 			const options: DesignPreviewOptions = {
-				siteTitle: 'Mock(Design)(Title)',
+				site_title: 'Mock(Design)(Title)',
 			};
 
 			expect( getDesignPreviewUrl( design, options ) ).toEqual(

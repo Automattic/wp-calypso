@@ -30,7 +30,7 @@ class SitePostSubscriber {
 	 * Get subscriber status for the current user for the Post.
 	 *
 	 *
-	 * *Example:*
+	 * Example:
 	 *    Get subscriber status for the current user for the Post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )
@@ -51,7 +51,7 @@ class SitePostSubscriber {
 	/**
 	 * Subscribe the current user to the post.
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Subscribe the current user to the post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )
@@ -72,7 +72,7 @@ class SitePostSubscriber {
 	/**
 	 * Unsubscribe current user to the post
 	 *
-	 * *Example:*
+	 * Example:
 	 *    // Unsubscribe current user to the post
 	 *    wpcom
 	 *    .site( 'en.blog.wordpress.com' )

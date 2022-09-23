@@ -1,5 +1,5 @@
 import AnchorFmDesignPicker from './anchor-fm-design-picker';
-import SiteSetupDesignPicker from './site-setup-design-picker';
+import UnifiedDesignPicker from './unified-design-picker';
 import type { Step } from '../../types';
 
 /**
@@ -9,8 +9,7 @@ const DesignSetup: Step = ( props ) => {
 	if ( 'anchor-fm' === props.flow ) {
 		return <AnchorFmDesignPicker { ...props } />;
 	}
-
-	return <SiteSetupDesignPicker { ...props } />;
+	return <UnifiedDesignPicker { ...props } />;
 };
 
 export default DesignSetup;

@@ -59,6 +59,7 @@ class DomainSearch extends Component {
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
 		selectedSiteSlug: PropTypes.string,
+		domainAndPlanUpsellFlow: PropTypes.bool,
 	};
 
 	isMounted = false;
@@ -88,12 +89,14 @@ class DomainSearch extends Component {
 		this.isMounted && page( domainMappingUrl );
 	};
 
-	handleAddTransfer = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [ domainTransfer( { domain } ) ] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+	handleAddTransfer = async ( domain ) => {
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ domainTransfer( { domain } ) ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
 	componentDidMount() {
@@ -118,7 +121,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	addDomain( suggestion ) {
+	async addDomain( suggestion ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -138,9 +141,26 @@ class DomainSearch extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [ registration ] )
-			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
+		if ( this.props.domainAndPlanUpsellFlow ) {
+			try {
+				// If we are in the domain + annual plan upsell flow, we need to redirect
+				// to the plans page next and let it know that we are still in that flow.
+				await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+			page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
+			return;
+		}
+
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
 	}
 
 	removeDomain( suggestion ) {
@@ -152,7 +172,9 @@ class DomainSearch extends Component {
 		);
 		if ( productToRemove ) {
 			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		}
 	}
 
@@ -233,9 +255,12 @@ class DomainSearch extends Component {
 							noticeText={ translate( 'You must verify your email to register new domains.' ) }
 							noticeStatus="is-info"
 						>
-							{ ! hasPlanInCart && <NewDomainsRedirectionNoticeUpsell /> }
+							{ ! hasPlanInCart && ! this.props.domainAndPlanUpsellFlow && (
+								<NewDomainsRedirectionNoticeUpsell />
+							) }
 							<RegisterDomainStep
 								suggestion={ this.getInitialSuggestion() }
+								domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 								domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 								onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 								onAddDomain={ this.handleAddRemoveDomain }

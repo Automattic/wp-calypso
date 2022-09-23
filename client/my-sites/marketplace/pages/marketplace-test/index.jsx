@@ -134,7 +134,7 @@ export default function MarketplaceTest() {
 				<PluginsBrowserList
 					plugins={ data }
 					listName={ 'paid' }
-					title={ 'Paid Plugins' }
+					title={ 'Premium Plugins' }
 					site={ selectedSiteSlug }
 					showPlaceholders={ isFetching }
 					currentSites={ null }

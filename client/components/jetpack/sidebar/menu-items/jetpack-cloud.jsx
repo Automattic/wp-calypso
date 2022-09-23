@@ -1,12 +1,20 @@
+import config from '@automattic/calypso-config';
 import { WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN } from '@automattic/calypso-products';
+import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import SidebarItem from 'calypso/layout/sidebar/item';
-import { settingsPath, purchasesPath, purchasesBasePath } from 'calypso/lib/jetpack/paths';
+import {
+	settingsPath,
+	purchasesPath,
+	purchasesBasePath,
+	pluginsPath,
+} from 'calypso/lib/jetpack/paths';
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -18,14 +26,15 @@ export default ( { path } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const isAgency = useSelector( isAgencyUser );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
 	);
 	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
 
-	const onNavigate = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_settings_clicked' ) );
+	const onNavigate = ( event ) => () => {
+		dispatch( recordTracksEvent( event ) );
 
 		setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
@@ -38,6 +47,8 @@ export default ( { path } ) => {
 	const shouldShowPurchases =
 		isSectionNameEnabled( 'site-purchases' ) &&
 		useSelector( ( state ) => canCurrentUser( state, siteId, 'own_site' ) );
+
+	const isPluginManagementEnabled = config.isEnabled( 'jetpack/plugin-management' );
 
 	return (
 		<>
@@ -53,6 +64,18 @@ export default ( { path } ) => {
 					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
+			{ isPluginManagementEnabled && isAgency && (
+				<SidebarItem
+					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+					customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }
+					label={ translate( 'Plugins', {
+						comment: 'Jetpack sidebar navigation item',
+					} ) }
+					link={ pluginsPath( siteSlug ) }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_plugins_clicked' ) }
+					selected={ itemLinkMatches( pluginsPath( siteSlug ), path ) }
+				/>
+			) }
 			{ shouldShowSettings && (
 				<SidebarItem
 					customIcon={ <JetpackIcons icon="settings" /> }
@@ -60,7 +83,7 @@ export default ( { path } ) => {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }
 					link={ settingsPath( siteSlug ) }
-					onNavigate={ onNavigate }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_settings_clicked' ) }
 					selected={ itemLinkMatches( settingsPath( siteSlug ), path ) }
 				/>
 			) }
@@ -71,7 +94,7 @@ export default ( { path } ) => {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }
 					link={ purchasesPath( siteSlug ) }
-					onNavigate={ onNavigate }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_purchases_clicked' ) }
 					selected={ itemLinkMatches( purchasesBasePath(), path ) }
 				/>
 			) }

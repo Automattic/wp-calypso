@@ -2,7 +2,7 @@ import { Card } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { PropsWithChildren, useState } from 'react';
+import { MouseEvent, PropsWithChildren, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -29,10 +29,15 @@ import {
 import TitanUnusedMailboxesNotice from 'calypso/my-sites/email/add-mailboxes/titan-unused-mailboxes-notice';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import { NewMailBoxList } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
+import PasswordResetTipField from 'calypso/my-sites/email/form/mailboxes/components/password-reset-tip-field';
 import getMailProductForProvider from 'calypso/my-sites/email/form/mailboxes/components/selectors/get-mail-product-for-provider';
 import getCartItems from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-cart-items';
 import { getEmailProductProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';
 import { MailboxOperations } from 'calypso/my-sites/email/form/mailboxes/components/utilities/mailbox-operations';
+import {
+	FIELD_NAME,
+	FIELD_PASSWORD_RESET_EMAIL,
+} from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import { INBOX_SOURCE } from 'calypso/my-sites/email/inbox/constants';
 import {
@@ -40,6 +45,7 @@ import {
 	emailManagementInbox,
 	emailManagementTitanSetUpMailbox,
 } from 'calypso/my-sites/email/paths';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import {
@@ -48,7 +54,8 @@ import {
 	isRequestingSiteDomains,
 } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { HiddenFieldNames } from 'calypso/my-sites/email/form/mailboxes/components/new-mailbox-list';
 import type { translate } from 'i18n-calypso';
 
 interface AddMailboxesProps {
@@ -64,8 +71,8 @@ interface AddMailboxesAdditionalProps {
 	provider: EmailProvider;
 	selectedDomain: ResponseDomain;
 	selectedDomainName: string;
-	selectedSite: SiteData;
-	selectedSiteId: number;
+	selectedSite: SiteDetails | undefined | null;
+	selectedSiteId: number | undefined | null;
 	source: string;
 	translate: typeof translate;
 }
@@ -77,14 +84,18 @@ const useAdditionalProps = ( {
 	selectedDomainName,
 	source = '',
 }: AddMailboxesProps ): AddMailboxesAdditionalProps => {
-	const selectedSite = useSelector( getSelectedSite ) as SiteData;
-	const selectedSiteId: number = selectedSite.ID;
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite?.ID;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSiteId ) );
-	const isLoadingDomains = useSelector(
-		( state ) =>
+	const isLoadingDomains = useSelector( ( state ) => {
+		if ( ! selectedSiteId ) {
+			return true;
+		}
+		return (
 			! hasLoadedSiteDomains( state, selectedSiteId ) ||
 			isRequestingSiteDomains( state, selectedSiteId )
-	);
+		);
+	} );
 
 	const selectedDomain = getSelectedDomain( {
 		domains,
@@ -171,11 +182,10 @@ const MailboxNotices = ( {
 		return null;
 	}
 
-	const { existingItemsCount } = getEmailProductProperties(
-		provider,
-		selectedDomain,
-		emailProduct as ProductListItem
-	);
+	const emailProductProperties = emailProduct
+		? getEmailProductProperties( provider, selectedDomain, emailProduct )
+		: { existingItemsCount: 0 };
+	const { existingItemsCount } = emailProductProperties;
 
 	const handleUnusedMailboxFinishSetupClick = (): void => {
 		recordClickEvent( {
@@ -184,6 +194,10 @@ const MailboxNotices = ( {
 			selectedDomainName,
 			source,
 		} );
+
+		if ( ! selectedSite ) {
+			throw new Error( 'Cannot finish unused mailbox setup without selected site' );
+		}
 
 		page( emailManagementTitanSetUpMailbox( selectedSite.slug, selectedDomainName, currentRoute ) );
 	};
@@ -221,8 +235,18 @@ const MailboxesForm = ( {
 	emailProduct: ProductListItem | null;
 	goToEmail: () => void;
 } ): JSX.Element => {
+	const userEmail = useSelector( getCurrentUserEmail );
 	const [ isAddingToCart, setIsAddingToCart ] = useState( false );
 	const [ isValidating, setIsValidating ] = useState( false );
+
+	const isPasswordResetEmailValid = ! new RegExp( `@${ selectedDomainName }$` ).test( userEmail );
+	const defaultHiddenFields: HiddenFieldNames[] = [ FIELD_NAME ];
+	if ( isPasswordResetEmailValid ) {
+		defaultHiddenFields.push( FIELD_PASSWORD_RESET_EMAIL );
+	}
+
+	const [ hiddenFieldNames, setHiddenFieldNames ] =
+		useState< HiddenFieldNames[] >( defaultHiddenFields );
 
 	const cartKey = useCartKey();
 	const cartManager = useShoppingCart( cartKey );
@@ -230,6 +254,11 @@ const MailboxesForm = ( {
 	if ( isLoadingDomains || ! emailProduct ) {
 		return <AddEmailAddressesCardPlaceholder />;
 	}
+
+	const showPasswordResetEmailField = ( event: MouseEvent< HTMLElement > ) => {
+		event.preventDefault();
+		setHiddenFieldNames( [ FIELD_NAME ] );
+	};
 
 	const onCancel = () => {
 		recordClickEvent( {
@@ -278,9 +307,16 @@ const MailboxesForm = ( {
 		cartManager
 			.addProductsToCart( [ getCartItems( mailboxOperations.mailboxes, mailProperties ) ] )
 			.then( () => {
-				page( '/checkout/' + selectedSite.slug );
+				page( '/checkout/' + selectedSite?.slug ?? '' );
 			} )
-			.finally( () => setIsAddingToCart( false ) );
+			.finally( () => setIsAddingToCart( false ) )
+			.catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
+	};
+
+	const passwordResetEmailDefaultValue = {
+		[ FIELD_PASSWORD_RESET_EMAIL ]: isPasswordResetEmailValid ? userEmail : '',
 	};
 
 	return (
@@ -290,6 +326,8 @@ const MailboxesForm = ( {
 			<Card>
 				<NewMailBoxList
 					areButtonsBusy={ isAddingToCart || isValidating }
+					hiddenFieldNames={ hiddenFieldNames }
+					initialFieldValues={ passwordResetEmailDefaultValue }
 					onSubmit={ onSubmit }
 					onCancel={ onCancel }
 					provider={ provider }
@@ -297,7 +335,11 @@ const MailboxesForm = ( {
 					showAddNewMailboxButton
 					showCancelButton
 					submitActionText={ translate( 'Continue' ) }
-				/>
+				>
+					{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
+						<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />
+					) }
+				</NewMailBoxList>
 			</Card>
 		</>
 	);
@@ -328,14 +370,14 @@ const AddMailboxes = ( props: AddMailboxesProps ): JSX.Element | null => {
 
 	const goToEmail = (): void => {
 		let url = emailManagement(
-			selectedSite.slug,
+			selectedSite?.slug,
 			isSelectedDomainNameValid ? selectedDomainName : null,
 			currentRoute,
 			{ source }
 		);
 
 		if ( source === INBOX_SOURCE ) {
-			url = emailManagementInbox( selectedSite.slug );
+			url = emailManagementInbox( selectedSite?.slug );
 		}
 
 		page( url );
