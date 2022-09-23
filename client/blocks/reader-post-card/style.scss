@@ -27,7 +27,7 @@
 	position: relative;
 
 	@include breakpoint-deprecated( '>660px' ) {
-		border-bottom: 1px solid var( --color-neutral-5 );
+		border-bottom: 1px solid #E9E9EA;
 		padding: 12px 0 20px;
 	}
 
@@ -53,6 +53,7 @@
 
 	&.has-thumbnail {
 		.reader-featured-image {
+			box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 			box-sizing: border-box;
 		}
 
@@ -276,14 +277,18 @@
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__timestamp-slug,
 .reader__content .reader-post-card__tag-link {
-	color: var( --color-text-subtle );
+	color: var( --color-neutral-40);
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
 	cursor: pointer;
 	&:hover {
-		color: var( --color-primary );
+		color: var( --color-text-subtle );
 	}
+}
+
+.reader__content .reader-post-card__tag-link {
+	color: var( --color-neutral-100 );
 }
 
 .reader-post-card__timestamp-bullet {
@@ -397,16 +402,16 @@
 }
 
 .reader-post-card__link {
-	color: var( --color-primary );
+	color: var( --color-neutral-100 );
 	cursor: pointer;
 	font-size: 15px;
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var( --color-text-subtle );
 	}
 
 	&:visited {
-		color: var( --color-primary );
+		color: var( --color-neutral-100 );
 	}
 }
 
@@ -441,7 +446,7 @@
 .reader__content .reader-post-card__title-link:visited,
 .reader-post-card__title-link,
 .reader-post-card__title-link:visited {
-	color: var( --color-neutral-70 );
+	color: var( --color-neutral-100 );
 	cursor: pointer;
 	font-size: $font-title-small;
 	font-weight: 600;
@@ -454,6 +459,7 @@
 }
 
 .reader-post-card .reader-excerpt {
+	color: var( --color-neutral-80 );
 	font-family: $sans;
 	font-size: $font-body;
 	letter-spacing: -0.24px;
@@ -625,6 +631,7 @@
 
 .reader-post-card__gallery-image {
 	border-radius: 6px;
+	box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 	height: 300px;
 }
 
@@ -684,6 +691,7 @@
 
 	&.four-images {
 		border-radius: 6px;
+		box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 
 		.reader-post-card__featured-images-item {
 			width: calc(50% - 1px);
@@ -720,6 +728,7 @@
 
 	&.three-images {
 		border-radius: 6px;
+		box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 
 		.reader-featured-image img {
 			border-radius: 0;
@@ -778,6 +787,7 @@
 
 	&.two-images {
 		border-radius: 6px;
+		box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 
 		.reader-post-card__featured-images-item {
 			width: calc(50% - 1px);
