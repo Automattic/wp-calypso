@@ -5,9 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
@@ -90,6 +89,7 @@ function PluginDetails( props ) {
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -304,12 +304,12 @@ function PluginDetails( props ) {
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Plugins > Plugin Details"
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
@@ -422,11 +422,7 @@ function LegacyPluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />

@@ -7,7 +7,6 @@ import PluginRowFormatter from '../plugin-row-formatter';
 import RemovePlugin from '../remove-plugin';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import '../style.scss';
 
@@ -26,7 +25,7 @@ export default function PluginsList( {
 	removePluginNotice,
 	updatePlugin,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 
 	const rowFormatter = ( props: PluginRowFormatterArgs ) => {

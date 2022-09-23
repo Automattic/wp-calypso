@@ -1,7 +1,7 @@
 import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -16,7 +16,7 @@ export enum ProcessingResult {
 	FAILURE = 'failure',
 }
 
-const ProcessingStep: Step = function ( props ): ReactElement | null {
+const ProcessingStep: Step = function ( props ) {
 	const { submit } = props.navigation;
 
 	const { __ } = useI18n();

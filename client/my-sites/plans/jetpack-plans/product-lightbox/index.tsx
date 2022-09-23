@@ -72,7 +72,7 @@ const ProductLightbox: React.FC< Props > = ( {
 			overlayClassName="product-lightbox__modal-overlay"
 			isOpen={ isVisible }
 			onRequestClose={ close }
-			htmlOpenClassName="ReactModal__Html--open"
+			htmlOpenClassName="ReactModal__Html--open lightbox-mode"
 		>
 			<div className="product-lightbox__content-wrapper">
 				<Button className="product-lightbox__close-button" plain onClick={ close }>

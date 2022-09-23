@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import ThankYou, { ThankYouCtaType } from './thank-you';
 
 const ThankYouCta: ThankYouCtaType = ( {
@@ -23,7 +22,7 @@ const ThankYouCta: ThankYouCtaType = ( {
 	);
 };
 
-const SearchProductThankYou = (): ReactElement => {
+const SearchProductThankYou = () => {
 	const translate = useTranslate();
 	return (
 		<ThankYou

@@ -4,7 +4,6 @@ import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-mana
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -15,7 +14,7 @@ interface Props {
 	plugin: Plugin;
 }
 
-export default function PluginAvailableOnSitesList( props: Props ): ReactElement | null {
+export default function PluginAvailableOnSitesList( props: Props ) {
 	const translate = useTranslate();
 
 	const columns = [

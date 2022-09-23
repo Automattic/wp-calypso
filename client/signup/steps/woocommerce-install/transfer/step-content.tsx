@@ -1,15 +1,12 @@
 import { Title, SubTitle } from '@automattic/onboarding';
-import { ReactElement } from 'react';
+import type { PropsWithChildren } from 'react';
 
-export default function StepContent( {
-	title,
-	subtitle,
-	children,
-}: {
+type Props = PropsWithChildren< {
 	title?: string;
 	subtitle?: string;
-	children: ReactElement | null;
-} ): ReactElement {
+} >;
+
+export default function StepContent( { title, subtitle, children }: Props ) {
 	return (
 		<>
 			<div className="transfer__heading-wrapper woocommerce-install__heading-wrapper">

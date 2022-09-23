@@ -3,8 +3,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -15,6 +14,7 @@ import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -36,13 +36,20 @@ import './style.scss';
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( selectedSiteId ) {
 		analyticsPath += '/:site';
 	}
 
 	if ( trackPageViews ) {
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		return (
+			<PageViewTracker
+				path={ analyticsPath }
+				title={ analyticsPageTitle }
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+		);
 	}
 
 	return null;
@@ -121,11 +128,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	return (
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }

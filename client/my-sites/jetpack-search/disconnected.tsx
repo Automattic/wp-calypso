@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
@@ -7,7 +6,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-export default function JetpackSearchDisconnected(): ReactElement {
+export default function JetpackSearchDisconnected() {
 	const isCloud = isJetpackCloud();
 	return (
 		<Main className="jetpack-search">

@@ -8,7 +8,7 @@ import {
 	EmailProviderStackedFeaturesToggleButton,
 } from 'calypso/my-sites/email/email-providers-comparison/stacked/email-provider-stacked-card/email-provider-stacked-features';
 import type { ProviderCardProps } from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/provider-card-props';
-import type { MouseEvent, ReactElement } from 'react';
+import type { MouseEvent } from 'react';
 
 import './style.scss';
 
@@ -30,7 +30,7 @@ const EmailProvidersStackedCard = ( {
 	productName,
 	providerKey,
 	showExpandButton = true,
-}: ProviderCardProps ): ReactElement => {
+}: ProviderCardProps ) => {
 	const [ areFeaturesExpanded, setFeaturesExpanded ] = useState( false );
 
 	const isViewportSizeLowerThan660px = useBreakpoint( '<660px' );

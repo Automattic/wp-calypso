@@ -17,6 +17,7 @@
 		margin: auto;
 		box-sizing: border-box;
 		border: 0.1em solid transparent;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		animation: 3s linear infinite;
 		animation-name: wpnc__rotate-spinner;

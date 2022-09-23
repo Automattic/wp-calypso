@@ -1,16 +1,15 @@
 import classNames from 'classnames';
-import * as React from 'react';
+import type { PropsWithChildren } from 'react';
 
 import './style.scss';
 
 // @TODO: move to '@automattic/components' and reuse in Gutenboarding
 
-interface Props {
-	children: React.ReactElement[];
+type Props = PropsWithChildren< {
 	className?: string;
-}
+} >;
 
-const Badge: React.FunctionComponent< Props > = ( { children, className, ...props } ) => (
+const Badge = ( { children, className, ...props }: Props ) => (
 	<span { ...props } className={ classNames( 'badge', className ) }>
 		{ children }
 	</span>

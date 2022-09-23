@@ -3,7 +3,6 @@ import { Tooltip } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { TranslateResult } from 'i18n-calypso';
-import React from 'react';
 import './style.scss';
 
 export interface SelectItemAlt< T > {
@@ -22,7 +21,7 @@ interface Props< T > {
 	onSelect: ( value: T ) => void;
 }
 
-function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ): React.ReactElement {
+function SelectItemsAlt< T >( { className, items, onSelect }: Props< T > ) {
 	return (
 		<div className={ classnames( 'select-items-alt', className ) }>
 			{ items.map(

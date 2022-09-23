@@ -181,6 +181,7 @@ $section-border: solid 1px var(--color-neutral-5);
 		top: 11px;
 
 		&::before {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			border-radius: 50%;
 			height: 24px;
 			width: 24px;
@@ -203,6 +204,7 @@ $section-border: solid 1px var(--color-neutral-5);
 	background-size: cover;
 	width: 32px;
 	height: 32px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	position: relative;
 	flex: 0 0 32px;

@@ -36,6 +36,7 @@
 
 .stored-credit-card__primary {
 	padding: 2px 4px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.25rem;
 	background: var(--studio-gray-80);
 	color: var(--studio-white);

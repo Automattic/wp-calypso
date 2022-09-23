@@ -8,6 +8,7 @@
 		padding: 0 0 32px 5px;
 		@include break-mobile {
 			font-size: $font-body;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 2rem;
 		}
 	}

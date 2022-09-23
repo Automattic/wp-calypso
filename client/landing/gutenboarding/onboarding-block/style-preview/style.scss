@@ -307,6 +307,7 @@ $gutenboarding-style-preview-bar-height-mobile: 15px;
 	background: var(--studio-gray-5);
 	width: 3px;
 	height: 3px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	margin: 0 2px;
 

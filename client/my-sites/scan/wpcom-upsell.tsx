@@ -4,7 +4,6 @@ import {
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -21,7 +20,7 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 
 import './style.scss';
 
-export default function WPCOMScanUpsellPage(): ReactElement {
+export default function WPCOMScanUpsellPage() {
 	const translate = useTranslate();
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_business_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );

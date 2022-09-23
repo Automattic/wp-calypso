@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { isEnabled } from '@automattic/calypso-config';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -84,7 +83,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onSelect,
 	design,
-	premiumBadge = null,
 	highRes,
 	disabled,
 	hideDesignTitle,
@@ -106,19 +104,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	const badgeType = design.is_premium ? 'premium' : 'none';
 
-	const badgeContainer = ! isEnabled( 'signup/theme-preview-screen' ) ? (
-		design.is_premium && premiumBadge
-	) : (
+	const badgeContainer = (
 		<BadgeContainer badgeType={ badgeType } isPremiumThemeAvailable={ isPremiumThemeAvailable } />
 	);
 
 	const shouldUpgrade = design.is_premium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
-		if ( ! isEnabled( 'signup/theme-preview-screen' ) ) {
-			return null;
-		}
-
 		if ( hideDescription ) {
 			return null;
 		}
