@@ -89,6 +89,7 @@ function PluginDetails( props ) {
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -303,7 +304,11 @@ function PluginDetails( props ) {
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Plugins > Plugin Details"
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
