@@ -100,6 +100,10 @@ const sectionPatterns: Pattern[] = [
 		name: 'Two column image grid',
 	},
 	{
+		id: 7153,
+		name: 'Media and text with image on the left',
+	},
+	{
 		id: 7132,
 		name: 'Cover image with left-aligned call to action',
 	},
