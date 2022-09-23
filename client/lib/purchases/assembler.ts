@@ -87,6 +87,7 @@ function createPurchaseObject( purchase: RawPurchase | RawPurchaseCreditCard ): 
 		productId: Number( purchase.product_id ),
 		productName: purchase.product_name,
 		productSlug: purchase.product_slug,
+		productType: purchase.product_type,
 		productDisplayPrice: purchase.product_display_price,
 		totalRefundAmount: Number( purchase.total_refund_amount ),
 		totalRefundText: purchase.total_refund_text,
