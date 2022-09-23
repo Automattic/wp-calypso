@@ -41,14 +41,14 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericYearly ] );
 	} );
 
-	test( 'paid domain registration', () => {
+	test( 'paid domain', () => {
 		const cart = getCart( [ 'dotlive_domain' ] );
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistration ] );
 	} );
 
-	test( 'free domain registration', () => {
+	test( 'free domain', () => {
 		const cart = getCart( [ 'dotlive_domain' ], 0 );
 		const refundPolicies = getRefundPolicies( cart );
 
@@ -83,7 +83,7 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanBiennial ] );
 	} );
 
-	test( 'yearly plan and bundled domain registration', () => {
+	test( 'yearly plan and bundled domain', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 
 		cart.bundled_domain = 'test.live';
@@ -102,7 +102,7 @@ describe( 'getRefundPolicies', () => {
 		] );
 	} );
 
-	test( 'yearly plan, bundled domain registration and paid domain registration', () => {
+	test( 'yearly plan, bundled domain and paid domain', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 
 		// Free domain
@@ -128,10 +128,11 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [
 			RefundPolicy.DomainNameRegistrationForPlan,
 			RefundPolicy.PlanYearly,
+			RefundPolicy.DomainNameRegistration,
 		] );
 	} );
 
-	test( 'yearly plan, bundled domain registration and professional email free trial', () => {
+	test( 'yearly plan, bundled domain and professional email free trial', () => {
 		const cart = getCart( [ PLAN_PERSONAL ] );
 
 		cart.bundled_domain = 'test.live';

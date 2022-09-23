@@ -11,6 +11,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { isDomainBundledWithPlan } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -35,7 +36,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainRegistration( product ) ) {
-			if ( cart.bundled_domain ) {
+			if ( isDomainBundledWithPlan( cart, product.meta ) ) {
 				return RefundPolicy.DomainNameRegistrationForPlan;
 			}
 
@@ -216,7 +217,15 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 }
 
 export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
-	const refundPolicies = getRefundPolicies( cart );
+	let refundPolicies = getRefundPolicies( cart );
+
+	if ( refundPolicies.includes( RefundPolicy.DomainNameRegistrationForPlan ) ) {
+		refundPolicies = refundPolicies.filter(
+			( refundPolicy ) =>
+				refundPolicy !== RefundPolicy.DomainNameRegistration &&
+				refundPolicy !== RefundPolicy.DomainNameRenewal
+		);
+	}
 
 	return (
 		<>
