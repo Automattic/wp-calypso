@@ -3,9 +3,9 @@
 import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useLocale } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { defer, get, isEmpty, find } from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import {
 	getDomainProductSlug,
@@ -50,7 +50,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from '../../../../stores';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -74,9 +74,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			};
 		} );
 
-	const currentStepProgress = find( signupProgress, { stepName: 'domains' } );
-	console.log( 'currentStepProgress', currentStepProgress );
-
 	const { siteTitle, siteAccentColor } = useSelect( ( select ) => {
 		return {
 			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
@@ -87,7 +84,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { __ } = useI18n();
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
 
-	const dispatch = useDispatch();
+	const dispatch = useReduxDispatch();
 
 	const isDomainOnly = false; //useSelect( ( select ) => select( ONBOARD_STORE ) ).getIsDomainOnly();
 	const stepSectionName = undefined;
@@ -234,33 +231,37 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			submitSignupStep: () => dispatch( submitSignupStep ),
 		} );
 
-		dispatch(
-			submitSignupStep(
-				Object.assign(
-					{
-						stepName: 'domains', //this.props.stepName,
-						domainItem,
-						googleAppsCartItem,
-						isPurchasingItem,
-						siteUrl,
-						stepSectionName,
-						...( flow === 'newsletter' && siteAccentColor && { siteAccentColor } ),
-					},
-					getThemeArgs()
-				),
-				Object.assign(
-					{ domainItem },
-					isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
-					useThemeHeadstartItem
-				)
-			)
-		);
+		// setDomainResult( {
+		// 	domainItem,
+		// 	shouldHideFreePlan: isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
+		// } );
 
-		dispatch( setDesignType( getDesignType() ) );
+		// dispatch(
+		// 	submitSignupStep(
+		// 		Object.assign(
+		// 			{
+		// 				stepName: 'domains', //this.props.stepName,
+		// 				domainItem,
+		// 				googleAppsCartItem,
+		// 				isPurchasingItem,
+		// 				siteUrl,
+		// 				stepSectionName,
+		// 				...( flow === 'newsletter' && siteAccentColor && { siteAccentColor } ),
+		// 			},
+		// 			getThemeArgs()
+		// 		),
+		// 		Object.assign(
+		// 			{ domainItem },
+		// 			isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
+		// 			useThemeHeadstartItem
+		// 		)
+		// 	)
+		// );
+
+		// dispatch( setDesignType( getDesignType() ) );
 		// Start the username suggestion process.
-		siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
-
-		submit?.( { siteSlug: siteUrl } ); //this.props.goToNextStep();
+		// siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
+		submit?.( { siteSlug: siteUrl, productSlug: suggestion.product_slug } ); //this.props.goToNextStep();
 	};
 
 	const handleSkip = ( googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {

@@ -126,6 +126,9 @@ window.AppBoot = async () => {
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
 
+	//This should be tackled in another way
+	window.reduxStore = reduxStore;
+
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
 	ReactDom.render(

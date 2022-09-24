@@ -60,7 +60,7 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = ( cartItem ) => {
-		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
+		const { additionalStepData, stepSectionName, stepName, flowName, siteSlug } = this.props;
 
 		if ( cartItem ) {
 			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
@@ -122,6 +122,7 @@ export class PlansStep extends Component {
 			this.props.submitSignupStep( step, {
 				cartItem,
 				themeSlugWithRepo: 'pub/lynx',
+				siteSlug: siteSlug,
 			} );
 			this.props.goToNextStep();
 		} else {
@@ -501,6 +502,7 @@ export default connect(
 		isInVerticalScrollingPlansExperiment: true,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+		siteSlug: siteSlug,
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );

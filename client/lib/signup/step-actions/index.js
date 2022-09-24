@@ -501,8 +501,13 @@ export function setIntentOnSite( callback, { siteSlug, intent } ) {
 export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
 	// Note that we pull in emailItem to avoid race conditions from multiple step API functions
 	// trying to fetch and update the cart simultaneously, as both of those actions are asynchronous.
-	const { emailItem, siteSlug } = dependencies;
-	const { cartItem, lastKnownFlow } = stepProvidedItems;
+	const { emailItem } = dependencies;
+	const {
+		cartItem,
+		lastKnownFlow,
+		providedDependencies: stepProvidedDependencies,
+	} = stepProvidedItems;
+	const siteSlug = dependencies?.siteSlug ?? stepProvidedDependencies?.siteSlug;
 	if ( isEmpty( cartItem ) && isEmpty( emailItem ) ) {
 		// the user selected the free plan
 		defer( callback );

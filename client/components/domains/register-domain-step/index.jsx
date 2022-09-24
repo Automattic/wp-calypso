@@ -182,8 +182,6 @@ class RegisterDomainStep extends Component {
 				this.state.lastQuery = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 			}
 		}
-
-		console.log( 'register domain step includeWordPressDotCom', this.props.includeWordPressDotCom );
 	}
 
 	getState( props ) {

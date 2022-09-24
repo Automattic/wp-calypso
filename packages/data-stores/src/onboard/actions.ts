@@ -355,6 +355,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setDomainResult
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor

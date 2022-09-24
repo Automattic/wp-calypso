@@ -134,6 +134,7 @@ export function generateFlows( {
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-08-16',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'siteSlug' ],
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},

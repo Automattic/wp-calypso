@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { createSiteWithCart } from '../lib/signup/utils';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
@@ -63,7 +64,39 @@ export const linkInBio: Flow = {
 				// );
 
 				case 'domains':
-					return window.location.assign( `/start/${ name }/plans-link-in-bio` );
+					createSiteWithCart(
+						name,
+						providedDependencies.siteSlug,
+						false,
+						{
+							domainItem: {
+								is_domain_registration: true,
+								meta: providedDependencies.siteSlug,
+								product_slug: providedDependencies.productSlug,
+							},
+							flowName: undefined,
+							lastKnownFlow: name,
+							googleAppsCartItem: undefined,
+							isPurchasingItem: true,
+							siteUrl: providedDependencies.siteSlug,
+							themeSlugWithRepo: undefined,
+							themeItem: undefined,
+							siteAccentColor: '#0675C4',
+						},
+						userIsLoggedIn,
+						false,
+						( error, siteDependencies ) => {
+							//With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
+							//Currently we only pass siteSlug, but we shall save domainItem in the store
+							return window.location.assign(
+								`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
+									siteDependencies.siteSlug as string
+								) }`
+							);
+						}
+					);
+					break;
+				// return window.location.assign( `/start/${ name }/plans-link-in-bio` );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
