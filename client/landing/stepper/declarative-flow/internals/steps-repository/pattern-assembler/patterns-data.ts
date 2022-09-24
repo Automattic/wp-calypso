@@ -60,64 +60,60 @@ const footerPatterns: Pattern[] = [
 
 const sectionPatterns: Pattern[] = [
 	{
-		id: 3296,
-		name: 'About me',
+		id: 1603,
+		name: 'Call to Action',
 	},
 	{
-		id: 857,
-		name: 'Image and text side by side',
+		id: 7156,
+		name: 'Media and text with image on the right',
 	},
 	{
-		id: 5306,
-		name: 'Heading, Three-up, and Paragraph',
-	},
-	{
-		id: 5274,
-		name: 'Call to Action with Cover Block',
-	},
-	{
-		id: 3880,
-		name: 'About me',
-	},
-	{
-		id: 4691,
-		name: 'Payment Block Media and Text',
-	},
-	{
-		id: 3759,
-		name: 'Coming Soon',
-	},
-	{
-		id: 1400,
+		id: 1053,
 		name: 'Contact',
 	},
 	{
-		id: 3856,
-		name: 'Organic Gallery With Intro Text',
+		id: 7135,
+		name: 'Three columns with images and text',
 	},
 	{
-		id: 3862,
-		name: 'Alternating Image and Text',
+		id: 7138,
+		name: 'Centered headline and text',
 	},
 	{
-		id: 1826,
-		name: 'Two Images, Text, and Buttons',
+		id: 5634,
+		name: 'Contact Info with Map',
 	},
 	{
-		id: 5564,
-		name: 'Contact',
+		id: 7140,
+		name: 'Left-aligned headline',
 	},
 	{
-		id: 1046,
-		name: 'Subscription',
+		id: 7143,
+		name: 'Full-width image',
 	},
 	{
-		id: 1593,
-		name: 'Header and Three Images',
+		id: 7146,
+		name: 'Four column list',
 	},
 	{
-		id: 678,
-		name: 'Images with Titles',
+		id: 7149,
+		name: 'Two column image grid',
+	},
+	{
+		id: 7153,
+		name: 'Media and text with image on the left',
+	},
+	{
+		id: 7132,
+		name: 'Cover image with left-aligned call to action',
+	},
+	{
+		id: 7159,
+		name: 'Cover image with centered text and a button',
+	},
+	{
+		id: 7161,
+		name: 'Two testimonials side by side',
 	},
 ];
 
