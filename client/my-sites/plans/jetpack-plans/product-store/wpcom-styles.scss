@@ -11,7 +11,7 @@ $wpcom-menu-collapse: 783px;
 	--jetpack-corners-soft: 4px;
 }
 
-:is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
+.is-group-sites.is-section-plans .jetpack-product-store {
 
 	:is(.button[disabled], .button:disabled, .button.disabled) {
 		background-color: var(--studio-gray-5);
