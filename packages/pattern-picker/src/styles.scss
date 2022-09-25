@@ -41,6 +41,12 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		filter: blur(0);
 	}
 
+	.mshots-image__container {
+		display: block;
+		height: 100%;
+		width: 100%;
+	}
+
 	.mshots-image-visible {
 		max-width: 100%;
 
