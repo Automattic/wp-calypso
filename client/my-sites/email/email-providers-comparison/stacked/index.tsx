@@ -10,13 +10,12 @@ import page from 'page';
 import { stringify } from 'qs';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
-import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import PromoCard from 'calypso/components/promo-section/promo-card';
-import useUsersQuery from 'calypso/data/users/use-users-query';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -34,15 +33,17 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import {
+	emailManagement,
+	emailManagementInDepthComparison,
+	loginUrlWithUserNameAndRedirectToEmailProvidersComparison,
+} from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { InfiniteData } from 'react-query';
 
 import './style.scss';
 
@@ -55,14 +56,6 @@ export type EmailProvidersStackedComparisonProps = {
 	selectedEmailProviderSlug?: string;
 	selectedIntervalLength?: IntervalLength;
 	source: string;
-};
-
-type User = {
-	login: string;
-};
-
-type UsersData = {
-	users: User[];
 };
 
 const EmailProvidersStackedComparison = ( {
@@ -99,38 +92,32 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
-	useQuerySitePurchases( selectedSite?.ID ?? -1 );
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain ) && false;
 
-	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
+	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
 	const isPrivacyAvailable = domain?.privacyAvailable;
 
 	const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
 
-	const purchses = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const loginUrl = loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
+		ownerUserName,
+		selectedSite?.slug,
+		selectedDomainName
+	);
 
-	const domainSubscription = purchses.filter(
-		( purchase ) => purchase.id === parseInt( domain?.subscriptionId ?? 0 )
-	)[ 0 ];
-
-	const fetchOptions = {
-		search: domainSubscription?.userId,
-		search_columns: [ 'ID' ],
-	};
-
-	const { data } = useUsersQuery( selectedSite?.ID, fetchOptions, {
-		enabled: domainSubscription !== undefined,
-	} );
-
-	const teams = data as InfiniteData< UsersData > & UsersData;
-
-	const ownerUserName = teams ? teams.users[ 0 ].login : '';
-
-	const userNameUrlParam = `?email_address=${ ownerUserName }`;
-	const loginUrl = `https://wordpress.com/log-in${ ownerUserName ? userNameUrlParam : '' }`;
-
-	const onClickLink = ( eventType: string ) => {
-		dispatch( recordTracksEvent( `calypso_email_providers_${ eventType }_click` ) );
+	/**
+	 * This function builds the event 'calypso_email_providers_owner_contact_click'
+	 * or 'calypso_email_providers_user_login_click' depending on the event type passed as parameter.
+	 *
+	 * @param { "owner_contact" | "user_login" } eventType
+	 */
+	const onClickLink = ( eventType: 'owner_contact' | 'user_login' ) => {
+		dispatch(
+			recordTracksEvent( `calypso_email_providers_${ eventType }_click`, {
+				owner_login: ownerUserName,
+			} )
+		);
 	};
 
 	const isGSuiteSupported =
@@ -326,7 +313,7 @@ const EmailProvidersStackedComparison = ( {
 
 			<>
 				{ ! currentUserCanAddEmail && (
-					<PromoCard className="email-providers-stacked-comparison__owner-notice">
+					<PromoCard className="email-providers-stacked-comparison__non-owner-notice">
 						<p>
 							{ translate(
 								'An email solution can only be purchased by the domain owner. ' +
@@ -334,13 +321,20 @@ const EmailProvidersStackedComparison = ( {
 									"If you don't have access to that account, please reach out to the domain owner {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}",
 								{
 									components: {
-										link: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
+										link: (
+											<a
+												href={ loginUrl }
+												onClick={ () => onClickLink( 'user_login' ) }
+												rel="noopener noreferrer"
+												target="_blank"
+											/>
+										),
 										reachOutLink: isPrivacyAvailable ? (
 											<a
 												href={ contactOwnerUrl }
-												target="_blank"
-												rel="noopener noreferrer"
 												onClick={ () => onClickLink( 'owner_contact' ) }
+												rel="noopener noreferrer"
+												target="_blank"
 											/>
 										) : (
 											<></>
