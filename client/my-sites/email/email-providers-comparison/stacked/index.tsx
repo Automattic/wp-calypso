@@ -92,7 +92,7 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
-	const currentUserCanAddEmail = canCurrentUserAddEmail( domain ) && false;
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 
 	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
@@ -321,14 +321,7 @@ const EmailProvidersStackedComparison = ( {
 									"If you don't have access to that account, please reach out to the domain owner {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}",
 								{
 									components: {
-										link: (
-											<a
-												href={ loginUrl }
-												onClick={ () => onClickLink( 'user_login' ) }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										),
+										link: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
 										reachOutLink: isPrivacyAvailable ? (
 											<a
 												href={ contactOwnerUrl }
