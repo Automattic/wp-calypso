@@ -1,8 +1,6 @@
-.help-center-inline-chat__iframe {
-	width: 100%;
-	height: calc(100% - 4px);
-}
 
-.help-center .components-card.help-center__container .help-center__container-content:has(> iframe) {
-	overflow: hidden;
+.help-center__persistent-iframe-container {
+	width: 100%;
+	height: 100%;
+	padding: 0 !important;
 }
