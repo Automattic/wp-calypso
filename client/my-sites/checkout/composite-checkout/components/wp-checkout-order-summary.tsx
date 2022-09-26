@@ -198,8 +198,10 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		);
 	}
 
-	if ( refundPolicies.length === 1 ) {
-		const [ refundWindow ] = getRefundWindows( refundPolicies );
+	const refundWindows = getRefundWindows( refundPolicies );
+
+	if ( refundWindows.length === 1 ) {
+		const refundWindow = refundWindows[ 0 ];
 
 		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
 			count: refundWindow,
