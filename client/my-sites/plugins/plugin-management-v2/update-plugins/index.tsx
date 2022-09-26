@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
+import ButtonGroup from 'calypso/components/button-group';
 import acceptDialog from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
@@ -21,9 +22,10 @@ import '../style.scss';
 
 interface Props {
 	plugins: Array< Plugin >;
+	isWpCom?: boolean;
 }
 
-export default function UpdatePlugins( { plugins }: Props ): ReactElement | null {
+export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -83,9 +85,8 @@ export default function UpdatePlugins( { plugins }: Props ): ReactElement | null
 		);
 	}
 
-	return pluginUpdateCount ? (
-		// <ButtonGroup className="plugin-management-v2__table-button-group">
-		<Button primary onClick={ updateAllPluginsNotice }>
+	const buttonContent = (
+		<Button primary compact={ ! isWpCom } onClick={ updateAllPluginsNotice }>
 			{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
 				context: 'button label',
 				count: pluginUpdateCount,
@@ -94,6 +95,17 @@ export default function UpdatePlugins( { plugins }: Props ): ReactElement | null
 				},
 			} ) }
 		</Button>
-	) : // </ButtonGroup>
-	null;
+	);
+
+	if ( ! pluginUpdateCount ) {
+		return null;
+	}
+
+	return isWpCom ? (
+		buttonContent
+	) : (
+		<ButtonGroup className="plugin-management-v2__table-button-group">
+			{ buttonContent }
+		</ButtonGroup>
+	);
 }

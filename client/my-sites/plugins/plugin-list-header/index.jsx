@@ -128,10 +128,14 @@ export class PluginsListHeader extends PureComponent {
 		const leftSideButtons = [];
 		const autoupdateButtons = [];
 		const activateButtons = [];
-
 		if ( ! isBulkManagementActive ) {
-			{
-				isJetpackCloud && <UpdatePlugins plugins={ plugins } />;
+			if ( isJetpackCloud ) {
+				const updateButton = (
+					<UpdatePlugins key="plugin-list-header__buttons-update-all" plugins={ plugins } />
+				);
+				if ( updateButton ) {
+					rightSideButtons.push( updateButton );
+				}
 			}
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">

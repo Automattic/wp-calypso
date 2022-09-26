@@ -476,7 +476,7 @@ export class PluginsMain extends Component {
 								<div className="plugins__header-right-content">
 									{ this.renderAddPluginButton() }
 									{ this.renderUploadPluginButton() }
-									<UpdatePlugins plugins={ currentPlugins } />
+									<UpdatePlugins isWpCom plugins={ currentPlugins } />
 								</div>
 							) }
 						</div>
