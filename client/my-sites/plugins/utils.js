@@ -4,7 +4,6 @@ import { useTranslate, translate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 export function siteObjectsToSiteIds( sites ) {
 	return sites?.map( ( site ) => site.ID ) ?? [];
@@ -126,8 +125,6 @@ export function getSitePlugin( plugin, siteId, pluginsOnSites ) {
 }
 
 export function handleUpdatePlugins( plugins, updateAction, pluginsOnSites ) {
-	removePluginStatuses( 'completed', 'error' );
-
 	const updatedPlugins = new Set();
 	const updatedSites = new Set();
 

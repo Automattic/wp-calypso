@@ -283,6 +283,7 @@ export class PluginsList extends Component {
 
 	updatePlugin = ( selectedPlugin ) => {
 		handleUpdatePlugins( [ selectedPlugin ], this.props.updatePlugin, this.props.pluginsOnSites );
+		this.removePluginStatuses();
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 

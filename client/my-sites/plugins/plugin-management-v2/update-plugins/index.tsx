@@ -7,6 +7,7 @@ import acceptDialog from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 import { getPlugins, getPluginsOnSites } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -54,6 +55,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 			handleUpdatePlugins( plugins, updateAction, pluginsOnSites );
 			recordEvent( 'Clicked Update all Plugins' );
 			recordTracksEvent( 'calypso_plugins_update_all_click' );
+			dispatch( removePluginStatuses( 'completed', 'error' ) );
 		}
 	}
 
