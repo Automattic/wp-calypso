@@ -41,11 +41,64 @@ export const videopress: Flow = {
 		setStepProgress( flowProgress );
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const [ _siteTitle, _domain ] = useSelect( ( select ) => {
+			return [
+				select( ONBOARD_STORE ).getSelectedSiteTitle(),
+				select( ONBOARD_STORE ).getSelectedDomain(),
+			];
+		} );
+
 		const clearOnboardingSiteOptions = () => {
 			setSiteTitle( '' );
 			setSiteDescription( '' );
 			setDomain( undefined );
 		};
+
+		const stepValidateUserIsLoggedIn = () => {
+			if ( ! userIsLoggedIn ) {
+				navigate( 'intro' );
+				return false;
+			}
+			return true;
+		};
+
+		const stepValidateSiteTitle = () => {
+			if ( ! stepValidateUserIsLoggedIn() ) {
+				return false;
+			}
+
+			if ( ! _siteTitle.length ) {
+				navigate( 'options' );
+				return false;
+			}
+
+			return true;
+		};
+
+		const stepValidateDomain = () => {
+			if ( ! stepValidateSiteTitle() ) {
+				return false;
+			}
+
+			if ( ! _domain ) {
+				navigate( 'chooseADomain' );
+				return false;
+			}
+
+			return true;
+		};
+
+		switch ( _currentStep ) {
+			case 'options':
+				stepValidateUserIsLoggedIn();
+				break;
+			case 'chooseADomain':
+				stepValidateSiteTitle();
+				break;
+			case 'chooseAPlan':
+				stepValidateDomain();
+				break;
+		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
