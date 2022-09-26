@@ -1,14 +1,14 @@
 import config from '@automattic/calypso-config';
 
 interface BeaconData {
-	eventName: string;
+	name: string;
 	value: number;
 	type: 'counting' | 'timing';
 }
 
-function createBeacon( calypsoSection: string, { eventName, value, type }: BeaconData ) {
+function createBeacon( calypsoSection: string, { name, value, type }: BeaconData ) {
 	const section = calypsoSection.replace( /[.:-]/g, '_' );
-	const event = eventName.replace( '-', '_' );
+	const event = name.replace( '-', '_' );
 
 	// A counting event defaults to incrementing by one.
 	if ( type === 'counting' && value == null ) {

@@ -10,20 +10,20 @@ const logAnalyticsThrottled = throttle(
 		const events = [
 			// Basic per-section response time metric for backwards compatibility.
 			{
-				eventName: 'response_time',
+				name: 'response_time',
 				value: duration,
 				type: 'timing',
 			},
 			// More granular response-time metric including SSR and auth status.
 			{
-				eventName: `.loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time`,
+				name: `response_time.loggedin_${ loggedIn }.ssr_${ usedSSRHandler }`,
 				value: duration,
 				type: 'timing',
 			},
 		];
 		if ( target ) {
 			events.push( {
-				eventName: `target.${ target }`,
+				name: `target.${ target }`,
 				type: 'counting',
 			} );
 		}
@@ -49,7 +49,7 @@ export function logSectionResponse( req, res, next ) {
 		logAnalyticsThrottled( {
 			loggedIn: !! user,
 			usedSSRHandler: !! usedSSRHandler, // Convert undefined to false
-			duration: new Date() - startRenderTime,
+			duration: Date().now() - startRenderTime,
 			sectionName,
 			target,
 		} );
