@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -14,6 +15,8 @@ import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import './style.scss';
 
 const noop = () => {};
+
+const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const getRandomPromo = () => {
 	const promoOptions = [
