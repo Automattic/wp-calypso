@@ -21,7 +21,7 @@
 	border-radius: 2px;
 
 	&:checked::before {
-		content: url("/calypso/images/checkbox-icons/checkmark-primary.svg");
+		content: url(/calypso/images/checkbox-icons/checkmark-primary.svg);
 		width: 12px;
 		height: 12px;
 		margin: 1px auto;

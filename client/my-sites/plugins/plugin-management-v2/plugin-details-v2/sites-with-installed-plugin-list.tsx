@@ -1,7 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getSitesWithSecondarySites } from 'calypso/my-sites/plugins/plugin-management-v2/utils/get-sites-with-secondary-sites';
 import PluginManageConnection from '../plugin-manage-connection';
+import PluginManageSubcription from '../plugin-manage-subscription';
 import RemovePlugin from '../remove-plugin';
 import SitesList from '../sites-list';
 import type { Plugin } from '../types';
@@ -14,12 +17,14 @@ interface Props {
 	selectedSite: SiteDetails;
 	isLoading: boolean;
 	plugin: Plugin;
+	isWpCom?: boolean;
 }
 
 export default function SitesWithInstalledPluginsList( {
 	sites,
 	plugin,
 	selectedSite,
+	isWpCom,
 	...rest
 }: Props ) {
 	const translate = useTranslate();
@@ -55,10 +60,25 @@ export default function SitesWithInstalledPluginsList( {
 	const siteCount = sitesWithSecondarySites.length;
 
 	const renderActions = ( site: SiteDetails ) => {
+		const settingsLink = plugin?.action_links?.Settings ?? null;
 		return (
 			<>
 				<RemovePlugin site={ site } plugin={ plugin } />
 				<PluginManageConnection site={ site } plugin={ plugin } />
+				{ isWpCom && (
+					<>
+						<PluginManageSubcription site={ site } plugin={ plugin } />
+						{ settingsLink && (
+							<PopoverMenuItem
+								className="plugin-management-v2__actions"
+								icon="cog"
+								href={ settingsLink }
+							>
+								{ translate( 'Settings' ) }
+							</PopoverMenuItem>
+						) }
+					</>
+				) }
 			</>
 		);
 	};
@@ -75,6 +95,7 @@ export default function SitesWithInstalledPluginsList( {
 					}
 				) }
 			</div>
+			{ isWpCom && plugin.isMarketplaceProduct && <QueryUserPurchases /> }
 			<SitesList
 				{ ...rest }
 				plugin={ plugin }

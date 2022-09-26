@@ -212,6 +212,7 @@ html.is-desktop .warning {
 	padding: 12px 16px 12px 48px;
 	color: #fff;
 	background-color: #f0b849; /* $alert-yellow */
+	/* stylelint-disable-next-line function-url-quotes */
 	background-image: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI0IDI0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTEyLDJDNi41LDIsMiw2LjUsMiwxMnM0LjUsMTAsMTAsMTBzMTAtNC41LDEwLTEwUzE3LjUsMiwxMiwyeiBNMTMsMTdoLTJ2LTJoMlYxN3ogTTEzLDEzaC0ybC0wLjUtNmgzTDEzLDEzeiIgLz48L3N2Zz4=");
 	background-size: 24px 24px;
 	background-position: 12px center;
