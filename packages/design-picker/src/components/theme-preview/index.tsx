@@ -1,8 +1,9 @@
+import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
-import { ReactChild, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { DEVICE_TYPE } from '../../constants';
 import Toolbar from './toolbar';
@@ -16,7 +17,6 @@ interface Viewport {
 
 interface ThemePreviewProps {
 	url: string;
-	loadingMessage?: string | ReactChild;
 	inlineCss?: string;
 	viewportWidth?: number;
 	isFitHeight?: boolean;
@@ -27,7 +27,6 @@ interface ThemePreviewProps {
 
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
-	loadingMessage,
 	inlineCss,
 	viewportWidth,
 	isFitHeight,
@@ -109,8 +108,10 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			{ containerResizeListener }
 			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ handleDeviceClick } /> }
 			<div className="theme-preview__frame-wrapper">
-				{ ! isLoaded && loadingMessage && (
-					<div className="theme-preview__frame-message">{ loadingMessage }</div>
+				{ ! isLoaded && (
+					<div className="theme-preview__frame-message">
+						<Spinner />
+					</div>
 				) }
 				<iframe
 					ref={ iframeRef }
