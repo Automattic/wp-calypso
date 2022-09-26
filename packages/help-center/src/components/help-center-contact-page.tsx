@@ -37,7 +37,9 @@ export const HelpCenterContactPage: React.FC = () => {
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
 	const email = useSelector( getCurrentUserEmail );
-	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email );
+	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
+		staleTime: 30 * 60 * 1000,
+	} );
 
 	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
