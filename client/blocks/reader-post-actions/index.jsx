@@ -14,6 +14,9 @@ import * as stats from 'calypso/reader/stats';
 import { userCan } from 'calypso/state/posts/utils';
 
 import './style.scss';
+import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import FollowButton from 'calypso/reader/follow-button';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 
 const ReaderPostActions = ( props ) => {
 	const {
@@ -63,6 +66,11 @@ const ReaderPostActions = ( props ) => {
 						onClick={ onEditClick }
 						iconSize={ iconSize }
 					/>
+				</li>
+			) }
+			{ shouldShowLikes( post ) && (
+				<li className="reader-post-actions__item">
+					<ReaderFollowButton siteUrl={ post.feed_URL } iconSize={ 24 } />
 				</li>
 			) }
 			{ shouldShowShare( post ) && (
