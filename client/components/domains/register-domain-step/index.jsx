@@ -263,9 +263,30 @@ class RegisterDomainStep extends Component {
 		this._isMounted = false;
 	}
 
+	// In the launch flow, the initial query could sometimes be missing if the user had
+	// created a site by skipping the domain step. In these cases, fire the initial search
+	// with the subdomain name.
+	getInitialQueryInLaunchFlow() {
+		if ( ! this.props.isInLaunchFlow ) {
+			return;
+		}
+
+		if (
+			typeof this.props.selectedSite !== 'object' ||
+			typeof this.props.selectedSite.domain !== 'string'
+		) {
+			return;
+		}
+
+		const hostname = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const regexHostnameWithRandomNumberSuffix = /^(.+?)([0-9]{5,})/i;
+		const [ , strippedHostname ] = hostname.match( regexHostnameWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? hostname;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery;
+		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
