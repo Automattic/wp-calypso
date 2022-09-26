@@ -36,7 +36,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
+import { getRefundPolicies, getRefundWindows } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -166,27 +166,19 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		return null;
 	}
 
-	const planBundleRefundPolicy = refundPolicies.find(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.PlanBiennialBundle ||
-			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
-			refundPolicy === RefundPolicy.PlanYearlyBundle
-	);
-
-	let text: TranslateResult = translate( 'Limited money back guarantee', {
-		comment:
-			'The user is eligible for a refund during an unspecified time period after the purchase',
-	} );
-
-	if ( planBundleRefundPolicy ) {
-		const refundWindow = Math.min( ...getRefundWindows( [ planBundleRefundPolicy ] ) );
-
-		text = translate( '%(days)d-day full money back guarantee', {
-			args: { days: refundWindow },
-		} );
-	}
-
 	const refundWindows = getRefundWindows( refundPolicies );
+	const shortestRefundWindow = Math.min( ...getRefundWindows( refundPolicies ) );
+
+	// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+	let text: TranslateResult = translate(
+		'%(days)d-day full money back guarantee',
+		'%(days)d-day full money back guarantee',
+		{
+			count: shortestRefundWindow,
+			args: { days: shortestRefundWindow },
+			comment: 'The number of days until the shortest refund window in the cart expires.',
+		}
+	);
 
 	if ( refundWindows.length === 1 ) {
 		const refundWindow = refundWindows[ 0 ];
