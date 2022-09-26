@@ -16,7 +16,7 @@ describe( 'PaymentInfoBlock', () => {
 		describe( 'when the purchase has credits as the payment method', () => {
 			const purchase = { expiryStatus, payment: { type: 'credits' }, isRechargeable: false };
 
-			it( 'renders "Credits"', () => {
+			it( 'renders "You don’t have a payment method to renew this subscription"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
 					'You don’t have a payment method to renew this subscription'

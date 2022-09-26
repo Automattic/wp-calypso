@@ -38,7 +38,7 @@ export default function PaymentInfoBlock( {
 	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className={ 'manage-purchase__no-payment-method' }>
+				<div className="manage-purchase__no-payment-method">
 					<Icon icon={ warning } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
