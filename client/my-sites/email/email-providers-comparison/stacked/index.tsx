@@ -94,29 +94,83 @@ const EmailProvidersStackedComparison = ( {
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 
-	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
+	const NonOwnerNotice = () => {
+		const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
-	const isPrivacyAvailable = domain?.privacyAvailable;
+		const isPrivacyAvailable = domain?.privacyAvailable;
 
-	const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
+		const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
 
-	const loginUrl = loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
-		ownerUserName,
-		selectedSite?.slug,
-		selectedDomainName
-	);
+		const loginUrl = loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
+			ownerUserName,
+			selectedSite?.slug,
+			selectedDomainName
+		);
 
-	/**
-	 * This function builds the event 'calypso_email_providers_owner_contact_click'
-	 * or 'calypso_email_providers_user_login_click' depending on the event type passed as parameter.
-	 *
-	 * @param { "owner_contact" | "user_login" } eventType
-	 */
-	const onClickLink = ( eventType: 'owner_contact' | 'user_login' ) => {
-		dispatch(
-			recordTracksEvent( `calypso_email_providers_${ eventType }_click`, {
-				owner_login: ownerUserName,
-			} )
+		const onClickLink = ( eventType: 'owner_contact' | 'user_login' | 'contact_support' ) => {
+			if ( eventType === 'owner_contact' ) {
+				dispatch(
+					recordTracksEvent( `calypso_email_providers_owner_contact_click`, {
+						owner_login: ownerUserName,
+					} )
+				);
+
+				return;
+			} else if ( eventType === 'contact_support' ) {
+				dispatch(
+					recordTracksEvent( `calypso_email_providers_contact_support_click`, {
+						owner_login: ownerUserName,
+					} )
+				);
+
+				return;
+			}
+
+			dispatch(
+				recordTracksEvent( `calypso_email_providers_user_login_click`, {
+					owner_login: ownerUserName,
+				} )
+			);
+		};
+
+		return (
+			<PromoCard className="email-providers-stacked-comparison__non-owner-notice">
+				<p>
+					{ translate(
+						'Email service can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
+							'who is the owner of %(selectedDomainName)s. ' +
+							'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
+							'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}',
+						{
+							components: {
+								loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
+								reachOutLink: isPrivacyAvailable ? (
+									<a
+										href={ contactOwnerUrl }
+										onClick={ () => onClickLink( 'owner_contact' ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								) : (
+									<></>
+								),
+								contactSupportLink: (
+									<a
+										href="https://wordpress.com/help/contact"
+										onClick={ () => onClickLink( 'contact_support' ) }
+										rel="noopener noreferrer"
+										target="_blank"
+									/>
+								),
+							},
+							args: {
+								ownerUserName,
+								selectedDomainName,
+							},
+						}
+					) }
+				</p>
+			</PromoCard>
 		);
 	};
 
@@ -312,35 +366,7 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ ! currentUserCanAddEmail && (
-					<PromoCard className="email-providers-stacked-comparison__non-owner-notice">
-						<p>
-							{ translate(
-								'An email solution can only be purchased by the domain owner. ' +
-									'To make a purchase, please {{link}}log in{{/link}} with the account that purchased the domain. ' +
-									"If you don't have access to that account, please reach out to the domain owner {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}",
-								{
-									components: {
-										link: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
-										reachOutLink: isPrivacyAvailable ? (
-											<a
-												href={ contactOwnerUrl }
-												onClick={ () => onClickLink( 'owner_contact' ) }
-												rel="noopener noreferrer"
-												target="_blank"
-											/>
-										) : (
-											<></>
-										),
-									},
-									args: {
-										ownerUserName,
-									},
-								}
-							) }
-						</p>
-					</PromoCard>
-				) }
+				{ ! currentUserCanAddEmail && <NonOwnerNotice /> }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 

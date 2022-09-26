@@ -22,8 +22,10 @@ export function useDomainOwnerUserName(
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 
+	const selectedSubscriptionId = domain?.subscriptionId ?? '0';
+
 	const domainSubscription = purchases.filter(
-		( purchase ) => purchase.id === parseInt( domain?.subscriptionId ?? '0' )
+		( purchase ) => purchase.id === parseInt( selectedSubscriptionId )
 	)[ 0 ];
 
 	const fetchOptions = {
