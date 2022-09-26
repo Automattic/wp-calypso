@@ -1,6 +1,5 @@
 import { QueryClient, QueryCache } from 'react-query';
-import { BASE_STALE_TIME } from 'calypso/data/marketplace/constants';
-import { MAX_AGE } from 'calypso/state/initial-state';
+import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
 
 const sharedCache = new QueryCache();
 
