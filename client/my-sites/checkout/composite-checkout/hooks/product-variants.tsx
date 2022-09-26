@@ -47,7 +47,7 @@ export interface SitePlanData {
 }
 
 export interface SitesPlansResult {
-	data: SitePlanData[];
+	data: SitePlanData[] | null;
 }
 
 export function useGetProductVariants(
@@ -57,7 +57,7 @@ export function useGetProductVariants(
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 
-	const sitePlans: SitesPlansResult = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
+	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan: SitePlanData | undefined = sitePlans?.data?.find(
 		( plan ) => plan.currentPlan
 	);
