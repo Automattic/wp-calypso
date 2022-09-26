@@ -199,6 +199,7 @@ export const useStoreItemInfo = ( {
 	const getCustomLabel = useCallback(
 		( item: SelectorProduct ) => {
 			if (
+				! getIsOwned( item ) &&
 				getIsExternal( item ) &&
 				( [ ...JETPACK_SOCIAL_PRODUCTS ] as ReadonlyArray< string > ).includes( item.productSlug )
 			) {
@@ -206,7 +207,7 @@ export const useStoreItemInfo = ( {
 			}
 			return null;
 		},
-		[ translate ]
+		[ getIsOwned, translate ]
 	);
 
 	return useMemo(
