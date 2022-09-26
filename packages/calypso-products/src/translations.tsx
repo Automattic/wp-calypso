@@ -635,12 +635,16 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Quick and accurate spelling correction' ),
 	];
 	const boostIncludesInfo = [
+		translate( '{{strong}}Automated critical CSS{{/strong}}', {
+			components: {
+				strong: <strong />,
+			},
+		} ),
 		translate( 'Site performance scores' ),
 		translate( 'One-click optimization' ),
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
-		translate( 'Automated critical CSS (Paid feature)' ),
 	];
 	const socialIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
