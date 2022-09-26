@@ -364,7 +364,7 @@ export class PluginsMain extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton( isMobile ) {
+	renderUploadPluginButton() {
 		const { selectedSiteSlug, translate, hasUploadPlugins } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
@@ -375,7 +375,7 @@ export class PluginsMain extends Component {
 		return (
 			<Button href={ uploadUrl } onClick={ this.handleUploadPluginButtonClick }>
 				<Icon className="plugins__button-icon" icon={ upload } width={ 18 } height={ 18 } />
-				{ ! isMobile && translate( 'Upload' ) }
+				{ translate( 'Upload' ) }
 			</Button>
 		);
 	}
@@ -447,10 +447,6 @@ export class PluginsMain extends Component {
 				<QuerySiteFeatures siteIds={ this.props.siteIds } />
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
-					// <FixedNavigationHeader
-					// 	className="plugins__page-heading"
-					// 	navigationItems={ this.getNavigationItems() }
-					// ></FixedNavigationHeader>
 					<FixedNavigationHeader
 						className="plugin__header"
 						compactBreadcrumb={ false }
@@ -479,7 +475,7 @@ export class PluginsMain extends Component {
 							{ ! isJetpackCloud && (
 								<div className="plugins__header-right-content">
 									{ this.renderAddPluginButton() }
-									{ this.renderUploadPluginButton( this.state.isMobile ) }
+									{ this.renderUploadPluginButton() }
 									<UpdatePlugins plugins={ currentPlugins } />
 								</div>
 							) }
