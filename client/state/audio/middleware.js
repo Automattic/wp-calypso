@@ -1,6 +1,9 @@
+import config from '@automattic/calypso-config';
 import { HAPPYCHAT_IO_RECEIVE_MESSAGE } from 'calypso/state/action-types';
 
 const isAudioSupported = () => typeof window === 'object' && typeof window.Audio === 'function';
+
+const soundFilePath = config( 'happychat_pling_noise_path' );
 
 export const playSound = ( src ) => {
 	if ( ! isAudioSupported() ) {
@@ -18,7 +21,7 @@ export const playSoundForMessageToCustomer = ( dispatch, { message } ) => {
 		return;
 	}
 
-	playSound( '/calypso/audio/chat-pling.wav' );
+	playSound( soundFilePath );
 };
 
 /**

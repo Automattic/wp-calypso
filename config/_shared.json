@@ -15,6 +15,7 @@
 		"production": "8a12a3ca5a21a619015a47e492b02cfc"
 	},
 	"discover_logged_out_redirect_url": false,
+	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
 	"features": {},
 	"google_analytics_key": false,

@@ -675,6 +675,7 @@ __metadata:
     "@wordpress/icons": ^8.3.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
+    copy-webpack-plugin: ^10.1.0
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4

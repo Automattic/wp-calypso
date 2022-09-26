@@ -9,6 +9,7 @@ const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpac
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
+const CopyPlugin = require( 'copy-webpack-plugin' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -117,6 +118,9 @@ module.exports = {
 					chunkGroups: true,
 				},
 			} ),
+		new CopyPlugin( {
+			patterns: [ { from: 'src/*.wav', to: path.resolve( __dirname, 'dist', '[name][ext]' ) } ],
+		} ),
 	].filter( Boolean ),
 	devServer: {
 		host: 'calypso.localhost',
