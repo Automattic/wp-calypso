@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -176,8 +177,10 @@ export class AppPromo extends Component {
 					<Gridicon icon="cross" size={ 24 } />
 				</Button>
 				<Button
-					onClick={ this.sendMagicLink }
-					className="app-promo__link"
+					onClick={ ! displayJetpackAppBranding && this.sendMagicLink }
+					className={ classNames( 'app-promo__link', {
+						'app-promo_jetpack-app-button': displayJetpackAppBranding,
+					} ) }
 					title="Try the mobile app!"
 				>
 					<img

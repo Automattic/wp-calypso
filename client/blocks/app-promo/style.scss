@@ -67,6 +67,16 @@
 	}
 }
 
+.app-promo .app-promo_jetpack-app-button {
+	color: #1e1e1e;
+
+	&:hover {
+		color: #1e1e1e;
+		text-decoration: none;
+		cursor: inherit;
+	}
+}
+
 .app-promo__dialog {
 	max-width: 480px;
 }
