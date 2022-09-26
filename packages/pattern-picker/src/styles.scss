@@ -49,10 +49,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	.mshots-image-visible {
 		max-width: 100%;
-
-		@media ( max-height: 375px ) {
-			margin-top: 16px;
-		}
 	}
 }
 
