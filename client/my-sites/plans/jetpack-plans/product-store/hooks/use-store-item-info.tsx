@@ -3,6 +3,7 @@ import {
 	JetpackPurchasableItemSlug,
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_SCAN_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 	planHasFeature,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -191,6 +192,24 @@ export const useStoreItemInfo = ( {
 		]
 	);
 
+	/**
+	 * This is a temporary custom label for Jetpack Social product only.
+	 * TODO: Remove 'getCustomLabel' in the near future when Social is ready for purchase.
+	 */
+	const getCustomLabel = useCallback(
+		( item: SelectorProduct ) => {
+			if (
+				! getIsOwned( item ) &&
+				getIsExternal( item ) &&
+				( [ ...JETPACK_SOCIAL_PRODUCTS ] as ReadonlyArray< string > ).includes( item.productSlug )
+			) {
+				return translate( 'Coming soon!' );
+			}
+			return null;
+		},
+		[ getIsOwned, translate ]
+	);
+
 	return useMemo(
 		() => ( {
 			getCheckoutURL,
@@ -208,6 +227,7 @@ export const useStoreItemInfo = ( {
 			getOnClickPurchase,
 			getPurchase,
 			isMultisite,
+			getCustomLabel,
 		} ),
 		[
 			getCheckoutURL,
@@ -222,6 +242,7 @@ export const useStoreItemInfo = ( {
 			getOnClickPurchase,
 			getPurchase,
 			isMultisite,
+			getCustomLabel,
 		]
 	);
 };
