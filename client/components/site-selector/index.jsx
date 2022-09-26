@@ -58,6 +58,7 @@ export class SiteSelector extends Component {
 		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
 		showHiddenSites: PropTypes.bool,
+		maxResults: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -362,6 +363,7 @@ export class SiteSelector extends Component {
 
 		return (
 			<SitesList
+				maxResults={ this.props.maxResults }
 				addToVisibleSites={ ( siteId ) => this.visibleSites.push( siteId ) }
 				searchTerm={ this.state.searchTerm }
 				sites={ sites }
@@ -417,7 +419,7 @@ export class SiteSelector extends Component {
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
 					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
-						<span className="site-selector__hidden-sites-message">
+						<span className="site-selector__list-bottom-adornment">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
 								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
@@ -431,7 +433,6 @@ export class SiteSelector extends Component {
 										a: (
 											<a
 												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												className="site-selector__manage-hidden-sites"
 												target="_blank"
 												rel="noopener noreferrer"
 											/>
