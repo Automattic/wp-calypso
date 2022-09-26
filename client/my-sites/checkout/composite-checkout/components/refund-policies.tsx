@@ -33,20 +33,16 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return undefined;
 		}
 
-		if ( isDomainRegistration( product ) ) {
-			if ( ! product.item_subtotal_integer ) {
-				return undefined;
-			}
+		if ( ! product.item_subtotal_integer ) {
+			return undefined;
+		}
 
+		if ( isDomainRegistration( product ) ) {
 			if ( isRenewal( product ) ) {
 				return RefundPolicy.DomainNameRenewal;
 			}
 
 			return RefundPolicy.DomainNameRegistration;
-		}
-
-		if ( ! product.item_subtotal_integer ) {
-			return undefined;
 		}
 
 		if ( product.product_slug === 'premium_theme' ) {
