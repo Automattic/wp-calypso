@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import store from 'store';
 import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg';
+import jetpackLogoImage from 'calypso/assets/images/jetpack/wp-to-jp-vertical.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
@@ -168,9 +169,9 @@ export class AppPromo extends Component {
 				>
 					<img
 						className="app-promo__icon"
-						src={ wordpressLogoImage }
-						width="32"
-						height="32"
+						src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
+						width={ displayJetpackAppBranding ? '25' : '32' }
+						height={ displayJetpackAppBranding ? '43' : '32' }
 						alt="WordPress App Icon"
 					/>
 					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
