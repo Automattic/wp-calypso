@@ -28,15 +28,22 @@ export const videopress: Flow = {
 		}
 
 		const name = this.name;
-		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
+		const { setDomain, setSiteDescription, setSiteTitle, setStepProgress } =
+			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const clearOnboardingSiteOptions = () => {
+			setSiteTitle( '' );
+			setSiteDescription( '' );
+			setDomain( undefined );
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
+					clearOnboardingSiteOptions();
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
@@ -71,6 +78,7 @@ export const videopress: Flow = {
 				}
 
 				case 'launchpad': {
+					clearOnboardingSiteOptions();
 					return redirect( `/page/${ siteSlug }/home` );
 				}
 			}
