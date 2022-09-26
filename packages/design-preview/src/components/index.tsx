@@ -15,6 +15,8 @@ interface PreviewProps {
 	recordDeviceClick: ( device: string ) => void;
 }
 
+const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
+
 const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
 	variations.find( ( variation ) => variation.slug === slug );
 
@@ -30,10 +32,11 @@ const Preview: React.FC< PreviewProps > = ( {
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
-			return (
+			const inlineCss =
 				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' )
-			);
+				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
+
+			return inlineCss + INJECTED_CSS;
 		}
 
 		return '';
