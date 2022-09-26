@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
+import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import wpcomSupport from 'calypso/lib/wp/support';
-import wpcomOAuthWrapper from 'calypso/lib/wpcom-oauth-wrapper';
 import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 import { injectLocalization } from './localization';
@@ -13,9 +13,9 @@ const debug = debugFactory( 'calypso:wp' );
 let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
-	wpcom = wpcomOAuthWrapper( oauthToken.getToken(), wpcomXhrWrapper );
+	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
 } else {
-	wpcom = wpcomOAuthWrapper( wpcomProxyRequest );
+	wpcom = new WPCOM( wpcomProxyRequest );
 
 	// Upgrade to "access all users blogs" mode
 	wpcom.request(
@@ -53,4 +53,4 @@ export default wpcom;
 /**
  * Expose `wpcomJetpackLicensing` which uses a different auth token than wpcom.
  */
-export const wpcomJetpackLicensing = wpcomOAuthWrapper( wpcomXhrWrapper );
+export const wpcomJetpackLicensing = new WPCOM( wpcomXhrWrapper );

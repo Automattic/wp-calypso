@@ -19,10 +19,10 @@ yarn add wpcom
 
 ```js
 // Edit a post on a site
-const wpcomFacotory = require( 'wpcom' );
+const wpcomFactory = require( 'wpcom' );
 const wpcomXhrRequest = require( 'wpcom-xhr-request' );
 
-const wpcom = wpcomFacotory( '<your-token>', wpcomXhrRequest );
+const wpcom = wpcomFactory( '<your-token>', wpcomXhrRequest );
 
 wpcom
 	.site( 'your-blog.wordpress.com' )

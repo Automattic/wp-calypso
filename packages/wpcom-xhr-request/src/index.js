@@ -25,6 +25,7 @@ const defaults = {
 	processResponseInEnvelopeMode: true,
 	onStreamRecord: () => {},
 	proxyOrigin: 'https://public-api.wordpress.com',
+	token: null,
 	url: '',
 };
 
@@ -234,8 +235,9 @@ export default function request( options, fn ) {
 		headers,
 		isRestAPI,
 		method,
-		query,
 		proxyOrigin,
+		query,
+		token,
 	} = settings;
 
 	// request base path
@@ -298,8 +300,8 @@ export default function request( options, fn ) {
 		debug( 'adding HTTP headers: %o', headers );
 	}
 
-	if ( authToken ) {
-		req.set( 'Authorization', `Bearer ${ authToken }` );
+	if ( authToken || token ) {
+		req.set( 'Authorization', `Bearer ${ authToken || token }` );
 	}
 
 	if ( ! req.get( 'Accept' ) ) {
