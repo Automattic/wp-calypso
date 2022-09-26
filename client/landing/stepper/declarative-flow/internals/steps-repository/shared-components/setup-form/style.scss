@@ -39,6 +39,7 @@
 			/* Overwrites the transition value set by FormInput component.
 			It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
 			transition: none;
+			cursor: pointer;
 		}
 	}
 
@@ -87,6 +88,8 @@ fieldset {
 	height: 0;
 	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 	opacity: 0;
+	margin-top: 16px;
+	overflow: hidden;
 
 	&.is-visible {
 		height: 80px;
@@ -125,6 +128,9 @@ fieldset {
 }
 
 .setup-form__accent-color-popover {
+	.popover__arrow {
+		display: none;
+	}
 	&:focus,
 	&:focus-visible {
 		outline: none;

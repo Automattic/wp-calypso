@@ -29,7 +29,7 @@ export type AccentColor = {
  * @returns a value for background-image
  */
 function generateSwatchSVG( color: string | undefined ) {
-	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23ccc' stroke-width='1' fill='${ encodeURIComponent(
+	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23000' stroke-opacity='0.2' stroke-width='1' fill='${ encodeURIComponent(
 		color || '#fff'
 	) }'%3E%3C/circle%3E${
 		// render a line when a color isn't selected
@@ -53,13 +53,22 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }
 			>
-				<ColorPicker
-					disableAlpha
-					color={ accentColor.hex }
-					onChangeComplete={ ( { hex, rgb } ) =>
-						setAccentColor( { hex, rgb: rgb as unknown as RGB } )
-					}
-				/>
+				{ /* add a form so pressing enter in the color input field will close the picker */ }
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						setColorPickerOpen( false );
+					} }
+				>
+					<ColorPicker
+						disableAlpha
+						color={ accentColor.hex }
+						onChangeComplete={ ( { hex, rgb } ) =>
+							setAccentColor( { hex, rgb: rgb as unknown as RGB } )
+						}
+					/>
+				</form>
 			</Popover>
 			<FormFieldset>
 				<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
@@ -72,7 +81,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					} }
 					name="accentColor"
 					id="accentColor"
-					onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
+					onFocus={ () => setColorPickerOpen( true ) }
 					readOnly
 					value={ accentColor.hex }
 				/>
