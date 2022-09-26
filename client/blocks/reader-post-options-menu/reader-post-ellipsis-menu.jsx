@@ -323,7 +323,7 @@ class ReaderPostEllipsisMenu extends Component {
 				{ this.props.showVisitPost && post.URL && (
 					<PopoverMenuItem
 						onClick={ this.visitPost }
-						icon={ ReaderExternalIcon( { iconSize: 24 } ) }
+						icon={ ReaderExternalIcon( { iconSize: 20 } ) }
 					>
 						{ translate( 'Visit post' ) }
 					</PopoverMenuItem>
