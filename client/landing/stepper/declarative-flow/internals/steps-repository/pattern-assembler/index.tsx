@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -23,6 +23,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
+	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
 	const { goBack, goNext, submit } = navigation;
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
@@ -98,15 +99,25 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
+		incrementIndexRef.current++;
 		if ( sectionPosition !== null ) {
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
-				pattern,
+				{
+					...pattern,
+					key: sections[ sectionPosition ].key,
+				},
 				...sections.slice( sectionPosition + 1 ),
 			] );
 			setScrollToSelectorByPosition( sectionPosition );
 		} else {
-			setSections( [ ...( sections as Pattern[] ), pattern ] );
+			setSections( [
+				...( sections as Pattern[] ),
+				{
+					...pattern,
+					key: `${ incrementIndexRef.current }-${ pattern.id }`,
+				},
+			] );
 			setScrollToSelectorByPosition( sections.length );
 		}
 	};
