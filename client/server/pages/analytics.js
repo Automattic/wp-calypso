@@ -15,7 +15,7 @@ const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, use
 		},
 		// More granular response-time metric including SSR and auth status.
 		{
-			name: `loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time.`,
+			name: `loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time`,
 			value: duration,
 			type: 'timing',
 		},
@@ -28,7 +28,7 @@ const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, use
  * Only logs if the request context contains a `sectionName` attribute.
  */
 export function logSectionResponse( req, res, next ) {
-	const startRenderTime = Date().now();
+	const startRenderTime = Date.now();
 
 	res.on( 'close', function () {
 		if ( ! req.context?.sectionName ) {
@@ -39,7 +39,7 @@ export function logSectionResponse( req, res, next ) {
 		logAnalyticsThrottled( {
 			loggedIn: !! user,
 			usedSSRHandler: !! usedSSRHandler, // Convert undefined to false
-			duration: Date().now() - startRenderTime,
+			duration: Date.now() - startRenderTime,
 			sectionName,
 		} );
 	} );
