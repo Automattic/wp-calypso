@@ -38,6 +38,10 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 		}
 
 		const siteSlug = getSiteSlug( getState(), siteId );
+
 		// TODO: consider using the `page` library instead of calling using `location.href` here
-		window.location.href = addQueryArgs( { siteSlug, source }, '/start/launch-site' );
+		window.location.href = addQueryArgs(
+			{ siteSlug, source, hide_initial_query: 'yes' },
+			'/start/launch-site'
+		);
 	};
