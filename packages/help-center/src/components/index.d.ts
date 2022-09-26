@@ -74,6 +74,7 @@ declare module 'calypso/state/ui/selectors' {
 declare module 'calypso/state/sites/selectors' {
 	export const getSite: ( state: unknown, siteId: number ) => { is_wpcom_atomic: boolean };
 	export const getIsSimpleSite: ( state: unknown ) => boolean;
+	export const getSiteSlug: ( state: unknown, siteId: number ) => string;
 }
 
 declare module 'calypso/state/sites/selectors/is-simple-site' {

@@ -11,9 +11,9 @@ import { Icon, captureVideo, desktop, formatListNumbered, video, external } from
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import NewReleases from '../icons/new-releases';
-export const SITE_STORE = 'automattic/site';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
@@ -26,10 +26,11 @@ export const HelpCenterMoreResources = () => {
 	const [ showWhatsNewDot, setShowWhatsNewDot ] = useState( false );
 	const sectionName = useSelector( getSectionName );
 
-	const { isBusinessOrEcomPlanUser, siteId } = useSelector( ( state ) => {
+	const { isBusinessOrEcomPlanUser, siteId, siteSlug } = useSelector( ( state ) => {
 		const purchases = getUserPurchases( state );
 		const purchaseSlugs = purchases && purchases.map( ( purchase ) => purchase.productSlug );
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, siteId );
 
 		return {
 			isBusinessOrEcomPlanUser: !! (
@@ -37,6 +38,7 @@ export const HelpCenterMoreResources = () => {
 				( purchaseSlugs.some( isWpComBusinessPlan ) || purchaseSlugs.some( isWpComEcommercePlan ) )
 			),
 			siteId: siteId,
+			siteSlug: siteSlug,
 		};
 	} );
 
@@ -100,7 +102,7 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ `https://wordpress.com/home/${ window.location.host }?myHomeCoursePaymentsModal=payments-features` }
+							href={ `https://wordpress.com/home/${ siteSlug }?myHomeCoursePaymentsModal=payments-features` }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__video"
