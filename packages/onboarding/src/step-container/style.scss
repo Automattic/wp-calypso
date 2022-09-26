@@ -9,6 +9,11 @@
 	max-width: 960px;
 	margin: 0 auto;
 
+	@media ( min-width: 660px ) {
+		display: flex;
+		flex-direction: column;
+	}
+
 	// Some steps (like plans) need a larger
 	// width column.
 	&.is-wide-layout {
@@ -264,6 +269,11 @@
 		font-weight: 400;
 		line-height: 20px;
 		margin: 1rem 0;
+
+		@media ( min-width: 660px ) {
+			margin-top: auto;
+			margin-bottom: 10px;
+		}
 
 		svg {
 			margin-inline-end: 6px;

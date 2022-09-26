@@ -10,6 +10,13 @@
 /**
  * General onboarding styling
  */
+
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
 body {
 	background-color: #fdfdfd;
 }
@@ -64,6 +71,7 @@ button {
 .subscribers,
 .blazepress,
 .intro {
+	height: 100%;
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
