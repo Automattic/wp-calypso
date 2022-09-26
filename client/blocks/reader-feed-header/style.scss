@@ -39,15 +39,16 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
-	align-self: stretch;
+	align-items: center;
+	display: flex;
 	font-family: $serif;
 	font-size: $font-title-large;
 	font-weight: 600;
+	justify-content: center;
 	max-height: 16px * 4;
 	margin-bottom: 6px;
 	overflow: hidden;
 	position: relative;
-	text-align: center;
 	white-space: normal;
 
 	.reader-feed-header__site-title-link,
