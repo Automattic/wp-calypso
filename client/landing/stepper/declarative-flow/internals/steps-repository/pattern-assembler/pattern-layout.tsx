@@ -1,4 +1,6 @@
 import { Button } from '@automattic/components';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { motion } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -83,14 +85,17 @@ const PatternLayout = ( {
 							</li>
 						);
 					} ) }
-					<li className="pattern-layout__list-item pattern-layout__list-item--section">
+					<motion.li
+						whileHover={ { x: 10 } }
+						className="pattern-layout__list-item pattern-layout__list-item--section"
+					>
 						<Button onClick={ () => onSelectSection( null ) }>
 							<span className="pattern-layout__add-icon">+</span>{ ' ' }
 							{ sections?.length
 								? translate( 'Add another section' )
 								: translate( 'Add a first section' ) }
 						</Button>
-					</li>
+					</motion.li>
 					{ footer ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<span className="pattern-layout__list-item-text" title={ footer.name }>
