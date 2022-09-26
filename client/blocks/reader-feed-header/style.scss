@@ -65,6 +65,11 @@
 	@include breakpoint-deprecated( '<960px' ) {
 		max-height: 16px * 5.9;
 	}
+
+	.blog-stickers {
+		position: relative;
+		top: 2px;
+	}
 }
 
 .reader-feed-header {
