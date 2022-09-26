@@ -1,12 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import {
-	Button,
-	Gridicon,
-	useSitesTableFiltering,
-	useSitesTableSorting,
-	useScrollToTop,
-	JetpackLogo,
-} from '@automattic/components';
+import { Button, Gridicon, useScrollToTop, JetpackLogo } from '@automattic/components';
+import { createSitesListComponent } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
@@ -140,30 +134,16 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 	}
 `;
 
+const SitesDashboardSitesList = createSitesListComponent();
+
 export function SitesDashboard( {
 	queryParams: { page = 1, perPage = 96, search, showHidden, status = 'all' },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
-
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
-
 	const { hasSitesSortingPreferenceLoaded, sitesSorting, onSitesSortingChange } = useSitesSorting();
-	const { sortedSites } = useSitesTableSorting( allSites, sitesSorting );
-
-	const { filteredSites, statuses } = useSitesTableFiltering( sortedSites, {
-		search,
-		showHidden: search ? true : showHidden,
-		status,
-	} );
-
-	const paginatedSites = filteredSites.slice( ( page - 1 ) * perPage, page * perPage );
-
-	const selectedStatus = statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
-
 	const [ displayMode, setDisplayMode ] = useSitesDisplayMode();
-
 	const userPreferencesLoaded = hasSitesSortingPreferenceLoaded && 'none' !== displayMode;
-
 	const elementRef = useRef( window );
 
 	const isBelowThreshold = useCallback( ( containerNode: Window ) => {
@@ -224,83 +204,99 @@ export function SitesDashboard( {
 				</HeaderControls>
 			</PageHeader>
 			<PageBodyWrapper>
-				<>
-					{ ( allSites.length > 0 || isLoading ) && (
-						<SitesContentControls
-							initialSearch={ search }
-							statuses={ statuses }
-							selectedStatus={ selectedStatus }
-							displayMode={ displayMode }
-							onDisplayModeChange={ setDisplayMode }
-							sitesSorting={ sitesSorting }
-							onSitesSortingChange={ onSitesSortingChange }
-							hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
-						/>
-					) }
-					{ userPreferencesLoaded && (
-						<>
-							{ paginatedSites.length > 0 || isLoading ? (
-								<>
-									{ displayMode === 'list' && (
-										<SitesTable
-											isLoading={ isLoading }
-											sites={ paginatedSites }
-											className={ sitesMargin }
-										/>
-									) }
-									{ displayMode === 'tile' && (
-										<SitesGrid
-											isLoading={ isLoading }
-											sites={ paginatedSites }
-											className={ sitesMargin }
-										/>
-									) }
-									{ ( selectedStatus.hiddenCount > 0 || filteredSites.length > perPage ) && (
-										<PageBodyBottomContainer>
-											<Pagination
-												page={ page }
-												perPage={ perPage }
-												total={ filteredSites.length }
-												pageClick={ ( newPage: number ) => {
-													handleQueryParamChange( { page: newPage } );
-												} }
-											/>
-											{ selectedStatus.hiddenCount > 0 && (
-												<HiddenSitesMessageContainer>
-													<HiddenSitesMessage>
-														{ sprintf(
-															/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
-															_n(
-																'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
-																'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
-																selectedStatus.hiddenCount
-															),
-															{
-																hiddenSitesCount: selectedStatus.hiddenCount,
-															}
+				<SitesDashboardSitesList
+					sites={ allSites }
+					filtering={ { search } }
+					sorting={ sitesSorting }
+					grouping={ { status, showHidden } }
+				>
+					{ ( { sites, statuses } ) => {
+						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
+
+						const selectedStatus =
+							statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];
+
+						return (
+							<>
+								{ ( allSites.length > 0 || isLoading ) && (
+									<SitesContentControls
+										initialSearch={ search }
+										statuses={ statuses }
+										selectedStatus={ selectedStatus }
+										displayMode={ displayMode }
+										onDisplayModeChange={ setDisplayMode }
+										sitesSorting={ sitesSorting }
+										onSitesSortingChange={ onSitesSortingChange }
+										hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+									/>
+								) }
+								{ userPreferencesLoaded && (
+									<>
+										{ paginatedSites.length > 0 || isLoading ? (
+											<>
+												{ displayMode === 'list' && (
+													<SitesTable
+														isLoading={ isLoading }
+														sites={ paginatedSites }
+														className={ sitesMargin }
+													/>
+												) }
+												{ displayMode === 'tile' && (
+													<SitesGrid
+														isLoading={ isLoading }
+														sites={ paginatedSites }
+														className={ sitesMargin }
+													/>
+												) }
+												{ ( selectedStatus.hiddenCount > 0 || sites.length > perPage ) && (
+													<PageBodyBottomContainer>
+														<Pagination
+															page={ page }
+															perPage={ perPage }
+															total={ sites.length }
+															pageClick={ ( newPage: number ) => {
+																handleQueryParamChange( { page: newPage } );
+															} }
+														/>
+														{ selectedStatus.hiddenCount > 0 && (
+															<HiddenSitesMessageContainer>
+																<HiddenSitesMessage>
+																	{ sprintf(
+																		/* translators: the `hiddenSitesCount` field will be a number greater than 0 */
+																		_n(
+																			'%(hiddenSitesCount)d site is hidden from the list. Use search to access it.',
+																			'%(hiddenSitesCount)d sites are hidden from the list. Use search to access them.',
+																			selectedStatus.hiddenCount
+																		),
+																		{
+																			hiddenSitesCount: selectedStatus.hiddenCount,
+																		}
+																	) }
+																</HiddenSitesMessage>
+																<Button
+																	href={ addQueryArgs( window.location.href, {
+																		'show-hidden': 'true',
+																	} ) }
+																>
+																	{ __( 'Show all' ) }
+																</Button>
+															</HiddenSitesMessageContainer>
 														) }
-													</HiddenSitesMessage>
-													<Button
-														href={ addQueryArgs( window.location.href, {
-															'show-hidden': 'true',
-														} ) }
-													>
-														{ __( 'Show all' ) }
-													</Button>
-												</HiddenSitesMessageContainer>
-											) }
-										</PageBodyBottomContainer>
-									) }
-								</>
-							) : (
-								<NoSitesMessage
-									status={ selectedStatus.name }
-									statusSiteCount={ selectedStatus.count }
-								/>
-							) }
-						</>
-					) }
-				</>
+													</PageBodyBottomContainer>
+												) }
+											</>
+										) : (
+											<NoSitesMessage
+												status={ selectedStatus.name }
+												statusSiteCount={ selectedStatus.count }
+											/>
+										) }
+									</>
+								) }
+							</>
+						);
+					} }
+				</SitesDashboardSitesList>
 			</PageBodyWrapper>
 			<ScrollButton
 				onClick={ scrollToTop }

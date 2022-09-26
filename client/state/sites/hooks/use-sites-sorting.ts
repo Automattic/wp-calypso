@@ -1,14 +1,9 @@
-import {
-	SitesTableSortOptions,
-	SitesTableSortKey,
-	SitesTableSortOrder,
-	isValidSorting,
-} from '@automattic/components';
+import { SitesSortOptions, SitesSortKey, SitesSortOrder, isValidSorting } from '@automattic/sites';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
 const SEPARATOR = '-' as const;
 
-type SitesSorting = `${ SitesTableSortKey }${ typeof SEPARATOR }${ SitesTableSortOrder }`;
+type SitesSorting = `${ SitesSortKey }${ typeof SEPARATOR }${ SitesSortOrder }`;
 
 const DEFAULT_SITES_SORTING = {
 	sortKey: 'updatedAt',
@@ -27,9 +22,7 @@ export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) =>
 	return sorting;
 };
 
-export const stringifySitesSorting = (
-	sorting: Required< SitesTableSortOptions >
-): SitesSorting => {
+export const stringifySitesSorting = ( sorting: Required< SitesSortOptions > ): SitesSorting => {
 	return `${ sorting.sortKey }${ SEPARATOR }${ sorting.sortOrder }`;
 };
 
@@ -42,7 +35,7 @@ export const useSitesSorting = () => {
 	return {
 		hasSitesSortingPreferenceLoaded: sitesSorting !== 'none',
 		sitesSorting: parseSitesSorting( sitesSorting ),
-		onSitesSortingChange: ( newSorting: Required< SitesTableSortOptions > ) => {
+		onSitesSortingChange: ( newSorting: Required< SitesSortOptions > ) => {
 			onSitesSortingChange( stringifySitesSorting( newSorting ) );
 		},
 	};

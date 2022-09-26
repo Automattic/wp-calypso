@@ -1307,6 +1307,23 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
+  version: 0.0.0-use.local
+  resolution: "@automattic/sites@workspace:packages/sites"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/social-previews@workspace:^, @automattic/social-previews@workspace:packages/social-previews":
   version: 0.0.0-use.local
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
@@ -12587,6 +12604,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"

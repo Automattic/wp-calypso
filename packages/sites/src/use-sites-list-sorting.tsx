@@ -1,20 +1,14 @@
+import { createHigherOrderComponent } from '@wordpress/compose';
 import { useMemo } from 'react';
+import { MinimumSite } from './site-type';
 
-interface SiteDetailsForSortingWithOptionalUserInteractions {
-	title: string;
-	user_interactions?: string[];
-	options?: {
-		updated_at?: string;
-	};
-}
+type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
+	MinimumSite,
+	'title' | 'user_interactions' | 'options'
+>;
 
-interface SiteDetailsForSortingWithUserInteractions {
-	title: string;
-	user_interactions: string[];
-	options?: {
-		updated_at?: string;
-	};
-}
+type SiteDetailsForSortingWithUserInteractions = Pick< MinimumSite, 'title' | 'options' > &
+	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
 	| SiteDetailsForSortingWithOptionalUserInteractions
@@ -23,44 +17,40 @@ export type SiteDetailsForSorting =
 const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ] as const;
 const validSortOrders = [ 'asc', 'desc' ] as const;
 
-export type SitesTableSortKey = typeof validSortKeys[ number ];
-export type SitesTableSortOrder = typeof validSortOrders[ number ];
+export type SitesSortKey = typeof validSortKeys[ number ];
+export type SitesSortOrder = typeof validSortOrders[ number ];
 
 export const isValidSorting = ( input: {
 	sortKey: string;
 	sortOrder: string;
-} ): input is Required< SitesTableSortOptions > => {
+} ): input is Required< SitesSortOptions > => {
 	const { sortKey, sortOrder } = input;
 
 	return (
-		validSortKeys.includes( sortKey as SitesTableSortKey ) &&
-		validSortOrders.includes( sortOrder as SitesTableSortOrder )
+		validSortKeys.includes( sortKey as SitesSortKey ) &&
+		validSortOrders.includes( sortOrder as SitesSortOrder )
 	);
 };
 
-export interface SitesTableSortOptions {
-	sortKey?: SitesTableSortKey;
-	sortOrder?: SitesTableSortOrder;
+export interface SitesSortOptions {
+	sortKey?: SitesSortKey;
+	sortOrder?: SitesSortOrder;
 }
 
-interface UseSitesTableSortingResult< T extends SiteDetailsForSorting > {
-	sortedSites: T[];
-}
-
-export function useSitesTableSorting< T extends SiteDetailsForSorting >(
+export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	allSites: T[],
-	{ sortKey, sortOrder = 'asc' }: SitesTableSortOptions
-): UseSitesTableSortingResult< T > {
+	{ sortKey, sortOrder = 'asc' }: SitesSortOptions
+) {
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return { sortedSites: sortSitesByLastInteractedWith( allSites, sortOrder ) };
+				return sortSitesByLastInteractedWith( allSites, sortOrder );
 			case 'alphabetically':
-				return { sortedSites: sortSitesAlphabetically( allSites, sortOrder ) };
+				return sortSitesAlphabetically( allSites, sortOrder );
 			case 'updatedAt':
-				return { sortedSites: sortSitesByLastPublish( allSites, sortOrder ) };
+				return sortSitesByLastPublish( allSites, sortOrder );
 			default:
-				return { sortedSites: allSites };
+				return allSites;
 		}
 	}, [ allSites, sortKey, sortOrder ] );
 }
@@ -147,7 +137,7 @@ const hasInteractions = (
 
 function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	sites: T[],
-	sortOrder: SitesTableSortOrder
+	sortOrder: SitesSortOrder
 ) {
 	const interactedItems = ( sites as SiteDetailsForSorting[] ).filter( hasInteractions );
 
@@ -166,7 +156,7 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 function sortAlphabetically< T extends SiteDetailsForSorting >(
 	a: T,
 	b: T,
-	sortOrder: SitesTableSortOrder
+	sortOrder: SitesSortOrder
 ) {
 	const normalizedA = a.title.toLocaleLowerCase();
 	const normalizedB = b.title.toLocaleLowerCase();
@@ -184,14 +174,14 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 
 function sortSitesAlphabetically< T extends SiteDetailsForSorting >(
 	sites: T[],
-	sortOrder: SitesTableSortOrder
+	sortOrder: SitesSortOrder
 ): T[] {
 	return [ ...sites ].sort( ( a, b ) => sortAlphabetically( a, b, sortOrder ) );
 }
 
 function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
 	sites: T[],
-	sortOrder: SitesTableSortOrder
+	sortOrder: SitesSortOrder
 ): T[] {
 	return [ ...sites ].sort( ( a, b ) => {
 		if ( ! a.options?.updated_at || ! b.options?.updated_at ) {
@@ -209,3 +199,19 @@ function sortSitesByLastPublish< T extends SiteDetailsForSorting >(
 		return 0;
 	} );
 }
+
+type SitesSortingProps = {
+	sitesSorting: SitesSortOptions;
+	sites: SiteDetailsForSorting[];
+};
+
+export const withSitesListSorting = createHigherOrderComponent(
+	< OuterProps extends SitesSortingProps >( Component: React.ComponentType< OuterProps > ) => {
+		return ( props: OuterProps ) => {
+			const sites = useSitesListSorting( props.sites, props.sitesSorting );
+
+			return <Component { ...props } sites={ sites } />;
+		};
+	},
+	'withSitesSorting'
+);

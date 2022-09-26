@@ -1,4 +1,5 @@
-import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
+import { ListTile } from '@automattic/components';
+import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
