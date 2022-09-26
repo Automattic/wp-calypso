@@ -349,7 +349,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_PREMIUM_DESIGN_TOOLS ]: {
 		getSlug: () => FEATURE_PREMIUM_DESIGN_TOOLS,
 		getTitle: () => i18n.translate( 'Premium design tools' ),
-		getDescription: () => i18n.translate( "Change all of your site's fonts colours and more." ),
+		getDescription: () => i18n.translate( "Change all of your site's fonts, colours and more." ),
 	},
 
 	[ FEATURE_PREMIUM_THEMES ]: {
