@@ -134,8 +134,10 @@
 
 	.reader-post-actions {
 		margin: 10px 0 0;
+	}
 
-		svg:hover path {
+	.reader-post-actions__item:hover {
+		svg path {
 			stroke: var(--color-link);
 		}
 	}
@@ -507,10 +509,6 @@
 		position: relative;
 		left: -2px;
 		top: -1px;
-	}
-
-	.gridicons-external {
-		margin-right: 2px;
 	}
 
 	.reader-share__button .gridicon {
