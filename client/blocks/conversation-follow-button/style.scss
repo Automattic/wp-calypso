@@ -20,6 +20,16 @@ button.conversation-follow-button {
 		}
 	}
 
+	&.popover__menu-item:hover {
+		.conversation-follow-button__label {
+			color: white;
+		}
+
+		.gridicon {
+			fill: var( --color-text-inverted );
+		}
+	}
+
 	&:focus {
 		box-shadow: none;
 	}
@@ -52,6 +62,16 @@ button.conversation-follow-button {
 
 			.gridicons-reader-following-conversation {
 				fill: var( --color-success );
+			}
+		}
+
+		&.popover__menu-item:hover {
+			.conversation-follow-button__label {
+				color: white;
+			}
+
+			.gridicon {
+				fill: var( --color-text-inverted );
 			}
 		}
 	}
