@@ -355,21 +355,11 @@ export class SiteSelector extends Component {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
-		const existingSites = sites.filter( Boolean );
-
-		if ( ! existingSites.length ) {
-			return (
-				<div className="site-selector__no-results">
-					{ this.props.translate( 'No sites found' ) }
-				</div>
-			);
-		}
-
 		return (
 			<SitesList
 				addToVisibleSites={ ( siteId ) => this.visibleSites.push( siteId ) }
 				searchTerm={ this.state.searchTerm }
-				sites={ existingSites }
+				sites={ sites }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
 				onMouseEnter={ this.onSiteHover }
