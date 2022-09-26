@@ -309,20 +309,16 @@ export function isUnderEmailManagementAll( path ) {
 export function loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
 	ownerUserName,
 	selectedSiteSlug,
-	selectedDomainName
+	selectedDomainName,
 ) {
-	const userNameUrlParameter = `?email_address=${ ownerUserName }`;
 	const redirectUrlParameter = encodeURIComponent(
 		emailManagementPurchaseNewEmailAccount(
 			selectedSiteSlug ?? '',
 			selectedDomainName,
 			null,
 			'login-redirect',
-			'google-workspace'
 		)
 	);
-	const loginUrl = `/log-in${
-		ownerUserName ? userNameUrlParameter : ''
-	}&redirect_to=${ redirectUrlParameter }`;
-	return loginUrl;
+
+	return `/log-in${ buildQueryString( { email_address: ownerUserName, redirect_to: redirectUrlParameter }) }`;
 }
