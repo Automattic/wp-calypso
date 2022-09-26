@@ -28,7 +28,8 @@ export const videopress: Flow = {
 		}
 
 		const name = this.name;
-		const { setStepProgress, setSiteTitle, setSiteDescription } = useDispatch( ONBOARD_STORE );
+		const { setDomain, setSiteDescription, setSiteTitle, setStepProgress } =
+			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
@@ -36,6 +37,7 @@ export const videopress: Flow = {
 		const clearOnboardingSiteOptions = () => {
 			setSiteTitle( '' );
 			setSiteDescription( '' );
+			setDomain( undefined );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
