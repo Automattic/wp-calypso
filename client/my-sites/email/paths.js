@@ -309,16 +309,14 @@ export function isUnderEmailManagementAll( path ) {
 export function loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
 	ownerUserName,
 	selectedSiteSlug,
-	selectedDomainName
+	selectedDomainName,
 ) {
-	const userNameUrlParameter = `?email_address=${ ownerUserName }`;
 	const redirectUrlParameter = encodeURIComponent(
 		emailManagementPurchaseNewEmailAccount(
 			selectedSiteSlug ?? '',
 			selectedDomainName,
 			null,
 			'login-redirect',
-			'google-workspace'
 		)
 	);
 	const loginUrl = `https://wordpress.com/log-in${
