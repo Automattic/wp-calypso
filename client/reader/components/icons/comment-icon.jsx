@@ -3,7 +3,7 @@ import classnames from 'classnames';
 export default function ReaderCommentIcon( { iconSize } ) {
 	const className = classnames( 'comment-button__icon', {
 		'needs-offset-x': iconSize % 18 === 0,
-		'reader-external': true,
+		'reader-comment': true,
 	} );
 
 	return (

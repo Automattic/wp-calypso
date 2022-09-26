@@ -137,7 +137,11 @@
 	}
 
 	.reader-post-actions__item:hover {
-		svg path {
+		svg.reader-external path {
+			fill: var(--color-link);
+		}
+
+		svg.reader-comment path {
 			stroke: var(--color-link);
 		}
 	}
