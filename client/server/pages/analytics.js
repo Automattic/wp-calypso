@@ -5,12 +5,32 @@ import analytics from '../lib/analytics';
 // Compute the number of milliseconds between each call to recordTiming
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
-const logAnalyticsThrottled = throttle( function ( sectionName, duration, target ) {
-	analytics.statsd.recordTiming( sectionName, 'response-time', duration );
-	if ( target ) {
-		analytics.statsd.recordCounting( sectionName, `target.${ target }` );
-	}
-}, THROTTLE_MILLIS );
+const logAnalyticsThrottled = throttle(
+	( { sectionName, target, duration, loggedIn, usedSSRHandler } ) => {
+		const events = [
+			// Basic per-section response time metric for backwards compatibility.
+			{
+				eventName: 'response_time',
+				value: duration,
+				type: 'timing',
+			},
+			// More granular response-time metric including SSR and auth status.
+			{
+				eventName: `.loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time`,
+				value: duration,
+				type: 'timing',
+			},
+		];
+		if ( target ) {
+			events.push( {
+				eventName: `target.${ target }`,
+				type: 'counting',
+			} );
+		}
+		analytics.statsd.recordEvents( sectionName, events );
+	},
+	THROTTLE_MILLIS
+);
 
 /*
  * Middleware to log the response time of the node request for a
@@ -18,14 +38,21 @@ const logAnalyticsThrottled = throttle( function ( sectionName, duration, target
  * Only logs if the request context contains a `sectionName` attribute.
  */
 export function logSectionResponse( req, res, next ) {
-	const startRenderTime = new Date();
+	const startRenderTime = Date().now();
 
-	res.on( 'finish', function () {
-		const context = req.context || {};
-		if ( context.sectionName ) {
-			const duration = new Date() - startRenderTime;
-			logAnalyticsThrottled( context.sectionName, duration, context.target );
+	res.on( 'close', function () {
+		if ( ! req.context?.sectionName ) {
+			return;
 		}
+		const { user, sectionName, target, usedSSRHandler } = req.context;
+
+		logAnalyticsThrottled( {
+			loggedIn: !! user,
+			usedSSRHandler: !! usedSSRHandler, // Convert undefined to false
+			duration: new Date() - startRenderTime,
+			sectionName,
+			target,
+		} );
 	} );
 
 	next();
