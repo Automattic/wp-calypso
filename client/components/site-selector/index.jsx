@@ -57,6 +57,7 @@ export class SiteSelector extends Component {
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
+		showHiddenSites: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -64,6 +65,7 @@ export class SiteSelector extends Component {
 		showManageSitesButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
+		showHiddenSites: false,
 		siteBasePath: false,
 		indicator: false,
 		hideSelected: false,
@@ -292,7 +294,10 @@ export class SiteSelector extends Component {
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
-		let sites = this.state.searchTerm ? this.props.sites : this.props.visibleSites;
+		let sites =
+			this.state.searchTerm || this.props.showHiddenSites
+				? this.props.sites
+				: this.props.visibleSites;
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );
@@ -411,7 +416,7 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
-					{ hiddenSitesCount > 0 && ! this.state.searchTerm && (
+					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
 						<span className="site-selector__hidden-sites-message">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
