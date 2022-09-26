@@ -12,22 +12,24 @@ import {
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { getRefundPolicies, RefundPolicy } from '../refund-policies';
 
-function getCart( productSlugs: string[] = [], cost = 10 ) {
+function getPlanAndDomainBundle( planSlug: string ) {
 	const cart = getEmptyResponseCart();
 
-	cart.products = productSlugs.map( ( productSlug ) => {
-		const product = getEmptyResponseCartProduct();
+	cart.bundled_domain = 'test.live';
 
-		product.item_subtotal_integer = cost;
-		product.item_subtotal_display = `$${ cost }`;
-		product.product_slug = productSlug;
+	cart.products.push( {
+		...getEmptyResponseCartProduct(),
+		is_domain_registration: true,
+		meta: 'test.live',
+		product_slug: 'dotlive_domain',
+	} );
 
-		if ( productSlug.endsWith( '_domain' ) ) {
-			product.meta = 'test.live';
-			product.is_domain_registration = true;
-		}
-
-		return product;
+	cart.products.push( {
+		...getEmptyResponseCartProduct(),
+		extra: { domain_to_bundle: 'test.live' },
+		item_subtotal_display: '$10',
+		item_subtotal_integer: 10,
+		product_slug: planSlug,
 	} );
 
 	return cart;
@@ -35,28 +37,49 @@ function getCart( productSlugs: string[] = [], cost = 10 ) {
 
 describe( 'getRefundPolicies', () => {
 	test( 'add-on product', () => {
-		const cart = getCart( [ PRODUCT_WPCOM_CUSTOM_DESIGN ] );
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 5,
+			product_slug: PRODUCT_WPCOM_CUSTOM_DESIGN,
+		} );
+
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericYearly ] );
 	} );
 
 	test( 'paid domain', () => {
-		const cart = getCart( [ 'dotlive_domain' ] );
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			item_subtotal_integer: 10,
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistration ] );
 	} );
 
 	test( 'free domain', () => {
-		const cart = getCart( [ 'dotlive_domain' ], 0 );
+		const cart = getEmptyResponseCart();
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [] );
 	} );
 
 	test( 'monthly plan', () => {
-		const cart = getCart();
+		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
 			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
@@ -66,11 +89,11 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanMonthly ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericMonthly ] );
 	} );
 
 	test( 'biennial plan', () => {
-		const cart = getCart();
+		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
 			bill_period: `${ PLAN_BIENNIAL_PERIOD }`,
@@ -80,39 +103,19 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanBiennial ] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.GenericBiennial ] );
 	} );
 
 	test( 'yearly plan and bundled domain', () => {
-		const cart = getCart( [ PLAN_PERSONAL ] );
-
-		cart.bundled_domain = 'test.live';
-		cart.products.unshift( {
-			...getEmptyResponseCartProduct(),
-			is_domain_registration: true,
-			meta: 'test.live',
-			product_slug: 'dotlive_domain',
-		} );
+		const cart = getPlanAndDomainBundle( PLAN_PERSONAL );
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [
-			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.PlanYearly,
-		] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanYearlyBundle ] );
 	} );
 
 	test( 'yearly plan, bundled domain and paid domain', () => {
-		const cart = getCart( [ PLAN_PERSONAL ] );
-
-		// Free domain
-		cart.bundled_domain = 'test.live';
-		cart.products.unshift( {
-			...getEmptyResponseCartProduct(),
-			is_domain_registration: true,
-			meta: 'test.live',
-			product_slug: 'dotlive_domain',
-		} );
+		const cart = getPlanAndDomainBundle( PLAN_PERSONAL );
 
 		// Paid domain
 		cart.products.push( {
@@ -126,22 +129,13 @@ describe( 'getRefundPolicies', () => {
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [
-			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.PlanYearly,
+			RefundPolicy.PlanYearlyBundle,
 			RefundPolicy.DomainNameRegistration,
 		] );
 	} );
 
 	test( 'yearly plan, bundled domain and professional email free trial', () => {
-		const cart = getCart( [ PLAN_PERSONAL ] );
-
-		cart.bundled_domain = 'test.live';
-		cart.products.unshift( {
-			...getEmptyResponseCartProduct(),
-			is_domain_registration: true,
-			meta: 'test.live',
-			product_slug: 'dotlive_domain',
-		} );
+		const cart = getPlanAndDomainBundle( PLAN_PERSONAL );
 
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
@@ -157,14 +151,11 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [
-			RefundPolicy.DomainNameRegistrationForPlan,
-			RefundPolicy.PlanYearly,
-		] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanYearlyBundle ] );
 	} );
 
 	test( 'Jetpack Scan monthly product', () => {
-		const cart = getCart();
+		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
 			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
@@ -178,7 +169,7 @@ describe( 'getRefundPolicies', () => {
 	} );
 
 	test( 'DIFM product', () => {
-		const cart = getCart();
+		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
 			bill_period: '-1',
@@ -192,7 +183,7 @@ describe( 'getRefundPolicies', () => {
 	} );
 
 	test( 'premium theme product', () => {
-		const cart = getCart();
+		const cart = getEmptyResponseCart();
 		cart.products.push( {
 			...getEmptyResponseCartProduct(),
 			bill_period: '-1',

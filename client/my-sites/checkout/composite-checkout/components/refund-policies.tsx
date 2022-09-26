@@ -17,14 +17,13 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 export enum RefundPolicy {
 	DomainNameRegistration = 1,
-	DomainNameRegistrationForPlan,
 	DomainNameRenewal,
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
-	PlanBiennial,
-	PlanMonthly,
-	PlanYearly,
+	PlanBiennialBundle,
+	PlanMonthlyBundle,
+	PlanYearlyBundle,
 	PremiumTheme,
 }
 
@@ -35,10 +34,6 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isDomainRegistration( product ) ) {
-			if ( isDomainBundledWithPlan( cart, product.meta ) ) {
-				return RefundPolicy.DomainNameRegistrationForPlan;
-			}
-
 			if ( ! product.item_subtotal_integer ) {
 				return undefined;
 			}
@@ -59,16 +54,20 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isPlan( product ) ) {
-			if ( isMonthlyProduct( product ) ) {
-				return RefundPolicy.PlanMonthly;
-			}
+			const bundledDomain = product.extra?.domain_to_bundle;
 
-			if ( isYearly( product ) ) {
-				return RefundPolicy.PlanYearly;
-			}
+			if ( isDomainBundledWithPlan( cart, bundledDomain ) ) {
+				if ( isMonthlyProduct( product ) ) {
+					return RefundPolicy.PlanMonthlyBundle;
+				}
 
-			if ( isBiennially( product ) ) {
-				return RefundPolicy.PlanBiennial;
+				if ( isYearly( product ) ) {
+					return RefundPolicy.PlanYearlyBundle;
+				}
+
+				if ( isBiennially( product ) ) {
+					return RefundPolicy.PlanBiennialBundle;
+				}
 			}
 		}
 
@@ -92,21 +91,24 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 
 // Get the refund windows in days for the items in the cart
 export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
-	const refundWindowsInCart = refundPolicies.map( ( refundPolicy ) => {
+	const refundWindowsInCart = refundPolicies.flatMap( ( refundPolicy ) => {
 		switch ( refundPolicy ) {
 			case RefundPolicy.DomainNameRegistration:
-			case RefundPolicy.DomainNameRegistrationForPlan:
 			case RefundPolicy.DomainNameRenewal:
 				return 4;
 
 			case RefundPolicy.GenericMonthly:
-			case RefundPolicy.PlanMonthly:
 				return 7;
+
+			case RefundPolicy.PlanMonthlyBundle:
+				return [ 4, 7 ];
+
+			case RefundPolicy.PlanBiennialBundle:
+			case RefundPolicy.PlanYearlyBundle:
+				return [ 4, 14 ];
 
 			case RefundPolicy.GenericBiennial:
 			case RefundPolicy.GenericYearly:
-			case RefundPolicy.PlanBiennial:
-			case RefundPolicy.PlanYearly:
 			case RefundPolicy.PremiumTheme:
 				return 14;
 		}
@@ -145,13 +147,6 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
-		case RefundPolicy.DomainNameRegistrationForPlan:
-			text = translate(
-				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
-				{ components: { refundsSupportPage } }
-			);
-			break;
-
 		case RefundPolicy.DomainNameRenewal:
 			text = translate(
 				'Please note: to receive a {{refundsSupportPage}}refund for a domain renewal{{/refundsSupportPage}}, you must {{cancelDomainSupportPage}}cancel your domain{{/cancelDomainSupportPage}} within 96 hours of the renewal transaction. Canceling the domain means it will be deleted and you may not be able to recover it.',
@@ -180,23 +175,23 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			);
 			break;
 
-		case RefundPolicy.PlanBiennial:
+		case RefundPolicy.PlanBiennialBundle:
 			text = translate(
-				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for two year subscriptions.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}two year plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
 
-		case RefundPolicy.PlanMonthly:
+		case RefundPolicy.PlanMonthlyBundle:
 			text = translate(
-				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for monthly subscriptions.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}monthly plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
 
-		case RefundPolicy.PlanYearly:
+		case RefundPolicy.PlanYearlyBundle:
 			text = translate(
-				'You understand that {{refundsSupportPage}}plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for yearly subscriptions.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}yearly plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
@@ -218,7 +213,14 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
 	let refundPolicies = getRefundPolicies( cart );
 
-	if ( refundPolicies.includes( RefundPolicy.DomainNameRegistrationForPlan ) ) {
+	const hasPlanBundleRefundPolicy = refundPolicies.some(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.PlanBiennialBundle ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
+			refundPolicy === RefundPolicy.PlanYearlyBundle
+	);
+
+	if ( hasPlanBundleRefundPolicy ) {
 		refundPolicies = refundPolicies.filter(
 			( refundPolicy ) =>
 				refundPolicy !== RefundPolicy.DomainNameRegistration &&

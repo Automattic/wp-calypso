@@ -166,26 +166,20 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		return null;
 	}
 
-	const domainRefundWindow = refundPolicies.find(
-		( refundPolicy ) => refundPolicy === RefundPolicy.DomainNameRegistrationForPlan
-	);
-	const planRefundWindow = refundPolicies.find(
+	const planBundleRefundPolicy = refundPolicies.find(
 		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.PlanMonthly ||
-			refundPolicy === RefundPolicy.PlanYearly ||
-			refundPolicy === RefundPolicy.PlanBiennial
+			refundPolicy === RefundPolicy.PlanBiennialBundle ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
+			refundPolicy === RefundPolicy.PlanYearlyBundle
 	);
-
-	const everyRefundPolicyIsForDomainOrPlan =
-		refundPolicies.length === 2 && domainRefundWindow && planRefundWindow;
 
 	let text: TranslateResult = translate( 'Limited money back guarantee', {
 		comment:
 			'The user is eligible for a refund during an unspecified time period after the purchase',
 	} );
 
-	if ( everyRefundPolicyIsForDomainOrPlan ) {
-		const [ refundWindow ] = getRefundWindows( [ domainRefundWindow ] );
+	if ( planBundleRefundPolicy ) {
+		const refundWindow = Math.min( ...getRefundWindows( [ planBundleRefundPolicy ] ) );
 
 		text = translate( '%(days)d-day full money back guarantee', {
 			args: { days: refundWindow },
