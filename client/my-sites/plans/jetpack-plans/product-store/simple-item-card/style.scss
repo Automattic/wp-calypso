@@ -65,3 +65,16 @@
 	line-height: rem(24px);
 	padding: 8px 0 16px;
 }
+
+.simple-item-card__custom-label {
+	span {
+		display: inline-block;
+		padding: 0.125rem 0.5rem;
+		margin: 0.4rem 1rem 0 0;
+		background-color: var(--studio-yellow-10);
+		border-radius: 4px;
+		font-size: 0.875rem;
+		font-weight: 500;
+		white-space: nowrap;
+	}
+}
