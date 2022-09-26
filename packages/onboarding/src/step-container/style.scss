@@ -9,11 +9,6 @@
 	max-width: 960px;
 	margin: 0 auto;
 
-	@media ( min-width: 660px ) {
-		display: flex;
-		flex-direction: column;
-	}
-
 	// Some steps (like plans) need a larger
 	// width column.
 	&.is-wide-layout {
