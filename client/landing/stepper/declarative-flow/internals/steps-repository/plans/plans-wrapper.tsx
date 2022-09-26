@@ -1,3 +1,4 @@
+import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import PlansStep from 'calypso/signup/steps/plans';
 interface Props {
 	onSubmit: () => void;
@@ -11,6 +12,7 @@ const PlansWrapper: React.FC< Props > = ( { onSubmit } ) => {
 		signupDependencies: { domainItem: null },
 		goToNextStep: onSubmit,
 		translate: () => 'string',
+		slug: useSiteSlugParam(),
 	};
 
 	return (

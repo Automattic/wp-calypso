@@ -43,7 +43,6 @@ export const linkInBio: Flow = {
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			const logInUrl = getStartUrl();
-
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -62,7 +61,11 @@ export const linkInBio: Flow = {
 					);
 
 				case 'plansLinkInBio':
-					return navigate( 'launchpad' );
+					return window.location.assign(
+						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
+					);
+
+				// return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );

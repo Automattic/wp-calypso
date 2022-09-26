@@ -25,6 +25,7 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { addPlanToCart } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
 	isEligibleForProPlan,
@@ -38,7 +39,12 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import {
+	saveSignupStep,
+	submitSignupStep,
+	processStep,
+	completeSignupStep,
+} from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -123,7 +129,21 @@ export class PlansStep extends Component {
 				cartItem,
 				themeSlugWithRepo: 'pub/lynx',
 			} );
-			this.props.goToNextStep();
+
+			this.props.processStep( step );
+
+			addPlanToCart(
+				() => {
+					this.props.completeSignupStep( step, {
+						cartItem,
+						themeSlugWithRepo: 'pub/lynx',
+					} );
+					this.props.goToNextStep( 'lanchpad' );
+				},
+				{ siteSlug: this.props.slug },
+				step,
+				window.redux
+			);
 		} else {
 			this.props.submitSignupStep( step, {
 				cartItem,
@@ -460,6 +480,7 @@ PlansStep.propTypes = {
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
 	isTreatmentPlansReorderTest: PropTypes.bool,
+	slug: PropTypes.string,
 };
 
 /**
@@ -504,5 +525,12 @@ export default connect(
 			eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 		};
 	},
-	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
+	{
+		recordTracksEvent,
+		saveSignupStep,
+		submitSignupStep,
+		errorNotice,
+		processStep,
+		completeSignupStep,
+	}
 )( localize( PlansStep ) );
