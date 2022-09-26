@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import superagent from 'superagent';
 import { v4 as uuid } from 'uuid';
-import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
+import { createStatsdURL } from 'calypso/lib/analytics/statsd-utils';
 const URL = require( 'url' );
 
 function getUserFromRequest( request ) {
@@ -43,16 +43,15 @@ function getUserFromRequest( request ) {
 
 const analytics = {
 	statsd: {
-		recordTiming: function ( featureSlug, eventType, duration ) {
+		/**
+		 * Sends statsd events for a Calypso section.
+		 *
+		 * @param {string} calypsoSection The section in which the events occured.
+		 * @param {{eventName: string, value: number, type: 'counting'|'timing'}[]} events Array of events to process.
+		 */
+		recordEvents: ( calypsoSection, events ) => {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
-				const url = statsdTimingUrl( featureSlug, eventType, duration );
-				superagent.get( url ).end();
-			}
-		},
-
-		recordCounting: function ( featureSlug, eventType, increment = 1 ) {
-			if ( config( 'server_side_boom_analytics_enabled' ) ) {
-				const url = statsdCountingUrl( featureSlug, eventType, increment );
+				const url = createStatsdURL( calypsoSection, events );
 				superagent.get( url ).end();
 			}
 		},
