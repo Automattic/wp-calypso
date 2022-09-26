@@ -80,7 +80,14 @@
 	}
 
 	.like-button__label-count {
+		font-size: 13px;
+		font-weight: 500;
 		position: relative;
 		top: 1px;
 	}
+}
+
+.like-button__like-icons svg {
+	position: relative;
+	top: -1px;
 }

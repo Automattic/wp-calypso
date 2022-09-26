@@ -21,9 +21,11 @@
 }
 
 .comment-button__label {
-	font-size: $font-body-small;
+	font-size: 13px;
+	font-weight: 500;
 	margin-left: -1px;
 	position: relative;
+	top: 1px;
 
 	&:empty {
 		display: none;
@@ -32,7 +34,7 @@
 	.comment-button__label-count {
 		margin-right: 4px;
 		position: relative;
-		top: 1px;
+		top: 2px;
 	}
 }
 
