@@ -12,7 +12,6 @@ import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsu
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { SelectButtonProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-import type { ReactElement } from 'react';
 
 const usePlanAvailable = (
 	emailProviderSlug: string,
@@ -50,7 +49,7 @@ const SelectButton = ( {
 	intervalLength,
 	onSelectEmailProvider,
 	selectedDomainName,
-}: SelectButtonProps ): ReactElement => {
+}: SelectButtonProps ) => {
 	const translate = useTranslate();
 
 	const cartKey = useCartKey();

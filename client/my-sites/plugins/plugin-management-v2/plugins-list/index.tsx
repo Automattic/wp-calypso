@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PluginCommonList from '../plugin-common/plugin-common-list';
@@ -6,7 +7,6 @@ import PluginRowFormatter from '../plugin-row-formatter';
 import RemovePlugin from '../remove-plugin';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import '../style.scss';
 
@@ -25,7 +25,7 @@ export default function PluginsList( {
 	removePluginNotice,
 	updatePlugin,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 
 	const rowFormatter = ( props: PluginRowFormatterArgs ) => {
@@ -38,6 +38,24 @@ export default function PluginsList( {
 		);
 	};
 
+	const trackManagePlugin = ( pluginSlug: string ) => () => {
+		recordTracksEvent( 'calypso_plugin_manage_click', {
+			site: selectedSite?.ID,
+			plugin: pluginSlug,
+		} );
+	};
+
+	const trackRemovePlugin = ( pluginSlug: string ) => {
+		recordTracksEvent( 'calypso_plugin_remove_click', {
+			plugin: pluginSlug,
+		} );
+	};
+
+	const onRemoveClick = ( plugin: Plugin ) => () => {
+		removePluginNotice( plugin );
+		trackRemovePlugin( plugin.slug );
+	};
+
 	const renderActions = ( plugin: Plugin ) => {
 		return (
 			<>
@@ -45,6 +63,7 @@ export default function PluginsList( {
 					className="plugin-management-v2__actions"
 					icon="chevron-right"
 					href={ `/plugins/${ plugin.slug }${ selectedSite ? `/${ selectedSite.domain }` : '' }` }
+					onClick={ trackManagePlugin( plugin.slug ) }
 				>
 					{ translate( 'Manage Plugin' ) }
 				</PopoverMenuItem>
@@ -52,9 +71,9 @@ export default function PluginsList( {
 					<RemovePlugin site={ selectedSite } plugin={ plugin } />
 				) : (
 					<PopoverMenuItem
-						onClick={ () => removePluginNotice( plugin ) }
 						icon="trash"
 						className="plugin-management-v2__actions"
+						onClick={ onRemoveClick( plugin ) }
 					>
 						{ translate( 'Remove' ) }
 					</PopoverMenuItem>

@@ -35,24 +35,26 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	}, [ variation, base ] );
 
 	return (
-		<div
-			className={ classnames( 'design-preview__style-variation', {
-				'design-preview__style-variation--is-selected': isSelected,
-			} ) }
-			tabIndex={ 0 }
-			role="button"
-			aria-label={
-				translate( 'Style: %s', {
-					comment: 'Aria label for style preview buttons',
-					args: variation.title,
-				} ) as string
-			}
-			onClick={ () => onClick( variation ) }
-			onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
-		>
-			<GlobalStylesContext.Provider value={ context }>
-				<Preview label={ variation.title } />
-			</GlobalStylesContext.Provider>
+		<div className="design-preview__style-variation-wrapper">
+			<div
+				className={ classnames( 'design-preview__style-variation', {
+					'design-preview__style-variation--is-selected': isSelected,
+				} ) }
+				tabIndex={ 0 }
+				role="button"
+				aria-label={
+					translate( 'Style: %s', {
+						comment: 'Aria label for style preview buttons',
+						args: variation.title,
+					} ) as string
+				}
+				onClick={ () => onClick( variation ) }
+				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
+			>
+				<GlobalStylesContext.Provider value={ context }>
+					<Preview label={ variation.title } />
+				</GlobalStylesContext.Provider>
+			</div>
 		</div>
 	);
 };

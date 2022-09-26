@@ -148,6 +148,7 @@ body.connect-domain-setup__body-white {
 			font-size: $font-body-small;
 			color: var(--color-text-subtle);
 			box-sizing: border-box;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			border-radius: 50%;
 			flex-shrink: 0;
 

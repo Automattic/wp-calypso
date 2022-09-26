@@ -12,7 +12,6 @@ import useGetDomainIntroductoryOfferEligibilities from 'calypso/my-sites/email/e
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -36,7 +35,7 @@ const DiscountPriceInformation = ( {
 }: {
 	isEligibleForIntroductoryOffer: boolean;
 	product: ProductListItem;
-} ): ReactElement => {
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -66,7 +65,7 @@ export const FreeTrialPriceInformation = ( {
 }: {
 	className?: string;
 	product: ProductListItem;
-} ): ReactElement | null => {
+} ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const translate = useTranslate();
 
@@ -112,7 +111,7 @@ const PriceInformation = ( {
 	domain?: ResponseDomain;
 	isDomainInCart?: boolean;
 	product: ProductListItem | null;
-} ): ReactElement | null => {
+} ) => {
 	const { isEligibleForIntroductoryOffer, isEligibleForIntroductoryOfferFreeTrial } =
 		useGetDomainIntroductoryOfferEligibilities( {
 			domain,

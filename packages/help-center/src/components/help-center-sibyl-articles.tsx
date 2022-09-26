@@ -92,12 +92,12 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"
 			>
-				{ articles.map( ( article ) => {
+				{ articles.map( ( article, index ) => {
 					if ( 'type' in article && [ 'video', 'tour' ].includes( article.type ) ) {
 						return;
 					}
 					return (
-						<li key={ article.link }>
+						<li key={ article.link + index }>
 							<ConfigurableLink
 								to={ getPostUrl( article as Article, message ) }
 								external={ 'en' !== locale }

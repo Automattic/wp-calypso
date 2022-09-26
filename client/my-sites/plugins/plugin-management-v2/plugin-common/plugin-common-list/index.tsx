@@ -25,7 +25,7 @@ export default function PluginCommonList( {
 	primaryKey,
 	selectedSite,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<>
 			<div className={ classNames( { 'plugin-common-multi-site-table': ! selectedSite } ) }>

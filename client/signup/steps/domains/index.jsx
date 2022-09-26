@@ -483,6 +483,7 @@ class DomainsStep extends Component {
 
 		// Search using the initial query but do not show the query on the search input field.
 		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+		initialState.hideInitialQuery = hideInitialQuery;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -497,7 +498,6 @@ class DomainsStep extends Component {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
 
@@ -549,6 +549,7 @@ class DomainsStep extends Component {
 					}
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
+					isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				/>
 			</CalypsoShoppingCartProvider>
 		);

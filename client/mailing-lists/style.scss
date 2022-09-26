@@ -39,6 +39,7 @@
 		&.gridicons-cross {
 			fill: white;
 			background: var(--color-neutral-70);
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			border-radius: 100%;
 			box-shadow: 0 0 0 3px var(--color-neutral-0);
 

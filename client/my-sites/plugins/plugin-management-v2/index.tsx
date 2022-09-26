@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -20,7 +20,7 @@ interface Props {
 	isBulkManagementActive: boolean;
 	pluginUpdateCount: number;
 	toggleBulkManagement: () => void;
-	updateAllPlugins: () => void;
+	updateAllPluginsNotice: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
 	updatePlugin: ( plugin: Plugin ) => void;
 }
@@ -32,10 +32,10 @@ export default function PluginManagementV2( {
 	isBulkManagementActive,
 	pluginUpdateCount,
 	toggleBulkManagement,
-	updateAllPlugins,
+	updateAllPluginsNotice,
 	removePluginNotice,
 	updatePlugin,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -53,8 +53,8 @@ export default function PluginManagementV2( {
 		return (
 			<div className="plugin-common-table__bulk-actions">
 				{ !! pluginUpdateCount && (
-					<ButtonGroup>
-						<Button compact primary onClick={ updateAllPlugins }>
+					<ButtonGroup className="plugin-management-v2__table-button-group">
+						<Button compact primary onClick={ updateAllPluginsNotice }>
 							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
 								context: 'button label',
 								count: pluginUpdateCount,
@@ -65,7 +65,7 @@ export default function PluginManagementV2( {
 						</Button>
 					</ButtonGroup>
 				) }
-				<ButtonGroup>
+				<ButtonGroup className="plugin-management-v2__table-button-group">
 					<Button compact onClick={ toggleBulkManagement }>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>

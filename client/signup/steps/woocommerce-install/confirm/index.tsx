@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DomainEligibilityWarning from 'calypso/components/eligibility-warnings/domain-warning';
 import PlanWarning from 'calypso/components/eligibility-warnings/plan-warning';
@@ -28,7 +28,7 @@ const WarningsOrHoldsSection = styled.div`
 	margin-bottom: 40px;
 `;
 
-export default function Confirm( props: WooCommerceInstallProps ): ReactElement | null {
+export default function Confirm( props: WooCommerceInstallProps ) {
 	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();

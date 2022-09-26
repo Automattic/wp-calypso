@@ -1,4 +1,4 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
+import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
@@ -88,7 +88,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			primary={
 				<>
 					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
-						{ site.name }
+						{ site.title }
 					</SiteName>
 
 					<div className={ badges }>

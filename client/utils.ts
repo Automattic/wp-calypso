@@ -22,3 +22,18 @@ export function debounce< T, U >( callback: ( ...args: T[] ) => U, timeout: numb
 export function redirectToLaunchpad( siteSlug: string, launchpadFlow: string ) {
 	window.location.replace( `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ siteSlug }` );
 }
+
+/**
+ * The function calculates does the user fall into
+ * the provided percentage of people for product sampling?
+ *
+ * @param userId Number
+ * @param percentage Number
+ * @returns {boolean}
+ */
+export function isEligibleForProductSampling( userId: number, percentage: number ) {
+	if ( percentage >= 100 ) return true;
+	const userSegment = userId % 100;
+
+	return userSegment < percentage;
+}

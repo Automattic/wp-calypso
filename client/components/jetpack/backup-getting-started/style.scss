@@ -12,7 +12,7 @@ $content-max-width: 210px;
 
 	@include break-medium {
 		height: $card-height-desktop;
-		background-image: url("calypso/assets/images/jetpack/getting-started-backup-bg.svg");
+		background-image: url(calypso/assets/images/jetpack/getting-started-backup-bg.svg);
 		grid-template-columns: minmax(0, $preview-max-width) minmax($content-max-width, 1fr);
 		grid-column-gap: 1.5rem;
 	}
@@ -77,6 +77,7 @@ $content-max-width: 210px;
 
 .backup-getting-started__header {
 	font-size: 1.25rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.5rem;
 	letter-spacing: -0.02em;
 	font-weight: 700;
@@ -86,6 +87,7 @@ $content-max-width: 210px;
 
 .backup-getting-started__text {
 	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.25rem;
 	letter-spacing: -0.02em;
 	margin: 0 0 1rem;

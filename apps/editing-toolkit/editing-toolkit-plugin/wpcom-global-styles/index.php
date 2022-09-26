@@ -77,3 +77,63 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 	);
 }
 add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
+
+/**
+ * Returns the stylesheet resulting of merging core and theme data.
+ *
+ * @return string Stylesheet.
+ */
+function wpcom_get_free_global_stylesheet() {
+	// Return cached value if it can be used and exists.
+	$can_use_cached = ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG )
+		&& ( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG )
+		&& ( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST )
+		&& ! is_admin();
+
+	$transient_name = 'wpcom_free_global_styles_' . get_stylesheet();
+	if ( $can_use_cached ) {
+		$cached = get_transient( $transient_name );
+		if ( $cached ) {
+			return $cached;
+		}
+	}
+
+	$tree = new WP_Theme_JSON_Gutenberg();
+
+	// Merge theme and core data.
+	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_theme_data() );
+	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_core_data() );
+
+	// Generate the default spacing sizes presets.
+	$tree->set_spacing_sizes();
+
+	// We only get the stylesheet for variables and styles of the theme.
+	$stylesheet = $tree->get_stylesheet( array( 'variables', 'styles' ), array( 'theme' ) );
+
+	if ( $can_use_cached ) {
+		// This cache can be long since it only applies to customers that can't load global styles.
+		// Once the customer is on a paid plan this code isn't executed and will use the default
+		// Gutenberg global styles loading mechanism instead.
+		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
+	}
+
+	return $stylesheet;
+}
+
+/**
+ * De-queues Global Styles if the given site is on a free plan.
+ *
+ * @param  int $blog_id Blog ID.
+ */
+function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
+	if ( ! $blog_id ) {
+		$blog_id = get_current_blog_id();
+	}
+
+	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
+	if ( wpcom_should_limit_global_styles( $blog_id ) ) {
+		global $wp_styles;
+		$wp_styles->add_data( 'global-styles', 'after', array( wpcom_get_free_global_stylesheet() ) );
+	}
+}
+add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );

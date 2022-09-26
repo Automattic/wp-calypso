@@ -127,7 +127,7 @@ class MailboxNameValidator extends BaseValidator< string > {
 	}
 }
 
-class AlternateEmailValidator extends BaseValidator< string > {
+class PasswordResetEmailValidator extends BaseValidator< string > {
 	private readonly domainName: string;
 
 	constructor( domainName: string ) {
@@ -161,7 +161,7 @@ class AlternateEmailValidator extends BaseValidator< string > {
 		const value = `${ field.value }`;
 
 		if ( ! emailValidator.validate( value ) ) {
-			field.error = AlternateEmailValidator.getInvalidEmailError();
+			field.error = PasswordResetEmailValidator.getInvalidEmailError();
 
 			return;
 		}
@@ -173,7 +173,7 @@ class AlternateEmailValidator extends BaseValidator< string > {
 			parts.length > 1 &&
 			parts[ 1 ].toLowerCase() === this.domainName?.toLowerCase()
 		) {
-			field.error = AlternateEmailValidator.getSameDomainError( this.domainName );
+			field.error = PasswordResetEmailValidator.getSameDomainError( this.domainName );
 		}
 	}
 }
@@ -388,7 +388,7 @@ class MailboxNameAvailabilityValidator extends BaseValidator< string > {
 export type { Validator };
 
 export {
-	AlternateEmailValidator,
+	PasswordResetEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
 	MailboxNameAvailabilityValidator,

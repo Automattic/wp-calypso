@@ -16,8 +16,6 @@ import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks
 import GoBackButton from '../go-back-button';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
-import './style.scss';
-
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {

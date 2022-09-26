@@ -1,5 +1,6 @@
-import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
+import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import { ComponentPropsWithoutRef } from 'react';
@@ -15,7 +16,7 @@ export interface SitesDashboardQueryParams {
 	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
-	status?: FilterableSiteLaunchStatuses;
+	status?: GroupableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
@@ -76,7 +77,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	},
 } );
 
-type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
+type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;
@@ -114,6 +115,7 @@ export const SitesContentControls = ( {
 	onDisplayModeChange,
 	sitesSorting,
 	onSitesSortingChange,
+	hasSitesSortingPreferenceLoaded,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -128,7 +130,12 @@ export const SitesContentControls = ( {
 				defaultValue={ initialSearch }
 			/>
 			<DisplayControls>
-				<ControlsSelectDropdown selectedText={ selectedStatus.title }>
+				<ControlsSelectDropdown
+					// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+					selectedText={ sprintf( __( 'Status: %(siteStatus)s' ), {
+						siteStatus: selectedStatus.title,
+					} ) }
+				>
 					{ statuses.map( ( { name, title, count } ) => (
 						<SelectDropdown.Item
 							key={ name }
@@ -147,6 +154,7 @@ export const SitesContentControls = ( {
 				</ControlsSelectDropdown>
 				<VisibilityControls>
 					<SitesSortingDropdown
+						hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
 						sitesSorting={ sitesSorting }
 						onSitesSortingChange={ onSitesSortingChange }
 					/>

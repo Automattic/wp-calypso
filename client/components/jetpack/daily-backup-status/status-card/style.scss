@@ -245,3 +245,12 @@
 	display: grid;
 	grid-auto-flow: column;
 }
+
+.backup__progress-bar-percent {
+	font-weight: 600;
+	line-height: 24px;
+	text-align: right;
+	color: #23282d;
+	margin-bottom: 0;
+}
+

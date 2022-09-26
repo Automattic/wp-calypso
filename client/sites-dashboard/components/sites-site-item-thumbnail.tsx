@@ -1,4 +1,5 @@
-import { SiteThumbnail, getSiteLaunchStatus } from '@automattic/components';
+import { SiteThumbnail } from '@automattic/components';
+import { getSiteLaunchStatus } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -41,7 +42,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		<SiteThumbnail
 			{ ...props }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
-			alt={ site.name || __( 'Site thumbnail' ) }
+			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
 			{ site.icon ? (
@@ -52,7 +53,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 				/>
 			) : (
 				<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
-					{ getFirstGrapheme( site.name ?? '' ) }
+					{ getFirstGrapheme( site.title ?? '' ) }
 				</NoIcon>
 			) }
 		</SiteThumbnail>

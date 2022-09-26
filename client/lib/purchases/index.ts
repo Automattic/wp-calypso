@@ -9,7 +9,7 @@ import {
 	isJetpackPlan,
 	isMonthlyProduct,
 	isPlan,
-	isTheme,
+	isThemePurchase,
 	isTitanMail,
 	isConciergeSession,
 	getJetpackProductsDisplayNames,
@@ -682,7 +682,7 @@ export function paymentLogoType( purchase: Purchase ): string | null | undefined
 }
 
 export function purchaseType( purchase: Purchase ) {
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		return i18n.translate( 'Premium Theme' );
 	}
 

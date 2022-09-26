@@ -338,6 +338,7 @@ ul.module-header-actions {
 
 		li {
 			font-size: $font-body-small;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 2em;
 
 			@include breakpoint-deprecated( ">960px" ) {

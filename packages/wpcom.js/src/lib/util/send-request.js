@@ -70,6 +70,12 @@ export default function sendRequest( params, query, body, fn ) {
 	if ( body ) {
 		params.body = body;
 	}
+
+	// OAuth token
+	if ( this.token ) {
+		params.token = this.token;
+	}
+
 	debug( 'params: %o', params );
 
 	// if callback is provided, behave traditionally

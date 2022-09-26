@@ -205,6 +205,7 @@ $date-picker_nav_button_size: 20px;
 	height: 24px;
 	width: 24px;
 	line-height: 24px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	cursor: pointer;
 	border: 1px solid rgba(var(--color-surface-rgb), 0);

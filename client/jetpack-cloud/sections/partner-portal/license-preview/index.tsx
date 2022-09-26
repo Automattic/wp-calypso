@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import page from 'page';
-import { ReactElement, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
@@ -40,7 +40,7 @@ export default function LicensePreview( {
 	attachedAt,
 	revokedAt,
 	filter,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isHighlighted = getQueryArg( window.location.href, 'highlight' ) === licenseKey;
@@ -219,7 +219,7 @@ export default function LicensePreview( {
 	);
 }
 
-export function LicensePreviewPlaceholder(): ReactElement {
+export function LicensePreviewPlaceholder() {
 	const translate = useTranslate();
 
 	return (

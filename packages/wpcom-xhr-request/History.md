@@ -1,5 +1,9 @@
 # History
 
+## 1.3.0 / 2022-09-27
+
+- Add support for `token` parameter for OAuth authentication
+
 ## 1.2.0 / 2020-12-11
 
 - Add support for processing streamed `application/x-ndjson` responses

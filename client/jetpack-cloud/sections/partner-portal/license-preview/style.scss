@@ -1,10 +1,10 @@
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .license-preview {
 	margin: 0;
 	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.25rem;
 	color: var(--studio-gray-70);
 	transition: margin 0.2s ease;
@@ -51,6 +51,7 @@
 		margin: 0 0 4px;
 		font-size: 1.25rem;
 		font-weight: normal;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.75rem;
 		color: var(--studio-gray-100);
 		overflow: hidden;
@@ -74,6 +75,7 @@
 	&__tag {
 		white-space: nowrap;
 		font-size: 0.875rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1rem;
 
 		&--is-just-issued,

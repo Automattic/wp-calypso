@@ -89,6 +89,7 @@
 .list-item.is-error .list-item__title {
 	font-style: italic;
 	font-size: 1rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 2rem;
 }
 

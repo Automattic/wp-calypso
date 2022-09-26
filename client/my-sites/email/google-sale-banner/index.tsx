@@ -15,7 +15,6 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -23,7 +22,7 @@ type GoogleSaleBannerProps = {
 	domains: Array< ResponseDomain >;
 };
 
-const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ): ReactElement | null => {
+const GoogleSaleBanner = ( { domains }: GoogleSaleBannerProps ) => {
 	const googleWorkspaceProduct = useSelector( ( state ) =>
 		getProductBySlug( state, GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY )
 	);

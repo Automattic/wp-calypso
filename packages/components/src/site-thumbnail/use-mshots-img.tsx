@@ -1,5 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { fetchIsRedirect } from './fetch-is-redirect';
 
 export function mshotsUrl( targetUrl: string, options: MShotsOptions, countToRefresh = 0 ): string {
 	if ( ! targetUrl ) {
@@ -42,81 +43,76 @@ export const useMshotsImg = (
 	isError: boolean;
 	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
+	const [ previousSrc, setPreviousSrc ] = useState( src );
+	const srcHasChanged = src !== previousSrc;
+
 	const [ retryCount, setRetryCount ] = useState( 0 );
 	const { mshotUrl, srcSet } = useMemo( () => {
-		const mshotUrl = mshotsUrl( src, options, retryCount );
+		// If the src has changed, the retry count will be reset
+		// and we want to avoid caching the mshot loading the image
+		const count = srcHasChanged ? -1 : retryCount;
+		const mshotUrl = mshotsUrl( src, options, count );
 
 		// Add retina sizes 2x and 3x.
 		const srcSet = [ ...sizes, getRetinaSize( 2, options ), getRetinaSize( 3, options ) ]
 			.map( ( { width, height } ) => {
-				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, retryCount );
+				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, count );
 				return `${ resizedUrl } ${ width }w`;
 			} )
 			.join( ', ' );
 		return { mshotUrl, srcSet };
-	}, [ src, options, retryCount, sizes ] );
+	}, [ srcHasChanged, retryCount, src, options, sizes ] );
 
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
 	const timeout = useRef< ReturnType< typeof setTimeout > >();
 
-	const onLoad = useCallback(
-		( event: React.SyntheticEvent< HTMLImageElement, Event > ) => {
-			if ( ! mshotUrl.length ) {
-				return;
-			}
-
-			setIsLoading( true );
-
-			// Loaded image natural width should conform to sizes passed in.
-			const hasExpectedImageDimensions = sizes.some(
-				( size ) => size.width === event.currentTarget.naturalWidth
-			);
-
-			// mShot Loading image is 400x300px.
-			// mShot 404 image is 748×561px
-			// So we use the image dimensions to determine whether mShot is still
-			// generating an image.
-			const hasMshotLoadingImageDimensions =
-				event.currentTarget.naturalWidth === 400 && event.currentTarget.naturalHeight === 300;
-
-			// JSDOM environment doesn't have a real rendering engine and so can't
-			// simulate image dimensions. The `a8cIsLoading` hack is only there
-			// for unit testing purposes.
-			const loading =
-				( sizes.length && ! hasExpectedImageDimensions ) ||
-				hasMshotLoadingImageDimensions ||
-				'a8cIsLoading' in event.currentTarget;
-
-			if ( ! loading ) {
-				setIsLoading( false );
-			} else if ( retryCount < MAXTRIES ) {
-				// Only refresh 10 times
-				timeout.current = setTimeout(
-					() => setRetryCount( ( retryCount ) => retryCount + 1 ),
-					retryCount * 500
-				);
-			}
-		},
-		[ retryCount, mshotUrl.length, sizes ]
-	);
-
 	const onError = useCallback( () => {
 		setIsError( true );
 	}, [] );
 
 	useEffect( () => {
+		if ( ! src ) {
+			return;
+		}
+
+		async function checkRedirectImage() {
+			const isRedirect = await fetchIsRedirect( mshotUrl );
+			// 307 is the status code for a temporary redirect used by mshots.
+			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
+			// and the `response.headers.get('content-type)` will be 'image/gif'
+			if ( ! isRedirect ) {
+				setIsLoading( false );
+			}
+		}
+
+		if ( isLoading && retryCount < MAXTRIES ) {
+			// Only refresh 10 times
+			timeout.current = setTimeout( () => {
+				setRetryCount( ( retryCount ) => retryCount + 1 );
+				checkRedirectImage();
+			}, retryCount * 600 );
+		}
+
 		return () => {
 			clearTimeout( timeout.current );
 		};
-	}, [] );
+	}, [ isLoading, mshotUrl, retryCount, src ] );
+
+	useEffect( () => {
+		// Reset state when the image src changes. e.g. When the site is updated
+		if ( srcHasChanged ) {
+			setIsLoading( true );
+			setRetryCount( 0 );
+			setPreviousSrc( src );
+		}
+	}, [ src, srcHasChanged ] );
 
 	return {
 		isLoading,
 		isError,
 		imgProps: {
-			onLoad,
 			onError,
 			srcSet,
 			src: mshotUrl,

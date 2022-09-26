@@ -17,7 +17,7 @@ import {
 	getCampaignBudgetData,
 	getCampaignClickthroughRate,
 	getCampaignDurationFormatted,
-	getCampaignEstimatedReach,
+	getCampaignEstimatedImpressions,
 	getCampaignOverallSpending,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -31,9 +31,10 @@ type Props = {
 
 export default function CampaignItem( { campaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
 
-	const { cancelCampaign } = useCancelCampaignMutation();
+	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 
 	const {
 		impressions_total,
@@ -48,8 +49,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		end_date,
 		budget_cents,
 		audience_list,
-		impressions_estimated_total,
-		deliver_margin_multiplier,
+		display_delivery_estimate,
 		display_name,
 	} = campaign;
 
@@ -59,8 +59,8 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const clickthroughRate = useMemo(
-		() => getCampaignClickthroughRate( clicks_total, impressions_total ),
-		[ clicks_total || 0, impressions_total ]
+		() => getCampaignClickthroughRate( clicks_total || 0, impressions_total || 0 ),
+		[ clicks_total, impressions_total ]
 	);
 
 	const durationFormatted = useMemo(
@@ -69,14 +69,14 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const { totalBudget, totalBudgetLeft } = useMemo(
-		() => getCampaignBudgetData( budget_cents, spent_budget_cents ),
+		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
 	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';
 
-	const estimatedReach = useMemo(
-		() => getCampaignEstimatedReach( impressions_estimated_total, deliver_margin_multiplier ),
-		[ impressions_estimated_total, deliver_margin_multiplier ]
+	const estimatedImpressions = useMemo(
+		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
+		[ display_delivery_estimate ]
 	);
 
 	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
@@ -119,16 +119,32 @@ export default function CampaignItem( { campaign }: Props ) {
 	const buttons = [
 		{
 			action: 'cancel',
+			isPrimary: true,
 			label: __( 'No' ),
 		},
 		{
 			action: 'remove',
-			isPrimary: true,
 			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
 				cancelCampaign( siteId, campaign.campaign_id );
 			},
+		},
+	];
+
+	const errorDialogButtons = [
+		{
+			action: 'remove',
+			label: __( 'Contact support' ),
+			onClick: async () => {
+				setShowErrorDialog( false );
+				window.open( 'https://wordpress.com/support/', '_blank' );
+			},
+		},
+		{
+			action: 'cancel',
+			isPrimary: true,
+			label: __( 'Ok' ),
 		},
 	];
 
@@ -141,6 +157,15 @@ export default function CampaignItem( { campaign }: Props ) {
 			>
 				<h1>{ cancelCampaignTitle }</h1>
 				<p>{ cancelCampaignMessage }</p>
+			</Dialog>
+
+			<Dialog
+				isVisible={ showErrorDialog }
+				buttons={ errorDialogButtons }
+				onClose={ () => setShowErrorDialog( false ) }
+			>
+				<h1>{ __( "Something's gone wrong" ) }</h1>
+				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
@@ -157,7 +182,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								{ impressions_total || 0 }
+								{ impressions_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
@@ -165,7 +190,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total || 0 }
+								{ clicks_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -211,10 +236,10 @@ export default function CampaignItem( { campaign }: Props ) {
 					<div className="campaign-item__row campaign-item__goal-row2">
 						<div className="campaign-item__column campaign-item__estimated-reach">
 							<div className="campaign-item__block_label campaign-item__estimated-reach-label">
-								{ __( 'Estimated reach' ) }
+								{ __( 'Estimated impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__estimated-reach-value">
-								{ estimatedReach }
+								{ estimatedImpressions }
 							</div>
 						</div>
 

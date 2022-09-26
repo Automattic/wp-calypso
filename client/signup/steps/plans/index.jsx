@@ -223,7 +223,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_faq_202209_v1"
+					name="calypso_signup_plans_step_faq_202209_v2"
 					options={ {
 						isEligible:
 							[ 'en-gb', 'en' ].includes( locale ) &&
@@ -346,18 +346,10 @@ export class PlansStep extends Component {
 		}
 
 		if ( useEmailOnboardingSubheader ) {
-			return 'en' === locale ||
-				i18n.hasTranslation(
-					'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.'
-				)
-				? translate(
-						'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
-						{ components: { link: freePlanButton } }
-				  )
-				: translate(
-						"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-						{ components: { link: freePlanButton } }
-				  );
+			return translate(
+				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
 		}
 
 		if ( ! hideFreePlan ) {

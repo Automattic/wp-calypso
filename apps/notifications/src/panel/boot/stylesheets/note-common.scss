@@ -1,6 +1,7 @@
 div.wpnc__note-actions {
 	@extend %container;
 	color: var(--color-neutral-70);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1em;
 	text-align: center;
 	padding-top: $wpnc__padding-large;

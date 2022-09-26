@@ -13,13 +13,13 @@ const sortByNameAndUrl = ( list ) => sortBy( list, [ 'name', 'URL' ] );
  * @returns {Array}        Sites objects
  */
 export default createSelector(
-	( state ) => {
+	( state, { shouldSort = true } = {} ) => {
 		const primarySiteId = getPrimarySiteId( state );
 		const [ primarySite, sites ] = partition( getSitesItems( state ), { ID: primarySiteId } );
 
-		return [ ...primarySite, ...sortByNameAndUrl( sites ) ].map( ( site ) =>
-			getSite( state, site.ID )
-		);
+		const allSites = shouldSort ? sortByNameAndUrl( sites ) : sites;
+
+		return [ ...primarySite, ...allSites ].map( ( site ) => getSite( state, site.ID ) );
 	},
 	( state ) => [ getSitesItems( state ), state.currentUser.capabilities ]
 );

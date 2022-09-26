@@ -1,6 +1,6 @@
 
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-common-table__table {
 	display: none;
@@ -88,15 +88,18 @@ td.plugin-common-table__actions {
 		max-width: 150px;
 	}
 }
+
 .components-form-toggle.is-checked .components-form-toggle__track {
 	background-color: var(--studio-jetpack-green-50);
 }
+
 .plugin-common-table__plugin-icon {
 	width: 32px;
 	height: 32px;
 	vertical-align: middle;
 	margin-inline-end: 16px;
 }
+
 .plugin-common-table__bulk-actions {
 	display: flex;
 	justify-content: end;

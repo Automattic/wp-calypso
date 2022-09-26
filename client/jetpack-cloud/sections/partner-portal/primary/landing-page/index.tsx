@@ -1,10 +1,9 @@
 import page from 'page';
 import { useEffect } from 'react';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { getActivePartnerKey } from 'calypso/state/partner-portal/partner/selectors';
 
-export default function LandingPage(): React.ReactElement | null {
+export default function LandingPage() {
 	const activePartnerKey = useSelector( getActivePartnerKey );
 
 	useEffect( () => {
