@@ -4,7 +4,6 @@ import {
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
 	isPlan,
-	isTheme,
 	isYearly,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -55,7 +54,7 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 			return undefined;
 		}
 
-		if ( isTheme( product ) ) {
+		if ( product.product_slug === 'premium_theme' ) {
 			return RefundPolicy.PremiumTheme;
 		}
 
