@@ -11,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import React, { FormEvent, useEffect } from 'react';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -213,18 +214,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					value={ accentColor.hex }
 				/>
 			</FormFieldset>
-			{ ! hasMinContrast( accentColor.rgb ) && (
-				<div className="newsletter-setup__contrast-warning" style={ { display: 'flex' } }>
-					<div className="newsletter-setup__contrast-warning-icon-container">
-						<Icon icon={ tip } size={ 20 } />
-					</div>
-					<div>
-						{ __(
-							'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
-						) }
-					</div>
+			<div
+				className={ classNames( 'newsletter-setup__contrast-warning', {
+					'is-visible': ! hasMinContrast( accentColor.rgb ),
+				} ) }
+				aria-hidden={ hasMinContrast( accentColor.rgb ) }
+				role="alert"
+			>
+				<div className="newsletter-setup__contrast-warning-icon-container">
+					<Icon icon={ tip } size={ 20 } />
 				</div>
-			) }
+				<div>
+					{ __(
+						'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
+					) }
+				</div>
+			</div>
 			<Button className="newsletter-setup__submit-button" type="submit" primary>
 				{ __( 'Continue' ) }
 			</Button>
