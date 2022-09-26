@@ -23,9 +23,14 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { localizePath } from 'calypso/lib/i18n-utils/localize-path';
 import urlSearch from 'calypso/lib/url-search';
+import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
+import PluginsList from 'calypso/my-sites/plugins/plugins-list';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import {
 	getPlugins,
 	isRequestingForSites,
@@ -50,8 +55,6 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import NoPermissionsError from './no-permissions-error';
-import PluginsList from './plugins-list';
 
 import './style.scss';
 
@@ -106,6 +109,8 @@ export class PluginsMain extends Component {
 		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
 			this.setState( { isMobile } );
 		} );
+
+		this.setBreadCrumbs();
 	}
 
 	componentWillUnmount() {
@@ -389,29 +394,33 @@ export class PluginsMain extends Component {
 		);
 	}
 
-	getNavigationItems() {
-		const { search, selectedSiteSlug } = this.props;
-		const navigationItems = [
-			{
-				label: this.props.translate( 'Plugins' ),
-				href: `/plugins/${ selectedSiteSlug || '' }`,
-				helpBubble: this.props.translate(
+	setBreadCrumbs() {
+		const { search, state, selectedSiteSlug, translate } = this.props;
+
+		if ( getBreadcrumbs( state ).length === 0 ) {
+			this.props.appendBreadcrumb( {
+				label: translate( 'Plugins' ),
+				href: localizePath( `/plugins/${ selectedSiteSlug || '' }` ),
+				id: 'plugins',
+				helpBubble: translate(
 					'Add new functionality and integrations to your site with plugins.'
 				),
-			},
-			{
-				label: this.props.translate( 'Installed Plugins' ),
-				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
-			},
-		];
-		if ( search ) {
-			navigationItems.push( {
-				label: this.props.translate( 'Search Results' ),
-				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
 			} );
 		}
 
-		return navigationItems;
+		this.props.appendBreadcrumb( {
+			label: translate( 'Installed Plugins' ),
+			href: localizePath( `/plugins/${ selectedSiteSlug || '' }` ),
+			id: 'installed-plugins',
+		} );
+
+		if ( search ) {
+			this.props.appendBreadcrumb( {
+				label: translate( 'Search Results' ),
+				href: localizePath( `/plugins/${ selectedSiteSlug || '' }?s=${ search }` ),
+				id: 'search-results',
+			} );
+		}
 	}
 
 	render() {
@@ -458,7 +467,7 @@ export class PluginsMain extends Component {
 				{ ! isJetpackCloud && (
 					<FixedNavigationHeader
 						className="plugins__page-heading"
-						navigationItems={ this.getNavigationItems() }
+						navigationItems={ getBreadcrumbs( this.props.state ) }
 					>
 						<div className="plugins__main-buttons">
 							{ this.renderAddPluginButton() }
@@ -571,8 +580,9 @@ export default flow(
 				hasUploadPlugins: hasUploadPlugins,
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 				isJetpackCloud,
+				state,
 			};
 		},
-		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
+		{ appendBreadcrumb, wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
 	)
 )( PluginsMain );
