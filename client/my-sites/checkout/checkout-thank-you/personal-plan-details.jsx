@@ -1,6 +1,5 @@
 import { isPersonal, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import adsRemovedImage from 'calypso/assets/images/illustrations/removed-ads.svg';
@@ -9,7 +8,7 @@ import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
 
 const PersonalPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
-	const plan = find( sitePlans.data, isPersonal );
+	const plan = sitePlans.data?.find( isPersonal );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 
 	return (
