@@ -55,6 +55,7 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
+	FEATURE_PREMIUM_DESIGN_TOOLS,
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
@@ -384,6 +385,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_SUPPORT,
 			FEATURE_FREE_THEMES,
@@ -411,6 +413,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupCompareAvailableFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_HOSTING,
+		FEATURE_PREMIUM_DESIGN_TOOLS,
 		FEATURE_NO_ADS,
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -505,6 +508,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
@@ -554,6 +558,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		[
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
 			FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -621,6 +626,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_JETPACK_ESSENTIAL,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
@@ -716,6 +722,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		[
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
 			FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -777,6 +784,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			// pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_JETPACK_ADVANCED,
 			isLoggedInMonthlyPricing && FEATURE_EMAIL_SUPPORT,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
@@ -822,6 +830,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		[
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_HOSTING,
+			FEATURE_PREMIUM_DESIGN_TOOLS,
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
 			FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -909,6 +918,7 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 		FEATURE_GOOGLE_MY_BUSINESS,
 		FEATURE_HOSTING,
+		FEATURE_PREMIUM_DESIGN_TOOLS,
 		FEATURE_MEMBERSHIPS,
 		FEATURE_NO_BRANDING,
 		FEATURE_REPUBLICIZE,

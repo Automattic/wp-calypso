@@ -63,6 +63,7 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
+	FEATURE_PREMIUM_DESIGN_TOOLS,
 	FEATURE_INSTALL_PLUGINS,
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_JETPACK_ADVANCED,
@@ -343,6 +344,12 @@ export const FEATURES_LIST = {
 			i18n.translate(
 				'Site hosting is included with your plan, eliminating additional cost and technical hassle.'
 			),
+	},
+
+	[ FEATURE_PREMIUM_DESIGN_TOOLS ]: {
+		getSlug: () => FEATURE_PREMIUM_DESIGN_TOOLS,
+		getTitle: () => i18n.translate( 'Premium design tools' ),
+		getDescription: () => i18n.translate( "Change all of your site's fonts colours and more." ),
 	},
 
 	[ FEATURE_PREMIUM_THEMES ]: {
