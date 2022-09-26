@@ -8,7 +8,6 @@ import {
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -59,7 +58,7 @@ class CartFreeUserPlanUpsell extends Component {
 
 	getUpgradeText() {
 		const { cart, planPrice, translate, eligibleForProPlan } = this.props;
-		const firstDomain = find( getAllCartItems( cart ), this.isRegistrationOrTransfer );
+		const firstDomain = getAllCartItems( cart ).find( this.isRegistrationOrTransfer );
 
 		if ( planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
