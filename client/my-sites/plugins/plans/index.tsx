@@ -162,7 +162,9 @@ const Plans = ( {
 									<Button
 										className="button plan-features__actions-button is-business-plan"
 										primary
-										href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }
+										href={ `/checkout/${ selectedSite?.slug }/${
+											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+										}` }
 									>
 										{ translate( 'Upgrade to Business' ) }
 									</Button>
@@ -187,7 +189,9 @@ const Plans = ( {
 								) : (
 									<Button
 										className="button plan-features__actions-button is-ecommerce-plan"
-										href={ `/checkout/${ selectedSite?.slug }/${ PLAN_ECOMMERCE }` }
+										href={ `/checkout/${ selectedSite?.slug }/${
+											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
+										}` }
 									>
 										{ translate( 'Upgrade to eCommerce' ) }
 									</Button>
@@ -225,7 +229,9 @@ const Plans = ( {
 						<Button
 							className="button plan-features__actions-button is-business-plan"
 							primary
-							href={ `/checkout/${ selectedSite?.slug }/${ PLAN_BUSINESS }` }
+							href={ `/checkout/${ selectedSite?.slug }/${
+								intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+							}` }
 						>
 							{ translate( 'Upgrade to Business' ) }
 						</Button>
