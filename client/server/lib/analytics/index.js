@@ -47,7 +47,7 @@ const analytics = {
 		 * Sends statsd events for a Calypso section.
 		 *
 		 * @param {string} calypsoSection The section in which the events occured.
-		 * @param {{eventName: string, value: number, type: 'counting'|'timing'}[]} events Array of events to process.
+		 * @param {{name: string, value: number, type: 'counting'|'timing'}[]} events Array of events to process.
 		 */
 		recordEvents: ( calypsoSection, events ) => {
 			if ( config( 'server_side_boom_analytics_enabled' ) ) {
