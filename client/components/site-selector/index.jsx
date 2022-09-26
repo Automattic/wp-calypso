@@ -305,8 +305,8 @@ export class SiteSelector extends Component {
 		return sites;
 	}
 
-	renderAllSites( sites ) {
-		if ( ! this.props.showAllSites || sites.length > 0 || ! this.props.allSitesPath ) {
+	renderAllSites() {
+		if ( ! this.props.showAllSites || this.state.searchTerm || ! this.props.allSitesPath ) {
 			return null;
 		}
 
@@ -419,7 +419,7 @@ export class SiteSelector extends Component {
 					isReskinned={ this.props.isReskinned }
 				/>
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
-					{ this.renderAllSites( sites ) }
+					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
 					{ hiddenSitesCount > 0 && ! this.state.searchTerm && (
 						<span className="site-selector__hidden-sites-message">
