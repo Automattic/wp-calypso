@@ -50,6 +50,23 @@
 	}
 }
 
+.app-promo .app-promo__paragraph {
+	margin-bottom: 0;
+	padding: 0 10px;
+	text-align: left;
+}
+
+.app-promo .app-promo__jetpack-app-link {
+	color: var(--studio-jetpack-green-40);
+	font-weight: 700;
+	border-bottom: 1.5px solid var(--studio-jetpack-green-40);
+
+	&:hover {
+		color: var(--studio-jetpack-green-60);
+		border-bottom: none;
+	}
+}
+
 .app-promo__dialog {
 	max-width: 480px;
 }

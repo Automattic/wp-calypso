@@ -152,6 +152,19 @@ export class AppPromo extends Component {
 		const { translate } = this.props;
 		const buttons = [ { action: 'cancel', label: translate( 'OK' ) } ];
 
+		const message = displayJetpackAppBranding ? (
+			<p className="app-promo__paragraph">
+				<a href="https://wp.com/app" className="app-promo__jetpack-app-link">
+					Get the Jetpack app
+				</a>{ ' ' }
+				{ translate( 'to use Reader anywhere, any time.' ) }
+			</p>
+		) : (
+			<p className="app-promo__paragraph">
+				{ translate( 'WordPress.com in the palm of your hands — download the mobile app.' ) }
+			</p>
+		);
+
 		return (
 			<div className="app-promo">
 				<Button
@@ -174,7 +187,7 @@ export class AppPromo extends Component {
 						height={ displayJetpackAppBranding ? '43' : '32' }
 						alt="WordPress App Icon"
 					/>
-					{ 'WordPress.com in the palm of your hands — download the mobile app.' }
+					{ message }
 				</Button>
 				<Dialog
 					className="app-promo__dialog"
