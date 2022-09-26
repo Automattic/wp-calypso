@@ -321,7 +321,7 @@ export function loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
 			'google-workspace'
 		)
 	);
-	const loginUrl = `https://wordpress.com/log-in${
+	const loginUrl = `/log-in${
 		ownerUserName ? userNameUrlParameter : ''
 	}&redirect_to=${ redirectUrlParameter }`;
 	return loginUrl;
