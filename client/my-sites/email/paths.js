@@ -309,16 +309,19 @@ export function isUnderEmailManagementAll( path ) {
 export function loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
 	ownerUserName,
 	selectedSiteSlug,
-	selectedDomainName,
+	selectedDomainName
 ) {
 	const redirectUrlParameter = encodeURIComponent(
 		emailManagementPurchaseNewEmailAccount(
 			selectedSiteSlug ?? '',
 			selectedDomainName,
 			null,
-			'login-redirect',
+			'login-redirect'
 		)
 	);
 
-	return `/log-in${ buildQueryString( { email_address: ownerUserName, redirect_to: redirectUrlParameter }) }`;
+	return `/log-in${ buildQueryString( {
+		email_address: ownerUserName,
+		redirect_to: redirectUrlParameter,
+	} ) }`;
 }
