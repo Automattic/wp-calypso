@@ -159,7 +159,7 @@ export default function CTAButton( {
 					currentContext={ 'plugin-details' }
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
-					onProceed={ () => {
+					onProceed={ () =>
 						onClickInstallPlugin( {
 							dispatch,
 							selectedSite,
@@ -169,8 +169,8 @@ export default function CTAButton( {
 							billingPeriod,
 							productsList,
 							desiredPlan,
-						} );
-					} }
+						} )
+					}
 				/>
 			</Dialog>
 			<Button

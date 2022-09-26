@@ -24,9 +24,12 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import { MARKETPLACE_FLOW } from 'calypso/my-sites/plugins/flows';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import CTAButton from '../plugin-details-CTA/CTA-button';
 
@@ -75,7 +78,17 @@ const Plans = ( {
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
 
 	const isMarketplaceProduct = true;
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 
+	// Eligibilities for Simple Sites.
+	// eslint-disable-next-line prefer-const
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, selectedSite?.ID )
+	);
+
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const hasEligibilityMessages =
+		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
 	const productsList = useSelector( getProductsList );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 	const {
@@ -83,6 +96,7 @@ const Plans = ( {
 		// isFetched: isWpComPluginFetched,
 		// isFetching: isWpComPluginFetching,
 	} = useWPCOMPlugin( pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
+
 	const promos: PromoSectionProps = {
 		promos: [
 			{
@@ -149,7 +163,7 @@ const Plans = ( {
 								{ plugin ? (
 									<CTAButton
 										plugin={ plugin }
-										hasEligibilityMessages={ [] }
+										hasEligibilityMessages={ hasEligibilityMessages }
 										disabled={ false }
 										plansPage={ false }
 										desiredPlan={
@@ -177,7 +191,7 @@ const Plans = ( {
 								{ plugin ? (
 									<CTAButton
 										plugin={ plugin }
-										hasEligibilityMessages={ [] }
+										hasEligibilityMessages={ hasEligibilityMessages }
 										disabled={ false }
 										plansPage={ false }
 										desiredPlan={
@@ -219,7 +233,7 @@ const Plans = ( {
 					plugin ? (
 						<CTAButton
 							plugin={ plugin }
-							hasEligibilityMessages={ [] }
+							hasEligibilityMessages={ hasEligibilityMessages }
 							disabled={ false }
 							plansPage={ false }
 							desiredPlan={ intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS }
