@@ -87,7 +87,14 @@ $border-radius: 4px;
 		.newsletter-setup__contrast-warning {
 			display: flex;
 			font-size: $font-body-small;
-			margin-bottom: 32px;
+			height: 0;
+			transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+			opacity: 0;
+
+			&.is-visible {
+				height: 80px;
+				opacity: 1;
+			}
 
 			.newsletter-setup__contrast-warning-icon-container {
 				margin-top: 4px;
