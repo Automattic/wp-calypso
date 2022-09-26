@@ -231,8 +231,9 @@
 	font-weight: 600;
 }
 
-// completed tasks
-.launchpad__task.is-completed {
+// completed && keep active tasks
+.launchpad__task.is-completed,
+.launchpad__task.keep-active {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
@@ -244,9 +245,11 @@
 	}
 }
 
-// completed tasks that are kept active
+// pending && keep active tasks
 .launchpad__task.keep-active:hover,
-.launchpad__task.keep-active > a:focus {
+.launchpad__task.pending:hover,
+.launchpad__task.keep-active > a:focus,
+.launchpad__task.pending > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
