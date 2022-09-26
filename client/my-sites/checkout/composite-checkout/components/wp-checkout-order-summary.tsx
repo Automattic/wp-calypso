@@ -185,17 +185,11 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	} );
 
 	if ( everyRefundPolicyIsForDomainOrPlan ) {
-		const [ refundWindow ] = getRefundWindows( [ planRefundWindow ] );
+		const [ refundWindow ] = getRefundWindows( [ domainRefundWindow ] );
 
-		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-		text = translate(
-			'%(days)d-day money back guarantee for plan',
-			'%(days)d-day money back guarantee for plan',
-			{
-				count: refundWindow,
-				args: { days: refundWindow },
-			}
-		);
+		text = translate( '%(days)d-day full money back guarantee', {
+			args: { days: refundWindow },
+		} );
 	}
 
 	const refundWindows = getRefundWindows( refundPolicies );
