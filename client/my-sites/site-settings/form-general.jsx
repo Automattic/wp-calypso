@@ -547,7 +547,9 @@ export class SiteSettingsFormGeneral extends Component {
 			querySiteDomainsComponent = '';
 		} else {
 			btnComponent = (
-				<Button href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings` }>
+				<Button
+					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&hide_initial_query=yes` }
+				>
 					{ btnText }
 				</Button>
 			);
