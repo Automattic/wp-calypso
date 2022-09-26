@@ -6,6 +6,7 @@ import {
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -16,6 +17,7 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
+import { getConnectedAccountIdForSiteId } from 'calypso/state/memberships/settings/selectors';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSelectedSite,
@@ -28,10 +30,16 @@ import './style.scss';
 
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog: window.location.hash === '#add-new-payment-plan',
+		showAddEditDialog: this.props.showAddEditDialogOnMount,
 		showDeleteDialog: false,
 		product: null,
 	};
+
+	componentDidMount() {
+		if ( ! this.props.isPaidNewsletterEnabledAndConnected ) {
+			page( `/earn/payments/${ this.props.siteSlug }` );
+		}
+	}
 
 	renderEllipsisMenu( productId ) {
 		return (
@@ -115,7 +123,9 @@ class MembershipsProductsSection extends Component {
 				{ this.state.showAddEditDialog && this.props.hasStripeFeature && (
 					<RecurringPaymentsPlanAddEditModal
 						closeDialog={ this.closeDialog }
-						product={ this.state.product }
+						product={ Object.assign( this.state.product ?? {}, {
+							subscribe_as_site_subscriber: this.props.isPaidNewsletterEnabledAndConnected,
+						} ) }
 					/>
 				) }
 				{ this.state.showDeleteDialog && (
@@ -133,15 +143,22 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
+		const connectedAccountId = getConnectedAccountIdForSiteId( state, siteId );
+		const isPaidNewsletterEnabledAndConnected =
+			window.location.hash === '#add-newsletter-payment-plan' && connectedAccountId;
 		return {
 			site,
 			siteId,
+			connectedAccountId,
+			isPaidNewsletterEnabledAndConnected,
 			siteSlug: getSelectedSiteSlug( state ),
 			products: getProductsForSiteId( state, siteId ),
 			hasStripeFeature:
 				siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
 				siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 				siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
+			showAddEditDialogOnMount:
+				window.location.hash === '#add-new-payment-plan' || isPaidNewsletterEnabledAndConnected,
 		};
 	},
 	( dispatch ) => ( {
