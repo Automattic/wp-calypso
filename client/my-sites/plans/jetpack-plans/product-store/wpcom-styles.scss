@@ -11,7 +11,7 @@ $wpcom-menu-collapse: 783px;
 	--jetpack-corners-soft: 4px;
 }
 
-:is(.is-group-sites.is-section-plans, .is-section-jetpack-connect) .jetpack-product-store {
+.is-group-sites.is-section-plans .jetpack-product-store {
 
 	:is(.button[disabled], .button:disabled, .button.disabled) {
 		background-color: var(--studio-gray-5);
@@ -71,4 +71,11 @@ $wpcom-menu-collapse: 783px;
 			}
 		}
 	}
+}
+
+// Remove extra padding on wordpress.com/jetpack/connect/plans/:site page (to match the same
+// padding on the cloud.jetpack.com/pricing page) (limited browser support with :has()).
+.is-section-jetpack-connect.has-no-sidebar .layout__content:has(.jetpack-pricing-page-rework-v1) {
+	padding-left: 0;
+	padding-right: 0;
 }
