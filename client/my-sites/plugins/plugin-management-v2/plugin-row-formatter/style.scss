@@ -101,6 +101,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 	@include break-xlarge {
 		display: flex;
 		justify-content: end;
+		white-space: pre;
 
 		.plugin-install-button__install.embed {
 			margin: 0;
