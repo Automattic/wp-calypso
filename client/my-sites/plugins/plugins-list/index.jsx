@@ -564,6 +564,7 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					isJetpackCloud={ this.props.isJetpackCloud }
 				/>
 				<PluginManagementV2
 					plugins={ this.getPlugins() }

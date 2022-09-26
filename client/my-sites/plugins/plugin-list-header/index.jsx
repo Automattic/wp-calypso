@@ -16,6 +16,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import UpdatePlugins from '../plugin-management-v2/update-plugins';
 
 import './style.scss';
 
@@ -53,6 +54,7 @@ export class PluginsListHeader extends PureComponent {
 		updatePluginNotice: PropTypes.func.isRequired,
 		plugins: PropTypes.array.isRequired,
 		selected: PropTypes.array.isRequired,
+		isJetpackCloud: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -106,7 +108,15 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { hasManagePluginsFeature, isWpComAtomic, translate, siteId } = this.props;
+		const {
+			hasManagePluginsFeature,
+			isWpComAtomic,
+			translate,
+			siteId,
+			isJetpackCloud,
+			isBulkManagementActive,
+			plugins,
+		} = this.props;
 		const buttons = [];
 
 		if ( siteId && isWpComAtomic && ! hasManagePluginsFeature ) {
@@ -119,7 +129,22 @@ export class PluginsListHeader extends PureComponent {
 		const autoupdateButtons = [];
 		const activateButtons = [];
 
-		if ( this.props.isBulkManagementActive ) {
+		if ( ! isBulkManagementActive ) {
+			{
+				isJetpackCloud && <UpdatePlugins plugins={ plugins } />;
+			}
+			rightSideButtons.push(
+				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
+					<Button
+						className="plugin-list-header__buttons-action-button"
+						compact
+						onClick={ this.toggleBulkManagement }
+					>
+						{ translate( 'Edit All', { context: 'button label' } ) }
+					</Button>
+				</ButtonGroup>
+			);
+		} else {
 			const updateButton = (
 				<Button
 					key="plugin-list-header__buttons-update"
