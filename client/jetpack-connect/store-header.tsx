@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -10,7 +9,7 @@ import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-fr
 
 import './style.scss';
 
-export default function StoreHeader(): React.ReactElement {
+export default function StoreHeader() {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( getPartnerSlugFromQuery );
 	const currentRoute = useSelector( getCurrentRoute );

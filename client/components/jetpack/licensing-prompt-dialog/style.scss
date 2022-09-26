@@ -53,7 +53,12 @@
 .licensing-prompt-dialog .licensing-prompt-dialog__instructions {
 	font-size: $font-body;
 	margin-bottom: 1.5em;
+
+	.user-purchases-link {
+		text-decoration: underline;
+	}
 }
+
 
 .licensing-prompt-dialog__actions {
 	display: flex;

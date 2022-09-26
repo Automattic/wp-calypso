@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import RevokeLicenseDialog from 'calypso/jetpack-cloud/sections/partner-portal/revoke-license-dialog';
 import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
@@ -23,7 +23,7 @@ export default function LicenseDetailsActions( {
 	siteUrl,
 	attachedAt,
 	revokedAt,
-}: Props ): ReactElement {
+}: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );

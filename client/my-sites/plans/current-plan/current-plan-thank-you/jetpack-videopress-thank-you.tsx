@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import React, { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYou, { ThankYouCtaType } from './thank-you';
@@ -22,7 +21,7 @@ const ThankYouCta: ThankYouCtaType = ( { dismissUrl, recordThankYouClick } ) => 
 	);
 };
 
-const VideoPressProductThankYou = (): ReactElement => {
+const VideoPressProductThankYou = () => {
 	const translate = useTranslate();
 	return (
 		<ThankYou

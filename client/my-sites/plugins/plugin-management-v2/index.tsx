@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
@@ -35,7 +35,7 @@ export default function PluginManagementV2( {
 	updateAllPluginsNotice,
 	removePluginNotice,
 	updatePlugin,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

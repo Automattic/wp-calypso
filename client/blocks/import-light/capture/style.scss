@@ -16,6 +16,7 @@
 
 	input[type="text"].form-text-input {
 		font-size: 0.875rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 2rem;
 		color: var(--studio-gray-90);
 		border-radius: 4px;

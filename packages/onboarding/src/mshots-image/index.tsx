@@ -19,6 +19,7 @@ export type MShotsOptions = {
 	w: number;
 	h?: number;
 	screen_height?: number;
+	format?: 'png' | 'jpeg';
 };
 
 const debug = debugFactory( 'design-picker:mshots-image' );

@@ -3,7 +3,6 @@ import { translate } from 'i18n-calypso';
 import { hasIntroductoryOfferFreeTrial } from 'calypso/lib/emails';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -31,7 +30,7 @@ const SalePriceWithInterval = ( {
 	intervalLength: IntervalLength;
 	salePrice: string | null;
 	standardPrice: string | null;
-} ): ReactElement => {
+} ) => {
 	const translateArguments = {
 		args: {
 			salePrice,
@@ -72,7 +71,7 @@ const StandardPriceWithInterval = ( {
 }: {
 	intervalLength: IntervalLength;
 	standardPrice: string | null;
-} ): ReactElement => {
+} ) => {
 	const translateArguments = {
 		args: { standardPrice },
 		comment:
@@ -103,7 +102,7 @@ const PriceWithInterval = ( {
 	isDiscounted?: boolean;
 	isEligibleForIntroductoryOffer: boolean;
 	product: ProductListItem | null;
-} ): ReactElement => {
+} ) => {
 	const standardPrice = formatCurrency( product?.cost ?? 0, currencyCode ?? '', {
 		stripZeros: true,
 	} );

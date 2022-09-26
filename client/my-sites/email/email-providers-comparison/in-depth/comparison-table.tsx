@@ -5,7 +5,6 @@ import EmailProviderPrice from 'calypso/my-sites/email/email-providers-compariso
 import LearnMoreLink from 'calypso/my-sites/email/email-providers-comparison/in-depth/learn-more-link';
 import SelectButton from 'calypso/my-sites/email/email-providers-comparison/in-depth/select-button';
 import type { ComparisonListOrTableProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -14,7 +13,7 @@ const ComparisonTable = ( {
 	intervalLength,
 	onSelectEmailProvider,
 	selectedDomainName,
-}: ComparisonListOrTableProps ): ReactElement => {
+}: ComparisonListOrTableProps ) => {
 	const translate = useTranslate();
 
 	return (

@@ -1,6 +1,6 @@
 import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
-import { ReactElement, ComponentType } from 'react';
+import { ComponentType } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -35,7 +35,7 @@ const Placeholder = () => (
  * If the plan is an Atomic plan, we show a component to activate the
  * automated transfer process. If it's not, we show the upsell component.
  */
-const BusinessATSwitch = ( { UpsellComponent }: Props ): ReactElement => {
+const BusinessATSwitch = ( { UpsellComponent }: Props ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
 	const featuresNotLoaded: boolean = useSelector(

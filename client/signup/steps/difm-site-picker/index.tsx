@@ -33,7 +33,7 @@ const DIFMSitePicker = ( {
 	);
 };
 
-export default function DIFMSitePickerStep( props: Props ): React.ReactElement {
+export default function DIFMSitePickerStep( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { goToNextStep } = props;

@@ -4,6 +4,7 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 100%;
 	line-height: 22px;
 
@@ -122,6 +123,7 @@
 .reader-share__site-selector .site__domain {
 	&::after {
 		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
 }

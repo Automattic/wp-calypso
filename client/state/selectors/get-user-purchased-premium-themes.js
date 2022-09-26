@@ -10,7 +10,7 @@ import 'calypso/state/purchases/init';
  */
 export const getUserPurchasedPremiumThemes = ( state ) => {
 	const purchases = getUserPurchases( state );
-	return purchases && purchases.filter( ( purchase ) => purchase.productSlug === 'premium_theme' );
+	return purchases && purchases.filter( ( purchase ) => purchase.productType === 'theme' );
 };
 
 export default getUserPurchasedPremiumThemes;

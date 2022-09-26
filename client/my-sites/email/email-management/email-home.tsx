@@ -26,11 +26,11 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactNode } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactNode } ) => {
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
@@ -43,7 +43,7 @@ const ContentWithHeader = ( props: { children: ReactNode } ): ReactElement => {
 	);
 };
 
-const NoAccess = (): ReactElement => {
+const NoAccess = () => {
 	const translate = useTranslate();
 	return (
 		<ContentWithHeader>
@@ -55,7 +55,7 @@ const NoAccess = (): ReactElement => {
 	);
 };
 
-const LoadingPlaceholder = (): ReactElement => {
+const LoadingPlaceholder = () => {
 	return (
 		<ContentWithHeader>
 			<SectionHeader className="email-home__section-placeholder is-placeholder" />

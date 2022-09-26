@@ -2,7 +2,7 @@ import { NavigableMenu, MenuItem, VisuallyHidden } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import type { Category } from '../../types';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 interface Props {
@@ -21,7 +21,7 @@ export function DesignPickerCategoryFilter( {
 	heading,
 	footer,
 	recommendedCategorySlug,
-}: Props ): ReactElement | null {
+}: Props ) {
 	const instanceId = useInstanceId( DesignPickerCategoryFilter );
 	const { __ } = useI18n();
 

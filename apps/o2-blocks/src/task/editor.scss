@@ -23,6 +23,7 @@
 	color: white;
 	background: #7a6ff0;
 	border-radius: 2px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	height: 24px;
 	line-height: 24px;
@@ -48,6 +49,7 @@
 	display: inline-block;
 	font-weight: bold;
 	color: 111;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	height: 20px;
 	line-height: 20px;
@@ -59,7 +61,7 @@
 .wp-block-todo.is-checked .wp-block-todo__status,
 .wp-block-todo.is-checked img {
 	background-color: #00b0e8;
-	background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGc+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTkgMTkuNDE0bC02LjcwNy02LjcwNyAxLjQxNC0xLjQxNEw5IDE2LjU4NiAyMC4yOTMgNS4yOTNsMS40MTQgMS40MTQiPjwvcGF0aD48L2c+PC9zdmc+");
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PGc+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTkgMTkuNDE0bC02LjcwNy02LjcwNyAxLjQxNC0xLjQxNEw5IDE2LjU4NiAyMC4yOTMgNS4yOTNsMS40MTQgMS40MTQiPjwvcGF0aD48L2c+PC9zdmc+);
 	border-color: #00b0e8;
 	background-repeat: no-repeat;
 	background-position: 50% center;
@@ -71,6 +73,7 @@
 }
 
 .wp-block-todo__assigned {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	font-weight: 600;
 	display: flex;
@@ -85,6 +88,7 @@
 	height: 24px;
 	margin-left: 10px;
 	color: rgba(white, 0.6);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	text-transform: uppercase;
 	text-align: center;
@@ -92,5 +96,6 @@
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 	font-weight: 100; /* stylelint-disable-line scales/font-weights */
 	background: #eb6565;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }

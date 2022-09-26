@@ -1,6 +1,5 @@
 import { Button, Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setActivePartnerKey } from 'calypso/state/partner-portal/partner/actions';
@@ -8,7 +7,7 @@ import { getCurrentPartner } from 'calypso/state/partner-portal/partner/selector
 import { PartnerKey } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
-export default function SelectPartnerKey(): ReactElement | null {
+export default function SelectPartnerKey() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );

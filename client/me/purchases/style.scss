@@ -139,6 +139,7 @@
 .purchase-item__purchase-type {
 	font-size: $font-body-small;
 	color: var(--color-neutral-50);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.4em;
 }
 
@@ -163,6 +164,7 @@
 .purchase-item__status {
 	font-size: $font-body-small;
 	color: var(--color-neutral-80);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.3em;
 
 	.purchase-item__is-error,
