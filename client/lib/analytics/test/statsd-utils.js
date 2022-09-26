@@ -1,32 +1,29 @@
-import url from 'url';
-import { statsdTimingUrl, statsdCountingUrl } from '../statsd-utils';
+import { createStatsdURL } from '../statsd-utils';
 
 describe( 'StatsD Analytics Utils', () => {
-	describe( 'statsdTimingUrl', () => {
-		test( 'returns a URL for recording timing data to statsd', () => {
-			const sdUrl = url.parse( statsdTimingUrl( 'post-mysite.com', 'page-load', 150 ), true, true );
-			expect( sdUrl.query.v ).toEqual( 'calypso' );
-			expect( sdUrl.query.u ).toEqual( 'post_mysite_com' );
-			expect( sdUrl.query.json ).toEqual(
-				JSON.stringify( {
-					beacons: [ 'calypso.development.post_mysite_com.page_load:150|ms' ],
-				} )
-			);
-		} );
-	} );
+	describe( 'createStatsdURL', () => {
+		test( 'returns a URL for sending events to statsd', () => {
+			const events = [
+				{
+					name: 'response_time',
+					value: 100,
+					type: 'timing',
+				},
+				{
+					name: 'page-load',
+					type: 'counting',
+				},
+			];
+			const sdUrl = new URL( createStatsdURL( 'my-section-name', events ) );
 
-	describe( 'statsdCountingUrl', () => {
-		test( 'returns a URL for recording counting data to statsd', () => {
-			const sdUrl = url.parse(
-				statsdCountingUrl( 'post-mysite.com', 'page-count', 1 ),
-				true,
-				true
-			);
-			expect( sdUrl.query.v ).toEqual( 'calypso' );
-			expect( sdUrl.query.u ).toEqual( 'post_mysite_com' );
-			expect( sdUrl.query.json ).toEqual(
+			expect( sdUrl.searchParams.get( 'v' ) ).toEqual( 'calypso' );
+			expect( sdUrl.searchParams.get( 'u' ) ).toEqual( 'my_section_name' );
+			expect( sdUrl.searchParams.get( 'json' ) ).toEqual(
 				JSON.stringify( {
-					beacons: [ 'calypso.development.post_mysite_com.page_count:1|c' ],
+					beacons: [
+						'calypso.development.my_section_name.response_time:100|ms',
+						'calypso.development.my_section_name.page_load:1|c',
+					],
 				} )
 			);
 		} );

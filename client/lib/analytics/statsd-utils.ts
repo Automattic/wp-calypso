@@ -7,7 +7,6 @@ interface BeaconData {
 }
 
 function createBeacon( calypsoSection: string, { name, value, type }: BeaconData ) {
-	const section = calypsoSection.replace( /[.:-]/g, '_' );
 	const event = name.replace( '-', '_' );
 
 	// A counting event defaults to incrementing by one.
@@ -15,17 +14,18 @@ function createBeacon( calypsoSection: string, { name, value, type }: BeaconData
 		value = 1;
 	}
 
-	return `calypso.${ config( 'boom_analytics_key' ) }.${ section }.${ event }:${ value }|${
+	return `calypso.${ config( 'boom_analytics_key' ) }.${ calypsoSection }.${ event }:${ value }|${
 		type === 'timing' ? 'ms' : 'c'
 	}`;
 }
 
 export function createStatsdURL( calypsoSection: string, events: BeaconData[] ) {
+	const section = calypsoSection.replace( /[.:-]/g, '_' );
 	const json = JSON.stringify( {
-		beacons: events.map( ( event ) => createBeacon( calypsoSection, event ) ),
+		beacons: events.map( ( event ) => createBeacon( section, event ) ),
 	} );
 
-	const [ encodedSection, encodedJson ] = [ calypsoSection, json ].map( encodeURIComponent );
+	const [ encodedSection, encodedJson ] = [ section, json ].map( encodeURIComponent );
 
 	// While the `u` parameter is typically the URL, the original statsd code in Calypso
 	// used just the section name everywhere. To keep things consistent, we continue
