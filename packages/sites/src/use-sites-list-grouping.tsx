@@ -1,58 +1,44 @@
-import { useFuzzySearch } from '@automattic/search';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import {
-	SiteObjectWithStatus,
 	getSiteLaunchStatus,
 	siteLaunchStatuses,
+	SiteObjectWithStatus,
 	useTranslatedSiteLaunchStatuses,
 } from './site-status';
+import { MinimumSite } from './site-type';
 
-export const SITES_TABLE_SEARCH_INDEX_KEYS = [ 'name', 'slug', 'title', 'URL' ];
+export const DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE = 'all';
 
-export const DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE = 'all';
-
-export const siteLaunchStatusFilterValues = [
-	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
+export const siteLaunchStatusGroupValues = [
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
 	...siteLaunchStatuses,
 ] as const;
 
-export type FilterableSiteLaunchStatuses = typeof siteLaunchStatusFilterValues[ number ];
+export type GroupableSiteLaunchStatuses = typeof siteLaunchStatusGroupValues[ number ];
 
-interface SitesTableFilterOptions {
-	search?: string;
-	showHidden?: boolean;
-	status: FilterableSiteLaunchStatuses;
-}
-
-interface Status {
+export interface Status {
 	title: React.ReactChild;
-	name: FilterableSiteLaunchStatuses;
+	name: GroupableSiteLaunchStatuses;
 	count: number;
 	hiddenCount: number;
 }
 
-interface UseSitesTableFilteringResult< T > {
-	filteredSites: T[];
-	statuses: Status[];
+export interface SitesGroupingOptions {
+	showHidden?: boolean;
+	status: GroupableSiteLaunchStatuses;
 }
 
-type SiteObjectWithBasicInfo = SiteObjectWithStatus & {
-	URL: string;
-	name: string | undefined;
-	slug: string;
-	title: string;
-	visible?: boolean;
-};
+type SiteForGrouping = Pick< MinimumSite, keyof SiteObjectWithStatus | 'visible' >;
 
-export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
+export const useSitesListGrouping = < T extends SiteForGrouping >(
 	allSites: T[],
-	{ status, showHidden = false, search }: SitesTableFilterOptions
-): UseSitesTableFilteringResult< T > {
+	{ showHidden = false, status }: SitesGroupingOptions
+) => {
 	const { __ } = useI18n();
 	const translatedSiteLaunchStatuses = useTranslatedSiteLaunchStatuses();
 
-	const filterableSiteLaunchStatuses = useMemo( () => {
+	const groupableSiteLaunchStatuses = useMemo( () => {
 		return {
 			all: __( 'All sites' ),
 			...translatedSiteLaunchStatuses,
@@ -60,9 +46,9 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 	}, [ __, translatedSiteLaunchStatuses ] );
 
 	const [ statuses, groupedByStatus ] = useMemo( () => {
-		const statuses: Status[] = siteLaunchStatusFilterValues.map( ( name ) => ( {
+		const statuses: Status[] = siteLaunchStatusGroupValues.map( ( name ) => ( {
 			name,
-			title: filterableSiteLaunchStatuses[ name ],
+			title: groupableSiteLaunchStatuses[ name ],
 			count: 0,
 			hiddenCount: 0,
 		} ) );
@@ -101,13 +87,7 @@ export function useSitesTableFiltering< T extends SiteObjectWithBasicInfo >(
 		}
 
 		return [ statuses, groupedByStatus ];
-	}, [ allSites, filterableSiteLaunchStatuses, showHidden ] );
+	}, [ allSites, groupableSiteLaunchStatuses, showHidden ] );
 
-	const filteredSites = useFuzzySearch( {
-		data: groupedByStatus[ status ],
-		keys: SITES_TABLE_SEARCH_INDEX_KEYS,
-		query: search,
-	} );
-
-	return { filteredSites, statuses };
-}
+	return { statuses, currentStatusGroup: groupedByStatus[ status ] };
+};

@@ -1,4 +1,4 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
+import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';

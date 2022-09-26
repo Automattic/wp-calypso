@@ -2,83 +2,12 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react-hooks';
-import { useSitesTableFiltering } from '../use-sites-table-filtering';
-
-function createMockSite( {
-	ID = Math.round( Math.random() * 1000 ),
-	name,
-	URL,
-	is_private = false,
-	is_coming_soon = false,
-	visible = true,
-	options = {
-		is_redirect: false,
-		unmapped_url: '',
-	},
-}: {
-	ID?: number;
-	name?: string;
-	URL?: string;
-	is_private?: boolean;
-	is_coming_soon?: boolean;
-	visible?: boolean;
-	options?: {
-		is_redirect?: boolean;
-		unmapped_url?: string;
-	};
-} = {} ) {
-	const slug = `site${ ID }.io`;
-
-	return {
-		name: name ?? `site ${ ID }`,
-		URL: URL ?? `https://site${ ID }.io`,
-		slug,
-		title: name ?? slug,
-		is_private,
-		is_coming_soon,
-		visible,
-		options,
-	};
-}
+import { useSitesListGrouping } from '../src';
+import { createMockSite } from './create-mock-site';
 
 const status = 'all';
 
-describe( 'useSitesTableFiltering', () => {
-	test( 'no sites to filter', () => {
-		const { result } = renderHook( () => useSitesTableFiltering( [], { search: '', status } ) );
-		expect( result.current.filteredSites ).toEqual( [] );
-	} );
-
-	test( 'empty search query returns the same list', () => {
-		const sites = [ createMockSite(), createMockSite(), createMockSite() ];
-
-		const { result } = renderHook( () => useSitesTableFiltering( sites, { search: '', status } ) );
-
-		expect( result.current.filteredSites ).toEqual( sites );
-	} );
-
-	test( 'search by query matches site name', () => {
-		const catSite = createMockSite( { name: 'cat' } );
-		const dogSite = createMockSite( { name: 'dog' } );
-
-		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
-		);
-
-		expect( result.current.filteredSites ).toEqual( [ catSite ] );
-	} );
-
-	test( 'search by query matches site URL', () => {
-		const catSite = createMockSite( { URL: 'https://cat.io' } );
-		const dogSite = createMockSite( { URL: 'https://dog.io' } );
-
-		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ catSite, dogSite ], { search: 'c', status } )
-		);
-
-		expect( result.current.filteredSites ).toEqual( [ catSite ] );
-	} );
-
+describe( 'useSitesListGrouping', () => {
 	test( 'filter by "private"', () => {
 		const public1 = createMockSite( { is_private: false } );
 		const public2 = createMockSite( { is_private: false } );
@@ -87,23 +16,21 @@ describe( 'useSitesTableFiltering', () => {
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
+			useSitesListGrouping( [ public1, public2, private1, private2, comingSoon ], {
 				status: 'private',
 			} )
 		);
 
-		expect( result.current.filteredSites ).toEqual( [ private1, private2 ] );
+		expect( result.current.currentStatusGroup ).toEqual( [ private1, private2 ] );
 	} );
 
 	test( 'does not return hidden sites by default', () => {
 		const visible = createMockSite( { visible: true } );
 		const hidden = createMockSite( { visible: false } );
 
-		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ visible, hidden ], { status } )
-		);
+		const { result } = renderHook( () => useSitesListGrouping( [ visible, hidden ], { status } ) );
 
-		expect( result.current.filteredSites ).toEqual( [ visible ] );
+		expect( result.current.currentStatusGroup ).toEqual( [ visible ] );
 	} );
 
 	test( 'returns hidden sites when asked', () => {
@@ -111,10 +38,10 @@ describe( 'useSitesTableFiltering', () => {
 		const hidden = createMockSite( { visible: false } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ visible, hidden ], { status, showHidden: true } )
+			useSitesListGrouping( [ visible, hidden ], { status, showHidden: true } )
 		);
 
-		expect( result.current.filteredSites ).toEqual( [ visible, hidden ] );
+		expect( result.current.currentStatusGroup ).toEqual( [ visible, hidden ] );
 	} );
 
 	test( 'returns counts for each status type', () => {
@@ -131,10 +58,9 @@ describe( 'useSitesTableFiltering', () => {
 		} );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering(
+			useSitesListGrouping(
 				[ public1, public2, private1, private2, comingSoon, redirect1, redirect2 ],
 				{
-					search: '',
 					status,
 				}
 			)
@@ -182,8 +108,7 @@ describe( 'useSitesTableFiltering', () => {
 		const comingSoon = createMockSite( { is_private: true, is_coming_soon: true } );
 
 		const { result } = renderHook( () =>
-			useSitesTableFiltering( [ public1, public2, private1, private2, comingSoon ], {
-				search: '',
+			useSitesListGrouping( [ public1, public2, private1, private2, comingSoon ], {
 				showHidden: true,
 				status,
 			} )
@@ -221,28 +146,5 @@ describe( 'useSitesTableFiltering', () => {
 				hiddenCount: 0,
 			},
 		] );
-	} );
-
-	test( 'filtering maintains object equality', () => {
-		// Object equality is important for memoizing the site table row
-
-		const mockSite = createMockSite( { name: 'site title 1' } );
-
-		const { result, rerender } = renderHook(
-			( { search } ) => useSitesTableFiltering( [ mockSite ], { search, status: 'all' } ),
-			{ initialProps: { search: 'titl' } }
-		);
-
-		expect( result.current.filteredSites ).toHaveLength( 1 );
-		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
-
-		rerender( { search: 'does not match' } );
-
-		expect( result.current.filteredSites ).toHaveLength( 0 );
-
-		rerender( { search: 'title' } );
-
-		expect( result.current.filteredSites ).toHaveLength( 1 );
-		expect( result.current.filteredSites[ 0 ] ).toBe( mockSite );
 	} );
 } );
