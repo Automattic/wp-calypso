@@ -121,14 +121,6 @@ export class AppPromo extends Component {
 		return (
 			<div className="app-promo">
 				<Button
-					tabIndex="0"
-					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
-				>
-					<Gridicon icon="cross" size={ 24 } />
-				</Button>
-				<Button
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
@@ -143,7 +135,15 @@ export class AppPromo extends Component {
 						height="32"
 						alt="WordPress Desktop Icon"
 					/>
-					{ promoItem.message }
+					<p className="app-promo__paragraph">{ promoItem.message }</p>
+				</Button>
+				<Button
+					tabIndex="0"
+					className="app-promo__dismiss"
+					onClick={ this.dismiss }
+					aria-label={ translate( 'Dismiss' ) }
+				>
+					<Gridicon icon="cross" size={ 16 } />
 				</Button>
 			</div>
 		);
@@ -168,14 +168,6 @@ export class AppPromo extends Component {
 
 		return (
 			<div className="app-promo">
-				<Button
-					tabIndex="0"
-					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
-				>
-					<Gridicon icon="cross" size={ 24 } />
-				</Button>
 				<Button
 					onClick={ ! displayJetpackAppBranding && this.sendMagicLink }
 					className={ classNames( 'app-promo__link', {
@@ -205,6 +197,14 @@ export class AppPromo extends Component {
 						) }
 					</p>
 				</Dialog>
+				<Button
+					tabIndex="0"
+					className="app-promo__dismiss"
+					onClick={ this.dismiss }
+					aria-label={ translate( 'Dismiss' ) }
+				>
+					<Gridicon icon="cross" size={ 16 } />
+				</Button>
 			</div>
 		);
 	};
