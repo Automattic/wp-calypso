@@ -292,7 +292,7 @@ export class SiteSelector extends Component {
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
-		let sites = this.props.visibleSites;
+		let sites = this.state.searchTerm ? this.props.sites : this.props.visibleSites;
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );
