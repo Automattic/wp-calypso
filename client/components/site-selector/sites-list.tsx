@@ -1,5 +1,7 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { createSitesListComponent } from '@automattic/sites';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import Site from 'calypso/blocks/site';
@@ -12,6 +14,7 @@ import {
 type SiteDetailsWithTitle = SiteDetails & { title: string };
 
 interface SitesListProps extends SitesSortingPreferenceProps {
+	maxResults?: number;
 	searchTerm: string;
 	addToVisibleSites( siteId: number ): void;
 	isReskinned?: boolean;
@@ -27,6 +30,7 @@ const SiteSelectorSitesList = createSitesListComponent( { grouping: false } );
 
 const SitesList = ( {
 	searchTerm,
+	maxResults,
 	sitesSorting,
 	addToVisibleSites,
 	isReskinned,
@@ -49,9 +53,11 @@ const SitesList = ( {
 					return <div className="site-selector__no-results">{ __( 'No sites found' ) }</div>;
 				}
 
+				const slicedSites = maxResults != null ? sites.slice( 0, maxResults ) : sites;
+
 				return (
 					<>
-						{ sites.map( ( site ) => {
+						{ slicedSites.map( ( site ) => {
 							addToVisibleSites( site.ID );
 
 							return (
@@ -67,6 +73,24 @@ const SitesList = ( {
 								/>
 							);
 						} ) }
+						{ slicedSites.length < sites.length && (
+							<span className="site-selector__list-bottom-adornment">
+								{ createInterpolateElement(
+									sprintf(
+										// translators: maxResults is the maximum number of list results.
+										__(
+											'Only displaying the first %(maxResults)d sites.<br />Use search to refine.'
+										),
+										{
+											maxResults,
+										}
+									),
+									{
+										br: <br />,
+									}
+								) }
+							</span>
+						) }
 					</>
 				);
 			} }
