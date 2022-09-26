@@ -137,7 +137,7 @@ const ScrollButton = styled( Button, { shouldForwardProp: ( prop ) => prop !== '
 const SitesDashboardSitesList = createSitesListComponent();
 
 export function SitesDashboard( {
-	queryParams: { page = 1, perPage = 96, search, showHidden, status = 'all' },
+	queryParams: { page = 1, perPage = 96, search, status = 'all' },
 }: SitesDashboardProps ) {
 	const { __, _n } = useI18n();
 	const { data: allSites = [], isLoading } = useSiteExcerptsQuery();
@@ -208,7 +208,7 @@ export function SitesDashboard( {
 					sites={ allSites }
 					filtering={ { search } }
 					sorting={ sitesSorting }
-					grouping={ { status, showHidden } }
+					grouping={ { status, showHidden: true } }
 				>
 					{ ( { sites, statuses } ) => {
 						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );

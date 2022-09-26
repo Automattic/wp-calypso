@@ -73,7 +73,6 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 						? parseInt( context.query[ 'per-page' ] )
 						: undefined,
 					search: context.query.search,
-					showHidden: context.query[ 'show-hidden' ] === 'true',
 					status: context.query.status,
 				} }
 			/>
