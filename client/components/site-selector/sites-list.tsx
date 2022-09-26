@@ -5,7 +5,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import Site from 'calypso/blocks/site';
-import { addQueryArgs } from 'calypso/lib/url';
 import {
 	SitesSortingPreferenceProps,
 	withSitesSortingPreference,
@@ -80,23 +79,14 @@ const SitesList = ( {
 									sprintf(
 										// translators: maxResults is the maximum number of list results.
 										__(
-											'This list is limited to the first %(maxResults)d results. Open the <a>sites page</a> to view more.'
+											'Only displaying the first %(maxResults)d sites.<br />Use search to refine.'
 										),
 										{
 											maxResults,
 										}
 									),
 									{
-										a: (
-											<a
-												href={ addQueryArgs(
-													{ search: searchTerm.length > 0 ? searchTerm : null },
-													'/sites'
-												) }
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
+										br: <br />,
 									}
 								) }
 							</span>
