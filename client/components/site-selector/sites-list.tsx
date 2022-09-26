@@ -22,10 +22,9 @@ interface SitesListProps extends SitesSortingPreferenceProps {
 	isSelected( site: SiteDetailsWithTitle ): boolean;
 }
 
-const SiteSelectorSitesList = createSitesListComponent( { grouping: false } );
+const SiteSelectorSitesList = createSitesListComponent( { grouping: false, filtering: false } );
 
 const SitesList = ( {
-	searchTerm,
 	sitesSorting,
 	addToVisibleSites,
 	isReskinned,
@@ -37,11 +36,7 @@ const SitesList = ( {
 	isSelected,
 }: SitesListProps ) => {
 	return (
-		<SiteSelectorSitesList
-			filtering={ { search: searchTerm } }
-			sites={ originalSites }
-			sorting={ sitesSorting }
-		>
+		<SiteSelectorSitesList sites={ originalSites } sorting={ sitesSorting }>
 			{ ( { sites } ) => (
 				<>
 					{ sites.map( ( site ) => {
