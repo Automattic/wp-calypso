@@ -25,6 +25,9 @@
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 16px;
+	img {
+		border-radius: 100%;
+	}
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
@@ -49,7 +52,7 @@
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: var( --color-primary );
+		color: var( --color-neutral-100 );
 	}
 
 	&::after {
