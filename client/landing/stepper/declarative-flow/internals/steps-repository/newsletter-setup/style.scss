@@ -86,6 +86,7 @@ $border-radius: 4px;
 				/* Overwrites the transition value set by FormInput component.
 				It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
 				transition: none;
+				cursor: pointer;
 			}
 		}
 
