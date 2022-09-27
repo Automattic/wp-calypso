@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
-import ReaderFollowIcon from 'calypso/reader/components/icons/follow-icon';
-import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
+import ReaderFollowIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingIcon from 'calypso/reader/components/icons/following-feed-icon';
 import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
