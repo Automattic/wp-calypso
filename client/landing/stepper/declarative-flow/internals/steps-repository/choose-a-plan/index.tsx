@@ -43,7 +43,8 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
-	const { createVideoPressSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
+	const { createVideoPressSite, setSelectedSite, setPendingAction, setProgress } =
+		useDispatch( ONBOARD_STORE );
 
 	const getDefaultStepContent = () => <h1>Choose a plan step</h1>;
 
@@ -111,51 +112,52 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			updateSelectedPlanButton( plan.periodAgnosticSlug );
 
 			setSelectedPlanProductId( planId );
-			try {
-				await createVideoPressSite( {
-					username: currentUser!.username,
-					languageSlug: locale,
-					visibility,
-				} );
-			} catch ( e ) {
-				setSelectedPlanProductId( undefined );
-				enableUI();
-				return;
-			}
 
-			const newSite = getNewSite();
-			setSelectedSite( newSite?.blogid );
+			setPendingAction( async () => {
+				setProgress( 0 );
+				try {
+					await createVideoPressSite( {
+						username: currentUser!.username,
+						languageSlug: locale,
+						visibility,
+					} );
+				} catch ( e ) {
+					return;
+				}
+				setProgress( 0.5 );
 
-			const planObject = supportedPlans.find(
-				( plan ) => plan.productIds.indexOf( planId as number ) >= 0
-			);
+				const newSite = getNewSite();
+				setSelectedSite( newSite?.blogid );
 
-			if ( domain && domain.product_slug ) {
-				const registration = domainRegistration( {
-					domain: domain.domain_name,
-					productSlug: domain.product_slug as string,
-					extra: { privacy_available: domain.supports_privacy },
-				} );
-
-				const cartKey = await cartManagerClient.getCartKeyForSiteSlug(
-					newSite?.site_slug as string
+				const planObject = supportedPlans.find(
+					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
 				);
-				cartManagerClient
-					.forCartKey( cartKey )
-					.actions.addProductsToCart( [ registration ] )
-					.then( () => {
-						submit?.( {
-							planSlug: planObject?.periodAgnosticSlug,
-							siteSlug: newSite?.site_slug,
-						} );
-					} )
-					.catch( () => enableUI() );
-			} else {
-				submit?.( {
-					planSlug: planObject?.periodAgnosticSlug,
-					siteSlug: newSite?.site_slug,
-				} );
-			}
+
+				if ( domain && domain.product_slug ) {
+					const registration = domainRegistration( {
+						domain: domain.domain_name,
+						productSlug: domain.product_slug as string,
+						extra: { privacy_available: domain.supports_privacy },
+					} );
+
+					setProgress( 0.75 );
+
+					const cartKey = await cartManagerClient.getCartKeyForSiteSlug(
+						newSite?.site_slug as string
+					);
+					await cartManagerClient
+						.forCartKey( cartKey )
+						.actions.addProductsToCart( [ registration ] );
+				}
+
+				setProgress( 1.0 );
+
+				return window.location.replace(
+					`/checkout/${ newSite?.site_slug }/${ planObject?.periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+				);
+			} );
+
+			submit?.();
 		};
 
 		return (
