@@ -6,11 +6,11 @@ import {
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import HeaderCake from 'calypso/components/header-cake';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -26,20 +26,17 @@ import {
 } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
+import MembershipsSection from './';
 import './style.scss';
 
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog: this.props.showAddEditDialogOnMount,
+		showAddEditDialog:
+			window.location.hash === '#add-new-payment-plan' ||
+			window.location.hash === '#add-newsletter-payment-plan',
 		showDeleteDialog: false,
 		product: null,
 	};
-
-	componentDidMount() {
-		if ( ! this.props.isPaidNewsletterEnabledAndConnected ) {
-			page( `/earn/payments/${ this.props.siteSlug }` );
-		}
-	}
 
 	renderEllipsisMenu( productId ) {
 		return (
@@ -79,6 +76,7 @@ class MembershipsProductsSection extends Component {
 	render() {
 		return (
 			<div>
+				<QueryMembershipsSettings siteId={ this.props.siteId } />
 				<QueryMembershipProducts siteId={ this.props.siteId } />
 				<HeaderCake backHref={ '/earn/payments/' + this.props.siteSlug }>
 					{ this.props.translate( 'Payment plans' ) }
@@ -101,7 +99,10 @@ class MembershipsProductsSection extends Component {
 					/>
 				) }
 
-				{ this.props.hasStripeFeature && (
+				{ ! this.props.connectedAccountId && (
+					<MembershipsSection section={ this.props.section } query={ this.props.query } />
+				) }
+				{ this.props.hasStripeFeature && this.props.connectedAccountId && (
 					<SectionHeader>
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
 							{ this.props.translate( 'Add a new payment plan' ) }
@@ -120,14 +121,17 @@ class MembershipsProductsSection extends Component {
 						{ this.renderEllipsisMenu( product.ID ) }
 					</CompactCard>
 				) ) }
-				{ this.state.showAddEditDialog && this.props.hasStripeFeature && (
-					<RecurringPaymentsPlanAddEditModal
-						closeDialog={ this.closeDialog }
-						product={ Object.assign( this.state.product ?? {}, {
-							subscribe_as_site_subscriber: this.props.isPaidNewsletterEnabledAndConnected,
-						} ) }
-					/>
-				) }
+				{ this.state.showAddEditDialog &&
+					this.props.hasStripeFeature &&
+					this.props.connectedAccountId && (
+						<RecurringPaymentsPlanAddEditModal
+							closeDialog={ this.closeDialog }
+							product={ Object.assign( this.state.product ?? {}, {
+								subscribe_as_site_subscriber:
+									window.location.hash === '#add-newsletter-payment-plan',
+							} ) }
+						/>
+					) }
 				{ this.state.showDeleteDialog && (
 					<RecurringPaymentsPlanDeleteModal
 						closeDialog={ this.closeDialog }
@@ -143,22 +147,16 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
-		const connectedAccountId = getConnectedAccountIdForSiteId( state, siteId );
-		const isPaidNewsletterEnabledAndConnected =
-			window.location.hash === '#add-newsletter-payment-plan' && connectedAccountId;
 		return {
 			site,
 			siteId,
-			connectedAccountId,
-			isPaidNewsletterEnabledAndConnected,
 			siteSlug: getSelectedSiteSlug( state ),
 			products: getProductsForSiteId( state, siteId ),
+			connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),
 			hasStripeFeature:
 				siteHasFeature( state, siteId, FEATURE_PREMIUM_CONTENT_CONTAINER ) ||
 				siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 				siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
-			showAddEditDialogOnMount:
-				window.location.hash === '#add-new-payment-plan' || isPaidNewsletterEnabledAndConnected,
 		};
 	},
 	( dispatch ) => ( {
