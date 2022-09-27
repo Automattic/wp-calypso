@@ -7,6 +7,7 @@ import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -14,6 +15,7 @@ type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
 	source: string;
+	source: 'email-comparison' | 'email-management';
 };
 
 const buildQueryString = ( parameters = {} ) =>
@@ -23,6 +25,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const { domain, selectedSite, source } = props;
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
