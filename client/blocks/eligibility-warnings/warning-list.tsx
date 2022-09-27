@@ -2,7 +2,6 @@ import { Gridicon } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { map } from 'lodash';
 import { Fragment } from 'react';
-import ActionPanelLink from 'calypso/components/action-panel/link';
 import ExternalLink from 'calypso/components/external-link';
 import type { EligibilityWarning } from 'calypso/state/automated-transfer/selectors';
 
@@ -43,18 +42,6 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 				</div>
 			</div>
 		) ) }
-
-		<div className="eligibility-warnings__warning">
-			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-description">
-					{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
-						components: {
-							a: <ActionPanelLink href="/help/contact" />,
-						},
-					} ) }
-				</span>
-			</div>
-		</div>
 	</div>
 );
 
