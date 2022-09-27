@@ -1,21 +1,22 @@
 import { useTranslate } from 'i18n-calypso';
 import Banner from 'calypso/components/banner';
+import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { getDomainsThatCanAddEmailProvider } from 'calypso/lib/emails';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactElement } from 'react';
 
-type BannerPromoTitanVia2faProps = {
+type BannerPromoTitanProps = {
 	domains: ResponseDomain[];
 	selectedSiteSlug: string;
 	currentRoute: string;
 };
 
-export default function BannerPromoTitanVia2fa( {
+export default function BannerPromoTitan( {
 	domains,
 	selectedSiteSlug,
 	currentRoute,
-}: BannerPromoTitanVia2faProps ): ReactElement | null {
+}: BannerPromoTitanProps ): ReactElement | null {
 	const translate = useTranslate();
 
 	const [ firstDomainWithoutEmailProvider ] = getDomainsThatCanAddEmailProvider( domains );
@@ -26,13 +27,16 @@ export default function BannerPromoTitanVia2fa( {
 
 	const domainName = firstDomainWithoutEmailProvider.name;
 
+	// TODO: use the same banner for email forwarding page
+	if (hasEmailForwards( domain )) {
+		
+	}
+
 	return (
 		<Banner
-			title={ translate( 'Buy titan for %(domainName)s since it already has 2fa :)', {
-				args: { domainName },
-			} ) }
-			description={ translate( 'Lorem ipsum' ) }
-			callToAction={ translate( 'Buy' ) }
+			title={ translate( 'Looking forward to a secure email solution?' ) }
+			description={ translate( 'Try Professional Email today for 3 months free' ) }
+			callToAction={ translate( 'Try now' ) }
 			icon="my-sites"
 			horizontal
 			href={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domainName, currentRoute ) }
