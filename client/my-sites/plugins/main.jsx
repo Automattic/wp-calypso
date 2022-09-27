@@ -108,7 +108,7 @@ export class PluginsMain extends Component {
 			if ( search ) {
 				this.props.appendBreadcrumb( {
 					label: this.props.translate( 'Search Results' ),
-					href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+					href: `/plugins/manage/${ selectedSiteSlug || '' }?s=${ search }`,
 					id: 'plugins-site-search',
 				} );
 			} else {
@@ -150,7 +150,7 @@ export class PluginsMain extends Component {
 		if ( search ) {
 			this.props.appendBreadcrumb( {
 				label: this.props.translate( 'Search Results' ),
-				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+				href: `/plugins/manage/${ selectedSiteSlug || '' }?s=${ search }`,
 				id: 'plugins-site-search',
 			} );
 		}
