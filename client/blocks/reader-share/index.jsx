@@ -19,6 +19,8 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
+import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
+import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 
 /**
  * Local variables
@@ -200,7 +202,7 @@ class ReaderShare extends Component {
 							title={ translate( 'Share on Facebook' ) }
 							focusOnHover={ false }
 						>
-							<SocialLogo icon="facebook" />
+							<ReaderFacebookIcon iconSize={ 20 } />
 							<span>Facebook</span>
 						</PopoverMenuItem>
 						<PopoverMenuItem
@@ -209,7 +211,7 @@ class ReaderShare extends Component {
 							title={ translate( 'Share on Twitter' ) }
 							focusOnHover={ false }
 						>
-							<SocialLogo icon="twitter" />
+							<ReaderTwitterIcon iconSize={ 20 } />
 							<span>Twitter</span>
 						</PopoverMenuItem>
 						<PopoverMenuItemClipboard

@@ -66,9 +66,10 @@
 	}
 
 	.gridicon,
-	.social-logo {
-		height: 24px;
-		width: 24px;
+	.reader-twitter,
+	.reader-facebook {
+		height: 20px;
+		width: 20px;
 		position: absolute;
 		top: 8px;
 		left: 18px;
@@ -76,7 +77,7 @@
 		fill: var( --color-neutral-light );
 
 		@include breakpoint-deprecated( '>480px' ) {
-			left: 11px;
+			left: 14px;
 		}
 	}
 
@@ -84,18 +85,19 @@
 		fill: var( --color-primary );
 	}
 
-	.social-logo.twitter {
+	.reader-twitter {
 		fill: var( --color-twitter );
 	}
 
-	.social-logo.facebook {
+	.reader-facebook {
 		fill: var( --color-facebook );
 	}
 
 	&:hover,
 	&:focus {
 		.gridicon,
-		.social-logo {
+		.reader-twitter,
+		.reader-facebook {
 			fill: var( --color-text-inverted );
 		}
 	}
