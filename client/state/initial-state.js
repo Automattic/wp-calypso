@@ -159,15 +159,6 @@ function getInitialServerState( initialReducer ) {
 	return pick( serverState, Object.keys( window.initialReduxState ) );
 }
 
-// Retrieve the dehydrated react-query client.
-export function getDehydratedReactQueryState() {
-	if ( typeof window !== 'object' || ! window.dehydratedReactQueryState || isSupportSession() ) {
-		return null;
-	}
-
-	return window.dehydratedReactQueryState;
-}
-
 // Retrieve the initial persisted state from the cached local client data.
 // This function only handles legacy Redux state for the monolithic root reducer
 // `loadPersistedState` must have completed first.

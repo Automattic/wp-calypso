@@ -7,7 +7,6 @@ import { get, pick } from 'lodash';
 import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
-import { dehydrate } from 'react-query';
 import superagent from 'superagent';
 import {
 	getLanguageFileUrl,
@@ -22,6 +21,7 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
+import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
@@ -230,9 +230,7 @@ export function serverRender( req, res ) {
 		);
 	}
 
-	if ( context.queryClient ) {
-		context.dehydratedReactQueryState = dehydrate( context.queryClient );
-	}
+	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
 		attachHead( context );

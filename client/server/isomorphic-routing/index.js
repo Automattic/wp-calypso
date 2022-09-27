@@ -53,8 +53,8 @@ function setRouteMiddleware( context, next ) {
 }
 
 function combineMiddlewares( ...middlewares ) {
-	return async function ( req, res, expressNext ) {
-		req.context = await getEnhancedContext( req, res );
+	return function ( req, res, expressNext ) {
+		req.context = getEnhancedContext( req, res );
 		applyMiddlewares(
 			req.context,
 			...middlewares,
@@ -71,12 +71,12 @@ function combineMiddlewares( ...middlewares ) {
 }
 
 // TODO: Maybe merge into getDefaultContext().
-async function getEnhancedContext( req, res ) {
+function getEnhancedContext( req, res ) {
 	return Object.assign( {}, req.context, {
 		isServerSide: true,
 		originalUrl: req.originalUrl,
 		path: req.url,
-		queryClient: await createQueryClientSSR(),
+		queryClient: createQueryClientSSR(),
 		pathname: req.path,
 		params: req.params,
 		query: req.query,

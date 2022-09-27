@@ -1,6 +1,5 @@
-import { QueryClient, QueryCache } from 'react-query';
+import { QueryClient, QueryCache, dehydrate } from 'react-query';
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
-
 const sharedCache = new QueryCache();
 
 export function createQueryClientSSR() {
@@ -10,4 +9,11 @@ export function createQueryClientSSR() {
 	} );
 
 	return queryClient;
+}
+
+export function dehydrateQueryClient( queryClient?: QueryClient ) {
+	if ( ! queryClient ) {
+		return null;
+	}
+	return dehydrate( queryClient );
 }
