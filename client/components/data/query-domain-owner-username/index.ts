@@ -29,13 +29,17 @@ export function useDomainOwnerUserName(
 		( purchase ) => purchase.id === parseInt( selectedSubscriptionId )
 	)[ 0 ];
 
-	const { data } = useUsersQuery(
+	const { data, isLoading } = useUsersQuery(
 		selectedSite?.ID,
 		{},
 		{
 			enabled: domainSubscription !== undefined,
 		}
 	);
+
+	if ( isLoading || ! domainSubscription ) {
+		return '';
+	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
 	const ownerUser = teams.users?.filter(
