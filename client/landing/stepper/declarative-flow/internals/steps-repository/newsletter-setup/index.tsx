@@ -60,7 +60,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
-
 	const site = useSite();
 	const usesSite = !! useSiteSlugParam();
 
@@ -162,13 +161,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }
 			>
-				<ColorPicker
-					disableAlpha
-					color={ accentColor.hex }
-					onChangeComplete={ ( { hex, rgb } ) =>
-						setAccentColor( { hex, rgb: rgb as unknown as RGB } )
-					}
-				/>
+				{ /* add a form so pressing enter in the color input field will close the picker */ }
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						setColorPickerOpen( false );
+					} }
+				>
+					<ColorPicker
+						disableAlpha
+						color={ accentColor.hex }
+						onChangeComplete={ ( { hex, rgb } ) =>
+							setAccentColor( { hex, rgb: rgb as unknown as RGB } )
+						}
+					/>
+				</form>
 			</Popover>
 			<FormFieldset>
 				<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
@@ -209,7 +217,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					} }
 					name="accentColor"
 					id="accentColor"
-					onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
+					onFocus={ () => setColorPickerOpen( true ) }
 					readOnly
 					value={ accentColor.hex }
 				/>
