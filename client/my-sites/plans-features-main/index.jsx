@@ -62,7 +62,6 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import { isMarketplaceFlow } from '../plugins/flows';
 import PlanTypeSelector from './plan-type-selector';
 import PlanFAQ from './plansStepFaq';
 import WpcomFAQ from './wpcom-faq';
@@ -366,7 +365,7 @@ export class PlansFeaturesMain extends Component {
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
-			flowName,
+			isInMarketplace,
 			sitePlanSlug,
 		} = this.props;
 
@@ -401,7 +400,7 @@ export class PlansFeaturesMain extends Component {
 
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
 
-		if ( isMarketplaceFlow( flowName ) ) {
+		if ( isInMarketplace ) {
 			// workaround to show free plan on both monthly/yearly toggle
 			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
 				// elements are rendered in order, needs to be the first one
