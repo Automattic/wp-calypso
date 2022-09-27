@@ -196,7 +196,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	}, [ editedMarkAsDonation, editedSchedule ] );
 
 	const onClose = ( reason ) => {
-		if ( reason === 'submit' && ! product ) {
+		if ( reason === 'submit' && ( ! product || ! product.ID ) ) {
 			addProduct(
 				siteId,
 				{
@@ -213,7 +213,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				},
 				translate( 'Added "%s" payment plan.', { args: editedProductName } )
 			);
-		} else if ( reason === 'submit' && product ) {
+		} else if ( reason === 'submit' && product && product.ID ) {
 			updateProduct(
 				siteId,
 				{
@@ -242,7 +242,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 		);
 		return (
 			<>
-				<p>{ product ? editProduct : noProduct }</p>
+				<p>{ product && product.ID ? editProduct : noProduct }</p>
 				<FormFieldset>
 					<FormLabel htmlFor="currency">{ translate( 'Select price' ) }</FormLabel>
 					{ product && (
@@ -324,7 +324,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						onChange={ handleMarkAsDonation }
 						checked={ 'donation' === editedMarkAsDonation }
 						label={ translate( 'Mark this plan as a donation.' ) }
-						disabled={ !! product }
+						disabled={ !! product && product.ID }
 					/>
 				</FormFieldset>
 			</>
@@ -390,7 +390,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				},
 			] }
 		>
-			<FormSectionHeading>{ product ? editPlan : addPlan }</FormSectionHeading>
+			<FormSectionHeading>{ product && product.ID ? editPlan : addPlan }</FormSectionHeading>
 			<SectionNav
 				className="memberships__dialog-nav"
 				selectedText={ getTabName( currentDialogTab ) }
