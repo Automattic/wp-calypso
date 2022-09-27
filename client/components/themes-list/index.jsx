@@ -13,7 +13,7 @@ import './style.scss';
 
 const noop = () => {};
 
-const ThemesList = ( props ) => {
+export const ThemesList = ( props ) => {
 	const fetchNextPage = useCallback(
 		( options ) => {
 			props.fetchNextPage( options );
