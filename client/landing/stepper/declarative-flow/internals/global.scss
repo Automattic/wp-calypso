@@ -71,7 +71,6 @@ button {
 .subscribers,
 .blazepress,
 .intro {
-	height: 100%;
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -139,6 +138,10 @@ button {
 				inset-inline-end: 24px;
 			}
 		}
+	}
+
+	@media ( min-width: 660px ) {
+		height: 100%;
 	}
 
 	/**
