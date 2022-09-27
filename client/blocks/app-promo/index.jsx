@@ -168,7 +168,7 @@ export class AppPromo extends Component {
 		return (
 			<div className="app-promo">
 				<Button
-					onClick={ ! displayJetpackAppBranding && this.sendMagicLink }
+					onClick={ ! displayJetpackAppBranding ? this.sendMagicLink : undefined }
 					className={ classNames( 'app-promo__link', {
 						'app-promo_jetpack-app-button': displayJetpackAppBranding,
 					} ) }
