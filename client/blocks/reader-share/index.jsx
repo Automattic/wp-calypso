@@ -182,9 +182,6 @@ class ReaderShare extends Component {
 					{ ReaderShareIcon( {
 						iconSize: this.props.iconSize,
 					} ) }
-					<span className="reader-share__button-label">
-						{ translate( 'Share', { comment: 'Share the post' } ) }
-					</span>
 				</Button>
 				{ this.state.showingMenu && (
 					<ReaderPopoverMenu

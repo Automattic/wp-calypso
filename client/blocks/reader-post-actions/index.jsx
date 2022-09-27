@@ -122,7 +122,7 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showVisit: false,
-	iconSize: 24,
+	iconSize: 20,
 };
 
 export default localize( ReaderPostActions );
