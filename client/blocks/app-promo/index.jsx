@@ -115,8 +115,19 @@ export class AppPromo extends Component {
 		this.setState( { showDialog: false } );
 	};
 
+	dismissButton = () => (
+		<Button
+			tabIndex="0"
+			className="app-promo__dismiss"
+			onClick={ this.dismiss }
+			aria-label={ this.props.translate( 'Dismiss' ) }
+		>
+			<Gridicon icon="cross" size={ 16 } />
+		</Button>
+	);
+
 	desktopPromo = ( promoItem ) => {
-		const { location, translate } = this.props;
+		const { location } = this.props;
 
 		return (
 			<div className="app-promo">
@@ -137,14 +148,7 @@ export class AppPromo extends Component {
 					/>
 					<p className="app-promo__paragraph">{ promoItem.message }</p>
 				</Button>
-				<Button
-					tabIndex="0"
-					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
-				>
-					<Gridicon icon="cross" size={ 16 } />
-				</Button>
+				{ this.dismissButton() }
 			</div>
 		);
 	};
@@ -197,14 +201,7 @@ export class AppPromo extends Component {
 						) }
 					</p>
 				</Dialog>
-				<Button
-					tabIndex="0"
-					className="app-promo__dismiss"
-					onClick={ this.dismiss }
-					aria-label={ translate( 'Dismiss' ) }
-				>
-					<Gridicon icon="cross" size={ 16 } />
-				</Button>
+				{ this.dismissButton() }
 			</div>
 		);
 	};
