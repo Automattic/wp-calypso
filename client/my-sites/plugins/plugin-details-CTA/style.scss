@@ -16,12 +16,12 @@
 	.eligibility-warnings {
 		margin: 0;
 
-		.eligibility-warnings__confirm-buttons {
-			flex-direction: row-reverse;
-		}
-
 		.card {
 			box-shadow: none;
+		}
+
+		.eligibility-warnings__confirm-buttons {
+			flex-direction: row-reverse;
 		}
 	}
 }
