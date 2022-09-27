@@ -29,6 +29,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
 		null
 	);
+	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
 
 	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -49,6 +50,14 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 	useEffect( () => {
 		setWebPreviewFrameContainer( document.querySelector( '.web-preview__frame-wrapper' ) );
 	}, [] );
+
+	useEffect( () => {
+		setScrollToSelector( null );
+	}, [ header, sections ] );
+
+	useEffect( () => {
+		setScrollToSelector( footer ? 'footer' : null );
+	}, [ footer ] );
 
 	return (
 		<div
@@ -91,6 +100,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 				url={ site?.URL }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
+				scrollToSelector={ scrollToSelector }
 			/>
 		</div>
 	);

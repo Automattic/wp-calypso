@@ -64,7 +64,7 @@ export default class WebPreviewContent extends Component {
 	}
 
 	componentDidUpdate( prevProps, prevState ) {
-		const { previewUrl, inlineCss } = this.props;
+		const { previewUrl, inlineCss, scrollToSelector } = this.props;
 		const { loaded } = this.state;
 
 		this.setIframeUrl( previewUrl );
@@ -100,6 +100,17 @@ export default class WebPreviewContent extends Component {
 					channel: `preview-${ this.previewId }`,
 					type: 'inline-css',
 					inline_css: inlineCss,
+				},
+				'*'
+			);
+		}
+
+		if ( scrollToSelector && loaded && ! prevState.loaded ) {
+			this.iframe.contentWindow?.postMessage(
+				{
+					channel: `preview-${ this.previewId }`,
+					type: 'scroll-to-selector',
+					scroll_to_selector: scrollToSelector,
 				},
 				'*'
 			);
@@ -307,7 +318,6 @@ export default class WebPreviewContent extends Component {
 			}, loadingTimeout );
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
-
 			if ( this.loadingTimeoutTimer ) {
 				debug( 'preview loaded before timeout' );
 				clearTimeout( this.loadingTimeoutTimer );
@@ -486,6 +496,8 @@ WebPreviewContent.propTypes = {
 	fixedViewportWidth: PropTypes.number,
 	// Injects CSS in the iframe after the content is loaded.
 	inlineCss: PropTypes.string,
+	// Uses the CSS selector to scroll to it
+	scrollToSelector: PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
@@ -510,4 +522,5 @@ WebPreviewContent.defaultProps = {
 	toolbarComponent: Toolbar,
 	autoHeight: false,
 	inlineCss: null,
+	scrollToSelector: null,
 };
