@@ -1,18 +1,11 @@
-import classnames from 'classnames';
-
-export default function ReaderCommentedIcon( { iconSize } ) {
-	const className = classnames( 'comment-button__icon', {
-		'needs-offset-x': iconSize % 18 === 0,
-		'reader-commented': true,
-	} );
-
+export default function ReaderFollowingConversationIcon( { iconSize } ) {
 	return (
 		<svg
 			fill="none"
-			viewBox="0 0 24 24"
+			viewBox="0 0 20 20"
 			width={ iconSize }
 			height={ iconSize }
-			className={ className }
+			className="reader-following-conversation"
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path

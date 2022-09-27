@@ -12,7 +12,7 @@ export default function ReaderLikeIcon( { liked, iconSize } ) {
 				fill="none"
 				height={ iconSize }
 				className={ className }
-				viewBox="0 0 24 24"
+				viewBox="0 0 20 20"
 				width={ iconSize }
 				xmlns="http://www.w3.org/2000/svg"
 			>
