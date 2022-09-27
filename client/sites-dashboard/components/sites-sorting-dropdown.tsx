@@ -4,7 +4,6 @@ import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
 import {
 	stringifySitesSorting,
 	parseSitesSorting,
@@ -33,57 +32,40 @@ export const SitesSortingDropdown = ( {
 	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
-	const currentSorting = useMemo( () => {
-		if ( ! hasSitesSortingPreferenceLoaded ) {
-			return null;
-		}
-
-		const { sortKey, sortOrder } = sitesSorting;
-		const SEPARATOR = '-';
-
-		switch ( `${ sortKey }${ SEPARATOR }${ sortOrder }` ) {
-			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Magic' );
-
-			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Name' );
-
-			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Last published' );
-
-			default:
-				throw new Error( `invalid sort value ${ sitesSorting }` );
-		}
-	}, [ __, sitesSorting, hasSitesSortingPreferenceLoaded ] );
-
-	const choices = useMemo( () => {
-		return [
-			{
-				value: stringifySitesSorting( {
-					sortKey: 'alphabetically',
-					sortOrder: 'asc',
-				} ),
-				label: __( 'Name' ),
-			},
-			{
-				value: stringifySitesSorting( {
-					sortKey: 'lastInteractedWith',
-					sortOrder: 'desc',
-				} ),
-				label: __( 'Magic' ),
-			},
-			{
-				value: stringifySitesSorting( {
-					sortKey: 'updatedAt',
-					sortOrder: 'desc',
-				} ),
-				label: __( 'Last published' ),
-			},
-		];
-	}, [ __ ] );
-
 	if ( ! hasSitesSortingPreferenceLoaded ) {
 		return null;
+	}
+
+	const choices = [
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'alphabetically',
+				sortOrder: 'asc',
+			} ),
+			label: __( 'Name' ),
+		},
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'desc',
+			} ),
+			/* translators: name of sorting mode where the details about how best to sort sites are left up to the software */
+			label: __( 'Magic' ),
+		},
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'updatedAt',
+				sortOrder: 'desc',
+			} ),
+			label: __( 'Last published' ),
+		},
+	];
+
+	const currentSortingValue = stringifySitesSorting( sitesSorting );
+	const currentSortingLabel = choices.find( ( { value } ) => value === currentSortingValue )?.label;
+
+	if ( currentSortingLabel === undefined ) {
+		throw new Error( `invalid sort value ${ sitesSorting }` );
 	}
 
 	return (
@@ -94,20 +76,20 @@ export const SitesSortingDropdown = ( {
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
 					// translators: %s is the current sorting mode.
-					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSorting ) }
+					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSortingLabel ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 				>
 					{
 						// translators: %s is the current sorting mode.
-						sprintf( __( 'Sort: %s' ), currentSorting )
+						sprintf( __( 'Sort: %s' ), currentSortingLabel )
 					}
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
 				<MenuItemsChoice
-					value={ stringifySitesSorting( sitesSorting ) }
-					onSelect={ ( value: Parameters< typeof parseSitesSorting >[ 0 ] ) => {
+					value={ currentSortingValue }
+					onSelect={ ( value: typeof choices[ 0 ][ 'value' ] ) => {
 						onSitesSortingChange( parseSitesSorting( value ) );
 						onClose();
 					} }
