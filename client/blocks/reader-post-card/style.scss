@@ -135,13 +135,16 @@
 		margin: 10px 0 0;
 	}
 
-	.reader-post-actions__item:hover {
-		svg.reader-external path {
-			fill: var(--color-link);
-		}
+	.reader-post-actions__item {
+		&:hover,
+		button.is-active {
+			svg.reader-external path {
+				fill: var(--color-link);
+			}
 
-		svg.reader-comment path, svg.reader-star path {
-			stroke: var(--color-link);
+			svg.reader-comment path, svg.reader-star path, svg.reader-share path {
+				stroke: var(--color-link);
+			}
 		}
 	}
 
