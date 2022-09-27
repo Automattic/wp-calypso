@@ -28,6 +28,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const { domain, selectedSite, source, usePromoCard = true } = props;
 
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
