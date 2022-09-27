@@ -219,6 +219,38 @@
 	}
 }
 
+.reader-post-card__conversation-post {
+	.comments__comment-actions {
+		display: flex;
+		justify-content: flex-start;
+	}
+	.comments__comment-actions .components-button.like-button {
+		display: flex;
+		justify-content: flex-start;
+
+		.gridicon {
+			position: relative;
+		}
+
+		.gridicons-star {
+			display: none;
+		}
+
+		.like-button__like-icons {
+			margin-right: 0;
+			position: unset;
+			top: unset;
+		}
+	}
+	.reader-post-card__byline {
+		margin-top: 16px;
+	}
+	.reader-post-options-menu__ellipsis-menu {
+		flex: 1;
+    text-align: right;
+	}
+}
+
 .reader-post-card__photo {
 	border-radius: 6px;
 	display: flex;
