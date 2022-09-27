@@ -525,7 +525,7 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
-									icon={ ReaderCommentIcon( { iconSize: 18 } ) }
+									icon={ ReaderCommentIcon( { iconSize: 20 } ) }
 								/>
 							) }
 

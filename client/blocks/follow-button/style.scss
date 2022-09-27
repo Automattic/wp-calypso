@@ -6,7 +6,7 @@ button.follow-button {
 	display: flex;
 	padding: 0;
 
-	.gridicons-reader-follow {
+	.reader-follow-feed {
 		fill: var( --color-primary );
 		pointer-events: auto;
 	}
@@ -19,7 +19,7 @@ button.follow-button {
 	&:hover {
 		color: var( --color-primary );
 
-		.gridicons-reader-follow {
+		.reader-follow-feed {
 			fill: var( --color-primary );
 		}
 	}
@@ -29,13 +29,13 @@ button.follow-button {
 	}
 
 	// Hides Following icon by default
-	.gridicons-reader-following {
+	.reader-following-feed {
 		display: none;
 		pointer-events: none;
 	}
 
 	&.is-following {
-		.gridicons-reader-following {
+		.reader-following-feed {
 			display: inline-block;
 			fill: var( --color-success );
 			pointer-events: auto;
@@ -46,7 +46,7 @@ button.follow-button {
 		}
 
 		// Hides Follow icon if already following
-		.gridicons-reader-follow {
+		.reader-follow-feed {
 			display: none;
 			pointer-events: none;
 		}
@@ -54,13 +54,13 @@ button.follow-button {
 		&:hover {
 			color: var( --color-success );
 
-			.gridicons-reader-following {
+			.reader-following-feed {
 				fill: var( --color-success );
 			}
 		}
 	}
 
-	.gridicons-reader-following {
+	.reader-following-feed {
 		pointer-events: none;
 	}
 

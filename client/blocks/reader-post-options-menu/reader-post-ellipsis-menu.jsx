@@ -299,8 +299,8 @@ class ReaderPostEllipsisMenu extends Component {
 						postId={ postId }
 						post={ post }
 						followSource={ READER_POST_OPTIONS_MENU }
-						followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
-						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 24 } ) }
+						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
 					/>
 				) }
 

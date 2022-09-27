@@ -12,7 +12,8 @@ button.conversation-follow-button {
 		color: var( --color-primary );
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		color: var( --color-primary );
 
 		.reader-follow-conversation {
@@ -20,13 +21,16 @@ button.conversation-follow-button {
 		}
 	}
 
-	&.popover__menu-item:hover {
-		.conversation-follow-button__label {
-			color: white;
-		}
+	&.popover__menu-item {
+		&:hover,
+		&:focus {
+			.conversation-follow-button__label {
+				color: white;
+			}
 
-		.gridicon {
-			fill: var( --color-text-inverted );
+			.gridicon, .reader-follow-conversation, .reader-following-conversation {
+				fill: var( --color-text-inverted );
+			}
 		}
 	}
 
@@ -57,7 +61,8 @@ button.conversation-follow-button {
 			pointer-events: none;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var( --color-success );
 
 			.reader-following-conversation {
@@ -70,7 +75,7 @@ button.conversation-follow-button {
 				color: white;
 			}
 
-			.gridicon {
+			.gridicon, .reader-follow-conversation, .reader-following-conversation {
 				fill: var( --color-text-inverted );
 			}
 		}
