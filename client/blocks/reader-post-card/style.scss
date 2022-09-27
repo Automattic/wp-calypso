@@ -326,6 +326,13 @@
 
 .reader__content .reader-post-card__tag-link {
 	color: var( --color-neutral-100 );
+	&:focus {
+		outline: dotted 1px;
+	}
+}
+
+.reader-feed-header__seen-button:focus {
+	outline: dotted 1px;
 }
 
 .reader-post-card__timestamp-bullet {
