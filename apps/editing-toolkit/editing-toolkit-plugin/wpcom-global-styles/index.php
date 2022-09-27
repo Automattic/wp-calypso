@@ -69,6 +69,11 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		true
 	);
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
+	wp_localize_script(
+		'wpcom-global-styles-editor',
+		'wpcomGlobalStylesAssetsUrl',
+		plugins_url( 'dist/', __FILE__ )
+	);
 	wp_enqueue_style(
 		'wpcom-global-styles-editor',
 		plugins_url( 'dist/wpcom-global-styles.css', __FILE__ ),
