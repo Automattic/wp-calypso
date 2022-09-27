@@ -9,8 +9,9 @@ import {
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
+import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -21,7 +22,8 @@ type EmailPlanWarningsProps = {
 
 const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = selectedSite?.slug ?? '';
 
 	const warning = emailAccount?.warnings?.[ 0 ];
 
@@ -64,11 +66,12 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	return (
 		<div className="email-plan-warnings__container">
 			{ cannotAddEmailMessage && (
-				<div className="email-plan-warnings__warning">
-					<div className="email-plan-warnings__message">
-						<span>{ cannotAddEmailMessage }</span>
-					</div>
-				</div>
+				<EmailNonDomainOwnerMessage
+					domain={ domain }
+					usePromoCard={ false }
+					selectedSite={ selectedSite }
+					source={ 'email-management' }
+				/>
 			) }
 
 			{ ! cannotAddEmailMessage && warning && (
