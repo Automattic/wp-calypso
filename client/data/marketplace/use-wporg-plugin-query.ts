@@ -16,7 +16,8 @@ import {
 } from 'calypso/lib/plugins/utils';
 import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { BASE_STALE_TIME, WPORG_CACHE_KEY } from './constants';
+import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { WPORG_CACHE_KEY } from './constants';
 import { Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
 
