@@ -217,10 +217,11 @@ export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
 	);
 
 	if ( hasPlanBundleRefundPolicy ) {
+		// The plan bundle refund policies indicate that the user already has a plan and a free
+		// domain in their cart. If they also have a paid domain, it gets repetitive to show them
+		// the DomainNameRegistration refund policy text. Therefore we exclude it.
 		refundPolicies = refundPolicies.filter(
-			( refundPolicy ) =>
-				refundPolicy !== RefundPolicy.DomainNameRegistration &&
-				refundPolicy !== RefundPolicy.DomainNameRenewal
+			( refundPolicy ) => refundPolicy !== RefundPolicy.DomainNameRegistration
 		);
 	}
 
