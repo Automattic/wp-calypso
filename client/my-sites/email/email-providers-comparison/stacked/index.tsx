@@ -14,7 +14,6 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
-import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -33,11 +32,7 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	emailManagement,
-	emailManagementInDepthComparison,
-	loginUrlWithUserNameAndRedirectToEmailProvidersComparison,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
