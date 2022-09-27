@@ -34,7 +34,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 			{ variations.length > 0 && (
 				<div className="design-preview__sidebar-variations">
 					<h2>{ translate( 'Style variations' ) }</h2>
-					<h3>{ translate( 'Choose a variation to change the look of the site.' ) }</h3>
+					<p>{ translate( 'Choose a variation to change the look of the site.' ) }</p>
 					<div className="design-preview__sidebar-variations-grid">
 						<StyleVariationPreviews
 							variations={ variations }
