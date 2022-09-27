@@ -47,7 +47,6 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
-	isModal?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -61,7 +60,6 @@ export const EligibilityWarnings = ( {
 	isEligible,
 	isMarketplace,
 	isPlaceholder,
-	isModal,
 	onProceed,
 	standaloneProceed,
 	recordUpgradeClick,
@@ -86,7 +84,6 @@ export const EligibilityWarnings = ( {
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
-			'eligibility-warnings--is-modal': isModal,
 		},
 		className
 	);

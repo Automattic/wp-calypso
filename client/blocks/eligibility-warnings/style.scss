@@ -45,8 +45,13 @@
 
 .eligibility-warnings__hold,
 .eligibility-warnings__warning {
+	align-items: center;
 	display: flex;
 	flex-direction: row;
+}
+
+.eligibility-warnings__hold,
+.eligibility-warnings__warning {
 	align-items: flex-start;
 	margin-bottom: 16px;
 
@@ -120,11 +125,4 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 	max-width: 300px;
-}
-
-.eligibility-warnings--is-modal {
-	.eligibility-warnings__confirm-buttons {
-		display: flex;
-		justify-content: flex-end;
-	}
 }
