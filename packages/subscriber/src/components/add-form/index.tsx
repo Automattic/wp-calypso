@@ -62,7 +62,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Fields
 	 */
-	const emailControlMaxNum = 10;
+	const emailControlMaxNum = 6;
 	const emailControlPlaceholder = [
 		__( 'sibling@example.com' ),
 		__( 'parents@example.com' ),
