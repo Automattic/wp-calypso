@@ -231,9 +231,9 @@
 	font-weight: 600;
 }
 
-// completed && keep active tasks
-.launchpad__task.is-completed,
-.launchpad__task.keep-active {
+// completed tasks
+.launchpad__task.completed-and-inactive,
+.launchpad__task.completed-and-active {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
@@ -245,11 +245,11 @@
 	}
 }
 
-// pending && keep active tasks
-.launchpad__task.keep-active:hover,
-.launchpad__task.pending:hover,
-.launchpad__task.keep-active > a:focus,
-.launchpad__task.pending > a:focus {
+// not-completed && completed-and-active tasks
+.launchpad__task.completed-and-active:hover,
+.launchpad__task.not-completed:hover,
+.launchpad__task.completed-and-active > a:focus,
+.launchpad__task.not-completed > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}

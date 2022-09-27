@@ -18,9 +18,9 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 	return (
 		<li
 			className={ classnames( 'launchpad__task', {
-				'keep-active': keepActive && isCompleted, // a task that is completed and can be revisited
-				'is-completed': isCompleted && ! keepActive, // a task that is completed and can't be revisited
-				pending: ! isCompleted && ! keepActive, // a task that hasn't been completed yet
+				'completed-and-active': isCompleted && keepActive, // a task that is completed and can be revisited
+				'completed-and-inactive': isCompleted && ! keepActive, // a task that is completed and can't be revisited
+				'not-completed': ! isCompleted && ! keepActive, // a task that hasn't been completed yet
 			} ) }
 		>
 			<Button
