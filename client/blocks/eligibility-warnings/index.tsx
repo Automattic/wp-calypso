@@ -14,6 +14,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
 import { connect, useSelector } from 'react-redux';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -146,7 +147,7 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList context={ context } warnings={ warnings } />
+					<WarningList context={ context } warnings={ warnings } showContact={ false } />
 				</CompactCard>
 			) }
 			<CompactCard>
@@ -163,6 +164,14 @@ export const EligibilityWarnings = ( {
 					>
 						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
+					<div className="support-block">
+						<span>{ translate( 'Need help?' ) }</span>
+						{ translate( '{{a}}Contact support{{/a}}', {
+							components: {
+								a: <ActionPanelLink href="/help/contact" />,
+							},
+						} ) }
+					</div>
 				</div>
 			</CompactCard>
 		</div>

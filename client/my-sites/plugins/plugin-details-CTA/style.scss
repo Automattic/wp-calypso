@@ -23,14 +23,13 @@
 		.card {
 			box-shadow: none;
 		}
-
 		.card:last-of-type.is-compact {
 			border-top: 1px solid var(--color-border-shadow);
 		}
 
 		.eligibility-warnings__confirm-buttons {
 			display: flex;
-			justify-content: flex-end;
+			flex-direction: row-reverse;
 		}
 	}
 }
