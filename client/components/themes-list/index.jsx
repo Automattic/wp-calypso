@@ -64,81 +64,89 @@ export class ThemesList extends Component {
 		);
 	}
 
-	renderTheme( theme, index ) {
-		if ( isEmpty( theme ) ) {
-			return null;
-		}
-		// Decide if we should pass ref for bookmark.
-		const { themesBookmark, siteId } = this.props;
-		const bookmarkRef = themesBookmark === theme.id ? this.props.bookmarkRef : null;
-
-		return (
-			<Theme
-				key={ 'theme-' + theme.id }
-				buttonContents={ this.props.getButtonOptions( theme.id ) }
-				screenshotClickUrl={
-					this.props.getScreenshotUrl && this.props.getScreenshotUrl( theme.id )
-				}
-				onScreenshotClick={ this.props.onScreenshotClick }
-				onMoreButtonClick={ this.props.onMoreButtonClick }
-				actionLabel={ this.props.getActionLabel( theme.id ) }
-				index={ index }
-				theme={ theme }
-				active={ this.props.isActive( theme.id ) }
-				price={ this.props.getPrice( theme.id ) }
-				installing={ this.props.isInstalling( theme.id ) }
-				upsellUrl={ this.props.upsellUrl }
-				bookmarkRef={ bookmarkRef }
-				siteId={ siteId }
-			/>
-		);
-	}
-
-	renderLoadingPlaceholders() {
-		return times( this.props.placeholderCount, function ( i ) {
-			return (
-				<Theme
-					key={ 'placeholder-' + i }
-					theme={ { id: 'placeholder-' + i, name: 'Loading…' } }
-					isPlaceholder={ true }
-				/>
-			);
-		} );
-	}
-
-	// Invisible trailing items keep all elements same width in flexbox grid.
-	renderTrailingItems() {
-		const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
-		return times( NUM_SPACERS, function ( i ) {
-			return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
-		} );
-	}
-
-	renderEmpty() {
-		return (
-			this.props.emptyContent || (
-				<EmptyContent
-					title={ this.props.translate( 'Sorry, no themes found.' ) }
-					line={ this.props.translate( 'Try a different search or more filters?' ) }
-				/>
-			)
-		);
-	}
-
 	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
-			return this.renderEmpty();
+			return <Empty emptyContent={ this.props.emptyContent } translate={ this.props.translate } />;
 		}
 
 		return (
 			<div className="themes-list">
-				{ this.props.themes.map( this.renderTheme, this ) }
-				{ this.props.loading && this.renderLoadingPlaceholders() }
-				{ this.renderTrailingItems() }
+				{ this.props.themes.map( ( theme, index ) => (
+					<ThemeBlock
+						key={ 'theme-block' + index }
+						theme={ theme }
+						index={ index }
+						{ ...this.props }
+					/>
+				) ) }
+				{ this.props.loading && (
+					<LoadingPlaceholders placeholderCount={ this.props.placeholderCount } />
+				) }
+				{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
+				<TrailingItems />
 				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
 			</div>
 		);
 	}
+}
+
+function ThemeBlock( props ) {
+	const { theme, index } = props;
+	if ( isEmpty( theme ) ) {
+		return null;
+	}
+	// Decide if we should pass ref for bookmark.
+	const { themesBookmark, siteId } = props;
+	const bookmarkRef = themesBookmark === theme.id ? props.bookmarkRef : null;
+
+	return (
+		<Theme
+			key={ 'theme-' + theme.id }
+			buttonContents={ props.getButtonOptions( theme.id ) }
+			screenshotClickUrl={ props.getScreenshotUrl && props.getScreenshotUrl( theme.id ) }
+			onScreenshotClick={ props.onScreenshotClick }
+			onMoreButtonClick={ props.onMoreButtonClick }
+			actionLabel={ props.getActionLabel( theme.id ) }
+			index={ index }
+			theme={ theme }
+			active={ props.isActive( theme.id ) }
+			price={ props.getPrice( theme.id ) }
+			installing={ props.isInstalling( theme.id ) }
+			upsellUrl={ props.upsellUrl }
+			bookmarkRef={ bookmarkRef }
+			siteId={ siteId }
+		/>
+	);
+}
+
+function Empty( { emptyContent, translate } ) {
+	return (
+		emptyContent || (
+			<EmptyContent
+				title={ translate( 'Sorry, no themes found.' ) }
+				line={ translate( 'Try a different search or more filters?' ) }
+			/>
+		)
+	);
+}
+
+function LoadingPlaceholders( { placeholderCount } ) {
+	return times( placeholderCount, function ( i ) {
+		return (
+			<Theme
+				key={ 'placeholder-' + i }
+				theme={ { id: 'placeholder-' + i, name: 'Loading…' } }
+				isPlaceholder={ true }
+			/>
+		);
+	} );
+}
+
+function TrailingItems() {
+	const NUM_SPACERS = 11; // gives enough spacers for a theoretical 12 column layout
+	return times( NUM_SPACERS, function ( i ) {
+		return <div className="themes-list__spacer" key={ 'themes-list__spacer-' + i } />;
+	} );
 }
 
 const mapStateToProps = ( state ) => ( {
