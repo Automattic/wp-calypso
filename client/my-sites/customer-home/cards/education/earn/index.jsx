@@ -1,7 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import earnCardPrompt from 'calypso/assets/images/customer-home/illustration--secondary-earn.svg';
-import VideoModal from 'calypso/components/videos-ui/video-modal';
 import { COURSE_SLUGS } from 'calypso/data/courses';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -11,7 +10,7 @@ export const EDUCATION_EARN = 'home-education-earn';
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
 	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'coursePaymentsModal',
+		'myHomeCoursePaymentsModal',
 		COURSE_SLUGS.PAYMENTS_FEATURES
 	);
 
@@ -32,16 +31,9 @@ const EducationEarn = ( { siteSlug } ) => {
 				{
 					calypsoLink: true,
 					url: `/earn/${ siteSlug }`,
-					ModalComponent: VideoModal,
-					modalComponentProps: {
-						isVisible: isModalOpen,
-						onClose: ( event ) => {
-							event.preventDefault();
-							closeModal();
-						},
-						courseSlug: COURSE_SLUGS.PAYMENTS_FEATURES,
-					},
 					onClick: openModal,
+					isOpen: isModalOpen,
+					onClose: closeModal,
 					text: translate( 'Learn more' ),
 				},
 			] }
