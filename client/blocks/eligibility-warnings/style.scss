@@ -1,4 +1,5 @@
 .eligibility-warnings {
+	max-width: 650px;
 	margin-top: 16px;
 	font-size: $font-body-small;
 
@@ -11,6 +12,11 @@
 		align-items: center;
 		display: flex;
 		gap: 5px;
+	}
+
+	.eligibility-warnings__message-description {
+		color: var(--color-text-subtle);
+		font-size: $font-body;
 	}
 }
 
@@ -28,10 +34,6 @@
 }
 
 .eligibility-warnings--with-indent {
-	.eligibility-warnings__message {
-		padding: 0 16px;
-		margin-left: 24px;
-	}
 	.gridicon + .eligibility-warnings__message {
 		margin-left: 0;
 	}
@@ -73,10 +75,15 @@
 	flex-direction: row;
 	align-items: flex-start;
 	margin-bottom: 16px;
+}
 
-	&:first-of-type {
-		padding-top: 6px;
-	}
+.eligibility-warnings__warning:first-child {
+	border-bottom: none;
+}
+
+.eligibility-warnings__warning:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
 }
 
 .eligibility-warnings__hold .gridicon,
@@ -96,13 +103,10 @@
 	flex-grow: 1;
 	line-height: 24px;
 	padding: 0;
+	max-width: 100%;
 
 	.eligibility-warnings__message-title {
 		font-weight: 600;
-	}
-
-	.eligibility-warnings__message-description {
-		color: var(--color-text-subtle);
 	}
 }
 
@@ -145,4 +149,30 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 	max-width: 300px;
+}
+
+.eligibility-warnings__domain-names {
+	margin-top: 10px;
+
+	.card {
+		padding: 10px 24px;
+		margin-bottom: 5px;
+	}
+
+	.badge {
+		position: absolute;
+		right: 20px;
+		border-radius: 4px;
+	}
+}
+
+.eligibility-warnings__warnings-card {
+	background: #f6f7f7;
+	margin: 0 24px;
+}
+
+.eligibility-warnings__box {
+	border: 1px solid #dcdcde;
+	padding: 16px 24px;
+	margin-top: 15px;
 }
