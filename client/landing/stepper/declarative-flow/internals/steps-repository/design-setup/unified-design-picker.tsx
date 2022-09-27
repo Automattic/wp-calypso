@@ -24,9 +24,11 @@ import { urlToSlug } from 'calypso/lib/url';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -215,8 +217,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+
+	const isPluginBundleEligible = useIsPluginBundleEligible();
+	const themeDetails = useThemeDetails( selectedDesign?.slug || '' );
+	const hasThemeSoftwareSet = themeDetails?.data?.taxonomies?.theme_software_set?.length;
+
 	const shouldUpgrade =
-		selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
+		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( isEnabled( 'themes/plugin-bundling' ) && ! isPluginBundleEligible && hasThemeSoftwareSet );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
