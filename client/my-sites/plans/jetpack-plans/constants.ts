@@ -155,8 +155,6 @@ export const EXTERNAL_PRODUCT_SOCIAL_BASIC = (): SelectorProduct => ( {
 	displayName: translate( 'Social' ),
 	shortName: translate( 'Social' ),
 	tagline: translate( 'Easily share your website content on your social media channels' ),
-	displayPrice: 10,
-	displayCurrency: 'USD',
 	description: translate(
 		'Easily share your website content on your social media channels from one place.'
 	),
