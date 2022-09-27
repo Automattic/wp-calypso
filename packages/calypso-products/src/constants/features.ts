@@ -90,7 +90,6 @@ export const FEATURE_RECURRING_PAYMENTS = 'recurring-payments';
 export const FEATURE_PREMIUM_CONTENT_BLOCK = 'premium-content-block';
 export const FEATURE_PREMIUM_CONTENT_CONTAINER = 'premium-content/container';
 export const FEATURE_HOSTING = 'hosting';
-export const FEATURE_PREMIUM_DESIGN_TOOLS = 'premium-design-tools';
 export const PREMIUM_DESIGN_FOR_STORES = 'premium-design-for-stores';
 export const FEATURE_SFTP_DATABASE = 'sftp-and-database-access';
 export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';

@@ -63,7 +63,6 @@ import {
 	FEATURE_GOOGLE_ANALYTICS,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
-	FEATURE_PREMIUM_DESIGN_TOOLS,
 	FEATURE_INSTALL_PLUGINS,
 	FEATURE_INSTANT_EMAIL_V2,
 	FEATURE_JETPACK_ADVANCED,
@@ -187,6 +186,7 @@ import {
 	FEATURE_FREE_THEMES_V2,
 	FEATURE_VIDEO_UPLOADS_V2,
 	/* END - condensed_plan_features_v1 test */
+	WPCOM_FEATURES_GLOBAL_STYLES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -346,8 +346,8 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ FEATURE_PREMIUM_DESIGN_TOOLS ]: {
-		getSlug: () => FEATURE_PREMIUM_DESIGN_TOOLS,
+	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
+		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
 		getTitle: () => i18n.translate( 'Premium design tools' ),
 		getDescription: () => i18n.translate( "Change all of your site's fonts, colours and more." ),
 	},
