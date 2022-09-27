@@ -41,9 +41,31 @@ export interface AvailableProductVariantAndCompared extends AvailableProductVari
 }
 
 export interface SitePlanData {
-	currentPlan: boolean;
+	autoRenew?: boolean;
+	autoRenewDate?: string;
+	canStartTrial?: boolean;
+	currencyCode: string;
+	currentPlan?: boolean;
+	discountReason?: string | null;
+	expiry?: string;
+	expiryDate?: string;
+	formattedDiscount: string;
+	formattedOriginalPrice: string;
+	formattedPrice: string;
+	freeTrial?: boolean;
+	hasDomainCredit?: boolean;
+	id: number;
 	interval: number;
+	introductoryOfferFormattedPrice?: string;
+	introductoryOfferRawPrice?: number;
+	isDomainUpgrade?: boolean;
+	productDisplayPrice?: string;
+	productName: string;
 	productSlug: string;
+	rawDiscount: string;
+	rawPrice: number;
+	subscribedDate?: string;
+	userIsOwner?: boolean;
 }
 
 export interface SitesPlansResult {
@@ -58,9 +80,7 @@ export function useGetProductVariants(
 	const reduxDispatch = useDispatch();
 
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
-	const activePlan: SitePlanData | undefined = sitePlans?.data?.find(
-		( plan ) => plan.currentPlan
-	);
+	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 	debug( 'activePlan', activePlan );
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug, activePlan?.productSlug );
