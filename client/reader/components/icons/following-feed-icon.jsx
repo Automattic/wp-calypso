@@ -1,8 +1,8 @@
-export default function ReaderFollowingIcon( { iconSize } ) {
+export default function ReaderFollowingFeedIcon( { iconSize } ) {
 	return (
 		<svg
 			key="following"
-			className="gridicons-reader-following"
+			className="reader-following-feed"
 			fill="none"
 			viewBox="0 0 20 20"
 			width={ iconSize }

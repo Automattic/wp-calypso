@@ -14,7 +14,7 @@ export default function ReaderFollowConversationIcon( { iconSize } ) {
 				stroke="#646970"
 				strokeWidth="1.5"
 			/>
-			<path d="m10.5 6.5h4v4h4.5v-8.5h-8.5z" fill="#fff" />
+			<path d="m10.5 6.5h4v4h4.5v-8.5h-8.5z" fill="#fff" className="status" />
 			<g fill="#606a73">
 				<path d="m5.625 6.875h7.25v.75h-7.25z" stroke="#646970" strokeWidth=".75" />
 				<path d="m5.625 9.875h3.25v.75h-3.25z" stroke="#646970" strokeWidth=".75" />
