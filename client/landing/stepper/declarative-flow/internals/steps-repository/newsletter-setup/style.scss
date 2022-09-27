@@ -120,6 +120,8 @@ $border-radius: 4px;
 
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
+			// adds +2 px of padding to the button to match the input field height
+			padding: 10px 14px;
 		}
 	}
 }
