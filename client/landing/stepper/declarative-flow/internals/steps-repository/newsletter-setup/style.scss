@@ -94,6 +94,7 @@ $border-radius: 4px;
 		}
 
 		.newsletter-setup__contrast-warning {
+			z-index: 1;
 			display: flex;
 			font-size: $font-body-small;
 			height: 0;
@@ -118,6 +119,7 @@ $border-radius: 4px;
 
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
+			z-index: 2;
 		}
 	}
 }
