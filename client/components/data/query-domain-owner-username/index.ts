@@ -7,8 +7,9 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { InfiniteData } from 'react-query';
 
 type User = {
-	login: string;
+	ID: number;
 	linked_user_ID: number;
+	login: string;
 };
 
 type UsersData = {
@@ -43,7 +44,7 @@ export function useDomainOwnerUserName(
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
 	const ownerUser = teams.users?.filter(
-		( user ) => user.linked_user_ID === domainSubscription?.userId
+		( user ) => ( user.linked_user_ID ?? user.ID ) === domainSubscription?.userId
 	);
 	const ownerUserName = ownerUser[ 0 ]?.login ?? '';
 
