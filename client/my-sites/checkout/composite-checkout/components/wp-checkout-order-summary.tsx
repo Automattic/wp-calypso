@@ -36,7 +36,7 @@ import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
-import { getRefundPolicies, getRefundWindows } from './refund-policies';
+import { getRefundPolicies, getRefundWindows, RefundPolicy } from './refund-policies';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -167,7 +167,14 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	}
 
 	const refundWindows = getRefundWindows( refundPolicies );
-	const shortestRefundWindow = Math.min( ...getRefundWindows( refundPolicies ) );
+	const shortestRefundWindow = Math.min( ...refundWindows );
+
+	const planBundleRefundPolicy = refundPolicies.find(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.PlanBiennialBundle ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
+			refundPolicy === RefundPolicy.PlanYearlyBundle
+	);
 
 	// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 	let text: TranslateResult = translate(
@@ -180,7 +187,18 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		}
 	);
 
-	if ( refundWindows.length === 1 ) {
+	if ( planBundleRefundPolicy ) {
+		const refundWindow = Math.max( ...getRefundWindows( [ planBundleRefundPolicy ] ) );
+
+		text = translate(
+			'%(days)d-day money back guarantee for plan',
+			'%(days)d-day money back guarantee for plan',
+			{
+				count: refundWindow,
+				args: { days: refundWindow },
+			}
+		);
+	} else if ( refundWindows.length === 1 ) {
 		const refundWindow = refundWindows[ 0 ];
 
 		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {

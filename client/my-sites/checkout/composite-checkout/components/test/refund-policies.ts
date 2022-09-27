@@ -10,7 +10,7 @@ import {
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
-import { getRefundPolicies, RefundPolicy } from '../refund-policies';
+import { getRefundPolicies, getRefundWindows, RefundPolicy } from '../refund-policies';
 
 function getPlanAndDomainBundle( planSlug: string ) {
 	const cart = getEmptyResponseCart();
@@ -194,5 +194,40 @@ describe( 'getRefundPolicies', () => {
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.PremiumTheme ] );
+	} );
+} );
+
+describe( 'getRefundWindows', () => {
+	test( 'paid domain', () => {
+		const refundWindows = getRefundWindows( [ RefundPolicy.DomainNameRegistration ] );
+
+		expect( refundWindows ).toEqual( [ 4 ] );
+	} );
+
+	test( 'monthly product', () => {
+		const refundWindows = getRefundWindows( [ RefundPolicy.GenericMonthly ] );
+
+		expect( refundWindows ).toEqual( [ 7 ] );
+	} );
+
+	test( 'yearly and biennial product', () => {
+		const refundWindows = getRefundWindows( [
+			RefundPolicy.GenericYearly,
+			RefundPolicy.GenericBiennial,
+		] );
+
+		expect( refundWindows ).toEqual( [ 14 ] );
+	} );
+
+	test( 'yearly plan and bundled domain', () => {
+		const refundWindows = getRefundWindows( [ RefundPolicy.PlanYearlyBundle ] );
+
+		expect( refundWindows ).toEqual( [ 4, 14 ] );
+	} );
+
+	test( 'premium theme', () => {
+		const refundWindows = getRefundWindows( [ RefundPolicy.PremiumTheme ] );
+
+		expect( refundWindows ).toEqual( [ 14 ] );
 	} );
 } );
