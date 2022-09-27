@@ -10,18 +10,15 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import VideoModal from 'calypso/components/videos-ui/video-modal';
-import { COURSE_SLUGS } from 'calypso/data/courses';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
-import { useRouteModal } from 'calypso/lib/route-modal';
+import Modals from 'calypso/my-sites/customer-home/locations/modal';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
-import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
@@ -45,11 +42,6 @@ const Home = ( {
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
-
-	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'myHomeCoursePaymentsModal',
-		COURSE_SLUGS.PAYMENTS_FEATURES
-	);
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
@@ -125,7 +117,7 @@ const Home = ( {
 			) : (
 				<>
 					<Primary cards={ layout.primary } />
-					<PluginsAnnouncementModal />
+					<Modals />
 					<div className="customer-home__layout">
 						<div className="customer-home__layout-col customer-home__layout-col-left">
 							<Secondary cards={ layout.secondary } />
@@ -133,14 +125,6 @@ const Home = ( {
 						<div className="customer-home__layout-col customer-home__layout-col-right">
 							<Tertiary cards={ layout.tertiary } />
 						</div>
-					</div>
-					<div className="payments-features-video__modal">
-						<VideoModal
-							isVisible={ isModalOpen }
-							onClose={ closeModal }
-							onOpen={ openModal }
-							courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
-						/>
 					</div>
 				</>
 			) }
