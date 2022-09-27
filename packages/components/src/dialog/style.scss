@@ -112,6 +112,14 @@
 	float: left;
 }
 
+.dialog__action-buttons-close {
+	padding: 15px 15px 5px 5px;
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	cursor: pointer;
+}
+
 .ReactModal__Body--open {
 	overflow: hidden;
 }
