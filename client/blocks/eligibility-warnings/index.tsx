@@ -153,16 +153,6 @@ export const EligibilityWarnings = ( {
 			) }
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
-					<div className="support-block">
-						<span>{ translate( 'Need help?' ) }</span>
-						<ExternalLink
-							href={ localizeUrl( 'https://wordpress.com/support' ) }
-							icon={ false }
-							target="_blank"
-						>
-							{ translate( 'Contact support' ) }
-						</ExternalLink>
-					</div>
 					<Button
 						primary={ true }
 						disabled={
@@ -175,6 +165,16 @@ export const EligibilityWarnings = ( {
 					>
 						{ getProceedButtonText( listHolds, translate ) }
 					</Button>
+					<div className="support-block">
+						<span>{ translate( 'Need help?' ) }</span>
+						<ExternalLink
+							href={ localizeUrl( 'https://wordpress.com/support' ) }
+							icon={ false }
+							target="_blank"
+						>
+							{ translate( 'Contact support' ) }
+						</ExternalLink>
+					</div>
 				</div>
 			</CompactCard>
 		</div>
