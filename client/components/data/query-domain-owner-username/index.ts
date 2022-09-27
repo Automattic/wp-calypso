@@ -8,6 +8,7 @@ import type { InfiniteData } from 'react-query';
 
 type User = {
 	login: string;
+	linked_user_ID: number;
 };
 
 type UsersData = {
@@ -17,7 +18,7 @@ type UsersData = {
 export function useDomainOwnerUserName(
 	selectedSite: SiteDetails | null | undefined,
 	domain: ResponseDomain | null | undefined
-) {
+): string {
 	useQuerySitePurchases( selectedSite?.ID ?? -1 );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
@@ -28,16 +29,19 @@ export function useDomainOwnerUserName(
 		( purchase ) => purchase.id === parseInt( selectedSubscriptionId )
 	)[ 0 ];
 
-	const fetchOptions = {
-		search: domainSubscription?.userId,
-		search_columns: [ 'ID' ],
-	};
-
-	const { data } = useUsersQuery( selectedSite?.ID, fetchOptions, {
-		enabled: domainSubscription !== undefined,
-	} );
+	const { data } = useUsersQuery(
+		selectedSite?.ID,
+		{},
+		{
+			enabled: domainSubscription !== undefined,
+		}
+	);
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
-	const ownerUserName = teams ? teams.users[ 0 ].login : '';
-	return ownerUserName;
+	const ownerUser = teams.users?.filter(
+		( user ) => user.linked_user_ID === domainSubscription?.userId
+	);
+	const ownerUserName = ownerUser[ 0 ]?.login ?? '';
+
+	return ownerUserName ?? '';
 }

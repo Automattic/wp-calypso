@@ -1,6 +1,6 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { buildQueryString } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { stringify } from 'qs';
 import { useDispatch } from 'react-redux';
 import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
 import PromoCard from 'calypso/components/promo-section/promo-card';
@@ -27,6 +27,9 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	const isPrivacyAvailable = domain?.privacyAvailable;
 
+	const buildQueryString = ( parameters = {} ) =>
+		parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
 	const buildLoginUrl = () => {
 		const redirectUrlParameter = encodeURIComponent(
 			emailManagementPurchaseNewEmailAccount(
@@ -43,7 +46,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		} ) }`;
 	};
 
-	const contactOwnerUrl = `https://privatewho.is/?${ buildQueryString( {
+	const contactOwnerUrl = `https://privatewho.is/${ buildQueryString( {
 		s: domain?.name,
 	} ) }`;
 
@@ -69,7 +72,13 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	const translateOptions = {
 		components: {
-			loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
+			loginLink: (
+				<a
+					rel="noopener noreferrer"
+					href={ loginUrl }
+					onClick={ () => onClickLink( 'user_login' ) }
+				/>
+			),
 			reachOutLink: isPrivacyAvailable ? (
 				<a
 					href={ contactOwnerUrl }
