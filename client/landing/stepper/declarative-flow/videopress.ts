@@ -86,7 +86,6 @@ export const videopress: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
-					clearOnboardingSiteOptions();
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
