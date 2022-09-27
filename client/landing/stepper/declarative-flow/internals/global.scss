@@ -6,6 +6,7 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 /**
  * General onboarding styling
@@ -140,7 +141,7 @@ button {
 		}
 	}
 
-	@media ( min-width: 660px ) {
+	@include break-large {
 		height: 100%;
 	}
 
