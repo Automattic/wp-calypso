@@ -3,6 +3,7 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
+	isEcommerce,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -124,17 +125,15 @@ export class PlansStep extends Component {
 				themeSlugWithRepo: 'pub/lynx',
 			} );
 			this.props.goToNextStep();
-		} else if ( flowName === 'onboarding' && cartItem?.product_slug === 'ecommerce-bundle' ) {
-			// Buying ecommerce-bundle at signup gives you pub/twentytwentytwo
-			this.props.submitSignupStep( step, {
-				cartItem,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			} );
-			this.props.goToNextStep();
 		} else {
-			this.props.submitSignupStep( step, {
-				cartItem,
-			} );
+			const signupVals = { cartItem };
+
+			// Buying an eCommerce plan defaults to the pub/twentytwentytwo theme (All remaining flows)
+			if ( isEcommerce( cartItem ) ) {
+				signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+			}
+
+			this.props.submitSignupStep( step, signupVals );
 			this.props.goToNextStep();
 		}
 	};
