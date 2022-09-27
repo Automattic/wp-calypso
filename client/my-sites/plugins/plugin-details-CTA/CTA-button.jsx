@@ -33,7 +33,17 @@ import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
+export default function CTAButton( {
+	plugin,
+	hasEligibilityMessages,
+	disabled,
+	// just a quick flag to demonstrate reusing
+	plansPage = true,
+	// We need a way to tell which plan do we want now
+	desiredPlan,
+	buttonText = '',
+	buttonClassName = 'plugin-details-cta__install-button',
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -99,12 +109,26 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
 
+	const getButtonText = () => {
+		if ( buttonText ) return buttonText;
+
+		if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
+			return translate( 'Purchase and activate' );
+		}
+
+		if ( shouldUpgrade ) {
+			return translate( 'Upgrade and activate' );
+		}
+
+		return translate( 'Install and activate' );
+	};
+
 	return (
 		<>
 			<PluginCustomDomainDialog
 				onProceed={ () => {
 					if ( hasEligibilityMessages ) {
-						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
 							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
@@ -145,19 +169,20 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 							isMarketplaceProduct,
 							billingPeriod,
 							productsList,
+							desiredPlan,
 						} )
 					}
 				/>
 			</Dialog>
 			<Button
-				className="plugin-details-cta__install-button"
+				className={ buttonClassName }
 				primary
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {
 						return setShowAddCustomDomain( true );
 					}
 					if ( hasEligibilityMessages ) {
-						if ( pluginsPlansPageFlag && shouldUpgrade ) {
+						if ( plansPage && pluginsPlansPageFlag && shouldUpgrade ) {
 							return page( pluginsPlansPage );
 						}
 						return setShowEligibility( true );
@@ -178,14 +203,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				{
-					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
-						? translate( 'Purchase and activate' )
-						: shouldUpgrade
-						? translate( 'Upgrade and activate' )
-						: translate( 'Install and activate' )
-				}
+				{ getButtonText() }
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">
@@ -219,6 +237,7 @@ function onClickInstallPlugin( {
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
+	desiredPlan,
 } ) {
 	dispatch( removePluginStatuses( 'completed', 'error' ) );
 
@@ -251,14 +270,13 @@ function onClickInstallPlugin( {
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		if ( upgradeAndInstall ) {
+			const marketplacePlan = desiredPlan
+				? desiredPlan
+				: marketplacePlanToAdd( selectedSite?.plan, billingPeriod );
+
 			// We also need to add a business plan to the cart.
 			return page(
-				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
-					selectedSite?.plan,
-					billingPeriod
-				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-				}`
+				`/checkout/${ selectedSite.slug }/${ marketplacePlan },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			);
 		}
 

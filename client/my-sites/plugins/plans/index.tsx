@@ -1,9 +1,13 @@
 import {
 	getPlan,
 	PLAN_BUSINESS,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 } from '@automattic/calypso-products';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,18 +18,30 @@ import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MainComponent from 'calypso/components/main';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { Gridicon } from 'calypso/devdocs/design/playground-scope';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { MarketplaceFooter } from 'calypso/my-sites/plugins/education-footer';
 import { MARKETPLACE_FLOW } from 'calypso/my-sites/plugins/flows';
+import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import CTAButton from '../plugin-details-CTA/CTA-button';
 
 import './style.scss';
 
-const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
+const Plans = ( {
+	intervalType,
+	pluginSlug,
+}: {
+	intervalType: 'yearly' | 'monthly';
+	pluginSlug: string;
+} ) => {
 	const translate = useTranslate();
 	const breadcrumbs = useSelector( getBreadcrumbs );
 	const selectedSite = useSelector( getSelectedSite );
@@ -60,6 +76,26 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 			} )
 		);
 	}, [ dispatch, translate, selectedSite, breadcrumbs.length, intervalType ] );
+
+	const isMarketplaceProduct = true;
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+
+	// Eligibilities for Simple Sites.
+	// eslint-disable-next-line prefer-const
+	const { eligibilityHolds, eligibilityWarnings } = useSelector( ( state ) =>
+		getEligibility( state, selectedSite?.ID )
+	);
+
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const hasEligibilityMessages =
+		! isAtomic && ! isJetpack && ( eligibilityHolds?.length || eligibilityWarnings?.length );
+	const productsList = useSelector( getProductsList );
+	const isProductListFetched = Object.values( productsList ).length > 0;
+	const {
+		data: plugin,
+		// isFetched: isWpComPluginFetched,
+		// isFetching: isWpComPluginFetching,
+	} = useWPCOMPlugin( pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
 
 	const promos: PromoSectionProps = {
 		promos: [
@@ -99,9 +135,9 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 				brandFont
 			/>
 
-			<div className="plans">
+			<div className="plugins-plans">
 				<PlansFeaturesMain
-					basePlansPath="/plugins/plans"
+					basePlansPath={ '/plugins/plans/' + pluginSlug }
 					showFAQ={ false }
 					site={ selectedSite }
 					intervalType={ intervalType }
@@ -110,6 +146,73 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					flowName={ MARKETPLACE_FLOW }
 					shouldShowPlansFeatureComparison
 					isReskinned
+					customRender={ {
+						topButtons: [
+							<td
+								key="current-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
+								<Button className="button plan-features__actions-button is-current" disabled>
+									{ translate( 'Your current plan' ) }
+								</Button>
+							</td>,
+							<td
+								key="business-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
+								{ plugin ? (
+									<CTAButton
+										plugin={ plugin }
+										hasEligibilityMessages={ hasEligibilityMessages }
+										disabled={ false }
+										plansPage={ false }
+										desiredPlan={
+											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+										}
+										buttonText={ translate( 'Upgrade to Business' ) }
+										buttonClassName="button plan-features__actions-button is-business-plan"
+									/>
+								) : (
+									<Button
+										className="button plan-features__actions-button is-business-plan"
+										primary
+										href={ `/checkout/${ selectedSite?.slug }/${
+											intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+										}` }
+									>
+										{ translate( 'Upgrade to Business' ) }
+									</Button>
+								) }
+							</td>,
+							<td
+								key="ecommerce-action"
+								className="plan-features-comparison__table-item is-top-buttons"
+							>
+								{ plugin ? (
+									<CTAButton
+										plugin={ plugin }
+										hasEligibilityMessages={ hasEligibilityMessages }
+										disabled={ false }
+										plansPage={ false }
+										desiredPlan={
+											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
+										}
+										buttonText={ translate( 'Upgrade to Ecommerce' ) }
+										buttonClassName="button plan-features__actions-button is-ecommerce-plan"
+									/>
+								) : (
+									<Button
+										className="button plan-features__actions-button is-ecommerce-plan"
+										href={ `/checkout/${ selectedSite?.slug }/${
+											intervalType === 'monthly' ? PLAN_ECOMMERCE_MONTHLY : PLAN_ECOMMERCE
+										}` }
+									>
+										{ translate( 'Upgrade to eCommerce' ) }
+									</Button>
+								) }
+							</td>,
+						],
+					} }
 				/>
 			</div>
 
@@ -126,11 +229,29 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 						},
 					}
 				) }
-				buttonText={ translate( 'Upgrade to Business' ) }
+				children={
+					plugin ? (
+						<CTAButton
+							plugin={ plugin }
+							hasEligibilityMessages={ hasEligibilityMessages }
+							disabled={ false }
+							plansPage={ false }
+							desiredPlan={ intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS }
+							buttonText={ translate( 'Upgrade to Business' ) }
+						/>
+					) : (
+						<Button
+							className="button plan-features__actions-button is-business-plan"
+							primary
+							href={ `/checkout/${ selectedSite?.slug }/${
+								intervalType === 'monthly' ? PLAN_BUSINESS_MONTHLY : PLAN_BUSINESS
+							}` }
+						>
+							{ translate( 'Upgrade to Business' ) }
+						</Button>
+					)
+				}
 				buttonPrimary={ true }
-				buttonOnClick={ () => {
-					alert( 'Connect code after merging PR 68087' );
-				} }
 				buttonDisabled={ false }
 			/>
 			<MarketplaceFooter />
