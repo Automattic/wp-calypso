@@ -14,7 +14,7 @@ const CustomDomainPurchaseDetail = ( {
 	selectedSite,
 	hasDomainCredit,
 	hasNonPrimaryDomainsFlag,
-	onlyBlogDomain,
+	onlyBlogDomain = false,
 	registeredDomain,
 	translate,
 } ) => {
