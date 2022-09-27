@@ -12,14 +12,12 @@ const Modals = () => {
 	return (
 		<>
 			<PluginsAnnouncementModal />
-			<div className="payments-features-video__modal">
-				<VideoModal
-					isVisible={ isModalOpen }
-					onClose={ closeModal }
-					onOpen={ openModal }
-					courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
-				/>
-			</div>
+			<VideoModal
+				isVisible={ isModalOpen }
+				onClose={ closeModal }
+				onOpen={ openModal }
+				courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
+			/>
 		</>
 	);
 };
