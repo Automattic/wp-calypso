@@ -100,6 +100,7 @@ $border-radius: 4px;
 			transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 			opacity: 0;
 			margin-top: 16px;
+			overflow: hidden;
 
 			&.is-visible {
 				height: 80px;
