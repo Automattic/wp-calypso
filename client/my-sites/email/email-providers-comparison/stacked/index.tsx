@@ -10,12 +10,10 @@ import page from 'page';
 import { stringify } from 'qs';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
-import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
@@ -27,17 +25,14 @@ import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
+import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import {
-	emailManagement,
-	emailManagementInDepthComparison,
-	loginUrlWithUserNameAndRedirectToEmailProvidersComparison,
-} from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -92,87 +87,7 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
-	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
-
-	const NonOwnerNotice = () => {
-		const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
-
-		const isPrivacyAvailable = domain?.privacyAvailable;
-
-		const contactOwnerUrl = `https://privatewho.is/?s=${ selectedDomainName }`;
-
-		const loginUrl = loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
-			ownerUserName,
-			selectedSite?.slug,
-			selectedDomainName
-		);
-
-		const onClickLink = ( eventType: 'owner_contact' | 'user_login' | 'contact_support' ) => {
-			if ( eventType === 'owner_contact' ) {
-				dispatch(
-					recordTracksEvent( `calypso_email_providers_owner_contact_click`, {
-						owner_login: ownerUserName,
-					} )
-				);
-
-				return;
-			} else if ( eventType === 'contact_support' ) {
-				dispatch(
-					recordTracksEvent( `calypso_email_providers_contact_support_click`, {
-						owner_login: ownerUserName,
-					} )
-				);
-
-				return;
-			}
-
-			dispatch(
-				recordTracksEvent( `calypso_email_providers_user_login_click`, {
-					owner_login: ownerUserName,
-				} )
-			);
-		};
-
-		return (
-			<PromoCard className="email-providers-stacked-comparison__non-owner-notice">
-				<p>
-					{ translate(
-						'Email service can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
-							'who is the owner of %(selectedDomainName)s. ' +
-							'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
-							'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}',
-						{
-							components: {
-								loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'user_login' ) } />,
-								reachOutLink: isPrivacyAvailable ? (
-									<a
-										href={ contactOwnerUrl }
-										onClick={ () => onClickLink( 'owner_contact' ) }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								) : (
-									<></>
-								),
-								contactSupportLink: (
-									<a
-										href="https://wordpress.com/help/contact"
-										onClick={ () => onClickLink( 'contact_support' ) }
-										rel="noopener noreferrer"
-										target="_blank"
-									/>
-								),
-							},
-							args: {
-								ownerUserName,
-								selectedDomainName,
-							},
-						}
-					) }
-				</p>
-			</PromoCard>
-		);
-	};
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain ) && false;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -366,7 +281,14 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ ! currentUserCanAddEmail && <NonOwnerNotice /> }
+				{ ! currentUserCanAddEmail && (
+					<EmailNonDomainOwnerMessage
+						domain={ domain }
+						usePromoCard
+						selectedSite={ selectedSite }
+						source={ 'email-comparison' }
+					/>
+				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
