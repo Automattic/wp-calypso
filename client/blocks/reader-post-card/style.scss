@@ -479,6 +479,16 @@
 	}
 }
 
+@include breakpoint-deprecated( '<660px' ) {
+	.reader-post-card__post {
+		margin-left: 0;
+	}
+	.reader-post-card__tags {
+		margin-left: -52px;
+		width: calc(100% + 75px);
+	}
+}
+
 .reader-post-card.is-expanded-video .reader-post-card__post {
 	flex-wrap: wrap;
 }
