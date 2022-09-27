@@ -383,7 +383,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const pickDesignText =
 			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
-				? translate( 'Select and continue' )
+				? translate( 'Continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (
