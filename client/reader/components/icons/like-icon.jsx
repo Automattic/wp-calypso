@@ -5,7 +5,9 @@ export default function ReaderLikeIcon( { liked, iconSize } ) {
 		'needs-offset': iconSize % 18 === 0,
 		'reader-star': true,
 	} );
-
+	if ( ! iconSize ) {
+		iconSize = 20;
+	}
 	return (
 		<span className="like-button__like-icons">
 			<svg
