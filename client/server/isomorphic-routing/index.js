@@ -3,7 +3,7 @@ import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import { setSectionMiddleware } from 'calypso/controller';
 import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
-import { createQueryClient } from 'calypso/state/query-client';
+import { createQueryClientSSR } from 'calypso/state/query-client-ssr';
 import { setRoute } from 'calypso/state/route/actions';
 
 const debug = debugFactory( 'calypso:pages' );
@@ -76,7 +76,7 @@ async function getEnhancedContext( req, res ) {
 		isServerSide: true,
 		originalUrl: req.originalUrl,
 		path: req.url,
-		queryClient: await createQueryClient(),
+		queryClient: await createQueryClientSSR(),
 		pathname: req.path,
 		params: req.params,
 		query: req.query,
