@@ -20,6 +20,12 @@ type PatternLayoutProps = {
 	onContinueClick: () => void;
 };
 
+const spring = {
+	type: 'spring',
+	damping: 25,
+	stiffness: 120,
+};
+
 const PatternLayout = ( {
 	header,
 	sections,
@@ -66,7 +72,9 @@ const PatternLayout = ( {
 					{ sections?.map( ( section, index ) => {
 						const { id, name } = section;
 						return (
-							<li
+							<motion.li
+								layout
+								transition={ spring }
 								key={ `${ index }-${ id }` }
 								className="pattern-layout__list-item pattern-layout__list-item--section"
 							>
@@ -82,11 +90,12 @@ const PatternLayout = ( {
 									disableMoveUp={ index === 0 }
 									disableMoveDown={ sections?.length === index + 1 }
 								/>
-							</li>
+							</motion.li>
 						);
 					} ) }
 					<motion.li
-						whileHover={ { x: 10 } }
+						layout
+						transition={ spring }
 						className="pattern-layout__list-item pattern-layout__list-item--section"
 					>
 						<Button onClick={ () => onSelectSection( null ) }>
