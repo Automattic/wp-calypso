@@ -159,10 +159,11 @@ export class AppPromo extends Component {
 
 		const message = displayJetpackAppBranding ? (
 			<p className="app-promo__paragraph">
-				<a href="https://wp.com/app" className="app-promo__jetpack-app-link">
-					Get the Jetpack app
-				</a>{ ' ' }
-				{ translate( 'to use Reader anywhere, any time.' ) }
+				{ translate( '{{a}}Get the Jetpack app{{/a}} to use Reader anywhere, any time.', {
+					components: {
+						a: <a href="https://wp.com/app" className="app-promo__jetpack-app-link" />,
+					},
+				} ) }
 			</p>
 		) : (
 			<p className="app-promo__paragraph">
