@@ -31,6 +31,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 		undefined
 	);
 	const [ allPlansExpanded, setAllPlansExpanded ] = React.useState( true );
+	const [ isUIDisabled, setIsUIDisabled ] = React.useState( false );
 
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -53,14 +54,75 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			);
 		} );
 
-		const onPlanSelect = async ( planId: number | undefined ) => {
-			/// @todo lock UI
+		const onPlansToggleChanged = ( newBillingPeriod: Plans.PlanBillingPeriod ) => {
+			if ( ! isUIDisabled ) {
+				setBillingPeriod( newBillingPeriod );
+			}
+		};
+
+		const updatePlanSelectionDisabledState = () => {
+			const buttons = document.getElementsByClassName( 'plan-item__select-button' );
+			for ( let i = 0; i < buttons.length; ++i ) {
+				( buttons[ i ] as HTMLButtonElement ).disabled = isUIDisabled;
+			}
+		};
+
+		const disableUI = () => {
+			if ( ! isUIDisabled ) {
+				setIsUIDisabled( true );
+				updatePlanSelectionDisabledState();
+			}
+		};
+
+		const enableUI = () => {
+			if ( isUIDisabled ) {
+				setIsUIDisabled( false );
+				updatePlanSelectionDisabledState();
+				updateSelectedPlanButton( '' );
+			}
+		};
+
+		const updateSelectedPlanButton = ( slug: string ) => {
+			if ( slug.length > 0 ) {
+				const parentSpan = document.getElementById( 'plan-item-' + slug );
+				if ( ! parentSpan ) {
+					return;
+				}
+
+				const buttons = parentSpan.getElementsByClassName( 'plan-item__select-button' );
+				if ( buttons.length <= 0 ) {
+					return;
+				}
+
+				const button = buttons[ 0 ];
+				if ( ! button.classList.contains( 'selected-plan-item' ) ) {
+					button.classList.add( 'selected-plan-item' );
+				}
+			} else {
+				const buttons = document.getElementsByClassName( 'selected-plan-item' );
+				for ( let i = 0; i < buttons.length; ++i ) {
+					buttons[ i ].classList.remove( 'selected-plan-item' );
+				}
+			}
+		};
+
+		const onPlanSelect = async ( planId: number | undefined, plan: Plans.Plan ) => {
+			disableUI();
+			updateSelectedPlanButton( plan.periodAgnosticSlug );
+
 			setSelectedPlanProductId( planId );
-			await createVideoPressSite( {
-				username: currentUser!.username,
-				languageSlug: locale,
-				visibility,
-			} );
+			try {
+				await createVideoPressSite( {
+					username: currentUser!.username,
+					languageSlug: locale,
+					visibility,
+				} );
+			} catch ( e ) {
+				setSelectedPlanProductId( undefined );
+				enableUI();
+				return;
+			}
+
 			const newSite = getNewSite();
 			setSelectedSite( newSite?.blogid );
 
@@ -86,7 +148,8 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 							planSlug: planObject?.periodAgnosticSlug,
 							siteSlug: newSite?.site_slug,
 						} );
-					} );
+					} )
+					.catch( () => enableUI() );
 			} else {
 				submit?.( {
 					planSlug: planObject?.periodAgnosticSlug,
@@ -99,7 +162,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			<div className="plans-grid">
 				<PlansIntervalToggle
 					intervalType={ billingPeriod }
-					onChange={ setBillingPeriod }
+					onChange={ onPlansToggleChanged }
 					maxMonthlyDiscountPercentage={ maxAnnualDiscount }
 					className="plans-grid__toggle"
 				/>
@@ -110,7 +173,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 							{ filteredPlans
 								.filter( ( plan ) => !! plan )
 								.map( ( plan, index ) => (
-									<>
+									<span
+										key={ 'plan-item-' + plan.periodAgnosticSlug }
+										id={ 'plan-item-' + plan.periodAgnosticSlug }
+									>
 										<PlanItem
 											popularBadgeVariation={ 'ON_TOP' }
 											allPlansExpanded={ allPlansExpanded }
@@ -128,7 +194,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 												selectedPlanProductId ===
 													getPlanProduct( plan.periodAgnosticSlug, billingPeriod )?.productId
 											}
-											onSelect={ onPlanSelect }
+											onSelect={ ( id ) => onPlanSelect( id, plan ) }
 											onPickDomainClick={ undefined }
 											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
 											CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }
@@ -137,7 +203,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 										{ index < filteredPlans.length - 1 && (
 											<div key={ 'plan-item-separator-' + index } className="plan-separator"></div>
 										) }
-									</>
+									</span>
 								) ) }
 						</div>
 					</div>
