@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
-import { isEqual, isEmpty, times } from 'lodash';
+import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -13,82 +13,65 @@ import './style.scss';
 
 const noop = () => {};
 
-export class ThemesList extends Component {
-	static propTypes = {
-		themes: PropTypes.array.isRequired,
-		emptyContent: PropTypes.element,
-		loading: PropTypes.bool.isRequired,
-		fetchNextPage: PropTypes.func.isRequired,
-		getButtonOptions: PropTypes.func,
-		getScreenshotUrl: PropTypes.func,
-		onScreenshotClick: PropTypes.func.isRequired,
-		onMoreButtonClick: PropTypes.func,
-		getActionLabel: PropTypes.func,
-		isActive: PropTypes.func,
-		getPrice: PropTypes.func,
-		isInstalling: PropTypes.func,
-		// i18n function provided by localize()
-		translate: PropTypes.func,
-		placeholderCount: PropTypes.number,
-		bookmarkRef: PropTypes.oneOfType( [
-			PropTypes.func,
-			PropTypes.shape( { current: PropTypes.any } ),
-		] ),
-		siteId: PropTypes.number,
-	};
+const ThemesList = ( props ) => {
+	const fetchNextPage = useCallback(
+		( options ) => {
+			props.fetchNextPage( options );
+		},
+		[ props.fetchNextPage ]
+	);
 
-	static defaultProps = {
-		loading: false,
-		themes: [],
-		fetchNextPage: noop,
-		placeholderCount: DEFAULT_THEME_QUERY.number,
-		optionsGenerator: () => [],
-		getActionLabel: () => '',
-		isActive: () => false,
-		getPrice: () => '',
-		isInstalling: () => false,
-	};
-
-	fetchNextPage = ( options ) => {
-		this.props.fetchNextPage( options );
-	};
-
-	shouldComponentUpdate( nextProps ) {
-		return (
-			nextProps.loading !== this.props.loading ||
-			! isEqual( nextProps.themes, this.props.themes ) ||
-			nextProps.getButtonOptions !== this.props.getButtonOptions ||
-			nextProps.getScreenshotUrl !== this.props.getScreenshotUrl ||
-			nextProps.onScreenshotClick !== this.props.onScreenshotClick ||
-			nextProps.onMoreButtonClick !== this.props.onMoreButtonClick
-		);
+	if ( ! props.loading && props.themes.length === 0 ) {
+		return <Empty emptyContent={ props.emptyContent } translate={ props.translate } />;
 	}
 
-	render() {
-		if ( ! this.props.loading && this.props.themes.length === 0 ) {
-			return <Empty emptyContent={ this.props.emptyContent } translate={ this.props.translate } />;
-		}
+	return (
+		<div className="themes-list">
+			{ props.themes.map( ( theme, index ) => (
+				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+			) ) }
+			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
+			{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
+			<TrailingItems />
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
+		</div>
+	);
+};
 
-		return (
-			<div className="themes-list">
-				{ this.props.themes.map( ( theme, index ) => (
-					<ThemeBlock
-						key={ 'theme-block' + index }
-						theme={ theme }
-						index={ index }
-						{ ...this.props }
-					/>
-				) ) }
-				{ this.props.loading && (
-					<LoadingPlaceholders placeholderCount={ this.props.placeholderCount } />
-				) }
-				{ /* Invisible trailing items keep all elements same width in flexbox grid. */ }
-				<TrailingItems />
-				<InfiniteScroll nextPageMethod={ this.fetchNextPage } />
-			</div>
-		);
-	}
-}
+ThemesList.propTypes = {
+	themes: PropTypes.array.isRequired,
+	emptyContent: PropTypes.element,
+	loading: PropTypes.bool.isRequired,
+	fetchNextPage: PropTypes.func.isRequired,
+	getButtonOptions: PropTypes.func,
+	getScreenshotUrl: PropTypes.func,
+	onScreenshotClick: PropTypes.func.isRequired,
+	onMoreButtonClick: PropTypes.func,
+	getActionLabel: PropTypes.func,
+	isActive: PropTypes.func,
+	getPrice: PropTypes.func,
+	isInstalling: PropTypes.func,
+	// i18n function provided by localize()
+	translate: PropTypes.func,
+	placeholderCount: PropTypes.number,
+	bookmarkRef: PropTypes.oneOfType( [
+		PropTypes.func,
+		PropTypes.shape( { current: PropTypes.any } ),
+	] ),
+	siteId: PropTypes.number,
+};
+
+ThemesList.defaultProps = {
+	loading: false,
+	themes: [],
+	fetchNextPage: noop,
+	placeholderCount: DEFAULT_THEME_QUERY.number,
+	optionsGenerator: () => [],
+	getActionLabel: () => '',
+	isActive: () => false,
+	getPrice: () => '',
+	isInstalling: () => false,
+};
 
 function ThemeBlock( props ) {
 	const { theme, index } = props;
