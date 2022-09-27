@@ -12,6 +12,8 @@ By controlling the dialog's visibility through the `isVisible` property, the dia
 providing any CSS transitions to animate the opening/closing of the dialog. This also keeps the parent's code clean and
 readable, with a minimal amount of boilerplate code required to show a dialog.
 
+The `showCloseIcon` property is used to show a `x` icon at the top right, closing the dialog once it's clicked.
+
 ## Basic Usage
 
 ```js
