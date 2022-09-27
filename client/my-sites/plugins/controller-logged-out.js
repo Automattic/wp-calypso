@@ -3,8 +3,8 @@ import {
 	getWPCOMPluginsQueryParams,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
-import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import wpcom from 'calypso/lib/wp';
+import { receiveProductsList } from 'calypso/state/products-list/actions';
 
 function getQueryOptions( { path, lang } ) {
 	const props = {
@@ -36,11 +36,17 @@ const prefetchPopularPlugins = ( queryClient, options ) =>
 const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );
 
-const prefetchProductList = ( store ) => {
-	const productsList = getProductsList( store.getState() );
-	if ( Object.values( productsList ).length === 0 ) {
-		return requestProductsList( { type: 'all' } )( store.dispatch );
-	}
+const prefetchProductList = ( queryClient, store ) => {
+	const query = { type: 'all' };
+
+	return queryClient
+		.fetchQuery( 'products-list', () => wpcom.req.get( '/products', query ) )
+		.then(
+			( productsList ) => {
+				return store.dispatch( receiveProductsList( productsList, query.type ) );
+			},
+			() => {}
+		);
 };
 
 export async function fetchPlugins( context, next ) {
@@ -55,7 +61,7 @@ export async function fetchPlugins( context, next ) {
 	};
 
 	await Promise.all( [
-		prefetchProductList( store ),
+		prefetchProductList( queryClient, store ),
 		prefetchPaidPlugins( queryClient, options ),
 		prefetchPopularPlugins( queryClient, options ),
 		prefetchFeaturedPlugins( queryClient, options ),

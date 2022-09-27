@@ -230,7 +230,7 @@ export function serverRender( req, res ) {
 		);
 	}
 
-	context.initialQueryState = dehydrateQueryClient( context.queryClient );
+	context.initialQueryState = dehydrateQueryClient( context.queryClient, [ 'products-list' ] );
 
 	if ( context.store ) {
 		attachHead( context );
