@@ -4,7 +4,7 @@ import { Spinner } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import WebPreview from 'calypso/components/web-preview/content';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -18,7 +18,7 @@ import './pattern-assembler-preview.scss';
 
 interface Props {
 	header: Pattern | null;
-	sections?: Pattern[];
+	sections: Pattern[];
 	footer: Pattern | null;
 }
 
@@ -30,7 +30,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 		null
 	);
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
-
+	const prevSectionsRef: { current: undefined | Pattern[] } = useRef();
 	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
@@ -53,11 +53,41 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 
 	useEffect( () => {
 		setScrollToSelector( null );
-	}, [ header, sections ] );
+	}, [ header ] );
 
 	useEffect( () => {
 		setScrollToSelector( footer ? 'footer' : null );
 	}, [ footer ] );
+
+	useEffect( () => {
+		const prevSections = prevSectionsRef.current;
+		const setScrollToSelectorByPosition = ( position: number ) => {
+			const patternPosition = header ? position + 1 : position;
+			setScrollToSelector( `.entry-content > .wp-block-group:nth-child( ${ patternPosition } )` );
+		};
+
+		if ( ! prevSections || ! sections.length ) {
+			prevSectionsRef.current = sections;
+			setScrollToSelector( null );
+			return;
+		}
+
+		if ( prevSections.length === sections.length ) {
+			// Ordered
+			const orderedSectionIndex = sections.findIndex( ( section, index ) => {
+				return section.id !== prevSections[ index ].id;
+			} );
+			setScrollToSelectorByPosition( orderedSectionIndex + 1 );
+		} else if ( sections.length > prevSections.length ) {
+			// Added
+			setScrollToSelectorByPosition( sections.length );
+		} else {
+			// Removed
+			setScrollToSelector( null );
+		}
+
+		prevSectionsRef.current = sections;
+	}, [ sections, header ] );
 
 	return (
 		<div
