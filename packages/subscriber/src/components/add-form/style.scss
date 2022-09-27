@@ -81,7 +81,7 @@
 	max-width: 368px;
 
 	label {
-		display: inline-block;
+		display: block;
 		width: 100%;
 		font-size: 0.875rem;
 		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -126,7 +126,7 @@
 	.add-subscriber__form-skip-btn {
 		display: block;
 		width: 100%;
-		margin-bottom: 2rem;
+		margin: 2rem 0;
 	}
 
 	.add-subscriber__form-skip-btn {
