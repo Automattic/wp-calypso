@@ -74,6 +74,7 @@ export class PluginsMain extends Component {
 			selectedSiteSlug,
 			hasInstallPurchasedPlugins,
 			hasManagePlugins,
+			search,
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
@@ -102,12 +103,37 @@ export class PluginsMain extends Component {
 				return;
 			}
 		}
+
+		if ( prevProps.search !== search ) {
+			if ( search ) {
+				this.props.appendBreadcrumb( {
+					label: this.props.translate( 'Search Results' ),
+					href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+					id: 'plugins-site-search',
+				} );
+			} else {
+				this.resetBreadcrumbs();
+			}
+		}
 	}
 
 	componentDidMount() {
+		this.resetBreadcrumbs();
+
+		// Change the isMobile state when the size of the browser changes.
+		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
+			this.setState( { isMobile } );
+		} );
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
+	resetBreadcrumbs() {
 		const { selectedSiteSlug, search } = this.props;
 
-		const navigationItems = [
+		this.props.updateBreadcrumbs( [
 			{
 				label: this.props.translate( 'Plugins' ),
 				href: `/plugins/${ selectedSiteSlug || '' }`,
@@ -119,23 +145,15 @@ export class PluginsMain extends Component {
 				label: this.props.translate( 'Installed Plugins' ),
 				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
 			},
-		];
+		] );
+
 		if ( search ) {
-			navigationItems.push( {
+			this.props.appendBreadcrumb( {
 				label: this.props.translate( 'Search Results' ),
 				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
+				id: 'plugins-site-search',
 			} );
 		}
-		this.props.updateBreadcrumbs( navigationItems );
-
-		// Change the isMobile state when the size of the browser changes.
-		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
-			this.setState( { isMobile } );
-		} );
-	}
-
-	componentWillUnmount() {
-		this.unsubscribe();
 	}
 
 	getCurrentPlugins() {
