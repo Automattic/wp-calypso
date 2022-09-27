@@ -1,16 +1,26 @@
 import { isStarter, isGSuiteOrExtraLicenseOrGoogleWorkspace } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-import PropTypes from 'prop-types';
+import { useTranslate } from 'i18n-calypso';
 import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
 import PurchaseDetail from 'calypso/components/purchase-detail';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
+import type { WithSnakeCaseSlug, WithCamelCaseSlug } from '@automattic/calypso-products';
+import type { SitesPlansResult } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 
-const StarterPlanDetails = ( { translate, selectedSite, sitePlans, purchases } ) => {
-	const plan = find( sitePlans.data, isStarter );
+const StarterPlanDetails = ( {
+	selectedSite,
+	sitePlans,
+	purchases,
+}: {
+	selectedSite: false | { slug: string };
+	sitePlans: SitesPlansResult;
+	purchases: Array< WithSnakeCaseSlug | WithCamelCaseSlug >;
+} ) => {
+	const translate = useTranslate();
+	const plan = sitePlans.data?.find( isStarter );
 	const googleAppsWasPurchased = purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
+	const selectedSiteSlug = selectedSite ? selectedSite.slug : '';
 
 	return (
 		<div>
@@ -29,7 +39,7 @@ const StarterPlanDetails = ( { translate, selectedSite, sitePlans, purchases } )
 						'donations and tips, or access to your exclusive content.'
 				) }
 				buttonText={ translate( 'Start Earning' ) }
-				href={ '/earn/' + selectedSite.slug }
+				href={ '/earn/' + selectedSiteSlug }
 			/>
 
 			<PurchaseDetail
@@ -39,15 +49,10 @@ const StarterPlanDetails = ( { translate, selectedSite, sitePlans, purchases } )
 					"Complement WordPress.com's stats with Google's in-depth look at your visitors and traffic patterns."
 				) }
 				buttonText={ translate( 'Connect Google Analytics' ) }
-				href={ '/settings/analytics/' + selectedSite.slug }
+				href={ '/settings/analytics/' + selectedSiteSlug }
 			/>
 		</div>
 	);
 };
 
-StarterPlanDetails.propTypes = {
-	selectedSite: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.object ] ).isRequired,
-	sitePlans: PropTypes.object.isRequired,
-};
-
-export default localize( StarterPlanDetails );
+export default StarterPlanDetails;
