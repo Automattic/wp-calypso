@@ -29,13 +29,11 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 			imageHeight = imageHeight / 2;
 			classNames = classnames( 'reader-post-card__featured-images', 'four-images' );
 		} else if ( imagesToDisplay.length === 3 ) {
-			imageWidth = imageWidth / 2;
 			if ( index !== 0 ) {
 				imageHeight = imageHeight / 2;
 			}
 			classNames = classnames( 'reader-post-card__featured-images', 'three-images' );
 		} else if ( imagesToDisplay.length === 2 ) {
-			imageWidth = imageWidth / 2;
 			classNames = classnames( 'reader-post-card__featured-images', 'two-images' );
 		} else {
 			classNames = classnames( 'reader-post-card__featured-images', 'one-image' );

@@ -53,7 +53,6 @@
 
 	&.has-thumbnail {
 		.reader-featured-image {
-			box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 			box-sizing: border-box;
 		}
 
@@ -737,25 +736,33 @@
 		border-radius: 6px;
 		box-shadow: 0 0 0 1px rgba(0,0,0,.1);
 
-		.reader-featured-image,
+		.reader-featured-image {
+			border-radius: 0;
+			height: 302px;
+			max-height: 302px;
+		}
 		.reader-featured-image img {
 			border-radius: 0;
 		}
 		/* First image */
 		.reader-post-card__featured-images-item:first-child {
 			border-bottom-left-radius: 6px;
-			max-height: 202px;
-			overflow-y: hidden;
-			width: calc(66% - 1px);
+			max-height: 302px;
+			overflow: hidden;
+			width: calc(50% - 1px);
 		}
 		.reader-post-card__featured-images-item:first-child img {
 			border-bottom-left-radius: 6px;
 			border-top-left-radius: 6px;
+			height: 100%;
+			max-width: none;
+			object-fit: cover;
+			overflow: hidden;
 			width: 100%;
 		}
 		/* Second and third images */
 		.reader-post-card__featured-images-item.column-two {
-			width: calc(34% - 1px);
+			width: calc(50% - 1px);
 		}
 		.reader-post-card__featured-images-item.column-two .reader-post-card__featured-images.column {
 			.reader-post-card__featured-images-item {
@@ -772,8 +779,8 @@
 				.reader-featured-image {
 					border-radius: 0;
 					border-top-right-radius: 6px;
-					max-height: 100px;
-					overflow-y: hidden;
+					height: 150px;
+					overflow: hidden;
 				}
 			}
 			.reader-post-card__featured-images-item:last-child {
@@ -786,8 +793,8 @@
 				.reader-featured-image {
 					border-radius: 0;
 					border-bottom-right-radius: 6px;
-					max-height: 100px;
-					overflow-y: hidden;
+					max-height: 150px;
+					overflow: hidden;
 				}
 			}
 		}
@@ -802,11 +809,13 @@
 		}
 		.reader-featured-image {
 			border-radius: 0;
-			max-height: 150px;
-			overflow-y: hidden;
+			height: 100%;
+			max-height: 300px;
+			overflow: hidden;
 		}
 		.reader-featured-image img {
 			border-radius: 0;
+			max-width: none;
 		}
 		.reader-post-card__featured-images-item:first-child {
 			.reader-featured-image, img {
