@@ -195,7 +195,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className={ 'add-subscriber' }>
 			<div className={ 'add-subscriber__title-container' }>
 				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-				<Title>{ __( 'Add subscribers to build your audience' ) }</Title>
+				<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
 			</div>
 
 			<div className={ 'add-subscriber__form--container' }>
