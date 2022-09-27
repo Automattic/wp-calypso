@@ -182,8 +182,8 @@ export class AppPromo extends Component {
 					<img
 						className="app-promo__icon"
 						src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
-						width={ displayJetpackAppBranding ? '25' : '32' }
-						height={ displayJetpackAppBranding ? '43' : '32' }
+						width={ displayJetpackAppBranding ? 25 : 32 }
+						height={ displayJetpackAppBranding ? 43 : 32 }
 						alt="WordPress App Icon"
 					/>
 					{ message }
