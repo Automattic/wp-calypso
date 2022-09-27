@@ -87,7 +87,7 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
-	const currentUserCanAddEmail = canCurrentUserAddEmail( domain ) && false;
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
