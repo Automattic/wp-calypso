@@ -148,7 +148,7 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList context={ context } warnings={ warnings } />
+					<WarningList context={ context } warnings={ warnings } showContact={ false } />
 				</CompactCard>
 			) }
 			<CompactCard>
