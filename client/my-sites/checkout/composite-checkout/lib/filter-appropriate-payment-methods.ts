@@ -16,7 +16,13 @@ export default function filterAppropriatePaymentMethods( {
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	responseCart: ResponseCart;
 } ): PaymentMethod[] {
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const jetpackFreeTrialProducts = [ 2504, 2504 ];
+	const isAFreeTrialPurchase =
+		responseCart.products &&
+		responseCart.products.some(
+			( product ) => jetpackFreeTrialProducts.indexOf( product.product_id ) !== -1
+		);
+	const isPurchaseFree = responseCart.total_cost_integer === 0 && ! isAFreeTrialPurchase;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 
 	return paymentMethodObjects
