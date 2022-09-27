@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, useDesignsBySite, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -74,12 +74,6 @@ export const siteSetupFlow: Flow = {
 			...( isEnabled( 'signup/woo-verify-email' ) ? [ 'editEmail' ] : [] ),
 			'difmStartingPoint',
 		] as StepPath[];
-	},
-	useSideEffect() {
-		// Prefetch designs for a smooth design picker UX.
-		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
-		const site = useSite();
-		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
