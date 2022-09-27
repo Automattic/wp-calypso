@@ -69,8 +69,7 @@ export const STICKY_OFFSET_TOP = 109;
  */
 export const DEVICE_TYPE = {
 	COMPUTER: 'computer',
-	TABLET: 'tablet',
 	PHONE: 'phone',
 };
 
-export const DEVICES_SUPPORTED = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.TABLET, DEVICE_TYPE.PHONE ];
+export const DEVICES_SUPPORTED = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
