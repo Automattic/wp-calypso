@@ -49,6 +49,7 @@ export const SitesSortingDropdown = ( {
 				sortKey: 'lastInteractedWith',
 				sortOrder: 'desc',
 			} ),
+			/* translators: name of sorting mode where the details about how best to sort sites are left up to the software */
 			label: __( 'Magic' ),
 		},
 		{
