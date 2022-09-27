@@ -13,8 +13,8 @@ $create-page-text-color: #a2aab2;
 	min-height: 45px;
 
 	&:focus {
-		color: $white;
-		border: 1px solid $white;
+		color: var(--color-text-inverted);
+		border: 1px solid var(--color-text-inverted);
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
@@ -22,8 +22,8 @@ $create-page-text-color: #a2aab2;
 	}
 
 	svg {
-		background: white;
-		color: black;
+		background: var(--color-text-inverted);
+		color: #000;
 		border-radius: 2px;
 	}
 }

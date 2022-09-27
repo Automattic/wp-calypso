@@ -132,12 +132,12 @@
 			align-items: center;
 			padding: 0;
 			height: 80px;
-			background-color: white;
+			background-color: var(--color-text-inverted);
 		}
 	}
 	.header.force-opaque,
 	.header.is-opaque {
-		background-color: white;
+		background-color: var(--color-text-inverted);
 	}
 	html.with-admin-bar .header {
 		top: 32px;
@@ -190,7 +190,7 @@
 			width: 100%;
 			height: 100vh;
 			padding: 1rem 0 2rem;
-			background-color: white;
+			background-color: var(--color-text-inverted);
 			box-shadow: 0 12px 12px 0 rgba(0, 0, 0, 0.15);
 		}
 		.header__nav-wrapper.is-expanded,
@@ -212,12 +212,12 @@
 		height: 1px;
 		padding: 1rem;
 		background-color: #101517;
-		color: white;
+		color: var(--color-text-inverted);
 		transform: translateX(-1000px);
 		transition: transform 0.1s ease-in-out;
 	}
 	.header__skip:focus {
-		color: white;
+		color: var(--color-text-inverted);
 		transform: translateX(0);
 		width: auto;
 		height: auto;
@@ -452,7 +452,7 @@
 	}
 	.header__search-btn:any-link:hover {
 		background-color: #101517;
-		color: white;
+		color: var(--color-text-inverted);
 	}
 	.header__search-btn:active {
 		transform: scale(0.9);
@@ -564,7 +564,7 @@
 		z-index: 1;
 		width: 100%;
 		padding: 9rem 0 4.75rem;
-		background-color: white;
+		background-color: var(--color-text-inverted);
 		transform-origin: 0 0;
 		animation-name: submenu-content;
 		animation-duration: 0.35s;
@@ -919,13 +919,13 @@
 		color: #101517;
 	}
 	.mobile-btn:any-link:hover {
-		background: black;
-		color: white;
+		background: #000;
+		color: var(--color-text-inverted);
 	}
 	.mobile-btn:any-link:hover .mobile-btn__inner,
 	.mobile-btn:any-link:hover .mobile-btn__inner::before,
 	.mobile-btn:any-link:hover .mobile-btn__inner::after {
-		background: white;
+		background: var(--color-text-inverted);
 	}
 	.mobile-btn:any-link:focus {
 		background-color: transparent;
@@ -957,7 +957,7 @@
 		position: absolute;
 		width: 100%;
 		height: 3px;
-		background: black;
+		background: #000;
 		border-radius: 3px; /* stylelint-disable-line scales/radii */
 	}
 	.mobile-btn__inner::before,

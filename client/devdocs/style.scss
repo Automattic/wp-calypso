@@ -103,7 +103,7 @@ $devdocs-max-width: 720px;
 	grid-gap: 24px;
 
 	.design__illustrations-illustration {
-		background: white;
+		background: var(--color-text-inverted);
 		border: 1px solid var(--color-border-subtle);
 		padding: 24px;
 

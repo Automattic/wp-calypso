@@ -257,11 +257,11 @@
 	}
 }
 .a8c-footer__link-list :any-link {
-	color: white;
+	color: var(--color-text-inverted);
 	text-decoration: underline;
 }
 .a8c-footer__link-list :any-link:hover {
-	color: white;
+	color: var(--color-text-inverted);
 	text-decoration: none;
 }
 .a8c-footer__link-list .a8c-footer__home-link {
@@ -337,11 +337,11 @@
 .language-toggle:focus,
 .language-toggle:hover {
 	outline: 0;
-	color: white;
-	background-color: black;
+	color: var(--color-text-inverted);
+	background-color: #000;
 }
 .language-toggle:active {
-	color: white;
+	color: var(--color-text-inverted);
 	background-color: #2c3338;
 }
 .language-toggle .gridicon {

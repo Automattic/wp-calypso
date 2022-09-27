@@ -244,7 +244,7 @@ $accent-blue: #117ac9;
 				content: "";
 				width: 100%;
 				height: 100%;
-				border: 2px solid white;
+				border: 2px solid var(--color-text-inverted);
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				position: absolute;
