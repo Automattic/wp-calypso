@@ -1,11 +1,11 @@
-import { QueryClient, QueryCache, dehydrate, hashQueryKey, TQueryKey } from 'react-query';
+import { QueryClient, QueryCache, dehydrate, hashQueryKey } from 'react-query';
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
 const sharedCache = new QueryCache();
 
 class QueryClientSSR extends QueryClient {
 	fetchedQueryKeys: { [ hash: string ]: boolean } = {};
 
-	fetchQuery( queryKey: TQueryKey, ...args: any[] ) {
+	fetchQuery( queryKey: any, ...args: any[] ) {
 		const queryHash = hashQueryKey( queryKey );
 		this.fetchedQueryKeys[ queryHash ] = true;
 		return super.fetchQuery( queryKey, ...args );
