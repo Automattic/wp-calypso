@@ -33,7 +33,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
-					<div className="plugin-details-header__name">{ plugin.name }</div>
+					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
 					<div className="plugin-details-header__subtitle">
 						<span className="plugin-details-header__author">
 							{ translate( 'By {{author/}}', {
@@ -41,9 +41,9 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 									author: (
 										<a
 											href={ localizePath(
-												`/plugins/${
-													selectedSite?.slug || ''
-												}?s=developer:"${ getPluginAuthorKeyword( plugin ) }"`
+												`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
+													plugin
+												) }"`
 											) }
 										>
 											{ plugin.author_name }
@@ -113,7 +113,7 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 			<div className="plugin-details-header__main-info">
 				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
 				<div className="plugin-details-header__title-container">
-					<div className="plugin-details-header__name">{ plugin.name }</div>
+					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
 					<div className="plugin-details-header__description">
 						{ preventWidows( plugin.short_description || plugin.description ) }
 					</div>
@@ -128,7 +128,7 @@ function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
 						) : (
 							<a
 								href={ localizePath(
-									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthorKeyword(
+									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
 										plugin
 									) }"`
 								) }
@@ -192,12 +192,18 @@ function PluginDetailsHeaderPlaceholder() {
 		<div className="plugin-details-header__wrapper is-placeholder">
 			<div className="plugin-details-header__tags">...</div>
 			<div className="plugin-details-header__container">
-				<div className="plugin-details-header__name">...</div>
+				<h1 className="plugin-details-header__name">...</h1>
 				<div className="plugin-details-header__description">...</div>
 				<div className="plugin-details-header__additional-info">...</div>
 			</div>
 		</div>
 	);
+}
+
+function getPluginAuthor( plugin ) {
+	if ( config.isEnabled( 'marketplace-jetpack-plugin-search' ) ) return plugin.author_name;
+
+	return getPluginAuthorKeyword( plugin );
 }
 
 export default PluginDetailsHeader;

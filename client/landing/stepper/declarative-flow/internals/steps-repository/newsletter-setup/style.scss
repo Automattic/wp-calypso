@@ -45,7 +45,8 @@ $border-radius: 4px;
 		}
 
 		label,
-		input {
+		input,
+		textarea {
 			font-family: $font-family;
 			font-weight: 400;
 		}
@@ -55,11 +56,14 @@ $border-radius: 4px;
 			font-size: $font-body;
 		}
 
-		input {
+		input,
+		textarea,
+		pre {
 			color: var(--studio-gray-100);
 			font-size: $font-body-small;
 			padding: 12px 16px;
-			height: $input-height;
+			line-height: 20px;
+			min-height: $input-height;
 			border-radius: $border-radius;
 			background-repeat: no-repeat;
 			background-position: 95%;
@@ -76,10 +80,21 @@ $border-radius: 4px;
 			}
 		}
 
+		input {
+			height: 44px;
+		}
+
 		.newsletter-setup__contrast-warning {
 			display: flex;
 			font-size: $font-body-small;
-			margin-bottom: 32px;
+			height: 0;
+			transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+			opacity: 0;
+
+			&.is-visible {
+				height: 80px;
+				opacity: 1;
+			}
 
 			.newsletter-setup__contrast-warning-icon-container {
 				margin-top: 4px;
@@ -100,5 +115,12 @@ $border-radius: 4px;
 .components-color-picker {
 	.components-h-stack {
 		width: unset !important;
+	}
+}
+
+.newsletter-setup__accent-color-popover {
+	&:focus,
+	&:focus-visible {
+		outline: none;
 	}
 }

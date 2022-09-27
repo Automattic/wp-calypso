@@ -105,6 +105,12 @@ export interface Design {
 	hide?: boolean;
 }
 
+export interface DesignOptions {
+	styleVariation?: StyleVariation;
+	verticalId?: string;
+	pageTemplate?: string;
+}
+
 export interface DesignPreviewOptions {
 	language?: string;
 	vertical_id?: string;
@@ -113,6 +119,7 @@ export interface DesignPreviewOptions {
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
+	disable_viewport_height?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

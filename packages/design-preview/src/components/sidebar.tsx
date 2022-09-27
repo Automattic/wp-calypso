@@ -6,16 +6,18 @@ interface SidebarProps {
 	title?: string;
 	description?: string;
 	variations: StyleVariation[];
-	activeVariation?: StyleVariation;
-	onVariationClick: ( variation: StyleVariation ) => void;
+	selectedVariation?: StyleVariation;
+	onSelectVariation: ( variation: StyleVariation ) => void;
+	actionButtons: React.ReactNode;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
 	title,
 	description,
 	variations = [],
-	activeVariation,
-	onVariationClick,
+	selectedVariation,
+	onSelectVariation,
+	actionButtons,
 } ) => {
 	return (
 		<div className="design-preview__sidebar">
@@ -35,11 +37,15 @@ const Sidebar: React.FC< SidebarProps > = ( {
 					<div className="design-preview__sidebar-variations-grid">
 						<StyleVariationPreviews
 							variations={ variations }
-							activeVariation={ activeVariation }
-							onClick={ onVariationClick }
+							selectedVariation={ selectedVariation }
+							onClick={ onSelectVariation }
 						/>
 					</div>
 				</div>
+			) }
+
+			{ actionButtons && (
+				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
 			) }
 		</div>
 	);

@@ -120,6 +120,7 @@ export interface SiteDetails {
 	slug: string;
 	visible?: boolean;
 	wpcom_url?: string;
+	user_interactions?: string[];
 }
 
 export interface SiteDetailsCapabilities {
@@ -454,4 +455,5 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	page_template?: string;
 }

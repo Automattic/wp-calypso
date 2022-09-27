@@ -13,6 +13,7 @@
 	min-width: 16px;
 	appearance: none;
 
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	margin-right: 4px;
 	line-height: 10px;
@@ -25,6 +26,7 @@
 		height: 8px;
 		text-indent: -9999px;
 		background: var(--color-primary);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		animation: grow 0.2s ease-in-out;
 	}

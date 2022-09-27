@@ -5,9 +5,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
@@ -69,6 +68,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
 import usePreinstalledPremiumPlugin from './use-preinstalled-premium-plugin';
 
@@ -77,6 +77,7 @@ function PluginDetails( props ) {
 	const translate = useTranslate();
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	// Site information.
@@ -88,6 +89,7 @@ function PluginDetails( props ) {
 	const isRequestingSites = useSelector( checkRequestingSites );
 	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
@@ -216,7 +218,7 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		if ( breadcrumbs.length === 0 ) {
+		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
@@ -238,15 +240,7 @@ function PluginDetails( props ) {
 				} )
 			);
 		}
-	}, [
-		fullPlugin.name,
-		props.pluginSlug,
-		selectedSite,
-		breadcrumbs.length,
-		dispatch,
-		translate,
-		localizePath,
-	] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -310,23 +304,21 @@ function PluginDetails( props ) {
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Plugins > Plugin Details"
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
-
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-
 			{ isSiteConnected === false && (
 				<Notice
 					icon="notice"
@@ -345,7 +337,6 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout">
 					<div className="plugin-details__header">
@@ -392,6 +383,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }
@@ -430,11 +422,7 @@ function LegacyPluginDetails( props ) {
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />

@@ -31,12 +31,14 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_newsletter':
 					taskData = {
-						title: translate( 'Set up Newsletter' ),
+						title: translate( 'Personalize Newsletter' ),
 					};
 					break;
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
+						keepActive: true,
+						actionUrl: `/plans/${ siteSlug }`,
 						badgeText: translatedPlanName,
 					};
 					break;
@@ -64,13 +66,16 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
-						title: translate( 'Setup Link in bio' ),
+						title: translate( 'Personalize Link in Bio' ),
+						keepActive: true,
+						actionUrl: `/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`,
 					};
 					break;
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
+						keepActive: true,
 						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
@@ -79,6 +84,7 @@ export function getEnhancedTasks(
 						title: translate( 'Launch Link in bio' ),
 						isCompleted: linkInBioSiteLaunchCompleted,
 						dependencies: [ linkInBioLinksEditCompleted ],
+						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -121,21 +127,23 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 }
 
 // This function will determine whether we want to disable or enable a task on the checklist
+// If a task depends on the completion of other tasks, we want to check if all dependencies are finished:
+//    ^ If all the dependencies are done ( true ), then the task is enabled
+//    ^ If at least one of the dependencies is unfinished ( false ), then we check the proceeding conditions
 // If a task is set to keepActive, we keep it enabled. It allows a task to be revisited when completed
 // If a task is completed, we disable it
-// If a task is NOT completed AND the task contains dependencies, we want to check if all dependencies are set to true:
-//    ^ If all the dependencies are true, then the task is enabled
-//    ^ If at least one of the dependencies is false, then the task is disabled
 export function isTaskDisabled( task: Task ) {
+	if ( hasIncompleteDependencies( task ) ) {
+		return true;
+	}
+
 	if ( task.keepActive ) {
 		return false;
 	}
 
-	if ( task.isCompleted ) {
-		return task.isCompleted;
-	}
+	return task.isCompleted;
+}
 
-	if ( task.dependencies ) {
-		return task.dependencies.some( ( dependency: boolean ) => dependency === false );
-	}
+export function hasIncompleteDependencies( task: Task ) {
+	return task?.dependencies?.some( ( dependency: boolean ) => dependency === false );
 }

@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { ReactElement, useState } from 'react';
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -18,7 +18,7 @@ export interface FailureInfo {
 	error: string;
 }
 
-export default function Transfer( props: WooCommerceInstallProps ): ReactElement | null {
+export default function Transfer( props: WooCommerceInstallProps ) {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;

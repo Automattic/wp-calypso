@@ -30,6 +30,7 @@
 	width: 40px;
 	&::after {
 		border: 1px solid rgba(0, 0, 0, 0.1);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		bottom: 0;
 		content: "";
@@ -46,6 +47,7 @@
 }
 
 .facebook-share-preview__profile-picture {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }
 

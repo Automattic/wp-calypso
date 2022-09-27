@@ -39,3 +39,6 @@ function render() {
 | `hideSummary`          | `bool`      | false          | Indicates if the summary area should be hidden.                                                                                                      |
 | `clickableHeader`      | `bool`      | false          | Indicates if the whole header can be clicked to open the card.                                                                                       |
 | `highlight`            | `string`    | null           | Displays a colored highlight. If specified (default is no highlight), can be one of `info`, `success`, `error`, or `warning`.                        |
+| `smooth`               | `bool`      | false          | Enables smooth animation on collapse/expand.  Recommended to specify `contentExpandedStyle` to set proper max-height or other animation parameters.  |
+| `contentExpandedStyle` | `object`    | null           | Styles specified when content is expanded to control smooth animation                                                                                |
+| `contentCollapsedStyle`| `object`    | null           | Styles specified when content is collapsed to control smooth animation                                                                               |

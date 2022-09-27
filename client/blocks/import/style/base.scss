@@ -1,7 +1,7 @@
 @import "@automattic/onboarding/styles/base-styles.scss";
 @import "@automattic/onboarding/styles/mixins.scss";
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 @import "./mixins.scss";
 @import "./components.scss";
 
@@ -59,6 +59,7 @@
 
 		.onboarding-subtitle {
 			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.4444em;
 
 			@include break-small {
@@ -102,6 +103,7 @@
 
 			.onboarding-subtitle {
 				font-size: 1rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.5em;
 				color: var(--studio-gray-50);
 			}

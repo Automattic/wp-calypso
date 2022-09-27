@@ -3,14 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import Search from 'calypso/components/search';
 import { addQueryArgs } from 'calypso/lib/route';
-import type { ReactElement } from 'react';
 
 export default function SiteSearch( {
 	searchQuery,
 }: {
 	searchQuery: string | null;
 	currentPage: number;
-} ): ReactElement {
+} ) {
 	const translate = useTranslate();
 	const isMobile = useMobileBreakpoint();
 

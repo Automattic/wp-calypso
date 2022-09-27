@@ -1,5 +1,5 @@
 // The following changes should be merged in their respective files before nav unification goes to production
-@import url( "//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" );
+@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
 
 // Override Global Vars
 .theme-default {
@@ -39,6 +39,21 @@ $font-size: rem(14px);
 		transition: none;
 		overflow: hidden;
 	}
+}
+
+.sidebar__actions {
+	--transparent-button-text-color: var(--color-sidebar-text);
+	--transparent-button-text-color-hover: var(--color-sidebar-menu-hover-text);
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-end;
+	margin-top: auto;
+	padding: 8px 8px 0 8px;
+}
+
+.sidebar__action--collapsed {
+	display: none;
 }
 
 .theme-default {
@@ -373,6 +388,34 @@ $font-size: rem(14px);
 			--sidebar-width-min: 36px;
 		}
 
+		.sidebar__actions {
+			padding-left: 0;
+			padding-right: 0;
+
+			span {
+				display: flex;
+				flex-shrink: 0;
+			}
+
+			span.sidebar__action--collapsed {
+				display: block;
+				width: 20px;
+				margin-right: 8px;
+				margin-left: 8px;
+				color: var(--color-sidebar-gridicon-fill);
+			}
+
+			.button {
+				border: none;
+				padding: 0;
+				justify-content: flex-start;
+			}
+
+			.button:hover span.sidebar__action--collapsed {
+				color: var(--color-sidebar-menu-hover-text);
+			}
+		}
+
 		.layout__primary .main,
 		.layout__secondary,
 		.layout__secondary .sidebar,
@@ -431,6 +474,7 @@ $font-size: rem(14px);
 		.current-site__notices > .banner {
 			&::before {
 				content: "\f534";
+				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;

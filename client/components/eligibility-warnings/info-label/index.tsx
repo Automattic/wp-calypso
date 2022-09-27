@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactElement, ReactNode } from 'react';
+import type { PropsWithChildren } from 'react';
 
 const Banner = styled.div`
 	color: var( --studio-gray-90 );
@@ -30,17 +30,12 @@ const Label = styled.div< { type: string } >`
 	margin-left: 10px;
 `;
 
-interface InfoLabelProps {
-	children: ReactNode;
+type InfoLabelProps = PropsWithChildren< {
 	label?: string;
 	type?: string;
-}
+} >;
 
-export default function InfoLabel( {
-	children,
-	label,
-	type = 'info',
-}: InfoLabelProps ): ReactElement {
+export default function InfoLabel( { children, label, type = 'info' }: InfoLabelProps ) {
 	return (
 		<Banner>
 			<Content>{ children }</Content>

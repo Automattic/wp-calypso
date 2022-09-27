@@ -31,8 +31,8 @@ class PluginAction extends Component {
 				ref={ this.disabledInfoLabelRef }
 				onClick={ this.handleAction }
 			>
-				{ this.props.label }
-				{ this.renderDisabledInfo() }
+				<span className="plugin-action__label-text">{ this.props.label }</span>
+				<span className="plugin-action__label-disabled-info">{ this.renderDisabledInfo() }</span>
 			</span>
 			/* eslint-enable jsx-a11y/click-events-have-key-events */
 			/* eslint-enable jsx-a11y/no-static-element-interactions */

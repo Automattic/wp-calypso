@@ -49,6 +49,11 @@ export default function () {
 	// successful site address change shows a continuous placeholder state... #23929 for details.
 	page.redirect( '/domains/manage/edit', paths.domainManagementRoot() );
 	page.redirect( '/domains/manage/edit/:site', paths.domainManagementRoot() );
+	// This redirect should remain until we implement the `/domains/manage/all/edit-contact-info` route
+	page.redirect(
+		paths.domainManagementAllEditContactInfo(),
+		paths.domainManagementRoot() + '?site=all&action=edit-contact-email'
+	);
 
 	registerMultiPage( {
 		paths: [
@@ -128,14 +133,6 @@ export default function () {
 		paths.domainManagementRoot(),
 		...getCommonHandlers( { noSitePath: false } ),
 		domainManagementController.domainManagementListAllSites,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		paths.domainManagementAllEditContactInfo(),
-		...getCommonHandlers( { noSitePath: false } ),
-		domainManagementController.domainManagementBulkEditContactInfo,
 		makeLayout,
 		clientRender
 	);

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
 import type {
 	QueryArgs,
@@ -95,9 +96,11 @@ export type FeaturedItemCardProps = {
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
+	isCtaExternal?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
+	customLabel?: React.ReactNode;
 };
 
 export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
@@ -107,4 +110,5 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
+	isExternal?: boolean;
 };

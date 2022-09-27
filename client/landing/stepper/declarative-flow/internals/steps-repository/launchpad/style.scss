@@ -109,6 +109,11 @@
 	line-height: 48px;
 	margin: 32px 0;
 	padding: 0 20px;
+
+	// truncate long domain names
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .launchpad__url-box-top-level-domain {
@@ -132,6 +137,13 @@
 
 .launchpad__progress-bar-container {
 	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {
@@ -211,6 +223,13 @@
 	line-height: 20px;
 	text-align: left;
 	font-weight: 600;
+}
+
+// change badge color on hover (Choose a Plan step)
+.launchpad__task:hover {
+	.launchpad__checklist-item .badge {
+		background: var(--studio-blue-10);
+	}
 }
 
 // completed tasks
@@ -321,5 +340,66 @@
 
 	.spinner-line {
 		display: none;
+	}
+}
+
+// Launchpad - Processing Screens
+.processing {
+	.wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var(--color-text);
+		stroke: var(--color-text);
+		transform-origin: 0 0;
+	}
+
+	.processing-step__progress-bar {
+		background-color: #fff;
+	}
+
+	&.link-in-bio {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: #d0cce3;
+		background-image:
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 30%, auto 30%;
+		background-position-x: 0%, 100%;
+		background-position-y: 90%, 10%;
+
+		@include break-huge {
+			background-size: auto 50%, auto 50%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+		}
+	}
+
+	.step-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
+	}
+
+	.step-container__content {
+		width: 100%;
+	}
+
+	.progress-bar {
+		display: none;
+	}
+
+	h1.processing-step__progress-step {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
 	}
 }

@@ -18,16 +18,18 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getIsDeprecated,
+		getIsExternal,
+		getIsIncludedInPlan,
+		getIsIncludedInPlanOrSuperseded,
+		getIsMultisiteCompatible,
+		getIsOwned,
+		getIsPlanFeature,
+		getIsSuperseded,
+		getIsUserPurchaseOwner,
 		getOnClickPurchase,
-		isIncludedInPlan,
-		isIncludedInPlanOrSuperseded,
-		isMultisiteCompatible,
 		isMultisite,
-		isOwned,
-		isPlanFeature,
-		isSuperseded,
-		isDeprecated,
-		isUserPurchaseOwner,
+		getCustomLabel,
 	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
@@ -38,27 +40,28 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 
 			<div className="jetpack-product-store__all-items--grid">
 				{ items.map( ( item ) => {
-					const isItemOwned = isOwned( item );
-					const isItemSuperseded = isSuperseded( item );
-					const isItemDeprecated = isDeprecated( item );
-					const isItemIncludedInPlanOrSuperseded = isIncludedInPlanOrSuperseded( item );
-					const isItemIncludedInPlan = isIncludedInPlan( item );
-					const isMultiSiteIncompatible = isMultisite && ! isMultisiteCompatible( item );
+					const isOwned = getIsOwned( item );
+					const isSuperseded = getIsSuperseded( item );
+					const isDeprecated = getIsDeprecated( item );
+					const isExternal = getIsExternal( item );
+					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
+					const isIncludedInPlan = getIsIncludedInPlan( item );
+					const isMultiSiteIncompatible = isMultisite && ! getIsMultisiteCompatible( item );
 
 					const isCtaDisabled =
 						isMultiSiteIncompatible ||
-						( ( isItemOwned || isItemIncludedInPlan ) && ! isUserPurchaseOwner( item ) );
+						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const customLabel = getCustomLabel( item );
 
-					const hideMoreInfoLink =
-						isItemDeprecated || isItemOwned || isItemIncludedInPlanOrSuperseded;
+					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
 					const price = (
 						<ItemPrice
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
-							isIncludedInPlan={ isItemIncludedInPlan }
-							isOwned={ isItemOwned }
+							isIncludedInPlan={ isIncludedInPlan }
+							isOwned={ isOwned }
 							item={ item }
 							siteId={ siteId }
 						/>
@@ -68,12 +71,16 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						<>
 							{ item?.shortDescription || item.description } <br />
 							{ ! hideMoreInfoLink && (
-								<MoreInfoLink onClick={ onClickMoreInfoFactory( item ) } item={ item } />
+								<MoreInfoLink
+									onClick={ onClickMoreInfoFactory( item ) }
+									item={ item }
+									isExternal={ isExternal }
+								/>
 							) }
 						</>
 					);
 
-					const ctaAsPrimary = ! ( isItemOwned || isPlanFeature( item ) || isItemSuperseded );
+					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
 
 					return (
 						<SimpleItemCard
@@ -83,10 +90,12 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 							description={ description }
 							icon={ <img alt="" src={ getProductIcon( { productSlug: item.productSlug } ) } /> }
 							isCtaDisabled={ isCtaDisabled }
+							isCtaExternal={ isExternal }
 							key={ item.productSlug }
 							onClickCta={ getOnClickPurchase( item ) }
 							price={ price }
-							title={ item.shortName }
+							title={ item.displayName }
+							customLabel={ customLabel }
 						/>
 					);
 				} ) }

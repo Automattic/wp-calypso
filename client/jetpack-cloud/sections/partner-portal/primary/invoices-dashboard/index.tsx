@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -8,7 +7,7 @@ import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-por
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
 import './style.scss';
 
-export default function InvoicesDashboard(): ReactElement {
+export default function InvoicesDashboard() {
 	const translate = useTranslate();
 
 	return (

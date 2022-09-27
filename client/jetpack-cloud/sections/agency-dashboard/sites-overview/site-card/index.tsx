@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useState, useCallback, ReactElement, MouseEvent, KeyboardEvent } from 'react';
+import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import SiteActions from '../site-actions';
@@ -15,7 +15,7 @@ interface Props {
 	columns: SiteColumns;
 }
 
-export default function SiteCard( { rows, columns }: Props ): ReactElement {
+export default function SiteCard( { rows, columns }: Props ) {
 	const dispatch = useDispatch();
 
 	const [ isExpanded, setIsExpanded ] = useState( false );

@@ -25,6 +25,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 	let siteCreatedFlag: boolean;
 	let newSiteDetails: NewSiteResponse;
 	let page: Page;
+	let selectedFreeDomain: string;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
@@ -41,7 +42,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		it( 'Select a .wordpress.com domain name', async function () {
 			const domainSearchComponent = new DomainSearchComponent( page );
 			await domainSearchComponent.search( blogName );
-			await domainSearchComponent.selectDomain( '.wordpress.com' );
+			selectedFreeDomain = await domainSearchComponent.selectDomain( '.wordpress.com' );
 		} );
 
 		it( `Select WordPress.com Free plan`, async function () {
@@ -59,8 +60,11 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Enter Onboarding flow', async function () {
+		it( 'Enter Onboarding flow for the selected domain', async function () {
 			await expect( page.waitForURL( /setup\/goals\?/ ) ).resolves.not.toThrow();
+
+			const urlRegex = `/setup/goals?siteSlug=${ selectedFreeDomain }`;
+			expect( page.url() ).toMatch( urlRegex );
 		} );
 
 		it( 'Select "Write" goal', async function () {

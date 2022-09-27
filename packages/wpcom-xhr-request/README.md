@@ -44,7 +44,7 @@ $ npm install wpcom-xhr-request
 - `apiNamespace`: `WP-API` namepsace.
 - `apiVersion`: `REST-API` app version - `1` as default.
 - `proxyOrigin`: `https://public-api.wordpress.com` as default.
-- `authToken`: token authentication.
+- `token`: token authentication.
 - `query`: object used to pass the `query` to the request.
 - `body`: object used to pass the `body` to the request.
 - `form-data`: `POST` FormData (for `multipart/form-data`, usually a file upload).
@@ -105,7 +105,7 @@ handler(
 ## Authentication
 
 For API requests that require authentication to WordPress.com, you must pass in an
-OAuth token as the `authToken` parameter in the `params` object for the API call.
+OAuth token as the `token` parameter in the `params` object for the API call.
 
 You can get an OAuth token server-side through
 [`node-wpcom-oauth`][node-wpcom-oauth], or any other OAuth2 interaction

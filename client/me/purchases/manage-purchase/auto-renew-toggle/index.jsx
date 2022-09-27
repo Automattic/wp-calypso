@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -32,6 +33,7 @@ class AutoRenewToggle extends Component {
 		siteSlug: PropTypes.string,
 		getChangePaymentMethodUrlFor: PropTypes.func,
 		paymentMethodUrl: PropTypes.string,
+		showLink: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -204,20 +206,41 @@ class AutoRenewToggle extends Component {
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, withTextStatus, shouldDisable } = this.props;
+		const { planName, siteDomain, purchase, withTextStatus, shouldDisable, showLink, children } =
+			this.props;
 
 		if ( ! this.shouldRender( purchase ) ) {
 			return null;
 		}
 
-		return (
-			<>
+		let toggle;
+		if ( showLink ) {
+			toggle = this.isUpdatingAutoRenew() ? (
+				'…'
+			) : (
+				<Button
+					link
+					className="is-link"
+					onClick={ this.onToggleAutoRenew }
+					disabled={ shouldDisable }
+				>
+					{ children }
+				</Button>
+			);
+		} else {
+			toggle = (
 				<ToggleControl
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() || shouldDisable }
 					onChange={ this.onToggleAutoRenew }
 					label={ withTextStatus && this.renderTextStatus() }
 				/>
+			);
+		}
+
+		return (
+			<>
+				{ toggle }
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }

@@ -28,9 +28,9 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
-import { blazePressFlow } from './declarative-flow/blazepress-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
+import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
 import { newsletter } from './declarative-flow/newsletter';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
@@ -65,7 +65,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
-	{ flowName: 'blazepress', pathToFlow: blazePressFlow },
+	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
 		: null,
@@ -137,6 +137,9 @@ window.AppBoot = async () => {
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
 						<FlowSwitch user={ user as UserStore.CurrentUser } />
+						{ config.isEnabled( 'gdpr-banner' ) && (
+							<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+						) }
 					</BrowserRouter>
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />

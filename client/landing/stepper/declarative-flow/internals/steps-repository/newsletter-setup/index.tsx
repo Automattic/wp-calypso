@@ -1,12 +1,19 @@
 import { Button, FormInputValidation, Popover } from '@automattic/components';
-import { hasMinContrast, StepContainer, RGB, base64ImageToBlob } from '@automattic/onboarding';
+import {
+	hasMinContrast,
+	hexToRgb,
+	StepContainer,
+	RGB,
+	base64ImageToBlob,
+} from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import React, { FormEvent, useEffect } from 'react';
-import greenCheckmarkImg from 'calypso/assets/images/onboarding/green-checkmark.svg';
+import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -60,26 +67,21 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
 		useDispatch( ONBOARD_STORE );
 
-	const [ formTouched, setFormTouched ] = React.useState( false );
+	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ colorPickerOpen, setColorPickerOpen ] = React.useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const [ accentColor, setAccentColor ] = React.useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
-	const siteTitleError =
-		formTouched && ! siteTitle.trim()
-			? __( `Oops. Looks like your Newsletter doesn't have a name yet.` )
-			: '';
-
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
 	useEffect( () => {
 		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
-		if ( defaultAccentColor.hex === siteAccentColor ) {
-			setAccentColor( defaultAccentColor );
+		if ( siteAccentColor && siteAccentColor !== '' && siteAccentColor !== defaultAccentColor.hex ) {
+			setAccentColor( { hex: siteAccentColor, rgb: hexToRgb( siteAccentColor ) } );
 		} else {
-			setAccentColor( { ...defaultAccentColor, hex: siteAccentColor } );
+			setAccentColor( defaultAccentColor );
 		}
 
 		setTagline( siteDescription );
@@ -95,13 +97,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			return;
 		}
 
-		if ( formTouched ) {
-			return;
-		}
-
 		setComponentSiteTitle( site.name || '' );
 		setTagline( site.description );
-	}, [ site, formTouched ] );
+	}, [ site ] );
+
+	useEffect( () => {
+		if ( siteTitle.trim().length && invalidSiteTitle ) {
+			setInvalidSiteTitle( false );
+		}
+	}, [ siteTitle, invalidSiteTitle ] );
 
 	const imageFileToBase64 = ( file: Blob ) => {
 		const reader = new FileReader();
@@ -112,7 +116,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	const onSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
-		setFormTouched( true );
+		setInvalidSiteTitle( ! siteTitle.trim().length );
 
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
@@ -132,17 +136,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	};
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		setFormTouched( true );
 		switch ( event.currentTarget.name ) {
 			case 'siteTitle':
 				return setComponentSiteTitle( event.currentTarget.value );
 			case 'tagline':
 				return setTagline( event.currentTarget.value );
 		}
-	};
-
-	const getBackgroundImage = ( fieldValue: string | undefined ) => {
-		return fieldValue && fieldValue.trim() ? `url( ${ greenCheckmarkImg } )` : '';
 	};
 
 	const stepContent = (
@@ -158,6 +157,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			/>
 			<Popover
 				isVisible={ colorPickerOpen }
+				className="newsletter-setup__accent-color-popover"
 				context={ accentColorRef.current }
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }
@@ -177,24 +177,24 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					placeholder={ __( 'My newsletter' ) }
 					name="siteTitle"
 					id="siteTitle"
-					style={ {
-						backgroundImage: getBackgroundImage( siteTitle ),
-					} }
-					isError={ !! siteTitleError }
+					isError={ invalidSiteTitle }
 					onChange={ onChange }
 				/>
-				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
+				{ invalidSiteTitle && (
+					<FormInputValidation
+						isError
+						text={ __( `Oops. Looks like your Newsletter doesn't have a name yet.` ) }
+					/>
+				) }
 			</FormFieldset>
 			<FormFieldset>
 				<FormLabel htmlFor="tagline">{ __( 'Brief description' ) }</FormLabel>
-				<FormInput
-					value={ tagline }
-					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+				<ForwardedAutoresizingFormTextarea
 					name="tagline"
 					id="tagline"
-					style={ {
-						backgroundImage: getBackgroundImage( tagline ),
-					} }
+					value={ tagline }
+					placeholder={ __( 'Describe your Newsletter in a line or two' ) }
+					enableAutoFocus={ false }
 					onChange={ onChange }
 				/>
 			</FormFieldset>
@@ -204,10 +204,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					inputRef={ accentColorRef }
 					className="newsletter-setup__accent-color"
 					style={ {
-						backgroundImage: [
-							generateSwatchSVG( accentColor.hex ),
-							...( ! accentColor.default ? [ getBackgroundImage( accentColor.hex ) ] : [] ),
-						].join( ', ' ),
+						backgroundImage: generateSwatchSVG( accentColor.hex ),
 						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
 					} }
 					name="accentColor"
@@ -217,18 +214,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					value={ accentColor.hex }
 				/>
 			</FormFieldset>
-			{ ! hasMinContrast( accentColor.rgb ) && (
-				<div className="newsletter-setup__contrast-warning" style={ { display: 'flex' } }>
-					<div className="newsletter-setup__contrast-warning-icon-container">
-						<Icon icon={ tip } size={ 20 } />
-					</div>
-					<div>
-						{ __(
-							'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
-						) }
-					</div>
+			<div
+				className={ classNames( 'newsletter-setup__contrast-warning', {
+					'is-visible': ! hasMinContrast( accentColor.rgb ),
+				} ) }
+				aria-hidden={ hasMinContrast( accentColor.rgb ) }
+				role="alert"
+			>
+				<div className="newsletter-setup__contrast-warning-icon-container">
+					<Icon icon={ tip } size={ 20 } />
 				</div>
-			) }
+				<div>
+					{ __(
+						'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
+					) }
+				</div>
+			</div>
 			<Button className="newsletter-setup__submit-button" type="submit" primary>
 				{ __( 'Continue' ) }
 			</Button>

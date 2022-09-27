@@ -30,15 +30,15 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
-export const setPopup = ( popup: Window ) =>
+export const setIframe = ( iframe: null | HTMLIFrameElement ) =>
 	( {
-		type: 'HELP_CENTER_SET_POPUP',
-		popup,
+		type: 'HELP_CENTER_SET_IFRAME',
+		iframe,
 	} as const );
 
-export const resetPopup = () =>
+export const resetIframe = () =>
 	( {
-		type: 'HELP_CENTER_RESET_POPUP',
+		type: 'HELP_CENTER_RESET_IFRAME',
 	} as const );
 
 export const setUserDeclaredSiteUrl = ( url: string ) =>
@@ -67,6 +67,6 @@ export type HelpCenterAction = ReturnType<
 	| typeof setMessage
 	| typeof setUserDeclaredSite
 	| typeof setUserDeclaredSiteUrl
-	| typeof resetPopup
-	| typeof setPopup
+	| typeof resetIframe
+	| typeof setIframe
 >;

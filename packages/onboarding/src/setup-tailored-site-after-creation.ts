@@ -30,39 +30,35 @@ export const base64ImageToBlob = ( base64String: string ) => {
 	return new Blob( [ buffer ], { type: type } );
 };
 
-interface OnboardingSite {
-	siteTitle: string;
-	siteDescription: string;
-	siteLogo: string | null;
-}
-
 interface SetupOnboardingSiteOptions {
 	siteId: number;
 	flowName: string | null;
 }
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
-	const { getState, getPatternContent } = select( ONBOARD_STORE );
-	const state = getState();
+	const { resetOnboardStore } = dispatch( ONBOARD_STORE );
 	const { saveSiteSettings, setIntentOnSite, setStaticHomepageOnSite } = dispatch( SITE_STORE );
-	const selectedPatternContent = getPatternContent();
+	const selectedPatternContent = select( ONBOARD_STORE ).getPatternContent();
+	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
+	const siteDescription = select( ONBOARD_STORE ).getSelectedSiteDescription();
+	const siteLogo = select( ONBOARD_STORE ).getSelectedSiteLogo();
 
-	const postSiteSettings = ( siteId: number, state: OnboardingSite ) => {
+	const postSiteSettings = ( siteId: number ) => {
 		const siteSettings = {
-			blogname: state.siteTitle,
-			blogdescription: state.siteDescription,
+			blogname: siteTitle,
+			blogdescription: siteDescription,
 		};
 
 		return saveSiteSettings( siteId, siteSettings );
 	};
 
-	const postSiteLogo = ( state: OnboardingSite ) => {
-		if ( ! state.siteLogo || ! siteId ) {
+	const postSiteLogo = () => {
+		if ( ! siteLogo || ! siteId ) {
 			return Promise.resolve();
 		}
 		return uploadAndSetSiteLogo(
 			siteId,
-			new File( [ base64ImageToBlob( state.siteLogo ) ], 'site-logo.png' )
+			new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' )
 		);
 	};
 
@@ -99,16 +95,17 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 	if ( siteId && flowName ) {
 		return Promise.all( [
-			postSiteSettings( siteId, state ),
-			postSiteLogo( state ),
+			postSiteSettings( siteId ),
+			postSiteLogo(),
 			setPattern( siteId, flowName ),
 			setIntent( siteId, flowName ),
 			setLaunchpadScreen( siteId, flowName ),
 		] ).then( () => {
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
-				has_site_title: !! state.siteTitle,
-				has_tagline: !! state.siteDescription,
+				has_site_title: !! siteTitle,
+				has_tagline: !! siteDescription,
 			} );
+			resetOnboardStore();
 		} );
 	}
 }

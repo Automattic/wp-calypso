@@ -246,7 +246,7 @@ export function updatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.update ) {
+		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
 			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
 		}
 
@@ -575,6 +575,9 @@ export function fetchAllPlugins() {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
+				// Cast the enumerable string-keyed property to a number.
+				siteId = Number( siteId );
+
 				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {

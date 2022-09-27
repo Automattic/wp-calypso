@@ -14,18 +14,22 @@ import {
 	sendUserInfo,
 	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION,
+} from 'calypso/state/happychat/constants';
 import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
 import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
 import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
 import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
 import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
 import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
-import { setCurrentMessage } from 'calypso/state/happychat/ui/actions';
+import { setCurrentMessage, closeChat } from 'calypso/state/happychat/ui/actions';
 import { getUserInfo } from './getUserInfo';
 
 import './happychat.scss';
 
-const parentTarget = window.opener || window.parent;
+const parentTarget = window.parent;
 
 function getReceivedMessagesOlderThan( timestamp, messages ) {
 	if ( ! timestamp ) {
@@ -34,57 +38,52 @@ function getReceivedMessagesOlderThan( timestamp, messages ) {
 	return messages.filter( ( m ) => m.timestamp >= timestamp && m.source !== 'customer' );
 }
 
-function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation } ) {
+function ParentConnection( { chatStatus, timeline, geoLocation } ) {
 	const dispatch = useDispatch();
 	const [ blurredAt, setBlurredAt ] = useState( 0 );
 	const [ introMessage, setIntroMessage ] = useState( null );
+	const [ windowState, setWindowState ] = useState();
 
 	// listen to messages from parent window
 	useEffect( () => {
 		function onMessage( e ) {
 			const message = e.data;
 			switch ( message.type ) {
-				case 'route':
-					dispatch( sendEvent( `Looking at ${ message.route }` ) );
+				case 'happy-chat-introduction-data':
+					if ( ! introMessage && message !== introMessage ) {
+						dispatch(
+							setChatCustomFields( {
+								calypsoSectionName: 'gutenberg-editor',
+								wpcomSiteId: message.siteId?.toString(),
+								wpcomSitePlan: message.planSlug,
+							} )
+						);
+						dispatch(
+							sendUserInfo(
+								getUserInfo(
+									message.message,
+									message.siteUrl,
+									message.siteId?.toString(),
+									geoLocation
+								)
+							)
+						);
+						dispatch( sendMessage( message.message, { includeInSummary: true } ) );
+						setIntroMessage( message );
+					}
 					break;
-				case 'happy-chat-introduction-data': {
-					setIntroMessage( message );
+
+				case 'window-state-change':
+					setWindowState( message.state );
 					break;
-				}
 			}
 		}
-
 		window.addEventListener( 'message', onMessage );
+
 		return () => window.removeEventListener( 'message', onMessage );
-	}, [ dispatch ] );
+	}, [ dispatch, introMessage, geoLocation ] );
 
-	useEffect( () => {
-		if ( connectionStatus === 'connected' && introMessage ) {
-			dispatch(
-				setChatCustomFields( {
-					calypsoSectionName: 'gutenberg-editor',
-					wpcomSiteId: introMessage.siteId?.toString(),
-					wpcomSitePlan: introMessage.planSlug,
-				} )
-			);
-			// forward the message from the form
-			if ( introMessage.message ) {
-				dispatch(
-					sendUserInfo(
-						getUserInfo(
-							introMessage.message,
-							introMessage.siteUrl,
-							introMessage.siteId?.toString(),
-							geoLocation
-						)
-					)
-				);
-				dispatch( sendMessage( introMessage.message, { includeInSummary: true } ) );
-			}
-		}
-	}, [ connectionStatus, introMessage, dispatch, geoLocation ] );
-
-	// notify parent window about chat status changes
+	// notify parent window about chat closing
 	useEffect( () => {
 		if ( chatStatus === 'closed' ) {
 			parentTarget?.postMessage(
@@ -97,54 +96,34 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 		}
 	}, [ chatStatus ] );
 
+	// handle window status
 	useEffect( () => {
-		function visibilityHandler() {
-			if ( document.visibilityState === 'hidden' ) {
+		switch ( windowState ) {
+			case 'minimized':
 				setBlurredAt( Date.now() );
-			} else {
+				dispatch( sendEvent( 'User minimized HelpCenter' ) );
+				break;
+
+			case 'maximized':
 				setBlurredAt( 0 );
-			}
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: document.visibilityState === 'visible' ? 'open' : 'blurred',
-				},
-				'*'
-			);
+				dispatch( sendEvent( 'User maximized HelpCenter' ) );
+				break;
+
+			case 'closed':
+				dispatch( sendEvent( 'User closed HelpCenter' ) );
+				dispatch( closeChat() );
+				break;
 		}
-		window.addEventListener( 'visibilitychange', visibilityHandler );
+	}, [ dispatch, windowState ] );
 
-		function closeHandler() {
-			parentTarget?.postMessage(
-				{
-					type: 'window-state-change',
-					state: 'blurred',
-				},
-				'*'
-			);
-		}
-		window.addEventListener( 'beforeunload', closeHandler );
-
-		// send open state on load
-		parentTarget?.postMessage(
-			{
-				type: 'window-state-change',
-				state: 'open',
-			},
-			'*'
-		);
-
-		// request intro data
+	// request intro data
+	useEffect( () => {
 		parentTarget?.postMessage(
 			{
 				type: 'happy-chat-introduction-data',
 			},
 			'*'
 		);
-
-		return () => {
-			window.removeEventListener( 'visibilitychange', visibilityHandler );
-		};
 	}, [ dispatch ] );
 
 	useEffect( () => {
@@ -158,14 +137,6 @@ function ParentConnection( { chatStatus, timeline, connectionStatus, geoLocation
 		);
 	}, [ blurredAt, timeline ] );
 
-	useEffect( () => {
-		dispatch( sendEvent( `Started looking at Happychat` ) );
-
-		return () => {
-			dispatch( sendEvent( `Stopped looking at Happychat` ) );
-		};
-	}, [ dispatch ] );
-
 	return null;
 }
 
@@ -173,7 +144,7 @@ export default function Happychat( { auth } ) {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const chatStatus = useSelector( getHappychatChatStatus );
-	const connectionStatus = useSelector( getHappychatConnectionStatus );
+	let connectionStatus = useSelector( getHappychatConnectionStatus );
 	const timeline = useSelector( getHappychatTimeline );
 	const message = useSelector( getCurrentMessage );
 	const isServerReachable = useSelector( isHappychatServerReachable );
@@ -181,9 +152,15 @@ export default function Happychat( { auth } ) {
 	const isMessageFromCurrentUser = ( { user_id, source } ) => {
 		return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 	};
+	const isContinuedSession =
+		new URLSearchParams( window.location.search ).get( 'session' ) === 'continued';
+
+	if ( isContinuedSession && connectionStatus === HAPPYCHAT_CONNECTION_STATUS_CONNECTING ) {
+		connectionStatus = HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION;
+	}
 	return (
 		<div className="happychat__container">
-			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } />
+			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } isHappychatEnabled />
 			<ParentConnection
 				connectionStatus={ connectionStatus }
 				timeline={ timeline }

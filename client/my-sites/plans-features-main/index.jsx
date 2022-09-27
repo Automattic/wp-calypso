@@ -24,6 +24,8 @@ import {
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
+	TITAN_MAIL_MONTHLY_SLUG,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -47,6 +49,7 @@ import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -59,7 +62,9 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import { isMarketplaceFlow } from '../plugins/flows';
 import PlanTypeSelector from './plan-type-selector';
+import PlanFAQ from './plansStepFaq';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -113,7 +118,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
-			isCondensedFeaturesExperiment,
+			isFAQCondensedExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -154,7 +159,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
-					isCondensedFeaturesExperiment={ isCondensedFeaturesExperiment }
+					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 				/>
 			</div>
 		);
@@ -356,7 +361,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
-		const { customerType, selectedPlan, plansWithScroll, isAllPaidPlansShown } = this.props;
+		const {
+			customerType,
+			selectedPlan,
+			plansWithScroll,
+			isAllPaidPlansShown,
+			flowName,
+			sitePlanSlug,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
@@ -388,6 +400,18 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
+
+		if ( isMarketplaceFlow( flowName ) ) {
+			// workaround to show free plan on both monthly/yearly toggle
+			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
+				// elements are rendered in order, needs to be the first one
+				plans.unshift( PLAN_FREE );
+			}
+			return plans.filter(
+				( plan ) =>
+					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+			);
+		}
 
 		if ( isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
@@ -437,10 +461,17 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment, showFAQ } = this.props;
 
 		if ( isInSignup ) {
+			if ( isFAQExperiment ) {
+				return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
+			}
 			return null;
+		}
+
+		if ( ! showFAQ ) {
+			return;
 		}
 
 		return <WpcomFAQ />;
@@ -556,6 +587,7 @@ export default connect(
 		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
+		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -585,6 +617,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
+			titanMonthlyRenewalCost,
 		};
 	},
 	{

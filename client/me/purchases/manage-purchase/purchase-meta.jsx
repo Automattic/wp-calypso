@@ -242,7 +242,7 @@ function PurchaseMetaPrice( { purchase } ) {
 				return (
 					<div>
 						<div>
-							{ translate( 'Service : %(oneTimeFee)s (one-time)', {
+							{ translate( 'Service: %(oneTimeFee)s (one-time)', {
 								args: {
 									oneTimeFee,
 								},
@@ -250,8 +250,8 @@ function PurchaseMetaPrice( { purchase } ) {
 						</div>
 						<div>
 							{ translate(
-								'%(extraPageCount)d extra page : %(costOfExtraPages)s (one-time)',
-								'%(extraPageCount)d extra pages : %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra page: %(costOfExtraPages)s (one-time)',
+								'%(extraPageCount)d extra pages: %(costOfExtraPages)s (one-time)',
 								{
 									count: extraPageCount,
 									args: {
@@ -504,9 +504,32 @@ function PurchaseMetaExpiration( {
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
+		const shouldRenderToggle = site && isProductOwner;
+		const autoRenewToggle = shouldRenderToggle ? (
+			<AutoRenewToggle
+				planName={ site.plan.product_name_short }
+				siteDomain={ site.domain }
+				siteSlug={ site.slug }
+				purchase={ purchase }
+				toggleSource="manage-purchase"
+				showLink={ true }
+				getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
+			/>
+		) : (
+			<span />
+		);
 		const subsRenewText = isAutorenewalEnabled
-			? translate( 'Auto-renew is ON' )
-			: translate( 'Auto-renew is OFF' );
+			? translate( 'Auto-renew is {{autoRenewToggle}}ON{{/autoRenewToggle}}', {
+					components: {
+						autoRenewToggle,
+					},
+			  } )
+			: translate( 'Auto-renew is {{autoRenewToggle}}OFF{{/autoRenewToggle}}', {
+					components: {
+						autoRenewToggle,
+					},
+			  } );
+
 		let subsBillingText;
 		if (
 			isAutorenewalEnabled &&
@@ -533,25 +556,11 @@ function PurchaseMetaExpiration( {
 			} );
 		}
 
-		const shouldRenderToggle = site && isProductOwner;
-
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
 				{ ! hideAutoRenew && (
 					<div className="manage-purchase__auto-renew">
-						{ shouldRenderToggle && (
-							<span className="manage-purchase__detail manage-purchase__auto-renew-toggle">
-								<AutoRenewToggle
-									planName={ site.plan.product_name_short }
-									siteDomain={ site.domain }
-									siteSlug={ site.slug }
-									purchase={ purchase }
-									toggleSource="manage-purchase"
-									getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
-								/>
-							</span>
-						) }
 						<span className="manage-purchase__detail manage-purchase__auto-renew-text">
 							{ subsRenewText }
 						</span>

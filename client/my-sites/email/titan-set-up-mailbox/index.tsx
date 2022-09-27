@@ -8,14 +8,23 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
+import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { getSelectedDomain } from 'calypso/lib/domains';
-import { hasTitanMailWithUs, getTitanProductName } from 'calypso/lib/titan';
+import {
+	getConfiguredTitanMailboxCount,
+	getMaxTitanMailboxCount,
+	getTitanProductName,
+	hasTitanMailWithUs,
+} from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementPurchaseNewEmailAccount,
+	emailManagement,
+} from 'calypso/my-sites/email/paths';
 import TitanSetUpMailboxForm from 'calypso/my-sites/email/titan-set-up-mailbox/titan-set-up-mailbox-form';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 interface TitanSetUpMailboxProps {
@@ -30,9 +39,10 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 
 	const previousRoute = useSelector( getPreviousRoute );
 
-	const domains = useSelector( ( state ) =>
-		getDomainsBySiteId( state, selectedSiteId ?? undefined )
-	);
+	const { data: allDomains = [] } = useGetDomainsQuery( selectedSiteId, {
+		retry: false,
+	} );
+	const domains = allDomains.map( createSiteDomainObject );
 
 	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
 
@@ -56,10 +66,19 @@ const TitanSetUpMailbox = ( { selectedDomainName, source }: TitanSetUpMailboxPro
 				)
 			);
 		}
+
+		if ( selectedDomain && hasTitanSubscription ) {
+			const configuredMailboxCount = getConfiguredTitanMailboxCount( selectedDomain );
+			const maxMailboxCount = getMaxTitanMailboxCount( selectedDomain );
+
+			if ( configuredMailboxCount === maxMailboxCount ) {
+				page.redirect( emailManagement( selectedSiteSlug ?? '', selectedDomainName ) );
+			}
+		}
 	}, [
-		selectedDomain,
 		currentRoute,
 		hasTitanSubscription,
+		selectedDomain,
 		selectedDomainName,
 		selectedSiteSlug,
 		source,

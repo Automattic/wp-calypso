@@ -1,5 +1,5 @@
 import { Button } from '@wordpress/components';
-import { reusableBlock, chevronUp, chevronDown, closeSmall } from '@wordpress/icons';
+import { chevronUp, chevronDown, closeSmall, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 
 type PatternActionBarProps = {
@@ -53,15 +53,15 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Replace"
+				label={ translate( 'Replace' ) }
 				onClick={ onReplace }
-				icon={ reusableBlock }
-				iconSize={ 23 }
+				icon={ edit }
+				iconSize={ 20 }
 			/>
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Delete"
+				label={ translate( 'Delete' ) }
 				onClick={ onDelete }
 				icon={ closeSmall }
 				iconSize={ 23 }

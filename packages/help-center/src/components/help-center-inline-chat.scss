@@ -2,3 +2,7 @@
 	width: 100%;
 	height: calc(100% - 4px);
 }
+
+.help-center .components-card.help-center__container .help-center__container-content:has(> iframe) {
+	overflow: hidden;
+}

@@ -3,7 +3,6 @@ import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import PluginRemoveButton from '../../plugin-remove-button';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import '../style.scss';
 
@@ -12,7 +11,7 @@ interface Props {
 	plugin: Plugin;
 }
 
-export default function RemovePlugin( { site, plugin }: Props ): ReactElement {
+export default function RemovePlugin( { site, plugin }: Props ) {
 	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, plugin.slug ) );
 
 	return (

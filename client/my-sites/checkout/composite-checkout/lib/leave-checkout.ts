@@ -1,7 +1,12 @@
+import { isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
+import {
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	retrieveSignupDestination,
+} from 'calypso/signup/storageUtils';
 
 const debug = debugFactory( 'calypso:leave-checkout' );
 
@@ -25,6 +30,15 @@ export const leaveCheckout = ( {
 		previousPath,
 		createUserAndSiteBeforeTransaction,
 	} );
+
+	const signupFlowName = getSignupCompleteFlowName();
+
+	if ( isTailoredSignupFlow( signupFlowName ) ) {
+		const urlFromCookie = retrieveSignupDestination();
+		if ( urlFromCookie ) {
+			window.location.assign( urlFromCookie );
+		}
+	}
 
 	if ( jetpackCheckoutBackUrl ) {
 		window.location.href = jetpackCheckoutBackUrl;

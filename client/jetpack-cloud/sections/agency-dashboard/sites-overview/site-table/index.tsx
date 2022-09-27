@@ -1,6 +1,6 @@
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
-import { ReactElement, Fragment } from 'react';
+import { Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
@@ -15,7 +15,7 @@ interface Props {
 	items: Array< SiteData >;
 }
 
-export default function SiteTable( { isLoading, columns, items }: Props ): ReactElement {
+export default function SiteTable( { isLoading, columns, items }: Props ) {
 	return (
 		<table className="site-table__table">
 			<thead>

@@ -36,7 +36,7 @@ describe( 'PluginAction', () => {
 			const children = screen.queryByTestId( 'plugin-action-children' );
 
 			expect( label ).toBeInTheDocument();
-			expect( label ).toHaveClass( 'plugin-action__label' );
+			expect( label ).toHaveClass( 'plugin-action__label-text' );
 
 			expect( children ).toBeInTheDocument();
 			expect( children.parentNode ).toHaveClass( 'plugin-action__children' );

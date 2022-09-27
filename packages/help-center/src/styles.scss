@@ -138,18 +138,19 @@ $head-foot-height: 50px;
 		.help-center-header__unread-count {
 			display: inline-block;
 			margin-left: 8px;
-			padding: 2px 6px;
+			padding: 2px 8px;
 			background: var(--studio-pink-50);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			border-radius: 50%;
 			font-size: $font-body-extra-small;
-			color: white;
+			color: #fff;
 		}
 
 		.help-center-header__a8c-only-badge {
 			display: inline-block;
 			margin-left: 8px;
 			padding: 2px 6px;
-			background: lightgray;
+			background: #d3d3d3;
 			border-radius: 4px;
 			font-size: $font-body-extra-small;
 			color: var(--studio-gray-50);
@@ -196,7 +197,7 @@ $head-foot-height: 50px;
 	button.button.back-button__help-center.is-borderless {
 		display: flex;
 		align-items: center;
-		color: black;
+		color: #000;
 		font-size: $font-body-small;
 		padding-right: 5px;
 
@@ -220,6 +221,7 @@ $head-foot-height: 50px;
 		list-style: none;
 		box-sizing: border-box;
 		padding: 0;
+		margin: 0;
 
 		> li {
 			padding: 0;
@@ -332,10 +334,6 @@ $head-foot-height: 50px;
 	.help-center-contact-form__label,
 	.site-picker__label {
 		font-size: $font-body-small;
-	}
-
-	.help-center-sibyl-articles__list {
-		margin: 0;
 	}
 
 	.help-center-header__text {

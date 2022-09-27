@@ -1,7 +1,7 @@
 import { PRODUCT_JETPACK_SEARCH } from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search-new.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -29,7 +29,7 @@ import JetpackSearchFooter from '../footer';
 
 import './style.scss';
 
-export default function JetpackSearchUpsell(): ReactElement {
+export default function JetpackSearchUpsell() {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug ) || '';

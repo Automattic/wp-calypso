@@ -15,7 +15,7 @@
 	img {
 		width: 32px;
 		height: 32px;
-		border: 2px solid white;
+		border: 2px solid #fff;
 		border-radius: 50%; // stylelint-disable-line declaration-property-unit-allowed-list
 	}
 
@@ -56,6 +56,20 @@
 	.site-picker__site-item {
 		padding: 12px 8px;
 	}
+
+	.popover.is-top-left {
+		z-index: 9999;
+
+		.popover__arrow {
+			z-index: 1;
+		}
+
+		.popover__inner span {
+			display: block;
+			padding: 16px;
+		}
+	}
+
 }
 
 .help-center-contact-form__message,
@@ -74,21 +88,51 @@
 	}
 }
 
-.button.help-center-contact-form__site-picker-cta.is-primary {
-	background-color: var(--color-accent);
-	border-color: var(--color-accent);
-	color: var(--color-text-inverted);
-
-	&:hover {
-		color: var(--color-text-inverted);
-		background-color: var(--color-accent-60);
-		border-color: var(--color-accent-60);
+section.contact-form-submit {
+	// this creates a border for the CTA.
+	// a simple border won't cut it because it would be padded in.
+	&::before {
+		content: " ";
+		display: block;
+		height: 1px;
+		background: rgba(0, 0, 0, 0.1);
+		position: absolute;
+		left: -16px;
+		top: 0;
+		width: calc(100% + 32px);
 	}
+	position: sticky;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	box-sizing: border-box;
+	background: #fff;
+	padding: 16px;
 
-	&:disabled {
-		background-color: var(--color-surface) !important;
-		border-color: var(--color-neutral-5) !important;
-		color: var(--color-neutral-20) !important;
+	.button.help-center-contact-form__site-picker-cta.is-primary {
+		background-color: var(--color-accent);
+		border-color: var(--color-accent);
+		color: var(--color-text-inverted);
+
+		&:hover,
+		&:focus {
+			color: var(--color-text-inverted);
+			background-color: var(--color-accent-60);
+			border-color: var(--color-accent-60);
+		}
+
+		&:focus {
+			border: none;
+			box-shadow: none;
+			outline: solid 2px var(--color-accent-60);
+			outline-offset: 2px;
+		}
+
+		&:disabled {
+			background-color: var(--color-surface) !important;
+			border-color: var(--color-neutral-5) !important;
+			color: var(--color-neutral-20) !important;
+		}
 	}
 }
 
@@ -151,21 +195,6 @@
 	}
 }
 
-.help-center-contact-form {
-	.popover.is-top-left {
-		z-index: 9999;
-
-		.popover__arrow {
-			z-index: 1;
-		}
-
-		.popover__inner span {
-			display: block;
-			padding: 16px;
-		}
-	}
-}
-
 .help-center-contact-form__domain-sharing .components-checkbox-control {
 	display: flex;
 
@@ -180,9 +209,26 @@
 }
 
 .form-input-validation {
-	line-height: 1.5rem;
+	line-height: 1.5;
 
 	.gridicon {
 		fill: currentColor;
 	}
+}
+
+.help-center-contact-form__site-picker-forum-privacy-popover {
+	display: inline-block;
+	max-width: 200px;
+	padding: 5px;
+}
+
+.help-center-contact-form__site-picker-forum-privacy-info {
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+}
+
+.help-center-contact-form__site-picker-privacy-popover {
+	z-index: 10000;
 }

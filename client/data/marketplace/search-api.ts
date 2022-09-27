@@ -92,7 +92,7 @@ function getFilterbyAuthor( author: string ): {
 } {
 	return {
 		bool: {
-			must: [ { term: { 'plugin.author': author } } ],
+			must: [ { term: { 'plugin.author.raw': author } } ],
 		},
 	};
 }

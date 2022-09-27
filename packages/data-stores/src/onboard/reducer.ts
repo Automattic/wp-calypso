@@ -4,7 +4,7 @@ import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair } from '@automattic/design-picker/src/types';
+import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
@@ -117,6 +117,19 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 		return action.selectedDesign;
 	}
 	if ( [ 'RESET_SELECTED_DESIGN', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return undefined;
+	}
+	return state;
+};
+
+const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_STYLE_VARIATION' ) {
+		return action.selectedStyleVariation;
+	}
+	if ( [ 'RESET_SELECTED_STYLE_VARIATION', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return undefined;
 	}
 	return state;
@@ -379,6 +392,7 @@ const reducer = combineReducers( {
 	storeType,
 	selectedFonts,
 	selectedDesign,
+	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,

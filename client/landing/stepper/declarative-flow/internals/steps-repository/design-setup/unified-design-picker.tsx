@@ -6,6 +6,7 @@ import {
 	UnifiedDesignPicker,
 	useCategorization,
 	getDesignPreviewUrl,
+	isBlankCanvasDesign,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -23,19 +24,23 @@ import { urlToSlug } from 'calypso/lib/url';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
+import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
-import getThemeIdFromDesign from './util/get-theme-id-from-design';
+import getThemeIdFromDesign from './utils/get-theme-id-from-design';
+import { removeLegacyDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
-import type { Design } from '@automattic/design-picker';
+import type { StarterDesigns } from '@automattic/data-stores';
+import type { Design, StyleVariation } from '@automattic/design-picker';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -47,7 +52,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const translate = useTranslate();
 	const locale = useLocale();
 
-	// CSS breakpoints are set at 600px for mobile
 	const isMobile = ! useViewportMatch( 'small' );
 
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
@@ -77,6 +81,22 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	// ********** Logic for fetching designs
+	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
+			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
+		}
+
+		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
+		if ( blankCanvasDesignOffset !== -1 ) {
+			// Extract the blank canvas design first and then insert it into 4th position for the build intent
+			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
+			if ( isEnabled( 'signup/design-picker-pattern-assembler' ) && intent === SiteIntent.Build ) {
+				allDesigns.static.designs.splice( 3, 0, ...blankCanvasDesign );
+			}
+		}
+
+		return allDesigns;
+	};
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
@@ -85,7 +105,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 		},
-		{ enabled: true }
+		{
+			enabled: true,
+			select: selectStarterDesigns,
+		}
 	);
 
 	const generatedDesigns = allDesigns?.generated?.designs || [];
@@ -106,7 +129,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const categorizationOptions = getCategorizationOptions( intent, true );
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
-	// ********** Logic for selecting a design
+	// ********** Logic for selecting a design and style variation
 
 	const [ isPreviewingDesign, setIsPreviewingDesign ] = useState( false );
 
@@ -118,44 +141,68 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	function getEventPropsByDesign( design: Design ) {
+	const isEnabledStyleSelection = isEnabled( 'signup/design-picker-style-selection' );
+	const selectedDesignHasStyleVariations =
+		isEnabledStyleSelection && ( selectedDesign?.style_variations || [] ).length > 0;
+
+	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
+		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
+	} );
+
+	const selectedStyleVariation = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedStyleVariation()
+	);
+	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
+		const variationSlugSuffix =
+			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
+
 		return {
-			slug: design?.slug,
-			theme: design?.recipe?.stylesheet,
 			flow,
 			intent,
-			is_premium: design?.is_premium,
+			slug: design.slug + variationSlugSuffix,
+			theme: design.recipe?.stylesheet,
+			theme_style: design.recipe?.stylesheet + variationSlugSuffix,
 			design_type: design.design_type,
-			...( design?.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
-			...( design?.recipe?.header_pattern_ids && {
+			is_premium: design.is_premium,
+			...( design.recipe?.pattern_ids && { pattern_ids: design.recipe.pattern_ids.join( ',' ) } ),
+			...( design.recipe?.header_pattern_ids && {
 				header_pattern_ids: design.recipe.header_pattern_ids.join( ',' ),
 			} ),
-			...( design?.recipe?.footer_pattern_ids && {
+			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
+			has_style_variations: isEnabledStyleSelection && ( design.style_variations || [] ).length > 0,
 		};
 	}
 
-	function previewDesign( _selectedDesign: Design, positionIndex?: number ) {
-		recordTracksEvent( 'calypso_signup_design_preview_select', {
-			...getEventPropsByDesign( _selectedDesign ),
-			...( positionIndex && { position_index: positionIndex } ),
-		} );
+	function previewDesign( design: Design, variation?: StyleVariation ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_select',
+			getEventPropsByDesign( design, variation )
+		);
+		setSelectedDesign( design );
 
-		setSelectedDesign( _selectedDesign );
+		if ( variation ) {
+			recordTracksEvent(
+				'calypso_signup_design_picker_style_variation_button_click',
+				getEventPropsByDesign( design, variation )
+			);
+			setSelectedStyleVariation( variation );
+		}
+
 		setIsPreviewingDesign( true );
 	}
 
-	// ********** Logic for fetching the details of a selected design with style variations
+	function previewDesignVariation( variation: StyleVariation ) {
+		recordTracksEvent(
+			'calypso_signup_design_preview_style_variation_preview_click',
+			getEventPropsByDesign( selectedDesign as Design, variation )
+		);
 
-	const isEnabledStyleSelection =
-		selectedDesign &&
-		selectedDesign.design_type !== 'vertical' &&
-		isEnabled( 'signup/design-picker-style-selection' );
-
-	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
-		enabled: isPreviewingDesign && isEnabledStyleSelection,
-	} );
+		setSelectedStyleVariation( variation );
+	}
 
 	// ********** Logic for unlocking a selected premium design
 
@@ -170,8 +217,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+
+	const isPluginBundleEligible = useIsPluginBundleEligible();
+	const themeDetails = useThemeDetails( selectedDesign?.slug || '' );
+	const hasThemeSoftwareSet = themeDetails?.data?.taxonomies?.theme_software_set?.length;
+
 	const shouldUpgrade =
-		selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
+		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( isEnabled( 'themes/plugin-bundling' ) && ! isPluginBundleEligible && hasThemeSoftwareSet );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -239,19 +292,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				);
 			}
 			setPendingAction( () =>
-				setDesignOnSite( siteSlugOrId, _selectedDesign, siteVerticalId ).then( () =>
-					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
-				)
+				setDesignOnSite( siteSlugOrId, _selectedDesign, {
+					styleVariation: selectedStyleVariation,
+					verticalId: siteVerticalId,
+				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
 			recordTracksEvent( 'calypso_signup_select_design', {
-				...getEventPropsByDesign( _selectedDesign ),
+				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
 
 			if ( _selectedDesign.verticalizable ) {
 				recordTracksEvent(
 					'calypso_signup_select_verticalized_design',
-					getEventPropsByDesign( _selectedDesign )
+					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
 				);
 			}
 
@@ -269,6 +323,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			flow,
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
+			has_style_variations:
+				isEnabledStyleSelection && ( _selectedDesign.style_variations || [] ).length > 0,
 		} );
 
 		submit?.( providedDependencies );
@@ -278,15 +334,20 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		if ( isPreviewingDesign ) {
 			recordTracksEvent(
 				'calypso_signup_design_preview_exit',
-				getEventPropsByDesign( selectedDesign as Design )
+				getEventPropsByDesign( selectedDesign as Design, selectedStyleVariation )
 			);
 
 			setSelectedDesign( undefined );
+			setSelectedStyleVariation( undefined );
 			setIsPreviewingDesign( false );
 			return;
 		}
 
 		goBack();
+	}
+
+	function recordDeviceClick( device: string ) {
+		recordTracksEvent( 'calypso_signup_design_preview_device_click', { device } );
 	}
 
 	function recordStepContainerTracksEvent( eventName: string ) {
@@ -320,6 +381,30 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
+		const pickDesignText =
+			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
+				? translate( 'Select and continue' )
+				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
+
+		const actionButtons = (
+			<>
+				{ selectedDesignHasStyleVariations && (
+					<div className="action-buttons__title">{ headerDesignTitle }</div>
+				) }
+				<div>
+					{ shouldUpgrade ? (
+						<Button primary borderless={ false } onClick={ upgradePlan }>
+							{ translate( 'Unlock theme' ) }
+						</Button>
+					) : (
+						<Button primary borderless={ false } onClick={ () => pickDesign() }>
+							{ pickDesignText }
+						</Button>
+					) }
+				</div>
+			</>
+		);
+
 		const stepContent = (
 			<>
 				<UpgradeModal
@@ -328,7 +413,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					closeModal={ closeUpgradeModal }
 					checkout={ goToCheckout }
 				/>
-				{ isEnabledStyleSelection ? (
+				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
@@ -336,6 +421,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						title={ designTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
+						selectedVariation={ selectedStyleVariation }
+						onSelectVariation={ previewDesignVariation }
+						actionButtons={ actionButtons }
+						recordDeviceClick={ recordDeviceClick }
 					/>
 				) : (
 					<WebPreview
@@ -361,32 +450,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			</>
 		);
 
-		const pickDesignText =
-			selectedDesign?.design_type === 'vertical'
-				? translate( 'Select and continue' )
-				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
-
-		const actionButtons = (
-			<div>
-				{ shouldUpgrade ? (
-					<Button primary borderless={ false } onClick={ upgradePlan }>
-						{ translate( 'Unlock theme' ) }
-					</Button>
-				) : (
-					<Button primary borderless={ false } onClick={ () => pickDesign() }>
-						{ pickDesignText }
-					</Button>
-				) }
-			</div>
-		);
-
-		return isEnabledStyleSelection ? (
+		return selectedDesignHasStyleVariations ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
+				customizedActionButtons={ actionButtons }
 				recordTracksEvent={ recordStepContainerTracksEvent }
 			/>
 		) : (
@@ -421,8 +492,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
-	const newDesignEnabled = isEnabled( 'signup/theme-preview-screen' );
-
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
@@ -431,13 +500,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			locale={ locale }
 			onSelect={ pickDesign }
 			onPreview={ previewDesign }
-			onUpgrade={ upgradePlan }
 			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
-			previewOnly={ newDesignEnabled }
-			hasDesignOptionHeader={ ! newDesignEnabled }
 			purchasedThemes={ purchasedThemes }
 		/>
 	);

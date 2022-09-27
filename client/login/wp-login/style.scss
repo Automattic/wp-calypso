@@ -205,6 +205,7 @@ $image-height: 47px;
 
 	.wp-login__links a {
 		border-bottom: none;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 3.4em;
 		color: var(--color-neutral-60);
 		font-size: $font-body-small;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useMemo } from '@wordpress/element';
 import Sidebar from './sidebar';
 import SitePreview from './site-preview';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
@@ -9,21 +9,38 @@ interface PreviewProps {
 	title?: string;
 	description?: string;
 	variations?: StyleVariation[];
+	selectedVariation?: StyleVariation;
+	onSelectVariation: ( variation: StyleVariation ) => void;
+	actionButtons: React.ReactNode;
+	recordDeviceClick: ( device: string ) => void;
 }
+
+const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
+
+const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
+	variations.find( ( variation ) => variation.slug === slug );
 
 const Preview: React.FC< PreviewProps > = ( {
 	previewUrl,
 	title,
 	description,
 	variations = [],
+	selectedVariation,
+	onSelectVariation,
+	actionButtons,
+	recordDeviceClick,
 } ) => {
-	const [ activeVariation, setActiveVariation ] = useState< StyleVariation | undefined >();
+	const sitePreviewInlineCss = useMemo( () => {
+		if ( selectedVariation ) {
+			const inlineCss =
+				selectedVariation.inline_css ??
+				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
 
-	useEffect( () => {
-		if ( variations.length > 0 && ! activeVariation ) {
-			setActiveVariation( variations[ 0 ] );
+			return inlineCss + INJECTED_CSS;
 		}
-	}, [ variations, activeVariation ] );
+
+		return '';
+	}, [ variations, selectedVariation ] );
 
 	return (
 		<div className="design-preview">
@@ -31,10 +48,15 @@ const Preview: React.FC< PreviewProps > = ( {
 				title={ title }
 				description={ description }
 				variations={ variations }
-				activeVariation={ activeVariation }
-				onVariationClick={ setActiveVariation }
+				selectedVariation={ selectedVariation }
+				onSelectVariation={ onSelectVariation }
+				actionButtons={ actionButtons }
 			/>
-			<SitePreview url={ previewUrl } inlineCss={ activeVariation?.inline_css || '' } />
+			<SitePreview
+				url={ previewUrl }
+				inlineCss={ sitePreviewInlineCss }
+				recordDeviceClick={ recordDeviceClick }
+			/>
 		</div>
 	);
 };
