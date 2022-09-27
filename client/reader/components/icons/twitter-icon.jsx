@@ -3,7 +3,7 @@ export default function ReaderTwitterIcon( { iconSize } ) {
 		<svg
 			fill="none"
 			className="reader-twitter"
-			viewBox="0 0 20 20"
+			viewBox="0 0 24 24"
 			width={ iconSize }
 			height={ iconSize }
 			xmlns="http://www.w3.org/2000/svg"
