@@ -89,9 +89,9 @@ export const RemovePlanDialog = ( {
 						<p>{ subTitle }</p>
 						<ul className="remove-plan-dialog__list-plan-features">
 							{ domainFeature }
-							{ planFeatures.map( ( feature, index ) => {
+							{ planFeatures.map( ( feature ) => {
 								return (
-									<li key={ index }>
+									<li key={ feature }>
 										<Gridicon
 											className="remove-plan-dialog__item-cross-small"
 											size={ 24 }
