@@ -117,12 +117,7 @@
 	position: absolute;
 	z-index: 1;
 	right: 0;
-	opacity: 0.5;
 	cursor: pointer;
-}
-
-.dialog__action-buttons-close:hover {
-	opacity: 1;
 }
 
 .ReactModal__Body--open {
