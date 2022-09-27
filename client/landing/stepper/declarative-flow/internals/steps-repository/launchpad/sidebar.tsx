@@ -84,8 +84,11 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
 				<div className="launchpad__url-box">
-					<span>{ siteName }</span>
-					<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
+					<div>
+						<span>{ siteName }</span>
+						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+					</div>
 				</div>
 				<Checklist tasks={ enhancedTasks } />
 			</div>
