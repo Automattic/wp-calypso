@@ -346,12 +346,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
-		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
-		getTitle: () => i18n.translate( 'Premium design tools' ),
-		getDescription: () => i18n.translate( "Change all of your site's fonts, colours and more." ),
-	},
-
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
 		getTitle: () => {
@@ -641,6 +635,12 @@ export const FEATURES_LIST = {
 				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
+	},
+
+	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
+		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
+		getTitle: () => i18n.translate( 'Premium design tools' ),
+		getDescription: () => i18n.translate( "Change all of your site's fonts, colours and more." ),
 	},
 
 	[ FEATURE_NO_ADS ]: {
