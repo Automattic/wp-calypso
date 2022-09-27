@@ -9,6 +9,8 @@ import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
+import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import * as DiscoverHelper from 'calypso/reader/discover/helper';
 import FollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
@@ -281,8 +283,6 @@ class ReaderPostEllipsisMenu extends Component {
 				onToggle={ this.onMenuToggle }
 				position={ position }
 			>
-				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
-
 				{ this.props.showFollow && (
 					<FollowButton
 						tagName={ PopoverMenuItem }
@@ -299,6 +299,8 @@ class ReaderPostEllipsisMenu extends Component {
 						postId={ postId }
 						post={ post }
 						followSource={ READER_POST_OPTIONS_MENU }
+						followIcon={ ReaderFollowConversationIcon( { iconSize: 24 } ) }
+						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 24 } ) }
 					/>
 				) }
 
@@ -335,8 +337,11 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
+				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
+				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
+
 				{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="reader-post-options-menu__hr" /> }
+					( isBlockPossible || isDiscoverPost ) && <hr className="popover__menu-separator" /> }
 
 				{ isBlockPossible && (
 					<PopoverMenuItem onClick={ this.blockSite }>
