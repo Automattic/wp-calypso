@@ -31,7 +31,17 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		margin-bottom: 16px;
 	}
+
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-label {
+		margin-bottom: 8px;
+	}
+
 
 	.link-in-bio-setup__form {
 		display: flex;
@@ -71,6 +81,7 @@ $font-family: "SF Pro Text", $sans;
 		border: none;
 		width: 100%;
 		height: 40px;
+		margin-top: 16px;
 
 		&:hover:not([disabled]) {
 			background-color: var(--wp-admin-theme-color-darker-10);

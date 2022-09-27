@@ -42,6 +42,15 @@ $border-radius: 4px;
 		.form-fieldset,
 		.newsletter-setup__submit-button {
 			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		.form-input-validation {
+			padding-bottom: 0;
+		}
+
+		.form-label {
+			margin-bottom: 8px;
 		}
 
 		label,
@@ -90,6 +99,7 @@ $border-radius: 4px;
 			height: 0;
 			transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 			opacity: 0;
+			margin-top: 16px;
 
 			&.is-visible {
 				height: 80px;
