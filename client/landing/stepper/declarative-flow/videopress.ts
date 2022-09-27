@@ -41,12 +41,7 @@ export const videopress: Flow = {
 		setStepProgress( flowProgress );
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const [ _siteTitle, _domain ] = useSelect( ( select ) => {
-			return [
-				select( ONBOARD_STORE ).getSelectedSiteTitle(),
-				select( ONBOARD_STORE ).getSelectedDomain(),
-			];
-		} );
+		const _siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
 
 		const clearOnboardingSiteOptions = () => {
 			setSiteTitle( '' );
@@ -75,35 +70,22 @@ export const videopress: Flow = {
 			return true;
 		};
 
-		const stepValidateDomain = () => {
-			if ( ! stepValidateSiteTitle() ) {
-				return false;
-			}
-
-			if ( ! _domain ) {
-				navigate( 'chooseADomain' );
-				return false;
-			}
-
-			return true;
-		};
-
 		switch ( _currentStep ) {
+			case 'intro':
+				clearOnboardingSiteOptions();
+				break;
 			case 'options':
 				stepValidateUserIsLoggedIn();
 				break;
 			case 'chooseADomain':
-				stepValidateSiteTitle();
-				break;
 			case 'chooseAPlan':
-				stepValidateDomain();
+				stepValidateSiteTitle();
 				break;
 		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
-					clearOnboardingSiteOptions();
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
