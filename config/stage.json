@@ -131,6 +131,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
+		"subscriber-csv-upload": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": false,
 		"themes/premium": true,
