@@ -10,7 +10,6 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 	JETPACK_CREDENTIALS_STORE,
-	JETPACK_CREDENTIALS_TEST_SUCCESS,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -18,6 +17,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
+import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
@@ -112,12 +112,7 @@ export const success = ( action, { rewind_state } ) =>
 		} )(),
 		// The idea is to mark the credentials test as valid so
 		// it doesn't need to be tested again.
-		{
-			type: JETPACK_CREDENTIALS_TEST_SUCCESS,
-			siteId: action.siteId,
-			role: action.credentials.role,
-			testResult: true,
-		},
+		markCredentialsAsValid( action.siteId, action.credentials.role ),
 	] );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {

@@ -4,7 +4,8 @@ import {
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_TEST,
-	JETPACK_CREDENTIALS_TEST_SUCCESS,
+	JETPACK_CREDENTIALS_TEST_VALID,
+	JETPACK_CREDENTIALS_TEST_INVALID,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/activity-log/get-credentials';
 import { success as removeCredentialsFromState } from 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
@@ -58,9 +59,22 @@ export const testCredentials = ( siteId, role ) => ( {
 	role,
 } );
 
-export const markCredentialsAsInvalid = ( siteId, role ) => ( {
-	type: JETPACK_CREDENTIALS_TEST_SUCCESS,
+export const markCredentialsAsValid = ( siteId, role ) => ( {
+	type: JETPACK_CREDENTIALS_TEST_VALID,
 	siteId,
 	role,
-	testResult: false,
 } );
+
+export const markCredentialsAsInvalid = ( siteId, role ) => ( {
+	type: JETPACK_CREDENTIALS_TEST_INVALID,
+	siteId,
+	role,
+} );
+
+export const updateCredentialsTestResult = ( siteId, role, testResult ) => ( dispatch ) => {
+	if ( testResult ) {
+		dispatch( markCredentialsAsValid( siteId, role ) );
+	} else {
+		dispatch( markCredentialsAsInvalid( siteId, role ) );
+	}
+};
