@@ -45,7 +45,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showTitleEmoji,
 		showSkipBtn,
 		showCsvUpload,
-		submitBtnName,
+		submitBtnName = __( 'Add subscribers' ),
 		allowEmptyFormSubmit,
 		recordTracksEvent,
 		onSkipBtnClick,
@@ -289,8 +289,12 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ showCsvUpload && isSelectedFileValid && selectedFile && (
 						<p className={ 'add-subscriber__form--disclaimer' }>
 							{ createInterpolateElement(
-								__(
-									'By clicking "continue", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
+								sprintf(
+									/* translators: the first string variable shows CTA button name */
+									__(
+										'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
+									),
+									submitBtnName
 								),
 								{
 									Button: createElement( Button, {
@@ -309,7 +313,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						isBusy={ inProgress }
 						disabled={ inProgress }
 					>
-						{ submitBtnName || __( 'Add subscribers' ) }
+						{ submitBtnName }
 					</NextButton>
 					{ showSkipBtn && (
 						<SkipButton
