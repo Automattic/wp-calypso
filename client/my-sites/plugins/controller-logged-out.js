@@ -63,7 +63,7 @@ const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIM
 			if ( context.res?.req?.useragent?.isBot ) {
 				context.res.status( 504 );
 			}
-			context.skipMarkupCache = true;
+			context.serverSideRender = false;
 
 			if ( config.isEnabled( 'ssr/log-prefetch-timeout' ) ) {
 				logToLogstash( {
