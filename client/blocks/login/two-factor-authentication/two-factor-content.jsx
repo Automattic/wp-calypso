@@ -11,7 +11,6 @@ export default function TwoFactorContent( {
 	twoFactorNotificationSent,
 	rebootAfterLogin,
 	isWoo,
-	isPartnerSignup,
 } ) {
 	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
 		return (
@@ -19,7 +18,6 @@ export default function TwoFactorContent( {
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
-					showOrDivider={ isWoo && ! isPartnerSignup }
 					isWoo={ isWoo }
 				/>
 			</div>
@@ -40,7 +38,6 @@ export default function TwoFactorContent( {
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
-					showOrDivider={ isWoo && ! isPartnerSignup }
 				/>
 			</div>
 		);
