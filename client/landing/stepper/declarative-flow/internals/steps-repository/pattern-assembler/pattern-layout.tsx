@@ -20,12 +20,6 @@ type PatternLayoutProps = {
 	onContinueClick: () => void;
 };
 
-const spring = {
-	type: 'spring',
-	damping: 25,
-	stiffness: 120,
-};
-
 const PatternLayout = ( {
 	header,
 	sections,
@@ -41,6 +35,12 @@ const PatternLayout = ( {
 	onContinueClick,
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
+
+	const itemTransition = {
+		type: 'spring',
+		damping: 25,
+		stiffness: 120,
+	};
 
 	return (
 		<div className="pattern-layout">
@@ -74,8 +74,8 @@ const PatternLayout = ( {
 						return (
 							<motion.li
 								layout
-								transition={ spring }
-								key={ `${ index }-${ id }` }
+								transition={ itemTransition }
+								key={ `${ id }` }
 								className="pattern-layout__list-item pattern-layout__list-item--section"
 							>
 								<span className="pattern-layout__list-item-text" title={ name }>
@@ -93,18 +93,14 @@ const PatternLayout = ( {
 							</motion.li>
 						);
 					} ) }
-					<motion.li
-						layout
-						transition={ spring }
-						className="pattern-layout__list-item pattern-layout__list-item--section"
-					>
+					<li className="pattern-layout__list-item pattern-layout__list-item--section">
 						<Button onClick={ () => onSelectSection( null ) }>
 							<span className="pattern-layout__add-icon">+</span>{ ' ' }
 							{ sections?.length
 								? translate( 'Add another section' )
 								: translate( 'Add a first section' ) }
 						</Button>
-					</motion.li>
+					</li>
 					{ footer ? (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 							<span className="pattern-layout__list-item-text" title={ footer.name }>
