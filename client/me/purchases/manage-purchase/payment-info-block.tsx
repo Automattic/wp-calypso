@@ -35,6 +35,10 @@ export default function PaymentInfoBlock( {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
+	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+	}
+
 	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
@@ -44,10 +48,6 @@ export default function PaymentInfoBlock( {
 				</div>
 			</PaymentInfoBlockWrapper>
 		);
-	}
-
-	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
-		return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 	}
 
 	if (
