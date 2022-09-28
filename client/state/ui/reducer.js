@@ -16,6 +16,7 @@ import mediaModal from './media-modal/reducer';
 import postTypeList from './post-type-list/reducer';
 import preview from './preview/reducer';
 import section from './section/reducer';
+import transitioningToSiteCreation from './transitioning-to-site-creation/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -87,6 +88,7 @@ const reducer = combineReducers( {
 	section,
 	selectedSiteId,
 	siteSelectionInitialized,
+	transitioningToSiteCreation,
 } );
 
 export { reducer };
