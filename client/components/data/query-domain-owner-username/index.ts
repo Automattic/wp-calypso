@@ -46,7 +46,6 @@ export function useDomainOwnerUserName(
 	const ownerUser = teams.users?.find(
 		( user ) => ( user.linked_user_ID ?? user.ID ) === domainSubscription?.userId
 	);
-	const ownerUserName = ownerUser?.login ?? '';
 
-	return ownerUserName ?? '';
+	return ownerUser?.login ?? '';
 }

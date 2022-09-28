@@ -1,12 +1,11 @@
 import { SiteDetails } from '@automattic/data-stores';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
-import { useDispatch } from 'react-redux';
 import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './style.scss';
 
@@ -17,18 +16,17 @@ type EmailNonDomainOwnerMessageProps = {
 	usePromoCard: boolean;
 };
 
+const buildQueryString = ( parameters = {} ) =>
+	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
+
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
 	const { domain, selectedSite, source, usePromoCard } = props;
 
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
 	const isPrivacyAvailable = domain?.privacyAvailable;
-
-	const buildQueryString = ( parameters = {} ) =>
-		parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 	const buildLoginUrl = () => {
 		const redirectUrlParameter = emailManagementPurchaseNewEmailAccount(
@@ -55,16 +53,12 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			action: eventType,
 		};
 
-		dispatch( recordTracksEvent( `calypso_email_providers_nonowner_click`, properties ) );
-
-		if ( eventType === 'login' ) {
-			window.location.href = loginUrl;
-		}
+		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
 	};
 
 	const translateOptions = {
 		components: {
-			loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'login' ) } />,
+			loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'login' ) } rel="external" />,
 			reachOutLink: isPrivacyAvailable ? (
 				<a
 					href={ contactOwnerUrl }
