@@ -117,11 +117,7 @@ export const videopress: Flow = {
 					return navigate( 'chooseAPlan' );
 
 				case 'chooseAPlan': {
-					navigate( 'processing' );
-				}
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
+					return navigate( 'processing' );
 				}
 
 				case 'completingPurchase':

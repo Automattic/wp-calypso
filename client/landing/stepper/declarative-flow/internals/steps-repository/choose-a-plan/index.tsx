@@ -75,14 +75,6 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 			}
 		};
 
-		const enableUI = () => {
-			if ( isUIDisabled ) {
-				setIsUIDisabled( false );
-				updatePlanSelectionDisabledState();
-				updateSelectedPlanButton( '' );
-			}
-		};
-
 		const updateSelectedPlanButton = ( slug: string ) => {
 			if ( slug.length > 0 ) {
 				const parentSpan = document.getElementById( 'plan-item-' + slug );
@@ -152,7 +144,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				setProgress( 1.0 );
 
-				return window.location.replace(
+				window.location.replace(
 					`/checkout/${ newSite?.site_slug }/${ planObject?.periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
 				);
 			} );
