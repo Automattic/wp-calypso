@@ -129,7 +129,7 @@ export class PlansStep extends Component {
 			const signupVals = { cartItem };
 
 			// Buying an eCommerce plan defaults to the pub/twentytwentytwo theme (All remaining flows)
-			if ( isEcommerce( cartItem ) ) {
+			if ( cartItem && isEcommerce( cartItem ) ) {
 				signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
 			}
 
