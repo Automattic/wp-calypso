@@ -5,8 +5,8 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import wpcom from 'calypso/lib/wp';
+import { receiveProductsList } from 'calypso/state/products-list/actions';
 
 const PREFETCH_TIMEOUT = 500;
 const PREFETCH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
@@ -41,11 +41,17 @@ const prefetchPopularPlugins = ( queryClient, options ) =>
 const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );
 
-const prefetchProductList = ( store ) => {
-	const productsList = getProductsList( store.getState() );
-	if ( Object.values( productsList ).length === 0 ) {
-		return requestProductsList( { type: 'all' } )( store.dispatch );
-	}
+const prefetchProductList = ( queryClient, store ) => {
+	const query = { type: 'all' };
+
+	return queryClient
+		.fetchQuery( 'products-list', () => wpcom.req.get( '/products', query ) )
+		.then(
+			( productsList ) => {
+				return store.dispatch( receiveProductsList( productsList, query.type ) );
+			},
+			() => {}
+		);
 };
 
 const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
@@ -93,7 +99,7 @@ export async function fetchPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( store ),
+			prefetchProductList( queryClient, store ),
 			prefetchPaidPlugins( queryClient, options ),
 			prefetchPopularPlugins( queryClient, options ),
 			prefetchFeaturedPlugins( queryClient, options ),
