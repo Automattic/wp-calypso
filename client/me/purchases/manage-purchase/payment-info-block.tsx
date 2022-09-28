@@ -46,6 +46,10 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
+	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'None ' ) }</PaymentInfoBlockWrapper>;
+	}
+
 	if (
 		hasPaymentMethod( purchase ) &&
 		isPaidWithCreditCard( purchase ) &&

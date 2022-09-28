@@ -65,6 +65,17 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 		} );
 
+		describe( 'when the purchase is bought with credits and has no payment method', () => {
+			const purchase = {
+				isAutoRenewEnabled: false,
+			};
+
+			it( 'renders "None"', () => {
+				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+			} );
+		} );
+
 		describe( 'when the purchase a non-rechargable payment method', () => {
 			const purchase = {
 				expiryStatus,
