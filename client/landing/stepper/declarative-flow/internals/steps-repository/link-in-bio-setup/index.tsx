@@ -17,6 +17,12 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 
+	const linkInBioStrings = {
+		titlePlaceholder: __( 'My Link in Bio' ),
+		titleMissing: __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ),
+		taglinePlaceholder: __( 'Add a short biography here' ),
+	};
+
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
@@ -93,6 +99,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
+					translatedStrings={ linkInBioStrings }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

@@ -13,6 +13,11 @@ import AccentColorControl, { AccentColor } from './accent-color-control';
 
 import './style.scss';
 
+interface TranslatedStrings {
+	titlePlaceholder: string;
+	titleMissing: string;
+	taglinePlaceholder: string;
+}
 interface SetupFormProps {
 	site: SiteDetails | null;
 	siteTitle: string;
@@ -27,6 +32,7 @@ interface SetupFormProps {
 	setSelectedFile: Dispatch< SetStateAction< File | undefined > >;
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
 	handleSubmit: ( event: FormEvent< Element > ) => void;
+	translatedStrings?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
 }
@@ -45,6 +51,7 @@ const SetupForm = ( {
 	setSelectedFile,
 	setBase64Image,
 	handleSubmit,
+	translatedStrings,
 	isLoading = false,
 	isSubmitError = false,
 }: SetupFormProps ) => {
@@ -92,13 +99,16 @@ const SetupForm = ( {
 					id="setup-form-input-name"
 					value={ siteTitle }
 					onChange={ onChange }
-					placeholder={ __( 'My Site Name' ) }
+					placeholder={ translatedStrings?.titlePlaceholder || __( 'My Site Name' ) }
 					isError={ invalidSiteTitle }
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation
 						isError
-						text={ __( `Oops. Looks like your site doesn't have a name yet.` ) }
+						text={
+							translatedStrings?.titleMissing ||
+							__( `Oops. Looks like your site doesn't have a name yet.` )
+						}
 					/>
 				) }
 			</FormFieldset>
@@ -108,7 +118,9 @@ const SetupForm = ( {
 					name="setup-form-input-description"
 					id="setup-form-input-description"
 					value={ tagline }
-					placeholder={ __( 'Add a short description here' ) }
+					placeholder={
+						translatedStrings?.taglinePlaceholder || __( 'Add a short description here' )
+					}
 					enableAutoFocus={ false }
 					onChange={ onChange }
 				/>
