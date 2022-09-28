@@ -87,7 +87,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 
 	const showBundledBadge =
 		isEnabled( 'themes/plugin-bundling' ) &&
-		( design.taxonomies?.theme_software_set || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
+		( design.software_sets || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -131,14 +131,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			text = __( 'Free' );
 		}
 
+		let badge: React.ReactNode = null;
+		if ( showBundledBadge ) {
+			badge = <WooCommerceBundledBadge />;
+		} else if ( isPremium ) {
+			badge = (
+				<PremiumBadge
+					tooltipPosition="bottom right"
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+			);
+		}
+
 		return (
 			<div className="design-picker__pricing-description">
-				{ ! showBundledBadge && isPremium && (
-					<PremiumBadge
-						tooltipPosition="bottom right"
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					/>
-				) }
+				{ badge }
 				<span>{ text }</span>
 			</div>
 		);
@@ -174,8 +181,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 							</div>
 						) }
 					</span>
-
-					{ showBundledBadge && <WooCommerceBundledBadge /> }
 				</span>
 				{ getPricingDescription() }
 			</button>
