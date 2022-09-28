@@ -64,32 +64,16 @@ const sectionPatterns: Pattern[] = [
 		name: 'Call to Action',
 	},
 	{
-		id: 7156,
-		name: 'Media and text with image on the right',
-	},
-	{
-		id: 1053,
-		name: 'Contact',
-	},
-	{
-		id: 7135,
-		name: 'Three columns with images and text',
+		id: 1751,
+		name: 'Call to Action',
 	},
 	{
 		id: 7138,
 		name: 'Centered headline and text',
 	},
 	{
-		id: 5634,
-		name: 'Contact Info with Map',
-	},
-	{
 		id: 7140,
 		name: 'Left-aligned headline',
-	},
-	{
-		id: 7143,
-		name: 'Full-width image',
 	},
 	{
 		id: 7146,
@@ -100,6 +84,38 @@ const sectionPatterns: Pattern[] = [
 		name: 'Two column image grid',
 	},
 	{
+		id: 7135,
+		name: 'Three columns with images and text',
+	},
+	{
+		id: 737,
+		name: 'Logos',
+	},
+	{
+		id: 1213,
+		name: 'Quotes',
+	},
+	{
+		id: 5676,
+		name: 'Paragraph and properties',
+	},
+	{
+		id: 789,
+		name: 'Numbered List',
+	},
+	{
+		id: 7143,
+		name: 'Full-width image',
+	},
+	{
+		id: 7159,
+		name: 'Cover image with centered text and a button',
+	},
+	{
+		id: 7156,
+		name: 'Media and text with image on the right',
+	},
+	{
 		id: 7153,
 		name: 'Media and text with image on the left',
 	},
@@ -108,12 +124,24 @@ const sectionPatterns: Pattern[] = [
 		name: 'Cover image with left-aligned call to action',
 	},
 	{
-		id: 7159,
-		name: 'Cover image with centered text and a button',
-	},
-	{
 		id: 7161,
 		name: 'Two testimonials side by side',
+	},
+	{
+		id: 3255,
+		name: 'About me',
+	},
+	{
+		id: 1053,
+		name: 'Contact',
+	},
+	{
+		id: 194,
+		name: 'Contact',
+	},
+	{
+		id: 5634,
+		name: 'Contact Info with Map',
 	},
 ];
 
