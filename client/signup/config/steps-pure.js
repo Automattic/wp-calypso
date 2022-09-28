@@ -201,8 +201,8 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			optionalDependencies: [ 'emailItem' ],
+			providesDependencies: [ 'cartItem' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
