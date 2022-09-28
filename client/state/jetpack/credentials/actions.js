@@ -70,11 +70,3 @@ export const markCredentialsAsInvalid = ( siteId, role ) => ( {
 	siteId,
 	role,
 } );
-
-export const updateCredentialsTestResult = ( siteId, role, testResult ) => ( dispatch ) => {
-	if ( testResult ) {
-		dispatch( markCredentialsAsValid( siteId, role ) );
-	} else {
-		dispatch( markCredentialsAsInvalid( siteId, role ) );
-	}
-};

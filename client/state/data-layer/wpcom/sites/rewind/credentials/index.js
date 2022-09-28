@@ -4,7 +4,7 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	markCredentialsAsInvalid,
-	updateCredentialsTestResult,
+	markCredentialsAsValid,
 } from 'calypso/state/jetpack/credentials/actions';
 
 export const testCredentials = ( action ) =>
@@ -21,8 +21,13 @@ export const testCredentials = ( action ) =>
 		action
 	);
 
-export const testCredentialsSucceeded = ( { siteId, role }, { ok: testResult } ) =>
-	updateCredentialsTestResult( siteId, role, testResult );
+export const testCredentialsSucceeded = ( { siteId, role }, { ok: testResult } ) => {
+	if ( ! testResult ) {
+		return markCredentialsAsInvalid( siteId, role );
+	}
+
+	return markCredentialsAsValid( siteId, role );
+};
 
 export const testCredentialsFailed = ( { siteId, role } ) =>
 	markCredentialsAsInvalid( siteId, role );
