@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SiteScreenshot } from '../site-screenshot/';
 import getPlanFeatures from './get-plan-features';
 
@@ -30,23 +31,6 @@ export const RemovePlanDialog = ( {
 	const siteName = site.name ?? '';
 
 	/**
-	 * Dialog buttons
-	 */
-	const buttons = [
-		{
-			action: 'remove',
-			label: translate( 'Cancel my plan' ),
-			onClick: removePlan,
-		},
-		{
-			action: 'cancel',
-			label: translate( 'Keep my plan' ),
-			onClick: closeDialog,
-			isPrimary: true,
-		},
-	];
-
-	/**
 	 * Istantiate site's plan variables.
 	 */
 	const productSlug = site.plan?.product_slug;
@@ -60,6 +44,40 @@ export const RemovePlanDialog = ( {
 		hasDomain && wpcomSiteURL
 			? translate( 'If you cancel your plan, once it expires, you will lose:' )
 			: translate( 'If you cancel your plan, you will lose:' );
+
+	/**
+	 * Click events, buttons tracking and action.
+	 */
+	const clickRemovePlan = () => {
+		recordTracksEvent( 'calypso_remove_purchase_cancellation_modal_remove_plan_click', {
+			product_slug: productSlug,
+		} );
+		removePlan();
+	};
+
+	const clickCloseDialog = () => {
+		recordTracksEvent( 'calypso_remove_purchase_cancellation_modal_cancel_click', {
+			product_slug: productSlug,
+		} );
+		closeDialog();
+	};
+
+	/**
+	 * Dialog buttons
+	 */
+	const buttons = [
+		{
+			action: 'remove',
+			label: translate( 'Cancel my plan' ),
+			onClick: clickRemovePlan,
+		},
+		{
+			action: 'cancel',
+			label: translate( 'Keep my plan' ),
+			onClick: clickCloseDialog,
+			isPrimary: true,
+		},
+	];
 
 	/**
 	 * Return the list of features that the user will lose by canceling their plan.
