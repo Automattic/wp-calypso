@@ -39,6 +39,7 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	.form-label {
+		color: var(--studio-gray-100);
 		margin-bottom: 8px;
 	}
 
@@ -70,6 +71,10 @@ $font-family: "SF Pro Text", $sans;
 
 		input {
 			height: 44px;
+		}
+
+		.components-form-file-upload .add {
+			color: var(--studio-gray-100);
 		}
 	}
 
