@@ -1,4 +1,6 @@
 .eligibility-warnings {
+	overflow-wrap: anywhere;
+	background: #fff;
 	max-width: 650px;
 	margin-top: 16px;
 	font-size: $font-body-small;
@@ -12,6 +14,10 @@
 		align-items: center;
 		display: flex;
 		gap: 5px;
+	}
+
+	.card {
+		box-shadow: none;
 	}
 }
 
