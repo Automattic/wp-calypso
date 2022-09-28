@@ -26,9 +26,9 @@ export function useDomainOwnerUserName(
 
 	const selectedSubscriptionId = domain?.subscriptionId ?? '0';
 
-	const domainSubscription = purchases.filter(
+	const domainSubscription = purchases.find(
 		( purchase ) => purchase.id === parseInt( selectedSubscriptionId )
-	)[ 0 ];
+	);
 
 	const { data, isLoading } = useUsersQuery(
 		selectedSite?.ID,
@@ -43,10 +43,10 @@ export function useDomainOwnerUserName(
 	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
-	const ownerUser = teams.users?.filter(
+	const ownerUser = teams.users?.find(
 		( user ) => ( user.linked_user_ID ?? user.ID ) === domainSubscription?.userId
 	);
-	const ownerUserName = ownerUser[ 0 ]?.login ?? '';
+	const ownerUserName = ownerUser?.login ?? '';
 
 	return ownerUserName ?? '';
 }

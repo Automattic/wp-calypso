@@ -1,5 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
+import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useDispatch } from 'react-redux';
 import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
@@ -13,8 +13,8 @@ import './style.scss';
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
-	usePromoCard: boolean;
 	source: 'email-comparison' | 'email-management';
+	usePromoCard: boolean;
 };
 
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
@@ -31,13 +31,11 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 	const buildLoginUrl = () => {
-		const redirectUrlParameter = encodeURIComponent(
-			emailManagementPurchaseNewEmailAccount(
-				selectedSite?.slug ?? '',
-				domain?.name ?? '',
-				null,
-				'login-redirect'
-			)
+		const redirectUrlParameter = emailManagementPurchaseNewEmailAccount(
+			selectedSite?.slug ?? '',
+			domain?.name ?? '',
+			null,
+			'login-redirect'
 		);
 
 		return `/log-in/${ buildQueryString( {
@@ -52,37 +50,25 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	const loginUrl = buildLoginUrl();
 
-	const onClickLink = ( eventType: 'owner_contact' | 'user_login' | 'contact_support' ) => {
+	const onClickLink = ( eventType: 'contact' | 'login' | 'support' ) => {
 		const properties = {
-			owner_login: ownerUserName,
+			action: eventType,
 		};
 
-		if ( eventType === 'owner_contact' ) {
-			dispatch( recordTracksEvent( `calypso_email_providers_owner_contact_click`, properties ) );
+		dispatch( recordTracksEvent( `calypso_email_providers_nonowner_click`, properties ) );
 
-			return;
-		} else if ( eventType === 'contact_support' ) {
-			dispatch( recordTracksEvent( `calypso_email_providers_contact_support_click`, properties ) );
-
-			return;
+		if ( eventType === 'login' ) {
+			window.location.href = loginUrl;
 		}
-
-		dispatch( recordTracksEvent( `calypso_email_providers_user_login_click`, properties ) );
 	};
 
 	const translateOptions = {
 		components: {
-			loginLink: (
-				<a
-					rel="noopener noreferrer"
-					href={ loginUrl }
-					onClick={ () => onClickLink( 'user_login' ) }
-				/>
-			),
+			loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'login' ) } />,
 			reachOutLink: isPrivacyAvailable ? (
 				<a
 					href={ contactOwnerUrl }
-					onClick={ () => onClickLink( 'owner_contact' ) }
+					onClick={ () => onClickLink( 'contact' ) }
 					rel="noopener noreferrer"
 					target="_blank"
 				/>
@@ -92,7 +78,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			contactSupportLink: (
 				<a
 					href="https://wordpress.com/help/contact"
-					onClick={ () => onClickLink( 'contact_support' ) }
+					onClick={ () => onClickLink( 'support' ) }
 					rel="noopener noreferrer"
 					target="_blank"
 				/>
@@ -104,36 +90,51 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		},
 	};
 
-	function getReason() {
-		switch ( source ) {
-			case 'email-comparison':
-				return translate(
-					'Email service can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
-						'who is the owner of %(selectedDomainName)s. ' +
-						'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
-						'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}',
-					translateOptions
-				);
-			case 'email-management':
-				return translate(
-					'Additional mailboxes can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
-						'who is the owner of %(selectedDomainName)s. ' +
-						'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
-						'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}',
-					translateOptions
-				);
-			default:
-				return null;
+	let reasonText: TranslateResult | null = null;
+
+	if ( source === 'email-comparison' ) {
+		if ( ownerUserName ) {
+			reasonText = translate(
+				'Email service can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
+					'who is the owner of %(selectedDomainName)s. ' +
+					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
+					'Otherwise, please {{reachOutLink}}reach out to %(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				translateOptions
+			);
+		} else {
+			reasonText = translate(
+				'Email service can only be purchased by the owner of %(selectedDomainName)s. ' +
+					'If you have access to that account, please log in with the account to make a purchase. ' +
+					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				translateOptions
+			);
+		}
+	} else if ( source === 'email-management' ) {
+		if ( ownerUserName ) {
+			reasonText = translate(
+				'Additional mailboxes can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
+					'who is the owner of %(selectedDomainName)s. ' +
+					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
+					'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				translateOptions
+			);
+		} else {
+			reasonText = translate(
+				'Additional mailboxes can only be purchased by the owner of %(selectedDomainName)s. ' +
+					'If you have access to that account, please log in with the account to make a purchase. ' +
+					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+				translateOptions
+			);
 		}
 	}
 
 	if ( usePromoCard ) {
 		return (
 			<PromoCard className="email-non-domain-owner-message__non-owner-notice">
-				<p>{ getReason() }</p>
+				<p>{ reasonText }</p>
 			</PromoCard>
 		);
 	}
 
-	return <p className="email-non-domain-owner-message__non-owner-message">{ getReason() }</p>;
+	return <p className="email-non-domain-owner-message__non-owner-message">{ reasonText }</p>;
 };
