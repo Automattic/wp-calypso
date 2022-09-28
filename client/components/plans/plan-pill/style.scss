@@ -27,3 +27,13 @@
 	border-radius: 10px; /* stylelint-disable-line scales/radii */
 	background-color: var(--color-neutral-100);
 }
+
+.plan-pill.is-in-marketplace {
+	padding: 4px 10px;
+	background-color: var(--color-neutral-100);
+}
+
+.plan-pill.is-current-plan {
+	background-color: var(--studio-gray-5);
+	color: var(--studio-gray-80);
+}

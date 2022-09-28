@@ -11,7 +11,8 @@ $plan-features-sidebar-width: 272px;
 	// need to be moved to the corresponding selectors
 
 	// To be moved to line 651 approximately
-	.plan-features--signup {
+	.plan-features--signup,
+	.plan-features--marketplace {
 		.plan-features__table {
 			@media ( max-width: 1040px ) {
 				display: none;
@@ -28,9 +29,9 @@ $plan-features-sidebar-width: 272px;
 				.plan-features__summary,
 				.plan-features__description {
 					padding: 16px 33px;
-
 				}
-				.plan-features--signup .plan-features__pricing {
+				.plan-features--signup .plan-features__pricing,
+				.plan-features--marketplace .plan-features__pricing {
 					padding: 0 7px;
 				}
 			}
@@ -103,6 +104,20 @@ $plan-features-sidebar-width: 272px;
 
 			.plan-features__mobile-plan {
 				max-width: 408px;
+			}
+		}
+	}
+
+	.plan-features--marketplace {
+		.plan-features__mobile {
+			.plan-features__header {
+				display: block;
+				position: relative;
+				text-align: left;
+				box-sizing: border-box;
+				border-top: solid 1px;
+				border-radius: 2px 2px 0 0;
+				padding: 20px;
 			}
 		}
 	}
@@ -737,7 +752,8 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	overflow-x: auto;
 }
 
-.plan-features--signup {
+.plan-features--signup,
+.plan-features--marketplace {
 	margin: 0 auto;
 
 	.signup__steps & {

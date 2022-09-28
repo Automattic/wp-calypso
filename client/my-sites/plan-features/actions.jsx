@@ -15,15 +15,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const noop = () => {};
-const PlanFeaturesActions = ( props ) => {
-	return (
-		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -46,6 +37,7 @@ const PlanFeaturesActionsButton = ( {
 	selectedPlan,
 	recordTracksEvent: trackTracksEvent,
 	translate,
+	isInMarketplace,
 	...props
 } ) => {
 	const classes = classNames(
@@ -71,6 +63,21 @@ const PlanFeaturesActionsButton = ( {
 
 		onUpgradeClick();
 	};
+
+	if ( isInMarketplace ) {
+		if ( current ) {
+			return (
+				<Button className={ classes } disabled>
+					{ translate( 'Your current plan' ) }
+				</Button>
+			);
+		}
+		return (
+			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+				{ translate( 'Select' ) }
+			</Button>
+		);
+	}
 
 	if ( current && ! isInSignup && planType !== PLAN_P2_FREE ) {
 		return (
@@ -168,6 +175,16 @@ const PlanFeaturesActionsButton = ( {
 	return null;
 };
 
+const PlanFeaturesActions = ( props ) => {
+	return (
+		<div className="plan-features__actions">
+			<div className="plan-features__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
+};
+
 PlanFeaturesActions.propTypes = {
 	availableForPurchase: PropTypes.bool,
 	buttonText: PropTypes.string,
@@ -184,6 +201,7 @@ PlanFeaturesActions.propTypes = {
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
 	selectedPlan: PropTypes.string,
+	isInMarketplace: PropTypes.bool,
 };
 
 export default connect(
