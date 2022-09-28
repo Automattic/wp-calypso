@@ -20,9 +20,17 @@
 	.eligibility-warnings {
 		margin: 0;
 
+		.eligibility-warnings__header {
+			margin-top: 32px; // 16px from card + 32 = 48 gap from top
+		}
+
 		.card {
 			box-shadow: none;
+
+			padding-left: 48px;
+			padding-right: 48px;
 		}
+
 		.card:last-of-type.is-compact {
 			border-top: 1px solid var(--color-border-shadow);
 		}
