@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -36,12 +36,17 @@ const PatternLayout = ( {
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
-	const itemTransition = {
-		type: 'spring',
-		damping: 25,
-		stiffness: 120,
+	const variantB = {
+		initial: {
+			opacity: 0,
+		},
+		animate: {
+			opacity: 1,
+		},
+		exit: {
+			opacity: 0,
+		},
 	};
-
 	return (
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
@@ -72,25 +77,27 @@ const PatternLayout = ( {
 					{ sections?.map( ( section, index ) => {
 						const { id, name } = section;
 						return (
-							<motion.li
-								layout
-								transition={ itemTransition }
-								key={ `${ id }` }
-								className="pattern-layout__list-item pattern-layout__list-item--section"
-							>
-								<span className="pattern-layout__list-item-text" title={ name }>
-									{ name }
-								</span>
-								<PatternActionBar
-									onReplace={ () => onSelectSection( index ) }
-									onDelete={ () => onDeleteSection( index ) }
-									onMoveUp={ () => onMoveUpSection( index ) }
-									onMoveDown={ () => onMoveDownSection( index ) }
-									enableMoving={ true }
-									disableMoveUp={ index === 0 }
-									disableMoveDown={ sections?.length === index + 1 }
-								/>
-							</motion.li>
+							<AnimatePresence>
+								<motion.li
+									variants={ variantB }
+									layout
+									key={ `${ id }` }
+									className="pattern-layout__list-item pattern-layout__list-item--section"
+								>
+									<span className="pattern-layout__list-item-text" title={ name }>
+										{ name }
+									</span>
+									<PatternActionBar
+										onReplace={ () => onSelectSection( index ) }
+										onDelete={ () => onDeleteSection( index ) }
+										onMoveUp={ () => onMoveUpSection( index ) }
+										onMoveDown={ () => onMoveDownSection( index ) }
+										enableMoving={ true }
+										disableMoveUp={ index === 0 }
+										disableMoveDown={ sections?.length === index + 1 }
+									/>
+								</motion.li>
+							</AnimatePresence>
 						);
 					} ) }
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
