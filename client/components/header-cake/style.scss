@@ -11,13 +11,11 @@
 
 .header-cake.card {
 	display: flex;
-	height:0;
 	align-items: center;
 	font-size: $font-body-small;
 	line-height: 18px;
 	padding-top: 11px;
 	padding-bottom: 11px;
-	margin-bottom:0;
 
 	&::after {
 		display: none;

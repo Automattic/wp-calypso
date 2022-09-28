@@ -571,3 +571,36 @@
 	margin-bottom: 16px;
 	min-height: 200px;
 }
+
+.post-edit-button {
+	&:hover,
+	&:focus,
+	&:active {
+		.gridicon {
+			fill: var(--color-link);
+		}
+
+		.post-edit-button__label {
+			color: var(--color-link);
+		}
+	}
+}
+
+.post-edit-button__label {
+	display: none;
+}
+
+.reader-post-actions__item {
+	&:hover,
+	button.is-active {
+		svg.reader-external path {
+			fill: var(--color-link);
+		}
+
+		svg.reader-comment path,
+		svg.reader-star path,
+		svg.reader-share path {
+			stroke: var(--color-link);
+		}
+	}
+}
