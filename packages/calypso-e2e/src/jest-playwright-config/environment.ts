@@ -147,8 +147,13 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 		// Create folders for test artifacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
+		const date = new Date()
+			.toISOString()
+			.split( 'Z' )[ 0 ]
+			.replace( /[.:+]/g, '-' )
+			.replace( 'T', '_' );
 		this.testArtifactsPath = await fs.mkdtemp(
-			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
+			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
 		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
@@ -271,6 +276,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
+				// Print path to captured artifacts for faster triaging.
+				console.log( `Artifacts for failed test "${ event.test.name }":` );
+				console.log( this.testArtifactsPath );
 				break;
 			}
 			case 'test_done': {
