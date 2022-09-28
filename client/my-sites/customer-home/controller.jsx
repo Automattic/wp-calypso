@@ -31,11 +31,16 @@ export async function maybeRedirect( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
 
+	// We need the latest site info to determine if a user should be redirected to Launchpad.
+	// As a result, we can't use locally cached data, which might think that Launchpad is
+	// still enabled when, in reality, the final tasks have been completed and everything is
+	// disabled. Because of this, we refetch site information and limit traffic by scoping down
+	// requests to launchpad enabled sites.
+	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
 	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) {
 		await context.store.dispatch( requestSite( siteId ) );
 	}
 
-	// TODO: Write explanation for refetching launchpad site options
 	const refetchedOptions = getSiteOptions( context.store.getState(), siteId );
 	const shouldRedirectToLaunchpad = refetchedOptions?.launchpad_screen === 'full';
 
