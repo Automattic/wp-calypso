@@ -142,6 +142,7 @@ export default function CTAButton( {
 					currentContext={ 'plugin-details' }
 					title={ translate( 'Upgrade your plan to install plugins' ) }
 					primaryText={
+						eligibilityHolds &&
 						eligibilityHolds.indexOf( eligibilityHoldsConstants.NO_BUSINESS_PLAN ) !== -1
 							? translate(
 									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
