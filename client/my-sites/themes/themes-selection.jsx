@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { compact, property, snakeCase } from 'lodash';
+import { compact, isEqual, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
@@ -280,8 +280,23 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
+	componentDidUpdate( nextProps ) {
+		if (
+			nextProps.search !== this.props.search ||
+			nextProps.tier !== this.props.tier ||
+			! isEqual( nextProps.filter, this.props.filter ) ||
+			! isEqual( nextProps.vertical, this.props.vertical )
+		) {
+			this.resetPage();
+		}
+	}
+
 	incrementPage = () => {
 		this.setState( ( prevState ) => ( { page: prevState.page + 1 } ) );
+	};
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
 	};
 
 	render() {
@@ -295,21 +310,4 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 }
 
-/**
- * Key component instances by search, tier, filter and vertical
- * to ensure that as any of them is changed, pagination is reset.
- */
-function KeyedThemesSelectionWithPage( { search, tier, filter, vertical, ...restProps } ) {
-	return (
-		<ThemesSelectionWithPage
-			key={ `themes-selection-${ search }-${ tier }-${ filter }-${ vertical }` }
-			search={ search }
-			tier={ tier }
-			filter={ filter }
-			vertical={ vertical }
-			{ ...restProps }
-		/>
-	);
-}
-
-export default KeyedThemesSelectionWithPage;
+export default ThemesSelectionWithPage;
