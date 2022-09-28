@@ -865,13 +865,17 @@
 		}
 		.reader-featured-image {
 			border-radius: 0;
-			height: 100%;
+			height: 300px;
 			max-height: 300px;
-			overflow: hidden;
+	    
 		}
 		.reader-featured-image img {
 			border-radius: 0;
+			height: 100%;
 			max-width: none;
+	    object-fit: cover;
+	    overflow: hidden;
+	    width: 100%;
 		}
 		.reader-post-card__featured-images-item:first-child {
 			.reader-featured-image, img {
