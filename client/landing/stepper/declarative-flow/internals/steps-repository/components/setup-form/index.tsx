@@ -50,7 +50,7 @@ const SetupForm = ( {
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
-
+	console.log( 'new form' );
 	const imageFileToBase64 = ( file: Blob ) => {
 		const reader = new FileReader();
 		reader.readAsDataURL( file );

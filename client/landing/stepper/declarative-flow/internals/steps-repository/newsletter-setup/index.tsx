@@ -7,8 +7,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
-import SetupForm from '../shared-components/setup-form';
-import { AccentColor } from '../shared-components/setup-form/accent-color-control';
+import SetupForm from '../components/setup-form';
+import { AccentColor } from '../components/setup-form/accent-color-control';
 import type { Step } from '../../types';
 import './style.scss';
 
