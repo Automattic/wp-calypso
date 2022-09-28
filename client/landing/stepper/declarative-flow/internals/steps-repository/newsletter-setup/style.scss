@@ -50,7 +50,7 @@ $border-radius: 4px;
 		}
 
 		.form-label {
-			color: var(--studio-black);
+			color: var(--studio-gray-100);
 			margin-bottom: 8px;
 		}
 
@@ -93,6 +93,10 @@ $border-radius: 4px;
 
 		input {
 			height: 44px;
+		}
+
+		.components-form-file-upload .add {
+			color: var(--studio-gray-100);
 		}
 
 		.newsletter-setup__contrast-warning {
