@@ -12,7 +12,7 @@ interface Props {
 
 const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 	className,
-	tooltipPosition = 'bottom left',
+	tooltipPosition = 'bottom right',
 } ) => {
 	const { __ } = useI18n();
 
