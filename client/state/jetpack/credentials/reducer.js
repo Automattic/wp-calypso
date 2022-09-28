@@ -69,13 +69,22 @@ export const updateRequestStatus = keyedReducer( 'siteId', ( state, { type } ) =
 export const testRequestStatus = keyedReducer( 'siteId', ( state, { type, role } ) => {
 	switch ( type ) {
 		case JETPACK_CREDENTIALS_TEST:
-			return { [ role ]: 'pending' };
+			return {
+				...state,
+				[ role ]: 'pending',
+			};
 
 		case JETPACK_CREDENTIALS_TEST_VALID:
-			return { [ role ]: 'valid' };
+			return {
+				...state,
+				[ role ]: 'valid',
+			};
 
 		case JETPACK_CREDENTIALS_TEST_INVALID:
-			return { [ role ]: 'invalid' };
+			return {
+				...state,
+				[ role ]: 'invalid',
+			};
 	}
 
 	return state;

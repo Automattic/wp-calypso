@@ -7,8 +7,8 @@ describe( 'reducer', () => {
 			expect( testRequestStatus( undefined, {} ) ).toEqual( {} );
 		} );
 
-		test( 'state should be valid if the credentials are okay', () => {
-			const stateIn = undefined;
+		test( 'status should be valid if the credentials are okay', () => {
+			const stateIn = {};
 			const action = markCredentialsAsValid( 123000, 'main' );
 
 			const stateOut = testRequestStatus( stateIn, action );
@@ -19,8 +19,8 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'state should be invalid if the credentials are not okay', () => {
-			const stateIn = undefined;
+		test( 'status should be invalid if the credentials are not okay', () => {
+			const stateIn = {};
 			const action = markCredentialsAsInvalid( 234000, 'main' );
 
 			const stateOut = testRequestStatus( stateIn, action );
@@ -31,14 +31,67 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		test( 'state should be pending if we started the credentials test process', () => {
-			const stateIn = undefined;
+		test( 'status should be pending if we started the credentials test process', () => {
+			const stateIn = {};
 			const action = testCredentials( 345000, 'main' );
 
 			const stateOut = testRequestStatus( stateIn, action );
 			expect( stateOut ).toEqual( {
 				345000: {
 					main: 'pending',
+				},
+			} );
+		} );
+
+		test( 'should keep existing roles statuses after requesting a new test', () => {
+			const stateIn = {
+				456000: {
+					main: 'valid',
+				},
+			};
+			const action = testCredentials( 456000, 'alternate' );
+
+			const stateOut = testRequestStatus( stateIn, action );
+			expect( stateOut ).toEqual( {
+				456000: {
+					main: 'valid',
+					alternate: 'pending',
+				},
+			} );
+		} );
+
+		test( 'should keep existing roles statuses after marking a role as valid', () => {
+			const stateIn = {
+				567000: {
+					main: 'valid',
+					alternate: 'pending',
+				},
+			};
+			const action = markCredentialsAsValid( 567000, 'alternate' );
+
+			const stateOut = testRequestStatus( stateIn, action );
+			expect( stateOut ).toEqual( {
+				567000: {
+					main: 'valid',
+					alternate: 'valid',
+				},
+			} );
+		} );
+
+		test( 'should keep existing roles statuses after marking a role as invalid', () => {
+			const stateIn = {
+				678000: {
+					main: 'valid',
+					alternate: 'pending',
+				},
+			};
+			const action = markCredentialsAsInvalid( 678000, 'alternate' );
+
+			const stateOut = testRequestStatus( stateIn, action );
+			expect( stateOut ).toEqual( {
+				678000: {
+					main: 'valid',
+					alternate: 'invalid',
 				},
 			} );
 		} );
