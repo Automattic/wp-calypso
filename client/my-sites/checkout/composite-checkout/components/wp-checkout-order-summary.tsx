@@ -187,7 +187,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		}
 	);
 
-	if ( planBundleRefundPolicy ) {
+	if ( refundPolicies.length === 1 && planBundleRefundPolicy ) {
 		const refundWindow = Math.max( ...getRefundWindows( [ planBundleRefundPolicy ] ) );
 
 		text = translate(
