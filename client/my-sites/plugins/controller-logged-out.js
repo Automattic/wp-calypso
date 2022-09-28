@@ -1,10 +1,15 @@
+import config from '@automattic/calypso-config';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
 	getWPCOMPluginsQueryParams,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+
+const PREFETCH_TIMEOUT = 500;
+const PREFECTH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
 
 function getQueryOptions( { path, lang } ) {
 	const props = {
@@ -43,6 +48,35 @@ const prefetchProductList = ( store ) => {
 	}
 };
 
+const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
+	let prefetcfhFulfilled = false;
+	return Promise.race( [
+		Promise.all( prefetchPromises ).then( () => ( prefetcfhFulfilled = true ) ),
+		new Promise( ( _, reject ) =>
+			setTimeout( () => ! prefetcfhFulfilled && reject( PREFECTH_TIMEOUT_ERROR ), timeout )
+		),
+	] ).catch( ( err ) => {
+		if ( err === PREFECTH_TIMEOUT_ERROR ) {
+			if ( context.res?.req?.useragent?.isBot ) {
+				context.res.status( 504 );
+			}
+			context.skipMarkupCache = true;
+
+			if ( config.isEnabled( 'ssr/log-prefecth-timeout' ) ) {
+				logToLogstash( {
+					feature: 'calypso_ssr',
+					message: 'plugins prefetch timeout',
+					extra: {
+						key,
+						'user-agent': context.res.req.useragent.source,
+						path: context.path,
+					},
+				} );
+			}
+		}
+	} );
+};
+
 export async function fetchPlugins( context, next ) {
 	const { queryClient, store } = context;
 
@@ -54,12 +88,16 @@ export async function fetchPlugins( context, next ) {
 		...getQueryOptions( context ),
 	};
 
-	await Promise.all( [
-		prefetchProductList( store ),
-		prefetchPaidPlugins( queryClient, options ),
-		prefetchPopularPlugins( queryClient, options ),
-		prefetchFeaturedPlugins( queryClient, options ),
-	] );
+	await prefetchTimebox(
+		[
+			prefetchProductList( queryClient, store ),
+			prefetchPaidPlugins( queryClient, options ),
+			prefetchPopularPlugins( queryClient, options ),
+			prefetchFeaturedPlugins( queryClient, options ),
+		],
+		context,
+		'fetchPlugins'
+	);
 
 	next();
 }
