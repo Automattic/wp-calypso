@@ -51,6 +51,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import NoPermissionsError from './no-permissions-error';
+import UpdatePlugins from './plugin-management-v2/update-plugins';
 import PluginsList from './plugins-list';
 
 import './style.scss';
@@ -333,8 +334,6 @@ export class PluginsMain extends Component {
 			<PluginsList
 				header={ this.props.translate( 'Installed Plugins' ) }
 				plugins={ currentPlugins }
-				pluginUpdateCount={ this.props.pluginUpdateCount }
-				pluginsWithUpdates={ this.props.pluginsWithUpdates }
 				isPlaceholder={ this.shouldShowPluginListPlaceholders() }
 				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
@@ -354,12 +353,8 @@ export class PluginsMain extends Component {
 		const browserUrl = '/plugins' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
 		return (
-			<Button
-				className="plugins__button"
-				href={ browserUrl }
-				onClick={ this.handleAddPluginButtonClick }
-			>
-				<span className="plugins__button-text">{ translate( 'Browse plugins' ) }</span>
+			<Button href={ browserUrl } onClick={ this.handleAddPluginButtonClick }>
+				{ translate( 'Browse plugins' ) }
 			</Button>
 		);
 	}
@@ -369,7 +364,7 @@ export class PluginsMain extends Component {
 		this.props.recordGoogleEvent( 'Plugins', 'Clicked Plugin Upload Link' );
 	};
 
-	renderUploadPluginButton( isMobile ) {
+	renderUploadPluginButton() {
 		const { selectedSiteSlug, translate, hasUploadPlugins } = this.props;
 		const uploadUrl = '/plugins/upload' + ( selectedSiteSlug ? '/' + selectedSiteSlug : '' );
 
@@ -378,13 +373,9 @@ export class PluginsMain extends Component {
 		}
 
 		return (
-			<Button
-				className="plugins__button"
-				href={ uploadUrl }
-				onClick={ this.handleUploadPluginButtonClick }
-			>
+			<Button href={ uploadUrl } onClick={ this.handleUploadPluginButtonClick }>
 				<Icon className="plugins__button-icon" icon={ upload } width={ 18 } height={ 18 } />
-				{ ! isMobile && <span className="plugins__button-text">{ translate( 'Upload' ) }</span> }
+				{ translate( 'Upload' ) }
 			</Button>
 		);
 	}
@@ -434,7 +425,7 @@ export class PluginsMain extends Component {
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
 
-		const { isJetpackCloud, selectedSite } = this.props;
+		const { isJetpackCloud, selectedSite, currentPlugins } = this.props;
 
 		const pageTitle = isJetpackCloud
 			? this.props.translate( 'Plugins', { textOnly: true } )
@@ -457,14 +448,10 @@ export class PluginsMain extends Component {
 				{ this.renderPageViewTracking() }
 				{ ! isJetpackCloud && (
 					<FixedNavigationHeader
-						className="plugins__page-heading"
+						className="plugin__header"
+						compactBreadcrumb={ false }
 						navigationItems={ this.getNavigationItems() }
-					>
-						<div className="plugins__main-buttons">
-							{ this.renderAddPluginButton() }
-							{ this.renderUploadPluginButton( this.state.isMobile ) }
-						</div>
-					</FixedNavigationHeader>
+					/>
 				) }
 				<div
 					className={ classNames( 'plugins__top-container', {
@@ -473,16 +460,25 @@ export class PluginsMain extends Component {
 				>
 					<div className="plugins__content-wrapper">
 						<div className="plugins__page-title-container">
-							<h2 className="plugins__page-title">{ pageTitle }</h2>
-							<div className="plugins__page-subtitle">
-								{ this.props.selectedSite
-									? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
-											args: {
-												selectedSite: this.props.selectedSite.domain,
-											},
-									  } )
-									: this.props.translate( 'Manage plugins installed on all sites' ) }
+							<div className="plugins__header-left-content">
+								<h2 className="plugins__page-title">{ pageTitle }</h2>
+								<div className="plugins__page-subtitle">
+									{ this.props.selectedSite
+										? this.props.translate( 'Manage all plugins installed on %(selectedSite)s', {
+												args: {
+													selectedSite: this.props.selectedSite.domain,
+												},
+										  } )
+										: this.props.translate( 'Manage plugins installed on all sites' ) }
+								</div>
 							</div>
+							{ ! isJetpackCloud && (
+								<div className="plugins__header-right-content">
+									{ this.renderAddPluginButton() }
+									{ this.renderUploadPluginButton() }
+									<UpdatePlugins isWpCom plugins={ currentPlugins } />
+								</div>
+							) }
 						</div>
 
 						<div className="plugins__main plugins__main-updated">
