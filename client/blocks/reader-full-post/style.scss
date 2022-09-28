@@ -606,3 +606,29 @@
 		}
 	}
 }
+
+.reader-full-post__content .reader-post-actions__item {
+	.comment-button__label-count {
+		top: 0;
+	}
+	.like-button__label-count {
+		margin-left: 4px;
+		top: 0;
+	}
+	.reader-share {
+		position: relative;
+		top: -1px;
+	}
+	.reader-share {
+		margin-right: 0;
+	}
+}
+
+.reader-full-post__content .reader-full-post__sidebar {
+	.comment-button__label-count {
+		top: 2px;
+	}
+	.like-button__label-count {
+		top: 2px;
+	}
+}
