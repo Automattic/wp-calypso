@@ -1,5 +1,5 @@
 /**
- * Returns true if a domain is a managed WPCOM subdomain such as fine.art.blog, cool.tech.blog or
+ * Checks wheter a domain is a managed WPCOM subdomain such as fine.art.blog, cool.tech.blog or
  * mylinkinbio.w.link.
  *
  * We need to update this function every time a new free managed subdomain is added to WPCOM.
