@@ -18,9 +18,10 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -146,6 +147,9 @@ export const HelpCenterContactForm = () => {
 	const userId = useSelector( getCurrentUserId );
 	const { data: userSites } = useUserSites( userId );
 	const userWithNoSites = userSites?.sites.length === 0;
+	const queryClient = useQueryClient();
+	const email = useSelector( getCurrentUserEmail );
+
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -282,6 +286,12 @@ export const HelpCenterContactForm = () => {
 							} );
 							history.push( '/success' );
 							resetStore();
+							// reset support-history cache
+							setTimeout( () => {
+								// wait 30 seconds until support-history endpoint actually updates
+								// yup, it takes that long (tried 5, and 10)
+								queryClient.invalidateQueries( [ `activeSupportTickets`, email ] );
+							}, 30000 );
 						} )
 						.catch( () => {
 							setHasSubmittingError( true );
