@@ -26,8 +26,6 @@ const EducationEarn = ( { siteSlug } ) => {
 			] }
 			modalLinks={ [
 				{
-					calypsoLink: true,
-					url: `/earn/${ siteSlug }`,
 					onClick: openModal,
 					text: translate( 'Learn more' ),
 				},
