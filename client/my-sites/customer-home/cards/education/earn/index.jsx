@@ -9,10 +9,7 @@ export const EDUCATION_EARN = 'home-education-earn';
 
 const EducationEarn = ( { siteSlug } ) => {
 	const translate = useTranslate();
-	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'myHomeCoursePaymentsModal',
-		COURSE_SLUGS.PAYMENTS_FEATURES
-	);
+	const { openModal } = useRouteModal( 'coursePaymentsModal', COURSE_SLUGS.PAYMENTS_FEATURES );
 
 	return (
 		<EducationalContent
@@ -32,8 +29,6 @@ const EducationEarn = ( { siteSlug } ) => {
 					calypsoLink: true,
 					url: `/earn/${ siteSlug }`,
 					onClick: openModal,
-					isOpen: isModalOpen,
-					onClose: closeModal,
 					text: translate( 'Learn more' ),
 				},
 			] }

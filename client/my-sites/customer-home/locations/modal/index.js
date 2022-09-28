@@ -4,8 +4,8 @@ import { useRouteModal } from 'calypso/lib/route-modal';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 
 const Modals = () => {
-	const { isModalOpen, openModal, closeModal } = useRouteModal(
-		'myHomeCoursePaymentsModal',
+	const { closeModal, isModalOpen } = useRouteModal(
+		'coursePaymentsModal',
 		COURSE_SLUGS.PAYMENTS_FEATURES
 	);
 
@@ -15,7 +15,6 @@ const Modals = () => {
 			<VideoModal
 				isVisible={ isModalOpen }
 				onClose={ closeModal }
-				onOpen={ openModal }
 				courseSlug={ COURSE_SLUGS.PAYMENTS_FEATURES }
 			/>
 		</>
