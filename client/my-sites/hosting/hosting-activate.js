@@ -25,7 +25,11 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 			<HeaderCake isCompact={ true } backHref={ backUrl }>
 				{ translate( 'Activate Hosting Features' ) }
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ backUrl } />
+			<EligibilityWarnings
+				className="hosting__activating-warnings"
+				onProceed={ transferInitiate }
+				backUrl={ backUrl }
+			/>
 		</MainComponent>
 	);
 };
