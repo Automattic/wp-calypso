@@ -5,7 +5,7 @@ function getRelativeUrlWithParameters(
 	queryArgs: object,
 	clearExistingParameters = false
 ): string {
-	const url = new URL( window.location.href );
+	const url = new URL( page.current || window.location.href, window.location.origin );
 
 	if ( clearExistingParameters ) {
 		url.searchParams.forEach( ( value, key ) => url.searchParams.delete( key ) );
