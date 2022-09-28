@@ -194,8 +194,13 @@
 	}
 
 	.form-password-input .form-password-input__toggle-visibility {
-		top: 14px;
+		top: 10px;
 	}
+
+	.form-input-validation {
+		text-align: left;
+	}
+
 
 	.login__form-header-wrapper,
 	.signup-form__woo-wrapper {
@@ -237,6 +242,8 @@
 
 		@media screen and ( max-width: 660px ) {
 			text-align: left;
+			padding-left: $woo-form-whitespace-660;
+			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
@@ -505,11 +512,13 @@
 		p {
 			color: $gray-60;
 			line-height: 24px;
-			margin-bottom: 4px;
+			margin-bottom: 8px;
+			font-size: $font-body;
 		}
 
 		a {
 			color: var(--color-gray-100);
+			font-size: $font-body;
 		}
 
 		@media screen and ( max-width: 660px ) {
