@@ -89,7 +89,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	if ( source === 'email-comparison' ) {
 		if ( ownerUserName ) {
 			reasonText = translate(
-				'Email service can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
+				'Email service can only be purchased by %(ownerUserName)s, ' +
 					'who is the owner of %(selectedDomainName)s. ' +
 					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
 					'Otherwise, please {{reachOutLink}}reach out to %(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
@@ -106,7 +106,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	} else if ( source === 'email-management' ) {
 		if ( ownerUserName ) {
 			reasonText = translate(
-				'Additional mailboxes can only be purchased by {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}}, ' +
+				'Additional mailboxes can only be purchased by %(ownerUserName)s, ' +
 					'who is the owner of %(selectedDomainName)s. ' +
 					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
 					'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
