@@ -48,6 +48,8 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
+	title?: string;
+	primaryText?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -71,6 +73,8 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
+	title,
+	primaryText,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -87,6 +91,13 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings--with-indent': showWarnings,
 		},
 		className
+	);
+
+	const showTitle = title ? <div className="eligibility-warnings__title">{ title }</div> : '';
+	const showPrimaryText = primaryText ? (
+		<div className="eligibility-warnings__primary-text">{ primaryText }</div>
+	) : (
+		''
 	);
 
 	const launchCurrentSite = () => launch( siteId );
@@ -124,6 +135,14 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+			{ isMarketplace && ( showTitle || showPrimaryText ) && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						{ showTitle }
+						{ showPrimaryText }
+					</div>
+				</CompactCard>
+			) }
 
 			{ ( isPlaceholder || listHolds.length > 0 ) && (
 				<CompactCard>

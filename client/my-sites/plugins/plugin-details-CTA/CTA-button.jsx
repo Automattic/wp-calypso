@@ -134,6 +134,10 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
+					title={ translate( 'Upgrade your plan to install plugins' ) }
+					primaryText={ translate(
+						'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month'
+					) }
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
