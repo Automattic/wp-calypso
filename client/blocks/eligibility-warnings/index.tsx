@@ -29,11 +29,10 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import HoldList, { hasBlockingHold } from './hold-list';
+import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
-
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -89,6 +88,7 @@ export const EligibilityWarnings = ( {
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
+			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
 		},
 		className
 	);
@@ -121,6 +121,8 @@ export const EligibilityWarnings = ( {
 	const showThisSiteIsEligibleMessage =
 		isEligible && 0 === listHolds.length && 0 === warnings.length;
 
+	const blockingMessages = getBlockingMessages( translate );
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -128,6 +130,15 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+			{ ! isPlaceholder && context === 'plugin-details' && hasBlockingHold( listHolds ) && (
+				<CompactCard>
+					<HardBlockingNotice
+						holds={ listHolds }
+						translate={ translate }
+						blockingMessages={ blockingMessages }
+					/>
+				</CompactCard>
+			) }
 			{ ( title || primaryText ) && (
 				<CompactCard>
 					<div className="eligibility-warnings__header">

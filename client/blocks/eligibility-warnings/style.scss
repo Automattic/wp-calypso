@@ -136,7 +136,8 @@
 }
 
 .eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold,
+.eligibility-warnings--blocking-hold .eligibility-warnings__header {
 	opacity: 0.2;
 }
 
