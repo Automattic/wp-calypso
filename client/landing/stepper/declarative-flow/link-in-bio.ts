@@ -47,7 +47,6 @@ export const linkInBio: Flow = {
 					return window.location.assign( logInUrl );
 
 				case 'patterns':
-					recordFullStoryEvent( 'calypso_signup_start_renan_222', { flow: 'test' } );
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
