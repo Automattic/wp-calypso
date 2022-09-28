@@ -125,6 +125,7 @@
 
 	&.has-thumbnail {
 		.reader-related-card__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 17px;
 		}
 
@@ -269,6 +270,7 @@
 }
 
 .reader-related-card__title {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 25px;

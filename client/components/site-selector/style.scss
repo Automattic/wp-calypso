@@ -1,7 +1,6 @@
 @import "@automattic/typography/styles/variables";
-@import "../../assets/stylesheets/shared/mixins/_long-content-fade";
-@import "../../assets/stylesheets/shared/mixins/_breakpoints";
-@import "@automattic/typography/styles/variables";
+@import "../../assets/stylesheets/shared/mixins/long-content-fade";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
 
 /**
  * Site Selector
@@ -205,13 +204,14 @@
 	border-bottom: 1px solid var(--color-neutral-10);
 }
 
-.site-selector__hidden-sites-message {
+.site-selector__list-bottom-adornment {
 	color: var(--color-text-subtle);
 	display: block;
 	font-size: $font-body-extra-small;
 	padding: 16px 16px 24px;
 
-	.site-selector__manage-hidden-sites {
+	a {
+		color: inherit;
 		text-decoration: underline;
 
 		&:hover {
@@ -220,6 +220,6 @@
 	}
 }
 
-.site-selector__no-results + .site-selector__hidden-sites-message {
+.site-selector__no-results + .site-selector__list-bottom-adornment {
 	display: none;
 }

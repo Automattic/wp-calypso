@@ -12,7 +12,6 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
-		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -112,10 +111,8 @@
 		"signup/standard-theme-v13n": true,
 		"signup/starting-point-courses": true,
 		"signup/stepper-flow": true,
-		"signup/theme-preview-screen": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
-		"sites/automagical-sorting": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"themes/atomic-homepage-replace": true,

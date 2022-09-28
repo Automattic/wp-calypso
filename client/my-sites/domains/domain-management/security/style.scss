@@ -27,6 +27,7 @@
 	.security__content ul {
 		margin-left: 1.5em;
 		& > li {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 2em;
 		}
 	}

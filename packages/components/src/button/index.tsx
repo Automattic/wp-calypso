@@ -41,6 +41,7 @@ const cleanAnchorProps = ( {
 	primary,
 	scary,
 	plain,
+	transparent,
 	...anchorProps
 }: ButtonProps | AnchorProps ): AnchorProps => anchorProps as AnchorProps;
 

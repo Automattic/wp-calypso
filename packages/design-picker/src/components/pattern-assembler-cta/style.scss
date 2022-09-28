@@ -2,17 +2,17 @@
 @import "@wordpress/base-styles/mixins";
 
 .pattern-assembler-cta-wrapper {
-	display: none;
+	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	text-align: center;
 	align-items: center;
 	padding: 64px;
-	grid-column: 1 / span 3;
 	background-color: #f6f7f7;
 	color: #50575e;
 
 	@include break-medium {
-		display: flex;
+		grid-column: 1 / span 3;
 	}
 
 	.pattern-assembler-cta__title {

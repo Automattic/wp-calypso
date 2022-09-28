@@ -13,11 +13,35 @@
 }
 
 .plugin-details-cta__dialog-content {
+	.dialog__content {
+		padding: 0;
+	}
+
 	.eligibility-warnings {
 		margin: 0;
 
 		.card {
 			box-shadow: none;
+
+			padding-left: 48px;
+			padding-right: 48px;
+
+			.notice {
+				margin-bottom: 0;
+			}
+		}
+
+		.card:first-of-type.is-compact {
+			padding-top: 48px; // 16px from card padding + 32 = 48 gap from top
+		}
+
+		.card:last-of-type.is-compact {
+			border-top: 1px solid var(--color-border-shadow);
+		}
+
+		.eligibility-warnings__confirm-buttons {
+			display: flex;
+			flex-direction: row-reverse;
 		}
 	}
 }

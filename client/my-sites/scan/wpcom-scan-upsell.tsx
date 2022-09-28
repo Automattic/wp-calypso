@@ -1,7 +1,6 @@
 import { Button } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
@@ -20,7 +19,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const ScanMultisiteBody: FunctionComponent = () => {
+const ScanMultisiteBody = () => {
 	const translate = useTranslate();
 	return (
 		<PromoCard
@@ -39,7 +38,7 @@ const ScanMultisiteBody: FunctionComponent = () => {
 	);
 };
 
-const ScanVPActiveBody: FunctionComponent = () => {
+const ScanVPActiveBody = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_vaultpress_click' );
 	const translate = useTranslate();
 	return (
@@ -69,7 +68,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 	);
 };
 
-const ScanUpsellBody: FunctionComponent = () => {
+const ScanUpsellBody = () => {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_scan_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
@@ -119,7 +118,7 @@ const ScanUpsellBody: FunctionComponent = () => {
 	);
 };
 
-export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): ReactElement {
+export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ) {
 	const translate = useTranslate();
 	let body;
 	switch ( reason ) {

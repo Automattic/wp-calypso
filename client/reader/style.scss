@@ -325,6 +325,7 @@
 -------------------------------------------------------------- */
 
 .tiled-gallery.type-circle .tiled-gallery-item img {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }
 .tiled-gallery.type-circle .tiled-gallery-caption {

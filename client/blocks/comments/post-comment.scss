@@ -92,6 +92,7 @@ a.comments__comment-username {
 
 .comments__comment-trackbackicon {
 	background-color: var(--color-neutral-0);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	height: 32px;
 	margin-right: 9px;

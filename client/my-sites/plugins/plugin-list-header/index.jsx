@@ -16,6 +16,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import UpdatePlugins from '../plugin-management-v2/update-plugins';
 
 import './style.scss';
 
@@ -38,9 +39,7 @@ export class PluginsListHeader extends PureComponent {
 		isBulkManagementActive: PropTypes.bool,
 		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
-		updateAllPlugins: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
-		pluginUpdateCount: PropTypes.number.isRequired,
 		activateSelected: PropTypes.func.isRequired,
 		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
 		deactivateSelected: PropTypes.func.isRequired,
@@ -55,6 +54,7 @@ export class PluginsListHeader extends PureComponent {
 		updatePluginNotice: PropTypes.func.isRequired,
 		plugins: PropTypes.array.isRequired,
 		selected: PropTypes.array.isRequired,
+		isJetpackCloud: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -108,7 +108,15 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	renderCurrentActionButtons() {
-		const { hasManagePluginsFeature, isWpComAtomic, translate, siteId } = this.props;
+		const {
+			hasManagePluginsFeature,
+			isWpComAtomic,
+			translate,
+			siteId,
+			isJetpackCloud,
+			isBulkManagementActive,
+			plugins,
+		} = this.props;
 		const buttons = [];
 
 		if ( siteId && isWpComAtomic && ! hasManagePluginsFeature ) {
@@ -120,22 +128,14 @@ export class PluginsListHeader extends PureComponent {
 		const leftSideButtons = [];
 		const autoupdateButtons = [];
 		const activateButtons = [];
-
-		if ( ! this.props.isBulkManagementActive ) {
-			if ( 0 < this.props.pluginUpdateCount ) {
-				rightSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-update-all">
-						<Button compact primary onClick={ this.props.updateAllPlugins }>
-							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
-								context: 'button label',
-								count: this.props.pluginUpdateCount,
-								args: {
-									numUpdates: this.props.pluginUpdateCount,
-								},
-							} ) }
-						</Button>
-					</ButtonGroup>
+		if ( ! isBulkManagementActive ) {
+			if ( isJetpackCloud ) {
+				const updateButton = (
+					<UpdatePlugins key="plugin-list-header__buttons-update-all" plugins={ plugins } />
 				);
+				if ( updateButton ) {
+					rightSideButtons.push( updateButton );
+				}
 			}
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">

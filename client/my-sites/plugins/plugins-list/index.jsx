@@ -29,7 +29,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PluginManagementV2 from '../plugin-management-v2';
-import { getPluginActionDailogMessage } from '../utils';
+import { getPluginActionDailogMessage, getSitePlugin, handleUpdatePlugins } from '../utils';
 
 import './style.scss';
 
@@ -59,7 +59,6 @@ export class PluginsList extends Component {
 		hasManagePlugins: PropTypes.bool,
 		header: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool.isRequired,
-		pluginUpdateCount: PropTypes.number,
 		selectedSite: PropTypes.object,
 		selectedSiteSlug: PropTypes.string,
 		siteIsAtomic: PropTypes.bool,
@@ -71,7 +70,7 @@ export class PluginsList extends Component {
 	};
 
 	shouldComponentUpdate( nextProps, nextState ) {
-		const propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount' ];
+		const propsToCheck = [ 'plugins', 'sites', 'selectedSite' ];
 		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
 			return true;
 		}
@@ -160,7 +159,7 @@ export class PluginsList extends Component {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) ) {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = this.getSitePlugin( plugin, siteId );
+					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
 					return sitePlugin?.active;
 				} );
 			}
@@ -169,7 +168,7 @@ export class PluginsList extends Component {
 		inactive( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = this.getSitePlugin( plugin, siteId );
+					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
 					return ! sitePlugin?.active;
 				} );
 			}
@@ -178,7 +177,7 @@ export class PluginsList extends Component {
 		updates( plugin ) {
 			if ( this.isSelected( plugin ) ) {
 				return Object.keys( plugin.sites ).some( ( siteId ) => {
-					const sitePlugin = this.getSitePlugin( plugin, siteId );
+					const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
 					const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
 					return sitePlugin?.update?.new_version && site.canUpdateFiles;
 				} );
@@ -267,54 +266,12 @@ export class PluginsList extends Component {
 		} );
 	}
 
-	getSitePlugin = ( plugin, siteId ) => {
-		return {
-			...plugin,
-			...this.props.pluginsOnSites[ plugin.slug ]?.sites[ siteId ],
-		};
-	};
-
 	pluginHasUpdate = ( plugin ) => {
 		return Object.keys( plugin.sites ).some( ( siteId ) => {
-			const sitePlugin = this.getSitePlugin( plugin, siteId );
+			const sitePlugin = getSitePlugin( plugin, siteId, this.props.pluginsOnSites );
 			const site = this.props.allSites.find( ( s ) => s.ID === parseInt( siteId ) );
 			return sitePlugin?.update && site?.canUpdateFiles;
 		} );
-	};
-
-	handleUpdatePlugins = ( plugins ) => {
-		this.removePluginStatuses();
-
-		const updatedPlugins = new Set();
-		const updatedSites = new Set();
-
-		plugins
-			// only consider plugins needing an update
-			.filter( ( plugin ) => plugin.update )
-			.forEach( ( plugin ) => {
-				Object.entries( plugin.sites )
-					// only consider the sites where the those plugins are installed
-					.filter( ( [ , sitePlugin ] ) => sitePlugin.update?.new_version )
-					.forEach( ( [ siteId ] ) => {
-						updatedPlugins.add( plugin.slug );
-						updatedSites.add( siteId );
-
-						const sitePlugin = this.getSitePlugin( plugin, siteId );
-						return this.props.updatePlugin( siteId, sitePlugin );
-					} );
-			} );
-
-		recordTracksEvent( 'calypso_plugins_bulk_action_execute', {
-			action: 'updating',
-			plugins: [ ...updatedPlugins ].join( ',' ),
-			sites: [ ...updatedSites ].join( ',' ),
-		} );
-	};
-
-	updateAllPlugins = () => {
-		this.handleUpdatePlugins( this.props.plugins );
-		this.recordEvent( 'Clicked Update all Plugins', true );
-		recordTracksEvent( 'calypso_plugins_update_all_click' );
 	};
 
 	updateSelected = ( accepted ) => {
@@ -325,7 +282,8 @@ export class PluginsList extends Component {
 	};
 
 	updatePlugin = ( selectedPlugin ) => {
-		this.handleUpdatePlugins( [ selectedPlugin ] );
+		handleUpdatePlugins( [ selectedPlugin ], this.props.updatePlugin, this.props.pluginsOnSites );
+		this.removePluginStatuses();
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	};
 
@@ -594,9 +552,7 @@ export class PluginsList extends Component {
 					plugins={ this.props.plugins }
 					selected={ this.getSelected() }
 					toggleBulkManagement={ this.toggleBulkManagement }
-					updateAllPlugins={ this.updateAllPlugins }
 					updateSelected={ this.updateSelected }
-					pluginUpdateCount={ this.props.pluginUpdateCount }
 					activateSelected={ this.activateSelected }
 					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
 					deactivateSelected={ this.deactivateSelected }
@@ -609,6 +565,7 @@ export class PluginsList extends Component {
 					autoupdateEnablePluginNotice={ () => this.bulkActionDialog( 'enableAutoupdates' ) }
 					autoupdateDisablePluginNotice={ () => this.bulkActionDialog( 'disableAutoupdates' ) }
 					updatePluginNotice={ () => this.bulkActionDialog( 'update' ) }
+					isJetpackCloud={ this.props.isJetpackCloud }
 				/>
 				<PluginManagementV2
 					plugins={ this.getPlugins() }
@@ -616,18 +573,17 @@ export class PluginsList extends Component {
 					selectedSite={ this.props.selectedSite }
 					searchTerm={ this.props.searchTerm }
 					isBulkManagementActive={ this.state.bulkManagementActive }
-					pluginUpdateCount={ this.props.pluginUpdateCount }
 					toggleBulkManagement={ this.toggleBulkManagement }
-					updateAllPlugins={ this.updateAllPlugins }
 					removePluginNotice={ this.removePluginDialog }
 					updatePlugin={ this.updatePlugin }
+					isJetpackCloud={ this.props.isJetpackCloud }
 				/>
 			</div>
 		);
 	}
 
 	getPlugins() {
-		return this.props.plugins.map( ( plugin ) => {
+		const plugins = this.props.plugins.map( ( plugin ) => {
 			const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 			const allowedPluginActions = this.getAllowedPluginActions( plugin );
 			const isSelectable =
@@ -639,6 +595,15 @@ export class PluginsList extends Component {
 				...{ onClick: selectThisPlugin, isSelected: this.isSelected( plugin ), isSelectable },
 			};
 		} );
+
+		// Plugins which require an update sort first, otherwise the original order is kept.
+		plugins.sort( ( a, b ) => {
+			const updateA = !! a.update;
+			const updateB = !! b.update;
+			return Number( updateB ) - Number( updateA );
+		} );
+
+		return plugins;
 	}
 
 	getAllowedPluginActions( plugin ) {

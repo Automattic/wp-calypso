@@ -1,12 +1,11 @@
-import { ReactElement, ReactNode } from 'react';
 import Card from '../card';
+import type { PropsWithChildren } from 'react';
 
-type Props = {
+type Props = PropsWithChildren< {
 	title: string;
-	children: ReactNode;
-};
+} >;
 
-const SitePlanWarning = ( { title, children }: Props ): ReactElement => (
+const SitePlanWarning = ( { title, children }: Props ) => (
 	<Card title={ title } icon="notice-outline">
 		<p>{ children }</p>
 	</Card>

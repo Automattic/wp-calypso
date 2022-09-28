@@ -51,7 +51,7 @@
 
 	h1 {
 		color: var(--color-neutral-70);
-		/* stylelint-disable-next-line scales/font-size */
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.375em;
 		font-weight: 600;
 		margin-bottom: 0.5em;
@@ -110,6 +110,14 @@
 
 .dialog__action-buttons .is-left-aligned {
 	float: left;
+}
+
+.dialog__action-buttons-close {
+	padding: 15px 15px 5px 5px;
+	position: absolute;
+	z-index: 1;
+	right: 0;
+	cursor: pointer;
 }
 
 .ReactModal__Body--open {

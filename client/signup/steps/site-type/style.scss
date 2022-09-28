@@ -37,6 +37,7 @@
 	.site-type__option-label,
 	.site-type__option-description {
 		display: block;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.4em;
 	}
 

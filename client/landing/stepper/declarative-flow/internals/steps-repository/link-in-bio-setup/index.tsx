@@ -1,21 +1,13 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
-import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { FormEvent, useEffect } from 'react';
-import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormInput from 'calypso/components/forms/form-text-input';
-import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
+import SetupForm from './setup-form';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -25,7 +17,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { __ } = useI18n();
 	const site = useSite();
 
-	const usesSite = !! useSiteSlugParam();
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = React.useState< string | null >();
@@ -54,28 +45,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		setTagline( site.description );
 	}, [ site ] );
 
-	useEffect( () => {
-		if ( siteTitle.trim().length && invalidSiteTitle ) {
-			setInvalidSiteTitle( false );
-		}
-	}, [ siteTitle, invalidSiteTitle ] );
-
-	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		switch ( event.currentTarget.name ) {
-			case 'link-in-bio-input-name':
-				return setComponentSiteTitle( event.currentTarget.value );
-			case 'link-in-bio-input-description':
-				return setTagline( event.currentTarget.value );
-		}
-	};
-
-	const imageFileToBase64 = ( file: Blob ) => {
-		const reader = new FileReader();
-		reader.readAsDataURL( file );
-		reader.onload = () => setBase64Image( reader.result as string );
-		reader.onerror = () => setBase64Image( null );
-	};
-
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 		setInvalidSiteTitle( ! siteTitle.trim().length );
@@ -96,54 +65,6 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		}
 	};
 
-	const stepContent = (
-		<form className="link-in-bio-setup__form" onSubmit={ handleSubmit }>
-			<SiteIconWithPicker
-				site={ site }
-				placeholderText={ __( 'Upload a profile image' ) }
-				onSelect={ ( file ) => {
-					setSelectedFile( file );
-					imageFileToBase64( file );
-				} }
-				disabled={ usesSite ? ! site : false }
-				selectedFile={ selectedFile }
-			/>
-			<FormFieldset>
-				<FormLabel htmlFor="link-in-bio-input-name">{ __( 'Site name' ) }</FormLabel>
-				<FormInput
-					name="link-in-bio-input-name"
-					id="link-in-bio-input-name"
-					value={ siteTitle }
-					onChange={ onChange }
-					placeholder={ __( 'My Link in Bio' ) }
-					isError={ invalidSiteTitle }
-				/>
-				{ invalidSiteTitle && (
-					<FormInputValidation
-						isError
-						text={ __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ) }
-					/>
-				) }
-			</FormFieldset>
-
-			<FormFieldset>
-				<FormLabel htmlFor="link-in-bio-input-description">{ __( 'Brief description' ) }</FormLabel>
-				<ForwardedAutoresizingFormTextarea
-					name="link-in-bio-input-description"
-					id="link-in-bio-input-description"
-					value={ tagline }
-					placeholder={ __( 'Add a short biography here' ) }
-					enableAutoFocus={ false }
-					onChange={ onChange }
-				/>
-			</FormFieldset>
-
-			<Button className="link-in-bio-setup-form__submit" primary type="submit">
-				{ __( 'Continue' ) }
-			</Button>
-		</form>
-	);
-
 	return (
 		<StepContainer
 			stepName={ 'link-in-bio-setup' }
@@ -159,7 +80,21 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					align={ 'center' }
 				/>
 			}
-			stepContent={ stepContent }
+			stepContent={
+				<SetupForm
+					site={ site }
+					siteTitle={ siteTitle }
+					setComponentSiteTitle={ setComponentSiteTitle }
+					invalidSiteTitle={ invalidSiteTitle }
+					setInvalidSiteTitle={ setInvalidSiteTitle }
+					tagline={ tagline }
+					setTagline={ setTagline }
+					selectedFile={ selectedFile }
+					setSelectedFile={ setSelectedFile }
+					setBase64Image={ setBase64Image }
+					handleSubmit={ handleSubmit }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

@@ -1,8 +1,7 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import { useState, useCallback, ReactElement } from 'react';
-import * as React from 'react';
+import { useRef, useState, useCallback, ChangeEvent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 
@@ -20,10 +19,10 @@ interface JetpackCancellationSurveyProps {
 export default function JetpackCancellationSurvey( {
 	selectedAnswerId,
 	onAnswerChange,
-}: JetpackCancellationSurveyProps ): ReactElement {
+}: JetpackCancellationSurveyProps ) {
 	const translate = useTranslate();
-	const [ customAnswerText, setCustomAnswerText ] = useState< string >( '' );
-	const customAnswerInputRef = React.useRef< HTMLInputElement | null >();
+	const [ customAnswerText, setCustomAnswerText ] = useState( '' );
+	const customAnswerInputRef = useRef< HTMLInputElement | null >();
 
 	const choices: Choice[] = [
 		{
@@ -61,7 +60,7 @@ export default function JetpackCancellationSurvey( {
 	);
 
 	const onChangeCustomAnswerText = useCallback(
-		( event: React.ChangeEvent< HTMLInputElement > ) => {
+		( event: ChangeEvent< HTMLInputElement > ) => {
 			const { value } = event.target;
 
 			onAnswerChange( selectedAnswerId, value );
@@ -70,7 +69,7 @@ export default function JetpackCancellationSurvey( {
 		[ selectedAnswerId, onAnswerChange, setCustomAnswerText ]
 	);
 
-	const renderChoiceCard = ( choice: Choice ): ReactElement => {
+	const renderChoiceCard = ( choice: Choice ) => {
 		return (
 			<Card
 				className={ classnames( 'jetpack-cancellation-survey__card', {
@@ -88,7 +87,7 @@ export default function JetpackCancellationSurvey( {
 	};
 
 	return (
-		<React.Fragment>
+		<>
 			<FormattedHeader
 				headerText={ translate( 'Before you go, help us improve Jetpack' ) }
 				subHeaderText={ translate( 'Please let us know why you are cancelling.' ) }
@@ -120,6 +119,6 @@ export default function JetpackCancellationSurvey( {
 					/>
 				</div>
 			</Card>
-		</React.Fragment>
+		</>
 	);
 }

@@ -89,14 +89,25 @@
 }
 
 section.contact-form-submit {
-	position: fixed;
+	// this creates a border for the CTA.
+	// a simple border won't cut it because it would be padded in.
+	&::before {
+		content: " ";
+		display: block;
+		height: 1px;
+		background: rgba(0, 0, 0, 0.1);
+		position: absolute;
+		left: -16px;
+		top: 0;
+		width: calc(100% + 32px);
+	}
+	position: sticky;
 	bottom: 0;
 	left: 0;
 	width: 100%;
 	box-sizing: border-box;
 	background: #fff;
 	padding: 16px;
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
 
 	.button.help-center-contact-form__site-picker-cta.is-primary {
 		background-color: var(--color-accent);
@@ -203,4 +214,21 @@ section.contact-form-submit {
 	.gridicon {
 		fill: currentColor;
 	}
+}
+
+.help-center-contact-form__site-picker-forum-privacy-popover {
+	display: inline-block;
+	max-width: 200px;
+	padding: 5px;
+}
+
+.help-center-contact-form__site-picker-forum-privacy-info {
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+}
+
+.help-center-contact-form__site-picker-privacy-popover {
+	z-index: 10000;
 }

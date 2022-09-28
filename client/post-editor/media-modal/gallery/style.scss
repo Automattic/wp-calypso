@@ -85,6 +85,7 @@
 	/*!rtl:ignore*/
 	transform: translate(25%, -25%);
 	border: 1px solid var(--color-neutral-20);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	background-color: var(--color-neutral-0);
 	color: var(--color-neutral-20);

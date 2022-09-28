@@ -155,25 +155,30 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	/* Gray / Gray 90 */
 	color: #1d2327;
 
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 32px;
 	line-height: 1.19;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 42px;
 	}
 
 	// TODO: remove this hack once the welcome editor deals better with
 	// overflowing text
 	body.locale-de & {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 24px;
 
 		@media ( min-width: $wpcom-modal-breakpoint ) {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 28px;
 		}
 	}
 }
 
 .wpcom-block-editor-nux__description {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 15px;
 	line-height: 22px;
 
@@ -181,6 +186,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	color: #50575e;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 17px;
 		line-height: 26px;
 	}

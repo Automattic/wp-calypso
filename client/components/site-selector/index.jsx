@@ -13,7 +13,6 @@ import { connect } from 'react-redux';
 import AllSites from 'calypso/blocks/all-sites';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Search from 'calypso/components/search';
-import searchSites from 'calypso/components/search-sites';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { addQueryArgs } from 'calypso/lib/url';
 import allSitesMenu from 'calypso/my-sites/sidebar/static-data/all-sites-menu';
@@ -58,6 +57,8 @@ export class SiteSelector extends Component {
 		navigateToSite: PropTypes.func.isRequired,
 		isReskinned: PropTypes.bool,
 		showManageSitesButton: PropTypes.bool,
+		showHiddenSites: PropTypes.bool,
+		maxResults: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -65,6 +66,7 @@ export class SiteSelector extends Component {
 		showManageSitesButton: false,
 		showAddNewSite: false,
 		showAllSites: false,
+		showHiddenSites: false,
 		siteBasePath: false,
 		indicator: false,
 		hideSelected: false,
@@ -83,13 +85,13 @@ export class SiteSelector extends Component {
 	};
 
 	onSearch = ( terms ) => {
-		this.props.searchSites( terms );
+		const trimmedTerm = terms.trim();
 
 		this.setState( {
 			highlightedIndex: terms ? 0 : -1,
-			showSearch: terms ? true : this.state.showSearch,
+			showSearch: trimmedTerm ? true : this.state.showSearch,
 			isKeyboardEngaged: true,
-			searchTerm: terms,
+			searchTerm: trimmedTerm,
 		} );
 	};
 
@@ -293,13 +295,10 @@ export class SiteSelector extends Component {
 	setSiteSelectorRef = ( component ) => ( this.siteSelectorRef = component );
 
 	sitesToBeRendered() {
-		let sites;
-
-		if ( this.props.sitesFound ) {
-			sites = this.props.sitesFound;
-		} else {
-			sites = this.props.visibleSites;
-		}
+		let sites =
+			this.state.searchTerm || this.props.showHiddenSites
+				? this.props.sites
+				: this.props.visibleSites;
 
 		if ( this.props.filter ) {
 			sites = sites.filter( this.props.filter );
@@ -313,7 +312,7 @@ export class SiteSelector extends Component {
 	}
 
 	renderAllSites() {
-		if ( ! this.props.showAllSites || this.props.sitesFound || ! this.props.allSitesPath ) {
+		if ( ! this.props.showAllSites || this.state.searchTerm || ! this.props.allSitesPath ) {
 			return null;
 		}
 
@@ -362,20 +361,12 @@ export class SiteSelector extends Component {
 			return <SitePlaceholder key="site-placeholder" />;
 		}
 
-		const existingSites = sites.filter( Boolean );
-
-		if ( ! existingSites.length ) {
-			return (
-				<div className="site-selector__no-results">
-					{ this.props.translate( 'No sites found' ) }
-				</div>
-			);
-		}
-
 		return (
 			<SitesList
+				maxResults={ this.props.maxResults }
 				addToVisibleSites={ ( siteId ) => this.visibleSites.push( siteId ) }
-				sites={ existingSites }
+				searchTerm={ this.state.searchTerm }
+				sites={ sites }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
 				onMouseEnter={ this.onSiteHover }
@@ -427,8 +418,8 @@ export class SiteSelector extends Component {
 				<div className="site-selector__sites" ref={ this.setSiteSelectorRef }>
 					{ this.renderAllSites() }
 					{ this.renderSites( sites ) }
-					{ hiddenSitesCount > 0 && ! this.props.sitesFound && (
-						<span className="site-selector__hidden-sites-message">
+					{ ! this.props.showHiddenSites && hiddenSitesCount > 0 && ! this.state.searchTerm && (
+						<span className="site-selector__list-bottom-adornment">
 							{ this.props.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
 								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
@@ -442,7 +433,6 @@ export class SiteSelector extends Component {
 										a: (
 											<a
 												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												className="site-selector__manage-hidden-sites"
 												target="_blank"
 												rel="noopener noreferrer"
 											/>
@@ -459,7 +449,10 @@ export class SiteSelector extends Component {
 							<Button
 								transparent
 								onClick={ this.onManageSitesClick }
-								href={ addQueryArgs( { search: this.props.searchTerm }, '/sites' ) }
+								href={ addQueryArgs(
+									{ search: this.state.searchTerm.length > 0 ? this.state.searchTerm : null },
+									'/sites'
+								) }
 							>
 								{ this.props.translate( 'Manage sites' ) }
 							</Button>
@@ -581,7 +574,6 @@ const mapState = ( state ) => {
 
 export default flow(
 	localize,
-	searchSites,
 	withSitesSortingPreference,
 	connect( mapState, { navigateToSite, recordTracksEvent } )
 )( SiteSelector );

@@ -11,8 +11,8 @@ import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
@@ -34,7 +34,12 @@ import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
+export default function CTAButton( {
+	plugin,
+	hasEligibilityMessages,
+	eligibilityHolds,
+	disabled,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -75,10 +80,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		getPrimaryDomainBySiteId( state, selectedSite?.ID )
 	);
 
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
 	const pluginRequiresCustomPrimaryDomain =
 		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) && !! plugin?.tags?.seo;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
@@ -102,7 +103,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const productsList = useSelector( getProductsList );
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
-	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
+	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
 
 	return (
 		<>
@@ -121,7 +122,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
-						eligibleForProPlan,
 						productsList,
 					} );
 				} }
@@ -136,9 +136,19 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
+				showCloseIcon={ true }
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
+					title={ translate( 'Flex your site with plugins' ) }
+					primaryText={
+						eligibilityHolds &&
+						eligibilityHolds.indexOf( eligibilityHoldsConstants.NO_BUSINESS_PLAN ) !== -1
+							? translate(
+									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
+							  )
+							: ''
+					}
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
@@ -149,7 +159,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 							upgradeAndInstall: shouldUpgrade,
 							isMarketplaceProduct,
 							billingPeriod,
-							eligibleForProPlan,
 							productsList,
 						} )
 					}
@@ -175,7 +184,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
-						eligibleForProPlan,
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
 						productsList,
@@ -223,7 +231,6 @@ function onClickInstallPlugin( {
 	upgradeAndInstall,
 	isMarketplaceProduct,
 	billingPeriod,
-	eligibleForProPlan,
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
@@ -263,8 +270,7 @@ function onClickInstallPlugin( {
 			return page(
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
-					billingPeriod,
-					eligibleForProPlan
+					billingPeriod
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`
@@ -289,8 +295,7 @@ function onClickInstallPlugin( {
 		return page(
 			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 				selectedSite?.plan,
-				billingPeriod,
-				eligibleForProPlan
+				billingPeriod
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}

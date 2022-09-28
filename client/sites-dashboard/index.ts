@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { getSiteBySlug, getSiteHomeUrl } from 'calypso/state/sites/selectors';
@@ -13,11 +12,6 @@ export default function () {
 		const siteId = site?.ID;
 		page.redirect( getSiteHomeUrl( state, siteId ) );
 	} );
-
-	if ( ! isEnabled( 'build/sites-dashboard' ) ) {
-		page( '/sites', '/home' );
-		return;
-	}
 
 	page( '/sites', sanitizeQueryParameters, sitesDashboard, makeLayout, clientRender );
 }

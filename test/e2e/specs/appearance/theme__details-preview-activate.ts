@@ -74,18 +74,15 @@ describe( DataHelper.createSuiteTitle( 'Theme: Preview and Activate' ), () => {
 		await previewComponent.closePreview();
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip( 'Activate theme', async function () {
 		await themesDetailPage.activate();
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip( 'Open theme customizer', async function () {
 		popupTab = await themesDetailPage.customizeSite();
 		await popupTab.waitForLoadState( 'load' );
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
 	it.skip( 'Close theme customizer', async function () {
 		await popupTab.close();
 	} );

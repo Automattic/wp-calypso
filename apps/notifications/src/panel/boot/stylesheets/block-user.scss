@@ -12,6 +12,7 @@ div.wpnc__user {
 	}
 
 	p {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 0.85em;
 		margin: 0;
 	}
@@ -62,6 +63,7 @@ div.wpnc__user {
 .wpnc__like .wpnc__body div.wpnc__user,
 .wpnc__comment_like .wpnc__body div.wpnc__user,
 .wpnc__reblog .wpnc__body div.wpnc__user {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.3em;
 }
 

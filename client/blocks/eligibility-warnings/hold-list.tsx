@@ -223,7 +223,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 
 	return (
 		<>
-			{ ! isPlaceholder && (
+			{ ! isPlaceholder && context !== 'plugin-details' && (
 				<HardBlockingNotice
 					holds={ holds }
 					translate={ translate }

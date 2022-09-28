@@ -1,11 +1,12 @@
-import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
+import { ListTile } from '@automattic/components';
+import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -80,7 +81,6 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isAtomicSite = site?.is_wpcom_atomic;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -121,7 +121,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 			<Column mobileHidden>
 				<SitePlan>
-					{ site.jetpack && ! isAtomicSite && (
+					{ isNotAtomicJetpack( site ) && (
 						<SitePlanIcon>
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>

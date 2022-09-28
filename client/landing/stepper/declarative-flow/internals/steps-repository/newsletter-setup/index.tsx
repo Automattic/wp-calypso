@@ -11,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import classNames from 'classnames';
 import React, { FormEvent, useEffect } from 'react';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -33,8 +34,8 @@ type AccentColor = {
 };
 
 const defaultAccentColor = {
-	hex: '#0675C4',
-	rgb: { r: 6, g: 117, b: 196 },
+	hex: '#1D39EB',
+	rgb: { r: 29, g: 57, b: 235 },
 	default: true,
 };
 
@@ -45,7 +46,7 @@ const defaultAccentColor = {
  * @returns a value for background-image
  */
 function generateSwatchSVG( color: string | undefined ) {
-	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23ccc' stroke-width='1' fill='${ encodeURIComponent(
+	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23000' stroke-opacity='0.2' stroke-width='1' fill='${ encodeURIComponent(
 		color || '#fff'
 	) }'%3E%3C/circle%3E${
 		// render a line when a color isn't selected
@@ -59,7 +60,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const accentColorRef = React.useRef< HTMLInputElement >( null );
-
 	const site = useSite();
 	const usesSite = !! useSiteSlugParam();
 
@@ -161,13 +161,22 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }
 			>
-				<ColorPicker
-					disableAlpha
-					color={ accentColor.hex }
-					onChangeComplete={ ( { hex, rgb } ) =>
-						setAccentColor( { hex, rgb: rgb as unknown as RGB } )
-					}
-				/>
+				{ /* add a form so pressing enter in the color input field will close the picker */ }
+				<form
+					onSubmit={ ( event ) => {
+						event.preventDefault();
+						event.stopPropagation();
+						setColorPickerOpen( false );
+					} }
+				>
+					<ColorPicker
+						disableAlpha
+						color={ accentColor.hex }
+						onChangeComplete={ ( { hex, rgb } ) =>
+							setAccentColor( { hex, rgb: rgb as unknown as RGB } )
+						}
+					/>
+				</form>
 			</Popover>
 			<FormFieldset>
 				<FormLabel htmlFor="siteTitle">{ __( 'Site name' ) }</FormLabel>
@@ -208,23 +217,27 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					} }
 					name="accentColor"
 					id="accentColor"
-					onFocus={ () => setColorPickerOpen( ! colorPickerOpen ) }
+					onFocus={ () => setColorPickerOpen( true ) }
 					readOnly
 					value={ accentColor.hex }
 				/>
 			</FormFieldset>
-			{ ! hasMinContrast( accentColor.rgb ) && (
-				<div className="newsletter-setup__contrast-warning" style={ { display: 'flex' } }>
-					<div className="newsletter-setup__contrast-warning-icon-container">
-						<Icon icon={ tip } size={ 20 } />
-					</div>
-					<div>
-						{ __(
-							'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
-						) }
-					</div>
+			<div
+				className={ classNames( 'newsletter-setup__contrast-warning', {
+					'is-visible': ! hasMinContrast( accentColor.rgb ),
+				} ) }
+				aria-hidden={ hasMinContrast( accentColor.rgb ) }
+				role="alert"
+			>
+				<div className="newsletter-setup__contrast-warning-icon-container">
+					<Icon icon={ tip } size={ 20 } />
 				</div>
-			) }
+				<div>
+					{ __(
+						'The accent color chosen may make your buttons and links illegible. Consider picking a darker color.'
+					) }
+				</div>
+			</div>
 			<Button className="newsletter-setup__submit-button" type="submit" primary>
 				{ __( 'Continue' ) }
 			</Button>

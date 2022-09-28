@@ -1,5 +1,5 @@
 import page from 'page';
-import { ReactElement, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import { requestAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
@@ -23,7 +23,7 @@ export default function TransferSite( {
 }: {
 	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
-} ): ReactElement | null {
+} ) {
 	const dispatch = useDispatch();
 
 	const [ progress, setProgress ] = useState( 0.1 );

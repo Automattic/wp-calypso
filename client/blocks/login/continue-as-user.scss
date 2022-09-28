@@ -26,6 +26,7 @@
 	.continue-as-user__gravatar-link {
 		color: var(--color-text);
 		margin: 0 auto;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 150%;
 
 		.continue-as-user__username {

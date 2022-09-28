@@ -163,6 +163,7 @@
 		font-weight: 400;
 		font-size: $font-body;
 		color: #3c434a;
+		background-position-y: 5px;
 	}
 
 	.foldable-card.card {
@@ -315,6 +316,36 @@
 	}
 }
 
+.product-lightbox__variants-plan-card-price,
+.product-lightbox__variants-plan-card-old-price {
+	h4 {
+		display: inherit;
+	}
+	.plan-price__fraction {
+		font-weight: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+	.plan-price__integer {
+		margin: 0;
+		font-weight: inherit;
+	}
+	.plan-price__currency-symbol {
+		color: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+	.plan-price.is-original::before {
+		content: none;
+	}
+	.plan-price {
+		margin: 0 0.2rem 0 0;
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
+	}
+}
+
 .product-lightbox__variants-grey-label {
 	font-size: 0.75rem;
 	color: #646970;
@@ -378,6 +409,11 @@
 	.product-lightbox__variants-options {
 		margin: 0;
 	}
+
+	.product-lightbox__close-button {
+		z-index: 1;
+		background-color: #fff;
+	}
 }
 
 @media screen and ( max-height: 630px ) and ( orientation: landscape ) {
@@ -409,4 +445,8 @@
 .product-lightbox__checkout-button {
 	margin-block-start: 1rem;
 	margin-block-end: 0;
+}
+
+.ReactModal__Html--open.lightbox-mode .layout__content {
+	overflow-y: scroll;
 }

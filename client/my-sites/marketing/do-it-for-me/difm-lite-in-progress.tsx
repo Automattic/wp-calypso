@@ -21,7 +21,7 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
+function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 	const isLoadingSite = useSelector(
 		( state: AppState ) => isRequestingSite( state, siteId ) || isRequestingSites( state )

@@ -6,7 +6,7 @@ $masterbar-color-secondary: #101517;
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "client/assets/stylesheets/shared/_animation.scss";
+@import "client/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
@@ -842,12 +842,13 @@ a.masterbar__quick-language-switcher {
 	.masterbar__secure-checkout-text {
 		color: var(--color-primary-5);
 		transform: translateY(1px);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.2em;
 		font-size: 0.75rem;
 		margin-left: 5px;
 
 		@include breakpoint-deprecated( ">480px" ) {
-			// stylelint-disable-next-line declaration-property-unit-allowed-list
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
 			margin-left: 0;
 		}

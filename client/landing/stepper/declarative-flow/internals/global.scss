@@ -6,10 +6,18 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 /**
  * General onboarding styling
  */
+
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
 body {
 	background-color: #fdfdfd;
 }
@@ -58,6 +66,7 @@ button {
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
+.link-in-bio-post-setup,
 .completing-purchase,
 .anchor-fm,
 .subscribers,
@@ -132,12 +141,21 @@ button {
 		}
 	}
 
+	@include break-large {
+		height: 100%;
+	}
+
 	/**
  	 * Step Container
  	 */
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+
+		@media ( min-width: 660px ) {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 }
 
@@ -160,7 +178,7 @@ button {
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
-				border: 1px solid var(--studio-gray-10);
+				border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 				svg {
 					transition: ease 300ms;

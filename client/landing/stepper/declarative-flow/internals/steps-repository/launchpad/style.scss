@@ -105,10 +105,16 @@
 	background: #f6f7f7;
 	border: 1px solid var(--studio-gray-0);
 	border-radius: 4px;
+	display: flex;
+	align-items: center;
 	height: 48px;
-	line-height: 48px;
 	margin: 32px 0;
 	padding: 0 20px;
+
+	// truncate long domain names
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .launchpad__url-box-top-level-domain {
@@ -132,6 +138,13 @@
 
 .launchpad__progress-bar-container {
 	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {

@@ -82,7 +82,7 @@ const AddOns = ( {
 	);
 };
 
-export default function AddOnsStep( props: Props ): React.ReactElement {
+export default function AddOnsStep( props: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const addOns = useAddOns();

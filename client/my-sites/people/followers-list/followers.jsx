@@ -19,6 +19,9 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
+import { includeSubscriberImporterGradually } from '../helpers';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -97,9 +100,15 @@ class Followers extends Component {
 	}
 
 	renderInviteFollowersAction( isPrimary = true ) {
-		const { site } = this.props;
+		const { site, includeSubscriberImporter } = this.props;
 
-		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
+		return (
+			<InviteButton
+				primary={ isPrimary }
+				siteSlug={ site.slug }
+				includeSubscriberImporter={ includeSubscriberImporter }
+			/>
+		);
 	}
 
 	render() {
@@ -118,7 +127,7 @@ class Followers extends Component {
 		let emptyTitle;
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
-				if ( isEnabled( 'subscriber-importer' ) ) {
+				if ( this.props.includeSubscriberImporter ) {
 					return (
 						<Card>
 							<EmailVerificationGate
@@ -144,7 +153,7 @@ class Followers extends Component {
 					this.props.translate( 'No one is following you by email yet.' )
 				);
 			} else {
-				emptyTitle = isEnabled( 'subscriber-importer' )
+				emptyTitle = this.props.includeSubscriberImporter
 					? preventWidows( this.props.translate( 'No WordPress.com subscribers yet.' ) )
 					: preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 			}
@@ -169,7 +178,7 @@ class Followers extends Component {
 					count: this.props.totalFollowers,
 				};
 
-				headerText = isEnabled( 'subscriber-importer' )
+				headerText = this.props.includeSubscriberImporter
 					? this.props.translate(
 							'You have %(number)d subscriber receiving updates by email',
 							'You have %(number)d subscribers receiving updates by email',
@@ -250,4 +259,13 @@ class Followers extends Component {
 	}
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( Followers ) );
+const mapStateToProps = ( state ) => {
+	const userId = getCurrentUserId( state );
+	const a8cTeamMember = isA8cTeamMember( state );
+
+	return {
+		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+	};
+};
+
+export default connect( mapStateToProps, { recordGoogleEvent } )( localize( Followers ) );

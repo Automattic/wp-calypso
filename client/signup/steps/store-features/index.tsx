@@ -1,7 +1,7 @@
 import { FEATURE_SIMPLE_PAYMENTS, FEATURE_WOOP } from '@automattic/calypso-products';
 import { SelectItems } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -25,7 +25,7 @@ interface Props {
 	siteId: number;
 }
 
-export default function StoreFeaturesStep( props: Props ): React.ReactNode {
+export default function StoreFeaturesStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const headerText = translate( 'Set up your store' );
@@ -69,7 +69,7 @@ export default function StoreFeaturesStep( props: Props ): React.ReactNode {
 	};
 
 	// Only do following things when mounted
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 

@@ -14,7 +14,6 @@ import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -173,7 +172,6 @@ export class PluginInstallButton extends Component {
 			plugin,
 			billingPeriod,
 			canInstallPurchasedPlugins,
-			eligibleForProPlan,
 			productsList,
 		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
@@ -184,8 +182,7 @@ export class PluginInstallButton extends Component {
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
-					billingPeriod,
-					eligibleForProPlan
+					billingPeriod
 			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 			  }#step2`;
@@ -328,7 +325,6 @@ export default connect(
 				siteId,
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
-			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
 			productsList: getProductsList( state ),
 		};
 	},

@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import SectionNav from 'calypso/components/section-nav';
@@ -25,7 +24,7 @@ interface Props {
 	className: string;
 }
 
-export default function PortalNav( { className = '' }: Props ): ReactElement | null {
+export default function PortalNav( { className = '' }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );

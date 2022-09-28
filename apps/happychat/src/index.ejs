@@ -22,19 +22,10 @@
 	<body>
 		<div id="wpcom" class="container"></div>
 		<script>
-			const env = new URLSearchParams( window.location.search ).get( 'env' ) || 'dev';
-			const happychat_url =
-				env === 'dev'
-					? 'https://happychat-io-staging.go-vip.co/customer'
-					: 'https://happychat.io/customer';
-			const env_id = env === 'dev' ? 'development' : 'production';
-
 			window.configData = {
-				env_id,
 				i18n_default_locale_slug: 'en',
 				google_analytics_key: 'UA-10673494-15',
 				client_slug: 'browser',
-				happychat_url,
 				site_filter: [],
 				sections: {},
 				enable_all_sections: false,

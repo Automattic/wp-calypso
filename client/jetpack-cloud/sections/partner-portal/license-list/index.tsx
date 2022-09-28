@@ -1,5 +1,5 @@
 import page from 'page';
-import { PropsWithChildren, ReactElement, useContext, useCallback } from 'react';
+import { PropsWithChildren, useContext, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
@@ -38,7 +38,7 @@ const LicenseTransition = ( props: PropsWithChildren< LicenseTransitionProps > )
 	<CSSTransition { ...props } classNames="license-list__license-transition" timeout={ 150 } />
 );
 
-export default function LicenseList(): ReactElement {
+export default function LicenseList() {
 	const dispatch = useDispatch();
 	const { filter, search, sortField, sortDirection, currentPage } =
 		useContext( LicenseListContext );

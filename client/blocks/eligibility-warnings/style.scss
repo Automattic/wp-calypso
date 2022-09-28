@@ -1,6 +1,30 @@
 .eligibility-warnings {
 	margin-top: 16px;
 	font-size: $font-body-small;
+
+	.eligibility-warnings__confirm-buttons {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.support-block {
+		align-items: center;
+		display: flex;
+		gap: 5px;
+	}
+}
+
+.eligibility-warnings__title {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	overflow-wrap: anywhere;
+	line-height: 40px;
+	color: var(--studio-gray-100);
+	font-weight: 400;
+}
+
+.eligibility-warnings__primary-text {
+	margin-top: 8px;
 }
 
 .eligibility-warnings--with-indent {
@@ -45,13 +69,8 @@
 
 .eligibility-warnings__hold,
 .eligibility-warnings__warning {
-	align-items: center;
 	display: flex;
 	flex-direction: row;
-}
-
-.eligibility-warnings__hold,
-.eligibility-warnings__warning {
 	align-items: flex-start;
 	margin-bottom: 16px;
 
@@ -117,7 +136,8 @@
 }
 
 .eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold,
+.eligibility-warnings--blocking-hold .eligibility-warnings__header {
 	opacity: 0.2;
 }
 

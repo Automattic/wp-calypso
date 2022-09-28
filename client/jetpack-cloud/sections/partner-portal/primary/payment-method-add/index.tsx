@@ -13,7 +13,7 @@ import { useSelect } from '@wordpress/data';
 import { getQueryArg } from '@wordpress/url';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useCallback, useMemo, ReactElement, useEffect } from 'react';
+import { useCallback, useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -39,7 +39,7 @@ import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/acti
 
 import './style.scss';
 
-function PaymentMethodAdd(): ReactElement {
+function PaymentMethodAdd() {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
@@ -235,7 +235,7 @@ function PaymentMethodAdd(): ReactElement {
 	);
 }
 
-export default function PaymentMethodAddWrapper(): ReactElement {
+export default function PaymentMethodAddWrapper() {
 	const locale = useSelector( getCurrentUserLocale );
 
 	return (
