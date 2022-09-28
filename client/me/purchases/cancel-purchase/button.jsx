@@ -316,6 +316,8 @@ class CancelPurchaseButton extends Component {
 			return onClick();
 		};
 
+		const planName = getName( purchase );
+
 		return (
 			<div>
 				<Button
@@ -361,8 +363,20 @@ class CancelPurchaseButton extends Component {
 						isDialogVisible={ this.state.isShowingMarketplaceSubscriptionsDialog }
 						closeDialog={ this.closeDialog }
 						removePlan={ closeDialogAndProceed }
-						planName={ getName( purchase ) }
+						planName={ planName }
 						activeSubscriptions={ activeSubscriptions }
+						sectionHeadingText={ translate( 'Cancel %(plan)s', {
+							args: { plan: planName },
+						} ) }
+						primaryButtonText={ translate( 'Continue', {
+							comment:
+								'This button cancels the active plan and all active Marketplace subscriptions on the site',
+						} ) }
+						bodyParagraphText={ translate(
+							'This subscription will be cancelled. It will be removed when your plan expires.',
+							'These subscriptions will be cancelled. They will be removed when your plan expires.',
+							{ count: activeSubscriptions.length }
+						) }
 					/>
 				) }
 			</div>
