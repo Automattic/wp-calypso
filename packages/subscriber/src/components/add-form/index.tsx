@@ -276,7 +276,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					) }
 
 					{ showCsvUpload && isSelectedFileValid && ! selectedFile && (
-						<label>
+						<label
+							aria-label={ __(
+								'Or bring your mailing list from other newsletter services by uploading a CSV file.'
+							) }
+						>
 							{ createInterpolateElement(
 								__(
 									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
