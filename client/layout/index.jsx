@@ -42,6 +42,7 @@ import {
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
+import { isTransitioningToSiteCreation } from 'calypso/state/ui/transitioning-to-site-creation/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
@@ -139,6 +140,7 @@ class Layout extends Component {
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
+		transitioningToSiteCreation: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -300,7 +302,7 @@ class Layout extends Component {
 						{ this.props.secondary }
 					</div>
 					<div id="primary" className="layout__primary">
-						{ this.props.primary }
+						{ this.props.transitioningToSiteCreation ? null : this.props.primary }
 					</div>
 				</div>
 				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
@@ -412,6 +414,7 @@ export default withCurrentRoute(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
+			transitioningToSiteCreation: isTransitioningToSiteCreation( state ),
 		};
 	} )( Layout )
 );
