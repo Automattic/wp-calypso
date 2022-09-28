@@ -47,21 +47,6 @@ describe( 'getJetpackCredentialsTestStatus()', () => {
 		expect( output ).toEqual( SITES_CREDENTIALS_FIXTURE[ siteId ]?.[ role ] );
 	} );
 
-	test( 'should return credentials test is failure', () => {
-		const stateIn = {
-			jetpack: {
-				credentials: {
-					testRequestStatus: SITES_CREDENTIALS_FIXTURE,
-				},
-			},
-		};
-		const siteId = 4560000;
-		const role = 'main';
-
-		const output = getJetpackCredentialsTestStatus( stateIn, siteId, role );
-		expect( output ).toEqual( SITES_CREDENTIALS_FIXTURE[ siteId ]?.[ role ] );
-	} );
-
 	test( 'should return credentials test is pending when siteId not exists in state', () => {
 		const stateIn = {
 			jetpack: {

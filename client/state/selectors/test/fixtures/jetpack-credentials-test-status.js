@@ -8,7 +8,4 @@ export const sites = {
 	3450000: {
 		main: 'invalid',
 	},
-	4560000: {
-		main: 'failure',
-	},
 };

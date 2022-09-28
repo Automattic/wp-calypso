@@ -123,10 +123,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			if ( 'invalid' === credentialsTestStatus ) {
 				setTestCredentialsResult( false );
 			}
-
-			if ( 'failure' === credentialsTestStatus ) {
-				setTestCredentialsResult( false );
-			}
 		},
 		[ credentialsTestStatus ]
 	);
