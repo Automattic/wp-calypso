@@ -231,7 +231,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				/>
 			) }
 			<div
-				className={ classNames( {
+				className={ classNames( 'eligibility-warnings__hold-list', {
 					'eligibility-warnings__hold-list-dim': hasValidBlockingHold,
 				} ) }
 				data-testid="HoldList-Card"
