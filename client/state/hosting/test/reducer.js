@@ -92,6 +92,7 @@ describe( 'reducer', () => {
 
 		expect( state ).toEqual( {
 			12345678: {
+				lastCacheClearTimestamp: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
@@ -103,6 +104,7 @@ describe( 'reducer', () => {
 	test( 'should accumulate sites', () => {
 		const previousState = {
 			12345678: {
+				lastCacheClearTimestamp: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
@@ -117,12 +119,14 @@ describe( 'reducer', () => {
 
 		expect( state ).toEqual( {
 			12345678: {
+				lastCacheClearTimestamp: null,
 				phpVersion: null,
 				sftpUsers: [ 1, 2, 3 ],
 				sshAccess: null,
 				staticFile404: null,
 			},
 			9876543: {
+				lastCacheClearTimestamp: null,
 				phpVersion: null,
 				sftpUsers: [ 9, 8, 7 ],
 				sshAccess: null,
