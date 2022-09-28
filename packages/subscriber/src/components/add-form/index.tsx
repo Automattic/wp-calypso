@@ -238,9 +238,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
 						<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>
 							<Icon icon={ tip } />
-							{ __(
-								'Nice start there! If you have more subscribers to add, we’ll help you get them added later.'
-							) }
+							{ __( 'Great start! You’ll be able to add more subscribers after setup.' ) }
 						</FormInputValidation>
 					) }
 
