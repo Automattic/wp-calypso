@@ -93,13 +93,6 @@ export const EligibilityWarnings = ( {
 		className
 	);
 
-	const showTitle = title ? <div className="eligibility-warnings__title">{ title }</div> : '';
-	const showPrimaryText = primaryText ? (
-		<div className="eligibility-warnings__primary-text">{ primaryText }</div>
-	) : (
-		''
-	);
-
 	const launchCurrentSite = () => launch( siteId );
 	const makeCurrentSitePublic = () => makeSitePublic( siteId );
 
@@ -135,11 +128,13 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
-			{ isMarketplace && ( showTitle || showPrimaryText ) && (
+			{ ( title || primaryText ) && (
 				<CompactCard>
 					<div className="eligibility-warnings__header">
-						{ showTitle }
-						{ showPrimaryText }
+						{ title && <div className="eligibility-warnings__title">{ title }</div> }
+						{ primaryText && (
+							<div className="eligibility-warnings__primary-text">{ primaryText }</div>
+						) }
 					</div>
 				</CompactCard>
 			) }
