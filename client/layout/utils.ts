@@ -17,12 +17,6 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
 
-	// if the Site Picker is shown, don't sync scrolling. The Site Picker has a
-	// nested scroll window which is not currently compatible with the sync logic here
-	if ( secondaryEl?.querySelector( '.site-selector__sites' ) ) {
-		return;
-	}
-
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
 	if ( contentEl && contentHeight && masterbarHeight && secondaryElHeight ) {

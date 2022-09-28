@@ -260,6 +260,7 @@ class Layout extends Component {
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
+					layoutFocus={ this.props.currentLayoutFocus }
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }

@@ -15,6 +15,7 @@
 	z-index: z-index("root", ".site-selector");
 	display: flex;
 	flex-direction: column;
+	height: calc(100vh - var(--masterbar-height));
 
 	&.is-large .search {
 		display: flex;
@@ -170,7 +171,6 @@
 // The actual list of sites
 .site-selector__sites {
 	flex: 1;
-	max-height: calc(100% - 93px);
 	overflow-y: auto;
 	background: var(--color-surface);
 
