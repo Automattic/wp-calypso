@@ -5,6 +5,7 @@ import {
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct, useShoppingCart } from '@automattic/shopping-cart';
+import debugFactory from 'debug';
 import { LocalizeProps, useTranslate, TranslateResult } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +20,7 @@ import { debounce } from 'calypso/utils';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
+const debug = debugFactory( 'calypso:difm:page-picker' );
 export type CartItem = {
 	nameOverride?: TranslateResult;
 	productSlug: string;
@@ -205,7 +207,10 @@ function getSiteCartProducts( {
 				};
 			}
 			default:
-				// We show only products relevent to the DIFM flow
+				debug(
+					'We show only products relevent to the DIFM flow and the following product was hidden',
+					product
+				);
 				return null;
 		}
 	} );
@@ -214,12 +219,17 @@ function getSiteCartProducts( {
 	const difmRelatedCartItems = cartItems.filter( ( e ) => e !== null );
 	const difmProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === WPCOM_DIFM_LITE );
 	const planProduct = difmRelatedCartItems.find( ( e ) => e?.productSlug === PLAN_PREMIUM );
-	if ( difmProduct && planProduct ) {
-		//Enforce order
-		return [ difmProduct, planProduct ];
+
+	//Enforce order
+	const finalCartItems: CartItem[] = [];
+	if ( difmProduct ) {
+		finalCartItems.push( difmProduct );
+	}
+	if ( planProduct ) {
+		finalCartItems.push( planProduct );
 	}
 
-	return [];
+	return finalCartItems;
 }
 
 export function useCartForDIFM( selectedPages: string[] ): {
@@ -334,7 +344,7 @@ export function useCartForDIFM( selectedPages: string[] ): {
 			isSmallestUnit: true,
 		} );
 	}
-	const isInitialBasketLoaded = displayedCartItems.length > 1;
+	const isInitialBasketLoaded = displayedCartItems.length > 0;
 	return {
 		items: displayedCartItems,
 		total: totalCostFormatted,
