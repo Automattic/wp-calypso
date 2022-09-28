@@ -34,8 +34,8 @@ type AccentColor = {
 };
 
 const defaultAccentColor = {
-	hex: '#113AF5',
-	rgb: { r: 17, g: 58, b: 245 },
+	hex: '#1D39EB',
+	rgb: { r: 29, g: 57, b: 235 },
 	default: true,
 };
 
@@ -46,7 +46,7 @@ const defaultAccentColor = {
  * @returns a value for background-image
  */
 function generateSwatchSVG( color: string | undefined ) {
-	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23ccc' stroke-width='1' fill='${ encodeURIComponent(
+	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23000' stroke-opacity='0.2' stroke-width='1' fill='${ encodeURIComponent(
 		color || '#fff'
 	) }'%3E%3C/circle%3E${
 		// render a line when a color isn't selected
