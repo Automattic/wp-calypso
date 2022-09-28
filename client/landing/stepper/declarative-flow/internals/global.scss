@@ -161,7 +161,7 @@ button {
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
-				border: 1px solid var(--studio-gray-10);
+				border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 				svg {
 					transition: ease 300ms;
