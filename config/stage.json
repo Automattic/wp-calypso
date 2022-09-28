@@ -28,7 +28,7 @@
 		"desktop-promo": true,
 		"dev/preferences-helper": true,
 		"difm/allow-woa-sites": false,
-		"difm/allow-extra-pages": false,
+		"difm/allow-extra-pages": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,

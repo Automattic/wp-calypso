@@ -25,7 +25,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { incrementCounter } from 'calypso/state/persistent-counter/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getProductCost } from 'calypso/state/products-list/selectors';
+import { getProductCost, getProductPriceTierList } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -248,13 +248,22 @@ export default function DIFMLanding( {
 	const dispatch = useDispatch();
 
 	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
+	const tiers = useSelector( ( state ) => getProductPriceTierList( state, WPCOM_DIFM_LITE ) );
+
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && currencyCode;
+	const hasPriceDataLoaded = productCost && tiers.length > 1 && currencyCode;
 
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+		: '';
+
+	const extraPageCost = hasPriceDataLoaded
+		? formatCurrency( tiers[ 1 ].minimum_price - tiers[ 0 ].minimum_price, currencyCode, {
+				stripZeros: true,
+				isSmallestUnit: true,
+		  } )
 		: '';
 
 	const faqHeader = useRef( null );
@@ -520,6 +529,20 @@ export default function DIFMLanding( {
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-6"
+							question={ translate(
+								'I need more than the included 5 pages. Can I purchase additional pages?'
+							) }
+						>
+							<p>
+								{ translate( 'Yes! Additional pages can be purchased for %(extraPageCost)s each.', {
+									args: {
+										extraPageCost,
+									},
+								} ) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ
+							id="faq-7"
 							question={ translate( 'What will my finished site look like?' ) }
 						>
 							<p>
@@ -529,7 +552,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-7"
+							id="faq-8"
 							question={ translate( 'What if I want changes to the finished site?' ) }
 						>
 							<p>
