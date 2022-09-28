@@ -11,14 +11,14 @@
 	display: none; /* disabled */
 	box-sizing: border-box;
 
-	transform: translateZ( 0 );
+	transform: translateZ(0);
 	backface-visibility: hidden;
 
 	.happychat__title {
 		cursor: default;
 		padding: 0;
-		background: var( --color-surface );
-		color: var( --color-neutral-dark );
+		background: var(--color-surface);
+		color: var(--color-neutral-dark);
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
@@ -31,10 +31,10 @@
 
 	&.is-open {
 		display: block;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		bottom: 0;
-		z-index: z-index( 'root', '.happychat__container.is-open' );
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.2 ), 0 1px 10px rgba( 0, 0, 0, 0.1 );
+		z-index: z-index("root", ".happychat__container.is-open");
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 10px rgba(0, 0, 0, 0.1);
 		width: 280px;
 	}
 }
@@ -48,13 +48,13 @@
 	}
 
 	::-webkit-scrollbar-thumb {
-		border-radius: 10px;
-		background-color: var( --color-neutral-20 );
+		border-radius: 10px; /* stylelint-disable-line scales/radii */
+		background-color: var(--color-neutral-20);
 		border: 3px solid transparent;
 		background-clip: padding-box;
 
 		&:hover {
-			background-color: var( --color-neutral-light );
+			background-color: var(--color-neutral-light);
 		}
 	}
 }
@@ -74,7 +74,7 @@
 	}
 
 	> .happychat__title {
-		transform: translateZ( 0 );
+		transform: translateZ(0);
 		position: relative;
 		animation: happychat-disappear 0.1s 1 forwards;
 	}
@@ -122,7 +122,7 @@
 	}
 }
 
-@include breakpoint-deprecated( '>960px' ) {
+@include breakpoint-deprecated( ">960px" ) {
 	@keyframes happychat-minimize {
 		0% {
 			max-height: 100%;
@@ -148,11 +148,11 @@
  * Sidebar mode
  */
 
-@include breakpoint-deprecated( '>1040px' ) {
+@include breakpoint-deprecated( ">1040px" ) {
 	.layout.has-docked-chat {
 		.happychat__container.is-open {
 			position: fixed;
-			height: calc( 100% - var( --masterbar-height ) );
+			height: calc(100% - var(--masterbar-height));
 			bottom: 0;
 			right: 0;
 			width: 272px;
@@ -165,7 +165,7 @@
 			.happychat__composer,
 			.happychat__welcome,
 			.happychat__active-toolbar {
-				border-left: 1px solid var( --color-neutral-10 );
+				border-left: 1px solid var(--color-neutral-10);
 			}
 
 			.happychat__title {

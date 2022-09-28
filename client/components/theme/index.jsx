@@ -20,6 +20,11 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { updateThemes } from 'calypso/state/themes/actions/theme-update';
+import {
+	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
+	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
+	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
+} from 'calypso/state/themes/selectors';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
@@ -244,9 +249,8 @@ export class Theme extends Component {
 		);
 	};
 
-	goToCheckout = () => {
+	goToCheckout = ( plan = 'premium' ) => {
 		const { siteSlug } = this.props;
-		const plan = 'premium';
 
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
@@ -259,12 +263,34 @@ export class Theme extends Component {
 	};
 
 	getUpsellMessage() {
-		const { hasPremiumThemesFeature, theme, didPurchaseTheme, translate } = this.props;
+		const {
+			hasPremiumThemesFeature,
+			theme,
+			didPurchaseTheme,
+			translate,
+			doesThemeBundleSoftwareSet,
+			isSiteEligibleForBundledSoftware,
+		} = this.props;
 
-		if ( didPurchaseTheme && ! hasPremiumThemesFeature ) {
+		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
+		// Bundled themes: Require premium themes, atomic, and woop features (Business or higher plans)
+		const isUsablePremiumTheme = ! doesThemeBundleSoftwareSet && hasPremiumThemesFeature;
+		const isUsableBundledTheme =
+			doesThemeBundleSoftwareSet && hasPremiumThemesFeature && isSiteEligibleForBundledSoftware;
+
+		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
-		} else if ( hasPremiumThemesFeature ) {
+		} else if ( isUsablePremiumTheme ) {
 			return translate( 'The premium theme is included in your plan.' );
+		} else if ( isUsableBundledTheme ) {
+			return translate( 'The WooCommerce theme is included in your plan.' );
+		} else if ( doesThemeBundleSoftwareSet ) {
+			return createInterpolateElement(
+				translate( 'This WooCommerce theme is included in the <Link>Business plan</Link>.' ),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
 		}
 
 		return createInterpolateElement(
@@ -293,6 +319,8 @@ export class Theme extends Component {
 			hasPremiumThemesFeature,
 			isPremiumTheme,
 			didPurchaseTheme,
+			doesThemeBundleSoftwareSet,
+			isPremiumThemeAvailable,
 		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -314,7 +342,7 @@ export class Theme extends Component {
 		 * Only show the Premium badge if we're not already showing the price
 		 * and the theme isn't the active theme.
 		 */
-		const showPremiumBadge = isPremiumTheme && ! themeNeedsPurchase && ! active;
+		const showPremiumBadge = isPremiumTheme && isPremiumThemeAvailable && ! active;
 
 		const themeDescription = decodeEntities( description );
 
@@ -346,11 +374,13 @@ export class Theme extends Component {
 		) : (
 			<div>
 				<div data-testid="upsell-header" className="theme__upsell-header">
-					{ translate( 'Premium theme' ) }
+					{ ! doesThemeBundleSoftwareSet && translate( 'Premium theme' ) }
+					{ doesThemeBundleSoftwareSet && translate( 'WooCommerce theme' ) }
 				</div>
 				<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
 			</div>
 		);
+
 		const upsell = showUpsell && (
 			<span className="theme__upsell">
 				<TrackComponentView
@@ -364,7 +394,7 @@ export class Theme extends Component {
 						! isEnabled( 'signup/seller-upgrade-modal' )
 							? 'theme__upsell-icon'
 							: 'theme__upsell-popover',
-						hasPremiumThemesFeature || showPremiumBadge ? 'active' : null
+						isPremiumThemeAvailable || showPremiumBadge ? 'active' : null
 					) }
 					position={ ! isEnabled( 'signup/seller-upgrade-modal' ) ? 'top left' : 'top' }
 				>
@@ -474,8 +504,11 @@ export default connect(
 			hasPremiumThemesFeature:
 				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			doesThemeBundleSoftwareSet: getDoesThemeBundleSoftwareSet( state, theme.id ),
+			isSiteEligibleForBundledSoftware: getIsSiteEligibleForBundledSoftware( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
+			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

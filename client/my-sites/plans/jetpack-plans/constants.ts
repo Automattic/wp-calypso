@@ -32,9 +32,16 @@ import {
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
+	SOCIAL_SHARES_1000,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SECURITY_PLANS,
+	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
@@ -112,6 +119,9 @@ export const EXTERNAL_PRODUCT_CRM = (): SelectorProduct => ( {
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
+	shortDescription: translate(
+		'Build better relationships with your customers and grow your business.'
+	),
 	buttonLabel: translate( 'Get CRM' ),
 	features: {
 		items: buildCardFeaturesFromItem( [
@@ -133,12 +143,46 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY = (): SelectorProduct => ( {
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 } );
 
+export const EXTERNAL_PRODUCT_SOCIAL_BASIC = (): SelectorProduct => ( {
+	// This is a virtual, non-purchasable product for Jetpack Social that
+	// points to an external landing page.
+	productSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
+	term: TERM_ANNUALLY,
+	type: ITEM_TYPE_PRODUCT,
+	costProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
+	monthlyProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
+	iconSlug: 'jetpack_crm',
+	displayName: translate( 'Social' ),
+	shortName: translate( 'Social' ),
+	tagline: translate( 'Easily share your website content on your social media channels' ),
+	description: translate(
+		'Easily share your website content on your social media channels from one place.'
+	),
+	shortDescription: translate( 'Write once, post everywhere.' ),
+	buttonLabel: translate( 'Get Social' ),
+	features: {
+		items: buildCardFeaturesFromItem( [ SOCIAL_SHARES_1000 ] ),
+	},
+	hidePrice: true,
+	externalUrl: 'https://jetpack.com/social/',
+} );
+
+export const EXTERNAL_PRODUCT_SOCIAL_BASIC_MONTHLY = (): SelectorProduct => ( {
+	...EXTERNAL_PRODUCT_SOCIAL_BASIC(),
+	productSlug: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+	term: TERM_MONTHLY,
+	displayTerm: TERM_ANNUALLY,
+	costProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
+} );
+
 // List of products showcased in the Plans grid but not sold through Calypso
 export const EXTERNAL_PRODUCTS_LIST = [
 	PRODUCT_JETPACK_CRM_FREE,
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 ];
 
 // External Product slugs to SelectorProduct.
@@ -147,6 +191,8 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
+	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: EXTERNAL_PRODUCT_SOCIAL_BASIC,
+	[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: EXTERNAL_PRODUCT_SOCIAL_BASIC_MONTHLY,
 };
 
 /**
@@ -234,6 +280,10 @@ export const TIER_2_SLUGS = [
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
+
+export const MOST_POPULAR_PRODUCTS = [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_VIDEOPRESS_PRODUCTS ];
+
+export const MOST_POPULAR_BUNDLES = [ ...JETPACK_SECURITY_PLANS, ...JETPACK_COMPLETE_PLANS ];
 
 export const isTier1 = ( slug: string ): boolean => TIER_1_SLUGS.includes( slug );
 export const isTier2 = ( slug: string ): boolean => TIER_2_SLUGS.includes( slug );

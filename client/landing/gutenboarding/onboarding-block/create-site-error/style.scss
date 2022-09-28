@@ -1,5 +1,5 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../mixins';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "../../mixins";
 
 .create-site-error {
 	max-width: 540px;
@@ -14,7 +14,7 @@
 
 	// Match link to error text color, prevent purple links
 	.components-external-link {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 
 	// Space between link and Subtitle

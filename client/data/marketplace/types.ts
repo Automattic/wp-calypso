@@ -13,6 +13,7 @@ export type Plugin = {
 	slug: string;
 	version?: string;
 	author?: string;
+	author_name?: string;
 	author_profile?: string;
 	tested?: string;
 	rating?: number;
@@ -25,6 +26,10 @@ export type Plugin = {
 	download_link?: string;
 	icon?: string;
 	railcar: Railcar;
+	variations?: {
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
+	};
 };
 
 export type ESIndexResult = {
@@ -49,6 +54,7 @@ export type ESIndexResult = {
 	'plugin.support_threads_resolved'?: number;
 	'plugin.active_installs'?: number;
 	plugin: {
+		author: string;
 		title: string;
 		excerpt: string;
 		icons: string;

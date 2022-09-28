@@ -30,7 +30,6 @@
 	"oauth_client_id": false,
 	"protocol": "http",
 	"port": 3000,
-	"happychat_url": "https://happychat.io/customer",
 	"jetpack_support_blog": "jetpackme.wordpress.com",
 	"wpcom_support_blog": "en.support.wordpress.com",
 	"apple_pay_merchant_id": "merchant.com.wordpress",
@@ -39,8 +38,8 @@
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"olark_chat_identity": false,
-	"dsp_stripe_pub_key": "pk_test_todo",
-	"dsp_widget_js_src": "http://todo/widget.js",
+	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
+	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"upwork_support_locales": [
 		"de",
 		"de-at",

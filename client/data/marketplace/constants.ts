@@ -1,4 +1,3 @@
-export const BASE_STALE_TIME = 1000 * 60 * 60 * 2; // 2 hours
 export const DEFAULT_PAGE_SIZE = 20;
 export const DEFAULT_CATEGORY = 'all';
 
@@ -18,6 +17,7 @@ export const RETURNABLE_FIELDS = [
 	'modified_gmt',
 	'plugin.title',
 	'author',
+	'plugin.author',
 	'author_login',
 	'blog_id',
 	'date',

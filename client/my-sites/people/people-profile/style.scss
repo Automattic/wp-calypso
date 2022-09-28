@@ -8,7 +8,7 @@
 		.people-profile__role-badge,
 		.gravatar.is-placeholder {
 			color: transparent;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -30,7 +30,7 @@
 	width: 56px !important;
 	height: 56px !important;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 72px !important;
 		height: 72px !important;
 	}
@@ -39,20 +39,20 @@
 .people-profile__detail {
 	margin-left: 80px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-left: 96px;
 	}
 }
 
 .people-profile__username {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
 	text-overflow: clip;
 	overflow: hidden;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-small;
 	}
 
@@ -62,10 +62,10 @@
 }
 
 .people-profile__login {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body;
 		margin-top: -3px;
 	}
@@ -77,17 +77,17 @@
 }
 
 .people-profile__subscribed {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	margin-top: 4px;
 }
 
 .people-profile__role-badge {
 	float: left;
-	background: var( --color-surface );
-	border: 1px solid var( --color-neutral-light );
+	background: var(--color-surface);
+	border: 1px solid var(--color-neutral-light);
 	border-radius: 2px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	margin-left: 8px;
 	padding: 2px 6px;
@@ -98,41 +98,41 @@
 	}
 
 	&.role-super-admin {
-		background: var( --color-error );
+		background: var(--color-error);
 		border: none;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&.role-administrator,
 	&.role-admin-owner {
-		background: var( --color-neutral-70 );
+		background: var(--color-neutral-70);
 		border: none;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&.role-editor {
-		background: var( --color-primary-dark );
+		background: var(--color-primary-dark);
 		border: none;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&.role-author,
 	&.role-contributor {
-		background: var( --color-primary );
+		background: var(--color-primary);
 		border: none;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	&.role-contractor {
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 		border: none;
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	&.role-p2-guest {
-		background: rgb( 112, 71, 227 );
+		background: rgb(112, 71, 227);
 		border: none;
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 }
 

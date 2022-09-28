@@ -11,6 +11,7 @@ import {
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_PRE_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
@@ -44,6 +45,16 @@ function importerStatus( state = {}, action ) {
 					...state[ action.importerId ],
 					importerState: appStates.UPLOAD_FAILURE,
 					errorData: { type: 'uploadError', description: action.error },
+				},
+			};
+
+		case IMPORTS_PRE_UPLOAD_FAILED:
+			return {
+				...state,
+				[ action.importerId ]: {
+					...state[ action.importerId ],
+					importerState: appStates.UPLOAD_FAILURE,
+					errorData: { type: 'preUploadError', description: action.error, code: action.errorCode },
 				},
 			};
 

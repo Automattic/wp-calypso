@@ -1,30 +1,29 @@
 /* eslint-disable no-restricted-imports */
 import { useHas3PC, useSupportAvailability } from '@automattic/data-stores';
-import { useSelector } from 'react-redux';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
-import { shouldTargetWpcom } from '../utils';
+import { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 export function useStillNeedHelpURL() {
 	const { hasCookies } = useHas3PC();
-	const isSimpleSite: boolean = useSelector( ( state ) => getIsSimpleSite( state ) );
-	const canUseWpcomApis = Boolean( shouldTargetWpcom( isSimpleSite ) );
-	const { data: supportAvailability } = useSupportAvailability( 'OTHER', canUseWpcomApis );
+	const { data: supportAvailability, isLoading } = useSupportAvailability(
+		'OTHER',
+		canAccessWpcomApis()
+	);
 
 	// email support is available for all non-free users, let's use it as a proxy for free users
 	// TODO: check purchases instead
 	const isFreeUser = ! supportAvailability?.is_user_eligible_for_tickets;
 
-	if ( ! canUseWpcomApis ) {
-		return 'https://wordpress.com/help/contact';
+	if ( ! canAccessWpcomApis() ) {
+		return { url: 'https://wordpress.com/help/contact', isLoading };
 	}
 
 	if ( ! isFreeUser ) {
-		return '/contact-options';
+		return { url: '/contact-options', isLoading };
 	}
 
 	if ( supportAvailability?.is_user_eligible_for_directly && hasCookies ) {
-		return '/contact-form?mode=DIRECTLY';
+		return { url: '/contact-form?mode=DIRECTLY', isLoading };
 	}
 
-	return '/contact-form?mode=FORUM';
+	return { url: '/contact-form?mode=FORUM', isLoading };
 }

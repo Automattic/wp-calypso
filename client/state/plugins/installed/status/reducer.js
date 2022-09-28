@@ -18,6 +18,7 @@ import {
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_FAILURE,
 	PLUGIN_NOTICES_REMOVE,
+	RESET_PLUGIN_NOTICES,
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
@@ -79,6 +80,8 @@ export default function status( state = {}, action ) {
 
 			return Object.fromEntries( allStatuses );
 		}
+		case RESET_PLUGIN_NOTICES:
+			return {};
 		default:
 			return state;
 	}

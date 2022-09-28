@@ -1,8 +1,8 @@
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
 import { stepSlug, useMyDomainInputMode } from '../constants';
+import type { SiteDetails } from '@automattic/data-stores';
 
 type ValueOf< T > = T[ keyof T ];
-export type Maybe< T > = T | null;
+export type Maybe< T > = T | null | undefined;
 
 type PossibleSlugs = ValueOf< typeof stepSlug >;
 type PossibleInitialModes = ValueOf< typeof useMyDomainInputMode >;
@@ -16,7 +16,7 @@ export type AuthCodeValidationError = DomainsApiError;
 
 export type AuthCodeValidationData = {
 	domain: string;
-	selectedSite: Maybe< SiteData >;
+	selectedSite: Maybe< SiteDetails >;
 	verificationData: {
 		ownership_verification_data: {
 			verification_type: 'auth_code';
@@ -56,7 +56,7 @@ export type StartStepProps = {
 	progressStepList: Record< PossibleSlugs, string >;
 	domainInboundTransferStatusInfo: Partial< InboundTransferStatusInfo >;
 	initialMode: PossibleInitialModes;
-	selectedSite: Maybe< SiteData >;
+	selectedSite: Maybe< SiteDetails >;
 	setPage: ( page: PossibleSlugs ) => void;
 };
 
@@ -70,5 +70,5 @@ export type DomainStepAuthCodeProps = {
 	validateHandler: AuthCodeValidationHandler;
 	pageSlug: PossibleSlugs;
 	progressStepList: Record< PossibleSlugs, string >;
-	selectedSite: Maybe< SiteData >;
+	selectedSite: Maybe< SiteDetails >;
 };

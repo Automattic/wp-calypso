@@ -1,24 +1,36 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
+import {
+	recordDSPEntryPoint,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
-	const { moduleName, postId } = props;
+	const { moduleName, postId, onToggleVisibility } = props;
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const showPromotePost = config.isEnabled( 'promote-post' );
+	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	const keyValue = 'post-' + postId;
+	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
+		'blazepress-widget',
+		keyValue
+	);
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();
-		await showDSPWidgetModal( selectedSiteId, postId );
+		onToggleVisibility( true );
+		openModal();
 
 		gaRecordEvent(
 			'Stats',
@@ -32,6 +44,15 @@ const PromotePost = ( props ) => {
 		<>
 			{ showPromotePost && (
 				<li className="stats-list__item-action module-content-list-item-action">
+					<BlazePressWidget
+						isVisible={ isModalOpen && value === keyValue }
+						siteId={ selectedSiteId }
+						postId={ postId }
+						onClose={ () => {
+							closeModal();
+							onToggleVisibility( false );
+						} }
+					/>
 					<button
 						onClick={ showDSPWidget }
 						rel="noopener noreferrer"

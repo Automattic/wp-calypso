@@ -65,19 +65,21 @@ export class MapDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = ( suggestion ) => {
+	addDomainToCart = async ( suggestion ) => {
 		const { selectedSiteSlug } = this.props;
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [
 				domainRegistration( {
 					productSlug: suggestion.product_slug,
 					domain: suggestion.domain_name,
 				} ),
-			] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + selectedSiteSlug );
-			} );
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + selectedSiteSlug );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {

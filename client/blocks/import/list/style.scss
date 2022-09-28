@@ -1,17 +1,18 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 /**
  * Right to Left support
  */
-html[dir='rtl'] {
+html[dir="rtl"] {
 	.import__onboarding-page {
 		.list__importer-action .action-card__button-container {
-			button, a {
+			button,
+			a {
 				text-align: left;
 
 				svg {
-					transform: rotate( 180deg );
+					transform: rotate(180deg);
 				}
 			}
 		}
@@ -41,8 +42,8 @@ html[dir='rtl'] {
 		}
 
 		h3 {
-			font-size: 1.125em; /* stylelint-disable-line */
-			color: var( --studio-gray-90 );
+			font-size: 1.125em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-90);
 			margin-bottom: 1em;
 		}
 
@@ -60,16 +61,18 @@ html[dir='rtl'] {
 			li {
 				margin-bottom: 10px;
 				list-style: none;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.25em;
 			}
 
-			a, button {
+			a,
+			button {
 				padding: 0;
-				font-size: 0.875em; /* stylelint-disable-line */
-				font-weight: 500; /* stylelint-disable-line */
+				font-size: 0.875em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-weight: 500;
 				line-height: 20px;
 				text-decoration: underline;
-				color: var( --studio-gray-100 );
+				color: var(--studio-gray-100);
 			}
 		}
 
@@ -79,7 +82,7 @@ html[dir='rtl'] {
 			margin-top: 10px;
 			margin-right: 0;
 			margin-inline-end: 1.5em !important;
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 		}
 
 		.list__importers-primary {

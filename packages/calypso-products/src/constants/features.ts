@@ -96,11 +96,26 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-export const FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL = 'free-professional-email-trial';
+
+//condensed_plan_features_v1 test
+export const FEATURE_HOSTING_TEST = 'hosting-test';
+export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
+export const FEATURE_PLUGINS_TEST = 'plugins-test';
+export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';
+export const FEATURE_FREE_NEWSLETTER_V1 = 'free-newsletter';
+export const FEATURE_PAID_NEWSLETTER_V1 = 'paid-newsletter';
+export const FEATURE_MONETISE_V2 = 'monetize-v2';
+export const FEATURE_REPUBLICIZE_V3 = 'republicize-v3';
+export const FEATURE_UPLOAD_THEMES_V3 = 'upload-themes-v3';
+export const FEATURE_EDGE_CACHING_V2 = 'edge-caching-v2';
+export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
+export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
+export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
+export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
+export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
-export const FEATURE_DASH = 'blank-feature-dash';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
 export const FEATURE_SITE_STATS = 'site-stats';
 export const FEATURE_TRAFFIC_TOOLS = 'traffic-tools';
@@ -135,6 +150,7 @@ export const FEATURE_SCAN_V2 = 'scan-v2';
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
 export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_WAF = 'waf';
 export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';
 export const FEATURE_SEARCH_V2 = 'search-v2';
 export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';
@@ -180,6 +196,7 @@ export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbrande
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
+export const SOCIAL_SHARES_1000 = 'social-shares-1000';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
@@ -248,33 +265,20 @@ export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited
 export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
 
-/* WPCOM Plan grid features update experiment */
-export const FEATURE_FREE_NEWSLETTER = 'free-newsletter';
-export const FEATURE_PAID_NEWSLETTER = 'paid-newsletter';
-export const FEATURE_BASIC_BACKUPS = 'site-backups';
-export const FEATURE_UNMETERED_BANDWIDTH = 'unmetered-traffic';
-export const FEATURE_CDN = 'site-cdn';
-export const FEATURE_SSL = 'site-ssl';
-export const FEATURE_BURST_SCALING = 'burst-scaling';
-export const FEATURE_EDGE_CACHING = 'edge-caching';
-export const FEATURE_PREMIUM_THEMES_V2 = 'unlimited-premium-themes-v2';
-export const FEATURE_SEO_PREVIEW_TOOLS_V2 = 'seo-preview-tools-v2';
-export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
-export const FEATURE_BASIC_DESIGN_V2 = 'basic-design-v2';
-export const FEATURE_ADVANCED_DESIGN_V2 = 'advanced-design-v2';
-export const FEATURE_REPUBLICIZE_V2 = 'republicize-v2';
-export const FEATURE_INSTALL_PLUGINS_V2 = 'install-plugins-v2';
-export const FEATURE_UPLOAD_THEMES_V2 = 'upload-themes-v2';
-export const FEATURE_WORDADS_INSTANT_V2 = 'wordads-instant-v2';
-export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
-export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
-export const FEATURE_SPAM_AKISMET_PLUS_V2 = 'spam-akismet-plus-v2';
-export const FEATURE_SFTP_DATABASE_V2 = 'sftp-and-database-access-v2';
-export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2 = 'live-chat-support-business-days-v2';
-export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2 = 'live-chat-support-all-days-v2';
-export const FEATURE_UNLIMITED_USERS_V2 = 'unlimited-users-v2';
-export const FEATURE_EMAIL_SUPPORT_V2 = 'email-support-v2';
-export const FEATURE_ADVANCED_SEO_V2 = 'advanced-seo-v2';
-export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
-/* END - WPCOM Plan grid features update experiment */
+// Signup flow related features
+export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';
+export const FEATURE_UNLIMITED_SUBSCRIBERS = 'unlimited-subscribers';
+export const FEATURE_IMPORT_SUBSCRIBERS = 'import-subscribers';
+export const FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER = 'add-multiple-pages-newsletter';
+export const FEATURE_AD_FREE_EXPERIENCE = 'ad-free-experience';
+export const FEATURE_COLLECT_PAYMENTS_NEWSLETTER = 'collect-payments-newsletter';
+export const FEATURE_POST_BY_EMAIL = 'post-by-email';
+export const FEATURE_REAL_TIME_ANALYTICS = 'real-time-analytics';
+export const FEATURE_GOOGLE_ANALYTICS_V2 = 'google-analytics-v2';
+export const FEATURE_ADD_UNLIMITED_LINKS = 'add-unlimited-links';
+export const FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS = 'customize-themes-buttons-colors';
+export const FEATURE_TRACK_VIEWS_CLICKS = 'track-views-clicks';
+export const FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO = 'collect-payments-link-in-bio';
+export const FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION = 'link-in-bio-themes-customization';

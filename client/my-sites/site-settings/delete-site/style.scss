@@ -9,12 +9,12 @@
 	line-height: 16px;
 	text-transform: uppercase;
 	text-align: left;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .delete-site__content-list {
 	margin: 0 0 20px;
-	border: solid 1px var( --color-neutral-10 );
+	border: solid 1px var(--color-neutral-10);
 	border-radius: 2px;
 	list-style: none;
 	text-align: left;
@@ -24,10 +24,10 @@
 	box-sizing: border-box;
 	width: 100%;
 	padding: 12px 16px;
-	border-top: solid 1px var( --color-neutral-10 );
+	border-top: solid 1px var(--color-neutral-10);
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	&:first-child {
 		border-top: none;
@@ -45,16 +45,16 @@ h1.delete-site__confirm-header {
 	margin-bottom: 16px;
 	font-size: $font-title-small;
 	line-height: 24px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 }
 
 .delete-site__confirm-label {
 	margin-bottom: 8px;
 	line-height: 24px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-weight: normal;
 }
 
 .delete-site__target-domain {
-	color: var( --color-error );
+	color: var(--color-error);
 }

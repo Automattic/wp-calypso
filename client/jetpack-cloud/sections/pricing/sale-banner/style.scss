@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .sale-banner {
 	display: flex;
@@ -7,15 +7,15 @@
 	justify-content: center;
 	padding: 1rem 3rem 1rem 2rem;
 	font-size: 1rem;
-	color: var( --studio-black );
-	background-color: var( --studio-jetpack-green-30 );
+	color: var(--studio-black);
+	background-color: var(--studio-jetpack-green-30);
 
 	@media ( min-width: 1101px ) {
 		padding: 1rem;
 	}
 
 	&__content {
-		width: calc( 100% - 4rem );
+		width: calc(100% - 4rem);
 		max-width: 1200px;
 
 		@media ( min-width: 783px ) {
@@ -35,13 +35,13 @@
 	&__countdown-timer {
 		margin-left: auto;
 		white-space: nowrap;
-		color: var( --studio-black );
+		color: var(--studio-black);
 	}
 
 	&__close-button {
 		position: absolute;
 		right: 1rem;
-		color: var( --studio-black );
+		color: var(--studio-black);
 		cursor: pointer;
 	}
 }

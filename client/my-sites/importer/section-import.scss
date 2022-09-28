@@ -3,13 +3,13 @@
 		margin: 0 auto;
 		max-width: 500px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: none;
 		}
 	}
 
 	.formatted-header__subtitle {
-		color: var( --color-neutral-dark );
+		color: var(--color-neutral-dark);
 
 		a {
 			display: inline-block;

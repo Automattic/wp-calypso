@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domain-search-results__transfer-card {
 	display: flex;
 	flex-direction: column;
 	margin-bottom: 12px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 		flex-direction: row;
 	}
@@ -19,11 +19,11 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding-right: 10px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-small;
 
 		p {
@@ -43,7 +43,7 @@
 		padding: 15px 0 0;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: auto;
 
 		a {
@@ -67,16 +67,16 @@ body.is-section-signup.is-white-signup {
 		svg {
 			display: block;
 			margin: 0 auto;
-			fill: var( --color-neutral-20 );
+			fill: var(--color-neutral-20);
 			width: 20px;
 			height: 20px;
 		}
 	}
 	span {
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		a {
-			color: var( --color-text );
+			color: var(--color-text);
 			text-decoration: underline;
 			font-weight: 600;
 		}

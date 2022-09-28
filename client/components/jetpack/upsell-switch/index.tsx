@@ -1,6 +1,13 @@
 import { getPlan } from '@automattic/calypso-products';
 import classNames from 'classnames';
-import { ReactElement, useState, ReactNode, useEffect, ComponentType, useMemo } from 'react';
+import {
+	ReactElement,
+	useState,
+	PropsWithChildren,
+	useEffect,
+	ComponentType,
+	useMemo,
+} from 'react';
 import * as React from 'react';
 import { connect, DefaultRootState } from 'react-redux';
 import Main from 'calypso/components/main';
@@ -27,8 +34,7 @@ type SiteState = {
 	reason?: string;
 };
 
-type Props = {
-	children: ReactNode;
+type Props = PropsWithChildren< {
 	UpsellComponent: ComponentType< UpsellComponentProps >;
 	display: ReactElement;
 	QueryComponent: ComponentType< QueryComponentProps >;
@@ -41,14 +47,14 @@ type Props = {
 	atomicSite: boolean;
 	siteProducts: SiteProduct[] | null;
 	sitePlan: SitePlan | null | undefined;
-};
+} >;
 
 const UI_STATE_LOADING = Symbol();
 const UI_STATE_LOADED = Symbol();
 
 type UiState = typeof UI_STATE_LOADED | typeof UI_STATE_LOADING | null;
 
-function UpsellSwitch( props: Props ): React.ReactElement {
+function UpsellSwitch( props: Props ) {
 	const {
 		UpsellComponent,
 		QueryComponent,

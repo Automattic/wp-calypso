@@ -10,8 +10,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import { requestSite } from 'calypso/state/sites/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -77,7 +77,7 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 		wpcom
 			.site( fromSite )
 			.get( { apiVersion: '1.2' } )
-			.then( ( site: SitesItem ) =>
+			.then( ( site: SiteDetails ) =>
 				setHasOriginSiteJetpackConnected( !! ( site && site.capabilities ) )
 			)
 			.catch( () => setHasOriginSiteJetpackConnected( false ) )

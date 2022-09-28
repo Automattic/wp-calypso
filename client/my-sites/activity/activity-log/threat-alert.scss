@@ -1,9 +1,9 @@
 .activity-log__threat-alert {
 	padding: 8px 0;
 	font-size: $font-body-small;
-	box-shadow: 0 -1px 0 rbga( var( --color-neutral-10 ), 0.5 );
+	box-shadow: 0 -1px 0 rbga(var(--color-neutral-10), 0.5);
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-small;
 	}
 
@@ -18,7 +18,7 @@
 		padding: 7px;
 		width: 24px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding-left: 8px;
 		}
 	}
@@ -40,7 +40,7 @@
 	.foldable-card__content {
 		padding-left: 48px;
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			padding-left: 56px;
 		}
 
@@ -51,7 +51,7 @@
 }
 
 .activity-log__threat-alert-header {
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	width: 100%;
 }
 
@@ -68,7 +68,7 @@
 .activity-log__threat-alert-title {
 	padding-right: 16px;
 	font-weight: 600;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	.activity-log__threat-alert-filename {
 		padding: 0 2px;
@@ -90,7 +90,7 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-small;
 	}
 }
@@ -98,12 +98,12 @@
 .activity-log__threat-alert-time-since {
 	margin-left: 2px;
 	padding-left: 4px;
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	font-weight: 400;
 
 	&::before {
 		// cdot three-per-em-space
-		content: '\00b7\2004';
+		content: "\00b7\2004";
 	}
 }
 

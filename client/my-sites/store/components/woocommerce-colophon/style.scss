@@ -1,9 +1,10 @@
 .woocommerce-colophon {
 	margin-top: 40px;
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	span, a {
+	span,
+	a {
 		display: inline-block;
 		vertical-align: top;
 	}
@@ -16,7 +17,7 @@
 		margin-left: 4px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-bottom: 24px;
 	}
 }

@@ -1,54 +1,77 @@
+import { css } from '@emotion/css';
 import classnames from 'classnames';
 import { ReactNode } from 'react';
 import './style.scss';
 import { MShotsOptions, useMshotsImg } from './use-mshots-img';
 import { getTextColorFromBackground } from './utils';
 
-const MSHOTS_OPTION: MShotsOptions = {
-	vpw: 1200,
-	vph: 1200,
-	w: 374 * 2,
-};
+export type SizeCss = { width: number; height: number };
+
+const DEFAULT_SIZE = { width: 106, height: 76.55 };
+
+const DEFAULT_CLASSNAME = css( DEFAULT_SIZE );
+
+const VIEWPORT_BASE = 1200;
 
 type Props = {
+	alt: string;
 	backgroundColor?: string;
 	className?: string;
 	mShotsUrl?: string;
-	size?: 'small' | 'medium';
+	width?: number;
+	height?: number;
+	dimensionsSrcset?: Array< SizeCss >;
+	sizesAttr?: string;
 	children?: ReactNode;
-	alt?: string;
 	bgColorImgUrl?: string;
+	viewport?: number;
 	mshotsOption?: MShotsOptions;
 };
 
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	className,
+	className = DEFAULT_CLASSNAME,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
-	size = 'small',
-	mshotsOption = MSHOTS_OPTION,
+	width = DEFAULT_SIZE.width,
+	height = DEFAULT_SIZE.height,
+	dimensionsSrcset = [],
+	sizesAttr = '',
+	viewport = VIEWPORT_BASE,
+	mshotsOption,
 }: Props ) => {
-	const { src, isLoading, isError, imgRef } = useMshotsImg( mShotsUrl, mshotsOption );
+	const options: MShotsOptions = {
+		vpw: viewport,
+		vph: viewport,
+		w: width,
+		h: height,
+		...mshotsOption,
+	};
+	const { imgProps, isLoading, isError } = useMshotsImg( mShotsUrl, options, [
+		...dimensionsSrcset,
+		{ width, height },
+	] );
 
 	const color = backgroundColor && getTextColorFromBackground( backgroundColor );
 
 	const classes = classnames(
 		'site-thumbnail',
-		className,
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
-		`site-thumbnail__size-${ size }`
+		className
 	);
 
 	const showLoader = mShotsUrl && ! isError;
+	const mshotIsFullyLoaded = imgProps.src && ! isError && ! isLoading;
+
+	const blurSize = width > DEFAULT_SIZE.width ? 'medium' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
-			{ bgColorImgUrl && (
+			{ !! bgColorImgUrl && ! mshotIsFullyLoaded && (
 				<div
-					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ size }` }
+					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ blurSize }` }
 					style={ { backgroundImage: `url(${ bgColorImgUrl })` } }
 				></div>
 			) }
@@ -59,15 +82,12 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ src && ! isError && (
+			{ imgProps.src && ! isLoading && (
 				<img
-					className={ classnames( 'site-thumbnail__image', {
-						'site-thumbnail__mshot_default_hidden': isLoading,
-					} ) }
-					ref={ imgRef }
-					src={ src }
+					className="site-thumbnail__image"
 					alt={ alt }
-					loading="lazy"
+					sizes={ sizesAttr || `${ width }px` }
+					{ ...imgProps }
 				/>
 			) }
 		</div>

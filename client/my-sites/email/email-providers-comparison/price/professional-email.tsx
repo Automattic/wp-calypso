@@ -40,13 +40,14 @@ const ProfessionalEmailPrice = ( {
 		return null;
 	}
 
-	const isEligibleForFreeTrial = isDomainInCart || isDomainEligibleForTitanFreeTrial( domain );
+	const isEligibleForFreeTrial =
+		isDomainInCart || isDomainEligibleForTitanFreeTrial( { domain, product } );
 
 	const priceWithInterval = (
 		<PriceWithInterval
 			currencyCode={ currencyCode ?? '' }
 			intervalLength={ intervalLength }
-			isEligibleForFreeTrial={ isEligibleForFreeTrial }
+			isEligibleForIntroductoryOffer={ isEligibleForFreeTrial }
 			product={ product }
 		/>
 	);
@@ -60,7 +61,13 @@ const ProfessionalEmailPrice = ( {
 			) }
 
 			<PriceBadge
-				priceInformation={ <PriceInformation domain={ domain } product={ product } /> }
+				priceInformation={
+					<PriceInformation
+						domain={ domain }
+						isDomainInCart={ isDomainInCart }
+						product={ product }
+					/>
+				}
 				price={ priceWithInterval }
 			/>
 		</>

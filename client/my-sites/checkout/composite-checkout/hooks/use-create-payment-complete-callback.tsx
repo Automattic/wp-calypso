@@ -9,6 +9,7 @@ import { hasPlan, hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
@@ -33,14 +34,13 @@ import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
-import type { PostCheckoutUrlArguments } from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );

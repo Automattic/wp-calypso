@@ -1,29 +1,7 @@
-import type { SitePlan } from '../sites/selectors/get-site-plan';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
 const EMPTY_SITES = Object.freeze( {} );
-
-export interface SitesItem {
-	ID?: number;
-	name?: string;
-	description?: string;
-	URL?: string;
-	slug?: string;
-	capabilities?: Record< string, boolean >;
-	jetpack?: boolean;
-	is_multisite?: boolean;
-	site_owner?: number;
-	lang?: string;
-	visible?: boolean;
-	is_private?: boolean;
-	is_coming_soon?: boolean;
-	single_user_site?: boolean;
-	is_vip?: boolean;
-	options?: Record< string, unknown >;
-	plan?: SitePlan;
-	is_wpcom_atomic?: boolean;
-}
 
 /**
  * Returns site items object or empty object.

@@ -7,7 +7,7 @@ import './style.scss';
 
 class ReskinSideExplainer extends Component {
 	getStrings() {
-		const { type, translate } = this.props;
+		const { flowName, translate, type } = this.props;
 
 		let title;
 		let freeTitle;
@@ -26,9 +26,9 @@ class ReskinSideExplainer extends Component {
 			'business',
 			'ecommerce',
 			'domain',
-		].includes( this.props.flowName );
+		].includes( flowName );
 
-		const isLaunchFlow = 'launch-site' === this.props.flowName;
+		const hideChooseDomainLater = [ 'launch-site', 'onboarding-with-email' ].includes( flowName );
 
 		switch ( type ) {
 			case 'free-domain-explainer':
@@ -69,7 +69,9 @@ class ReskinSideExplainer extends Component {
 					subtitle2 = null;
 				}
 
-				ctaText = isLaunchFlow ? null : <span>{ translate( 'Choose my domain later' ) }</span>;
+				ctaText = hideChooseDomainLater ? null : (
+					<span>{ translate( 'Choose my domain later' ) }</span>
+				);
 				break;
 
 			case 'use-your-domain':

@@ -24,8 +24,11 @@ import {
 	TERM_BIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
+	TITAN_MAIL_MONTHLY_SLUG,
+	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -46,6 +49,7 @@ import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -59,6 +63,7 @@ import {
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
 import PlanTypeSelector from './plan-type-selector';
+import PlanFAQ from './plansStepFaq';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -102,6 +107,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			flowName,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -111,6 +117,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isFAQCondensedExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -144,12 +151,14 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 				/>
 			</div>
 		);
@@ -176,11 +185,11 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
-			isProfessionalEmailPromotionAvailable,
 			redirectToAddDomainFlow,
 			domainAndPlanPackage,
 			translate,
 			locale,
+			flowName,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -235,7 +244,6 @@ export class PlansFeaturesMain extends Component {
 					isInSignup={ isInSignup }
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
-					isProfessionalEmailPromotionAvailable={ isProfessionalEmailPromotionAvailable }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
 					redirectTo={ redirectTo }
@@ -246,6 +254,7 @@ export class PlansFeaturesMain extends Component {
 					discountEndDate={ discountEndDate }
 					withScroll={ plansWithScroll }
 					popularPlanSpec={ getPopularPlanSpec( {
+						flowName,
 						customerType,
 						isJetpack,
 						availablePlans: visiblePlans,
@@ -277,6 +286,7 @@ export class PlansFeaturesMain extends Component {
 			hidePremiumPlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
+			flowName,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -309,6 +319,12 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+			plans = plans.filter(
+				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
+			);
 		}
 
 		if ( ! isEnabled( 'plans/personal-plan' ) ) {
@@ -344,7 +360,14 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getVisiblePlansForPlanFeatures( availablePlans ) {
-		const { customerType, selectedPlan, plansWithScroll, isAllPaidPlansShown } = this.props;
+		const {
+			customerType,
+			selectedPlan,
+			plansWithScroll,
+			isAllPaidPlansShown,
+			isInMarketplace,
+			sitePlanSlug,
+		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
@@ -376,6 +399,18 @@ export class PlansFeaturesMain extends Component {
 		}
 
 		const withIntervalSelector = this.getKindOfPlanTypeSelector( this.props ) === 'interval';
+
+		if ( isInMarketplace ) {
+			// workaround to show free plan on both monthly/yearly toggle
+			if ( sitePlanSlug === PLAN_FREE && ! plans.includes( PLAN_FREE ) ) {
+				// elements are rendered in order, needs to be the first one
+				plans.unshift( PLAN_FREE );
+			}
+			return plans.filter(
+				( plan ) =>
+					plan === sitePlanSlug || isPlanOneOfType( plan, [ TYPE_BUSINESS, TYPE_ECOMMERCE ] )
+			);
+		}
 
 		if ( isAllPaidPlansShown || withIntervalSelector ) {
 			return plans.filter( ( plan ) =>
@@ -425,10 +460,17 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment, showFAQ } = this.props;
 
 		if ( isInSignup ) {
+			if ( isFAQExperiment ) {
+				return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
+			}
 			return null;
+		}
+
+		if ( ! showFAQ ) {
+			return;
 		}
 
 		return <WpcomFAQ />;
@@ -506,7 +548,7 @@ PlansFeaturesMain.propTypes = {
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-	isProfessionalEmailPromotionAvailable: PropTypes.bool,
+
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
@@ -528,7 +570,6 @@ PlansFeaturesMain.defaultProps = {
 	hidePremiumPlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
-	isProfessionalEmailPromotionAvailable: false,
 	showFAQ: true,
 	siteId: null,
 	siteSlug: '',
@@ -545,6 +586,7 @@ export default connect(
 		const currentPurchase = getByPurchaseId( state, currentPlan?.id );
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
+		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -574,6 +616,7 @@ export default connect(
 			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
+			titanMonthlyRenewalCost,
 		};
 	},
 	{

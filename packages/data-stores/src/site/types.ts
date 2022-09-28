@@ -120,6 +120,7 @@ export interface SiteDetails {
 	slug: string;
 	visible?: boolean;
 	wpcom_url?: string;
+	user_interactions?: string[];
 }
 
 export interface SiteDetailsCapabilities {
@@ -156,7 +157,7 @@ export interface SiteDetailsOptions {
 	anchor_podcast?: boolean;
 	background_color?: boolean;
 	blog_public?: number;
-	created_at?: Date;
+	created_at?: string;
 	default_category?: number;
 	default_comment_status?: boolean;
 	default_likes_enabled?: boolean;
@@ -219,6 +220,8 @@ export interface SiteDetailsOptions {
 	was_created_with_blank_canvas_design?: boolean;
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
+	launchpad_screen?: false | 'off' | 'full' | 'minimized';
+	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -438,4 +441,19 @@ export interface GlobalStyles {
 			};
 		};
 	};
+}
+
+export interface LaunchPadCheckListTasksStatuses {
+	first_post_published?: boolean;
+	links_edited?: boolean;
+	site_launched?: boolean;
+}
+
+export interface ThemeSetupOptions {
+	trim_content?: boolean;
+	vertical_id?: string;
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
+	page_template?: string;
 }

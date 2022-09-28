@@ -8,25 +8,25 @@
 	height: 16px;
 	margin: 16px 0;
 	border-radius: 16px; /* stylelint-disable-line scales/radii */
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	color: transparent;
-	animation: placeholder-lines__help-center-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;
+	animation: placeholder-lines__help-center-loading 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite;
 	animation-delay: 0s;
 
-	&:nth-child( 1 ) {
+	&:nth-child(1) {
 		animation-delay: -1.3s;
 	}
 
-	&:nth-child( 2 ) {
+	&:nth-child(2) {
 		animation-delay: -2.5s;
 	}
 
-	&:nth-child( 3 ) {
+	&:nth-child(3) {
 		animation-delay: -3.8s;
 	}
 
 	&::after {
-		content: '\00a0';
+		content: "\00a0";
 	}
 }
 

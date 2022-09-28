@@ -7,7 +7,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useStartingPoints from './starting-points';
 import type { Step } from '../../types';
-import './style.scss';
 
 /**
  * The starting point step

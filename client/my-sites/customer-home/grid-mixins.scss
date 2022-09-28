@@ -3,9 +3,10 @@
 	display: grid;
 }
 @mixin grid-template-columns( $cols, $gap, $fr ) {
-	-ms-grid-columns: $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap
+	-ms-grid-columns:
+		$fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap $fr $gap
 		$fr $gap $fr $gap $fr;
-	grid-template-columns: repeat( $cols, [col-start] minmax( 0, $fr ) );
+	grid-template-columns: repeat($cols, [col-start] minmax(0, $fr));
 	grid-column-gap: $gap;
 }
 @mixin grid-row( $row-start, $span ) {

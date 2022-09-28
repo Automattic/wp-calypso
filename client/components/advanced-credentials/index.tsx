@@ -10,6 +10,7 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
+import wp from 'calypso/lib/wp';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
@@ -76,30 +77,50 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const isRequestingCredentials = useSelector( ( state ) =>
-		isRequestingSiteCredentials( state, siteId as number )
-	);
-
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, siteId, role )
 	) as FormState & { abspath: string };
+
+	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
+	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
 
 	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
 
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
 
+	const isRequestingCredentials = useSelector(
+		( state ) => isRequestingSiteCredentials( state, siteId as number ) || testCredentialsLoading
+	);
+
+	useEffect( () => {
+		try {
+			( async () => {
+				const results: { ok: boolean } = await wp.req.post( {
+					path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
+					apiNamespace: 'wpcom/v2',
+				} );
+				const { ok } = results;
+				setTestCredentialsLoading( false );
+				setTestCredentialsResult( ok );
+			} )();
+		} catch ( error: any ) {
+			setTestCredentialsLoading( false );
+			setTestCredentialsResult( false );
+		}
+	}, [] );
+
 	const statusState = useMemo( (): StatusState => {
 		if ( isRequestingCredentials ) {
 			return StatusState.Loading;
 		}
 
-		if ( hasCredentials ) {
+		if ( hasCredentials && testCredentialsResult ) {
 			return StatusState.Connected;
 		}
 
 		return StatusState.Disconnected;
-	}, [ hasCredentials, isRequestingCredentials ] );
+	}, [ hasCredentials, testCredentialsResult, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( 'unsubmitted' !== formSubmissionStatus ) {

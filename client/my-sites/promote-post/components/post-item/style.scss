@@ -1,43 +1,96 @@
+$post-item-background-color: var(--color-surface);
 
-.post-item__card {
+.post-item__panel {
+	box-sizing: border-box;
 	display: flex;
+	justify-content: space-between;
 	align-items: center;
+	padding: 0 16px;
+	background: $post-item-background-color;
+}
 
-	.post-item__main {
-		flex: 1;
-		display: flex;
-		align-items: center;
+.post-item__detail {
+	position: relative;
+	width: calc(100% - 50px);
+	margin-right: auto;
+	word-break: break-word;
+	word-wrap: break-word;
+	padding: 16px 0;
+}
 
-		.post-item__body {
-			display: flex;
-			flex-direction: column;
-			justify-content: space-between;
-			height: 70px;
-		}
+.card.is-compact {
+	padding: 0 16px;
+}
 
-		.post-item__title {
-			color: var( --color-neutral-70 );
-			font-weight: 600;
-			font-size: 1rem;
-		}
+.post-item__title {
+	margin: 0;
+	padding: 0 0 2px;
+	font-weight: 600;
+	font-size: $font-title-small;
+	line-height: 1.2;
+}
 
+.post-item__meta,
+.post-item__post-type {
+	font-size: $font-body-extra-small;
+	color: var(--color-text-subtle);
+}
 
-		.post-item__subtitle {
-			color: var( --color-neutral-50 );
-			font-size: 0.875rem;
-		}
+.post-item__meta-time-status {
+	display: inline-block;
+	margin-right: 16px;
+}
 
-		.post-item__image-container {
-			margin: 0 20px 0 0;
-			flex-shrink: 0;
-			width: 80px;
-			height: 80px;
+.post-item__post-type {
+	margin-right: 16px;
+}
 
-			.post-item__image {
-				height: 80px;
-			}
-		}
+/* Force all items in the meta section to be middle-aligned */
+.post-item__meta a,
+.post-item__meta div,
+.post-item__meta li,
+.post-item__meta span,
+.post-item__meta ul {
+	display: inline-block;
+	vertical-align: bottom;
+}
+
+a.post-item__title-link,
+a.post-item__title-link:visited {
+	color: var(--color-neutral-70);
+	display: block;
+	padding-bottom: 2px;
+	padding-right: 8px;
+
+	&:hover {
+		color: var(--color-neutral-50);
+	}
+
+	.post-item__panel.is-untitled & {
+		color: var(--color-text-subtle);
+		font-style: italic;
 	}
 }
 
+.post-item__post-thumbnail-wrapper {
+	display: block;
+	position: relative;
+	width: 80px;
+	align-self: stretch;
+	overflow: hidden;
+	margin: 8px 0;
+}
 
+.post-item__post-thumbnail {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	height: 100%;
+	max-height: 80px;
+	max-width: none;
+}
+
+.post-item__promote-link {
+	margin-left: 32px;
+}

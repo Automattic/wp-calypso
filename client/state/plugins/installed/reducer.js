@@ -6,6 +6,9 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_REQUEST,
+	PLUGINS_ALL_REQUEST_SUCCESS,
+	PLUGINS_ALL_REQUEST_FAILURE,
 	PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -17,6 +20,27 @@ import {
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
 import status from './status/reducer';
+
+/**
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for all
+ * plugins on all sites.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export function isRequestingAll( state = false, action ) {
+	switch ( action.type ) {
+		case PLUGINS_ALL_REQUEST:
+			return true;
+		case PLUGINS_ALL_REQUEST_FAILURE:
+		case PLUGINS_ALL_REQUEST_SUCCESS:
+			return false;
+		default:
+			return state;
+	}
+}
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
@@ -119,6 +143,7 @@ function plugin( state, action ) {
 
 export default combineReducers( {
 	isRequesting,
+	isRequestingAll,
 	plugins,
 	status,
 } );

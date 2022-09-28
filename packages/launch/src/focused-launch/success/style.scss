@@ -1,6 +1,6 @@
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
-@import '../../variables';
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "../../variables";
 
 // Override some of the .focused-launch-container styles,
 // to make the contents of success view centered in the middle of the page
@@ -41,7 +41,7 @@
 .focused-launch-success__url-copy-button {
 	// stylelint-disable-next-line scales/radii
 	border-radius: 4px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 }
 
 .focused-launch-success__url-wrapper {
@@ -60,7 +60,7 @@
 
 .focused-launch-success__url-field {
 	@include onboarding-small-text();
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	flex-grow: 0;
 	flex-shrink: 1;
 	min-width: 0;
@@ -70,7 +70,7 @@
 }
 
 .focused-launch-success__url-link {
-	fill: var( --studio-gray-50 );
+	fill: var(--studio-gray-50);
 	flex-grow: 0;
 	flex-shrink: 0;
 	margin-left: 4px;
@@ -85,7 +85,7 @@
 
 .focused-launch-success__url-copy-button {
 	@include onboarding-small-text();
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	flex-grow: 0;
 	flex-shrink: 0;

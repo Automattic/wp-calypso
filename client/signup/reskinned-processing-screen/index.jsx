@@ -34,6 +34,14 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 				{ title: __( 'Preparing Checkout' ) },
 			];
 			break;
+		case 'onboarding-with-email':
+			steps = [
+				{ title: __( 'Getting your domain' ) },
+				{ title: __( 'Turning on the lights' ) },
+				{ title: __( 'Making you cookies' ) },
+				{ title: __( 'Planning the next chess move' ) },
+			];
+			break;
 		default:
 			steps = [
 				! isDestinationSetupSiteFlow && { title: __( 'Building your site' ) },

@@ -1,6 +1,7 @@
 import PromotedPosts from 'calypso/my-sites/promote-post/main';
 
 export const promotedPosts = ( context, next ) => {
-	context.primary = <PromotedPosts />;
+	const { tab } = context.params;
+	context.primary = <PromotedPosts tab={ tab } />;
 	next();
 };

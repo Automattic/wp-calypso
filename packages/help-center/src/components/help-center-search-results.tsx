@@ -22,7 +22,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getAdminHelpResults from 'calypso/state/inline-help/selectors/get-admin-help-results';
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { useHelpSearchQuery } from '../hooks/use-help-search-query';
 import { SearchResult } from '../types';
@@ -98,12 +97,11 @@ function HelpSearchResults( {
 }: HelpSearchResults ) {
 	const dispatch = useDispatch();
 
-	const { hasPurchases, sectionName, adminResults, isSimpleSite } = useSelector( ( state ) => {
+	const { hasPurchases, sectionName, adminResults } = useSelector( ( state ) => {
 		return {
 			hasPurchases: hasCancelableUserPurchases( state ),
 			sectionName: getSectionName( state ),
 			adminResults: getAdminHelpResults( state, searchQuery, 3 ),
-			isSimpleSite: getIsSimpleSite( state ),
 		};
 	} );
 
@@ -119,11 +117,7 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery(
-		searchQuery,
-		locale,
-		isSimpleSite
-	);
+	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery, locale );
 
 	const searchResults = searchData ?? [];
 	const hasAPIResults = searchResults.length > 0;
@@ -179,7 +173,7 @@ function HelpSearchResults( {
 		onSelect( event, result );
 	};
 
-	const renderHelpLink = ( result: SearchResult, type: string ) => {
+	const renderHelpLink = ( result: SearchResult, type: string, index: number ) => {
 		const { link, title, icon } = result;
 
 		const external = externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION;
@@ -197,7 +191,7 @@ function HelpSearchResults( {
 		};
 
 		return (
-			<Fragment key={ link ?? title }>
+			<Fragment key={ `${ result.post_id ?? link ?? title }-${ index }` }>
 				<li className="help-center-search-results__item">
 					<div className="help-center-search-results__cell">
 						<a
@@ -238,7 +232,7 @@ function HelpSearchResults( {
 					</h3>
 				) : null }
 				<ul className="help-center-search-results__list" aria-labelledby={ title ? id : undefined }>
-					{ results.map( ( result ) => renderHelpLink( result, type ) ) }
+					{ results.map( ( result, index ) => renderHelpLink( result, type, index ) ) }
 				</ul>
 			</Fragment>
 		) : null;

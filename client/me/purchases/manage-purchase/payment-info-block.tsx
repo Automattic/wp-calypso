@@ -108,6 +108,20 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
+	if (
+		! isRechargeable( purchase ) &&
+		hasPaymentMethod( purchase ) &&
+		purchase.isAutoRenewEnabled
+	) {
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className={ 'manage-purchase__no-payment-method' }>
+					<Icon icon={ warning } />
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
+	}
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 }
 

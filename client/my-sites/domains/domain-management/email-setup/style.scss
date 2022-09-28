@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-setup {
 	.section-nav {
 		box-shadow: none;
-		border-bottom: 1px solid var( --studio-gray-5 );
+		border-bottom: 1px solid var(--studio-gray-5);
 	}
 
 	.form-label {
@@ -29,14 +29,14 @@
 
 		.email-setup__subtitle {
 			font-size: $font-body-small;
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 		}
 
 		.foldable-card__action {
 			position: relative;
 
 			svg {
-				fill: var( --color-neutral-90 );
+				fill: var(--color-neutral-90);
 			}
 		}
 

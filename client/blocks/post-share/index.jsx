@@ -575,7 +575,8 @@ class PostShare extends Component {
 						<div className="post-share__title">
 							<span>
 								{ translate(
-									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
+									'Share on your connected social media accounts using ' +
+										'{{a}}Jetpack Social{{/a}}.',
 									{
 										components: {
 											a: <a href={ `/marketing/connections/${ siteSlug }` } />,

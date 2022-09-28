@@ -1,6 +1,6 @@
 .google-sale-banner {
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		&.banner.card {
 			padding-right: 24px;
 		}

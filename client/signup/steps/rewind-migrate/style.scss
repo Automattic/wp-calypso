@@ -4,7 +4,8 @@
 	display: none;
 }
 
-.rewind-switch__card, .rewind-auto-config__card {
+.rewind-switch__card,
+.rewind-auto-config__card {
 	text-align: center;
 	margin: 1px auto;
 	max-width: 670px;
@@ -22,7 +23,7 @@
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	padding: rem( 40px ) rem( 40px ) rem( 30px );
+	padding: rem(40px) rem(40px) rem(30px);
 	margin-top: 48px;
 
 	& + .step-wrapper__buttons .navigation-link {
@@ -35,16 +36,16 @@
 
 .rewind-switch__heading {
 	display: inline-block;
-	font-size: rem( 25px );
-	letter-spacing: rem( 1.5px );
-	color: var( --color-neutral-70 );
+	font-size: rem(25px);
+	letter-spacing: rem(1.5px);
+	color: var(--color-neutral-70);
 }
 
 .rewind-switch__description {
 	max-width: 600px;
-	color: var( --color-text );
-	font-size: rem( 13.5px );
-	line-height: rem( 25px );
+	color: var(--color-text);
+	font-size: rem(13.5px);
+	line-height: rem(25px);
 }
 
 .rewind-migrate__warning {
@@ -56,6 +57,6 @@
 		max-width: 600px;
 		font-style: italic;
 		font-size: $font-body-extra-small;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }

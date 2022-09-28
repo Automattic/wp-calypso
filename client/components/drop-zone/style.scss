@@ -7,15 +7,15 @@
 
 	margin: 15px;
 
-	z-index: z-index( 'root', '.drop-zone' );
+	z-index: z-index("root", ".drop-zone");
 	visibility: hidden;
 	opacity: 0;
 	transition: 0.3s opacity, 0.3s background-color, 0s visibility 0.3s;
 
-	border: 6px solid var( --color-primary-dark );
-	border-radius: 6px;
+	border: 6px solid var(--color-primary-dark);
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
 
-	background-color: rgba( var( --color-primary-rgb ), 0.8 );
+	background-color: rgba(var(--color-primary-rgb), 0.8);
 
 	&.is-active {
 		opacity: 1;
@@ -24,7 +24,7 @@
 	}
 
 	&.is-dragging-over-element {
-		background-color: rgba( var( --color-primary-rgb ), 0.8 );
+		background-color: rgba(var(--color-primary-rgb), 0.8);
 	}
 
 	&.is-full-screen {
@@ -37,18 +37,18 @@
 	top: 50%;
 	left: 0;
 	right: 0;
-	z-index: z-index( 'root', '.drop-zone__content' );
-	transform: translateY( -50% );
+	z-index: z-index("root", ".drop-zone__content");
+	transform: translateY(-50%);
 	width: 100%;
 	font-size: $font-body-small;
 	font-weight: 600;
 	text-align: center;
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	transition: transform 0.3s ease-in-out;
 }
 
 .drop-zone.is-dragging-over-element .drop-zone__content {
-	transform: translateY( -50% ) scale( 1.05 );
+	transform: translateY(-50%) scale(1.05);
 }
 
 .drop-zone__content-icon,
@@ -70,19 +70,19 @@
 }
 
 .drop-zone.editor-featured-image__dropzone {
-	background-color: var( --color-accent );
-	border: 6px solid var( --color-accent-dark );
+	background-color: var(--color-accent);
+	border: 6px solid var(--color-accent-dark);
 
 	&.is-dragging-over-element {
-		background-color: var( --color-accent-dark );
-		border-color: var( --color-accent-80 );
+		background-color: var(--color-accent-dark);
+		border-color: var(--color-accent-80);
 	}
 
 	.drop-zone__content-icon svg g {
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 	}
 
 	.drop-zone__content-text {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }

@@ -1,5 +1,8 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .plugins-browser-list {
-	margin-bottom: 16px;
+	margin-bottom: 8px; // 32 + 8 = 40 gap
 
 	.feature-example & {
 		margin: 0;
@@ -15,36 +18,43 @@
 			line-height: 28px;
 			/* stylelint-disable-next-line scales/font-weights */
 			font-weight: 500;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated("<660px") {
 		padding: 0 16px;
+	}
+
+	.spotlight {
+		margin-top: 20px;
 	}
 }
 
 .plugins-browser-list__header {
-	color: var( --color-gray-90 );
+	color: var(--color-gray-90);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
 
-	padding-top: 48px;
+	padding-top: 32px;
+
 	.plugins-browser-list__titles {
-		padding-bottom: 10px;
+		margin-bottom: 4px; // +20 from elements = 24 gap
 
 		.plugins-browser-list__title {
-			font-size: $font-title-small;
+			@extend .wp-brand-font;
+			font-size: $font-title-medium;
 			font-weight: 500;
 
-			&[class*='plugins-browser-list__search-for'] {
+			&[class*="plugins-browser-list__search-for"] {
 				font-weight: 400;
 			}
 		}
 
 		.plugins-browser-list__subtitle {
+			margin-top: 4px;
 			font-size: $font-body-small;
 		}
 	}
@@ -53,9 +63,10 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: space-between;
+		margin-top: auto;
+		margin-bottom: 4px; // +20 from elements = 24 gap
 
 		> div {
-			padding-bottom: 10px;
 			flex-grow: 4;
 
 			.select-dropdown__container {
@@ -64,12 +75,10 @@
 		}
 
 		.plugins-browser-list__browse-all {
-			font-size: $font-body;
+			font-size: $font-body-small;
 			display: flex;
 			justify-content: flex-end;
 			align-items: center;
-			padding-bottom: 10px;
-			margin-left: 1.5rem;
 			flex-grow: 4;
 			svg {
 				margin-left: 2px;

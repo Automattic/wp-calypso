@@ -28,9 +28,8 @@ export const JetpackPluginUpdateWarning: FC< ExternalProps > = ( {
 	const dispatch = useDispatch();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
-	const siteJetpackVersion = useSelector( ( state ) =>
-		getSiteOption( state, siteId, 'jetpack_version' )
-	);
+	const siteJetpackVersion =
+		useSelector( ( state ) => getSiteOption( state, siteId, 'jetpack_version' ) ) ?? 0;
 
 	const pluginUpgradeUrl = useSelector( ( state ) =>
 		getSiteAdminUrl( state, siteId, 'update-core.php#update-plugins-table' )

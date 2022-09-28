@@ -1,0 +1,49 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-product-store {
+	display: flex;
+	flex-direction: column;
+
+	.header {
+		margin-bottom: 36px;
+	}
+
+	.header .formatted-header {
+		margin: 0;
+	}
+
+	a.button {
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body;
+		font-weight: 600;
+	}
+
+	.button:not([disabled], :disabled, .is-primary) {
+		color: var(--color-neutral-100);
+		border: 1px solid var(--color-neutral-100);
+	}
+	.button:focus {
+		border-width: 1px;
+	}
+
+	.info-popover.owner-info__pop-over {
+		line-height: inherit;
+		pointer-events: all;
+	}
+}
+
+:is(.product-lightbox__modal, .jetpack-product-store) :is(.button[disabled], .button:disabled, .button.disabled) {
+	pointer-events: none;
+}
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
+	margin: 0 auto;
+	font-size: $font-title-large;
+	line-height: rem(38px);
+
+	@include break-large {
+		font-size: $font-headline-small;
+		line-height: rem(40px);
+	}
+}

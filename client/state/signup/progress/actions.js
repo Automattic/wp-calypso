@@ -1,4 +1,4 @@
-import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import { isTitanMail, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isEmpty, reduce, snakeCase } from 'lodash';
 import { assertValidDependencies } from 'calypso/lib/signup/asserts';
@@ -55,11 +55,19 @@ function recordSubmitStep( stepName, providedDependencies, optionalProps ) {
 				propValue = otherProps;
 			}
 
+			if ( propName === 'email_item' && propValue && isTitanMail( propValue ) ) {
+				const { extra, quantity, ...otherProps } = propValue;
+				propValue = otherProps;
+			}
+
 			if ( propName === 'selected_page_titles' && Array.isArray( propValue ) ) {
 				propValue = propValue.join( ',' );
 			}
 
-			if ( [ 'cart_item', 'domain_item' ].includes( propName ) && typeof propValue !== 'string' ) {
+			if (
+				[ 'cart_item', 'domain_item', 'email_item' ].includes( propName ) &&
+				typeof propValue !== 'string'
+			) {
 				propValue = Object.entries( propValue || {} )
 					.map( ( pair ) => pair.join( ':' ) )
 					.join( ',' );

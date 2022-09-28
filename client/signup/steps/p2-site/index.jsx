@@ -626,7 +626,7 @@ class P2Site extends Component {
 					</form>
 
 					<div className="p2-site__learn-more">
-						<a href="https://wordpress.com/p2" className="p2-site__learn-more-link">
+						<a href="https://wordpress.com/p2/" className="p2-site__learn-more-link">
 							{ this.props.translate( 'Learn more about P2' ) }
 						</a>
 					</div>

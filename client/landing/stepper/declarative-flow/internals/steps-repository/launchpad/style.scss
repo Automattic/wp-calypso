@@ -1,37 +1,30 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/typography/styles/variables';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 
 // Launchpad - Layout
 // This is styling common parts of stepper page
 .launchpad {
-	.progress-bar,
+	.flow-progress,
 	.step-container__header {
 		display: none;
 	}
+
 	.step-container {
 		background: #fdfdfd;
 		padding: 0;
 		margin: 0;
 		max-width: none;
 		min-height: 100vh;
-		.step-container__navigation.action-buttons {
-			top: auto;
-			inset-inline-start: 40px;
-			.step-container__skip-wrapper {
-				margin-inline-start: 0;
-			}
-		}
 	}
 
 	.step-container__buttons {
-		padding: 0 0 34px;
+		padding: 24px 0 34px;
 		margin: 0;
 		text-align: center;
 
 		@include break-large {
-			text-align: left;
-			padding: 0 0 40px 40px;
+			display: none;
 		}
 	}
 }
@@ -39,6 +32,7 @@
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
+
 	@include break-large {
 		flex-direction: row;
 	}
@@ -48,16 +42,21 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 16px;
+	margin: 24px 16px 32px;
+	display: flex;
+	flex-direction: column;
 
 	@include break-large {
 		max-width: 440px;
 		margin: 24px 20px 24px 40px;
+		height: 95vh;
 	}
 }
 
 .launchpad__sidebar-content-container {
 	margin-left: 0;
+	margin-top: 100px;
+	flex-grow: 1;
 
 	@include break-large {
 		margin-left: 16px;
@@ -65,8 +64,8 @@
 }
 
 .launchpad__sidebar-h1 {
-	color: var( --studio-gray-100 );
-	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+	color: var(--studio-gray-100);
+	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-size: $font-headline-small;
 	font-weight: 400;
 	letter-spacing: 0.2px;
@@ -77,6 +76,7 @@
 
 .launchpad__sidebar-header {
 	margin-left: 8px;
+
 	@include break-large {
 		margin-left: 0;
 	}
@@ -87,7 +87,7 @@
 }
 
 .launchpad__sidebar-header-flow-name {
-	font-family: 'Recoleta';
+	font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-large;
@@ -103,18 +103,48 @@
 
 .launchpad__url-box {
 	background: #f6f7f7;
-	border: 1px solid var( --studio-gray-0 );
+	border: 1px solid var(--studio-gray-0);
 	border-radius: 4px;
+	display: flex;
+	align-items: center;
 	height: 48px;
-	line-height: 48px;
 	margin: 32px 0;
 	padding: 0 20px;
+
+	// truncate long domain names
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.launchpad__url-box-top-level-domain {
+	font-weight: 500;
+}
+
+.launchpad__sidebar-admin-link {
+	padding: 80px 20px 10px;
+	display: none;
+
+	button {
+		text-decoration: underline;
+	}
+
+	@include break-large {
+		display: block;
+	}
 }
 
 // Launchpad - Progress Bar
 
 .launchpad__progress-bar-container {
-	margin: 100px 0 32px;
+	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {
@@ -124,19 +154,13 @@
 }
 
 .launchpad__progress-bar {
-	background: var( --studio-gray-5 );
-	border-radius: 4px;
-	height: 5px;
-	margin-left: 38px;
-	margin-top: -12px;
 	width: 120px;
+	vertical-align: middle;
 }
 
-.launchpad__progress-bar-completed {
-	background: var( --studio-blue-50 );
-	border-radius: 4px;
-	height: 5px;
-	width: 40px;
+.launchpad__progress-bar.progress-bar.is-compact {
+	background-color: #dcdcde;
+	position: relative;
 }
 
 // Launchpad - Checklist
@@ -154,7 +178,7 @@
 .launchpad__checklist-item {
 	align-items: center;
 	background-color: transparent;
-	border-bottom: 1px solid var( --studio-gray-5 );
+	border-bottom: 1px solid var(--studio-gray-5);
 	border-left: none;
 	border-right: none;
 	border-top: none;
@@ -162,43 +186,75 @@
 	padding: 16px;
 	width: 100%;
 	margin: 0;
-	color: var( --color-text );
+	color: var(--color-text);
 }
 
-.launchpad__checklist-item-status {
+.button.launchpad__checklist-item:hover:not([disabled]),
+.button.launchpad__checklist-item:focus:not([disabled]) {
+	fill: var(--studio-blue-50);
+	color: var(--studio-blue-50);
+	border-bottom: 1px solid var(--studio-gray-5);
+}
+
+.launchpad__checklist-item .badge {
+	background-color: var(--studio-blue-5);
+	color: var(--studio-blue-80);
+}
+
+.launchpad__checklist-item[disabled],
+.launchpad__checklist-item[disabled]:focus {
+	background-color: transparent;
+	pointer-events: none;
+}
+
+.launchpad__checklist-item-checkmark-container {
 	margin-right: 8px;
 	width: 20px;
-	.gridicon {
+
+	.launchpad__checklist-item-checkmark {
 		top: 2px;
+		vertical-align: text-bottom;
 	}
 }
 
-.launchpad__checklist-item-status-pending {
-	border: 1px solid var( --studio-gray-10 );
-	// stylelint-disable-next-line declaration-property-unit-allowed-list
-	border-radius: 50%;
-	box-sizing: border-box;
-	display: block;
-	height: 12px;
-	margin: 5px;
-	transition: all 0.1s;
-	width: 12px;
-}
-
-.launchpad__checklist-item-status-complete {
-	fill: var( --color-success );
-	vertical-align: text-bottom;
-}
-
+// general styles
 .launchpad__checklist-item-text {
 	flex-grow: 1;
 	font-size: $font-body;
 	line-height: 20px;
 	text-align: left;
 	font-weight: 600;
-	&.is-complete {
-		opacity: 0.8;
+}
+
+// change badge color on hover (Choose a Plan step)
+.launchpad__task:hover {
+	.launchpad__checklist-item .badge {
+		background: var(--studio-blue-10);
+	}
+}
+
+// completed tasks
+.launchpad__task.is-completed {
+	.launchpad__checklist-item-text {
+		color: var(--studio-gray-50);
 		font-weight: 400;
+	}
+
+	.launchpad__checklist-item-chevron,
+	.launchpad__checklist-item-checkmark {
+		fill: var(--studio-gray-50);
+	}
+}
+
+// completed tasks that are kept active
+.launchpad__task.keep-active:hover {
+	.launchpad__checklist-item-text {
+		color: var(--studio-blue-50);
+	}
+
+	.launchpad__checklist-item-chevron,
+	.launchpad__checklist-item-checkmark {
+		fill: var(--studio-blue-50);
 	}
 }
 
@@ -209,37 +265,36 @@
 	width: 30px;
 }
 
+.gridicon.launchpad__checklist-item-chevron {
+	top: 0;
+	margin-top: 0;
+}
+
 // Launchpad Site Preview Component
 
 .launchpad__site-preview-wrapper {
 	margin: 16px;
-	height: 850px;
 	flex-grow: 1;
 
 	@include break-large {
 		margin: 73px 40px 12px 20px;
-		height: 900px;
 	}
 
 	.preview-toolbar__toolbar {
 		display: none;
+
 		@include break-large {
 			display: block;
 		}
 	}
 
-	.preview-toolbar__devices {
-		margin-bottom: 6px;
+	.web-preview__placeholder {
+		overflow-y: visible;
+		min-height: 720px;
 	}
 
-	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
-		max-width: 100%;
-
-		@include break-large {
-			box-shadow: inset 0 0 1px #e1e1e1;
-			max-width: 375px;
-			border-radius: 50px; /* stylelint-disable-line scales/radii */
-		}
+	.preview-toolbar__devices {
+		margin-bottom: 28px;
 	}
 
 	.web-preview__frame-wrapper.is-resizable {
@@ -249,24 +304,103 @@
 	}
 
 	.web-preview__frame {
-		border: 10px solid var( --color-print );
-		border-radius: 20px; /* stylelint-disable-line scales/radii */
+		border: 10px solid var(--color-print);
+		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
-		height: 812px;
-		width: 100%;
-		filter: none;
+		max-width: 95%;
+		box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
 
 		@include break-large {
-			max-width: 95%;
 			margin-top: 0;
-			box-shadow: inset 0 0 1px #e1e1e1;
-			filter: drop-shadow( 0 3px 8px rgba( 0, 0, 0, 0.05 ) ) drop-shadow( 0 3px 3px rgba( 0, 0, 0, 0.03 ) );
-			border-radius: 50px; /* stylelint-disable-line scales/radii */
+			box-shadow:
+				0 15px 20px rgb(0 0 0 / 4%),
+				0 13px 10px rgb(0 0 0 / 3%),
+				0 6px 6px rgb(0 0 0 / 2%);
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			min-height: 585px;
+			height: calc(100% - 120px);
 		}
-		
+	}
+
+	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
+		max-width: 95%;
+
+		@include break-large {
+			box-shadow:
+				0 76px 65px rgba(0 0 0 / 4%),
+				0 50px 40px rgba(0 0 0 / 3%),
+				0 30px 20px rgba(0 0 0 / 3%),
+				0 15px 13px rgba(0 0 0 / 2%),
+				0 6px 5px rgba(0 0 0 / 2%),
+				0 2px 3px rgba(0 0 0 / 1%);
+			max-width: 340px;
+			border-radius: 40px; /* stylelint-disable-line scales/radii */
+			height: 680px;
+		}
 	}
 
 	.spinner-line {
 		display: none;
+	}
+}
+
+// Launchpad - Processing Screens
+.processing {
+	.wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var(--color-text);
+		stroke: var(--color-text);
+		transform-origin: 0 0;
+	}
+
+	.processing-step__progress-bar {
+		background-color: #fff;
+	}
+
+	&.link-in-bio {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: #d0cce3;
+		background-image:
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 30%, auto 30%;
+		background-position-x: 0%, 100%;
+		background-position-y: 90%, 10%;
+
+		@include break-huge {
+			background-size: auto 50%, auto 50%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+		}
+	}
+
+	.step-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
+	}
+
+	.step-container__content {
+		width: 100%;
+	}
+
+	.progress-bar {
+		display: none;
+	}
+
+	h1.processing-step__progress-step {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
 	}
 }

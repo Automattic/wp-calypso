@@ -2,7 +2,7 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useSelect } from '@wordpress/data';
 import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
-import CountrySpecificPaymentFields from '../../components/country-specific-payment-fields';
+import { CountrySpecificPaymentFields } from '../../components/country-specific-payment-fields';
 
 export default function ContactFields( {
 	getFieldValue,
@@ -11,7 +11,7 @@ export default function ContactFields( {
 	shouldUseEbanx,
 	shouldShowTaxFields,
 }: {
-	getFieldValue: ( key: string ) => string | undefined;
+	getFieldValue: ( key: string ) => string;
 	setFieldValue: ( key: string, value: string ) => void;
 	getErrorMessagesForField: ( key: string ) => string[];
 	shouldUseEbanx?: boolean;
@@ -35,7 +35,7 @@ export default function ContactFields( {
 				<CountrySpecificPaymentFields
 					countryCode={ getFieldValue( 'countryCode' ) }
 					countriesList={ countriesList }
-					getErrorMessage={ getErrorMessagesForField }
+					getErrorMessages={ getErrorMessagesForField }
 					getFieldValue={ getFieldValue }
 					handleFieldChange={ setFieldValue }
 					disableFields={ isDisabled }

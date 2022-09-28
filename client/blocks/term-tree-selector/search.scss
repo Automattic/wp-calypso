@@ -7,13 +7,13 @@
 		top: 9px;
 	}
 
-	input[type='search'].form-text-input {
+	input[type="search"].form-text-input {
 		right: 0;
 		width: 100%;
 		height: 35px;
 		padding: 4px 8px 4px 30px;
 		border-width: 0 0 1px;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		font-size: $font-body-small;
 		-webkit-appearance: none;
 	}

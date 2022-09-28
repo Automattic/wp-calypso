@@ -92,11 +92,6 @@ export function getFlowPageTitle( flowName, isUserLoggedIn ) {
 	return flow.pageTitle || translate( 'Create a site' );
 }
 
-export function getFlowHideBack( flowName, isUserLoggedIn ) {
-	const flow = flows.getFlow( flowName, isUserLoggedIn );
-	return flow.hideBackButton || false;
-}
-
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
@@ -192,6 +187,10 @@ export const isP2Flow = ( flowName ) => {
 
 export const isVideoPressFlow = ( flowName ) => {
 	return flowName === 'videopress';
+};
+
+export const isWpccFlow = ( flowName ) => {
+	return flowName === 'wpcc';
 };
 
 /**

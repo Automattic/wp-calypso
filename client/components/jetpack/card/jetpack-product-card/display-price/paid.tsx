@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 
 type OwnProps = {
 	discountedPrice?: number;
+	discountedPriceFirst?: boolean;
 	originalPrice?: number;
 	pricesAreFetching?: boolean | null;
 	billingTerm: Duration;
@@ -19,6 +20,7 @@ type OwnProps = {
 
 const Paid: React.FC< OwnProps > = ( {
 	discountedPrice,
+	discountedPriceFirst,
 	originalPrice,
 	pricesAreFetching,
 	billingTerm,
@@ -47,6 +49,9 @@ const Paid: React.FC< OwnProps > = ( {
 	}
 
 	const renderDiscountedPrice = () => {
+		const theDiscountedPrice = (
+			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+		);
 		/*
 		 * Price should be displayed from left-to-right, even in right-to-left
 		 * languages. `PlanPrice` seems to keep the ltr direction no matter
@@ -55,13 +60,14 @@ const Paid: React.FC< OwnProps > = ( {
 		 */
 		return (
 			<>
+				{ discountedPriceFirst && theDiscountedPrice }
 				<PlanPrice
 					original
 					className="display-price__original-price"
 					rawPrice={ originalPrice as number }
 					currencyCode={ currencyCode }
 				/>
-				<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+				{ ! discountedPriceFirst && theDiscountedPrice }
 			</>
 		);
 	};

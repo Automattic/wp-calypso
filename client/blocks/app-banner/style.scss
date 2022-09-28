@@ -4,11 +4,11 @@
 	width: 100%;
 	top: 0;
 	left: 0;
-	background: rgba( var( --studio-black-rgb ), 0.6 );
+	background: rgba(var(--studio-black-rgb), 0.6);
 	touch-action: none;
-	
+
 	/* Needed for banner to appear in front of notifications panel. */
-	z-index: z-index( 'root', '.app-banner' );
+	z-index: z-index("root", ".app-banner");
 }
 
 /* Prevent the body from scrolling when the app banner is visible */
@@ -24,22 +24,29 @@ body.app-banner-is-visible {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	background-color: var( --color-surface );
-	color: var( --color-primary-80 );
+	background-color: var(--color-surface);
+	color: var(--color-primary-80);
 	padding: 20px;
 	margin-bottom: 0;
-	box-shadow: 3px -2px 24px 4px rgba( 0, 0, 0, 0.29 );
+	box-shadow: 3px -2px 24px 4px rgba(0, 0, 0, 0.29);
 	overflow: hidden;
+
+	&.jetpack {
+		color: var(--color-neutral-100);
+		padding: 30px 24px;
+		text-align: center;
+		font-family: "SF Pro Text", $sans;
+	}
 }
 
 .app-banner__circle {
 	position: absolute;
 	border: 2px solid;
-	border-radius: 50%; /* stylelint-disable-line */
-	z-index: z-index( 'root', '.app-banner__circle' );
+	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	z-index: z-index("root", ".app-banner__circle");
 
 	&.is-blue {
-		border-color: var( --studio-blue-10 );
+		border-color: var(--studio-blue-10);
 		height: 102px;
 		width: 102px;
 		right: -60px;
@@ -47,7 +54,7 @@ body.app-banner-is-visible {
 	}
 
 	&.is-red {
-		border-color: var( --studio-red-10 );
+		border-color: var(--studio-red-10);
 		height: 91px;
 		width: 91px;
 		right: 25px;
@@ -55,7 +62,7 @@ body.app-banner-is-visible {
 	}
 
 	&.is-yellow {
-		border-color: var( --studio-yellow-10 );
+		border-color: var(--studio-yellow-10);
 		height: 48px;
 		width: 48px;
 		left: -24px;
@@ -63,37 +70,86 @@ body.app-banner-is-visible {
 	}
 }
 
+.app-banner__icon {
+	height: 50px;
+	width: 93px;
+	margin: auto;
+}
+
 .app-banner__text-content {
 	width: 100%;
+
+	&.jetpack {
+		letter-spacing: -0.4px;
+		margin: 36px auto 0;
+	}
 }
 
 .app-banner__title {
-	/* stylelint-disable-next-line */
-	font-size: rem( 22px ); //typography-exception
+	font-size: rem(22px); //typography-exception
 	font-family: $brand-serif;
 	line-height: 30px;
+
+	&.jetpack {
+		font-size: rem(28px); //typography-exception
+		font-weight: 500;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
+		-webkit-font-smoothing: auto;
+		-moz-osx-font-smoothing: initial;
+		text-rendering: auto;
+		@extend .wp-brand-font;
+	}
 }
 
 .app-banner__copy {
 	margin-top: 12px;
-	/* stylelint-disable-next-line */
-	font-size: rem( 15px ); //typography-exception
+	font-size: rem(15px); //typography-exception
+
+	&.jetpack {
+		font-size: rem(16px); //typography-exception
+		line-height: 21px;
+		max-width: 18em;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 18px;
+	}
 }
 
 .app-banner__buttons {
 	width: 100%;
-	margin-top: 20px;
+	margin-top: 36px;
 }
 
 .button.app-banner__open-button {
-	background-color: var( --color-accent-40 );
+	background-color: var(--color-accent-40);
 	border: 0;
-	border-radius: 4px; /* stylelint-disable-line */
+	border-radius: 4px;
 	margin-right: 10px;
+
+	&.jetpack {
+		background-color: var(--color-jetpack);
+		margin-bottom: 12px;
+	}
 }
 
 .button.app-banner__no-thanks-button {
 	background: none;
 	border: 0;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
+
+	&.jetpack {
+		color: var(--color-text);
+	}
+}
+
+.button.jetpack {
+	width: 100%;
+	min-width: 110px;
+	max-width: 366px;
+	margin: auto;
+	display: block;
+	padding: 15px 18px;
+	font-size: rem(18px); //typography-exception;
 }

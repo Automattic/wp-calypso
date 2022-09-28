@@ -13,7 +13,6 @@ import {
 	isWpComPersonalPlan,
 	isWpComPlan,
 	isWpComPremiumPlan,
-	isStarterPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -22,6 +21,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -34,7 +34,9 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getPlanFeatures from '../lib/get-plan-features';
 import getRefundDays from '../lib/get-refund-days';
 import getRefundText from '../lib/get-refund-text';
@@ -81,7 +83,7 @@ export default function WPCheckoutOrderSummary( {
 				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
+					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
 			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
@@ -142,6 +144,21 @@ function SwitchToAnnualPlan( {
 	return <SwitchToAnnualPlanButton onClick={ handleClick }>{ text }</SwitchToAnnualPlanButton>;
 }
 
+function CheckoutSummaryFeaturesWrapper( props: {
+	siteId: number | undefined;
+	nextDomainIsFree: boolean;
+} ) {
+	const { siteId, nextDomainIsFree } = props;
+	const signupFlowName = getSignupCompleteFlowName();
+	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
+
+	if ( signupFlowName && shouldUseFlowFeatureList ) {
+		return <CheckoutSummaryFlowFeaturesList flowName={ signupFlowName } />;
+	}
+
+	return <CheckoutSummaryFeaturesList siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />;
+}
+
 function CheckoutSummaryFeaturesList( props: {
 	siteId: number | undefined;
 	nextDomainIsFree: boolean;
@@ -166,9 +183,6 @@ function CheckoutSummaryFeaturesList( props: {
 
 	const translate = useTranslate();
 
-	const hasOnlyStarterPlan =
-		plans.filter( ( plan ) => isStarterPlan( plan.product_slug ) ).length === plans.length;
-
 	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
 
 	return (
@@ -188,13 +202,6 @@ function CheckoutSummaryFeaturesList( props: {
 				<CheckoutSummaryFeaturesListItem>
 					<WPCheckoutCheckIcon id="features-list-support-text" />
 					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
-				</CheckoutSummaryFeaturesListItem>
-			) }
-
-			{ ! hasOnlyStarterPlan && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-text" />
-					{ translate( 'Customer support via email' ) }
 				</CheckoutSummaryFeaturesListItem>
 			) }
 
@@ -223,19 +230,44 @@ function CheckoutSummaryFeaturesList( props: {
 	);
 }
 
+function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
+	const planFeatures = getFlowPlanFeatures( flowName, planInCart );
+
+	return (
+		<CheckoutSummaryFeaturesListWrapper>
+			{ planFeatures.map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ `feature-list-${ feature.getSlug() }` }>
+						<WPCheckoutCheckIcon id={ `feature-list-${ feature.getSlug() }-icon` } />
+						{ feature.isHighlightedFeature ? (
+							<strong>{ feature.getTitle() }</strong>
+						) : (
+							feature.getTitle()
+						) }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
+		</CheckoutSummaryFeaturesListWrapper>
+	);
+}
+
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const bundledText = translate( 'free for one year' );
-	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
-		components: {
-			strong: <strong />,
-		},
-		args: {
-			domain: domain.meta,
-			bundled: bundledText,
-		},
-		comment: 'domain name and bundling message, separated by a dash',
-	} );
+	const bundledDomain = translate(
+		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
+		{
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message',
+		}
+	);
 
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {

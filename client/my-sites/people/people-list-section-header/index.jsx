@@ -6,9 +6,12 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { includeSubscriberImporterGradually } from '../helpers';
 
 import './style.scss';
 
@@ -20,6 +23,7 @@ class PeopleListSectionHeader extends Component {
 		site: PropTypes.object,
 		isSiteAutomatedTransfer: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
+		includeSubscriberImporter: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -38,6 +42,12 @@ class PeopleListSectionHeader extends Component {
 		return '/people/new/' + siteSlug;
 	}
 
+	getAddSubscriberLink() {
+		const siteSlug = get( this.props, 'site.slug' );
+
+		return '/people/add-subscribers/' + siteSlug;
+	}
+
 	getPopoverText() {
 		const { currentRoute, translate } = this.props;
 
@@ -52,10 +62,22 @@ class PeopleListSectionHeader extends Component {
 		return null;
 	}
 
+	isSubscribersTab() {
+		const { currentRoute } = this.props;
+
+		return startsWith( currentRoute, '/people/email-followers' );
+	}
+
 	render() {
-		const { label, count, children, translate } = this.props;
+		const { label, count, children, translate, includeSubscriberImporter } = this.props;
 		const siteLink = this.getAddLink();
+		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
+
+		const showInviteUserBtn =
+			( siteLink && ! this.isSubscribersTab() ) || ( siteLink && ! includeSubscriberImporter );
+		const showAddSubscriberBtn =
+			addSubscriberLink && this.isSubscribersTab() && includeSubscriberImporter;
 
 		return (
 			<SectionHeader
@@ -66,12 +88,19 @@ class PeopleListSectionHeader extends Component {
 				popoverText={ this.getPopoverText() }
 			>
 				{ children }
-				{ siteLink && (
+				{ showInviteUserBtn && (
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
-							{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
+							{ includeSubscriberImporter
+								? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
+								: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>
+					</Button>
+				) }
+				{ showAddSubscriberBtn && (
+					<Button href={ addSubscriberLink } compact primary>
+						{ translate( 'Add Subscribers', { context: 'Verb. Button to add more subscribers.' } ) }
 					</Button>
 				) }
 			</SectionHeader>
@@ -80,8 +109,12 @@ class PeopleListSectionHeader extends Component {
 }
 
 const mapStateToProps = ( state ) => {
+	const userId = getCurrentUserId( state );
 	const selectedSiteId = getSelectedSiteId( state );
+	const a8cTeamMember = isA8cTeamMember( state );
+
 	return {
+		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		currentRoute: getCurrentRoute( state ),
 	};

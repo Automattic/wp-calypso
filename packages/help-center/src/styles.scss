@@ -1,13 +1,13 @@
-@import '@wordpress/base-styles/variables';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/color-studio/dist/color-variables';
-@import '@automattic/typography/styles/variables';
+@import "@wordpress/base-styles/variables";
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/typography/styles/variables";
 
 $head-foot-height: 50px;
 
 .help-center {
 	.components-card.help-center__container {
-		position: absolute;
+		position: fixed;
 		background-color: #fff;
 		color: #000;
 		z-index: 9999;
@@ -40,7 +40,7 @@ $head-foot-height: 50px;
 			// This icon does not accept size prop due to a bug - https://github.com/WordPress/gutenberg/pull/40315
 			// We can remove this when the bug is fixed
 			.help-center-header__minimize svg {
-				transform: scale( 0.7, 1 );
+				transform: scale(0.7, 1);
 				transform-origin: center;
 			}
 
@@ -80,13 +80,12 @@ $head-foot-height: 50px;
 		}
 
 		&.is-desktop {
-			top: calc( #{$header-height} + 16px );
+			top: calc(#{$header-height} + 16px);
 			right: 16px;
 			width: 410px;
 			height: 80vh;
 			max-height: 800px;
-			box-shadow: 0 0 3px 0 rgba( 0, 0, 0, 0.25 );
-			overflow: auto;
+			box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.25);
 
 			.help-center__container-header {
 				cursor: move;
@@ -94,8 +93,7 @@ $head-foot-height: 50px;
 
 			.help-center__container-content {
 				flex-grow: 1;
-				height: calc( 80vh - #{$head-foot-height} * 2 );
-				position: relative;
+				height: calc(80vh - #{$head-foot-height} * 2);
 			}
 
 			&.is-minimized {
@@ -120,7 +118,7 @@ $head-foot-height: 50px;
 
 			&.is-minimized {
 				min-height: $head-foot-height;
-				top: calc( 100vh - #{$head-foot-height} );
+				top: calc(100vh - #{$head-foot-height});
 			}
 		}
 
@@ -139,21 +137,22 @@ $head-foot-height: 50px;
 		.help-center-header__unread-count {
 			display: inline-block;
 			margin-left: 8px;
-			padding: 2px 6px;
-			background: var( --studio-pink-50 );
-			border-radius: 20px; // stylelint-disable-line scales/radii
+			padding: 2px 8px;
+			background: var(--studio-pink-50);
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			border-radius: 50%;
 			font-size: $font-body-extra-small;
-			color: white;
+			color: #fff;
 		}
 
 		.help-center-header__a8c-only-badge {
 			display: inline-block;
 			margin-left: 8px;
 			padding: 2px 6px;
-			background: lightgray;
+			background: #d3d3d3;
 			border-radius: 4px;
 			font-size: $font-body-extra-small;
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 			text-transform: uppercase;
 		}
 	}
@@ -197,13 +196,13 @@ $head-foot-height: 50px;
 	button.button.back-button__help-center.is-borderless {
 		display: flex;
 		align-items: center;
-		color: black;
+		color: #000;
 		font-size: $font-body-small;
 		padding-right: 5px;
 
 		&:focus {
 			color: #043959;
-			box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba( 79, 148, 212, 0.8 );
+			box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
 			outline: 1px solid transparent;
 			border-color: inherit;
 		}
@@ -212,7 +211,7 @@ $head-foot-height: 50px;
 	.help-center__container-content {
 		padding: 0 !important;
 
-		> *:not( iframe ) {
+		> *:not(iframe) {
 			padding: 16px;
 		}
 	}
@@ -221,6 +220,7 @@ $head-foot-height: 50px;
 		list-style: none;
 		box-sizing: border-box;
 		padding: 0;
+		margin: 0;
 
 		> li {
 			padding: 0;
@@ -229,12 +229,12 @@ $head-foot-height: 50px;
 				display: flex;
 				align-items: center;
 				text-decoration: none;
-				color: var( --studio-gray-100 );
+				color: var(--studio-gray-100);
 				margin-bottom: 16px;
 				font-size: $font-body-small;
 
 				&:hover {
-					background: var( --color-neutral-0 );
+					background: var(--color-neutral-0);
 				}
 			}
 		}
@@ -244,8 +244,8 @@ $head-foot-height: 50px;
 			border-radius: 2px;
 			display: block;
 			padding: 8px;
-			background: var( --studio-gray-0 );
-			fill: var( --studio-blue-50 );
+			background: var(--studio-gray-0);
+			fill: var(--studio-blue-50);
 			flex-shrink: 0;
 		}
 	}
@@ -254,7 +254,7 @@ $head-foot-height: 50px;
 	.help-center__section-title {
 		font-size: $font-body-small;
 		font-weight: 500;
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		margin: 1em 0;
 	}
 
@@ -270,16 +270,16 @@ $head-foot-height: 50px;
 		height: 100%;
 
 		.spinner__outer {
-			border-top-color: var( --wp-admin-theme-color );
+			border-top-color: var(--wp-admin-theme-color);
 		}
 		.spinner__inner {
-			border-top-color: var( --wp-admin-theme-color );
-			border-right-color: var( --wp-admin-theme-color );
+			border-top-color: var(--wp-admin-theme-color);
+			border-right-color: var(--wp-admin-theme-color);
 		}
 	}
 
-	body[class*='is-section-'],
-	body[class^='is-section-'] {
+	body[class*="is-section-"],
+	body[class^="is-section-"] {
 		.help-center {
 			button,
 			input,
@@ -309,8 +309,7 @@ $head-foot-height: 50px;
 			}
 
 			.help-center__container.is-desktop {
-				position: fixed;
-				top: calc( var( --masterbar-height ) + 16px );
+				top: calc(var(--masterbar-height) + 16px);
 			}
 
 			.search-card {
@@ -322,7 +321,7 @@ $head-foot-height: 50px;
 	}
 
 	.help-center-contact-form {
-		.button:not( .back-button__help-center ) {
+		.button:not(.back-button__help-center) {
 			line-height: 2.71428571;
 			min-height: 40px;
 			margin-bottom: 4px;
@@ -335,10 +334,6 @@ $head-foot-height: 50px;
 		font-size: $font-body-small;
 	}
 
-	.help-center-sibyl-articles__list {
-		margin: 0;
-	}
-
 	.help-center-header__text {
 		margin: 1em 0;
 	}
@@ -347,7 +342,7 @@ $head-foot-height: 50px;
 		position: relative;
 
 		&::before {
-			content: '';
+			content: "";
 			display: block;
 			padding-top: 56.25%;
 		}
@@ -364,6 +359,6 @@ $head-foot-height: 50px;
 	}
 
 	.components-base-control__label {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 }

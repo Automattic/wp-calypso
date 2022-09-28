@@ -1,7 +1,7 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { ReactElement, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
@@ -22,7 +22,7 @@ export default function SiteStatusContent( {
 	type,
 	isLargeScreen = false,
 	isFavorite = false,
-}: Props ): ReactElement {
+}: Props ) {
 	const dispatch = useDispatch();
 
 	const {
@@ -87,14 +87,27 @@ export default function SiteStatusContent( {
 			);
 		}
 
+		const siteUrl = value.url;
+
 		return (
 			<>
 				<SiteSetFavorite
 					isFavorite={ isFavorite }
 					siteId={ rows.site.value.blog_id }
-					siteUrl={ rows.site.value.url }
+					siteUrl={ siteUrl }
 				/>
-				<span className="sites-overview__row-text">{ value.url }</span>
+				{ isLargeScreen ? (
+					<Button
+						className="sites-overview__row-text"
+						borderless
+						compact
+						href={ `/activity-log/${ siteUrl }` }
+					>
+						{ siteUrl }
+					</Button>
+				) : (
+					<span className="sites-overview__row-text">{ siteUrl }</span>
+				) }
 				<span className="sites-overview__overlay"></span>
 				{ errorContent }
 			</>

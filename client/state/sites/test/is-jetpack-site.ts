@@ -20,17 +20,45 @@ describe( 'isJetpackSite', () => {
 		expect( isJetpackSite( getSiteState(), siteId + 1 ) ).toEqual( null );
 	} );
 
-	test( 'should return false if the site is hosted on WordPress.com, even if a product plugin is installed', () => {
-		expect( isJetpackSite( getSiteState( { jetpack: false } ), siteId ) ).toEqual( false );
+	test( 'should return true for Atomic sites with Jetpack by default', () => {
 		expect(
 			isJetpackSite(
 				getSiteState( {
+					jetpack: true,
 					options: {
-						is_automated_transfer: true,
-						jetpack_connection_active_plugins: [ 'jetpack-backup' ],
+						is_wpcom_atomic: true,
 					},
 				} ),
 				siteId
+			)
+		).toEqual( true );
+	} );
+
+	test( 'should return false for Atomic sites without Jetpack', () => {
+		expect(
+			isJetpackSite(
+				getSiteState( {
+					jetpack: false,
+					options: {
+						is_wpcom_atomic: true,
+					},
+				} ),
+				siteId
+			)
+		).toEqual( false );
+	} );
+
+	test( 'should return false for Atomic sites when treatAtomicAsJetpackSite is set to false', () => {
+		expect(
+			isJetpackSite(
+				getSiteState( {
+					jetpack: true,
+					options: {
+						is_wpcom_atomic: true,
+					},
+				} ),
+				siteId,
+				{ treatAtomicAsJetpackSite: false }
 			)
 		).toEqual( false );
 	} );
@@ -40,6 +68,9 @@ describe( 'isJetpackSite', () => {
 			isJetpackSite(
 				getSiteState( {
 					jetpack: true,
+					options: {
+						is_wpcom_atomic: true,
+					},
 				} ),
 				siteId
 			)
@@ -72,6 +103,20 @@ describe( 'isJetpackSite', () => {
 				siteId
 			)
 		).toEqual( true );
+	} );
+
+	test( 'should return false if the site has neither the full Jetpack plugin nor a standalone one', () => {
+		expect(
+			isJetpackSite(
+				getSiteState( {
+					jetpack: false,
+					options: {
+						jetpack_connection_active_plugins: [],
+					},
+				} ),
+				siteId
+			)
+		).toEqual( false );
 	} );
 
 	test( 'should return false if the site has a standalone Jetpack plugin installed, but not the full plugin with considerStandaloneProducts set to false', () => {

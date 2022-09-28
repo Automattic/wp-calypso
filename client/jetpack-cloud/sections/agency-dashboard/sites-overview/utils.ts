@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { urlToSlug } from 'calypso/lib/url';
 import type {
 	AllowedTypes,
 	SiteData,
@@ -220,12 +221,15 @@ const getLinks = (
 } => {
 	let link = '';
 	let isExternalLink = false;
+
+	const siteUrlWithMultiSiteSupport = urlToSlug( siteUrl );
+
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime&source=dashboard`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
 			} else {
-				link = `/backup/${ siteUrl }`;
+				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
 		}
@@ -233,7 +237,7 @@ const getLinks = (
 			if ( status === 'inactive' ) {
 				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
 			} else {
-				link = `/scan/${ siteUrl }`;
+				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
 			break;
 		}
@@ -248,12 +252,14 @@ const getLinks = (
 			break;
 		}
 		case 'plugin': {
-			link = `https://wordpress.com/plugins/updates/${ siteUrl }`;
+			link = `https://wordpress.com/plugins/updates/${ siteUrlWithMultiSiteSupport }`;
 			isExternalLink = true;
 			// FIXME: Remove this condition when we enable plugin management in production
 			if ( config.isEnabled( 'jetpack/plugin-management' ) ) {
 				link =
-					status === 'warning' ? `/plugin/updates/${ siteUrl }` : `/plugins/manage/${ siteUrl }`;
+					status === 'warning'
+						? `/plugins/updates/${ siteUrlWithMultiSiteSupport }`
+						: `/plugins/manage/${ siteUrlWithMultiSiteSupport }`;
 				isExternalLink = false;
 			}
 			break;

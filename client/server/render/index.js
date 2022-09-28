@@ -14,7 +14,7 @@ import {
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
@@ -219,9 +219,7 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
-			context.showGdprBanner
-		}`;
+		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
 		context.renderedLayout = render(

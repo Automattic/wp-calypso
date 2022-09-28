@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -19,7 +18,6 @@ import Promote from './action-promote';
 import Spam from './action-spam';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
-const showPromotePost = config.isEnabled( 'promote-post' );
 
 class StatsListItem extends Component {
 	static displayName = 'StatsListItem';
@@ -28,6 +26,7 @@ class StatsListItem extends Component {
 		active: this.props.active,
 		actionMenuOpen: false,
 		disabled: false,
+		promoteWidgetOpen: false,
 	};
 
 	addMenuListener = () => {
@@ -81,6 +80,10 @@ class StatsListItem extends Component {
 			return;
 		}
 
+		if ( this.state.promoteWidgetOpen ) {
+			return;
+		}
+
 		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
@@ -126,6 +129,12 @@ class StatsListItem extends Component {
 		const actionClassSet = classNames( 'module-content-list-item-actions', {
 			collapsed: actionMenu && ! this.state.disabled,
 		} );
+
+		const onTogglePromoteWidget = ( visible ) => {
+			this.setState( {
+				promoteWidgetOpen: visible,
+			} );
+		};
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
@@ -174,11 +183,14 @@ class StatsListItem extends Component {
 				}
 			}, this );
 
-			if ( showPromotePost ) {
-				actionItems.push(
-					<Promote postId={ data.id } key={ 'promote-post-' + data.id } moduleName={ moduleName } />
-				);
-			}
+			actionItems.push(
+				<Promote
+					postId={ data.id }
+					key={ 'promote-post-' + data.id }
+					moduleName={ moduleName }
+					onToggleVisibility={ onTogglePromoteWidget }
+				/>
+			);
 
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;

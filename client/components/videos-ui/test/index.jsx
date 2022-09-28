@@ -31,11 +31,20 @@ const useUpdateUserCourseProgressionMutation = () => {
 	};
 };
 
+const useCourseDetails = () => {
+	return {
+		headerTitle: '',
+		headerSubtitle: '',
+		headerSummary: [ '' ],
+	};
+};
+
 jest.mock( 'calypso/data/courses', () => ( {
 	COURSE_SLUGS: {
 		BLOGGING_QUICK_START: 'blogging-quick-start',
 	},
 	useCourseData,
+	useCourseDetails,
 	useUpdateUserCourseProgressionMutation,
 } ) );
 

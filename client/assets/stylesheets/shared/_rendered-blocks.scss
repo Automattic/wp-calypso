@@ -1,7 +1,7 @@
-@use 'sass:math';
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/typography/styles/variables';
-@import './mixins/breakpoints';
+@use "sass:math";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/typography/styles/variables";
+@import "./mixins/breakpoints";
 
 %rendered-block-content {
 	@extend %content-font;
@@ -51,8 +51,8 @@
 	blockquote {
 		padding: 0 24px 0 32px;
 		margin: 16px 0 32px;
-		border-left: 3px solid var( --color-neutral-0 );
-		color: var( --color-neutral-50 );
+		border-left: 3px solid var(--color-neutral-0);
+		color: var(--color-neutral-50);
 		font-weight: 400;
 		background: transparent;
 	}
@@ -65,7 +65,7 @@
 	}
 
 	hr {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		margin: 24px 0;
 	}
 
@@ -88,14 +88,14 @@
 		margin: 24px auto;
 	}
 
-	iframe[class^='twitter-'],
-	iframe[class^='instagram-'],
+	iframe[class^="twitter-"],
+	iframe[class^="instagram-"],
 	.fb_iframe_widget {
 		display: block;
 		margin: 24px auto !important;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.alignleft {
 			max-width: 100%;
 			float: left;
@@ -113,7 +113,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.alignleft,
 		.alignright {
 			clear: both;
@@ -153,7 +153,7 @@
 		&.alignleft {
 			max-width: 100%;
 
-			@include breakpoint-deprecated( '>660px' ) {
+			@include breakpoint-deprecated( ">660px" ) {
 				max-width: 50%;
 			}
 
@@ -177,7 +177,7 @@
 		margin: 0;
 		font-size: $font-body-small;
 		text-align: center;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 
 	// placeholder for videopress videos
@@ -186,13 +186,13 @@
 		margin-bottom: 24px;
 		padding: 11px 24px;
 		border-radius: 2px;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 		box-sizing: border-box;
 		font-size: $font-body-small;
 		line-height: 1.4285;
 		animation: appear 0.3s ease-in-out;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 13px 48px;
 			font-size: inherit;
 		}
@@ -258,7 +258,7 @@
 		line-height: 22px;
 		border-radius: 2px;
 		padding: 8px 14px;
-		border-color: var( --color-neutral-10 );
+		border-color: var(--color-neutral-10);
 	}
 
 	.wp-block-table table {
@@ -267,14 +267,14 @@
 
 	.wp-block-table td,
 	.wp-block-table th {
-		border: 1px solid var( --color-neutral-10 );
+		border: 1px solid var(--color-neutral-10);
 		font-size: 1rem;
 		line-height: 1.8;
 	}
 
 	.wp-block-table th {
 		font-weight: bold;
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 	}
 
 	.wp-block-button__link,
@@ -316,9 +316,9 @@
 			position: relative;
 
 			// On mobile and responsive viewports, we allow only 1 or 2 columns at the most.
-			width: calc( 50% - 1em );
+			width: calc(50% - 1em);
 
-			&:nth-of-type( even ) {
+			&:nth-of-type(even) {
 				margin-right: 0;
 			}
 
@@ -347,12 +347,7 @@
 				color: $white;
 				text-align: center;
 				font-size: 0.875rem;
-				background: linear-gradient(
-					0deg,
-					rgba( $color: $black, $alpha: 0.7 ) 0,
-					rgba( $color: $black, $alpha: 0.3 ) 70%,
-					transparent
-				);
+				background: linear-gradient(0deg, rgba($color: $black, $alpha: 0.7) 0, rgba($color: $black, $alpha: 0.3) 70%, transparent);
 				box-sizing: border-box;
 				margin: 0;
 				z-index: 2;
@@ -389,7 +384,7 @@
 			@for $i from 3 through 8 {
 				&.columns-#{ $i } .blocks-gallery-image,
 				&.columns-#{ $i } .blocks-gallery-item {
-					width: calc( #{math.div( 100%, $i )} - #{math.div( 1em * ( $i - 1 ), $i )} );
+					width: calc(#{math.div( 100%, $i )} - #{math.div( 1em * ( $i - 1 ), $i )});
 					margin-right: 1em;
 				}
 			}
@@ -425,7 +420,7 @@
 	}
 	.wp-block-gallery {
 		// Non cropped images.
-		&:not( .is-cropped ) {
+		&:not(.is-cropped) {
 			.blocks-gallery-item {
 				align-self: flex-start;
 			}
@@ -440,18 +435,19 @@
 		flex-wrap: wrap;
 		// Need bogus :not(.wp-gallery-individual-image) to override long :not()
 		// specificity chain on default image block on front end.
-		figure.wp-block-image:not( .wp-gallery-individual-image ) {
+		figure.wp-block-image:not(.wp-gallery-individual-image) {
 			// Add space between thumbnails, and unset right most thumbnails later.
-			margin: 0 var( --gallery-block--gutter-size, #{$grid-unit-20} )
-				var( --gallery-block--gutter-size, #{$grid-unit-20} ) 0;
+			margin:
+				0 var(--gallery-block--gutter-size, #{$grid-unit-20})
+				var(--gallery-block--gutter-size, #{$grid-unit-20}) 0;
 
-			&:last-of-type:not( .wp-gallery-individual-image ) {
+			&:last-of-type:not(.wp-gallery-individual-image) {
 				margin-right: 0;
 			}
 
-			width: calc( 50% - ( var( --gallery-block--gutter-size, #{$grid-unit-20} ) / 2 ) );
+			width: calc(50% - ( var(--gallery-block--gutter-size, #{$grid-unit-20}) / 2 ));
 
-			&:nth-of-type( even ) {
+			&:nth-of-type(even) {
 				margin-right: 0;
 			}
 		}
@@ -480,12 +476,7 @@
 			}
 
 			figcaption {
-				background: linear-gradient(
-					0deg,
-					rgba( $color: $black, $alpha: 0.7 ) 0,
-					rgba( $color: $black, $alpha: 0.3 ) 70%,
-					transparent
-				);
+				background: linear-gradient(0deg, rgba($color: $black, $alpha: 0.7) 0, rgba($color: $black, $alpha: 0.3) 70%, transparent);
 				bottom: 0;
 				color: $white;
 				font-size: $default-font-size;
@@ -527,24 +518,24 @@
 		}
 
 		// Non cropped images.
-		&:not( .is-cropped ) {
-			figure.wp-block-image:not( .wp-gallery-individual-image ) {
+		&:not(.is-cropped) {
+			figure.wp-block-image:not(.wp-gallery-individual-image) {
 				margin-top: 0;
 				margin-bottom: auto;
 				img {
-					margin-bottom: var( --gallery-block--gutter-size, #{$grid-unit-20} );
+					margin-bottom: var(--gallery-block--gutter-size, #{$grid-unit-20});
 				}
 
 				figcaption {
-					bottom: var( --gallery-block--gutter-size, #{$grid-unit-20} );
+					bottom: var(--gallery-block--gutter-size, #{$grid-unit-20});
 				}
 			}
 		}
 
 		// Cropped Images.
-		&.is-cropped figure.wp-block-image:not( .wp-gallery-individual-image ) {
+		&.is-cropped figure.wp-block-image:not(.wp-gallery-individual-image) {
 			align-self: inherit;
-			> div:not( .components-drop-zone ),
+			> div:not(.components-drop-zone),
 			> a {
 				display: flex;
 			}
@@ -558,7 +549,7 @@
 			}
 		}
 
-		&.columns-1 figure.wp-block-image:not( .wp-gallery-individual-image ) {
+		&.columns-1 figure.wp-block-image:not(.wp-gallery-individual-image) {
 			margin-right: 0;
 			width: 100%;
 		}
@@ -567,45 +558,42 @@
 		@include break-small {
 			@for $i from 3 through 8 {
 				&.columns-#{ $i } figure.wp-block-image:not( .wp-gallery-individual-image ) {
-					margin-right: var( --gallery-block--gutter-size, #{$grid-unit-20} );
-					width: calc(
-						#{math.div( 100%, $i )} -
-							( var( --gallery-block--gutter-size, #{$grid-unit-20} ) * #{math.div( $i - 1, $i )} )
-					);
+					margin-right: var(--gallery-block--gutter-size, #{$grid-unit-20});
+					width:
+						calc(#{math.div( 100%, $i )} -
+						( var(--gallery-block--gutter-size, #{$grid-unit-20}) * #{math.div( $i - 1, $i )} ));
 				}
 
 				// Prevent collapsing margin while sibling is being dragged.
 				&.columns-#{$i}
-					figure.wp-block-image:not( .wp-gallery-individual-image ).is-dragging
-					~ figure.wp-block-image:not( .wp-gallery-individual-image ) {
-					margin-right: var( --gallery-block--gutter-size, #{$grid-unit-20} );
+				figure.wp-block-image:not( .wp-gallery-individual-image ).is-dragging
+				~ figure.wp-block-image:not( .wp-gallery-individual-image ) {
+					margin-right: var(--gallery-block--gutter-size, #{$grid-unit-20});
 				}
 			}
 			// Unset the right margin on every rightmost gallery item to ensure center balance.
 			@for $column-count from 1 through 8 {
 				&.columns-#{$column-count}
-					figure.wp-block-image:not( .wp-gallery-individual-image ):nth-of-type( #{ $column-count }n ) {
+				figure.wp-block-image:not( .wp-gallery-individual-image ):nth-of-type( #{ $column-count }n ) {
 					margin-right: 0;
 				}
 			}
 			// If number of columns not explicitly set default to 3 columns if 3 or more images.
 			&.columns-default {
-				figure.wp-block-image:not( .wp-gallery-individual-image ) {
-					margin-right: var( --gallery-block--gutter-size, #{$grid-unit-20} );
-					width: calc(
-						33.33% - ( var( --gallery-block--gutter-size, 16px ) * #{math.div( 2, 3 )} )
-					);
+				figure.wp-block-image:not(.wp-gallery-individual-image) {
+					margin-right: var(--gallery-block--gutter-size, #{$grid-unit-20});
+					width: calc(33.33% - ( var(--gallery-block--gutter-size, 16px) * #{math.div( 2, 3 )} ));
 				}
-				figure.wp-block-image:not( .wp-gallery-individual-image ):nth-of-type( 3n + 3 ) {
+				figure.wp-block-image:not(.wp-gallery-individual-image):nth-of-type(3n + 3) {
 					margin-right: 0;
 				}
 				// If only 2 child images use 2 columns.
-				figure.wp-block-image:not( .wp-gallery-individual-image ):first-child:nth-last-child( 2 ),
-				figure.wp-block-image:not( .wp-gallery-individual-image ):first-child:nth-last-child( 2 ) ~ figure.wp-block-image:not( .wp-gallery-individual-image ) {
-					width: calc( 50% - ( var( --gallery-block--gutter-size, 16px ) * 0.5 ) );
+				figure.wp-block-image:not(.wp-gallery-individual-image):first-child:nth-last-child(2),
+				figure.wp-block-image:not(.wp-gallery-individual-image):first-child:nth-last-child(2) ~ figure.wp-block-image:not(.wp-gallery-individual-image) {
+					width: calc(50% - ( var(--gallery-block--gutter-size, 16px) * 0.5 ));
 				}
 				// For a single image set to 100%.
-				figure.wp-block-image:not( .wp-gallery-individual-image ):first-child:nth-last-child( 1 ) {
+				figure.wp-block-image:not(.wp-gallery-individual-image):first-child:nth-last-child(1) {
 					width: 100%;
 				}
 			}
@@ -634,7 +622,7 @@
 	}
 
 	// iCloud embeds - force a min height because they're a bit slender by default
-	.wp-block-embed__wrapper iframe[src*='icloud.com'] {
+	.wp-block-embed__wrapper iframe[src*="icloud.com"] {
 		min-height: 300px;
 	}
 }

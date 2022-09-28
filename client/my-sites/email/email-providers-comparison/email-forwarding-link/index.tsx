@@ -6,7 +6,6 @@ import { emailManagementAddEmailForwards } from 'calypso/my-sites/email/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -14,9 +13,7 @@ type EmailForwardingLinkProps = {
 	selectedDomainName: string;
 };
 
-const EmailForwardingLink = ( {
-	selectedDomainName,
-}: EmailForwardingLinkProps ): ReactElement | null => {
+const EmailForwardingLink = ( { selectedDomainName }: EmailForwardingLinkProps ) => {
 	const translate = useTranslate();
 
 	const currentRoute = useSelector( getCurrentRoute );

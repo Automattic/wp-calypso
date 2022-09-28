@@ -1,7 +1,7 @@
 import page from 'page';
 import { useCallback, useEffect } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
-import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
 /* When adding future upsells, you can use the following approach:
 

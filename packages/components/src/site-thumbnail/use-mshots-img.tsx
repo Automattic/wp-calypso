@@ -1,5 +1,6 @@
 import { addQueryArgs } from '@wordpress/url';
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { fetchIsRedirect } from './fetch-is-redirect';
 
 export function mshotsUrl( targetUrl: string, options: MShotsOptions, countToRefresh = 0 ): string {
 	if ( ! targetUrl ) {
@@ -23,56 +24,99 @@ export type MShotsOptions = {
 	requeue?: boolean;
 };
 
+function getRetinaSize( multiply: number, { w, h }: MShotsOptions ) {
+	return {
+		width: w * multiply,
+		height: ( h || w ) * multiply,
+	};
+}
+
 export const useMshotsImg = (
 	src: string,
-	options: MShotsOptions
+	options: MShotsOptions,
+	sizes: Array< {
+		width: number;
+		height?: number;
+	} > = []
 ): {
-	src: string;
 	isLoading: boolean;
 	isError: boolean;
-	imgRef: React.MutableRefObject< HTMLImageElement | null >;
+	imgProps: Partial< React.ImgHTMLAttributes< HTMLImageElement > >;
 } => {
+	const [ previousSrc, setPreviousSrc ] = useState( src );
+	const srcHasChanged = src !== previousSrc;
+
 	const [ retryCount, setRetryCount ] = useState( 0 );
-	const mshotUrl = useMemo(
-		() => mshotsUrl( src, options, retryCount ),
-		[ src, options, retryCount ]
-	);
-	const imgRef = useRef< HTMLImageElement >( null );
+	const { mshotUrl, srcSet } = useMemo( () => {
+		// If the src has changed, the retry count will be reset
+		// and we want to avoid caching the mshot loading the image
+		const count = srcHasChanged ? -1 : retryCount;
+		const mshotUrl = mshotsUrl( src, options, count );
+
+		// Add retina sizes 2x and 3x.
+		const srcSet = [ ...sizes, getRetinaSize( 2, options ), getRetinaSize( 3, options ) ]
+			.map( ( { width, height } ) => {
+				const resizedUrl = mshotsUrl( src, { ...options, w: width, h: height }, count );
+				return `${ resizedUrl } ${ width }w`;
+			} )
+			.join( ', ' );
+		return { mshotUrl, srcSet };
+	}, [ srcHasChanged, retryCount, src, options, sizes ] );
+
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ isError, setIsError ] = useState( false );
 
+	const timeout = useRef< ReturnType< typeof setTimeout > >();
+
+	const onError = useCallback( () => {
+		setIsError( true );
+	}, [] );
+
 	useEffect( () => {
-		let timeout: number;
-		if ( mshotUrl.length > 0 && imgRef?.current && ! imgRef.current.onload ) {
-			imgRef.current.onload = () => {
-				// MShot Loading image is 400x300px.
-				// MShot 404 image is 748×561px
-				setIsLoading( true );
-				const hasLoadingImgDimensions =
-					imgRef?.current?.naturalWidth === 400 && imgRef?.current.naturalHeight === 300;
-				if ( ! hasLoadingImgDimensions ) {
-					setIsLoading( false );
-				} else if ( retryCount < MAXTRIES ) {
-					// Only refresh 10 times
-					timeout = setTimeout(
-						() => setRetryCount( ( retryCount ) => retryCount + 1 ),
-						retryCount * 500
-					);
-				}
-			};
-			imgRef.current.onerror = () => {
-				setIsError( true );
-			};
+		if ( ! src ) {
+			return;
 		}
+
+		async function checkRedirectImage() {
+			const isRedirect = await fetchIsRedirect( mshotUrl );
+			// 307 is the status code for a temporary redirect used by mshots.
+			// If we `follow` the redirect, the `response.url` will be 'https://s0.wp.com/mshots/v1/default'
+			// and the `response.headers.get('content-type)` will be 'image/gif'
+			if ( ! isRedirect ) {
+				setIsLoading( false );
+			}
+		}
+
+		if ( isLoading && retryCount < MAXTRIES ) {
+			// Only refresh 10 times
+			timeout.current = setTimeout( () => {
+				setRetryCount( ( retryCount ) => retryCount + 1 );
+				checkRedirectImage();
+			}, retryCount * 600 );
+		}
+
 		return () => {
-			clearTimeout( timeout );
+			clearTimeout( timeout.current );
 		};
-	}, [ imgRef, mshotUrl, retryCount ] );
+	}, [ isLoading, mshotUrl, retryCount, src ] );
+
+	useEffect( () => {
+		// Reset state when the image src changes. e.g. When the site is updated
+		if ( srcHasChanged ) {
+			setIsLoading( true );
+			setRetryCount( 0 );
+			setPreviousSrc( src );
+		}
+	}, [ src, srcHasChanged ] );
 
 	return {
-		src: mshotUrl,
 		isLoading,
 		isError,
-		imgRef,
+		imgProps: {
+			onError,
+			srcSet,
+			src: mshotUrl,
+			loading: 'lazy',
+		},
 	};
 };

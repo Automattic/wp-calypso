@@ -1,3 +1,5 @@
+import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
+
 export const getDashboardUrl = ( slug: string ) => {
 	return `/home/${ slug }`;
 };
@@ -20,4 +22,17 @@ export const getHostingConfigUrl = ( slug: string ) => {
 
 export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
+};
+
+export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
+	return site.jetpack && ! site?.is_wpcom_atomic;
+};
+
+export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
+
+export const MEDIA_QUERIES = {
+	small: `@media ${ SMALL_MEDIA_QUERY }`,
+	mediumOrSmaller: '@media screen and ( max-width: 781px )',
+	mediumOrLarger: '@media screen and ( min-width: 660px )',
+	large: '@media screen and ( min-width: 960px )',
 };

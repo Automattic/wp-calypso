@@ -5,7 +5,7 @@
 
 /* The next several rules make the popover nearly fullscreen at mobile widths */
 .masterbar-cart-button__popover .popover__arrow {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
 	}
 }
@@ -14,25 +14,25 @@
 .masterbar-cart-button__popover.popover.is-bottom-left .popover__inner,
 .masterbar-cart-button__popover.popover.is-bottom-right .popover__inner,
 .masterbar-cart-button__popover.popover .popover__inner {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		top: 0;
 	}
 }
 
 .masterbar-cart-button__popover .mini-cart {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: flex;
 		flex-direction: column;
 		position: fixed;
-		top: var( --masterbar-height );
+		top: var(--masterbar-height);
 		right: 0;
 		bottom: 1em;
-		background-color: var( --color-surface );
+		background-color: var(--color-surface);
 	}
 }
 
 .masterbar-cart-button__popover .mini-cart-line-items {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		max-height: none;
 	}
 }

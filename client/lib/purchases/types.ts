@@ -1,3 +1,5 @@
+import { PriceTierEntry } from '@automattic/calypso-products';
+
 export interface Purchase {
 	active?: boolean;
 	amount: number;
@@ -39,10 +41,12 @@ export interface Purchase {
 	payment: PurchasePayment | PurchasePaymentWithCreditCard | PurchasePaymentWithPayPal;
 	pendingTransfer: boolean;
 	priceText: string;
+	priceTierList?: Array< PurchasePriceTier >;
 	productDisplayPrice: string;
 	productId: number;
 	productName: string;
 	productSlug: string;
+	productType: string;
 	purchaseRenewalQuantity: number | null;
 	refundAmount: number;
 	refundOptions: RefundOptions | null;
@@ -58,10 +62,25 @@ export interface Purchase {
 	totalRefundAmount: number;
 	totalRefundText: string;
 	userId: number;
+	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
 	tagLine: string;
 	taxAmount: number | string | undefined;
 	taxText: string | undefined;
+}
+
+export interface PurchasePriceTier {
+	minimumUnits: number;
+	maximumUnits?: undefined | null | number;
+	minimumPrice: number;
+	maximumPrice: number;
+	minimumPriceDisplay: string;
+	maximumPriceDisplay?: string | null | undefined;
+}
+
+export interface RawPurchasePriceTierEntry extends PriceTierEntry {
+	minimum_price_monthly_display: never;
+	maximum_price_monthly_display: never;
 }
 
 export interface RawPurchase {
@@ -78,6 +97,7 @@ export interface RawPurchase {
 	cost_to_unbundle: undefined | number | string;
 	cost_to_unbundle_display: undefined | string;
 	price_text: string;
+	price_tier_list?: Array< RawPurchasePriceTierEntry >;
 	currency_code: string;
 	currency_symbol: string;
 	description: string;
@@ -117,6 +137,7 @@ export interface RawPurchase {
 	product_id: number | string;
 	product_name: string;
 	product_slug: string;
+	product_type: string;
 	product_display_price: string;
 	total_refund_amount: number | undefined;
 	total_refund_text: string;

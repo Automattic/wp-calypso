@@ -1,6 +1,6 @@
-@import '../style';
+@import "../style";
 
-$font-family: 'SF Pro Text', $sans;
+$font-family: "SF Pro Text", $sans;
 $input-height: 44px;
 $border-radius: 4px;
 
@@ -12,7 +12,6 @@ $border-radius: 4px;
 	.step-container__content {
 		display: flex;
 		justify-content: center;
-		margin-bottom: 30px;
 	}
 
 	.newsletter-setup .step-container__header {
@@ -43,39 +42,92 @@ $border-radius: 4px;
 		.form-fieldset,
 		.newsletter-setup__submit-button {
 			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		.form-input-validation {
+			padding-bottom: 0;
+		}
+
+		.form-label {
+			color: var(--studio-black);
+			margin-bottom: 8px;
 		}
 
 		label,
-		input {
+		input,
+		textarea {
 			font-family: $font-family;
 			font-weight: 400;
 		}
 
 		label {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-size: $font-body;
 		}
 
-		input {
-			color: var( --studio-gray-100 );
+		input,
+		textarea,
+		pre {
+			color: var(--studio-gray-100);
 			font-size: $font-body-small;
 			padding: 12px 16px;
-			height: $input-height;
+			line-height: 20px;
+			min-height: $input-height;
 			border-radius: $border-radius;
 			background-repeat: no-repeat;
 			background-position: 95%;
 
 			&.newsletter-setup__accent-color {
 				background-size: 25px, auto;
-				background-position: 13px center, 95%;
+				background-position: left 13px center, 95%;
 				background-repeat: no-repeat, no-repeat;
 				padding-left: 50px;
-				color: var( --studio-gray-30 );
+
+				/* Overwrites the transition value set by FormInput component.
+				It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
+				transition: none;
+				cursor: pointer;
+			}
+		}
+
+		input {
+			height: 44px;
+		}
+
+		.components-form-file-upload .add {
+			color: var(--studio-black);
+			text-decoration: underline;
+		}
+
+		.newsletter-setup__contrast-warning {
+			display: flex;
+			font-size: $font-body-small;
+			height: 0;
+			transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+			opacity: 0;
+			margin-top: 16px;
+			overflow: hidden;
+
+			&.is-visible {
+				height: 80px;
+				opacity: 1;
+			}
+
+			.newsletter-setup__contrast-warning-icon-container {
+				margin-top: 4px;
+				margin-right: 4px;
+
+				svg {
+					stroke: var(--studio-yellow-40);
+				}
 			}
 		}
 
 		.newsletter-setup__submit-button {
 			border-radius: $border-radius;
+			// adds +2 px of padding to the button to match the input field height
+			padding: 10px 14px;
 		}
 	}
 }
@@ -83,5 +135,12 @@ $border-radius: 4px;
 .components-color-picker {
 	.components-h-stack {
 		width: unset !important;
+	}
+}
+
+.newsletter-setup__accent-color-popover {
+	&:focus,
+	&:focus-visible {
+		outline: none;
 	}
 }

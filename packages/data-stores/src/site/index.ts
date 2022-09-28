@@ -1,4 +1,5 @@
-import { registerStore } from '@wordpress/data';
+import { plugins, use, registerStore } from '@wordpress/data';
+import persistOptions from '../one-week-persistence-config';
 import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
@@ -15,6 +16,8 @@ export { STORE_KEY };
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
+		use( plugins.persistence, persistOptions );
+
 		isRegistered = true;
 		registerStore< State >( STORE_KEY, {
 			actions: createActions( clientCreds ),
@@ -22,6 +25,7 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 			reducer,
 			resolvers,
 			selectors,
+			persist: [ 'bundledPluginSlug' ],
 		} );
 	}
 	return STORE_KEY;

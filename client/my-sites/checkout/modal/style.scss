@@ -1,13 +1,13 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 body.has-checkout-modal {
 	overflow: hidden;
 }
 
 .checkout-modal {
-	z-index: z-index( 'root', '.checkout-modal' );
+	z-index: z-index("root", ".checkout-modal");
 
 	.components-modal__frame {
 		top: auto;

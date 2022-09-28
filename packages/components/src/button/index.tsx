@@ -17,6 +17,7 @@ export interface OwnProps {
 	busy?: boolean;
 	borderless?: boolean;
 	plain?: boolean;
+	transparent?: boolean;
 }
 
 type AnchorElementProps = AnchorHTMLAttributes< HTMLAnchorElement >;
@@ -40,6 +41,7 @@ const cleanAnchorProps = ( {
 	primary,
 	scary,
 	plain,
+	transparent,
 	...anchorProps
 }: ButtonProps | AnchorProps ): AnchorProps => anchorProps as AnchorProps;
 
@@ -76,6 +78,7 @@ const Button: ForwardRefRenderFunction<
 				'is-scary': props.scary,
 				'is-busy': props.busy,
 				'is-borderless': props.borderless,
+				'is-transparent': props.transparent,
 		  } );
 
 	if ( isAnchor( props ) ) {

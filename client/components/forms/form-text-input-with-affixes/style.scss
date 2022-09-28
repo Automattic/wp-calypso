@@ -7,32 +7,32 @@
 		flex-direction: row;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 
-	input[type='email'].form-text-input,
-	input[type='password'].form-text-input,
-	input[type='url'].form-text-input,
-	input[type='text'].form-text-input,
-	input[type='number'].form-text-input {
+	input[type="email"].form-text-input,
+	input[type="password"].form-text-input,
+	input[type="url"].form-text-input,
+	input[type="text"].form-text-input,
+	input[type="number"].form-text-input {
 		flex-grow: 1;
 		border-radius: 0;
 		position: relative;
-		z-index: z-index( 'root', '.form-text-input-with-affixes .form-text-input' );
+		z-index: z-index("root", ".form-text-input-with-affixes .form-text-input");
 
 		&:focus {
 			// Fixes the right border of the box shadow displayed when this input element is focused which appears as
 			// cut off when this input has a suffix, or is stuck to another element that has a higher stacking order
 			// (fix found at http://stackoverflow.com/a/24728957)
-			transform: scale( 1 );
+			transform: scale(1);
 		}
 
 		&:disabled {
 			border-right-width: 0;
 
 			& + .form-text-input-with-affixes__suffix {
-				border-left: 1px solid var( --color-neutral-10 );
+				border-left: 1px solid var(--color-neutral-10);
 			}
 		}
 	}
@@ -53,9 +53,9 @@
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
 	position: relative;
-	background: var( --color-neutral-0 );
-	border: 1px solid var( --color-neutral-10 );
-	color: var( --color-neutral-50 );
+	background: var(--color-neutral-0);
+	border: 1px solid var(--color-neutral-10);
+	color: var(--color-neutral-50);
 	padding: 7px 14px;
 	white-space: nowrap;
 	flex: 1 0 auto;
@@ -67,8 +67,8 @@
 	border-top-left-radius: 2px;
 	border-top-right-radius: 2px;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		:not( .no-wrap ) > & {
+	@include breakpoint-deprecated( "<480px" ) {
+		:not(.no-wrap) > & {
 			border-bottom: none;
 		}
 	}
@@ -77,17 +77,17 @@
 		@include no-prefix-wrap();
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		@include no-prefix-wrap();
 	}
 
-	& + input[type='email'].form-text-input,
-	& + input[type='password'].form-text-input,
-	& + input[type='url'].form-text-input,
-	& + input[type='text'].form-text-input,
-	& + input[type='number'].form-text-input {
+	& + input[type="email"].form-text-input,
+	& + input[type="password"].form-text-input,
+	& + input[type="url"].form-text-input,
+	& + input[type="text"].form-text-input,
+	& + input[type="number"].form-text-input {
 		&:disabled {
-			border-left-color: var( --color-neutral-10 );
+			border-left-color: var(--color-neutral-10);
 			border-right-width: 1px;
 		}
 	}
@@ -97,8 +97,8 @@
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;
 
-	@include breakpoint-deprecated( '<480px' ) {
-		:not( .no-wrap ) > & {
+	@include breakpoint-deprecated( "<480px" ) {
+		:not(.no-wrap) > & {
 			border-top: none;
 		}
 	}
@@ -107,7 +107,7 @@
 		@include no-suffix-wrap();
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		@include no-suffix-wrap();
 	}
 }

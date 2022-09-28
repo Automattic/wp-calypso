@@ -21,21 +21,19 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 	const introContent: IntroContent = {
 		newsletter: {
 			title: createInterpolateElement(
-				__( 'Your stories, right into your<br /> readers’ inbox, now!' ),
+				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Create your newsletter' ),
+			buttonText: __( 'Set up your Newsletter' ),
 		},
 		'link-in-bio': {
 			title: createInterpolateElement(
-				__( 'Your short bio and links,<br /> accessible to your<br /> audience in minutes' ),
+				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Create your link in bio' ),
+			buttonText: __( 'Set up your Link in Bio' ),
 		},
 	};
-
-	createInterpolateElement( __( 'Let’s set up your<br />Link in Bio' ), { br: <br /> } );
 
 	return (
 		<div className="intro__content">

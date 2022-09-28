@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
 
 .masterbar__item {
-    flex: 1;
+	flex: 1;
 }
 
 .signup-success {
@@ -14,11 +14,11 @@
 	padding: 0 0 40px;
 	gap: 41px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: 535px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 90%;
 	}
 
@@ -31,7 +31,7 @@
 	}
 
 	.signup-success__header {
-		margin-top: var( --masterbar-height );
+		margin-top: var(--masterbar-height);
 		text-align: center;
 		min-height: 270px;
 
@@ -60,7 +60,7 @@
 	}
 
 	.signup-success__row-wrapper {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			align-items: center;
 			display: flex;
 			width: 100%;
@@ -70,7 +70,7 @@
 	.signup-success__row-content {
 		flex: 1;
 		p {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 			font-size: $font-body-small;
 			margin-top: 5px;
 			padding-right: 10px;
@@ -84,7 +84,7 @@
 	}
 
 	hr {
-		background-color: var( --studio-gray-5 );
+		background-color: var(--studio-gray-5);
 		margin: 30px 0;
 	}
 }
@@ -95,7 +95,7 @@
 	align-items: center;
 	padding: 0;
 	p {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 		margin-bottom: 0;
 	}
@@ -104,7 +104,7 @@
 		margin-bottom: 30px;
 
 		a {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			border-bottom: 1px solid #000;
 		}
 	}

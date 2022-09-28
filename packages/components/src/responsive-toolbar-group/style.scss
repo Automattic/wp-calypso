@@ -3,20 +3,21 @@
 	padding-bottom: 24px;
 
 	.responsive-toolbar-group__grouped-list {
+		background-color: transparent;
+		border-color: transparent;
 		justify-content: space-between;
 		flex-wrap: nowrap;
 		display: flex;
 		opacity: 0;
 
-		border-color: rgba( 0, 0, 0, 0 );
 
 		.responsive-toolbar-group__menu-item.is-selected {
 			background-color: #1e1e1e;
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
-		.responsive-toolbar-group__menu-item:not( .is-selected ):not( .responsive-toolbar-group__more-item ) {
+		.responsive-toolbar-group__menu-item:not(.is-selected):not(.responsive-toolbar-group__more-item) {
 			&:hover {
-				background: var( --studio-gray-0 );
+				background: var(--studio-gray-0);
 			}
 		}
 
@@ -28,9 +29,9 @@
 			margin-right: -8px;
 		}
 
-		.responsive-toolbar-group__button-item:not( [class*='is-pressed'] ) {
+		.responsive-toolbar-group__button-item:not([class*="is-pressed"]) {
 			&:hover::before {
-				background: var( --studio-gray-0 );
+				background: var(--studio-gray-0);
 			}
 		}
 	}
@@ -91,7 +92,8 @@
 	}
 
 	// Remove on-focus, on-click border
-	.components-toolbar .components-button::before {
+	.components-toolbar .components-button::before,
+	.components-toolbar .components-button:focus {
 		box-shadow: none;
 	}
 }

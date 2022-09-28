@@ -5,21 +5,21 @@
 		font-weight: 400;
 		margin: 0;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-body;
 		}
 	}
 }
 
 .header__logo {
-	fill: var( --color-primary );
+	fill: var(--color-primary);
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		width: 39px;
 		height: 39px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 24px;
 		height: 24px;
 	}

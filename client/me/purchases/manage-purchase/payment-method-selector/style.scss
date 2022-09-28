@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .payment-method-selector__terms {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	margin: 5px 0 0;
 	padding: 0;
 
@@ -46,12 +46,12 @@
 			width: auto;
 		}
 
-		&:not( .is-status-paypal ) {
-			background-color: var( --color-accent );
+		&:not(.is-status-paypal) {
+			background-color: var(--color-accent);
 		}
 
 		&:focus {
-			outline: var( --color-primary-light ) solid 2px;
+			outline: var(--color-primary-light) solid 2px;
 		}
 	}
 }
@@ -64,11 +64,11 @@
 /* Jetpack cloud overwrites */
 
 .payment-method-selector__content.is-jetpack-cloud {
-	.components-checkbox-control__input[type='checkbox']:checked {
-		background-color: var( --studio-jetpack-green-50 );
+	.components-checkbox-control__input[type="checkbox"]:checked {
+		background-color: var(--studio-jetpack-green-50);
 	}
 
 	.checkout-submit-button .checkout-button {
-		background-color: var( --studio-jetpack-green-50 );
+		background-color: var(--studio-jetpack-green-50);
 	}
 }

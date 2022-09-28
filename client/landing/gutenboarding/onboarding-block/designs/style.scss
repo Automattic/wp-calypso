@@ -1,11 +1,11 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '@wordpress/base-styles/colors';
-@import '../../mixins';
-@import '../../variables.scss';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "@wordpress/base-styles/colors";
+@import "../../mixins";
+@import "../../variables.scss";
 
 .designs {
-	background-color: var( --contrastColor );
-	color: var( --mainColor );
+	background-color: var(--contrastColor);
+	color: var(--mainColor);
 	padding-bottom: $onboarding-footer-height;
 
 	.designs__header {

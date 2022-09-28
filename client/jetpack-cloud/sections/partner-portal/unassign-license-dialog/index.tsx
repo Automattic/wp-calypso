@@ -1,6 +1,6 @@
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import { noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
@@ -23,7 +23,7 @@ export default function UnassignLicenseDialog( {
 	siteUrl,
 	onClose,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	let close = noop;
 	const translate = useTranslate();
 	const dispatch = useDispatch();

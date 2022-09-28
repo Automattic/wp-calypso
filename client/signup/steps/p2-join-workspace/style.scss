@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .is-p-2-join-workspace .p2-step-wrapper {
 	max-width: 620px;
@@ -26,21 +26,21 @@
 	grid-template-columns: min-content auto min-content;
 	grid-column-gap: 12px;
 	padding: 0.75rem;
-	border-top: 1px solid var( --p2-color-border-light );
+	border-top: 1px solid var(--p2-color-border-light);
 
 	@include break-small {
 		padding: 0.75rem 1.5rem;
 	}
 
 	&:last-of-type {
-		border-bottom: 1px solid var( --p2-color-border-light );
+		border-bottom: 1px solid var(--p2-color-border-light);
 	}
 }
 
 .p2-join-workspace__workspace-icon {
-	background: var( --p2-color-link );
+	background: var(--p2-color-link);
 	grid-area: 1 / 1 / span 2;
-	color: var( --p2-color-white );
+	color: var(--p2-color-white);
 	font-weight: 500;
 	font-size: 1.25rem;
 	height: 50px;
@@ -64,31 +64,31 @@
 	}
 
 	.p2-join-workspace__workspace-link {
-		color: var( --p2-color-text );
-	
+		color: var(--p2-color-text);
+
 		&:hover {
-			color: var( --p2-color-text );
+			color: var(--p2-color-text);
 		}
 	}
 }
 
 .p2-join-workspace__workspace-description {
 	font-size: 0.75rem;
-	color: var( --p2-color-border-medium );
+	color: var(--p2-color-border-medium);
 	grid-area: 2 / 2;
 	grid-area: 2/1/span 1/span 2;
 
 	@include break-small {
 		grid-area: 2/2/span 1/span 1;
 	}
-	
+
 	> span::after {
-		content: '·';
+		content: "·";
 		padding: 0 0.5rem;
 	}
 
 	> span:last-of-type::after {
-		content: '';
+		content: "";
 		padding: 0;
 	}
 }
@@ -101,18 +101,18 @@
 }
 
 .p2-join-workspace__action-join {
-	background: var( --p2-color-background-light );
+	background: var(--p2-color-background-light);
 	border-radius: 18px; /* stylelint-disable-line scales/radii */
 	padding: 0 1.5rem;
 	font-weight: 500;
 
 	&:hover {
-		background: var( --p2-color-background-medium );
+		background: var(--p2-color-background-medium);
 	}
 }
 
 .p2-join-workspace__create-workspace {
-	background: var( --p2-color-background-light );
+	background: var(--p2-color-background-light);
 	padding: 1.2rem;
 	display: grid;
 	border-radius: 2px; /* stylelint-disable-line scales/radii */
@@ -153,16 +153,16 @@
 		justify-content: right;
 		padding-top: unset;
 	}
-	
-	button:not( :disabled ) {
-		background: var( --p2-color-link );
-		color: var( --p2-color-white );
+
+	button:not(:disabled) {
+		background: var(--p2-color-link);
+		color: var(--p2-color-white);
 		border-radius: 18px; /* stylelint-disable-line scales/radii */
 		padding: 0 1rem;
 
 		&:hover {
-			background: var( --p2-color-link-dark );
-			color: var( --p2-color-white );
+			background: var(--p2-color-link-dark);
+			color: var(--p2-color-white);
 		}
 	}
 }
@@ -179,7 +179,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	
+
 	fieldset {
 		border: none;
 		text-align: center;
@@ -189,10 +189,10 @@
 	.p2-join-workspace__code-input-cancel {
 		margin-top: 2rem;
 		text-decoration: underline;
-		color: var( --p2-color-link );
+		color: var(--p2-color-link);
 
 		&:hover {
-			color: var( --p2-color-link-dark );
+			color: var(--p2-color-link-dark);
 		}
 	}
 }
@@ -206,46 +206,46 @@
 }
 
 .p2-join-workspace__code-input-box {
-	border: 1px solid var( --p2-color-border-medium );
+	border: 1px solid var(--p2-color-border-medium);
 	font-size: 1.5rem;
 	text-align: center;
 	border-radius: 2px;
 
 	.has-error & {
-		border-color: var( --p2-color-error );
+		border-color: var(--p2-color-error);
 	}
 }
 
 .p2-join-workspace__code-input-separator {
 	&::before {
-		content: '—';
+		content: "—";
 	}
 }
 
 .p2-join-workspace__code-input-error {
-	color: var( --p2-color-error );
+	color: var(--p2-color-error);
 	font-size: 0.875rem;
 	margin-top: 0.5rem;
 }
 
 .spinner__outer {
 	.p2-join-workspace & {
-		border-top-color: var( --p2-color-link-dark );
+		border-top-color: var(--p2-color-link-dark);
 	}
 
 	.p2-join-workspace__code-input-submit & {
-		border-top-color: var( --p2-color-white );
+		border-top-color: var(--p2-color-white);
 	}
 }
 
 .spinner__inner {
 	.p2-join-workspace & {
-		border-top-color: var( --p2-color-link );
-		border-right-color: var( --p2-color-link );
+		border-top-color: var(--p2-color-link);
+		border-right-color: var(--p2-color-link);
 	}
 
 	.p2-join-workspace__code-input-submit & {
-		border-top-color: var( --p2-color-border-light );
-		border-right-color: var( --p2-color-border-light );
+		border-top-color: var(--p2-color-border-light);
+		border-right-color: var(--p2-color-border-light);
 	}
 }

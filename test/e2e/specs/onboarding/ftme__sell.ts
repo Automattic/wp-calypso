@@ -30,7 +30,6 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	const testUser = DataHelper.getNewTestUser( {
 		usernamePrefix: 'ftmepersonal',
 	} );
-	const blogName = DataHelper.getBlogName();
 	const blogTagLine = DataHelper.getRandomPhrase();
 
 	let page: Page;
@@ -136,7 +135,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Select "Write" goal', async function () {
+		it( 'Select "Sell" goal', async function () {
 			await startSiteFlow.selectGoal( 'Sell' );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
@@ -147,7 +146,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 		} );
 
 		it( 'Enter blog name', async function () {
-			await startSiteFlow.enterBlogName( blogName );
+			await startSiteFlow.enterBlogName( testUser.siteName );
 		} );
 
 		it( 'Enter blog tagline', async function () {
@@ -164,7 +163,11 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			startSiteFlow = new StartSiteFlow( page );
 		} );
 
-		it( 'Continue with simple option', async function () {
+		// This step is only applicable if the flag themes/plugin-bundling
+		// is false.
+		// When the flag is turned on for all environments, delete this.
+		// -mreishus 2022-09-13
+		it.skip( 'Continue with simple option', async function () {
 			await page.waitForURL( /.*setup\/storeFeatures.*/ );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
@@ -178,6 +181,14 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 			await page.waitForURL(
 				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
 			);
+		} );
+
+		it( 'Site URL matches selected domain', async function () {
+			const url = page.url();
+			// If domain selection is skipped during onboarding, the first (default) site
+			// is created with the user's username.
+			// See https://github.com/Automattic/wp-calypso/pull/67517.
+			expect( url ).toContain( testUser.username );
 		} );
 	} );
 

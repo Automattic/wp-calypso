@@ -1,6 +1,6 @@
 .backup-upsell__content {
 	.jetpack-product-card__description {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			min-height: 55px;
 		}
 	}
@@ -18,7 +18,7 @@
 		width: auto;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: start;
 	}
 }

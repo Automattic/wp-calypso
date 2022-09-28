@@ -57,7 +57,10 @@ export function useSiteSetupFlowProgress(
 		case SiteIntent.Build: {
 			switch ( currentStep ) {
 				case 'designSetup':
-					middleProgress = { progress: 1, count: 2 };
+					middleProgress = { progress: 1, count: 3 };
+					break;
+				case 'patternAssembler':
+					middleProgress = { progress: 2, count: 3 };
 					break;
 			}
 
@@ -96,6 +99,22 @@ export function useSiteSetupFlowProgress(
 						break;
 					case 'wooVerifyEmail':
 						middleProgress = { progress: 7, count: 8 };
+						break;
+				}
+			}
+			if ( isEnabled( 'themes/plugin-bundling' ) ) {
+				switch ( currentStep ) {
+					case 'goals':
+						middleProgress = { progress: 1, count: 4 };
+						break;
+					case 'vertical':
+						middleProgress = { progress: 2, count: 4 };
+						break;
+					case 'options':
+						middleProgress = { progress: 3, count: 4 };
+						break;
+					case 'designSetup':
+						middleProgress = { progress: 4, count: 4 };
 						break;
 				}
 			}

@@ -1,4 +1,4 @@
-import { TITAN_MAIL_MONTHLY_SLUG } from '@automattic/calypso-products';
+import { TITAN_MAIL_YEARLY_SLUG } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -8,7 +8,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import tip from 'calypso/components/domains/register-domain-step/tip';
 import EmailProductPrice from 'calypso/components/emails/email-product-price';
-import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 
 import './style.scss';
@@ -22,8 +22,7 @@ class EmailSignupTitanCard extends Component {
 		hidePrice: PropTypes.bool,
 		onAddButtonClick: PropTypes.func.isRequired,
 		onSkipButtonClick: PropTypes.func.isRequired,
-		priceRule: PropTypes.string,
-		price: PropTypes.string,
+		product: PropTypes.object,
 		showChevron: PropTypes.bool,
 		skipButtonTitle: PropTypes.node.isRequired,
 	};
@@ -33,7 +32,7 @@ class EmailSignupTitanCard extends Component {
 	};
 
 	renderEmailSuggestion( customDomainName ) {
-		const { salePrice, titanMonthlyRenewalCost, translate } = this.props;
+		const { product, translate } = this.props;
 
 		return (
 			<div className="email-signup-titan-card__suggestion-content">
@@ -44,12 +43,7 @@ class EmailSignupTitanCard extends Component {
 							'This is a sample email address for the user at their domain; %(domainName)s is a domain name, e.g. example.com',
 					} ) }
 				</h3>
-				<EmailProductPrice
-					price={ titanMonthlyRenewalCost }
-					salePrice={ salePrice }
-					isSignupStep={ true }
-					showStrikedOutPrice={ false }
-				/>
+				<EmailProductPrice product={ product } />
 			</div>
 		);
 	}
@@ -67,6 +61,7 @@ class EmailSignupTitanCard extends Component {
 		const {
 			addButtonTitle,
 			extraClasses,
+			hideSkip = false,
 			isReskinned,
 			onAddButtonClick,
 			onSkipButtonClick,
@@ -92,12 +87,14 @@ class EmailSignupTitanCard extends Component {
 					{ this.renderEmailSuggestion( domainItem ) }
 					{ wrapDivActionContainer(
 						<>
-							<Button
-								className="email-signup-titan-card__suggestion-action"
-								onClick={ onSkipButtonClick }
-							>
-								{ skipButtonTitle }
-							</Button>
+							{ ! hideSkip && (
+								<Button
+									className="email-signup-titan-card__suggestion-action"
+									onClick={ onSkipButtonClick }
+								>
+									{ skipButtonTitle }
+								</Button>
+							) }
 							<Button
 								className="email-signup-titan-card__suggestion-action"
 								primary
@@ -122,9 +119,9 @@ class EmailSignupTitanCard extends Component {
 
 export default connect( ( state ) => {
 	const signupDependencies = getSignupDependencyStore( state );
-	const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
+	const product = getProductBySlug( state, TITAN_MAIL_YEARLY_SLUG );
 	return {
 		signupDependencies,
-		titanMonthlyRenewalCost,
+		product,
 	};
 } )( localize( EmailSignupTitanCard ) );

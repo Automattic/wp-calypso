@@ -20,13 +20,13 @@
 	}
 }
 
-@include breakpoint-deprecated( '>1040px' ) {
+@include breakpoint-deprecated( ">1040px" ) {
 	.theme-download-card {
 		text-align: inherit;
 
 		.gridicon {
 			position: absolute;
-			transform: translateY( -50% );
+			transform: translateY(-50%);
 			margin: 0.3em 0 0;
 			float: left;
 			top: 50%;
@@ -34,7 +34,7 @@
 
 		.button {
 			position: absolute;
-			transform: translateY( -50% );
+			transform: translateY(-50%);
 			top: 50%;
 			right: 26px;
 		}

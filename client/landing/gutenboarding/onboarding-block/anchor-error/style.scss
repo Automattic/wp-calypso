@@ -1,6 +1,6 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '@automattic/calypso-color-schemes/src/calypso-color-schemes';
-@import '../../mixins';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
+@import "../../mixins";
 
 .anchor-error__flex-container {
 	display: flex;
@@ -16,7 +16,7 @@
 }
 
 .anchor-error__text-container {
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 }
 
 .anchor-error__button-container {
@@ -35,12 +35,12 @@
 }
 
 .anchor-error__link {
-	&.components-button.is-link:not( :disabled ),
-	&.components-button.is-link:not( :disabled ) {
-		color: var( --studio-gray-40 );
+	&.components-button.is-link:not(:disabled),
+	&.components-button.is-link:not(:disabled) {
+		color: var(--studio-gray-40);
 	}
-	&.components-button.is-link:hover:not( :disabled ),
-	&.components-button.is-link:active:not( :disabled ) {
-		color: var( --studio-gray-60 );
+	&.components-button.is-link:hover:not(:disabled),
+	&.components-button.is-link:active:not(:disabled) {
+		color: var(--studio-gray-60);
 	}
 }

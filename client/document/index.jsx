@@ -191,6 +191,7 @@ class Document extends Component {
 							src={ getBilmurUrl() }
 							data-provider="wordpress.com"
 							data-service="calypso"
+							data-customproperties={ `{"route_name": "${ sectionName }"}` }
 						/>
 					) }
 

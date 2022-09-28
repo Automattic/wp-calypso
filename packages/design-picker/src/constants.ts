@@ -63,3 +63,14 @@ export const MOBILE_VIEWPORT_WIDTH = 599;
  * Generated design picker
  */
 export const STICKY_OFFSET_TOP = 109;
+
+/**
+ * Theme preview
+ */
+export const DEVICE_TYPE = {
+	COMPUTER: 'computer',
+	TABLET: 'tablet',
+	PHONE: 'phone',
+};
+
+export const DEVICES_SUPPORTED = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.TABLET, DEVICE_TYPE.PHONE ];

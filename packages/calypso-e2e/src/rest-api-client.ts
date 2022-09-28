@@ -61,6 +61,9 @@ export class RestAPIClient {
 
 	/**
 	 * Constructs an instance of the API client.
+	 *
+	 * @param {AccountCredentials} credentials User credentials.
+	 * @param {string} [bearerToken] BearerToken for the user.
 	 */
 	constructor( credentials: AccountCredentials, bearerToken?: string ) {
 		this.credentials = credentials;
@@ -258,54 +261,26 @@ export class RestAPIClient {
 		}
 
 		const mySites = await this.getAllSites();
+		const myAccountInformation = await this.getMyAccountInformation();
 
 		// Start from tail end of the array since
 		// the target of site deletion is likely the
 		// most recently created site.
 		for ( const site of mySites.sites.reverse() ) {
-			const myAccountInformation = await this.getMyAccountInformation();
+			if ( site.ID === expectedSiteDetails.id && site.site_owner === myAccountInformation.ID ) {
+				const params: RequestParams = {
+					method: 'post',
+					headers: {
+						Authorization: await this.getAuthorizationHeader( 'bearer' ),
+						'Content-Type': this.getContentTypeHeader( 'json' ),
+					},
+				};
 
-			if ( site.site_owner !== myAccountInformation.ID ) {
-				console.info(
-					`Aborting site deletion: site owner ID did not match.\nExpected: ${ site.site_owner }, Got: ${ myAccountInformation.ID } `
+				return await this.sendRequest(
+					this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
+					params
 				);
-				break;
 			}
-
-			// Normalize URL to ensure equal comparison.
-			if ( new URL( site.URL ).href !== new URL( expectedSiteDetails.url ).href ) {
-				console.info(
-					`Aborting site deletion: site URL did not match.\nExpected: ${ site.URL }, Got: ${ expectedSiteDetails.url } `
-				);
-				break;
-			}
-
-			if ( site.ID !== expectedSiteDetails.id ) {
-				console.info(
-					`Aborting site deletion: site ID did not match.\nExpected: ${ site.ID }, Got: ${ expectedSiteDetails.id } `
-				);
-				break;
-			}
-
-			if ( site.name !== expectedSiteDetails.name ) {
-				console.info(
-					`Aborting site deletion: site name did not match.\nExpected: ${ site.name }, Got: ${ expectedSiteDetails.name } `
-				);
-				break;
-			}
-
-			const params: RequestParams = {
-				method: 'post',
-				headers: {
-					Authorization: await this.getAuthorizationHeader( 'bearer' ),
-					'Content-Type': this.getContentTypeHeader( 'json' ),
-				},
-			};
-
-			return await this.sendRequest(
-				this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
-				params
-			);
 		}
 		// If nothing matches, return that no action was performed.
 		return null;

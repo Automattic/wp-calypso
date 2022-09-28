@@ -10,7 +10,7 @@
 		.profile-link__url,
 		.profile-link__remove {
 			color: transparent;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -40,7 +40,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 1px solid var( --color-neutral-0 );
+	border: 1px solid var(--color-neutral-0);
 }
 
 .profile-link__link {
@@ -48,7 +48,7 @@
 }
 
 .profile-link__title {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	float: left;
 	font-size: $font-body-small;
 	font-weight: 400;
@@ -66,7 +66,7 @@
 .profile-link__url {
 	font-size: $font-body-extra-small;
 	line-height: 1.4;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	float: left;
 	clear: left;
 }

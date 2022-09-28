@@ -19,7 +19,9 @@ export const ManagePluginMenu = ( { plugin } ) => {
 		plugin.isMarketplaceProduct &&
 		purchases.find( ( purchase ) =>
 			Object.values( plugin?.variations ).some(
-				( variation ) => variation.product_slug === purchase.productSlug
+				( variation ) =>
+					variation.product_slug === purchase.productSlug ||
+					variation.product_id === purchase.productId
 			)
 		);
 	const settingsLink = pluginOnSite?.action_links?.Settings ?? null;

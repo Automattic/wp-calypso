@@ -41,7 +41,7 @@
 .gmb-stats__chart-interval {
 	margin-top: 10px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 100%;
 	}
 }

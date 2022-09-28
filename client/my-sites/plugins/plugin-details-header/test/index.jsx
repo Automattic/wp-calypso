@@ -11,7 +11,28 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
+	const fn = ( key ) => {
+		if ( 'magnificent_non_en_locales' === key ) {
+			return [
+				'es',
+				'pt-br',
+				'de',
+				'fr',
+				'he',
+				'ja',
+				'it',
+				'nl',
+				'ru',
+				'tr',
+				'id',
+				'zh-cn',
+				'zh-tw',
+				'ko',
+				'ar',
+				'sv',
+			];
+		}
+	};
 	fn.isEnabled = jest.fn();
 	return fn;
 } );

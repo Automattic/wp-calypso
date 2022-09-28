@@ -110,7 +110,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		this.updateParentState( form, phoneCountryCode );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		let form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
@@ -122,7 +122,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			this.setState( { phoneCountryCode } );
 		}
 
-		form = updateFormWithContactChange( form, 'phone', value );
+		form = updateFormWithContactChange( form, 'phone', phoneNumber );
 		this.updateParentState( form, phoneCountryCode );
 		return;
 	};
@@ -135,6 +135,12 @@ export class ManagedContactDetailsFormFields extends Component {
 		);
 		const camelName = camelCase( name );
 
+		const basicValue = form[ camelName ]?.value ?? '';
+		let value = basicValue;
+		if ( name === 'phone' ) {
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
+		}
+
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
@@ -143,7 +149,7 @@ export class ManagedContactDetailsFormFields extends Component {
 			errorMessage: customErrorMessage || getFirstError( form[ camelName ] ),
 			onChange: this.handleFieldChangeEvent,
 			onBlur: this.handleBlur( name ),
-			value: form[ camelName ]?.value ?? '',
+			value,
 			name,
 			eventFormName,
 		};
@@ -233,7 +239,6 @@ export class ManagedContactDetailsFormFields extends Component {
 								label: translate( 'Phone' ),
 								onChange: this.handlePhoneChange,
 								countriesList: this.props.countriesList,
-								countryCode: this.state.phoneCountryCode,
 								enableStickyCountry: false,
 							},
 							{
@@ -257,7 +262,6 @@ export class ManagedContactDetailsFormFields extends Component {
 							label: translate( 'Phone' ),
 							onChange: this.handlePhoneChange,
 							countriesList: this.props.countriesList,
-							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
 						},
 						{

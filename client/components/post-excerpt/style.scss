@@ -1,43 +1,43 @@
 .post-excerpt {
-		@extend %content-font;
-		margin: 0;
-		position: relative;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		-webkit-line-clamp: 3;
+	@extend %content-font;
+	margin: 0;
+	position: relative;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	-webkit-line-clamp: 3;
+	font-size: $font-body;
+	line-height: 1.618;
+	max-height: 24px * 3;
+
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
-		line-height: 1.618;
-		max-height: 24px * 3;
+		line-height: 22px;
+		max-height: 22px * 3;
+	}
 
-		@include breakpoint-deprecated( '<480px' ) {
-			font-size: $font-body;
-			line-height: 22px;
-			max-height: 22px * 3;
-		}
+	p {
+		margin: 0;
+	}
 
-		p {
-			margin: 0;
-		}
+	p[align] {
+		text-align: inherit;
+	}
 
-		p[align] {
-			text-align: inherit;
-		}
+	&.is-long {
+		&::after {
+			content: "";
+			text-align: right;
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			width: 50%;
+			height: 24px;
+			background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
 
-		&.is-long {
-			&::after {
-				content: '';
-				text-align: right;
-				position: absolute;
-				bottom: 0;
-				right: 0;
-				width: 50%;
-				height: 24px;
-				background: linear-gradient( to right, rgba( 255, 255, 255, 0 ), rgba( 255, 255, 255, 1 ) 50% );
-
-				@include breakpoint-deprecated( '<480px' ) {
-					height: 22px;
-				}
+			@include breakpoint-deprecated( "<480px" ) {
+				height: 22px;
 			}
 		}
+	}
 }

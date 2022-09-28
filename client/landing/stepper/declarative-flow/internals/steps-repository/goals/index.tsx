@@ -32,6 +32,7 @@ const { serializeGoals, goalsToIntent } = Onboard.utils;
 const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
+	'smp-import': [ SiteGoal.Import ],
 };
 
 /**

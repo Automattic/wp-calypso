@@ -1,3 +1,4 @@
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
@@ -13,13 +14,18 @@ const useSteps = ( flowName ) => {
 	let steps = [];
 
 	switch ( flowName ) {
-		case 'newsletter':
-		case 'link-in-bio':
+		case LINK_IN_BIO_FLOW:
 			steps = [
-				{ title: __( 'Saving your preferences' ) },
-				{ title: __( 'Getting your Domain' ) },
-				{ title: __( 'Adding your Plan' ) },
-				{ title: __( 'Preparing Checkout' ) },
+				{ title: __( 'Great choices. Nearly there!' ) },
+				{ title: __( 'Shining and polishing your Bio' ) },
+				{ title: __( 'Mounting it on a marble pedestal' ) },
+			];
+			break;
+		case NEWSLETTER_FLOW:
+			steps = [
+				{ title: __( 'Excellent choices. Nearly there!' ) },
+				{ title: __( 'Smoothing down the stationery' ) },
+				{ title: __( 'Embossing all the envelopes' ) },
 			];
 			break;
 		default:
@@ -48,6 +54,14 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 	const progress = ( currentStep + 1 ) / totalSteps;
 	const isComplete = progress >= 1;
 
+	// Temporarily override document styles to prevent scrollbars from showing
+	useEffect( () => {
+		document.documentElement.classList.add( 'no-scroll' );
+		return () => {
+			document.documentElement.classList.remove( 'no-scroll' );
+		};
+	}, [] );
+
 	useInterval(
 		() => setCurrentStep( ( s ) => s + 1 ),
 		// Enable the interval when progress is incomplete.
@@ -75,9 +89,11 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 				/>
 			</div>
 
-			<div className="reskinned-processing-screen__jetpack-powered">
-				<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
-			</div>
+			{ flowName === NEWSLETTER_FLOW && (
+				<div className="reskinned-processing-screen__jetpack-powered">
+					<JetpackLogo monochrome size={ 18 } /> <span>Jetpack powered</span>
+				</div>
+			) }
 		</div>
 	);
 }

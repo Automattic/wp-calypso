@@ -83,7 +83,8 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			revoked = true;
 		} );
 
-		it( `Ensure invite link is no longer valid`, async function () {
+		// see: https://a8c.slack.com/archives/C02DQP0FP/p1663592311997839
+		it.skip( `Ensure invite link is no longer valid`, async function () {
 			const newPage = await browser.newPage();
 			await newPage.goto( adjustedInviteLink );
 

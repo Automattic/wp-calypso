@@ -80,6 +80,10 @@ class Whats_New {
 		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-whats-new-dot-controller.php';
 		$controller = new WP_REST_WPCOM_Block_Editor_Whats_New_Dot_Controller();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-whats-new-list-controller.php';
+		$controller = new WP_REST_WPCOM_Block_Editor_Whats_New_List_Controller();
+		$controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Whats_New', 'init' ) );

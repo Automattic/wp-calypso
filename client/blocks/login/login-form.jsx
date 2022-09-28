@@ -315,7 +315,7 @@ export class LoginForm extends Component {
 		this.loginUser();
 	};
 
-	renderWooCommerce( showSocialLogin = true ) {
+	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
 
@@ -404,6 +404,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<div className="login__form-footer">
+						<p className="login__social-tos">{ socialToS }</p>
 						<div className="login__form-action">
 							<Button
 								primary
@@ -485,16 +486,44 @@ export class LoginForm extends Component {
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
 
+		const socialToS = this.props.translate(
+			// To make any changes to this copy please speak to the legal team
+			'By continuing with any of the options below, ' +
+				'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
+				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+			{
+				components: {
+					tosLink: (
+						<a
+							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+					privacyLink: (
+						<a
+							href={ localizeUrl( 'https://automattic.com/privacy/' ) }
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+
 		if ( isJetpackWooCommerceFlow ) {
-			return this.renderWooCommerce();
+			return this.renderWooCommerce( { socialToS } );
 		}
 
 		if ( isJetpackWooDnaFlow ) {
-			return this.renderWooCommerce( !! accountType ); // Only show the social buttons after the user entered an email.
+			return this.renderWooCommerce( {
+				showSocialLogin: !! accountType, // Only show the social buttons after the user entered an email.
+				socialToS,
+			} );
 		}
 
 		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
-			return this.renderWooCommerce();
+			return this.renderWooCommerce( { socialToS } );
 		}
 
 		return (
@@ -595,32 +624,7 @@ export class LoginForm extends Component {
 						</div>
 					</div>
 
-					<p className="login__form-terms">
-						{ this.props.translate(
-							// To make any changes to this copy please speak to the legal team
-							'By continuing, ' +
-								'you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-								' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-							{
-								components: {
-									tosLink: (
-										<a
-											href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									privacyLink: (
-										<a
-											href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
+					<p className="login__form-terms">{ socialToS }</p>
 
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isFormDisabled }>

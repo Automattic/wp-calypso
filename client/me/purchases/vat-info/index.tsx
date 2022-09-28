@@ -84,7 +84,7 @@ function VatForm() {
 					name="country"
 					disabled={ isUpdating || isVatAlreadySet }
 					value={ currentVatDetails.country ?? vatDetails.country ?? '' }
-					onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+					onChange={ ( event: React.ChangeEvent< HTMLSelectElement > ) =>
 						setCurrentVatDetails( { ...currentVatDetails, country: event.target.value } )
 					}
 				/>
@@ -158,7 +158,7 @@ function CountryCodeInput( {
 	name: string;
 	disabled?: boolean;
 	value: string;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onChange: ( event: React.ChangeEvent< HTMLSelectElement > ) => void;
 } ) {
 	const countries = [
 		'AT',

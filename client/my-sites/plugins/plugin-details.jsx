@@ -6,7 +6,7 @@ import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
@@ -20,12 +20,14 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
+import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
+import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -33,6 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { appendBreadcrumb } from 'calypso/state/breadcrumb/actions';
 import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -40,7 +43,7 @@ import {
 	getPluginOnSites,
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,
-	isRequestingForSites,
+	isRequestingForAllSites,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import {
@@ -65,6 +68,7 @@ import {
 	isRequestingSites as checkRequestingSites,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MarketplaceFooter } from './education-footer';
 import NoPermissionsError from './no-permissions-error';
 import usePreinstalledPremiumPlugin from './use-preinstalled-premium-plugin';
 
@@ -73,6 +77,7 @@ function PluginDetails( props ) {
 	const translate = useTranslate();
 
 	const breadcrumbs = useSelector( getBreadcrumbs );
+
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	// Site information.
@@ -82,10 +87,10 @@ function PluginDetails( props ) {
 	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 	const isRequestingSites = useSelector( checkRequestingSites );
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
-	);
+	const requestingPluginsForSites = useSelector( ( state ) => isRequestingForAllSites( state ) );
 	const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { localizePath } = useLocalizedPlugins();
 
 	// Plugin information.
 	const plugin = useSelector( ( state ) => getPluginOnSites( state, siteIds, props.pluginSlug ) );
@@ -103,10 +108,12 @@ function PluginDetails( props ) {
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, props.pluginSlug )
 	);
-	const userCanManagePlugins = useSelector( ( state ) =>
-		selectedSite?.ID
-			? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
-			: canCurrentUserManagePlugins( state )
+	const userCanManagePlugins = useSelector(
+		( state ) =>
+			! selectedSite ||
+			( selectedSite?.ID
+				? canCurrentUser( state, selectedSite?.ID, 'manage_options' )
+				: canCurrentUserManagePlugins( state ) )
 	);
 
 	const isPluginInstalledOnsite =
@@ -142,7 +149,7 @@ function PluginDetails( props ) {
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
-			dispatch( wporgFetchPluginData( props.pluginSlug ) );
+			dispatch( wporgFetchPluginData( props.pluginSlug, translate.localeSlug ) );
 		}
 	}, [
 		isProductListFetched,
@@ -150,6 +157,7 @@ function PluginDetails( props ) {
 		isWporgPluginFetched,
 		props.pluginSlug,
 		dispatch,
+		translate.localeSlug,
 	] );
 
 	// Fetch WPcom plugin data if needed
@@ -210,11 +218,11 @@ function PluginDetails( props ) {
 	const { isPreinstalledPremiumPluginUpgraded } = usePreinstalledPremiumPlugin( fullPlugin.slug );
 
 	useEffect( () => {
-		if ( breadcrumbs.length === 0 ) {
+		if ( breadcrumbs?.length === 0 ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: translate( 'Plugins' ),
-					href: `/plugins/${ selectedSite?.slug || '' }`,
+					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
 						'Add new functionality and integrations to your site with plugins.'
@@ -227,12 +235,12 @@ function PluginDetails( props ) {
 			dispatch(
 				appendBreadcrumb( {
 					label: fullPlugin.name,
-					href: `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }`,
+					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
 					id: `plugin-${ props.pluginSlug }`,
 				} )
 			);
 		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite ] );
+	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
@@ -251,6 +259,20 @@ function PluginDetails( props ) {
 	}
 
 	const showPlaceholder = existingPlugin === 'unknown';
+
+	if ( props.isJetpackCloud ) {
+		return (
+			<PluginDetailsV2
+				showPlaceholder={ showPlaceholder }
+				selectedSite={ selectedSite }
+				fullPlugin={ fullPlugin }
+				sitesWithPlugins={ sitesWithPlugins }
+				isMarketplaceProduct={ isMarketplaceProduct }
+				isWpcom={ isWpcom }
+				{ ...props }
+			/>
+		);
+	}
 
 	if ( legacyVersion ) {
 		return (
@@ -282,19 +304,21 @@ function PluginDetails( props ) {
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
-			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			<PageViewTracker
+				path={ analyticsPath }
+				title="Plugins > Plugin Details"
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
-
 			<PluginNotices
 				pluginId={ fullPlugin.id }
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-
 			{ isSiteConnected === false && (
 				<Notice
 					icon="notice"
@@ -313,7 +337,6 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-
 			<div className="plugin-details__page">
 				<div className="plugin-details__layout">
 					<div className="plugin-details__header">
@@ -352,16 +375,7 @@ function PluginDetails( props ) {
 					</div>
 
 					<div className="plugin-details__actions">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 
 						{ ! showPlaceholder && ! requestingPluginsForSites && (
 							<PluginDetailsSidebar plugin={ fullPlugin } />
@@ -369,6 +383,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
+			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }
@@ -377,7 +392,6 @@ function LegacyPluginDetails( props ) {
 	const {
 		getPageTitle,
 		analyticsPath,
-		siteIds,
 		selectedSite,
 		selectedOrAllSites,
 		isWide,
@@ -393,38 +407,22 @@ function LegacyPluginDetails( props ) {
 		isJetpackSelfHosted,
 		isWpcom,
 		isPreinstalledPremiumPluginUpgraded,
-		pluginSlug,
-		isJetpackCloud,
+		breadcrumbs,
 	} = props;
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const showBillingIntervalSwitcher =
-		! isJetpackCloud &&
-		( ! isPreinstalledPremiumPluginUpgraded ||
-			( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite ) );
-
-	const breadcrumbs = isJetpackCloud
-		? [
-				{
-					label: translate( 'Plugins' ),
-					href: `/plugins/manage/${ selectedSite?.slug || '' }`,
-					id: 'plugins',
-				},
-				{
-					label: fullPlugin.name,
-					href: `/plugins/${ pluginSlug }/${ selectedSite?.slug || '' }`,
-					id: `plugin-${ pluginSlug }`,
-				},
-		  ]
-		: props.breadcrumbs;
+		! isPreinstalledPremiumPluginUpgraded ||
+		( isMarketplaceProduct && ! requestingPluginsForSites && ! isPluginInstalledOnsite );
 
 	return (
 		<MainComponent wideLayout>
 			<DocumentHead title={ getPageTitle() } />
 			<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
-			<QueryJetpackPlugins siteIds={ siteIds } />
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist />
@@ -466,24 +464,11 @@ function LegacyPluginDetails( props ) {
 			<div className="plugin-details__page legacy">
 				<div className="plugin-details__layout plugin-details__top-section">
 					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader
-							plugin={ fullPlugin }
-							isPlaceholder={ showPlaceholder }
-							isJetpackCloud={ isJetpackCloud }
-						/>
+						<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>
 
 					<div className="plugin-details__layout-col-right">
-						<PluginDetailsCTA
-							plugin={ fullPlugin }
-							siteIds={ siteIds }
-							selectedSite={ selectedSite }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							isPlaceholder={ showPlaceholder }
-							billingPeriod={ billingPeriod }
-							isMarketplaceProduct={ isMarketplaceProduct }
-							isSiteConnected={ isSiteConnected }
-						/>
+						<PluginDetailsCTA plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
 					</div>
 				</div>
 
@@ -503,31 +488,20 @@ function LegacyPluginDetails( props ) {
 							</Notice>
 						) }
 
-						<SitesListArea
-							fullPlugin={ fullPlugin }
-							isPluginInstalledOnsite={ isPluginInstalledOnsite }
-							billingPeriod={ billingPeriod }
-							{ ...props }
-						/>
+						{ isLoggedIn && (
+							<SitesListArea
+								fullPlugin={ fullPlugin }
+								isPluginInstalledOnsite={ isPluginInstalledOnsite }
+								billingPeriod={ billingPeriod }
+								{ ...props }
+							/>
+						) }
 
-						<div className="plugin-details__layout plugin-details__body">
-							<div className="plugin-details__layout-col-left">
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections
-										className="plugin-details__plugins-sections"
-										plugin={ fullPlugin }
-										isWpcom={ isWpcom }
-										addBanner
-										removeReadMore
-									/>
-								) : (
-									<PluginSectionsCustom plugin={ fullPlugin } />
-								) }
-							</div>
-							<div className="plugin-details__layout-col-right">
-								<PluginDetailsSidebar plugin={ fullPlugin } />
-							</div>
-						</div>
+						<PluginDetailsBody
+							fullPlugin={ fullPlugin }
+							isMarketplaceProduct={ isMarketplaceProduct }
+							isWpcom={ isWpcom }
+						/>
 					</>
 				) }
 			</div>

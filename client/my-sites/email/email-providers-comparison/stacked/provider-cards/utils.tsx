@@ -6,6 +6,7 @@ import type {
 	ShoppingCartManagerActions,
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
+import type { CannotAddEmailReason } from 'calypso/lib/domains/types';
 
 export const addToCartAndCheckout = (
 	shoppingCartManager: ShoppingCartManagerActions,
@@ -41,7 +42,7 @@ export const recordTracksEventAddToCartClick = (
 	provider: string,
 	source: string,
 	userCanAddEmail: boolean,
-	userCannotAddEmailReason?: { code: string } | null
+	userCannotAddEmailReason?: CannotAddEmailReason | null
 ): void => {
 	recordTracksEvent( 'calypso_email_providers_add_click', {
 		context: comparisonContext,

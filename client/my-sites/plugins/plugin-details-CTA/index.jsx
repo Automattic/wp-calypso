@@ -1,3 +1,4 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 import config from '@automattic/calypso-config';
 import {
 	isFreePlanProduct,
@@ -5,6 +6,7 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -13,16 +15,23 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isRequestingForSites,
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
@@ -33,31 +42,24 @@ import PluginDetailsCTAPreinstalledPremiumPlugins from './preinstalled-premium-p
 import USPS from './usps';
 import './style.scss';
 
-const PluginDetailsCTA = ( props ) => {
-	const {
-		plugin,
-		selectedSite,
-		isPluginInstalledOnsite,
-		siteIds,
-		isPlaceholder,
-		billingPeriod,
-		isMarketplaceProduct,
-		isSiteConnected,
-	} = props;
-
+const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
+	const billingPeriod = useSelector( getBillingInterval );
 
-	const requestingPluginsForSites = useSelector( ( state ) =>
-		isRequestingForSites( state, siteIds )
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, pluginSlug )
 	);
 
 	// Site type
+	const selectedSite = useSelector( getSelectedSite );
+	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
+	const siteIds = [ ...new Set( siteObjectsToSiteIds( sites ) ) ];
+
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
@@ -66,18 +68,31 @@ const PluginDetailsCTA = ( props ) => {
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( pluginSlug );
 	const userCantManageTheSite = ! userCan( 'manage_options', selectedSite );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const sitePlugin = useSelector( ( state ) =>
 		getPluginOnSite( state, selectedSite?.ID, pluginSlug )
+	);
+	const sitesWithPlugins = useSelector( getSelectedOrAllSitesWithPlugins );
+	const isSiteConnected = useSelector( ( state ) =>
+		getSiteConnectionStatus( state, selectedSite?.ID )
 	);
 
 	const shouldUpgrade =
 		useSelector( ( state ) => ! siteHasFeature( state, selectedSite?.ID, pluginFeature ) ) &&
 		! isJetpackSelfHosted;
 
+	const requestingPluginsForSites = useSelector( ( state ) =>
+		isRequestingForSites( state, siteIds )
+	);
+
+	const isPluginInstalledOnsite =
+		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, pluginSlug )
 	);
 	const installedOnSitesQuantity = sitesWithPlugin.length;
+
+	const [ displayManageSitePluginsModal, setDisplayManageSitePluginsModal ] = useState( false );
 
 	// Eligibilities for Simple Sites.
 	// eslint-disable-next-line prefer-const
@@ -140,7 +155,17 @@ const PluginDetailsCTA = ( props ) => {
 	}
 
 	if ( legacyVersion ) {
-		return <LegacyPluginDetailsCTA { ...props } />;
+		return (
+			<LegacyPluginDetailsCTA
+				plugin={ plugin }
+				selectedSite={ selectedSite }
+				isPluginInstalledOnsite={ isPluginInstalledOnsite }
+				siteIds={ siteIds }
+				billingPeriod={ billingPeriod }
+				isMarketplaceProduct={ isMarketplaceProduct }
+				isSiteConnected={ isSiteConnected }
+			/>
+		);
 	}
 
 	if ( isPluginInstalledOnsite && sitePlugin ) {
@@ -198,7 +223,7 @@ const PluginDetailsCTA = ( props ) => {
 		);
 	}
 
-	if ( ! selectedSite ) {
+	if ( ! selectedSite && isLoggedIn ) {
 		// Check if there is no site selected
 		return (
 			<div className="plugin-details-cta__container">
@@ -259,18 +284,24 @@ const PluginDetailsCTA = ( props ) => {
 				/>
 			) }
 			<div className="plugin-details-cta__install">
-				<CTAButton
-					plugin={ plugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					isJetpackSelfHosted={ isJetpackSelfHosted }
-					selectedSite={ selectedSite }
-					hasEligibilityMessages={ hasEligibilityMessages }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					billingPeriod={ billingPeriod }
-					shouldUpgrade={ shouldUpgrade }
-					isSiteConnected={ isSiteConnected }
-					disabled={ incompatiblePlugin || userCantManageTheSite }
-				/>
+				{ isLoggedIn ? (
+					<CTAButton
+						plugin={ plugin }
+						hasEligibilityMessages={ hasEligibilityMessages }
+						eligibilityHolds={ eligibilityHolds }
+						disabled={ incompatiblePlugin || userCantManageTheSite }
+					/>
+				) : (
+					<Button
+						type="a"
+						className="plugin-details-CTA__install-button"
+						primary
+						onClick={ ( e ) => e.stopPropagation() }
+						href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
+					>
+						{ translate( 'View plans' ) }
+					</Button>
+				) }
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-cta__t-and-c">
@@ -293,7 +324,7 @@ const PluginDetailsCTA = ( props ) => {
 					) }
 				</div>
 			) }
-			{ shouldUpgrade && (
+			{ shouldUpgrade && isLoggedIn && (
 				<div className="plugin-details-cta__upgrade-required">
 					<span className="plugin-details-cta__upgrade-required-icon">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
@@ -316,7 +347,6 @@ function LegacyPluginDetailsCTA( {
 	siteIds,
 	billingPeriod,
 	isMarketplaceProduct,
-	isSiteConnected,
 } ) {
 	const pluginSlug = plugin.slug;
 	const translate = useTranslate();
@@ -437,14 +467,8 @@ function LegacyPluginDetailsCTA( {
 			<div className="plugin-details-cta__install">
 				<CTAButton
 					plugin={ plugin }
-					isPluginInstalledOnsite={ isPluginInstalledOnsite }
-					isJetpackSelfHosted={ isJetpackSelfHosted }
-					selectedSite={ selectedSite }
 					hasEligibilityMessages={ hasEligibilityMessages }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					billingPeriod={ billingPeriod }
-					shouldUpgrade={ shouldUpgrade }
-					isSiteConnected={ isSiteConnected }
+					eligibilityHolds={ eligibilityHolds }
 				/>
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (

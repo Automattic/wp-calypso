@@ -22,6 +22,7 @@ import {
 	getDisplayName,
 	isExpired,
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -417,6 +418,19 @@ class PurchaseItem extends Component {
 			);
 		}
 
+		if (
+			! isRechargeable( purchase ) &&
+			hasPaymentMethod( purchase ) &&
+			purchase.isAutoRenewEnabled
+		) {
+			return (
+				<div className={ 'purchase-item__no-payment-method' }>
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
+
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
 				return (
@@ -472,7 +486,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchaseId={ purchase?.id } />
+						<OwnerInfo purchase={ purchase } />
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>

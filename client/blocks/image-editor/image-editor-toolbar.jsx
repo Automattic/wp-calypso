@@ -196,6 +196,7 @@ export class ImageEditorToolbar extends Component {
 					ref={ button.ref }
 					className={ buttonClasses }
 					onClick={ button.onClick }
+					type="button"
 				>
 					<Gridicon icon={ button.icon } />
 					<span>{ button.text }</span>

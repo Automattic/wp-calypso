@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .use-my-domain {
 	display: flex;
@@ -33,7 +33,7 @@
 			top: -1px;
 
 			.gridicon.use-my-domain__domain-input-clear-icon {
-				fill: var( --studio-gray-50 );
+				fill: var(--studio-gray-50);
 				width: 18px;
 				height: 18px;
 			}

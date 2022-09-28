@@ -11,6 +11,7 @@ export function generateFlows( {
 	getLaunchDestination = noop,
 	getThankYouNoSiteDestination = noop,
 	getDomainSignupFlowDestination = noop,
+	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
@@ -113,31 +114,26 @@ export function generateFlows( {
 		},
 		{
 			name: 'newsletter',
-			steps: [ 'domains', 'plans' ],
-			destination: ( dependencies, localeSlug, goesThroughCheckout ) => {
-				return goesThroughCheckout
-					? `/setup/completingPurchase?flow=newsletter&siteSlug=${ dependencies.siteSlug }`
-					: `/setup/subscribers?flow=newsletter&complete-setup=true&siteSlug=${ dependencies.siteSlug }`;
-			},
+			steps: [ 'domains', 'plans-newsletter' ],
+			destination: ( dependencies ) =>
+				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
 			lastModified: '2022-08-15',
 			showRecaptcha: true,
-			hideBackButton: true,
 			get pageTitle() {
-				return translate( 'Newsletters' );
+				return translate( 'Newsletter' );
 			},
 		},
 		{
 			name: 'link-in-bio',
-			steps: [ 'domains', 'plans' ],
+			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
-				`/setup/completingPurchase?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
 				) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-08-16',
 			showRecaptcha: true,
-			hideBackButton: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
@@ -155,11 +151,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-with-email',
-			steps: getAddOnsStep( [ 'user', 'domains', 'emails', 'plans' ] ),
-			destination: getSignupDestination,
+			steps: getAddOnsStep( [ 'user', 'mailbox-domain', 'mailbox', 'mailbox-plan' ] ),
+			destination: getEmailSignupFlowDestination,
 			description:
-				'Copy of the onboarding flow that always includes an email step; the flow is used by the Professional Email landing page',
-			lastModified: '2021-08-11',
+				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
+			lastModified: '2022-09-07',
 			showRecaptcha: true,
 		},
 		{

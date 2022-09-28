@@ -12,12 +12,12 @@ import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
-import { marketplacePlanToAdd } from 'calypso/lib/plugins/utils';
+import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -172,17 +172,17 @@ export class PluginInstallButton extends Component {
 			plugin,
 			billingPeriod,
 			canInstallPurchasedPlugins,
-			eligibleForProPlan,
+			productsList,
 		} = this.props;
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
-		const product_slug = plugin?.variations?.[ variationPeriod ]?.product_slug;
+		const variation = plugin?.variations?.[ variationPeriod ];
+		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
 
 		const buttonLink = canInstallPurchasedPlugins
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
 			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
-					billingPeriod,
-					eligibleForProPlan
+					billingPeriod
 			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 			  }#step2`;
@@ -201,7 +201,7 @@ export class PluginInstallButton extends Component {
 	}
 
 	renderButton() {
-		const { translate, isInstalling, isEmbed, disabled } = this.props;
+		const { translate, isInstalling, isEmbed, disabled, isJetpackCloud } = this.props;
 		const label = isInstalling ? translate( 'Installing…' ) : translate( 'Install' );
 
 		if ( isEmbed ) {
@@ -211,8 +211,12 @@ export class PluginInstallButton extends Component {
 						<span className="plugin-install-button__installing">{ label }</span>
 					) : (
 						<Button compact={ true } onClick={ this.installAction } disabled={ disabled }>
-							<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
-							<Gridicon icon="plugins" size={ 18 } />
+							{ ! isJetpackCloud && (
+								<>
+									<Gridicon key="plus-icon" icon="plus-small" size={ 18 } />
+									<Gridicon icon="plugins" size={ 18 } />
+								</>
+							) }
 							{ translate( 'Install' ) }
 						</Button>
 					) }
@@ -321,7 +325,7 @@ export default connect(
 				siteId,
 				WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 			),
-			eligibleForProPlan: isEligibleForProPlan( state, siteId ),
+			productsList: getProductsList( state ),
 		};
 	},
 	{

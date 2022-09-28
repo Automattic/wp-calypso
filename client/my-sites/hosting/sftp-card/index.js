@@ -1,5 +1,4 @@
-import config from '@automattic/calypso-config';
-import { FEATURE_SSH } from '@automattic/calypso-products';
+import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { PanelBody, ToggleControl } from '@wordpress/components';
@@ -52,6 +51,7 @@ export const SftpCard = ( {
 	requestSftpUsers,
 	createSftpUser,
 	resetSftpPassword,
+	siteHasSftpFeature,
 	siteHasSshFeature,
 	isSshAccessEnabled,
 	requestSshAccess,
@@ -187,10 +187,18 @@ export const SftpCard = ( {
 					checked={ isSshAccessEnabled }
 					onChange={ () => toggleSshAccess() }
 					label={ translate(
-						'Enable SSH access for this site. {{em}}This feature is currently in beta.{{/em}}',
+						'Enable SSH access for this site. {{supportLink}}Learn more{{/supportLink}}.',
 						{
 							components: {
-								em: <em />,
+								supportLink: (
+									<ExternalLink
+										icon
+										target="_blank"
+										href={ localizeUrl(
+											'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
+										) }
+									/>
+								),
 							},
 						}
 					) }
@@ -220,6 +228,7 @@ export const SftpCard = ( {
 	};
 
 	const displayQuestionsAndButton = ! ( username || isLoading );
+	const showSshPanel = ! siteHasSftpFeature || siteHasSshFeature;
 
 	const featureExplanation = siteHasSshFeature
 		? translate(
@@ -277,21 +286,22 @@ export const SftpCard = ( {
 							}
 						) }
 					</PanelBody>
-					{ siteHasSshFeature && (
+					{ showSshPanel && (
 						<PanelBody title={ translate( 'What is SSH?' ) } initialOpen={ false }>
 							{ translate(
 								'SSH stands for Secure Shell. It’s a way to perform advanced operations on your site using the command line. ' +
-									'{{em}}This feature is currently in beta.{{/em}} For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
+									'For more information see {{supportLink}}Connect to SSH on WordPress.com{{/supportLink}}.',
 								{
 									components: {
 										supportLink: (
 											<ExternalLink
 												icon
 												target="_blank"
-												href={ localizeUrl( 'https://wordpress.com/support/sftp/' ) }
+												href={ localizeUrl(
+													'https://wordpress.com/support/connect-to-ssh-on-wordpress-com/'
+												) }
 											/>
 										),
-										em: <em />,
 									},
 								}
 							) }
@@ -444,8 +454,8 @@ export default connect(
 			currentUserId,
 			username,
 			password,
-			siteHasSshFeature:
-				config.isEnabled( 'launch-wpcom-ssh' ) && siteHasFeature( state, siteId, FEATURE_SSH ),
+			siteHasSftpFeature: siteHasFeature( state, siteId, FEATURE_SFTP ),
+			siteHasSshFeature: siteHasFeature( state, siteId, FEATURE_SSH ),
 			isSshAccessEnabled: 'ssh' === getAtomicHostingSshAccess( state, siteId ),
 		};
 	},

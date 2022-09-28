@@ -25,8 +25,37 @@ const ThreeColumnContainer = styled.div`
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 96px;
+	margin-top: 48px;
 `;
+
+export const MarketplaceFooter = () => {
+	const { __ } = useI18n();
+
+	return (
+		<Section
+			header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+			dark
+		>
+			<ThreeColumnContainer>
+				<FeatureItem header={ __( 'Fully Managed' ) }>
+					{ __(
+						'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+					) }
+				</FeatureItem>
+				<FeatureItem header={ __( 'Thousands of plugins' ) }>
+					{ __(
+						'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+					) }
+				</FeatureItem>
+				<FeatureItem header={ __( 'Flexible pricing' ) }>
+					{ __(
+						'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+					) }
+				</FeatureItem>
+			</ThreeColumnContainer>
+		</Section>
+	);
+};
 
 const EducationFooter = () => {
 	const { __ } = useI18n();
@@ -44,7 +73,10 @@ const EducationFooter = () => {
 
 	return (
 		<EducationFooterContainer>
-			<Section header={ __( 'Learn more' ) }>
+			<Section
+				header={ __( 'Get started with plugins' ) }
+				subheader={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+			>
 				<ThreeColumnContainer>
 					<LinkCard
 						external
@@ -81,30 +113,7 @@ const EducationFooter = () => {
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<Section
-				header={ preventWidows(
-					__( 'Add additional features to your WordPress site. Risk free.' )
-				) }
-				dark
-			>
-				<ThreeColumnContainer>
-					<FeatureItem header={ __( 'Fully Managed' ) }>
-						{ __(
-							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-						) }
-					</FeatureItem>
-					<FeatureItem header={ __( 'Thousands of plugins' ) }>
-						{ __(
-							'Along with our hand curated collection of premium plugins, you also have thousands of community developed plugins at your disposal.'
-						) }
-					</FeatureItem>
-					<FeatureItem header={ __( 'Flexible pricing' ) }>
-						{ __(
-							'WordPress.com offers monthly and annual premium plugin pricing for extra flexibility.'
-						) }
-					</FeatureItem>
-				</ThreeColumnContainer>
-			</Section>
+			<MarketplaceFooter />
 		</EducationFooterContainer>
 	);
 };

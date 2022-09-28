@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
+import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getPlugins, isEqualSlugOrId } from 'calypso/state/plugins/installed/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -40,6 +40,9 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const categoryDescription = categories[ category ]?.categoryDescription || null;
+
+	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
 		getPlugins( state, siteObjectsToSiteIds( sites ) )
@@ -63,8 +66,9 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
 			title={ categoryName }
+			subtitle={ categoryDescription }
 			site={ siteSlug }
-			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? listLink : false }
+			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }

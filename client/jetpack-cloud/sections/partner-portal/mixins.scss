@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 @mixin licensing-portal-bottom-action-bar() {
 	position: fixed;
@@ -8,7 +8,7 @@
 	bottom: 0;
 	padding: 0.875rem 0.875rem 1.5rem;
 	background: white;
-	box-shadow: 0 -1px 2px rgba( 0, 0, 0, 0.12 );
+	box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
 	z-index: 20;
 
 	.button {
@@ -18,7 +18,7 @@
 		white-space: nowrap;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		position: static;
 		padding: 0;
 		background: transparent;

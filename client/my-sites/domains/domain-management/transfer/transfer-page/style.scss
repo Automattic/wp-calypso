@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .transfer-page {
 	header.formatted-header {
@@ -17,7 +17,7 @@
 	}
 
 	.card {
-		color: var( --studio-gray-50 );
+		color: var(--studio-gray-50);
 		padding: 16px;
 		margin-bottom: 24px;
 
@@ -30,7 +30,7 @@
 			margin: 0;
 			font-weight: 600;
 			font-size: $font-body;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 		}
 
 		.action-card {
@@ -76,7 +76,7 @@
 
 	.transfer-page__help {
 		&-section-card {
-			background: var( --studio-gray-0 );
+			background: var(--studio-gray-0);
 			border-radius: 2px;
 			box-shadow: none;
 			padding: 24px;
@@ -87,17 +87,17 @@
 			line-height: 24px;
 			font-weight: 600;
 			margin-bottom: 4px;
-			color: var( --studio-gray-80 );
+			color: var(--studio-gray-80);
 		}
 
 		&-section-text {
-			color: var( --studio-gray-50 );
+			color: var(--studio-gray-50);
 			font-size: $font-body-small;
 			line-height: 20px;
 			margin-bottom: 0;
 
 			br {
-				content: ' ';
+				content: " ";
 				display: block;
 				margin-bottom: 20px;
 			}
@@ -111,7 +111,7 @@
 	.transfer-page__transfer-lock-label {
 		display: flex;
 		font-size: $font-body-small;
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 
 		svg {
 			margin-right: 8px;
@@ -141,7 +141,7 @@
 		@include placeholder();
 	}
 
-	@include breakpoint-deprecated( '>1280px' ) {
+	@include breakpoint-deprecated( ">1280px" ) {
 		.layout__column--main {
 			padding-right: 24px;
 		}

@@ -1,9 +1,15 @@
+import sortBy from 'lodash/sortBy';
 import {
 	LicenseFilter,
 	LicenseSortField,
 	LicenseState,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
-import { APIPartner, Partner } from 'calypso/state/partner-portal/types';
+import {
+	APIPartner,
+	Partner,
+	APIProductFamily,
+	APIProductFamilyProduct,
+} from 'calypso/state/partner-portal/types';
 
 /**
  * Noop which can be reused (e.g. in equality checks).
@@ -175,4 +181,14 @@ export function formatApiPartner( partner: APIPartner ): Partner {
  */
 export function getProductTitle( product: string ): string {
 	return product.replace( /(?:Jetpack\s|[)(])/gi, '' );
+}
+
+export function selectProductOptions( families: APIProductFamily[] ): APIProductFamilyProduct[] {
+	return families.flatMap( ( family ) => family.products );
+}
+
+export function selectAlphaticallySortedProductOptions(
+	families: APIProductFamily[]
+): APIProductFamilyProduct[] {
+	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }

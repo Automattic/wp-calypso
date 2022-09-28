@@ -37,7 +37,7 @@ type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
 
 const Placeholder = () => <span className="new-or-existing-site__placeholder">&nbsp;</span>;
 
-export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
+export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
@@ -46,7 +46,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 	const headerText = translate( 'Do It For Me' );
 
 	const subHeaderText = translate(
-		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus a one year subscription of the %(plan)s plan.',
+		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus an additional purchase of the %(plan)s plan.',
 		{
 			args: {
 				displayCost,

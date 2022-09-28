@@ -1,56 +1,65 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 $grey-header: #151b1e;
-$grey-footer: #101517;
 
 .courses {
-	.step-container__content {
-		padding-top: 60px;
-		background-color: $grey-header;
+	.signup-header {
+		color: var(--color-text-inverted);
+
+		svg.wordpress-logo {
+			fill: var(--color-text-inverted);
+		}
 	}
 
-	.step-container .step-container__navigation.action-buttons {
-		background-color: $grey-footer;
-		border: 0;
-		box-shadow: 0 -1px 0 #2c3234;
+	.step-container {
+		.step-container__navigation.action-buttons {
+			background-color: var(--studio-gray-100);
+			border: 0;
+			box-shadow: 0 -1px 0 #2c3234;
 
-		button.navigation-link.is-borderless {
-			color: #fff;
+			button.navigation-link.is-borderless {
+				color: #fff;
 
-			svg {
-				fill: #fff;
+				svg {
+					fill: #fff;
+				}
+			}
+
+			@include break-small {
+				background-color: $grey-header;
+				box-shadow: none;
 			}
 		}
 
-		@include break-small {
+		.step-container__content {
+			padding-top: 60px;
 			background-color: $grey-header;
-			box-shadow: none;
-		}
-	}
 
-	.videos-ui {
-		position: relative;
-		width: 100%;
-		min-height: calc( 100vh - 60px );
+			.videos-ui {
+				position: relative;
+				width: 100%;
+				min-height: calc(100vh - 60px);
 
-		span,
-		p {
-			font-size: 0.875rem;
-		}
-
-		.videos-ui__header .videos-ui__header-content .videos-ui__summary svg {
-			fill: #fff9;
-		}
-
-		.videos-ui__body {
-			svg use {
-				fill: #fff;
-			}
-
-			.videos-ui__active-video-content {
+				span,
 				p {
-					padding-bottom: 1.5em;
+					font-size: 0.875rem;
+				}
+
+				.videos-ui__header .videos-ui__header-content .videos-ui__summary svg {
+					fill: #fff9;
+				}
+
+				.videos-ui__body {
+					svg use {
+						fill: #fff;
+					}
+
+					.videos-ui__active-video-content {
+						p {
+							padding-bottom: 1.5em;
+						}
+					}
 				}
 			}
 		}
@@ -64,9 +73,10 @@ $grey-footer: #101517;
 		right: 0;
 		padding: 0 20px;
 		box-shadow: 0 -1px 0 #2c3234;
-		background-color: var( --studio-gray-100 );
+		background-color: var(--studio-gray-100);
 		animation: appear 0.3s ease-in-out;
-		@include reduce-motion( 'animation' );
+
+		@include reduce-motion( "animation" );
 
 		.courses__footer-content {
 			display: flex;
@@ -83,7 +93,7 @@ $grey-footer: #101517;
 			margin-left: 20px;
 			border-radius: 4px;
 			border-color: transparent;
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			font-weight: 500;
 			transition: opacity 0.2s ease-out;
 

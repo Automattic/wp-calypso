@@ -119,9 +119,9 @@ class HelpContact extends Component {
 	startHappychat = ( contactForm ) => {
 		this.recordCompactSubmit( 'happychat' );
 		this.props.openHappychat();
-		const { howCanWeHelp, howYouFeel, message, site } = contactForm;
+		const { message, site } = contactForm;
 
-		this.props.sendUserInfo( this.props.getUserInfo( { howCanWeHelp, howYouFeel, site } ) );
+		this.props.sendUserInfo( this.props.getUserInfo( { site } ) );
 		this.props.sendHappychatMessage( message, { includeInSummary: true } );
 
 		recordTracksEvent( 'calypso_help_live_chat_begin', {
@@ -169,8 +169,8 @@ class HelpContact extends Component {
 		this.recordSubmitWithActiveTickets( 'directly' );
 	};
 
-	submitKayakoTicket = ( contactForm ) => {
-		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
+	submitSupportTicket = ( contactForm ) => {
+		const { subject, message, site } = contactForm;
 		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
@@ -179,21 +179,16 @@ class HelpContact extends Component {
 				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;
 		}
-		const ticketMeta = [
-			'How can you help: ' + howCanWeHelp,
-			'How I feel: ' + howYouFeel,
-			'Site I need help with: ' + ( site ? site.URL : 'N/A' ),
-			'Plan: ' + plan,
-		];
+		const ticketMeta = [ 'Site I need help with: ' + ( site ? site.URL : 'N/A' ), 'Plan: ' + plan ];
 
-		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
+		const supportMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 		this.setState( { isSubmitting: true } );
-		this.recordCompactSubmit( 'kayako' );
+		this.recordCompactSubmit( 'email' );
 
 		const payload = {
 			subject,
-			message: kayakoMessage,
+			message: supportMessage,
 			locale: currentUserLocale,
 			client: config( 'client_slug' ),
 			is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
@@ -202,6 +197,7 @@ class HelpContact extends Component {
 			payload.blog_url = site.URL;
 		}
 
+		// Endpoint url has 'kayako', but actually submits to Zendesk.
 		wpcom.req
 			.post( '/help/tickets/kayako/new', payload )
 			.then( () => {
@@ -217,7 +213,7 @@ class HelpContact extends Component {
 				} );
 
 				recordTracksEvent( 'calypso_help_contact_submit', {
-					ticket_type: 'kayako',
+					ticket_type: 'email',
 					support_variation: supportVariation,
 					site_plan_product_id: site ? site.plan.product_id : null,
 					is_automated_transfer: site ? site.options.is_automated_transfer : null,
@@ -409,7 +405,7 @@ class HelpContact extends Component {
 					additionalSupportOption = {
 						enabled: true,
 						label: translate( 'Email us' ),
-						onSubmit: this.submitKayakoTicket,
+						onSubmit: this.submitSupportTicket,
 					};
 				}
 
@@ -418,8 +414,6 @@ class HelpContact extends Component {
 					onSubmit: this.startHappychat,
 					buttonLabel,
 					showSubjectField: false,
-					showHowCanWeHelpField: true,
-					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
@@ -428,11 +422,9 @@ class HelpContact extends Component {
 			case SUPPORT_TICKET:
 			case SUPPORT_UPWORK_TICKET:
 				return {
-					onSubmit: this.submitKayakoTicket,
+					onSubmit: this.submitSupportTicket,
 					buttonLabel: isSubmitting ? translate( 'Sending email' ) : translate( 'Email us' ),
 					showSubjectField: true,
-					showHowCanWeHelpField: true,
-					showHowYouFeelField: true,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
 				};
@@ -457,8 +449,6 @@ class HelpContact extends Component {
 						}
 					),
 					showSubjectField: false,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: false,
 					showQASuggestions: true,
 				};
@@ -498,8 +488,6 @@ class HelpContact extends Component {
 								}
 						  ),
 					showSubjectField: true,
-					showHowCanWeHelpField: false,
-					showHowYouFeelField: false,
 					showSiteField: true,
 					showAlternativeSiteOptionsField: true,
 					showHidingUrlOption: true,
@@ -584,8 +572,6 @@ class HelpContact extends Component {
 		if ( this.props.compact ) {
 			return Object.assign( props, {
 				showSubjectField: false,
-				showHowCanWeHelpField: false,
-				showHowYouFeelField: false,
 				showQASuggestions: false,
 			} );
 		}

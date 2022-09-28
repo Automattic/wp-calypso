@@ -1,20 +1,31 @@
 /*
     Global styles for Stepper framework
 */
-@import '@wordpress/components/build-style/style';
-@import '@automattic/calypso-color-schemes';
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/onboarding/styles/variables';
+@import "@wordpress/components/build-style/style";
+@import "@automattic/calypso-color-schemes";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 /**
  * General onboarding styling
  */
+
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
+body {
+	background-color: #fdfdfd;
+}
+
 body,
 button {
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-		'Cantarell', 'Helvetica Neue', sans-serif;
-	text-rendering: optimizeLegibility;
+	font-family: $sans;
+	text-rendering: optimizelegibility;
 	-moz-osx-font-smoothing: grayscale;
 	-webkit-font-smoothing: antialiased;
 
@@ -26,8 +37,7 @@ button {
 	h2,
 	h3,
 	p {
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu',
-			'Cantarell', 'Helvetica Neue', sans-serif;
+		font-family: $sans;
 		font-weight: 400;
 		margin: 0;
 	}
@@ -35,7 +45,7 @@ button {
 	a,
 	a:visited {
 		text-decoration: none;
-		color: var( --color-link );
+		color: var(--color-link);
 	}
 
 	button {
@@ -52,14 +62,16 @@ button {
  * Site Setup
  */
 .site-setup,
+.plugin-bundle,
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
+.link-in-bio-post-setup,
 .completing-purchase,
 .anchor-fm,
 .subscribers,
-.blazepress {
-	position: relative;
+.blazepress,
+.intro {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -70,16 +82,6 @@ button {
 
 	&.courses {
 		padding: 0;
-
-		.signup-header {
-			z-index: 1;
-			color: #fff;
-
-			svg path {
-				fill: #fff;
-				stroke: #fff;
-			}
-		}
 	}
 
 	.flow-progress {
@@ -107,12 +109,13 @@ button {
  	 * Signup Header
  	 */
 	.signup-header {
+		z-index: 1;
+
 		.wordpress-logo {
 			position: absolute;
-			inset-inline-start: 20px;
 			inset-block-start: 20px;
-			fill: var( --color-text );
-			stroke: var( --color-text );
+			inset-inline-start: 24px;
+			fill: var(--color-text);
 			transform-origin: 0 0;
 		}
 
@@ -122,9 +125,8 @@ button {
 
 			.flow-progress-indicator {
 				font-weight: 500;
-				/* stylelint-disable-line */
 				font-size: 0.875rem;
-				color: var( --studio-gray-30 );
+				color: var(--studio-gray-30);
 			}
 		}
 
@@ -139,14 +141,132 @@ button {
 		}
 	}
 
+	@include break-large {
+		height: 100%;
+	}
+
 	/**
  	 * Step Container
  	 */
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+
+		@media ( min-width: 660px ) {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 }
+
+/**
+ * Tailored flow stylings
+ */
+.newsletter,
+.link-in-bio {
+	button {
+		&[type="submit"] {
+			font-size: $font-body-small;
+			background-color: var(--studio-blue-50);
+			font-weight: 500;
+		}
+
+		&.components-button {
+			border-radius: 4px;
+
+			&.site-icon-with-picker__upload-button {
+				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				font-family: "SF Pro Text", $sans;
+				transition: ease 300ms;
+				border: 1px solid rgba($color: #000, $alpha: 0.2);
+
+				svg {
+					transition: ease 300ms;
+					fill: var(--studio-blue-50);
+				}
+
+				span {
+					font-size: $font-body-extra-small;
+				}
+
+				&:hover,
+				&:focus {
+					box-shadow: none;
+					outline: none;
+					background-color: var(--studio-blue-50);
+
+					svg {
+						fill: #fff;
+					}
+
+					span {
+						font-size: $font-body-extra-small;
+
+						&.add {
+							color: var(--studio-blue-50);
+						}
+
+						&.replace {
+							color: var(--studio-gray-60);
+
+							&:hover {
+								color: var(--studio-blue-50);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	fieldset {
+		label {
+			font-size: $font-body;
+			color: var(--studio-gray-60);
+		}
+
+		input[type="text"].form-text-input,
+		textarea.form-textarea {
+			font-size: $font-body-small;
+			border-radius: 4px;
+			border: 1px solid var(--studio-gray-10);
+
+			&:focus {
+				box-shadow: 0 0 0 2px #e2eaf1;
+			}
+		}
+	}
+
+	.progress-bar {
+		background-color: #fff;
+		position: absolute;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
+	}
+
+	&.intro {
+		button.intro__button {
+			border-radius: 4px;
+			background-color: var(--studio-gray-100);
+			transition: ease 300ms;
+
+			&:hover,
+			&:focus {
+				background-color: var(--studio-gray-70);
+			}
+
+			&:focus {
+				border: none;
+				outline: solid 2px var(--studio-gray-70);
+				outline-offset: 2px;
+				box-shadow: none;
+			}
+		}
+	}
+}
+
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {

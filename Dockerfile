@@ -1,9 +1,9 @@
 ARG use_cache=false
-ARG node_version=16.13.2
+ARG node_version=16.17.0
 ARG base_image=registry.a8c.com/calypso/base:latest
 
 ###################
-FROM node:${node_version}-buster as builder-cache-false
+FROM node:${node_version}-bullseye-slim as builder-cache-false
 
 
 ###################

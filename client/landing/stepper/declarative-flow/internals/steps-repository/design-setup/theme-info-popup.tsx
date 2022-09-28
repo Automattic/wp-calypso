@@ -35,11 +35,11 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 			<div className="theme-info-popup__support-links popup-item">
 				<h2>Support</h2>
 				<p>
-					<a href="https://wordpress.com/help/contact/" target="__blank">
+					<a href="https://wordpress.com/help/contact" target="__blank">
 						Contact us
 					</a>{ ' ' }
 					or visit the{ ' ' }
-					<a href="https://en.forums.wordpress.com/forum/themes" target="__blank">
+					<a href="https://en.forums.wordpress.com/forum/themes/" target="__blank">
 						support forum
 					</a>
 				</p>
@@ -56,8 +56,7 @@ const ThemeInfoPopup = ( { slug }: ThemeInfoPopupProps ) => {
 	}
 
 	const { author, author_uri, description } = theme;
-	const features = theme.taxonomies.features;
-
+	const features = theme.taxonomies.theme_feature;
 	return (
 		<div className="theme-info-popup">
 			<ThemeDescription author_uri={ author_uri } author={ author } description={ description } />

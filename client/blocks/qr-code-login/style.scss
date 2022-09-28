@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .qr-code-login {
 	display: flex;
@@ -30,17 +30,17 @@
 			margin-left: 16px;
 		}
 
-        .qr-code-login__step {
-            margin-bottom: 0.75em;
-        }
+		.qr-code-login__step {
+			margin-bottom: 0.75em;
+		}
 
 		a {
 			font-weight: 500;
 		}
 
-		 p {
-			 margin-bottom: 0;
-		 }
+		p {
+			margin-bottom: 0;
+		}
 	}
 
 	.qr-code-login__token {
@@ -49,16 +49,16 @@
 		flex: 0 0 300px;
 		margin: 0 auto 20px;
 		max-width: 100%;
-		max-height: calc( 100vw - 48px );
+		max-height: calc(100vw - 48px);
 
 		canvas {
 			max-width: 100%;
-			max-height: calc( 100vw - 48px );
+			max-height: calc(100vw - 48px);
 		}
 
 		@include break-small {
-            margin: 0;
-        }
+			margin: 0;
+		}
 	}
 
 	::after {
@@ -75,16 +75,16 @@
 	width: 100%;
 	height: 100%;
 	position: relative;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	margin-bottom: 8px;
 
 	@include placeholder( --color-neutral-0 );
 
-	:nth-child( 2 ) {
+	:nth-child(2) {
 		left: auto;
 		right: 0;
 	}
-	:nth-child( 3 ) {
+	:nth-child(3) {
 		top: auto;
 		bottom: 0;
 	}
@@ -94,9 +94,9 @@
 }
 .qr-code-login__corner-box {
 	position: absolute;
-	border: 5px solid var( --color-neutral-0 );
+	border: 5px solid var(--color-neutral-0);
 	outline: 5px solid #fff;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	width: 16px;
 	height: 16px;
 	top: 0;

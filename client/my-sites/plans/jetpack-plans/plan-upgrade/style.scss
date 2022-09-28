@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .plan-upgrade__product {
-	border-bottom: solid 2px var( --color-primary );
+	border-bottom: solid 2px var(--color-primary);
 
 	em {
 		font-style: normal;
@@ -91,11 +91,11 @@
 }
 
 .plan-upgrade__arrow {
-	color: var( --studio-gray-40 );
+	color: var(--studio-gray-40);
 
 	font-size: 3rem;
 
-	transform: rotate( 90deg );
+	transform: rotate(90deg);
 	transform-origin: center center;
 
 	@include break-wide {

@@ -63,7 +63,6 @@ import Notice from 'calypso/components/notice';
 import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	checkDomainAvailability,
-	getFixedDomainSearch,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
 	getTld,
@@ -158,10 +157,6 @@ class RegisterDomainStep extends Component {
 		if ( props.initialState ) {
 			this.state = { ...this.state, ...props.initialState };
 
-			if ( props.suggestion ) {
-				this.state.lastQuery = props.suggestion;
-			}
-
 			if ( props.initialState.searchResults ) {
 				this.state.loadingResults = false;
 				this.state.searchResults = props.initialState.searchResults;
@@ -181,11 +176,16 @@ class RegisterDomainStep extends Component {
 			} else {
 				this.state.railcarId = this.getNewRailcarId();
 			}
+
+			// If there's a domain name as a query parameter suggestion, we always search for it first when the page loads
+			if ( props.suggestion ) {
+				this.state.lastQuery = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
+			}
 		}
 	}
 
 	getState( props ) {
-		const suggestion = props.suggestion ? getFixedDomainSearch( props.suggestion ) : '';
+		const suggestion = getDomainSuggestionSearch( props.suggestion, MIN_QUERY_LENGTH );
 		const loadingResults = Boolean( suggestion );
 
 		return {
@@ -263,9 +263,30 @@ class RegisterDomainStep extends Component {
 		this._isMounted = false;
 	}
 
+	// In the launch flow, the initial query could sometimes be missing if the user had
+	// created a site by skipping the domain step. In these cases, fire the initial search
+	// with the subdomain name.
+	getInitialQueryInLaunchFlow() {
+		if ( ! this.props.isInLaunchFlow ) {
+			return;
+		}
+
+		if (
+			typeof this.props.selectedSite !== 'object' ||
+			typeof this.props.selectedSite.domain !== 'string'
+		) {
+			return;
+		}
+
+		const hostname = this.props.selectedSite.domain.split( '.' )[ 0 ];
+		const regexHostnameWithRandomNumberSuffix = /^(.+?)([0-9]{5,})/i;
+		const [ , strippedHostname ] = hostname.match( regexHostnameWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? hostname;
+	}
+
 	componentDidMount() {
 		const storedQuery = globalThis?.sessionStorage?.getItem( SESSION_STORAGE_QUERY_KEY );
-		const query = this.state.lastQuery || storedQuery;
+		const query = this.state.lastQuery || storedQuery || this.getInitialQueryInLaunchFlow();
 
 		if ( query && ! this.state.searchResults && ! this.state.subdomainSearchResults ) {
 			this.onSearch( query );
@@ -1439,9 +1460,16 @@ class RegisterDomainStep extends Component {
 	};
 
 	showAvailabilityErrorMessage( domain, error, errorData ) {
-		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		const {
+			DOTBLOG_SUBDOMAIN,
+			TRANSFERRABLE,
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
+			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
+		} = domainAvailability;
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
+			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
 		) {
 			return;
@@ -1455,9 +1483,16 @@ class RegisterDomainStep extends Component {
 	}
 
 	showSuggestionErrorMessage( domain, error, errorData ) {
-		const { DOTBLOG_SUBDOMAIN, TRANSFERRABLE } = domainAvailability;
+		const {
+			DOTBLOG_SUBDOMAIN,
+			TRANSFERRABLE,
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE,
+			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE,
+		} = domainAvailability;
 		if (
 			( TRANSFERRABLE === error && this.state.lastDomainIsTransferrable ) ||
+			RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE === error ||
+			SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE === error ||
 			( this.props.isSignupStep && DOTBLOG_SUBDOMAIN === error )
 		) {
 			return;

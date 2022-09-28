@@ -116,12 +116,12 @@ const JetpackComFooter: React.FC = () => {
 				items: [
 					{
 						label: translate( 'Terms of Service' ),
-						href: addQueryArgs( utmParams, 'http://wordpress.com/tos/' ),
+						href: addQueryArgs( utmParams, 'https://wordpress.com/tos/' ),
 						trackId: 'terms_of_service',
 					},
 					{
 						label: translate( 'Privacy Policy' ),
-						href: addQueryArgs( utmParams, 'http://automattic.com/privacy/' ),
+						href: addQueryArgs( utmParams, 'https://automattic.com/privacy/' ),
 						trackId: 'privacy_policy',
 					},
 					hideCaliforniaNotice

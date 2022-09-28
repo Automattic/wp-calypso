@@ -6,36 +6,36 @@
 	padding: 2px;
 	margin-right: 1em;
 
-	background-color: var( --color-neutral-70 );
-	fill: var( --color-text-inverted );
+	background-color: var(--color-neutral-70);
+	fill: var(--color-text-inverted);
 	border-radius: 2px;
 
 	&.wordpress {
-		background-color: var( --color-wordpress-com );
+		background-color: var(--color-wordpress-com);
 	}
 
 	&.medium-logo {
-		background-color: var( --color-medium );
+		background-color: var(--color-medium);
 	}
 
 	&.blogger-alt {
-		background-color: var( --color-blogger );
+		background-color: var(--color-blogger);
 	}
 
 	&.wix-logo {
-		background-color: var( --color-wix );
+		background-color: var(--color-wix);
 	}
 
 	&.squarespace {
-		background-color: var( --color-squarespace );
+		background-color: var(--color-squarespace);
 	}
 
 	&.substack-logo {
 		padding: 8px;
-		background-color: var( --color-substack );
+		background-color: var(--color-substack);
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		width: 56px;
 		height: 56px;
 		padding: 4px;

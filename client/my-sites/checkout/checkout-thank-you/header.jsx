@@ -27,7 +27,6 @@ import {
 	domainManagementTransferInPrecheck,
 } from 'calypso/my-sites/domains/paths';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
-import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -126,22 +125,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 				return translate(
 					'You will receive an email confirmation shortly,' +
 						' along with detailed instructions to schedule your call with us.'
-				);
-			}
-
-			if ( 'traffic-guide' === displayMode ) {
-				return translate(
-					// eslint-disable-next-line inclusive-language/use-inclusive-words
-					'{{p}}Congratulations for taking this important step towards mastering the art of online marketing!' +
-						' To download your copy of The Ultimate Traffic Guide, simply click the button below and confirm the download prompt.{{/p}}' +
-						'{{p}}The Ultimate Traffic Guide is a goldmine of traffic tips and how-tos that reveals the exact “Breakthrough Traffic” process we’ve developed over the past decade.{{/p}}' +
-						'{{p}}We’ve done all the hard work for you.' +
-						' We’ve sifted through an ocean of marketing articles, tested the ideas to see if they actually work, and then distilled the very best ideas into this printable guide.{{/p}}',
-					{
-						components: {
-							p: <p />,
-						},
-					}
 				);
 			}
 
@@ -354,12 +337,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.open( getTitanEmailUrl( this.props.titanAppsUrlPrefix, '' ) );
 	};
 
-	downloadTrafficGuideHandler = ( event ) => {
-		event.preventDefault();
-
-		downloadTrafficGuide();
-	};
-
 	startTransfer = ( event ) => {
 		event.preventDefault();
 
@@ -401,10 +378,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( 'concierge' === displayMode ) {
 			return translate( 'Schedule my session' );
-		}
-
-		if ( 'traffic-guide' === displayMode ) {
-			return translate( 'Click here to download your copy now.' );
 		}
 
 		if ( ! selectedSite.slug && hasFailedPurchases ) {
@@ -497,7 +470,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
-		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 
 		if ( this.isSearch() ) {
 			const buttonProps = this.getSearchButtonProps();
@@ -530,7 +502,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if (
 			! isConciergePurchase &&
-			! isTrafficGuidePurchase &&
 			( hasFailedPurchases ||
 				! primaryPurchase ||
 				! selectedSite ||
@@ -555,8 +526,6 @@ export class CheckoutThankYouHeader extends PureComponent {
 			clickHandler = this.visitScheduler;
 		} else if ( this.isSingleDomainPurchase() ) {
 			clickHandler = this.visitDomain;
-		} else if ( isTrafficGuidePurchase ) {
-			clickHandler = this.downloadTrafficGuideHandler;
 		} else if ( isTitanMail( primaryPurchase ) ) {
 			clickHandler = this.visitTitanWebmail;
 		}

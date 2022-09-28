@@ -1,10 +1,10 @@
 /* eslint-disable no-restricted-imports */
-/* eslint-disable no-console */
 /**
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useSupportAvailability } from '@automattic/data-stores';
+import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
@@ -22,8 +22,17 @@ import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
 
-const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
+const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const portalParent = useRef( document.createElement( 'div' ) ).current;
+	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
+	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
+	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+
+	useEffect( () => {
+		if ( data?.status === 'assigned' ) {
+			setShowHelpCenter( true );
+		}
+	}, [ data, setShowHelpCenter ] );
 
 	const { siteId, isSimpleSite } = useSelector( ( state ) => {
 		return {
@@ -33,14 +42,11 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	} );
 
 	// prefetch the current site and user
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
-	const user = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
-	const { isLoading: isLoadingChat } = useSupportAvailability( 'CHAT', isSimpleSite );
-	const { data: supportData, isLoading: isSupportDataLoading } = useSupportAvailability(
-		'OTHER',
-		isSimpleSite
-	);
+	useSupportAvailability( 'CHAT', isSimpleSite );
+	const { data: supportData } = useSupportAvailability( 'OTHER', isSimpleSite );
 	useStillNeedHelpURL();
 
 	useEffect( () => {
@@ -53,10 +59,6 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 			] );
 		}
 	}, [ supportData, setDirectlyData ] );
-
-	const isLoading = isSimpleSite
-		? [ ! site, ! user, isSupportDataLoading, isLoadingChat ].some( Boolean )
-		: false;
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];
@@ -78,7 +80,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose } ) => {
 	}, [ portalParent ] );
 
 	return createPortal(
-		<HelpCenterContainer handleClose={ handleClose } isLoading={ isLoading } />,
+		<HelpCenterContainer handleClose={ handleClose } hidden={ hidden } />,
 		portalParent
 	);
 };

@@ -10,6 +10,7 @@ import {
 	IMPORTS_IMPORT_UNLOCK,
 	IMPORTS_START_IMPORTING,
 	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_PRE_UPLOAD_FAILED,
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
@@ -252,3 +253,10 @@ export const startUpload =
 				dispatch( failUploadAction );
 			} );
 	};
+
+export const failPreUpload = ( importerId, message, code ) => ( {
+	type: IMPORTS_PRE_UPLOAD_FAILED,
+	importerId,
+	error: message,
+	errorCode: code,
+} );

@@ -53,7 +53,7 @@
 		]
 	},
 	"engines": {
-		"node": "^16.13.2",
+		"node": "^16.17.0",
 		"yarn": "^3.1.1"
 	},
 	"scripts": {
@@ -96,7 +96,7 @@
 		"install-if-no-packages": "node bin/install-if-no-packages.js",
 		"lint": "run-s -s 'lint:*'",
 		"lint:config-defaults": "node bin/validate-config-keys.js",
-		"lint:css": "stylelint \"**/*.scss\" --syntax scss",
+		"lint:css": "stylelint \"**/*.{css,scss}\"",
 		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.json --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
@@ -127,6 +127,8 @@
 		"tsc": "NODE_OPTIONS='--max-old-space-size=4096' tsc",
 		"typecheck": "yarn run tsc --project client",
 		"update-deps": "rm -rf yarn.lock && yarn run distclean && PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true yarn install && replace --silent 'http://' 'https://' . --recursive --include='yarn.lock' && touch -m node_modules",
+		"vscode:link": "node bin/set-up-vs-code.js",
+		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
 		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",
 		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
 	},
@@ -191,6 +193,7 @@
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
 		"lodash": "^4.17.21",
+		"lottie-web": "^5.9.6",
 		"photon": "workspace:^",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
@@ -217,6 +220,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.7.0",
 		"@typescript-eslint/parser": "^5.7.0",
 		"@wordpress/eslint-plugin": "^12.3.0",
+		"@wordpress/stylelint-config": "^20.0.2",
 		"babel-loader": "^8.2.3",
 		"bunyan": "^1.8.15",
 		"capture-website": "^1.0.0",
@@ -246,6 +250,7 @@
 		"gzip-size": "^6.0.0",
 		"husky": "^7.0.4",
 		"jest": "^27.3.1",
+		"jest-canvas-mock": "^2.4.0",
 		"jest-environment-jsdom": "^27.3.1",
 		"jest-teamcity": "^1.9.0",
 		"loader-utils": "^1.2.3",
@@ -269,7 +274,7 @@
 		"source-map": "^0.7.3",
 		"stackframe": "^1.1.1",
 		"stacktrace-gps": "^3.0.3",
-		"stylelint": "^13.13.1",
+		"stylelint": "^14.11.0",
 		"tslib": "^2.3.0",
 		"typescript": "^4.7.4",
 		"v8-profiler-next": "^1.9.0",
@@ -288,7 +293,7 @@
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
 		"lzma-native": "^8.0.5"
 	},
-	"packageManager": "yarn@3.1.1",
+	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false

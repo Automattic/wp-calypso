@@ -1,4 +1,4 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 /**
  * Site Indicator
  */
@@ -14,11 +14,11 @@
 
 .site-indicator__button {
 	align-self: center;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	border: none;
 	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	box-shadow: none;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	cursor: default;
 	display: block;
 	width: 26px;
@@ -27,7 +27,7 @@
 	position: relative;
 	text-align: center;
 	text-transform: none;
-	z-index: z-index( 'root', '.site-indicator__button' );
+	z-index: z-index("root", ".site-indicator__button");
 	overflow: initial;
 	line-height: 28px;
 
@@ -36,7 +36,7 @@
 	}
 	.accessible-focus &:focus {
 		outline: 0;
-		border: 1px dotted var( --color-primary );
+		border: 1px dotted var(--color-primary);
 		&::before {
 			top: 4px;
 			left: 4px;
@@ -48,18 +48,18 @@
 	}
 
 	.is-update & {
-		background: var( --color-warning );
-		color: var( --color-text-inverted );
+		background: var(--color-warning);
+		color: var(--color-text-inverted);
 	}
 
 	.is-error & {
-		background: var( --color-error );
-		color: var( --color-text-inverted );
+		background: var(--color-error);
+		color: var(--color-text-inverted);
 	}
 
 	.is-expanded & {
 		.accessible-focus &:focus {
-			border: 1px dotted var( --color-surface );
+			border: 1px dotted var(--color-surface);
 			&::before {
 				top: 6px;
 				left: 6px;
@@ -80,7 +80,7 @@
 
 // Displayed on top of a Site element once the user clicks on the button
 .site-indicator__message {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 	font-size: $font-body-extra-small;
 	line-height: 1.4;
 	padding: 5px 16px;
@@ -93,10 +93,10 @@
 	justify-content: space-between;
 
 	.is-update & {
-		background: var( --color-warning );
+		background: var(--color-warning);
 	}
 	.is-error & {
-		background: var( --color-error );
+		background: var(--color-error);
 	}
 }
 .site-indicator__action {
@@ -110,7 +110,7 @@
 	a:visited,
 	.button.is-borderless.is-scary,
 	.site-indicator__action-button {
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		text-decoration: underline;
 	}
 

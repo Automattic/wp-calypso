@@ -1,10 +1,12 @@
 import {
-	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
-	siteLaunchStatusFilterValues,
-} from '@automattic/components';
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
+	siteLaunchStatusGroupValues,
+} from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SitesDashboard } from './components/sites-dashboard';
+import { MEDIA_QUERIES } from './utils';
 import type { Context as PageJSContext } from 'page';
 
 const globalStyles = css`
@@ -13,7 +15,12 @@ const globalStyles = css`
 
 		.layout__content {
 			// The page header background extends all the way to the edge of the screen
-			padding: 32px 0;
+			padding-block: 32px;
+			padding-inline: 0;
+
+			${ MEDIA_QUERIES.mediumOrSmaller } {
+				padding-block-start: 46px;
+			}
 
 			// Prevents the status dropdown from being clipped when the page content
 			// isn't tall enough
@@ -23,7 +30,7 @@ const globalStyles = css`
 `;
 
 const getStatusFilterValue = ( status?: string ) => {
-	return siteLaunchStatusFilterValues.find( ( value ) => value === status );
+	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
 };
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
@@ -32,7 +39,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	 * in the route.
 	 */
 	if ( context.query.status === undefined ) {
-		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE;
+		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 		return next();
 	}
 
@@ -58,10 +65,14 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 	context.primary = (
 		<>
 			<Global styles={ globalStyles } />
+			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
 			<SitesDashboard
 				queryParams={ {
+					page: context.query.page ? parseInt( context.query.page ) : undefined,
+					perPage: context.query[ 'per-page' ]
+						? parseInt( context.query[ 'per-page' ] )
+						: undefined,
 					search: context.query.search,
-					showHidden: context.query[ 'show-hidden' ] === 'true',
 					status: context.query.status,
 				} }
 			/>

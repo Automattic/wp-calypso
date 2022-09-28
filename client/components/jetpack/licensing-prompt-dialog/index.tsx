@@ -3,6 +3,7 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -46,9 +47,11 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_view' ) );
 	}, [ dispatch ] );
 
-	let titleToRender = isEnabled( 'jetpack/pricing-page-rework-v1' )
-		? translate( 'Jetpack is successfully installed' )
-		: '';
+	let titleToRender =
+		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
+		window.location.pathname.startsWith( JPC_PATH_PLANS )
+			? translate( 'Jetpack is successfully installed' )
+			: '';
 
 	if ( ! titleToRender ) {
 		if ( hasOneDetachedLicense ) {
@@ -93,7 +96,22 @@ function LicensingPromptDialog( { siteId }: Props ) {
 					<li>
 						{ translate( 'You can find the license keys in your purchase confirmation email.' ) }
 					</li>
-					<li>{ translate( 'Or in Upgrades -> Purchases -> Active Upgrades' ) }</li>
+					<li>
+						{ translate( 'Or in {{purchases/}}', {
+							components: {
+								purchases: (
+									<Button
+										className="user-purchases-link"
+										href="/me/purchases"
+										target="_blank"
+										plain
+									>
+										{ 'https://wordpress.com/me/purchases' }
+									</Button>
+								),
+							},
+						} ) }
+					</li>
 				</ul>
 			</>
 		);

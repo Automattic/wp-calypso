@@ -391,6 +391,22 @@ export const atomicSoftwareInstallStatus: Reducer<
 	return state;
 };
 
+const bundledPluginSlug: Reducer< { [ key: string ]: string | undefined }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'SET_BUNDLED_PLUGIN_SLUG' ) {
+		return {
+			...state,
+			[ action.siteSlug ]: action.pluginSlug,
+		};
+	}
+	if ( action.type === 'RESET_SITE_STORE' ) {
+		return {};
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -411,6 +427,7 @@ const reducer = combineReducers( {
 	latestAtomicTransferStatus,
 	atomicSoftwareStatus,
 	atomicSoftwareInstallStatus,
+	bundledPluginSlug,
 } );
 
 export type State = ReturnType< typeof reducer >;

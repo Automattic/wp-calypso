@@ -1,11 +1,12 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
@@ -16,7 +17,7 @@ export enum ProcessingResult {
 	FAILURE = 'failure',
 }
 
-const ProcessingStep: Step = function ( props ): ReactElement | null {
+const ProcessingStep: Step = function ( props ) {
 	const { submit } = props.navigation;
 
 	const { __ } = useI18n();
@@ -39,6 +40,8 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
 	};
 
+	const captureFlowException = useCaptureFlowException( 'ProcessingStep' );
+
 	useEffect( () => {
 		( async () => {
 			if ( typeof action === 'function' ) {
@@ -52,6 +55,9 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 					setDestinationState( destination );
 					setHasActionSuccessfullyRun( true );
 				} catch ( e ) {
+					// eslint-disable-next-line no-console
+					console.error( 'ProcessingStep failed:', e );
+					captureFlowException( e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {
@@ -96,7 +102,7 @@ const ProcessingStep: Step = function ( props ): ReactElement | null {
 	}, [ simulatedProgress, progress, __ ] );
 
 	const flowName = props.flow || '';
-	const isJetpackPowered = [ 'link-in-bio', 'newsletter' ].includes( flowName );
+	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 
 	return (
 		<StepContainer

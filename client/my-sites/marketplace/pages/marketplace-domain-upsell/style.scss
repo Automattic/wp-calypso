@@ -1,17 +1,17 @@
 .is-section-marketplace.has-no-sidebar {
 	.layout__content {
-		background-color: var( --studio-white );
+		background-color: var(--studio-white);
 		height: 100vh;
 		padding: 0;
 		overflow: inherit;
 		@media ( max-width: 782px ) {
 			padding: 0;
-			background-color: var( --studio-white );
+			background-color: var(--studio-white);
 			height: 200vh;
 			.layout__primary {
 				height: 100vh;
 				.marketplace-domain-upsell__root {
-					height: calc( 100vh - 50px );
+					height: calc(100vh - 50px);
 				}
 			}
 		}
@@ -35,16 +35,16 @@
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 60% 40%;
 	grid-template-areas:
-		'domainpicker basket'
-		'domainpicker empty';
+		"domainpicker basket"
+		"domainpicker empty";
 
 	@media ( max-width: 782px ) {
 		grid-template-rows: 1fr 157px;
 		grid-template-columns: 100%;
 		grid-template-areas:
-			'domainpicker'
-			'basket';
-		margin: var( --masterbar-height ) 0 0;
+			"domainpicker"
+			"basket";
+		margin: var(--masterbar-height) 0 0;
 		&.expanded-basket-view {
 			grid-template-rows: 1fr 245px;
 		}
@@ -78,7 +78,7 @@
 		&::-webkit-scrollbar {
 			display: none !important;
 		}
-		max-height: calc( 100vh - 95px );
+		max-height: calc(100vh - 95px);
 
 		.domain-picker {
 			max-width: 611px;
@@ -104,7 +104,7 @@
 		justify-content: space-around;
 		height: auto;
 		@media ( max-width: 782px ) {
-			background-color: var( --studio-gray-0 );
+			background-color: var(--studio-gray-0);
 			padding: 0;
 			align-items: flex-end;
 			height: auto;

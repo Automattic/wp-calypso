@@ -14,14 +14,14 @@ import GettingStartedVideo from '../../components/getting-started-video';
 import ImporterDrag from '../../components/importer-drag';
 import { getImportDragConfig } from '../../components/importer-drag/config';
 import ProgressScreen from '../../components/progress-screen';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
 	job?: ImportJob;
 	importer: Importer;
-	siteItem: SitesItem | null;
+	siteItem: SiteDetails | null | undefined;
 	siteSlug: string;
 	siteAnalyzedData: UrlData;
 	stepNavigator?: StepNavigator;
@@ -116,7 +116,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		return (
 			job && (
 				<ImporterDrag
-					site={ siteItem as SitesItem }
+					site={ siteItem }
 					urlData={ siteAnalyzedData }
 					importerData={ getImportDragConfig( importer, stepNavigator?.supportLinkModal ) }
 					importerStatus={ job }

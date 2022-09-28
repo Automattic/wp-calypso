@@ -1,82 +1,82 @@
 .threat-fix-header {
-  &__card-container {
-    flex-direction: column;
-    margin-bottom: auto;
-    margin-top: auto;
-    margin-right: auto;
-    max-height: 100px;
+	&__card-container {
+		flex-direction: column;
+		margin-bottom: auto;
+		margin-top: auto;
+		margin-right: auto;
+		max-height: 100px;
 		max-width: 435px;
-    @include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			max-width: 263px;
 		}
-  }
+	}
 
-  &__warning-icon {
-    fill: #a7aaad;
-  }
+	&__warning-icon {
+		fill: #a7aaad;
+	}
 
-  &__autofix-checkbox {
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 32px;
-    margin-left: auto;
+	&__autofix-checkbox {
+		margin-top: auto;
+		margin-bottom: auto;
+		margin-right: 32px;
+		margin-left: auto;
 
-    input[type='checkbox'] {
-      /* Add if not using autoprefixer */
-      -webkit-appearance: none;
-      /* Remove most all native input styles */
-      appearance: none;
-      /* For iOS < 15 */
-      background-color: var( --form-background );
-      /* Not removed via appearance */
-      margin: 0;
+		input[type="checkbox"] {
+			/* Add if not using autoprefixer */
+			-webkit-appearance: none;
+			/* Remove most all native input styles */
+			appearance: none;
+			/* For iOS < 15 */
+			background-color: var(--form-background);
+			/* Not removed via appearance */
+			margin: 0;
 
-      font: inherit;
-      color: currentColor;
-      width: 24px;
-      height: 24px;
-      border: 1px solid #c3c4c7;
-      box-sizing: border-box;
-      border-radius: 2px;
-      transform: translateY( -0.075em );
+			font: inherit;
+			color: currentColor;
+			width: 24px;
+			height: 24px;
+			border: 1px solid #c3c4c7;
+			box-sizing: border-box;
+			border-radius: 2px;
+			transform: translateY(-0.075em);
 
-      display: grid;
-      place-content: center;
-    }
+			display: grid;
+			place-content: center;
+		}
 
-    input[type='checkbox']::before {
-      content: '';
-      clip-path: polygon( 14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62% );
-      transform: scale( 0 );
-      transform-origin: bottom left;
-      transition: 120ms transform ease-in-out;
-      background-color: #069e08;
-    }
+		input[type="checkbox"]::before {
+			content: "";
+			clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+			transform: scale(0);
+			transform-origin: bottom left;
+			transition: 120ms transform ease-in-out;
+			background-color: #069e08;
+		}
 
-    input[type='checkbox']:checked::before {
-      transform: scale( 1 );
-    }
-  }
+		input[type="checkbox"]:checked::before {
+			transform: scale(1);
+		}
+	}
 
-  &__card-top {
-    font-style: normal;
-    font-weight: 600;
-    font-size: $font-body-large;
-    line-height: 24px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+	&__card-top {
+		font-style: normal;
+		font-weight: 600;
+		font-size: $font-body-large;
+		line-height: 24px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-  &__card-bottom {
-    font-style: normal;
-    font-weight: normal;
-    font-size: $font-body-small;
-    line-height: 21px;
-    color: #50575e;
+	&__card-bottom {
+		font-style: normal;
+		font-weight: normal;
+		font-size: $font-body-small;
+		line-height: 21px;
+		color: #50575e;
 
-    &.is-critical {
-      color: #d63638;
-    }
-  }
+		&.is-critical {
+			color: #d63638;
+		}
+	}
 }

@@ -1,24 +1,24 @@
 %container {
-  &::after {
-    content: '.';
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-  }
+	&::after {
+		content: ".";
+		display: block;
+		height: 0;
+		clear: both;
+		visibility: hidden;
+	}
 }
 
 %ellipsy {
-  overflow: hidden;
-  text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 %ellipsy-box {
-  @extend %ellipsy;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
+	@extend %ellipsy;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
 }
 
 %calypso-border {
-  border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 }

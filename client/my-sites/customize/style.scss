@@ -4,11 +4,11 @@
 }
 
 .main.customize.is-iframe {
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 	margin: 0;
 	overflow-y: scroll;
 	padding: 0;
-	z-index: z-index( 'root', '.main.customize.is-iframe' );
+	z-index: z-index("root", ".main.customize.is-iframe");
 	-webkit-overflow-scrolling: touch;
 	min-height: 0;
 	position: fixed;
@@ -32,7 +32,7 @@
 
 /**
  * We need to block focus access to the main site behind the customizer so that focus remains on the customizer.
- * We can't use a focus lock (as on a Modal) as that would block access from exiting the browser window. 
+ * We can't use a focus lock (as on a Modal) as that would block access from exiting the browser window.
  * The customizer should behave like a normal page. This excludes the header and sidebar from being in the
  * focus order, while still allowing access to the chat and notices.
  */

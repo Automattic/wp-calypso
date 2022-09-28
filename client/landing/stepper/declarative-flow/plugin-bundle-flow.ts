@@ -20,11 +20,12 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
-import pluginBundleSteps from './plugin-bundle-data';
+import pluginBundleData from './plugin-bundle-data';
 import type { StepPath } from './internals/steps-repository';
 import type { BundledPlugin } from './plugin-bundle-data';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
+const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
 export const pluginBundleFlow: Flow = {
@@ -32,22 +33,26 @@ export const pluginBundleFlow: Flow = {
 
 	useSteps() {
 		const siteSlugParam = useSiteSlugParam();
-		let pluginSlug = useSelect( ( select ) =>
-			select( ONBOARD_STORE ).getBundledPluginSlug( siteSlugParam || '' )
+		const pluginSlug = useSelect( ( select ) =>
+			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
 		) as BundledPlugin;
 
-		const steps: StepPath[] = [ 'getCurrentBundledPlugins' ];
+		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
+			window.location.replace( `/home/${ siteSlugParam }` );
+		}
+
+		// FIXME - Need to not redirect when getCurrentThemeSoftwareSets is still running
+		//
+		// if ( ! pluginSlug || ! pluginBundleData.hasOwnProperty( pluginSlug ) ) {
+		// 	window.location.replace( `/home/${ siteSlugParam }` );
+		// }
+
+		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
 		let bundlePluginSteps: StepPath[] = [];
 
-		// Temp for testing baxter
-		if ( pluginSlug === 'test-plugin' ) {
-			pluginSlug = 'woocommerce';
+		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
+			bundlePluginSteps = pluginBundleData[ pluginSlug ] as StepPath[];
 		}
-
-		if ( pluginSlug ) {
-			bundlePluginSteps = pluginBundleSteps[ pluginSlug ] as StepPath[];
-		}
-
 		return steps.concat( bundlePluginSteps );
 	},
 	useStepNavigation( currentStep, navigate ) {
@@ -107,10 +112,16 @@ export const pluginBundleFlow: Flow = {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+						pendingActions.push(
+							setThemeOnSite(
+								siteSlug,
+								WRITE_INTENT_DEFAULT_THEME,
+								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
+							)
+						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
@@ -176,7 +187,8 @@ export const pluginBundleFlow: Flow = {
 					return exitFlow( `/home/${ siteSlug }` );
 				}
 
-				// TODO - Do we need this?
+				case 'wooTransfer':
+					return navigate( 'processing' );
 				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 			}

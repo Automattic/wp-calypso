@@ -9,7 +9,7 @@
  * @blame: dmsnell
 */
 
-@import '../variables.scss';
+@import "../variables.scss";
 
 /* stylelint-disable scales/font-size */
 
@@ -39,7 +39,8 @@
 
 .facebook-preview__title {
 	color: #1d2129;
-	
+
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 16px;
 	/* stylelint-disable-next-line scales/font-weight */
 	font-weight: 600;
@@ -50,6 +51,7 @@
 
 .facebook-preview__description {
 	color: #606770;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px; //value in Facebook's styles
 	line-height: 20px; //value in Facebook's styles
 	overflow-y: hidden;
@@ -57,6 +59,7 @@
 
 .facebook-preview__url {
 	color: #606770;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px; //value in Facebook's styles
 	line-height: 11px; //value in Facebook's styles
 	text-transform: uppercase;
@@ -126,11 +129,11 @@
 		}
 
 		&::after {
-			content: '';
+			content: "";
 			display: block;
 			height: 100%;
 			width: 100%;
-			background: #ffffff;
+			background: #fff;
 		}
 	}
 

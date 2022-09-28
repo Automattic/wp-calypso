@@ -53,9 +53,24 @@ export function useCategories(
 
 	const categories = {
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
-		paid: { name: __( 'Top premium plugins' ), slug: 'paid', tags: [] },
-		popular: { name: __( 'Top free plugins' ), slug: 'popular', tags: [] },
-		featured: { name: __( 'Editor’s pick' ), slug: 'featured', tags: [] },
+		paid: {
+			name: __( 'Must-have premium plugins' ),
+			categoryDescription: __( 'Add the best-loved plugins on WordPress.com' ),
+			slug: 'paid',
+			tags: [],
+		},
+		popular: {
+			name: __( 'The free essentials' ),
+			categoryDescription: __( 'Add and install the very best free plugins' ),
+			slug: 'popular',
+			tags: [],
+		},
+		featured: {
+			name: __( 'Our developers’ favorites' ),
+			categoryDescription: __( 'Start fast with these WordPress.com team picks' ),
+			slug: 'featured',
+			tags: [],
+		},
 		seo: {
 			name: __( 'Search Engine Optimization' ),
 			description: __( 'Search Optimization' ),
@@ -66,6 +81,9 @@ export function useCategories(
 		ecommerce: {
 			name: __( 'Ecommerce & Business' ),
 			description: __( 'Ecommerce' ),
+			categoryDescription: __(
+				'Everything you need to turn your WordPress site into a powerful online store.'
+			),
 			icon: 'grid',
 			slug: 'ecommerce',
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
@@ -73,6 +91,7 @@ export function useCategories(
 		booking: {
 			name: __( 'Booking & Scheduling' ),
 			description: __( 'Booking' ),
+			categoryDescription: __( 'Add a fully functional booking system to your site.' ),
 			icon: 'grid',
 			slug: 'booking',
 			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
@@ -132,6 +151,9 @@ export function useCategories(
 		analytics: {
 			name: __( 'Analytics' ),
 			description: __( 'Analytics' ),
+			categoryDescription: __(
+				`Tools to help you better understand your site's visitors and performance.`
+			),
 			icon: 'grid',
 			slug: 'analytics',
 			tags: [ 'analytics' ],
@@ -146,6 +168,9 @@ export function useCategories(
 		design: {
 			name: __( 'Design' ),
 			description: __( 'Design' ),
+			categoryDescription: __(
+				'A collection of tools that will give you more control over the design of your site.'
+			),
 			icon: 'grid',
 			slug: 'design',
 			tags: [ 'design', 'blocks', 'editor' ],

@@ -19,10 +19,10 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const sectionName = useSelector( getSectionName );
 
 	const params = new URLSearchParams( search );
-	const postId = state?.post_id ?? params.get( 'postId' );
-	const blogId = state?.blog_id ?? params.get( 'blogId' );
-	const link = state?.link ?? params.get( 'link' );
-	const query = state?.query ?? params.get( 'query' );
+	const postId = params.get( 'postId' );
+	const blogId = params.get( 'blogId' );
+	const link = params.get( 'link' );
+	const query = params.get( 'query' );
 
 	useEffect( () => {
 		const tracksData = {
@@ -36,8 +36,8 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	}, [ query, link, sectionName ] );
 
 	const redirectToSearchOrHome = () => {
-		if ( state?.query ) {
-			history.push( `/?query=${ state.query }` );
+		if ( query ) {
+			history.push( `/?query=${ query }` );
 		} else {
 			history.push( '/' );
 		}

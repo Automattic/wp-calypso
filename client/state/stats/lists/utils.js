@@ -910,7 +910,7 @@ export const normalizers = {
 			result.push( {
 				label: translate( 'Unknown Search Terms' ),
 				value: encryptedSearchTerms,
-				link: 'http://wordpress.com/support/stats/#search-engine-terms',
+				link: 'https://wordpress.com/support/stats/#search-engine-terms',
 				labelIcon: 'external',
 			} );
 		}

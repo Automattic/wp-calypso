@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { Plugin } from 'calypso/data/marketplace/types';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
@@ -23,6 +24,7 @@ interface WPORGResponse {
 	};
 	isLoading: boolean;
 	fetchNextPage?: () => void;
+	hasNextPage?: boolean;
 }
 
 interface WPCOMResponse {
@@ -77,8 +79,9 @@ const usePlugins = ( {
 			? useESPluginsInfinite
 			: useWPORGInfinitePlugins;
 
+	const { localeSlug = '' } = useTranslate();
 	const wporgPluginsOptions = {
-		locale,
+		locale: locale || localeSlug,
 		category,
 		tag,
 		searchTerm: search,
@@ -98,6 +101,7 @@ const usePlugins = ( {
 		data: { plugins: wporgPluginsInfinite = [], pagination: wporgPaginationInfinite } = {},
 		isLoading: isFetchingWPORGInfinite,
 		fetchNextPage,
+		hasNextPage,
 	} = searchHook( wporgPluginsOptions, {
 		enabled:
 			infinite &&
@@ -157,12 +161,7 @@ const usePlugins = ( {
 	}
 
 	function fetchNextPageAndStop() {
-		if (
-			infinite &&
-			dotOrgPagination?.page &&
-			dotOrgPagination?.pages &&
-			dotOrgPagination.page >= dotOrgPagination.pages
-		) {
+		if ( ! hasNextPage ) {
 			return;
 		}
 

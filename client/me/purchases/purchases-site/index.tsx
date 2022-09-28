@@ -27,7 +27,7 @@ export default function PurchasesSite(
 				isPlaceholder?: false;
 				siteId: number;
 				purchases: Purchase[];
-				name: string;
+				name: string | undefined;
 				slug: string;
 				cards: StoredCard[];
 				showSite?: boolean;

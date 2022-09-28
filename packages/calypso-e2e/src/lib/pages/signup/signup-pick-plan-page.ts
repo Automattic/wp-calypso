@@ -38,6 +38,10 @@ export class SignupPickPlanPage {
 		}
 
 		const responseJSON = await response.json();
-		return responseJSON.body;
+		const body: NewSiteResponse = responseJSON.body;
+
+		// Cast the blogID value to a number, in case it comes in as a string.
+		body.blog_details.blogid = Number( body.blog_details.blogid );
+		return body;
 	}
 }

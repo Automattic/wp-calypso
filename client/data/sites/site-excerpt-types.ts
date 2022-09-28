@@ -3,18 +3,19 @@ import {
 	SITE_EXCERPT_REQUEST_FIELDS,
 	SITE_EXCERPT_REQUEST_OPTIONS,
 } from './site-excerpt-constants';
-import type { SiteData, SiteDataOptions } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails, SiteDetailsOptions } from '@automattic/data-stores';
 
 export type SiteExcerptNetworkData = Pick<
-	SiteData,
+	SiteDetails,
 	typeof SITE_EXCERPT_REQUEST_FIELDS[ number ]
 > & {
-	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
+	options?: Pick< SiteDetailsOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
 };
 
 export type SiteExcerptData = Pick<
-	SiteData,
+	SiteDetails,
 	typeof SITE_EXCERPT_REQUEST_FIELDS[ number ] | typeof SITE_EXCERPT_COMPUTED_FIELDS[ number ]
 > & {
-	options?: Pick< SiteDataOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
+	title: string;
+	options?: Pick< SiteDetailsOptions, typeof SITE_EXCERPT_REQUEST_OPTIONS[ number ] >;
 };

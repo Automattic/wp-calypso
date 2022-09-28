@@ -18,13 +18,9 @@ import {
 	isFreePlan,
 	isWpComEcommercePlan,
 	getPlanClass,
-	FEATURE_BLANK,
-	FEATURE_DASH,
-	FEATURE_BASIC_DESIGN,
-	PRODUCT_WPCOM_CUSTOM_DESIGN,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -35,7 +31,6 @@ import { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
-import QueryProductsList from 'calypso/components/data/query-products-list';
 import FoldableCard from 'calypso/components/foldable-card';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -43,11 +38,15 @@ import SpinnerLine from 'calypso/components/spinner-line';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getDiscountByName } from 'calypso/lib/discounts';
-import { useExperiment } from 'calypso/lib/explat';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import {
+	getHighlightedFeatures,
+	getPlanDescriptionForMobile,
+	getPlanFeatureAccessor,
+} from 'calypso/my-sites/plan-features-comparison/util';
 import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -58,12 +57,12 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import { getProductCost } from 'calypso/state/products-list/selectors';
 import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
@@ -82,7 +81,6 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
-
 import './style.scss';
 
 const noop = () => {};
@@ -131,7 +129,6 @@ export class PlanFeatures extends Component {
 		return (
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
-				<QueryProductsList />
 				<div className={ planClasses }>
 					{ this.renderNotice() }
 					<div ref={ this.contentRef } className="plan-features__content">
@@ -323,6 +320,7 @@ export class PlanFeatures extends Component {
 			showPlanCreditsApplied,
 			isLaunchPage,
 			isInVerticalScrollingPlansExperiment,
+			flowName,
 		} = this.props;
 
 		// move any free plan to last place in mobile view
@@ -366,6 +364,7 @@ export class PlanFeatures extends Component {
 				availableForPurchase,
 				currencyCode,
 				current,
+				features,
 				planConstantObj,
 				planName,
 				popular,
@@ -377,9 +376,11 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice, isMonthlyPlan } = properties;
-			const planDescription = isInVerticalScrollingPlansExperiment
-				? planConstantObj.getShortDescription()
-				: planConstantObj.getDescription();
+			const planDescription = getPlanDescriptionForMobile( {
+				flowName,
+				plan: planConstantObj,
+				isInVerticalScrollingPlansExperiment,
+			} );
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -434,28 +435,16 @@ export class PlanFeatures extends Component {
 						selectedPlan={ selectedPlan }
 					/>
 					<FoldableCard header={ translate( 'Show features' ) } clickableHeader compact>
-						{ this.renderMobileFeatures( properties ) }
+						{ this.renderMobileFeatures( features ) }
 					</FoldableCard>
 				</div>
 			);
 		} );
 	}
 
-	renderMobileFeatures( properties ) {
-		const { features, currencyCode, productCustomDesignCost } = properties;
-
+	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			const featureSlug = currentFeature?.getSlug();
-
-			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
-				currentFeature.meta = {
-					price: productCustomDesignCost,
-					currency: currencyCode,
-				};
-			}
-			return ! [ FEATURE_BLANK, FEATURE_DASH ].includes( featureSlug )
-				? this.renderFeatureItem( currentFeature, index )
-				: null;
+			return currentFeature ? this.renderFeatureItem( currentFeature, index ) : null;
 		} );
 	}
 
@@ -579,7 +568,7 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
-	handleUpgradeClick = ( singlePlanProperties ) => {
+	handleUpgradeClick = async ( singlePlanProperties ) => {
 		const {
 			isInSignup,
 			onUpgradeClick: ownPropsOnUpgradeClick,
@@ -614,54 +603,60 @@ export class PlanFeatures extends Component {
 		}
 
 		if ( domainAndPlanPackage ) {
-			// In this flow we redirect to checkout with both the plan and domain
-			// product in the cart.
-			shoppingCartManager
-				.addProductsToCart( [
+			try {
+				// In this flow we redirect to checkout with both the plan and domain
+				// product in the cart.
+				await shoppingCartManager.addProductsToCart( [
 					{
 						product_slug: productSlug,
 						extra: {
 							afterPurchaseUrl: redirectTo ?? undefined,
 						},
 					},
-				] )
-				.then( () => {
-					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
-							// If the coupon does not apply, let's continue to checkout anyway.
-							return Promise.resolve();
-						} );
-					}
-				} )
-				.then( () => {
-					this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
-				} );
+				] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+
+			if ( withDiscount && this.isMounted ) {
+				try {
+					await shoppingCartManager.applyCoupon( withDiscount );
+				} catch {
+					// If the coupon does not apply, let's continue to checkout anyway.
+				}
+			}
+
+			this.isMounted && page( `/checkout/${ selectedSiteSlug }` );
 			return;
 		}
 
 		if ( redirectToAddDomainFlow === true ) {
-			// In this flow, we add the product to the cart directly and then
-			// redirect to the "add a domain" page.
-			shoppingCartManager
-				.addProductsToCart( [
+			try {
+				// In this flow, we add the product to the cart directly and then
+				// redirect to the "add a domain" page.
+				await shoppingCartManager.addProductsToCart( [
 					{
 						product_slug: productSlug,
 						extra: {
 							afterPurchaseUrl: redirectTo ?? undefined,
 						},
 					},
-				] )
-				.then( () => {
-					if ( withDiscount && this.isMounted ) {
-						return shoppingCartManager.applyCoupon( withDiscount ).catch( () => {
-							// If the coupon does not apply, let's continue to the next page anyway.
-							return Promise.resolve();
-						} );
-					}
-				} )
-				.then( () => {
-					this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
-				} );
+				] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+
+			if ( withDiscount && this.isMounted ) {
+				try {
+					await shoppingCartManager.applyCoupon( withDiscount );
+				} catch {
+					// If the coupon does not apply, let's continue to the next page anyway.
+				}
+			}
+
+			this.isMounted && page( `/domains/add/${ selectedSiteSlug }` );
 			return;
 		}
 
@@ -758,56 +753,42 @@ export class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
-		const { isPlansPageQuickImprovements } = this.props;
+		const { flowName, isInVerticalScrollingPlansExperiment } = this.props;
 		const description = feature.getDescription
 			? feature.getDescription( undefined, this.props.domainName )
 			: null;
 		const classes = classNames( 'plan-features__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
+			'is-bold': feature.isHighlightedFeature,
 		} );
+		const isMobileNewsletterLinkinBio =
+			isInVerticalScrollingPlansExperiment && isNewsletterOrLinkInBioFlow( flowName );
 
 		return (
 			<PlanFeaturesItem
 				key={ index }
 				description={ description }
-				hideGridicon={
-					isPlansPageQuickImprovements || ( this.props.isReskinned ? false : this.props.withScroll )
-				}
+				hideInfoPopover={ feature.hideInfoPopover || isMobileNewsletterLinkinBio }
+				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 				availableForCurrentPlan={ feature.availableForCurrentPlan }
 			>
 				<span className={ classes }>
 					{ this.renderAnnualPlansFeatureNotice( feature ) }
-					<span className="plan-features__item-title">{ feature.getTitle( feature.meta ) }</span>
+					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
 		);
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties, selectedFeature, withScroll, isPlansPageQuickImprovements } =
-			this.props;
+		const { planProperties, selectedFeature, withScroll } = this.props;
 
 		return map( planProperties, ( properties ) => {
-			const { availableForPurchase, features, planName, currencyCode, productCustomDesignCost } =
-				properties;
-
+			const { availableForPurchase, features, planName } = properties;
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
-			let currentFeature = features[ key ];
-			const featureSlug = currentFeature?.getSlug();
-			const isFeatureDash = featureSlug === FEATURE_DASH;
-
-			if ( isFeatureDash || featureSlug === FEATURE_BLANK ) {
-				currentFeature = null;
-			}
-
-			if ( featureSlug === FEATURE_BASIC_DESIGN ) {
-				currentFeature.meta = {
-					price: productCustomDesignCost,
-					currency: currencyCode,
-				};
-			}
+			const currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
@@ -817,7 +798,6 @@ export class PlanFeatures extends Component {
 					currentFeature &&
 					selectedFeature === currentFeature.getSlug() &&
 					availableForPurchase,
-				'is-plans-quick-improvements': isPlansPageQuickImprovements,
 			} );
 
 			return currentFeature ? (
@@ -825,10 +805,7 @@ export class PlanFeatures extends Component {
 					{ this.renderFeatureItem( currentFeature ) }
 				</td>
 			) : (
-				<td
-					key={ `${ planName }-none` }
-					className={ `plan-features__table-item ${ isFeatureDash ? 'is-dash' : 'is-blank' }` }
-				/>
+				<td key={ `${ planName }-none` } className="plan-features__table-item" />
 			);
 		} );
 	}
@@ -877,7 +854,6 @@ PlanFeatures.propTypes = {
 	disableBloggerPlanWithNonBlogDomain: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isJetpack: PropTypes.bool,
-	isProfessionalEmailPromotionAvailable: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	// either you specify the plans prop or isPlaceholder prop
 	plans: PropTypes.array,
@@ -891,6 +867,7 @@ PlanFeatures.propTypes = {
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 	kindOfPlanTypeSelector: PropTypes.oneOf( [ 'interval', 'customer' ] ),
+	flowName: PropTypes.string,
 };
 
 PlanFeatures.defaultProps = {
@@ -937,7 +914,6 @@ const ConnectedPlanFeatures = connect(
 	( state, ownProps ) => {
 		const {
 			isInSignup,
-			isProfessionalEmailPromotionAvailable,
 			placeholder,
 			plans,
 			isLandingPage,
@@ -945,7 +921,7 @@ const ConnectedPlanFeatures = connect(
 			visiblePlans,
 			popularPlanSpec,
 			kindOfPlanTypeSelector,
-			isPlansPageQuickImprovements,
+			isInVerticalScrollingPlansExperiment,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -960,16 +936,13 @@ const ConnectedPlanFeatures = connect(
 		const canPurchase = ! isPaid || isCurrentUserCurrentPlanOwner( state, selectedSiteId );
 		const isLoggedInMonthlyPricing =
 			! isInSignup && ! isJetpack && kindOfPlanTypeSelector === 'interval';
+		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
 				let isPlaceholder = false;
-				const experiment = isPlansPageQuickImprovements
-					? 'pricing_packaging_plans_page_quick_improvements_v2'
-					: '';
-				const planConstantObj = applyTestFiltersToPlansList( plan, experiment, {
+				const planConstantObj = applyTestFiltersToPlansList( plan, undefined, {
 					isLoggedInMonthlyPricing,
-					isProfessionalEmailPromotionAvailable,
 				} );
 				const planProductId = planConstantObj.getProductId();
 				const planObject = getPlan( state, planProductId );
@@ -984,9 +957,6 @@ const ConnectedPlanFeatures = connect(
 					: null;
 				const popular = popularPlanSpec && planMatches( plan, popularPlanSpec );
 
-				const currencyCode = getCurrentUserCurrencyCode( state );
-				const productCustomDesignCost = getProductCost( state, PRODUCT_WPCOM_CUSTOM_DESIGN ) / 12;
-
 				const newPlan = false;
 				const bestValue = isBestValue( plan ) && ! isPaid;
 				const currentPlan = sitePlan && sitePlan.product_slug;
@@ -994,35 +964,32 @@ const ConnectedPlanFeatures = connect(
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = ! isJetpack || isSiteAT || ( ! relatedMonthlyPlan && showMonthly );
 
-				const features = planConstantObj.getPlanCompareFeatures( experiment );
+				const features = planConstantObj.getPlanCompareFeatures();
 
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject || isLoadingSitePlans ) {
 					isPlaceholder = true;
 				}
 
+				// Mobile view
 				if ( isInSignup ) {
-					switch ( siteType ) {
-						case 'blog':
-							if ( planConstantObj.getBlogSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject( planConstantObj.getBlogSignupFeatures() );
-							}
+					const featureAccessor = getPlanFeatureAccessor( {
+						flowName,
+						plan: planConstantObj,
+						isInVerticalScrollingPlansExperiment,
+					} );
+					if ( featureAccessor ) {
+						planFeatures = getPlanFeaturesObject( featureAccessor() );
+					}
 
-							break;
-						case 'grid':
-							if ( planConstantObj.getPortfolioSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getPortfolioSignupFeatures()
-								);
-							}
-
-							break;
-						default:
-							if ( ! isPlansPageQuickImprovements && planConstantObj.getSignupFeatures ) {
-								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
-								);
-							}
+					const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
+					if ( highlightedFeatures.length ) {
+						planFeatures = planFeatures.map( ( feature ) => {
+							return {
+								...feature,
+								isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
+							};
+						} );
 					}
 				}
 
@@ -1060,8 +1027,7 @@ const ConnectedPlanFeatures = connect(
 				return {
 					availableForPurchase,
 					cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ),
-					currencyCode,
-					productCustomDesignCost,
+					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
 					discountPrice,
 					features: planFeatures,
@@ -1103,7 +1069,6 @@ const ConnectedPlanFeatures = connect(
 			canPurchase,
 			isJetpack,
 			planProperties,
-			isPlansPageQuickImprovements,
 			selectedSiteSlug,
 			purchaseId,
 			siteIsPrivate,
@@ -1118,6 +1083,7 @@ const ConnectedPlanFeatures = connect(
 				planCredits &&
 				! isJetpackNotAtomic &&
 				! isInSignup,
+			flowName,
 		};
 	},
 	{
@@ -1128,24 +1094,9 @@ const ConnectedPlanFeatures = connect(
 /* eslint-enable */
 
 export default function PlanFeaturesWrapper( props ) {
-	const locale = useLocale();
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'pricing_packaging_plans_page_quick_improvements_v2',
-		{
-			isEligible: [ 'en-gb', 'en' ].includes( locale ),
-		}
-	);
-
-	if ( isLoadingExperimentAssignment ) {
-		return null;
-	}
-
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures
-				{ ...props }
-				isPlansPageQuickImprovements={ 'treatment' === experimentAssignment?.variationName }
-			/>
+			<ConnectedPlanFeatures { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
 }

@@ -33,22 +33,33 @@ export class PluginActivateToggle extends Component {
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_deactivate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'inactive',
 			} );
 		} else {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Activate Plugin', 'Plugin Name', plugin.slug );
-			recordEvent( 'calypso_plugin_activate_click', {
+			recordEvent( 'calypso_plugin_active_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'active',
 			} );
 		}
 	};
 
 	trackManageConnectionLink = () => {
-		const { recordGoogleEvent: recordGAEvent } = this.props;
+		const {
+			site,
+			plugin,
+			recordGoogleEvent: recordGAEvent,
+			recordTracksEvent: recordEvent,
+		} = this.props;
 		recordGAEvent( 'Plugins', 'Clicked Manage Jetpack Connection Link', 'Plugin Name', 'jetpack' );
+		recordEvent( 'calypso_plugin_manage_connection_click', {
+			site: site.ID,
+			plugin: plugin.slug,
+		} );
 	};
 
 	manageConnectionLink() {
@@ -91,13 +102,15 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { inProgress, site, plugin, disabled, translate, hideLabel } = this.props;
+		const { inProgress, site, plugin, disabled, translate, hideLabel, isJetpackCloud } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		if ( plugin && 'jetpack' === plugin.slug ) {
+		const isJetpackPlugin = plugin && 'jetpack' === plugin.slug;
+
+		if ( ! isJetpackCloud && isJetpackPlugin ) {
 			return (
 				<PluginAction
 					className="plugin-activate-toggle"
@@ -109,7 +122,7 @@ export class PluginActivateToggle extends Component {
 		}
 		return (
 			<PluginAction
-				disabled={ disabled }
+				disabled={ disabled || isJetpackPlugin }
 				className="plugin-activate-toggle"
 				label={ translate( 'Active', { context: 'plugin status' } ) }
 				inProgress={ inProgress }

@@ -1,6 +1,30 @@
 .eligibility-warnings {
 	margin-top: 16px;
 	font-size: $font-body-small;
+
+	.eligibility-warnings__confirm-buttons {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.support-block {
+		align-items: center;
+		display: flex;
+		gap: 5px;
+	}
+}
+
+.eligibility-warnings__title {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	overflow-wrap: anywhere;
+	line-height: 40px;
+	color: var(--studio-gray-100);
+	font-weight: 400;
+}
+
+.eligibility-warnings__primary-text {
+	margin-top: 8px;
 }
 
 .eligibility-warnings--with-indent {
@@ -18,15 +42,15 @@
 
 	.section-header__label-text,
 	.eligibility-warnings__message {
-		color: var( --color-neutral-0 );
-		background-color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
+		background-color: var(--color-neutral-0);
 	}
 	.eligibility-warnings__message {
 		height: 24px;
 	}
 
 	.eligibility-warnings__hold .gridicon {
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 	}
 
 	.button,
@@ -45,13 +69,8 @@
 
 .eligibility-warnings__hold,
 .eligibility-warnings__warning {
-	align-items: center;
 	display: flex;
 	flex-direction: row;
-}
-
-.eligibility-warnings__hold,
-.eligibility-warnings__warning {
 	align-items: flex-start;
 	margin-bottom: 16px;
 
@@ -66,11 +85,11 @@
 }
 
 .eligibility-warnings__hold .gridicon {
-	color: var( --color-neutral-10 );
+	color: var(--color-neutral-10);
 }
 
 .eligibility-warnings__warning .gridicon {
-	color: var( --color-warning-10 );
+	color: var(--color-warning-10);
 }
 
 .eligibility-warnings__message {
@@ -83,17 +102,17 @@
 	}
 
 	.eligibility-warnings__message-description {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
 .eligibility-warnings__action a,
 .eligibility-warnings__hold-action a {
 	.gridicons-help-outline {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 	&:hover .gridicons-help-outline {
-		color: var( --color-primary );
+		color: var(--color-primary);
 	}
 }
 
@@ -106,7 +125,7 @@
 	display: flex;
 
 	.gridicon {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		flex-shrink: 0;
 	}
 	span {
@@ -117,7 +136,8 @@
 }
 
 .eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold,
+.eligibility-warnings--blocking-hold .eligibility-warnings__header {
 	opacity: 0.2;
 }
 

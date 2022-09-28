@@ -1,24 +1,24 @@
 .theme-features__features {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+	display: flex;
+	justify-content: flex-start;
+	flex-wrap: wrap;
 
-    .theme-features__feature {
-        display: inline-block;
-        height: 20px;
-        padding: 0 10px;
-        margin-right: 7px;
-        margin-top: 7px;
-        background: #dcdcde;
-        border-radius: 4px;
-        color: #2c3338;
-        font-weight: 500;
-        font-size: $font-body-extra-small;
-        line-height: 20px;
-    }
+	.theme-features__feature {
+		display: inline-block;
+		height: 20px;
+		padding: 0 10px;
+		margin-right: 7px;
+		margin-top: 7px;
+		background: #dcdcde;
+		border-radius: 4px;
+		color: #2c3338;
+		font-weight: 500;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+	}
 
-    h2 {
-        font-size: $font-body-small;
-        margin-bottom: 0.5rem;
-    }
+	h2 {
+		font-size: $font-body-small;
+		margin-bottom: 0.5rem;
+	}
 }

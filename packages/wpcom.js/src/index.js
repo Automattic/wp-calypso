@@ -62,6 +62,25 @@ export default function WPCOM( token, reqHandler ) {
 }
 
 /**
+ * Add a token to this instance of WPCOM.
+ * When loaded, the token is applied to the param object of each subsequent request.
+ *
+ * @param {string} [token] - oauth token
+ */
+WPCOM.prototype.loadToken = function ( token ) {
+	this.token = token;
+};
+
+/**
+ * Returns a boolean representing whether or not the token has been loaded.
+ *
+ * @returns {boolean} oauth token
+ */
+WPCOM.prototype.isTokenLoaded = function () {
+	return this.token !== undefined;
+};
+
+/**
  * Return `Me` object instance
  *
  * @returns {Me} Me instance

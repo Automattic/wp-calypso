@@ -10,73 +10,77 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
   >
     Test Question One
   </legend>
-  <label
-    className="form-label"
+  <div
+    className="multiple-choice-question__answers"
   >
-    <input
-      checked={false}
-      className="form-radio"
-      disabled={false}
-      onChange={[Function]}
-      type="radio"
-      value="test-answer-1"
-    />
-    <span
-      className="form-radio__label"
+    <label
+      className="form-label"
     >
-      Test Answer One
-    </span>
-  </label>
-  <label
-    className="form-label"
-  >
-    <input
-      checked={false}
-      className="form-radio"
-      disabled={false}
-      onChange={[Function]}
-      type="radio"
-      value="test-answer-2"
-    />
-    <span
-      className="form-radio__label"
+      <input
+        checked={false}
+        className="form-radio"
+        disabled={false}
+        onChange={[Function]}
+        type="radio"
+        value="test-answer-1"
+      />
+      <span
+        className="form-radio__label"
+      >
+        Test Answer One
+      </span>
+    </label>
+    <label
+      className="form-label"
     >
-      Test Answer Two
-    </span>
-  </label>
-  <label
-    className="form-label"
-  >
-    <input
-      checked={false}
-      className="form-radio"
-      disabled={false}
-      onChange={[Function]}
-      type="radio"
-      value="test-answer-3"
-    />
-    <span
-      className="form-radio__label"
+      <input
+        checked={false}
+        className="form-radio"
+        disabled={false}
+        onChange={[Function]}
+        type="radio"
+        value="test-answer-2"
+      />
+      <span
+        className="form-radio__label"
+      >
+        Test Answer Two
+      </span>
+    </label>
+    <label
+      className="form-label"
     >
-      Test Answer Three
-    </span>
-  </label>
-  <label
-    className="form-label"
-  >
-    <input
-      checked={false}
-      className="form-radio"
-      disabled={false}
-      onChange={[Function]}
-      type="radio"
-      value="test-answer-4"
-    />
-    <span
-      className="form-radio__label"
+      <input
+        checked={false}
+        className="form-radio"
+        disabled={false}
+        onChange={[Function]}
+        type="radio"
+        value="test-answer-3"
+      />
+      <span
+        className="form-radio__label"
+      >
+        Test Answer Three
+      </span>
+    </label>
+    <label
+      className="form-label"
     >
-      Test Answer Four
-    </span>
-  </label>
+      <input
+        checked={false}
+        className="form-radio"
+        disabled={false}
+        onChange={[Function]}
+        type="radio"
+        value="test-answer-4"
+      />
+      <span
+        className="form-radio__label"
+      >
+        Test Answer Four
+      </span>
+    </label>
+  </div>
 </fieldset>
 `;

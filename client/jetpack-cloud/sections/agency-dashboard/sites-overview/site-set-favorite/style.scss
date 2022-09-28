@@ -1,21 +1,21 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .site-set-favorite__favorite-icon {
 	position: absolute;
 	top: 6px;
-	color: var( --studio-gray-20 ) !important;
+	color: var(--studio-gray-20) !important;
 	@include break-large() {
 		visibility: hidden;
-		color: var( --color-primary ) !important;
+		color: var(--color-primary) !important;
 	}
 }
 .site-set-favorite__favorite-icon-active {
 	visibility: visible;
-	color: var( --color-primary ) !important;
+	color: var(--color-primary) !important;
 }
 button.button.site-set-favorite__view-favorite {
-	color: var( --studio-white );
+	color: var(--studio-white);
 	text-decoration: underline;
 	font-size: inherit;
 	position: relative;
@@ -23,6 +23,6 @@ button.button.site-set-favorite__view-favorite {
 	left: 4px;
 	padding: 0;
 	&:hover {
-		color: var( --studio-white );
+		color: var(--studio-white);
 	}
 }

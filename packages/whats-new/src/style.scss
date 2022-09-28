@@ -1,9 +1,9 @@
 // @TODO: remove the ignore rule and replace font sizes accordingly
 /* stylelint-disable scales/font-size */
 
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/calypso-color-schemes';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/calypso-color-schemes";
 
 $wpcom-modal-breakpoint: 660px;
 $wpcom-modal-breakpoint-small: 480px;
@@ -16,11 +16,11 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 // Core modal style overrides
 .whats-new-guide__main {
 	&.components-guide-overlay {
-		background-color: rgba( 0, 0, 0, 0.45 );
+		background-color: rgba(0, 0, 0, 0.45);
 	}
 
 	&.components-modal__frame {
-		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
+		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		border-radius: 4px;
 		overflow: auto;
 		max-height: 80vh;
@@ -37,7 +37,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			width: $wpcom-modal-inner-content-width * 2;
 			min-height: $wpcom-modal-content-min-height;
 			height: fit-content;
-			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
+			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 
@@ -45,7 +45,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		height: 0;
 
 		.components-button {
-			color: var( --studio-white );
+			color: var(--studio-white);
 		}
 	}
 
@@ -61,7 +61,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		background: var( --studio-white );
+		background: var(--studio-white);
 		border-top: none;
 		box-sizing: border-box;
 
@@ -80,9 +80,9 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 
 		.guide__buttons {
 			.components-button {
-				background-color: var( --color-surface );
-				color: var( --color-neutral-70 );
-				border-color: var( --color-neutral-10 );
+				background-color: var(--color-surface);
+				color: var(--color-neutral-70);
+				border-color: var(--color-neutral-10);
 				border-radius: 2px;
 				border-style: solid;
 				border-width: 1px;
@@ -95,10 +95,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 			}
 
 			.guide__forward-button {
-				background-color: var( --wp-admin-theme-color );
-				border-color: var( --wp-admin-theme-color );
+				background-color: var(--wp-admin-theme-color);
+				border-color: var(--wp-admin-theme-color);
 
-				color: var( --color-text-inverted );
+				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 
 				&:focus {
@@ -122,10 +122,10 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 		li {
 
 			button {
-				background-color: var( --studio-gray-10 );
+				background-color: var(--studio-gray-10);
 
 				&.is-current {
-					background-color: var( --studio-gray-80 );
+					background-color: var(--studio-gray-80);
 				}
 			}
 		}
@@ -136,7 +136,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	display: flex;
 	flex-direction: column-reverse;
 	justify-content: flex-end;
-	background: var( --studio-white );
+	background: var(--studio-white);
 	width: 100%;
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
@@ -174,7 +174,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	height: 50%;
 	max-height: 230px;
 	padding: 32px 52px 0;
-	background: var( --studio-blue-50 );
+	background: var(--studio-blue-50);
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -196,18 +196,18 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	}
 
 	@media ( max-width: $wpcom-modal-breakpoint ) {
-		max-height: calc( 100vh / 3 );
+		max-height: calc(100vh / 3);
 	}
 
 	@media ( max-height: $wpcom-modal-breakpoint-small ) {
-		max-height: calc( 100vh / 4 );
+		max-height: calc(100vh / 4);
 	}
 }
 
 .whats-new-page__heading {
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
-	color: var( --studio-gray-90 );
+	color: var(--studio-gray-90);
 
 	font-size: $font-title-medium;
 	line-height: 1;
@@ -232,7 +232,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 	line-height: 22px;
 	margin: 10px 0 0;
 	/* Gray / Gray 80 */
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		margin: 10px 0;
@@ -244,8 +244,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-content-spacing * 2 );
 .whats-new-page__link {
 	font-size: $font-body-small;
 
-	&.is-tertiary:not( :disabled ) {
-		color: var( --studio-blue-50 );
+	&.is-tertiary:not(:disabled) {
+		color: var(--studio-blue-50);
 
 		&:hover {
 			box-shadow: none;

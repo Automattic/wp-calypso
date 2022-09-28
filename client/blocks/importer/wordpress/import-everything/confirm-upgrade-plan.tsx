@@ -4,7 +4,7 @@ import { sprintf } from '@wordpress/i18n';
 import { check, plus, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { getFeatureByKey } from 'calypso/lib/plans/features-list';
@@ -12,12 +12,12 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { FunctionComponent } from 'react';
 
 interface Props {
-	sourceSite: SitesItem | null;
-	targetSite: SitesItem | null;
+	sourceSite: SiteDetails | null;
+	targetSite: SiteDetails | null;
 }
 
 export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {

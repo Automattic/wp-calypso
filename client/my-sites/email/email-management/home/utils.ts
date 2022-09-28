@@ -1,5 +1,6 @@
 import { translate } from 'i18n-calypso';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canCurrentUserAddEmail } from 'calypso/lib/domains';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import {
@@ -127,6 +128,14 @@ export function resolveEmailPlanStatus(
 		text: translate( 'Action required' ),
 	};
 
+	const cannotManageStatus = {
+		statusClass: 'warning',
+		icon: 'info',
+		text: translate( 'Can’t manage subscription', {
+			comment: 'Current user is not allowed to manage email subscription',
+		} ),
+	};
+
 	if ( hasGSuiteWithUs( domain ) ) {
 		// Check for pending TOS acceptance warnings at the account level
 		if (
@@ -149,6 +158,10 @@ export function resolveEmailPlanStatus(
 				icon: 'info',
 				text: translate( 'Configuring mailboxes' ),
 			};
+		}
+
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
 		}
 
 		return activeStatus;
@@ -182,6 +195,10 @@ export function resolveEmailPlanStatus(
 			return errorStatus;
 		}
 
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
+		}
+
 		return activeStatus;
 	}
 
@@ -209,14 +226,6 @@ export function recordEmailAppLaunchEvent( {
 		context,
 		provider,
 	} );
-}
-
-/**
- * Tracks an event for the key 'calypso_inbox_new_mailbox_upsell_click'.
- *
- */
-export function recordInboxNewMailboxUpsellClickEvent() {
-	recordTracksEvent( 'calypso_inbox_new_mailbox_upsell_click', {} );
 }
 
 /**

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { TextControl, ComboboxControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -37,9 +37,7 @@ const CityZipRow = styled.div`
 	justify-items: stretch;
 `;
 
-export default function StepStoreAddress(
-	props: WooCommerceStoreAddressProps
-): ReactElement | null {
+export default function StepStoreAddress( props: WooCommerceStoreAddressProps ) {
 	const { goToNextStep, isReskinned, signupDependencies } = props;
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -231,7 +229,7 @@ export default function StepStoreAddress(
 	);
 }
 
-function ControlError( props: { error: string } ): ReactElement | null {
+function ControlError( props: { error: string } ) {
 	const { error } = props;
 	if ( error ) {
 		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;

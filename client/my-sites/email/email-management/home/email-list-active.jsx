@@ -26,7 +26,7 @@ const EmailListActiveWarning = ( { domain, selectedSiteId } ) => {
 		isLoading
 	);
 
-	if ( statusClass === 'success' ) {
+	if ( statusClass !== 'error' ) {
 		return null;
 	}
 

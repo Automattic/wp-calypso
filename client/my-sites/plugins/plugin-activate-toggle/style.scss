@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .plugin-activate-toggle__disabled,
 .plugin-activate-toggle__link {
 	display: inline-flex;
@@ -8,15 +11,15 @@
 
 .plugin-activate-toggle__link:hover,
 .plugin-activate-toggle__link:hover .plugin-activate-toggle__icon {
-	color: var( --color-link-dark );
+	color: var(--color-link-dark);
 }
 
 .plugin-activate-toggle__disabled {
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 }
 
 .plugin-activate-toggle__disabled .plugin-activate-toggle__icon {
-	color: var( --color-neutral-0 );
+	color: var(--color-neutral-0);
 }
 
 .plugin-activate-toggle__label {
@@ -34,7 +37,7 @@
 }
 
 .plugin-activate-toggle__link .plugin-activate-toggle__icon {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }
 
 .plugin-activate-toggle__icon {
@@ -42,5 +45,20 @@
 	margin: auto 0 auto 3px;
 	.gridicon {
 		display: block;
+	}
+}
+
+.plugin-row-formatter__toggle {
+	.plugin-autoupdate-toggle {
+		.plugin-action__label {
+			@include break-xlarge() {
+				// We don't want to use display: none here, because it will hide the popover icon
+				// that might contain useful details about why the action is disabled.
+				font-size: 0;
+			}
+			.plugin-action__disabled-info {
+				color: var(--studio-gray-40);
+			}
+		}
 	}
 }

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -20,7 +19,7 @@ const SupportLinkStyle = styled.a`
 	font-weight: bold;
 `;
 
-export default function SupportCard( { backUrl }: { backUrl?: string } ): ReactElement {
+export default function SupportCard( { backUrl }: { backUrl?: string } ) {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 

@@ -147,10 +147,10 @@ open class E2EBuildType(
 					set -x
 
 					mkdir -p screenshots
-					find test/e2e -type f -path '*/screenshots/*' -print0 | xargs -r -0 mv -t screenshots
+					find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
 
 					mkdir -p logs
-					find test/e2e -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 
 					mkdir -p trace
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace

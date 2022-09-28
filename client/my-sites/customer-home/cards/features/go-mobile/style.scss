@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .customer-home__layout-col-right {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.go-mobile__subheader.customer-home__card-subheader {
 			margin-bottom: 0;
 		}
@@ -27,7 +27,7 @@
 
 .go-mobile__email-link {
 	padding-top: 8px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: none;
 
 	@include break-large() {

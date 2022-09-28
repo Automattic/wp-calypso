@@ -13,6 +13,7 @@ import {
 	isGSuiteOrGoogleWorkspaceProductSlug,
 	isJetpackProductSlug,
 	isTitanMail,
+	isDIFMProduct,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -22,6 +23,7 @@ import {
 	Theme,
 	LineItem as LineItemType,
 } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren } from 'react';
@@ -647,6 +649,46 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 		);
 	}
 
+	if ( isDIFMProduct( product ) ) {
+		const numberOfExtraPages =
+			product.quantity && product.price_tier_maximum_units
+				? product.quantity - product.price_tier_maximum_units
+				: 0;
+
+		if ( numberOfExtraPages > 0 ) {
+			const costOfExtraPages = formatCurrency(
+				product.item_original_cost_integer - product.item_original_cost_for_quantity_one_integer,
+				product.currency,
+				{
+					stripZeros: true,
+					isSmallestUnit: true,
+				}
+			);
+
+			return (
+				<>
+					{ translate( 'Service: %(productCost)s one-time fee', {
+						args: {
+							productCost: product.item_original_cost_for_quantity_one_display,
+						},
+					} ) }
+					<br></br>
+					{ translate(
+						'%(numberOfExtraPages)d Extra Page: %(costOfExtraPages)s one-time fee',
+						'%(numberOfExtraPages)d Extra Pages: %(costOfExtraPages)s one-time fee',
+						{
+							args: {
+								numberOfExtraPages,
+								costOfExtraPages,
+							},
+							count: numberOfExtraPages,
+						}
+					) }
+				</>
+			);
+		}
+	}
+
 	const isDomainRegistration = product.is_domain_registration;
 	const isDomainMapping = productSlug === 'domain_map';
 
@@ -927,7 +969,9 @@ function WPLineItem( {
 							setIsModalVisible( false );
 						} }
 						primaryAction={ () => {
-							removeProductFromCart( product.uuid );
+							removeProductFromCart( product.uuid ).catch( () => {
+								// Nothing needs to be done here. CartMessages will display the error to the user.
+							} );
 							onRemoveProduct?.( label );
 						} }
 						cancelAction={ () => {

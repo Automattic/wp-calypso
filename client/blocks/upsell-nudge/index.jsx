@@ -58,6 +58,7 @@ export const UpsellNudge = ( {
 	primaryButton,
 	selectedSiteHasFeature,
 	showIcon = false,
+	icon = 'star',
 	site,
 	siteSlug,
 	target,
@@ -129,7 +130,7 @@ export const UpsellNudge = ( {
 			forceHref={ forceHref }
 			horizontal={ horizontal }
 			href={ href }
-			icon="star"
+			icon={ icon }
 			jetpack={ isJetpack || isJetpackDevDocs } //Force show Jetpack example in Devdocs
 			isAtomic={ isAtomic }
 			list={ list }

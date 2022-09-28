@@ -69,7 +69,7 @@ function computeFields( allSites: SiteExcerptNetworkData[] ) {
 
 		return {
 			...data,
-			name: trimmedName.length > 0 ? trimmedName : slug,
+			title: trimmedName.length > 0 ? trimmedName : slug,
 			slug,
 		};
 	};

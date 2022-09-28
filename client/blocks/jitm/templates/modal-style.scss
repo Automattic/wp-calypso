@@ -1,8 +1,8 @@
 /* stylelint-disable scales/font-size */
 
-@import '@automattic/typography/styles/fonts';
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/calypso-color-schemes';
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/calypso-color-schemes";
 
 $wpcom-modal-breakpoint: 600px;
 
@@ -17,7 +17,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	&.components-modal__frame {
 		overflow: visible;
 		height: 50vh;
-		top: calc( 17.5vh - #{$wpcom-modal-footer-height * 0.5} );
+		top: calc(17.5vh - #{$wpcom-modal-footer-height * 0.5});
 		min-height: $wpcom-modal-content-min-height;
 
 		@media ( max-width: $wpcom-modal-breakpoint ) {
@@ -32,19 +32,19 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: 720px;
 			height: $wpcom-modal-content-min-height;
-			top: calc( 50% - #{$wpcom-modal-footer-height * 0.5} );
+			top: calc(50% - #{$wpcom-modal-footer-height * 0.5});
 		}
 	}
 
 	// Colour scheme for Google Workspace sale JITM
 	&.modal--google_workspace_engagement_customers {
 		.modal__sidebar {
-			background: var( --color-surface );
+			background: var(--color-surface);
 			margin-right: 20px;
 		}
 
 		.components-button:hover svg {
-			fill: var( --color-neutral-20 );
+			fill: var(--color-neutral-20);
 		}
 	}
 
@@ -92,7 +92,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 		&::before {
 			display: inline-block;
-			content: '';
+			content: "";
 			height: $wpcom-modal-footer-height;
 			vertical-align: middle;
 		}
@@ -111,14 +111,14 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 }
 
 .components-modal__screen-overlay {
-	background-color: rgba( 0, 0, 0, 0.7 );
+	background-color: rgba(0, 0, 0, 0.7);
 }
 
 .modal__container {
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	background: var( --studio-white );
+	background: var(--studio-white);
 	height: 100%;
 	padding: 0 7%;
 
@@ -154,7 +154,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	display: flex;
 	flex-direction: column;
 
-	button,a {
+	button,
+	a {
 		margin-top: 13%;
 		padding: 10px 24px;
 	}
@@ -166,8 +167,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .modal__disclaimer {
 	margin: 0;
-	font-size: calc( #{$font-body-extra-small} * 0.65 );
-	color: var( --color-text-subtle );
+	font-size: calc(#{$font-body-extra-small} * 0.65);
+	color: var(--color-text-subtle);
 
 	@media ( max-width: $wpcom-modal-breakpoint ) {
 		font-size: $font-body-extra-small;
@@ -176,8 +177,8 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 .modal__limited-offer {
 	margin-bottom: 0.7rem;
-	color: var( --studio-blue-40 );
-	font-size: calc( #{$font-body-extra-small} * 0.9 );
+	color: var(--studio-blue-40);
+	font-size: calc(#{$font-body-extra-small} * 0.9);
 	font-weight: bold;
 	letter-spacing: 0.1rem;
 }
@@ -185,7 +186,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__visual {
 	height: 40%;
 	padding: 25px 25px 0;
-	background: var( --color-primary );
+	background: var(--color-primary);
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -199,7 +200,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 .modal__heading {
 	@include onboarding-font-recoleta;
 	/* Gray / Gray 90 */
-	color: var( --studio-gray-90 );
+	color: var(--studio-gray-90);
 
 	font-size: $font-title-medium;
 	line-height: 1;
@@ -223,7 +224,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		display: block;
-		background-color: var( --studio-blue-5 );
+		background-color: var(--studio-blue-5);
 		min-width: 45%;
 		position: relative;
 		overflow: hidden;
@@ -236,14 +237,14 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	img.modal__plans {
 		top: 50%;
 		left: 50%;
-		transform: translate( -50%, -50% );
+		transform: translate(-50%, -50%);
 	}
 
 	img.modal__embedded-inbox {
 		left: 50%;
 		width: 100%;
 		bottom: 0;
-		transform: translate( -50%, 0 );
+		transform: translate(-50%, 0);
 	}
 }
 
@@ -253,7 +254,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	margin: 10px 0;
 
 	/* Gray / Gray 60 */
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		font-size: $font-body;

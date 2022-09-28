@@ -2,7 +2,8 @@
 	// the following is a hack so the dropdown selector is not cropped when it overflows its container
 	margin-bottom: 300px;
 
-	h3, h4 {
+	h3,
+	h4 {
 		&:first-of-type {
 			margin-top: 10px;
 		}

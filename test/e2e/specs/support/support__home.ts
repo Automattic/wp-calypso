@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-pr
  */
 
 import {
@@ -54,13 +54,11 @@ describe( DataHelper.createSuiteTitle( 'Support: My Home' ), function () {
 
 		// Invalid keyword search often takes more than 30s to resolve.
 		// See: https://github.com/Automattic/wp-calypso/issues/55478
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'Enter invalid search keyword', async function () {
 			const keyword = ';;;ppp;;;';
 			await supportComponent.search( keyword );
 		} );
 
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'No search results are shown', async function () {
 			await supportComponent.noResultsShown();
 		} );

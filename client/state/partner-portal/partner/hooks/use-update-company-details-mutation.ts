@@ -9,6 +9,8 @@ function updateCompanyDetails( details: CompanyDetailsPayload ): Promise< APIPar
 		path: '/jetpack-licensing/partner',
 		body: {
 			name: details.name,
+			contact_person: details.contactPerson,
+			company_website: details.companyWebsite,
 			city: details.city,
 			line1: details.line1,
 			line2: details.line2,

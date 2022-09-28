@@ -14,16 +14,16 @@
 	}
 
 	.signup-header {
-		top: var( --marketing-message-height );
+		top: var(--marketing-message-height);
 	}
 
 	@media screen and ( min-width: 600px ) {
 		.is-wide-layout .step-wrapper__navigation {
-			top: calc( var( --marketing-message-height ) + 2px );
+			top: calc(var(--marketing-message-height) + 2px);
 		}
 	}
 
 	.plans-step {
-		padding-top: var( --marketing-message-height );
+		padding-top: var(--marketing-message-height);
 	}
 }

@@ -1,12 +1,12 @@
 .posts-list-banner__container {
-	padding: 40px;
+	padding: 30px;
 	display: flex;
 	align-items: center;
 	margin-bottom: 17px;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var(--color-border-subtle);
 	border-radius: 2px;
-	background-color: var( --color-surface );
-	color: var( --color-text );
+	background-color: var(--color-surface);
+	color: var(--color-text);
 
 	.posts-list-banner__img {
 		margin-right: 40px;
@@ -15,11 +15,12 @@
 	.posts-list-banner__title {
 		font-size: 2rem;
 		font-weight: bold;
+		margin-bottom: 14px;
 	}
 
 	.posts-list-banner__footer {
 		display: flex;
 		align-items: center;
-		margin-top: 10px;
+		margin-top: 20px;
 	}
 }

@@ -23,13 +23,13 @@
 
 	@include banner-color( var( --color-accent ) );
 
-	&.is-jetpack:not( .is-atomic ) {
+	&.is-jetpack:not(.is-atomic) {
 		@include banner-color( var( --color-jetpack ) );
 	}
 
 	.card__link-indicator {
 		align-items: center;
-		color: var( --color-neutral );
+		color: var(--color-neutral);
 		display: flex;
 	}
 
@@ -41,14 +41,14 @@
 		transition: all 100ms ease-in-out;
 
 		&.is-card-link {
-			box-shadow: 0 0 0 1px var( --color-neutral ), 0 2px 4px var( --color-neutral-10 );
+			box-shadow: 0 0 0 1px var(--color-neutral), 0 2px 4px var(--color-neutral-10);
 		}
 		.card__link-indicator {
-			color: var( --color-neutral-dark );
+			color: var(--color-neutral-dark);
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 
 		padding: 12px 16px;
@@ -83,7 +83,7 @@
 
 	.banner__icon {
 		align-self: center;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 		display: flex;
 	}
 
@@ -101,7 +101,7 @@
 		justify-content: center;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 
 		.banner__icon {
@@ -123,7 +123,7 @@
 		width: 32px;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		align-items: center;
 	}
 }
@@ -134,7 +134,7 @@
 	flex-grow: 1;
 	flex-wrap: wrap;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-wrap: nowrap;
 	}
 }
@@ -151,7 +151,7 @@
 	.banner__title,
 	.banner__description,
 	.banner__list {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.banner__title {
@@ -171,13 +171,13 @@
 		li {
 			margin: 6px 0;
 			.gridicon {
-				color: var( --color-neutral );
+				color: var(--color-neutral);
 				display: none;
 			}
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: auto;
 
 		.banner__list li .gridicon {
@@ -209,7 +209,7 @@
 
 		.plan-price.is-discounted,
 		.plan-price.is-discounted .plan-price__currency-symbol {
-			color: var( --color-neutral-70 );
+			color: var(--color-neutral-70);
 		}
 
 		.has-call-to-action & .plan-price {
@@ -217,14 +217,14 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.button {
 			display: block;
 			flex: 1;
 		}
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin: 0 -6px 0 8px;
 		text-align: center;
 		width: auto;
@@ -261,7 +261,8 @@
 	margin-top: -8px;
 }
 
-.is-horizontal .dismissible-card__close-button, .is-horizontal .banner__close-icon {
+.is-horizontal .dismissible-card__close-button,
+.is-horizontal .banner__close-icon {
 	top: 50%;
 	margin-top: -12px;
 }
@@ -270,7 +271,7 @@
 	position: absolute;
 	top: 16px;
 	right: 16px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 }
 

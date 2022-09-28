@@ -29,3 +29,4 @@ export const UNKNOWN_REMOTE_INSTALL_ERROR = 'unknownRemoteInstallError';
 export const USER_IS_ALREADY_CONNECTED_TO_SITE = 'userIsAlreadyConnectedToSite';
 export const WORDPRESS_DOT_COM = 'wordpress.com';
 export const XMLRPC_ERROR = 'xmlrpcError';
+export const NOT_CONNECTED_USER = 'notConnectedUser';

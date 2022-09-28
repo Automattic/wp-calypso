@@ -10,7 +10,7 @@
 	display: flex;
 	padding: 6px 0;
 	margin: 0 10px 0 0;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	line-height: 18px;
@@ -21,11 +21,11 @@
 	}
 
 	&::after {
-		content: '';
+		content: "";
 		display: block;
 		height: 2px;
 		flex: 1;
 		margin: 8px 0 0 10px;
-		background-color: var( --color-border-subtle );
+		background-color: var(--color-border-subtle);
 	}
 }

@@ -4,6 +4,7 @@ import { ReactNode, useState } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import Main from 'calypso/components/main';
@@ -51,9 +52,10 @@ export const StoragePricing: React.FC< Props > = ( {
 
 	return (
 		<>
+			<QueryProductsList type="jetpack" />
+			<QueryIntroOffers siteId={ siteId ?? 'none' } />
 			{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 			{ siteId && <QuerySiteProducts siteId={ siteId } /> }
-			{ siteId && <QueryIntroOffers siteId={ siteId } /> }
 
 			{ nav }
 			<Main className="storage-pricing__main" wideLayout>

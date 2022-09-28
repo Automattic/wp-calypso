@@ -1,7 +1,10 @@
 import classnames from 'classnames';
-import type { ReactElement } from 'react';
 
-export function LoadingEllipsis( { className }: { className?: string } ): ReactElement {
+type LoadingEllipsisProps = {
+	className?: string;
+};
+
+export function LoadingEllipsis( { className }: LoadingEllipsisProps ) {
 	return (
 		// Styles are defined globally in _loading.scss so that this component
 		// can be rendered on the server and will appear immediately.

@@ -1,6 +1,4 @@
-import * as React from 'react';
-
-export const WriteIcon = (): React.ReactNode => (
+export const WriteIcon = () => (
 	<svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M11.5 8.5C10.1501 9.76923 7.64987 12.4487 6 14C5.85001 13.0128 6 10.7663 7.24982 8.80769C7.57814 8.29318 8.14971 7.53846 9.4996 6.69231C10.8495 5.84615 13.9992 5 13.9992 5C13.9993 5.84615 12.8499 7.23077 11.5 8.5Z"

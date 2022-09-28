@@ -16,10 +16,12 @@ import LicensingActivationBanner from 'calypso/components/jetpack/licensing-acti
 import LicensingPromptDialog from 'calypso/components/jetpack/licensing-prompt-dialog';
 import Main from 'calypso/components/main';
 import { MAIN_CONTENT_ID } from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
+import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useExperiment } from 'calypso/lib/explat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { showMasterbar } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -64,6 +66,22 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 		'calypso_jetpack_upsell_page_2022_06'
 	);
 	const showUpsellPage = experimentAssignment?.variationName === 'treatment';
+
+	useEffect( () => {
+		if (
+			isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
+			/**
+			 * Load the HotJar script on routes 'cloud.jetpack.com/pricing/..' and
+			 * 'wordpress.com/jetpack/connect/plans/:site/..' (Jetpack plugin post-conneciton route)
+			 */
+			( isJetpackCloud() || window.location.pathname.startsWith( JPC_PATH_PLANS ) )
+		) {
+			// HotJar analytics tracking
+			// https://github.com/Automattic/wp-calypso/blob/trunk/client/state/analytics/README_HotJar.md
+			dispatch( loadTrackingTool( 'HotJar' ) );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	useEffect( () => {
 		dispatch(
@@ -209,7 +227,9 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 			{ nav }
 
 			<Main
-				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask' ) }
+				className={ classNames( 'selector__main', iterationClassName, 'fs-unmask', {
+					'jetpack-pricing-page-rework-v1': isEnabled( 'jetpack/pricing-page-rework-v1' ),
+				} ) }
 				id={ MAIN_CONTENT_ID }
 				wideLayout
 			>
@@ -217,11 +237,18 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 					path={ viewTrackerPath }
 					properties={ viewTrackerProps }
 					title="Plans"
-					options={ { useJetpackGoogleAnalytics: ! isJetpackCloud() } }
+					options={ { useJetpackGoogleAnalytics: isJetpackCloud() } }
 				/>
 
 				{ isEnabled( 'jetpack/pricing-page-rework-v1' ) ? (
-					<ProductStore enableUserLicensesDialog={ enableUserLicensesDialog } />
+					<ProductStore
+						createCheckoutURL={ createProductURL }
+						duration={ currentDuration }
+						enableUserLicensesDialog={ enableUserLicensesDialog }
+						onClickPurchase={ selectProduct }
+						urlQueryArgs={ urlQueryArgs }
+						header={ header }
+					/>
 				) : (
 					<>
 						{ siteId && enableUserLicensesDialog && (
