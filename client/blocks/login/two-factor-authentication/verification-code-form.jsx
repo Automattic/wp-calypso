@@ -15,7 +15,6 @@ import {
 	sendSmsCode,
 } from 'calypso/state/login/actions';
 import { getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
-import Divider from '../divider';
 import TwoFactorActions from './two-factor-actions';
 
 import './verification-code-form.scss';
@@ -31,11 +30,6 @@ class VerificationCodeForm extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthRequestError: PropTypes.object,
 		twoFactorAuthType: PropTypes.string.isRequired,
-		showOrDivider: PropTypes.bool,
-	};
-
-	static defaultProps = {
-		showOrDivider: false,
 	};
 
 	state = {
@@ -162,7 +156,6 @@ class VerificationCodeForm extends Component {
 					{ smallPrint }
 				</Card>
 
-				{ this.props.showOrDivider && <Divider>{ this.props.translate( 'or' ) }</Divider> }
 				<TwoFactorActions
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
