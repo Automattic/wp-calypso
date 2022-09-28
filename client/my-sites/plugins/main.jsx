@@ -26,6 +26,8 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import urlSearch from 'calypso/lib/url-search';
 import { getVisibleSites, siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { appendBreadcrumb, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
+import { getBreadcrumbs } from 'calypso/state/breadcrumb/selectors';
 import {
 	getPlugins,
 	isRequestingForSites,
@@ -72,6 +74,7 @@ export class PluginsMain extends Component {
 			selectedSiteSlug,
 			hasInstallPurchasedPlugins,
 			hasManagePlugins,
+			search,
 		} = this.props;
 
 		currentPlugins.map( ( plugin ) => {
@@ -100,9 +103,23 @@ export class PluginsMain extends Component {
 				return;
 			}
 		}
+
+		if ( prevProps.search !== search ) {
+			if ( search ) {
+				this.props.appendBreadcrumb( {
+					label: this.props.translate( 'Search Results' ),
+					href: `/plugins/manage/${ selectedSiteSlug || '' }?s=${ search }`,
+					id: 'plugins-site-search',
+				} );
+			} else {
+				this.resetBreadcrumbs();
+			}
+		}
 	}
 
 	componentDidMount() {
+		this.resetBreadcrumbs();
+
 		// Change the isMobile state when the size of the browser changes.
 		this.unsubscribe = subscribeIsWithinBreakpoint( '<960px', ( isMobile ) => {
 			this.setState( { isMobile } );
@@ -111,6 +128,32 @@ export class PluginsMain extends Component {
 
 	componentWillUnmount() {
 		this.unsubscribe();
+	}
+
+	resetBreadcrumbs() {
+		const { selectedSiteSlug, search } = this.props;
+
+		this.props.updateBreadcrumbs( [
+			{
+				label: this.props.translate( 'Plugins' ),
+				href: `/plugins/${ selectedSiteSlug || '' }`,
+				helpBubble: this.props.translate(
+					'Add new functionality and integrations to your site with plugins.'
+				),
+			},
+			{
+				label: this.props.translate( 'Installed Plugins' ),
+				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
+			},
+		] );
+
+		if ( search ) {
+			this.props.appendBreadcrumb( {
+				label: this.props.translate( 'Search Results' ),
+				href: `/plugins/manage/${ selectedSiteSlug || '' }?s=${ search }`,
+				id: 'plugins-site-search',
+			} );
+		}
 	}
 
 	getCurrentPlugins() {
@@ -380,31 +423,6 @@ export class PluginsMain extends Component {
 		);
 	}
 
-	getNavigationItems() {
-		const { search, selectedSiteSlug } = this.props;
-		const navigationItems = [
-			{
-				label: this.props.translate( 'Plugins' ),
-				href: `/plugins/${ selectedSiteSlug || '' }`,
-				helpBubble: this.props.translate(
-					'Add new functionality and integrations to your site with plugins.'
-				),
-			},
-			{
-				label: this.props.translate( 'Installed Plugins' ),
-				href: `/plugins/manage/${ selectedSiteSlug || '' }`,
-			},
-		];
-		if ( search ) {
-			navigationItems.push( {
-				label: this.props.translate( 'Search Results' ),
-				href: `/plugins/${ selectedSiteSlug || '' }?s=${ search }`,
-			} );
-		}
-
-		return navigationItems;
-	}
-
 	render() {
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
@@ -450,7 +468,7 @@ export class PluginsMain extends Component {
 					<FixedNavigationHeader
 						className="plugin__header"
 						compactBreadcrumb={ false }
-						navigationItems={ this.getNavigationItems() }
+						navigationItems={ this.props.breadcrumbs }
 					/>
 				) }
 				<div
@@ -540,6 +558,8 @@ export default flow(
 				siteHasFeature( state, selectedSiteId, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ) ||
 				jetpackNonAtomic;
 
+			const breadcrumbs = getBreadcrumbs( state );
+
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
 				sites,
@@ -567,8 +587,15 @@ export default flow(
 				hasUploadPlugins: hasUploadPlugins,
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 				isJetpackCloud,
+				breadcrumbs,
 			};
 		},
-		{ wporgFetchPluginData, recordTracksEvent, recordGoogleEvent }
+		{
+			wporgFetchPluginData,
+			recordTracksEvent,
+			recordGoogleEvent,
+			appendBreadcrumb,
+			updateBreadcrumbs,
+		}
 	)
 )( PluginsMain );
