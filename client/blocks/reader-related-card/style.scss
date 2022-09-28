@@ -256,9 +256,6 @@
 	&.reader-featured-image {
 		max-height: 150px;
 
-		img {
-			max-width: unset;
-		}
 	}
 	@include breakpoint-deprecated( '>960px' ) {
 		min-height: 153px;

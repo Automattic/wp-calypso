@@ -130,8 +130,10 @@
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
+	margin-left: 2px;
 	padding: 4px;
 	position: relative;
+	top: 1px;
 	user-select: none;
 
 	@include breakpoint-deprecated( '<660px' ) {
@@ -345,8 +347,8 @@
 	}
 }
 
-.reader-full-post .like-button .gridicon {
-	top: 4px;
+.reader-full-post .like-button .gridicons-star {
+	display: none;
 }
 
 .reader-full-post__sidebar-comment-like {
