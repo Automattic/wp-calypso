@@ -28,7 +28,6 @@ import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundl
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
-import { useThemeDetails } from '../../../../hooks/use-theme-details';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { getCategorizationOptions } from './categories';
 import { STEP_NAME } from './constants';
@@ -219,12 +218,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const themeDetails = useThemeDetails( selectedDesign?.slug || '' );
-	const hasThemeSoftwareSet = themeDetails?.data?.taxonomies?.theme_software_set?.length;
+	const isBundledWithWooCommerce = ( selectedDesign?.software_sets || [] ).some(
+		( set ) => set.slug === 'woo-on-plans'
+	);
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) && ! isPluginBundleEligible && hasThemeSoftwareSet );
+		( isEnabled( 'themes/plugin-bundling' ) &&
+			! isPluginBundleEligible &&
+			isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
