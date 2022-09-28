@@ -39,6 +39,11 @@
 	@include breakpoint-deprecated( '<660px' ) {
 		width: auto;
 		padding: 0 20px;
+
+		.reader-post-card__tags {
+			margin-left: 0;
+			width: 100%;
+		}
 	}
 }
 
@@ -59,10 +64,7 @@
 	);
 
 	@include breakpoint-deprecated( '>660px' ) {
-		border: 0;
-		position: absolute;
-		top: var( --masterbar-height );
-		z-index: 0;
+		display: none;
 	}
 
 	.external-link .gridicons-external {
@@ -117,9 +119,7 @@
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		position: static;
-		text-align: left;
-		width: auto;
+		display: none;
 	}
 }
 
@@ -175,11 +175,7 @@
 
 .reader-full-post .back-button {
 	@include breakpoint-deprecated( '<660px' ) {
-		background: transparent;
-		border-bottom: 0;
-		position: fixed;
-		width: 100px;
-		z-index: z-index( '.reader-full-post__sidebar-comment-like', '.reader-full-post .back-button' );
+		display: none;
 	}
 }
 
