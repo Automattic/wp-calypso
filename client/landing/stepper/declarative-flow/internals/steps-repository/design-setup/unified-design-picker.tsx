@@ -218,13 +218,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const hasThemeSoftwareSet = ( selectedDesign?.software_sets || [] ).some(
+	const isBundledWithWooCommerce = ( selectedDesign?.software_sets || [] ).some(
 		( set ) => set.slug === 'woo-on-plans'
 	);
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
-		( isEnabled( 'themes/plugin-bundling' ) && ! isPluginBundleEligible && hasThemeSoftwareSet );
+		( isEnabled( 'themes/plugin-bundling' ) &&
+			! isPluginBundleEligible &&
+			isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
