@@ -160,7 +160,11 @@ function CheckoutSummaryFeaturesWrapper( props: {
 function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 
-	const refundPolicies = getRefundPolicies( cart );
+	const refundPolicies = getRefundPolicies( cart ).filter(
+		( refundPolicy ) =>
+			refundPolicy !== RefundPolicy.DomainNameRegistration &&
+			refundPolicy !== RefundPolicy.DomainNameRenewal
+	);
 
 	if ( ! refundPolicies.length ) {
 		return null;
