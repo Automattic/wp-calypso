@@ -6,10 +6,18 @@
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/onboarding/styles/mixins";
 @import "@automattic/onboarding/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 /**
  * General onboarding styling
  */
+
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
 body {
 	background-color: #fdfdfd;
 }
@@ -133,12 +141,21 @@ button {
 		}
 	}
 
+	@include break-large {
+		height: 100%;
+	}
+
 	/**
  	 * Step Container
  	 */
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+
+		@media ( min-width: 660px ) {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 }
 
