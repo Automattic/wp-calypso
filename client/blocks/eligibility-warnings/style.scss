@@ -1,7 +1,6 @@
 .eligibility-warnings {
 	overflow-wrap: anywhere;
 	background: #fff;
-	max-width: 650px;
 	margin-top: 16px;
 	font-size: $font-body-small;
 
@@ -19,6 +18,10 @@
 	.card {
 		box-shadow: none;
 	}
+}
+
+.dialog .eligibility-warnings {
+	max-width: 650px;
 }
 
 .eligibility-warnings__title {
