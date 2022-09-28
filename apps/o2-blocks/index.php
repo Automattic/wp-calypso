@@ -41,7 +41,7 @@ function a8c_editor_assets() {
 
 	wp_enqueue_script(
 		'a8c-blocks-js',
-		plugins_url( 'dist/editor.js', __FILE__ ),
+		plugins_url( 'dist/editor.min.js', __FILE__ ),
 		$assets['dependencies'],
 		$assets['version'],
 		true
