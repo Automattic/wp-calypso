@@ -34,8 +34,8 @@ type AccentColor = {
 };
 
 const defaultAccentColor = {
-	hex: '#0675C4',
-	rgb: { r: 6, g: 117, b: 196 },
+	hex: '#113AF5',
+	rgb: { r: 17, g: 58, b: 245 },
 	default: true,
 };
 
