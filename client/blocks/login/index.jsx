@@ -38,6 +38,7 @@ import {
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -219,7 +220,8 @@ class Login extends Component {
 			return signupUrl;
 		}
 
-		if ( isWoo ) {
+		if ( isWoo && ! currentQuery ) {
+			// In 2fa screens, we don't have currentQuery
 			return 'https://woocommerce.com/start/';
 		}
 
@@ -633,6 +635,8 @@ export default connect(
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
