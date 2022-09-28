@@ -162,7 +162,7 @@ export const EligibilityWarnings = ( {
 						busy={ siteIsLaunching || siteIsSavingSettings }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate, isMarketplace ) }
+						{ getProceedButtonText( listHolds, translate, context ) }
 					</Button>
 					<div className="support-block">
 						<span>{ translate( 'Need help?' ) }</span>
@@ -196,10 +196,10 @@ function getSiteIsEligibleMessage(
 function getProceedButtonText(
 	holds: string[],
 	translate: LocalizeProps[ 'translate' ],
-	isMarketplace = false
+	context: string | null
 ) {
 	if ( siteRequiresUpgrade( holds ) ) {
-		if ( isMarketplace ) {
+		if ( context === 'plugin-details' || context === 'plugins' ) {
 			return translate( 'Upgrade and activate plugin' );
 		}
 		return translate( 'Upgrade and continue' );
