@@ -101,7 +101,10 @@ function render( element, key, req ) {
 				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
-			markupCache.set( key, renderedLayout );
+
+			if ( ! req.context.skipMarkupCache ) {
+				markupCache.set( key, renderedLayout );
+			}
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
