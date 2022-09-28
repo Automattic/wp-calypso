@@ -158,6 +158,7 @@
 
 		@media screen and ( max-width: 660px ) {
 			padding-top: 50px;
+			padding-bottom: 80px;
 		}
 	}
 
@@ -242,8 +243,6 @@
 
 		@media screen and ( max-width: 660px ) {
 			text-align: left;
-			padding-left: $woo-form-whitespace-660;
-			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
@@ -633,6 +632,11 @@
 	.formatted-header__subtitle {
 		@media screen and ( max-width: 660px ) {
 			width: 250px;
+		}
+
+		@media screen and ( max-width: 660px ) {
+			padding-left: $woo-form-whitespace-660;
+			padding-right: $woo-form-whitespace-660;
 		}
 	}
 
