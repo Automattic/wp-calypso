@@ -21,6 +21,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setTransitioningToSiteCreation } from 'calypso/state/ui/transitioning-to-site-creation/actions';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
@@ -306,6 +307,8 @@ export default {
 				actualFlowName = 'with-add-ons';
 			}
 		}
+
+		context.store.dispatch( setTransitioningToSiteCreation( false ) );
 
 		context.primary = createElement( SignupComponent, {
 			store: context.store,

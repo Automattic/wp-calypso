@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { onboardingUrl } from 'calypso/lib/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setTransitioningToSiteCreation } from 'calypso/state/ui/transitioning-to-site-creation/actions';
 
 const SiteSelectorAddSite: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -16,6 +17,7 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 			: 'calypso_add_new_wordpress_click';
 
 		dispatch( recordTracksEvent( event ) );
+		dispatch( setTransitioningToSiteCreation( true ) );
 	}, [ dispatch ] );
 
 	return (
