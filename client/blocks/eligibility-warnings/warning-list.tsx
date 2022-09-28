@@ -9,11 +9,12 @@ import type { EligibilityWarning } from 'calypso/state/automated-transfer/select
 interface ExternalProps {
 	context: string | null;
 	warnings: EligibilityWarning[];
+	showContact?: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
 
-export const WarningList = ( { context, translate, warnings }: Props ) => (
+export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => (
 	<div>
 		<div className="eligibility-warnings__warning">
 			<Gridicon icon="notice-outline" size={ 24 } />
@@ -44,17 +45,19 @@ export const WarningList = ( { context, translate, warnings }: Props ) => (
 			</div>
 		) ) }
 
-		<div className="eligibility-warnings__warning">
-			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-description">
-					{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
-						components: {
-							a: <ActionPanelLink href="/help/contact" />,
-						},
-					} ) }
-				</span>
+		{ showContact && (
+			<div className="eligibility-warnings__warning">
+				<div className="eligibility-warnings__message">
+					<span className="eligibility-warnings__message-description">
+						{ translate( '{{a}}Contact support{{/a}} for help and questions.', {
+							components: {
+								a: <ActionPanelLink href="/help/contact" />,
+							},
+						} ) }
+					</span>
+				</div>
 			</div>
-		</div>
+		) }
 	</div>
 );
 

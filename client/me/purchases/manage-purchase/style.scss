@@ -444,3 +444,9 @@
 		margin-top: 0;
 	}
 }
+
+.manage-purchase__auto-renew-text button.is-link {
+	color: var(--color-link);
+	text-decoration: underline;
+	line-height: inherit;
+}

@@ -5,7 +5,7 @@ import {
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
-import { BASE_STALE_TIME } from './constants';
+import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
 type Type = 'all' | 'featured';
 

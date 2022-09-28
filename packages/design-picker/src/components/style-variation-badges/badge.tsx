@@ -49,12 +49,12 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick } ) => {
 		>
 			<span
 				style={ {
-					backgroundColor: styles.color.background,
-					color: styles.color.foreground || styles.color.primary,
+					background: `linear-gradient(
+							to right,
+							${ styles.color.background } 0 50%,
+							${ styles.color.foreground || styles.color.primary } 50% 100%)`,
 				} }
-			>
-				A
-			</span>
+			/>
 		</div>
 	);
 };

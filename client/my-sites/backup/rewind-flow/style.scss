@@ -61,7 +61,7 @@ input.rewind-flow__rewind-config-editor-checkbox.form-checkbox {
 	margin-right: 5px;
 	margin-bottom: 2px;
 	&:checked::before {
-		content: url("/calypso/images/checkbox-icons/checkmark-jetpack.svg");
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
 	}
 }
 

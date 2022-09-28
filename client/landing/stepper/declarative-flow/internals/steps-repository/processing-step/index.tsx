@@ -6,6 +6,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
+import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
@@ -39,6 +40,8 @@ const ProcessingStep: Step = function ( props ) {
 		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
 	};
 
+	const captureFlowException = useCaptureFlowException( 'ProcessingStep' );
+
 	useEffect( () => {
 		( async () => {
 			if ( typeof action === 'function' ) {
@@ -54,6 +57,7 @@ const ProcessingStep: Step = function ( props ) {
 				} catch ( e ) {
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
+					captureFlowException( e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else {

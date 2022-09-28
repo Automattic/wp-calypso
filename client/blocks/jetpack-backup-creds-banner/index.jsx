@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import jetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
+import jetpackCredentials from 'calypso/assets/images/jetpack/jetpack-icon-key.svg';
 import Banner from 'calypso/components/banner';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
@@ -38,7 +38,7 @@ class JetpackBackupCredsBanner extends Component {
 					<Banner
 						event={ event }
 						className="jetpack-backup-creds-banner"
-						iconPath={ jetpackDisconnected }
+						iconPath={ jetpackCredentials }
 						href={
 							rewindState.canAutoconfigure
 								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
@@ -46,7 +46,7 @@ class JetpackBackupCredsBanner extends Component {
 						}
 						title={ translate( 'Add your server credentials' ) }
 						description={ translate(
-							"Enter your site's server credentials to set up site restores from your backups."
+							'Enter your SSH, SFTP or FTP credentials to enable one-click site restores and faster backups.'
 						) }
 					/>
 				) }

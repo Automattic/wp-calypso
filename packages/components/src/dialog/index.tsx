@@ -1,6 +1,7 @@
 import classnames from 'classnames';
 import { useCallback } from 'react';
 import Modal from 'react-modal';
+import Gridicon from '../gridicon';
 import ButtonBar from './button-bar';
 import type { Button, BaseButton } from './button-bar';
 import type { PropsWithChildren } from 'react';
@@ -20,6 +21,7 @@ type Props = {
 	leaveTimeout?: number;
 	onClose: ( action?: string ) => void;
 	shouldCloseOnEsc?: boolean;
+	showCloseIcon?: boolean;
 };
 
 const Dialog = ( {
@@ -36,6 +38,7 @@ const Dialog = ( {
 	leaveTimeout = 200,
 	onClose,
 	shouldCloseOnEsc,
+	showCloseIcon = false,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -71,6 +74,11 @@ const Dialog = ( {
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
 		>
+			{ showCloseIcon && (
+				<button className="dialog__action-buttons-close" onClick={ () => onClose( this ) }>
+					<Gridicon icon={ 'cross' } size={ 24 } />
+				</button>
+			) }
 			<div className={ contentClassName } tabIndex={ -1 }>
 				{ children }
 			</div>

@@ -13,11 +13,23 @@
 }
 
 .plugin-details-cta__dialog-content {
+	.dialog__content {
+		padding: 0;
+	}
+
 	.eligibility-warnings {
 		margin: 0;
 
 		.card {
 			box-shadow: none;
+		}
+		.card:last-of-type.is-compact {
+			border-top: 1px solid var(--color-border-shadow);
+		}
+
+		.eligibility-warnings__confirm-buttons {
+			display: flex;
+			flex-direction: row-reverse;
 		}
 	}
 }

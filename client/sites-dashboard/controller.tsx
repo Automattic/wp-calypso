@@ -1,7 +1,7 @@
 import {
-	DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE,
-	siteLaunchStatusFilterValues,
-} from '@automattic/components';
+	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
+	siteLaunchStatusGroupValues,
+} from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -30,7 +30,7 @@ const globalStyles = css`
 `;
 
 const getStatusFilterValue = ( status?: string ) => {
-	return siteLaunchStatusFilterValues.find( ( value ) => value === status );
+	return siteLaunchStatusGroupValues.find( ( value ) => value === status );
 };
 
 export function sanitizeQueryParameters( context: PageJSContext, next: () => void ) {
@@ -39,7 +39,7 @@ export function sanitizeQueryParameters( context: PageJSContext, next: () => voi
 	 * in the route.
 	 */
 	if ( context.query.status === undefined ) {
-		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_FILTER_VALUE;
+		context.query.status = DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE;
 		return next();
 	}
 
@@ -73,7 +73,6 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 						? parseInt( context.query[ 'per-page' ] )
 						: undefined,
 					search: context.query.search,
-					showHidden: context.query[ 'show-hidden' ] === 'true',
 					status: context.query.status,
 				} }
 			/>

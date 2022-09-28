@@ -12,7 +12,7 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isTheme,
+	isThemePurchase,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -493,15 +493,15 @@ class ManagePurchase extends Component {
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
+				text = translate( 'Cancel Domain' );
 			}
 
 			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
+				text = translate( 'Cancel Subscription' );
 			}
 
 			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
+				text = translate( 'Cancel' );
 			}
 		} else {
 			if ( isDomainTransfer( purchase ) ) {
@@ -564,7 +564,7 @@ class ManagePurchase extends Component {
 			);
 		}
 
-		if ( isTheme( purchase ) ) {
+		if ( isThemePurchase( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="themes" size={ 54 } />
@@ -589,7 +589,7 @@ class ManagePurchase extends Component {
 			return plan.getDescription();
 		}
 
-		if ( isTheme( purchase ) && theme ) {
+		if ( isThemePurchase( purchase ) && theme ) {
 			return theme.description;
 		}
 
@@ -1032,7 +1032,7 @@ export default connect(
 		const isProductOwner = purchase && purchase.userId === userId;
 		const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 		const isPurchasePlan = purchase && isPlan( purchase );
-		const isPurchaseTheme = purchase && isTheme( purchase );
+		const isPurchaseTheme = purchase && isThemePurchase( purchase );
 		const productsList = getProductsList( state );
 		const site = getSite( state, siteId );
 		const hasLoadedSites = ! isRequestingSites( state );

@@ -18,7 +18,6 @@
 	"features": {
 		"ad-tracking": true,
 		"bilmur-script": true,
-		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -60,7 +59,7 @@
 		"jetpack/plugin-management": false,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pricing-page-rework-v1": false,
+		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/simplify-pricing-structure": false,
 		"jitms": true,
 		"lasagna": true,

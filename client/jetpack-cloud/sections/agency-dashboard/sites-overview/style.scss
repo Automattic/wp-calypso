@@ -111,12 +111,12 @@
 		width: calc(100% - 120px);
 		margin-inline-start: 8px;
 		margin-inline-end: 5px;
-		font-size: 1rem;
+		font-size: 1rem !important;
 	}
 	@include break-large() {
 		width: calc(100% - 55px);
 		margin-inline-start: 55px;
-		font-size: 0.875rem;
+		font-size: 0.875rem !important;
 	}
 }
 .sites-overview__overlay {

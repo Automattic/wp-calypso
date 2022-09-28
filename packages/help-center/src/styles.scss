@@ -7,7 +7,7 @@ $head-foot-height: 50px;
 
 .help-center {
 	.components-card.help-center__container {
-		position: absolute;
+		position: fixed;
 		background-color: #fff;
 		color: #000;
 		z-index: 9999;
@@ -94,7 +94,6 @@ $head-foot-height: 50px;
 			.help-center__container-content {
 				flex-grow: 1;
 				height: calc(80vh - #{$head-foot-height} * 2);
-				position: relative;
 			}
 
 			&.is-minimized {
@@ -310,7 +309,6 @@ $head-foot-height: 50px;
 			}
 
 			.help-center__container.is-desktop {
-				position: fixed;
 				top: calc(var(--masterbar-height) + 16px);
 			}
 
