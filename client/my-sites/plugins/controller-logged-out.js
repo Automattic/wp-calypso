@@ -9,7 +9,7 @@ import { requestProductsList } from 'calypso/state/products-list/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 
 const PREFETCH_TIMEOUT = 500;
-const PREFECTH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
+const PREFETCH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
 
 function getQueryOptions( { path, lang } ) {
 	const props = {
@@ -49,26 +49,29 @@ const prefetchProductList = ( store ) => {
 };
 
 const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
-	let prefetcfhFulfilled = false;
+	let timeboxResolve;
+	const timeboxPromise = new Promise( ( resolve, reject ) => {
+		timeboxResolve = resolve;
+		setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR );
+	} );
+
 	return Promise.race( [
-		Promise.all( prefetchPromises ).then( () => ( prefetcfhFulfilled = true ) ),
-		new Promise( ( _, reject ) =>
-			setTimeout( () => ! prefetcfhFulfilled && reject( PREFECTH_TIMEOUT_ERROR ), timeout )
-		),
+		Promise.all( prefetchPromises ).then( timeboxResolve ),
+		timeboxPromise,
 	] ).catch( ( err ) => {
-		if ( err === PREFECTH_TIMEOUT_ERROR ) {
+		if ( err === PREFETCH_TIMEOUT_ERROR ) {
 			if ( context.res?.req?.useragent?.isBot ) {
 				context.res.status( 504 );
 			}
 			context.skipMarkupCache = true;
 
-			if ( config.isEnabled( 'ssr/log-prefecth-timeout' ) ) {
+			if ( config.isEnabled( 'ssr/log-prefetch-timeout' ) ) {
 				logToLogstash( {
 					feature: 'calypso_ssr',
 					message: 'plugins prefetch timeout',
 					extra: {
 						key,
-						'user-agent': context.res.req.useragent.source,
+						'user-agent': context.res?.req?.useragent?.source,
 						path: context.path,
 					},
 				} );
@@ -90,7 +93,7 @@ export async function fetchPlugins( context, next ) {
 
 	await prefetchTimebox(
 		[
-			prefetchProductList( queryClient, store ),
+			prefetchProductList( store ),
 			prefetchPaidPlugins( queryClient, options ),
 			prefetchPopularPlugins( queryClient, options ),
 			prefetchFeaturedPlugins( queryClient, options ),
