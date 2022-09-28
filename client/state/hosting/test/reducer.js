@@ -1,9 +1,39 @@
 import deepFreeze from 'deep-freeze';
-import { HOSTING_SFTP_USERS_SET, HOSTING_SFTP_USER_UPDATE } from 'calypso/state/action-types';
-import reducer, { sftpUsers } from '../reducer';
+import {
+	HOSTING_CLEAR_CACHE_REQUEST,
+	HOSTING_SFTP_USERS_SET,
+	HOSTING_SFTP_USER_UPDATE,
+} from 'calypso/state/action-types';
+import reducer, { lastCacheClearTimestamp, sftpUsers } from '../reducer';
 
 describe( 'reducer', () => {
 	jest.spyOn( console, 'warn' ).mockImplementation();
+
+	describe( '#lastCacheClearTimestamp', () => {
+		const timestamp = 1664397666661;
+
+		beforeAll( () => {
+			jest.useFakeTimers( 'modern' ).setSystemTime( timestamp );
+		} );
+
+		afterAll( () => {
+			jest.useRealTimers();
+		} );
+
+		test( 'should default to null', () => {
+			const state = lastCacheClearTimestamp( undefined, {} );
+
+			expect( state ).toEqual( null );
+		} );
+
+		test( 'should update to the current time whenever `HOSTING_CLEAR_CACHE_REQUEST` is dispatched', () => {
+			const state = lastCacheClearTimestamp( undefined, {
+				type: HOSTING_CLEAR_CACHE_REQUEST,
+			} );
+
+			expect( state ).toEqual( timestamp );
+		} );
+	} );
 
 	describe( '#sftpUsers()', () => {
 		test( 'should default to an empty object', () => {

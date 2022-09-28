@@ -59,7 +59,7 @@ const staticFile404 = ( state = null, { type, setting } ) => {
 	return state;
 };
 
-const lastCacheClearTimestamp = withSchemaValidation(
+export const lastCacheClearTimestamp = withSchemaValidation(
 	{ type: 'integer' },
 	withPersistence( ( state = null, { type } ) => {
 		switch ( type ) {
