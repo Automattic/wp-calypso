@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { eligibilityHolds as eligibilityHoldsConstants } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
@@ -33,7 +34,12 @@ import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
 
-export default function CTAButton( { plugin, hasEligibilityMessages, disabled } ) {
+export default function CTAButton( {
+	plugin,
+	hasEligibilityMessages,
+	eligibilityHolds,
+	disabled,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const [ showEligibility, setShowEligibility ] = useState( false );
@@ -134,6 +140,15 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
+					title={ translate( 'Flex your site with plugins' ) }
+					primaryText={
+						eligibilityHolds &&
+						eligibilityHolds.indexOf( eligibilityHoldsConstants.NO_BUSINESS_PLAN ) !== -1
+							? translate(
+									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
+							  )
+							: ''
+					}
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
