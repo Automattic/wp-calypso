@@ -25,7 +25,8 @@
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 16px;
-	img {
+	img,
+	.site-icon.is-blank {
 		border-radius: 100%;
 	}
 }
