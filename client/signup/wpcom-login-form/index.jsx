@@ -35,8 +35,8 @@ export default class WpcomLoginForm extends Component {
 			return null;
 		}
 
-		return Object.keys( extraFields ).map( ( field ) => (
-			<input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />
+		return Object.entries( extraFields ).map( ( [ field, value ] ) => (
+			<input key={ field } type="hidden" name={ field } value={ value } />
 		) );
 	}
 
