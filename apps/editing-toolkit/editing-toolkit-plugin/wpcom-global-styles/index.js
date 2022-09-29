@@ -65,10 +65,11 @@ const showGlobalStylesNotice = async () => {
 					}
 
 					entityTitle.parentElement.append( noticeContainer );
+					return;
 				}
 
 				render( <GlobalStylesNotice />, noticeContainer );
-				break;
+				return;
 			}
 		}
 	} );
