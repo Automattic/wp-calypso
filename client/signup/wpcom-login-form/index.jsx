@@ -5,7 +5,7 @@ import { Component } from 'react';
 const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
 function getFormAction( redirectTo ) {
-	const subdomainRegExp = /^https?:\/\/([a-z0-9]*).wordpress.com/;
+	const subdomainRegExp = /^https?:\/\/([a-z0-9]+)\.wordpress\.com(?:$|\/)/;
 	const hostname = config( 'hostname' );
 	let subdomain = '';
 
