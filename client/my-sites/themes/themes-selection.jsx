@@ -1,5 +1,5 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { compact, isEqual, property, snakeCase } from 'lodash';
+import { compact, property, snakeCase } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import * as React from 'react';
@@ -284,8 +284,8 @@ class ThemesSelectionWithPage extends React.Component {
 		if (
 			nextProps.search !== this.props.search ||
 			nextProps.tier !== this.props.tier ||
-			! isEqual( nextProps.filter, this.props.filter ) ||
-			! isEqual( nextProps.vertical, this.props.vertical )
+			nextProps.filter !== this.props.filter ||
+			nextProps.vertical !== this.props.vertical
 		) {
 			this.resetPage();
 		}
