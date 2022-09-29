@@ -21,6 +21,9 @@ type EmailPlanWarningsProps = {
 	emailAccount: EmailAccount;
 };
 
+const WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION = 'other-user-owns-subscription';
+const WARNING_CODE_OTHER_USER_OWNS_EMAIL = 'other-user-owns-email';
+
 const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
 	const selectedSite = useSelector( getSelectedSite );
