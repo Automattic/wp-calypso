@@ -1,4 +1,4 @@
-import { SiteThumbnail, getSiteLaunchStatus, Spinner } from '@automattic/components';
+import { SiteThumbnail, Spinner } from '@automattic/components';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -16,7 +16,8 @@ interface SiteScreenshotProps extends ComponentProps< typeof SiteThumbnail > {
  * @returns SiteThumbnail
  */
 export const SiteScreenshot = ( { site, alt, ...props }: SiteScreenshotProps ) => {
-	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
+	const shouldUseScreenshot =
+		! site.is_coming_soon && ! site.is_private && site.launch_status === 'launched';
 
 	let siteUrl = site.URL;
 	if ( site.options?.updated_at ) {
