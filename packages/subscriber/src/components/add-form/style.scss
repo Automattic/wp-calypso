@@ -161,11 +161,16 @@
 		svg {
 			position: absolute;
 			margin-inline-start: -2rem;
-			fill: none;
 		}
 
 		&.is-warning {
 			color: var(--studio-gray-40);
+		}
+
+		&:not(.is-error) {
+			svg {
+				fill: none;
+			}
 		}
 	}
 
