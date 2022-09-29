@@ -674,7 +674,7 @@ export default connect(
 
 			// Add site icon to feed object so have icon for external feeds
 			if ( props.feed ) {
-				const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
 				props.feed.site_icon = follow ? follow.site_icon : null;
 			}
 		}
