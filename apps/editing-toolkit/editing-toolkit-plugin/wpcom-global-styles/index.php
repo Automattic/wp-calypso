@@ -146,26 +146,29 @@ add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
  * @param bool    $updated This value is true if the post existed and was updated.
  */
 function wpcom_track_global_styles( $blog_id, $post, $updated ) {
-	require_lib( 'tracks/client' );
-
 	// If the post isn't updated then we know the gs cpt is being created.
-	if ( ! $updated ) {
-		tracks_record_event( get_current_user_id(), 'wpcom_global_styles_create' );
-		return;
+	$event_name = 'wpcom_global_styles_create';
+
+	if ( $updated ) {
+		// This is a fragile way of checking if the global styles cpt is being reset, we might need to update this condition in the future.
+		$global_style_keys      = array_keys( json_decode( $post->post_content, true ) ?? array() );
+		$is_empty_global_styles = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) === 0;
+
+		// By default, we know that we are at least updating.
+		$event_name = 'wpcom_global_styles_customize';
+
+		// If we are updating to empty contents then we know for sure we are resetting the contents.
+		if ( $is_empty_global_styles ) {
+			$event_name = 'wpcom_global_styles_reset';
+		}
 	}
 
-	// This is a fragile way of checking if the global styles cpt is being reset, we might need to update this condition in the future.
-	$global_style_keys      = array_keys( json_decode( $post->post_content, true ) ?? array() );
-	$is_empty_global_styles = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) === 0;
-
-	// By default, we know that we are at least updating.
-	$event_name = 'wpcom_global_styles_customize';
-
-	// If we are updating to empty contents then we know for sure we are resetting the contents.
-	if ( $is_empty_global_styles ) {
-		$event_name = 'wpcom_global_styles_reset';
+	// Invoke the correct function based on the underlying infrastructure.
+	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
+		wpcomsh_record_tracks_event( $event_name, array() );
+	} else {
+		require_lib( 'tracks/client' );
+		tracks_record_event( get_current_user_id(), $event_name );
 	}
-
-	tracks_record_event( get_current_user_id(), $event_name );
 }
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
