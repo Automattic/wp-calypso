@@ -65,7 +65,7 @@ const showGlobalStylesNotice = async () => {
 					}
 
 					entityTitle.parentElement.append( noticeContainer );
-					return;
+					break;
 				}
 
 				render( <GlobalStylesNotice />, noticeContainer );
