@@ -5,7 +5,7 @@
 /**
  *	General
  */
-.step-container {
+.site-setup .step-container {
 	max-width: 960px;
 	margin: 0 auto;
 
@@ -35,6 +35,7 @@
 		@include break-small {
 			margin-top: 25vh;
 			display: flex;
+			flex-direction: row;
 
 			.step-container__header {
 				margin-top: 0;
