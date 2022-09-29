@@ -155,6 +155,10 @@ button {
 		@media ( min-width: 660px ) {
 			display: flex;
 			flex-direction: column;
+
+			&.is-horizontal-layout {
+				flex-direction: row;
+			}
 		}
 	}
 }
