@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -19,9 +20,13 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
-
+	const flow = useFlowParam();
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
+
+	useEffect( () => {
+		recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
+	}, [ flow ] );
 
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
