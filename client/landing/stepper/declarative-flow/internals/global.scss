@@ -250,6 +250,22 @@ button {
 	}
 }
 
+/**
+ * Global notices
+ */
+#notices {
+	top: 0;
+
+	@media (min-width: 661px) {
+		top: 16px;
+	}
+
+	.gridicon {
+		fill: currentColor;
+	}
+}
+
+
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {
 		.inline-help {

@@ -48,7 +48,8 @@ export async function maybeRedirect( context, next ) {
 		// The new stepper launchpad onboarding flow isn't registered within the "page"
 		// client-side router, so page.redirect won't work. We need to use the
 		// traditional window.location Web API.
-		redirectToLaunchpad( slug, refetchedOptions?.site_intent );
+		const emailedVerifiedParam = new URLSearchParams( window.location );
+		redirectToLaunchpad( slug, refetchedOptions?.site_intent, emailedVerifiedParam );
 		return;
 	}
 	next();

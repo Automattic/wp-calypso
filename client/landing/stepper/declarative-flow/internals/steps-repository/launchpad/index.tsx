@@ -1,12 +1,15 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { useVerifiedParam } from 'calypso/landing/stepper/hooks/use-verified-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { successNotice } from 'calypso/state/notices/actions';
 import StepContent from './step-content';
 import type { Step } from '../../types';
 import './style.scss';
@@ -19,9 +22,21 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
-
+	const emailedVerified = useVerifiedParam();
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		if ( emailedVerified ) {
+			const message = translate( 'Email confirmed!' );
+			dispatch(
+				successNotice( message, {
+					duration: 10000,
+				} )
+			);
+		}
+	}, [] );
 
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
