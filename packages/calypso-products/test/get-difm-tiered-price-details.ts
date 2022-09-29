@@ -19,7 +19,7 @@ describe( 'getDIFMTieredPriceDetails', () => {
 		).toBe( null );
 	} );
 
-	it( 'should return null if product is price tier list is empty', () => {
+	it( 'should return null if product has an empty price tier list', () => {
 		expect(
 			getDIFMTieredPriceDetails( { product_slug: WPCOM_DIFM_LITE, price_tier_list: [] } )
 		).toBe( null );
