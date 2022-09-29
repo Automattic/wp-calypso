@@ -9,7 +9,16 @@
 	padding: 0 20px;
 
 	@include break-medium {
+		padding: 0 20px;
 		width: 368px;
+	}
+
+	.setup-form__field,
+	fieldset {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		margin-bottom: 16px;
 	}
 
 	label,
@@ -21,6 +30,7 @@
 
 	input,
 	textarea,
+	input[type="text"].form-text-input,
 	pre {
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
@@ -43,6 +53,15 @@
 		}
 	}
 
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-label {
+		color: var(--studio-black);
+		margin-bottom: 8px;
+	}
+
 	label {
 		color: var(--studio-gray-60);
 		font-size: $font-body;
@@ -63,76 +82,59 @@
 			color: var(--studio-gray-100);
 		}
 	}
-}
 
-.setup-form__field,
-fieldset {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	margin-bottom: 16px;
-}
+	.setup-form__contrast-warning {
+		display: flex;
+		font-size: $font-body-small;
+		height: 0;
+		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+		opacity: 0;
+		margin-top: 16px;
+		overflow: hidden;
 
-.form-input-validation {
-	padding-bottom: 0;
-}
+		&.is-visible {
+			height: 80px;
+			opacity: 1;
+		}
 
-.form-label {
-	color: var(--studio-black);
-	margin-bottom: 8px;
-}
+		.setup-form__contrast-warning-icon-container {
+			margin-top: 4px;
+			margin-right: 4px;
 
-.setup-form__contrast-warning {
-	display: flex;
-	font-size: $font-body-small;
-	height: 0;
-	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-	opacity: 0;
-	margin-top: 16px;
-	overflow: hidden;
-
-	&.is-visible {
-		height: 80px;
-		opacity: 1;
-	}
-
-	.setup-form__contrast-warning-icon-container {
-		margin-top: 4px;
-		margin-right: 4px;
-
-		svg {
-			stroke: var(--studio-yellow-40);
+			svg {
+				stroke: var(--studio-yellow-40);
+			}
 		}
 	}
-}
 
-.setup-form__submit {
-	color: var(--color-surface);
-	background-color: var(--studio-blue-50);
-	border-radius: 4px;
-	font-weight: 500;
-	width: 100%;
-	// adds +2 px of padding to the button to match the input field height
-	padding: 10px 14px;
-	margin-top: 16px;
-
-	&:hover:not([disabled]) {
-		background-color: var(--wp-admin-theme-color-darker-10);
+	.components-color-picker {
+		.components-h-stack {
+			width: unset !important;
+		}
 	}
-}
 
-.components-color-picker {
-	.components-h-stack {
-		width: unset !important;
+	.setup-form__accent-color-popover {
+		.popover__arrow {
+			display: none;
+		}
+		&:focus,
+		&:focus-visible {
+			outline: none;
+		}
 	}
-}
 
-.setup-form__accent-color-popover {
-	.popover__arrow {
-		display: none;
-	}
-	&:focus,
-	&:focus-visible {
-		outline: none;
+	.setup-form__submit {
+		color: var(--color-surface);
+		background-color: var(--studio-blue-50);
+		border-radius: 4px;
+		font-weight: 500;
+		width: 100%;
+		// adds +2 px of padding to the button to match the input field height
+		padding: 10px 14px;
+		margin-top: 16px;
+
+		&:hover:not([disabled]) {
+			background-color: var(--wp-admin-theme-color-darker-10);
+		}
 	}
 }
