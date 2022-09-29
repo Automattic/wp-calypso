@@ -35,6 +35,7 @@ const PatternLayout = ( {
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
+	// Followed suggested practice to reduce the bundle size https://www.framer.com/docs/guide-reduce-bundle-size/
 	const loadFeatures = () => import( './features.js' ).then( ( res ) => res.default );
 
 	return (
@@ -47,7 +48,7 @@ const PatternLayout = ( {
 					) }
 				</p>
 			</div>
-			<LazyMotion features={ loadFeatures }>
+			<LazyMotion features={ loadFeatures } strict>
 				<div className="pattern-layout__body">
 					<ul>
 						{ header ? (
