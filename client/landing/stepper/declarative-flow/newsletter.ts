@@ -2,6 +2,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
@@ -16,6 +17,7 @@ export const newsletter: Flow = {
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
 		}, [] );
 
 		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];

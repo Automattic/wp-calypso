@@ -63,6 +63,7 @@ const cleanButtonProps = ( {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 	// @ts-ignore Clean incorrect usage of the component
 	target,
+	transparent,
 	...buttonProps
 }: ButtonProps | AnchorProps ): ButtonProps => ( { ...buttonProps, type } as ButtonProps );
 
