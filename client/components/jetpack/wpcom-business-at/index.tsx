@@ -248,9 +248,14 @@ export default function WPCOMBusinessAT() {
 						isPrimary: true,
 					},
 				] }
-				className={ classNames( 'wpcom-business-at__dialog', 'eligibility-warnings', {
-					'eligibility-warnings--with-indent': warnings?.length,
-				} ) }
+				className={ classNames(
+					'wpcom-business-at__dialog',
+					'eligibility-warnings',
+					'eligibility-warnings--without-title',
+					{
+						'eligibility-warnings--with-indent': warnings?.length,
+					}
+				) }
 			>
 				{ !! holds?.length && (
 					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />

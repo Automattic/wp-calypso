@@ -16,63 +16,6 @@
 	.dialog__content {
 		padding: 0;
 	}
-
-	.eligibility-warnings {
-		margin: 0;
-
-		.card {
-			box-shadow: none;
-
-			padding-left: 48px;
-			padding-right: 48px;
-
-			.notice {
-				margin-bottom: 0;
-			}
-		}
-
-		.card:last-of-type.is-compact {
-			border-top: 1px solid var(--color-border-shadow);
-		}
-
-		.eligibility-warnings__confirm-buttons {
-			display: flex;
-			flex-direction: row-reverse;
-		}
-
-		.eligibility-warnings__hold-list {
-			background: #fff;
-			border: 1px solid var(--studio-gray-5);
-			border-radius: 4px;
-			display: flex;
-			flex-direction: column;
-			align-items: flex-start;
-			padding: 26px 24px;
-			gap: 10px;
-
-			h1.card-heading.card-heading-20 {
-				font-size: unset;
-				font-weight: 600;
-				margin: unset;
-				color: unset;
-			}
-
-			.eligibility-warnings__hold {
-				padding: unset;
-				margin: unset;
-				width: 100%;
-			}
-
-			.eligibility-warnings__message {
-				padding: 16px 0;
-				margin: unset;
-				border-top: 1px solid var(--studio-gray-5);
-			}
-			.eligibility-warnings__message:last-of-type {
-				padding-bottom: 0;
-			}
-		}
-	}
 }
 
 .plugin-details-cta__price {
