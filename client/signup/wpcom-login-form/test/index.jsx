@@ -35,7 +35,7 @@ describe( 'WpcomLoginForm', () => {
 		// when update a prop
 		rerender( <WpcomLoginForm { ...props } log="another_log" /> );
 		const el = container.querySelector( 'input[name="log"]' );
-		expect( el.value ).toEqual( 'another_log' );
+		expect( el ).toHaveValue( 'another_log' );
 	} );
 
 	test( 'should render extra fields if extraFields prop is passed.', () => {
