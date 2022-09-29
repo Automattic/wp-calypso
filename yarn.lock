@@ -35783,6 +35783,7 @@ swiper@4.5.1:
     eslint-plugin-react-hooks: ^4.3.0
     eslint-plugin-wpcalypso: "workspace:^"
     eslint-plugin-you-dont-need-lodash-underscore: ^6.12.0
+    framer-motion: ^6.2.8
     fsevents: ^2.3.2
     gettext-parser: ^4.0.3
     glob: ^7.1.6

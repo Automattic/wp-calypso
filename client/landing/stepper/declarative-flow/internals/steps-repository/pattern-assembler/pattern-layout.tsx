@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
 import PatternActionBar from './pattern-action-bar';
