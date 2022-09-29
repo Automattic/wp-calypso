@@ -136,14 +136,12 @@ $border-radius: 4px;
 	.components-h-stack {
 		width: unset !important;
 	}
-	.react-colorful__saturation {
-		.react-colorful__pointer {
-			display: none;
-		}
-	}
 }
 
 .newsletter-setup__accent-color-popover {
+	.popover__arrow {
+		display: none;
+	}
 	&:focus,
 	&:focus-visible {
 		outline: none;
