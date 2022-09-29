@@ -160,18 +160,12 @@ function CheckoutSummaryFeaturesWrapper( props: {
 function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
 
-	const refundPolicies = getRefundPolicies( cart ).filter(
-		( refundPolicy ) =>
-			refundPolicy !== RefundPolicy.DomainNameRegistration &&
-			refundPolicy !== RefundPolicy.DomainNameRenewal
-	);
+	const refundPolicies = getRefundPolicies( cart );
+	const refundWindows = getRefundWindows( refundPolicies );
 
-	if ( ! refundPolicies.length ) {
+	if ( ! refundWindows.length ) {
 		return null;
 	}
-
-	const refundWindows = getRefundWindows( refundPolicies );
-	const shortestRefundWindow = Math.min( ...refundWindows );
 
 	const planBundleRefundPolicy = refundPolicies.find(
 		( refundPolicy ) =>
@@ -180,35 +174,51 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 			refundPolicy === RefundPolicy.PlanYearlyBundle
 	);
 
-	// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
-	let text: TranslateResult = translate(
-		'%(days)d-day full money back guarantee',
-		'%(days)d-day full money back guarantee',
-		{
-			count: shortestRefundWindow,
-			args: { days: shortestRefundWindow },
-			comment: 'The number of days until the shortest refund window in the cart expires.',
-		}
+	const allCartItemsAreDomains = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.DomainNameRenewal
 	);
 
-	if ( refundPolicies.length === 1 && planBundleRefundPolicy ) {
-		const refundWindow = Math.max( ...getRefundWindows( [ planBundleRefundPolicy ] ) );
+	if ( allCartItemsAreDomains ) {
+		return null;
+	}
 
-		text = translate(
-			'%(days)d-day money back guarantee for plan',
-			'%(days)d-day money back guarantee for plan',
-			{
-				count: refundWindow,
-				args: { days: refundWindow },
-			}
-		);
-	} else if ( refundWindows.length === 1 ) {
+	let text: TranslateResult;
+
+	if ( refundWindows.length === 1 ) {
 		const refundWindow = refundWindows[ 0 ];
 
-		text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
-			count: refundWindow,
-			args: { days: refundWindow },
-		} );
+		if ( planBundleRefundPolicy ) {
+			text = translate(
+				'%(days)d-day money back guarantee (minus domain registration costs)',
+				'%(days)d-day money back guarantee (minus domain registration costs)',
+				{
+					count: refundWindow,
+					args: { days: refundWindow },
+				}
+			);
+		} else {
+			text = translate( '%(days)d-day money back guarantee', '%(days)d-day money back guarantee', {
+				count: refundWindow,
+				args: { days: refundWindow },
+			} );
+		}
+	} else if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+		text = translate( 'Partial money back guarantee' );
+	} else {
+		const shortestRefundWindow = Math.min( ...refundWindows );
+
+		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
+		text = translate(
+			'Minimum %(days)d-day money back guarantee',
+			'Minimum %(days)d-day money back guarantee',
+			{
+				count: shortestRefundWindow,
+				args: { days: shortestRefundWindow },
+				comment: 'The number of days until the shortest refund window in the cart expires.',
+			}
+		);
 	}
 
 	return (

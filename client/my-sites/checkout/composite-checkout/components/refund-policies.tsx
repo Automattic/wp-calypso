@@ -25,12 +25,13 @@ export enum RefundPolicy {
 	PlanMonthlyBundle,
 	PlanYearlyBundle,
 	PremiumTheme,
+	NonRefundable,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 	const refundPolicies = cart.products.map( ( product ) => {
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
-			return undefined;
+			return RefundPolicy.NonRefundable;
 		}
 
 		if ( ! product.item_subtotal_integer ) {
@@ -78,6 +79,8 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		if ( isBiennially( product ) ) {
 			return RefundPolicy.GenericBiennial;
 		}
+
+		return RefundPolicy.NonRefundable;
 	} );
 
 	return Array.from( new Set( refundPolicies ) ).filter(
@@ -87,22 +90,18 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 
 // Get the refund windows in days for the items in the cart
 export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
-	const refundWindowsInCart = refundPolicies.flatMap( ( refundPolicy ) => {
+	const refundWindows = refundPolicies.map( ( refundPolicy ) => {
 		switch ( refundPolicy ) {
 			case RefundPolicy.DomainNameRegistration:
 			case RefundPolicy.DomainNameRenewal:
 				return 4;
 
 			case RefundPolicy.GenericMonthly:
-				return 7;
-
 			case RefundPolicy.PlanMonthlyBundle:
-				return [ 4, 7 ];
+				return 7;
 
 			case RefundPolicy.PlanBiennialBundle:
 			case RefundPolicy.PlanYearlyBundle:
-				return [ 4, 14 ];
-
 			case RefundPolicy.GenericBiennial:
 			case RefundPolicy.GenericYearly:
 			case RefundPolicy.PremiumTheme:
@@ -110,7 +109,9 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
 		}
 	} );
 
-	return Array.from( new Set( refundWindowsInCart ) );
+	return Array.from( new Set( refundWindows ) ).filter(
+		( refundWindow ): refundWindow is 4 | 7 | 14 => refundWindow !== undefined
+	);
 }
 
 function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {

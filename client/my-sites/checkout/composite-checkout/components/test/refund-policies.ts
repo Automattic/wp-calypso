@@ -179,7 +179,7 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [] );
+		expect( refundPolicies ).toEqual( [ RefundPolicy.NonRefundable ] );
 	} );
 
 	test( 'premium theme product', () => {
@@ -222,12 +222,18 @@ describe( 'getRefundWindows', () => {
 	test( 'yearly plan and bundled domain', () => {
 		const refundWindows = getRefundWindows( [ RefundPolicy.PlanYearlyBundle ] );
 
-		expect( refundWindows ).toEqual( [ 4, 14 ] );
+		expect( refundWindows ).toEqual( [ 14 ] );
 	} );
 
 	test( 'premium theme', () => {
 		const refundWindows = getRefundWindows( [ RefundPolicy.PremiumTheme ] );
 
 		expect( refundWindows ).toEqual( [ 14 ] );
+	} );
+
+	test( 'non-refundable', () => {
+		const refundWindows = getRefundWindows( [ RefundPolicy.NonRefundable ] );
+
+		expect( refundWindows ).toEqual( [] );
 	} );
 } );
