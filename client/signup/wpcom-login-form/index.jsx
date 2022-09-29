@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import debugFactory from 'debug';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 
 const debug = debugFactory( 'calypso:signup:wpcom-login' );
 
@@ -21,11 +21,14 @@ function getFormAction( redirectTo ) {
 }
 
 export default class WpcomLoginForm extends Component {
-	form = null;
+	constructor( props ) {
+		super( props );
+		this.form = createRef();
+	}
 
 	componentDidMount() {
 		debug( 'submit form' );
-		this.form.submit();
+		this.form.current.submit();
 	}
 
 	renderExtraFields() {
@@ -40,15 +43,11 @@ export default class WpcomLoginForm extends Component {
 		) );
 	}
 
-	storeFormRef = ( form ) => {
-		this.form = form;
-	};
-
 	render() {
 		const { redirectTo } = this.props;
 
 		return (
-			<form method="post" action={ getFormAction( redirectTo ) } ref={ this.storeFormRef }>
+			<form method="post" action={ getFormAction( redirectTo ) } ref={ this.form }>
 				<input type="hidden" name="log" value={ this.props.log } />
 				<input type="hidden" name="pwd" value={ this.props.pwd } />
 				<input type="hidden" name="authorization" value={ this.props.authorization } />
