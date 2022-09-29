@@ -129,6 +129,26 @@ $videopress-mobile-layout-width: 700px;
 						}
 					}
 				}
+
+				.selected-plan-item {
+					background-color: #ffe61c !important;
+					color: #000 !important;
+					background-image: repeating-linear-gradient(
+						-45deg,
+						transparent,
+						transparent 1rem,
+						rgba(0, 0, 0, 0.1) 1rem,
+						rgba(0, 0, 0, 0.1) 2rem
+					) !important;
+					background-size: 200% 200% !important;
+					animation: videopress-selected-plan-item 10s linear infinite !important;
+				}
+
+				@keyframes videopress-selected-plan-item {
+					100% {
+						background-position: 100% 100%;
+					}
+				}
 			}
 		}
 	}
