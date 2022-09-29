@@ -1,6 +1,13 @@
 .eligibility-warnings {
+	// 16px from card padding + 32 = 48 gap from top|bottom
+	// 24px from card padding + 24 = 48 gab from left|right
+	padding: 32px 24px;
+	overflow-wrap: anywhere;
+	background: #fff;
 	margin-top: 16px;
 	font-size: $font-body-small;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	padding-top: 2em;
 
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
@@ -12,6 +19,15 @@
 		display: flex;
 		gap: 5px;
 	}
+
+	.card {
+		box-shadow: none;
+	}
+}
+
+.dialog .eligibility-warnings {
+	box-shadow: none;
+	max-width: 650px;
 }
 
 .eligibility-warnings__title {
@@ -28,10 +44,6 @@
 }
 
 .eligibility-warnings--with-indent {
-	.eligibility-warnings__message {
-		padding: 0 16px;
-		margin-left: 24px;
-	}
 	.gridicon + .eligibility-warnings__message {
 		margin-left: 0;
 	}
@@ -73,10 +85,6 @@
 	flex-direction: row;
 	align-items: flex-start;
 	margin-bottom: 16px;
-
-	&:first-of-type {
-		padding-top: 6px;
-	}
 }
 
 .eligibility-warnings__hold .gridicon,
@@ -103,6 +111,7 @@
 
 	.eligibility-warnings__message-description {
 		color: var(--color-text-subtle);
+		font-size: $font-body;
 	}
 }
 
@@ -145,4 +154,29 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 	max-width: 300px;
+}
+
+.eligibility-warnings__domain-names {
+	margin-top: 20px;
+
+	.card {
+		padding: 10px 24px;
+		margin-bottom: 5px;
+	}
+
+	.badge {
+		position: absolute;
+		right: 20px;
+		border-radius: 4px;
+	}
+}
+
+.eligibility-warnings__warnings-card {
+	background: #f6f7f7;
+	margin: 0 24px;
+}
+
+.eligibility-warnings__warning:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
 }

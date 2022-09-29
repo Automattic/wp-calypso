@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
@@ -255,7 +255,11 @@ export default function WPCOMBusinessAT() {
 				{ !! holds?.length && (
 					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />
 				) }
-				{ !! warnings?.length && <WarningList warnings={ warnings } context={ 'backup' } /> }
+				{ !! warnings?.length && (
+					<CompactCard className="eligibility-warnings__warnings-card">
+						<WarningList warnings={ warnings } context={ 'backup' } />
+					</CompactCard>
+				) }
 			</Dialog>
 		</Main>
 	);
