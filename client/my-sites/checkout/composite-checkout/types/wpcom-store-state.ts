@@ -531,7 +531,6 @@ export function prepareDomainContactValidationRequest(
 			last_name: details.lastName?.value,
 			organization: details.organization?.value,
 			email: details.email?.value,
-			alternate_email: details.alternateEmail?.value,
 			phone: details.phone?.value,
 			phone_number_country: details.phoneNumberCountry?.value,
 			address_1: details.address1?.value,
@@ -557,7 +556,7 @@ export function prepareGSuiteContactValidationRequest(
 		contact_information: {
 			first_name: details.firstName?.value ?? '',
 			last_name: details.lastName?.value ?? '',
-			alternate_email: details.alternateEmail?.value ?? '',
+			email: details.email?.value ?? '',
 			postal_code: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value

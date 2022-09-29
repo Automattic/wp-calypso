@@ -406,7 +406,7 @@ export type GSuiteContactValidationRequest = {
 	contact_information: {
 		first_name: string;
 		last_name: string;
-		alternate_email: string;
+		email: string;
 		postal_code: string;
 		country_code: string;
 	};

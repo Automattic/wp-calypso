@@ -36,7 +36,7 @@ import './style.scss';
 
 const noop = () => {};
 
-export class ContactDetailsFormFields extends Component {
+class ContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
 		contactDetails: PropTypes.shape(
@@ -513,9 +513,9 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
-					label={ this.props.translate( 'Alternate Email Address' ) }
-					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+					label={ this.props.translate( 'Alternate email address' ) }
+					{ ...this.getFieldProps( 'email', {
+						customErrorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 				/>
 			</div>

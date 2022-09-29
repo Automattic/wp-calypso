@@ -113,12 +113,6 @@ function EmailSummary( {
 		return null;
 	}
 
-	if ( isGSuiteInCart && ! areThereDomainProductsInCart ) {
-		return contactInfo.alternateEmail?.value ? (
-			<SummaryLine>{ contactInfo.alternateEmail?.value }</SummaryLine>
-		) : null;
-	}
-
 	if ( ! contactInfo.email?.value ) {
 		return null;
 	}
