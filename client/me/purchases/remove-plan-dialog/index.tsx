@@ -3,10 +3,10 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { isRefundable } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SiteScreenshot } from '../site-screenshot/';
 import getPlanFeatures from './get-plan-features';
-
 import './style.scss';
 
 interface RemovePlanDialogProps {
@@ -40,10 +40,9 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
-	const subTitle =
-		hasDomain && wpcomSiteURL
-			? translate( 'If you cancel your plan, once it expires, you will lose:' )
-			: translate( 'If you cancel your plan, you will lose:' );
+	const subTitle = ! isRefundable
+		? translate( 'If you cancel your plan, once it expires, you will lose:' )
+		: translate( 'If you cancel your plan, you will lose:' );
 
 	/**
 	 * Click events, buttons tracking and action.
