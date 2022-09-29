@@ -124,6 +124,8 @@ export const EligibilityWarnings = ( {
 
 	const blockingMessages = getBlockingMessages( translate );
 
+	const filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -151,11 +153,11 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || listHolds.length > 0 ) && (
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
 				<CompactCard>
 					<HoldList
 						context={ context }
-						holds={ listHolds }
+						holds={ filteredHolds }
 						isPlaceholder={ isPlaceholder }
 						isMarketplace={ isMarketplace }
 					/>

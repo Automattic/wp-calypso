@@ -140,7 +140,7 @@ export default function CTAButton( {
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
-					title={ translate( 'Flex your site with plugins' ) }
+					title={ translate( 'Upgrade your plan to install plugins' ) }
 					primaryText={
 						eligibilityHolds &&
 						eligibilityHolds.indexOf( eligibilityHoldsConstants.NO_BUSINESS_PLAN ) !== -1
