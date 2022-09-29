@@ -41,16 +41,51 @@ export const videopress: Flow = {
 		setStepProgress( flowProgress );
 		const _siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const _siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+
 		const clearOnboardingSiteOptions = () => {
 			setSiteTitle( '' );
 			setSiteDescription( '' );
 			setDomain( undefined );
 		};
 
+		const stepValidateUserIsLoggedIn = () => {
+			if ( ! userIsLoggedIn ) {
+				navigate( 'intro' );
+				return false;
+			}
+			return true;
+		};
+
+		const stepValidateSiteTitle = () => {
+			if ( ! stepValidateUserIsLoggedIn() ) {
+				return false;
+			}
+
+			if ( ! _siteTitle.length ) {
+				navigate( 'options' );
+				return false;
+			}
+
+			return true;
+		};
+
+		switch ( _currentStep ) {
+			case 'intro':
+				clearOnboardingSiteOptions();
+				break;
+			case 'options':
+				stepValidateUserIsLoggedIn();
+				break;
+			case 'chooseADomain':
+			case 'chooseAPlan':
+				stepValidateSiteTitle();
+				break;
+		}
+
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
-					clearOnboardingSiteOptions();
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
