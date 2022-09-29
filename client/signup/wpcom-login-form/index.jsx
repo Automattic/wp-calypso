@@ -1,8 +1,5 @@
 import config from '@automattic/calypso-config';
-import debugFactory from 'debug';
-import { Component, createRef } from 'react';
-
-const debug = debugFactory( 'calypso:signup:wpcom-login' );
+import { useEffect, useRef } from 'react';
 
 function getFormAction( redirectTo ) {
 	const subdomainRegExp = /^https?:\/\/([a-z0-9]+)\.wordpress\.com(?:$|\/)/;
@@ -20,20 +17,14 @@ function getFormAction( redirectTo ) {
 	return `https://${ subdomain }wordpress.com/wp-login.php`;
 }
 
-export default class WpcomLoginForm extends Component {
-	constructor( props ) {
-		super( props );
-		this.form = createRef();
-	}
+export default function WpcomLoginForm( { extraFields, redirectTo, authorization, pwd, log } ) {
+	const form = useRef();
 
-	componentDidMount() {
-		debug( 'submit form' );
-		this.form.current.submit();
-	}
+	useEffect( () => {
+		form.current.submit();
+	}, [] );
 
-	renderExtraFields() {
-		const { extraFields } = this.props;
-
+	function renderExtraFields() {
 		if ( ! extraFields ) {
 			return null;
 		}
@@ -43,17 +34,13 @@ export default class WpcomLoginForm extends Component {
 		) );
 	}
 
-	render() {
-		const { redirectTo } = this.props;
-
-		return (
-			<form method="post" action={ getFormAction( redirectTo ) } ref={ this.form }>
-				<input type="hidden" name="log" value={ this.props.log } />
-				<input type="hidden" name="pwd" value={ this.props.pwd } />
-				<input type="hidden" name="authorization" value={ this.props.authorization } />
-				<input type="hidden" name="redirect_to" value={ this.props.redirectTo } />
-				{ this.renderExtraFields() }
-			</form>
-		);
-	}
+	return (
+		<form method="post" action={ getFormAction( redirectTo ) } ref={ form }>
+			<input type="hidden" name="log" value={ log } />
+			<input type="hidden" name="pwd" value={ pwd } />
+			<input type="hidden" name="authorization" value={ authorization } />
+			<input type="hidden" name="redirect_to" value={ redirectTo } />
+			{ renderExtraFields() }
+		</form>
+	);
 }
