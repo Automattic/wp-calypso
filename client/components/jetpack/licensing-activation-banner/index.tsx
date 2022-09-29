@@ -24,7 +24,7 @@ function LicensingActivationBanner( { siteId }: Props ) {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_licensing_activation_banner_render', { site_id: siteId } )
 		);
-	}, [ dispatch, siteId ] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const onLinkClick = useCallback( () => {
 		dispatch(

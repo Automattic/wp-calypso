@@ -45,7 +45,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const onSwitchView = useCallback(
 		( view: ViewType ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_jetpack_product_view_select', {
+				recordTracksEvent( 'calypso_jetpack_product_store_view_select', {
 					site_id: siteId,
 					view,
 				} )

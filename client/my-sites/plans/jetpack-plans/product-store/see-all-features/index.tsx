@@ -11,7 +11,7 @@ export const SeeAllFeatures: React.FC = () => {
 	return (
 		<div className="jetpack-product-store__see-all-features">
 			<Button
-				onClick={ () => recordTracksEvent( 'calypso_product_see_all_features_click' ) }
+				onClick={ () => recordTracksEvent( 'calypso_product_store_see_all_features_click' ) }
 				href={ PLAN_COMPARISON_PAGE }
 				target="_blank"
 				rel="noreferrer"

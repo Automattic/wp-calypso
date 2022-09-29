@@ -22,7 +22,7 @@ export const useProductLightbox = () => {
 		( product: SelectorProduct ): VoidFunction => {
 			return () => {
 				dispatch(
-					recordTracksEvent( 'calypso_jetpack_product_more_about_product_click', {
+					recordTracksEvent( 'calypso_jetpack_product_store_more_about_product_click', {
 						product_slug: product.productSlug,
 					} )
 				);

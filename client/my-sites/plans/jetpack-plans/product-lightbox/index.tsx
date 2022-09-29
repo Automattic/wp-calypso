@@ -68,10 +68,8 @@ const ProductLightbox: React.FC< Props > = ( {
 	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite, getOnClickPurchase } =
 		useStoreItemInfoContext();
 
-	const onClickCta = getOnClickPurchase( product );
-	const onCheckoutClick = () => {
-		onClickCta();
-
+	const onCheckoutClick = useCallback( () => {
+		getOnClickPurchase( product )();
 		// Tracking when checkout is clicked
 		dispatch(
 			recordTracksEvent( 'calyspo_product_lightbox_checkout_click', {
@@ -79,7 +77,7 @@ const ProductLightbox: React.FC< Props > = ( {
 				product_slug: product.productSlug,
 			} )
 		);
-	};
+	}, [ dispatch, getOnClickPurchase, product, siteId ] );
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
