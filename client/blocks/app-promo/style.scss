@@ -19,7 +19,7 @@
 	align-self: center;
 
 	svg {
-		fill: #616161;
+		fill: var(--color-text-subtle);
 	}
 }
 
@@ -56,10 +56,10 @@
 }
 
 .app-promo .app-promo_jetpack-app-button {
-	color: #1e1e1e;
+	color: var(--color-text);
 
 	&:hover {
-		color: #1e1e1e;
+		color: var(--color-text);
 		text-decoration: none;
 		cursor: inherit;
 	}
