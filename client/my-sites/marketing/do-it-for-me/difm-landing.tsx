@@ -8,6 +8,7 @@ import {
 	isPremium,
 	isEcommerce,
 	isPro,
+	getDIFMTieredPriceDetails,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -25,7 +26,7 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { incrementCounter } from 'calypso/state/persistent-counter/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getProductCost, getProductPriceTierList } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -247,11 +248,14 @@ export default function DIFMLanding( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
-	const tiers = useSelector( ( state ) => getProductPriceTierList( state, WPCOM_DIFM_LITE ) );
+	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
+	const productCost = product?.cost;
+
+	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
+	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && tiers.length > 1 && currencyCode;
+	const hasPriceDataLoaded = productCost && extraPageCost && currencyCode;
 
 	const [ isLoading, setIsLoading ] = useState( true );
 
@@ -259,8 +263,8 @@ export default function DIFMLanding( {
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
 		: '';
 
-	const extraPageCost = hasPriceDataLoaded
-		? formatCurrency( tiers[ 1 ].minimum_price - tiers[ 0 ].minimum_price, currencyCode, {
+	const extraPageDisplayCost = hasPriceDataLoaded
+		? formatCurrency( extraPageCost, currencyCode, {
 				stripZeros: true,
 				isSmallestUnit: true,
 		  } )
@@ -534,11 +538,14 @@ export default function DIFMLanding( {
 							) }
 						>
 							<p>
-								{ translate( 'Yes! Additional pages can be purchased for %(extraPageCost)s each.', {
-									args: {
-										extraPageCost,
-									},
-								} ) }
+								{ translate(
+									'Yes! Additional pages can be purchased for %(extraPageDisplayCost)s each.',
+									{
+										args: {
+											extraPageDisplayCost,
+										},
+									}
+								) }
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
