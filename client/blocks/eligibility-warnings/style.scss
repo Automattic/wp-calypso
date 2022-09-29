@@ -3,6 +3,8 @@
 	background: #fff;
 	margin-top: 16px;
 	font-size: $font-body-small;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	padding-top: 2em;
 
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
@@ -21,6 +23,8 @@
 }
 
 .dialog .eligibility-warnings {
+	box-shadow: none;
+	padding-top: 0;
 	max-width: 650px;
 }
 
