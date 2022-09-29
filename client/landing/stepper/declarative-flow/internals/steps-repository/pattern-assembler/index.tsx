@@ -54,15 +54,26 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		return pageTemplate;
 	};
 
+	let incrementIndex = 0;
 	const addSection = ( pattern: Pattern ) => {
+		incrementIndex++;
 		if ( sectionPosition !== null ) {
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
-				pattern,
+				{
+					...pattern,
+					key: `${ incrementIndex }-${ pattern.id }`,
+				},
 				...sections.slice( sectionPosition + 1 ),
 			] );
 		} else {
-			setSections( [ ...( sections as Pattern[] ), pattern ] );
+			setSections( [
+				...( sections as Pattern[] ),
+				{
+					...pattern,
+					key: `${ incrementIndex }-${ pattern.id }`,
+				},
+			] );
 		}
 	};
 

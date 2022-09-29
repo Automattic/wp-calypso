@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
+import { AnimatePresence, domMax, LazyMotion, m } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -35,17 +35,6 @@ const PatternLayout = ( {
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
-	const variantB = {
-		initial: {
-			opacity: 0,
-		},
-		animate: {
-			opacity: 1,
-		},
-		exit: {
-			opacity: 0,
-		},
-	};
 	return (
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
@@ -56,7 +45,7 @@ const PatternLayout = ( {
 					) }
 				</p>
 			</div>
-			<LazyMotion features={ domAnimation }>
+			<LazyMotion features={ domMax }>
 				<div className="pattern-layout__body">
 					<ul>
 						{ header ? (
@@ -74,13 +63,14 @@ const PatternLayout = ( {
 								</Button>
 							</li>
 						) }
-						{ sections?.map( ( section, index ) => {
-							const { id, name } = section;
-							return (
-								<AnimatePresence exitBeforeEnter>
+						<AnimatePresence initial={ false }>
+							{ sections?.map( ( section, index ) => {
+								const { name, key } = section as Pattern;
+								return (
 									<m.li
-										variants={ variantB }
-										key={ `${ id }` }
+										layout={ 'position' }
+										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
+										key={ `${ key }` }
 										className="pattern-layout__list-item pattern-layout__list-item--section"
 									>
 										<span className="pattern-layout__list-item-text" title={ name }>
@@ -96,10 +86,14 @@ const PatternLayout = ( {
 											disableMoveDown={ sections?.length === index + 1 }
 										/>
 									</m.li>
-								</AnimatePresence>
-							);
-						} ) }
-						<li className="pattern-layout__list-item pattern-layout__list-item--section">
+								);
+							} ) }
+						</AnimatePresence>
+						{ /* <AnimatePresence> */ }
+						<li
+							key={ `${ 'add-section-item' }` }
+							className="pattern-layout__list-item pattern-layout__list-item--section"
+						>
 							<Button onClick={ () => onSelectSection( null ) }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ sections?.length
@@ -107,6 +101,7 @@ const PatternLayout = ( {
 									: translate( 'Add a first section' ) }
 							</Button>
 						</li>
+						{ /* </AnimatePresence> */ }
 						{ footer ? (
 							<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 								<span className="pattern-layout__list-item-text" title={ footer.name }>
