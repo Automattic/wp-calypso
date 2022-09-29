@@ -8,7 +8,7 @@ import { createRef, Component } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
-import Search from 'calypso/components/search';
+import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import StickyPanel from 'calypso/components/sticky-panel';
 import {
@@ -318,6 +318,7 @@ class ThemesMagicSearchCard extends Component {
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				hideClose={ true }
+				searchMode={ SEARCH_MODE_ON_ENTER }
 			>
 				{ renderSuggestions && (
 					<KeyedSuggestions
