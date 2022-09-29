@@ -1,15 +1,20 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
 
 import './style.scss';
 
-const PluginIcon = ( { className, image, isPlaceholder } ) => {
+declare interface PluginIconProps {
+	className: string,
+	image: string,
+	isPlaceholder: boolean
+}
+
+const PluginIcon = ( { className, image, isPlaceholder }: PluginIconProps ) => {
 	const classes = classNames(
 		{
 			'plugin-icon': true,
 			'is-placeholder': isPlaceholder,
-			'is-fallback': ! image,
+			'is-fallback': !image,
 		},
 		className
 	);
@@ -23,12 +28,6 @@ const PluginIcon = ( { className, image, isPlaceholder } ) => {
 			) }
 		</div>
 	);
-};
-
-PluginIcon.propTypes = {
-	image: PropTypes.string,
-	isPlaceholder: PropTypes.bool,
-	className: PropTypes.string,
 };
 
 export default PluginIcon;
