@@ -50,12 +50,12 @@ class PostByline extends Component {
 			showSiteName,
 			showAvatar,
 			teams,
-			showFollow,
 			showPrimaryFollowButton,
 			followSource,
 		} = this.props;
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
-		const feedId = get( post, 'feed_ID' );
+		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
@@ -70,7 +70,6 @@ class PostByline extends Component {
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (

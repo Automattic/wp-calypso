@@ -10,7 +10,7 @@ import FeedError from 'calypso/reader/feed-error';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import SiteBlocked from 'calypso/reader/site-blocked';
 import Stream from 'calypso/reader/stream';
-import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import EmptyContent from './empty';
@@ -75,7 +75,7 @@ class FeedStream extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const feed = getFeed( state, ownProps.feedId );
+	const feed = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
 	const siteId = getReaderSiteId( feed );
 
 	return {
