@@ -159,7 +159,7 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	$is_empty_global_styles = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) === 0;
 
 	// By default, we know that we are at least updating.
-	$event_name = 'wpcom_global_styles_update';
+	$event_name = 'wpcom_global_styles_customize';
 
 	// If we are updating to empty contents then we know for sure we are resetting the contents.
 	if ( $is_empty_global_styles ) {
