@@ -31,10 +31,6 @@
 			}
 		}
 
-		.card:first-of-type.is-compact {
-			padding-top: 48px; // 16px from card padding + 32 = 48 gap from top
-		}
-
 		.card:last-of-type.is-compact {
 			border-top: 1px solid var(--color-border-shadow);
 		}

@@ -1,4 +1,7 @@
 .eligibility-warnings {
+	// 16px from card padding + 32 = 48 gap from top|bottom
+	// 24px from card padding + 24 = 48 gab from left|right
+	padding: 32px 24px;
 	overflow-wrap: anywhere;
 	background: #fff;
 	margin-top: 16px;
@@ -24,7 +27,6 @@
 
 .dialog .eligibility-warnings {
 	box-shadow: none;
-	padding-top: 0;
 	max-width: 650px;
 }
 
