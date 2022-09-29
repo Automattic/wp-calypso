@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useRef } from 'react';
 import { DEVICES_SUPPORTED, DEVICE_TYPE } from '../../constants';
-import { computer, phone } from './icons';
+import { computer, tablet, phone } from './icons';
 import type { Device } from '../../types';
 import './style.scss';
 
@@ -16,6 +16,7 @@ interface ToolbarProps {
 const Toolbar = ( { device: currentDevice, onDeviceClick }: ToolbarProps ) => {
 	const devices = useRef( {
 		[ DEVICE_TYPE.COMPUTER ]: { title: translate( 'Desktop' ), icon: computer, iconSize: 36 },
+		[ DEVICE_TYPE.TABLET ]: { title: translate( 'Tablet' ), icon: tablet, iconSize: 24 },
 		[ DEVICE_TYPE.PHONE ]: { title: translate( 'Phone' ), icon: phone, iconSize: 24 },
 	} );
 

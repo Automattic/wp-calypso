@@ -101,6 +101,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'theme-preview__container--loading': ! isLoaded,
 				'theme-preview__container--frame-bordered': isShowFrameBorder,
 				'theme-preview__container--is-computer': device === 'computer',
+				'theme-preview__container--is-tablet': device === 'tablet',
 				'theme-preview__container--is-phone': device === 'phone',
 			} ) }
 		>

@@ -104,6 +104,14 @@
 		}
 	}
 
+	&--is-tablet {
+		.theme-preview__frame-wrapper {
+			.theme-preview__frame {
+				max-width: 783px;
+			}
+		}
+	}
+
 	&--is-phone {
 		.theme-preview__frame-wrapper {
 			.theme-preview__frame {
