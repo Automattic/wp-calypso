@@ -141,10 +141,10 @@ $videopress-mobile-layout-width: 700px;
 						rgba(0, 0, 0, 0.1) 2rem
 					) !important;
 					background-size: 200% 200% !important;
-					animation: videopressselectedplanitem 10s linear infinite !important;
+					animation: videopress-selected-plan-item 10s linear infinite !important;
 				}
 
-				@keyframes videopressselectedplanitem {
+				@keyframes videopress-selected-plan-item {
 					100% {
 						background-position: 100% 100%;
 					}
