@@ -39,6 +39,13 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
 
 	const WarningMessageForCode = ( props: { code: string | number | null } ) => {
+		return (
+			<div className="email-plan-warnings__warning">
+				<div className="email-plan-warnings__message">
+					<span>{ cannotAddEmailWarningMessage }</span>
+				</div>
+			</div>
+		);
 		switch ( props.code ) {
 			case WARNING_CODE_OTHER_USER_OWNS_EMAIL:
 				return (
