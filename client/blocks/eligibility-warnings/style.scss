@@ -7,7 +7,6 @@
 	font-size: $font-body-small;
 	margin: 0;
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	padding-top: 2em;
 
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
@@ -65,6 +64,10 @@
 		.eligibility-warnings__message:last-of-type {
 			padding-bottom: 0;
 		}
+	}
+
+	&.eligibility-warnings--without-title {
+		padding-top: 3em;
 	}
 }
 
@@ -148,6 +151,7 @@
 	flex-grow: 1;
 	line-height: 24px;
 	padding: 0;
+	margin-bottom: 10px;
 
 	.eligibility-warnings__message-title {
 		font-weight: 600;
