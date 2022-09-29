@@ -11,6 +11,15 @@
 	.eligibility-warnings__confirm-buttons {
 		display: flex;
 		justify-content: space-between;
+
+		@media ( max-width: 660px ) {
+			display: block;
+
+			.button {
+				width: 100%;
+				margin-top: 20px;
+			}
+		}
 	}
 
 	.support-block {
@@ -218,6 +227,10 @@
 .eligibility-warnings__warnings-card {
 	background: #f6f7f7;
 	margin: 0 24px;
+
+	@media ( max-width: 480px ) {
+		margin: 0 16px;
+	}
 
 	.eligibility-warnings__message {
 		border-bottom: 1px solid var(--color-border-subtle);
