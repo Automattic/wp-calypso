@@ -10,6 +10,7 @@ import {
 	discoverBlogId,
 } from 'calypso/reader/discover/helper';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getReaderFollowForFeed } from 'calypso/state/reader/follows/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -95,7 +96,11 @@ export default connect( ( state, ownProps ) => {
 	const feedId = get( post, 'feed_ID' );
 	const isDiscover = get( post, 'is_discover' );
 	const isDiscoverStream = ownProps.isDiscoverStream;
-	const feed = getReaderFollowForFeed( state, parseInt( feedId ) );
+	const feed = getFeed( state, feedId );
+	const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+
+	// Add site icon to feed object so have icon for external feeds
+	feed.site_icon = follow ? follow.site_icon : null;
 
 	let discoverPost = undefined;
 	let discoverSite = undefined;
