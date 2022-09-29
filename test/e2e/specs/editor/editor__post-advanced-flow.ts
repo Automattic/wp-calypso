@@ -66,23 +66,20 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		} );
 
 		it( 'Validate post', async function () {
-			const testPage = await browser.newPage();
-			await testPage.goto( postURL.href );
+			await page.goto( postURL.href );
 
 			// Work around issue:
 			// https://github.com/Automattic/wp-calypso/issues/57503
-			await ElementHelper.reloadAndRetry( testPage, validatePublishedPage );
+			await ElementHelper.reloadAndRetry( page, validatePublishedPage );
 
 			async function validatePublishedPage(): Promise< void > {
-				await ParagraphBlock.validatePublishedContent( testPage, [ originalContent ] );
+				await ParagraphBlock.validatePublishedContent( page, [ originalContent ] );
 			}
-
-			await testPage.close();
 		} );
 	} );
 
 	describe( 'Edit published post', function () {
-		it( 'Navigate to Posts page', async function () {
+		beforeAll( async () => {
 			await postsPage.visit();
 		} );
 
@@ -108,15 +105,10 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			postURL = await editorPage.publish();
 		} );
 
-		it( 'Published post contains additional post content', async function () {
-			const testPage = await browser.newPage();
-			await testPage.goto( postURL.href );
-
-			await ParagraphBlock.validatePublishedContent( testPage, [
-				originalContent,
-				additionalContent,
-			] );
-			await testPage.close();
+		it( 'Ensure published post contains additional content', async function () {
+			await page.goto( postURL.href );
+			await ParagraphBlock.validatePublishedContent( page, [ originalContent, additionalContent ] );
+			await page.goBack();
 		} );
 	} );
 
@@ -125,17 +117,27 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 			await editorPage.unpublish();
 		} );
 
-		it( 'Post is no longer visible', async function () {
-			const testPage = await browser.newPage();
-			await testPage.goto( postURL.href );
-			await testPage.waitForSelector( 'body.error404' );
-			await testPage.close();
+		it( 'Ensure post is no longer visible', async function () {
+			// It's important that we use another context to confirm that the
+			// page was reverted to draft. It's also important that we DON'T use
+			// a separate context to preview this page when it was previously
+			// published, because it would get cached and wouldn't 404 until the
+			// cache self-invalidates (300s period). This workaround is specific
+			// for Atomic sites. See pMz3w-fZ0 for more info.
+			const tmpPage = await browser.newPage();
+			await tmpPage.goto( postURL.href );
+
+			await tmpPage.waitForSelector( 'body.error404' );
+			await tmpPage.close();
 		} );
 	} );
 
 	describe( 'Trash post', function () {
-		it( 'Trash post', async function () {
+		beforeAll( async function () {
 			await postsPage.visit();
+		} );
+
+		it( 'Trash post', async function () {
 			await postsPage.clickTab( 'Drafts' );
 			await postsPage.clickMenuItemForPost( { title: postTitle, action: 'Trash' } );
 		} );
