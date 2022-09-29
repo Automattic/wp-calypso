@@ -515,15 +515,16 @@ class ManagePurchase extends Component {
 
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
+			const { hasCustomPrimaryDomain } = this.props;
 			if ( isPlan( purchase ) ) {
-				if ( hasCustomDomain && isRefundable( purchase ) ) {
+				if ( hasCustomPrimaryDomain && isRefundable( purchase ) ) {
 					return (
 						<RemovePlanDialog
 							isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 							closeDialog={ this.closeDialog }
 							removePlan={ this.goToCancelLink }
 							site={ site }
-							hasDomain={ hasCustomDomain }
+							hasDomain={ hasCustomPrimaryDomain }
 							wpcomSiteURL={ site.slug }
 						/>
 					);
