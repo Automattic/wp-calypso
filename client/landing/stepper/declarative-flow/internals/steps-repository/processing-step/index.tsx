@@ -7,6 +7,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
+import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -18,9 +19,13 @@ export enum ProcessingResult {
 
 const ProcessingStep: Step = function ( props ): ReactElement | null {
 	const { submit } = props.navigation;
+	const { flow } = props;
 
 	const { __ } = useI18n();
-	const loadingMessages = useProcessingLoadingMessages();
+	const videoPressLoadingMessages = useVideoPressLoadingMessages();
+	const defaultLoadingMessages = useProcessingLoadingMessages();
+	const loadingMessages =
+		'videopress' === flow ? videoPressLoadingMessages : defaultLoadingMessages;
 
 	const [ currentMessageIndex, setCurrentMessageIndex ] = useState( 0 );
 	const [ hasActionSuccessfullyRun, setHasActionSuccessfullyRun ] = useState( false );

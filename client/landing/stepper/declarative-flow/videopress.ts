@@ -29,9 +29,22 @@ export const videopress: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		// Make sure we only target videopress stepper for body css
-		if ( document.body && ! document.body.classList.contains( 'is-videopress-stepper' ) ) {
-			document.body.classList.add( 'is-videopress-stepper' );
+		if ( document.body ) {
+			// Make sure we only target videopress stepper for body css
+			if ( ! document.body.classList.contains( 'is-videopress-stepper' ) ) {
+				document.body.classList.add( 'is-videopress-stepper' );
+			}
+
+			// Also target processing step for background images
+			const processingStepClassName = 'is-processing-step';
+			const hasProcessingStepClass = document.body.classList.contains( processingStepClassName );
+			if ( 'processing' === _currentStep ) {
+				if ( ! hasProcessingStepClass ) {
+					document.body.classList.add( processingStepClassName );
+				}
+			} else if ( hasProcessingStepClass ) {
+				document.body.classList.remove( processingStepClassName );
+			}
 		}
 
 		const name = this.name;
@@ -104,19 +117,11 @@ export const videopress: Flow = {
 					return navigate( 'chooseAPlan' );
 
 				case 'chooseAPlan': {
-					const { planSlug, siteSlug } = providedDependencies;
-
-					return window.location.replace(
-						`/checkout/${ siteSlug }/${ planSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
-					);
+					return navigate( 'processing' );
 				}
 
 				case 'completingPurchase':
-					return navigate( 'processing' );
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
-				}
+					return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();
