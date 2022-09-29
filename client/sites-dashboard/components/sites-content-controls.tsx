@@ -135,13 +135,17 @@ export const SitesContentControls = ( {
 					selectedText={ sprintf( __( 'Status: %(siteStatus)s' ), {
 						siteStatus: selectedStatus.title,
 					} ) }
-					ariaLabel={ sprintf(
-						// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
-						__( 'Filtering by Status "%(siteStatus)s". Switch status filter.' ),
-						{
-							siteStatus: selectedStatus.title,
-						}
-					) }
+					ariaLabel={
+						'all' === selectedStatus.name
+							? __( 'Displaying all sites.' )
+							: sprintf(
+									// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+									__( 'Filtering to sites with status "%(siteStatus)s".' ),
+									{
+										siteStatus: selectedStatus.title,
+									}
+							  )
+					}
 				>
 					{ statuses.map( ( { name, title, count } ) => (
 						<SelectDropdown.Item
