@@ -5,7 +5,7 @@ const GlobalStylesNotice = () => {
 	return (
 		<Notice status="warning" isDismissible={ false }>
 			{ __(
-				"Your style changes won't be public until you upgrade your plan. Uou can revert your styles.",
+				"Your style changes won't be public until you upgrade your plan. You can revert your styles.",
 				'full-site-editing'
 			) }
 		</Notice>
