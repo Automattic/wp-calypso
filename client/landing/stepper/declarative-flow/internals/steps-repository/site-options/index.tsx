@@ -138,6 +138,8 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	} = textsForFlow;
 
 	const isFormDisabled = ! isVideoPressFlow && ! site;
+	const isSiteTitleEmpty = ! siteTitle || siteTitle.trim().length === 0;
+	const isFormSubmitDisabled = isFormDisabled || ( isVideoPressFlow && isSiteTitleEmpty );
 
 	const stepContent = (
 		<form className="site-options__form" onSubmit={ handleSubmit }>
@@ -188,7 +190,7 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 				) }
 			</FormFieldset>
 			<Button
-				disabled={ isFormDisabled }
+				disabled={ isFormSubmitDisabled }
 				className="site-options__submit-button"
 				type="submit"
 				primary
