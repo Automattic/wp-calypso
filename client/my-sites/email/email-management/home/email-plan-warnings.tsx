@@ -94,7 +94,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	return (
 		<div className="email-plan-warnings__container">
 			{ cannotAddEmailWarningMessage && (
-				<WarningMessageForCode code={ cannotAddEmailWarningCode }/>
+				<WarningMessageForCode code={ cannotAddEmailWarningCode } />
 			) }
 
 			{ ! cannotAddEmailWarningMessage && warning && (
