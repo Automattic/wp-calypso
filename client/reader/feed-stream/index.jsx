@@ -76,12 +76,14 @@ class FeedStream extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
 	const feed = getFeed( state, ownProps.feedId );
 	const siteId = getReaderSiteId( feed );
 
 	// Add site icon to feed object so have icon for external feeds
-	feed.site_icon = follow ? follow.site_icon : null;
+	if ( feed ) {
+		const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+		feed.site_icon = follow ? follow.site_icon : null;
+	}
 
 	return {
 		feed,

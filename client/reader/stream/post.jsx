@@ -97,10 +97,12 @@ export default connect( ( state, ownProps ) => {
 	const isDiscover = get( post, 'is_discover' );
 	const isDiscoverStream = ownProps.isDiscoverStream;
 	const feed = getFeed( state, feedId );
-	const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
 
 	// Add site icon to feed object so have icon for external feeds
-	feed.site_icon = follow ? follow.site_icon : null;
+	if ( feed ) {
+		const follow = getReaderFollowForFeed( state, parseInt( ownProps.feedId ) );
+		feed.site_icon = follow ? follow.site_icon : null;
+	}
 
 	let discoverPost = undefined;
 	let discoverSite = undefined;
