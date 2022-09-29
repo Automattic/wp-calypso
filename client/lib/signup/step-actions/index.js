@@ -1179,19 +1179,19 @@ export function isAddOnsFulfilled( stepName, defaultDependencies, nextProps ) {
 export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { isPaidPlan, sitePlanSlug, submitSignupStep } = nextProps;
 	const fulfilledDependencies = [];
-	const defaultedDependencies = {};
+	const dependenciesFromDefaults = {};
 
 	// Check for plan-specific default theme
 	if ( defaultDependencies && defaultDependencies.themeSlugWithRepo ) {
 		fulfilledDependencies.push( 'themeSlugWithRepo' );
-		defaultedDependencies.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
+		dependenciesFromDefaults.themeSlugWithRepo = defaultDependencies.themeSlugWithRepo;
 	}
 
 	if ( isPaidPlan ) {
 		const cartItem = undefined;
 		submitSignupStep(
 			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem, ...defaultedDependencies }
+			{ cartItem, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, sitePlanSlug );
 		fulfilledDependencies.push( 'cartItem' );
@@ -1199,7 +1199,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 		const cartItem = getCartItemForPlan( defaultDependencies.cartItem );
 		submitSignupStep(
 			{ stepName, cartItem, wasSkipped: true },
-			{ cartItem, ...defaultedDependencies }
+			{ cartItem, ...dependenciesFromDefaults }
 		);
 		recordExcludeStepEvent( stepName, defaultDependencies.cartItem );
 		fulfilledDependencies.push( 'cartItem' );
