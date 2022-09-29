@@ -145,7 +145,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				setProgress( 1.0 );
 
 				window.location.replace(
-					`/checkout/${ newSite?.site_slug }/${ planObject?.periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+					`/checkout/${ newSite?.site_slug }/${ planObject?.periodAgnosticSlug }?signup=1&redirect_to=/setup/completingPurchase?flow=videopress`
 				);
 			} );
 
