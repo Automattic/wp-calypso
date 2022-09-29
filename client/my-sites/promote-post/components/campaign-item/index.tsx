@@ -55,7 +55,7 @@ export default function CampaignItem( { campaign }: Props ) {
 	} = campaign;
 
 	const overallSpending = useMemo(
-		() => getCampaignOverallSpending( spent_budget_cents, start_date, end_date ),
+		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
 		[ spent_budget_cents, start_date, end_date ]
 	);
 
