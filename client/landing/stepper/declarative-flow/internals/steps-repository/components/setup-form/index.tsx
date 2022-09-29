@@ -14,9 +14,10 @@ import AccentColorControl, { AccentColor } from './accent-color-control';
 import './style.scss';
 
 interface TranslatedStrings {
-	titlePlaceholder: string;
-	titleMissing: string;
-	taglinePlaceholder: string;
+	titlePlaceholder?: string;
+	titleMissing?: string;
+	taglinePlaceholder?: string;
+	iconPlaceholder?: string;
 }
 interface SetupFormProps {
 	site: SiteDetails | null;
@@ -84,7 +85,7 @@ const SetupForm = ( {
 		<form className="setup-form__form" onSubmit={ handleSubmit }>
 			<SiteIconWithPicker
 				site={ site }
-				placeholderText={ __( 'Upload a profile image' ) }
+				placeholderText={ translatedStrings?.iconPlaceholder || __( 'Upload a profile image' ) }
 				onSelect={ ( file ) => {
 					setSelectedFile( file );
 					imageFileToBase64( file );

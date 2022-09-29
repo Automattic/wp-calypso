@@ -27,6 +27,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
+		iconPlaceholder: __( 'Add a site icon' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =

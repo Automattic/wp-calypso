@@ -21,6 +21,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 		titlePlaceholder: __( 'My Link in Bio' ),
 		titleMissing: __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Add a short biography here' ),
+		iconPlaceholder: __( 'Upload a profile image' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
