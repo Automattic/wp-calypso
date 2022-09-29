@@ -4,9 +4,9 @@ import classNames from 'classnames';
 import './style.scss';
 
 declare interface PluginIconProps {
-	className: string;
-	image: string;
-	isPlaceholder: boolean;
+	className?: string;
+	image?: string;
+	isPlaceholder?: boolean;
 }
 
 const PluginIcon = ( { className, image, isPlaceholder }: PluginIconProps ) => {
