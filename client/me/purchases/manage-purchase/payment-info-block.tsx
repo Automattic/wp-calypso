@@ -35,8 +35,19 @@ export default function PaymentInfoBlock( {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
+	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+	}
+
 	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
-		return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className="manage-purchase__no-payment-method">
+					<Icon icon={ warning } />
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
 	}
 
 	if (
