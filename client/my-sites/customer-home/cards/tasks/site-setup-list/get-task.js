@@ -270,7 +270,7 @@ export const getTask = (
 				timing: 10,
 				title: translate( 'Publish your first post' ),
 				description: translate(
-					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
+					"Get your thoughts together because it is time to start writing. After publishing, don't forget to share your first post with your networks on social media."
 				),
 				actionText: translate( 'Draft a post' ),
 				actionUrl: `/post/${ siteSlug }`,
