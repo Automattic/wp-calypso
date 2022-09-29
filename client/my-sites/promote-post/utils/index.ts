@@ -77,16 +77,21 @@ export const getCampaignDurationDays = ( start_date: string, end_date: string ) 
 
 export const getCampaignOverallSpending = (
 	spent_budget_cents: number,
+	budget_cents: number,
 	start_date: string,
 	end_date: string
 ) => {
 	if ( ! spent_budget_cents ) {
 		return '-';
 	}
-
-	const totalBudgetUsed = spent_budget_cents / 100;
-	let daysRun = moment().diff( moment( start_date ), 'days' );
 	const campaignDays = getCampaignDurationDays( start_date, end_date );
+	const spentBudgetCents =
+		spent_budget_cents > budget_cents * campaignDays
+			? budget_cents * campaignDays
+			: spent_budget_cents;
+
+	const totalBudgetUsed = spentBudgetCents / 100;
+	let daysRun = moment().diff( moment( start_date ), 'days' );
 	daysRun = daysRun > campaignDays ? campaignDays : daysRun;
 
 	/* translators: %1$s: Amount, %2$s: Days. eg: $3 over 2 days */
@@ -97,7 +102,7 @@ export const getCampaignOverallSpending = (
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
 	const formattedRate = clickthroughRate.toLocaleString( undefined, {
-		useGrouping: false,
+		useGrouping: true,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
 	} );
@@ -122,14 +127,28 @@ export const getCampaignBudgetData = (
 	end_date: string,
 	spent_budget_cents: number
 ) => {
-	const totalBudget = ( budget_cents * getCampaignDurationDays( start_date, end_date ) ) / 100;
-	const totalBudgetUsed = spent_budget_cents / 100;
+	const campaignDays = getCampaignDurationDays( start_date, end_date );
+	const spentBudgetCents =
+		spent_budget_cents > budget_cents * campaignDays
+			? budget_cents * campaignDays
+			: spent_budget_cents;
+
+	const totalBudget = ( budget_cents * campaignDays ) / 100;
+	const totalBudgetUsed = spentBudgetCents / 100;
 	const totalBudgetLeft = totalBudget - totalBudgetUsed;
 	return {
 		totalBudget,
 		totalBudgetUsed,
 		totalBudgetLeft,
 	};
+};
+
+export const formatCents = ( amount: number ) => {
+	return amount.toLocaleString( undefined, {
+		useGrouping: true,
+		minimumFractionDigits: amount % 1 !== 0 ? 2 : 0,
+		maximumFractionDigits: 2,
+	} );
 };
 
 export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string ) => {

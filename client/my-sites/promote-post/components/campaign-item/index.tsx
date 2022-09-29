@@ -13,6 +13,7 @@ import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-pos
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	canCancelCampaign,
+	formatCents,
 	getCampaignAudienceString,
 	getCampaignBudgetData,
 	getCampaignClickthroughRate,
@@ -54,7 +55,7 @@ export default function CampaignItem( { campaign }: Props ) {
 	} = campaign;
 
 	const overallSpending = useMemo(
-		() => getCampaignOverallSpending( spent_budget_cents, start_date, end_date ),
+		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
 		[ spent_budget_cents, start_date, end_date ]
 	);
 
@@ -72,7 +73,9 @@ export default function CampaignItem( { campaign }: Props ) {
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
-	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';
+	const totalBudgetLeftString = totalBudgetLeft
+		? `($${ formatCents( totalBudgetLeft ) } ${ __( 'left' ) })`
+		: '';
 
 	const estimatedImpressions = useMemo(
 		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
