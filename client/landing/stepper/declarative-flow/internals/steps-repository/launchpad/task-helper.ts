@@ -41,10 +41,7 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a Plan' ),
 						keepActive: true,
 						actionDispatch: () => {
-							recordTracksEvent( 'calypso_launchpad_choose_plan_task_clicked', {
-								flow: flow,
-								isCompleted: task.isCompleted,
-							} );
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 							window.location.replace( `/plans/${ siteSlug }` );
 						},
 						badgeText: translatedPlanName,
@@ -56,10 +53,7 @@ export function getEnhancedTasks(
 						keepActive: true,
 						actionDispatch: () => {
 							if ( goToStep ) {
-								recordTracksEvent( 'calypso_launchpad_add_subscribers_task_clicked', {
-									flow: flow,
-									isCompleted: task.isCompleted,
-								} );
+								recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 								goToStep( 'subscribers' );
 							}
 						},
@@ -69,10 +63,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						actionDispatch: () => {
-							recordTracksEvent( 'calypso_launchpad_publish_first_post_task_clicked', {
-								flow: flow,
-								isCompleted: task.isCompleted,
-							} );
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 							window.location.replace( `/post/${ siteSlug }` );
 						},
 					};
@@ -87,10 +78,7 @@ export function getEnhancedTasks(
 						title: translate( 'Personalize Link in Bio' ),
 						keepActive: true,
 						actionDispatch: () => {
-							recordTracksEvent( 'calypso_launchpad_setup_link_in_bio_task_clicked', {
-								flow: flow,
-								isCompleted: task.isCompleted,
-							} );
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 							window.location.replace(
 								`/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`
 							);
@@ -101,10 +89,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Add links' ),
 						actionDispatch: () => {
-							recordTracksEvent( 'calypso_launchpad_add_links_task_clicked', {
-								flow: flow,
-								isCompleted: task.isCompleted,
-							} );
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 							window.location.replace( `/site-editor/${ siteSlug }` );
 						},
 						keepActive: true,
@@ -128,10 +113,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTracksEvent( 'calypso_launchpad_launch_link_in_bio_task_clicked', {
-										flow: flow,
-										isCompleted: task.isCompleted,
-									} );
+									recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 									window.location.replace( `/home/${ siteSlug }` );
 								} );
 
@@ -144,6 +126,19 @@ export function getEnhancedTasks(
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
 	return enhancedTaskList;
+}
+
+// Records a generic task click Tracks event
+function recordTaskClickTracksEvent(
+	flow: string | null | undefined,
+	isCompleted: boolean,
+	taskId: string
+) {
+	recordTracksEvent( 'calypso_launchpad_task_clicked', {
+		taskId,
+		isCompleted,
+		flow,
+	} );
 }
 
 // Returns list of tasks/checklist items for a specific flow
