@@ -20,11 +20,12 @@ export const anchorFmFlow: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 		const siteSlugParam = useSiteSlugParam();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'anchor-fm', currentStep );
+			recordSubmitStep( providedDependencies, 'anchor-fm', flowName, currentStep );
 			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
 
 			switch ( currentStep ) {
