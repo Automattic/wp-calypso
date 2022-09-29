@@ -588,6 +588,10 @@ export class EditorPage {
 			this.getPublishedURLFromToast(),
 		] );
 
+		if ( ! publishedURL ) {
+			throw new Error( 'Could not retrieve published post URL' );
+		}
+
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL.href );
 		}

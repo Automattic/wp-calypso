@@ -63,7 +63,6 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 		it( 'Publish post', async function () {
 			postURL = await editorPage.publish();
-			expect( postURL.href ).toBeDefined();
 		} );
 
 		it( 'Validate post', async function () {
