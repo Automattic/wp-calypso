@@ -11,7 +11,7 @@ import {
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
 
-function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status } ) {
+function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status, type } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -38,7 +38,7 @@ function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status
 
 	return (
 		<PopoverMenuItem onClick={ showDSPWidget } icon={ 'speaker' }>
-			{ translate( 'Promote Post' ) }
+			{ type === 'post' ? translate( 'Promote Post' ) : translate( 'Promote Page' ) }
 		</PopoverMenuItem>
 	);
 }

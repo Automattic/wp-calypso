@@ -97,7 +97,7 @@ export const getCampaignOverallSpending = (
 export const getCampaignClickthroughRate = ( clicks_total: number, impressions_total: number ) => {
 	const clickthroughRate = ( clicks_total * 100 ) / impressions_total || 0;
 	const formattedRate = clickthroughRate.toLocaleString( undefined, {
-		useGrouping: false,
+		useGrouping: true,
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 2,
 	} );
@@ -130,6 +130,14 @@ export const getCampaignBudgetData = (
 		totalBudgetUsed,
 		totalBudgetLeft,
 	};
+};
+
+export const formatCents = ( amount: number ) => {
+	return amount.toLocaleString( undefined, {
+		useGrouping: true,
+		minimumFractionDigits: amount % 1 !== 0 ? 2 : 0,
+		maximumFractionDigits: 2,
+	} );
 };
 
 export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string ) => {
