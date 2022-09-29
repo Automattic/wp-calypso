@@ -1,6 +1,8 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
+import WooCommerceBundledBadge from '../../../../../../../packages/design-picker/src/components/woocommerce-bundled-badge';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { Design } from '@automattic/design-picker';
@@ -22,11 +24,22 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		)
 	);
 
+	const showBundledBadge =
+		isEnabled( 'themes/plugin-bundling' ) &&
+		( selectedDesign.software_sets || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
+
+	let badge: React.ReactNode = null;
+	if ( showBundledBadge ) {
+		badge = <WooCommerceBundledBadge />;
+	} else if ( selectedDesign.is_premium ) {
+		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
+	}
+
 	if ( selectedDesign.is_premium ) {
 		return (
 			<div className="design-picker-design-title__container">
 				{ designTitle }
-				<PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />
+				{ badge }
 			</div>
 		);
 	}
