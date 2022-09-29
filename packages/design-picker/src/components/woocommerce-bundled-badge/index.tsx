@@ -16,7 +16,10 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 } ) => {
 	const { __ } = useI18n();
 
-	const tooltipText = __( 'Placeholder text', __i18n_text_domain__ );
+	const tooltipText = __(
+		'This theme comes bundled with WooCommerce, the best way to sell online.',
+		__i18n_text_domain__
+	);
 
 	const divRef = useRef( null );
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
