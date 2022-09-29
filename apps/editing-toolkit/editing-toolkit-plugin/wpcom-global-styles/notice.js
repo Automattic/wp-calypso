@@ -1,3 +1,5 @@
+/* global wpcomGlobalStyles */
+
 import { Button, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -21,10 +23,15 @@ const GlobalStylesNotice = () => {
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
 			{ createInterpolateElement(
 				__(
-					"Your style changes won't be public until you upgrade your plan. You can <a>revert your styles</a>.",
+					"Your style changes won't be public until you <upgradeLink>upgrade your plan</upgradeLink>. You can <revertLink>revert your styles</revertLink>.",
 					'full-site-editing'
 				),
-				{ a: <Button variant="link" onClick={ resetGlobalStyles } /> }
+				{
+					upgradeLink: (
+						<Button variant="link" href={ wpcomGlobalStyles.upgradeUrl } target="_top" />
+					),
+					revertLink: <Button variant="link" onClick={ resetGlobalStyles } />,
+				}
 			) }
 		</Notice>
 	);
