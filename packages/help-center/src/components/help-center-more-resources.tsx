@@ -102,7 +102,7 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ `https://wordpress.com/home/${ siteSlug }?myHomeCoursePaymentsModal=payments-features` }
+							href={ `https://wordpress.com/home/${ siteSlug }?coursePaymentsModal=payments-features` }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__video"
