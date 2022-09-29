@@ -48,19 +48,19 @@ as that has a lot of dependencies that aren't ready for server-side rendering.
   our server router's middleware signatures. We might want to switch to an isomorphic
   router in the future.
 
-## Logged-in requests
-Currently, if a request is not logged-in, SSR middleware chains are skipped.
+## Logged-in Requests
+Currently, if a request is logged-in, SSR middleware chains are skipped.
 Even if you define an index.node.js, those middleware handlers will not be used
-if the request is logged in. This improves server-side performance in scenarios
+if the request is logged-in. This improves server-side performance in scenarios
 where the SSR pipeline ultimately resolves the same thing the non-SSR code would
 resolve.
 
 In general, SSR isn't a good fit for our logged-in pages. A lot of data is different
 for different users, which makes it difficult to correctly cache data for the same
-page. Since caching data is crucial for performance, it isn't usually feasable to
+page. Since caching data is crucial for performance, it isn't usually feasible to
 SSR logged-in requests.
 
-## Network requests
+## Network Requests
 It's common for SSR layouts to include network-fetched data. For example, the themes
 SSR page includes themes fetched on the backend. If your SSR section includes
 network requsets, it is **crucial** for those requsets to be cached and optimized
@@ -69,7 +69,7 @@ performance across the server can be negatively impacted, resulting in route tim
 and even outages.
 
 Thankfully, we have existing techniques for caching data, such as the redux cache
-(used for themes) and the react query cache (used for plugins). In each case, you
+(used for themes) and the React Query cache (used for plugins). In each case, you
 can avoid re-fetching data if the data already exists.
 
 ## Error Handling
