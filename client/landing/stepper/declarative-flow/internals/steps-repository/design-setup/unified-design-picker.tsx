@@ -114,6 +114,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
 
+	const hasVerticalImages = generatedDesigns.length > 0;
+
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
 		if ( ! hasTrackedView.current && staticDesigns.length > 0 ) {
@@ -121,7 +123,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				has_vertical_images: generatedDesigns.length > 0,
+				has_vertical_images: hasVerticalImages,
 			} );
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
@@ -336,7 +338,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
 			} );
 
-			if ( _selectedDesign.verticalizable ) {
+			if ( _selectedDesign.verticalizable && hasVerticalImages ) {
 				recordTracksEvent(
 					'calypso_signup_select_verticalized_design',
 					getEventPropsByDesign( _selectedDesign, selectedStyleVariation )
