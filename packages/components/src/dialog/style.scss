@@ -118,6 +118,10 @@
 	z-index: 1;
 	right: 0;
 	cursor: pointer;
+
+	&:hover svg {
+		opacity: 0.5;
+	}
 }
 
 .ReactModal__Body--open {
