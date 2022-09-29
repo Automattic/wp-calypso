@@ -24,13 +24,13 @@ export const newsletter: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const name = this.name;
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
-			flowName: name,
+			flowName,
 		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
@@ -42,7 +42,7 @@ export const newsletter: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
