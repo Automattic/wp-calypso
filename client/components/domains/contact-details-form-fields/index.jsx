@@ -36,7 +36,7 @@ import './style.scss';
 
 const noop = () => {};
 
-class ContactDetailsFormFields extends Component {
+export class ContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
 		contactDetails: PropTypes.shape(

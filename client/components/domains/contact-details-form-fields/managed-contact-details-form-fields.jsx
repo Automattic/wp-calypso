@@ -30,7 +30,7 @@ const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-class ManagedContactDetailsFormFields extends Component {
+export class ManagedContactDetailsFormFields extends Component {
 	static propTypes = {
 		eventFormName: PropTypes.string,
 		contactDetails: PropTypes.shape(
