@@ -101,7 +101,7 @@ export default connect( ( state, ownProps ) => {
 	// Add site icon to feed object so have icon for external feeds
 	if ( feed ) {
 		const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
-		feed.site_icon = follow ? follow.site_icon : null;
+		feed.site_icon = follow?.site_icon;
 	}
 
 	let discoverPost = undefined;

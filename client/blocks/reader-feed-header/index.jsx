@@ -79,12 +79,17 @@ class FeedHeader extends Component {
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteId = site && site.ID;
 		const siteIcon = site ? get( site, 'icon.img' ) : null;
-		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
 		} );
+
+		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		// don't show the default favicon for some sites
+		if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
+			feedIcon = null;
+		}
 
 		let fakeSite;
 
