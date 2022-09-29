@@ -8,6 +8,8 @@ import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/read
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
@@ -142,6 +144,8 @@ class PostByline extends Component {
 						siteUrl={ followUrl }
 						followSource={ followSource }
 						railcar={ post.railcar }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 					/>
 				) }
 				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />

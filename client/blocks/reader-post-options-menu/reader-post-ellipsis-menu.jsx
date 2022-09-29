@@ -12,7 +12,6 @@ import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import * as DiscoverHelper from 'calypso/reader/discover/helper';
-import FollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -271,7 +270,6 @@ class ReaderPostEllipsisMenu extends Component {
 			isBlockPossible = true;
 		}
 
-		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
@@ -283,15 +281,6 @@ class ReaderPostEllipsisMenu extends Component {
 				onToggle={ this.onMenuToggle }
 				position={ position }
 			>
-				{ this.props.showFollow && (
-					<FollowButton
-						tagName={ PopoverMenuItem }
-						siteUrl={ followUrl }
-						followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
-						followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
-					/>
-				) }
-
 				{ showConversationFollowButton && (
 					<ConversationFollowButton
 						tagName={ PopoverMenuItem }
