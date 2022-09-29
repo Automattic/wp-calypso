@@ -53,7 +53,7 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.assign(
-						`/start/${ name }/domains?new=${ encodeURIComponent(
+						`/start/${ flowName }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes`
 					);
