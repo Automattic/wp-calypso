@@ -1,5 +1,6 @@
 import { calculateMonthlyPriceForPlan } from '@automattic/calypso-products';
 import { getPlan } from './plan';
+import type { AppState } from 'calypso/types';
 
 import 'calypso/state/plans/init';
 
@@ -11,7 +12,11 @@ import 'calypso/state/plans/init';
  * @param  {boolean} isMonthly if true, returns monthly price
  * @returns {number|null}  plan price
  */
-export function getPlanRawPrice( state, productId, isMonthly = false ) {
+export function getPlanRawPrice(
+	state: AppState,
+	productId: number,
+	isMonthly?: boolean
+): number | null {
 	const plan = getPlan( state, productId );
 	const rawPrice = plan?.raw_price ?? -1;
 	const origCost = plan?.orig_cost ?? 0;
