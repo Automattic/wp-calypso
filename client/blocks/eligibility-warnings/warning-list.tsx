@@ -17,13 +17,15 @@ type Props = ExternalProps & LocalizeProps;
 
 export const WarningList = ( { context, translate, warnings, showContact = true }: Props ) => (
 	<div>
-		<div className="eligibility-warnings__warning">
-			<div className="eligibility-warnings__message">
-				<span className="eligibility-warnings__message-description">
-					{ getWarningDescription( context, warnings.length, translate ) }
-				</span>
+		{ getWarningDescription( context, warnings.length, translate ) && (
+			<div className="eligibility-warnings__warning">
+				<div className="eligibility-warnings__message">
+					<span className="eligibility-warnings__message-description">
+						{ getWarningDescription( context, warnings.length, translate ) }
+					</span>
+				</div>
 			</div>
-		</div>
+		) }
 
 		{ map( warnings, ( { name, description, supportUrl, domainNames }, index ) => (
 			<div className="eligibility-warnings__warning" key={ index }>

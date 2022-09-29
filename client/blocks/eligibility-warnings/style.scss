@@ -29,10 +29,6 @@
 		}
 	}
 
-	.card:last-of-type.is-compact {
-		border-top: 1px solid var(--color-border-shadow);
-	}
-
 	.eligibility-warnings__hold-list {
 		background: #fff;
 		border: 1px solid var(--studio-gray-5);
@@ -222,9 +218,18 @@
 .eligibility-warnings__warnings-card {
 	background: #f6f7f7;
 	margin: 0 24px;
+
+	.eligibility-warnings__message {
+		border-bottom: 1px solid var(--color-border-subtle);
+		padding-bottom: 10px;
+	}
 }
 
 .eligibility-warnings__warning:last-child {
 	margin-bottom: 0;
 	border-bottom: none;
+
+	.eligibility-warnings__message {
+		border-bottom: none;
+	}
 }
