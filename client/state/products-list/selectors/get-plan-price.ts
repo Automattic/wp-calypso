@@ -1,6 +1,6 @@
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
-import type { Plan } from '@automattic/calypso-products';
+import type { PlanObject } from './compute-full-and-monthly-prices-for-plan';
 import type { AppState } from 'calypso/types';
 
 /**
@@ -15,7 +15,7 @@ import type { AppState } from 'calypso/types';
 export const getPlanPrice = (
 	state: AppState,
 	siteId: number | undefined,
-	planObject: Plan,
+	planObject: Pick< PlanObject, 'getStoreSlug' | 'getProductId' >,
 	isMonthly?: boolean
 ): number | null => {
 	return (
