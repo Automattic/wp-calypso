@@ -1,16 +1,34 @@
-import { QueryClient, QueryCache, dehydrate, hashQueryKey } from 'react-query';
+import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from 'react-query';
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
-const sharedCache = new QueryCache();
+import type { Query, QueryState } from 'react-query/types/core/query';
 
 class QueryClientSSR extends QueryClient {
-	fetchedQueryKeys: { [ hash: string ]: boolean } = {};
+	private fetchedQueryKeys: { [ hash: string ]: boolean } = {};
 
-	fetchQuery( queryKey: any, ...args: any[] ) {
-		const queryHash = hashQueryKey( queryKey );
-		this.fetchedQueryKeys[ queryHash ] = true;
-		return super.fetchQuery( queryKey, ...args );
+	addFetchedQueryKey( queryKey: string ) {
+		this.fetchedQueryKeys[ queryKey ] = true;
+	}
+
+	getFetchedQueryKey( queryKey: string ) {
+		return this.fetchedQueryKeys[ queryKey ];
 	}
 }
+
+class QueryCacheSSR extends QueryCache {
+	build< TQueryFnData, TError, TData, TQueryKey extends QueryKey >(
+		client: QueryClient | QueryClientSSR,
+		options: QueryOptions< TQueryFnData, TError, TData, TQueryKey >,
+		state?: QueryState< TData, TError >
+	): Query< TQueryFnData, TError, TData, TQueryKey > {
+		const query = super.build( client, options, state );
+		if ( client instanceof QueryClientSSR ) {
+			client.addFetchedQueryKey( query.queryHash );
+		}
+		return query;
+	}
+}
+
+const sharedCache = new QueryCacheSSR();
 
 export function createQueryClientSSR() {
 	const queryClient = new QueryClientSSR( {
@@ -21,14 +39,14 @@ export function createQueryClientSSR() {
 	return queryClient;
 }
 
-export function dehydrateQueryClient( queryClient?: QueryClientSSR ) {
+export function dehydrateQueryClient( queryClient: QueryClientSSR ) {
 	if ( ! queryClient ) {
 		return null;
 	}
 
 	return dehydrate( queryClient, {
-		shouldDehydrateQuery: ( { queryHash } ) => {
-			return !! queryClient.fetchedQueryKeys[ queryHash ];
+		shouldDehydrateQuery: ( { queryHash: queryKey } ) => {
+			return !! queryClient.getFetchedQueryKey( queryKey );
 		},
 	} );
 }
