@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import { AnimatePresence, domMax, LazyMotion, m } from 'framer-motion';
+import { AnimatePresence, LazyMotion, m } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
@@ -35,6 +35,8 @@ const PatternLayout = ( {
 }: PatternLayoutProps ) => {
 	const translate = useTranslate();
 
+	const loadFeatures = () => import( './features.js' ).then( ( res ) => res.default );
+
 	return (
 		<div className="pattern-layout">
 			<div className="pattern-layout__header">
@@ -45,7 +47,7 @@ const PatternLayout = ( {
 					) }
 				</p>
 			</div>
-			<LazyMotion features={ domMax }>
+			<LazyMotion features={ loadFeatures }>
 				<div className="pattern-layout__body">
 					<ul>
 						{ header ? (
