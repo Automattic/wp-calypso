@@ -53,6 +53,10 @@ test( 'should allow http(s) links', () => {
 } );
 
 test( 'should omit non http(s) links', () => {
+	expect( clean( '<style><img alt="\u0022 src=x onerror=alert(1)//">' ) ).toBe( '' );
+	expect(
+		clean( '<IMG src="https://aaa" ><div>aaa<style><img alt="\u0022 src=x onerror=alert(1)//">' )
+	).toBe( '<img src="https://aaa"><div>aaa&lt;img alt="" src=x onerror=alert(1)//"&gt;</div>' );
 	expect( cleanNode( '<a href="file:///etc/passwd">a</a>' ) ).not.toHaveAttribute( 'href' );
 	expect( cleanNode( '<a href="javascript:alert(o)">a</a>' ) ).not.toHaveAttribute( 'href' );
 	expect( cleanNode( '<a href="ssh://bankvault">a</a>' ) ).not.toHaveAttribute( 'href' );
