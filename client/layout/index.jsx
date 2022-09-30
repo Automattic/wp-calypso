@@ -42,6 +42,7 @@ import {
 	masterbarIsVisible,
 	getSidebarIsCollapsed,
 } from 'calypso/state/ui/selectors';
+import { isSignupInitializing } from 'calypso/state/ui/signup-is-initializing/selectors';
 import BodySectionCssClass from './body-section-css-class';
 import LayoutLoader from './loader';
 import { handleScroll } from './utils';
@@ -136,6 +137,7 @@ class Layout extends Component {
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
 		isOffline: PropTypes.bool,
+		signupIsInitializing: PropTypes.bool,
 		sectionGroup: PropTypes.string,
 		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
@@ -411,6 +413,7 @@ export default withCurrentRoute(
 			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
+			signupIsInitializing: isSignupInitializing( state ),
 			userAllowedToHelpCenter,
 		};
 	} )( Layout )
