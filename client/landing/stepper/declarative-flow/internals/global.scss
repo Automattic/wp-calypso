@@ -191,14 +191,15 @@ button {
 						}
 					}
 				}
-				&:active:enabled {
+				&:focus {
 					background-color: var(--studio-blue-50);
+					box-shadow: none;
 					svg {
 						fill: #fff;
 					}
-				}
-				&:focus {
-					box-shadow: none;
+					span {
+						color: var(--studio-blue-50);
+					}
 				}
 			}
 		}
