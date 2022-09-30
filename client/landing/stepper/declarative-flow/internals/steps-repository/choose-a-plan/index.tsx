@@ -125,6 +125,8 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
 				);
 
+				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, billingPeriod );
+
 				if ( domain && domain.product_slug ) {
 					const registration = domainRegistration( {
 						domain: domain.domain_name,
@@ -145,7 +147,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				setProgress( 1.0 );
 
 				window.location.replace(
-					`/checkout/${ newSite?.site_slug }/${ planObject?.periodAgnosticSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+					`/checkout/${ newSite?.site_slug }/${ planProductObject?.storeSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
 				);
 			} );
 
