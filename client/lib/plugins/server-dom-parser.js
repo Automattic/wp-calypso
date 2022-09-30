@@ -94,7 +94,11 @@ class DOMDoc {
  */
 class DOMParser {
 	parseFromString( html ) {
-		return new DOMDoc( parseDocument( html ) );
+		try {
+			return new DOMDoc( parseDocument( html ) );
+		} catch ( e ) {
+			return null;
+		}
 	}
 }
 
@@ -112,6 +116,6 @@ export const getServerRoot = () => {
 				return getNodeWrapper( el );
 			},
 		},
-		NodeFilter: { SHOW_ALL: 4294967295 },
+		NodeFilter: { SHOW_ALL: 4294967295 }, // Used by the oridingal DOM TreeWalker to filter which nodes to walk through.
 	};
 };
