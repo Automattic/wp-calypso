@@ -21,11 +21,11 @@ export enum RefundPolicy {
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
+	NonRefundable,
 	PlanBiennialBundle,
 	PlanMonthlyBundle,
 	PlanYearlyBundle,
 	PremiumTheme,
-	NonRefundable,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
