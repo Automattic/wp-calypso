@@ -36,7 +36,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 				} )
 			);
 		}
-	}, [] );
+	}, [ emailVerified, translate, dispatch ] );
 
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
