@@ -156,30 +156,27 @@ button {
 
 		&.components-button {
 			border-radius: 4px;
+			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
-				border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 				svg {
-					transition: ease 300ms;
-					fill: var(--studio-blue-50);
+					fill: var(--studio-gray-30);
 				}
 
 				span {
 					font-size: $font-body-extra-small;
 				}
 
-				&:hover,
-				&:focus {
+				&:hover {
 					box-shadow: none;
 					outline: none;
-					background-color: var(--studio-blue-50);
 
 					svg {
-						fill: #fff;
+						fill: var(--studio-blue-50);
 					}
 
 					span {
@@ -190,13 +187,18 @@ button {
 						}
 
 						&.replace {
-							color: var(--studio-gray-60);
-
-							&:hover {
-								color: var(--studio-blue-50);
-							}
+							color: var(--studio-blue-50);
 						}
 					}
+				}
+				&:active:enabled {
+					background-color: var(--studio-blue-50);
+					svg {
+						fill: #fff;
+					}
+				}
+				&:focus {
+					box-shadow: none;
 				}
 			}
 		}
