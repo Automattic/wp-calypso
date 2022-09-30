@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
-import { AnimatePresence, LazyMotion, m } from 'framer-motion';
 import { useTranslate } from 'i18n-calypso';
+import { Suspense, lazy } from 'react';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
 
@@ -18,6 +18,24 @@ type PatternLayoutProps = {
 	onDeleteFooter: () => void;
 	onContinueClick: () => void;
 };
+
+const AnimatePresence = lazy( () =>
+	import( /* webpackChunkName: "async-load-framer-motion" */ 'framer-motion' ).then( ( mod ) => ( {
+		default: mod.AnimatePresence,
+	} ) )
+);
+
+const LazyMotion = lazy( () =>
+	import( /* webpackChunkName: "async-load-framer-motion" */ 'framer-motion' ).then( ( mod ) => ( {
+		default: mod.LazyMotion,
+	} ) )
+);
+
+const m = lazy( () =>
+	import( /* webpackChunkName: "async-load-framer-motion" */ 'framer-motion' ).then( ( mod ) => ( {
+		default: mod.m,
+	} ) )
+);
 
 const PatternLayout = ( {
 	header,
@@ -48,76 +66,78 @@ const PatternLayout = ( {
 					) }
 				</p>
 			</div>
-			<LazyMotion features={ loadFeatures } strict>
-				<div className="pattern-layout__body">
-					<ul>
-						{ header ? (
-							<li className="pattern-layout__list-item pattern-layout__list-item--header">
-								<span className="pattern-layout__list-item-text" title={ header.name }>
-									{ header.name }
-								</span>
-								<PatternActionBar onReplace={ onSelectHeader } onDelete={ onDeleteHeader } />
-							</li>
-						) : (
-							<li className="pattern-layout__list-item pattern-layout__list-item--header">
-								<Button onClick={ onSelectHeader }>
+			<Suspense>
+				<LazyMotion features={ loadFeatures } strict>
+					<div className="pattern-layout__body">
+						<ul>
+							{ header ? (
+								<li className="pattern-layout__list-item pattern-layout__list-item--header">
+									<span className="pattern-layout__list-item-text" title={ header.name }>
+										{ header.name }
+									</span>
+									<PatternActionBar onReplace={ onSelectHeader } onDelete={ onDeleteHeader } />
+								</li>
+							) : (
+								<li className="pattern-layout__list-item pattern-layout__list-item--header">
+									<Button onClick={ onSelectHeader }>
+										<span className="pattern-layout__add-icon">+</span>{ ' ' }
+										{ translate( 'Choose a header' ) }
+									</Button>
+								</li>
+							) }
+							<AnimatePresence initial={ false }>
+								{ sections?.map( ( section, index ) => {
+									const { name, key } = section as Pattern;
+									return (
+										<m.li
+											layout={ 'position' }
+											exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
+											key={ `${ key }` }
+											className="pattern-layout__list-item pattern-layout__list-item--section"
+										>
+											<span className="pattern-layout__list-item-text" title={ name }>
+												{ name }
+											</span>
+											<PatternActionBar
+												onReplace={ () => onSelectSection( index ) }
+												onDelete={ () => onDeleteSection( index ) }
+												onMoveUp={ () => onMoveUpSection( index ) }
+												onMoveDown={ () => onMoveDownSection( index ) }
+												enableMoving={ true }
+												disableMoveUp={ index === 0 }
+												disableMoveDown={ sections?.length === index + 1 }
+											/>
+										</m.li>
+									);
+								} ) }
+							</AnimatePresence>
+							<li className="pattern-layout__list-item pattern-layout__list-item--section">
+								<Button onClick={ () => onSelectSection( null ) }>
 									<span className="pattern-layout__add-icon">+</span>{ ' ' }
-									{ translate( 'Choose a header' ) }
+									{ sections?.length
+										? translate( 'Add another section' )
+										: translate( 'Add a first section' ) }
 								</Button>
 							</li>
-						) }
-						<AnimatePresence initial={ false }>
-							{ sections?.map( ( section, index ) => {
-								const { name, key } = section as Pattern;
-								return (
-									<m.li
-										layout={ 'position' }
-										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
-										key={ `${ key }` }
-										className="pattern-layout__list-item pattern-layout__list-item--section"
-									>
-										<span className="pattern-layout__list-item-text" title={ name }>
-											{ name }
-										</span>
-										<PatternActionBar
-											onReplace={ () => onSelectSection( index ) }
-											onDelete={ () => onDeleteSection( index ) }
-											onMoveUp={ () => onMoveUpSection( index ) }
-											onMoveDown={ () => onMoveDownSection( index ) }
-											enableMoving={ true }
-											disableMoveUp={ index === 0 }
-											disableMoveDown={ sections?.length === index + 1 }
-										/>
-									</m.li>
-								);
-							} ) }
-						</AnimatePresence>
-						<li className="pattern-layout__list-item pattern-layout__list-item--section">
-							<Button onClick={ () => onSelectSection( null ) }>
-								<span className="pattern-layout__add-icon">+</span>{ ' ' }
-								{ sections?.length
-									? translate( 'Add another section' )
-									: translate( 'Add a first section' ) }
-							</Button>
-						</li>
-						{ footer ? (
-							<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-								<span className="pattern-layout__list-item-text" title={ footer.name }>
-									{ footer.name }
-								</span>
-								<PatternActionBar onReplace={ onSelectFooter } onDelete={ onDeleteFooter } />
-							</li>
-						) : (
-							<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-								<Button onClick={ onSelectFooter }>
-									<span className="pattern-layout__add-icon">+</span>{ ' ' }
-									{ translate( 'Choose a footer' ) }
-								</Button>
-							</li>
-						) }
-					</ul>
-				</div>
-			</LazyMotion>
+							{ footer ? (
+								<li className="pattern-layout__list-item pattern-layout__list-item--footer">
+									<span className="pattern-layout__list-item-text" title={ footer.name }>
+										{ footer.name }
+									</span>
+									<PatternActionBar onReplace={ onSelectFooter } onDelete={ onDeleteFooter } />
+								</li>
+							) : (
+								<li className="pattern-layout__list-item pattern-layout__list-item--footer">
+									<Button onClick={ onSelectFooter }>
+										<span className="pattern-layout__add-icon">+</span>{ ' ' }
+										{ translate( 'Choose a footer' ) }
+									</Button>
+								</li>
+							) }
+						</ul>
+					</div>
+				</LazyMotion>
+			</Suspense>
 			<div className="pattern-layout__footer">
 				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
 					{ translate( 'Continue' ) }
