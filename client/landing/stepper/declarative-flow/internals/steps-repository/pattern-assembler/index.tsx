@@ -60,10 +60,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		if ( sectionPosition !== null ) {
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
-				{
-					...pattern,
-					key: `${ incrementIndex }-${ pattern.id }`,
-				},
+				pattern,
 				...sections.slice( sectionPosition + 1 ),
 			] );
 		} else {
