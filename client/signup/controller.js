@@ -21,6 +21,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setSignupIsInitializing } from 'calypso/state/ui/signup-is-initializing/actions';
 import { getStepComponent } from './config/step-components';
 import SignupComponent from './main';
 import {
@@ -87,6 +88,11 @@ export const removeP2SignupClassName = function () {
 };
 
 export default {
+	indicateStartSignupStateChanges( context, next ) {
+		context.store.dispatch( setSignupIsInitializing( true ) );
+		next();
+	},
+
 	redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
@@ -385,6 +391,10 @@ export default {
 			signupStore.dispatch( setSiteType( query.site_type ) );
 		}
 
+		next();
+	},
+	indicateEndSignupStateChanges( context, next ) {
+		context.store.dispatch( setSignupIsInitializing( false ) );
 		next();
 	},
 };

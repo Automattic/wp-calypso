@@ -13,6 +13,7 @@ export default function () {
 			`/start/:flowName/:stepName/${ lang }`,
 			`/start/:flowName/:stepName/:stepSectionName/${ lang }`,
 		],
+		controller.indicateStartSignupStateChanges,
 		controller.redirectTests,
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
@@ -20,6 +21,7 @@ export default function () {
 		controller.setSelectedSiteForSignup,
 		controller.start,
 		controller.importSiteInfoFromQuery,
+		controller.indicateEndSignupStateChanges,
 		makeLayout,
 		clientRender
 	);
