@@ -96,7 +96,9 @@ $border-radius: 4px;
 		}
 
 		.components-form-file-upload {
-			text-decoration: underline;
+			span {
+				text-decoration: underline;
+			}
 			.add {
 				color: var(--studio-black);
 			}
@@ -144,9 +146,6 @@ $border-radius: 4px;
 }
 
 .newsletter-setup__accent-color-popover {
-	.popover__arrow {
-		display: none;
-	}
 	&:focus,
 	&:focus-visible {
 		outline: none;

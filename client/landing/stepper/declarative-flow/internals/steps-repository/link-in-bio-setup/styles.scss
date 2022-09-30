@@ -74,7 +74,9 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.components-form-file-upload {
-			text-decoration: underline;
+			span {
+				text-decoration: underline;
+			}
 			.add {
 				color: var(--studio-black);
 			}
