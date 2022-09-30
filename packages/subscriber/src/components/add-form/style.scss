@@ -70,6 +70,7 @@
 		font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		color: var(--color-text);
 		text-decoration: underline;
+		border: none;
 
 		&:hover {
 			color: var(--color-text-subtle);
@@ -163,8 +164,16 @@
 			margin-inline-start: -2rem;
 		}
 
-		&.is-warning {
+		&:not(.is-error):not(.is-warning) {
 			color: var(--studio-gray-40);
+		}
+
+		&.is-warning {
+			color: var(--studio-gray-100);
+
+			svg * {
+				stroke: var(--studio-yellow-40);
+			}
 		}
 
 		&:not(.is-error) {
