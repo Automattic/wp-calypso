@@ -119,7 +119,6 @@ export type PossiblyCompleteDomainContactDetails = {
 	lastName: string | null;
 	organization: string | null;
 	email: string | null;
-	alternateEmail: string | null;
 	phone: string | null;
 	address1: string | null;
 	address2: string | null;
@@ -135,7 +134,6 @@ export type DomainContactDetailsErrors = {
 	lastName?: string | TranslateResult;
 	organization?: string | TranslateResult;
 	email?: string | TranslateResult;
-	alternateEmail?: string | TranslateResult;
 	phone?: string | TranslateResult;
 	address1?: string | TranslateResult;
 	address2?: string | TranslateResult;
@@ -251,7 +249,6 @@ export type ManagedContactDetailsShape< T > = {
 	lastName?: T;
 	organization?: T;
 	email?: T;
-	alternateEmail?: T;
 	phone?: T;
 	phoneNumberCountry?: T;
 	address1?: T;
@@ -384,7 +381,6 @@ export type ContactValidationRequestContactInformation = {
 	last_name?: string;
 	organization?: string;
 	email?: string;
-	alternate_email?: string;
 	phone?: string;
 	phone_number_country?: string;
 	address_1?: string;
@@ -457,7 +453,6 @@ export type ContactValidationResponseMessages = {
 	last_name?: string[];
 	organization?: string[];
 	email?: string[];
-	alternate_email?: string[];
 	phone?: string[];
 	phone_number_country?: string[];
 	address_1?: string[];

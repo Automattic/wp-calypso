@@ -109,10 +109,6 @@ function EmailSummary( {
 		return null;
 	}
 
-	if ( ! contactInfo.alternateEmail?.value && ! contactInfo.email?.value ) {
-		return null;
-	}
-
 	if ( ! contactInfo.email?.value ) {
 		return null;
 	}
