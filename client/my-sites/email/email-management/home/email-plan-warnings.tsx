@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
@@ -30,10 +31,6 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	const warning = emailAccount?.warnings?.[ 0 ];
 
-	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
-		return null;
-	}
-
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
 	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
@@ -61,6 +58,18 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 				return null;
 		}
 	};
+
+	const warningNotice = useMemo( () => {
+		if ( ! cannotAddEmailWarningCode ) {
+			return null;
+		}
+
+		return <WarningMessageForCode code={ cannotAddEmailWarningCode } />;
+	}, [ cannotAddEmailWarningCode ] );
+
+	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
+		return null;
+	}
 
 	let cta = null;
 
@@ -93,9 +102,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	return (
 		<div className="email-plan-warnings__container">
-			{ cannotAddEmailWarningMessage && (
-				<WarningMessageForCode code={ cannotAddEmailWarningCode } />
-			) }
+			{ cannotAddEmailWarningMessage && warningNotice }
 
 			{ ! cannotAddEmailWarningMessage && warning && (
 				<div className="email-plan-warnings__warning">
