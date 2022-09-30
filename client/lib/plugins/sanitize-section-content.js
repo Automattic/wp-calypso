@@ -1,6 +1,7 @@
 import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
+import { allowedTags, customTags } from './allowed-tags';
 
 let root = 'undefined' !== typeof window && window;
 
@@ -36,32 +37,7 @@ export function getSanitizeSectionRoot() {
  * @returns {boolean} whether the tag is allowed
  */
 const isAllowedTag = ( tagName ) => {
-	switch ( tagName ) {
-		case '#text':
-		case 'a':
-		case 'b':
-		case 'blockquote':
-		case 'code':
-		case 'div':
-		case 'em':
-		case 'h1':
-		case 'h2':
-		case 'h3':
-		case 'h4':
-		case 'h5':
-		case 'h6':
-		case 'i':
-		case 'img':
-		case 'li':
-		case 'ol':
-		case 'p':
-		case 'span':
-		case 'strong':
-		case 'ul':
-			return true;
-		default:
-			return false;
-	}
+	return !! allowedTags[ tagName ];
 };
 
 /**
@@ -78,40 +54,7 @@ const isAllowedTag = ( tagName ) => {
  * @returns {boolean} whether the attribute is allowed
  */
 const isAllowedAttr = ( tagName, attrName ) => {
-	switch ( tagName ) {
-		case 'a':
-			return 'href' === attrName;
-
-		case 'iframe':
-			switch ( attrName ) {
-				case 'class':
-				case 'type':
-				case 'height':
-				case 'width':
-				case 'src':
-					return true;
-				default:
-					return false;
-			}
-
-		case 'img':
-			switch ( attrName ) {
-				case 'alt':
-				case 'src':
-					return true;
-				default:
-					return false;
-			}
-
-		case 'div':
-			switch ( attrName ) {
-				case 'class':
-					return true;
-			}
-
-		default:
-			return false;
-	}
+	return !! allowedTags[ tagName ]?.[ attrName ];
 };
 
 const isValidYoutubeEmbed = ( node ) => {
@@ -223,7 +166,7 @@ export const sanitizeSectionContent = ( content ) => {
 		filter(
 			node.attributes,
 			( { name, value } ) =>
-				! isAllowedAttr( tagName, name ) ||
+				! isAllowedAttr( isYoutube ? customTags.YOUTUBE : tagName, name ) ||
 				// only valid http(s) URLs are allowed
 				( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
 		).forEach( ( { name } ) => node.removeAttribute( name ) );
