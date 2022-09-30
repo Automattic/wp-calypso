@@ -20,17 +20,6 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	return state;
 };
 
-const directlyData: Reducer<
-	{ isLoaded: boolean; hasSession: boolean } | undefined,
-	HelpCenterAction
-> = ( state, action ) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_DIRECTLY_DATA':
-			return action.data;
-	}
-	return state;
-};
-
 const site: Reducer< SiteDetails | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -112,7 +101,6 @@ const routerState: Reducer< { history: Location[] | undefined; index: number | u
 };
 
 const reducer = combineReducers( {
-	directlyData,
 	showHelpCenter,
 	site,
 	subject,
