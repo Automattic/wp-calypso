@@ -32,6 +32,7 @@ import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -230,8 +231,8 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanWarningDialog() {
-		const { site } = this.props;
-
+		const { site, primaryDomain } = this.props;
+		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
 		return (
 			<RemovePlanDialog
 				isDialogVisible={ this.state.isShowingRemovePlanWarning }
@@ -240,6 +241,7 @@ class RemovePurchase extends Component {
 				site={ site }
 				hasDomain={ hasCustomDomain }
 				wpcomSiteURL={ site.wpcom_url }
+				primaryDomain={ primaryDomainName }
 			/>
 		);
 	}
@@ -424,6 +426,7 @@ export default connect(
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
+			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};
 	},
 	{
