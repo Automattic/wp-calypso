@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { useGetEmailAccountsQuery } from '../../../data/emails/use-get-email-accounts-query';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { InfiniteData } from 'react-query';
 
@@ -14,6 +15,10 @@ type User = {
 
 type UsersData = {
 	users: User[];
+};
+
+type EmailAccountWithActiveField = {
+	active: boolean;
 };
 
 export function useEmailOwnerUserName(
