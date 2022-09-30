@@ -22,13 +22,13 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
-	const emailedVerified = useEmailVerifiedParam();
+	const emailVerified = useEmailVerifiedParam();
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( emailedVerified ) {
+		if ( emailVerified ) {
 			const message = translate( 'Email confirmed!' );
 			dispatch(
 				successNotice( message, {
