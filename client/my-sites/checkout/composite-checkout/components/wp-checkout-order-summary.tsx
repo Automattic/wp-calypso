@@ -167,13 +167,6 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		return null;
 	}
 
-	const planBundleRefundPolicy = refundPolicies.find(
-		( refundPolicy ) =>
-			refundPolicy === RefundPolicy.PlanBiennialBundle ||
-			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
-			refundPolicy === RefundPolicy.PlanYearlyBundle
-	);
-
 	const allCartItemsAreDomains = refundPolicies.every(
 		( refundPolicy ) =>
 			refundPolicy === RefundPolicy.DomainNameRegistration ||
@@ -186,8 +179,16 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 
 	let text: TranslateResult;
 
-	if ( refundWindows.length === 1 ) {
+	if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
+		text = translate( 'Partial money back guarantee' );
+	} else if ( refundWindows.length === 1 ) {
 		const refundWindow = refundWindows[ 0 ];
+		const planBundleRefundPolicy = refundPolicies.find(
+			( refundPolicy ) =>
+				refundPolicy === RefundPolicy.PlanBiennialBundle ||
+				refundPolicy === RefundPolicy.PlanMonthlyBundle ||
+				refundPolicy === RefundPolicy.PlanYearlyBundle
+		);
 
 		if ( planBundleRefundPolicy ) {
 			text = translate(
@@ -204,8 +205,6 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 				args: { days: refundWindow },
 			} );
 		}
-	} else if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
-		text = translate( 'Partial money back guarantee' );
 	} else {
 		const shortestRefundWindow = Math.min( ...refundWindows );
 
