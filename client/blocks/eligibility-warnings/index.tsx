@@ -7,6 +7,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -23,6 +24,7 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
@@ -47,8 +49,6 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
-	title?: string;
-	primaryText?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -72,8 +72,6 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
-	title,
-	primaryText,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -89,7 +87,7 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': ! title && ! primaryText,
+			'eligibility-warnings--without-title': context !== 'plugin-details',
 		},
 		className
 	);
@@ -124,6 +122,15 @@ export const EligibilityWarnings = ( {
 
 	const blockingMessages = getBlockingMessages( translate );
 
+	let filteredHolds = listHolds;
+	if ( context === 'plugin-details' ) {
+		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+	}
+
+	const monthlyCost = useSelector( ( state ) =>
+		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
+	);
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -140,22 +147,29 @@ export const EligibilityWarnings = ( {
 					/>
 				</CompactCard>
 			) }
-			{ ( title || primaryText ) && (
+			{ ! isPlaceholder && context === 'plugin-details' && (
 				<CompactCard>
 					<div className="eligibility-warnings__header">
-						{ title && <div className="eligibility-warnings__title">{ title }</div> }
-						{ primaryText && (
-							<div className="eligibility-warnings__primary-text">{ primaryText }</div>
-						) }
+						<div className="eligibility-warnings__title">
+							{ translate( 'Upgrade your plan to install plugins' ) }
+						</div>
+						<div className="eligibility-warnings__primary-text">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate(
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+										{ args: { monthlyCost } }
+								  )
+								: '' }
+						</div>
 					</div>
 				</CompactCard>
 			) }
 
-			{ ( isPlaceholder || listHolds.length > 0 ) && (
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
 				<CompactCard>
 					<HoldList
 						context={ context }
-						holds={ listHolds }
+						holds={ filteredHolds }
 						isPlaceholder={ isPlaceholder }
 						isMarketplace={ isMarketplace }
 					/>

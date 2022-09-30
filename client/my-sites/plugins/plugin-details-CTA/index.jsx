@@ -288,7 +288,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					<CTAButton
 						plugin={ plugin }
 						hasEligibilityMessages={ hasEligibilityMessages }
-						eligibilityHolds={ eligibilityHolds }
 						disabled={ incompatiblePlugin || userCantManageTheSite }
 					/>
 				) : (
@@ -465,11 +464,7 @@ function LegacyPluginDetailsCTA( {
 				</PluginPrice>
 			</div>
 			<div className="plugin-details-cta__install">
-				<CTAButton
-					plugin={ plugin }
-					hasEligibilityMessages={ hasEligibilityMessages }
-					eligibilityHolds={ eligibilityHolds }
-				/>
+				<CTAButton plugin={ plugin } hasEligibilityMessages={ hasEligibilityMessages } />
 			</div>
 			{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 				<div className="plugin-details-cta__t-and-c">
