@@ -31,8 +31,9 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	useEffect( () => {
 		if ( launchpadScreenOption === 'off' ) {
 			window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
+			recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
 		}
-	}, [ launchpadScreenOption, siteSlug ] );
+	}, [ launchpadScreenOption, siteSlug, flow ] );
 
 	return (
 		<>
