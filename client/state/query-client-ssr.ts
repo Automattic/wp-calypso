@@ -3,15 +3,7 @@ import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
 import type { Query, QueryState } from 'react-query/types/core/query';
 
 class QueryClientSSR extends QueryClient {
-	private fetchedQueryKeys: { [ hash: string ]: boolean } = {};
-
-	addFetchedQueryKey( queryKey: string ) {
-		this.fetchedQueryKeys[ queryKey ] = true;
-	}
-
-	getFetchedQueryKey( queryKey: string ) {
-		return this.fetchedQueryKeys[ queryKey ];
-	}
+	fetchedQueryKeys = new Set< string >();
 }
 
 class QueryCacheSSR extends QueryCache {
@@ -46,7 +38,7 @@ export function dehydrateQueryClient( queryClient: QueryClientSSR ) {
 
 	return dehydrate( queryClient, {
 		shouldDehydrateQuery: ( { queryHash: queryKey } ) => {
-			return !! queryClient.getFetchedQueryKey( queryKey );
+			return queryClient.fetchedQueryKeys.has( queryKey );
 		},
 	} );
 }
