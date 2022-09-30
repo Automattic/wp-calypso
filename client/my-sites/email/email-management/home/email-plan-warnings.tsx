@@ -35,39 +35,30 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
 	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
 
-	const WarningMessageForCode = ( props: { code: string | number | null } ) => {
-		switch ( props.code ) {
-			case WARNING_CODE_OTHER_USER_OWNS_EMAIL:
-				return (
-					<div className="email-plan-warnings__warning">
-						<div className="email-plan-warnings__message">
-							<span>{ cannotAddEmailWarningMessage }</span>
+	const WarningMessageForCode = useMemo( () => {
+		return ( props: { code: string | number | null } ) => {
+			switch ( props.code ) {
+				case WARNING_CODE_OTHER_USER_OWNS_EMAIL:
+					return (
+						<div className="email-plan-warnings__warning">
+							<div className="email-plan-warnings__message">
+								<span>{ cannotAddEmailWarningMessage }</span>
+							</div>
 						</div>
-					</div>
-				);
-			case WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
-				return (
-					<EmailNonDomainOwnerMessage
-						domain={ domain }
-						source={ 'email-management' }
-						usePromoCard={ false }
-						selectedSite={ selectedSite }
-					/>
-				);
-			default:
-				return null;
-		}
-	};
-
-	const warningNotice = useMemo( () => {
-		if (
-			! cannotAddEmailWarningCode ||
-			cannotAddEmailWarningCode === WARNING_CODE_OTHER_USER_OWNS_EMAIL
-		) {
-			return null;
-		}
-
-		return <WarningMessageForCode code={ cannotAddEmailWarningCode } />;
+					);
+				case WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
+					return (
+						<EmailNonDomainOwnerMessage
+							domain={ domain }
+							source={ 'email-management' }
+							usePromoCard={ false }
+							selectedSite={ selectedSite }
+						/>
+					);
+				default:
+					return null;
+			}
+		};
 	}, [ cannotAddEmailWarningCode ] );
 
 	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
@@ -105,7 +96,9 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	return (
 		<div className="email-plan-warnings__container">
-			{ cannotAddEmailWarningMessage && warningNotice }
+			{ cannotAddEmailWarningMessage && (
+				<WarningMessageForCode code={ cannotAddEmailWarningCode } />
+			) }
 
 			{ ! cannotAddEmailWarningMessage && warning && (
 				<div className="email-plan-warnings__warning">
