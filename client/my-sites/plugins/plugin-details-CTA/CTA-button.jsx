@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
+	PLAN_BUSINESS_MONTHLY,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
@@ -22,6 +23,7 @@ import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/prefe
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
+	getProductDisplayCost,
 } from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
@@ -105,6 +107,10 @@ export default function CTAButton( {
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
 
+	const monthlyCost = useSelector( ( state ) =>
+		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
+	);
+
 	return (
 		<>
 			<PluginCustomDomainDialog
@@ -145,7 +151,8 @@ export default function CTAButton( {
 						eligibilityHolds &&
 						eligibilityHolds.indexOf( eligibilityHoldsConstants.NO_BUSINESS_PLAN ) !== -1
 							? translate(
-									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
+									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+									{ args: { monthlyCost } }
 							  )
 							: ''
 					}
