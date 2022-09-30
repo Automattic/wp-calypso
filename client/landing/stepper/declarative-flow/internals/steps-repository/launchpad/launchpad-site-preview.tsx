@@ -20,6 +20,8 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			theme_preview: true,
 			// hide the "Create your website with WordPress.com" banner
 			hide_banners: true,
+			// hide cookies popup
+			preview: true,
 			do_preview_no_interactions: true,
 		} );
 	}
