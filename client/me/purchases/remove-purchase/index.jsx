@@ -241,7 +241,7 @@ class RemovePurchase extends Component {
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
 				hasDomain={ hasCustomDomain }
-				wpcomSiteURL={ site.slug }
+				wpcomSlug={ site.slug }
 				primaryDomain={ primaryDomainName }
 			/>
 		);
