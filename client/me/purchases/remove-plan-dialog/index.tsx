@@ -17,7 +17,7 @@ interface RemovePlanDialogProps {
 	site: SiteExcerptData;
 	hasDomain: boolean;
 	primaryDomain: string;
-	wpcomSiteURL: string;
+	wpcomSlug: string;
 }
 
 export const RemovePlanDialog = ( {
@@ -27,7 +27,7 @@ export const RemovePlanDialog = ( {
 	site,
 	hasDomain,
 	primaryDomain,
-	wpcomSiteURL,
+	wpcomSlug,
 }: RemovePlanDialogProps ) => {
 	const translate = useTranslate();
 	const siteName = site.name ?? '';
@@ -87,17 +87,17 @@ export const RemovePlanDialog = ( {
 	 */
 	const FeaturesList = () => {
 		if ( typeof productSlug === 'string' ) {
-			const planFeatures = getPlanFeatures( productSlug, hasDomain, wpcomSiteURL );
+			const planFeatures = getPlanFeatures( productSlug, hasDomain, wpcomSlug );
 
 			if ( planFeatures.length > 0 ) {
 				const domainFeature =
-					hasDomain && primaryDomain && wpcomSiteURL ? (
+					hasDomain && primaryDomain && wpcomSlug ? (
 						<p>
 							{ translate(
 								'Your custom domain as primary. Your traffic will be redirected to %(domain)s - primarydomain: %(primaryDomain)s',
 								{
 									args: {
-										domain: wpcomSiteURL,
+										domain: wpcomSlug,
 										primaryDomain: primaryDomain,
 									},
 								}

@@ -66,7 +66,6 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
-	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -98,6 +97,7 @@ import {
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -145,6 +145,7 @@ class ManagePurchase extends Component {
 		selectedSiteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		isSiteLevel: PropTypes.bool,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -516,13 +517,15 @@ class ManagePurchase extends Component {
 
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
-			const { hasCustomPrimaryDomain } = this.props;
+			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
+			const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
 			let customDomain = false;
 
 			if ( isPlan( purchase ) && ! isJetpackPlan( purchase ) ) {
-				if ( hasCustomPrimaryDomain && isRefundable( purchase ) ) {
+				if ( hasCustomPrimaryDomain && primaryDomainName ) {
 					customDomain = true;
 				}
+
 				return (
 					<RemovePlanDialog
 						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
@@ -530,7 +533,8 @@ class ManagePurchase extends Component {
 						removePlan={ this.goToCancelLink }
 						site={ site }
 						hasDomain={ customDomain }
-						wpcomSiteURL={ site.slug }
+						wpcomSlug={ site.slug }
+						primaryDomain={ primaryDomainName }
 					/>
 				);
 			}
@@ -1096,6 +1100,7 @@ export default connect(
 		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 		return {
 			hasLoadedDomains,
 			hasLoadedSites,
@@ -1122,6 +1127,7 @@ export default connect(
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
 			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+			primaryDomain: primaryDomain,
 		};
 	},
 	{
