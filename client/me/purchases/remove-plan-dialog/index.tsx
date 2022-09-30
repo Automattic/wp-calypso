@@ -16,6 +16,7 @@ interface RemovePlanDialogProps {
 	isRemoving: boolean;
 	site: SiteExcerptData;
 	hasDomain: boolean;
+	primaryDomain: string;
 	wpcomSiteURL: string;
 }
 
@@ -25,6 +26,7 @@ export const RemovePlanDialog = ( {
 	isDialogVisible,
 	site,
 	hasDomain,
+	primaryDomain,
 	wpcomSiteURL,
 }: RemovePlanDialogProps ) => {
 	const translate = useTranslate();
@@ -89,13 +91,14 @@ export const RemovePlanDialog = ( {
 
 			if ( planFeatures.length > 0 ) {
 				const domainFeature =
-					hasDomain && wpcomSiteURL ? (
+					hasDomain && primaryDomain && wpcomSiteURL ? (
 						<p>
 							{ translate(
-								'Your custom domain as primary. Your traffic will be redirected to %(domain)s',
+								'Your custom domain as primary. Your traffic will be redirected to %(domain)s - primarydomain: %(primaryDomain)s',
 								{
 									args: {
 										domain: wpcomSiteURL,
+										primaryDomain: primaryDomain,
 									},
 								}
 							) }
