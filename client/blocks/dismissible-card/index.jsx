@@ -3,16 +3,14 @@ import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPreferences from 'calypso/components/data/query-preferences';
-import { savePreference, setPreference } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { dismissCard } from './actions';
+import { isCardDismissed } from './selectors';
 
 import './style.scss';
 
-const PREFERENCE_PREFIX = 'dismissible-card-';
-
 function DismissibleCard( { className, highlight, temporary, onClick, preferenceName, children } ) {
-	const preference = `${ PREFERENCE_PREFIX }${ preferenceName }`;
-	const isDismissed = useSelector( ( state ) => getPreference( state, preference ) );
+	const isDismissed = useSelector( isCardDismissed( preferenceName ) );
 	const hasReceivedPreferences = useSelector( hasReceivedRemotePreferences );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -23,7 +21,7 @@ function DismissibleCard( { className, highlight, temporary, onClick, preference
 
 	function handleClick( event ) {
 		onClick?.( event );
-		dispatch( ( temporary ? setPreference : savePreference )( preference, true ) );
+		dispatch( dismissCard( preferenceName, temporary ) );
 	}
 
 	return (
