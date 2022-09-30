@@ -211,12 +211,17 @@
 		display: inline-flex;
 		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
 		margin-top: 8px;
-		width: 100%;
+		flex: 1;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
 			min-height: 2em;
 		}
+	}
+
+	.design-picker__option-overlay {
+		display: flex;
+		align-items: center;
 	}
 
 	.design-picker__option-name {

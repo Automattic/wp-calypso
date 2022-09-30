@@ -1,4 +1,10 @@
-export function isFreeUrlDomainName( domainName ) {
+/**
+ * Checks wheter a domain is a managed WPCOM subdomain such as fine.art.blog, cool.tech.blog or
+ * mylinkinbio.w.link.
+ *
+ * We need to update this function every time a new free managed subdomain is added to WPCOM.
+ */
+export function isFreeUrlDomainName( domainName: string ): boolean {
 	const freeDotBlogSubdomains = [
 		'art',
 		'business',
@@ -34,7 +40,7 @@ export function isFreeUrlDomainName( domainName ) {
 	const freeUrlDomainNames = freeDotBlogSubdomains.map(
 		( dotBlogSubdomain ) => `.${ dotBlogSubdomain }.blog`
 	);
-	freeUrlDomainNames.unshift( '.wordpress.com', '.wpcomstaging.com' );
+	freeUrlDomainNames.unshift( '.w.link', '.wordpress.com', '.wpcomstaging.com' );
 
 	return freeUrlDomainNames.some( ( freeUrlDomainName ) =>
 		domainName.endsWith( freeUrlDomainName )

@@ -6,6 +6,7 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -22,9 +23,9 @@ export const linkInBio: Flow = {
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const name = this.name;
+		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
+		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
@@ -32,11 +33,12 @@ export const linkInBio: Flow = {
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`
-				: `/start/account/user?variationName=${ name }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ name }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
@@ -51,7 +53,7 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.assign(
-						`/start/${ name }/domains?new=${ encodeURIComponent(
+						`/start/${ flowName }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes`
 					);

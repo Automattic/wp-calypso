@@ -89,6 +89,7 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
+			'eligibility-warnings--without-title': ! title && ! primaryText,
 		},
 		className
 	);
@@ -177,6 +178,14 @@ export const EligibilityWarnings = ( {
 			) }
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
+					<div className="support-block">
+						<span>{ translate( 'Need help?' ) }</span>
+						{ translate( '{{a}}Contact support{{/a}}', {
+							components: {
+								a: <ActionPanelLink href="/help/contact" />,
+							},
+						} ) }
+					</div>
 					<Button
 						primary={ true }
 						disabled={
@@ -189,14 +198,6 @@ export const EligibilityWarnings = ( {
 					>
 						{ getProceedButtonText( listHolds, translate, context ) }
 					</Button>
-					<div className="support-block">
-						<span>{ translate( 'Need help?' ) }</span>
-						{ translate( '{{a}}Contact support{{/a}}', {
-							components: {
-								a: <ActionPanelLink href="/help/contact" />,
-							},
-						} ) }
-					</div>
 				</div>
 			</CompactCard>
 		</div>
