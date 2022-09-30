@@ -202,7 +202,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 */
 	function renderImportErrorMsg() {
 		const error = importSelector?.error;
-		if ( error?.code ) error.code = HANDLED_ERROR.IMPORT_LIMIT;
 
 		return (
 			error && (
