@@ -58,6 +58,14 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	const translateOptions = {
 		components: {
+			contactSupportLink: (
+				<a
+					href="https://wordpress.com/help/contact"
+					onClick={ () => onClickLink( 'support' ) }
+					rel="noopener noreferrer"
+					target="_blank"
+				/>
+			),
 			loginLink: <a href={ loginUrl } onClick={ () => onClickLink( 'login' ) } rel="external" />,
 			reachOutLink: isPrivacyAvailable ? (
 				<a
@@ -69,14 +77,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			) : (
 				<></>
 			),
-			contactSupportLink: (
-				<a
-					href="https://wordpress.com/help/contact"
-					onClick={ () => onClickLink( 'support' ) }
-					rel="noopener noreferrer"
-					target="_blank"
-				/>
-			),
+			strong: <strong />,
 		},
 		args: {
 			ownerUserName,
@@ -89,15 +90,15 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	if ( source === 'email-comparison' ) {
 		if ( ownerUserName ) {
 			reasonText = translate(
-				'Email service can only be purchased by %(ownerUserName)s, ' +
-					'who is the owner of %(selectedDomainName)s. ' +
+				'Email service can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
+					'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
 					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
 					'Otherwise, please {{reachOutLink}}reach out to %(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				translateOptions
 			);
 		} else {
 			reasonText = translate(
-				'Email service can only be purchased by the owner of %(selectedDomainName)s. ' +
+				'Email service can only be purchased by the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
 					'If you have access to that account, please log in with the account to make a purchase. ' +
 					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				translateOptions
@@ -106,15 +107,15 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	} else if ( source === 'email-management' ) {
 		if ( ownerUserName ) {
 			reasonText = translate(
-				'Additional mailboxes can only be purchased by %(ownerUserName)s, ' +
-					'who is the owner of %(selectedDomainName)s. ' +
+				'Additional mailboxes can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
+					'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
 					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
 					'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				translateOptions
 			);
 		} else {
 			reasonText = translate(
-				'Additional mailboxes can only be purchased by the owner of %(selectedDomainName)s. ' +
+				'Additional mailboxes can only be purchased by the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
 					'If you have access to that account, please log in with the account to make a purchase. ' +
 					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
 				translateOptions

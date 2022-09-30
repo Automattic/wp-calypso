@@ -88,6 +88,7 @@ const EmailProvidersStackedComparison = ( {
 	);
 
 	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
+	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
 
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
@@ -95,7 +96,7 @@ const EmailProvidersStackedComparison = ( {
 	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
 	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
-		if ( ! currentUserCanAddEmail ) {
+		if ( showNonOwnerMessage ) {
 			return {
 				google: false,
 				titan: false,
@@ -188,7 +189,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="ProfessionalEmailCard"
-			onExpandedChange={ currentUserCanAddEmail ? changeExpandedState : undefined }
+			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -198,7 +199,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="GoogleWorkspaceCard"
-			onExpandedChange={ currentUserCanAddEmail ? changeExpandedState : undefined }
+			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -264,7 +265,7 @@ const EmailProvidersStackedComparison = ( {
 				</div>
 			) }
 
-			{ currentUserCanAddEmail && (
+			{ ! showNonOwnerMessage && (
 				<BillingIntervalToggle
 					intervalLength={ selectedIntervalLength }
 					onIntervalChange={ changeIntervalLength }
@@ -281,7 +282,7 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
-				{ ! currentUserCanAddEmail && (
+				{ showNonOwnerMessage && (
 					<EmailNonDomainOwnerMessage
 						domain={ domain }
 						usePromoCard
