@@ -18,6 +18,10 @@
 	transition: transform 0.15s ease-in-out, opacity 0.15s ease-out;
 }
 
+.is-signup-initializing .layout__secondary .site-selector {
+	transition-delay: 10s;
+}
+
 // Setup the content element to adapt to the sidebar,
 // lack of sidebar, or the WebPreview component.
 .layout__content {
