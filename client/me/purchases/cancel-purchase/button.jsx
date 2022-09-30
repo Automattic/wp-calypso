@@ -259,15 +259,15 @@ class CancelPurchaseButton extends Component {
 		} else {
 			this.cancelPurchase( purchase );
 		}
-		await this.handleMarketplaceSubscriptions();
+		await this.handleMarketplaceSubscriptions( refundable );
 	};
 
-	handleMarketplaceSubscriptions = async () => {
+	handleMarketplaceSubscriptions = async ( isPlanRefundable ) => {
 		// If the site has active Marketplace subscriptions, remove these as well
 		if ( this.shouldHandleMarketplaceSubscriptions() ) {
 			return Promise.all(
 				this.props.activeSubscriptions.map( async ( s ) => {
-					if ( hasAmountAvailableToRefund( s ) ) {
+					if ( isPlanRefundable && hasAmountAvailableToRefund( s ) ) {
 						await this.cancelAndRefund( s );
 					} else {
 						await this.cancelPurchase( s );
