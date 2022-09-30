@@ -177,6 +177,12 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		return null;
 	}
 
+	const hasMonthlyPlanBundle = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+
 	let text: TranslateResult;
 
 	if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
@@ -205,6 +211,21 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 				args: { days: refundWindow },
 			} );
 		}
+	} else if ( hasMonthlyPlanBundle ) {
+		const [ refundWindow ] = getRefundWindows( [ RefundPolicy.PlanMonthlyBundle ] );
+		const planProduct = cart.products.find( ( product ) => isPlan( product ) );
+
+		text = translate(
+			'%(days)d-day money back guarantee for %(product)s',
+			'%(days)d-day money back guarantee for %(product)s',
+			{
+				count: refundWindow,
+				args: {
+					days: refundWindow,
+					product: planProduct?.product_name ?? '',
+				},
+			}
+		);
 	} else {
 		const shortestRefundWindow = Math.min( ...refundWindows );
 

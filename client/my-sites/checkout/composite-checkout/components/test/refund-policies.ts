@@ -154,6 +154,33 @@ describe( 'getRefundPolicies', () => {
 		expect( refundPolicies ).toEqual( [ RefundPolicy.PlanYearlyBundle ] );
 	} );
 
+	test( 'monthly plan and bundled paid domain', () => {
+		const cart = getEmptyResponseCart();
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			item_subtotal_integer: 10,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
+			extra: { domain_to_bundle: 'test.live' },
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [
+			RefundPolicy.DomainNameRegistration,
+			RefundPolicy.PlanMonthlyBundle,
+		] );
+	} );
+
 	test( 'Jetpack Scan monthly product', () => {
 		const cart = getEmptyResponseCart();
 		cart.products.push( {

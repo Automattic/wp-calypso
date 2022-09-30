@@ -10,7 +10,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { isDomainBundledWithPlan } from 'calypso/lib/cart-values/cart-items';
 import { DOMAIN_CANCEL, REFUNDS } from 'calypso/lib/url/support';
 import CheckoutTermsItem from './checkout-terms-item';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -51,9 +50,10 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		}
 
 		if ( isPlan( product ) ) {
-			const bundledDomain = product.extra?.domain_to_bundle;
-
-			if ( isDomainBundledWithPlan( cart, bundledDomain ) ) {
+			// Monthly plans can have an associated "bundled" domain, even if the domain price
+			// ultimately isn't free (i.e. it's not a real bundle). For that reason, we look at
+			// `product.extra.domain_to_bundle` here instead of `cart.bundled_domain`.
+			if ( product.extra?.domain_to_bundle ) {
 				if ( isMonthlyProduct( product ) ) {
 					return RefundPolicy.PlanMonthlyBundle;
 				}
@@ -181,7 +181,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.PlanMonthlyBundle:
 			text = translate(
-				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}monthly plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}monthly plan refunds{{/refundsSupportPage}} are limited to 7 days after purchase.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
