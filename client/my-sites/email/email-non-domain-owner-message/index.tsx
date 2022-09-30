@@ -3,6 +3,7 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useDomainOwnerUserName } from 'calypso/components/data/query-domain-owner-username';
 import PromoCard from 'calypso/components/promo-section/promo-card';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
@@ -12,15 +13,13 @@ import './style.scss';
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
-	source: 'email-comparison' | 'email-management';
-	usePromoCard: boolean;
 };
 
 const buildQueryString = ( parameters = {} ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
-	const { domain, selectedSite, source, usePromoCard } = props;
+	const { domain, selectedSite } = props;
 
 	const translate = useTranslate();
 
@@ -85,51 +84,34 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		},
 	};
 
-	let reasonText: TranslateResult | null = null;
+	let reasonText: TranslateResult | null;
 
-	if ( source === 'email-comparison' ) {
-		if ( ownerUserName ) {
-			reasonText = translate(
-				'Email service can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
-					'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
-					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
-					'Otherwise, please {{reachOutLink}}reach out to %(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-				translateOptions
-			);
-		} else {
-			reasonText = translate(
-				'Email service can only be purchased by the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
-					'If you have access to that account, please log in with the account to make a purchase. ' +
-					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-				translateOptions
-			);
-		}
-	} else if ( source === 'email-management' ) {
-		if ( ownerUserName ) {
-			reasonText = translate(
-				'Additional mailboxes can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
-					'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
-					'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
-					'Otherwise, please reach out to {{reachOutLink}}%(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-				translateOptions
-			);
-		} else {
-			reasonText = translate(
-				'Additional mailboxes can only be purchased by the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
-					'If you have access to that account, please log in with the account to make a purchase. ' +
-					'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
-				translateOptions
-			);
-		}
-	}
-
-	if ( usePromoCard ) {
-		return (
-			<PromoCard className="email-non-domain-owner-message__non-owner-notice">
-				<p>{ reasonText }</p>
-			</PromoCard>
+	if ( ownerUserName ) {
+		reasonText = translate(
+			'Email service can only be purchased by {{strong}}%(ownerUserName)s{{/strong}}, ' +
+				'who is the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
+				'If you have access to that account, please {{loginLink}}log in with the account{{/loginLink}} to make a purchase. ' +
+				'Otherwise, please {{reachOutLink}}reach out to %(ownerUserName)s{{/reachOutLink}} or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+			translateOptions
+		);
+	} else {
+		reasonText = translate(
+			'Email service can only be purchased by the owner of {{strong}}%(selectedDomainName)s{{/strong}}. ' +
+				'If you have access to that account, please log in with the account to make a purchase. ' +
+				'Otherwise, please {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+			translateOptions
 		);
 	}
 
-	return <p className="email-non-domain-owner-message__non-owner-message">{ reasonText }</p>;
+	return (
+		<>
+			<PromoCard className="email-non-domain-owner-message__non-owner-notice">
+				<p>{ reasonText }</p>
+			</PromoCard>
+			<TrackComponentView
+				eventName="calypso_non_domain_owner_notice_component_impression"
+				eventProperties={ { source: 'email-comparison' } }
+			/>
+		</>
+	);
 };
