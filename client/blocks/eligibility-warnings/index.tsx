@@ -7,6 +7,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -23,6 +24,7 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
@@ -129,6 +131,10 @@ export const EligibilityWarnings = ( {
 		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
+	const monthlyCost = useSelector( ( state ) =>
+		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
+	);
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -154,7 +160,8 @@ export const EligibilityWarnings = ( {
 						<div className="eligibility-warnings__primary-text">
 							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
 								? translate(
-										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+										{ args: { monthlyCost } }
 								  )
 								: '' }
 						</div>
