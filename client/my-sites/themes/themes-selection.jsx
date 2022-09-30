@@ -17,6 +17,7 @@ import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
+	isFulfilledThemesForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isThemeActive,
@@ -163,6 +164,7 @@ class ThemesSelection extends Component {
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
+					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
@@ -170,12 +172,14 @@ class ThemesSelection extends Component {
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
 					getPrice={ this.props.getPremiumThemePrice }
+					isRequestFulfilled={ this.props.isRequestFulfilled }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
+					searchTerm={ query.search }
 				/>
 			</div>
 		);
@@ -254,6 +258,7 @@ export const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting:
 				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
+			isRequestFulfilled: isFulfilledThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
