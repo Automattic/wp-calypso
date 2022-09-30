@@ -61,6 +61,7 @@ class RemovePurchase extends Component {
 		purchaseListUrl: PropTypes.string,
 		activeSubscriptions: PropTypes.array,
 		linkIcon: PropTypes.string,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -240,7 +241,7 @@ class RemovePurchase extends Component {
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
 				hasDomain={ hasCustomDomain }
-				wpcomSiteURL={ site.wpcom_url }
+				wpcomSiteURL={ site.slug }
 				primaryDomain={ primaryDomainName }
 			/>
 		);
