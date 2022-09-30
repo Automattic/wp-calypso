@@ -63,17 +63,18 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 
 	$calypso_domain = 'https://wordpress.com';
 	if (
-		! empty( $_GET['origin'] ) &&
+		! empty( $_GET['origin'] ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		in_array(
-			$_GET['origin'],
+			$_GET['origin'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			array(
 				'http://calypso.localhost:3000',
 				'https://wpcalypso.wordpress.com',
-				'https://horizon.wordpress.com'
-			)
+				'https://horizon.wordpress.com',
+			),
+			true
 		)
 	) {
-		$calypso_domain = $_GET['origin'];
+		$calypso_domain = $_GET['origin']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	$site_slug = method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' )
@@ -93,7 +94,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		'wpcomGlobalStyles',
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug"
+			'upgradeUrl' => "$calypso_domain/plans/$site_slug",
 		)
 	);
 	wp_enqueue_style(
