@@ -6,7 +6,10 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import {
+	emailManagementEdit,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 
 import './style.scss';
 
@@ -29,12 +32,21 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const isPrivacyAvailable = domain?.privacyAvailable;
 
 	const buildLoginUrl = () => {
-		const redirectUrlParameter = emailManagementPurchaseNewEmailAccount(
-			selectedSite?.slug ?? '',
-			domain?.name ?? '',
-			null,
-			'login-redirect'
-		);
+		const redirectUrlParameter =
+			source === 'email-comparison'
+				? emailManagementPurchaseNewEmailAccount(
+						selectedSite?.slug ?? '',
+						domain?.name ?? '',
+						null,
+						'login-redirect'
+				  )
+				: emailManagementEdit(
+						selectedSite?.slug ?? '',
+						domain?.name ?? '',
+						'manage',
+						null,
+						'login-redirect'
+				  );
 
 		return `/log-in/${ buildQueryString( {
 			email_address: ownerUserName,
