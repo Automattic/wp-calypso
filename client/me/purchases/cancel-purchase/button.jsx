@@ -373,7 +373,7 @@ class CancelPurchaseButton extends Component {
 								'This button cancels the active plan and all active Marketplace subscriptions on the site',
 						} ) }
 						bodyParagraphText={ translate(
-							'This subscription will be cancelled. It will be removed when your plan expires.',
+							'This subscription will be cancelled. It will be removed when it expires.',
 							'These subscriptions will be cancelled. They will be removed when your plan expires.',
 							{ count: activeSubscriptions.length }
 						) }
