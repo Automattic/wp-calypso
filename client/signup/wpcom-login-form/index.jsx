@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useEffect, useRef } from 'react';
 
 function getFormAction( redirectTo ) {
-	const subdomainRegExp = /^https?:\/\/([a-z0-9]+)\.wordpress\.com(?:$|\/)/;
+	const subdomainRegExp = /^https?:\/\/([a-z0-9-]+)\.wordpress\.com(?:$|\/)/;
 	const hostname = config( 'hostname' );
 	let subdomain = '';
 
