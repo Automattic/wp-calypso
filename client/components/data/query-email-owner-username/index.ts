@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { useGetEmailAccountsQuery } from '../../../data/emails/use-get-email-accounts-query';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { InfiniteData } from 'react-query';
 
@@ -17,10 +16,6 @@ type UsersData = {
 	users: User[];
 };
 
-type EmailAccountWithActiveField = {
-	active: boolean;
-};
-
 export function useEmailOwnerUserName(
 	selectedSite: SiteDetails | null | undefined,
 	domainName: string
@@ -29,19 +24,12 @@ export function useEmailOwnerUserName(
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 
-	const { data: emailAccounts = [] as EmailAccountWithActiveField[] } = useGetEmailAccountsQuery(
-		selectedSite ? selectedSite.ID : null,
-		domainName
+	const emailSubscription = purchases.find(
+		( purchase ) =>
+			( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) &&
+			purchase.meta === domainName &&
+			purchase.active
 	);
-
-	const emailSubscription =
-		emailAccounts.length > 0
-			? purchases.find(
-					( purchase ) =>
-						( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) &&
-						purchase.meta === domainName
-			  )
-			: null;
 
 	const { data, isLoading } = useUsersQuery(
 		selectedSite?.ID,
