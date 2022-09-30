@@ -289,11 +289,7 @@ const EmailProvidersStackedComparison = ( {
 
 			<>
 				{ showNonOwnerMessage && (
-					<EmailNonDomainOwnerMessage
-						domain={ domain }
-						selectedSite={ selectedSite }
-						source={ 'email-comparison' }
-					/>
+					<EmailNonDomainOwnerMessage domain={ domain } selectedSite={ selectedSite } />
 				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
