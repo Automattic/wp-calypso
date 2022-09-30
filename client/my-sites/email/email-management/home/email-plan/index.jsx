@@ -22,7 +22,12 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getTitanProductName,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+	isDomainEligibleForTitanIntroductoryOffer,
+} from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -63,7 +68,9 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 			onClick={ () => recordTracksEvent( 'calypso_upsell_email', { context: 'email-forwarding' } ) }
 		>
 			{ translate( 'Upgrade to Professional Email' ) }
-			<Badge type="info-green">{ translate( 'Try 3 months free' ) }</Badge>
+			{ isDomainEligibleForTitanIntroductoryOffer( domain ) && (
+				<Badge type="info-green">{ translate( 'Try 3 months free' ) }</Badge>
+			) }
 		</VerticalNavItem>
 	);
 };
