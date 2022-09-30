@@ -146,8 +146,12 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				setProgress( 1.0 );
 
+				const redirectTo = encodeURIComponent(
+					`/setup/completingPurchase?flow=videopress&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+				);
+
 				window.location.replace(
-					`/checkout/${ newSite?.site_slug }/${ planProductObject?.storeSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+					`/checkout/${ newSite?.site_slug }/${ planProductObject?.storeSlug }?signup=1&redirect_to=${ redirectTo }`
 				);
 			} );
 
