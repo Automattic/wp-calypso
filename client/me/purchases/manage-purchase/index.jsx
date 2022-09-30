@@ -13,6 +13,7 @@ import {
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isThemePurchase,
+	isJetpackPlan,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -516,27 +517,19 @@ class ManagePurchase extends Component {
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
 			const { hasCustomPrimaryDomain } = this.props;
-			if ( isPlan( purchase ) ) {
-				if ( hasCustomPrimaryDomain && isRefundable( purchase ) ) {
-					return (
-						<RemovePlanDialog
-							isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
-							closeDialog={ this.closeDialog }
-							removePlan={ this.goToCancelLink }
-							site={ site }
-							hasDomain={ hasCustomPrimaryDomain }
-							wpcomSiteURL={ site.slug }
-						/>
-					);
-				}
+			let customDomain = false;
 
+			if ( isPlan( purchase ) && ! isJetpackPlan( purchase ) ) {
+				if ( hasCustomPrimaryDomain && isRefundable( purchase ) ) {
+					customDomain = true;
+				}
 				return (
 					<RemovePlanDialog
 						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 						closeDialog={ this.closeDialog }
 						removePlan={ this.goToCancelLink }
 						site={ site }
-						hasDomain={ false }
+						hasDomain={ customDomain }
 						wpcomSiteURL={ site.slug }
 					/>
 				);
@@ -584,7 +577,7 @@ class ManagePurchase extends Component {
 			}
 
 			if ( isSubscription( purchase ) ) {
-				if ( isPlan( purchase ) && ! isJetpackProduct( purchase ) ) {
+				if ( isPlan( purchase ) && ! isJetpackProduct( purchase ) && ! isJetpackPlan( purchase ) ) {
 					event.preventDefault();
 					this.showRemoveSubscriptionWarningDialog( link );
 				}
