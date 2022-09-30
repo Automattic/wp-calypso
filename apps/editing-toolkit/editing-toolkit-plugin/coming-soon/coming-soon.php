@@ -17,6 +17,13 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
+	// mShots should be able to take screenshots of coming soon sites, in the
+	// same way RSS readers have access to coming soon sites.
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	if ( isset( $_GET['mshots'] ) ) {
+		return false;
+	}
+
 	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
 	// Everyone from Administrator to Subscriber will be able to see the site.
