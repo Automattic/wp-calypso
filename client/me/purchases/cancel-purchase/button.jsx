@@ -374,7 +374,7 @@ class CancelPurchaseButton extends Component {
 						} ) }
 						bodyParagraphText={ translate(
 							'This subscription will be cancelled. It will be removed when it expires.',
-							'These subscriptions will be cancelled. They will be removed when your plan expires.',
+							'These subscriptions will be cancelled. They will be removed when they expire.',
 							{ count: activeSubscriptions.length }
 						) }
 					/>
