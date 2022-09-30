@@ -2,6 +2,7 @@ import { SiteDetails } from '@automattic/data-stores';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import { useEmailOwnerUserName } from 'calypso/components/data/query-email-owner-username';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
 
@@ -85,5 +86,13 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 		);
 	}
 
-	return <p className="email-non-owner-message__non-owner-message">{ reasonText }</p>;
+	return (
+		<>
+			<TrackComponentView
+				eventName="calypso_non_email_owner_notice_component_impression"
+				eventProperties={ { source: 'email-management' } }
+			/>
+			<p className="email-non-owner-message__non-owner-message">{ reasonText }</p>
+		</>
+	);
 };
