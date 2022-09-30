@@ -165,6 +165,9 @@ export const sanitizeSectionContent = ( content ) => {
 	const parser = new root.DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
+	if ( ! doc ) {
+		return '';
+	}
 	// this will let us visit every single DOM node programmatically
 	// the third & fourth arguments are required by IE 11
 	const walker = doc.createTreeWalker( doc.body, root.NodeFilter.SHOW_ALL, null, false );
