@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
@@ -5,7 +6,8 @@ export const GUTENBERG = 'gutenberg-editor';
 export const NOTES = 'notifications';
 export const READER = 'reader';
 export const STATS = 'stats';
-export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS ];
+export const HOME = 'home';
+export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS, HOME ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
@@ -13,7 +15,15 @@ export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
 export const ONE_DAY_IN_MILLISECONDS = 86400000;
 
+const emptyBanner = {
+	title: '',
+	copy: '',
+	icon: '',
+};
+
 export function getAppBannerData( translate, sectionName, isRTL ) {
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+
 	switch ( sectionName ) {
 		case GUTENBERG:
 			return {
@@ -43,12 +53,20 @@ export function getAppBannerData( translate, sectionName, isRTL ) {
 				copy: translate( 'See your real-time stats anytime, anywhere.' ),
 				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
+		case HOME:
+			if ( displayJetpackAppBranding ) {
+				return {
+					title: translate( 'The Jetpack app makes WordPress better.' ),
+					copy: translate(
+						'Everything you need to write, publish, and manage a world-class site.'
+					),
+					icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
+				};
+			}
+
+			return emptyBanner;
 		default:
-			return {
-				title: '',
-				copy: '',
-				icon: '',
-			};
+			return emptyBanner;
 	}
 }
 
