@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import UpworkBanner from 'calypso/blocks/upwork-banner';
+import { isUpworkBannerDismissed } from 'calypso/blocks/upwork-banner/selector';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
@@ -233,13 +234,39 @@ class ThemeShowcase extends Component {
 		this.setState( { tabFilter }, callback );
 	};
 
-	expertsBanner = () => {
-		const { currentThemeId, loggedOutComponent, siteId, isLoggedIn } = this.props;
-		const showBanners = currentThemeId || ! siteId || ! isLoggedIn;
-		if ( loggedOutComponent || ! showBanners ) {
-			return;
+	renderBanner = () => {
+		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
+		const tabKey = this.state.tabFilter.key;
+
+		if (
+			tabKey !== this.tabFilters.MYTHEMES.key &&
+			! isExpertBannerDissmissed &&
+			! loggedOutComponent
+		) {
+			// these are from the time we rely on the redirect.
+			// See p2-pau2Xa-4nq#comment-12480
+			let location = 'theme-banner';
+			let utmCampaign = 'built-by-wordpress-com-redirect';
+
+			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
+			switch ( tabKey ) {
+				case this.tabFilters.RECOMMENDED.key:
+					location = 'recommended-theme-banner';
+					utmCampaign = 'theme-rec-tre';
+					break;
+				case this.tabFilters.TRENDING.key:
+					location = 'trending-theme-banner';
+					utmCampaign = 'theme-rec-tre';
+					break;
+				case this.tabFilters.ALL.key:
+					location = 'all-theme-banner';
+					utmCampaign = 'theme-all';
+			}
+
+			return <UpworkBanner location={ location } utmCampaign={ utmCampaign } />;
 		}
-		return <UpworkBanner location={ 'theme-banner' } />;
+
+		return upsellBanner;
 	};
 
 	allThemes = ( { themeProps } ) => {
@@ -388,12 +415,18 @@ class ThemeShowcase extends Component {
 							</NavTabs>
 						</SectionNav>
 					) }
-					{ this.props.upsellBanner }
-					{ 'recommended' === this.state.tabFilter.key && <RecommendedThemes { ...themeProps } /> }
-					{ 'all' === this.state.tabFilter.key && this.expertsBanner() }
-					{ 'all' === this.state.tabFilter.key && this.allThemes( { themeProps } ) }
-					{ 'my-themes' === this.state.tabFilter.key && <ThemesSelection { ...themeProps } /> }
-					{ 'trending' === this.state.tabFilter.key && <TrendingThemes { ...themeProps } /> }
+					{ this.renderBanner() }
+					{ this.tabFilters.RECOMMENDED.key === this.state.tabFilter.key && (
+						<RecommendedThemes { ...themeProps } />
+					) }
+					{ this.tabFilters.ALL.key === this.state.tabFilter.key &&
+						this.allThemes( { themeProps } ) }
+					{ this.tabFilters.MYTHEMES.key === this.state.tabFilter.key && (
+						<ThemesSelection { ...themeProps } />
+					) }
+					{ this.tabFilters.TRENDING.key === this.state.tabFilter.key && (
+						<TrendingThemes { ...themeProps } />
+					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source={ 'list' } />
@@ -416,6 +449,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		currentTheme,
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
+		isExpertBannerDissmissed: isUpworkBannerDismissed( state ),
 		siteCanInstallThemes: siteHasFeature( state, siteId, FEATURE_INSTALL_THEMES ),
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),

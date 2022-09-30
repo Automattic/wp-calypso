@@ -26,6 +26,7 @@ import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	GUTENBERG,
+	HOME,
 	NOTES,
 	READER,
 	STATS,
@@ -134,6 +135,8 @@ export class AppBanner extends Component {
 			switch ( currentSection ) {
 				case GUTENBERG:
 					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
+				case HOME:
+					return `intent://home/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case NOTES:
 					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case READER:
@@ -196,6 +199,13 @@ export class AppBanner extends Component {
 
 	getWordpressAppBanner = ( { translate, currentSection } ) => {
 		const { title, copy } = getAppBannerData( translate, currentSection );
+
+		// This conditional will be unnecessary once the 'jetpack/app-branding'
+		// feature flag is removed and its features are made the default
+		// experience, as getAppBannerData will then not include conditionals.
+		if ( ! title || ! copy ) {
+			return null;
+		}
 
 		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
