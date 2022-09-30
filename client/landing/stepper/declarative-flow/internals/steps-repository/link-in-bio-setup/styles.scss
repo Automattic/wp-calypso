@@ -73,14 +73,9 @@ $font-family: "SF Pro Text", $sans;
 			height: 44px;
 		}
 
-		.components-form-file-upload {
+		.components-form-file-upload .add {
+			color: var(--studio-black);
 			text-decoration: underline;
-			.add {
-				color: var(--studio-black);
-			}
-			.replace {
-				color: var(--studio-gray-100);
-			}
 		}
 	}
 
