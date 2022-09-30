@@ -41,8 +41,8 @@ export const RemovePlanDialog = ( {
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
 	const subTitle = ! isRefundable
-		? translate( 'If you cancel your plan, once it expires, you will lose:' )
-		: translate( 'If you cancel your plan, you will lose:' );
+		? translate( 'If you cancel your plan, you will lose:' )
+		: translate( 'If you cancel your plan, once it expires, you will lose:' );
 
 	/**
 	 * Click events, buttons tracking and action.
