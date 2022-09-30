@@ -24,6 +24,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -215,8 +216,17 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			? isThemePurchased( state, selectedDesignThemeId, site.ID )
 			: false
 	);
+
+	const isPluginBundleEligible = useIsPluginBundleEligible();
+	const isBundledWithWooCommerce = ( selectedDesign?.software_sets || [] ).some(
+		( set ) => set.slug === 'woo-on-plans'
+	);
+
 	const shouldUpgrade =
-		selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme;
+		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
+		( isEnabled( 'themes/plugin-bundling' ) &&
+			! isPluginBundleEligible &&
+			isBundledWithWooCommerce );
 
 	const [ showUpgradeModal, setShowUpgradeModal ] = useState( false );
 
@@ -375,7 +385,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const pickDesignText =
 			selectedDesign.design_type === 'vertical' || selectedDesignHasStyleVariations
-				? translate( 'Select and continue' )
+				? translate( 'Continue' )
 				: translate( 'Start with %(designTitle)s', { args: { designTitle } } );
 
 		const actionButtons = (

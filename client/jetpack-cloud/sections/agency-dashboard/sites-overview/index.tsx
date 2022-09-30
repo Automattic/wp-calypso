@@ -107,7 +107,7 @@ export default function SitesOverview() {
 		]
 	);
 
-	const selectedItem = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
+	const selectedTab = navItems.find( ( i ) => i.selected ) || navItems[ 0 ];
 	const hasAppliedFilter = !! search || filter?.issueTypes?.length > 0;
 	const showEmptyState = ! isLoading && ! isError && ! data?.sites?.length;
 
@@ -121,6 +121,8 @@ export default function SitesOverview() {
 			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
 		}
 	}
+
+	const isFavoritesTab = selectedTab.key === 'favorites';
 
 	return (
 		<div className="sites-overview">
@@ -143,19 +145,16 @@ export default function SitesOverview() {
 							applyUpdatedStyles
 							selectedText={
 								<span>
-									{ selectedItem.label }
-									<Count count={ selectedItem.count } compact={ true } />
+									{ selectedTab.label }
+									<Count count={ selectedTab.count } compact={ true } />
 								</span>
 							}
-							selectedCount={ selectedItem.count }
+							selectedCount={ selectedTab.count }
 							className={ classNames(
-								isMobile &&
-									highlightTab &&
-									selectedItem.key === 'favorites' &&
-									'sites-overview__highlight-tab'
+								isMobile && highlightTab && isFavoritesTab && 'sites-overview__highlight-tab'
 							) }
 						>
-							<NavTabs selectedText={ selectedItem.label } selectedCount={ selectedItem.count }>
+							<NavTabs selectedText={ selectedTab.label } selectedCount={ selectedTab.count }>
 								{ navItems.map( ( props ) => (
 									<NavItem { ...props } compactCount={ true } />
 								) ) }
@@ -176,7 +175,12 @@ export default function SitesOverview() {
 						{ showEmptyState ? (
 							<div className="sites-overview__no-sites">{ emptyStateMessage }</div>
 						) : (
-							<SiteContent data={ data } isLoading={ isLoading } currentPage={ currentPage } />
+							<SiteContent
+								data={ data }
+								isLoading={ isLoading }
+								currentPage={ currentPage }
+								isFavoritesTab={ isFavoritesTab }
+							/>
 						) }
 					</div>
 				</div>

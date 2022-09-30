@@ -56,6 +56,7 @@ export const pluginBundleFlow: Flow = {
 		return steps.concat( bundlePluginSteps );
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -132,7 +133,7 @@ export const pluginBundleFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			switch ( currentStep ) {
 				case 'storeAddress':

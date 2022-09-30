@@ -31,7 +31,18 @@ $font-family: "SF Pro Text", $sans;
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		margin-bottom: 16px;
 	}
+
+	.form-input-validation {
+		padding-bottom: 0;
+	}
+
+	.form-label {
+		color: var(--studio-black);
+		margin-bottom: 8px;
+	}
+
 
 	.link-in-bio-setup__form {
 		display: flex;
@@ -61,6 +72,18 @@ $font-family: "SF Pro Text", $sans;
 		input {
 			height: 44px;
 		}
+
+		.components-form-file-upload {
+			span {
+				text-decoration: underline;
+			}
+			.add {
+				color: var(--studio-black);
+			}
+			.replace {
+				color: var(--studio-gray-100);
+			}
+		}
 	}
 
 	.link-in-bio-setup-form__submit {
@@ -68,9 +91,10 @@ $font-family: "SF Pro Text", $sans;
 		background-color: var(--studio-blue-50);
 		border-radius: 4px;
 		font-weight: 500;
-		border: none;
 		width: 100%;
-		height: 40px;
+		// adds +2 px of padding to the button to match the input field height
+		padding: 10px 14px;
+		margin-top: 16px;
 
 		&:hover:not([disabled]) {
 			background-color: var(--wp-admin-theme-color-darker-10);

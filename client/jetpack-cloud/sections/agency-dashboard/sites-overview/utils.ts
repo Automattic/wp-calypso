@@ -227,7 +227,7 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-realtime&source=dashboard`;
+				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
 			} else {
 				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
 			}

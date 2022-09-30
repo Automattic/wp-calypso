@@ -81,33 +81,6 @@ body.is-section-plugins.theme-default.color-scheme {
 	margin: 0;
 }
 
-.plugins__main-buttons {
-	display: flex;
-	align-items: center;
-
-	@media screen and ( max-width: 1280px ) {
-		.plugins__button {
-			border: none;
-		}
-	}
-
-	.plugins__button {
-		white-space: nowrap;
-		display: flex;
-		align-items: center;
-		height: 32px;
-
-		.plugins__button-icon {
-			margin-right: 5px;
-		}
-
-		&:not(:last-child) {
-			@include breakpoint-deprecated( ">480px" ) {
-				margin-right: 10px;
-			}
-		}
-	}
-}
 
 .plugins__more-header {
 	font-size: $font-body-small;
@@ -352,11 +325,48 @@ body.is-section-plugins header .select-dropdown__item {
 	margin-bottom: 8px;
 }
 .plugins__page-title-container {
-	display: none;
-	@include breakpoint-deprecated( ">660px" ) {
-		display: block;
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	.plugins__header-left-content {
+		display: none;
+		@include breakpoint-deprecated( ">660px" ) {
+			display: block;
+			width: 100%;
+		}
+		@include break-xlarge {
+			width: 45%;
+		}
+	}
+	.plugins__header-right-content {
+		width: 100%;
+		margin: 12px 0;
+		.button {
+			height: 40px;
+			display: inline-flex;
+			&:not(:last-child) {
+				margin-inline-end: 8px;
+			}
+			.plugins__button-icon {
+				margin-inline-end: 5px;
+			}
+			// Move button to next line if there are 3 buttons on devices <425px
+			&:nth-child(3) {
+				margin-block-start: 12px;
+				display: block;
+				@media ( min-width: 425px ) {
+					display: initial;
+					margin-block-start: initial;
+				}
+			}
+		}
+		@include break-xlarge {
+			width: 55%;
+			text-align: right;
+		}
 	}
 }
+
 .plugins__main-updated {
 	.plugins__main-header .section-nav {
 		border-width: 1px;
@@ -419,6 +429,7 @@ body.is-section-plugins header .select-dropdown__item {
 	}
 	.search.is-open {
 		box-shadow: none;
+		z-index: 0;
 	}
 }
 
@@ -490,6 +501,30 @@ body.is-section-plugins header .select-dropdown__item {
 			padding: 7px;
 			font-size: 0.75rem;
 			line-height: 1;
+		}
+	}
+}
+
+.plugin__header {
+	border-bottom: none !important;
+	background-color: var(--color-surface-backdrop) !important;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		inset-inline-start: 10px !important;
+	}
+
+	@media ( min-width: 782px ) {
+		inset-inline-start: calc(var(--sidebar-width-min) + 10px) !important;
+	}
+
+	@include break-large {
+		inset-inline-start: calc(var(--sidebar-width-min) + 20px) !important;
+	}
+
+	@include break-xlarge {
+		> div {
+			max-width: 1530px;
+			margin: auto;
 		}
 	}
 }

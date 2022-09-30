@@ -9,12 +9,14 @@ import MaterialIcon from 'calypso/components/material-icon';
 import { clearWordPressCache } from 'calypso/state/hosting/actions';
 import getRequest from 'calypso/state/selectors/get-request';
 import { isAtomicClearCacheEnabled } from 'calypso/state/selectors/is-atomic-clear-cache-enabled';
+import { shouldProvideReasonToClearAtomicCache } from 'calypso/state/selectors/should-provide-reason-to-clear-atomic-cache';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 const MiscellaneousCard = ( {
 	disabled,
+	shouldProvideReasonToClearCache,
 	clearAtomicWordPressCache,
 	isClearCacheEnabled,
 	isClearingCache,
@@ -25,7 +27,10 @@ const MiscellaneousCard = ( {
 	const [ reason, setReason ] = useState( '' );
 
 	const clearCache = () => {
-		clearAtomicWordPressCache( siteId, reason );
+		clearAtomicWordPressCache(
+			siteId,
+			shouldProvideReasonToClearCache ? reason : 'Clearing again in less than 24 hours.'
+		);
 		setShowDialog( false );
 		setReason( '' );
 	};
@@ -68,7 +73,7 @@ const MiscellaneousCard = ( {
 					) }
 				</p>
 				<Button
-					onClick={ showConfirmationDialog }
+					onClick={ shouldProvideReasonToClearCache ? showConfirmationDialog : clearCache }
 					busy={ isClearingCache }
 					disabled={ disabled || isClearingCache }
 				>
@@ -124,6 +129,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			shouldProvideReasonToClearCache: shouldProvideReasonToClearAtomicCache( state, siteId ),
 			isClearCacheEnabled: isAtomicClearCacheEnabled( state, siteId ),
 			isClearingCache: getRequest( state, clearWordPressCache( siteId ) )?.isLoading ?? false,
 			siteId,

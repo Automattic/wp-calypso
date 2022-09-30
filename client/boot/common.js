@@ -236,15 +236,20 @@ const configureReduxStore = ( currentUser, reduxStore ) => {
 	}
 };
 
-function setupErrorLogger( reduxStore ) {
+export function setupErrorLogger( reduxStore ) {
 	// Add a bit of metadata from the redux store to the sentry event.
 	const beforeSend = ( event ) => {
 		const state = reduxStore.getState();
-		if ( ! event.tags ) {
-			event.tags = {};
-		}
-		event.tags.blog_id = getSelectedSiteId( state );
-		event.tags.calypso_section = getSectionName( state );
+		const tags = {
+			blog_id: getSelectedSiteId( state ),
+			calypso_section: getSectionName( state ),
+		};
+
+		event.tags = {
+			...tags,
+			...event.tags,
+		};
+
 		return event;
 	};
 

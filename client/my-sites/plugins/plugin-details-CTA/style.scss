@@ -13,12 +13,8 @@
 }
 
 .plugin-details-cta__dialog-content {
-	.eligibility-warnings {
-		margin: 0;
-
-		.card {
-			box-shadow: none;
-		}
+	.dialog__content {
+		padding: 0;
 	}
 }
 

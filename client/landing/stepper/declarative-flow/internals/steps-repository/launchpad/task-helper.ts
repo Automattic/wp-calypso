@@ -31,7 +31,7 @@ export function getEnhancedTasks(
 			switch ( task.id ) {
 				case 'setup_newsletter':
 					taskData = {
-						title: translate( 'Set up Newsletter' ),
+						title: translate( 'Personalize Newsletter' ),
 					};
 					break;
 				case 'plan_selected':
@@ -66,7 +66,7 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
-						title: translate( 'Set up Link in Bio' ),
+						title: translate( 'Personalize Link in Bio' ),
 						keepActive: true,
 						actionUrl: `/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`,
 					};
@@ -96,7 +96,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
+									window.location.replace( `/home/${ siteSlug }` );
 								} );
 
 								submit?.();

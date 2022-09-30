@@ -13,10 +13,11 @@ export const linkInBioPostSetup: Flow = {
 	},
 
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const siteSlug = useSiteSlug();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, 'link-in-bio-post-setup', currentStep );
+			recordSubmitStep( providedDependencies, 'link-in-bio-post-setup', flowName, currentStep );
 
 			switch ( currentStep ) {
 				case 'linkInBioPostSetup':

@@ -61,6 +61,10 @@ export interface DesignRecipe {
 	footer_pattern_ids?: number[] | string[];
 }
 
+export interface SoftwareSet {
+	slug: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 /**
@@ -88,6 +92,7 @@ export interface Design {
 	style_variations?: StyleVariation[];
 	price?: string;
 	verticalizable?: boolean;
+	software_sets?: SoftwareSet[];
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

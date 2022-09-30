@@ -28,7 +28,6 @@
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
 		"ad-tracking": false,
-		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,

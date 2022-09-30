@@ -65,15 +65,22 @@ $break-design-preview: 1024px;
 	}
 
 	.design-preview__sidebar-description {
-		p {
+		> p {
 			color: var(--studio-gray-80);
-			font-size: 0.875rem;
-			line-height: 20px;
+			font-size: 1rem;
+			line-height: 24px;
 		}
 	}
 
 	.design-preview__sidebar-variations {
 		display: block;
+
+		> p {
+			color: var(--studio-gray-100);
+			display: none;
+			font-size: 0.875rem;
+			line-height: 20px;
+		}
 
 		.design-preview__sidebar-variations-grid {
 			align-items: center;
@@ -118,7 +125,8 @@ $break-design-preview: 1024px;
 			display: block;
 			margin: 2rem 0 0;
 
-			h2 {
+			h2,
+			&.design-preview__sidebar-variations > p {
 				display: block;
 			}
 
@@ -133,7 +141,7 @@ $break-design-preview: 1024px;
 				display: grid;
 				gap: 12px;
 				grid-template-columns: repeat(2, 1fr);
-				margin: 0 -5px;
+				margin: 24px -5px 0;
 				padding: 2px;
 				width: 100%;
 
@@ -160,7 +168,6 @@ $break-design-preview: 1024px;
 		&::after {
 			border-radius: 3px; /* stylelint-disable-line scales/radii */
 			bottom: -3px;
-			box-shadow: 0 0 0 2px var(--studio-blue-50);
 			content: "";
 			display: block;
 			left: -3px;
@@ -171,13 +178,26 @@ $break-design-preview: 1024px;
 		}
 	}
 
+	&:hover,
+	&:focus-visible {
+		&::after {
+			box-shadow: 0 0 0 2px var(--studio-blue-50);
+		}
+	}
+
+	&--is-selected {
+		&::after {
+			box-shadow: 0 0 0 2px var(--studio-gray);
+		}
+	}
+
 	&:focus-visible {
 		outline: none;
 	}
 
 	.edit-site-global-styles-preview__iframe {
 		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 1px rgba(0 0 0 / 25%);
+		box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
 		border: 0;
 		display: block;
 		max-height: 61.2903px;
@@ -196,23 +216,20 @@ $break-design-preview: 1024px;
 
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
-			border: 0;
-			border-radius: 0;
-			box-shadow: none;
-
-			@include break-design-preview {
-				border-radius: 20px; /* stylelint-disable-line scales/radii */
-				box-shadow:
-					0 15px 20px rgb(0 0 0 / 4%),
-					0 13px 10px rgb(0 0 0 / 3%),
-					0 6px 6px rgb(0 0 0 / 2%);
-				margin-top: 0;
+			@media ( max-width: $break-design-preview ) {
+				border: 0;
+				border-radius: 0;
+				box-shadow: none;
+				height: 100%;
+				max-width: none;
+				width: 100%;
 			}
 		}
 	}
 
 	.theme-preview__toolbar {
 		display: none;
+		margin-top: -11px;
 
 		@include break-design-preview {
 			display: block;

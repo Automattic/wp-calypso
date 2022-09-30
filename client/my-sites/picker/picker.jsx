@@ -100,6 +100,8 @@ class SitePicker extends Component {
 			<div>
 				<CloseOnEscape onEscape={ this.closePicker } />
 				<SiteSelector
+					maxResults={ this.props.maxResults }
+					showHiddenSites={ this.props.showHiddenSites }
 					showManageSitesButton={ this.props.showManageSitesButton }
 					isPlaceholder={ ! this.state.isRendered }
 					indicator={ true }

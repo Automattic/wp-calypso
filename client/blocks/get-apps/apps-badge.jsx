@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { startsWith } from 'lodash';
@@ -6,6 +7,7 @@ import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 import './apps-badge.scss';
@@ -17,8 +19,12 @@ const APP_STORE_BADGE_URLS = {
 		defaultSrc: '/calypso/images/me/get-apps-ios-store.svg',
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
-		getStoreLink: ( utm_source ) =>
-			`https://apps.apple.com/app/apple-store/id335703880?pt=299112&ct=${ utm_source }&mt=8`,
+		getStoreLink: ( utm_source, _utm_medium, _utm_campaign, displayJetpackAppBranding ) => {
+			const appId = displayJetpackAppBranding
+				? '1565481562' // Jetpack
+				: '335703880'; // WordPress
+			return `https://apps.apple.com/app/apple-store/id${ appId }?pt=299112&ct=${ utm_source }&mt=8`;
+		},
 		getTitleText: () => translate( 'Download the WordPress iOS mobile app.' ),
 		getAltText: () => translate( 'Apple App Store download badge' ),
 		getLocaleSlug: function () {
@@ -34,9 +40,12 @@ const APP_STORE_BADGE_URLS = {
 		getStoreLink: (
 			utm_source,
 			utm_medium = 'web',
-			utm_campaign = 'mobile-download-promo-pages'
-		) =>
-			`https://play.google.com/store/apps/details?id=org.wordpress.android&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`,
+			utm_campaign = 'mobile-download-promo-pages',
+			displayJetpackAppBranding
+		) => {
+			const appId = displayJetpackAppBranding ? 'com.jetpack.android' : 'org.wordpress.android';
+			return `https://play.google.com/store/apps/details?id=${ appId }&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`;
+		},
 		getTitleText: () => translate( 'Download the WordPress Android mobile app.' ),
 		getAltText: () => translate( 'Google Play Store download badge' ),
 		getLocaleSlug,
@@ -77,6 +86,11 @@ export class AppsBadge extends PureComponent {
 			this.image = null;
 			this.loadImage();
 		}
+
+		const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
+		this.displayJetpackAppBranding =
+			config.isEnabled( 'jetpack/app-branding' ) && ( isIos || isAndroid );
 	}
 
 	loadImage() {
@@ -122,7 +136,14 @@ export class AppsBadge extends PureComponent {
 			<figure className={ figureClassNames }>
 				<a
 					href={
-						storeLink ? storeLink : badge.getStoreLink( utm_source, utm_medium, utm_campaign )
+						storeLink
+							? storeLink
+							: badge.getStoreLink(
+									utm_source,
+									utm_medium,
+									utm_campaign,
+									this.displayJetpackAppBranding
+							  )
 					}
 					onClick={ this.onLinkClick }
 					target="_blank"

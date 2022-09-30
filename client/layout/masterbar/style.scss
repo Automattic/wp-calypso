@@ -866,10 +866,6 @@ a.masterbar__quick-language-switcher {
 	svg {
 		fill: var(--color-masterbar-text);
 	}
-
-	&.is-active {
-		background: #1e1e1e;
-	}
 }
 
 @keyframes fadeIn {
