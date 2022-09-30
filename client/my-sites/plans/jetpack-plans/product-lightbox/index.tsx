@@ -1,7 +1,7 @@
 import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import Modal from 'react-modal';
 import { useDispatch } from 'react-redux';
 import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
@@ -78,6 +78,15 @@ const ProductLightbox: React.FC< Props > = ( {
 			} )
 		);
 	}, [ dispatch, getOnClickPurchase, product, siteId ] );
+
+	useEffect( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_product_lightbox_open', {
+				site_id: siteId,
+				product_slug: product.productSlug,
+			} )
+		);
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	const variantOptions = useMemo( () => {
 		const variants = JETPACK_RELATED_PRODUCTS_MAP[ product.productSlug ] || [];
