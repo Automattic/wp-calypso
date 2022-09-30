@@ -6,19 +6,44 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
 
+jest.mock( '../../../../../hooks/use-site.ts', () => ( {
+	useSite: () => {
+		const site = {
+			ID: 210745841,
+			name: 'testlib12403',
+			URL: 'https://testlib12403.wordpress.com',
+			options: {
+				site_intent: 'link-in-bio',
+				site_vertical_id: null,
+				launchpad_screen: 'full',
+				launchpad_checklist_tasks_statuses: {
+					links_edited: true,
+				},
+			},
+			plan: {
+				product_id: 1,
+				product_slug: 'free_plan',
+				product_name: 'WordPress.com Free',
+			},
+		};
+
+		return site;
+	},
+} ) );
+
+const siteName = 'mySite';
+const secondAndTopLevelDomain = 'wordpress.com';
+const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
+
 function renderTestSidebar( props ) {
 	render(
-		<MemoryRouter>
+		<MemoryRouter initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }>
 			<Sidebar { ...props } />
 		</MemoryRouter>
 	);
 }
 
 describe( 'Sidebar', () => {
-	const siteName = 'mySite';
-	const secondAndTopLevelDomain = 'wordpress.com';
-	const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
-
 	const props = {
 		siteSlug,
 		/* eslint-disable @typescript-eslint/no-empty-function */
@@ -45,5 +70,12 @@ describe( 'Sidebar', () => {
 			content.includes( secondAndTopLevelDomain )
 		);
 		expect( renderedDomain ).toBeVisible();
+	} );
+
+	it( 'displays a progress bar based off of task completion', () => {
+		renderTestSidebar( props );
+
+		const progressBar = screen.getByRole( 'progressbar' );
+		expect( progressBar ).toBeVisible();
 	} );
 } );
