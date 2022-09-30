@@ -47,6 +47,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	private testFilename: string;
 	private testFilePath: string;
 	private testArtifactsPath: string;
+	private testFailureArtifacts: string[];
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -65,6 +66,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
+		this.testFailureArtifacts = [];
 		this.allure = this.initializeAllureReporter( config );
 	}
 
@@ -276,9 +278,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
-				// Print path to captured artifacts for faster triaging.
-				console.log( `Artifacts for failed test "${ event.test.name }":` );
-				console.log( this.testArtifactsPath );
+				// Store the failing test's artifact path if it hasn't yet.
+				if ( this.testFailureArtifacts.indexOf( this.testArtifactsPath ) === -1 ) {
+					this.testFailureArtifacts.push( this.testArtifactsPath );
+				}
 				break;
 			}
 			case 'test_done': {
@@ -326,6 +329,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						}
 						contextIndex++;
 					}
+					// Print paths to captured artifacts for faster triaging.
+					console.log( `Artifacts for failed tests:` );
+					this.testFailureArtifacts.forEach( ( path ) => console.log( path ) );
 				}
 
 				// Regardless of pass/fail status, close the browser instance.
