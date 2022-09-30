@@ -78,4 +78,15 @@ describe( 'Sidebar', () => {
 		const progressBar = screen.getByRole( 'progressbar' );
 		expect( progressBar ).toBeVisible();
 	} );
+
+	describe( 'when the tailored flow includes a task to launch the site', () => {
+		describe( 'and all tasks except the launch site task are complete', () => {
+			it( 'shows a launch title', () => {
+				renderTestSidebar( props );
+
+				const title = screen.getByRole( 'heading', { name: /ready to launch/i } );
+				expect( title ).toBeVisible();
+			} );
+		} );
+	} );
 } );
