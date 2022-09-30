@@ -124,7 +124,10 @@ export const EligibilityWarnings = ( {
 
 	const blockingMessages = getBlockingMessages( translate );
 
-	const filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+	let filteredHolds = listHolds;
+	if ( context === 'plugin-details' ) {
+		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+	}
 
 	return (
 		<div className={ classes }>
@@ -142,13 +145,19 @@ export const EligibilityWarnings = ( {
 					/>
 				</CompactCard>
 			) }
-			{ ( title || primaryText ) && (
+			{ ! isPlaceholder && context === 'plugin-details' && (
 				<CompactCard>
 					<div className="eligibility-warnings__header">
-						{ title && <div className="eligibility-warnings__title">{ title }</div> }
-						{ primaryText && (
-							<div className="eligibility-warnings__primary-text">{ primaryText }</div>
-						) }
+						<div className="eligibility-warnings__title">
+							{ translate( 'Upgrade your plan to install plugins' ) }
+						</div>
+						<div className="eligibility-warnings__primary-text">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate(
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for $33/month.'
+								  )
+								: '' }
+						</div>
 					</div>
 				</CompactCard>
 			) }
