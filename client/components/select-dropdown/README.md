@@ -61,6 +61,10 @@ Optional tabIndex setting to override tab order via keyboard navigation. By defa
 
 Used to determine whether the select dropdown is in a disabled state. When disabled it will not respond to interaction and will render to appear disabled.
 
+`ariaLabel`
+
+Optional dropdown header label that can be used to improve the accessibility for screen readers.
+
 #### Dropdown Item
 
 `selected`
@@ -88,6 +92,10 @@ Optional bool to disable dropdown item.
 `onClick`
 
 Optional callback that will be applied when a `SelectDropdown.Item` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
+
+`ariaLabel`
+
+Optional dropdown item label that can be used to improve the accessibility for screen readers.
 
 ### Label
 

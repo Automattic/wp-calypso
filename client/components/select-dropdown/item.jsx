@@ -15,6 +15,7 @@ class SelectDropdownItem extends Component {
 		count: PropTypes.number,
 		disabled: PropTypes.bool,
 		icon: PropTypes.element,
+		ariaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -35,6 +36,11 @@ class SelectDropdownItem extends Component {
 			'has-icon': this.props.icon,
 		} );
 
+		const label = this.props.value || this.props.children;
+		const ariaLabel =
+			this.props.ariaLabel ||
+			( 'number' === typeof this.props.count ? `${ label } (${ this.props.count })` : label );
+
 		return (
 			<li className="select-dropdown__option">
 				<a
@@ -42,10 +48,11 @@ class SelectDropdownItem extends Component {
 					href={ this.props.path }
 					className={ optionClassName }
 					onClick={ this.props.disabled ? null : this.props.onClick }
-					data-bold-text={ this.props.value || this.props.children }
+					data-bold-text={ label }
 					role="menuitem"
 					tabIndex="0"
 					aria-current={ this.props.selected }
+					aria-label={ ariaLabel }
 					data-e2e-title={ this.props.e2eTitle }
 				>
 					<span className="select-dropdown__item-text">
