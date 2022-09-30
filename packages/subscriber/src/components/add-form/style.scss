@@ -81,11 +81,11 @@
 	max-width: 368px;
 
 	label {
-		display: inline-block;
+		display: block;
 		width: 100%;
 		font-size: 0.875rem;
 		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		margin: 0.75rem 0 1.5rem;
+		margin: 1rem 0;
 
 		&.add-subscriber__form-label-links {
 			.components-button {
@@ -126,7 +126,7 @@
 	.add-subscriber__form-skip-btn {
 		display: block;
 		width: 100%;
-		margin-bottom: 2rem;
+		margin: 2rem 0;
 	}
 
 	.add-subscriber__form-skip-btn {
@@ -156,7 +156,7 @@
 		padding: 0;
 		padding-inline-start: 2rem;
 		padding-inline-end: 0;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1rem;
 
 		svg {
 			position: absolute;
@@ -165,6 +165,12 @@
 
 		&.is-warning {
 			color: var(--studio-gray-40);
+		}
+
+		&:not(.is-error) {
+			svg {
+				fill: none;
+			}
 		}
 	}
 

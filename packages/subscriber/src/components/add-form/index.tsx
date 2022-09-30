@@ -62,7 +62,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	/**
 	 * ↓ Fields
 	 */
-	const emailControlMaxNum = 10;
+	const emailControlMaxNum = 6;
 	const emailControlPlaceholder = [
 		__( 'sibling@example.com' ),
 		__( 'parents@example.com' ),
@@ -195,7 +195,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className={ 'add-subscriber' }>
 			<div className={ 'add-subscriber__title-container' }>
 				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-				<Title>{ __( 'Add subscribers to build your audience' ) }</Title>
+				<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
 			</div>
 
 			<div className={ 'add-subscriber__form--container' }>
@@ -238,9 +238,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
 						<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>
 							<Icon icon={ tip } />
-							{ __(
-								'Nice start there! If you have more subscribers to add, we’ll help you get them added later.'
-							) }
+							{ __( 'Great start! You’ll be able to add more subscribers after setup.' ) }
 						</FormInputValidation>
 					) }
 
