@@ -533,7 +533,7 @@ class ManagePurchase extends Component {
 						removePlan={ this.goToCancelLink }
 						site={ site }
 						hasDomain={ customDomain }
-						wpcomSlug={ site.slug }
+						wpcomURL={ site.wpcom_url }
 						primaryDomain={ primaryDomainName }
 					/>
 				);
