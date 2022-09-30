@@ -123,7 +123,7 @@
 
 	&.selected {
 		border: 2px solid #0675c4;
-		background: linear-gradient(180deg, rgba(6, 117, 196, 0.2) -44.3%, rgba(255, 255, 255, 0) 100%);
+		background: #f9fbfd; // TODO: adjust Automattic colour scales to add more depth at lighter end of the spectrum
 		padding: 16px 24px;
 	}
 
