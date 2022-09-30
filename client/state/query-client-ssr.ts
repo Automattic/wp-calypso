@@ -13,8 +13,8 @@ class QueryCacheSSR extends QueryCache {
 		state?: QueryState< TData, TError >
 	): Query< TQueryFnData, TError, TData, TQueryKey > {
 		const query = super.build( client, options, state );
-		if ( client instanceof QueryClientSSR ) {
-			client.addFetchedQueryKey( query.queryHash );
+		if ( client instanceof QueryClientSSR && ( options as any ).enabled !== false ) {
+			client.fetchedQueryKeys.add( query.queryHash );
 		}
 		return query;
 	}
