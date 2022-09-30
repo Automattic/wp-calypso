@@ -23,13 +23,13 @@ export function debounce< T, U >( callback: ( ...args: T[] ) => U, timeout: numb
 export function redirectToLaunchpad(
 	siteSlug: string,
 	launchpadFlow: string,
-	emailedVerifiedParam?: string
+	emailVerifiedParam: boolean
 ) {
 	let launchpadRedirectionURL = `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ siteSlug }`;
-	if ( emailedVerifiedParam ) {
+	if ( emailVerifiedParam ) {
 		launchpadRedirectionURL = addQueryArgs(
 			{
-				verified: 1,
+				emailVerified: 1,
 			},
 			launchpadRedirectionURL
 		);
