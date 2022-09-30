@@ -86,7 +86,14 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: ( state, themeId, siteId ) => `/checkout/${ getSiteSlug( state, siteId ) }/business`,
+		getUrl: ( state, themeId, siteId ) => {
+			const slug = getSiteSlug( state, siteId );
+			const redirectTo = encodeURIComponent(
+				`/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+			);
+
+			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+		},
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||

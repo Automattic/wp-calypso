@@ -27,6 +27,7 @@ import {
 	getUrlFromParts,
 } from '@automattic/calypso-url';
 import { isTailoredSignupFlow } from '@automattic/onboarding';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import {
 	getGoogleApps,
@@ -134,6 +135,12 @@ export default function getThankYouPageUrl( {
 	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
+
+		// We need to do a hard redirect if we're redirecting to the stepper.
+		// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
+		if ( isURL( redirectTo ) || redirectTo.startsWith( '/setup' ) ) {
+			window.location.href = redirectTo;
+		}
 
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
