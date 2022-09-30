@@ -40,7 +40,7 @@ export class FileBlock {
 		// It can lead to the filename placeholder text not being replaced with the uploaded file name.
 		await Promise.all( [
 			page.waitForResponse(
-				( response: Response ) => response.url().includes( 'media?' ) && response.status() === 200
+				( response: Response ) => response.url().includes( 'media?' ) && response.ok()
 			),
 			input.setInputFiles( path ),
 		] );
