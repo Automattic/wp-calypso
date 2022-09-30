@@ -11,6 +11,7 @@ import {
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
 import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
+import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-message';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailAccount } from 'calypso/data/emails/types';
@@ -39,13 +40,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 		return ( props: { code: string | number | null } ) => {
 			switch ( props.code ) {
 				case WARNING_CODE_OTHER_USER_OWNS_EMAIL:
-					return (
-						<div className="email-plan-warnings__warning">
-							<div className="email-plan-warnings__message">
-								<span>{ cannotAddEmailWarningMessage }</span>
-							</div>
-						</div>
-					);
+					return <EmailNonOwnerMessage domainName={ domain.name } selectedSite={ selectedSite } />;
 				case WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
 					return (
 						<EmailNonDomainOwnerMessage
