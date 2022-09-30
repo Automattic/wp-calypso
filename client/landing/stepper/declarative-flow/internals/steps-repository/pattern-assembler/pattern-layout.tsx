@@ -92,11 +92,7 @@ const PatternLayout = ( {
 								);
 							} ) }
 						</AnimatePresence>
-						{ /* <AnimatePresence> */ }
-						<li
-							key={ `${ 'add-section-item' }` }
-							className="pattern-layout__list-item pattern-layout__list-item--section"
-						>
+						<li className="pattern-layout__list-item pattern-layout__list-item--section">
 							<Button onClick={ () => onSelectSection( null ) }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ sections?.length
@@ -104,7 +100,6 @@ const PatternLayout = ( {
 									: translate( 'Add a first section' ) }
 							</Button>
 						</li>
-						{ /* </AnimatePresence> */ }
 						{ footer ? (
 							<li className="pattern-layout__list-item pattern-layout__list-item--footer">
 								<span className="pattern-layout__list-item-text" title={ footer.name }>
