@@ -343,10 +343,6 @@
 	}
 }
 
-.reader-full-post .like-button .gridicons-star {
-	display: none;
-}
-
 .reader-full-post__sidebar-comment-like {
 	align-items: center;
 	display: flex;
@@ -380,8 +376,14 @@
 	}
 
 	.like-button__like-icons {
-		top: 4px;
+		margin-right: 0;
+		position: relative;
+		top: 5px;
+		svg {
+			position: static;
+		}
 	}
+
 
 	.like-button__label-status {
 		display: none;
@@ -611,7 +613,6 @@
 	}
 	.like-button__label-count {
 		margin-left: 4px;
-		top: 0;
 	}
 	.reader-share {
 		position: relative;
@@ -627,6 +628,7 @@
 		top: 2px;
 	}
 	.like-button__label-count {
+		position: relative;
 		top: 2px;
 	}
 }

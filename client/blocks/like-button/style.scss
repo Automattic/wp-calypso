@@ -7,8 +7,7 @@
 	box-sizing: border-box;
 
 	.gridicon {
-		position: absolute;
-		left: 0;
+		vertical-align: bottom;
 	}
 
 	.gridicons-star {
@@ -77,7 +76,6 @@
 	margin-left: 1px;
 	font-size: $font-body-small;
 	min-width: 10px;
-	position: relative;
 
 	&:empty {
 		display: none;
@@ -87,11 +85,6 @@
 		font-size: 13px;
 		font-weight: 500;
 		position: relative;
-		top: 5px;
+		top: 1px;
 	}
-}
-
-.like-button__like-icons svg {
-	position: relative;
-	top: -1px;
 }

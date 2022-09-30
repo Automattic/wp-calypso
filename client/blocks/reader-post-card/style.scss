@@ -228,21 +228,9 @@
 		justify-content: flex-start;
 	}
 	.comments__comment-actions .components-button.like-button {
-		display: flex;
-		justify-content: flex-start;
-
-		.gridicon {
+		.like-button__label-count {
 			position: relative;
-		}
-
-		.gridicons-star {
-			display: none;
-		}
-
-		.like-button__like-icons {
-			margin-right: 0;
-			position: unset;
-			top: unset;
+			top: 1px;
 		}
 	}
 	.reader-post-card__byline {
@@ -250,7 +238,7 @@
 	}
 	.reader-post-options-menu__ellipsis-menu {
 		flex: 1;
-    text-align: right;
+    	text-align: right;
 	}
 }
 
@@ -598,6 +586,12 @@
 			display: inline-block;
 			margin-right: 5px;
 			vertical-align: top;
+			position: relative;
+			top: 1px;
+		}
+		.like-button__label-count {
+			position: relative;
+			top: 5px;
 		}
 	}
 

@@ -6,7 +6,7 @@
 	font-size: $font-body-small;
 	justify-content: flex-start;
 	list-style: none;
-	
+
 	.components-button {
 		color: var( --color-text-subtle );
 		display: inline-block;
@@ -16,23 +16,14 @@
 		cursor: pointer;
 		font-size: $font-body-small;
 		font-weight: 400;
-		
-		.like-button__like-icons {
-			margin-right: 18px;
-		}
 
-		.gridicons-star {
-			display: none;
-		}
-		
 		&.comments__comment-actions-reply {
 			margin-left: -7px;
 		}
 
 		.gridicons-reply {
 			margin-right: 2px;
-			position: relative;
-    	top: 4px;
+			vertical-align: bottom;
 		}
 		
 		&:hover {
@@ -41,8 +32,8 @@
 		
 		&.comments__comment-actions-cancel-reply {
 			float: right;
-			margin-top: 4px;
-			margin-right: 0;
+			margin-top: 2px;
+			margin-right: 8px;
 			padding-right: 0;
 		}
 
@@ -53,6 +44,7 @@
 			
 			.comments__comment-actions-read-more-icon {
 				fill: var( --color-primary );
+				vertical-align: bottom;
 			}
 		}
 	}
