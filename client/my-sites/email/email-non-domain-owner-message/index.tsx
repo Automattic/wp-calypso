@@ -13,7 +13,6 @@ import './style.scss';
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
-	source: 'email-comparison' | 'email-management';
 };
 
 const buildQueryString = ( parameters = {} ) =>
