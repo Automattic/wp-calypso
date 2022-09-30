@@ -60,7 +60,10 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	};
 
 	const warningNotice = useMemo( () => {
-		if ( ! cannotAddEmailWarningCode ) {
+		if (
+			! cannotAddEmailWarningCode ||
+			cannotAddEmailWarningCode === WARNING_CODE_OTHER_USER_OWNS_EMAIL
+		) {
 			return null;
 		}
 
