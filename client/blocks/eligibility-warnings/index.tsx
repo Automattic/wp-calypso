@@ -49,8 +49,6 @@ interface ExternalProps {
 	eligibilityData?: EligibilityData;
 	currentContext?: string;
 	isMarketplace?: boolean;
-	title?: string;
-	primaryText?: string;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -74,8 +72,6 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
-	title,
-	primaryText,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -91,7 +87,7 @@ export const EligibilityWarnings = ( {
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
 			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
-			'eligibility-warnings--without-title': ! title && ! primaryText,
+			'eligibility-warnings--without-title': context !== 'plugin-details',
 		},
 		className
 	);
