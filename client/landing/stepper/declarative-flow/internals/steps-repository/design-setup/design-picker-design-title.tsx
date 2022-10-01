@@ -25,8 +25,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	);
 
 	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) &&
-		( selectedDesign.software_sets || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
+		isEnabled( 'themes/plugin-bundling' ) && selectedDesign.is_bundled_with_woo_commerce;
 
 	let badge: React.ReactNode = null;
 	if ( showBundledBadge ) {
@@ -35,7 +34,7 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 		badge = <PremiumBadge isPremiumThemeAvailable={ isPremiumThemeAvailable } />;
 	}
 
-	if ( selectedDesign.is_premium ) {
+	if ( badge ) {
 		return (
 			<div className="design-picker-design-title__container">
 				{ designTitle }

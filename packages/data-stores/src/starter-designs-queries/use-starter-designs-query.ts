@@ -84,6 +84,10 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
 
+	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+		( { slug } ) => slug === 'woo-on-plans'
+	);
+
 	return {
 		slug,
 		title,
@@ -91,6 +95,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		recipe,
 		categories,
 		is_premium,
+		is_bundled_with_woo_commerce,
 		price,
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',

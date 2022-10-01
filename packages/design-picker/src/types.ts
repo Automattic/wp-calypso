@@ -93,6 +93,7 @@ export interface Design {
 	price?: string;
 	verticalizable?: boolean;
 	software_sets?: SoftwareSet[];
+	is_bundled_with_woo_commerce?: boolean;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
