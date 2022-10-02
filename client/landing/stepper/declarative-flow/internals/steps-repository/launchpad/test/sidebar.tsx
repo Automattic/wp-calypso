@@ -1,67 +1,61 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
+import { Site } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
+import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
+import { defaultSiteDetails, generateSiteDetails } from './lib/fixtures';
 
-jest.mock( '../../../../../hooks/use-site.ts', () => ( {
-	useSite: () => {
-		const site = {
-			ID: 210745841,
-			name: 'testlib12403',
-			URL: 'https://testlib12403.wordpress.com',
-			options: {
-				site_intent: 'link-in-bio',
-				site_vertical_id: null,
-				launchpad_screen: 'full',
-				launchpad_checklist_tasks_statuses: {
-					links_edited: true,
-				},
-			},
-			plan: {
-				product_id: 1,
-				product_slug: 'free_plan',
-				product_name: 'WordPress.com Free',
-			},
-		};
-
-		return site;
-	},
-} ) );
-
-const siteName = 'mySite';
+const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
 
-function renderTestSidebar( props ) {
-	render(
-		<MemoryRouter initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }>
-			<Sidebar { ...props } />
-		</MemoryRouter>
-	);
+const props = {
+	siteSlug,
+	/* eslint-disable @typescript-eslint/no-empty-function */
+	submit: () => {},
+	goNext: () => {},
+	goToStep: () => {},
+	/* eslint-enable @typescript-eslint/no-empty-function */
+};
+
+function renderSidebar( props, siteDetails = defaultSiteDetails ) {
+	function TestSidebar( props ) {
+		const SITE_STORE = Site.register( {
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_id' ),
+		} );
+
+		const { receiveSite } = useDispatch( SITE_STORE );
+
+		receiveSite( siteDetails.ID, siteDetails );
+
+		return (
+			<MemoryRouter
+				initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
+			>
+				<Sidebar { ...props } />
+			</MemoryRouter>
+		);
+	}
+
+	render( <TestSidebar { ...props } /> );
 }
 
 describe( 'Sidebar', () => {
-	const props = {
-		siteSlug,
-		/* eslint-disable @typescript-eslint/no-empty-function */
-		submit: () => {},
-		goNext: () => {},
-		goToStep: () => {},
-		/* eslint-enable @typescript-eslint/no-empty-function */
-	};
-
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
-		renderTestSidebar( props );
+		renderSidebar( props );
 
 		const escapeHatchButton = screen.getByRole( 'button', { name: /go to admin/i } );
 		expect( escapeHatchButton ).toBeVisible();
 	} );
 
 	it( 'displays the current site url', () => {
-		renderTestSidebar( props );
+		renderSidebar( props );
 
 		const renderedSiteName = screen.getByText( ( content ) => content.includes( siteName ) );
 		expect( renderedSiteName ).toBeVisible();
@@ -73,7 +67,7 @@ describe( 'Sidebar', () => {
 	} );
 
 	it( 'displays a progress bar based off of task completion', () => {
-		renderTestSidebar( props );
+		renderSidebar( props );
 
 		const progressBar = screen.getByRole( 'progressbar' );
 		expect( progressBar ).toBeVisible();
@@ -82,9 +76,26 @@ describe( 'Sidebar', () => {
 	describe( 'when the tailored flow includes a task to launch the site', () => {
 		describe( 'and all tasks except the launch site task are complete', () => {
 			it( 'shows a launch title', () => {
-				renderTestSidebar( props );
+				const siteDetails = generateSiteDetails( {
+					options: {
+						...defaultSiteDetails.options,
+						launchpad_checklist_tasks_statuses: {
+							links_edited: true,
+						},
+					},
+				} );
+				renderSidebar( props, siteDetails );
 
 				const title = screen.getByRole( 'heading', { name: /ready to launch/i } );
+				expect( title ).toBeVisible();
+			} );
+		} );
+
+		describe( 'and other tasks besides the launch site task are incomplete', () => {
+			it( 'shows a normal title', () => {
+				renderSidebar( props );
+
+				const title = screen.getByRole( 'heading', { name: /almost ready/i } );
 				expect( title ).toBeVisible();
 			} );
 		} );
