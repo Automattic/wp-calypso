@@ -37,7 +37,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -766,7 +766,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned } = this.props;
+		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -775,7 +775,11 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText = translate( 'Back to Sites' );
+		const sitesBackLabelText =
+			userSiteCount && userSiteCount === 1
+				? translate( 'Back to My Home' )
+				: translate( 'Back to Sites' );
+		const defaultBackUrl = userSiteCount && userSiteCount === 1 ? `/home` : `/sites`;
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -796,10 +800,10 @@ class DomainsStep extends Component {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
-				backUrl = '/sites';
+				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
-				backUrl = '/sites/';
+				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 			}
 
@@ -891,6 +895,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
+			userSiteCount: getCurrentUserSiteCount( state ),
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),
