@@ -150,7 +150,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 									logoProps={ { width: 108, height: 78 } }
 								/>
 							) ) }
-					{ sites.slice( 0, 1 ).map( ( site ) => (
+					{ sites.map( ( site ) => (
 						<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
 					) ) }
 				</tbody>
