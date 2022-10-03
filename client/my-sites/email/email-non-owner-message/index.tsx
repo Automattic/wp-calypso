@@ -11,6 +11,7 @@ import './style.scss';
 type EmailNonOwnerMessageProps = {
 	domainName: string;
 	selectedSite?: SiteDetails | null;
+	source: string;
 };
 
 const buildQueryString = ( parameters = {} ) =>
@@ -43,6 +44,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 	const onClickLink = ( eventType: 'login' | 'support' ) => {
 		const properties = {
 			action: eventType,
+			source,
 		};
 
 		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
@@ -90,7 +92,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 		<>
 			<TrackComponentView
 				eventName="calypso_non_email_owner_notice_component_impression"
-				eventProperties={ { source: 'email-management' } }
+				eventProperties={ { source } }
 			/>
 			<p className="email-non-owner-message__non-owner-message">{ reasonText }</p>
 		</>

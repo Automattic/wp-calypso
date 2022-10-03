@@ -17,13 +17,14 @@ type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
 	source: string;
+	usePromoCard?: boolean;
 };
 
 const buildQueryString = ( parameters = {} ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
-	const { domain, selectedSite, source } = props;
+	const { domain, selectedSite, source, usePromoCard = true } = props;
 
 	const translate = useTranslate();
 
@@ -120,9 +121,14 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	return (
 		<>
-			<PromoCard className="email-non-domain-owner-message__non-owner-notice">
-				<p>{ reasonText }</p>
-			</PromoCard>
+			{ usePromoCard && (
+				<PromoCard className="email-non-domain-owner-message__non-owner-notice">
+					<p>{ reasonText }</p>
+				</PromoCard>
+			) }
+			{ ! usePromoCard && (
+				<p className={ 'email-non-domain-owner-message__non-owner-message' }>{ reasonText }</p>
+			) }
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"
 				eventProperties={ { source, context: 'domain-different-owner' } }

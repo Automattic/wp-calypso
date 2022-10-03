@@ -9,6 +9,10 @@ import {
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
+import {
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
+	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
+} from 'calypso/lib/emails/email-provider-constants';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
 import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
 import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-message';
@@ -21,9 +25,6 @@ type EmailPlanWarningsProps = {
 	domain: ResponseDomain;
 	emailAccount: EmailAccount;
 };
-
-const WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION = 'other-user-owns-subscription';
-const WARNING_CODE_OTHER_USER_OWNS_EMAIL = 'other-user-owns-email';
 
 const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
@@ -39,9 +40,15 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	const WarningMessageForCode = useMemo( () => {
 		return ( props: { code: string | number | null } ) => {
 			switch ( props.code ) {
-				case WARNING_CODE_OTHER_USER_OWNS_EMAIL:
-					return <EmailNonOwnerMessage domainName={ domain.name } selectedSite={ selectedSite } />;
-				case WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
+				case EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL:
+					return (
+						<EmailNonOwnerMessage
+							domainName={ domain.name }
+							selectedSite={ selectedSite }
+							source="email-management"
+						/>
+					);
+				case EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
 					return (
 						<EmailNonDomainOwnerMessage
 							domain={ domain }
