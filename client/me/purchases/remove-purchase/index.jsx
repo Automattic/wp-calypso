@@ -22,7 +22,7 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isRemovable } from 'calypso/lib/purchases';
+import { getName, isRefundable, isRemovable } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
@@ -232,8 +232,16 @@ class RemovePurchase extends Component {
 	}
 
 	renderPlanWarningDialog() {
-		const { site, primaryDomain } = this.props;
+		const { site, purchase, primaryDomain } = this.props;
 		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
+		const primaryDomainURL =
+			primaryDomainName.length < 20
+				? primaryDomainName
+				: primaryDomainName.substr( 0, 10 ) + '…' + primaryDomainName.slice( -10 );
+		const wordpressComURL =
+			site.wpcom_url.legth < 30
+				? site.wpcom_url
+				: site.wpcom_url.substr( 0, 8 ) + '…' + site.wpcom_url.slice( -20 );
 		return (
 			<RemovePlanDialog
 				isDialogVisible={ this.state.isShowingRemovePlanWarning }
@@ -241,8 +249,9 @@ class RemovePurchase extends Component {
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
 				hasDomain={ hasCustomDomain }
-				wpcomURL={ site.wpcom_url }
-				primaryDomain={ primaryDomainName }
+				isRefundable={ isRefundable( purchase ) }
+				primaryDomain={ primaryDomainURL }
+				wpcomURL={ wordpressComURL }
 			/>
 		);
 	}

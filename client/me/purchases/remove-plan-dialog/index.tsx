@@ -1,9 +1,9 @@
 import { Dialog, Gridicon } from '@automattic/components';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { isRefundable } from 'calypso/lib/purchases';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { SiteScreenshot } from '../site-screenshot/';
 import getPlanFeatures from './get-plan-features';
@@ -16,6 +16,7 @@ interface RemovePlanDialogProps {
 	isRemoving: boolean;
 	site: SiteExcerptData;
 	hasDomain: boolean;
+	isRefundable: boolean;
 	primaryDomain: string;
 	wpcomURL: string;
 }
@@ -26,6 +27,7 @@ export const RemovePlanDialog = ( {
 	isDialogVisible,
 	site,
 	hasDomain,
+	isRefundable,
 	primaryDomain,
 	wpcomURL,
 }: RemovePlanDialogProps ) => {
@@ -42,9 +44,9 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
-	const subTitle = ! isRefundable
-		? translate( 'If you cancel your plan, you will lose:' )
-		: translate( 'If you cancel your plan, once it expires, you will lose:' );
+	const subTitle = isRefundable
+		? translate( 'If you cancel your plan, once it expires, you will lose:' )
+		: translate( 'If you cancel your plan, you will lose:' );
 
 	/**
 	 * Click events, buttons tracking and action.
@@ -62,6 +64,29 @@ export const RemovePlanDialog = ( {
 		} );
 		closeDialog();
 	};
+
+	/**
+	 * Domain redirect copy
+	 */
+	const domainFeature =
+		hasDomain && primaryDomain && wpcomURL ? (
+			<p>
+				{ createInterpolateElement(
+					translate(
+						'<strong>%(customDomain)s</strong> as your primary site address. Visitors to your site will see <strong>%(wpcomURL)s</strong> as the address instead.',
+						{
+							args: {
+								customDomain: primaryDomain,
+								wpcomURL: wpcomURL,
+							},
+						}
+					).toString(),
+					{
+						strong: createElement( 'strong' ),
+					}
+				) }
+			</p>
+		) : null;
 
 	/**
 	 * Dialog buttons
@@ -89,42 +114,40 @@ export const RemovePlanDialog = ( {
 		if ( typeof productSlug === 'string' ) {
 			const planFeatures = getPlanFeatures( productSlug, hasDomain, wpcomURL );
 
-			if ( planFeatures.length > 0 ) {
-				const domainFeature =
-					hasDomain && primaryDomain && wpcomURL ? (
-						<p>
-							{ translate(
-								'The ability to have %(customDomain)s as your primary site address. %(wpcomURL)s will be the new address that people see when they visit your site.',
-								{
-									args: {
-										wpcomURL: wpcomURL,
-										customDomain: primaryDomain,
-									},
-								}
-							) }
-						</p>
-					) : null;
-				return (
-					<Fragment>
-						<p>{ subTitle }</p>
-						<ul className="remove-plan-dialog__list-plan-features">
-							{ domainFeature }
-							{ planFeatures.map( ( feature ) => {
-								return (
-									<li key={ feature }>
-										<Gridicon
-											className="remove-plan-dialog__item-cross-small"
-											size={ 24 }
-											icon="cross-small"
-										/>
-										{ feature }
-									</li>
-								);
-							} ) }
-						</ul>
-					</Fragment>
-				);
-			}
+			return (
+				<Fragment>
+					<p>{ subTitle }</p>
+					<ul
+						className={
+							'remove-plan-dialog__list-plan-features' +
+							( domainFeature ? ' --with-domain-feature' : '' )
+						}
+					>
+						{ domainFeature && (
+							<li key={ 'redirect-domain' }>
+								<Gridicon
+									className="remove-plan-dialog__item-cross-small"
+									size={ 24 }
+									icon="cross-small"
+								/>
+								{ domainFeature }
+							</li>
+						) }
+						{ planFeatures.map( ( feature ) => {
+							return (
+								<li key={ feature }>
+									<Gridicon
+										className="remove-plan-dialog__item-cross-small"
+										size={ 24 }
+										icon="cross-small"
+									/>
+									{ feature }
+								</li>
+							);
+						} ) }
+					</ul>
+				</Fragment>
+			);
 		}
 
 		return null;
@@ -133,9 +156,9 @@ export const RemovePlanDialog = ( {
 	/**
 	 * Dialog classname
 	 */
-	const dialogClassName = shouldUseSiteThumbnail
-		? 'remove-plan-dialog --with-screenshot'
-		: 'remove-plan-dialog';
+	const classSiteScreenshot = shouldUseSiteThumbnail ? ' --with-screenshot' : '';
+	const classDomainFeature = domainFeature ? ' --with-domain-feature' : '';
+	const dialogClassName = 'remove-plan-dialog' + classSiteScreenshot + classDomainFeature;
 
 	/**
 	 * Plan cancellation dialog.
