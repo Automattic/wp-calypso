@@ -171,12 +171,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		const designs = [ ...generatedDesigns.designs, ...staticDesigns.designs ];
 
-		for ( const design of designs ) {
-			if ( design.slug === themeFromQueryString ) {
-				setSelectedDesign( design );
-				setIsPreviewingDesign( true );
-			}
+		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
+		if ( ! requestedDesign ) {
+			return;
 		}
+
+		setSelectedDesign( requestedDesign );
+		setIsPreviewingDesign( true );
 	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {

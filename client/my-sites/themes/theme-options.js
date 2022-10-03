@@ -87,9 +87,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
 		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
-				`/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+				`${ origin }/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
 			);
 
 			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
