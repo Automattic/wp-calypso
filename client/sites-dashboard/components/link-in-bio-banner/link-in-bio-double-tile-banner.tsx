@@ -52,7 +52,7 @@ const Details = styled( 'div' )( {
 export const LinkInBioDoubleTileBanner = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
-		<Wrapper>
+		<Wrapper data-testid="double-tile-banner">
 			<Root>
 				<Details>
 					<Banner.Title />

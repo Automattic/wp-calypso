@@ -32,7 +32,7 @@ const Details = styled( 'div' )( {
 export const LinkInBioTileBanner = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
-		<Root>
+		<Root data-testid="tile-banner">
 			<Banner.DismissButton />
 			<Banner.Image src={ image } />
 			<Details>

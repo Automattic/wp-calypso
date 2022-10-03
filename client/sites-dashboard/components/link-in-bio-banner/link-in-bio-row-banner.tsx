@@ -25,7 +25,7 @@ const Details = styled( 'div' )( {
 export const LinkInBioRowBanner = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
-		<Root>
+		<Root data-testid="row-banner">
 			<Banner.Image src={ image } />
 			<Details>
 				<Banner.Title />

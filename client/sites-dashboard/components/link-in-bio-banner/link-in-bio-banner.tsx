@@ -15,7 +15,7 @@ export const LinkInBioBanner = ( props: Props ) => {
 	const isBannerVisible = useSelector( ( state ) =>
 		getPreference( state, LINK_IN_BIO_BANNER_PREFERENCE )
 	);
-	const showBanner = isBannerVisible === undefined || isBannerVisible;
+	const showBanner = isBannerVisible == null || isBannerVisible;
 
 	const renderBanner = () => {
 		let bannerType: BannerType = 'none';
@@ -26,10 +26,12 @@ export const LinkInBioBanner = ( props: Props ) => {
 				if ( siteCount === 1 ) {
 					bannerType = 'row';
 				}
-			} else if ( siteCount === 1 ) {
-				bannerType = 'double-tile';
-			} else if ( siteCount === 2 ) {
-				bannerType = 'tile';
+			} else if ( displayMode === 'grid' ) {
+				if ( siteCount === 1 ) {
+					bannerType = 'double-tile';
+				} else if ( siteCount === 2 ) {
+					bannerType = 'tile';
+				}
 			}
 		}
 		return LinkInBioBanners[ bannerType ];
