@@ -64,7 +64,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 
 	useEffect( () => {
 		if ( inView ) {
-			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_view' );
+			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
 		}
 	}, [ inView ] );
 
