@@ -152,7 +152,7 @@ add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
  */
 function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// If the post isn't updated then we know the gs cpt is being created.
-	$event_name = 'wpcom_global_styles_create';
+	$event_name = 'wpcom_core_global_styles_create';
 
 	if ( $updated ) {
 		// This is a fragile way of checking if the global styles cpt is being reset, we might need to update this condition in the future.
@@ -160,11 +160,11 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 		$is_empty_global_styles = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) === 0;
 
 		// By default, we know that we are at least updating.
-		$event_name = 'wpcom_global_styles_customize';
+		$event_name = 'wpcom_core_global_styles_customize';
 
 		// If we are updating to empty contents then we know for sure we are resetting the contents.
 		if ( $is_empty_global_styles ) {
-			$event_name = 'wpcom_global_styles_reset';
+			$event_name = 'wpcom_core_global_styles_reset';
 		}
 	}
 
