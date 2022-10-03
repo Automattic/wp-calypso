@@ -18,7 +18,7 @@ const buildQueryString = ( parameters = {} ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
-	const { domainName, selectedSite } = props;
+	const { domainName, selectedSite, source } = props;
 
 	const translate = useTranslate();
 
