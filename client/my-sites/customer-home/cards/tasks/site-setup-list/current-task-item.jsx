@@ -36,6 +36,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						<Button
 							className={ classnames( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
+								'is-jetpack-branded': currentTask.jetpackBranding,
 							} ) }
 							primary={ ! currentTask.actionIsLink }
 							onClick={ () => startTask() }

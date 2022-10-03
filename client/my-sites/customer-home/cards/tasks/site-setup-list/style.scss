@@ -251,3 +251,12 @@
 		display: block;
 	}
 }
+.button.is-primary.is-jetpack-branded {
+	background-color: var(--studio-jetpack-green-40);
+	border-color: var(--studio-jetpack-green-40);
+
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
+	}
+}

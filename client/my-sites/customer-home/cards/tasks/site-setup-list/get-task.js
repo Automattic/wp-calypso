@@ -76,6 +76,7 @@ export const getTask = (
 		description: translate(
 			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
 		),
+		jetpackBranding: true,
 	};
 
 	switch ( task.id ) {
