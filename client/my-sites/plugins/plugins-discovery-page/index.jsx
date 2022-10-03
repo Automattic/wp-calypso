@@ -134,13 +134,15 @@ const UpgradeNudge = ( {
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
 			className={ 'plugins-discovery-page__upsell' }
-			callToAction={ translate( 'Upgrade now' ) }
+			callToAction={ translate( 'Upgrade to Business' ) }
 			icon={ 'notice-outline' }
 			showIcon={ true }
 			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
-			title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
+			title={ translate(
+				'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
+			) }
 		/>
 	);
 };
