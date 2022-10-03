@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
@@ -56,6 +57,7 @@ export const getTask = (
 		userEmail,
 		isBlogger,
 		isFSEActive,
+		isRtl,
 	} = {}
 ) => {
 	let taskData = {};
@@ -65,7 +67,12 @@ export const getTask = (
 	const jetpackAppBanner = displayJetpackAppBranding && {
 		title: translate( 'Try the Jetpack app' ),
 		subtitle: translate( 'Put your site in your pocket' ),
-		icon: '/calypso/animations/app-promo/wp-to-jp.json',
+		icon: (
+			<AnimatedIcon
+				icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+				className="site-setup-list__task-icon"
+			/>
+		),
 		description: translate(
 			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
 		),
