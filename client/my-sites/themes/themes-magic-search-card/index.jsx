@@ -188,7 +188,7 @@ class ThemesMagicSearchCard extends Component {
 
 	onSearchChange = ( input ) => {
 		this.findTextForSuggestions( input );
-		this.setState( { searchInput: input } );
+		this.setState( { searchInput: input, applySearch: false } );
 	};
 
 	searchTokens = ( input ) => {
@@ -230,7 +230,7 @@ class ThemesMagicSearchCard extends Component {
 	};
 
 	updateInput = ( updatedInput ) => {
-		this.setState( { searchInput: updatedInput } );
+		this.setState( { searchInput: updatedInput, applySearch: true } );
 		this.searchInputRef.clear();
 	};
 
@@ -319,6 +319,7 @@ class ThemesMagicSearchCard extends Component {
 				overlayStyling={ this.searchTokens }
 				hideClose={ true }
 				searchMode={ SEARCH_MODE_ON_ENTER }
+				applySearch={ this.state.applySearch }
 			>
 				{ renderSuggestions && (
 					<KeyedSuggestions

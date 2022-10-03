@@ -65,6 +65,7 @@ class Search extends Component {
 		hideOpenIcon: PropTypes.bool,
 		inputLabel: PropTypes.string,
 		searchMode: PropTypes.string,
+		applySearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -92,6 +93,7 @@ class Search extends Component {
 		compact: false,
 		hideOpenIcon: false,
 		searchMode: SEARCH_MODE_WHEN_TYPING,
+		applySearch: false,
 	};
 
 	constructor( props ) {
@@ -156,7 +158,8 @@ class Search extends Component {
 		// The empty string must be handled always becuase it can be triggered:
 		// - by the user clicking on the clear icon
 		// - by the user pressing the ESC key
-		if ( this.isSearchOnWriteMode() || this.state.keyword === '' ) {
+		// Additionally, the search can be triggered on demand by using the boolean prop `applySearch`
+		if ( this.isSearchOnWriteMode() || this.state.keyword === '' || this.props.applySearch ) {
 			this.updateSearch();
 		}
 		this.props.onSearchChange( this.state.keyword );
