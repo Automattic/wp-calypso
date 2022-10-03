@@ -10,6 +10,7 @@ import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } fr
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
+import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
@@ -129,7 +130,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
-			<Column mobileHidden>{ translatedStatus }</Column>
+			<Column mobileHidden>
+				{ translatedStatus }
+				<SiteLaunchNag site={ site } />
+			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
