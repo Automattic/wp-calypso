@@ -21,10 +21,4 @@
 			}
 		}
 	}
-
-	// Overrides top margin for setup form component
-	// Needed due to extra accent color control above submit
-	.setup-form__form .setup-form__submit {
-		margin-top: 0;
-	}
 }

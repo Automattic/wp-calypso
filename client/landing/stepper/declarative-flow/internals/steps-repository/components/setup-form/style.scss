@@ -78,6 +78,7 @@
 		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
 		opacity: 0;
 		margin-top: 16px;
+		margin-bottom: -16px;
 		overflow: hidden;
 
 		&.is-visible {
