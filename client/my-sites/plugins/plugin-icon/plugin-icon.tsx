@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import './style.scss';
 
-declare interface PluginIconProps {
+interface PluginIconProps {
 	className?: string;
 	image?: string;
 	isPlaceholder?: boolean;
