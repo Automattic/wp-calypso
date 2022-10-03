@@ -149,7 +149,7 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			};
 		}
 
-		// There is no "disabled" configuration since it's allowed adding/removing forwarding for every site admin
+		// All site admins are allowed to add/remove email forwards
 		return {
 			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
 		};
