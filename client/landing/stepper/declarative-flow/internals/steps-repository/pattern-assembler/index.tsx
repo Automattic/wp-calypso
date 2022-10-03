@@ -33,6 +33,51 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 
+	const trackEventPattern = ( {
+		patternType,
+		patternId,
+		eventType,
+	}: {
+		patternType: string;
+		patternId: number;
+		eventType: string;
+	} ) => {
+		let eventName;
+		if ( eventType === 'select' ) {
+			eventName = 'calypso_signup_bcpa_select_pattern_click';
+		} else if ( eventType === 'delete' ) {
+			eventName = 'calypso_signup_bcpa_delete_pattern_click';
+		}
+
+		recordTracksEvent( eventName, {
+			pattern_type: patternType,
+			pattern_id: patternId,
+		} );
+	};
+
+	const trackEventContinue = () => {
+		const patterns = [ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+		recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
+			pattern_ids: patterns.map( ( { id } ) => id ),
+			pattern_names: patterns.map( ( { name } ) => name ),
+			pattern_count: patterns.length,
+		} );
+		patterns.forEach( ( { id, name } ) => {
+			recordTracksEvent( 'calypso_signup_bcpa_pattern_final_select', {
+				pattern_id: id,
+				pattern_name: name,
+			} );
+		} );
+	};
+
+	useEffect( () => {
+		if ( showPatternSelectorType ) {
+			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
+				pattern_type: showPatternSelectorType,
+			} );
+		}
+	}, [ showPatternSelectorType ] );
+
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -90,28 +135,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		] );
 	};
 
-	const trackEventPattern = ( {
-		patternType,
-		patternId,
-		eventType,
-	}: {
-		patternType: string;
-		patternId: number;
-		eventType: string;
-	} ) => {
-		let eventName;
-		if ( eventType === 'select' ) {
-			eventName = 'calypso_signup_bcpa_select_pattern_click';
-		} else if ( eventType === 'delete' ) {
-			eventName = 'calypso_signup_bcpa_delete_pattern_click';
-		}
-
-		recordTracksEvent( eventName, {
-			pattern_type: patternType,
-			pattern_id: patternId,
-		} );
-	};
-
 	const onSelect = ( pattern: Pattern | null ) => {
 		if ( pattern ) {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
@@ -136,14 +159,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			goBack();
 		}
 	};
-
-	useEffect( () => {
-		if ( showPatternSelectorType ) {
-			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
-				pattern_type: showPatternSelectorType,
-			} );
-		}
-	}, [ showPatternSelectorType ] );
 
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
@@ -214,14 +229,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 								submit?.();
 
-								const patterns = [ header, ...sections, footer ].filter(
-									( pattern ) => pattern
-								) as Pattern[];
-								recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
-									pattern_ids: patterns.map( ( { id } ) => id ),
-									pattern_names: patterns.map( ( { name } ) => name ),
-									pattern_count: patterns.length,
-								} );
+								trackEventContinue();
 							}
 						} }
 					/>
