@@ -104,7 +104,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				{ backupCurrentlyInProgress && (
 					<RewindFlowNotice
 						gridicon="notice"
-						title={ translate( 'There is a backup in progress. Restoring will stop it' ) }
+						title={ translate(
+							'A backup is currently in progress; restoring now will stop the backup.'
+						) }
 						type={ RewindFlowNoticeLevel.WARNING }
 					/>
 				) }
