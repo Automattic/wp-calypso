@@ -7,11 +7,9 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
-import PropTypes from 'prop-types';
+import { localize, useTranslate } from 'i18n-calypso';
 import { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import {
@@ -27,25 +25,37 @@ import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { getPlanPrice } from 'calypso/state/products-list/selectors';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getAllCartItems } from '../../../lib/cart-values/cart-items';
+import type { SiteDetails } from '@automattic/data-stores';
+import type {
+	ResponseCart,
+	MinimalRequestCartProduct,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
+import type { AppState } from 'calypso/types';
 
-class CartFreeUserPlanUpsell extends Component {
-	static propTypes = {
-		cart: PropTypes.object,
-		isCartPendingUpdate: PropTypes.bool,
-		addItemToCart: PropTypes.func.isRequired,
-		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		hasPaidPlan: PropTypes.bool,
-		hasPlanInCart: PropTypes.bool,
-		isPlansListFetching: PropTypes.bool,
-		isRegisteringOrTransferringDomain: PropTypes.bool,
-		isSitePlansListFetching: PropTypes.bool,
-		upsellPlan: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ),
-		planPrice: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ),
-		showPlanUpsell: PropTypes.bool,
-		translate: PropTypes.func.isRequired,
-	};
+export interface CartFreeUserPlanUpsellProps {
+	cart: Pick< ResponseCart, 'products' >;
+	isCartPendingUpdate?: boolean;
+	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
+}
 
+interface CartFreeUserPlanUpsellHocProps {
+	selectedSite?: SiteDetails | null;
+	hasPaidPlan?: boolean;
+	hasPlanInCart?: boolean;
+	isPlansListFetching?: boolean;
+	isRegisteringOrTransferringDomain?: boolean;
+	isSitePlansListFetching?: boolean;
+	planPrice: number | false | null | undefined;
+	showPlanUpsell?: boolean;
+	translate: ReturnType< typeof useTranslate >;
+	eligibleForProPlan?: boolean;
+	clickUpsellAddToCart: () => void;
+}
+
+class CartFreeUserPlanUpsell extends Component<
+	CartFreeUserPlanUpsellProps & CartFreeUserPlanUpsellHocProps
+> {
 	isLoading() {
 		const { isCartPendingUpdate: isLoadingCart } = this.props;
 		const isLoadingPlans = this.props.isPlansListFetching;
@@ -53,15 +63,15 @@ class CartFreeUserPlanUpsell extends Component {
 		return isLoadingCart || isLoadingPlans || isLoadingSitePlans;
 	}
 
-	isRegistrationOrTransfer = ( item ) => {
+	isRegistrationOrTransfer = ( item: ResponseCartProduct ) => {
 		return isDomainRegistration( item ) || isDomainTransfer( item );
 	};
 
 	getUpgradeText() {
 		const { cart, planPrice, translate, eligibleForProPlan } = this.props;
-		const firstDomain = find( getAllCartItems( cart ), this.isRegistrationOrTransfer );
+		const firstDomain = cart.products.find( this.isRegistrationOrTransfer );
 
-		if ( planPrice > firstDomain.cost ) {
+		if ( planPrice && firstDomain && planPrice > firstDomain.cost ) {
 			const extraToPay = planPrice - firstDomain.cost;
 			return eligibleForProPlan
 				? translate(
@@ -88,7 +98,7 @@ class CartFreeUserPlanUpsell extends Component {
 							},
 						}
 				  );
-		} else if ( planPrice < firstDomain.cost ) {
+		} else if ( planPrice && firstDomain && planPrice < firstDomain.cost ) {
 			const savings = firstDomain.cost - planPrice;
 			return eligibleForProPlan
 				? translate(
@@ -195,7 +205,7 @@ class CartFreeUserPlanUpsell extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { cart, addItemToCart } ) => {
+const mapStateToProps = ( state: AppState, { cart }: CartFreeUserPlanUpsellProps ) => {
 	const selectedSite = getSelectedSite( state );
 	const selectedSiteId = selectedSite ? selectedSite.ID : null;
 	const isPlansListFetching = isRequestingPlans( state );
@@ -208,19 +218,18 @@ const mapStateToProps = ( state, { cart, addItemToCart } ) => {
 		isPlansListFetching,
 		isRegisteringOrTransferringDomain: hasDomainRegistration( cart ) || hasTransferProduct( cart ),
 		isSitePlansListFetching: isRequestingSitePlans( state ),
-		upsellPlan,
 		planPrice:
 			! isPlansListFetching &&
 			selectedSiteId &&
+			upsellPlan &&
 			getPlanPrice( state, selectedSiteId, upsellPlan, false ),
 		selectedSite,
 		showPlanUpsell: !! selectedSiteId,
-		addItemToCart,
 		eligibleForProPlan,
 	};
 };
 
-const mapDispatchToProps = ( dispatch ) => {
+const mapDispatchToProps = ( dispatch: ReturnType< typeof useDispatch > ) => {
 	return {
 		clickUpsellAddToCart: () =>
 			dispatch( recordTracksEvent( 'calypso_non_dwpo_checkout_plan_upsell_add_to_cart', {} ) ),
