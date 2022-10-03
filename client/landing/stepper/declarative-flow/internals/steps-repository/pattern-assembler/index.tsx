@@ -61,8 +61,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
-			pattern_ids: patterns.map( ( { id } ) => id ),
-			pattern_names: patterns.map( ( { name } ) => name ),
+			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
 		} );
 		patterns.forEach( ( { id, name } ) => {
