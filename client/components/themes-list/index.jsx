@@ -21,7 +21,7 @@ export const ThemesList = ( props ) => {
 		[ props.fetchNextPage ]
 	);
 
-	if ( props.isLoading && props.themes.length === 0 ) {
+	if ( ! props.loading && props.themes.length === 0 ) {
 		return <Empty emptyContent={ props.emptyContent } translate={ props.translate } />;
 	}
 
