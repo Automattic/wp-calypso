@@ -3,7 +3,7 @@
  */
 
 import { sanitizeSectionContent as clean } from '../sanitize-section-content';
-
+import fixtures from './malformed-html-fixtures';
 /**
  * Attempts to create a DOM node from given HTML
  *
@@ -172,4 +172,48 @@ test( 'should prevent backspace-based XSS attacks', () => {
 	);
 
 	expect( link ).toHaveAttribute( 'href', 'http://example.com?referrer=wordpress.com' );
+} );
+
+describe( 'Malformed HTML datasets:', () => {
+	test( 'should sanitize empty', () => {
+		expect( clean( '' ) ).toBe( '' );
+	} );
+
+	test( 'should sanitize simple text', () => {
+		expect( clean( 'hello world' ) ).toBe( 'hello world' );
+	} );
+
+	test( 'should sanitize entities', () => {
+		expect( clean( '&lt;hello world&gt;' ) ).toBe( '&lt;hello world&gt;' );
+	} );
+
+	test( 'should remove unknown tags', () => {
+		expect( clean( '<u:y><b>hello <bogus><i>world</i></bogus></b>' ) ).toBe(
+			'<b>hello <i>world</i></b>'
+		);
+	} );
+
+	test( 'should remove unsafe tags', () => {
+		expect( clean( '<b>hello <i>world</i><script src=foo.js></script></b>' ) ).toBe(
+			'<b>hello <i>world</i></b>'
+		);
+	} );
+
+	test( 'should remove unsafe attributes', () => {
+		expect( clean( '<b>hello <i onclick="takeOverWorld(this)">world</i></b>' ) ).toBe(
+			'<b>hello <i>world</i></b>'
+		);
+	} );
+
+	test( 'should escape cruft', () => {
+		expect( clean( '<b>hello <i>world<</i></b> & tomorrow the universe' ) ).toBe(
+			'<b>hello <i>world&lt;</i></b> &amp; tomorrow the universe'
+		);
+	} );
+
+	test( 'should escape malformed HTML fixtures', () => {
+		fixtures.forEach( ( { payload, expected } ) => {
+			expect( clean( payload ) ).toBe( expected );
+		} );
+	} );
 } );
