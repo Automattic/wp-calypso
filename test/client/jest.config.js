@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
+
 module.exports = {
 	...base,
 	rootDir: '../../client',
