@@ -1,6 +1,7 @@
 import { Button, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import Badge from 'calypso/components/badge';
 
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
@@ -21,8 +22,13 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						} ) }
 					</div>
 				) }
+				{ currentTask.icon && (
+					<AnimatedIcon icon={ currentTask.icon } className="site-setup-list__task-icon" />
+				) }
 				{ ! useAccordionLayout && (
-					<h3 className="site-setup-list__task-title task__title">{ currentTask.title }</h3>
+					<h3 className="site-setup-list__task-title task__title">
+						{ currentTask.subtitle || currentTask.title }
+					</h3>
 				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -58,6 +59,18 @@ export const getTask = (
 	} = {}
 ) => {
 	let taskData = {};
+
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+
+	const jetpackAppBanner = displayJetpackAppBranding && {
+		title: translate( 'Try the Jetpack app' ),
+		subtitle: translate( 'Put your site in your pocket' ),
+		icon: '/calypso/animations/app-promo/wp-to-jp.json',
+		description: translate(
+			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
+		),
+	};
+
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
@@ -133,6 +146,7 @@ export const getTask = (
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
 				isSkippable: true,
+				...jetpackAppBanner,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
