@@ -17,9 +17,6 @@ function should_show_coming_soon_page() {
 		return false;
 	}
 
-	l( 'http referer ' . $_SERVER['HTTP_REFERER'] );
-	l( 'remote host ' . $_SERVER['REMOTE_HOST'] );
-
 	// mShots should be able to take screenshots of coming soon sites, in the
 	// same way RSS readers have access to coming soon sites.
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
