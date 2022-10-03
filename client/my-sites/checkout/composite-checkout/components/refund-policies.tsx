@@ -24,6 +24,9 @@ export enum RefundPolicy {
 	PlanBiennialBundle,
 	PlanMonthlyBundle,
 	PlanYearlyBundle,
+	PlanMonthlyRenewal,
+	PlanYearlyRenewal,
+	PlanBiennialRenewal,
 	PremiumTheme,
 }
 
@@ -66,6 +69,20 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 					return RefundPolicy.PlanBiennialBundle;
 				}
 			}
+
+			if ( isRenewal( product ) ) {
+				if ( isMonthlyProduct( product ) ) {
+					return RefundPolicy.PlanMonthlyRenewal;
+				}
+
+				if ( isYearly( product ) ) {
+					return RefundPolicy.PlanYearlyRenewal;
+				}
+
+				if ( isBiennially( product ) ) {
+					return RefundPolicy.PlanBiennialRenewal;
+				}
+			}
 		}
 
 		if ( isMonthlyProduct( product ) ) {
@@ -102,6 +119,8 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
 
 			case RefundPolicy.PlanBiennialBundle:
 			case RefundPolicy.PlanYearlyBundle:
+			case RefundPolicy.PlanBiennialRenewal:
+			case RefundPolicy.PlanYearlyRenewal:
 			case RefundPolicy.GenericBiennial:
 			case RefundPolicy.GenericYearly:
 			case RefundPolicy.PremiumTheme:
@@ -173,6 +192,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.PlanBiennialBundle:
+		case RefundPolicy.PlanBiennialRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}two year plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
@@ -180,6 +200,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.PlanMonthlyBundle:
+		case RefundPolicy.PlanMonthlyRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}monthly plan refunds{{/refundsSupportPage}} are limited to 7 days after purchase.',
 				{ components: { refundsSupportPage } }
@@ -187,6 +208,7 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 			break;
 
 		case RefundPolicy.PlanYearlyBundle:
+		case RefundPolicy.PlanYearlyRenewal:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration and {{refundsSupportPage}}yearly plan refunds{{/refundsSupportPage}} are limited to 14 days after purchase. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }

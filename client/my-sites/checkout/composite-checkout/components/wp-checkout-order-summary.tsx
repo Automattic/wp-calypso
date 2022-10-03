@@ -177,10 +177,18 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		return null;
 	}
 
-	const hasMonthlyPlanBundle = refundPolicies.every(
+	const allCartItemsAreMonthlyPlanBundle = refundPolicies.every(
 		( refundPolicy ) =>
 			refundPolicy === RefundPolicy.DomainNameRegistration ||
 			refundPolicy === RefundPolicy.PlanMonthlyBundle
+	);
+
+	const allCartItemsArePlanOrDomainRenewals = refundPolicies.every(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRenewal ||
+			refundPolicy === RefundPolicy.PlanMonthlyRenewal ||
+			refundPolicy === RefundPolicy.PlanYearlyRenewal ||
+			refundPolicy === RefundPolicy.PlanBiennialRenewal
 	);
 
 	let text: TranslateResult;
@@ -213,8 +221,8 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 				args: { days: refundWindow },
 			} );
 		}
-	} else if ( hasMonthlyPlanBundle ) {
-		const [ refundWindow ] = getRefundWindows( [ RefundPolicy.PlanMonthlyBundle ] );
+	} else if ( allCartItemsAreMonthlyPlanBundle || allCartItemsArePlanOrDomainRenewals ) {
+		const refundWindow = Math.max( ...refundWindows );
 		const planProduct = cart.products.find( isPlan );
 
 		text = translate(

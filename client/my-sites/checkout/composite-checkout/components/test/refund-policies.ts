@@ -181,6 +181,34 @@ describe( 'getRefundPolicies', () => {
 		] );
 	} );
 
+	test( 'monthly plan renewal and domain renewal', () => {
+		const cart = getEmptyResponseCart();
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			bill_period: `${ PLAN_MONTHLY_PERIOD }`,
+			extra: { purchaseType: 'renewal' },
+			item_subtotal_integer: 10,
+			product_slug: PLAN_PREMIUM_MONTHLY,
+		} );
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			extra: { purchaseType: 'renewal' },
+			is_domain_registration: true,
+			item_subtotal_integer: 10,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [
+			RefundPolicy.PlanMonthlyRenewal,
+			RefundPolicy.DomainNameRenewal,
+		] );
+	} );
+
 	test( 'Jetpack Scan monthly product', () => {
 		const cart = getEmptyResponseCart();
 		cart.products.push( {
