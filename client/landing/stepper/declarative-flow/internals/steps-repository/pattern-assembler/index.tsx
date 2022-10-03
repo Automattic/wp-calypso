@@ -213,6 +213,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 								);
 
 								submit?.();
+
+								const patterns = [ header, ...sections, footer ].filter(
+									( pattern ) => pattern
+								) as Pattern[];
+								recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
+									pattern_ids: patterns.map( ( { id } ) => id ),
+									pattern_names: patterns.map( ( { name } ) => name ),
+									pattern_count: patterns.length,
+								} );
 							}
 						} }
 					/>
