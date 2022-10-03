@@ -33,6 +33,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 
+	const getPatterns = () =>
+		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+
 	const trackEventPattern = ( {
 		patternType,
 		patternId,
@@ -56,7 +59,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const trackEventContinue = () => {
-		const patterns = [ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+		const patterns = getPatterns();
 		recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
 			pattern_ids: patterns.map( ( { id } ) => id ),
 			pattern_names: patterns.map( ( { name } ) => name ),
@@ -157,6 +160,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			setShowPatternSelectorType( null );
 		} else {
 			goBack();
+
+			const patterns = getPatterns();
+			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+				has_selected_patterns: patterns.length > 0,
+				pattern_count: patterns.length,
+			} );
 		}
 	};
 
