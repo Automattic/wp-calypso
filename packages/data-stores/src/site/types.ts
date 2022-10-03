@@ -152,7 +152,7 @@ export interface SiteDetailsOptions {
 	admin_url?: string;
 	advanced_seo_front_page_description?: string;
 	advanced_seo_title_formats?: string[];
-	ak_vp_bundle_enabled?: boolean | null;
+	ak_vp_bundle_enabled?: boolean;
 	allowed_file_types?: string[];
 	anchor_podcast?: boolean;
 	background_color?: boolean;
@@ -164,8 +164,8 @@ export interface SiteDetailsOptions {
 	default_ping_status?: boolean;
 	default_post_format?: string;
 	default_sharing_status?: boolean;
-	design_type?: string | null;
-	difm_lite_site_options?: DifmLiteSiteOptions | Record< string, never >;
+	design_type?: string;
+	difm_lite_site_options?: DifmLiteSiteOptions;
 	editing_toolkit_is_active?: boolean;
 	featured_images_enabled?: boolean;
 	frame_nonce?: string;
@@ -181,7 +181,7 @@ export interface SiteDetailsOptions {
 	image_thumbnail_crop?: number;
 	image_thumbnail_height?: number;
 	image_thumbnail_width?: number;
-	import_engine?: string | null;
+	import_engine?: string;
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
@@ -196,32 +196,32 @@ export interface SiteDetailsOptions {
 	jetpack_frame_nonce?: string;
 	jetpack_version?: string | undefined;
 	login_url?: string;
-	p2_hub_blog_id?: number | null;
+	p2_hub_blog_id?: number;
 	page_for_posts?: number;
 	page_on_front?: number;
 	permalink_structure?: string;
-	podcasting_archive?: boolean | null;
+	podcasting_archive?: boolean;
 	post_formats?: string[];
 	publicize_permanently_disabled?: boolean;
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
-	site_segment?: string | null;
-	site_vertical_id?: string | null;
+	site_segment?: string;
+	site_vertical_id?: string;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;
 	unmapped_url?: string;
 	updated_at?: string;
 	upgraded_filetypes_enabled?: boolean;
-	verification_services_codes?: string | null;
+	verification_services_codes?: string;
 	videopress_enabled?: boolean;
 	videopress_storage_used?: number;
 	was_created_with_blank_canvas_design?: boolean;
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
-	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses | [];
+	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
