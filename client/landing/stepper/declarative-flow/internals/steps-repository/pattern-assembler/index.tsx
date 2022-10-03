@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -90,15 +90,41 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		] );
 	};
 
+	const trackEventPattern = ( {
+		patternType,
+		patternId,
+		eventType,
+	}: {
+		patternType: string;
+		patternId: number;
+		eventType: string;
+	} ) => {
+		let eventName;
+		if ( eventType === 'select' ) {
+			eventName = 'calypso_signup_bcpa_select_pattern_click';
+		} else if ( eventType === 'delete' ) {
+			eventName = 'calypso_signup_bcpa_delete_pattern_click';
+		}
+
+		recordTracksEvent( eventName, {
+			pattern_type: patternType,
+			pattern_id: patternId,
+		} );
+	};
+
 	const onSelect = ( pattern: Pattern | null ) => {
 		if ( pattern ) {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
 			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
 			if ( 'section' === showPatternSelectorType ) addSection( pattern );
 
-			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
-				pattern_type: showPatternSelectorType,
-			} );
+			if ( showPatternSelectorType ) {
+				trackEventPattern( {
+					patternType: showPatternSelectorType,
+					patternId: pattern.id,
+					eventType: 'select',
+				} );
+			}
 		}
 		setShowPatternSelectorType( null );
 	};
@@ -110,6 +136,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			goBack();
 		}
 	};
+
+	useEffect( () => {
+		if ( showPatternSelectorType ) {
+			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
+				pattern_type: showPatternSelectorType,
+			} );
+		}
+	}, [ showPatternSelectorType ] );
 
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
@@ -127,6 +161,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setShowPatternSelectorType( 'header' );
 						} }
 						onDeleteHeader={ () => {
+							if ( header ) {
+								trackEventPattern( {
+									patternType: 'header',
+									patternId: header.id,
+									eventType: 'delete',
+								} );
+							}
 							setHeader( null );
 						} }
 						onSelectSection={ ( position: number | null ) => {
@@ -134,6 +175,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setShowPatternSelectorType( 'section' );
 						} }
 						onDeleteSection={ ( position: number ) => {
+							trackEventPattern( {
+								patternType: 'section',
+								patternId: sections[ position ].id,
+								eventType: 'delete',
+							} );
 							deleteSection( position );
 						} }
 						onMoveUpSection={ ( position: number ) => {
@@ -146,6 +192,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setShowPatternSelectorType( 'footer' );
 						} }
 						onDeleteFooter={ () => {
+							if ( footer ) {
+								trackEventPattern( {
+									patternType: 'footer',
+									patternId: footer.id,
+									eventType: 'delete',
+								} );
+							}
 							setFooter( null );
 						} }
 						onContinueClick={ () => {
