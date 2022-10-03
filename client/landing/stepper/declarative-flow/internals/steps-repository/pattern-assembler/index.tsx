@@ -12,7 +12,7 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
-import { encodePatternId, makeCustomizedHomePageTemplateContent } from './utils';
+import { encodePatternId, makeCustomHomePageTemplateContent } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -144,9 +144,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 									createTemplate(
 										siteSlugOrId,
 										design.recipe!.stylesheet!,
-										'customized-home',
-										translate( 'Customized Home' ),
-										makeCustomizedHomePageTemplateContent( !! header, !! footer )
+										'custom-home',
+										translate( 'Custom Home' ),
+										makeCustomHomePageTemplateContent( !! header, !! footer )
 									)
 										.then( ( { slug } ) =>
 											setDesignOnSite( siteSlugOrId, design, { pageTemplate: slug } )

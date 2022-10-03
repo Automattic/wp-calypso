@@ -3,7 +3,7 @@ import {
 	PATTERN_SOURCE_SITE_ID,
 	PREVIEW_PATTERN_URL,
 	STYLE_SHEET,
-	CUSTOMIZED_HOME_PAGE_TEMPLATE_CONTENT,
+	CUSTOM_HOME_PAGE_TEMPLATE_CONTENT,
 } from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
@@ -24,11 +24,11 @@ export const handleKeyboard =
 		if ( key === 'Enter' || key === ' ' ) callback();
 	};
 
-export const makeCustomizedHomePageTemplateContent = ( hasHeader: boolean, hasFooter: boolean ) =>
+export const makeCustomHomePageTemplateContent = ( hasHeader: boolean, hasFooter: boolean ) =>
 	[
-		hasHeader && CUSTOMIZED_HOME_PAGE_TEMPLATE_CONTENT.HEADER,
-		CUSTOMIZED_HOME_PAGE_TEMPLATE_CONTENT.MAIN,
-		hasFooter && CUSTOMIZED_HOME_PAGE_TEMPLATE_CONTENT.FOOTER,
+		hasHeader && CUSTOM_HOME_PAGE_TEMPLATE_CONTENT.HEADER,
+		CUSTOM_HOME_PAGE_TEMPLATE_CONTENT.MAIN,
+		hasFooter && CUSTOM_HOME_PAGE_TEMPLATE_CONTENT.FOOTER,
 	]
 		.filter( Boolean )
 		.join( '\n' );

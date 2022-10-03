@@ -3,7 +3,7 @@ export const STYLE_SHEET = 'pub/blank-canvas-blocks';
 export const PUBLIC_API_URL = 'https://public-api.wordpress.com';
 export const PREVIEW_PATTERN_URL = PUBLIC_API_URL + '/wpcom/v2/block-previews/pattern';
 
-export const CUSTOMIZED_HOME_PAGE_TEMPLATE_CONTENT = {
+export const CUSTOM_HOME_PAGE_TEMPLATE_CONTENT = {
 	HEADER: '<!-- wp:template-part {"slug":"header","tagName":"header"} /-->',
 	MAIN: `
 <!-- wp:group {"tagName":"main","lock":{"move":false,"remove":true}} -->
