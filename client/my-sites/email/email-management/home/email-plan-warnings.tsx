@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
@@ -9,13 +8,7 @@ import {
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
-import {
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-} from 'calypso/lib/emails/email-provider-constants';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
-import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
-import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-message';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { EmailPlanWarningNotice } from './email-plan-warning-notice';
@@ -36,7 +29,6 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
-
 	if ( ! requiredAction && canCurrentUserAddEmail( domain ) ) {
 		return null;
 	}
