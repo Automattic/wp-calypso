@@ -66,6 +66,7 @@ import {
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
+	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -533,8 +534,9 @@ class ManagePurchase extends Component {
 						removePlan={ this.goToCancelLink }
 						site={ site }
 						hasDomain={ customDomain }
-						wpcomURL={ site.wpcom_url }
+						isRefundable={ isRefundable( purchase ) }
 						primaryDomain={ primaryDomainName }
+						wpcomURL={ site.wpcom_url }
 					/>
 				);
 			}
