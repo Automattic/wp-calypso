@@ -13,6 +13,7 @@ import './style.scss';
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
+	source: string;
 };
 
 const buildQueryString = ( parameters = {} ) =>
