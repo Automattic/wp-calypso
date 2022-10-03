@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -263,10 +264,18 @@ export const HelpCenterContactForm = () => {
 
 			case 'EMAIL': {
 				if ( supportSite ) {
-					const ticketMeta = [
-						'Site I need help with: ' + supportSite.URL,
-						'Plan: ' + supportSite.plan?.product_slug,
-					];
+					let planName = supportSite.plan?.product_slug;
+
+					if ( supportSite.plan ) {
+						planName = `${ supportSite.plan.product_id } - ${
+							supportSite.plan.product_name_short
+						} (${ getPlanTermLabel(
+							supportSite.plan.product_slug,
+							( val ) => val // Passing an identity function instead of `translate` to always return the English string
+						) })`;
+					}
+
+					const ticketMeta = [ 'Site I need help with: ' + supportSite.URL, 'Plan: ' + planName ];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
