@@ -28,7 +28,7 @@ export const ThemesList = ( props ) => {
 
 	useEffect( () => {
 		if ( noThemesFound && props.searchTerm ) {
-			props.recordTracksEvent( 'calypso_themeshowcase_search_empty', {
+			props.recordTracksEvent( 'calypso_themeshowcase_search_empty_results', {
 				search_term: props.searchTerm,
 				blog_id: props.siteId,
 			} );
