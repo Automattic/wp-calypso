@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import image from 'calypso/assets/images/onboarding/link-in-bio-banner-large.png';
-import * as Banner from './link-in-bio-banner';
-import { useLinkInBioBanner } from './use-link-in-bio-banner';
+import * as Banner from './link-in-bio-banner-parts';
+import { handleBannerViewed } from './link-in-bio-banner-parts';
 
 const Wrapper = styled( 'div' )( {
 	// this is the height of the "footer" div in `SitesGridTile`.
@@ -20,11 +20,7 @@ const Root = styled( Banner.Root )( {
 	'.dismiss-button': {
 		position: 'absolute',
 		top: 16,
-		right: 16,
-		'html[dir=rtl] & ': {
-			right: 'unset',
-			left: 16,
-		},
+		insetInlineEnd: 16,
 	},
 	'.banner-image': {
 		marginInlineStart: 'auto',
@@ -54,7 +50,6 @@ const Details = styled( 'div' )( {
 } );
 
 export const LinkInBioDoubleTileBanner = () => {
-	const { handleBannerViewed } = useLinkInBioBanner();
 	useEffect( handleBannerViewed, [] );
 	return (
 		<Wrapper>

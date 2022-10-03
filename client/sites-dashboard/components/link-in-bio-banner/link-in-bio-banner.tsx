@@ -1,62 +1,39 @@
-//todo use variables where possible and check fontSize use in code base to make sure consistent
-import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { close } from '@wordpress/icons';
-import { ComponentProps } from 'react';
-import { useLinkInBioBanner } from './use-link-in-bio-banner';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useSelector } from 'react-redux';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { LINK_IN_BIO_BANNER_PREFERENCE } from './link-in-bio-banner-parts';
+import { LinkInBioBanners, BannerType } from './link-in-bio-banners';
 
-export const Root = styled( 'div' )( {
-	position: 'relative',
-	display: 'flex',
-	backgroundColor: '#D0CCE3',
-	borderRadius: '3px',
-} );
-
-export const Title = styled( 'h3' )( {
-	fontWeight: 500,
-	fontSize: 20,
-	color: '#000000',
-	margin: 0,
-} );
-
-Title.defaultProps = { children: __( 'Your digital identity' ) };
-
-export const Description = styled( 'p' )( {
-	margin: 0,
-} );
-
-Description.defaultProps = {
-	children: __( 'Show the world what you have to offer with a Link to Bio site.' ),
+type Props = {
+	displayMode: 'row' | 'grid';
+	siteCount: number;
 };
 
-export const DismissButton = ( props: ComponentProps< typeof Button > ) => {
-	const { handleDismissBanner } = useLinkInBioBanner();
-
-	return (
-		<Button
-			icon={ close }
-			onClick={ handleDismissBanner }
-			{ ...props }
-			className={ 'dismiss-button' }
-		/>
+export const LinkInBioBanner = ( props: Props ) => {
+	const { displayMode, siteCount } = props;
+	const isMobile = useMobileBreakpoint();
+	const isBannerVisible = useSelector( ( state ) =>
+		getPreference( state, LINK_IN_BIO_BANNER_PREFERENCE )
 	);
-};
+	const showBanner = isBannerVisible === undefined || isBannerVisible;
 
-export const Image = ( { src }: { src: string } ) => {
-	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className={ 'banner-image' } />;
-};
+	const renderBanner = () => {
+		let bannerType: BannerType = 'none';
+		if ( showBanner ) {
+			if ( isMobile ) {
+				bannerType = 'tile';
+			} else if ( displayMode === 'row' ) {
+				if ( siteCount === 1 ) {
+					bannerType = 'row';
+				}
+			} else if ( siteCount === 1 ) {
+				bannerType = 'double-tile';
+			} else if ( siteCount === 2 ) {
+				bannerType = 'tile';
+			}
+		}
+		return LinkInBioBanners[ bannerType ];
+	};
 
-export const CreateButton = () => {
-	const { handleBannerCtaClick } = useLinkInBioBanner();
-	return (
-		<Button
-			isPressed
-			href={ '/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp' }
-			className={ 'create-button' }
-			onClick={ handleBannerCtaClick }
-		>
-			{ __( 'Create your bio site' ) }
-		</Button>
-	);
+	return renderBanner();
 };

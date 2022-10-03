@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.png';
-import * as Banner from './link-in-bio-banner';
-import { useLinkInBioBanner } from './use-link-in-bio-banner';
+import * as Banner from './link-in-bio-banner-parts';
+import { handleBannerViewed } from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
 	padding: 32,
@@ -23,7 +23,6 @@ const Details = styled( 'div' )( {
 } );
 
 export const LinkInBioRowBanner = () => {
-	const { handleBannerViewed } = useLinkInBioBanner();
 	useEffect( handleBannerViewed, [] );
 	return (
 		<Root>

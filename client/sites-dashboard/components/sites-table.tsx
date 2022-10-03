@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { MEDIA_QUERIES } from '../utils';
-import { useLinkInBioBanner } from './link-in-bio-banner/use-link-in-bio-banner';
+import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -60,8 +60,6 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	if ( params.get( 'sitecount' ) ) {
 		sites = sites.slice( 0, Number( params.get( 'sitecount' ) ) );
 	}
-	const { getBanner } = useLinkInBioBanner();
-	const banner = getBanner( sites, 'row' );
 	const { __ } = useI18n();
 
 	const headerRef = useRef< HTMLTableSectionElement >( null );
@@ -155,7 +153,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					) ) }
 				</tbody>
 			</Table>
-			{ banner }
+			<LinkInBioBanner siteCount={ sites.length } displayMode={ 'row' } />
 		</>
 	);
 }

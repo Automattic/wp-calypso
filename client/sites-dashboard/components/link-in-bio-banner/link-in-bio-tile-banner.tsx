@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useEffect } from 'react';
 import image from 'calypso/assets/images/onboarding/link-in-bio-banner-medium.png';
-import * as Banner from './link-in-bio-banner';
-import { useLinkInBioBanner } from './use-link-in-bio-banner';
+import * as Banner from './link-in-bio-banner-parts';
+import { handleBannerViewed } from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
 	flexDirection: 'column',
@@ -13,11 +13,7 @@ const Root = styled( Banner.Root )( {
 	'.dismiss-button': {
 		position: 'absolute',
 		top: 16,
-		right: 16,
-		'html[dir=rtl] & ': {
-			right: 'unset',
-			left: 16,
-		},
+		insetInlineEnd: 16,
 	},
 	'.create-button': {
 		width: '100%',
@@ -34,7 +30,6 @@ const Details = styled( 'div' )( {
 } );
 
 export const LinkInBioTileBanner = () => {
-	const { handleBannerViewed } = useLinkInBioBanner();
 	useEffect( handleBannerViewed, [] );
 	return (
 		<Root>
