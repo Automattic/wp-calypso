@@ -470,9 +470,9 @@
 		padding: 0 0 8px;
 	}
 
-	.logged-out-form label,
-	.login__form-userdata label {
-		font-weight: 500;
+	.logged-out-form label.form-label,
+	.login__form-userdata label.form-label {
+		font-weight: normal;
 		font-size: $woo-font-size-base;
 		line-height: 20px;
 		color: $woo-label-color;
