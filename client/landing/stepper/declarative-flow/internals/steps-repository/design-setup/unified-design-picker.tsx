@@ -326,7 +326,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
 			has_style_variations:
-				isEnabledStyleSelection && ( _selectedDesign.style_variations || [] ).length > 0,
+				isEnabledStyleSelection && ( _selectedDesign?.style_variations || [] ).length > 0,
 		} );
 
 		submit?.( providedDependencies );

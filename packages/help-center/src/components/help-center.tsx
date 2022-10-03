@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * Internal Dependencies
  */
 import { execute } from '../directly';
+import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { HELP_CENTER_STORE, USER_STORE } from '../stores';
 import { Container } from '../types';
@@ -27,6 +28,18 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { data: chatStatus } = useSupportAvailability( 'CHAT' );
 	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
+	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
+
+	const { show, isMinimized } = useSelect( ( select ) => ( {
+		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
+		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+	} ) );
+
+	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized || ! show );
+
+	useEffect( () => {
+		setUnreadCount( unreadCount );
+	}, [ unreadCount, setUnreadCount ] );
 
 	useEffect( () => {
 		if ( data?.status === 'assigned' ) {
@@ -75,6 +88,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 				elapsed: ( Date.now() - start ) / 1000,
 			} );
 			document.body.removeChild( portalParent );
+			closeChat();
 			handleClose();
 		};
 	}, [ portalParent ] );

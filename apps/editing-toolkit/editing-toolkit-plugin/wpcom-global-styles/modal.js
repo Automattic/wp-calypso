@@ -1,3 +1,5 @@
+/* global wpcomGlobalStyles */
+
 import { Button, Modal } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -12,17 +14,6 @@ const GlobalStylesModal = () => {
 	if ( ! isVisible ) {
 		return null;
 	}
-
-	const searchParams = new URLSearchParams( window.location.search );
-	const params = Object.fromEntries( searchParams.entries() );
-	const { origin } = params;
-	const calypsoDomain = [
-		'http://calypso.localhost:3000',
-		'https://wpcalypso.wordpress.com',
-		'https://horizon.wordpress.com',
-	].includes( origin )
-		? origin
-		: 'https://wordpress.com';
 
 	return (
 		<Modal
@@ -44,11 +35,7 @@ const GlobalStylesModal = () => {
 					<Button variant="secondary" onClick={ () => setIsVisible( false ) }>
 						{ __( 'Try it out', 'full-site-editing' ) }
 					</Button>
-					<Button
-						variant="primary"
-						href={ `${ calypsoDomain }/plans/${ window._currentSiteId ?? '' }` }
-						target="_top"
-					>
+					<Button variant="primary" href={ wpcomGlobalStyles.upgradeUrl } target="_top">
 						{ __( 'Upgrade plan', 'full-site-editing' ) }
 					</Button>
 				</div>

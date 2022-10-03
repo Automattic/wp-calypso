@@ -18,6 +18,18 @@ export const setSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const setUnreadCount = ( count: number ) =>
+	( {
+		type: 'HELP_CENTER_SET_UNREAD_COUNT',
+		count,
+	} as const );
+
+export const setIsMinimized = ( minimized: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_MINIMIZED',
+		minimized,
+	} as const );
+
 export const setSubject = ( subject: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_SUBJECT',
@@ -69,4 +81,6 @@ export type HelpCenterAction = ReturnType<
 	| typeof setUserDeclaredSiteUrl
 	| typeof resetIframe
 	| typeof setIframe
+	| typeof setUnreadCount
+	| typeof setIsMinimized
 >;

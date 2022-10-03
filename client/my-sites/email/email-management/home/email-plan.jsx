@@ -149,8 +149,8 @@ function EmailPlan( { domain, hideHeaderCake = false, selectedSite, source } ) {
 			};
 		}
 
+		// All site admins are allowed to add/remove email forwards
 		return {
-			disabled: ! canAddMailboxes,
 			path: emailManagementAddEmailForwards( selectedSite.slug, domain.name, currentRoute ),
 		};
 	}

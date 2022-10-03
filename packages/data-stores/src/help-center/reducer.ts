@@ -11,6 +11,14 @@ const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state
 	return state;
 };
 
+const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, action ) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_MINIMIZED':
+			return action.minimized;
+	}
+	return state;
+};
+
 const directlyData: Reducer<
 	{ isLoaded: boolean; hasSession: boolean } | undefined,
 	HelpCenterAction
@@ -36,6 +44,15 @@ const subject: Reducer< string | undefined, HelpCenterAction > = ( state, action
 		return undefined;
 	} else if ( action.type === 'HELP_CENTER_SET_SUBJECT' ) {
 		return action.subject;
+	}
+	return state;
+};
+
+const unreadCount: Reducer< number, HelpCenterAction > = ( state = 0, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_UNREAD_COUNT' ) {
+		return action.count;
+	} else if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return 0;
 	}
 	return state;
 };
@@ -90,6 +107,8 @@ const reducer = combineReducers( {
 	message,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
+	isMinimized,
+	unreadCount,
 	iframe,
 } );
 
