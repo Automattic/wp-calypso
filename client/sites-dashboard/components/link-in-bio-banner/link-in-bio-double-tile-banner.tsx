@@ -15,20 +15,27 @@ const Wrapper = styled( 'div' )( {
 const Root = styled( Banner.Root )( {
 	alignItems: 'center',
 	padding: '0 64px',
-	paddingRight: 0,
+	paddingInlineEnd: 0,
 	height: '100%',
 	'.dismiss-button': {
 		position: 'absolute',
 		top: 16,
 		right: 16,
+		'html[dir=rtl] & ': {
+			right: 'unset',
+			left: 16,
+		},
 	},
 	'.banner-image': {
-		marginLeft: 'auto',
+		marginInlineStart: 'auto',
 		height: 173,
+		'html[dir=rtl] & ': {
+			transform: 'scaleX(-1)',
+		},
 	},
 	'@media screen and ( max-width: 960px )': {
 		padding: 32,
-		paddingRight: 0
+		paddingInlineEnd: 0,
 	},
 	'@media screen and ( max-width: 1100px )': {
 		'font-size': 'smaller',
@@ -52,13 +59,13 @@ export const LinkInBioDoubleTileBanner = () => {
 	return (
 		<Wrapper>
 			<Root>
-				<Banner.DismissButton />
 				<Details>
 					<Banner.Title />
 					<Banner.Description />
 					<Banner.CreateButton />
 				</Details>
 				<Banner.Image src={ image } />
+				<Banner.DismissButton />
 			</Root>
 		</Wrapper>
 	);

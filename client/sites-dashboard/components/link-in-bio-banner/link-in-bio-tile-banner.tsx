@@ -14,6 +14,10 @@ const Root = styled( Banner.Root )( {
 		position: 'absolute',
 		top: 16,
 		right: 16,
+		'html[dir=rtl] & ': {
+			right: 'unset',
+			left: 16,
+		},
 	},
 	'.create-button': {
 		width: '100%',
