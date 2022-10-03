@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -156,6 +155,16 @@ export class UserStep extends Component {
 		} = this.props;
 
 		let subHeaderText = this.props.subHeaderText;
+		const loginUrl = login( {
+			isJetpack: 'jetpack-connect' === sectionName,
+			from,
+			redirectTo: getRedirectToAfterLoginUrl( this.props ),
+			locale,
+			oauth2ClientId: oauth2Client?.id,
+			wccomFrom,
+			isWhiteLogin: isReskinned,
+			signupUrl: window.location.pathname + window.location.search,
+		} );
 
 		if ( [ 'wpcc', 'crowdsignal' ].includes( flowName ) && oauth2Client ) {
 			if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
@@ -168,19 +177,16 @@ export class UserStep extends Component {
 								"You'll need an account to connect your store and manage your extensions"
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
-				subHeaderText = translate( '{{a}}Learn more about the benefits{{/a}}', {
-					components: {
-						a: (
-							<a
-								href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
-								target="_blank"
-								rel="noopener noreferrer"
-							/>
-						),
-					},
-					comment:
-						'Link displayed on the Signup page to users willing to sign up for WooCommerce via WordPress.com',
-				} );
+				subHeaderText = translate(
+					"First, let's create your account. Already registered? {{a}}Log in{{/a}}",
+					{
+						components: {
+							a: <a href={ loginUrl } />,
+						},
+						comment:
+							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
+					}
+				);
 			} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				subHeaderText = translate(
 					'By creating an account via any of the options below, {{br/}}you agree to our {{a}}Terms of Service{{/a}}.',
@@ -209,17 +215,6 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			const loginUrl = login( {
-				isJetpack: 'jetpack-connect' === sectionName,
-				from,
-				redirectTo: getRedirectToAfterLoginUrl( this.props ),
-				locale,
-				oauth2ClientId: oauth2Client?.id,
-				wccomFrom,
-				isWhiteLogin: isReskinned,
-				signupUrl: window.location.pathname + window.location.search,
-			} );
-
 			subHeaderText = translate(
 				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
 				{
@@ -379,14 +374,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<Gridicon icon="my-sites" size={ 72 } />
-					<h3>
-						{ translate( 'Sign up for %(clientTitle)s with a WordPress.com account', {
-							args: { clientTitle: oauth2Client.title },
-							comment:
-								"'clientTitle' is the name of the app that uses WordPress.com Connect (e.g. 'Akismet' or 'VaultPress')",
-						} ) }
-					</h3>
+					<h3>{ translate( 'Get started in minutes' ) }</h3>
 				</div>
 			);
 		}
@@ -420,6 +408,10 @@ export class UserStep extends Component {
 
 		if ( isVideoPressFlow( flowName ) ) {
 			return translate( 'Continue' );
+		}
+
+		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
+			return translate( 'Get started' );
 		}
 
 		if ( this.userCreationPending() ) {
@@ -472,7 +464,7 @@ export class UserStep extends Component {
 					recaptchaClientId={ this.state.recaptchaClientId }
 					horizontal={ isReskinned }
 					isReskinned={ isReskinned }
-					shouldDisplayUserExistsError
+					shouldDisplayUserExistsError={ ! isWooOAuth2Client( oauth2Client ) }
 				/>
 				<div id="g-recaptcha"></div>
 			</>
