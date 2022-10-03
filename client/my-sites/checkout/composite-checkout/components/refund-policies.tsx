@@ -153,21 +153,21 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 
 		case RefundPolicy.GenericBiennial:
 			text = translate(
-				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with two year subscriptions.',
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with two year subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
 
 		case RefundPolicy.GenericMonthly:
 			text = translate(
-				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for products with monthly subscriptions.',
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 7 days after purchase or renewal for non-domain products with monthly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
 
 		case RefundPolicy.GenericYearly:
 			text = translate(
-				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for products with yearly subscriptions.',
+				'You understand that {{refundsSupportPage}}refunds{{/refundsSupportPage}} are limited to 14 days after purchase or renewal for non-domain products with yearly subscriptions.',
 				{ components: { refundsSupportPage } }
 			);
 			break;
