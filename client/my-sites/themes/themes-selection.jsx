@@ -17,7 +17,6 @@ import {
 	getPremiumThemePrice,
 	getThemesForQueryIgnoringPage,
 	getThemesFoundForQuery,
-	isFulfilledThemesForQuery,
 	isRequestingThemesForQuery,
 	isThemesLastPageForQuery,
 	isThemeActive,
@@ -172,7 +171,6 @@ class ThemesSelection extends Component {
 					getActionLabel={ this.props.getActionLabel }
 					isActive={ this.props.isThemeActive }
 					getPrice={ this.props.getPremiumThemePrice }
-					isRequestFulfilled={ this.props.isRequestFulfilled }
 					isInstalling={ this.props.isInstallingTheme }
 					loading={ this.props.isRequesting }
 					emptyContent={ this.props.emptyContent }
@@ -258,7 +256,6 @@ export const ConnectedThemesSelection = connect(
 			themesCount: getThemesFoundForQuery( state, sourceSiteId, query ),
 			isRequesting:
 				isCustomizedThemeListLoading || isRequestingThemesForQuery( state, sourceSiteId, query ),
-			isRequestFulfilled: isFulfilledThemesForQuery( state, sourceSiteId, query ),
 			isLastPage: isThemesLastPageForQuery( state, sourceSiteId, query ),
 			isLoggedIn: isUserLoggedIn( state ),
 			isThemeActive: bindIsThemeActive( state, siteId ),
