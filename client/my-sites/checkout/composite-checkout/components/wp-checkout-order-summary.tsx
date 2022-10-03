@@ -163,7 +163,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	const refundPolicies = getRefundPolicies( cart );
 	const refundWindows = getRefundWindows( refundPolicies );
 
-	if ( ! refundWindows.length ) {
+	if ( ! refundWindows.length || refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
 		return null;
 	}
 
@@ -185,24 +185,26 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 
 	let text: TranslateResult;
 
-	if ( refundPolicies.includes( RefundPolicy.NonRefundable ) ) {
-		text = translate( 'Partial money back guarantee' );
-	} else if ( refundWindows.length === 1 ) {
+	if ( refundWindows.length === 1 ) {
 		const refundWindow = refundWindows[ 0 ];
 		const planBundleRefundPolicy = refundPolicies.find(
 			( refundPolicy ) =>
 				refundPolicy === RefundPolicy.PlanBiennialBundle ||
-				refundPolicy === RefundPolicy.PlanMonthlyBundle ||
 				refundPolicy === RefundPolicy.PlanYearlyBundle
 		);
+		const planProduct = cart.products.find( isPlan );
 
 		if ( planBundleRefundPolicy ) {
+			// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 			text = translate(
-				'%(days)d-day money back guarantee (minus domain registration costs)',
-				'%(days)d-day money back guarantee (minus domain registration costs)',
+				'%(days)d-day money back guarantee for %(product)s',
+				'%(days)d-day money back guarantee for %(product)s',
 				{
 					count: refundWindow,
-					args: { days: refundWindow },
+					args: {
+						days: refundWindow,
+						product: planProduct?.product_name ?? '',
+					},
 				}
 			);
 		} else {
@@ -213,7 +215,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 		}
 	} else if ( hasMonthlyPlanBundle ) {
 		const [ refundWindow ] = getRefundWindows( [ RefundPolicy.PlanMonthlyBundle ] );
-		const planProduct = cart.products.find( ( product ) => isPlan( product ) );
+		const planProduct = cart.products.find( isPlan );
 
 		text = translate(
 			'%(days)d-day money back guarantee for %(product)s',
@@ -229,10 +231,9 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	} else {
 		const shortestRefundWindow = Math.min( ...refundWindows );
 
-		// Using plural translation because some languages have multiple plural forms and no plural-agnostic.
 		text = translate(
-			'Minimum %(days)d-day money back guarantee',
-			'Minimum %(days)d-day money back guarantee',
+			'%(days)d-day full money back guarantee',
+			'%(days)d-day full money back guarantee',
 			{
 				count: shortestRefundWindow,
 				args: { days: shortestRefundWindow },
