@@ -8,7 +8,7 @@ import {
 	getContextResults,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import { HELP_CENTER_STORE } from '../stores';
 import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
@@ -24,6 +23,7 @@ export const SITE_STORE = 'automattic/site' as const;
 type Props = {
 	message?: string;
 	supportSite?: SiteDetails;
+	showTitle: boolean;
 };
 
 function recordSibylArticleClick(
@@ -73,7 +73,7 @@ function getPostUrl( article: Article, query: string ) {
 	return article.link;
 }
 
-export function SibylArticles( { message = '', supportSite }: Props ) {
+export function SibylArticles( { message = '', supportSite, showTitle }: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
@@ -89,7 +89,6 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
 
 	const { data: intent } = useSiteIntent( supportSite?.ID );
-	const { setSybilArticles } = useDispatch( HELP_CENTER_STORE );
 
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
@@ -98,16 +97,13 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			: getContextResults( sectionName, intent?.site_intent ?? '' );
 	}, [ sibylArticles, sectionName, intent?.site_intent ] );
 
-	useMemo( () => {
-		// TODO move to hook
-		setSybilArticles( sibylArticles );
-	}, [ setSybilArticles, sibylArticles ] );
-
 	return (
 		<div className="help-center-sibyl-articles__container">
-			<h3 id="help-center--contextual_help" className="help-center__section-title">
-				{ __( 'Recommended resources', __i18n_text_domain__ ) }
-			</h3>
+			{ showTitle && (
+				<h3 id="help-center--contextual_help" className="help-center__section-title">
+					{ __( 'Recommended resources', __i18n_text_domain__ ) }
+				</h3>
+			) }
 			<ul
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"

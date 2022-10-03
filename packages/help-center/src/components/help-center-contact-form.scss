@@ -113,6 +113,7 @@ section.contact-form-submit {
 		background-color: var(--color-accent);
 		border-color: var(--color-accent);
 		color: var(--color-text-inverted);
+		line-height: 2.7;
 
 		&:hover,
 		&:focus {
@@ -231,4 +232,9 @@ section.contact-form-submit {
 
 .help-center-contact-form__site-picker-privacy-popover {
 	z-index: 10000;
+}
+
+.help-center__sibyl-articles-page {
+	display: flex;
+	flex-direction: column;
 }
