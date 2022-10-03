@@ -302,6 +302,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
+				is_mobile_device: isMobile,
 			} );
 
 			if ( _selectedDesign.verticalizable ) {
