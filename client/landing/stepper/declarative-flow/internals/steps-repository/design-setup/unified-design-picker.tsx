@@ -218,9 +218,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundledWithWooCommerce = ( selectedDesign?.software_sets || [] ).some(
-		( set ) => set.slug === 'woo-on-plans'
-	);
+	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||

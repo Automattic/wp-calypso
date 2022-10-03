@@ -86,8 +86,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) &&
-		( design.software_sets || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
+		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
