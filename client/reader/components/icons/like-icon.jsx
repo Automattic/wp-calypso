@@ -20,7 +20,7 @@ export default function ReaderLikeIcon( { liked, iconSize } ) {
 			>
 				<path
 					d="m10.0001 2.5 2.4463 5.33517h5.4704l-4.5834 4.23893 1.5592 5.4259-4.8925-2.8125-4.8925 2.8125 1.55917-5.4259-4.58333-4.23893h2.7352 2.73521z"
-					stroke={ liked ? 'var(--color-link)' : '#646970' }
+					stroke={ liked ? 'var(--color-primary)' : '#646970' }
 					strokeLinecap="round"
 					strokeWidth="1.5"
 				/>
