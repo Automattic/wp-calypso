@@ -66,7 +66,7 @@ class StepImportOrMigrate extends Component {
 	};
 
 	installJetpack = () => {
-		// recordTracksEvent( 'calypso_site_importer_install_jetpack' );
+		this.props.recordTracksEvent( 'calypso_site_importer_install_jetpack' );
 		const { sourceSiteInfo } = this.props;
 		const sourceSiteDomain = get( sourceSiteInfo, 'site_url', '' );
 		const source = 'import';
