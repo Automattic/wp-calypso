@@ -77,6 +77,10 @@
 	background: #fdfdfd;
 	min-height: 100%;
 
+	* {
+		font-family: proxima-nova, sans-serif;
+	}
+
 	&.layout.is-section-login {
 		min-height: 100%;
 		padding-bottom: 0;
