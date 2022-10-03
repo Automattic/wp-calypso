@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, FormInputValidation } from '@automattic/components';
+import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 
@@ -91,8 +91,8 @@ const SetupForm = ( {
 				selectedFile={ selectedFile }
 			/>
 			<FormFieldset>
-				<FormLabel htmlFor="setup-form-input-name">{ __( 'Site name' ) }</FormLabel>
-				<FormInput
+				<TextControl
+					label={ __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
 					value={ siteTitle }
