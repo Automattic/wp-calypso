@@ -95,6 +95,10 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
 			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
 			if ( 'section' === showPatternSelectorType ) addSection( pattern );
+
+			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
+				pattern_type: showPatternSelectorType,
+			} );
 		}
 		setShowPatternSelectorType( null );
 	};
