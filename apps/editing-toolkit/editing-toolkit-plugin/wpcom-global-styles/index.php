@@ -61,6 +61,26 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 	$dependencies = $asset['dependencies'] ?? array();
 	$version      = $asset['version'] ?? filemtime( plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles.min.js' );
 
+	$calypso_domain = 'https://wordpress.com';
+	if (
+		! empty( $_GET['origin'] ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		in_array(
+			$_GET['origin'], // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			array(
+				'http://calypso.localhost:3000',
+				'https://wpcalypso.wordpress.com',
+				'https://horizon.wordpress.com',
+			),
+			true
+		)
+	) {
+		$calypso_domain = $_GET['origin']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	}
+
+	$site_slug = method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' )
+		? \WPCOM_Masterbar::get_calypso_site_slug( get_current_blog_id() )
+		: wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+
 	wp_enqueue_script(
 		'wpcom-global-styles-editor',
 		plugins_url( 'dist/wpcom-global-styles.min.js', __FILE__ ),
@@ -71,8 +91,11 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 	wp_set_script_translations( 'wpcom-global-styles-editor', 'full-site-editing' );
 	wp_localize_script(
 		'wpcom-global-styles-editor',
-		'wpcomGlobalStylesAssetsUrl',
-		plugins_url( 'dist/', __FILE__ )
+		'wpcomGlobalStyles',
+		array(
+			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
+			'upgradeUrl' => "$calypso_domain/plans/$site_slug",
+		)
 	);
 	wp_enqueue_style(
 		'wpcom-global-styles-editor',
