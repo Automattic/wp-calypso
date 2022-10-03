@@ -30,6 +30,7 @@ export class Connection {
 	receiveInit?: ( init: HappychatUser ) => void;
 	receiveLocalizedSupport?: ( accept: boolean ) => void;
 	receiveMessage?: ( message: string ) => void;
+	receiveHappychatEnv?: ( env: 'production' | 'staging' ) => void;
 	receiveMessageOptimistic?: ( message: string ) => void;
 	receiveMessageUpdate?: ( message: string ) => void;
 	receiveReconnecting?: () => void;
@@ -64,6 +65,12 @@ export class Connection {
 		this.openSocket = new Promise( ( resolve, reject ) => {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
+					// not so clean way to check if the happychat URL is staging or prod one.
+					if ( ( url as string ).includes( 'staging' ) ) {
+						dispatch( this.receiveHappychatEnv?.( 'staging' ) );
+					} else {
+						dispatch( this.receiveHappychatEnv?.( 'production' ) );
+					}
 					const socket = buildConnection( url );
 					return socket
 						.once( 'connect', () => dispatch( this.receiveConnect?.() ) )

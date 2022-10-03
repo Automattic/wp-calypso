@@ -4,6 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
+import { Notice } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -74,30 +75,42 @@ export const HelpCenterContactPage: React.FC = () => {
 					} ) }
 				>
 					{ renderChat.render && (
-						<ConditionalLink
-							active={ renderChat.state === 'AVAILABLE' }
-							to="/contact-form?mode=CHAT"
-						>
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'chat', {
-									'is-disabled': renderChat.state !== 'AVAILABLE',
-								} ) }
-								role="button"
-								tabIndex={ 0 }
+						<div>
+							<ConditionalLink
+								active={ renderChat.state === 'AVAILABLE' }
+								to="/contact-form?mode=CHAT"
 							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ comment } />
+								<div
+									className={ classnames( 'help-center-contact-page__box', 'chat', {
+										'is-disabled': renderChat.state !== 'AVAILABLE',
+									} ) }
+									role="button"
+									tabIndex={ 0 }
+								>
+									<div className="help-center-contact-page__box-icon">
+										<Icon icon={ comment } />
+									</div>
+									<div>
+										<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
+										<p>
+											{ renderChat.state !== 'AVAILABLE'
+												? __( 'Chat is unavailable right now', __i18n_text_domain__ )
+												: __( 'Get an immediate reply', __i18n_text_domain__ ) }
+										</p>
+									</div>
 								</div>
-								<div>
-									<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
-									<p>
-										{ renderChat.state !== 'AVAILABLE'
-											? __( 'Chat is unavailable right now', __i18n_text_domain__ )
-											: __( 'Get an immediate reply', __i18n_text_domain__ ) }
-									</p>
-								</div>
-							</div>
-						</ConditionalLink>
+								{ renderChat.env === 'staging' && (
+									<Notice
+										status="warning"
+										actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
+										className="help-center-contact-page__staging-notice"
+										isDismissible={ false }
+									>
+										Using HappyChat staging
+									</Notice>
+								) }
+							</ConditionalLink>
+						</div>
 					) }
 
 					{ renderEmail.render && (

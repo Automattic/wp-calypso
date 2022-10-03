@@ -286,6 +286,20 @@ $head-foot-height: 50px;
 		}
 	}
 
+	.help-center-contact-page__staging-notice {
+		margin: 2px 0;
+		.components-notice__content {
+			display: flex;
+			justify-content: space-between;
+			margin: 0;
+
+			.components-notice__action {
+				margin: 0;
+				font-weight: bold;
+			}
+		}
+	}
+
 	body[class*="is-section-"],
 	body[class^="is-section-"] {
 		.help-center {
