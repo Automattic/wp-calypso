@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -95,7 +95,7 @@ const EmailProvidersStackedComparison = ( {
 
 	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
-	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
+	const initialExpandedCards = () => {
 		if ( showNonOwnerMessage ) {
 			return {
 				google: false,
@@ -121,7 +121,13 @@ const EmailProvidersStackedComparison = ( {
 			titan: true,
 			google: false,
 		};
-	} );
+	};
+
+	const [ detailsExpanded, setDetailsExpanded ] = useState( initialExpandedCards() );
+
+	useEffect( () => {
+		setDetailsExpanded( initialExpandedCards() );
+	}, [ showNonOwnerMessage ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -283,7 +289,11 @@ const EmailProvidersStackedComparison = ( {
 
 			<>
 				{ showNonOwnerMessage && (
-					<EmailNonDomainOwnerMessage domain={ domain } selectedSite={ selectedSite } />
+					<EmailNonDomainOwnerMessage
+						domain={ domain }
+						selectedSite={ selectedSite }
+						source={ 'email-comparison' }
+					/>
 				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>

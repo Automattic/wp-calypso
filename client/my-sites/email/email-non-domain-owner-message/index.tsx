@@ -13,13 +13,14 @@ import './style.scss';
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
+	source: string;
 };
 
 const buildQueryString = ( parameters = {} ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
-	const { domain, selectedSite } = props;
+	const { domain, selectedSite, source } = props;
 
 	const translate = useTranslate();
 
@@ -50,6 +51,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const onClickLink = ( eventType: 'contact' | 'login' | 'support' ) => {
 		const properties = {
 			action: eventType,
+			source,
 		};
 
 		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
@@ -110,7 +112,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			</PromoCard>
 			<TrackComponentView
 				eventName="calypso_non_domain_owner_notice_component_impression"
-				eventProperties={ { source: 'email-comparison' } }
+				eventProperties={ { source } }
 			/>
 		</>
 	);
