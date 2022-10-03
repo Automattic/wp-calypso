@@ -1,3 +1,4 @@
+import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
@@ -107,13 +108,40 @@ function ThemeBlock( props ) {
 }
 
 function Empty( { emptyContent, translate } ) {
-	return (
-		emptyContent || (
-			<EmptyContent
-				title={ translate( 'Sorry, no themes found.' ) }
-				line={ translate( 'Try a different search or more filters?' ) }
-			/>
-		)
+	const shouldUpgrade = true;
+
+	if ( emptyContent ) {
+		return emptyContent;
+	}
+
+	return shouldUpgrade ? (
+		<div className="themes-list__empty-container">
+			<span className="themes-list__not-found-text">
+				{ translate( 'No themes match your search' ) }
+			</span>
+
+			<div className="themes-list__upgrade-section-wrapper">
+				<div className="themes-list__upgrade-section-title">
+					{ translate( 'Use any theme on WordPress.com' ) }
+				</div>
+				<div className="themes-list__upgrade-section-subtitle">
+					{ translate(
+						'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a paid plan.'
+					) }
+				</div>
+
+				<Button primary className="themes-list__upgrade-section-cta">
+					{ translate( 'Upgrade your plan' ) }
+				</Button>
+
+				<div className="themes-list__themes-images"></div>
+			</div>
+		</div>
+	) : (
+		<EmptyContent
+			title={ translate( 'Sorry, no themes found.' ) }
+			line={ translate( 'Try a different search or more filters?' ) }
+		/>
 	);
 }
 

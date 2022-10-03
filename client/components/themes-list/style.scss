@@ -17,3 +17,36 @@
 	margin: 0 10px;
 	flex-grow: 1;
 }
+
+.themes-list__empty-container {
+	.themes-list__not-found-text {
+		color: var(--studio-gray-60);
+		margin-top: 40px;
+		margin-bottom: 20px;
+	}
+
+	.themes-list__upgrade-section-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-top: 64px;
+
+	}
+
+	.themes-list__upgrade-section-title {
+		font-size: $font-title-small;
+		color: var(--studio-gray-100);
+	}
+
+	.themes-list__upgrade-section-subtitle {
+		width: 680px;
+		margin-top: 8px;
+		text-align: center;
+		font-size: $font-body;
+		color: var(--studio-gray-60);
+	}
+
+	.themes-list__upgrade-section-cta {
+		margin-top: 32px;
+	}
+}
