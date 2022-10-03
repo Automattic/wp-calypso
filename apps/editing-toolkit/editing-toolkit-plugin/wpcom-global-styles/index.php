@@ -74,7 +74,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 			true
 		)
 	) {
-		$calypso_domain = $_GET['origin']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$calypso_domain = sanitize_text_field( wp_unslash( $_GET['origin'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 	}
 
 	$site_slug = method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' )
