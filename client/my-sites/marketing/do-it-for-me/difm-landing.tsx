@@ -148,15 +148,6 @@ const CTASectionWrapper = styled.div`
 	margin: 2rem 0;
 `;
 
-const SkipButton = styled( Button )`
-	&& {
-		color: var( --studio-gray-100 );
-		text-decoration: underline;
-		font-size: 0.875rem;
-		font-weight: 500;
-	}
-`;
-
 const LinkButton = styled( Button )`
 	font-size: 1rem;
 `;
@@ -236,8 +227,6 @@ const Step = ( {
 
 export default function DIFMLanding( {
 	onSubmit,
-	onSkip,
-	isInOnboarding = true,
 	siteId,
 }: {
 	onSubmit: () => void;
@@ -391,13 +380,8 @@ export default function DIFMLanding( {
 					</p>
 					<CTASectionWrapper>
 						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Hire a Professional' ) }
+							{ translate( 'Hire a professional' ) }
 						</NextButton>
-						{ isInOnboarding && (
-							<SkipButton isLink={ true } onClick={ onSkip }>
-								{ translate( "I'll do it myself" ) }
-							</SkipButton>
-						) }
 					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>
@@ -435,7 +419,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
 							<ul>
 								<li>
-									{ translate( 'Click {{a}}Hire a Professional{{/a}} to begin.', {
+									{ translate( 'Click {{a}}Hire a professional{{/a}} to begin.', {
 										components: {
 											a: <LinkButton isLink={ true } onClick={ onSubmit } />,
 										},
