@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { canCurrentUserAddEmail, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
@@ -9,15 +8,10 @@ import {
 	hasGoogleAccountTOSWarning,
 	isTitanMailAccount,
 } from 'calypso/lib/emails';
-import {
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
-	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
-} from 'calypso/lib/emails/email-provider-constants';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
-import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
-import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-message';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { EmailPlanWarningNotice } from './email-plan-warning-notice';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -35,33 +29,6 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
-	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
-
-	const WarningMessageForCode = useMemo( () => {
-		return ( props: { code: string | number | null } ) => {
-			switch ( props.code ) {
-				case EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL:
-					return (
-						<EmailNonOwnerMessage
-							domainName={ domain.name }
-							selectedSite={ selectedSite }
-							source="email-management"
-						/>
-					);
-				case EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION:
-					return (
-						<EmailNonDomainOwnerMessage
-							domain={ domain }
-							source={ 'email-management' }
-							usePromoCard={ false }
-							selectedSite={ selectedSite }
-						/>
-					);
-				default:
-					return null;
-			}
-		};
-	}, [ cannotAddEmailWarningCode ] );
 
 	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
 		return null;
@@ -98,9 +65,7 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	return (
 		<div className="email-plan-warnings__container">
-			{ cannotAddEmailWarningMessage && (
-				<WarningMessageForCode code={ cannotAddEmailWarningCode } />
-			) }
+			<EmailPlanWarningNotice selectedSite={ selectedSite } domain={ domain } />
 
 			{ ! cannotAddEmailWarningMessage && warning && (
 				<div className="email-plan-warnings__warning">
