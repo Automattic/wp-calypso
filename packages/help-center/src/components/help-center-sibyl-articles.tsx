@@ -8,7 +8,7 @@ import {
 	getContextResults,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
+import { HELP_CENTER_STORE } from '../stores';
 import { Article } from '../types';
 
 export const SITE_STORE = 'automattic/site' as const;
@@ -88,6 +89,7 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
 
 	const { data: intent } = useSiteIntent( supportSite?.ID );
+	const { setSybilArticles } = useDispatch( HELP_CENTER_STORE );
 
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
@@ -95,6 +97,11 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 			? sibylArticles
 			: getContextResults( sectionName, intent?.site_intent ?? '' );
 	}, [ sibylArticles, sectionName, intent?.site_intent ] );
+
+	useMemo( () => {
+		// TODO move to hook
+		setSybilArticles( sibylArticles );
+	}, [ setSybilArticles, sibylArticles ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">

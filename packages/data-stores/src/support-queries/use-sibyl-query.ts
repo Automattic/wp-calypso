@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
-type Result = {
+export type Result = {
 	id: string;
 	title: string;
 	description: string;
