@@ -1,5 +1,6 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	useSibylQuery,
 	SiteDetails,
@@ -24,15 +25,27 @@ type Props = {
 	supportSite?: SiteDetails;
 };
 
-const ConfigurableLink: React.FC< { external: boolean; fullUrl: string } & LinkProps > = ( {
-	external,
-	fullUrl,
-	...props
-} ) => {
+function recordSibylArticleClick(
+	article: ReturnType< typeof getContextResults >[ number ] | Article
+) {
+	return () =>
+		recordTracksEvent( 'calypso_helpcenter_page_open_sibyl_article', {
+			location: 'help-center',
+			article_link: article.link,
+			article_title: article.title,
+		} );
+}
+const ConfigurableLink: React.FC<
+	{
+		article: ReturnType< typeof getContextResults >[ number ] | Article;
+		external: boolean;
+		fullUrl: string;
+	} & LinkProps
+> = ( { article, external, fullUrl, ...props } ) => {
 	if ( external ) {
 		return <a href={ fullUrl } target="_blank" rel="noreferrer noopener" { ...props } />;
 	}
-	return <Link { ...props } />;
+	return <Link onClick={ recordSibylArticleClick( article ) } { ...props } />;
 };
 
 function getPostUrl( article: Article, query: string ) {
@@ -102,6 +115,7 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 								to={ getPostUrl( article as Article, message ) }
 								external={ 'en' !== locale }
 								fullUrl={ article.link }
+								article={ article }
 							>
 								<Icon icon={ page } />
 								{ article.title }
