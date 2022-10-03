@@ -129,10 +129,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
+			<Column mobileHidden>{ translatedStatus }</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>{ translatedStatus }</Column>
 			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>

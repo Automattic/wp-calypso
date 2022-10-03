@@ -124,8 +124,8 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 				<Row>
 					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
 					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
-					<th>{ __( 'Last Publish' ) }</th>
 					<th>{ __( 'Status' ) }</th>
+					<th>{ __( 'Last Publish' ) }</th>
 					<th style={ { width: '24px' } }></th>
 				</Row>
 			</THead>
