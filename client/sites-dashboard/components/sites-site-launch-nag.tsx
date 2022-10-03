@@ -1,6 +1,9 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getSiteLaunchStatus } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -57,6 +60,14 @@ const SiteLaunchDonut = () => {
 
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
+	const { ref, inView } = useInView();
+
+	useEffect( () => {
+		if ( inView ) {
+			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_view' );
+		}
+	}, [ inView ] );
+
 	if ( 'coming-soon' !== getSiteLaunchStatus( site ) ) {
 		return null;
 	}
@@ -71,7 +82,13 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 		: getDashboardUrl( site.slug );
 	const text = site.options?.site_intent ? __( 'Launch guide' ) : __( 'Launch checklist' );
 	return (
-		<SiteLaunchNagLink href={ link }>
+		<SiteLaunchNagLink
+			ref={ ref }
+			href={ link }
+			onClick={ () => {
+				recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_click' );
+			} }
+		>
 			<SiteLaunchDonut /> <span>{ text }</span>
 		</SiteLaunchNagLink>
 	);
