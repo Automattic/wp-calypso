@@ -1,9 +1,10 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { Route, Switch, useLocation } from 'react-router-dom';
-import { useHCWindowCommunicator } from '../happychat-window-communicator';
+import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
 
 export function ArticleTitle() {
@@ -44,13 +45,12 @@ const SupportModeTitle = () => {
 	}
 };
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
-	const { unreadCount, closeChat } = useHCWindowCommunicator( isMinimized );
+	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
 	const handleClose = () => {
-		closeChat();
 		onDismiss();
 	};
 
