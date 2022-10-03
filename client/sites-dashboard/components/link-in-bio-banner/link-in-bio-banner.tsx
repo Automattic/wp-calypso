@@ -47,8 +47,7 @@ export const Image = ( { src }: { src: string } ) => {
 	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className={ 'banner-image' } />;
 };
 
-export const CreateButton = ( props: ComponentProps< typeof Button > ) => {
-	const { children, ...rest } = props;
+export const CreateButton = () => {
 	const { handleBannerCtaClick } = useLinkInBioBanner();
 	return (
 		<Button
@@ -56,9 +55,8 @@ export const CreateButton = ( props: ComponentProps< typeof Button > ) => {
 			href={ '/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp' }
 			className={ 'create-button' }
 			onClick={ handleBannerCtaClick }
-			{ ...rest }
 		>
-			{ children ?? __( 'Create your bio site' ) }
+			{ __( 'Create your bio site' ) }
 		</Button>
 	);
 };

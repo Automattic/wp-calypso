@@ -29,7 +29,7 @@ const Details = styled( 'div' )( {
 	gap: 8,
 } );
 
-export const LinkInBioTiledBanner = () => {
+export const LinkInBioTileBanner = () => {
 	const { handleBannerViewed } = useLinkInBioBanner();
 	useEffect( handleBannerViewed, [] );
 	return (

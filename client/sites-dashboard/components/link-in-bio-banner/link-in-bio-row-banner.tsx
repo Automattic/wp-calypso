@@ -11,6 +11,9 @@ const Root = styled( Banner.Root )( {
 	'.banner-image': {
 		width: 185,
 	},
+	'.create-button': {
+		whiteSpace: 'nowrap',
+	},
 } );
 
 const Details = styled( 'div' )( {

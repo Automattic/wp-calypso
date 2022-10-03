@@ -1,9 +1,7 @@
 import { css } from '@emotion/css';
 import classnames from 'classnames';
-import { LinkInBioTiledBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-tile-banner';
-import { LinkInBioTileStretchBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-tile-stretch-banner';
-import { useLinkInBioBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/use-link-in-bio-banner';
 import { MEDIA_QUERIES } from '../utils';
+import { useLinkInBioBanner } from './link-in-bio-banner/use-link-in-bio-banner';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -37,15 +35,8 @@ export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => 
 	if ( params.get( 'sitecount' ) ) {
 		sites = sites.slice( 0, Number( params.get( 'sitecount' ) ) );
 	}
-	const { showBanner } = useLinkInBioBanner();
-	let banner = null;
-	if ( showBanner ) {
-		if ( sites.length === 1 ) {
-			banner = <LinkInBioTileStretchBanner />;
-		} else if ( sites.length === 2 ) {
-			banner = <LinkInBioTiledBanner />;
-		}
-	}
+	const { getBanner } = useLinkInBioBanner();
+	const banner = getBanner( sites, 'grid' );
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading

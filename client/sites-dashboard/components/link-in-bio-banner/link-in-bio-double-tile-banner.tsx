@@ -26,6 +26,16 @@ const Root = styled( Banner.Root )( {
 		marginLeft: 'auto',
 		height: 173,
 	},
+	'@media screen and ( max-width: 960px )': {
+		padding: 32,
+		paddingRight: 0
+	},
+	'@media screen and ( max-width: 1100px )': {
+		'font-size': 'smaller',
+		'.banner-image': {
+			height: 130,
+		},
+	},
 } );
 
 const Details = styled( 'div' )( {
@@ -36,7 +46,7 @@ const Details = styled( 'div' )( {
 	maxWidth: 252,
 } );
 
-export const LinkInBioTileStretchBanner = () => {
+export const LinkInBioDoubleTileBanner = () => {
 	const { handleBannerViewed } = useLinkInBioBanner();
 	useEffect( handleBannerViewed, [] );
 	return (

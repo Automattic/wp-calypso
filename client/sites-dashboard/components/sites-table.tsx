@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
-import { LinkInBioRowBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-row-banner';
-import { useLinkInBioBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/use-link-in-bio-banner';
 import { MEDIA_QUERIES } from '../utils';
+import { useLinkInBioBanner } from './link-in-bio-banner/use-link-in-bio-banner';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -61,13 +60,13 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	if ( params.get( 'sitecount' ) ) {
 		sites = sites.slice( 0, Number( params.get( 'sitecount' ) ) );
 	}
-	const { showBanner } = useLinkInBioBanner();
+	const { getBanner } = useLinkInBioBanner();
+	const banner = getBanner( sites, 'row' );
 	const { __ } = useI18n();
 
 	const headerRef = useRef< HTMLTableSectionElement >( null );
 	const [ isHeaderStuck, setIsHeaderStuck ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
-	const banner = showBanner && sites.length === 1 ? <LinkInBioRowBanner /> : null;
 
 	// Measure height of masterbar as we need it for the THead styles
 	useLayoutEffect( () => {
