@@ -73,7 +73,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Schedule` ), function () {
 			} );
 		} );
 
-		it( 'Close settings', async () => {
+		it( 'Close settings', async function () {
 			// On mobile, the sidebar covers all of the screen.
 			// Dismiss it so publish buttons are available.
 			await editorPage.closeSettings();
