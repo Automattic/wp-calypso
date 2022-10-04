@@ -11,6 +11,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import {
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
+	SUPPORT_DIRECTLY,
 	shouldShowHelpCenterToUser,
 } from '@automattic/help-center';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -197,7 +198,8 @@ export default function CheckoutHelpLink() {
 	const shouldRenderPaymentChatButton =
 		happyChatAvailable && ( isPresalesChatEligible || supportVariation === SUPPORT_HAPPYCHAT );
 
-	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
+	const hasDirectSupport =
+		supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
 
 	// If chat isn't available, use the inline help button instead.
 	return (
