@@ -57,7 +57,6 @@ class LikeButton extends PureComponent {
 			showZeroCount,
 			postId,
 			slug,
-			translate,
 			onMouseEnter,
 			onMouseLeave,
 			icon,
@@ -72,28 +71,9 @@ class LikeButton extends PureComponent {
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel,
 		};
-		let likeLabel = translate( 'Like', {
-			context: 'verb: imperative',
-			comment: 'Label for a button to "like" a post.',
-		} );
 
 		if ( this.props.liked ) {
 			containerClasses[ 'is-liked' ] = true;
-
-			if ( this.props.likedLabel ) {
-				likeLabel = this.props.likedLabel;
-			} else {
-				likeLabel = translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
-			}
-		}
-
-		// Override the label with a counter
-		if ( showLikeCount ) {
-			likeLabel = translate( 'Like', 'Likes', {
-				count: likeCount,
-				context: 'noun',
-				comment: 'Number of likes.',
-			} );
 		}
 
 		const labelElement = (
