@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { AddSSHKeyForm } from './add-ssh-key-form';
 import { ManageSSHKeys } from './manage-ssh-keys';
@@ -38,10 +39,19 @@ export const SecuritySSHKey = () => {
 	const { __ } = useI18n();
 
 	const addSSHKey = useAddSSHKeyMutation( {
+		onMutate: () => {
+			dispatch( recordTracksEvent( 'calypso_ssh_key_add_request' ) );
+		},
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_ssh_key_add_success' ) );
 			dispatch( successNotice( __( 'SSH key has been successfully added!' ) ) );
 		},
-		onError: () => {
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_ssh_key_add_failure', {
+					code: error.code,
+				} )
+			);
 			dispatch(
 				errorNotice( __( 'Sorry, we had a problem saving that SSH key. Please try again.' ) )
 			);
@@ -49,10 +59,19 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const deleteSSHKey = useDeleteSSHKeyMutation( {
+		onMutate: () => {
+			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_request' ) );
+		},
 		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_success' ) );
 			dispatch( successNotice( __( 'SSH key has been successfully removed!' ) ) );
 		},
-		onError: () => {
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_ssh_key_delete_failure', {
+					code: error.code,
+				} )
+			);
 			dispatch(
 				errorNotice( __( 'Sorry, we had a problem deleting that SSH key. Please try again.' ) )
 			);

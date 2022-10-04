@@ -8,8 +8,12 @@ interface MutationVariables {
 	key: string;
 }
 
+interface MutationError {
+	code: string;
+}
+
 export const useAddSSHKeyMutation = (
-	options: UseMutationOptions< unknown, unknown, MutationVariables > = {}
+	options: UseMutationOptions< unknown, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
