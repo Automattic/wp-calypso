@@ -480,6 +480,7 @@ class Login extends Component {
 			isWoo,
 			translate,
 			isPartnerSignup,
+			action,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -488,6 +489,28 @@ class Login extends Component {
 					require="calypso/blocks/login/social-connect-prompt"
 					onSuccess={ this.handleValidLogin }
 				/>
+			);
+		}
+
+		if ( action === 'lostpassword' ) {
+			return (
+				<Fragment>
+					<AsyncLoad
+						require="calypso/blocks/login/lost-password-form"
+						redirectToAfterLoginUrl={ this.props.redirectTo }
+						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
+						locale={ locale }
+					/>
+					<div className="login__lost-password-footer">
+						<p className="login__lost-password-no-account">
+							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+								components: {
+									signupLink: <a href={ this.getSignupUrl() } />,
+								},
+							} ) }
+						</p>
+					</div>
+				</Fragment>
 			);
 		}
 

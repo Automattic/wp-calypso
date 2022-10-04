@@ -501,7 +501,8 @@
 		}
 	}
 
-	.login__two-factor-footer {
+	.login__two-factor-footer,
+	.login__lost-password-footer {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -571,6 +572,14 @@
 
 	.logged-out-form__links {
 		text-align: center;
+	}
+
+	.login__lostpassword-form {
+		margin-top: 50px;
+
+		.login__form-action {
+			margin: 16px 0 52px;
+		}
 	}
 
 	// Signup styles
