@@ -349,6 +349,19 @@
 	gap: 5px;
 	justify-content: center;
 
+	.like-button,
+	.gridicons-not-visible,
+	.comment-button {
+		&:hover,
+		button.is-activ
+			color: var( --color-primary );
+
+			svg.reader-comment path, svg.reader-star path {
+				stroke: var(--color-link);
+			}
+		}
+	}
+
 	@include breakpoint-deprecated( '<660px' ) {
 		align-items: flex-start;
 		background: white;
@@ -383,7 +396,6 @@
 			position: static;
 		}
 	}
-
 
 	.like-button__label-status {
 		display: none;

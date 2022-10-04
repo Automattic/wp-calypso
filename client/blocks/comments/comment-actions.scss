@@ -25,11 +25,20 @@
 			margin-right: 2px;
 			vertical-align: bottom;
 		}
-		
-		&:hover {
-			color: var( --color-primary );
+
+		svg.reader-star path {
+			fill: none;
 		}
-		
+
+		&:hover,
+		button.is-active {
+			color: var( --color-primary );
+
+			svg.reader-star path {
+				stroke: var(--color-link);
+			}
+		}
+
 		&.comments__comment-actions-cancel-reply {
 			float: right;
 			margin-top: 2px;
@@ -41,7 +50,7 @@
 			color: var( --color-primary );
 			margin: 0 10px 0 -3px;
 			padding-left: 0;
-			
+
 			.comments__comment-actions-read-more-icon {
 				fill: var( --color-primary );
 				vertical-align: bottom;
