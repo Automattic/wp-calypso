@@ -211,7 +211,11 @@ const EditTerm = styled( Button )< { theme?: Theme } >`
 function TermVariantEditButton( { onClick }: { onClick: () => void } ) {
 	const translate = useTranslate();
 	return (
-		<EditTerm buttonType="text-button" onClick={ onClick }>
+		<EditTerm
+			buttonType="text-button"
+			onClick={ onClick }
+			aria-label={ translate( 'Change the billing term for this product' ) }
+		>
 			{ translate( 'Edit' ) }
 		</EditTerm>
 	);
