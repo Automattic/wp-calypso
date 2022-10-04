@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
 import {
