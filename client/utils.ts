@@ -25,11 +25,14 @@ export function redirectToLaunchpad(
 	launchpadFlow: string,
 	emailVerifiedParam: boolean
 ) {
-	let launchpadRedirectionURL = addQueryArgs('/setup/launchpad', {
-		flow: launchpadFlow,
-		siteSlug,
-		emailVerified: emailVerifiedParam ? 1 : undefined
-	});
+	const launchpadRedirectionURL = addQueryArgs(
+		{
+			flow: launchpadFlow,
+			siteSlug,
+			emailVerified: emailVerifiedParam ? 1 : undefined,
+		},
+		'/setup/launchpad'
+	);
 	window.location.replace( launchpadRedirectionURL );
 }
 
