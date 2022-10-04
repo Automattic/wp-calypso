@@ -15,7 +15,9 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 			<meta name="apple-mobile-web-app-capable" content="yes" />
 			<meta
 				name="theme-color"
-				content={ ! config( 'theme_color' ) ? '#016087' : config( 'theme_color' ) }
+				content={
+					! config( 'theme_color' ) ? 'var(--color-masterbar-background)' : config( 'theme_color' )
+				}
 			/>
 			<meta name="referrer" content="origin" />
 
