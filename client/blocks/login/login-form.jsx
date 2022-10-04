@@ -19,7 +19,7 @@ import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { lostPassword } from 'calypso/lib/paths';
+import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -515,6 +515,7 @@ export class LoginForm extends Component {
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
+			redirectTo,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -687,7 +688,12 @@ export class LoginForm extends Component {
 					{ this.props.isWoo && ! this.props.isPartnerSignup && (
 						<a
 							className="login__form-forgot-password"
-							href={ lostPassword( this.props.locale ) }
+							href={ login( {
+								redirectTo,
+								locale,
+								action: 'lostpassword',
+								oauth2ClientId: oauth2Client && oauth2Client.id,
+							} ) }
 							onClick={ this.recordResetPasswordLinkClick }
 							rel="external"
 						>
