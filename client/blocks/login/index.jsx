@@ -255,14 +255,12 @@ class Login extends Component {
 			isPartnerSignup,
 			isWoo,
 			action,
+			currentQuery,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
-		const currentUrl = new URL( window.location.href );
-		const displayLostPasswordConfirmation =
-			currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -329,7 +327,7 @@ class Login extends Component {
 					);
 				} else if ( this.props.twoFactorEnabled ) {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
-				} else if ( displayLostPasswordConfirmation ) {
+				} else if ( currentQuery.lostpassword_flow ) {
 					headerText = null;
 					postHeader = (
 						<p className="login__header-subtitle">
@@ -366,7 +364,7 @@ class Login extends Component {
 				);
 
 				// If users arrived here from the lost password flow, show them a specific message about it
-				postHeader = displayLostPasswordConfirmation && (
+				postHeader = currentQuery.lostpassword_flow && (
 					<p className="login__form-post-header">
 						{ translate(
 							'Check your e-mail address linked to the account for the confirmation link, including the spam or junk folder.'
