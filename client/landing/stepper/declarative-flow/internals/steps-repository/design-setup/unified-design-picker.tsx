@@ -10,6 +10,7 @@ import {
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -302,7 +303,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
-				is_mobile_device: isMobile,
+				device_type: resolveDeviceTypeByViewPort(),
 			} );
 
 			if ( _selectedDesign.verticalizable ) {

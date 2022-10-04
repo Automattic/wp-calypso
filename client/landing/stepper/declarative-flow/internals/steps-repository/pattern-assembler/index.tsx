@@ -1,6 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -36,23 +36,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
 
-	const trackEventPattern = ( {
+	const trackEventPatternSelect = ( {
 		patternType,
 		patternId,
-		eventType,
 	}: {
 		patternType: string;
 		patternId: number;
-		eventType: string;
 	} ) => {
-		let eventName;
-		if ( eventType === 'select' ) {
-			eventName = 'calypso_signup_bcpa_select_pattern_click';
-		} else if ( eventType === 'delete' ) {
-			eventName = 'calypso_signup_bcpa_delete_pattern_click';
-		}
+		recordTracksEvent( 'calypso_signup_bcpa_select_pattern_click', {
+			pattern_type: patternType,
+			pattern_id: patternId,
+		} );
+	};
 
-		recordTracksEvent( eventName, {
+	const trackEventPatternDelete = ( {
+		patternType,
+		patternId,
+	}: {
+		patternType: string;
+		patternId: number;
+	} ) => {
+		recordTracksEvent( 'calypso_signup_bcpa_delete_pattern_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 		} );
@@ -73,13 +77,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		} );
 	};
 
-	useEffect( () => {
-		if ( showPatternSelectorType ) {
+	const showPatternSelector = ( type: string ) => {
+		if ( type ) {
 			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
-				pattern_type: showPatternSelectorType,
+				pattern_type: type,
 			} );
 		}
-	}, [ showPatternSelectorType ] );
+
+		setShowPatternSelectorType( type );
+	};
 
 	const getDesign = () =>
 		( {
@@ -145,10 +151,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			if ( 'section' === showPatternSelectorType ) addSection( pattern );
 
 			if ( showPatternSelectorType ) {
-				trackEventPattern( {
+				trackEventPatternSelect( {
 					patternType: showPatternSelectorType,
 					patternId: pattern.id,
-					eventType: 'select',
 				} );
 			}
 		}
@@ -159,13 +164,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		if ( showPatternSelectorType ) {
 			setShowPatternSelectorType( null );
 		} else {
-			goBack();
-
 			const patterns = getPatterns();
 			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
 				has_selected_patterns: patterns.length > 0,
 				pattern_count: patterns.length,
 			} );
+
+			goBack();
 		}
 	};
 
@@ -182,27 +187,25 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						sections={ sections }
 						footer={ footer }
 						onSelectHeader={ () => {
-							setShowPatternSelectorType( 'header' );
+							showPatternSelector( 'header' );
 						} }
 						onDeleteHeader={ () => {
 							if ( header ) {
-								trackEventPattern( {
+								trackEventPatternDelete( {
 									patternType: 'header',
 									patternId: header.id,
-									eventType: 'delete',
 								} );
 							}
 							setHeader( null );
 						} }
 						onSelectSection={ ( position: number | null ) => {
 							setSectionPosition( position );
-							setShowPatternSelectorType( 'section' );
+							showPatternSelector( 'section' );
 						} }
 						onDeleteSection={ ( position: number ) => {
-							trackEventPattern( {
+							trackEventPatternDelete( {
 								patternType: 'section',
 								patternId: sections[ position ].id,
-								eventType: 'delete',
 							} );
 							deleteSection( position );
 						} }
@@ -213,14 +216,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							moveDownSection( position );
 						} }
 						onSelectFooter={ () => {
-							setShowPatternSelectorType( 'footer' );
+							showPatternSelector( 'footer' );
 						} }
 						onDeleteFooter={ () => {
 							if ( footer ) {
-								trackEventPattern( {
+								trackEventPatternDelete( {
 									patternType: 'footer',
 									patternId: footer.id,
-									eventType: 'delete',
 								} );
 							}
 							setFooter( null );
@@ -236,9 +238,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 									)
 								);
 
-								submit?.();
-
 								trackEventContinue();
+
+								submit?.();
 							}
 						} }
 					/>
