@@ -688,14 +688,19 @@ export class LoginForm extends Component {
 					{ this.props.isWoo && ! this.props.isPartnerSignup && (
 						<a
 							className="login__form-forgot-password"
-							href={ login( {
-								redirectTo,
-								locale,
-								action: 'lostpassword',
-								oauth2ClientId: oauth2Client && oauth2Client.id,
-							} ) }
-							onClick={ this.recordResetPasswordLinkClick }
-							rel="external"
+							href="/"
+							onClick={ ( event ) => {
+								event.preventDefault();
+								this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+								page(
+									login( {
+										redirectTo,
+										locale,
+										action: 'lostpassword',
+										oauth2ClientId: oauth2Client && oauth2Client.id,
+									} )
+								);
+							} }
 						>
 							{ this.props.translate( 'Forgot password?' ) }
 						</a>
