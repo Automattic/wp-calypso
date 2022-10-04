@@ -451,6 +451,30 @@ export class RestAPIClient {
 	}
 
 	/**
+	 *
+	 */
+	async setMySettings< SettingsParams >( details: SettingsParams ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', `/me/settings` ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Closes the account.
 	 *
 	 * Prior to the account being closed, this method performs
