@@ -33,7 +33,7 @@ interface SetupFormProps {
 	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
-	children: ReactChild;
+	children?: ReactChild | ReactChild[];
 }
 
 const SetupForm = ( {
