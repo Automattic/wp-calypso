@@ -1,4 +1,5 @@
 import { safeImageUrl } from '@automattic/calypso-url';
+import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { startsWith, get } from 'lodash';
@@ -83,13 +84,16 @@ const ReaderAvatar = ( {
 		'has-gravatar': hasAvatar || showPlaceholder,
 	} );
 
+	const defaultIconElement = ! hasSiteIcon && ! hasAvatar && ! showPlaceholder && (
+		<Gridicon icon="globe" size={ siteIconSize } />
+	);
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
 	);
 	const avatarElement = ( hasAvatar || showPlaceholder ) && (
 		<Gravatar key="author-avatar" user={ author } size={ gravatarSize } />
 	);
-	const iconElements = [ siteIconElement, avatarElement ];
+	const iconElements = [ defaultIconElement, siteIconElement, avatarElement ];
 
 	return (
 		<div className={ classes } onClick={ onClick } aria-hidden="true">

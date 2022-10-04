@@ -1,9 +1,13 @@
 .reader-visit-link__icon {
-	fill: var(--color-neutral-light);
+	fill: var( --color-primary );
 }
 
 .reader-visit-link__label {
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
+	font-size: 13px;
+	font-weight: 500;
+	position: relative;
+	top: 2px;
 }
 
 .reader-visit-link:hover,
@@ -13,7 +17,6 @@
 	}
 
 	.reader-visit-link__label {
-		color: var(--color-primary);
 		cursor: pointer;
 	}
 }

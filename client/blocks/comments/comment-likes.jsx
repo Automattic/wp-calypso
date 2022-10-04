@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
+import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
@@ -39,6 +40,11 @@ class CommentLikeButtonContainer extends Component {
 		const iLike = get( this.props.commentLike, 'i_like' );
 		const likedLabel = translate( 'Liked' );
 
+		const likeIcon = ReaderLikeIcon( {
+			liked: iLike,
+			iconSize: 18,
+		} );
+
 		return (
 			<LikeButton
 				{ ...props }
@@ -47,6 +53,7 @@ class CommentLikeButtonContainer extends Component {
 				onLikeToggle={ this.boundHandleLikeToggle }
 				likedLabel={ likedLabel }
 				iconSize={ 18 }
+				icon={ likeIcon }
 			/>
 		);
 	}

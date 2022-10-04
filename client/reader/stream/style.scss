@@ -2,7 +2,7 @@
 
 // Overrides default 720px width
 .is-reader-page .following.main {
-	max-width: 800px;
+	max-width: 600px;
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
@@ -239,7 +239,7 @@
 
 		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0;
-			padding: 20px 42px;
+			padding: 20px 52px;
 		}
 
 		.reader__post-title-link,
@@ -552,10 +552,6 @@
 
 		@include breakpoint-deprecated( "<660px" ) {
 			max-height: 207px;
-		}
-
-		.reader-related-card__excerpt {
-			-webkit-line-clamp: initial;
 		}
 	}
 
