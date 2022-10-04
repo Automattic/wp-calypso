@@ -14,7 +14,6 @@ describe( 'getAreJetpackCredentialsInvalid()', () => {
 		const siteId = 9990000;
 		const role = 'main';
 
-		expect( true ).toBe( true );
 		const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
 		expect( output ).toEqual( false );
 	} );
@@ -31,7 +30,6 @@ describe( 'getAreJetpackCredentialsInvalid()', () => {
 		const siteId = 1230000;
 		const role = 'main';
 
-		expect( true ).toBe( true );
 		const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
 		expect( output ).toEqual( false );
 	} );
@@ -48,7 +46,6 @@ describe( 'getAreJetpackCredentialsInvalid()', () => {
 		const siteId = 2340000;
 		const role = 'main';
 
-		expect( true ).toBe( true );
 		const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
 		expect( output ).toEqual( false );
 	} );
@@ -65,7 +62,6 @@ describe( 'getAreJetpackCredentialsInvalid()', () => {
 		const siteId = 3450000;
 		const role = 'main';
 
-		expect( true ).toBe( true );
 		const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
 		expect( output ).toEqual( true );
 	} );
