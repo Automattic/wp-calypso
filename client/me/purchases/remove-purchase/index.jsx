@@ -239,7 +239,7 @@ class RemovePurchase extends Component {
 				? primaryDomainName
 				: primaryDomainName.substr( 0, 10 ) + '…' + primaryDomainName.slice( -10 );
 		const wordpressComURL =
-			site.wpcom_url.legth < 30
+			site.wpcom_url.length < 30
 				? site.wpcom_url
 				: site.wpcom_url.substr( 0, 8 ) + '…' + site.wpcom_url.slice( -20 );
 		return (
