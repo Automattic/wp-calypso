@@ -113,6 +113,7 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'setup_url',
 		'slug',
+		'software_slug',
 		'support_URL',
 		'software_slug',
 		'tags',
