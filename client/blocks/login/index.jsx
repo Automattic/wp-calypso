@@ -73,6 +73,7 @@ class Login extends Component {
 		redirectTo: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
+		action: PropTypes.string,
 	};
 
 	state = {
@@ -253,11 +254,15 @@ class Login extends Component {
 			isAnchorFmSignup,
 			isPartnerSignup,
 			isWoo,
+			action,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
 		let preHeader = null;
 		let postHeader = null;
+		const currentUrl = new URL( window.location.href );
+		const displayLostPasswordConfirmation =
+			currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
 
 		if ( isManualRenewalImmediateLoginAttempt ) {
 			headerText = translate( 'Log in to update your payment details and renew your subscription' );
@@ -271,6 +276,15 @@ class Login extends Component {
 					service: capitalize( linkingSocialService ),
 				},
 			} );
+		} else if ( action === 'lostpassword' ) {
+			headerText = <h3>{ translate( 'Forgot your password?' ) }</h3>;
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'It happens to the best of us. Enter the email address associated with your WordPress.com account and we’ll send you a link to reset your password.'
+					) }
+				</p>
+			);
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
@@ -315,6 +329,15 @@ class Login extends Component {
 					);
 				} else if ( this.props.twoFactorEnabled ) {
 					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
+				} else if ( displayLostPasswordConfirmation ) {
+					headerText = null;
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ translate(
+								"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
+							) }
+						</p>
+					);
 				} else {
 					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
 					postHeader = (
@@ -343,9 +366,6 @@ class Login extends Component {
 				);
 
 				// If users arrived here from the lost password flow, show them a specific message about it
-				const currentUrl = new URL( window.location.href );
-				const displayLostPasswordConfirmation =
-					currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
 				postHeader = displayLostPasswordConfirmation && (
 					<p className="login__form-post-header">
 						{ translate(
