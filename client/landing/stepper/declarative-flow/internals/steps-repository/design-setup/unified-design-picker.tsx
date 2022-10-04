@@ -233,6 +233,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	function upgradePlan() {
+		if ( selectedDesign ) {
+			recordTracksEvent(
+				'calypso_signup_design_preview_unlock_theme_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+		}
+
 		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
 			return goToCheckout();
 		}
