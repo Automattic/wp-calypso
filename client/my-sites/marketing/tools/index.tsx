@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import promotionIcon from 'calypso/assets/images/customer-home/promoted-marketing-integrations-alt.svg';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
@@ -31,6 +32,7 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
+	const siteSlug = useSelector( getSelectedSiteSlug ) || '';
 
 	const facebookPluginInstalled = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, 'official-facebook-pixel' )
@@ -92,6 +94,22 @@ export const MarketingTools: FunctionComponent = () => {
 			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
+				<MarketingToolsFeature
+					title={ translate( 'Get more traffic by promoting your content' ) }
+					description={ translate(
+						'Promote your content on millions of sites across WordPress.com and Tumbler with our new promoted post tool. Get new users to your best content for as little as $1 a day.'
+					) }
+					imagePath={ promotionIcon }
+				>
+					<Button
+						onClick={ handleCreateALogoClick }
+						href={ `/advertising/${ siteSlug }` }
+						target="_blank"
+					>
+						{ translate( 'Let’s Go!' ) }
+					</Button>
+				</MarketingToolsFeature>
+
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
