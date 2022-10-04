@@ -33,7 +33,7 @@ export enum RefundPolicy {
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
-	let refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
+	const refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
@@ -115,9 +115,6 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 
 	// Account for the fact that users can purchase a bundled domain separately from a paid plan
 	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct ) {
-		refundPolicies = refundPolicies.filter(
-			( refundPolicy ) => refundPolicy !== RefundPolicy.DomainNameRegistration
-		);
 		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
 	}
 
@@ -263,17 +260,18 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 export default function RefundPolicies( { cart }: { cart: ResponseCart } ) {
 	let refundPolicies = getRefundPolicies( cart );
 
-	const hasPlanBundleRefundPolicy = refundPolicies.some(
+	const hasBundleRefundPolicy = refundPolicies.some(
 		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
 			refundPolicy === RefundPolicy.PlanBiennialBundle ||
 			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
 			refundPolicy === RefundPolicy.PlanYearlyBundle
 	);
 
-	if ( hasPlanBundleRefundPolicy ) {
-		// The plan bundle refund policies indicate that the user already has a plan and a free
-		// domain in their cart. If they also have a paid domain, it gets repetitive to show them
-		// the DomainNameRegistration refund policy text. Therefore we exclude it.
+	if ( hasBundleRefundPolicy ) {
+		// The plan bundle and bundled domain refund policies indicate that the user already has a
+		// free domain in their cart. If they also have a paid domain, it gets repetitive to show
+		// them the DomainNameRegistration refund policy text. Therefore we exclude it.
 		refundPolicies = refundPolicies.filter(
 			( refundPolicy ) => refundPolicy !== RefundPolicy.DomainNameRegistration
 		);

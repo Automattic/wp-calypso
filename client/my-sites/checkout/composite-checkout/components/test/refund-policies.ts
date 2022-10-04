@@ -275,7 +275,10 @@ describe( 'getRefundPolicies', () => {
 
 		const refundPolicies = getRefundPolicies( cart );
 
-		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistrationBundled ] );
+		expect( refundPolicies ).toEqual( [
+			RefundPolicy.DomainNameRegistrationBundled,
+			RefundPolicy.DomainNameRegistration,
+		] );
 	} );
 } );
 
