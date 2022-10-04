@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -165,6 +166,8 @@ function LineItemWrapper( {
 		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
 		! hasPartnerCoupon;
 	const [ isEditingTerm, setEditingTerm ] = useState( false );
+	const variants = useGetProductVariants( siteId, product.product_slug );
+	const areThereVariants = variants.length > 1;
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -180,16 +183,15 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ shouldShowVariantSelector && ! isEditingTerm && (
+				{ areThereVariants && shouldShowVariantSelector && ! isEditingTerm && (
 					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
 				) }
-				{ shouldShowVariantSelector && isEditingTerm && (
+				{ areThereVariants && shouldShowVariantSelector && isEditingTerm && (
 					<ItemVariationPicker
 						selectedItem={ product }
 						onChangeItemVariant={ onChangePlanLength }
 						isDisabled={ isDisabled }
-						siteId={ siteId }
-						productSlug={ product.product_slug }
+						variants={ variants }
 					/>
 				) }
 			</LineItem>
