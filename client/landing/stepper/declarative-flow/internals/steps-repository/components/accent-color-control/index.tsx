@@ -11,6 +11,8 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { tip } from 'calypso/signup/icons';
 
+import './style.scss';
+
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
@@ -48,7 +50,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		<>
 			<Popover
 				isVisible={ colorPickerOpen }
-				className="setup-form__accent-color-popover"
+				className="accent-color-control__popover"
 				context={ accentColorRef.current }
 				position="top left"
 				onClose={ () => setColorPickerOpen( false ) }
@@ -74,7 +76,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
-					className="setup-form__accent-color"
+					className="accent-color-control__accent-color-input"
 					style={ {
 						backgroundImage: generateSwatchSVG( accentColor.hex ),
 						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
@@ -87,13 +89,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				/>
 			</FormFieldset>
 			<div
-				className={ classNames( 'setup-form__contrast-warning', {
+				className={ classNames( 'accent-color-control__contrast-warning', {
 					'is-visible': ! hasMinContrast( accentColor.rgb ),
 				} ) }
 				aria-hidden={ hasMinContrast( accentColor.rgb ) }
 				role="alert"
 			>
-				<div className="setup-form__contrast-warning-icon-container">
+				<div className="accent-color-control__contrast-warning-icon-container">
 					<Icon icon={ tip } size={ 20 } />
 				</div>
 				<div>

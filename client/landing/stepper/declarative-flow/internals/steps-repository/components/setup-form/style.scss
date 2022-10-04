@@ -40,17 +40,6 @@
 		border-radius: 4px;
 		background-repeat: no-repeat;
 		background-position: 95%;
-		&.setup-form__accent-color {
-			background-size: 25px, auto;
-			background-position: left 13px center, 95%;
-			background-repeat: no-repeat, no-repeat;
-			padding-left: 50px;
-
-			/* Overwrites the transition value set by FormInput component.
-			It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
-			transition: none;
-			cursor: pointer;
-		}
 	}
 
 	.form-input-validation {
@@ -71,31 +60,6 @@
 		height: 44px;
 	}
 
-	.setup-form__contrast-warning {
-		display: flex;
-		font-size: $font-body-small;
-		height: 0;
-		transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-		opacity: 0;
-		margin-top: 16px;
-		margin-bottom: -16px;
-		overflow: hidden;
-
-		&.is-visible {
-			height: 80px;
-			opacity: 1;
-		}
-
-		.setup-form__contrast-warning-icon-container {
-			margin-top: 4px;
-			margin-right: 4px;
-
-			svg {
-				stroke: var(--studio-yellow-40);
-			}
-		}
-	}
-
 	.setup-form__submit {
 		color: var(--color-surface);
 		background-color: var(--studio-blue-50);
@@ -112,22 +76,6 @@
 	}
 }
 
-.components-color-picker {
-	.components-h-stack {
-		width: unset !important;
-	}
-}
-
-.setup-form__accent-color-popover {
-	.popover__arrow {
-		display: none;
-	}
-	&:focus,
-	&:focus-visible {
-		outline: none;
-	}
-}
-
 .components-form-file-upload {
 	span {
 		text-decoration: underline;
@@ -139,4 +87,3 @@
 		color: var(--studio-gray-100);
 	}
 }
-

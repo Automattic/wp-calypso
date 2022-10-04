@@ -2,13 +2,13 @@ import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboardi
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { FormEvent, useEffect } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
+import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
-import { AccentColor } from '../components/setup-form/accent-color-control';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -33,12 +33,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
 		useDispatch( ONBOARD_STORE );
 
-	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
-	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
-	const [ tagline, setTagline ] = React.useState( '' );
-	const [ accentColor, setAccentColor ] = React.useState< AccentColor >( defaultAccentColor );
-	const [ base64Image, setBase64Image ] = React.useState< string | null >();
-	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
+	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
+	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
+	const [ tagline, setTagline ] = useState( '' );
+	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
+	const [ base64Image, setBase64Image ] = useState< string | null >();
+	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
 
 	useEffect( () => {
@@ -110,15 +110,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					invalidSiteTitle={ invalidSiteTitle }
 					setInvalidSiteTitle={ setInvalidSiteTitle }
 					tagline={ tagline }
-					accentColor={ accentColor }
-					setAccentColor={ setAccentColor }
 					setTagline={ setTagline }
 					selectedFile={ selectedFile }
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
-				/>
+				>
+					<AccentColorControl accentColor={ accentColor } setAccentColor={ setAccentColor } />
+				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }
 			showJetpackPowered

@@ -5,7 +5,7 @@ import './style.scss';
 
 interface FeatureItemProps {
 	header: ReactChild;
-	children: ReactChild;
+	children: ReactChild | ReactChild[];
 }
 
 const FeatureItemContainer = styled.div`

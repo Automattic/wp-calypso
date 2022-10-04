@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, FormInputValidation } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { Dispatch, FormEvent, SetStateAction, useEffect } from 'react';
+import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -9,7 +9,6 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import AccentColorControl, { AccentColor } from './accent-color-control';
 
 import './style.scss';
 
@@ -27,8 +26,6 @@ interface SetupFormProps {
 	setInvalidSiteTitle: Dispatch< SetStateAction< boolean > >;
 	tagline: string;
 	setTagline: Dispatch< SetStateAction< string > >;
-	accentColor?: AccentColor;
-	setAccentColor?: Dispatch< SetStateAction< AccentColor > >;
 	selectedFile: File | undefined;
 	setSelectedFile: Dispatch< SetStateAction< File | undefined > >;
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
@@ -36,6 +33,7 @@ interface SetupFormProps {
 	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
+	children: ReactChild;
 }
 
 const SetupForm = ( {
@@ -46,8 +44,6 @@ const SetupForm = ( {
 	setInvalidSiteTitle,
 	tagline,
 	setTagline,
-	accentColor,
-	setAccentColor,
 	selectedFile,
 	setSelectedFile,
 	setBase64Image,
@@ -55,6 +51,7 @@ const SetupForm = ( {
 	translatedText,
 	isLoading = false,
 	isSubmitError = false,
+	children,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
@@ -124,9 +121,7 @@ const SetupForm = ( {
 					onChange={ onChange }
 				/>
 			</FormFieldset>
-			{ accentColor && setAccentColor && (
-				<AccentColorControl accentColor={ accentColor } setAccentColor={ setAccentColor } />
-			) }
+			{ children }
 			<Button className="setup-form__submit" disabled={ isLoading } primary type="submit">
 				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
 			</Button>
