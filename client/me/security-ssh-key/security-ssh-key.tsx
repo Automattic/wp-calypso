@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import { CompactCard, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
+import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -73,9 +74,25 @@ export const SecuritySSHKey = () => {
 			<DocumentHead title={ __( 'SSH Key' ) } />
 
 			<CompactCard>
-				<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
+				<p>
 					{ __(
 						'Add a SSH key to connect to our servers and manage your plugin-enabled WordPress.com website via command-line tools.'
+					) }
+				</p>
+				<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
+					{ createInterpolateElement(
+						__(
+							'Site-level Business plan is required to connect with SSH keys. <a>Read more.</a>'
+						),
+						{
+							a: (
+								<a
+									href="https://wordpress.com/support/connect-to-ssh-on-wordpress-com/"
+									target="_blank"
+									rel="noreferrer"
+								/>
+							),
+						}
 					) }
 				</p>
 
