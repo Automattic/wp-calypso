@@ -611,8 +611,15 @@
 	.comment-button__label-count {
 		top: 0;
 	}
+	.like-button__like-icons {
+		margin-right: 0;
+		> svg {
+			position: static;
+		}
+	}
 	.like-button__label-count {
 		margin-left: 4px;
+		top: -1px;
 	}
 	.reader-share {
 		position: relative;
