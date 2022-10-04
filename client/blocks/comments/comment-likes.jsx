@@ -4,11 +4,11 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import LikeButton from 'calypso/blocks/like-button/button';
+import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 
 class CommentLikeButtonContainer extends Component {
 	constructor() {

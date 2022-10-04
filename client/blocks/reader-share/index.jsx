@@ -10,8 +10,9 @@ import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import SiteSelector from 'calypso/components/site-selector';
-import SocialLogo from 'calypso/components/social-logo';
+import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 import ReaderShareIcon from 'calypso/reader/components/icons/share-icon';
+import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
 import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
 import * as stats from 'calypso/reader/stats';
 import { preloadEditor } from 'calypso/sections-preloaders';
@@ -19,8 +20,6 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 import './style.scss';
-import ReaderTwitterIcon from 'calypso/reader/components/icons/twitter-icon';
-import ReaderFacebookIcon from 'calypso/reader/components/icons/facebook-icon';
 
 /**
  * Local variables
