@@ -298,7 +298,9 @@ const EmailProvidersStackedComparison = ( {
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 
-			{ ! isDomainInCart && <EmailForwardingLink selectedDomainName={ selectedDomainName } /> }
+			{ ! isDomainInCart && ! showNonOwnerMessage && (
+				<EmailForwardingLink selectedDomainName={ selectedDomainName } />
+			) }
 
 			<TrackComponentView
 				eventName="calypso_email_providers_comparison_page_view"
