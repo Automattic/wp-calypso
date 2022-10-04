@@ -96,8 +96,9 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
 				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
 				await page.waitForSelector( '.account__settings .language-picker__name-label' );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ) );
-				await page.reload( { waitUntil: 'networkidle' } );
+				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
+				// await page.goto( DataHelper.getCalypsoURL( 'home' ) );
+				// await page.reload( { waitUntil: 'networkidle' } );
 				await cartCheckoutPage.visit( blogName );
 				await cartCheckoutPage.validatePaymentForm();
 				await page.screenshot( {
