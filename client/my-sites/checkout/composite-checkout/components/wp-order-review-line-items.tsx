@@ -90,6 +90,7 @@ export function WPOrderReviewLineItems( {
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
 			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
+					key={ product.product_slug }
 					product={ product }
 					siteId={ siteId }
 					isSummary={ isSummary }
