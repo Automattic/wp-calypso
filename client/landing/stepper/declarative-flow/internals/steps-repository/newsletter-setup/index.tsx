@@ -66,7 +66,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setTagline( site.description );
 	}, [ site ] );
 
-	const handleSubmit = async ( event: FormEvent ) => {
+	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
 		setInvalidSiteTitle( ! siteTitle.trim().length );
 
