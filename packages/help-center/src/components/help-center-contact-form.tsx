@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
@@ -378,17 +379,22 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const getSupportedLanguages = ( supportType: string, locale: string ) => {
+		const isLiveChatLanguageSupported = (
+			config( 'livechat_support_locales' ) as Array< string >
+		 ).includes( locale );
+
+		const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+			locale
+		);
+
 		switch ( supportType ) {
 			case SUPPORT_HAPPYCHAT:
-				return ! window.configData.livechat_support_locales.includes( locale );
+				return ! isLiveChatLanguageSupported;
 
 			case SUPPORT_TICKET:
 			case SUPPORT_CHAT_OVERFLOW:
 			case SUPPORT_UPWORK_TICKET:
-				return (
-					! window.configData.upwork_support_locales.includes( locale ) &&
-					! [ 'en', 'en-gb' ].includes( locale )
-				);
+				return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
 
 			default:
 				return false;
