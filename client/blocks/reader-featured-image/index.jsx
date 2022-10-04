@@ -40,7 +40,7 @@ const ReaderFeaturedImage = ( {
 				backgroundPosition: '50% 50%',
 				backgroundRepeat: 'no-repeat',
 				height: newHeight,
-				width: imageWidth || READER_CONTENT_WIDTH,
+				width: imageWidth || 'auto',
 			};
 		} else {
 			children = <img src={ safeCssUrl } />;

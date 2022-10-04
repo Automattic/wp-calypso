@@ -28,14 +28,6 @@ function CommentButton( props ) {
 		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
-			{ showLabel && commentCount > 0 && (
-				<span className="comment-button__label-status">
-					{ translate( 'Comment', 'Comments', {
-						context: 'noun',
-						count: commentCount,
-					} ) }
-				</span>
-			) }
 		</span>
 	);
 }

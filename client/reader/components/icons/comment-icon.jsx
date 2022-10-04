@@ -3,12 +3,13 @@ import classnames from 'classnames';
 export default function ReaderCommentIcon( { iconSize } ) {
 	const className = classnames( 'comment-button__icon', {
 		'needs-offset-x': iconSize % 18 === 0,
+		'reader-comment': true,
 	} );
 
 	return (
 		<svg
 			fill="none"
-			viewBox="0 0 24 24"
+			viewBox="0 0 20 20"
 			width={ iconSize }
 			height={ iconSize }
 			className={ className }

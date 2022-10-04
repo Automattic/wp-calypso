@@ -1,6 +1,8 @@
+import { safeImageUrl } from '@automattic/calypso-url';
 import { Card, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -76,11 +78,39 @@ class FeedHeader extends Component {
 		const siteTitle = getSiteName( { feed, site } );
 		const siteUrl = getSiteUrl( { feed, site } );
 		const siteId = site && site.ID;
+		const siteIcon = site ? get( site, 'icon.img' ) : null;
 
 		const classes = classnames( 'reader-feed-header', {
 			'is-placeholder': ! site && ! feed,
 			'has-back-button': showBack,
 		} );
+
+		let feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+		// don't show the default favicon for some sites
+		if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
+			feedIcon = null;
+		}
+
+		let fakeSite;
+
+		const safeSiteIcon = safeImageUrl( siteIcon );
+		const safeFeedIcon = safeImageUrl( feedIcon );
+
+		if ( safeSiteIcon ) {
+			fakeSite = {
+				icon: {
+					img: safeSiteIcon,
+				},
+			};
+		} else if ( safeFeedIcon ) {
+			fakeSite = {
+				icon: {
+					img: safeFeedIcon,
+				},
+			};
+		}
+
+		const siteIconElement = <SiteIcon key="site-icon" size={ 116 } site={ fakeSite } />;
 
 		return (
 			<div className={ classes }>
@@ -88,7 +118,7 @@ class FeedHeader extends Component {
 				{ showBack && <HeaderBack /> }
 				<Card className="reader-feed-header__site">
 					<a href={ siteUrl } className="reader-feed-header__site-icon">
-						<SiteIcon site={ site } size={ 116 } />
+						{ siteIconElement }
 					</a>
 					<div className="reader-feed-header__site-title">
 						{ site && (
@@ -145,7 +175,7 @@ class FeedHeader extends Component {
 									className="reader-feed-header__seen-button"
 									disabled={ feed.unseen_count === 0 }
 								>
-									<Gridicon icon="visible" size={ 22 } />
+									<Gridicon icon="visible" size={ 24 } />
 									<span
 										className="reader-feed-header__visibility"
 										title={ translate( 'Mark all as seen' ) }

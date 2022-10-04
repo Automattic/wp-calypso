@@ -2,13 +2,17 @@ $follow-button-gray-disabled: var( --color-neutral-10 );
 
 .follow-button,
 button.follow-button {
+	align-items: center;
 	border: 0;
 	display: flex;
 	padding: 0;
 
-	.gridicons-reader-follow {
-		fill: var( --color-primary );
+	svg.reader-follow-feed {
 		pointer-events: auto;
+
+		path {
+			fill: var( --color-primary );
+		}
 	}
 
 	.follow-button__label {
@@ -19,7 +23,7 @@ button.follow-button {
 	&:hover {
 		color: var( --color-primary );
 
-		.gridicons-reader-follow {
+		svg.reader-follow-feed path {
 			fill: var( --color-primary );
 		}
 	}
@@ -29,16 +33,19 @@ button.follow-button {
 	}
 
 	// Hides Following icon by default
-	.gridicons-reader-following {
+	svg.reader-following-feed {
 		display: none;
 		pointer-events: none;
 	}
 
 	&.is-following {
-		.gridicons-reader-following {
+		svg.reader-following-feed {
 			display: inline-block;
-			fill: var( --color-success );
 			pointer-events: auto;
+
+			path {
+				fill: var( --color-success );
+			}
 		}
 
 		.follow-button__label {
@@ -46,7 +53,7 @@ button.follow-button {
 		}
 
 		// Hides Follow icon if already following
-		.gridicons-reader-follow {
+		svg.reader-follow-feed {
 			display: none;
 			pointer-events: none;
 		}
@@ -54,13 +61,13 @@ button.follow-button {
 		&:hover {
 			color: var( --color-success );
 
-			.gridicons-reader-following {
+			svg.reader-following-feed path {
 				fill: var( --color-success );
 			}
 		}
 	}
 
-	.gridicons-reader-following {
+	svg.reader-following-feed {
 		pointer-events: none;
 	}
 
@@ -81,16 +88,20 @@ button.follow-button {
 			color: $follow-button-gray-disabled;
 		}
 
-		.gridicon {
-			fill: $follow-button-gray-disabled;
+		svg.reader-follow-feed, svg.reader-following-feed {
+			path {
+				fill: $follow-button-gray-disabled;
+			}
 		}
 
 		&:hover {
 			color: $follow-button-gray-disabled;
 			cursor: default;
 
-			.gridicon {
-				fill: $follow-button-gray-disabled;
+			svg.reader-follow-feed, svg.reader-following-feed {
+				path {
+					fill: $follow-button-gray-disabled;
+				}
 			}
 		}
 

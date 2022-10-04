@@ -1,4 +1,7 @@
 .like-button__like-icons {
+	margin-right: 20px;
 	position: relative;
-	top: 2px;
+	svg {
+		position: absolute;
+	}
 }

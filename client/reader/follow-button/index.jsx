@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import FollowButtonContainer from 'calypso/blocks/follow-button';
 import FollowButton from 'calypso/blocks/follow-button/button';
-import ReaderFollowIcon from 'calypso/reader/components/icons/follow-icon';
-import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import {
 	recordFollow as recordFollowTracks,
 	recordUnfollow as recordUnfollowTracks,
@@ -23,8 +23,8 @@ function ReaderFollowButton( props ) {
 		}
 	}
 
-	const followingIcon = ReaderFollowingIcon( { iconSize: iconSize || 24 } );
-	const followIcon = ReaderFollowIcon( { iconSize: iconSize || 24 } );
+	const followingIcon = ReaderFollowingFeedIcon( { iconSize: iconSize || 20 } );
+	const followIcon = ReaderFollowFeedIcon( { iconSize: iconSize || 20 } );
 
 	if ( isButtonOnly ) {
 		return (

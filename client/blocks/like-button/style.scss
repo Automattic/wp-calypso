@@ -7,8 +7,7 @@
 	box-sizing: border-box;
 
 	.gridicon {
-		position: absolute;
-		left: 0;
+		vertical-align: bottom;
 	}
 
 	.gridicons-star {
@@ -68,18 +67,23 @@
 	}
 }
 
+.reader-full-post__story .like-button {
+	padding: 0;
+}
+
 .like-button__label {
 	// this keeps the label from collapsing and making the icon drop down
 	margin-left: 1px;
 	font-size: $font-body-small;
 	min-width: 10px;
-	position: relative;
 
 	&:empty {
 		display: none;
 	}
 
 	.like-button__label-count {
+		font-size: 13px;
+		font-weight: 500;
 		position: relative;
 		top: 1px;
 	}

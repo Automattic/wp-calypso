@@ -8,6 +8,8 @@ import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/read
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
@@ -50,12 +52,12 @@ class PostByline extends Component {
 			showSiteName,
 			showAvatar,
 			teams,
-			showFollow,
 			showPrimaryFollowButton,
 			followSource,
 		} = this.props;
 		const followUrl = feed ? feed.feed_URL : post.site_URL;
-		const feedId = get( post, 'feed_ID' );
+		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
 		const siteSlug = get( site, 'slug' );
 		const siteUrl = get( site, 'URL' );
@@ -70,7 +72,6 @@ class PostByline extends Component {
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -143,14 +144,11 @@ class PostByline extends Component {
 						siteUrl={ followUrl }
 						followSource={ followSource }
 						railcar={ post.railcar }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 					/>
 				) }
-				<ReaderPostEllipsisMenu
-					site={ site }
-					teams={ teams }
-					post={ post }
-					showFollow={ showFollow }
-				/>
+				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */

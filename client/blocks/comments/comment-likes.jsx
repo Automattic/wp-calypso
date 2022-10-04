@@ -8,6 +8,7 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import ReaderLikeIcon from 'calypso/reader/components/icons/like-icon';
 
 class CommentLikeButtonContainer extends Component {
 	constructor() {
@@ -39,6 +40,11 @@ class CommentLikeButtonContainer extends Component {
 		const iLike = get( this.props.commentLike, 'i_like' );
 		const likedLabel = translate( 'Liked' );
 
+		const likeIcon = ReaderLikeIcon( {
+			liked: iLike,
+			iconSize: 18,
+		} );
+
 		return (
 			<LikeButton
 				{ ...props }
@@ -47,6 +53,7 @@ class CommentLikeButtonContainer extends Component {
 				onLikeToggle={ this.boundHandleLikeToggle }
 				likedLabel={ likedLabel }
 				iconSize={ 18 }
+				icon={ likeIcon }
 			/>
 		);
 	}

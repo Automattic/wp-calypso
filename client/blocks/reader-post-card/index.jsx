@@ -178,7 +178,7 @@ class ReaderPostCard extends Component {
 				onCommentClick={ onCommentClick }
 				showEdit={ false }
 				className="ignore-click"
-				iconSize={ 24 }
+				iconSize={ 20 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
