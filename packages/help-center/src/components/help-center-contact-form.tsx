@@ -382,8 +382,13 @@ export const HelpCenterContactForm = () => {
 		}
 		switch ( mode ) {
 			case 'CHAT':
+				if ( showingSibylResults ) {
+					return __( 'Still chat with us', __i18n_text_domain__ );
+				}
 			case 'EMAIL':
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
+				if ( showingSibylResults ) {
+					return __( 'Still email us', __i18n_text_domain__ );
+				}
 			case 'FORUM': {
 				if ( ownershipStatusLoading ) {
 					return formTitles.buttonLoadingLabel;
@@ -397,7 +402,7 @@ export const HelpCenterContactForm = () => {
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
 			<SibylArticles
-				title={ __( 'Did you want the answer to any of these questions?', __i18n_text_domain__ ) }
+				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
 				supportSite={ supportSite }
 				message={ message }
 			/>
