@@ -589,6 +589,17 @@ $break-design-preview: 1024px;
 			@include break-design-preview {
 				display: none;
 			}
+
+			.design-picker-design-title__container {
+				.premium-badge,
+				.woocommerce-bundled-badge {
+					display: none;
+
+					@include break-small {
+						display: inline-flex;
+					}
+				}
+			}
 		}
 
 		.step-container__navigation {
