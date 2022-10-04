@@ -1058,6 +1058,7 @@ __metadata:
     "@wordpress/icons": ^9.5.0
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/primitives": ^3.7.0
+    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     classnames: ^2.3.1
     enzyme: ^3.11.0
     jest: ^27.3.1
