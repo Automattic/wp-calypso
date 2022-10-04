@@ -37,7 +37,7 @@
  * Load editor assets.
  */
 function a8c_editor_assets() {
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.asset.php';
+	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
 	wp_enqueue_script(
 		'a8c-blocks-js',
@@ -61,7 +61,7 @@ function a8c_editor_assets() {
  */
 function a8c_view_assets() {
 	if ( ! is_admin() ) {
-		$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.asset.php';
+		$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
 
 		$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
 		wp_enqueue_style(
