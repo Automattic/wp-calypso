@@ -193,6 +193,12 @@
 		}
 	}
 
+	.site-setup-list__task-text.has-icon {
+		.task__description {
+			margin-top: -22px;
+		}
+	}
+
 	.site-setup-list__task-actions {
 		margin-top: 0;
 	}
@@ -200,6 +206,7 @@
 	.site-setup-list__task-icon {
 		width: 67px;
 		height: 35px;
+		margin-bottom: 25px;
 	}
 
 	.site-setup-list__task-skip {

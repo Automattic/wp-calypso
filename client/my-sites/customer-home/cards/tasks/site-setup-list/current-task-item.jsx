@@ -6,7 +6,11 @@ import Badge from 'calypso/components/badge';
 const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout } ) => {
 	return (
 		<div className="site-setup-list__task task" role="tabpanel">
-			<div className="site-setup-list__task-text task__text">
+			<div
+				className={ classnames( 'site-setup-list__task-text', 'task__text', {
+					'has-icon': currentTask.icon,
+				} ) }
+			>
 				{ currentTask.isCompleted && ! currentTask.hideLabel && (
 					<Badge type="info" className="site-setup-list__task-badge task__badge">
 						{ translate( 'Complete' ) }
@@ -21,11 +25,13 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						} ) }
 					</div>
 				) }
-				{ currentTask.icon }
 				{ ! useAccordionLayout && (
-					<h3 className="site-setup-list__task-title task__title">
-						{ currentTask.subtitle || currentTask.title }
-					</h3>
+					<div class="site-setup-list__header">
+						{ currentTask.icon }
+						<h3 className="site-setup-list__task-title task__title">
+							{ currentTask.subtitle || currentTask.title }
+						</h3>
+					</div>
 				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }
