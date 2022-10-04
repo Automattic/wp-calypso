@@ -1,104 +1,158 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-row-formatter__row-container {
 	position: relative;
 }
+
 .plugin-row-formatter__plugin-icon {
-	width: 24px;
-	height: 24px;
+	min-width: 32px;
+	max-width: 32px;
+	height: 32px;
 	vertical-align: middle;
-	margin-inline-end: 16px;
+	margin-inline-end: 12px;
 }
-.row-data-common-style {
+
+%row-data-common-style {
 	display: inline-block;
 	font-weight: 500;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: clip;
 	vertical-align: middle;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	font-size: 0.875rem;
 	text-align: left;
 }
 
+.has-active-status {
+	margin-top: -20px;
+}
+
 a.button.plugin-row-formatter__plugin-name {
-	@extend .row-data-common-style;
-	width: calc( 100% - 55px );
-}
-a.button.plugin-row-formatter__plugin-name-card {
-	@extend .row-data-common-style;
-	width: calc( 100% - 10px );
-}
-.plugin-row-formatter__site-name {
-	@extend .row-data-common-style;
+	@extend %row-data-common-style;
+
 	width: 100%;
 }
+
+a.button.plugin-row-formatter__plugin-name-card {
+	@extend %row-data-common-style;
+
+	width: calc(100% - 10px);
+}
+
+.plugin-row-formatter__site-name {
+	@extend %row-data-common-style;
+
+	display: inline-block;
+	width: 100%;
+}
+
 .plugin-row-formatter__overlay {
 	display: block;
 	position: absolute;
-	height: 48px;
-	width: 20px;
-	background: linear-gradient(
-		to right,
-		rgba( 255, 255, 255, 0.8 ) 30%,
-		rgba( 255, 255, 255, 1 ) 100%
-	);
-	inset-block-start: -10px;
+	height: 25px;
+	width: 25px;
+	background: linear-gradient(to right, rgb(255 255 255 / 80%) 30%, rgb(255 255 255 / 100%) 100%);
+	inset-block-start: 0;
 	inset-inline-end: 0;
 }
+
 .plugin-row-formatter__sites-count-button {
 	&:hover {
 		text-decoration: underline;
 	}
 }
 
+.plugin-row-formatter__plugin-name-container {
+	width: calc(100% - 55px);
+	position: relative;
+}
+
+.has-bulk-management-active {
+	.plugin-row-formatter__plugin-name-container {
+		width: calc(100% - 75px);
+	}
+}
+
 .plugin-row-formatter__toggle {
 	.plugin-action .components-toggle-control .components-base-control__field {
 		flex-direction: row-reverse;
-		@include break-xlarge() {
+
+		@include break-xlarge {
 			margin: auto 0;
 			flex-direction: unset;
 		}
 	}
+
 	.components-form-toggle {
 		position: absolute;
 		inset-inline-start: 200px;
-		@include break-xlarge() {
+
+		@include break-xlarge {
 			position: relative;
 			inset-inline-start: unset;
 		}
 	}
 }
+
 .plugin-row-formatter__install-plugin {
-	@include break-xlarge() {
+
+	@include break-xlarge {
 		display: flex;
 		justify-content: end;
+		white-space: pre;
+
 		.plugin-install-button__install.embed {
 			margin: 0;
 		}
 	}
 }
+
 .plugin-row-formatter__plugin-details {
 	display: flex;
 	align-items: center;
 }
 
-// Checkbox for multiselect purposes
-.plugin-row-formatter__checkbox[type='checkbox'] {
-	margin-inline-end: 16px;
+.theme-jetpack-cloud .plugin-row-formatter__checkbox[type="checkbox"]:checked::before {
+	content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+}
 
-	&:checked::before {
-		content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
-	}
+// Checkbox for multiselect purposes
+.plugin-row-formatter__checkbox[type="checkbox"] {
+	margin-inline-end: 16px;
 
 	&::after {
 		// Making tap area larger
-		content: '';
+		content: "";
 		position: absolute;
 		top: -20px;
 		left: -19px;
 		width: 56px;
 		height: 55px;
+	}
+}
+
+.plugin-row-formatter__last-updated {
+	font-size: 0.75rem;
+	color: var(--color-text-subtle);
+
+	@include break-xlarge {
+		// Align right when there's no enough space.
+		text-align: right;
+		width: 100%;
+		display: inline-block;
+		white-space: pre;
+	}
+
+	// Cut off the "Updated on" part when there's no enough space.
+	> span {
+		@include break-xlarge {
+			display: none;
+		}
+
+		@include break-huge {
+			display: inline;
+		}
 	}
 }

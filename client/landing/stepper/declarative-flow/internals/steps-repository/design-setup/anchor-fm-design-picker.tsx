@@ -67,7 +67,7 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 				return;
 			}
 
-			return setDesignOnSite( newSite.site_slug, _selectedDesign, '' ).then( () =>
+			return setDesignOnSite( newSite.site_slug, _selectedDesign ).then( () =>
 				reduxDispatch( requestActiveTheme( newSite.blogid ) )
 			);
 		} );

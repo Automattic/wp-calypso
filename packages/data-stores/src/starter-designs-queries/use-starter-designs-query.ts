@@ -7,7 +7,8 @@ import type {
 	Category,
 	Design,
 	DesignRecipe,
-	ThemeStyleVariation,
+	SoftwareSet,
+	StyleVariation,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
@@ -19,6 +20,7 @@ interface StarterDesignsQueryParams {
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 	enabled?: boolean;
+	select?: ( response: StarterDesigns ) => StarterDesigns;
 }
 
 interface StarterDesignsResponse {
@@ -30,9 +32,11 @@ interface StaticDesign {
 	recipe: DesignRecipe;
 	slug: string;
 	title: string;
+	description: string;
 	categories: Category[];
 	price?: string;
-	style_variations?: ThemeStyleVariation[];
+	style_variations?: StyleVariation[];
+	software_sets?: SoftwareSet[];
 }
 
 interface GeneratedDesign {
@@ -43,18 +47,20 @@ interface GeneratedDesign {
 
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
-	queryOptions: Options = {}
+	{ select, ...queryOptions }: Options = {}
 ): UseQueryResult< StarterDesigns > {
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
-			return {
+			const allDesigns = {
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
 				static: {
 					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
 				},
-			} as StarterDesigns;
+			};
+
+			return select ? select( allDesigns ) : allDesigns;
 		},
 		refetchOnMount: 'always',
 		staleTime: Infinity,
@@ -73,17 +79,25 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, recipe, categories, price, style_variations } = design;
+	const { slug, title, description, recipe, categories, price, style_variations, software_sets } =
+		design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+
+	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+		( { slug } ) => slug === 'woo-on-plans'
+	);
 
 	return {
 		slug,
 		title,
+		description,
 		recipe,
 		categories,
 		is_premium,
+		is_bundled_with_woo_commerce,
 		price,
+		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		verticalizable: isThemeVerticalizable( recipe.stylesheet ),

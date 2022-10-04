@@ -5,10 +5,10 @@ import { getProductsToDisplay } from '../../product-grid/utils';
 import slugToSelectorProduct from '../../slug-to-selector-product';
 import { SelectorProduct } from '../../types';
 import useGetPlansGridProducts from '../../use-get-plans-grid-products';
-import { ProductsListProps } from '../types';
+import { ItemToDisplayProps } from '../types';
 import { isolatePopularItems } from '../utils/isolate-popular-items';
 
-export const useProductsToDisplay = ( { siteId, duration }: ProductsListProps ) => {
+export const useProductsToDisplay = ( { siteId, duration }: ItemToDisplayProps ) => {
 	const { availableProducts, purchasedProducts, includedInPlanProducts } =
 		useGetPlansGridProducts( siteId );
 

@@ -63,8 +63,9 @@ export default class WebPreviewContent extends Component {
 		this.unsubscribeMobileBreakpoint();
 	}
 
-	componentDidUpdate( prevProps ) {
-		const { previewUrl } = this.props;
+	componentDidUpdate( prevProps, prevState ) {
+		const { previewUrl, inlineCss, scrollToSelector } = this.props;
+		const { loaded } = this.state;
 
 		this.setIframeUrl( previewUrl );
 
@@ -91,6 +92,28 @@ export default class WebPreviewContent extends Component {
 				this.resetResize();
 				window.removeEventListener( 'resize', this.handleResize );
 			}
+		}
+
+		if ( inlineCss && ! prevState.loaded && loaded ) {
+			this.iframe.contentWindow?.postMessage(
+				{
+					channel: `preview-${ this.previewId }`,
+					type: 'inline-css',
+					inline_css: inlineCss,
+				},
+				'*'
+			);
+		}
+
+		if ( scrollToSelector && loaded && ! prevState.loaded ) {
+			this.iframe.contentWindow?.postMessage(
+				{
+					channel: `preview-${ this.previewId }`,
+					type: 'scroll-to-selector',
+					scroll_to_selector: scrollToSelector,
+				},
+				'*'
+			);
 		}
 	}
 
@@ -295,7 +318,6 @@ export default class WebPreviewContent extends Component {
 			}, loadingTimeout );
 		} else {
 			this.setState( { loaded: true, isLoadingSubpage: false } );
-
 			if ( this.loadingTimeoutTimer ) {
 				debug( 'preview loaded before timeout' );
 				clearTimeout( this.loadingTimeoutTimer );
@@ -472,6 +494,10 @@ WebPreviewContent.propTypes = {
 	isStickyToolbar: PropTypes.bool,
 	// Fixes the viewport width of the iframe if provided.
 	fixedViewportWidth: PropTypes.number,
+	// Injects CSS in the iframe after the content is loaded.
+	inlineCss: PropTypes.string,
+	// Uses the CSS selector to scroll to it
+	scrollToSelector: PropTypes.string,
 };
 
 WebPreviewContent.defaultProps = {
@@ -495,4 +521,6 @@ WebPreviewContent.defaultProps = {
 	overridePost: null,
 	toolbarComponent: Toolbar,
 	autoHeight: false,
+	inlineCss: null,
+	scrollToSelector: null,
 };

@@ -1,10 +1,10 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .is-section-checkout-pending,
 .is-section-checkout-thank-you {
-	background: var( --studio-white );
+	background: var(--studio-white);
 
 	.layout__content {
 		padding-right: 0;
@@ -20,14 +20,14 @@
 	}
 
 	.thank-you__header-title {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		@include break-small {
 			font-size: $font-headline-medium;
 		}
 	}
 
 	.thank-you__header-subtitle {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 	}
 
 	.thank-you__body {
@@ -35,13 +35,13 @@
 	}
 
 	.thank-you__notice {
-		background-color: var( --studio-gray-0 );
-		color: var( --studio-gray-50 );
+		background-color: var(--studio-gray-0);
+		color: var(--studio-gray-50);
 		max-width: 600px;
 		height: auto;
 		margin: auto;
 		svg {
-			fill: var( --studio-gray-50 );
+			fill: var(--studio-gray-50);
 			margin-right: 3px;
 		}
 	}
@@ -59,7 +59,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	display: flex;
 	align-items: center;
 	padding: 16px 24px;
@@ -76,7 +76,7 @@
 	}
 
 	.checkout-thank-you__domains-header-logo {
-		fill: var( --studio-gray-60 );
+		fill: var(--studio-gray-60);
 		margin-right: 28px;
 	}
 }

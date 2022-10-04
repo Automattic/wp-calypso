@@ -1,6 +1,7 @@
-import type { FONT_PAIRINGS } from './constants';
+import type { DEVICES_SUPPORTED, FONT_PAIRINGS } from './constants';
 import type { ValuesType } from 'utility-types';
 
+export type Device = ValuesType< ValuesType< typeof DEVICES_SUPPORTED > >;
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
 /** @deprecated used for Gutenboarding (/new flow) */
@@ -14,27 +15,53 @@ export interface Category {
 	name: string;
 }
 
-export interface DesignRecipe {
-	stylesheet?: string;
-	pattern_ids?: number[];
-	header_pattern_ids?: number[];
-	footer_pattern_ids?: number[];
-}
-
-export interface ThemeStyleVariation {
+export interface StyleVariation {
 	slug: string;
+	title?: string;
 	settings: {
 		color: {
 			palette: {
-				theme: ThemeStyleVariationSettingsColorPalette[];
+				theme: StyleVariationSettingsColorPalette[];
 			};
 		};
 	};
+	styles: {
+		color: StyleVariationStylesColor;
+	};
+	inline_css?: string;
 }
 
-export interface ThemeStyleVariationSettingsColorPalette {
+export interface StyleVariationSettingsColorPalette {
 	color: string;
 	name: string;
+	slug: string;
+}
+
+export interface StyleVariationPreview {
+	color: StyleVariationPreviewColorPalette;
+}
+
+export interface StyleVariationPreviewColorPalette {
+	background?: string;
+	foreground?: string;
+	primary?: string;
+	secondary?: string;
+	tertiary?: string;
+}
+
+export interface StyleVariationStylesColor {
+	background?: string;
+	text?: string;
+}
+
+export interface DesignRecipe {
+	stylesheet?: string;
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
+}
+
+export interface SoftwareSet {
 	slug: string;
 }
 
@@ -53,6 +80,7 @@ export type DesignType =
 export interface Design {
 	slug: string;
 	title: string;
+	description?: string;
 	recipe?: DesignRecipe;
 	is_premium: boolean;
 	categories: Category[];
@@ -61,9 +89,11 @@ export interface Design {
 	showFirst?: boolean; // Whether this design will appear at the top, regardless of category
 	preview?: 'static';
 	design_type?: DesignType;
-	style_variations?: ThemeStyleVariation[];
+	style_variations?: StyleVariation[];
 	price?: string;
 	verticalizable?: boolean;
+	software_sets?: SoftwareSet[];
+	is_bundled_with_woo_commerce?: boolean;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -81,6 +111,12 @@ export interface Design {
 	hide?: boolean;
 }
 
+export interface DesignOptions {
+	styleVariation?: StyleVariation;
+	verticalId?: string;
+	pageTemplate?: string;
+}
+
 export interface DesignPreviewOptions {
 	language?: string;
 	vertical_id?: string;
@@ -89,6 +125,7 @@ export interface DesignPreviewOptions {
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
+	disable_viewport_height?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

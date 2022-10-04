@@ -120,6 +120,7 @@ export interface SiteDetails {
 	slug: string;
 	visible?: boolean;
 	wpcom_url?: string;
+	user_interactions?: string[];
 }
 
 export interface SiteDetailsCapabilities {
@@ -446,4 +447,13 @@ export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;
+}
+
+export interface ThemeSetupOptions {
+	trim_content?: boolean;
+	vertical_id?: string;
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
+	page_template?: string;
 }

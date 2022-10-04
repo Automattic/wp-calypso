@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 5
+  version: 6
   cacheKey: 8c0
 
 "5to6-codemod@npm:^1.8.0":
@@ -249,7 +249,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.23
+    playwright: ^1.25
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -388,6 +388,7 @@ __metadata:
     "@automattic/data-stores": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@storybook/addon-actions": ^6.4.19
     "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -506,6 +507,36 @@ __metadata:
     typescript: ^4.7.4
     utility-types: ^3.10.0
     webpack: ^5.68.0
+  peerDependencies:
+    "@wordpress/data": ^6.7.0
+    "@wordpress/element": ^4.5.0
+    "@wordpress/i18n": ^4.7.0
+    debug: ^4.3.3
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/design-preview@workspace:^, @automattic/design-preview@workspace:packages/design-preview":
+  version: 0.0.0-use.local
+  resolution: "@automattic/design-preview@workspace:packages/design-preview"
+  dependencies:
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/design-picker": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@wordpress/components": ^19.15.0
+    "@wordpress/edit-site": ^4.6.0
+    "@wordpress/react-i18n": ^3.7.0
+    classnames: ^2.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    tslib: ^2.3.0
+    typescript: ^4.7.4
   peerDependencies:
     "@wordpress/data": ^6.7.0
     "@wordpress/element": ^4.5.0
@@ -644,6 +675,7 @@ __metadata:
     "@wordpress/icons": ^8.3.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
+    copy-webpack-plugin: ^10.1.0
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
@@ -781,6 +813,20 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
+  languageName: unknown
+  linkType: soft
+
+"@automattic/jest-circus-allure-reporter@workspace:^, @automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter":
+  version: 0.0.0-use.local
+  resolution: "@automattic/jest-circus-allure-reporter@workspace:packages/jest-circus-allure-reporter"
+  dependencies:
+    "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@types/allure-js-commons": ^0.0.1
+    "@types/jest": ^27.4.0
+    "@types/node": ^16.11.26
+    allure-js-commons: 2.0.0-beta.9
+    typescript: ^4.7.4
   languageName: unknown
   linkType: soft
 
@@ -1012,6 +1058,7 @@ __metadata:
     "@wordpress/icons": ^9.5.0
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/primitives": ^3.7.0
+    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     classnames: ^2.3.1
     enzyme: ^3.11.0
     jest: ^27.3.1
@@ -1054,6 +1101,7 @@ __metadata:
     tslib: ^2.3.0
     typescript: ^4.7.4
     webpack: ^5.63.0
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/i18n": ^4.7.0
     react: ^17.0.2
@@ -1095,16 +1143,19 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     classnames: ^2.3.1
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     redux: ^4.1.2
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
     webpack: ^5.68.0
+    wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^6.7.0
     "@wordpress/element": ^4.5.0
@@ -1248,6 +1299,23 @@ __metadata:
     "@wordpress/i18n": ^4.9.0
     "@wordpress/icons": ^9.0.0
     classnames: ^2.3.1
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
+  version: 0.0.0-use.local
+  resolution: "@automattic/sites@workspace:packages/sites"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
     typescript: ^4.7.4
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -6521,6 +6589,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/allure-js-commons@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@types/allure-js-commons@npm:0.0.1"
+  checksum: 5f405c9cf7b4432e74a2085c21fa98cdc6eb20d1b059cfb0d4a735f8cb5144e9862a29f6a910c1f01b4183e9875211be9fb670ef2b6ee009cff409b8dff424ea
+  languageName: node
+  linkType: hard
+
 "@types/archiver@npm:^5.3.1":
   version: 5.3.1
   resolution: "@types/archiver@npm:5.3.1"
@@ -10099,7 +10174,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.23
+    playwright: ^1.25
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -10239,12 +10314,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.4, acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.7.0":
-  version: 8.7.0
-  resolution: "acorn@npm:8.7.0"
+"acorn@npm:^8.0.4, acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.7.0":
+  version: 8.8.0
+  resolution: "acorn@npm:8.8.0"
   bin:
     acorn: bin/acorn
-  checksum: 8168e567c2f0b9fb7a418d2651b4b614326a0814b4937ebddee0f5e5e25ddd6320aec0c20d3a67efd97a02d836cc7f9e5c84befe3daeeea68ed89a48ee8f7a5d
+  checksum: 5efce4f59554e0ab766f32932cba34b86cc2ecdf24fcd27463beff41d8a1b1b9575c21f92c1b9f7f82b93374a9d5aed33c91f93e2d0cb1bdf3f1e06ec131e816
   languageName: node
   linkType: hard
 
@@ -10414,6 +10489,17 @@ __metadata:
     require-from-string: ^2.0.2
     uri-js: ^4.2.2
   checksum: 45e52e708f1335486671a008629ed973e0d729e12f00e9ff6e2c5dcab4d207dc4d198440ee17f48a94649bd40f5dd50fc6ca133b3e7d04e7ea5b64dad93f95fc
+  languageName: node
+  linkType: hard
+
+"allure-js-commons@npm:2.0.0-beta.9":
+  version: 2.0.0-beta.9
+  resolution: "allure-js-commons@npm:2.0.0-beta.9"
+  dependencies:
+    mkdirp: ^1.0.4
+    properties: ^1.2.1
+    uuid: ^8.3.0
+  checksum: 434389a5aa2854d2336108d27abe572bdb13fb7b61dd9ce67e14e52504e97f31ef2f33ca40227fde44863645d447080be43ba3364fd82b8628f70ec4ee6ca241
   languageName: node
   linkType: hard
 
@@ -12496,6 +12582,7 @@ __metadata:
     "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/design-picker": "workspace:^"
+    "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
     "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"
@@ -12519,6 +12606,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
@@ -26908,23 +26996,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.23.2":
-  version: 1.23.2
-  resolution: "playwright-core@npm:1.23.2"
+"playwright-core@npm:1.25.1":
+  version: 1.25.1
+  resolution: "playwright-core@npm:1.25.1"
   bin:
     playwright: cli.js
-  checksum: d2b5c4787a30db6368e9005ee8d2c2bf2baf27f32755f47bd124744d682b7da31302d562359f33918af53bee7743a0b3cba0fe8e7f0be91313253e973bf3c079
+  checksum: 59b393ba8a62421b4278934a8277e57d956965f2e0497211d5e94120889bf65f7304596684ab9f68242bed33e2705c76b77cb1ef56f74f2ff08d7cd05aa3d341
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.23":
-  version: 1.23.2
-  resolution: "playwright@npm:1.23.2"
+"playwright@npm:^1.25":
+  version: 1.25.1
+  resolution: "playwright@npm:1.25.1"
   dependencies:
-    playwright-core: 1.23.2
+    playwright-core: 1.25.1
   bin:
     playwright: cli.js
-  checksum: 5e4b0df82c23880086f57d1c64c1f0be25887ac7db733c3aa9eae05f77edc50f62bcde36e2084cceae81c39e7934f4a506a64085a4695653234223942d2bb120
+  checksum: e7112e7c125bac78253f1288a08a8f0023130a9c8bb49e9d8645e8763bdca7a1a04fe77b652a5525931346281b91a5a8737696584941fd99e8d6099df24dd21e
   languageName: node
   linkType: hard
 
@@ -27533,7 +27621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-scss@npm:^4.0.2, postcss-scss@npm:^4.0.4":
+"postcss-scss@npm:^4.0.2":
   version: 4.0.4
   resolution: "postcss-scss@npm:4.0.4"
   peerDependencies:
@@ -27960,6 +28048,13 @@ __metadata:
     graceful-fs: ^4.1.2
     retry: ^0.10.0
   checksum: 6db0bbace1e60ff2ddd5ecbecf05807a7fb00b6c96985da755990d1628ac30d7f20ae91912bfb2679733ae501b4bedad48d475b1f156279fd7026276f6234fce
+  languageName: node
+  linkType: hard
+
+"properties@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "properties@npm:1.2.1"
+  checksum: c6ed008981dbe66e5d622064559166924d6bd56a0b9c4dcb41889457c47467683bda4091c69c348bf703051f95d8fa53cac4dc658172f9f752c00b8622dbc708
   languageName: node
   linkType: hard
 
@@ -32687,57 +32782,12 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"stylelint-config-recommended-scss@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "stylelint-config-recommended-scss@npm:7.0.0"
-  dependencies:
-    postcss-scss: ^4.0.2
-    stylelint-config-recommended: ^8.0.0
-    stylelint-scss: ^4.0.0
-  peerDependencies:
-    stylelint: ^14.4.0
-  checksum: cf8287245f7bec91329b768bddc2a9b16c67df09e4de526c49ffc7beabb8ad3332122135d021342eae93eaf95490ab2222414abadb6096c2de390928529261b9
-  languageName: node
-  linkType: hard
-
 "stylelint-config-recommended@npm:^6.0.0":
   version: 6.0.0
   resolution: "stylelint-config-recommended@npm:6.0.0"
   peerDependencies:
     stylelint: ^14.0.0
   checksum: df3ca2e5ad8754ac461ae07d029fb7d0599fb2b2d90c5dde6982d031ae707b629b96a673d75f0040d89746713b564b14a0b3f65d348426f5e8943f65d461328c
-  languageName: node
-  linkType: hard
-
-"stylelint-config-recommended@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "stylelint-config-recommended@npm:8.0.0"
-  peerDependencies:
-    stylelint: ^14.8.0
-  checksum: 8b34c4d6a9b6401f363a6c78c32e63851a9f19da50c55d3bcacbf9672d827c8395a67b0cda6a0611745c3b7562576e27de958000b5fe7526b3ae5a59a6a68a8b
-  languageName: node
-  linkType: hard
-
-"stylelint-config-standard-scss@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "stylelint-config-standard-scss@npm:5.0.0"
-  dependencies:
-    stylelint-config-recommended-scss: ^7.0.0
-    stylelint-config-standard: ^26.0.0
-  peerDependencies:
-    stylelint: ^14.9.0
-  checksum: 3eb756635cc57c346c6a02e74bc4fb852f2e0cd4ff09e0858374f407df840ace08f50f043c81f9c982e68b807152dd64a2690a7954ba6779f539da5702a00af3
-  languageName: node
-  linkType: hard
-
-"stylelint-config-standard@npm:^26.0.0":
-  version: 26.0.0
-  resolution: "stylelint-config-standard@npm:26.0.0"
-  dependencies:
-    stylelint-config-recommended: ^8.0.0
-  peerDependencies:
-    stylelint: ^14.9.0
-  checksum: 3be795207a8051d313aa90bbfd27493b409fc25bfd76324f16ba4bea8bd290a92301bdb60adc4303ae7111ee5100f1af5d866687b64eb4b132938f8ab30fb3fb
   languageName: node
   linkType: hard
 
@@ -34064,11 +34114,11 @@ swiper@4.5.1:
 
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
-  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=493e53"
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 9648156f08ecb48f34d5223d890147a59a66d4c03a419032c9e8a31befaa00497623b544569a8efc434f9ad845495871d3d4bda67dae3ee6d479d711e4ff5309
+  checksum: 2eb6e31b04fabec84a4d07b5d567deb5ef0a2971d89d9adb16895f148f7d8508adfb12074abc2efc6966805d3664e68ab67925060e5b0ebd8da616db4b151906
   languageName: node
   linkType: hard
 
@@ -35779,7 +35829,6 @@ swiper@4.5.1:
     postcss: ^8.4.5
     postcss-cli: ^9.0.1
     postcss-custom-properties: ^11.0.0
-    postcss-scss: ^4.0.4
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -35796,7 +35845,6 @@ swiper@4.5.1:
     stackframe: ^1.1.1
     stacktrace-gps: ^3.0.3
     stylelint: ^14.11.0
-    stylelint-config-standard-scss: ^5.0.0
     tslib: ^2.3.0
     typescript: ^4.7.4
     v8-profiler-next: ^1.9.0
@@ -35824,6 +35872,7 @@ swiper@4.5.1:
     "@automattic/calypso-e2e": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/jest-circus-allure-reporter": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@babel/core": ^7.16.0
     "@types/archiver": ^5.3.1
@@ -35845,7 +35894,7 @@ swiper@4.5.1:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.23
+    playwright: ^1.25
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

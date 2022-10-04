@@ -12,9 +12,9 @@ $animation-timing: 300ms;
 		align-items: center;
 		justify-content: center;
 
-		background-color: var( --studio-white );
-		color: var( --studio-black );
-		border-color: rgba( 0, 0, 0, 0.1 );
+		background-color: var(--studio-white);
+		color: var(--studio-black);
+		border-color: rgba(0, 0, 0, 0.1);
 
 		border-radius: 0;
 		border-width: 1px 0 0;
@@ -30,13 +30,13 @@ $animation-timing: 300ms;
 		}
 
 		&:hover {
-			background-color: var( --studio-white );
-			color: var( --studio-black );
-			border-color: rgba( 0, 0, 0, 0.1 );
+			background-color: var(--studio-white);
+			color: var(--studio-black);
+			border-color: rgba(0, 0, 0, 0.1);
 		}
 	}
 
-	&:not( .is-mobile ) {
+	&:not(.is-mobile) {
 		.back-to-top-button__help-center {
 			padding: 6px 0;
 		}

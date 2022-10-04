@@ -98,8 +98,16 @@ const PopularSearches = ( props ) => {
 };
 
 const SearchBoxHeader = ( props ) => {
-	const { searchTerm, title, searchTerms, isSticky, popularSearchesRef, isSearching, searchRef } =
-		props;
+	const {
+		searchTerm,
+		title,
+		searchTerms,
+		isSticky,
+		popularSearchesRef,
+		isSearching,
+		searchRef,
+		renderTitleInH1,
+	} = props;
 
 	// Clear the keyword in search box on PluginsBrowser load if required.
 	// Required when navigating to a new plugins browser location
@@ -113,7 +121,8 @@ const SearchBoxHeader = ( props ) => {
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
-			<div className="search-box-header__header">{ title }</div>
+			{ renderTitleInH1 && <h1 className="search-box-header__header">{ title }</h1> }
+			{ ! renderTitleInH1 && <div className="search-box-header__header">{ title }</div> }
 			<div className="search-box-header__search">
 				<SearchBox
 					searchTerm={ searchTerm }

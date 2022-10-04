@@ -8,7 +8,7 @@ import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair } from '@automattic/design-picker/src/types';
+import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 
 // copied from design picker to avoid a circular dependency
 function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
@@ -26,9 +26,9 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
-export const setPatternId = ( patternId: number ) => ( {
-	type: 'SET_SITE_PATTERN_ID' as const,
-	patternId,
+export const setPatternContent = ( patternContent: string ) => ( {
+	type: 'SET_SITE_PATTERN_CONTENT' as const,
+	patternContent,
 } );
 
 export interface CreateSiteActionParameters {
@@ -177,6 +177,13 @@ export const setSelectedDesign = ( selectedDesign: Design | undefined ) => ( {
 	selectedDesign,
 } );
 
+export const setSelectedStyleVariation = (
+	selectedStyleVariation: StyleVariation | undefined
+) => ( {
+	type: 'SET_SELECTED_STYLE_VARIATION' as const,
+	selectedStyleVariation,
+} );
+
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
 	type: 'SET_SELECTED_SITE' as const,
 	selectedSite,
@@ -202,7 +209,7 @@ export const setSiteLogo = ( siteLogo: string | null ) => ( {
 	siteLogo,
 } );
 
-export const setSiteAccentColor = ( siteAccentColor: string | undefined ) => ( {
+export const setSiteAccentColor = ( siteAccentColor: string ) => ( {
 	type: 'SET_SITE_ACCENT_COLOR' as const,
 	siteAccentColor,
 } );
@@ -325,9 +332,10 @@ export type OnboardAction = ReturnType<
 	| typeof setPlanProductId
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
+	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
-	| typeof setPatternId
+	| typeof setPatternContent
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId

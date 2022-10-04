@@ -6,7 +6,7 @@
 		width: auto;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		text-align: start;
 	}
 }

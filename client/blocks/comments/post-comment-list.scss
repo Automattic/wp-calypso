@@ -1,6 +1,6 @@
 // The main comment list wrapper
 .comments__comment-list {
-	border-top: 1px solid var( --color-neutral-10 );
+	border-top: 1px solid var(--color-neutral-10);
 	clear: both;
 	margin: 36px 0;
 	padding-top: 11px;
@@ -33,7 +33,7 @@
 			top: 8px;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			span {
 				display: none;
 			}
@@ -55,7 +55,7 @@
 }
 
 .comments__view-more {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
 	font-size: $font-body-small;
@@ -63,6 +63,6 @@
 	margin-bottom: 15px !important; // to overwrite 10px value
 
 	&:hover {
-		color: var( --color-primary-light );
+		color: var(--color-primary-light);
 	}
 }

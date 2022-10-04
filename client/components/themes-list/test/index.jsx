@@ -29,6 +29,7 @@ const defaultProps = deepFreeze( {
 	],
 	lastPage: true,
 	loading: false,
+	isRequestFulfilled: true,
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,

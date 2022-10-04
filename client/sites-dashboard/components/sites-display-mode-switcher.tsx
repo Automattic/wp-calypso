@@ -2,54 +2,28 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector, useStore } from 'react-redux';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { useSelector } from 'react-redux';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
 const container = css( {
-	marginInlineStart: 'auto',
 	display: 'flex',
 	gap: '10px',
 } );
 
-type SitesDisplayMode = 'tile' | 'list' | 'none';
-
-const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
+type SitesDisplayMode = 'tile' | 'list';
 
 export const useSitesDisplayMode = () => {
-	const store = useStore();
-	const dispatch = useDispatch();
-	const remotePreferencesLoaded = useSelector( hasReceivedRemotePreferences );
-
-	const [ displayMode, setLocalDisplayMode ] = useState< SitesDisplayMode >( () => {
-		if ( ! remotePreferencesLoaded ) {
-			return 'none';
-		}
-
-		return getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile';
+	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+	return useAsyncPreference< SitesDisplayMode >( {
+		defaultValue: siteCount && siteCount > 6 ? 'list' : 'tile',
+		preferenceName: 'sites-management-dashboard-display-mode',
 	} );
-
-	useEffect( () => {
-		if ( remotePreferencesLoaded ) {
-			setLocalDisplayMode( getPreference( store.getState(), PREFERENCE_NAME ) ?? 'tile' );
-		}
-	}, [ remotePreferencesLoaded, store ] );
-
-	const setDisplayMode = useCallback(
-		( newValue: SitesDisplayMode ) => {
-			setLocalDisplayMode( newValue );
-			dispatch( savePreference( PREFERENCE_NAME, newValue ) );
-		},
-		[ dispatch ]
-	);
-
-	return [ displayMode, setDisplayMode ] as const;
 };
 
 interface SitesDisplayModeSwitcherProps {
 	onDisplayModeChange( newValue: SitesDisplayMode ): void;
-	displayMode: SitesDisplayMode;
+	displayMode: ReturnType< typeof useSitesDisplayMode >[ 0 ];
 }
 
 export const SitesDisplayModeSwitcher = ( {

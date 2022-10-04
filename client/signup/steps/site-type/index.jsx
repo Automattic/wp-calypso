@@ -1,5 +1,4 @@
-import { englishLocales } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -73,11 +72,6 @@ class SiteType extends Component {
 			'This is just a starting point. You can add or change features later.'
 		);
 
-		const backLabelText =
-			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-				? translate( 'Back to Sites' )
-				: translate( 'Back to My Sites' );
-
 		return (
 			<StepWrapper
 				flowName={ flowName }
@@ -90,7 +84,7 @@ class SiteType extends Component {
 				stepContent={ this.renderStepContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
-				backLabelText={ hasInitializedSitesBackUrl ? backLabelText : null }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to Sites' ) : null }
 			/>
 		);
 	}

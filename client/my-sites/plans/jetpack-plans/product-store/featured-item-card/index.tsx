@@ -1,25 +1,20 @@
 import { Button } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
-import { ItemPrice } from '../item-price';
 import { FeaturedItemCardProps } from '../types';
 
 import './style.scss';
 
 export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
-	checkoutURL,
 	ctaAsPrimary,
+	ctaHref,
 	ctaLabel,
+	description,
 	hero,
-	isIncludedInPlan,
-	isOwned,
-	item,
-	onClickMore,
-	onClickPurchase,
-	siteId,
+	isCtaDisabled,
+	isCtaExternal,
+	onClickCta,
+	price,
+	title,
 } ) => {
-	const translate = useTranslate();
-	const { displayName: title, featuredDescription } = item;
-
 	return (
 		<div className="featured-item-card">
 			<div className="featured-item-card--hero">{ hero }</div>
@@ -27,35 +22,18 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 			<div className="featured-item-card--body">
 				<div>
 					<h2 className="featured-item-card--title">{ title }</h2>
-					<div className="featured-item-card--price">
-						<ItemPrice
-							isIncludedInPlan={ isIncludedInPlan }
-							isOwned={ isOwned }
-							item={ item }
-							siteId={ siteId }
-						/>
-					</div>
-					<div className="featured-item-card--desc">
-						<p>
-							<span>{ featuredDescription }</span>
-							<br />
-							<Button
-								className="featured-item-card--learn-more"
-								onClick={ onClickMore }
-								href="#"
-								plain
-							>
-								{ translate( 'More about %(product)s', {
-									args: {
-										product: title,
-									},
-								} ) }
-							</Button>
-						</p>
-					</div>
+					<div className="featured-item-card--price">{ price }</div>
+					<div className="featured-item-card--desc">{ description }</div>
 				</div>
 				<div className="featured-item-card--footer">
-					<Button primary={ ctaAsPrimary } onClick={ onClickPurchase } href={ checkoutURL }>
+					<Button
+						className="featured-item-card--cta"
+						primary={ ctaAsPrimary }
+						onClick={ onClickCta }
+						disabled={ isCtaDisabled }
+						target={ isCtaExternal ? '_blank' : undefined }
+						href={ isCtaDisabled ? '#' : ctaHref }
+					>
 						{ ctaLabel }
 					</Button>
 				</div>

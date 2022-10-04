@@ -1,6 +1,6 @@
-@import 'assets/stylesheets/gutenberg-base-styles';
-@import '../../variables.scss';
-@import '@automattic/onboarding/styles/z-index';
+@import "assets/stylesheets/gutenberg-base-styles";
+@import "../../variables.scss";
+@import "@automattic/onboarding/styles/z-index";
 
 $margin--gutenboarding__header-section-item: 13px; // matches design
 $padding--gutenboarding__header: $grid-unit-10;
@@ -13,7 +13,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 	border-bottom: 1px solid $gray-200;
 	height: $onboarding-header-height;
 	background: $white;
-	z-index: onboarding-z-index( '.onboarding__header' );
+	z-index: onboarding-z-index(".onboarding__header");
 	left: 0;
 	right: 0;
 	// Stick the toolbar to the top, because the admin bar is not fixed on mobile.
@@ -83,7 +83,7 @@ $padding--gutenboarding__header: $grid-unit-10;
 
 .gutenboarding__header-wp-logo {
 	margin-left: 24px - $padding--gutenboarding__header - $margin--gutenboarding__header-section-item; // we want 24px exact on spec: ( 24 - header padding - own margin )
-	color: var( --studio-black );
+	color: var(--studio-black);
 	display: flex;
 }
 

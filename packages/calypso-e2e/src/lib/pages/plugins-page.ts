@@ -57,6 +57,10 @@ const selectors = {
 export class PluginsPage {
 	private page: Page;
 
+	static paidSection = 'Must-have premium plugins';
+	static featuredSection = 'Our developers’ favorites';
+	static freeSection = 'The free essentials';
+
 	/**
 	 * Constructs an instance.
 	 */
@@ -73,7 +77,7 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		await this.page.goto( getCalypsoURL( `plugins/${ site }` ), { waitUntil: 'networkidle' } );
 	}
 
 	/**

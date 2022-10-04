@@ -8,8 +8,8 @@
 	margin-left: 10px;
 	box-sizing: border-box;
 	font-size: 0.75rem;
-	color: var( --studio-white );
-	background: var( --studio-black );
+	color: var(--studio-white);
+	background: var(--studio-black);
 	z-index: 1;
 
 	.design-picker .design-picker__option-meta & {
@@ -25,7 +25,7 @@
 	.components-tooltip .components-popover__content {
 		border-radius: 4px;
 		margin: 8px;
-		background-color: var( --studio-gray-100 );
+		background-color: var(--studio-gray-100);
 		white-space: pre-line;
 
 		> div {

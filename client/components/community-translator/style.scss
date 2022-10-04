@@ -1,12 +1,12 @@
 .community-translator__element {
 	display: inline-block;
 	cursor: pointer;
-	z-index: z-index( 'root', '.popover' );
+	z-index: z-index("root", ".popover");
 	&.is-untranslated {
 		text-shadow: 0 0 10px #f00, 0 0 2px #dd3d36 !important;
 	}
 	&:hover {
-		border-bottom: 1px dotted var( --color-neutral-0 );
+		border-bottom: 1px dotted var(--color-neutral-0);
 	}
 }
 
@@ -17,7 +17,7 @@
 .community-translator__dialog-header {
 	margin-bottom: 14px;
 	font-weight: 600;
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 	padding-bottom: 7px;
 	h2 {
 		font-weight: normal;
@@ -39,10 +39,10 @@
 .community-translator__string-container {
 	margin-bottom: 20px;
 	display: flex;
-	border-top: 1px solid var( --color-neutral-0 );
+	border-top: 1px solid var(--color-neutral-0);
 	padding-top: 10px;
 	&:first-child {
-		border-top : 0;
+		border-top: 0;
 	}
 	> span {
 		font-weight: 600;
@@ -54,7 +54,7 @@
 		flex-basis: 15%;
 		font-size: $font-body-small;
 		font-style: italic;
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 	dfn {
 		margin-bottom: 5px;
@@ -69,7 +69,7 @@
 	}
 	&.placeholder > span {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 		height: 20px;
 	}
 }

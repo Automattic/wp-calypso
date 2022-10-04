@@ -224,7 +224,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				{ this.state.targetSiteId && (
 					<TransferConfirmationDialog
 						disableDialogButtons={ this.state.disableDialogButtons }
-						domainName={ selectedDomainName }
+						domain={ domain }
 						isMapping={ this.props.isMapping }
 						isVisible={ this.state.showConfirmationDialog }
 						onConfirmTransfer={ this.handleConfirmTransfer }

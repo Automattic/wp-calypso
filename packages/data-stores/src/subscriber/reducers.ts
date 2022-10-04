@@ -46,6 +46,7 @@ export const subscriber: Reducer< SubscriberState, Action > = ( state = {}, acti
 		return Object.assign( {}, state, {
 			import: {
 				inProgress: false,
+				error: undefined,
 			},
 		} );
 	}

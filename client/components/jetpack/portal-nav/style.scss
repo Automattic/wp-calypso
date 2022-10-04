@@ -14,7 +14,7 @@
 
 	.section-nav-tabs {
 		// Using a deprecated breakpoint in order to match the usage in the section component we are overriding.
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			&.is-dropdown {
 				margin: 0;
 			}
@@ -25,7 +25,7 @@
 		padding: 14px 16px 11px;
 
 		&:hover {
-			background-color: var( --studio-gray-0 );
+			background-color: var(--studio-gray-0);
 		}
 	}
 }

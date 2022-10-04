@@ -2,18 +2,14 @@ import { isEnabled } from '@automattic/calypso-config';
 import { StepContainer } from '@automattic/onboarding';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
-import { useSetupOnboardingSite } from 'calypso/landing/stepper/hooks/use-setup-onboarding-site';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
 
-const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null {
+const Subscribers: Step = function ( { navigation } ) {
 	const __ = useTranslate();
 	const { submit } = navigation;
 	const site = useSite();
-
-	useSetupOnboardingSite( { site, flow } );
 
 	const handleSubmit = () => {
 		submit?.();
@@ -32,10 +28,12 @@ const Subscribers: Step = function ( { navigation, flow } ): ReactElement | null
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
+							flowName={ 'onboarding_subscribers' }
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }
 							allowEmptyFormSubmit={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							recordTracksEvent={ recordTracksEvent }
 						/>
 					) }
 				</div>

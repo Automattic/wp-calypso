@@ -37,7 +37,9 @@ export const HelpCenterContactPage: React.FC = () => {
 	const renderEmail = useShouldRenderEmailOption();
 	const renderChat = useShouldRenderChatOption();
 	const email = useSelector( getCurrentUserEmail );
-	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email );
+	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
+		staleTime: 30 * 60 * 1000,
+	} );
 
 	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
@@ -85,7 +87,14 @@ export const HelpCenterContactPage: React.FC = () => {
 						</ConditionalLink>
 					) }
 					{ renderEmail && (
-						<Link to="/contact-form?mode=EMAIL">
+						<Link
+							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
+							to={ `/contact-form?mode=EMAIL&overflow=${ (
+								renderChat.eligible &&
+								renderChat.state !== 'CLOSED' &&
+								renderChat.state !== 'AVAILABLE'
+							).toString() }` }
+						>
 							<div
 								className={ classnames( 'help-center-contact-page__box', 'email' ) }
 								role="button"
@@ -110,7 +119,7 @@ export const HelpCenterContactPage: React.FC = () => {
 
 export const HelpCenterContactButton: React.FC = () => {
 	const { __ } = useI18n();
-	const url = useStillNeedHelpURL();
+	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );
 	const redirectToWpcom = url === 'https://wordpress.com/help/contact';
 
@@ -121,9 +130,15 @@ export const HelpCenterContactButton: React.FC = () => {
 		} );
 	};
 
+	let to = redirectToWpcom ? { pathname: url } : url;
+
+	if ( isLoading ) {
+		to = '';
+	}
+
 	return (
 		<Link
-			to={ redirectToWpcom ? { pathname: url } : url }
+			to={ to }
 			target={ redirectToWpcom ? '_blank' : '_self' }
 			onClick={ trackContactButtonClicked }
 			className="button help-center-contact-page__button"

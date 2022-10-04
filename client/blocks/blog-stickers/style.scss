@@ -22,9 +22,9 @@
 	position: relative;
 
 	&::before {
-		color: var( --color-neutral-20 );
-		content: ' • ';
+		color: var(--color-neutral-20);
+		content: " • ";
 		position: absolute;
-			left: 0;
+		left: 0;
 	}
 }

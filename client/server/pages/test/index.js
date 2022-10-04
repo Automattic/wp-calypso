@@ -109,16 +109,6 @@ jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
-	GUTENBOARDING_SECTION_DEFINITION: {
-		name: 'gutenboarding',
-		paths: [ '/new' ],
-		module: 'gutenboarding',
-		group: 'gutenboarding',
-		enableLoggedOut: true,
-	},
-} ) );
-
 /**
  * Builds an app for an specific environment.
  *
@@ -1261,12 +1251,15 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( `Route /new`, () => {
-		assertSection( {
-			url: '/new',
-			sectionName: 'gutenboarding',
-			sectionGroup: 'gutenboarding',
-			entry: 'entry-gutenboarding',
+	describe( `Route deprecated /new`, () => {
+		it( 'redirects to start flow', async () => {
+			const { response } = await app.run( { request: { url: '/new' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start' );
+		} );
+
+		it( 'redirects to start flow with locale', async () => {
+			const { response } = await app.run( { request: { url: '/new/fr' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start/fr' );
 		} );
 	} );
 

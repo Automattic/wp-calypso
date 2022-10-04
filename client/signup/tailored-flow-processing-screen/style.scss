@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .signup {
 	&.is-newsletter,
@@ -48,7 +48,7 @@
 		.reskinned-processing-screen__jetpack-powered {
 			display: flex;
 			justify-content: center;
-			font-family: 'SF Pro Text', $sans;
+			font-family: "SF Pro Text", $sans;
 			font-size: $font-body-extra-small;
 			font-weight: 400;
 			line-height: 20px;
@@ -63,11 +63,12 @@
 		.reskinned-processing-screen__container {
 			background-color: #a2dafe;
 			background-image:
-				url( calypso/assets/images/onboarding/newsletter-processing-left.png ),
-				url( calypso/assets/images/onboarding/newsletter-processing-right.png );
+				url(calypso/assets/images/onboarding/newsletter-processing-left.png),
+				url(calypso/assets/images/onboarding/newsletter-processing-right.png);
 			background-position: left bottom, right top;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
+			/*!rtl:ignore*/
 			background-position-x: 0%, 100%;
 			background-position-y: 30%, 100%;
 			background-size: auto 55%, auto 25%;
@@ -76,9 +77,12 @@
 				background-size: auto 50%, auto 35%;
 			}
 
-			@include break-large {
+			@include break-huge {
 				background-size: auto 80%, auto 45%;
 				background-position-y: 70%, 100%;
+				background-image:
+					url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.png),
+					url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.png);
 			}
 		}
 	}
@@ -87,17 +91,22 @@
 		.reskinned-processing-screen__container {
 			background-color: #d0cce3;
 			background-image:
-				url( calypso/assets/images/onboarding/link-in-bio-processing-left.png ),
-				url( calypso/assets/images/onboarding/link-in-bio-processing-right.png );
-			background-position-y: 92%, 8%;
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+			background-position-y: 92%, 15%;
+			/*!rtl:ignore*/
 			background-position-x: 0, 100%;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
 			background-size: auto 25%, auto 25%;
 
-			@include break-large {
+			@include break-huge {
 				background-size: auto 55%, auto 55%;
 				background-position-y: 90%, 10%;
+
+				background-image:
+					url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+					url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
 			}
 		}
 	}

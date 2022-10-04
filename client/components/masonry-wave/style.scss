@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .masonry-wave__container {
-  display: grid;
+	display: grid;
 	grid-template-columns: repeat(var(--masonry-wave--amountOfColumns), 1fr);
 	grid-auto-rows: minmax(min-content, max-content);
 	column-gap: 0.75rem;

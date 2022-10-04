@@ -54,22 +54,35 @@ export default function PostItem( { post }: Props ) {
 	const safeUrl = safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 	return (
-		<CompactCard className="post-item__card">
-			<div className="post-item__main">
-				<div className="post-item__body">
-					<div className="post-item__title">{ post.title }</div>
-					<div className="post-item__subtitle">
-						<PostRelativeTimeStatus showPublishedStatus={ false } post={ post } />
-						<span className="post-item__posttype">{ getPostType( post.type ) }</span>
-						<Button isLink href={ post.URL }>
-							{ __( 'View' ) }
-						</Button>
-					</div>
+		<CompactCard className="post-item__panel">
+			<div className="post-item__detail">
+				<h1 // eslint-disable-line
+					className="post-item__title"
+				>
+					<a href={ post.URL } className="post-item__title-link">
+						{ post.title || __( 'Untitled' ) }
+					</a>
+				</h1>
+				<div className="post-item__meta">
+					<span className="post-item__meta-time-status">
+						{ post && (
+							<PostRelativeTimeStatus
+								showPublishedStatus={ false }
+								post={ post }
+								gridiconSize={ 12 }
+							/>
+						) }
+					</span>
+					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
 				</div>
 			</div>
-			<div className="post-item__image-container">
-				{ featuredImage && <img className="post-item__image" src={ featuredImage } alt="" /> }
-			</div>
+
+			{ featuredImage && (
+				<div className="post-item__post-thumbnail-wrapper ">
+					<img className="post-item__post-thumbnail" src={ featuredImage } alt="" />
+				</div>
+			) }
+
 			<div className="post-item__promote-link">
 				<BlazePressWidget
 					isVisible={ isModalOpen && value === keyValue }

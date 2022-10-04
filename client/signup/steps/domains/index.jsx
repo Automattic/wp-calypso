@@ -1,6 +1,5 @@
-import { englishLocales } from '@automattic/i18n-utils';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
-import i18n, { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -20,7 +19,11 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug } from 'calypso/lib/domains';
+import {
+	getDomainProductSlug,
+	getDomainSuggestionSearch,
+	getFixedDomainSearch,
+} from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
@@ -480,6 +483,7 @@ class DomainsStep extends Component {
 
 		// Search using the initial query but do not show the query on the search input field.
 		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+		initialState.hideInitialQuery = hideInitialQuery;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -490,8 +494,10 @@ class DomainsStep extends Component {
 			if ( initialState ) {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
-				initialState.loadingResults = true;
-				initialState.hideInitialQuery = hideInitialQuery;
+				// If length is less than 2 it will not fetch any data.
+				// filter before counting length
+				initialState.loadingResults =
+					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 			}
 		}
 
@@ -500,10 +506,7 @@ class DomainsStep extends Component {
 			showExampleSuggestions = true;
 		}
 
-		let includeWordPressDotCom = this.props.includeWordPressDotCom;
-		if ( 'undefined' === typeof includeWordPressDotCom ) {
-			includeWordPressDotCom = ! this.props.isDomainOnly;
-		}
+		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -546,6 +549,7 @@ class DomainsStep extends Component {
 					}
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
+					isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -614,8 +618,8 @@ class DomainsStep extends Component {
 					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
 					<span
 						role="button"
-						class="tailored-flow-subtitle__cta-text"
-						onClick={ this.handleDomainExplainerClick }
+						className="tailored-flow-subtitle__cta-text"
+						onClick={ () => this.handleSkip() }
 					/>
 				),
 			};
@@ -653,6 +657,14 @@ class DomainsStep extends Component {
 		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
 			this.props;
 
+		if ( stepSectionName === 'use-your-domain' ) {
+			return '';
+		}
+
+		if ( headerText ) {
+			return headerText;
+		}
+
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
@@ -663,7 +675,7 @@ class DomainsStep extends Component {
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
+		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
 	}
 
 	getAnalyticsSection() {
@@ -671,7 +683,7 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return [ 'newsletter', 'link-in-bio' ].includes( this.props.flowName );
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	renderContent() {
@@ -763,10 +775,7 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText =
-			englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-				? translate( 'Back to Sites' )
-				: translate( 'Back to My Sites' );
+		const sitesBackLabelText = translate( 'Back to Sites' );
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -817,6 +826,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
+				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }

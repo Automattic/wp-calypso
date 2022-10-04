@@ -1,0 +1,38 @@
+{
+	"name": "@automattic/jest-circus-allure-reporter",
+	"author": "Automattic Inc.",
+	"version": "0.1.0",
+	"description": "Allure reporter for Jest-Circus test runner.",
+	"main": "dist/esm/src/index.js",
+	"module": "dist/esm/src/index.js",
+	"types": "dist/types/src/index.d.ts",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/jest-circus-allure-reporter"
+	},
+	"keywords": [
+		"e2e",
+		"calypso",
+		"jest",
+		"reporter",
+		"allure"
+	],
+	"license": "GPL-2.0-or-later",
+	"dependencies": {
+		"@types/allure-js-commons": "^0.0.1",
+		"allure-js-commons": "2.0.0-beta.9"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@types/jest": "^27.4.0",
+		"@types/node": "^16.11.26",
+		"typescript": "^4.7.4"
+	},
+	"scripts": {
+		"clean": "yarn build --clean && rm -rf dist",
+		"build": "tsc --build ./tsconfig.json"
+	}
+}

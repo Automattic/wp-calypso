@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, plugins } from '@wordpress/icons';
 import classNames from 'classnames';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginCommonAction from '../plugin-common-actions';
@@ -25,7 +25,7 @@ export default function PluginCommonTable( {
 	primaryKey,
 	renderActions,
 	className,
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<table className={ classNames( 'plugin-common-table__table', className ) }>
 			<thead>
@@ -45,9 +45,10 @@ export default function PluginCommonTable( {
 						{ columns.map( ( column ) => (
 							<td key={ column.key }>
 								{ column.key === 'plugin' && (
-									<Gridicon
-										className="plugin-common-table__plugin-icon is-loading"
-										icon="plugins"
+									<Icon
+										size={ 32 }
+										icon={ plugins }
+										className="plugin-common-table__plugin-icon plugin-default-icon is-loading"
 									/>
 								) }
 								<TextPlaceholder />
@@ -60,12 +61,19 @@ export default function PluginCommonTable( {
 						return (
 							<tr key={ `table-row-${ id }` } className="plugin-common-table__table-row">
 								{ columns.map( ( column ) => {
+									if ( column.key === 'bulk-actions' ) {
+										// We don't want to render an empty table cell for the bulk actions.
+										return null;
+									}
 									return (
 										<td
 											className={ classNames(
 												column.smallColumn && 'plugin-common-table__small-column'
 											) }
 											key={ `table-data-${ column.key }-${ id }` }
+											// As we don't render the bulk actions cell, we can
+											// expand the update column a bit further.
+											colSpan={ column.key === 'update' ? 2 : undefined }
 										>
 											{ rowFormatter( { columnKey: column.key, item } ) }
 										</td>

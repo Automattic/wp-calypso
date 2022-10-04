@@ -48,12 +48,12 @@ button.conversation-follow-button {
 	&.is-following {
 		.reader-following-conversation {
 			display: inline-block;
-			fill: var( --color-success );
+			fill: var(--color-success);
 			pointer-events: auto;
 		}
 
 		.conversation-follow-button__label {
-			color: var( --color-success );
+			color: var(--color-success);
 		}
 
 		// Hides Follow icon if already following
@@ -94,7 +94,7 @@ button.conversation-follow-button {
 }
 
 .conversation-follow-button__label {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		display: none;
 	}
 }

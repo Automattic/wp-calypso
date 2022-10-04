@@ -10,12 +10,14 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-right: 0;
 		margin-top: 0;
 
-		&:active, &:hover, &:focus {
-			color: var( --color-text-inverted );
+		&:active,
+		&:hover,
+		&:focus {
+			color: var(--color-text-inverted);
 		}
 	}
 }

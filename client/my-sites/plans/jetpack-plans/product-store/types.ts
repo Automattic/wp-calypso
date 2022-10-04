@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import React from 'react';
+import { useStoreItemInfo } from './hooks/use-store-item-info';
 import type {
 	QueryArgs,
 	SelectorProduct,
@@ -22,10 +23,10 @@ export interface ProductStoreProps {
 	 */
 	enableUserLicensesDialog?: boolean;
 	duration: Duration;
-	createCheckoutURL?: PurchaseURLCallback;
-	onClickPurchase?: PurchaseCallback;
+	createCheckoutURL: PurchaseURLCallback;
+	onClickPurchase: PurchaseCallback;
 	urlQueryArgs: ProductStoreQueryArgs;
-	header: ReactNode;
+	header: React.ReactNode;
 }
 
 export type JetpackFreeProps = Pick< ProductStoreProps, 'urlQueryArgs' > & ProductStoreBaseProps;
@@ -41,20 +42,31 @@ export interface ViewFilterProps {
 	setCurrentView: ( currentView: ViewType ) => void;
 }
 
-export type ProductsListProps = ProductStoreBaseProps &
-	Omit< ProductStoreProps, 'urlQueryArgs' | 'header' >;
+export type ProductsListProps = ProductStoreBaseProps & {
+	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	duration: Duration;
+};
 
 export type BundlesListProps = ProductsListProps;
 
-export interface ItemsListProps extends ProductsListProps {
+export type ItemToDisplayProps = {
+	siteId: number | null;
+	duration: Duration;
+};
+
+export interface ItemsListProps extends ItemToDisplayProps {
 	currentView: ViewType;
 }
 
 export type MostPopularProps = {
 	className?: string;
 	heading: string;
-	items: React.ReactNode;
+	items: Array< SelectorProduct >;
+	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
+	siteId: number | null;
 };
+
+export type AllItemsProps = MostPopularProps;
 
 export type HeroImageProps = {
 	item: SelectorProduct;
@@ -68,20 +80,35 @@ export type UseStoreItemInfoProps = ProductStoreBaseProps & {
 	onClickPurchase?: PurchaseCallback;
 };
 
+export type StoreItemInfo = ReturnType< typeof useStoreItemInfo >;
+
 export type ItemPriceProps = ProductStoreBaseProps &
 	HeroImageProps & {
 		isOwned?: boolean;
 		isIncludedInPlan?: boolean;
+		isMultiSiteIncompatible?: boolean;
 	};
 
-export type FeaturedItemCardProps = ItemPriceProps & {
-	checkoutURL?: string;
+export type FeaturedItemCardProps = {
 	ctaAsPrimary?: boolean;
+	ctaHref?: string;
 	ctaLabel: React.ReactNode;
+	description: React.ReactNode;
 	hero: React.ReactNode;
-	item: SelectorProduct;
-	onClickMore: VoidFunction;
-	onClickPurchase?: VoidFunction;
+	isCtaDisabled?: boolean;
+	isCtaExternal?: boolean;
+	onClickCta?: VoidFunction;
+	price: React.ReactNode;
+	title: React.ReactNode;
+	customLabel?: React.ReactNode;
 };
 
-export type SimpleProductCardProps = Omit< FeaturedItemCardProps, 'hero' >;
+export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
+	icon?: React.ReactNode;
+};
+
+export type MoreInfoLinkProps = {
+	item: SelectorProduct;
+	onClick?: VoidFunction;
+	isExternal?: boolean;
+};

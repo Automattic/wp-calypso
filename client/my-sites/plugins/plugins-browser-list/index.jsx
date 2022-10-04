@@ -87,22 +87,22 @@ const PluginsBrowserList = ( {
 
 	return (
 		<div className="plugins-browser-list">
-			<div className="plugins-browser-list__header">
-				{ ( title || subtitle ) && (
+			{ ( title || subtitle ) && (
+				<div className="plugins-browser-list__header">
 					<div className="plugins-browser-list__titles">
 						<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
 						<div className="plugins-browser-list__subtitle">{ subtitle }</div>
 					</div>
-				) }
-				<div className="plugins-browser-list__actions">
-					{ expandedListLink && (
-						<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
-							{ __( 'Browse All' ) }
-							<Gridicon icon="arrow-right" size="18" />
-						</a>
-					) }
+					<div className="plugins-browser-list__actions">
+						{ expandedListLink && (
+							<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
+								{ __( 'Browse All' ) }
+								<Gridicon icon="arrow-right" size="18" />
+							</a>
+						) }
+					</div>
 				</div>
-			</div>
+			) }
 			{ listName === 'paid' && (
 				<AsyncLoad
 					require="calypso/blocks/jitm"

@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .more-info-box__more-button.button {
 	display: inline-flex;
@@ -23,10 +23,10 @@
 
 .is-section-jetpack-cloud-pricing {
 	.more-info-box__more-container {
-		background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+		background-color: rgba(var(--studio-jetpack-green-10-rgb), 0.1);
 	}
 
 	.more-info-box__more-button.button {
-		color: var( --studio-jetpack-green-40 );
+		color: var(--studio-jetpack-green-40);
 	}
 }

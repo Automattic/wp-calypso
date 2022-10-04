@@ -1,5 +1,5 @@
 body.is-section-marketplace.theme-default.color-scheme {
-	--color-surface-backdrop: var( --studio-white );
+	--color-surface-backdrop: var(--studio-white);
 }
 
 .is-section-marketplace {
@@ -29,9 +29,9 @@ body.is-section-marketplace.theme-default.color-scheme {
 
 	.masterbar__item,
 	.masterbar__item:hover {
-		color: var( --color-primary-5 );
+		color: var(--color-primary-5);
 		flex-grow: 0;
-		background: var( --color-masterbar-background );
+		background: var(--color-masterbar-background);
 	}
 }
 

@@ -1,4 +1,5 @@
-import { Gridicon, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
+import { Icon, plugins } from '@wordpress/icons';
 import classNames from 'classnames';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import PluginCommonActions from '../plugin-common-actions';
@@ -22,7 +23,7 @@ export default function PluginCommonCard( {
 	rowFormatter,
 	columns,
 	renderActions,
-}: Props ): ReactElement {
+}: Props ) {
 	const columnKeys: { [ key: string ]: boolean } = columns.reduce(
 		( obj, cur ) => ( { ...obj, [ cur.key ]: true } ),
 		{}
@@ -54,7 +55,11 @@ export default function PluginCommonCard( {
 									alt={ item.name }
 								/>
 							) : (
-								<Gridicon className="plugin-common-card__plugin-icon has-opacity" icon="plugins" />
+								<Icon
+									size={ 32 }
+									icon={ plugins }
+									className="plugin-common-card__plugin-icon plugin-default-icon"
+								/>
 							) }
 						</div>
 					</>
@@ -76,6 +81,12 @@ export default function PluginCommonCard( {
 							<span className="plugin-common-card__overlay"></span>
 						</div>
 					) }
+					{ columnKeys[ 'update' ] &&
+						rowFormatter( {
+							columnKey: 'update',
+							item,
+							isSmallScreen: true,
+						} ) }
 					{ columnKeys[ 'last-updated' ] && (
 						<div className="plugin-common-card__site-data">
 							{ rowFormatter( {
@@ -110,7 +121,7 @@ export default function PluginCommonCard( {
 						</div>
 					) }
 					{ columnKeys[ 'sites' ] && (
-						<div className="plugin-common-card__site-data">
+						<div className="plugin-common-card__site-data plugin-common-card__installed-on">
 							{ rowFormatter( {
 								columnKey: 'sites',
 								item,
@@ -118,13 +129,6 @@ export default function PluginCommonCard( {
 							} ) }
 						</div>
 					) }
-					{ columnKeys[ 'update' ] &&
-						rowFormatter( {
-							columnKey: 'update',
-							item,
-							isSmallScreen: true,
-							className: 'plugin-common-card__update-plugin',
-						} ) }
 					{ columnKeys[ 'install' ] && (
 						<div className="plugin-common-card__install-button">
 							{ rowFormatter( {

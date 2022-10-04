@@ -1,9 +1,9 @@
 
 
-$post-item-background-color: var( --color-surface );
-$post-item-border-color: var( --color-neutral-5 );
+$post-item-background-color: var(--color-surface);
+$post-item-border-color: var(--color-neutral-5);
 $post-item-border: solid 1px $post-item-border-color;
-$expanded-post-item-border: 1px solid var( --color-neutral );
+$expanded-post-item-border: 1px solid var(--color-neutral);
 $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item {
@@ -15,7 +15,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 		border: $post-item-border;
 	}
 
-	&:not( :first-child ) {
+	&:not(:first-child) {
 		border-top: 0;
 	}
 
@@ -44,7 +44,7 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 .post-item__detail {
 	position: relative;
-	width: calc( 100% - 50px );
+	width: calc(100% - 50px);
 	margin-right: auto;
 	word-break: break-word;
 	word-wrap: break-word;
@@ -65,17 +65,17 @@ $expanded-post-item-outline: 4px solid $post-item-border-color;
 
 a.post-item__title-link,
 a.post-item__title-link:visited {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	display: block;
 	padding-bottom: 2px;
 	padding-right: 8px;
 
 	&:hover {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 	}
 
 	.post-item__panel.is-untitled & {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-style: italic;
 	}
 
@@ -87,7 +87,7 @@ a.post-item__title-link:visited {
 
 .post-item__meta {
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .post-item__meta .post-time,
@@ -123,7 +123,7 @@ a.post-item__title-link:visited {
 .post-item__time-status-link,
 .post-item__time-status-link:active,
 .post-item__time-status-link:visited {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: block;
 }
 
@@ -158,7 +158,7 @@ a.post-item__title-link:visited {
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	transform: translate( -50%, -50% );
+	transform: translate(-50%, -50%);
 	height: 100%;
 	max-height: 80px;
 	max-width: none;

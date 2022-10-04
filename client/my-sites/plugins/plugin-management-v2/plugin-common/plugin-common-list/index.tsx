@@ -1,4 +1,5 @@
 import { Card } from '@automattic/components';
+import classNames from 'classnames';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginCommonCard from '../plugin-common-card';
 import PluginCommonTable from '../plugin-common-table';
@@ -24,15 +25,18 @@ export default function PluginCommonList( {
 	primaryKey,
 	selectedSite,
 	...rest
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<>
-			<PluginCommonTable
-				{ ...rest }
-				items={ items }
-				isLoading={ isLoading }
-				primaryKey={ primaryKey }
-			/>
+			<div className={ classNames( { 'plugin-common-multi-site-table': ! selectedSite } ) }>
+				<PluginCommonTable
+					{ ...rest }
+					items={ items }
+					isLoading={ isLoading }
+					primaryKey={ primaryKey }
+				/>
+			</div>
+
 			<div className="plugin-common-list__mobile-view">
 				<>
 					{ isLoading ? (

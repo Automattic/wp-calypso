@@ -3,7 +3,7 @@ import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import ImageEditor from 'calypso/blocks/image-editor';
 import DropZone from 'calypso/components/drop-zone';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -46,6 +46,12 @@ export function SiteIconWithPicker( {
 		[ setEditingFileName, setEditingFile, setImageEditorOpen ]
 	);
 
+	useEffect( () => {
+		if ( selectedFile ) {
+			setSelectedFileUrl( URL.createObjectURL( selectedFile ) );
+		}
+	}, [ selectedFile ] );
+
 	return (
 		<>
 			{ editingFile && imageEditorOpen && (
@@ -59,11 +65,14 @@ export function SiteIconWithPicker( {
 					onDone={ ( _error: Error | null, image: Blob ) => {
 						onSelect( new File( [ image ], editingFileName || 'site-logo.png' ) );
 						setSelectedFileUrl( URL.createObjectURL( image ) );
+						setEditingFile( URL.createObjectURL( image ) );
 						setImageEditorOpen( false );
 					} }
 					onCancel={ () => {
-						setEditingFile( undefined );
-						setEditingFileName( undefined );
+						if ( ! selectedFileUrl ) {
+							setEditingFile( undefined );
+							setEditingFileName( undefined );
+						}
 						setImageEditorOpen( false );
 					} }
 					widthLimit={ 512 }
@@ -94,15 +103,26 @@ export function SiteIconWithPicker( {
 					} }
 				>
 					{ selectedFileUrl || siteIconUrl ? (
-						<img src={ selectedFileUrl || siteIconUrl } alt={ site?.name } />
+						// eslint-disable-next-line jsx-a11y/click-events-have-key-events
+						<span
+							role="button"
+							tabIndex={ 0 }
+							title={ __( 'Edit' ) }
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								setImageEditorOpen( true );
+							} }
+						>
+							<img src={ selectedFileUrl || siteIconUrl } alt={ site?.name } />
+						</span>
 					) : (
 						<Icon icon={ upload } />
 					) }
-					<span>
-						{ selectedFileUrl || siteIconUrl
-							? __( 'Replace' )
-							: placeholderText || __( 'Add a site icon' ) }
-					</span>
+					{ selectedFileUrl || siteIconUrl ? (
+						<span className="replace">{ __( 'Replace' ) }</span>
+					) : (
+						<span className="add"> { placeholderText || __( 'Add a site icon' ) } </span>
+					) }
 				</FormFileUpload>
 			</FormFieldset>
 		</>

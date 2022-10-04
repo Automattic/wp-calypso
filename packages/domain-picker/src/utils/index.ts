@@ -1,3 +1,4 @@
+import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 export function mockDomainSuggestion(
@@ -34,19 +35,23 @@ interface DomainSuggestionsVendorOptions {
 	isSignup?: boolean;
 	isDomainOnly?: boolean;
 	isPremium?: boolean;
-	flowName?: 'link-in-bio';
+	flowName?: typeof NEWSLETTER_FLOW | typeof LINK_IN_BIO_FLOW;
 }
 type DomainSuggestionsVendor =
 	| 'variation2_front'
 	| 'variation4_front'
 	| 'variation8_front'
-	| 'link-in-bio';
+	| 'link-in-bio'
+	| 'newsletter';
 
 export function getDomainSuggestionsVendor(
 	options: DomainSuggestionsVendorOptions = {}
 ): DomainSuggestionsVendor {
-	if ( options.flowName === 'link-in-bio' ) {
-		return options.flowName;
+	if ( options.flowName === LINK_IN_BIO_FLOW ) {
+		return 'link-in-bio';
+	}
+	if ( options.flowName === NEWSLETTER_FLOW ) {
+		return 'newsletter';
 	}
 	if ( options.isSignup && ! options.isDomainOnly ) {
 		return 'variation4_front';

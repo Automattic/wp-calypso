@@ -1,87 +1,179 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-details-v2 {
 	padding: 0 16px;
-	@include breakpoint-deprecated( '>660px' ) {
+
+	p {
+		font-size: inherit;
+	}
+
+	.plugin-details-v2__top-container {
+		max-width: 1500px;
+		margin: auto;
+	}
+
+	.plugin-details-v2__body-container {
+		padding-block-start: 0;
+		background: var(--color-surface);
+		margin: 32px -180px -32px;
+		padding: 0 180px;
+
+		@include break-xlarge {
+			margin-top: 72px;
+		}
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 0;
 	}
-	@include break-xlarge() {
+
+	@include break-xlarge {
 		padding: 0 38px;
 	}
+
 	.plugin-details-sidebar__plugin-details-content {
 		border: none;
 		margin: 0;
 		padding: 0;
 	}
+
 	.current-section button {
 		padding: 12px 8px !important;
 	}
+
 	.legacy .plugin-details__layout {
 		grid-template-columns: unset;
 		max-width: 800px;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		margin: 0 -16px;
 		padding: 0 16px 16px;
-		@include breakpoint-deprecated( '>660px' ) {
+
+		@include breakpoint-deprecated( ">660px" ) {
 			background: unset;
 			margin: 0;
 			padding: 0;
 		}
 	}
+
 	.legacy .plugin-details-header__container {
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 20px 0;
 		}
-		@include break-xlarge() {
+
+		@include break-xlarge {
 			padding: 30px 0;
 		}
 	}
+
 	.legacy .plugin-details-header__additional-info {
 		.plugin-details-header__info {
 			padding: 0;
-			@media screen and ( max-width: 1040px ) {
+
+			@media screen and (max-width: 1040px) {
 				padding-block-end: 12px;
 			}
 		}
+
 		.plugin-details-header__info-value {
 			font-size: 0.875rem;
 		}
 	}
+
 	.plugin-ratings__rating-stars {
 		display: flex;
 		margin: 10px 0;
-		@include breakpoint-deprecated( '>660px' ) {
+
+		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0;
 		}
 	}
+
 	.plugin-details__page {
 		padding: 0;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			padding: 30px 0 0;
+		}
 	}
+
 	.plugin-details__body {
-		padding-block-start: 0;
-		background: var( --color-surface );
-		margin: 16px -72px -32px;
-		padding: 0 72px;
+		padding-top: 0;
+		max-width: 1500px;
+		margin: auto;
+
+		.section-nav-tabs__list {
+			box-shadow: none;
+		}
+
+		.plugin-details__plugins-sections .card {
+			padding-top: 24px;
+		}
+
+		.plugin-details__layout-col-left {
+			padding-block-start: 12px;
+
+			@include break-xlarge {
+				padding-block-start: 48px;
+			}
+
+			.section-nav__mobile-header {
+				padding: 10px 0;
+			}
+
+			.section-nav-tab {
+				&:first-child .section-nav-tab__link {
+					padding: 8px 8px 12px;
+
+					@include breakpoint-deprecated( ">660px" ) {
+						padding-left: 0;
+					}
+				}
+
+				&.is-selected .section-nav-tab__link {
+					color: var(--color-text-inverted);
+
+					.section-nav-tab__text {
+						padding-bottom: 0;
+						font-weight: 500;
+						border-bottom: none;
+					}
+
+					@include breakpoint-deprecated( ">660px" ) {
+						color: initial;
+					}
+				}
+			}
+		}
 	}
 }
+
 .plugin-details-v2__header {
 	border-bottom: none !important;
-	background-color: var( --color-surface-backdrop ) !important;
-	@include breakpoint-deprecated( '>660px' ) {
-		inset-inline-start: calc( var( --sidebar-width-min ) + 1px ) !important;
+	background-color: var(--color-surface-backdrop) !important;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		inset-inline-start: calc(var(--sidebar-width-min) + 1px) !important;
 		padding-inline-start: 24px !important;
 	}
-	@include break-large() {
-		inset-inline-start: calc( var( --sidebar-width-min ) + 45px ) !important;
+
+	@include break-large {
+		inset-inline-start: calc(var(--sidebar-width-min) + 45px) !important;
 		padding-inline-start: 39px !important;
 	}
-	@include break-xlarge() {
+
+	@include break-xlarge {
 		padding-inline-start: 70px !important;
+
+		> div {
+			max-width: 1530px;
+			margin: auto;
+		}
 	}
 }
+
 .plugin-details-v2__title {
 	font-size: 0.875rem;
-	color: var( --color-text );
+	color: var(--color-text);
 	margin: 16px 0;
 }

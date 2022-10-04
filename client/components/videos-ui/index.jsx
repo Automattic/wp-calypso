@@ -7,9 +7,9 @@ import Notice from 'calypso/components/notice';
 import {
 	COURSE_SLUGS,
 	useCourseData,
+	useCourseDetails,
 	useUpdateUserCourseProgressionMutation,
 } from 'calypso/data/courses';
-import { COURSE_DETAILS } from 'calypso/data/courses/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import VideoChapters from './video-chapters';
 import VideoPlayer from './video-player';
@@ -97,6 +97,7 @@ const VideosUi = ( {
 			} );
 		}
 	}, [ course ] );
+	const { headerTitle, headerSubtitle, headerSummary } = useCourseDetails( courseSlug );
 
 	return (
 		<div className="videos-ui">
@@ -119,14 +120,14 @@ const VideosUi = ( {
 				) }
 				<div className="videos-ui__header-content">
 					<div className="videos-ui__titles">
-						<h2>{ COURSE_DETAILS[ courseSlug ].headerTitle }</h2>
-						<h2>{ COURSE_DETAILS[ courseSlug ].headerSubtitle }</h2>
+						<h2>{ headerTitle }</h2>
+						<h2>{ headerSubtitle }</h2>
 					</div>
 					<div className="videos-ui__summary">
 						<ul>
-							{ COURSE_DETAILS[ courseSlug ].headerSummary.map( ( text ) => {
+							{ headerSummary.map( ( text ) => {
 								return (
-									<li>
+									<li key={ text }>
 										<Gridicon icon="checkmark" size={ 18 } /> { text }
 									</li>
 								);

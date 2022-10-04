@@ -177,7 +177,7 @@ function UseMyDomain( props ) {
 
 			const availabilityErrorMessage = getAvailabilityErrorMessage( {
 				availabilityData,
-				filteredDomainName,
+				domainName: filteredDomainName,
 				selectedSite,
 			} );
 

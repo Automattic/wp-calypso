@@ -1,13 +1,13 @@
-@use '../variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@use "../variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 $plugin-details-header-padding: 100px;
 $mobile-icon-height: 175px;
 
 .plugin-details-header__container {
 	display: block;
-    @extend %plugin-header;
+	@extend %plugin-header;
 }
 
 .plugin-details-header__main-info {
@@ -22,7 +22,7 @@ $mobile-icon-height: 175px;
 		justify-content: flex-start;
 		text-align: initial;
 	}
-	
+
 	.plugin-details-header__icon {
 		@include break-mobile {
 			width: 72px;
@@ -52,7 +52,7 @@ $mobile-icon-height: 175px;
 .plugin-details-header__banner {
 	padding-bottom: 34px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		display: none;
 	}
 }
@@ -62,23 +62,23 @@ $mobile-icon-height: 175px;
 	font-size: $font-title-large;
 	overflow-wrap: anywhere;
 	line-height: 40px;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 }
 
 .plugin-details-header__author {
 	font-size: $font-body;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 }
 
 .plugin-details-header__subtitle-separator {
 	padding: 0 16px;
-	color: #dddddd;
+	color: #ddd;
 	font-size: $font-body;
 }
 
 .plugin-details-header__description {
 	font-size: $font-title-small;
-	color: var( --studio-gray-80 );
+	color: var(--studio-gray-80);
 	padding: 24px 0;
 }
 
@@ -100,19 +100,19 @@ $mobile-icon-height: 175px;
 	.plugin-details-header__info-title {
 		font-size: $font-body-extra-small;
 		font-weight: 400;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 
 	.plugin-details-header__info-value {
 		font-size: $font-body;
-		color: var( --studio-gray-90 );
+		color: var(--studio-gray-90);
 	}
 }
 
 .plugin-details-header__tag-badge-container {
 	display: inline-block;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		margin-top: 12px;
 		display: block;
 	}
@@ -155,10 +155,10 @@ $mobile-icon-height: 175px;
 
 	.plugin-details-header__tags {
 		position: absolute;
-		top: calc( $mobile-icon-height + 25px );
+		top: calc($mobile-icon-height + 25px);
 		font-size: $font-body-extra-small;
-		color: var( --studio-gray-60 );
-	
+		color: var(--studio-gray-60);
+
 		@include break-mobile {
 			position: relative;
 			top: 0;
@@ -169,9 +169,9 @@ $mobile-icon-height: 175px;
 		margin-top: 16px;
 		margin-bottom: 30px;
 	}
-	
+
 	.plugin-details-header__description {
-		color: var( --studio-gray-70 );
+		color: var(--studio-gray-70);
 		padding: 0;
 	}
 

@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/partner-portal/primary/select-partner-key';
@@ -17,7 +16,7 @@ export default function DashboardOverview( {
 	search,
 	currentPage,
 	filter,
-}: SitesOverviewContextInterface ): ReactElement {
+}: SitesOverviewContextInterface ) {
 	const hasFetched = useSelector( hasFetchedPartner );
 	const isFetching = useSelector( isFetchingPartner );
 	const hasActiveKey = useSelector( hasActivePartnerKey );

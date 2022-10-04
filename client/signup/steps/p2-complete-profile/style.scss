@@ -22,17 +22,17 @@
 	height: 30px;
 	font-size: $font-body-extra-small;
 	line-height: 1.5;
-	border: 1px solid var( --p2-color-link );
-	border-radius: 40px; // stylelint-disable-line scales/radii
-	color: var( --p2-color-link );
+	border: 1px solid var(--p2-color-link);
+	border-radius: 40px; /* stylelint-disable-line scales/radii */
+	color: var(--p2-color-link);
 	display: block;
 	background: none;
 	margin: auto;
 
 	&:hover {
 		background: none;
-		color: var( --p2-color-link-dark );
-		border-color: var( --p2-color-link-dark );
+		color: var(--p2-color-link-dark);
+		border-color: var(--p2-color-link-dark);
 		cursor: pointer;
 	}
 }
@@ -43,7 +43,7 @@
 
 .p2-complete-profile__form {
 	.form-label {
-		color: var( --p2-color-text );
+		color: var(--p2-color-text);
 		font-weight: 500;
 	}
 }
@@ -56,12 +56,12 @@
 .p2-complete-profile__skip-btn.components-button {
 	display: inline;
 	width: auto;
-	color: var( --p2-color-link );
+	color: var(--p2-color-link);
 	font-size: inherit;
 
 	&:hover {
 		background: none;
-		color: var( --p2-color-link-dark );
+		color: var(--p2-color-link-dark);
 	}
 }
 

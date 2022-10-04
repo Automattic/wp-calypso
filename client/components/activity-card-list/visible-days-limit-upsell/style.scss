@@ -1,5 +1,5 @@
 .visible-days-limit-upsell__next-activity {
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		height: 80px;
 		padding: initial;
 	}
@@ -9,14 +9,7 @@
 	user-select: none;
 	pointer-events: none;
 
-	mask-image: linear-gradient(
-		to bottom,
-		rgba( 0, 0, 0, 0.8 ) 0,
-		rgba( 0, 0, 0, 0.4 ) 25%,
-		rgba( 0, 0, 0, 0.2 ) 50%,
-		rgba( 0, 0, 0, 0.1 ) 75%,
-		transparent 100%
-	);
+	mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0, rgba(0, 0, 0, 0.4) 25%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 100%);
 
 	// This is a placeholder activity card with no information,
 	// and including the time would only disrupt the timeline's

@@ -21,16 +21,16 @@
 		padding-bottom: 8px;
 		flex-grow: 1;
 		line-height: 16px;
-		max-width: calc( 100% - 32px );
+		max-width: calc(100% - 32px);
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			flex-wrap: nowrap;
 			flex-direction: row;
 		}
 	}
 
 	.log-item__subheader {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 	}
 

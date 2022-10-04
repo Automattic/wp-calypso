@@ -1,5 +1,6 @@
 // Actions for Individual Comments
 .comments__comment-actions {
+
 	align-items: center;
 	color: var( --color-text-subtle );
 	display: flex;
@@ -47,7 +48,7 @@
 		}
 
 		&.comments__comment-actions-read-more {
-			color: var( --color-primary );
+			color: var(--color-primary);
 			margin: 0 10px 0 -3px;
 			padding-left: 0;
 

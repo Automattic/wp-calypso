@@ -1,6 +1,7 @@
+import apiFetch from '@wordpress/api-fetch';
 import { useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 interface HasSeenWhatsNewModal {
 	hasSeenWhatsNewModal: boolean;
@@ -15,18 +16,28 @@ interface UpdateError {
 	error: string;
 }
 
-export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSite: boolean ) => {
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
+
+export const useHasSeenWhatsNewModalQuery = ( siteId: number | null ) => {
 	const queryKey = 'has-seen-whats-new-modal';
 
 	const { data, isLoading } = useQuery< { has_seen_whats_new_modal: boolean } >(
 		queryKey,
 		() =>
-			wpcomRequest( {
-				path: `/sites/${ siteId }/block-editor/has-seen-whats-new-modal`,
-				apiNamespace: 'wpcom/v2',
-			} ),
+			canAccessWpcomApis()
+				? wpcomRequest( {
+						path: `/block-editor/has-seen-whats-new-modal`,
+						apiNamespace: 'wpcom/v2',
+				  } )
+				: apiFetch( {
+						global: true,
+						path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+				  } as APIFetchOptions ),
 		{
-			enabled: !! siteId && isSimpleSite,
+			enabled: !! siteId,
 			refetchOnWindowFocus: false,
 		}
 	);
@@ -34,14 +45,20 @@ export const useHasSeenWhatsNewModalQuery = ( siteId: number | null, isSimpleSit
 	const queryClient = useQueryClient();
 	const mutation = useMutation< HasSeenWhatsNewModalResult, UpdateError, HasSeenWhatsNewModal >(
 		( { hasSeenWhatsNewModal } ) =>
-			wpcomRequest( {
-				path: `/sites/${ siteId }/block-editor/has-seen-whats-new-modal`,
-				apiNamespace: 'wpcom/v2',
-				method: 'post',
-				body: {
-					has_seen_whats_new_modal: hasSeenWhatsNewModal,
-				},
-			} ),
+			canAccessWpcomApis()
+				? wpcomRequest( {
+						path: `/block-editor/has-seen-whats-new-modal`,
+						apiNamespace: 'wpcom/v2',
+						method: 'PUT',
+						body: {
+							has_seen_whats_new_modal: hasSeenWhatsNewModal,
+						},
+				  } )
+				: apiFetch( {
+						path: `/wpcom/v2/block-editor/has-seen-whats-new-modal`,
+						method: 'PUT',
+						data: { has_seen_whats_new_modal: hasSeenWhatsNewModal },
+				  } ),
 		{
 			onSuccess( data ) {
 				queryClient.setQueryData( queryKey, {

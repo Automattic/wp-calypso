@@ -5,15 +5,8 @@
 	height: 18px;
 	margin: 0;
 	padding: 0;
-	background: var( --color-neutral-10 );
-	background: linear-gradient(
-		to bottom,
-		transparent,
-		transparent 8px,
-		var( --color-neutral-10 ) 8px,
-		var( --color-neutral-10 ) 10px,
-		transparent 10px
-	);
+	background: var(--color-neutral-10);
+	background: linear-gradient(to bottom, transparent, transparent 8px, var(--color-neutral-10) 8px, var(--color-neutral-10) 10px, transparent 10px);
 }
 
 .form-range:focus {
@@ -24,13 +17,7 @@
 	height: 26px;
 	width: 26px;
 	border: none;
-	background: radial-gradient(
-		var( --color-primary ),
-		var( --color-primary ) 6px,
-		var( --color-primary-dark ) 7px,
-		transparent 8px,
-		transparent
-	);
+	background: radial-gradient(var(--color-primary), var(--color-primary) 6px, var(--color-primary-dark) 7px, transparent 8px, transparent);
 	cursor: pointer;
 }
 

@@ -1,13 +1,15 @@
 .taxonomy-manager {
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
 }
 
 .taxonomy-manager__header {
 	display: flex;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
-	background: var( --color-surface );
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
+	background: var(--color-surface);
 }
 
 .taxonomy-manager__header .search-card {
@@ -35,7 +37,7 @@
 }
 
 .taxonomy-manager__list-item {
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 }
 
 .taxonomy-manager__list-item-card {
@@ -52,13 +54,13 @@
 
 	.taxonomy-manager__icon {
 		padding: 15px;
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		.gridicon {
 			display: block;
 		}
 	}
 	&.is-default .taxonomy-manager__icon {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	.taxonomy-manager__label {
@@ -74,13 +76,13 @@
 
 		.taxonomy-manager__list-item.is-placeholder & {
 			color: transparent;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
 		.taxonomy-manager__default-label {
 			text-transform: uppercase;
-			color: var( --color-accent );
+			color: var(--color-accent);
 			font-size: $font-body-extra-small;
 			margin-left: 10px;
 		}
@@ -103,7 +105,7 @@
 		.ellipsis-menu__toggle.button.is-borderless {
 			cursor: pointer;
 			font-size: $font-title-medium;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			padding: 15px 24px;
 			min-width: 24px;
 			.gridicon {
@@ -112,12 +114,12 @@
 		}
 
 		&.is-menu-visible .ellipsis-menu__toggle.button.is-borderless {
-			color: var( --color-accent );
+			color: var(--color-accent);
 		}
 	}
 }
 
 .taxonomy-manager .virtual-list__list-row.is-empty {
 	padding: 16px 24px;
-	box-shadow: 0 0 0 1px rgba( 200, 215, 225, 0.5 ), 0 1px 2px #e9eff3;
+	box-shadow: 0 0 0 1px rgba(200, 215, 225, 0.5), 0 1px 2px #e9eff3;
 }

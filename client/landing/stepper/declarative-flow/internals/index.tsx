@@ -1,9 +1,11 @@
 import { ProgressBar } from '@automattic/components';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -84,27 +86,36 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
 
+	const getDocumentHeadTitle = () => {
+		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
+			return flow.title;
+		}
+	};
+
 	return (
-		<Switch>
-			{ stepPaths.map( ( path ) => {
-				return (
-					<Route key={ path } path={ `/${ path }` }>
-						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-							<ProgressBar
-								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-								className="flow-progress"
-								value={ progressValue * 100 }
-								total={ 100 }
-							/>
-							<SignupHeader pageTitle={ flow.title } />
-							{ renderStep( path ) }
-						</div>
-					</Route>
-				);
-			} ) }
-			<Route>
-				<Redirect to={ stepPaths[ 0 ] + search } />
-			</Route>
-		</Switch>
+		<>
+			<DocumentHead title={ getDocumentHeadTitle() } />
+			<Switch>
+				{ stepPaths.map( ( path ) => {
+					return (
+						<Route key={ path } path={ `/${ path }` }>
+							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+								<ProgressBar
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									className="flow-progress"
+									value={ progressValue * 100 }
+									total={ 100 }
+								/>
+								<SignupHeader pageTitle={ flow.title } />
+								{ renderStep( path ) }
+							</div>
+						</Route>
+					);
+				} ) }
+				<Route>
+					<Redirect to={ stepPaths[ 0 ] + search } />
+				</Route>
+			</Switch>
+		</>
 	);
 };

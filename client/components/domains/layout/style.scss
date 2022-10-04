@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .two-columns-layout {
 	@include break-xlarge {
 		display: grid;
-		grid-template-columns: minmax( 0, 1fr ) 315px;
+		grid-template-columns: minmax(0, 1fr) 315px;
 		column-gap: 48px;
 	}
 

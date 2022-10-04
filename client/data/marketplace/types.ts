@@ -27,8 +27,8 @@ export type Plugin = {
 	icon?: string;
 	railcar: Railcar;
 	variations?: {
-		monthly: { product_slug: string };
-		yearly: { product_slug: string };
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
 	};
 };
 

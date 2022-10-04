@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -15,11 +16,11 @@ import {
 	getSiteObjectsWithPlugin,
 	getSiteObjectsWithoutPlugin,
 } from 'calypso/state/plugins/installed/selectors';
+import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { isFetching as isWporgPluginFetchingSelector } from 'calypso/state/plugins/wporg/selectors';
 import getSelectedOrAllSites from 'calypso/state/selectors/get-selected-or-all-sites';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -41,8 +42,9 @@ export default function PluginDetailsV2( {
 	showPlaceholder,
 	isMarketplaceProduct,
 	isWpcom,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const siteIds: any = [ ...new Set( siteObjectsToSiteIds( sitesWithPlugins ) ) ];
 	const sitesWithPlugin = useSelector( ( state ) =>
@@ -51,6 +53,13 @@ export default function PluginDetailsV2( {
 	const sitesWithoutPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithoutPlugin( state, siteIds, pluginSlug )
 	);
+
+	useEffect( () => {
+		return () => {
+			dispatch( resetPluginStatuses() );
+		};
+	}, [ dispatch ] );
+
 	const selectedOrAllSites = useSelector( getSelectedOrAllSites );
 
 	const isLoading = useSelector( ( state ) => isWporgPluginFetchingSelector( state, pluginSlug ) );
@@ -84,35 +93,39 @@ export default function PluginDetailsV2( {
 				sites={ sitesWithPlugins }
 				plugins={ [ fullPlugin ] }
 			/>
-			<div className="plugin-details__page legacy">
-				<div className="plugin-details__layout plugin-details__top-section">
-					<div className="plugin-details__layout-col-left">
-						<PluginDetailsHeader
-							isJetpackCloud
-							plugin={ fullPlugin }
-							isPlaceholder={ showPlaceholder }
-						/>
+			<div className="plugin-details-v2__top-container">
+				<div className="plugin-details__page legacy">
+					<div className="plugin-details__layout plugin-details__top-section">
+						<div className="plugin-details__layout-col-left">
+							<PluginDetailsHeader
+								isJetpackCloud
+								plugin={ fullPlugin }
+								isPlaceholder={ showPlaceholder }
+							/>
+						</div>
 					</div>
 				</div>
-			</div>
-			<SitesWithInstalledPluginsList
-				sites={ sitesWithPlugin }
-				selectedSite={ selectedSite }
-				isLoading={ isLoading }
-				plugin={ fullPlugin }
-			/>
-			<PluginAvailableOnSitesList
-				sites={ sitesWithoutPlugin }
-				selectedSite={ selectedSite }
-				isLoading={ isLoading }
-				plugin={ fullPlugin }
-			/>
-			{ fullPlugin.fetched && (
-				<PluginDetailsBody
-					fullPlugin={ fullPlugin }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					isWpcom={ isWpcom }
+				<SitesWithInstalledPluginsList
+					sites={ sitesWithPlugin }
+					selectedSite={ selectedSite }
+					isLoading={ isLoading }
+					plugin={ fullPlugin }
 				/>
+				<PluginAvailableOnSitesList
+					sites={ sitesWithoutPlugin }
+					selectedSite={ selectedSite }
+					isLoading={ isLoading }
+					plugin={ fullPlugin }
+				/>
+			</div>
+			{ fullPlugin.fetched && (
+				<div className="plugin-details-v2__body-container">
+					<PluginDetailsBody
+						fullPlugin={ fullPlugin }
+						isMarketplaceProduct={ isMarketplaceProduct }
+						isWpcom={ isWpcom }
+					/>
+				</div>
 			) }
 		</div>
 	);

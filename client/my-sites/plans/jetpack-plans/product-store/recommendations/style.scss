@@ -1,0 +1,17 @@
+.jetpack-product-store__recommendations {
+	padding: 4em 0;
+}
+
+.jetpack-product-store__recommendations--title {
+	text-align: center;
+}
+
+.jetpack-product-store__recommendations--logos {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	list-style-type: none;
+	margin: 0 auto;
+	gap: 1.5em;
+}

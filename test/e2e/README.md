@@ -25,7 +25,7 @@ Calypso E2E requires the following:
 
 - [NodeJS 16.13](https://nodejs.org/en/blog/release/v16.17.0/) or higher
 - [TypeScript 4.5](https://www.staging-typescript.org/docs/handbook/release-notes/typescript-4-5.html) or higher
-- [Playwright 1.22](https://playwright.dev/docs/release-notes#version-122) or higher
+- [Playwright 1.23](https://playwright.dev/docs/release-notes#version-123) or higher
 - [yarn 3.1](https://github.com/yarnpkg/berry) or higher
 
 ## Quick start

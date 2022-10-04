@@ -1,7 +1,6 @@
 import { ResponsiveToolbarGroup } from '@automattic/components';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks'; // eslint-disable-line no-restricted-imports
 import type { Category } from '../../types';
-import type { ReactElement } from 'react';
 import './style.scss';
 
 interface Props {
@@ -10,11 +9,7 @@ interface Props {
 	onSelect: ( selectedSlug: string | null ) => void;
 }
 
-export function UnifiedDesignPickerCategoryFilter( {
-	categories,
-	onSelect,
-	selectedSlug,
-}: Props ): ReactElement | null {
+export function UnifiedDesignPickerCategoryFilter( { categories, onSelect, selectedSlug }: Props ) {
 	const onClick = ( index: number ) => {
 		const category = categories[ index ];
 

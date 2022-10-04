@@ -1,31 +1,31 @@
 .domain-security-details {
-    &__card {
-        font-size: $font-body-small;
-        color: var( --studio-gray-80 );
-        display: flex;
-        flex-direction: column;
-        row-gap: 8px;
-    }
+	&__card {
+		font-size: $font-body-small;
+		color: var(--studio-gray-80);
+		display: flex;
+		flex-direction: column;
+		row-gap: 8px;
+	}
 
-    &__icon {
-        display: flex;
-        align-items: center;
-        font-weight: 500;
+	&__icon {
+		display: flex;
+		align-items: center;
+		font-weight: 500;
 
-        svg {
-            margin: 0 8px 0 3px;
-        }
+		svg {
+			margin: 0 8px 0 3px;
+		}
 
-        &--warning {
-            svg {
-                fill: var( --studio-orange-40 );
-            }
-        }
+		&--warning {
+			svg {
+				fill: var(--studio-orange-40);
+			}
+		}
 
-        &--success {
-            svg {
-                fill: var( --studio-green-50 );
-            }
-        }
-    }
+		&--success {
+			svg {
+				fill: var(--studio-green-50);
+			}
+		}
+	}
 }

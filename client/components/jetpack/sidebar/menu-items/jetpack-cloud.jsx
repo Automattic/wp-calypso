@@ -14,6 +14,7 @@ import {
 import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -25,14 +26,15 @@ export default ( { path } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
+	const isAgency = useSelector( isAgencyUser );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasBackups = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
 	);
 	const hasScan = useSelector( ( state ) => siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) );
 
-	const onNavigate = () => {
-		dispatch( recordTracksEvent( 'calypso_jetpack_sidebar_settings_clicked' ) );
+	const onNavigate = ( event ) => () => {
+		dispatch( recordTracksEvent( event ) );
 
 		setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
@@ -62,7 +64,7 @@ export default ( { path } ) => {
 					socialClicked: 'calypso_jetpack_sidebar_social_clicked',
 				} }
 			/>
-			{ isPluginManagementEnabled && (
+			{ isPluginManagementEnabled && isAgency && (
 				<SidebarItem
 					// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 					customIcon={ <Icon className="sidebar__menu-icon" size={ 28 } icon={ plugins } /> }
@@ -70,7 +72,7 @@ export default ( { path } ) => {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }
 					link={ pluginsPath( siteSlug ) }
-					onNavigate={ onNavigate }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_plugins_clicked' ) }
 					selected={ itemLinkMatches( pluginsPath( siteSlug ), path ) }
 				/>
 			) }
@@ -81,7 +83,7 @@ export default ( { path } ) => {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }
 					link={ settingsPath( siteSlug ) }
-					onNavigate={ onNavigate }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_settings_clicked' ) }
 					selected={ itemLinkMatches( settingsPath( siteSlug ), path ) }
 				/>
 			) }
@@ -92,7 +94,7 @@ export default ( { path } ) => {
 						comment: 'Jetpack sidebar navigation item',
 					} ) }
 					link={ purchasesPath( siteSlug ) }
-					onNavigate={ onNavigate }
+					onNavigate={ onNavigate( 'calypso_jetpack_sidebar_purchases_clicked' ) }
 					selected={ itemLinkMatches( purchasesBasePath(), path ) }
 				/>
 			) }

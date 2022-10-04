@@ -2,8 +2,9 @@
 	margin: 24px 0 0;
 
 	.is-link {
-		&:focus, &:active {
-			color: var( --color-neutral-20 );
+		&:focus,
+		&:active {
+			color: var(--color-neutral-20);
 		}
 	}
 }
@@ -25,11 +26,11 @@
 	right: 8px;
 	padding: 0;
 	cursor: pointer;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 
 	&:hover,
 	&:focus {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 	}
 
 	.gridicon {
@@ -41,7 +42,7 @@
 	max-width: 500px;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		text-align: left;
 	}
 }
@@ -62,7 +63,7 @@
 		margin: 16px 0 0;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		width: 100%;
 		min-height: 80px;
 		position: relative;
@@ -106,17 +107,17 @@
 	font-weight: 600;
 	margin-left: 8px;
 	text-transform: uppercase;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	&.is-enabled {
-		color: var( --color-success );
+		color: var(--color-success);
 	}
 }
 
 .notification-settings-push-notification-settings__settings-description {
 	margin-bottom: 0;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-right: 130px;
 	}
 }
@@ -124,10 +125,10 @@
 .notification-settings-push-notification-settings__settings-button {
 	margin-top: 8px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 0;
 		position: absolute;
-	 	bottom: 24px;
+		bottom: 24px;
 		right: 24px;
 	}
 }

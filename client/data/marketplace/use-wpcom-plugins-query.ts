@@ -1,11 +1,11 @@
-import { useQuery, UseQueryResult, UseQueryOptions, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, UseQueryOptions, QueryKey, QueryFunction } from 'react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
 	normalizePluginData,
 } from 'calypso/lib/plugins/utils';
 import wpcom from 'calypso/lib/wp';
-import { BASE_STALE_TIME } from './constants';
+import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
 type Type = 'all' | 'featured';
 
@@ -37,6 +37,16 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 	);
 };
 
+export const getWPCOMPluginsQueryParams = (
+	type: Type,
+	searchTerm?: string,
+	tag?: string
+): [ QueryKey, QueryFunction< { results: Array< { [ plugin: string ]: Plugin } > } > ] => {
+	const cacheKey = getCacheKey( type + searchTerm + tag );
+	const fetchFn = () => fetchWPCOMPlugins( type, searchTerm, tag );
+	return [ cacheKey, fetchFn ];
+};
+
 /**
  * Returns marketplace plugins list filtered by searchterm and type.
  *
@@ -52,16 +62,12 @@ export const useWPCOMPlugins = (
 	tag?: string,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	return useQuery(
-		getCacheKey( type + searchTerm + tag + `${ enabled ? 'enabled' : 'disabled' }` ),
-		() => fetchWPCOMPlugins( type, searchTerm, tag ),
-		{
-			select: ( data ) => normalizePluginsList( data.results ),
-			enabled: enabled,
-			staleTime: staleTime,
-			refetchOnMount: refetchOnMount,
-		}
-	);
+	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
+		select: ( data ) => normalizePluginsList( data.results ),
+		enabled: enabled,
+		staleTime: staleTime,
+		refetchOnMount: refetchOnMount,
+	} );
 };
 
 const fetchWPCOMPlugin = ( slug: string ) => {
@@ -90,6 +96,16 @@ export const useWPCOMPlugin = (
 	} );
 };
 
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
+	const cacheKey = 'plugins-featured-list';
+	const fetchFn = () =>
+		wpcom.req.get( {
+			path: featuredPluginsApiBase,
+			apiNamespace: pluginsApiNamespace,
+		} );
+	return [ cacheKey, fetchFn ];
+};
+
 /**
  * Returns the featured list of plugins from WPCOM
  *
@@ -101,18 +117,10 @@ export const useWPCOMFeaturedPlugins = ( {
 	staleTime = BASE_STALE_TIME,
 	refetchOnMount = true,
 }: UseQueryOptions = {} ): UseQueryResult => {
-	return useQuery(
-		'plugins-featured-list',
-		() =>
-			wpcom.req.get( {
-				path: featuredPluginsApiBase,
-				apiNamespace: pluginsApiNamespace,
-			} ),
-		{
-			select: ( data ) => normalizePluginsList( data ),
-			enabled,
-			staleTime,
-			refetchOnMount,
-		}
-	);
+	return useQuery( ...getWPCOMFeaturedPluginsQueryParams(), {
+		select: ( data ) => normalizePluginsList( data ),
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };

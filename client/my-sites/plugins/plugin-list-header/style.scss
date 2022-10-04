@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .plugin-list-header.section-header.card {
 	.section-header__actions {
@@ -15,6 +15,7 @@
 
 	.button-group {
 		margin-left: 8px;
+		display: inherit;
 	}
 
 	&.is-placeholder {
@@ -27,15 +28,10 @@
 		display: none;
 	}
 
-	.button-group {
-		margin-left: 8px;
-		display: inherit;
-	}
-
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding-right: 16px;
 	}
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		&.is-action-bar-visible {
 			.plugin-list-header__actions-dropdown {
 				display: none;
@@ -48,14 +44,14 @@
 }
 
 .plugin-list-header__section-actions-close {
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 
 	&:focus {
-		border-color: var( --color-accent );
-		box-shadow: 0 0 0 2px var( --color-primary-light );
+		border-color: var(--color-accent);
+		box-shadow: 0 0 0 2px var(--color-primary-light);
 	}
 }
 
@@ -64,10 +60,10 @@
 }
 
 .plugin-list-header__actions-remove-item {
-	color: var( --color-error );
+	color: var(--color-error);
 
 	&.is-disabled {
-		color: var( --color-error-5 );
+		color: var(--color-error-5);
 	}
 }
 
@@ -84,9 +80,17 @@
 	flex-grow: 1;
 }
 
+.theme-jetpack-cloud .plugin-list-header-new .bulk-select .form-checkbox {
+	&:checked::before {
+		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+	}
+}
+
 .plugin-list-header-new {
+	height: 60px;
 	margin-block-start: 8px;
 	&.section-header.card {
+		align-items: center;
 		margin-inline-start: 0;
 		margin-inline-end: 0;
 		padding-inline-start: 16px;
@@ -95,7 +99,7 @@
 			margin-inline-start: 1px;
 			margin-inline-end: 1px;
 		}
-		&:not( .is-bulk-editing ) {
+		&:not(.is-bulk-editing) {
 			@include break-xlarge() {
 				display: none;
 			}
@@ -126,7 +130,7 @@
 			flex-grow: 0;
 			justify-content: end;
 			.bulk-select__some-checked-icon {
-				color: var( --color-jetpack );
+				color: var(--color-jetpack);
 			}
 		}
 	}
@@ -134,26 +138,19 @@
 		.count {
 			display: none;
 		}
-		.form-checkbox {
-			&:checked::before {
-				content: url( '/calypso/images/checkbox-icons/checkmark-jetpack.svg' );
-			}
-		}
-	}
-	.plugin-list-header__action-buttons {
-		justify-content: end;
 	}
 	.plugin-list-header__bulk-select-wrapper {
 		display: flex;
 		align-items: center;
 	}
 	.plugin-list-header__bulk-select-label {
+		margin-inline-end: 16px;
 		font-size: 0.75rem;
 		font-weight: bold;
-		
+
 		span {
 			display: none;
-			@include breakpoint-deprecated( '>960px' ) {
+			@include breakpoint-deprecated( ">960px" ) {
 				display: inline;
 			}
 		}
@@ -161,6 +158,7 @@
 	.plugin-list-header__actions-dropdown {
 		margin-inline-start: auto;
 	}
+
 	.plugin-list-header__mode-buttons {
 		flex-grow: 0;
 		margin-inline-start: 16px;
@@ -168,7 +166,24 @@
 			margin-inline-start: 32px;
 		}
 	}
-	.plugin-list-header__bulk-select-label {
-		margin-inline-end: 16px;
+
+	.plugin-list-header__action-buttons {
+		justify-content: end;
+
+		button.plugin-list-header__buttons-action-button {
+			color: var(--studio-gray-80);
+		}
+
+		button {
+			&:disabled {
+				background: var(--studio-gray-5);
+				color: var(--studio-gray-30);
+				border: none;
+			}
+
+			&:not(:first-child):disabled {
+				border-left: 1px solid  var(--studio-gray-10);
+			}
+		}
 	}
 }

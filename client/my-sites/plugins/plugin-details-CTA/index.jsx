@@ -295,6 +295,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						type="a"
 						className="plugin-details-CTA__install-button"
 						primary
+						onClick={ ( e ) => e.stopPropagation() }
 						href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
 					>
 						{ translate( 'View plans' ) }

@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/mixins";
 
 .swipeable__container {
 	width: 100%;
@@ -18,7 +18,7 @@
 	align-items: flex-start;
 	transition: all 0.5s ease-in-out;
 	transition-property: transform, height;
-	@include reduce-motion( 'transition' );
+	@include reduce-motion( "transition" );
 }
 
 .swipeable__page {

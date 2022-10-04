@@ -1,7 +1,7 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/z-index';
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/z-index";
 
 $sidebar-width: 272px;
 $sidebar-transition-period: 100ms;
@@ -17,24 +17,26 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	right: 0;
 	bottom: 0;
 	// Use the same z-index as the edit-post-layout header
-	z-index: z-index( '.interface-interface-skeleton__header' );
-	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out
+	z-index: z-index(".interface-interface-skeleton__header");
+	animation:
+		wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-out
 		forwards;
-	@include reduce-motion( 'animation' );
+	@include reduce-motion( "animation" );
 
 	&.is-fading-out {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in
+		animation:
+			wpcom-block-editor-nav-sidebar-nav-sidebar__fade $sidebar-transition-period ease-in
 			reverse;
-		@include reduce-motion( 'animation' );
+		@include reduce-motion( "animation" );
 	}
 }
 
 @keyframes wpcom-block-editor-nav-sidebar-nav-sidebar__fade {
 	0% {
-		background-color: rgba( $black, 0 );
+		background-color: rgba($black, 0);
 	}
 	100% {
-		background-color: rgba( $black, 0.7 );
+		background-color: rgba($black, 0.7);
 	}
 }
 
@@ -49,12 +51,13 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	flex-direction: column;
 	box-shadow: -5px 0 20px $black;
 	animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-out;
-	@include reduce-motion( 'animation' );
+	@include reduce-motion( "animation" );
 
 	&.is-sliding-left {
-		animation: wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in
+		animation:
+			wpcom-block-editor-nav-sidebar-nav-sidebar__slide $sidebar-transition-period ease-in
 			reverse;
-		@include reduce-motion( 'animation' );
+		@include reduce-motion( "animation" );
 	}
 }
 
@@ -120,7 +123,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	margin: 12px 0;
 
 	&:hover,
-	&:not( [aria-disabled='true'] ):active {
+	&:not([aria-disabled="true"]):active {
 		color: $white;
 	}
 

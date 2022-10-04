@@ -1,29 +1,29 @@
-@use 'sass:math';
+@use "sass:math";
 
 $faq-gutter-width: 24px;
 
 .faq {
 	padding: 0 16px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0 24px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		padding: 0;
 	}
 }
 
 .faq__heading {
 	margin-bottom: 32px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-title-medium;
 }
 
 .faq__list {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 math.div( $faq-gutter-width, -2 );
+	margin: 0 math.div($faq-gutter-width, -2);
 	list-style: none;
 }
 
@@ -36,28 +36,28 @@ $faq-gutter-width: 24px;
 	padding-left: ( $faq-gutter-width * 0.5 );
 	padding-right: ( $faq-gutter-width * 0.5 );
 
-	@include breakpoint-deprecated( '480px-660px' ) {
+	@include breakpoint-deprecated( "480px-660px" ) {
 		width: 50%;
 	}
 
-	@include breakpoint-deprecated( '800px-1040px' ) {
+	@include breakpoint-deprecated( "800px-1040px" ) {
 		width: 50%;
 	}
 
-	@include breakpoint-deprecated( '>1040px' ) {
-		width: math.div( 100%, 3 );
+	@include breakpoint-deprecated( ">1040px" ) {
+		width: math.div(100%, 3);
 	}
 }
 
 .faq__question {
 	margin-bottom: 12px;
 	font-weight: 600;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .faq__answer {
 	margin-bottom: 1em;
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 
 	a {
 		text-decoration: underline;

@@ -9,7 +9,7 @@
 		overflow: hidden;
 
 		&:focus-visible {
-			box-shadow: 0 0 0 2px var( --color-primary );
+			box-shadow: 0 0 0 2px var(--color-primary);
 		}
 	}
 
@@ -20,7 +20,7 @@
 	// Crops the Android badge in order to remove the transparent space around it and generate a size-equivalent image
 	// to the iOS badge.
 	&.android-app-badge img {
-		transform: scale( 1.13 ) translate( -7px, -5.1px );
+		transform: scale(1.13) translate(-7px, -5.1px);
 		transform-origin: left;
 	}
 }

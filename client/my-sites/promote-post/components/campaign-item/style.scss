@@ -25,13 +25,19 @@
 			flex-direction: column;
 			justify-content: space-around;
 
-			.campaign-item__post-type {
-				color: var( --color-neutral-50 );
-				font-size: 0.875rem;
+			.campaign-item__display-name {
+				color: var(--color-neutral-50);
+				font-size: 0.75rem;
 			}
 
 			.campaign-item__header-title {
 				font-weight: 500;
+				font-size: 1.25rem;
+				margin: 4px 0;
+			}
+
+			.campaign-item__header-status .badge {
+				font-size: 0.75rem;
 			}
 		}
 	}
@@ -41,8 +47,7 @@
 
 		.campaign-item__row {
 			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
+			flex-flow: row wrap;
 			width: 100%;
 			margin-top: 20px;
 			margin-bottom: 20px;
@@ -60,7 +65,8 @@
 					font-size: 1rem;
 				}
 
-				.campaign-item__reach-value, .campaign-item__clicks-value {
+				.campaign-item__reach-value,
+				.campaign-item__clicks-value {
 					font-size: 1.5rem;
 					font-weight: 600;
 				}
@@ -75,7 +81,8 @@
 		margin-bottom: 10px;
 	}
 
-	.campaign-item__target-value {
+	.campaign-item__target-value a {
 		word-break: break-all;
+		color: var(--color-text);
 	}
 }

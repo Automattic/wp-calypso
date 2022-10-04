@@ -23,6 +23,7 @@ export interface ProductListItem {
 	is_domain_registration: boolean;
 	cost_display: string;
 	cost: number;
+	cost_smallest_unit: number;
 	currency_code: string;
 	introductory_offer?: ProductIntroductoryOffer;
 	price_tier_list: PriceTierEntry[];

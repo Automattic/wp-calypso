@@ -46,6 +46,7 @@ export interface Purchase {
 	productId: number;
 	productName: string;
 	productSlug: string;
+	productType: string;
 	purchaseRenewalQuantity: number | null;
 	refundAmount: number;
 	refundOptions: RefundOptions | null;
@@ -61,6 +62,7 @@ export interface Purchase {
 	totalRefundAmount: number;
 	totalRefundText: string;
 	userId: number;
+	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
 	tagLine: string;
 	taxAmount: number | string | undefined;
@@ -135,6 +137,7 @@ export interface RawPurchase {
 	product_id: number | string;
 	product_name: string;
 	product_slug: string;
+	product_type: string;
 	product_display_price: string;
 	total_refund_amount: number | undefined;
 	total_refund_text: string;

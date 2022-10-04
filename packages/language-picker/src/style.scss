@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .language-picker-component {
 	flex-direction: column;
@@ -30,7 +30,7 @@
 
 		.components-custom-select-control__button {
 			// less the width of the search button plus the border
-			width: calc( 100% - 60px );
+			width: calc(100% - 60px);
 			height: 100%;
 			font-size: 0.875rem;
 		}
@@ -54,7 +54,7 @@
 		flex: 1 1 auto;
 		margin-bottom: 12px;
 
-		.search-component__input[type='search'] {
+		.search-component__input[type="search"] {
 			font-size: 0.875rem;
 
 			@include break-small() {
@@ -64,7 +64,7 @@
 
 		.search-component.is-open {
 			border-radius: 2px;
-			box-shadow: 0 0 0 1px var( --color-primary );
+			box-shadow: 0 0 0 1px var(--color-primary);
 
 			.search-component__input {
 				border-radius: 2px;
@@ -96,7 +96,7 @@
 		padding-bottom: 4px;
 		&.is-selected {
 			padding-bottom: 2px;
-			border-bottom: 2px solid var( --color-primary );
+			border-bottom: 2px solid var(--color-primary);
 		}
 	}
 

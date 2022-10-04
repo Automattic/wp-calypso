@@ -52,7 +52,8 @@ export const WordpressImporter: React.FunctionComponent< Props > = ( props ) => 
 	 */
 	function installJetpack() {
 		recordTracksEvent( 'calypso_site_importer_install_jetpack' );
-		window.open( `/jetpack/connect/?url=${ fromSite }`, '_blank' );
+		const source = 'import';
+		window.open( `/jetpack/connect/?url=${ fromSite }&source=${ source }`, '_blank' );
 	}
 
 	function switchToMigrationScreen() {

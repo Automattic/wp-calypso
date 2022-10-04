@@ -1,4 +1,5 @@
 import { StepContainer } from '@automattic/onboarding';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import DIFMLanding from 'calypso/my-sites/marketing/do-it-for-me/difm-landing';
 import type { Step } from '../../types';
@@ -21,6 +22,8 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 		goNext?.();
 	};
 
+	const siteId = useSite()?.ID;
+
 	return (
 		<StepContainer
 			stepName={ STEP_NAME }
@@ -30,7 +33,12 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
 			stepContent={
-				<DIFMLanding onSubmit={ onSubmit } onSkip={ onSkip } isInOnboarding={ true } />
+				<DIFMLanding
+					onSubmit={ onSubmit }
+					onSkip={ onSkip }
+					isInOnboarding={ true }
+					siteId={ siteId }
+				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
 		/>

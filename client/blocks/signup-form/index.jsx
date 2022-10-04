@@ -790,7 +790,7 @@ class SignupForm extends Component {
 	termsOfServiceLink = () => {
 		const tosText = this.props.translate(
 			'By creating an account you agree to our {{tosLink}}Terms of Service{{/tosLink}} and' +
-				' acknowledge that you have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
+				' have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 			{
 				components: {
 					tosLink: (
@@ -1089,6 +1089,7 @@ class SignupForm extends Component {
 						logInUrl={ logInUrl }
 						disabled={ this.props.disabled }
 						disableSubmitButton={ this.props.disableSubmitButton }
+						queryArgs={ this.props.queryArgs }
 					/>
 
 					{ ! config.isEnabled( 'desktop' ) &&
@@ -1143,6 +1144,7 @@ class SignupForm extends Component {
 						socialService={ this.props.socialService }
 						socialServiceResponse={ this.props.socialServiceResponse }
 						isReskinned={ this.props.isReskinned }
+						flowName={ this.props.flowName }
 					/>
 				) }
 

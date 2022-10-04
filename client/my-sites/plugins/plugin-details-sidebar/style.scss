@@ -1,7 +1,7 @@
 .plugin-details-sidebar__plugin-details-title {
 	padding: 15px 0;
 	display: none;
-	color: var( --studio-gray-100 );
+	color: var(--studio-gray-100);
 	font-size: $font-body-small;
 
 	@media screen and ( max-width: 1040px ) {
@@ -14,15 +14,15 @@
 	padding: 32px 0;
 	border-style: solid none;
 	border-width: 1px;
-	border-color: #eeeeee;
+	border-color: #eee;
 
 	.title {
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: $font-body-extra-small;
 	}
 
 	.value {
-		color: var( --studio-gray-90 );
+		color: var(--studio-gray-90);
 		font-size: $font-body-small;
 		padding-bottom: 16px;
 

@@ -14,25 +14,25 @@
 .verification__step-waiting,
 .verification__step-unknown {
 	.gridicon {
-		fill: var( --color-neutral );
+		fill: var(--color-neutral);
 	}
 }
 
 .verification__step-active {
 	.gridicon {
-		fill: var( --color-secondary );
+		fill: var(--color-secondary);
 	}
 }
 
 .verification__step-good {
 	.gridicon {
-		fill: var( --color-success );
+		fill: var(--color-success);
 	}
 }
 
 .verification__step-bad {
 	.gridicon {
-		fill: var( --color-error );
+		fill: var(--color-error);
 	}
 }
 
@@ -58,7 +58,7 @@
 		}
 
 		span {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 	}
 }

@@ -14,7 +14,7 @@
 	line-height: 16px;
 	padding: 4px 2px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-body-small;
 		line-height: 18px;
 		padding: 8px 12px;

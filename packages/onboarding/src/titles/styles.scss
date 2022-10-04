@@ -1,9 +1,9 @@
-@import '../../styles/variables.scss';
-@import '../../styles/mixins.scss';
+@import "../../styles/variables.scss";
+@import "../../styles/mixins.scss";
 
 .onboarding-title {
 	@include onboarding-heading-text-mobile;
-	color: var( --mainColor );
+	color: var(--mainColor);
 	margin: 0;
 
 	@include break-mobile {
@@ -20,7 +20,7 @@
 	font-family: $default-font;
 	font-weight: normal;
 	letter-spacing: 0.2px;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 	margin: 5px 0 0;
 
 	@include break-small {

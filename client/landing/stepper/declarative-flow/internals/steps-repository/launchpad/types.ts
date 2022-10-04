@@ -1,6 +1,7 @@
 export interface Task {
 	id: string;
 	isCompleted: boolean;
+	keepActive?: boolean;
 	actionUrl: string;
 	taskType: string;
 	title?: string;
@@ -8,6 +9,7 @@ export interface Task {
 	badgeText?: string;
 	dependencies?: boolean[];
 	actionDispatch?: () => void;
+	isLaunchTask?: boolean;
 }
 
 export interface LaunchpadFlowTaskList {
@@ -16,6 +18,7 @@ export interface LaunchpadFlowTaskList {
 
 export interface TranslatedLaunchpadStrings {
 	flowName: string;
-	sidebarTitle: string;
-	sidebarSubtitle: string;
+	title: string;
+	launchTitle?: string;
+	subtitle: string;
 }

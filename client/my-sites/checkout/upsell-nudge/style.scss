@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .upsell-nudge__placeholders {
 	display: flex;
@@ -7,7 +7,7 @@
 
 	.is-placeholder {
 		animation: pulse-light 800ms ease-in-out infinite;
-		background: var( --color-neutral-10 );
+		background: var(--color-neutral-10);
 	}
 }
 
@@ -21,7 +21,7 @@
 	height: 50px;
 	width: 100%;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 80px;
 		height: 40px;
 	}
@@ -44,7 +44,7 @@
 .upsell-nudge__form-placeholder {
 	width: 100%;
 	margin-top: 64px;
-	margin-right: 0px;
+	margin-right: 0;
 	@include break-medium {
 		width: 60%;
 		margin-right: 8px;
@@ -55,7 +55,7 @@
 .upsell-nudge__benefits-placeholder {
 	width: 100%;
 	margin-top: 64px;
-	margin-left: 0px;
+	margin-left: 0;
 	@include break-medium {
 		width: 40%;
 		margin-left: 8px;

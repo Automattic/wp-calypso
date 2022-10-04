@@ -1,19 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
-import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
+import { Purchase } from 'calypso/lib/purchases/types';
+import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 
 type OwnProps = {
-	purchaseId?: number;
+	purchase: Purchase;
 };
 
-const OwnerInfo: React.FC< OwnProps > = ( { purchaseId } ) => {
+const OwnerInfo: React.FC< OwnProps > = ( { purchase } ) => {
 	const translate = useTranslate();
-	const userOwnsPurchase = useSelector( ( state ) =>
-		purchaseId !== undefined ? getUserOwnsPurchase( state, purchaseId ) : false
-	);
+	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 
-	return userOwnsPurchase ? null : (
+	return isCurrentUserPurchaseOwner( purchase ) ? null : (
 		<InfoPopover className="owner-info__pop-over" showOnHover>
 			<span>
 				{ translate(

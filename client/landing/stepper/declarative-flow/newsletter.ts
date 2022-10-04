@@ -1,7 +1,8 @@
-import { isEnabled } from '@automattic/calypso-config';
+import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
@@ -16,41 +17,44 @@ export const newsletter: Flow = {
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
 		}, [] );
 
-		return [
-			'intro',
-			'newsletterSetup',
-			'completingPurchase',
-			'processing',
-			'subscribers',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
-		] as StepPath[];
+		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const name = this.name;
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStep,
+			flowName,
+		} );
 		setStepProgress( flowProgress );
+		const locale = useLocale();
+
+		const getStartUrl = () => {
+			return locale && locale !== 'en'
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`;
+		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}
-					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
-					);
+					return window.location.assign( logInUrl );
 
 				case 'newsletterSetup':
-					return window.location.replace(
-						`/start/${ name }/domains?new=${ encodeURIComponent(
+					return window.location.assign(
+						`/start/${ flowName }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
 							( typeof providedDependencies.siteAccentColor === 'string' &&
@@ -58,13 +62,6 @@ export const newsletter: Flow = {
 								? `&siteAccentColor=${ encodeURIComponent( providedDependencies.siteAccentColor ) }`
 								: '' )
 					);
-
-				case 'completingPurchase':
-					return navigate( 'processing' );
-
-				case 'processing': {
-					return navigate( providedDependencies?.destination as StepPath );
-				}
 
 				case 'subscribers':
 					return navigate( 'launchpad' );
@@ -78,7 +75,7 @@ export const newsletter: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'launchpad':
-					return window.location.replace( `/view/${ siteSlug }` );
+					return window.location.assign( `/view/${ siteSlug }` );
 
 				default:
 					return navigate( 'intro' );

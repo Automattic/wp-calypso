@@ -1,11 +1,11 @@
 import './style.scss';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
@@ -20,8 +20,13 @@ export type TabOption = {
 	id: TabType;
 	name: string;
 };
-export default function PromotedPosts() {
-	const [ selectedTab, setSelectedTab ] = useState< TabType >( 'posts' );
+
+interface Props {
+	tab?: TabType;
+}
+
+export default function PromotedPosts( { tab }: Props ) {
+	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { isLoading: campaignsIsLoading, data: campaignsData } = useCampaignsQuery(
 		selectedSiteId ?? 0
@@ -36,29 +41,58 @@ export default function PromotedPosts() {
 		page( '/' );
 	}
 
+	const learnMoreLink = <InlineSupportLink supportContext="advertising" showIcon={ false } />;
+
+	const subtitle = campaignsData?.length
+		? translate(
+				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: learnMoreLink,
+					},
+				}
+		  )
+		: translate(
+				'Promote a post to attract high-quality traffic to your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				{
+					components: {
+						learnMoreLink: learnMoreLink,
+					},
+				}
+		  );
+
 	return (
 		<Main wideLayout className="promote-post">
 			<DocumentHead title={ translate( 'Advertising' ) } />
 			<SitePreview />
 			<FormattedHeader
 				brandFont
-				className="advertising-page-heading"
+				className="advertising__page-header"
 				headerText={ translate( 'Advertising' ) }
+				subHeaderText={ subtitle }
 				align="left"
-				hasScreenOptions
 			/>
-			<DocumentHead title={ translate( 'Advertising' ) } />
 			<SitePreview />
 			{ ! campaignsData?.length && ! campaignsIsLoading && <PostsListBanner /> }
-			<PromotePostTabBar
-				tabs={ tabs }
-				selectedTab={ selectedTab }
-				selectTab={ ( tab ) => setSelectedTab( tab ) }
-			/>
+			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && campaignsData && (
 				<CampaignsList isLoading={ campaignsIsLoading } campaigns={ campaignsData } />
 			) }
 			{ selectedTab === 'posts' && <PostsList /> }
+
+			<div className="promote-post__footer">
+				<p>
+					By promoting your post you agree to{ ' ' }
+					<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer">
+						WordPress.com Terms
+					</a>{ ' ' }
+					and{ ' ' }
+					<a href="https://automattic.com/privacy/" target={ 'blank' }>
+						Advertising Terms
+					</a>
+					.
+				</p>
+			</div>
 		</Main>
 	);
 }

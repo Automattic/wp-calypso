@@ -2,6 +2,7 @@ import { TERM_MONTHLY, TERM_ANNUALLY } from '@automattic/calypso-products';
 import JetpackBoostWelcomePage from 'calypso/components/jetpack/jetpack-boost-welcome';
 import JetpackFreeWelcomePage from 'calypso/components/jetpack/jetpack-free-welcome';
 import JetpackSocialWelcomePage from 'calypso/components/jetpack/jetpack-social-welcome';
+import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -64,7 +65,7 @@ export const productSelect =
 
 		const enableUserLicensesDialog = !! (
 			siteId &&
-			( isJetpackCloud() || context.path.startsWith( '/jetpack/connect/plans' ) )
+			( isJetpackCloud() || context.path.startsWith( JPC_PATH_PLANS ) )
 		);
 
 		context.primary = (

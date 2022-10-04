@@ -8,7 +8,7 @@
 			border: none !important;
 			box-shadow: none !important;
 
-			&[aria-disabled='true'] {
+			&[aria-disabled="true"] {
 				opacity: 0.3 !important;
 			}
 		}

@@ -1,7 +1,7 @@
-@use 'sass:math';
+@use "sass:math";
 
-@import '@automattic/typography/styles/fonts';
-@import 'assets/stylesheets/gutenberg-base-styles';
+@import "@automattic/typography/styles/fonts";
+@import "assets/stylesheets/gutenberg-base-styles";
 
 // Override core variables: we don't have wp-admin header and sidebar in Calypso
 // Targetting styles from `@wordpress/edit-post`
@@ -12,17 +12,17 @@ $admin-sidebar-width-big: 0;
 $admin-sidebar-width-collapsed: 0;
 
 // Gutenberg styles
-@import '@wordpress/edit-post/src/style.scss';
-@import '@wordpress/block-editor/src/style.scss';
-@import '@wordpress/format-library/src/style.scss';
+@import "@wordpress/edit-post/src/style.scss";
+@import "@wordpress/block-editor/src/style.scss";
+@import "@wordpress/format-library/src/style.scss";
 
 // Own/Gutenboarding styles
-@import './variables.scss';
+@import "./variables.scss";
 
 .gutenboarding__content-editor {
 	// overrides .edit-post-visual-editor
 	padding-top: 0;
-	background-color: #ffffff;
+	background-color: #fff;
 
 	// hide the block toolbar
 	.block-editor-block-list__block-popover,
@@ -36,17 +36,17 @@ $admin-sidebar-width-collapsed: 0;
 }
 
 input:disabled {
-	background: var( --color-neutral-0 );
-	border-color: var( --color-neutral-0 );
-	color: var( --color-neutral-20 );
+	background: var(--color-neutral-0);
+	border-color: var(--color-neutral-0);
+	color: var(--color-neutral-20);
 	opacity: 1;
-	-webkit-text-fill-color: var( --color-neutral-20 );
+	-webkit-text-fill-color: var(--color-neutral-20);
 
 	&:hover {
 		cursor: default;
 	}
 
 	&::placeholder {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 }

@@ -1,8 +1,8 @@
 import { plugins, registerStore, use } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
+import persistOptions from '../one-week-persistence-config';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
-import persistOptions from './persist';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';

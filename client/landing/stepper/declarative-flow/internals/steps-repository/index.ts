@@ -35,12 +35,11 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
-export { default as completingPurchase } from './completing-purchase';
+export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
 export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
-export { default as promote } from './promote';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 
 export type StepPath =
@@ -81,10 +80,9 @@ export type StepPath =
 	| 'letsGetStarted'
 	| 'chooseADomain'
 	| 'linkInBioSetup'
+	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
-	| 'completingPurchase'
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'promote'
 	| 'getCurrentThemeSoftwareSets';

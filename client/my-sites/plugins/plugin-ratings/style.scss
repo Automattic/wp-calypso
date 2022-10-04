@@ -12,7 +12,7 @@
 	display: flex;
 	align-items: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline-block;
 		margin-right: 8px;
 	}
@@ -25,10 +25,10 @@
 .plugin-ratings__rating-text,
 .plugin-ratings__num-ratings {
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	margin-bottom: 16px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline;
 		line-height: 24px;
 		vertical-align: top;
@@ -42,7 +42,7 @@
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	white-space: pre;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -75,11 +75,11 @@
 		position: relative;
 		border-radius: 0;
 		height: 8px;
-		background-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
 	}
 
 	.progress-bar__progress {
 		border-radius: 0;
-		background-color: var( --color-accent );
+		background-color: var(--color-accent);
 	}
 }

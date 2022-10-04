@@ -6,24 +6,24 @@
 	max-width: 640px;
 
 	opacity: 1;
-	filter: blur( 0 );
-	transform: translateZ( 0 ) translateX( 0 );
+	filter: blur(0);
+	transform: translateZ(0) translateX(0);
 	transition: 0.5s ease-in-out opacity, 0.5s ease-in-out filter, 0.5s ease-in-out transform;
 }
 
 .tile-grid__item {
 	transition: all 100ms ease-in-out;
 	position: relative;
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	border-bottom: 0;
 	margin: 0 10px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		box-shadow: none; //inherited from .card, remove for mobile only
 		width: 100%;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		padding: 0;
 		margin-bottom: 20px;
 		width: 230px;
@@ -33,37 +33,37 @@
 		border: 0;
 
 		&:hover {
-			box-shadow: 0 0 0 1px var( --color-neutral-light ), 0 2px 4px var( --color-neutral-10 );
+			box-shadow: 0 0 0 1px var(--color-neutral-light), 0 2px 4px var(--color-neutral-10);
 		}
 	}
 
 	&:active {
 		.tile-grid__cta {
-			color: var( --color-primary-dark );
+			color: var(--color-primary-dark);
 		}
 
 		.tile-grid__item-link::after {
-			border-top-color: var( --color-primary-dark );
-			border-right-color: var( --color-primary-dark );
+			border-top-color: var(--color-primary-dark);
+			border-right-color: var(--color-primary-dark);
 		}
 	}
 
 	&:first-child {
-		border-top-right-radius: 6px;
-		border-top-left-radius: 6px;
+		border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
+		border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			border-radius: 0;
 		}
 	}
 
 	&:last-child {
 		margin-bottom: 20px;
-		border: 1px solid var( --color-neutral-10 );
-		border-bottom-right-radius: 6px;
-		border-bottom-left-radius: 6px;
+		border: 1px solid var(--color-neutral-10);
+		border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
+		border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			border-radius: 0;
 			border: 0;
 		}
@@ -72,16 +72,17 @@
 	&.is-card-link {
 		padding-right: 0;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			padding-right: 40px;
 		}
 	}
 
 	&.is-highlighted {
-		box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 3px var( --color-primary-light );
+		box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 3px var(--color-primary-light);
 	}
 
-	a, svg {
+	a,
+	svg {
 		display: block;
 		width: 100%; // Safari fix
 	}
@@ -89,7 +90,7 @@
 	.card__link-indicator {
 		display: none;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			display: block;
 			width: 8px; //Match the size of the cta copy
 			height: 8px; //Match the size of the cta copy
@@ -97,10 +98,10 @@
 			top: 50%;
 			right: 15px;
 			margin-top: -6px;
-			border-top: 2px solid var( --color-neutral-10 );
-			border-right: 2px solid var( --color-neutral-10 );
-			transform: rotate( 45deg );
-			color: var( --color-text-inverted );
+			border-top: 2px solid var(--color-neutral-10);
+			border-right: 2px solid var(--color-neutral-10);
+			transform: rotate(45deg);
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -108,7 +109,7 @@
 .tile-grid__image {
 	display: none;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: block;
 	}
 
@@ -119,26 +120,26 @@
 	}
 }
 
-@include breakpoint-deprecated( '>480px' ) {
+@include breakpoint-deprecated( ">480px" ) {
 	.tile-grid__item-copy {
 		padding: 15px;
-		border-top: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+		border-top: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
 	}
 }
 
 .tile-grid__item-label {
-	color: var( --color-primary );
+	color: var(--color-primary);
 	padding: 0;
 	position: relative;
 }
 
 .tile-grid__item-description {
 	margin: 0;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	font-size: $font-body-small;
 	line-height: 1.5;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: 10px;
 
 		&:first-child {
@@ -148,9 +149,9 @@
 }
 
 .button.tile-grid__cta {
-	color: var( --color-primary );
+	color: var(--color-primary);
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		background: none;
 		text-align: left;
 		font-size: $font-body;

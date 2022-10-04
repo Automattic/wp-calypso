@@ -4,11 +4,11 @@
 
 		&.all-time__is-best .gridicon,
 		&.all-time__is-best .label {
-			color: var( --color-primary );
+			color: var(--color-primary);
 		}
 
 		.all-time__best-day {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: $font-body-extra-small;
 			box-sizing: border-box;
 			display: block;

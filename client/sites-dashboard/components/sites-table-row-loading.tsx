@@ -24,11 +24,12 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
-	vertical-align: block-start;
+	vertical-align: middle;
 `;
 
 const TitleRow = styled.div`
 	display: flex;
+	align-items: center;
 `;
 
 const FullWidth = styled.div`

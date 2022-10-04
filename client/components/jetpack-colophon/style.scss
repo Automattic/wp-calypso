@@ -1,7 +1,7 @@
 .jetpack-colophon {
 	margin-top: 40px;
 	text-align: center;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 
 	.jetpack-logo {
 		display: inline-block;
@@ -10,7 +10,7 @@
 	.jetpack-logo__icon-circle {
 		fill: currentColor;
 	}
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		font-size: $font-body-small;
 		margin-bottom: 24px;
 	}

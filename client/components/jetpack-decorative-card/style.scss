@@ -1,9 +1,9 @@
 .jetpack-decorative-card {
 	width: 100%;
 	max-width: 360px;
-	border-radius: 8px; // stylelint-disable-line scales/radii
+	border-radius: 8px; /* stylelint-disable-line scales/radii */ // stylelint-disable-line scales/radii
 	overflow: hidden;
-	box-shadow: 0 0 40px var( --studio-gray-20 );
+	box-shadow: 0 0 40px var(--studio-gray-20);
 	margin: 0 auto;
 	margin-bottom: 3rem;
 
@@ -27,7 +27,7 @@
 
 	&__body {
 		padding: 2rem;
-		background: var( --studio-white );
+		background: var(--studio-white);
 		display: flex;
 		justify-content: center;
 	}

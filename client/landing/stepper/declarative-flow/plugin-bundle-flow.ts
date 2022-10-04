@@ -25,6 +25,7 @@ import type { StepPath } from './internals/steps-repository';
 import type { BundledPlugin } from './plugin-bundle-data';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
+const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
 export const pluginBundleFlow: Flow = {
@@ -55,6 +56,7 @@ export const pluginBundleFlow: Flow = {
 		return steps.concat( bundlePluginSteps );
 	},
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -111,10 +113,16 @@ export const pluginBundleFlow: Flow = {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+						pendingActions.push(
+							setThemeOnSite(
+								siteSlug,
+								WRITE_INTENT_DEFAULT_THEME,
+								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
+							)
+						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
@@ -125,7 +133,7 @@ export const pluginBundleFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			switch ( currentStep ) {
 				case 'storeAddress':

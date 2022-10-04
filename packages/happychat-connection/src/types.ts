@@ -1,5 +1,6 @@
 export interface User {
 	ID: number;
+	language: string;
 }
 
 export interface GeoLocation {
@@ -9,17 +10,22 @@ export interface GeoLocation {
 	city: string;
 }
 
+export interface Jwt {
+	jwt: string;
+}
+
 export interface HappychatSession {
 	session_id: number;
 	geo_location: GeoLocation;
+	url: string;
 }
 
 export interface HappychatUser {
 	signer_user_id: number;
-	locale: string | null;
 	groups?: string[];
 	skills?: {
 		product: string[];
+		language: string[];
 	};
 	geoLocation?: GeoLocation;
 }
@@ -44,6 +50,7 @@ export interface ConnectionProps {
 export interface AvailabilityConnectionProps {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveUnauthorized?: ( message: string ) => void;
+	receiveStatus?: ( status: string ) => void;
 }
 
 export interface HappychatAuth {

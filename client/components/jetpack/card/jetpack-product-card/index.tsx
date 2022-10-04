@@ -1,11 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { SVG, Path } from '@wordpress/components';
 import classNames from 'classnames';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
 import { createElement, ReactNode, useEffect, useRef } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import HintButton from 'calypso/my-sites/plans/jetpack-plans/product-lightbox/hint-button';
 import DisplayPrice from './display-price';
 import JetpackProductCardFeatures from './features';
 import type {
@@ -48,7 +46,6 @@ type OwnProps = {
 	showAbovePriceText?: boolean;
 	scrollCardIntoView?: ScrollCardIntoViewCallback;
 	collapseFeaturesOnMobile?: boolean;
-	onLearnMoreClick?: React.MouseEventHandler;
 };
 
 type HeaderLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -90,7 +87,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 	aboveButtonText = null,
 	scrollCardIntoView,
 	collapseFeaturesOnMobile,
-	onLearnMoreClick,
 } ) => {
 	const isFree = item.isFree;
 
@@ -236,9 +232,6 @@ const JetpackProductCard: React.FC< OwnProps > = ( {
 				) }
 				{ item.disclaimer && (
 					<span className="jetpack-product-card__disclaimer">{ item.disclaimer }</span>
-				) }
-				{ isEnabled( 'jetpack/pricing-page-product-lightbox' ) && (
-					<HintButton onClick={ onLearnMoreClick } />
 				) }
 			</div>
 		</div>

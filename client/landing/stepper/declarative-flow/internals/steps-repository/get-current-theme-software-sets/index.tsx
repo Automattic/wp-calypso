@@ -4,12 +4,14 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 
 const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep( { navigation } ) {
 	const site = useSite();
+	const isPluginBundleEligible = useIsPluginBundleEligible();
 	const siteSlugParam = useSiteSlugParam();
 	let siteSlug: string | null = null;
 	if ( siteSlugParam ) {
@@ -42,6 +44,13 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ currentTheme?.id ] );
+
+	useEffect( () => {
+		if ( ! isPluginBundleEligible ) {
+			window.location.replace( `/home/${ siteSlug }` );
+		}
+	}, [ isPluginBundleEligible, siteSlug ] );
+
 	return null;
 };
 export default GetCurrentThemeSoftwareSets;

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { ReactElement } from 'react';
 
 const SupportLinkContainer = styled.p`
 	@media ( max-width: 320px ) {
@@ -19,13 +18,7 @@ const SupportLinkStyle = styled.a`
 	font-weight: bold;
 `;
 
-export default function SupportCard( {
-	domain,
-	backUrl,
-}: {
-	domain: string;
-	backUrl?: string;
-} ): ReactElement {
+export default function SupportCard( { domain, backUrl }: { domain: string; backUrl?: string } ) {
 	domain = domain?.replace( /http[s]*:\/\//, '' );
 
 	return (

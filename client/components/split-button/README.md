@@ -50,6 +50,16 @@ Whether the button is compact or not.
 </table>
 
 Whether the button is styled as a primary button.
+### `whiteSeparator`
+
+<table>
+	<tr><td>Type</td><td><code>PropTypes.bool</code></td></tr>
+    <tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>false</code></td></tr>
+</table>
+
+When the split button has the primary color, it has not any separator. This prop `whiteSeparator` will add line between the button and the toggle button.
+For non primary buttons, it could be used to hide the separator, because the line would blend with the white background.
 
 ### `scary`
 
@@ -71,6 +81,14 @@ Whether the button has modified styling to warn users (delete, remove, etc).es
 
 Callback that will be invoked when menu button is clicked.
 Will be passed the click event.
+### `href`
+
+<table>
+	<tr><td>Type</td><td>string</td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+String used to build a link `a` instead of a `button` element.
 
 ### `onToggle`
 

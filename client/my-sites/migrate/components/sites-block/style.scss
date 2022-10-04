@@ -3,8 +3,8 @@
 	flex-direction: row;
 	flex-wrap: nowrap;
 
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
-	background-color: var( --color-surface );
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	background-color: var(--color-surface);
 
 	& > * {
 		flex-grow: 1;
@@ -13,7 +13,7 @@
 
 	.sites-block__sites-arrow-wrapper {
 		width: 1px;
-		border-left: 1px solid var( --color-border-subtle );
+		border-left: 1px solid var(--color-border-subtle);
 		overflow: visible;
 		flex-grow: 0;
 		flex-shrink: 0;
@@ -26,8 +26,8 @@
 			left: -16px;
 			background: white;
 			padding: 5px;
-			top: calc( 50% - 16px );
-			color: var( --color-text-subtle );
+			top: calc(50% - 16px);
+			color: var(--color-text-subtle);
 		}
 	}
 
@@ -50,7 +50,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		&.is-step-source-select {
 			.sites-block__sites-arrow-wrapper,
 			.sites-block__target-site {
@@ -83,7 +83,7 @@
 		height: 32px;
 		width: 32px;
 		line-height: 32px;
-		border: 1px dashed var( --color-border );
+		border: 1px dashed var(--color-border);
 		position: relative;
 		overflow: hidden;
 		align-self: flex-start;
@@ -99,7 +99,7 @@
 	}
 
 	.sites-block__faux-site-selector-label {
-		color: var( --color-text );
+		color: var(--color-text);
 		display: block;
 		font-size: $font-body;
 		font-weight: 400;

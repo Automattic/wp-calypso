@@ -3,7 +3,6 @@ export const CONTACT_DETAILS_FORM_FIELDS = [
 	'lastName',
 	'organization',
 	'email',
-	'alternateEmail',
 	'phone',
 	'address1',
 	'address2',

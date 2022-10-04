@@ -1,8 +1,7 @@
-import { shouldTargetWpcom } from '@automattic/help-center';
 import apiFetch from '@wordpress/api-fetch';
 import { filter, forEach, compact, partition, get } from 'lodash';
 import { v4 as uuid } from 'uuid';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import wpcom from 'calypso/lib/wp';
 import readerContentWidth from 'calypso/reader/lib/content-width';
@@ -27,7 +26,7 @@ function trackRailcarRender( post ) {
 	tracks.recordTracksEvent( 'calypso_traintracks_render', post.railcar );
 }
 
-function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
+function fetchForKey( postKey, isHelpCenter = false ) {
 	const query = {};
 
 	const contentWidth = readerContentWidth();
@@ -37,7 +36,7 @@ function fetchForKey( postKey, isHelpCenter = false, isSimpleSite = true ) {
 
 	if ( postKey.blogId ) {
 		if ( isHelpCenter ) {
-			return shouldTargetWpcom( isSimpleSite )
+			return canAccessWpcomApis()
 				? wpcomRequest( {
 						path: `help/article/${ encodeURIComponent( postKey.blogId ) }/${ encodeURIComponent(
 							postKey.postId
@@ -127,7 +126,7 @@ export const receivePosts = ( posts ) => ( dispatch ) => {
 
 const requestsInFlight = new Set();
 export const fetchPost =
-	( postKey, isHelpCenter = false, isSimpleSite = true ) =>
+	( postKey, isHelpCenter = false ) =>
 	( dispatch ) => {
 		const requestKey = keyToString( postKey );
 		if ( requestsInFlight.has( requestKey ) ) {
@@ -138,7 +137,7 @@ export const fetchPost =
 		function removeKey() {
 			requestsInFlight.delete( requestKey );
 		}
-		return fetchForKey( postKey, isHelpCenter, isSimpleSite )
+		return fetchForKey( postKey, isHelpCenter )
 			.then( ( data ) => {
 				removeKey();
 				return dispatch( receivePosts( [ data ] ) );

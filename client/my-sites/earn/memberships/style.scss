@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .memberships__module-header {
-	background: var( --color-surface );
+	background: var(--color-surface);
 	height: 40px;
 	line-height: 40px;
 	padding-left: 24px;
@@ -13,7 +13,7 @@
 	@extend %mobile-interface-element;
 	@extend %placeholder;
 
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-weight: 600;
 	height: 40px; // 1
 	overflow: hidden; // 1
@@ -55,7 +55,7 @@
 }
 .memberships__onboarding-paragraph {
 	font-size: $font-body;
-	color: var( --color-text );
+	color: var(--color-text);
 
 	.button {
 		margin-top: 16px;
@@ -65,11 +65,11 @@
 	font-size: $font-body-small;
 }
 .memberships__onboarding-benefits {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 	padding-top: 8px;
 
 	@include break-medium {
@@ -80,7 +80,7 @@
 .memberships__onboarding-benefits > div {
 	margin: 16px 0;
 	flex-basis: 100%;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
 	@include break-small {
 		flex-basis: 48%;
@@ -93,7 +93,7 @@
 .memberships__onboarding-benefits > div > h3 {
 	font-size: $font-title-small;
 	line-height: 27px;
-	color: var( --color-text );
+	color: var(--color-text);
 }
 
 .memberships__earnings-breakdown-list {
@@ -101,13 +101,13 @@
 }
 
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 	font-size: $font-body-small;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
 	text-transform: uppercase;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-extra-small;
 		line-height: 1.6;
 	}
@@ -120,7 +120,7 @@
 	list-style-type: none;
 	text-align: center;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: auto;
 		float: none;
 		padding: 10px 24px;
@@ -129,13 +129,13 @@
 }
 
 .memberships__earnings-breakdown-label {
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 	font-size: $font-body-small;
 	letter-spacing: 0.1em;
 	line-height: 1.8;
 	text-transform: uppercase;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body-extra-small;
 		line-height: 1.6;
 	}
@@ -146,7 +146,7 @@
 	display: block;
 	font-size: $font-title-medium;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: auto;
 		float: right;
 		font-size: $font-body;
@@ -156,7 +156,7 @@
 .memberships__subscriber-profile {
 	position: relative;
 	@include clear-fix;
-	border-bottom: 1px solid var( --color-neutral-0 );
+	border-bottom: 1px solid var(--color-neutral-0);
 	box-shadow: none;
 
 	&.is-placeholder {
@@ -164,7 +164,7 @@
 		.memberships__subscriber-email,
 		.gravatar.is-placeholder {
 			color: transparent;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			animation: loading-fade 1.6s ease-in-out infinite;
 		}
 
@@ -182,7 +182,7 @@
 	width: 56px !important;
 	height: 56px !important;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 72px !important;
 		height: 72px !important;
 	}
@@ -191,13 +191,13 @@
 .memberships__subscriber-detail {
 	margin-left: 80px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		margin-left: 96px;
 	}
 }
 
 .memberships__subscriber-username {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body;
 	font-weight: 600;
 	white-space: pre;
@@ -205,7 +205,7 @@
 	overflow: hidden;
 	position: relative;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-title-small;
 	}
 
@@ -215,17 +215,17 @@
 }
 
 .memberships__subscriber-email {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		font-size: $font-body;
 		margin-top: -3px;
 	}
 }
 
 .memberships__subscriber-subscribed {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-extra-small;
 	margin-top: 4px;
 }
@@ -235,22 +235,22 @@
 }
 
 .memberships__module-plans-title {
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 }
 
 .memberships__module-settings-title {
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 	display: flex;
 	align-items: center;
 }
 
 .memberships__module-settings-description {
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 	font-size: $font-body-small;
 }
 
 .memberships__module-plans-description {
-	color: var( --color-neutral-100 );
+	color: var(--color-neutral-100);
 	font-size: $font-body-small;
 }
 
@@ -264,7 +264,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: var( --color-neutral-60 );
+	color: var(--color-neutral-60);
 }
 
 .memberships__module-products-list-icon {
@@ -278,17 +278,17 @@
 	flex-grow: 1;
 }
 .memberships__products-product-price {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-size: $font-body;
 	line-height: 1.5;
 }
 .memberships__products-product-title {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 }
 .memberships__earnings-breakdown-notes {
 	clear: both;
-	color: var( --color-neutral-30 );
+	color: var(--color-neutral-30);
 	padding-bottom: 12px;
 	padding-top: 24px;
 	font-size: $font-body-extra-small;
@@ -305,23 +305,20 @@
 
 .memberships__dialog-nav.section-nav {
 	box-shadow: none;
-	border-bottom: 1px solid var( --color-neutral-5 );
+	border-bottom: 1px solid var(--color-neutral-5);
 }
 
 .memberships__dialog-sections {
 	display: grid;
-	grid-template: 'item' 1fr / 1fr;
+	grid-template: "item" 1fr / 1fr;
 }
 
 .memberships__dialog-section {
 	grid-area: item; // Sections are displayed in the same grid area so the dialog takes the size of the biggest section.
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	&.is-visible {
-		z-index: z-index(
-			'.dialog__backdrop',
-			'.memberships__dialog-section.is-visible'
-		); // Visible section is placed above so it hides the ones below.
+		z-index: z-index(".dialog__backdrop", ".memberships__dialog-section.is-visible"); // Visible section is placed above so it hides the ones below.
 	}
 }
 
@@ -339,17 +336,17 @@
 	margin-bottom: 4px;
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 
 	&.is-warning {
-		color: var( --color-error );
+		color: var(--color-error);
 	}
 }
 
 .memberships__settings-section-desc {
 	margin-bottom: 0;
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-style: italic;
 }
 

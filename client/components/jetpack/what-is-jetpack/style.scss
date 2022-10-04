@@ -6,7 +6,7 @@
 	line-height: 21px;
 	padding: 16px;
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		flex-direction: row;
 	}
 
@@ -17,11 +17,11 @@
 	&__question {
 		margin-bottom: 12px;
 		font-weight: 600;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 
 	&__answer {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 
 		a {
 			text-decoration: underline;

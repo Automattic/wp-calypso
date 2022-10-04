@@ -1,9 +1,9 @@
 // Stats Pagination
 // I like lamp.
 
-$minimal-active: var( --studio-black );
-$minimal-inactive: var( --studio-gray-30 );
-$minimal-arrow-color: var( --studio-gray-50 );
+$minimal-active: var(--studio-black);
+$minimal-inactive: var(--studio-gray-30);
+$minimal-arrow-color: var(--studio-gray-50);
 $minimal-arrow-size: 24px;
 
 .pagination {
@@ -54,7 +54,7 @@ $minimal-arrow-size: 24px;
 				.pagination__list-button.button {
 					background-color: transparent;
 					color: $minimal-active;
-	
+
 					&:hover {
 						color: $minimal-active;
 					}
@@ -92,12 +92,12 @@ $minimal-arrow-size: 24px;
 	&.pagination__ellipsis span {
 		@extend %mobile-link-element;
 		padding: 8px 12px;
-		background-color: var( --color-surface );
-		border: solid 1px var( --color-neutral-10 );
+		background-color: var(--color-surface);
+		border: solid 1px var(--color-neutral-10);
 		border-right: none;
 		font-size: $font-body-small;
 		line-height: 18px;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		text-align: center;
 		border-radius: 0;
 		display: flex;
@@ -118,7 +118,7 @@ $minimal-arrow-size: 24px;
 	}
 
 	&:last-child .pagination__list-button.button.is-borderless {
-		border-right: solid 1px var( --color-neutral-10 );
+		border-right: solid 1px var(--color-neutral-10);
 		border-top-right-radius: 2px;
 		border-bottom-right-radius: 2px;
 	}
@@ -155,25 +155,25 @@ $minimal-arrow-size: 24px;
 }
 
 // // Hover/focus states
-.pagination__list-item .pagination__list-button.button.is-borderless:not( [disabled] ):hover,
+.pagination__list-item .pagination__list-button.button.is-borderless:not([disabled]):hover,
 .pagination__list-item .pagination__list-button.button.is-borderless:focus {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	outline: none;
 }
 
 // Selected state
 .pagination__list-item.is-selected .pagination__list-button.button.is-borderless {
-	border-color: var( --color-primary );
-	background-color: var( --color-primary );
-	color: var( --color-text-inverted );
+	border-color: var(--color-primary);
+	background-color: var(--color-primary);
+	color: var(--color-text-inverted);
 }
 
 .pagination__list-item.is-selected .pagination__list-button.button.is-borderless:hover {
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 }
 
 .pagination__list-item.is-selected + .pagination__list-item
-	.pagination__list-button.button.is-borderless {
+.pagination__list-button.button.is-borderless {
 	border-left: 0;
 }
 
@@ -181,5 +181,5 @@ $minimal-arrow-size: 24px;
 .pagination__ellipsis,
 .pagination__ellipsis:hover {
 	@extend %mobile-interface-element;
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 }

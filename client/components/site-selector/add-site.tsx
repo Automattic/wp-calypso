@@ -1,4 +1,4 @@
-import { Button, Gridicon } from '@automattic/components';
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -19,15 +19,13 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	}, [ dispatch ] );
 
 	return (
-		<span className="site-selector__add-new-site">
-			<Button
-				borderless
-				href={ `${ onboardingUrl() }?ref=calypso-selector` }
-				onClick={ recordAddNewSite }
-			>
-				<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
-			</Button>
-		</span>
+		<Button
+			primary
+			href={ `${ onboardingUrl() }?ref=calypso-selector` }
+			onClick={ recordAddNewSite }
+		>
+			{ translate( 'Add new site' ) }
+		</Button>
 	);
 };
 

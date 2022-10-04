@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, useDesignsBySite } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
@@ -9,6 +10,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -27,6 +29,7 @@ import {
 import type { StepPath } from './internals/steps-repository';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
+const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -72,12 +75,8 @@ export const siteSetupFlow: Flow = {
 			'difmStartingPoint',
 		] as StepPath[];
 	},
-	useSideEffect() {
-		const site = useSite();
-		// prefetch designs for a smooth design picker UX
-		useDesignsBySite( site );
-	},
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -93,6 +92,8 @@ export const siteSetupFlow: Flow = {
 		const isEnglishLocale = useIsEnglishLocale();
 		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
+		const isPluginBundleEligible = useIsPluginBundleEligible();
+		const isDesktop = useViewportMatch( 'large' );
 
 		let siteSlug: string | null = null;
 		if ( siteSlugParam ) {
@@ -140,10 +141,16 @@ export const siteSetupFlow: Flow = {
 						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
 					}
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push( setThemeOnSite( siteSlug, WRITE_INTENT_DEFAULT_THEME ) );
+						pendingActions.push(
+							setThemeOnSite(
+								siteSlug,
+								WRITE_INTENT_DEFAULT_THEME,
+								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
+							)
+						);
 					}
 
-					Promise.all( pendingActions ).then( () => window.location.replace( to ) );
+					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
 				} );
 			} );
 
@@ -154,7 +161,7 @@ export const siteSetupFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			switch ( currentStep ) {
 				case 'options': {
@@ -175,11 +182,15 @@ export const siteSetupFlow: Flow = {
 
 				case 'designSetup':
 					if (
-						( providedDependencies?.selectedDesign as Design )?.slug === 'blank-canvas-blocks'
+						isDesktop &&
+						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
 					) {
 						return navigate( 'patternAssembler' );
 					}
 
+					return navigate( 'processing' );
+
+				case 'patternAssembler':
 					return navigate( 'processing' );
 
 				case 'processing': {
@@ -187,6 +198,14 @@ export const siteSetupFlow: Flow = {
 
 					if ( processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
+					}
+
+					// End of Pattern Assembler flow
+					if (
+						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+						isBlankCanvasDesign( selectedDesign as Design )
+					) {
+						return exitFlow( `/site-editor/${ siteSlug }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -219,6 +238,7 @@ export const siteSetupFlow: Flow = {
 						isEnabled( 'themes/plugin-bundling' ) &&
 						theme_software_set &&
 						theme_software_set.length > 0 &&
+						isPluginBundleEligible &&
 						siteSlug
 					) {
 						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );

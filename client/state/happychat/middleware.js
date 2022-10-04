@@ -1,5 +1,4 @@
 import buildConnection from '@automattic/happychat-connection';
-import { get } from 'lodash';
 import {
 	HAPPYCHAT_BLUR,
 	HAPPYCHAT_FOCUS,
@@ -78,13 +77,8 @@ export const socketMiddleware = ( connection = null ) => {
 			case HAPPYCHAT_IO_SEND_MESSAGE_USERINFO:
 				// When user info is sent, pass it through in a message...
 				connection.send( action );
-				// ... and also set a few of the values in Custom Fields
-				store.dispatch(
-					setChatCustomFields( {
-						howCanWeHelp: get( action, 'payload.meta.howCanWeHelp', null ),
-						howYouFeel: get( action, 'payload.meta.howYouFeel', null ),
-					} )
-				);
+				// ... and also set a few of the values in Custom Fields (if any).
+				store.dispatch( setChatCustomFields( {} ) );
 				break;
 
 			case HAPPYCHAT_IO_SEND_MESSAGE_EVENT:

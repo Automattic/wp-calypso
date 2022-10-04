@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .upsell-product-card {
 	&__features {
@@ -17,7 +17,7 @@
 		}
 
 		.gridicon {
-			fill: var( --studio-jetpack-green-50 );
+			fill: var(--studio-jetpack-green-50);
 			margin-right: 8px;
 		}
 	}
@@ -33,7 +33,7 @@
 		padding: 0.125rem 0.5rem;
 		margin: 22px 0 0 16px;
 
-		background-color: var( --studio-yellow-10 );
+		background-color: var(--studio-yellow-10);
 		border-radius: 4px;
 
 		font-size: $font-body-small;
@@ -49,7 +49,7 @@
 	}
 
 	&__above-button {
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 		font-size: 0.875rem;
 		line-height: 1.2;
 	}
@@ -60,9 +60,9 @@ main.main.upsell-switch__loading.is_jetpackcom {
 }
 
 .display-price.is-placeholder .plan-price {
-	background: var( --studio-gray-5 );
+	background: var(--studio-gray-5);
 }
 
 .display-price.is-placeholder .display-price__billing-time-frame {
-	background: var( --studio-gray-5 );
+	background: var(--studio-gray-5);
 }

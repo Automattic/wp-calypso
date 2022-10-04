@@ -58,7 +58,7 @@ export default function TaxFields( {
 			<LeftColumn>
 				<CountrySelectMenu
 					translate={ translate }
-					onChange={ ( event: ChangeEvent< HTMLInputElement > ) => {
+					onChange={ ( event: ChangeEvent< HTMLSelectElement > ) => {
 						onChange( {
 							countryCode: { value: event.target.value, errors: [], isTouched: true },
 							postalCode: updatePostalCodeForCountry( postalCode, countryCode, countriesList ),

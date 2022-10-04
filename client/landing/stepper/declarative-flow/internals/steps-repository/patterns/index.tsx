@@ -6,17 +6,18 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
+import type { Pattern } from '@automattic/pattern-picker';
 
 import './styles.scss';
 
 const Patterns: Step = function Patterns( { navigation } ) {
 	const { goNext, goBack, submit } = navigation;
-	const { setPatternId } = useDispatch( ONBOARD_STORE );
+	const { setPatternContent } = useDispatch( ONBOARD_STORE );
 	const { __ } = useI18n();
 
-	function handleSubmit( patternId: number ) {
-		setPatternId( patternId );
-		submit?.( { patternId } );
+	function handleSubmit( pattern: Pattern ) {
+		setPatternContent( pattern.html );
+		submit?.( { patternContent: pattern.html } );
 	}
 
 	return (

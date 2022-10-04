@@ -1,78 +1,111 @@
-import { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
-import wpcomRequest from 'wpcom-proxy-request';
 import { SiteDetails } from '../site';
+import { useIsWpOrgSite } from './use-is-wporg-site';
+import { useUserSites } from './use-user-sites';
+import { useWpcomSite } from './use-wpcom-site';
 
-type ResultType = 'WPCOM' | 'WPORG' | 'UNKNOWN' | 'NOT_OWNED_BY_USER' | 'UNKNOWN';
+type ResultType =
+	| 'DISABLED'
+	| 'LOADING'
+	| 'OWNED_BY_USER'
+	| 'WPORG'
+	| 'UNKNOWN'
+	| 'NOT_OWNED_BY_USER'
+	| 'UNKNOWN';
 
 export type AnalysisReport = {
 	result: ResultType;
 	site?: SiteDetails;
-};
-
-type Analysis = {
-	url: string;
-	platform: string;
-	meta: {
-		title: string;
-		favicon: string;
-	};
-	platform_data?: { is_wpcom: boolean };
+	siteURL: string | undefined;
+	isWpcom: boolean;
 };
 
 // a simple way to check if a string is host to save on API calls
 function isHost( string: string | undefined ) {
 	if ( string ) {
-		return string.length > 4 && Boolean( string?.match( /\w{2,}\.\w{2,16}/ ) );
+		return string.length > 4 && Boolean( string?.match( /\w{2,}\.\w{2,32}/ ) );
 	}
 	return false;
+}
+
+function urlMatches( trustedURL: string, userInputUrl: string | undefined ) {
+	if ( ! trustedURL || ! userInputUrl ) {
+		return false;
+	}
+	const normalizedInputUrl = userInputUrl.trim().toLowerCase();
+
+	if ( trustedURL === normalizedInputUrl ) {
+		return true;
+	}
+	try {
+		const trustedURLObject = new URL( trustedURL );
+		if ( trustedURLObject.host === normalizedInputUrl ) {
+			return true;
+		}
+		const normalizedInputUrlObject = new URL( normalizedInputUrl );
+		if ( trustedURLObject.host === normalizedInputUrlObject.host ) {
+			return true;
+		}
+	} catch ( _e ) {
+		// couldn't build URL object
+		return false;
+	}
 }
 
 /**
  * Analyses a site to determine whether its a WPCOM site, and if yes, it would fetch and return the site information (SiteDetails).
  *
+ * @param userId the user ID
  * @param siteURL the site URL
+ * @param enabled whether the query is enabled
  */
-export function useSiteAnalysis( siteURL: string | undefined ) {
-	const [ analysis, setAnalysis ] = useState< AnalysisReport | undefined >();
+export function useSiteAnalysis(
+	userId: number | string,
+	siteURL: string | undefined,
+	enabled: boolean
+): AnalysisReport {
 	const [ debouncedSiteUrl ] = useDebounce( siteURL, 500 );
+	const isEnabled = isHost( debouncedSiteUrl ) && enabled;
+	const { data: userSites, isLoading: userSitesLoading } = useUserSites( userId, isEnabled );
+	const { data: wpcomSite, isLoading: wpcomSiteLoading } = useWpcomSite(
+		debouncedSiteUrl,
+		isEnabled
+	);
+	const { data: isWporg, isLoading: wpOrgSiteLoading } = useIsWpOrgSite(
+		debouncedSiteUrl,
+		isEnabled
+	);
 
-	useEffect( () => {
-		setAnalysis( undefined );
-		if ( ! isHost( debouncedSiteUrl ) ) {
-			return;
+	if ( ! isEnabled ) {
+		return {
+			result: 'DISABLED',
+			siteURL,
+			isWpcom: false,
+		};
+	}
+
+	const usersOwned = Boolean(
+		userSites?.sites.find( ( s ) => urlMatches( s.URL, debouncedSiteUrl ) )
+	);
+
+	if ( usersOwned ) {
+		return { site: wpcomSite, result: 'OWNED_BY_USER', siteURL, isWpcom: true };
+	} else if ( wpcomSite ) {
+		// use the wpcomSite response URL instead of user input to
+		// double check if the wpcom site belongs to the user before dismissing
+		if ( userSites?.sites.find( ( s ) => urlMatches( s.URL, wpcomSite.URL ) ) ) {
+			return { site: wpcomSite, result: 'OWNED_BY_USER', siteURL, isWpcom: true };
 		}
-		if ( debouncedSiteUrl ) {
-			( async () => {
-				try {
-					const analysis = await wpcomRequest< Analysis >( {
-						path: `/imports/analyze-url?site_url=${ encodeURIComponent( debouncedSiteUrl ) }`,
-						apiNamespace: 'wpcom/v2',
-					} );
+		return { site: wpcomSite, result: 'NOT_OWNED_BY_USER', siteURL, isWpcom: true };
+	} else if ( isWporg ) {
+		return { result: 'WPORG', siteURL, isWpcom: false };
+	}
 
-					if ( analysis.platform_data?.is_wpcom ) {
-						try {
-							// if a wpcom site, get its info
-							const site = await wpcomRequest< SiteDetails >( {
-								path: '/sites/' + encodeURIComponent( debouncedSiteUrl ),
-								apiVersion: '1.1',
-							} );
-							setAnalysis( { site, result: 'WPCOM' } );
-						} catch ( error ) {
-							// wpcom site, but not owned by user
-							setAnalysis( { result: 'NOT_OWNED_BY_USER' } );
-						}
-					} else if ( analysis.platform === 'wordpress' ) {
-						setAnalysis( { result: 'WPORG' } );
-					} else {
-						setAnalysis( { result: 'UNKNOWN' } );
-					}
-				} catch ( error ) {
-					setAnalysis( { result: 'UNKNOWN' } );
-				}
-			} )();
-		}
-	}, [ debouncedSiteUrl ] );
+	const isLoading = [ userSitesLoading, wpOrgSiteLoading, wpcomSiteLoading ].some( Boolean );
 
-	return { ...analysis, isLoading: ! analysis };
+	return {
+		result: isLoading ? 'LOADING' : 'UNKNOWN',
+		siteURL,
+		isWpcom: false,
+	};
 }

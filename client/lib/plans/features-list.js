@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -24,6 +24,7 @@ import {
 	FEATURE_ALL_PREMIUM_FEATURES,
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_ANTISPAM_V2,
+	FEATURE_WAF,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_AUTOMATED_RESTORES,
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
@@ -34,7 +35,6 @@ import {
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
-	FEATURE_DASH,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
 	FEATURE_COLLECT_PAYMENTS_V2,
@@ -153,39 +153,6 @@ import {
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_ADDITIONAL_SITES,
 	FEATURE_WOOCOMMERCE,
-	/* WPCOM Plan grid features update experiment */
-	FEATURE_UNLIMITED_TRAFFIC,
-	FEATURE_UNMETERED_BANDWIDTH,
-	FEATURE_SOCIAL_MEDIA_TOOLS,
-	FEATURE_FREE_NEWSLETTER,
-	FEATURE_PAID_NEWSLETTER,
-	FEATURE_BASIC_BACKUPS,
-	FEATURE_MANAGED_HOSTING,
-	FEATURE_CDN,
-	FEATURE_SSL,
-	FEATURE_BURST_SCALING,
-	FEATURE_EDGE_CACHING,
-	WPCOM_FEATURES_CDN,
-	FEATURE_PREMIUM_THEMES_V2,
-	FEATURE_SEO_PREVIEW_TOOLS_V2,
-	FEATURE_VIDEO_UPLOADS_V2,
-	FEATURE_BASIC_DESIGN_V2,
-	FEATURE_ADVANCED_DESIGN_V2,
-	FEATURE_REPUBLICIZE_V2,
-	FEATURE_INSTALL_PLUGINS_V2,
-	FEATURE_UPLOAD_THEMES_V2,
-	FEATURE_WORDADS_INSTANT_V2,
-	FEATURE_FREE_THEMES_V2,
-	FEATURE_SITE_STATS_V2,
-	FEATURE_SPAM_AKISMET_PLUS_V2,
-	FEATURE_SFTP_DATABASE_V2,
-	FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2,
-	FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2,
-	FEATURE_UNLIMITED_USERS_V2,
-	FEATURE_EMAIL_SUPPORT_V2,
-	FEATURE_ADVANCED_SEO_V2,
-	FEATURE_COLLECT_PAYMENTS_V3,
-	/* END - WPCOM Plan grid features update experiment */
 	FEATURE_UNLIMITED_EMAILS,
 	FEATURE_UNLIMITED_SUBSCRIBERS,
 	FEATURE_IMPORT_SUBSCRIBERS,
@@ -200,8 +167,26 @@ import {
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+	FEATURE_UNLIMITED_TRAFFIC,
+	FEATURE_MANAGED_HOSTING,
+	/* START - condensed_plan_features_v1 test */
+	FEATURE_HOSTING_TEST,
+	FEATURE_PRIORITY_SUPPORT_TEST,
+	FEATURE_PLUGINS_TEST,
+	FEATURE_SFTP_DATABASE_TEST,
+	FEATURE_FREE_NEWSLETTER_V1,
+	FEATURE_PAID_NEWSLETTER_V1,
+	FEATURE_REPUBLICIZE_V3,
+	FEATURE_MONETISE_V2,
+	FEATURE_EDGE_CACHING_V2,
+	FEATURE_UPLOAD_THEMES_V3,
+	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
+	FEATURE_SITE_STATS_V2,
+	FEATURE_COLLECT_PAYMENTS_V3,
+	FEATURE_FREE_THEMES_V2,
+	FEATURE_VIDEO_UPLOADS_V2,
+	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
-import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
 import ExternalLink from 'calypso/components/external-link';
@@ -212,10 +197,6 @@ import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 export const FEATURES_LIST = {
 	[ FEATURE_BLANK ]: {
 		getSlug: () => FEATURE_BLANK,
-		getTitle: () => '',
-	},
-	[ FEATURE_DASH ]: {
-		getSlug: () => FEATURE_DASH,
 		getTitle: () => '',
 	},
 
@@ -366,11 +347,30 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-			),
+		getTitle: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation( 'Unlimited premium themes' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Unlimited premium themes' )
+				: i18n.translate( 'Premium themes' );
+		},
+		getDescription: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				);
+
+			return shouldShowNewString
+				? i18n.translate(
+						'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				  )
+				: i18n.translate(
+						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+				  );
+		},
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -987,7 +987,7 @@ export const FEATURES_LIST = {
 	[ FEATURE_SITE_BACKUPS_AND_RESTORE ]: {
 		getSlug: () => FEATURE_SITE_BACKUPS_AND_RESTORE,
 		getTitle: () => i18n.translate( 'Automated site backups and one-click restore' ),
-		getDescription: () => i18n.translate( 'Automated site backups and one-click restore' ),
+		getDescription: () => {},
 	},
 	[ FEATURE_ACCEPT_PAYMENTS ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS,
@@ -1150,6 +1150,14 @@ export const FEATURES_LIST = {
 	[ FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => FEATURE_ANTISPAM_V2,
 		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
+	},
+
+	[ FEATURE_WAF ]: {
+		getSlug: () => FEATURE_WAF,
+		getTitle: () =>
+			i18n.translate( 'Website firewall (WAF beta)', {
+				comment: 'WAF stands for Web Application Firewall',
+			} ),
 	},
 
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
@@ -1413,7 +1421,7 @@ export const FEATURES_LIST = {
 	[ PREMIUM_DESIGN_FOR_STORES ]: {
 		getSlug: () => PREMIUM_DESIGN_FOR_STORES,
 		getTitle: () => i18n.translate( 'Premium design options customized for online stores' ),
-		getDescription: () => i18n.translate( 'Premium design options customized for online stores' ),
+		getDescription: () => {},
 	},
 
 	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS ]: {
@@ -1518,248 +1526,6 @@ export const FEATURES_LIST = {
 	},
 	/* END - New features Flexible and Pro plans introduced. */
 
-	/* WPCOM Plan grid features update experiment */
-	[ FEATURE_UNLIMITED_TRAFFIC ]: {
-		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
-		getTitle: () => i18n.translate( 'Unlimited traffic' ),
-		getDescription: () =>
-			i18n.translate(
-				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
-			),
-	},
-	[ FEATURE_UNMETERED_BANDWIDTH ]: {
-		getSlug: () => FEATURE_UNMETERED_BANDWIDTH,
-		getTitle: () => i18n.translate( 'Unmetered bandwidth' ),
-		getDescription: () => i18n.translate( 'Unmetered bandwidth' ),
-	},
-	[ FEATURE_FREE_NEWSLETTER ]: {
-		getSlug: () => FEATURE_FREE_NEWSLETTER,
-		getTitle: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
-		getDescription: () => i18n.translate( 'Offer a free email newsletter (unlimited subscribers)' ),
-	},
-	[ FEATURE_PAID_NEWSLETTER ]: {
-		getSlug: () => FEATURE_PAID_NEWSLETTER,
-		getTitle: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
-		getDescription: () => i18n.translate( 'Sell paid newsletters (unlimited subscribers)' ),
-	},
-	[ FEATURE_CDN ]: {
-		getSlug: () => WPCOM_FEATURES_CDN,
-		getTitle: () => i18n.translate( 'Fast CDN' ),
-		getDescription: () => i18n.translate( 'Fast CDN' ),
-	},
-	[ FEATURE_SSL ]: {
-		getSlug: () => FEATURE_SSL,
-		getTitle: () => i18n.translate( 'SSL security' ),
-		getDescription: () => i18n.translate( 'SSL security' ),
-	},
-	[ FEATURE_BURST_SCALING ]: {
-		getSlug: () => FEATURE_BURST_SCALING,
-		getTitle: () => i18n.translate( 'Automated burst scaling' ),
-		getDescription: () => i18n.translate( 'Automated burst scaling' ),
-	},
-	[ FEATURE_EDGE_CACHING ]: {
-		getSlug: () => FEATURE_BURST_SCALING,
-		getTitle: () => i18n.translate( 'Edge caching' ),
-		getDescription: () => i18n.translate( 'Edge caching' ),
-	},
-	[ FEATURE_MANAGED_HOSTING ]: {
-		getSlug: () => FEATURE_MANAGED_HOSTING,
-		getTitle: () => i18n.translate( 'Managed hosting' ),
-		getDescription: () =>
-			i18n.translate(
-				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
-			),
-	},
-	[ FEATURE_PREMIUM_THEMES_V2 ]: {
-		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited access to premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-			),
-	},
-
-	[ FEATURE_SEO_PREVIEW_TOOLS_V2 ]: {
-		getSlug: () => FEATURE_SEO_PREVIEW_TOOLS,
-		getTitle: () => i18n.translate( 'Basic SEO tools' ),
-		getDescription: () =>
-			i18n.translate(
-				'Edit your page titles and meta descriptions, and preview how your content will appear on social media.'
-			),
-	},
-
-	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
-		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
-		getDescription: () =>
-			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats.'
-			),
-		getStoreSlug: () => 'videopress',
-	},
-
-	[ FEATURE_BASIC_DESIGN_V2 ]: {
-		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: ( meta ) => {
-			return i18n.translate( 'CSS customization available for %(price)s extra.', {
-				args: {
-					price: formatCurrency( meta?.price, meta?.currency, {
-						stripZeros: true,
-					} ),
-				},
-				comment: 'Translators: CSS customization available for $2 extra.',
-			} );
-		},
-		getDescription: () =>
-			i18n.translate(
-				'You can add CSS customization to your plan at any time for an additional charge.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_ADVANCED_DESIGN_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( 'CSS customization tools', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_REPUBLICIZE_V2 ]: {
-		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => i18n.translate( 'Advanced social media tools' ),
-		getDescription: () =>
-			i18n.translate(
-				"Schedule your social media updates in advance and promote your posts when it's best for you."
-			),
-	},
-
-	[ FEATURE_SOCIAL_MEDIA_TOOLS ]: {
-		getSlug: () => FEATURE_SOCIAL_MEDIA_TOOLS,
-		getTitle: () => i18n.translate( 'Basic social media tools' ),
-		getDescription: () => i18n.translate( 'Built in social media tools.' ),
-	},
-
-	[ FEATURE_INSTALL_PLUGINS_V2 ]: {
-		getSlug: () => FEATURE_INSTALL_PLUGINS,
-		getTitle: () => i18n.translate( 'Install WordPress plugins' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to more than 50,000 WordPress plugins to extend functionality for your site'
-			),
-	},
-
-	[ FEATURE_UPLOAD_THEMES_V2 ]: {
-		getSlug: () => FEATURE_UPLOAD_THEMES,
-		getTitle: () => i18n.translate( 'Upload themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'With the option to upload themes, you can give your site a professional polish ' +
-					'that will help it stand out among the rest.'
-			),
-	},
-
-	[ FEATURE_WORDADS_INSTANT_V2 ]: {
-		getSlug: () => FEATURE_WORDADS_INSTANT,
-		getTitle: () => i18n.translate( 'Earn money from ads' ),
-		getDescription: () =>
-			i18n.translate(
-				'Earn money on your site by displaying ads and collecting payments or donations.'
-			),
-	},
-
-	[ FEATURE_FREE_THEMES_V2 ]: {
-		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to a wide range of professional themes ' +
-					"so you can find a design that's just right for your site."
-			),
-	},
-
-	[ FEATURE_SITE_STATS_V2 ]: {
-		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Built-in site stats' ),
-		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
-	},
-
-	[ FEATURE_SPAM_AKISMET_PLUS_V2 ]: {
-		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
-		getTitle: () => i18n.translate( 'World-class spam protection' ),
-		getDescription: () => i18n.translate( 'State-of-the-art spam defense, powered by Akismet.' ),
-	},
-
-	[ FEATURE_BASIC_BACKUPS ]: {
-		getSlug: () => FEATURE_BASIC_BACKUPS,
-		getTitle: () => i18n.translate( 'Basic backups' ),
-		getDescription: () => i18n.translate( 'Basic backups' ),
-	},
-
-	[ FEATURE_SFTP_DATABASE_V2 ]: {
-		getSlug: () => FEATURE_SFTP_DATABASE,
-		getTitle: () => i18n.translate( 'SFTP and Database Access' ),
-		getDescription: () => i18n.translate( 'SFTP and Database Access' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS_V2 ]: {
-		getSlug: () => FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		getTitle: () => i18n.translate( 'Basic live chat support' ),
-		getDescription: () => i18n.translate( 'Basic live chat support' ),
-	},
-
-	[ FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS_V2 ]: {
-		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		getTitle: () => i18n.translate( '24/7 live chat support' ),
-		getDescription: () => i18n.translate( '24/7 live chat support' ),
-	},
-
-	[ FEATURE_UNLIMITED_USERS_V2 ]: {
-		getSlug: () => FEATURE_UNLIMITED_USERS,
-		getTitle: () => i18n.translate( 'Unlimited contributors' ),
-		getDescription: () => i18n.translate( 'Unlimited contributors' ),
-	},
-
-	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
-		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
-		getTitle: () => i18n.translate( 'Collect payments and donations' ),
-		getDescription: () =>
-			i18n.translate(
-				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
-							/>
-						),
-					},
-				}
-			),
-	},
-	[ FEATURE_EMAIL_SUPPORT_V2 ]: {
-		getSlug: () => FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Unlimited email support' ),
-		getDescription: () =>
-			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
-	},
-	[ FEATURE_ADVANCED_SEO_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_SEO,
-		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
-		getDescription: () =>
-			i18n.translate(
-				'Boost traffic to your site with tools that make your content more findable on search engines and social media.'
-			),
-	},
 	[ FEATURE_UNLIMITED_EMAILS ]: {
 		getSlug: () => FEATURE_UNLIMITED_EMAILS,
 		getTitle: () => i18n.translate( 'Send unlimited emails' ),
@@ -1819,7 +1585,121 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
-	/* END - WPCOM Plan grid features update experiment */
+	/* START - condensed_plan_features_v1 test */
+	[ FEATURE_HOSTING_TEST ]: {
+		getSlug: () => FEATURE_HOSTING_TEST,
+		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
+		getDescription: () => {},
+	},
+	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
+		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
+		getTitle: () => '24/7 live chat support',
+		getDescription: () => {},
+	},
+	[ FEATURE_PLUGINS_TEST ]: {
+		getSlug: () => FEATURE_PLUGINS_TEST,
+		getTitle: () => 'Install WordPress plugins',
+		getDescription: () => {},
+	},
+	[ FEATURE_SFTP_DATABASE_TEST ]: {
+		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
+		getTitle: () => 'SFTP and Database Access',
+		getDescription: () => {},
+	},
+	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
+		getSlug: () => FEATURE_FREE_NEWSLETTER_V1,
+		getTitle: () => 'Free newsletter w/ unlimited subscribers.',
+		getDescription: () => {},
+	},
+	[ FEATURE_PAID_NEWSLETTER_V1 ]: {
+		getSlug: () => FEATURE_PAID_NEWSLETTER_V1,
+		getTitle: () => 'Paid newsletter w/ unlimited subscribers.',
+		getDescription: () => {},
+	},
+	[ FEATURE_REPUBLICIZE_V3 ]: {
+		getSlug: () => FEATURE_REPUBLICIZE,
+		getTitle: () => 'Advanced social media tools',
+		getDescription: () => {},
+	},
+	[ FEATURE_MONETISE_V2 ]: {
+		getSlug: () => FEATURE_MONETISE,
+		getTitle: () => 'Earn money from ads',
+		getDescription: () => {},
+	},
+	[ FEATURE_UPLOAD_THEMES_V3 ]: {
+		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
+		getTitle: () => 'Upload custom WordPress themes',
+		getDescription: () => {},
+	},
+	[ FEATURE_EDGE_CACHING_V2 ]: {
+		getSlug: () => FEATURE_EDGE_CACHING_V2,
+		getTitle: () => 'High-performance edge caching',
+		getDescription: () => {},
+	},
+	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
+		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
+		getDescription: () => {},
+	},
+	[ FEATURE_SITE_STATS_V2 ]: {
+		getSlug: () => FEATURE_SITE_STATS,
+		getTitle: () => i18n.translate( 'Built-in site stats' ),
+		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
+	},
+	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
+		getTitle: () => i18n.translate( 'Collect payments and donations' ),
+		getDescription: () =>
+			i18n.translate(
+				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: (
+							<ExternalLink
+								icon
+								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
+							/>
+						),
+					},
+				}
+			),
+	},
+	[ FEATURE_FREE_THEMES_V2 ]: {
+		getSlug: () => FEATURE_FREE_THEMES,
+		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access to a wide range of professional themes ' +
+					"so you can find a design that's just right for your site."
+			),
+	},
+	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS,
+		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
+		getDescription: () =>
+			i18n.translate(
+				'The easiest way to upload videos to your website and display them ' +
+					'using a fast, unbranded, customizable player with rich stats.'
+			),
+		getStoreSlug: () => 'videopress',
+	},
+	/* END - condensed_plan_features_v1 test */
+	[ FEATURE_UNLIMITED_TRAFFIC ]: {
+		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
+		getTitle: () => i18n.translate( 'Unlimited traffic' ),
+		getDescription: () =>
+			i18n.translate(
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
+			),
+	},
+	[ FEATURE_MANAGED_HOSTING ]: {
+		getSlug: () => FEATURE_MANAGED_HOSTING,
+		getTitle: () => i18n.translate( 'Managed hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

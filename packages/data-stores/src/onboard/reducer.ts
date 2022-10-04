@@ -4,7 +4,7 @@ import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair } from '@automattic/design-picker/src/types';
+import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
@@ -17,9 +17,9 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const patternId: Reducer< number | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_ID' ) {
-		return action.patternId;
+const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
+		return action.patternContent;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -122,6 +122,19 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	return state;
 };
 
+const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_STYLE_VARIATION' ) {
+		return action.selectedStyleVariation;
+	}
+	if ( [ 'RESET_SELECTED_STYLE_VARIATION', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return undefined;
+	}
+	return state;
+};
+
 const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	state: FeatureId[] = [],
 	action
@@ -202,7 +215,7 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const siteAccentColor: Reducer< string | undefined, OnboardAction > = ( state = '', action ) => {
+const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
 	}
@@ -369,7 +382,7 @@ const reducer = combineReducers( {
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
-	patternId,
+	patternContent,
 	domainSearch,
 	domainCategory,
 	isRedirecting,
@@ -379,6 +392,7 @@ const reducer = combineReducers( {
 	storeType,
 	selectedFonts,
 	selectedDesign,
+	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,

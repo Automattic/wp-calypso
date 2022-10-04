@@ -486,7 +486,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchaseId={ purchase?.id } />
+						<OwnerInfo purchase={ purchase } />
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>

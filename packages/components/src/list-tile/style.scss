@@ -1,29 +1,29 @@
 .list-tile {
 	display: flex;
-    align-items: center;
-    line-height: 1;
-    margin-right: 20px;
+	align-items: center;
+	line-height: 1;
+	margin-right: 20px;
 }
 
 .list-tile__leading {
-    margin-right: 20px;
+	margin-right: 20px;
 }
 
 .list-tile__title {
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: -0.4px;
-    color: var( --studio-gray-100 );
+	font-weight: 500;
+	font-size: 1rem;
+	letter-spacing: -0.4px;
+	color: var(--studio-gray-100);
 }
 
 .list-tile__subtitle {
-    font-size: 0.875rem;
-    line-height: 20px;
-    letter-spacing: -0.24px;
-    color: var( --studio-gray-60 );
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-rendering: auto;
-    max-height: 40px;
-    white-space: normal;
+	font-size: 0.875rem;
+	line-height: 20px;
+	letter-spacing: -0.24px;
+	color: var(--studio-gray-60);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-rendering: auto;
+	max-height: 40px;
+	white-space: normal;
 }

@@ -19,6 +19,7 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import { getPluginActionDailogMessage } from '../utils';
 
 import './style.scss';
 
@@ -26,25 +27,22 @@ class PluginRemoveButton extends Component {
 	static displayName = 'PluginRemoveButton';
 
 	removeAction = () => {
+		const { translate, plugin, site } = this.props;
+		const dialogOptions = {
+			additionalClassNames: 'plugins__confirmation-modal',
+			isScary: true,
+		};
+		const heading = translate( 'Remove %(pluginName)s', {
+			args: {
+				pluginName: plugin.name,
+			},
+		} );
 		accept(
-			this.props.translate(
-				'Are you sure you want to remove {{strong}}%(pluginName)s{{/strong}} from' +
-					' %(siteName)s? {{br /}} {{em}}This will deactivate the plugin and delete all' +
-					' associated files and data.{{/em}}',
-				{
-					components: {
-						em: <em />,
-						br: <br />,
-						strong: <strong />,
-					},
-					args: {
-						pluginName: this.props.plugin.name,
-						siteName: this.props.site.title,
-					},
-				}
-			),
+			getPluginActionDailogMessage( [ site ], [ plugin ], heading, 'deactivate and delete' ),
 			this.processRemovalConfirmation,
-			this.props.translate( 'Remove' )
+			heading,
+			null,
+			dialogOptions
 		);
 	};
 

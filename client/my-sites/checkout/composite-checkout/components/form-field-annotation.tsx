@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, ReactChild } from 'react';
 
 type FormFieldWrapperProps = {
 	isError: boolean;
@@ -49,7 +49,7 @@ type FormFieldAnnotationProps = {
 	// Semantic props
 	labelText: string;
 	normalDescription?: string;
-	errorDescription: string;
+	errorDescription?: ReactChild;
 
 	// Functional props
 	isError?: boolean; // default false
@@ -115,7 +115,7 @@ type RenderedDescriptionProps = {
 	descriptionText?: string;
 	descriptionId?: string;
 	isError?: boolean;
-	errorMessage?: string;
+	errorMessage?: ReactChild;
 };
 
 type DescriptionProps = {

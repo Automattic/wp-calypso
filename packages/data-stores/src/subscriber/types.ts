@@ -40,8 +40,9 @@ export type AddSubscribersResponse = {
 export type ImportSubscribersError = Record< string, unknown > | GenericError;
 
 export type ImportSubscribersResponse = {
-	id: number;
-	success: boolean;
+	upload_id: number;
+	errors: string[];
+	subscribed: number;
 };
 
 export type GetSubscribersImportResponse = ImportJob;

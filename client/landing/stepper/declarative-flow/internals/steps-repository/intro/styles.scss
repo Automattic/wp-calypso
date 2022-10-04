@@ -1,37 +1,47 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/onboarding/styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 .intro {
 	&.newsletter {
-		background-color: rgb( 162, 218, 254 );
-		background-image: url( 'calypso/assets/images/onboarding/newsletter-intro-left.png' ),
-		url( 'calypso/assets/images/onboarding/newsletter-intro-right.png' );
+		background-color: rgb(162 218 254);
+		background-image:
+			url(calypso/assets/images/onboarding/newsletter-intro-left.png),
+			url(calypso/assets/images/onboarding/newsletter-intro-right.png);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
-    	background-position-x: 0%, 100%;
-    	background-position-y: 100%, 100px;
-    	background-size: auto 30%, auto 50%;
+		/*!rtl:ignore*/
+		background-position-x: 0%, 100%;
+		background-position-y: 100%, 100px;
+		background-size: auto 30%, auto 50%;
 
-		@include break-large {
+
+		@include break-huge {
 			background-size: auto 55%, auto 80%;
 			background-position-y: 100%, 136px;
+			background-image:
+				url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
 		}
 	}
 
 	&.link-in-bio {
 		background-color: #d0cce3;
-
-		background-image: url( 'calypso/assets/images/onboarding/link-in-bio-intro-left.png' ),
-		url( 'calypso/assets/images/onboarding/link-in-bio-intro-right.png' );
+		background-image:
+			url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
+			url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
 		background-position-y: 85%, 15%;
+		/*!rtl:ignore*/
 		background-position-x: 0, 100%;
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 15%, auto 15%;
 
-		@include break-large {
+		@include break-huge {
 			background-size: auto 25%, auto 25%;
 			background-position-y: 85%, 10%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
 		}
 	}
 
@@ -47,15 +57,6 @@
 
 	.signup-header {
 		z-index: 1;
-
-		.wordpress-logo {
-			inset-block-start: 20px;
-			inset-inline-start: 24px;
-			position: absolute;
-			transform-origin: 0 0;
-			fill: var( --color-text );
-			stroke: var( --color-text );
-		}
 	}
 
 	.progress-bar {
@@ -80,7 +81,7 @@
 		.step-container__header {
 			margin-bottom: 0;
 		}
-	
+
 		.step-container__jetpack-powered {
 			margin: 20px 0 60px;
 		}
@@ -91,33 +92,34 @@
 		text-align: center;
 		position: absolute;
 		top: 50%;
-		transform: translateY( -50% );
+		transform: translateY(-50%);
 	}
-
 
 	.intro__title {
 		@include onboarding-font-recoleta;
-		/* stylelint-disable-next-line scales/font-size, declaration-property-unit-allowed-list */
-		font-size: 28px;
+
+		font-size: 1.75rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 130%;
 		padding-bottom: 32px;
 
 		@include break-large {
-			/* stylelint-disable-next-line scales/font-size, declaration-property-unit-allowed-list */
-			font-size: 44px;
+			font-size: 2.75rem;
 			line-height: 52px;
 		}
+
 		span {
 			display: block;
 		}
 	}
 
 	.intro__button {
-		font-family: 'SF Pro Text', $sans;
-		color: var( --color-surface );
-		background-color: var( --studio-gray-100 );
+		font-family: "SF Pro Text", $sans;
+		color: var(--color-surface);
+		background-color: var(--studio-gray-100);
 		border: none;
 		font-weight: 500;
 		letter-spacing: 0.32px;
+		padding: 10px 24px;
 	}
 }

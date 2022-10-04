@@ -38,7 +38,7 @@ export type Campaign = {
 	moderation_reason: string;
 	moderation_status: number | null;
 	type: string;
-	impressions_estimated_total: number;
+	display_delivery_estimate: string;
 	impressions_total: number;
 	delivery_percent: number;
 	status: string;
@@ -47,6 +47,8 @@ export type Campaign = {
 	spent_budget_cents: number;
 	deliver_margin_multiplier: number;
 	audience_list: AudienceList;
+	display_name: string;
+	avatar_url: string;
 };
 
 const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
@@ -55,7 +57,7 @@ const useCampaignsQuery = ( siteId: number, queryOptions = {} ) => {
 		async () => {
 			const { results: campaigns } = await requestDSP< { results: Campaign[] } >(
 				siteId,
-				'/campaigns/full'
+				`/campaigns/site/${ siteId }/full`
 			);
 			return campaigns;
 		},

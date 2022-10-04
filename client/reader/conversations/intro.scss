@@ -1,7 +1,7 @@
 // Conversations intro
 .conversations__intro {
-	border: 1px solid var( --color-neutral-0 );
-	color: var( --color-primary-dark );
+	border: 1px solid var(--color-neutral-0);
+	color: var(--color-primary-dark);
 	display: flex;
 	min-height: 140px;
 
@@ -9,7 +9,7 @@
 		background-position: 150px 20px;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		background-position: 120px 20px;
 	}
 
@@ -27,7 +27,7 @@
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: none;
 		}
 	}
@@ -44,7 +44,7 @@
 	}
 
 	.conversations__intro-copy-hidden {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			display: none;
 			visibility: hidden;
 		}
@@ -60,16 +60,16 @@
 	width: 24px;
 
 	.conversations__intro-close-icon {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 		position: absolute;
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
-		transform: scale( 1 );
+		transform: scale(1);
 
 		&:hover {
 			cursor: pointer;
-			fill: var( --color-neutral-50 );
+			fill: var(--color-neutral-50);
 		}
 	}
 }

@@ -8,23 +8,23 @@
 		}
 
 		&__header--fix-threat {
-			color: var( --color-primary-40 );
+			color: var(--color-primary-40);
 		}
 
 		&__header--ignore-threat {
-			color: var( --color-error-50 );
+			color: var(--color-error-50);
 		}
 
 		&__threat-title {
 			font-weight: 600;
 			margin: 8px 0;
 			display: flex;
-			border: 1px solid var( --studio-gray-5 );
+			border: 1px solid var(--studio-gray-5);
 			flex-direction: row;
 		}
 
 		&__threat-description {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: $font-body-small;
 		}
 
@@ -40,22 +40,22 @@
 		}
 
 		&__warning-icon--fix-threat {
-			fill: var( --color-primary-40 );
+			fill: var(--color-primary-40);
 		}
 
 		&__warning-icon--ignore-threat {
-			fill: var( --color-error-50 );
+			fill: var(--color-error-50);
 		}
 
 		&__warning-message {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: $font-body-small;
 		}
 
 		&__btn {
 			width: 100%;
 
-			@include breakpoint-deprecated( '>480px' ) {
+			@include breakpoint-deprecated( ">480px" ) {
 				min-width: 140px;
 				width: auto;
 			}

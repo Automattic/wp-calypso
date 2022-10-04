@@ -17,7 +17,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
-import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
+import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type {
 	StoreSelectors,
@@ -187,7 +187,7 @@ function NetBankingFields() {
 				<CountrySpecificPaymentFields
 					countryCode={ 'IN' } // If this payment method is available and the country is not India, we have other problems
 					countriesList={ countriesList }
-					getErrorMessage={ getErrorMessagesForField }
+					getErrorMessages={ getErrorMessagesForField }
 					getFieldValue={ getFieldValue }
 					handleFieldChange={ setFieldValue }
 					disableFields={ isDisabled }

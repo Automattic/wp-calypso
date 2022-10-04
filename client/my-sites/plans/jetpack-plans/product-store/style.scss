@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store {
 	display: flex;
@@ -13,390 +13,37 @@
 		margin: 0;
 	}
 
-	&__jetpack-free {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		margin: 4em 0;
-
-		&--headline {
-			font-size: $font-title-large;
-			margin-bottom: 1em;
-		}
-
-		&--info {
-			font-size: $font-body-small;
-			text-align: center;
-		}
-	}
-
-	&__recommendations {
-		padding: 4em 0;
-
-		&--title {
-			text-align: center;
-		}
-
-		&--logos {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex-wrap: wrap;
-			list-style-type: none;
-			margin: 0 auto;
-			gap: 1.5em;
-		}
-	}
-
-	&__bundles-list--featured-item {
-		display: flex;
-		flex-direction: column;
-	}
-
-	&__bundles-list--featured-item .foldable-card {
-		box-shadow: none;
-		width: 100%;
-		margin: 0;
-		border-bottom: 1px solid var( --studio-gray-5 );
-	}
-
-	&__bundles-list--featured-item .foldable-card.is-expanded {
-		margin: 0;
-	}
-
-	&__bundles-list--featured-item .foldable-card.is-expanded .foldable-card__content {
-		padding: 0;
-	}
-
-	&__bundles-list--featured-item .foldable-card__main {
-		font-size: $font-body;
-		line-height: 24px;
-		font-weight: 600;
-	}
-
-	&__most-popular {
-		margin-top: 3em;
-	}
-
-	&__most-popular--heading {
-		margin-bottom: rem( 24px );
-		font-size: $font-title-small;
-		font-weight: 700;
-		line-height: rem( 29px );
-
-		@include break-medium {
-			margin-bottom: rem( 32px );
-			font-size: $font-title-medium;
-			font-weight: 600;
-		}
-	}
-
-	&__most-popular--items {
-		list-style-type: none;
-		display: grid;
-		grid-template-columns: 1fr;
-		grid-gap: 24px;
-
-		@include break-medium {
-			grid-template-columns: 1fr 1fr;
-			margin: 32px auto 0;
-			gap: 24px;
-		}
-	}
-
-	.display-price {
-		display: flex;
-		align-items: center;
-
-		.plan-price__currency-symbol,
-		.plan-price__integer,
-		.plan-price__fraction {
-			font-size: $font-body;
-			line-height: normal;
-			margin-top: 0;
-		}
-
-		.plan-price.is-original {
-			.plan-price__currency-symbol,
-			.plan-price__integer,
-			.plan-price__fraction {
-				font-weight: 600;
-				margin: 0;
-			}
-		}
-
-		.plan-price.is-discounted,
-		.plan-price.is-original {
-			margin-right: 0.1em;
-		}
-
-		.plan-price.is-original::before,
-		.is-placeholder .plan-price::after {
-			display: none;
-		}
-
-		&__billing-time-frame,
-		&__expiration-date {
-			color: var( --studio-gray-50 );
-			font-size: 0.75rem;
-			line-height: 24px;
-		}
-	}
-
-	.display-price:not(.is-placeholder) {
-		.plan-price.is-original {
-			color: var( --studio-gray-50 );
-			text-decoration: line-through;
-			font-weight: 600;
-		}
-
-		.plan-price.is-discounted {
-			color: var( --studio-gray-100 );
-			font-weight: 700;
-		}
-	}
-
-	.item-price__is-owned {
-		font-size: $font-body-extra-small;
-		color: var( --studio-jetpack-green-50 );
-		font-weight: 600;
-		display: flex;
-		align-items: center;
-	}
-
-	.item-price__is-owned--dot {
-		display: inline-block;
-		width: 8px;
-		height: 8px;
-		background: var( --studio-jetpack-green-50 );
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		border-radius: 50%;
-		margin-inline-end: 4px;
-	}
-
-	&__products-list-all {
-		margin-top: 4em;
-		margin-bottom: 48px;
-	}
-
-	&__products-list-all h3 {
-		margin-bottom: 2.5em;
-	}
-
-	&__see-all-features {
-		display: flex;
-		justify-content: center;
-		margin: 3rem auto;
-	}
-
-	.features-list {
-		padding: 1.5rem;
-
-		@include break-mobile {
-			padding-bottom: 2.5rem;
-			border: 1px solid var( --studio-gray-0 );
-		}
-
-		@media (max-width: $break-mobile) {
-			padding: 0 0.5rem;
-		}
-
-		&__group:not(:first-child) {
-			margin-top: 1rem;
-		}
-
-		&__group--title {
-			font-size: 1.25rem;
-			padding: 1.25rem 1rem;
-			border-bottom: 1px solid var( --studio-gray-5 );
-			line-height: 24px;
-		}
-
-		&__group--icon {
-			margin-inline-end: 0.5rem;
-		}
-
-		&__group--features {
-			list-style-type: none;
-			margin: 0;
-		}
-
-		&__group--features li {
-			padding: 1rem;
-			font-size: $font-body-small;
-			border-bottom: 1px solid var( --studio-gray-5 );
-			line-height: 24px;
-			display: flex;
-			align-items: center;
-		}
-
-		&__group--features li img {
-			margin-inline-end: 0.5rem;
-		}
-	}
-
-	.button {
-		color: var( --color-neutral-100 );
-		border: 1px solid var( --color-neutral-100 );
-		font-family: 'SF Pro Text', $sans;
+	a.button {
+		font-family: "SF Pro Text", $sans;
 		font-size: $font-body;
 		font-weight: 600;
 	}
 
-	&__items-list .button.is-primary {
-		color: var( --color-text-inverted );
-		min-width: 5.7em;
-		border: none;
+	.button:not([disabled], :disabled, .is-primary) {
+		color: var(--color-neutral-100);
+		border: 1px solid var(--color-neutral-100);
+	}
+	.button:focus {
+		border-width: 1px;
 	}
 
-	.jetpack-product-store__view-filter .jetpack-product-store__view-filter--toggle.segmented-control {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		list-style: none;
-		height: 33px;
-		background-color: #f2f2f2;
-		border-color: var( --studio-gray-5 );
-		border-radius: 8px; /* stylelint-disable-line */
-		color: var( --color-text );
-		margin: 0 auto;
-		max-width: 21.4375em;
-
-		.segmented-control__item {
-			padding: 2px;
-			border-radius: 4px;
-			border-color: var( --studio-gray-5 );
-			cursor: pointer;
-			flex: 1 1 auto;
-
-			&:first-child {
-				margin-right: 5px;
-			}
-		}
-
-		.segmented-control__item .segmented-control__link {
-			color: var( --color-text );
-			padding: 6px 11px;
-			border: 1px solid #f2f2f2;
-			line-height: 15px;
-			height: 15px;
-			font-size: 0.75rem;
-			font-weight: 600;
-			text-align: center;
-			transition: color 0.1s linear, background-color 0.1s linear;
-
-			&:hover {
-				background-color: unset;
-				border: 1px solid var( --studio-gray-10 );
-				border-radius: 4px;
-			}
-		}
-
-		.segmented-control__item.is-selected .segmented-control__link {
-			background-color: var( --studio-white );
-			border-color: var( --studio-white );
-			color: var( --color-text );
-			border: 0.5px solid #0000000a;
-			border-radius: 4px;
-			box-shadow: 0 0.125em 0.5em #0000001f, 0 0.125em 0.0625em #0000000a;
-
-			&:hover {
-				background-color: var( --studio-white );
-				border-color: #0000000a;
-			}
-		}
+	.info-popover.owner-info__pop-over {
+		line-height: inherit;
+		pointer-events: all;
 	}
 }
 
-.jetpack-product-store__pricing-banner {
-	height: 112px;
-	margin-bottom: 40px;
-
-	@include break-large {
-		height: 32px;
-	}
-}
-
-.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
-	height: 112px;
-	gap: 12px;
-
-	@include break-large {
-		gap: 32px;
-		max-height: 32px;
-	}
-}
-
-.jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__item {
-	max-height: 32px;
-	margin: 0;
-}
-
-.jetpack-product-store__pricing-banner .intro-pricing-banner__item-icon {
-	margin-right: 10px;
-}
-
-.jetpack-product-store__need-more-info {
-	background-color: var( --color-surface );
-	padding: 5rem 0;
-	text-align: center;
-}
-
-.jetpack-product-store__need-more-info-headline {
-	padding-bottom: 0.9375rem;
-	font-size: 1.5rem;
-	font-weight: 700;
-	line-height: inherit;
-}
-
-.jetpack-product-store__need-more-info-buttons {
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	gap: 1rem;
-
-	@include break-medium {
-		justify-content: center;
-		flex-direction: row;
-	}
-}
-
-.jetpack-product-store__need-more-info-buttons .more-info-box__more-button.button {
-	color: var( --color-neutral-100 );
-}
-
-.jetpack-product-store__products-list-all-header {
-	margin-top: rem( 32px );
-	margin-bottom: rem( 24px );
-	font-size: $font-title-small;
-	font-weight: 700;
-
-	@include break-medium {
-		margin-top: rem( 72px );
-		margin-bottom: rem( 48px );
-		font-size: $font-title-medium;
-		line-height: rem( 29px );
-		font-weight: 600;
-	}
-}
-
-.jetpack-product-store__products-list-all-grid {
-	display: grid;
-	column-gap: 80px;
-	row-gap: 32px;
-
-	@include break-medium {
-		grid-template-columns: repeat( 2, 1fr );
-	}
+:is(.product-lightbox__modal, .jetpack-product-store) :is(.button[disabled], .button:disabled, .button.disabled) {
+	pointer-events: none;
 }
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
 	margin: 0 auto;
 	font-size: $font-title-large;
-	line-height: rem( 38px );
+	line-height: rem(38px);
 
 	@include break-large {
 		font-size: $font-headline-small;
-		line-height: rem( 40px );
+		line-height: rem(40px);
 	}
 }

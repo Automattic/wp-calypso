@@ -1,4 +1,4 @@
-/* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
+/* global calypsoifyGutenberg, Image, requestAnimationFrame */
 
 import { parse } from '@wordpress/blocks';
 import {
@@ -1097,23 +1097,6 @@ function handleAppBannerShowing( calypsoPort ) {
 	};
 }
 
-function handleHelpCenterShowing( calypsoPort ) {
-	const { port1, port2 } = new MessageChannel();
-
-	calypsoPort.postMessage(
-		{
-			action: 'getIsHelpCenterShown',
-			payload: {},
-		},
-		[ port2 ]
-	);
-
-	port1.onmessage = ( { data } ) => {
-		const { isHelpCenterVisible } = data;
-		dispatch( 'automattic/help-center' )?.setShowHelpCenter?.( isHelpCenterVisible );
-	};
-}
-
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1216,8 +1199,6 @@ function initPort( message ) {
 		handleInlineHelpButton( calypsoPort );
 
 		handleAppBannerShowing( calypsoPort );
-
-		handleHelpCenterShowing( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

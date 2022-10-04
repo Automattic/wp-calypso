@@ -1,15 +1,11 @@
 /** @jest-environment jsdom */
-
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserCurrencyCode: jest.fn( () => 'USD' ),
-} ) );
-
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 100 ),
 } ) );
 
 import { TERM_MONTHLY } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import * as currentUserSelectors from 'calypso/state/currency-code/selectors';
 import productsList from 'calypso/state/products-list/reducer';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -29,6 +25,9 @@ const initialState = {
 };
 
 describe( '<PlanUpgradeSection />', () => {
+	beforeAll( () => {
+		jest.spyOn( currentUserSelectors, 'getCurrentUserCurrencyCode' ).mockReturnValue( 'USD' );
+	} );
 	it( 'renders one legacy product card and one new plan product card', () => {
 		renderWithProvider(
 			<PlanUpgradeSection

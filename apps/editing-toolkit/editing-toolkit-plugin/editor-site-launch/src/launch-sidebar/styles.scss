@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/onboarding/styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 .nux-launch-sidebar {
 	@include onboarding-block-margin;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	background: var( --studio-white );
+	background: var(--studio-white);
 	padding-top: $onboarding-header-height;
 
 	@include break-medium {
@@ -26,7 +26,7 @@
 			font-weight: normal;
 			font-size: $font-body-small;
 			line-height: 1.5;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 	}
 }

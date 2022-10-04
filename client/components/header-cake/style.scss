@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '../../assets//stylesheets/shared/mixins/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "../../assets//stylesheets/shared/mixins/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 // ==========================================================================
 // .header-cake
@@ -21,13 +21,13 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-top: 10px;
 	}
 }
 
 .card.header-cake--has-screen-options {
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		margin-top: 35px;
 	}
 }
@@ -52,16 +52,16 @@
 		}
 	}
 
-	html[dir='rtl'] & {
+	html[dir="rtl"] & {
 		.gridicons-arrow-left {
-			transform: scaleX( -1 );
+			transform: scaleX(-1);
 		}
 	}
 }
 
 .header-cake__title {
 	flex: 1 1 auto;
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	text-align: center;
 	word-break: break-word;
 	white-space: nowrap;

@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@automattic/calypso-color-schemes';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/calypso-color-schemes";
 
 
 .jetpack-benefits__section-header {
@@ -17,7 +17,7 @@
 }
 
 .card.jetpack-benefits__card {
-	background-color: var( --studio-white );
+	background-color: var(--studio-white);
 	width: 800px;
 	max-width: 100%;
 }

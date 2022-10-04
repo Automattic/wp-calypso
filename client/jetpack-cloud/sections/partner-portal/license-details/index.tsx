@@ -1,6 +1,5 @@
 import { Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
@@ -32,7 +31,7 @@ export default function LicenseDetails( {
 	attachedAt,
 	revokedAt,
 	onCopyLicense = noop,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;

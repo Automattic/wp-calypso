@@ -4,6 +4,8 @@ import _self.bashNodeScript
 import _self.lib.wpcom.WPComPluginBuild
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 
 object WPComPlugins : Project({
 	id("WPComPlugins")
@@ -189,7 +191,9 @@ private object InlineHelp : WPComPluginBuild(
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {
 	init {
-		name = "Upload Gutenberg Source Maps to Sentry";
+		name = "Upload Source Maps";
+		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-comment by a WPCOM post-deploy job.";
+
 		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
 
 		// Only needed so that we can test the job in different branches.
@@ -220,18 +224,15 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 
 		steps {
 			bashNodeScript {
-				name = "Upload source maps to Sentry"
+				name = "Upload Gutenberg source maps to Sentry"
 				scriptContent = """
-					# Install the Sentry CLI binary
-					curl -sL https://sentry.io/get-cli/ | bash
-
 					rm -rf gutenberg gutenberg.zip
 
 					wget https://github.com/WordPress/gutenberg/releases/download/%GUTENBERG_VERSION%/gutenberg.zip
 					unzip gutenberg.zip -d gutenberg
 					cd gutenberg
 
-					# Upload the .js and .js.map files to Sentry (`wpcom-test-01` release)
+					# Upload the .js and .js.map files to Sentry for the given release.
 					sentry-cli releases files %SENTRY_RELEASE_NAME% upload-sourcemaps . \
 							--auth-token %SENTRY_AUTH_TOKEN% \
 							--org a8c \
@@ -239,6 +240,54 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 							--url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
 				"""
 			}
+
+			uploadPluginSourceMaps(
+				slug = "editing-toolkit",
+				buildId = "calypso_WPComPlugins_EditorToolKit",
+				buildTag = "etk-release-build",
+				wpcomURL = "~/wp-content/plugins/editing-toolkit-plugin/prod/"
+			)
+
+			uploadPluginSourceMaps(
+				slug = "wpcom-block-editor",
+				buildId = "calypso_WPComPlugins_WpcomBlockEditor",
+				wpcomURL = "~/wpcom-block-editor"
+			)
+
+			uploadPluginSourceMaps(
+				slug = "notifications",
+				buildId = "calypso_WPComPlugins_Notifications",
+				wpcomURL = "~/notifications"
+			)
 		}
+	}
+}
+
+// Given the plugin information, get the source code and upload any sourcemaps
+// to Sentry.
+fun BuildSteps.uploadPluginSourceMaps(
+	slug: String,
+	buildId: String,
+	wpcomURL: String,
+	buildTag: String = "$slug-release-build",
+): ScriptBuildStep {
+	return bashNodeScript {
+		name = "Upload $slug source maps to Sentry"
+		scriptContent = """
+			rm -rf code code.zip
+
+			# Downloads the latest release build for the plugin.
+			wget "%teamcity.serverUrl%/repository/download/$buildId/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
+			
+			unzip -q ./code.zip -d ./code
+			cd code
+
+			# Upload the .js and .js.map files to Sentry for the given release.
+			sentry-cli releases files %SENTRY_RELEASE_NAME% upload-sourcemaps . \
+					--auth-token %SENTRY_AUTH_TOKEN% \
+					--org a8c \
+					--project wpcom-gutenberg-wp-admin \
+					--url-prefix "$wpcomURL"
+		"""
 	}
 }

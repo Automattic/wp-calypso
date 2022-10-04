@@ -11,13 +11,13 @@
 	font-size: $font-body;
 	margin-bottom: 4px;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		font-size: $font-title-small;
 	}
 }
 
 .get-apps__desktop {
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -32,7 +32,7 @@
 	font-size: $font-body-small;
 	margin-bottom: 4px;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		font-size: $font-body;
 	}
 }
@@ -41,20 +41,20 @@
 .get-apps__description:last-child {
 	margin-bottom: 12px;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		margin-bottom: 0;
 	}
 }
 
 .get-apps__mobile {
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		order: 2;
 	}
 
 	.get-apps__store-subpanel {
 
-		@include breakpoint-deprecated('>800px') {
+		@include breakpoint-deprecated(">800px") {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -80,17 +80,18 @@
 }
 
 .get-apps__illustration {
-	background-color: var( --color-surface );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	background-color: var(--color-surface);
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
 	box-sizing: border-box;
-	color: var( --color-primary-dark );
+	color: var(--color-primary-dark);
 	max-width: 980px;
 	overflow: hidden;
 	padding: 16px;
 	text-align: center;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		padding: 24px;
 	}
 }
@@ -100,7 +101,7 @@
 	font-weight: 600;
 	padding: 0 24px;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		font-size: $font-title-medium;
 	}
 }
@@ -110,25 +111,25 @@
 	margin-bottom: 0;
 	padding: 0 24px;
 
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		font-size: $font-body-small;
 	}
 }
 
 .get-apps__card-text {
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		flex: 1;
 	}
 }
 
 .get-apps__also-available {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-style: italic;
 }
 
 .get-apps__desktop-button {
-	@include breakpoint-deprecated('>480px') {
+	@include breakpoint-deprecated(">480px") {
 		margin-left: 24px;
 	}
 }

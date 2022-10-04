@@ -11,10 +11,10 @@
 		flex: 1 1 100px;
 		max-width: 435px;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			margin: 0;
 			&::before {
-				content: '/';
+				content: "/";
 			}
 		}
 	}
@@ -23,7 +23,7 @@
 		margin-left: auto;
 		margin-right: 56px;
 
-		@include breakpoint-deprecated( '>480px') {
+		@include breakpoint-deprecated( ">480px") {
 			margin-right: 48px;
 		}
 	}

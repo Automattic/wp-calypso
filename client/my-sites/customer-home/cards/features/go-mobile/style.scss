@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .customer-home__layout-col-right {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		.go-mobile__subheader.customer-home__card-subheader {
 			margin-bottom: 0;
 		}
@@ -27,19 +27,19 @@
 
 .go-mobile__email-link {
 	padding-top: 8px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: none;
 
-	@include break-large() {
+	@include break-large {
 		display: block;
 	}
+
 	@include break-xlarge {
 		padding-top: 18px;
 	}
 }
 
 .go-mobile__email-link-button {
-	display: block;
 	margin-top: 14px;
 }
 
@@ -58,4 +58,50 @@
 .go-mobile__row.has-2-cols .go-mobile__app-badges {
 	margin-left: auto;
 	padding-left: 1rem;
+}
+
+// WordPress to Jetpack app specific styles; they can replace the above styles
+// when this is shipped to all users.
+.go-mobile--jetpack {
+	.go-mobile__icon {
+		margin-bottom: 15px;
+	}
+
+	.go-mobile__title {
+		margin-bottom: 20px;
+	}
+
+	// Reset preexisting, global styles for store buttons.
+	.go-mobile__app-badges .get-apps__app-badge {
+		max-height: none;
+		max-width: none;
+		width: auto;
+	}
+
+	.go-mobile__app-badges .get-apps__app-badge img {
+		max-width: 100%;
+		vertical-align: top;
+		width: 179px;
+	}
+
+	// These style replicate a preexisting approach for cropping the Google
+	// Play button. Long term, it is likely more appropriate to resize this
+	// image instead.
+	.get-apps__app-badge.android-app-badge img {
+		transform: scale(1.14) translate(-11px, -7px);
+	}
+
+	.go-mobile__email-link-button {
+		color: var(--studio-jetpack-green-40);
+		margin-top: 0;
+		text-decoration: underline;
+
+		&:hover,
+		&:focus,
+		&:active,
+		&.is-active {
+			color: var(--studio-jetpack-green-60);
+			box-shadow: none;
+		}
+	}
 }

@@ -23,7 +23,7 @@ export interface FullAndMonthlyPrices {
 
 type PlanOrProductSlug = PlanSlug | ProductSlug;
 type Optional< T, K extends keyof T > = Pick< Partial< T >, K > & Omit< T, K >;
-type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & {
+export type PlanObject = Optional< Pick< Plan, 'group' | 'getProductId' >, 'group' > & {
 	getStoreSlug: () => PlanOrProductSlug;
 };
 

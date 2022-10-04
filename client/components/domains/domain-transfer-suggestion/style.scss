@@ -3,21 +3,21 @@
 	align-items: center;
 
 	& .button.domain-suggestion__action.is-borderless {
-	  flex: 1 0 auto;
-	  font-size: $font-body-small;
-	  text-align: left;
-	  width: 100%;
+		flex: 1 0 auto;
+		font-size: $font-body-small;
+		text-align: left;
+		width: 100%;
 
-	  .is-section-signup & {
-		  @include breakpoint-deprecated( '>480px' ) {
-		  	width: auto;
-		  }
+		.is-section-signup & {
+			@include breakpoint-deprecated( ">480px" ) {
+				width: auto;
+			}
 		}
 
 		.is-section-domains & {
-			@include breakpoint-deprecated( '>800px' ) {
-		  	width: auto;
-		  }
+			@include breakpoint-deprecated( ">800px" ) {
+				width: auto;
+			}
 		}
 	}
 }
@@ -25,7 +25,7 @@
 .domain-transfer-suggestion__domain-description {
 	padding-right: 1em;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: 75%;
 	}
 
@@ -34,11 +34,11 @@
 	}
 
 	> p {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		font-size: $font-body-extra-small;
 		margin-bottom: 0;
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			margin-bottom: 8px;
 		}
 	}

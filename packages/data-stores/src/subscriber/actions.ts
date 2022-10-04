@@ -48,7 +48,7 @@ export function createActions() {
 				formData: [ [ 'import', file, file.name ] ],
 			} );
 
-			yield importCsvSubscribersStartSuccess( siteId, data.id );
+			yield importCsvSubscribersStartSuccess( siteId, data.upload_id );
 		} catch ( error ) {
 			yield importCsvSubscribersStartFailed( siteId, error as ImportSubscribersError );
 		}

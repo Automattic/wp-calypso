@@ -4,26 +4,26 @@
 	position: fixed;
 	top: ( 47px + 8px );
 	right: 16px;
-	background: rgba( var( --color-accent-rgb ), 0.96 );
+	background: rgba(var(--color-accent-rgb), 0.96);
 	padding: 8px 18px 8px 34px;
-	border-radius: 24px;
+	border-radius: 24px; /* stylelint-disable-line scales/radii */
 	color: white;
-	z-index: z-index( 'root', '.reader-update-notice' );
+	z-index: z-index("root", ".reader-update-notice");
 	margin: 0;
 	box-sizing: border-box;
 	opacity: 0;
-	transform: translateY( -100px );
+	transform: translateY(-100px);
 	pointer-events: none;
-	transition: background 0.15s ease-in-out, transform 0.2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	transition: background 0.15s ease-in-out, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 	font-size: $font-body;
 
 	&:hover {
-		background: var( --color-primary );
+		background: var(--color-primary);
 	}
 
 	&.is-active {
 		opacity: 1;
-		transform: translateY( 0 );
+		transform: translateY(0);
 		pointer-events: auto;
 		cursor: pointer;
 	}

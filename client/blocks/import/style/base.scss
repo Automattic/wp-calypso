@@ -1,19 +1,19 @@
-@import '@automattic/onboarding/styles/base-styles.scss';
-@import '@automattic/onboarding/styles/mixins.scss';
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import './mixins.scss';
-@import './components.scss';
+@import "@automattic/onboarding/styles/base-styles.scss";
+@import "@automattic/onboarding/styles/mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "./mixins.scss";
+@import "./components.scss";
 
 .import__onboarding-page {
 	.components-button.action-buttons__next.is-primary {
 		padding: 9px 40px;
-		border-radius: 4px; /* stylelint-disable-line scales/radii */
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		border-radius: 4px;
+		font-weight: 500;
 		line-height: 20px;
 
 		// override unnecessary super specificity added by another class
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 ) !important;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
 
 		&:disabled {
 			color: #fff;
@@ -48,8 +48,8 @@
 		}
 
 		strong {
-			font-weight: 500; /* stylelint-disable-line */
-			color: var( --studio-gray-100 );
+			font-weight: 500;
+			color: var(--studio-gray-100);
 		}
 
 		.onboarding-title {
@@ -58,7 +58,8 @@
 		}
 
 		.onboarding-subtitle {
-			font-size: 1.125rem; /* stylelint-disable-line */
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.4444em;
 
 			@include break-small {
@@ -79,11 +80,11 @@
 		}
 
 		.components-button.action-buttons__back {
-			color: var( --studio-gray-100 );
-			font-weight: 500; /* stylelint-disable-line */
+			color: var(--studio-gray-100);
+			font-weight: 500;
 
 			&:hover {
-				color: var( --color-neutral-70 );
+				color: var(--color-neutral-70);
 			}
 		}
 	}
@@ -95,15 +96,16 @@
 	.scanning__header {
 		.import__heading {
 			.onboarding-title {
-				font-family: var( --font-base, var( --font-base-default ) );
-				font-size: 1.75em; /* stylelint-disable-line */
-				margin-bottom: 0.5em /* stylelint-disable-line */;
+				font-family: var(--font-base, var(--font-base-default));
+				font-size: 1.75em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				margin-bottom: 0.5em;
 			}
 
 			.onboarding-subtitle {
 				font-size: 1rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.5em;
-				color: var( --studio-gray-50 );
+				color: var(--studio-gray-50);
 			}
 		}
 	}
@@ -116,7 +118,7 @@
 	}
 }
 
-[dir='rtl'] {
+[dir="rtl"] {
 	.import__details-list {
 		svg {
 			left: auto;
@@ -127,7 +129,7 @@
 .import__details-list {
 	display: flex;
 	flex-wrap: wrap;
-	color: var( --studio-gray-70 );
+	color: var(--studio-gray-70);
 	font-size: $font-body-small;
 	margin: 1em 0;
 
@@ -152,7 +154,7 @@
 		position: absolute;
 		top: 1px;
 		left: 0;
-		fill: var( --studio-gray-20 );
+		fill: var(--studio-gray-20);
 	}
 }
 
@@ -176,9 +178,9 @@
 }
 
 .import-layout__center {
-	background-color: var( --contrastColor );
+	background-color: var(--contrastColor);
 	tab-size: 4;
-	min-height: calc( 100vh - 2 * #{$header-height} );
+	min-height: calc(100vh - 2 * #{$header-height});
 	width: 100%;
 	display: flex;
 	justify-content: center;

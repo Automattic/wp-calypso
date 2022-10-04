@@ -304,10 +304,10 @@ export class ContactDetailsFormFields extends Component {
 		} );
 	};
 
-	handlePhoneChange = ( { value, countryCode } ) => {
+	handlePhoneChange = ( { phoneNumber, countryCode } ) => {
 		this.formStateController.handleFieldChange( {
 			name: 'phone',
-			value,
+			value: phoneNumber,
 		} );
 
 		if ( ! countries[ countryCode ] ) {
@@ -326,6 +326,12 @@ export class ContactDetailsFormFields extends Component {
 		const { eventFormName, getIsFieldDisabled } = this.props;
 		const { form } = this.state;
 
+		const basicValue = formState.getFieldValue( form, name ) || '';
+		let value = basicValue;
+		if ( name === 'phone' ) {
+			value = { phoneNumber: basicValue, countryCode: this.state.phoneCountryCode };
+		}
+
 		return {
 			labelClass: 'contact-details-form-fields__label',
 			additionalClasses: 'contact-details-form-fields__field',
@@ -336,7 +342,7 @@ export class ContactDetailsFormFields extends Component {
 				( formState.getFieldErrorMessages( form, camelCase( name ) ) || [] ).join( '\n' ),
 			onChange: this.handleFieldChange,
 			onBlur: this.handleBlur,
-			value: formState.getFieldValue( form, name ) || '',
+			value,
 			name,
 			eventFormName,
 			...ref,
@@ -391,7 +397,6 @@ export class ContactDetailsFormFields extends Component {
 							label: translate( 'Phone' ),
 							onChange: this.handlePhoneChange,
 							countriesList: this.props.countriesList,
-							countryCode: this.state.phoneCountryCode,
 							enableStickyCountry: false,
 						},
 						{
@@ -508,9 +513,9 @@ export class ContactDetailsFormFields extends Component {
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
-					label={ this.props.translate( 'Alternate Email Address' ) }
-					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage: this.props.contactDetailsErrors?.alternateEmail,
+					label={ this.props.translate( 'Alternate email address' ) }
+					{ ...this.getFieldProps( 'email', {
+						customErrorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 				/>
 			</div>

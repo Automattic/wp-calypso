@@ -9,7 +9,7 @@
 
 		cursor: pointer;
 
-		border: 1px solid var( --color-border ); /* TODO fix color */
+		border: 1px solid var(--color-border); /* TODO fix color */
 		border-radius: 2px;
 
 		margin-bottom: 8px;
@@ -17,17 +17,17 @@
 
 		&.disabled {
 			pointer-events: none;
-			border-color: var( --color-border-subtle );
+			border-color: var(--color-border-subtle);
 
 			* {
-				color: var( --color-neutral-10 );
+				color: var(--color-neutral-10);
 			}
 		}
 
 		&.selected {
 			pointer-events: none;
-			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px var( --color-primary );
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary);
 		}
 
 		.import-type-choice__option-data {

@@ -70,7 +70,7 @@ class CurrentSite extends Component {
 									className={ `gridicon dashicons-before dashicons-arrow-${ arrowDirection }-alt2` }
 								></span>
 								<span className="current-site__switch-sites-label">
-									{ translate( 'Switch Site' ) }
+									{ translate( 'Switch site' ) }
 								</span>
 							</Button>
 						</span>

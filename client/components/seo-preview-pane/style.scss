@@ -3,7 +3,7 @@
 	flex-direction: column;
 	height: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
 	}
 }
@@ -12,7 +12,7 @@
 	display: flex;
 	flex-direction: column;
 
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 
 	.vertical-menu {
 		flex-direction: row;
@@ -33,7 +33,7 @@
 			display: none;
 		}
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			flex-direction: column;
 			justify-content: flex-start;
 			border-bottom: 1px solid #c8d7e1;
@@ -54,10 +54,10 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		width: 250px;
 		min-width: 250px;
-		border-right: 1px solid var( --color-neutral-10 );
+		border-right: 1px solid var(--color-neutral-10);
 	}
 }
 
@@ -74,10 +74,10 @@
 
 	.seo-preview-pane__description {
 		font-size: $font-body-extra-small;
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin: 40px 0 40px 20px;
 		max-width: 200px;
 	}
@@ -93,8 +93,8 @@
 	height: auto;
 	margin: 0 10px;
 
-	background-color: var( --color-surface );
-	border: 1px solid var( --color-neutral-5 );
+	background-color: var(--color-surface);
+	border: 1px solid var(--color-neutral-5);
 
 	.reader-post-card {
 		padding: 10px;
@@ -106,7 +106,7 @@
 		}
 
 		.reader-post-card__timestamp-and-tag a {
-			color: var( --color-neutral-light );
+			color: var(--color-neutral-light);
 		}
 
 		.reader-post-actions__item {
@@ -120,7 +120,7 @@
 				pointer-events: none;
 
 				&:hover {
-					color: var( --color-neutral-light );
+					color: var(--color-neutral-light);
 				}
 			}
 		}
@@ -132,12 +132,12 @@
 		.comment-button__label-status,
 		.like-button__label-status,
 		.reader-share__button-label {
-			@include breakpoint-deprecated( '<960px' ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				@include hide-content-accessibly();
 			}
 		}
 
-		@include breakpoint-deprecated( '>960px' ) {
+		@include breakpoint-deprecated( ">960px" ) {
 			min-width: 480px;
 		}
 	}

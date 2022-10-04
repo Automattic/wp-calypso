@@ -9,12 +9,12 @@
 	vertical-align: middle;
 	width: 35px;
 
-	$payment-types: 'alipay', 'apple-pay', 'bancontact', 'giropay', 'eps', 'ideal', 'netbanking',
-		'paypal', 'p24', 'wechat', 'sofort';
+	$payment-types: "alipay", "apple-pay", "bancontact", "giropay", "eps", "ideal", "netbanking",
+		"paypal", "p24", "wechat", "sofort";
 
 	@each $type in $payment-types {
 		&.is-#{$type} {
-			background-image: url( '/calypso/images/upgrades/#{$type}.svg' );
+			background-image: url("/calypso/images/upgrades/#{$type}.svg");
 		}
 	}
 
@@ -90,6 +90,6 @@
 	}
 
 	&.disabled {
-		filter: grayscale( 100% );
+		filter: grayscale(100%);
 	}
 }

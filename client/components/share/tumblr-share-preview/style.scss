@@ -1,6 +1,6 @@
 .tumblr-share-preview {
 	color: #444;
-	font-family: Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
+	font-family: "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
 	margin: 0 auto;
 	max-width: 624px;
 
@@ -26,7 +26,7 @@
 }
 
 .tumblr-share-preview__content-part {
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	border-radius: 2px;
 	flex: 1 1 auto;
 	padding: 15px 20px;
@@ -49,11 +49,11 @@
 }
 
 .tumblr-share-preview__post-title {
-    font-family: Gibson, Helvetica Neue, HelveticaNeue, Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    font-size: $font-headline-small;
-    line-height: 47px;
-    margin-bottom: 10px;
+	font-family: Gibson, "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+	font-weight: 400;
+	font-size: $font-headline-small;
+	line-height: 47px;
+	margin-bottom: 10px;
 }
 
 .tumblr-share-preview__image-wrapper {

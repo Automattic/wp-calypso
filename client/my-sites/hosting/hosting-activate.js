@@ -22,10 +22,14 @@ const HostingActivate = ( { initiateTransfer, siteId, siteSlug, translate } ) =>
 				path="/hosting-config/activate/:site"
 				title="Hosting Configuration > Activate"
 			/>
-			<HeaderCake isCompact={ true } backHref={ backUrl }>
+			<HeaderCake isCompact={ false } backHref={ backUrl }>
 				{ translate( 'Activate Hosting Features' ) }
 			</HeaderCake>
-			<EligibilityWarnings onProceed={ transferInitiate } backUrl={ backUrl } />
+			<EligibilityWarnings
+				className="hosting__activating-warnings"
+				onProceed={ transferInitiate }
+				backUrl={ backUrl }
+			/>
 		</MainComponent>
 	);
 };

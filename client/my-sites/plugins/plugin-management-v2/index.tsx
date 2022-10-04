@@ -1,12 +1,15 @@
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { ReactElement, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
+import UpdatePlugins from './update-plugins';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -16,10 +19,10 @@ interface Props {
 	selectedSite: SiteDetails;
 	searchTerm: string;
 	isBulkManagementActive: boolean;
-	pluginUpdateCount: number;
 	toggleBulkManagement: () => void;
-	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
+	isJetpackCloud: boolean;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -27,12 +30,19 @@ export default function PluginManagementV2( {
 	selectedSite,
 	searchTerm,
 	isBulkManagementActive,
-	pluginUpdateCount,
 	toggleBulkManagement,
-	updateAllPlugins,
 	removePluginNotice,
+	updatePlugin,
+	isJetpackCloud,
 }: Props ): ReactElement {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		return () => {
+			dispatch( resetPluginStatuses() );
+		};
+	}, [ dispatch ] );
 
 	const renderBulkActionsHeader = () => {
 		if ( isLoading ) {
@@ -41,20 +51,8 @@ export default function PluginManagementV2( {
 
 		return (
 			<div className="plugin-common-table__bulk-actions">
-				{ !! pluginUpdateCount && (
-					<ButtonGroup>
-						<Button compact primary onClick={ updateAllPlugins }>
-							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
-								context: 'button label',
-								count: pluginUpdateCount,
-								args: {
-									numUpdates: pluginUpdateCount,
-								},
-							} ) }
-						</Button>
-					</ButtonGroup>
-				) }
-				<ButtonGroup>
+				{ isJetpackCloud && <UpdatePlugins plugins={ plugins } /> }
+				<ButtonGroup className="plugin-management-v2__table-button-group">
 					<Button compact onClick={ toggleBulkManagement }>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
@@ -81,9 +79,12 @@ export default function PluginManagementV2( {
 						smallColumn: true,
 					},
 					{
+						key: 'update',
+						header: translate( 'Update available' ),
+					},
+					{
 						key: 'last-updated',
-						header: translate( 'Last updated' ),
-						smallColumn: true,
+						header: null,
 					},
 			  ]
 			: [
@@ -92,11 +93,16 @@ export default function PluginManagementV2( {
 						header: translate( 'Sites' ),
 						smallColumn: true,
 					},
+					{
+						key: 'update',
+						header: translate( 'Update available' ),
+						smallColumn: true,
+					},
 			  ] ),
 		{
-			key: 'update',
+			key: 'bulk-actions',
 			header: renderBulkActionsHeader(),
-			colSpan: 2,
+			colSpan: 3,
 		},
 	];
 
@@ -123,6 +129,7 @@ export default function PluginManagementV2( {
 				} ) }
 				selectedSite={ selectedSite }
 				removePluginNotice={ removePluginNotice }
+				updatePlugin={ updatePlugin }
 			/>
 		</div>
 	);

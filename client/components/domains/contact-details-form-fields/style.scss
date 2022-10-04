@@ -20,7 +20,7 @@
 		margin-top: 15px;
 	}
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		.contact-details-form-fields__field.last-name,
 		.contact-details-form-fields__field.phone {
 			margin-left: 7px;
@@ -31,7 +31,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		.contact-details-form-fields__field.postal-code,
 		.contact-details-form-fields__field.state {
 			margin-left: 7px;
@@ -61,13 +61,13 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		.contact-details-form-fields__row {
 			flex-direction: column;
 		}
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		.custom-form-fieldsets__address-fields,
 		.g-apps-fieldset {
 			flex-direction: column;
@@ -98,7 +98,7 @@
 		.email-text-input-with-checkbox__checkbox-label {
 			margin-top: 0.5em;
 			&.is-disabled {
-				color: var( --color-neutral-20 );
+				color: var(--color-neutral-20);
 			}
 		}
 	}
