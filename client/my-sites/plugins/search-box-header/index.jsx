@@ -1,5 +1,6 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { useCurrentRoute } from 'calypso/components/route';
@@ -8,6 +9,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import './style.scss';
 
 function pageToSearch( s ) {
+	page.show( page.current );
 	setQueryArgs( '' !== s ? { s } : {} );
 }
 
