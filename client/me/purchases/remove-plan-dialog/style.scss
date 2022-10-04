@@ -83,6 +83,10 @@ $modal-breakpoint-mobile: 480px;
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				display: block;
 			}
+
+			strong {
+				overflow-wrap: anywhere;
+			}
 		}
 
 		.remove-plan-dialog__grid-colmn:first-child {
@@ -122,26 +126,43 @@ $modal-breakpoint-mobile: 480px;
 			}
 		}
 	}
-}
 
-.remove-plan-dialog__item-cross-small {
-	color: #e65054;
-	vertical-align: middle;
-	margin-right: 10px;
-}
-
-.remove-plan-dialog__list-plan-features {
-	list-style-type: none;
-	margin: 0;
-	text-align: left;
-
-	@media ( max-width: $modal-breakpoint-tablet ) {
-		margin-bottom: 48px;
+	.remove-plan-dialog__item-cross-small {
+		color: #e65054;
+		vertical-align: middle;
+		margin-right: 10px;
 	}
 
-	li {
-		display: grid;
-		grid-template-columns: 32px 1fr;
-		margin-bottom: 5px;
+	.remove-plan-dialog__list-plan-features {
+		list-style-type: none;
+		margin: 0;
+		text-align: left;
+
+		@media ( max-width: $modal-breakpoint-tablet ) {
+			margin-bottom: 48px;
+		}
+
+		li {
+			display: grid;
+			grid-template-columns: 32px 1fr;
+			margin-bottom: 5px;
+		}
+	}
+
+	&.--with-domain-feature {
+		.remove-plan-dialog__list-plan-features {
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				margin-bottom: 98px;
+			}
+
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				margin-bottom: 58px;
+			}
+		}
+
+		& + .dialog__action-buttons {
+			margin-top: -67px;
+			margin-bottom: 27px;
+		}
 	}
 }

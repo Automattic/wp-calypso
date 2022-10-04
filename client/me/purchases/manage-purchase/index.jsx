@@ -521,10 +521,18 @@ class ManagePurchase extends Component {
 			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
 			const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
 			let customDomain = false;
+			let wordpressComURL = '';
 
 			if ( isPlan( purchase ) && ! isJetpackPlan( purchase ) ) {
 				if ( hasCustomPrimaryDomain && primaryDomainName ) {
 					customDomain = true;
+				}
+
+				if ( typeof site.wpcom_url !== 'undefined' ) {
+					wordpressComURL =
+						site.wpcom_url.length < 35
+							? site.wpcom_url
+							: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
 				}
 
 				return (
@@ -536,7 +544,7 @@ class ManagePurchase extends Component {
 						hasDomain={ customDomain }
 						isRefundable={ isRefundable( purchase ) }
 						primaryDomain={ primaryDomainName }
-						wpcomURL={ site.wpcom_url }
+						wpcomURL={ wordpressComURL }
 					/>
 				);
 			}

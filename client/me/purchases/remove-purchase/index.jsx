@@ -234,14 +234,15 @@ class RemovePurchase extends Component {
 	renderPlanWarningDialog() {
 		const { site, purchase, primaryDomain } = this.props;
 		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
-		const primaryDomainURL =
-			primaryDomainName.length < 20
-				? primaryDomainName
-				: primaryDomainName.substr( 0, 10 ) + '…' + primaryDomainName.slice( -10 );
-		const wordpressComURL =
-			site.wpcom_url.length < 30
-				? site.wpcom_url
-				: site.wpcom_url.substr( 0, 8 ) + '…' + site.wpcom_url.slice( -20 );
+
+		let wordpressComURL = '';
+		if ( typeof site.wpcom_url !== 'undefined' ) {
+			wordpressComURL =
+				site.wpcom_url.length < 35
+					? site.wpcom_url
+					: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
+		}
+
 		return (
 			<RemovePlanDialog
 				isDialogVisible={ this.state.isShowingRemovePlanWarning }
@@ -250,7 +251,7 @@ class RemovePurchase extends Component {
 				site={ site }
 				hasDomain={ hasCustomDomain }
 				isRefundable={ isRefundable( purchase ) }
-				primaryDomain={ primaryDomainURL }
+				primaryDomain={ primaryDomainName }
 				wpcomURL={ wordpressComURL }
 			/>
 		);
