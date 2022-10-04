@@ -115,7 +115,7 @@
 	background: var(--p2-color-background-light);
 	padding: 1.2rem;
 	display: grid;
-	border-radius: 2px; /* stylelint-disable-line scales/radii */
+	border-radius: 2px;
 
 	@include break-small {
 		grid-template-columns: auto auto;

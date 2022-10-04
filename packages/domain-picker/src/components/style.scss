@@ -331,7 +331,6 @@ $accent-blue: #117ac9;
 	.domain-picker__badge {
 		color: var(--studio-green-80);
 		background-color: var(--studio-green-5);
-		// stylelint-disable-next-line scales/radii
 		border-radius: 4px;
 		text-transform: unset;
 		font-size: $font-body-extra-small;

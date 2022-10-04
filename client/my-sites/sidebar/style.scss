@@ -140,7 +140,6 @@ $font-size: rem(14px);
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: rem(13px);
 				line-height: 1.4;
 				font-weight: 400;
@@ -543,7 +542,6 @@ $font-size: rem(14px);
 		.sidebar__menu-link {
 			cursor: pointer;
 			color: var(--color-sidebar-text-alternative);
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			font-size: rem(13px);
 
 			&:hover,
