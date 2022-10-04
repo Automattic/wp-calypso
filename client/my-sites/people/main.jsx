@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -12,17 +11,15 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import TeamList from 'calypso/my-sites/people/team-list';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import FollowersList from './followers-list';
-import { includeSubscriberImporterGradually } from './helpers';
 import ViewersList from './viewers-list';
 
 class People extends Component {
@@ -170,7 +167,6 @@ class People extends Component {
 
 		return (
 			<Main>
-				<QueryReaderTeams />
 				<ScreenOptionsTab wpAdminPath="users.php" />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }
@@ -206,9 +202,7 @@ class People extends Component {
 }
 
 export default connect( ( state ) => {
-	const userId = getCurrentUserId( state );
 	const siteId = getSelectedSiteId( state );
-	const a8cTeamMember = isA8cTeamMember( state );
 
 	return {
 		siteId,
@@ -219,6 +213,6 @@ export default connect( ( state ) => {
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
-		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 	};
 } )( localize( People ) );

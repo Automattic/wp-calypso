@@ -6,12 +6,10 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { includeSubscriberImporterGradually } from '../helpers';
 
 import './style.scss';
 
@@ -109,12 +107,10 @@ class PeopleListSectionHeader extends Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const userId = getCurrentUserId( state );
 	const selectedSiteId = getSelectedSiteId( state );
-	const a8cTeamMember = isA8cTeamMember( state );
 
 	return {
-		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		currentRoute: getCurrentRoute( state ),
 	};
