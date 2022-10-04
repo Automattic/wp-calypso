@@ -4,6 +4,7 @@ import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { connect } from 'react-redux';
+import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -134,7 +135,14 @@ function Empty( { emptyContent, translate } ) {
 					{ translate( 'Upgrade your plan' ) }
 				</Button>
 
-				<div className="themes-list__themes-images"></div>
+				<div className="themes-list__themes-images">
+					<img
+						src={ proThemesBanner }
+						alt={ translate(
+							'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
+						) }
+					/>
+				</div>
 			</div>
 		</div>
 	) : (
