@@ -353,7 +353,7 @@
 	.gridicons-not-visible,
 	.comment-button {
 		&:hover,
-		button.is-activ
+		button.is-active {
 			color: var( --color-primary );
 
 			svg.reader-comment path, svg.reader-star path {
