@@ -2,7 +2,6 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -168,7 +167,6 @@ class People extends Component {
 
 		return (
 			<Main>
-				<QueryReaderTeams />
 				<ScreenOptionsTab wpAdminPath="users.php" />
 				<PageViewTracker
 					path={ `/people/${ filter }/:site` }

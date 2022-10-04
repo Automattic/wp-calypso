@@ -4,7 +4,6 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -81,7 +80,6 @@ class PeopleInvites extends PureComponent {
 		return (
 			<Main className="people-invites">
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
-				<QueryReaderTeams />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<FormattedHeader
 					brandFont
