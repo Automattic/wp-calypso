@@ -775,11 +775,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText =
+		const [ sitesBackLabelText, defaultBackUrl ] =
 			userSiteCount && userSiteCount === 1
-				? translate( 'Back to My Home' )
-				: translate( 'Back to Sites' );
-		const defaultBackUrl = userSiteCount && userSiteCount === 1 ? `/home` : `/sites`;
+				? [ translate( 'Back to My Home' ), '/home' ]
+				: [ translate( 'Back to Sites' ), '/sites' ];
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
