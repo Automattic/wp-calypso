@@ -25,6 +25,10 @@
 .reader-feed-header__site-icon {
 	align-self: center;
 	padding-bottom: 16px;
+	img,
+	.site-icon.is-blank {
+		border-radius: 100%;
+	}
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
@@ -36,20 +40,21 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
-	align-self: stretch;
+	align-items: center;
+	display: flex;
 	font-family: $serif;
 	font-size: $font-title-large;
 	font-weight: 600;
+	justify-content: center;
 	max-height: 16px * 4;
 	margin-bottom: 6px;
 	overflow: hidden;
 	position: relative;
-	text-align: center;
 	white-space: normal;
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: var(--color-primary);
+		color: var( --color-neutral-100 );
 	}
 
 	&::after {
@@ -60,6 +65,11 @@
 
 	@include breakpoint-deprecated( "<960px" ) {
 		max-height: 16px * 5.9;
+	}
+
+	.blog-stickers {
+		position: relative;
+		top: 2px;
 	}
 }
 

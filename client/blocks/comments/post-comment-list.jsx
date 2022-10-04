@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import SegmentedControl from 'calypso/components/segmented-control';
+import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
 	requestPostComments,
@@ -437,6 +439,8 @@ class PostCommentList extends Component {
 							postId={ postId }
 							post={ this.props.post }
 							followSource={ followSource }
+							followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+							followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
 						/>
 					) }
 				</div>

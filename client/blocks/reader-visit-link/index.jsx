@@ -27,9 +27,9 @@ class ReaderVisitLink extends Component {
 				target="_blank"
 				icon={ true }
 				showIconFirst={ true }
-				iconSize="20"
+				iconSize={ 24 }
 				iconClassName="reader-visit-link__icon"
-				iconComponent={ ReaderExternalIcon( { iconSize: 24 } ) }
+				iconComponent={ ReaderExternalIcon( { iconSize: 20 } ) }
 				onClick={ this.props.onClick }
 			>
 				<span className="reader-visit-link__label">{ this.props.children }</span>

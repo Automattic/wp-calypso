@@ -8,8 +8,10 @@ import ConversationFollowButton from 'calypso/blocks/conversation-follow-button'
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+import ReaderExternalIcon from 'calypso/reader/components/icons/external-icon';
+import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import * as DiscoverHelper from 'calypso/reader/discover/helper';
-import FollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { canBeMarkedAsSeen, isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -148,7 +150,7 @@ class ReaderPostEllipsisMenu extends Component {
 		}, 100 );
 	};
 
-	markAsSeen = () => {
+	markAsSeen = ( event ) => {
 		const { post, posts } = this.props;
 
 		if ( ! post ) {
@@ -187,10 +189,13 @@ class ReaderPostEllipsisMenu extends Component {
 			} );
 		}
 
+		event.stopPropagation();
+		event.preventDefault();
+
 		this.onMenuToggle();
 	};
 
-	markAsUnSeen = () => {
+	markAsUnSeen = ( event ) => {
 		const { post, posts } = this.props;
 
 		if ( ! post ) {
@@ -230,6 +235,9 @@ class ReaderPostEllipsisMenu extends Component {
 		}
 
 		this.onMenuToggle();
+
+		event.stopPropagation();
+		event.preventDefault();
 	};
 
 	render() {
@@ -262,7 +270,6 @@ class ReaderPostEllipsisMenu extends Component {
 			isBlockPossible = true;
 		}
 
-		const followUrl = this.getFollowUrl();
 		const isTeamMember = isAutomatticTeamMember( teams );
 		const showConversationFollowButton =
 			this.props.showConversationFollow && shouldShowConversationFollowButton( post );
@@ -274,17 +281,6 @@ class ReaderPostEllipsisMenu extends Component {
 				onToggle={ this.onMenuToggle }
 				position={ position }
 			>
-				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
-
-				{ this.props.showFollow && (
-					<FollowButton
-						tagName={ PopoverMenuItem }
-						siteUrl={ followUrl }
-						followLabel={ showConversationFollowButton ? translate( 'Follow site' ) : null }
-						followingLabel={ showConversationFollowButton ? translate( 'Following site' ) : null }
-					/>
-				) }
-
 				{ showConversationFollowButton && (
 					<ConversationFollowButton
 						tagName={ PopoverMenuItem }
@@ -292,13 +288,15 @@ class ReaderPostEllipsisMenu extends Component {
 						postId={ postId }
 						post={ post }
 						followSource={ READER_POST_OPTIONS_MENU }
+						followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
 					/>
 				) }
 
 				{ isEligibleForUnseen( { isWPForTeamsItem, currentRoute, hasOrganization } ) &&
 					canBeMarkedAsSeen( { post, posts } ) &&
 					post.is_seen && (
-						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible" itemComponent={ 'a' }>
+						<PopoverMenuItem onClick={ this.markAsUnSeen } icon="not-visible">
 							{ size( posts ) > 0 && translate( 'Mark all as unseen' ) }
 							{ size( posts ) === 0 && translate( 'Mark as unseen' ) }
 						</PopoverMenuItem>
@@ -314,7 +312,10 @@ class ReaderPostEllipsisMenu extends Component {
 					) }
 
 				{ this.props.showVisitPost && post.URL && (
-					<PopoverMenuItem onClick={ this.visitPost } icon="external">
+					<PopoverMenuItem
+						onClick={ this.visitPost }
+						icon={ ReaderExternalIcon( { iconSize: 20 } ) }
+					>
 						{ translate( 'Visit post' ) }
 					</PopoverMenuItem>
 				) }
@@ -325,8 +326,11 @@ class ReaderPostEllipsisMenu extends Component {
 					</PopoverMenuItem>
 				) }
 
+				{ isTeamMember && site && <hr className="popover__menu-separator" /> }
+				{ isTeamMember && site && <ReaderPostOptionsMenuBlogStickers blogId={ +site.ID } /> }
+
 				{ ( this.props.showFollow || isEditPossible || post.URL ) &&
-					( isBlockPossible || isDiscoverPost ) && <hr className="reader-post-options-menu__hr" /> }
+					( isBlockPossible || isDiscoverPost ) && <hr className="popover__menu-separator" /> }
 
 				{ isBlockPossible && (
 					<PopoverMenuItem onClick={ this.blockSite }>

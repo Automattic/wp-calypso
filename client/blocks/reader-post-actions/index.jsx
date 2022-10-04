@@ -8,6 +8,7 @@ import ShareButton from 'calypso/blocks/reader-share';
 import { shouldShowShare } from 'calypso/blocks/reader-share/helper';
 import ReaderVisitLink from 'calypso/blocks/reader-visit-link';
 import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import * as stats from 'calypso/reader/stats';
@@ -65,6 +66,11 @@ const ReaderPostActions = ( props ) => {
 					/>
 				</li>
 			) }
+			{ shouldShowLikes( post ) && (
+				<li className="reader-post-actions__item">
+					<ReaderFollowButton siteUrl={ post.feed_URL } iconSize={ iconSize } />
+				</li>
+			) }
 			{ shouldShowShare( post ) && (
 				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
@@ -116,7 +122,7 @@ ReaderPostActions.propTypes = {
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showVisit: false,
-	iconSize: 24,
+	iconSize: 20,
 };
 
 export default localize( ReaderPostActions );

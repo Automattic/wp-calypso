@@ -9,8 +9,8 @@ import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
-import './style.scss';
 import ReaderPostEllipsisMenu from './reader-post-ellipsis-menu';
+import './style.scss';
 
 class ReaderPostOptionsMenu extends Component {
 	static propTypes = {

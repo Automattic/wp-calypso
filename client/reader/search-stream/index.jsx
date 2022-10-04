@@ -11,6 +11,8 @@ import SearchInput from 'calypso/components/search';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import FollowButton from 'calypso/reader/follow-button';
@@ -172,6 +174,8 @@ class SearchStream extends React.Component {
 								} ) }
 								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 								followSource={ SEARCH_RESULTS_URL_INPUT }
+								followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+								followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 							/>
 						</div>
 					) }

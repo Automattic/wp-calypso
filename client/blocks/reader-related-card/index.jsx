@@ -9,6 +9,8 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
@@ -54,6 +56,8 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				siteUrl={ post.site_URL }
 				followSource={ followSource }
 				railcar={ post.railcar }
+				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 			/>
 		</div>
 	);

@@ -12,6 +12,7 @@ class ExternalLink extends Component {
 	static defaultProps = {
 		iconSize: 18,
 		showIconFirst: false,
+		iconComponent: null,
 	};
 
 	static propTypes = {
@@ -33,7 +34,7 @@ class ExternalLink extends Component {
 		} );
 
 		const props = {
-			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName' ),
+			...omit( this.props, 'icon', 'iconSize', 'showIconFirst', 'iconClassName', 'iconComponent' ),
 			className: classes,
 			rel: 'external',
 		};
@@ -50,7 +51,7 @@ class ExternalLink extends Component {
 			props.href = localizeUrl( props.href );
 		}
 
-		const iconComponent = props.iconComponent || (
+		const iconComponent = this.props.iconComponent || (
 			<Gridicon
 				className={ this.props.iconClassName }
 				icon="external"
