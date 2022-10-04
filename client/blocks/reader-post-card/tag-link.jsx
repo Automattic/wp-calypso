@@ -1,9 +1,5 @@
 import { Component } from 'react';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-} from 'calypso/reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 
 class TagLink extends Component {
 	recordSingleTagClick = () => {
