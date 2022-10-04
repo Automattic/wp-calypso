@@ -387,10 +387,10 @@ function load_help_center() {
 	$is_proxied = isset( $_SERVER['A8C_PROXIED_REQUEST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['A8C_PROXIED_REQUEST'] ) ) : false || defined( 'A8C_PROXIED_REQUEST' ) && A8C_PROXIED_REQUEST;
 
 	// phpcs:disable Squiz.PHP.CommentedOutCode.Found
-	// $current_segment = 30; // segment of existing users that will get the help center in %.
-	// $user_segment    = get_current_user_id() % 100;
+	$current_segment = 10; // segment of existing users that will get the help center in %.
+	$user_segment    = get_current_user_id() % 100;
 
-	if ( $is_proxied ) {
+	if ( $is_proxied || $user_segment < $current_segment ) {
 		require_once __DIR__ . '/help-center/class-help-center.php';
 	}
 }
