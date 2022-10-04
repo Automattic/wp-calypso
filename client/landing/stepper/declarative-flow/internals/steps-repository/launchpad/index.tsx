@@ -28,12 +28,12 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 		// launchpadScreenOption changes from undefined to either 'off' or 'full'
 		// we need to check if it's defined to avoid recording the same action twice
 		if ( launchpadScreenOption ) {
-			recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
-		}
-
-		if ( launchpadScreenOption === 'off' ) {
-			window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
-			recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+			if ( launchpadScreenOption === 'off' ) {
+				window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
+				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+			} else {
+				recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
+			}
 		}
 	}, [ launchpadScreenOption, siteSlug, flow ] );
 
