@@ -22,13 +22,13 @@ const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 export const LinkInBioBanner = ( props: Props ) => {
 	const { displayMode, sites } = props;
 	const siteCount = sites.length;
-	const doesNotAlreadyHaveALinkedInBioSite = ! hasLinkInBioSite( sites );
+	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
 	const isMobile = useMobileBreakpoint();
 	const isBannerVisible = useSelector( ( state ) =>
 		getPreference( state, LINK_IN_BIO_BANNER_PREFERENCE )
 	);
 	const showBanner =
-		( doesNotAlreadyHaveALinkedInBioSite && isBannerVisible == null ) || isBannerVisible;
+		( doesNotAlreadyHaveALinkInBioSite && isBannerVisible == null ) || isBannerVisible;
 
 	const renderBanner = () => {
 		let bannerType: BannerType = 'none';
