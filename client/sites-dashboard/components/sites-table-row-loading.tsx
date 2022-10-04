@@ -24,15 +24,12 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
-	vertical-align: top;
+	vertical-align: middle;
 `;
-
-const DetailColumn = styled( Column )( {
-	verticalAlign: 'middle',
-} );
 
 const TitleRow = styled.div`
 	display: flex;
+	align-items: center;
 `;
 
 const FullWidth = styled.div`
@@ -81,9 +78,9 @@ export default function SitesTableRowLoading( {
 			{ Array( columns - 1 )
 				.fill( null )
 				.map( ( _, i ) => (
-					<DetailColumn mobileHidden key={ i }>
+					<Column mobileHidden key={ i }>
 						<LoadingPlaceholder className={ css( { maxWidth: 70 } ) } delayMS={ delayMS } />
-					</DetailColumn>
+					</Column>
 				) ) }
 		</Row>
 	);
