@@ -29,6 +29,7 @@ export const AddSSHKeyForm = ( { addSSHKey }: AddSSHKeyFormProps ) => {
 					required
 					id={ PUBLIC_SSH_KEY_INPUT_ID }
 					value={ publicSSHKey }
+					placeholder={ __( 'Paste the public key here' ) }
 					onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
 						setPublicSSHKey( event.target.value )
 					}
