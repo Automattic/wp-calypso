@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
@@ -11,8 +10,7 @@ import './style.scss';
 const noop = () => {};
 
 function CommentButton( props ) {
-	const { commentCount, href, onClick, showLabel, tagName, target, icon } = props;
-	const translate = useTranslate();
+	const { commentCount, href, onClick, tagName, target, icon } = props;
 
 	return createElement(
 		tagName,
