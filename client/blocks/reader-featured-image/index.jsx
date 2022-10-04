@@ -43,7 +43,7 @@ const ReaderFeaturedImage = ( {
 				width: imageWidth || 'auto',
 			};
 		} else {
-			children = <img src={ safeCssUrl } />;
+			children = <img src={ safeCssUrl } alt="Featured" />;
 		}
 	}
 
