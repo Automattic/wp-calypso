@@ -11,21 +11,15 @@ import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
+const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
-
-	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
 
 	const selectedSite = useSelector( getSelectedSite );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
-	}
-
-	if ( legacyVersion || isJetpackCloud ) {
-		return <LegacyPluginDetailsHeader plugin={ plugin } isJetpackCloud={ isJetpackCloud } />;
 	}
 
 	return (
@@ -95,71 +89,6 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 		</div>
 	);
 };
-
-function LegacyPluginDetailsHeader( { plugin, isJetpackCloud } ) {
-	const moment = useLocalizedMoment();
-	const translate = useTranslate();
-	const { localizePath } = useLocalizedPlugins();
-
-	const selectedSite = useSelector( getSelectedSite );
-
-	const tags = Object.values( plugin?.tags || {} )
-		.slice( 0, 3 )
-		.join( ' · ' );
-
-	return (
-		<div className="plugin-details-header__container">
-			{ ! isJetpackCloud && <div className="plugin-details-header__tags">{ tags }</div> }
-			<div className="plugin-details-header__main-info">
-				<img className="plugin-details-header__icon" src={ plugin.icon } alt="" />
-				<div className="plugin-details-header__title-container">
-					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
-					<div className="plugin-details-header__description">
-						{ preventWidows( plugin.short_description || plugin.description ) }
-					</div>
-				</div>
-			</div>
-			<div className="plugin-details-header__additional-info">
-				<div className="plugin-details-header__info">
-					<div className="plugin-details-header__info-title">{ translate( 'Developer' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ isJetpackCloud ? (
-							plugin.author_name
-						) : (
-							<a
-								href={ localizePath(
-									`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
-										plugin
-									) }"`
-								) }
-							>
-								{ plugin.author_name }
-							</a>
-						) }
-					</div>
-				</div>
-				{ !! plugin.rating && (
-					<div className="plugin-details-header__info">
-						<div className="plugin-details-header__info-title">{ translate( 'Ratings' ) }</div>
-						<div className="plugin-details-header__info-value">
-							<PluginRatings rating={ plugin.rating } />
-						</div>
-					</div>
-				) }
-				<div className="plugin-details-header__info">
-					<div className="plugin-details-header__info-title">{ translate( 'Last updated' ) }</div>
-					<div className="plugin-details-header__info-value">
-						{ moment.utc( plugin.last_updated, 'YYYY-MM-DD hh:mma' ).format( 'LL' ) }
-					</div>
-				</div>
-				<div className="plugin-details-header__info">
-					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
-					<div className="plugin-details-header__info-value">{ plugin.version }</div>
-				</div>
-			</div>
-		</div>
-	);
-}
 
 const LIMIT_OF_TAGS = 3;
 function Tags( { plugin } ) {
