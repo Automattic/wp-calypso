@@ -9,6 +9,8 @@ import {
 	TYPE_BUSINESS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
+import { useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -57,6 +59,8 @@ const UpgradeNudge = ( {
 	const pluginsPlansPage = `/plugins/plans/yearly/${ selectedSite?.slug }`;
 
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	if (
 		jetpackNonAtomic ||
@@ -129,6 +133,18 @@ const UpgradeNudge = ( {
 		);
 	}
 
+	let title = translate( 'You need to upgrade your plan to install plugins.' );
+	if (
+		'en' === locale ||
+		hasTranslation(
+			'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
+		)
+	) {
+		title = translate(
+			'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
+		);
+	}
+
 	// This banner upsells the ability to install free and paid plugins on a Business plan.
 	return (
 		<UpsellNudge
@@ -140,9 +156,7 @@ const UpgradeNudge = ( {
 			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }
 			plan={ plan }
-			title={ translate(
-				'You need to upgrade to a Business Plan to install plugins. Get a free domain with an annual plan.'
-			) }
+			title={ title }
 		/>
 	);
 };
