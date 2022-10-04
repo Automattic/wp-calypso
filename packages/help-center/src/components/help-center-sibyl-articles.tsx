@@ -13,7 +13,7 @@ import { Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, LinkProps, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
@@ -49,7 +49,7 @@ const ConfigurableLink: React.FC<
 	return <Link onClick={ recordSibylArticleClick( article ) } { ...props } />;
 };
 
-function getPostUrl( article: Article, query: string ) {
+function getPostUrl( article: Article, query: string, canNavigateBack: string | null ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -61,6 +61,10 @@ function getPostUrl( article: Article, query: string ) {
 
 		if ( article.blog_id ) {
 			params.set( 'blogId', article.blog_id );
+		}
+
+		if ( canNavigateBack ) {
+			params.set( 'canNavigateBack', canNavigateBack );
 		}
 
 		const search = params.toString();
@@ -76,6 +80,9 @@ function getPostUrl( article: Article, query: string ) {
 export function SibylArticles( { message = '', supportSite, title }: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
+	const { search } = useLocation();
+	const params = new URLSearchParams( search );
+	const canNavigateBack = params.get( 'show-results' );
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -113,7 +120,7 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 					return (
 						<li key={ article.link + index }>
 							<ConfigurableLink
-								to={ getPostUrl( article as Article, message ) }
+								to={ getPostUrl( article as Article, message, canNavigateBack ) }
 								external={ 'en' !== locale }
 								fullUrl={ article.link }
 								article={ article }

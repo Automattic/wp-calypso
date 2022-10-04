@@ -226,11 +226,15 @@ export const HelpCenterContactForm = () => {
 
 	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
 
-	const [ showingSibylResults, setShowingSibylResults ] = useState( false );
+	const showingSibylResults = params.get( 'show-results' ) === 'true';
 
 	function handleCTA() {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
-			setShowingSibylResults( true );
+			params.set( 'show-results', 'true' );
+			history.push( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
 			return;
 		}
 		switch ( mode ) {
