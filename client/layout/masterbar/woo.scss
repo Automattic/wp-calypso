@@ -18,6 +18,7 @@
 
 		.masterbar__login-back-link {
 			margin-top: -10px;
+			font-weight: 500;
 
 			@media screen and ( max-width: 660px ) {
 				display: none;
@@ -30,6 +31,7 @@
 	color: var(--studio-gray-100);
 	text-decoration: none;
 	display: flex;
+	font-weight: 500;
 }
 
 .masterbar__woo-mobile-nav {
