@@ -221,7 +221,7 @@ export interface SiteDetailsOptions {
 	woocommerce_is_active?: boolean;
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
-	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses | [];
+	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
