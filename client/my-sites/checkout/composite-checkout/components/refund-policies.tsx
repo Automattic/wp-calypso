@@ -1,5 +1,6 @@
 import {
 	isBiennially,
+	isBundled,
 	isDomainRegistration,
 	isGoogleWorkspaceExtraLicence,
 	isMonthlyProduct,
@@ -16,22 +17,23 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 export enum RefundPolicy {
 	DomainNameRegistration = 1,
+	DomainNameRegistrationBundled,
 	DomainNameRenewal,
 	GenericBiennial,
 	GenericMonthly,
 	GenericYearly,
 	NonRefundable,
 	PlanBiennialBundle,
-	PlanMonthlyBundle,
-	PlanYearlyBundle,
-	PlanMonthlyRenewal,
-	PlanYearlyRenewal,
 	PlanBiennialRenewal,
+	PlanMonthlyBundle,
+	PlanMonthlyRenewal,
+	PlanYearlyBundle,
+	PlanYearlyRenewal,
 	PremiumTheme,
 }
 
 export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
-	const refundPolicies = cart.products.map( ( product ) => {
+	let refundPolicies: Array< RefundPolicy | undefined > = cart.products.map( ( product ) => {
 		if ( isGoogleWorkspaceExtraLicence( product ) ) {
 			return RefundPolicy.NonRefundable;
 		}
@@ -100,16 +102,38 @@ export function getRefundPolicies( cart: ResponseCart ): RefundPolicy[] {
 		return RefundPolicy.NonRefundable;
 	} );
 
+	const cartHasPlanBundlePolicy = refundPolicies.some(
+		( refundPolicy ) =>
+			refundPolicy === RefundPolicy.PlanMonthlyBundle ||
+			refundPolicy === RefundPolicy.PlanYearlyBundle ||
+			refundPolicy === RefundPolicy.PlanBiennialBundle
+	);
+
+	const cartHasDomainBundleProduct = cart.products.some(
+		( product ) => isDomainRegistration( product ) && isBundled( product )
+	);
+
+	// Account for the fact that users can purchase a bundled domain separately from a paid plan
+	if ( ! cartHasPlanBundlePolicy && cartHasDomainBundleProduct ) {
+		refundPolicies = refundPolicies.filter(
+			( refundPolicy ) => refundPolicy !== RefundPolicy.DomainNameRegistration
+		);
+		refundPolicies.push( RefundPolicy.DomainNameRegistrationBundled );
+	}
+
 	return Array.from( new Set( refundPolicies ) ).filter(
 		( refundPolicy ): refundPolicy is RefundPolicy => refundPolicy !== undefined
 	);
 }
 
+type RefundWindow = 4 | 7 | 14;
+
 // Get the refund windows in days for the items in the cart
-export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
+export function getRefundWindows( refundPolicies: RefundPolicy[] ): RefundWindow[] {
 	const refundWindows = refundPolicies.map( ( refundPolicy ) => {
 		switch ( refundPolicy ) {
 			case RefundPolicy.DomainNameRegistration:
+			case RefundPolicy.DomainNameRegistrationBundled:
 			case RefundPolicy.DomainNameRenewal:
 				return 4;
 
@@ -129,7 +153,7 @@ export function getRefundWindows( refundPolicies: RefundPolicy[] ) {
 	} );
 
 	return Array.from( new Set( refundWindows ) ).filter(
-		( refundWindow ): refundWindow is 4 | 7 | 14 => refundWindow !== undefined
+		( refundWindow ): refundWindow is RefundWindow => refundWindow !== undefined
 	);
 }
 
@@ -159,6 +183,13 @@ function RefundPolicyItem( { refundPolicy }: { refundPolicy: RefundPolicy } ) {
 		case RefundPolicy.DomainNameRegistration:
 			text = translate(
 				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration.',
+				{ components: { refundsSupportPage } }
+			);
+			break;
+
+		case RefundPolicy.DomainNameRegistrationBundled:
+			text = translate(
+				'You understand that {{refundsSupportPage}}domain name refunds{{/refundsSupportPage}} are limited to 96 hours after registration. Refunds of paid plans will deduct the standard cost of any domain name registered within a plan.',
 				{ components: { refundsSupportPage } }
 			);
 			break;

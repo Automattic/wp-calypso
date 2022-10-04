@@ -19,6 +19,7 @@ function getPlanAndDomainBundle( planSlug: string ) {
 
 	cart.products.push( {
 		...getEmptyResponseCartProduct(),
+		is_bundled: true,
 		is_domain_registration: true,
 		meta: 'test.live',
 		product_slug: 'dotlive_domain',
@@ -249,6 +250,32 @@ describe( 'getRefundPolicies', () => {
 		const refundPolicies = getRefundPolicies( cart );
 
 		expect( refundPolicies ).toEqual( [ RefundPolicy.PremiumTheme ] );
+	} );
+
+	test( 'bundled domain and paid domain', () => {
+		const cart = getEmptyResponseCart();
+
+		cart.bundled_domain = 'test.live';
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_bundled: true,
+			is_domain_registration: true,
+			meta: 'test.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		cart.products.push( {
+			...getEmptyResponseCartProduct(),
+			is_domain_registration: true,
+			item_subtotal_integer: 10,
+			meta: 'test2.live',
+			product_slug: 'dotlive_domain',
+		} );
+
+		const refundPolicies = getRefundPolicies( cart );
+
+		expect( refundPolicies ).toEqual( [ RefundPolicy.DomainNameRegistrationBundled ] );
 	} );
 } );
 

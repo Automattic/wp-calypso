@@ -170,6 +170,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	const allCartItemsAreDomains = refundPolicies.every(
 		( refundPolicy ) =>
 			refundPolicy === RefundPolicy.DomainNameRegistration ||
+			refundPolicy === RefundPolicy.DomainNameRegistrationBundled ||
 			refundPolicy === RefundPolicy.DomainNameRenewal
 	);
 
