@@ -91,7 +91,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 	return (
 		<>
 			<TrackComponentView
-				eventName="calypso_non_email_owner_notice_component_impression"
+				eventName="calypso_email_providers_nonowner_impression"
 				eventProperties={ { source } }
 			/>
 			<p className="email-non-owner-message__non-owner-message">{ reasonText }</p>

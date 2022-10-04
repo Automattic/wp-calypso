@@ -25,12 +25,12 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = selectedSite?.slug ?? '';
 
-	const warning = emailAccount?.warnings?.[ 0 ];
+	const requiredAction = emailAccount?.warnings?.[ 0 ];
 
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
 
-	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
+	if ( ! requiredAction && canCurrentUserAddEmail( domain ) ) {
 		return null;
 	}
 
@@ -67,10 +67,10 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 		<div className="email-plan-warnings__container">
 			<EmailPlanWarningNotice selectedSite={ selectedSite } domain={ domain } />
 
-			{ ! cannotAddEmailWarningMessage && warning && (
+			{ ! cannotAddEmailWarningMessage && requiredAction && (
 				<div className="email-plan-warnings__warning">
 					<div className="email-plan-warnings__message">
-						<span>{ warning.message }</span>
+						<span>{ requiredAction.message }</span>
 					</div>
 					<div className="email-plan-warnings__cta">{ cta }</div>
 				</div>
