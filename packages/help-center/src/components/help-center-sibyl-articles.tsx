@@ -21,9 +21,9 @@ import { Article } from '../types';
 export const SITE_STORE = 'automattic/site' as const;
 
 type Props = {
+	title?: string;
 	message?: string;
 	supportSite?: SiteDetails;
-	showTitle: boolean;
 };
 
 function recordSibylArticleClick(
@@ -73,7 +73,7 @@ function getPostUrl( article: Article, query: string ) {
 	return article.link;
 }
 
-export function SibylArticles( { message = '', supportSite, showTitle }: Props ) {
+export function SibylArticles( { message = '', supportSite, title }: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
@@ -99,11 +99,9 @@ export function SibylArticles( { message = '', supportSite, showTitle }: Props )
 
 	return (
 		<div className="help-center-sibyl-articles__container">
-			{ showTitle && (
-				<h3 id="help-center--contextual_help" className="help-center__section-title">
-					{ __( 'Recommended resources', __i18n_text_domain__ ) }
-				</h3>
-			) }
+			<h3 id="help-center--contextual_help" className="help-center__section-title">
+				{ title || __( 'Recommended resources', __i18n_text_domain__ ) }
+			</h3>
 			<ul
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"

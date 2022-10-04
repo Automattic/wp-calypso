@@ -391,10 +391,12 @@ export const HelpCenterContactForm = () => {
 
 	return showingSibylResults ? (
 		<div className="help-center__sibyl-articles-page">
-			<h3 className="help-center__section-title">
-				{ __( 'Did you want the answer to any of these questions?', __i18n_text_domain__ ) }
-			</h3>
-			<SibylArticles showTitle={ false } supportSite={ supportSite } message={ message } />
+			<BackButton />
+			<SibylArticles
+				title={ __( 'Did you want the answer to any of these questions?', __i18n_text_domain__ ) }
+				supportSite={ supportSite }
+				message={ message }
+			/>
 			<section className="contact-form-submit">
 				<Button
 					disabled={ isCTADisabled() }
@@ -525,7 +527,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles showTitle supportSite={ supportSite } message={ message } />
+			<SibylArticles supportSite={ supportSite } message={ message } />
 		</main>
 	);
 };
