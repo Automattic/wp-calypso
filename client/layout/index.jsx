@@ -155,7 +155,7 @@ class Layout extends Component {
 					.getPropertyValue( '--color-masterbar-background' )
 					.trim();
 				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-				// We only want to set `themeColor` if it's not set by some config value (i.e. for JetpackCloud)
+				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
 				if ( ! themeColorMeta.content ) {
 					themeColorMeta.content = themeColor;
 					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
@@ -180,8 +180,7 @@ class Layout extends Component {
 				.getPropertyValue( '--color-masterbar-background' )
 				.trim();
 			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
-			// We only want to set `themeColor` if it's not set by some config value (i.e. for JetpackCloud)
-			// `data-colorscheme` is only set if there wasn't a pre-defined value on app boot
+			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
 			if ( themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
 				themeColorMeta.content = themeColor;
 			}
