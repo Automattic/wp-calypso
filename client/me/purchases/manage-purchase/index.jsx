@@ -92,6 +92,7 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import {
@@ -541,6 +542,9 @@ class ManagePurchase extends Component {
 			let wordpressComURL = '';
 
 			if ( isPlan( purchase ) && ! isJetpackPlan( purchase ) ) {
+				const isPlanRefundable = isRefundable( purchase );
+				const actionFunction = isPlanRefundable ? this.goToCancelLink : this.showRemovePlanDialog;
+
 				if ( hasCustomPrimaryDomain && primaryDomainName ) {
 					customDomain = true;
 				}
@@ -556,10 +560,10 @@ class ManagePurchase extends Component {
 					<RemovePlanDialog
 						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ this.showRemovePlanDialog }
+						removePlan={ actionFunction }
 						site={ site }
 						hasDomain={ customDomain }
-						isRefundable={ isRefundable( purchase ) }
+						isRefundable={ isPlanRefundable }
 						primaryDomain={ primaryDomainName }
 						wpcomURL={ wordpressComURL }
 					/>
@@ -1234,5 +1238,7 @@ export default connect(
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
 		removePurchase,
+		errorNotice,
+		successNotice,
 	}
 )( localize( ManagePurchase ) );
