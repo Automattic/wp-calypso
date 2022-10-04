@@ -377,6 +377,29 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
+	const getSupportedLanguages = ( supportType: string, locale: string ) => {
+		switch ( supportType ) {
+			case SUPPORT_HAPPYCHAT:
+				return ! window.configData.livechat_support_locales.includes( locale );
+
+			case SUPPORT_TICKET:
+			case SUPPORT_CHAT_OVERFLOW:
+			case SUPPORT_UPWORK_TICKET:
+				return (
+					! window.configData.upwork_support_locales.includes( locale ) &&
+					! [ 'en', 'en-gb' ].includes( locale )
+				);
+
+			default:
+				return false;
+		}
+	};
+
+	const shouldShowHelpLanguagePrompt = () => {
+		const supportType = getSupportVariationFromMode( mode );
+		return getSupportedLanguages( supportType, locale );
+	};
+
 	const getCTALabel = () => {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			return __( 'Continue', __i18n_text_domain__ );
@@ -404,6 +427,7 @@ export const HelpCenterContactForm = () => {
 
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
+<<<<<<< HEAD
 
 	return showingSibylResults ? (
 		<div className="help-center__sibyl-articles-page">
@@ -436,6 +460,9 @@ export const HelpCenterContactForm = () => {
 			</section>
 		</div>
 	) : (
+=======
+	return (
+>>>>>>> a31baa6fb8 (Add support language message)
 		<main className="help-center-contact-form">
 			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
@@ -505,6 +532,9 @@ export const HelpCenterContactForm = () => {
 					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
 					className="help-center-contact-form__message"
 				/>
+				{ shouldShowHelpLanguagePrompt() && (
+					<b>{ __( 'Note: Support is only available in English at the moment.' ) }</b>
+				) }
 			</section>
 
 			{ mode === 'FORUM' && (
