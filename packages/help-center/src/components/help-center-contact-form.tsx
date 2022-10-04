@@ -16,7 +16,7 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
-import { TextControl, CheckboxControl } from '@wordpress/components';
+import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -539,7 +539,7 @@ export const HelpCenterContactForm = () => {
 					className="help-center-contact-form__message"
 				/>
 				{ shouldShowHelpLanguagePrompt() && (
-					<b>{ __( 'Note: Support is only available in English at the moment.' ) }</b>
+					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
 				) }
 			</section>
 
