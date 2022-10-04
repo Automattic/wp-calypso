@@ -7,12 +7,16 @@ interface MutationVariables {
 	sshKeyName: string;
 }
 
+interface MutationResponse {
+	message: string;
+}
+
 interface MutationError {
 	code: string;
 }
 
 export const useDeleteSSHKeyMutation = (
-	options: UseMutationOptions< unknown, MutationError, MutationVariables > = {}
+	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
