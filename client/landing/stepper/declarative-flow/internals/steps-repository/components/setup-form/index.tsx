@@ -33,7 +33,7 @@ interface SetupFormProps {
 	setSelectedFile: Dispatch< SetStateAction< File | undefined > >;
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
 	handleSubmit: ( event: FormEvent< Element > ) => void;
-	translatedStrings?: TranslatedStrings;
+	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
 }
@@ -52,7 +52,7 @@ const SetupForm = ( {
 	setSelectedFile,
 	setBase64Image,
 	handleSubmit,
-	translatedStrings,
+	translatedText,
 	isLoading = false,
 	isSubmitError = false,
 }: SetupFormProps ) => {
@@ -85,7 +85,7 @@ const SetupForm = ( {
 		<form className="setup-form__form" onSubmit={ handleSubmit }>
 			<SiteIconWithPicker
 				site={ site }
-				placeholderText={ translatedStrings?.iconPlaceholder || __( 'Upload a profile image' ) }
+				placeholderText={ translatedText?.iconPlaceholder || __( 'Upload a profile image' ) }
 				onSelect={ ( file ) => {
 					setSelectedFile( file );
 					imageFileToBase64( file );
@@ -100,14 +100,14 @@ const SetupForm = ( {
 					id="setup-form-input-name"
 					value={ siteTitle }
 					onChange={ onChange }
-					placeholder={ translatedStrings?.titlePlaceholder || __( 'My Site Name' ) }
+					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
 					isError={ invalidSiteTitle }
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation
 						isError
 						text={
-							translatedStrings?.titleMissing ||
+							translatedText?.titleMissing ||
 							__( `Oops. Looks like your site doesn't have a name yet.` )
 						}
 					/>
@@ -119,9 +119,7 @@ const SetupForm = ( {
 					name="setup-form-input-description"
 					id="setup-form-input-description"
 					value={ tagline }
-					placeholder={
-						translatedStrings?.taglinePlaceholder || __( 'Add a short description here' )
-					}
+					placeholder={ translatedText?.taglinePlaceholder || __( 'Add a short description here' ) }
 					enableAutoFocus={ false }
 					onChange={ onChange }
 				/>

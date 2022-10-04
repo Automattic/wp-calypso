@@ -23,7 +23,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const site = useSite();
 
-	const newsletterStrings = {
+	const newsletterFormText = {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
@@ -117,7 +117,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
-					translatedStrings={ newsletterStrings }
+					translatedText={ newsletterFormText }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }
