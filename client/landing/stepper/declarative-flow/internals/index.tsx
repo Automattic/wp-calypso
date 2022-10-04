@@ -64,8 +64,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ location ] );
 
 	useEffect( () => {
-		recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
-	}, [ flow.name, currentRoute, intent ] );
+		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
+		if ( currentRoute ) {
+			recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+		}
+	}, [ flow.name, currentRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
