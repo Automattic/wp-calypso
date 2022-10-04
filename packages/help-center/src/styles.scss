@@ -237,6 +237,12 @@ $head-foot-height: 50px;
 				&:hover {
 					background: var(--color-neutral-0);
 				}
+
+				> svg:last-child {
+					margin-left: auto;
+					margin-right: 0;
+					background: unset;
+				}
 			}
 		}
 

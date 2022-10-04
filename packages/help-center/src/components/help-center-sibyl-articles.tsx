@@ -9,7 +9,7 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
-import { Icon, page } from '@wordpress/icons';
+import { external, Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -100,9 +100,15 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
 		return sibylArticles?.length
-			? sibylArticles
+			? sibylArticles.map( ( article ) => {
+					return {
+						...article,
+						url: getPostUrl( article, message, canNavigateBack ),
+						is_external: 'en' !== locale || ! article.post_id,
+					};
+			  } )
 			: getContextResults( sectionName, intent?.site_intent ?? '' );
-	}, [ sibylArticles, sectionName, intent?.site_intent ] );
+	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, canNavigateBack ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
@@ -120,13 +126,14 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 					return (
 						<li key={ article.link + index }>
 							<ConfigurableLink
-								to={ getPostUrl( article as Article, message, canNavigateBack ) }
-								external={ 'en' !== locale }
+								to={ ( article as Article ).url }
+								external={ ( article as Article ).is_external ?? false }
 								fullUrl={ article.link }
 								article={ article }
 							>
 								<Icon icon={ page } />
-								{ article.title }
+								<span>{ article.title }</span>
+								{ ( article as Article ).is_external && <Icon icon={ external } size={ 20 } /> }
 							</ConfigurableLink>
 						</li>
 					);

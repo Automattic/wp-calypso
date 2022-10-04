@@ -31,6 +31,8 @@ export interface Article {
 	id?: string;
 	post_id?: string;
 	blog_id?: string;
+	url?: string;
+	is_external?: boolean;
 }
 
 export interface FeatureFlags {
