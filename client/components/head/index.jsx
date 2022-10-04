@@ -13,7 +13,7 @@ const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonc
 			<meta name="format-detection" content="telephone=no" />
 			<meta name="mobile-web-app-capable" content="yes" />
 			<meta name="apple-mobile-web-app-capable" content="yes" />
-			<meta name="theme-color" content="var(--color-masterbar-background)" />
+			<meta name="theme-color" content={ config( 'theme_color' ) } />
 			<meta name="referrer" content="origin" />
 
 			<link
