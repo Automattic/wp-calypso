@@ -2,8 +2,6 @@ import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-//import './style.scss';
-
 type EmailDifferentDomainOwnerMessageProps = {
 	source: string;
 };
@@ -45,9 +43,8 @@ export const EmailDifferentDomainOwnerMessage = (
 			/>
 			<p className="email-non-owner-message__non-owner-message">
 				{ translate(
-					'Additional mailboxes can only be purchased by the owner of the domain and email subscription. ' +
-						'It appears that the two products are currently owned by different users, ' +
-						'please {{contactSupportLink}}contact support{{/contactSupportLink}} for help if you wish to make a purchase.',
+					'Additional mailboxes can only be purchased by the owner of the domain and email subscriptions. ' +
+						'Please {{contactSupportLink}}contact support{{/contactSupportLink}} to make a purchase.',
 					translateOptions
 				) }
 			</p>
