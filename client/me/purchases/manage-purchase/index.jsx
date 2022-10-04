@@ -46,6 +46,8 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -91,14 +93,17 @@ import {
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { removePurchase } from 'calypso/state/purchases/actions';
 import {
 	getSitePurchases,
 	getByPurchaseId,
+	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -140,6 +145,7 @@ class ManagePurchase extends Component {
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
+		removePurchase: PropTypes.func.isRequired,
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -162,6 +168,8 @@ class ManagePurchase extends Component {
 		showNonPrimaryDomainWarningDialog: false,
 		showRemoveSubscriptionWarningDialog: false,
 		cancelLink: null,
+		isRemoving: false,
+		isCancelFormVisible: false,
 	};
 
 	componentDidMount() {
@@ -485,6 +493,15 @@ class ManagePurchase extends Component {
 		} );
 	}
 
+	showRemovePlanDialog = ( cancelLink ) => {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: false,
+			isCancelFormVisible: true,
+			cancelLink,
+		} );
+	};
+
 	closeDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
@@ -539,7 +556,7 @@ class ManagePurchase extends Component {
 					<RemovePlanDialog
 						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 						closeDialog={ this.closeDialog }
-						removePlan={ this.goToCancelLink }
+						removePlan={ this.showRemovePlanDialog }
 						site={ site }
 						hasDomain={ customDomain }
 						isRefundable={ isRefundable( purchase ) }
@@ -552,6 +569,76 @@ class ManagePurchase extends Component {
 
 		return null;
 	}
+
+	removePurchase = async () => {
+		this.setState( { isRemoving: true } );
+
+		const { purchaseListUrl, purchase } = this.props;
+		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
+
+		// If the site has active Marketplace subscriptions, remove these as well
+		if ( activeSubscriptions?.length > 0 ) {
+			// no need to await here, as
+			// - the success/error messages are handled for each request separately
+			// - the plan removal is awaited below
+			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
+		}
+
+		await this.handlePurchaseRemoval( purchase );
+
+		page( purchaseListUrl );
+	};
+
+	handlePurchaseRemoval = async ( purchase ) => {
+		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
+
+		await this.props.removePurchase( purchase.id, userId );
+
+		const productName = getName( purchase );
+		let successMessage;
+
+		if ( purchasesError ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( purchasesError );
+			return;
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
+			}
+
+			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+				components: { domain: <em>{ productName }</em> },
+			} );
+		} else {
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
+			} );
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
+	};
+
+	renderCancelForm() {
+		const { purchase } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				purchase={ purchase }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
+				isVisible={ this.state.isCancelFormVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+			/>
+		);
+	}
+
 	renderCancelPurchaseNavItem() {
 		const { isAtomicSite, purchase, translate } = this.props;
 		const { id } = purchase;
@@ -944,6 +1031,7 @@ class ManagePurchase extends Component {
 						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
+						{ this.renderCancelForm() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
@@ -1123,6 +1211,7 @@ export default connect(
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			productsList,
 			purchase,
+			purchasesError: getPurchasesError( state ),
 			purchases,
 			purchaseAttachedTo,
 			siteId,
@@ -1138,10 +1227,12 @@ export default connect(
 			relatedMonthlyPlanPrice,
 			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
 			primaryDomain: primaryDomain,
+			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};
 	},
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
+		removePurchase,
 	}
 )( localize( ManagePurchase ) );
