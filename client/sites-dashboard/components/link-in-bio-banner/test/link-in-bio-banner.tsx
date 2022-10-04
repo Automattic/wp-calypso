@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import * as viewport from '@automattic/viewport-react';
 import { render, screen } from '@testing-library/react';
 import each from 'jest-each';
 import React from 'react';
@@ -23,13 +24,17 @@ describe( '<LinkInBioBanner>', () => {
 		[ true, 2, 'row', 'row-banner', false ],
 		[ true, 3, 'grid', 'double-tile-banner', false ],
 		[ true, 3, 'grid', 'tile-banner', false ],
-		// visible and right amount of rows but on mobile - show tile only
-		// [ true, 1, 'row', 'tile-banner', true, 480 ],
-		// [ true, 1, 'grid', 'tile-banner', true, 480 ],
-		// [ true, 2, 'grid', 'tile-banner', true, 480 ],
+		// visible and right amount of rows but on mobile - always show tile-banner
+		[ true, 1, 'row', 'tile-banner', true, true ],
+		[ true, 1, 'grid', 'tile-banner', true, true ],
+		[ true, 2, 'grid', 'tile-banner', true, true ],
 	] ).test(
 		'Parameters: visible: %s, site count: %s, type: %s',
-		( visible, siteCount, type, output, expectValue ) => {
+		( visible, siteCount, type, output, expectValue, isMobile = false ) => {
+			if ( isMobile ) {
+				jest.spyOn( viewport, 'useMobileBreakpoint' ).mockReturnValue( true );
+			}
+
 			render(
 				<Provider store={ createTestStore( visible, siteCount ) }>
 					<LinkInBioBanner siteCount={ siteCount } displayMode={ type } />
