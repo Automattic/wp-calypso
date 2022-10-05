@@ -50,7 +50,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	const { history, index } = useSelect( ( select ) =>
 		select( HELP_CENTER_STORE ).getRouterState()
 	);
-	const { resetRouterState } = useDispatch( HELP_CENTER_STORE );
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -61,8 +60,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 			handleClose();
 			// after calling handleClose, reset the visibility state to default
 			setIsVisible( true );
-			// reset nav history when the help center is closed by the user
-			resetRouterState();
 		}
 	};
 
