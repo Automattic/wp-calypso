@@ -20,7 +20,7 @@ interface Props {
 const VARIATION_TITLES: Record< string, string > = {
 	newsletter: 'Newsletter',
 	'link-in-bio': 'Link in Bio',
-	videopress: 'Video Portfolio',
+	videopress: 'Video',
 };
 
 const SignupHeader = ( {

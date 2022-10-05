@@ -127,6 +127,19 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, billingPeriod );
 
+				const cartKey = await cartManagerClient.getCartKeyForSiteSlug(
+					newSite?.site_slug as string
+				);
+
+				const productsToAdd: any[] = [
+					{
+						product_slug: planProductObject?.storeSlug,
+						extra: {
+							signup_flow: flow,
+						},
+					},
+				];
+
 				if ( domain && domain.product_slug ) {
 					const registration = domainRegistration( {
 						domain: domain.domain_name,
@@ -134,20 +147,21 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 						extra: { privacy_available: domain.supports_privacy },
 					} );
 
-					setProgress( 0.75 );
-
-					const cartKey = await cartManagerClient.getCartKeyForSiteSlug(
-						newSite?.site_slug as string
-					);
-					await cartManagerClient
-						.forCartKey( cartKey )
-						.actions.addProductsToCart( [ registration ] );
+					productsToAdd.push( registration );
 				}
+
+				setProgress( 0.75 );
+
+				await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 
 				setProgress( 1.0 );
 
+				const redirectTo = encodeURIComponent(
+					`/setup/completingPurchase?flow=videopress&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+				);
+
 				window.location.replace(
-					`/checkout/${ newSite?.site_slug }/${ planProductObject?.storeSlug }?signup=1&redirect_to=/setup/completing-purchase?flow=videopress`
+					`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
 				);
 			} );
 
