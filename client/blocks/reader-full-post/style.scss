@@ -155,6 +155,9 @@
 	color: var(--color-neutral-70);
 	font-size: rem(17px);
 	line-height: 28px;
+	figure.wp-block-table {
+		overflow: auto;
+	}
 }
 
 .reader-full-post__story-content img {
