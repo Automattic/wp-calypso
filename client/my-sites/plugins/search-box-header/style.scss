@@ -22,6 +22,9 @@
 			.search-component {
 				height: 52px;
 				z-index: 0;
+				max-width: 400px;
+				margin: 0 auto;
+
 				&.is-expanded-to-container {
 					height: 100%;
 				}
