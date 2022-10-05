@@ -139,17 +139,11 @@ export class AppPromo extends Component {
 					target="_blank"
 					rel="noopener noreferrer"
 				>
-					<img
-						className="app-promo__icon"
-						src={ wordpressLogoImage }
-						width="32"
-						height="32"
-						alt="WordPress Desktop Icon"
-					/>
 					<p className="app-promo__paragraph">{ promoItem.message }</p>
 				</Button>
 				{ this.dismissButton() }
 			</div>
+				<img className="app-promo__icon" src={ wordpressLogoImage } width="32" height="32" alt="" />
 		);
 	};
 
@@ -174,13 +168,6 @@ export class AppPromo extends Component {
 					} ) }
 					title="Try the mobile app!"
 				>
-					<img
-						className="app-promo__icon"
-						src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
-						width={ displayJetpackAppBranding ? 25 : 32 }
-						height={ displayJetpackAppBranding ? 43 : 32 }
-						alt="WordPress App Icon"
-					/>
 					<p className="app-promo__paragraph">{ message }</p>
 				</Button>
 				<Dialog
@@ -198,6 +185,13 @@ export class AppPromo extends Component {
 				</Dialog>
 				{ this.dismissButton() }
 			</div>
+				<img
+					className="app-promo__icon"
+					src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
+					width={ displayJetpackAppBranding ? 25 : 32 }
+					height={ displayJetpackAppBranding ? 43 : 32 }
+					alt=""
+				/>
 		);
 	};
 
