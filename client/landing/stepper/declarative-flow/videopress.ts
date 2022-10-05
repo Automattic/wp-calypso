@@ -48,7 +48,7 @@ export const videopress: Flow = {
 		}
 
 		const name = this.name;
-		const { setDomain, setSiteDescription, setSiteTitle, setStepProgress } =
+		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle, setStepProgress } =
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
@@ -60,6 +60,7 @@ export const videopress: Flow = {
 			setSiteTitle( '' );
 			setSiteDescription( '' );
 			setDomain( undefined );
+			setSelectedDesign( undefined );
 		};
 
 		const stepValidateUserIsLoggedIn = () => {
