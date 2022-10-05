@@ -60,10 +60,6 @@ const footerPatterns: Pattern[] = [
 
 const sectionPatterns: Pattern[] = [
 	{
-		id: 1603,
-		name: 'Call to Action',
-	},
-	{
 		id: 1751,
 		name: 'Call to Action',
 	},
@@ -126,14 +122,6 @@ const sectionPatterns: Pattern[] = [
 	{
 		id: 7161,
 		name: 'Two testimonials side by side',
-	},
-	{
-		id: 3255,
-		name: 'About me',
-	},
-	{
-		id: 1053,
-		name: 'Contact',
 	},
 	{
 		id: 194,
