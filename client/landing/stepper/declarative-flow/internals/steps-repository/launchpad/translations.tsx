@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
 
@@ -17,6 +17,10 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 		case LINK_IN_BIO_FLOW:
 			translatedStrings.flowName = translate( 'Link in Bio' );
 			translatedStrings.sidebarTitle = translate( 'Your Link in Bio is ready to launch!' );
+			break;
+		case VIDEOPRESS_FLOW:
+			translatedStrings.flowName = translate( 'Video' );
+			translatedStrings.sidebarTitle = translate( 'Your Video site is ready to launch!' );
 			break;
 		case 'podcast':
 			translatedStrings.flowName = translate( 'Podcast' );
