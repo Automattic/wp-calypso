@@ -81,7 +81,21 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		const expectedBlockPatternCount = 50;
 		const frame = await editorPage.getEditorHandle();
 		const actualBlockPatternCount = await frame.evaluate(
-			`window.wp.data.select( 'core' ).getBlockPatterns().length`
+			() =>
+				new Promise( ( resolve ) => {
+					const wait = setInterval( () => {
+						// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+						// @ts-ignore
+						const patterns = window.wp.data.select( 'core' ).getBlockPatterns();
+						if ( patterns.length > 0 ) {
+							clearInterval( wait );
+							// This needs to be done in a loop until patterns
+							// request returns anything as initially it returns
+							// an empty array, making this case a false positive.
+							resolve( patterns.length );
+						}
+					}, 100 );
+				} )
 		);
 
 		expect( actualBlockPatternCount ).toBeGreaterThanOrEqual( expectedBlockPatternCount );
