@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { getSiteLaunchStatus } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -68,7 +67,10 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 		}
 	}, [ inView ] );
 
-	if ( 'coming-soon' !== getSiteLaunchStatus( site ) ) {
+	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
+	// That's because sites that have been previously launched before going back to
+	// Coming Soon mode don't have a launch checklist.
+	if ( 'unlaunched' !== site.launch_status ) {
 		return null;
 	}
 
