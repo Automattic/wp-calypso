@@ -5,7 +5,7 @@ import i18n from 'i18n-calypso';
 import { ChangeEvent, useReducer } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormTextarea from 'calypso/components/forms/form-textarea';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
 
 const PUBLIC_SSH_KEY_INPUT_ID = 'public_ssh_key';
 
@@ -67,7 +67,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 		>
 			<FormFieldset>
 				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'Public SSH key' ) }</FormLabel>
-				<FormTextarea
+				<TextareaAutosize
 					required
 					id={ PUBLIC_SSH_KEY_INPUT_ID }
 					disabled={ isAdding }
