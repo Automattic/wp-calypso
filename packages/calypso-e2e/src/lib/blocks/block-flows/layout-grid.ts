@@ -57,8 +57,7 @@ export class LayoutGridBlockFlow implements BlockFlow {
 		 * manually (unless you're ⚡️ fast) and happens only with the testing
 		 * framework.
 		 */
-		const page = twoColumnButtonLocator.page();
-		await page.evaluate( () => new Promise( ( r ) => setTimeout( r, 1000 ) ) );
+		await context.page.waitForTimeout( 1000 );
 
 		await this.addTextToColumn(
 			{
