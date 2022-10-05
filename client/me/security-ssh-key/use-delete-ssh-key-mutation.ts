@@ -13,6 +13,7 @@ interface MutationResponse {
 
 interface MutationError {
 	code: string;
+	message: string;
 }
 
 export const useDeleteSSHKeyMutation = (
@@ -20,19 +21,12 @@ export const useDeleteSSHKeyMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
-		async ( { sshKeyName }: MutationVariables ) => {
-			const response = await wp.req.get( {
+		async ( { sshKeyName }: MutationVariables ) =>
+			wp.req.get( {
 				path: `/me/ssh-keys/${ sshKeyName }`,
 				apiNamespace: 'wpcom/v2',
 				method: 'DELETE',
-			} );
-
-			if ( ! response.success ) {
-				throw new Error( 'Deleting SSH key was unsuccessful', response );
-			}
-
-			return response;
-		},
+			} ),
 		{
 			...options,
 			onSuccess( ...args ) {

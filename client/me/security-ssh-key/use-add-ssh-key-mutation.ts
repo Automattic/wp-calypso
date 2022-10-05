@@ -14,6 +14,7 @@ interface MutationResponse {
 
 interface MutationError {
 	code: string;
+	message: string;
 }
 
 export const useAddSSHKeyMutation = (
@@ -21,21 +22,14 @@ export const useAddSSHKeyMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation(
-		async ( { name, key }: MutationVariables ) => {
-			const response = await wp.req.post(
+		async ( { name, key }: MutationVariables ) =>
+			wp.req.post(
 				{ path: '/me/ssh-keys', apiNamespace: 'wpcom/v2' },
 				{
 					name,
 					key,
 				}
-			);
-
-			if ( ! response.success ) {
-				throw new Error( 'Adding SSH key was unsuccessful', response );
-			}
-
-			return response;
-		},
+			),
 		{
 			...options,
 			onSuccess( ...args ) {

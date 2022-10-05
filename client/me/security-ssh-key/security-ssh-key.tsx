@@ -2,6 +2,7 @@
 import { CompactCard, LoadingPlaceholder } from '@automattic/components';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -53,7 +54,10 @@ export const SecuritySSHKey = () => {
 				} )
 			);
 			dispatch(
-				errorNotice( __( 'Sorry, we had a problem saving that SSH key. Please try again.' ) )
+				errorNotice(
+					// translators: "reason" is why adding the ssh key failed.
+					sprintf( __( 'Saving SSH key failed: %(reason)s' ), { reason: error.message } )
+				)
 			);
 		},
 	} );
@@ -73,7 +77,10 @@ export const SecuritySSHKey = () => {
 				} )
 			);
 			dispatch(
-				errorNotice( __( 'Sorry, we had a problem deleting that SSH key. Please try again.' ) )
+				errorNotice(
+					// translators: "reason" is why deleting the ssh key failed.
+					sprintf( __( 'Deleting SSH key failed: %(reason)s' ), { reason: error.message } )
+				)
 			);
 		},
 	} );
