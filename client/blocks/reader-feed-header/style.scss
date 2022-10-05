@@ -63,10 +63,6 @@
 		top: auto;
 	}
 
-	@include breakpoint-deprecated( "<960px" ) {
-		max-height: 16px * 5.9;
-	}
-
 	a {
 		text-align: center;
 	}
