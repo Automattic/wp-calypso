@@ -40,5 +40,9 @@ export const useDeleteSSHKeyMutation = (
 
 	const deleteSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return deleteSSHKey;
+	return {
+		deleteSSHKey,
+		keyBeingDeleted:
+			mutation.isLoading && mutation.variables ? mutation.variables.sshKeyName : null,
+	};
 };

@@ -62,7 +62,7 @@ export const SecuritySSHKey = () => {
 		},
 	} );
 
-	const deleteSSHKey = useDeleteSSHKeyMutation( {
+	const { deleteSSHKey, keyBeingDeleted } = useDeleteSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_request' ) );
 		},
@@ -135,6 +135,7 @@ export const SecuritySSHKey = () => {
 				<ManageSSHKeys
 					sshKeys={ data }
 					onDelete={ ( sshKeyName ) => deleteSSHKey( { sshKeyName } ) }
+					keyBeingDeleted={ keyBeingDeleted }
 				/>
 			) }
 		</Main>
