@@ -40,7 +40,7 @@ const SearchBoxHeader = ( props ) => {
 		searchTerm,
 		title,
 		isSticky,
-		popularSearchesRef,
+		stickySearchBoxRef,
 		isSearching,
 		searchRef,
 		renderTitleInH1,
@@ -67,7 +67,7 @@ const SearchBoxHeader = ( props ) => {
 					isSearching={ isSearching }
 				/>
 			</div>
-			<div className="search-box-header__sticky-ref" ref={ popularSearchesRef }></div>
+			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
 		</div>
 	);
 };
