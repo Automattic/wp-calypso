@@ -21,7 +21,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
-	const canNavigateBack = params.get( 'canNavigateBack' ) === 'true';
+	const navigateToSearch = params.get( 'navigateToSearch' ) === 'true';
 	const link = params.get( 'link' );
 	const query = params.get( 'query' );
 
@@ -37,12 +37,10 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	}, [ query, link, sectionName ] );
 
 	const redirectToSearchOrHome = () => {
-		if ( canNavigateBack ) {
-			history.goBack();
-		} else if ( query ) {
+		if ( navigateToSearch ) {
 			history.push( `/?query=${ query }` );
 		} else {
-			history.push( '/' );
+			history.goBack();
 		}
 	};
 

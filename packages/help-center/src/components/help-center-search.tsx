@@ -68,7 +68,7 @@ export const HelpCenterSearch = () => {
 					location="help-center"
 				/>
 			) }
-			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } /> }
+			{ ! searchQuery && <SibylArticles message="" supportSite={ undefined } navigateToSearch /> }
 			{ ! searchQuery && <HelpCenterMoreResources /> }
 		</div>
 	);

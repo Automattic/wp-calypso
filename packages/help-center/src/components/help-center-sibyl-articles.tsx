@@ -15,7 +15,7 @@ import { external, Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, LinkProps, useLocation } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { Article } from '../types';
@@ -26,6 +26,7 @@ type Props = {
 	title?: string;
 	message?: string;
 	supportSite?: SiteDetails;
+	navigateToSearch?: boolean;
 };
 
 function recordSibylArticleClick(
@@ -51,7 +52,7 @@ const ConfigurableLink: React.FC<
 	return <Link onClick={ recordSibylArticleClick( article ) } { ...props } />;
 };
 
-function getPostUrl( article: Article, query: string, canNavigateBack: string | null ) {
+function getPostUrl( article: Article, query: string, navigateToSearch: boolean ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -65,8 +66,8 @@ function getPostUrl( article: Article, query: string, canNavigateBack: string | 
 			params.set( 'blogId', article.blog_id );
 		}
 
-		if ( canNavigateBack ) {
-			params.set( 'canNavigateBack', canNavigateBack );
+		if ( navigateToSearch ) {
+			params.set( 'navigateToSearch', String( navigateToSearch ) );
 		}
 
 		const search = params.toString();
@@ -85,12 +86,14 @@ const getFilteredContextResults = ( sectionName: string, siteIntent: string ) =>
 	} );
 };
 
-export function SibylArticles( { message = '', supportSite, title }: Props ) {
+export function SibylArticles( {
+	message = '',
+	supportSite,
+	title,
+	navigateToSearch = false,
+}: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
-	const { search } = useLocation();
-	const params = new URLSearchParams( search );
-	const canNavigateBack = params.get( 'show-results' );
 
 	const isAtomic = Boolean(
 		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
@@ -115,11 +118,11 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,
-				url: hasPostId ? getPostUrl( article as Article, message, canNavigateBack ) : article.link,
+				url: hasPostId ? getPostUrl( article as Article, message, navigateToSearch ) : article.link,
 				is_external: 'en' !== locale || ! hasPostId,
 			};
 		} );
-	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, canNavigateBack ] );
+	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, navigateToSearch ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
