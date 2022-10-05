@@ -37,7 +37,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
 
 	const trackEventPatternAdd = ( patternType: string ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_add_click', {
+		recordTracksEvent( 'calypso_signup_bcpa_add_pattern_click', {
 			pattern_type: patternType,
 		} );
 	};
@@ -49,7 +49,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		patternType: string;
 		patternId: number;
 	} ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_pattern_select_click', {
+		recordTracksEvent( 'calypso_signup_bcpa_select_pattern_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 		} );
