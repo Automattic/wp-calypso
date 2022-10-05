@@ -46,7 +46,7 @@ export const DismissButton = ( props: ComponentProps< typeof Button > ) => {
 			icon={ close }
 			onClick={ handleDismissBanner }
 			{ ...props }
-			className={ 'dismiss-button' }
+			className="dismiss-button"
 		/>
 	);
 };
