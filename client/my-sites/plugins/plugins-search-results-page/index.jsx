@@ -74,13 +74,13 @@ const PluginsSearchResultPage = ( {
 	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
-		let title = translate( 'Search results for "%(searchTerm)s"', {
+		let subtitle = translate( 'Search results for "%(searchTerm)s"', {
 			textOnly: true,
 			args: { searchTerm },
 		} );
 
 		if ( pluginsPagination ) {
-			title = translate(
+			subtitle = translate(
 				'Found %(total)s plugin for "%(searchTerm)s"',
 				'Found %(total)s plugins for "%(searchTerm)s"',
 				{
@@ -94,7 +94,7 @@ const PluginsSearchResultPage = ( {
 			);
 
 			if ( categoryName ) {
-				title = translate(
+				subtitle = translate(
 					'Found %(total)s plugin for "%(searchTerm)s" under "%(categoryName)s"',
 					'Found %(total)s plugins for "%(searchTerm)s" under "%(categoryName)s"',
 					{
@@ -118,7 +118,7 @@ const PluginsSearchResultPage = ( {
 					title={ translate( 'Search Results' ) }
 					subtitle={
 						<>
-							{ title }
+							{ subtitle }
 							<ClearSearchButton />
 						</>
 					}
