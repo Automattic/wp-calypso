@@ -9,7 +9,7 @@ import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/ac
 import './style.scss';
 
 function pageToSearch( s ) {
-	page.show( page.current );
+	page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
 	setQueryArgs( '' !== s ? { s } : {} );
 }
 
