@@ -19,10 +19,8 @@ const GlobalStylesModal = () => {
 
 	// Hide the welcome guide modal, so it doesn't conflict with our modal.
 	useEffect( () => {
-		if ( isVisible ) {
-			setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
-		}
-	}, [ setPreference, isVisible ] );
+		setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
+	}, [ setPreference ] );
 
 	if ( ! isVisible ) {
 		return null;
