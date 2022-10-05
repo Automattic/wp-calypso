@@ -42,10 +42,6 @@ button.follow-button {
 		svg.reader-following-feed {
 			display: inline-block;
 			pointer-events: auto;
-
-			path {
-				fill: var( --color-success );
-			}
 		}
 
 		.follow-button__label {
@@ -56,14 +52,6 @@ button.follow-button {
 		svg.reader-follow-feed {
 			display: none;
 			pointer-events: none;
-		}
-
-		&:hover {
-			color: var(--color-success);
-
-			svg.reader-following-feed path {
-				fill: var( --color-success );
-			}
 		}
 	}
 
