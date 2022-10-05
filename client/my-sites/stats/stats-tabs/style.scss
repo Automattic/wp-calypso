@@ -46,9 +46,6 @@ $stats-tab-outer-padding: 10px;
 
 			a,
 			.no-link {
-				display: block;
-				min-height: 35px;
-				padding-top: $stats-tab-outer-padding;
 				padding-bottom: 0; // needed to avoid double bottom spacing (because of min-height)
 			}
 
