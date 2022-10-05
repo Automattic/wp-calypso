@@ -30,26 +30,20 @@ export const LinkInBioBanner = ( props: Props ) => {
 	const showBanner =
 		( doesNotAlreadyHaveALinkInBioSite && isBannerVisible == null ) || isBannerVisible;
 
-	const renderBanner = () => {
-		let bannerType: BannerType = 'none';
-		if ( showBanner ) {
-			if ( isMobile ) {
+	let bannerType: BannerType = 'none';
+	if ( showBanner ) {
+		if ( isMobile ) {
+			bannerType = 'tile';
+		} else if ( displayMode === 'row' && siteCount === 1 ) {
+			bannerType = 'row';
+		} else if ( displayMode === 'grid' ) {
+			if ( siteCount === 1 ) {
+				bannerType = 'double-tile';
+			} else if ( siteCount === 2 ) {
 				bannerType = 'tile';
-			} else if ( displayMode === 'row' ) {
-				if ( siteCount === 1 ) {
-					bannerType = 'row';
-				}
-			} else if ( displayMode === 'grid' ) {
-				if ( siteCount === 1 ) {
-					bannerType = 'double-tile';
-				} else if ( siteCount === 2 ) {
-					bannerType = 'tile';
-				}
 			}
 		}
+	}
 
-		return LinkInBioBanners[ bannerType ];
-	};
-
-	return renderBanner();
+	return LinkInBioBanners[ bannerType ];
 };
