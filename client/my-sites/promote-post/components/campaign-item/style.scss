@@ -42,6 +42,22 @@
 		}
 	}
 
+	.campaign-item__notice {
+		margin-left: 0;
+
+		.campaign-item__notice-icon {
+			margin-right: 16px;
+			margin-left: 8px;
+			vertical-align: middle;
+			padding-bottom: 3px;
+		}
+
+		a {
+			color: var(--color-text-subtle);
+			text-decoration: underline;
+		}
+	}
+
 	.campaign-item__section {
 		border-bottom: #dcdcde thin solid;
 
