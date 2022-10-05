@@ -153,6 +153,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
+	// Unset the selected design, thus restarting the design picking experience.
+	useEffect( () => {
+		setSelectedDesign( undefined );
+		setSelectedStyleVariation( undefined );
+	}, [] );
+
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
 			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
@@ -290,14 +296,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			// Ensure that the selected design actually has the selected style variation.
-			const styleVariation =
-				_selectedDesign.style_variations && selectedStyleVariation
-					? _selectedDesign.style_variations.find(
-							( variation ) => variation.slug === selectedStyleVariation.slug
-					  )
-					: null;
-
 			let positionIndex = generatedDesigns.findIndex(
 				( design ) => design.slug === _selectedDesign.slug
 			);
@@ -306,10 +304,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					( design ) => design.slug === _selectedDesign.slug
 				);
 			}
-
 			setPendingAction( () =>
 				setDesignOnSite( siteSlugOrId, _selectedDesign, {
-					styleVariation,
+					styleVariation: selectedStyleVariation,
 					verticalId: siteVerticalId,
 				} ).then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 			);
