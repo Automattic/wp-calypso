@@ -11,8 +11,8 @@
 }
 
 .reader-post-actions .reader-post-actions__item {
-	margin-right: 12px;
-	line-height: 1;
+	height: 20px;
+	margin-right: 24px;
 
 	&.reader-post-actions__visit {
 		flex: 1;
@@ -22,13 +22,6 @@
 			box-sizing: border-box;
 			display: flex;
 			gap: 4px;
-			padding: 4px 4px 4px 0;
-			position: relative;
-
-			svg {
-				position: relative;
-				top: 2px;
-			}
 		}
 	}
 
@@ -37,7 +30,8 @@
 	}
 
 	& > button {
-		line-height: inherit;
+		margin: 0;
+		padding: 0;
 
 		&:focus {
 			outline: thin dotted;
