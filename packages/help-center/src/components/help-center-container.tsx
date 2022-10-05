@@ -19,6 +19,7 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { HistoryRecorder } from './history-recorder';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
@@ -46,6 +47,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	} );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
+	const { history, index } = useSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).getRouterState()
+	);
+	const { resetRouterState } = useDispatch( HELP_CENTER_STORE );
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -56,6 +61,8 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 			handleClose();
 			// after calling handleClose, reset the visibility state to default
 			setIsVisible( true );
+			// reset nav history when the help center is closed by the user
+			resetRouterState();
 		}
 	};
 
@@ -74,8 +81,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	}
 
 	return (
-		<MemoryRouter>
+		<MemoryRouter initialEntries={ history } initialIndex={ index }>
 			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
+			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile }
