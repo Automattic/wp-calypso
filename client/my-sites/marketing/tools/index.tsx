@@ -53,8 +53,8 @@ export const MarketingTools: FunctionComponent = () => {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
-	const handleLetsGoClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_lets_go_button_click' );
+	const handlePromotedPostsClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_promoted_posts_button_click' );
 	};
 
 	const handleFacebookClick = () => {
@@ -105,7 +105,7 @@ export const MarketingTools: FunctionComponent = () => {
 					imagePath={ promotionIcon }
 				>
 					<Button
-						onClick={ handleLetsGoClick }
+						onClick={ handlePromotedPostsClick }
 						href={ `/advertising/${ selectedSiteSlug }` }
 						target="_blank"
 					>
