@@ -96,7 +96,7 @@
 		"install-if-no-packages": "node bin/install-if-no-packages.js",
 		"lint": "run-s -s 'lint:*'",
 		"lint:config-defaults": "node bin/validate-config-keys.js",
-		"lint:css": "stylelint --rd --risd \"**/*.{css,scss}\"",
+		"lint:css": "stylelint \"**/*.{css,scss}\"",
 		"lint:js": "eslint --ext .js,.jsx,.ts,.tsx,.mjs,.json --cache .",
 		"lint:mixedindent": "mixedindentlint --ignore-comments \"client/**/*.scss\" \"assets/**/*.scss\" \"**/*.js\" \"**/*.jsx\" \"**/*.tsx\" \"**/*.tsx\" \"!build/**\" \"!node_modules/**\" \"!public/**\" \"!client/config/index.js\"",
 		"postcss": "postcss -r --config packages/calypso-build/postcss.config.js",
