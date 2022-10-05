@@ -70,5 +70,6 @@ describe( 'LocaleSuggestions', () => {
 		const { rerender } = render( <LocaleSuggestions { ...defaultProps } /> );
 		rerender( <LocaleSuggestions { ...defaultProps } locale="x" /> );
 		expect( defaultProps.setLocale ).toHaveBeenCalledTimes( 1 );
+		expect( defaultProps.setLocale ).toHaveBeenCalledWith( 'x' );
 	} );
 } );
