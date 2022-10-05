@@ -36,6 +36,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
 
+	const trackEventPatternAdd = ( patternType: string ) => {
+		recordTracksEvent( 'calypso_signup_bcpa_pattern_add_click', {
+			pattern_type: patternType,
+		} );
+	};
+
 	const trackEventPatternSelect = ( {
 		patternType,
 		patternId,
@@ -43,20 +49,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		patternType: string;
 		patternId: number;
 	} ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_select_pattern_click', {
-			pattern_type: patternType,
-			pattern_id: patternId,
-		} );
-	};
-
-	const trackEventPatternDelete = ( {
-		patternType,
-		patternId,
-	}: {
-		patternType: string;
-		patternId: number;
-	} ) => {
-		recordTracksEvent( 'calypso_signup_bcpa_delete_pattern_click', {
+		recordTracksEvent( 'calypso_signup_bcpa_pattern_select_click', {
 			pattern_type: patternType,
 			pattern_id: patternId,
 		} );
@@ -64,7 +57,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
-		recordTracksEvent( 'calypso_signup_bcpa_donecontinue_click', {
+		recordTracksEvent( 'calypso_signup_bcpa_continue_click', {
 			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
 			pattern_count: patterns.length,
@@ -75,16 +68,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				pattern_name: name,
 			} );
 		} );
-	};
-
-	const showPatternSelector = ( type: string ) => {
-		if ( type ) {
-			recordTracksEvent( 'calypso_signup_bcpa_show_pattern_selector_click', {
-				pattern_type: type,
-			} );
-		}
-
-		setShowPatternSelectorType( type );
 	};
 
 	const getDesign = () =>
@@ -186,27 +169,26 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						header={ header }
 						sections={ sections }
 						footer={ footer }
-						onSelectHeader={ () => {
-							showPatternSelector( 'header' );
+						onAddHeader={ () => {
+							trackEventPatternAdd( 'header' );
+							setShowPatternSelectorType( 'header' );
+						} }
+						onReplaceHeader={ () => {
+							setShowPatternSelectorType( 'header' );
 						} }
 						onDeleteHeader={ () => {
-							if ( header ) {
-								trackEventPatternDelete( {
-									patternType: 'header',
-									patternId: header.id,
-								} );
-							}
 							setHeader( null );
 						} }
-						onSelectSection={ ( position: number | null ) => {
+						onAddSection={ () => {
+							trackEventPatternAdd( 'section' );
+							setSectionPosition( null );
+							setShowPatternSelectorType( 'section' );
+						} }
+						onReplaceSection={ ( position: number ) => {
 							setSectionPosition( position );
-							showPatternSelector( 'section' );
+							setShowPatternSelectorType( 'section' );
 						} }
 						onDeleteSection={ ( position: number ) => {
-							trackEventPatternDelete( {
-								patternType: 'section',
-								patternId: sections[ position ].id,
-							} );
 							deleteSection( position );
 						} }
 						onMoveUpSection={ ( position: number ) => {
@@ -215,16 +197,14 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onMoveDownSection={ ( position: number ) => {
 							moveDownSection( position );
 						} }
-						onSelectFooter={ () => {
-							showPatternSelector( 'footer' );
+						onAddFooter={ () => {
+							trackEventPatternAdd( 'header' );
+							setShowPatternSelectorType( 'footer' );
+						} }
+						onReplaceFooter={ () => {
+							setShowPatternSelectorType( 'footer' );
 						} }
 						onDeleteFooter={ () => {
-							if ( footer ) {
-								trackEventPatternDelete( {
-									patternType: 'footer',
-									patternId: footer.id,
-								} );
-							}
 							setFooter( null );
 						} }
 						onContinueClick={ () => {
@@ -259,6 +239,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			hideSkip={ true }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
 		/>
 	);
 };
