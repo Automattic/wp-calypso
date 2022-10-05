@@ -34,6 +34,8 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
+						keepActive: true,
+						actionUrl: `/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`,
 					};
 					break;
 				case 'plan_selected':
