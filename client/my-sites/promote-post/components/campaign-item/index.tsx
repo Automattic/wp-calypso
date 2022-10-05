@@ -175,7 +175,7 @@ export default function CampaignItem( { campaign }: Props ) {
 					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
 						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
 						{ translate(
-							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Guidelines{{/advertisingTos}}.',
+							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
 							{
 								components: {
 									wpcomTos: (
