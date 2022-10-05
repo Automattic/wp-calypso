@@ -22,12 +22,6 @@ export default function PatternPicker( { onPick }: Props ) {
 	const prevRef = useRef< HTMLButtonElement >( null );
 	const nextRef = useRef< HTMLButtonElement >( null );
 
-	const slideTo = ( index: number ) => {
-		if ( swiper ) {
-			swiper.slideTo( index );
-		}
-	};
-
 	if ( ! patterns ) {
 		return null;
 	}
@@ -38,6 +32,8 @@ export default function PatternPicker( { onPick }: Props ) {
 				autoHeight={ true }
 				mousewheel={ true }
 				keyboard={ true }
+				threshold={ 5 }
+				slideToClickedSlide={ true }
 				slidesPerView={ 'auto' }
 				spaceBetween={ 20 }
 				modules={ [ Navigation, Mousewheel, Keyboard ] }
@@ -51,13 +47,9 @@ export default function PatternPicker( { onPick }: Props ) {
 				} }
 				centeredSlides={ true }
 			>
-				{ patterns.map( ( pattern, i ) => (
+				{ patterns.map( ( pattern ) => (
 					<SwiperSlide key={ `${ pattern.ID }-slide` } className="pattern-picker__slide">
-						<Item
-							key={ `${ pattern.ID }-slide-item` }
-							onClick={ () => slideTo( i ) }
-							pattern={ pattern }
-						/>
+						<Item key={ `${ pattern.ID }-slide-item` } pattern={ pattern } />
 					</SwiperSlide>
 				) ) }
 				<div className="pattern-picker__controls">
