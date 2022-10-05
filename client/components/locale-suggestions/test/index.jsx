@@ -12,6 +12,10 @@ jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
 jest.mock( 'calypso/components/notice', () => ( { children } ) => <>{ children }</> );
 
 describe( 'LocaleSuggestions', () => {
+	afterEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	const defaultProps = {
 		path: '',
 		locale: 'x',
@@ -58,5 +62,11 @@ describe( 'LocaleSuggestions', () => {
 		expect( screen.getByRole( 'link', { name: 'Español' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'English' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Français' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'should set the locale if it changes', () => {
+		const { rerender } = render( <LocaleSuggestions { ...defaultProps } /> );
+		rerender( <LocaleSuggestions { ...defaultProps } locale="x" /> );
+		expect( defaultProps.setLocale ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
