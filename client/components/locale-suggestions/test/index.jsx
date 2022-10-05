@@ -6,9 +6,7 @@ import { render, screen } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
 import { LocaleSuggestions } from '../';
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( { addLocaleToPath: ( locale ) => locale } ) );
 jest.mock( 'i18n-calypso', () => ( { getLocaleSlug: jest.fn( () => '' ) } ) );
-
 jest.mock( 'calypso/components/notice', () => ( { children } ) => <>{ children }</> );
 
 describe( 'LocaleSuggestions', () => {
@@ -33,11 +31,15 @@ describe( 'LocaleSuggestions', () => {
 	} );
 
 	// check that content within a card renders correctly
-	test( 'should render suggestions', () => {
+	test( 'should render suggestions with language name and language code in path', () => {
 		render( <LocaleSuggestions { ...defaultProps } /> );
 		expect( screen.getByRole( 'link', { name: 'Español' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Français' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'English' } ) ).toBeVisible();
+
+		expect( screen.getByRole( 'link', { name: 'Español' } ) ).toHaveAttribute( 'href', '/es' );
+		expect( screen.getByRole( 'link', { name: 'Français' } ) ).toHaveAttribute( 'href', '/fr' );
+		expect( screen.getByRole( 'link', { name: 'English' } ) ).toHaveAttribute( 'href', '/en' );
 	} );
 
 	test( 'should not render children with the same locale', () => {
