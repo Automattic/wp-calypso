@@ -153,6 +153,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
+	// Unset the selected design, thus restarting the design picking experience.
+	useEffect( () => {
+		setSelectedDesign( undefined );
+		setSelectedStyleVariation( undefined );
+	}, [] );
+
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
 			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
