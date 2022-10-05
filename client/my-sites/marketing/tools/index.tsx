@@ -32,7 +32,6 @@ export const MarketingTools: FunctionComponent = () => {
 
 	const selectedSiteSlug: T.SiteSlug | null = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId ) || 0;
-	const siteSlug = useSelector( getSelectedSiteSlug ) || '';
 
 	const facebookPluginInstalled = useSelector( ( state ) =>
 		getPluginOnSite( state, siteId, 'official-facebook-pixel' )
@@ -107,7 +106,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleLetsGoClick }
-						href={ `/advertising/${ siteSlug }` }
+						href={ `/advertising/${ selectedSiteSlug }` }
 						target="_blank"
 					>
 						{ translate( 'Let’s Go!' ) }
