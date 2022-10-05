@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
-import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
-import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
@@ -16,9 +16,9 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const categoryDescription = categories[ category ]?.categoryDescription;
 	const translate = useTranslate();
 
-	let title = '';
+	let resultCount = '';
 	if ( categoryName && pagination ) {
-		title = translate( '%(total)s plugin', '%(total)s plugins', {
+		resultCount = translate( '%(total)s plugin', '%(total)s plugins', {
 			count: pagination.results,
 			textOnly: true,
 			args: {
@@ -29,21 +29,19 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	return (
 		<>
-			<PluginsResultsHeader
+			<PluginsBrowserList
 				title={ categoryName }
 				subtitle={ categoryDescription }
-				resultCount={ title }
-			/>
-			<FullListView
+				resultCount={ resultCount }
 				plugins={ plugins }
 				listName={ category }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
-				sites={ sites }
+				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				fetchNextPage={ fetchNextPage }
 				extended
 			/>
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</>
 	);
 };

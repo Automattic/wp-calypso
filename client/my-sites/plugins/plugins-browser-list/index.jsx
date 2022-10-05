@@ -15,12 +15,13 @@ const PluginsBrowserList = ( {
 	variant = PluginsBrowserListVariant.Fixed,
 	title,
 	subtitle,
+	resultCount,
 	extended,
 	showPlaceholders,
 	site,
 	currentSites,
 	listName,
-	expandedListLink,
+	browseAllLink,
 	size,
 	search,
 } ) => {
@@ -83,11 +84,12 @@ const PluginsBrowserList = ( {
 
 	return (
 		<div className="plugins-browser-list">
-			{ ( title || subtitle ) && (
+			{ ( title || subtitle || resultCount || browseAllLink ) && (
 				<PluginsResultsHeader
 					title={ title }
 					subtitle={ subtitle }
-					browseAllLink={ expandedListLink }
+					resultCount={ resultCount }
+					browseAllLink={ browseAllLink }
 				/>
 			) }
 			{ listName === 'paid' && (
