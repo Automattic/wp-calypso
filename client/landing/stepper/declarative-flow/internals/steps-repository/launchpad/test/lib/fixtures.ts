@@ -141,7 +141,9 @@ export const defaultSiteDetails: SiteDetails = {
 		site_intent: 'link-in-bio',
 		site_vertical_id: null,
 		launchpad_screen: 'full',
-		launchpad_checklist_tasks_statuses: [],
+		launchpad_checklist_tasks_statuses: {
+			links_edited: false,
+		},
 	},
 	plan: {
 		product_id: 1,
