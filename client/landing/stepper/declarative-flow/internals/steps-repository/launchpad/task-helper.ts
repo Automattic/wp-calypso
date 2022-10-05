@@ -96,7 +96,7 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_setup':
 					taskData = {
-						title: translate( 'Set up your Video Site' ),
+						title: translate( 'Set up your Video site' ),
 					};
 					break;
 				case 'videopress_upload':
