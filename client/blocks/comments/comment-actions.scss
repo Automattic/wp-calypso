@@ -33,11 +33,16 @@
 		&:hover,
 		button.is-active,
 		&.like-button.is-liked {
-			color: var( --color-primary );
+			color: var( --color-link );
 
 			svg.reader-star path {
-				stroke: var( --color-primary );
-				fill: var( --color-primary );
+				stroke: var( --color-link );
+			}
+		}
+
+		&.like-button.is-liked {
+			svg.reader-star path {
+				fill: var( --color-link );
 			}
 		}
 
@@ -49,12 +54,12 @@
 		}
 
 		&.comments__comment-actions-read-more {
-			color: var(--color-primary);
+			color: var(--color-link);
 			margin: 0 10px 0 -3px;
 			padding-left: 0;
 
 			.comments__comment-actions-read-more-icon {
-				fill: var( --color-primary );
+				fill: var( --color-link );
 				vertical-align: bottom;
 			}
 		}
