@@ -39,9 +39,9 @@ export const useAddSSHKeyMutation = (
 		}
 	);
 
-	const { mutate } = mutation;
+	const { mutate, isLoading } = mutation;
 
-	const deleteSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
+	const addSSHKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
 
-	return deleteSSHKey;
+	return { addSSHKey, isLoading };
 };

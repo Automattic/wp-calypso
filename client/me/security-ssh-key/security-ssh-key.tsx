@@ -39,7 +39,7 @@ export const SecuritySSHKey = () => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
 
-	const addSSHKey = useAddSSHKeyMutation( {
+	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_add_request' ) );
 		},
@@ -125,7 +125,10 @@ export const SecuritySSHKey = () => {
 				{ isLoading ? (
 					<Placeholders />
 				) : ! hasKeys ? (
-					<AddSSHKeyForm addSSHKey={ ( { name, key } ) => addSSHKey( { name, key } ) } />
+					<AddSSHKeyForm
+						addSSHKey={ ( { name, key } ) => addSSHKey( { name, key } ) }
+						isAdding={ isAdding }
+					/>
 				) : null }
 			</CompactCard>
 			{ hasKeys && (
