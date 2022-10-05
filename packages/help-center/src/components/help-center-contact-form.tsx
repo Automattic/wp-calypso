@@ -405,6 +405,7 @@ export const HelpCenterContactForm = () => {
 				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
 				supportSite={ supportSite }
 				message={ message }
+				articleCanNavigateBack
 			/>
 			<section className="contact-form-submit">
 				<Button
@@ -536,7 +537,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles supportSite={ supportSite } message={ message } />
+			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
 		</main>
 	);
 };

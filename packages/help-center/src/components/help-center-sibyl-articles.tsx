@@ -26,7 +26,7 @@ type Props = {
 	title?: string;
 	message?: string;
 	supportSite?: SiteDetails;
-	navigateToSearch?: boolean;
+	articleCanNavigateBack?: boolean;
 };
 
 function recordSibylArticleClick(
@@ -52,7 +52,7 @@ const ConfigurableLink: React.FC<
 	return <Link onClick={ recordSibylArticleClick( article ) } { ...props } />;
 };
 
-function getPostUrl( article: Article, query: string, navigateToSearch: boolean ) {
+function getPostUrl( article: Article, query: string, articleCanNavigateBack: boolean ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -66,8 +66,8 @@ function getPostUrl( article: Article, query: string, navigateToSearch: boolean 
 			params.set( 'blogId', article.blog_id );
 		}
 
-		if ( navigateToSearch ) {
-			params.set( 'navigateToSearch', String( navigateToSearch ) );
+		if ( articleCanNavigateBack ) {
+			params.set( 'canNavigateBack', String( articleCanNavigateBack ) );
 		}
 
 		const search = params.toString();
@@ -90,7 +90,7 @@ export function SibylArticles( {
 	message = '',
 	supportSite,
 	title,
-	navigateToSearch = false,
+	articleCanNavigateBack = false,
 }: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -118,11 +118,13 @@ export function SibylArticles( {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,
-				url: hasPostId ? getPostUrl( article as Article, message, navigateToSearch ) : article.link,
+				url: hasPostId
+					? getPostUrl( article as Article, message, articleCanNavigateBack )
+					: article.link,
 				is_external: 'en' !== locale || ! hasPostId,
 			};
 		} );
-	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, navigateToSearch ] );
+	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, articleCanNavigateBack ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
