@@ -41,8 +41,10 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
+	const isGuttemburgContext = window.wpcomGutenberg;
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
+		'larger-margin': isGuttemburgContext,
 	} );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
