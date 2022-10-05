@@ -5,7 +5,7 @@ import type { ResponseDomain } from 'calypso/lib/domains/types';
 /**
  * Determines if the domain owner can add email (i.e. if the owner of the domain subscription is also the owner of the email subscription).
  */
-export function canDomainOwnerAddEmail( domain: ResponseDomain | undefined ) {
+export function canDomainOwnerAddEmail( domain: ResponseDomain | undefined ): boolean {
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningCode = cannotAddEmailWarningReason?.code ?? null;
 	const isDomainOwnerNotEmailOwner =
