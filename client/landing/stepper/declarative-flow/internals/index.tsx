@@ -68,6 +68,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( currentRoute ) {
 			recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
 		}
+
+		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
+		// This causes the intent to become empty, and thus this event being fired again.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ flow.name, currentRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
