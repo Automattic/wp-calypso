@@ -31,6 +31,10 @@ button.conversation-follow-button {
 
 			.gridicon, .reader-follow-conversation, .reader-following-conversation {
 				fill: var( --color-text-inverted );
+				g {
+					fill: white;
+					stroke: var( --color-success );
+				}
 			}
 		}
 	}
@@ -48,8 +52,12 @@ button.conversation-follow-button {
 	&.is-following {
 		.reader-following-conversation {
 			display: inline-block;
-			fill: var(--color-success);
 			pointer-events: auto;
+			fill: var(--color-success);
+			g {
+				fill: white;
+				stroke: var( --color-success );
+			}
 		}
 
 		.conversation-follow-button__label {
@@ -68,6 +76,10 @@ button.conversation-follow-button {
 
 			.reader-following-conversation {
 				fill: var( --color-success );
+				g {
+					fill: white;
+					stroke: var( --color-success );
+				}
 			}
 		}
 

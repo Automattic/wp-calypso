@@ -10,12 +10,13 @@ export default function ReaderFollowingFeedIcon( { iconSize } ) {
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path
-				clipRule="evenodd"
-				d="m16 4.5h-12v10.5c0 .2761.22386.5.5.5h7v1.5h-7c-1.10457 0-2-.8954-2-2v-10.5-1.5h1.5 12 1.5v1.5 8h-1.5zm-10.5 2h9v1.5h-9zm0 3h4v1.5h-4zm6.5 1.5h1v1h-1zm-1.5-1.5h1.5 1 1.5v1.5 1 1.5h-1.5-1-1.5v-1.5-1zm-5 2.5h4v1.5h-4z"
-				fill="#606a73"
-				fillRule="evenodd"
+				class="following-icon-background"
+				fill-rule="evenodd"
+				clip-rule="evenodd"
+				d="M16 4.5H4V15C4 15.2761 4.22386 15.5 4.5 15.5H11.5V17H4.5C3.39543 17 2.5 16.1046 2.5 15V4.5V3H4H16H17.5V4.5V12.5H16V4.5ZM5.5 6.5H14.5V8H5.5V6.5ZM5.5 9.5H9.5V11H5.5V9.5ZM12 11H13V12H12V11ZM10.5 9.5H12H13H14.5V11V12V13.5H13H12H10.5V12V11V9.5ZM5.5 12H9.5V13.5H5.5V12Z"
+				fill="#606A73"
 			/>
-			<path d="m13.5 16 2 2 3.5-3.5" stroke="#008a20" strokeWidth="1.5" />
+			<path class="following-icon-tick" d="M13.5 16L15.5 18L19 14.5" stroke="#008A20" stroke-width="1.5" />
 		</svg>
 	);
 }

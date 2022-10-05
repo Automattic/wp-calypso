@@ -1,5 +1,5 @@
 .reader-visit-link__icon {
-	fill: var( --color-primary );
+	fill: var( --color-link );
 }
 
 .reader-visit-link__label {
@@ -13,10 +13,11 @@
 .reader-visit-link:hover,
 .reader-visit-link:active {
 	.reader-visit-link__icon {
-		fill: var(--color-primary);
+		fill: var(--color-link);
 	}
 
 	.reader-visit-link__label {
 		cursor: pointer;
+		color: var(--color-link);
 	}
 }
