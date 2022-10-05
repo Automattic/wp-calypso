@@ -3,7 +3,7 @@ import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
 import type { Query, QueryState } from 'react-query/types/core/query';
 
 class QueryClientSSR extends QueryClient {
-	fetchedQueryKeys = new Set< string >();
+	fetchedQueryHashes = new Set< string >();
 }
 
 class QueryCacheSSR extends QueryCache {
@@ -13,8 +13,8 @@ class QueryCacheSSR extends QueryCache {
 		state?: QueryState< TData, TError >
 	): Query< TQueryFnData, TError, TData, TQueryKey > {
 		const query = super.build( client, options, state );
-		if ( client instanceof QueryClientSSR && ( options as any ).enabled !== false ) {
-			client.fetchedQueryKeys.add( query.queryHash );
+		if ( client instanceof QueryClientSSR && query.state.status === 'success' ) {
+			client.fetchedQueryHashes.add( query.queryHash );
 		}
 		return query;
 	}
@@ -37,8 +37,8 @@ export function dehydrateQueryClient( queryClient: QueryClientSSR ) {
 	}
 
 	return dehydrate( queryClient, {
-		shouldDehydrateQuery: ( { queryHash: queryKey } ) => {
-			return queryClient.fetchedQueryKeys.has( queryKey );
+		shouldDehydrateQuery: ( { queryHash } ) => {
+			return queryClient.fetchedQueryHashes.has( queryHash );
 		},
 	} );
 }
