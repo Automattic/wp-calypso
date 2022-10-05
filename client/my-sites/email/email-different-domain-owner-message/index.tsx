@@ -1,22 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
-type EmailDifferentDomainOwnerMessageProps = {
-	source: string;
-};
-
-export const EmailDifferentDomainOwnerMessage = (
-	props: EmailDifferentDomainOwnerMessageProps
-) => {
-	const { source } = props;
-
+export const EmailDifferentDomainOwnerMessage = () => {
 	const translate = useTranslate();
 
-	const onClickLink = ( eventType: 'login' | 'support' ) => {
+	const recordClickEvent = () => {
 		const properties = {
-			action: eventType,
-			source,
+			action: 'support',
+			source: 'email-management',
 		};
 
 		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
@@ -26,8 +19,8 @@ export const EmailDifferentDomainOwnerMessage = (
 		components: {
 			contactSupportLink: (
 				<a
-					href="https://wordpress.com/help/contact"
-					onClick={ () => onClickLink( 'support' ) }
+					href={ CALYPSO_CONTACT }
+					onClick={ () => recordClickEvent() }
 					rel="noopener noreferrer"
 					target="_blank"
 				/>
@@ -39,9 +32,9 @@ export const EmailDifferentDomainOwnerMessage = (
 		<>
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"
-				eventProperties={ { source } }
+				eventProperties={ { source: 'email-management', context: 'different-owners' } }
 			/>
-			<p className="email-non-owner-message__non-owner-message">
+			<p className="email-non-domain-owner-message__non-owner-message">
 				{ translate(
 					'Additional mailboxes can only be purchased by the owner of the domain and email subscriptions. ' +
 						'Please {{contactSupportLink}}contact support{{/contactSupportLink}} to make a purchase.',
