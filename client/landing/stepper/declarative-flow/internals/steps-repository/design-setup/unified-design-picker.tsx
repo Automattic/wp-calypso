@@ -35,7 +35,7 @@ import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
-import { removeLegacyDesignVariations } from './utils/style-variations';
+import { removeLegacyDesignVariations, promoteDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { StarterDesigns } from '@automattic/data-stores';
@@ -83,6 +83,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
 		if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
 			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
+			allDesigns.static.designs = promoteDesignVariations( allDesigns.static.designs );
 		}
 
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
