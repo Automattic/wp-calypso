@@ -2,11 +2,16 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
 import { ValidationErrors } from 'calypso/lib/media/constants';
 import { MediaLibraryContent } from 'calypso/my-sites/media-library/content';
+import mediaReducer from 'calypso/state/media/reducer';
+import { reducer as uiReducer } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-const noop = () => {};
+const render = ( el, options ) =>
+	renderWithProvider( el, { ...options, reducers: { ui: uiReducer, media: mediaReducer } } );
+
+jest.mock( 'calypso/my-sites/marketing/connections/inline-connection', () => () => null );
 
 const googleConnection = {
 	service: 'google_photos',
@@ -20,31 +25,25 @@ const googleConnectionInvalid = {
 
 const mediaValidationErrorTypes = [ ValidationErrors.SERVICE_AUTH_FAILED ];
 
-function getMediaContent( props ) {
-	return shallow(
-		<MediaLibraryContent
-			mediaValidationErrorTypes={ [] }
-			translate={ noop }
-			site={ { ID: 1 } }
-			{ ...props }
-		/>
-	);
-}
-
-function getMediaContentInstance( props ) {
-	return getMediaContent( props ).instance();
-}
+const defaultProps = {
+	filterRequiresUpgrade: false,
+	mediaScale: 1,
+	mediaValidationErrorTypes: [],
+	selectedItems: [],
+	site: { ID: 1 },
+	translate: () => {},
+};
 
 describe( 'MediaLibraryContent', () => {
-	let beforeWindow;
+	let originalScrollTo;
 
-	beforeAll( function () {
-		beforeWindow = global.window;
-		global.window = {};
+	beforeAll( () => {
+		originalScrollTo = window.scrollTo;
+		window.scrollTo = () => null;
 	} );
 
-	afterAll( function () {
-		global.window = beforeWindow;
+	afterAll( () => {
+		window.scrollTo = originalScrollTo;
 	} );
 
 	describe( 'isGoogleConnectedAndVisible', () => {
@@ -53,9 +52,9 @@ describe( 'MediaLibraryContent', () => {
 				googleConnection,
 				source: 'google_photos',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( true );
+			expect( content.isGoogleConnectedAndVisible( props ) ).toBe( true );
 		} );
 
 		test( 'returns false when not connected and using google source', () => {
@@ -63,9 +62,9 @@ describe( 'MediaLibraryContent', () => {
 				googleConnection,
 				source: '',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( false );
+			expect( content.isGoogleConnectedAndVisible( props ) ).toBe( false );
 		} );
 
 		test( 'returns false when using google source and not connected', () => {
@@ -73,9 +72,9 @@ describe( 'MediaLibraryContent', () => {
 				googleConnection: null,
 				source: 'google_photos',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.isGoogleConnectedAndVisible( props ) ).toBe( false );
+			expect( content.isGoogleConnectedAndVisible( props ) ).toBe( false );
 		} );
 	} );
 
@@ -85,9 +84,9 @@ describe( 'MediaLibraryContent', () => {
 				mediaValidationErrorTypes: [],
 				source: 'google_photos',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.hasGoogleExpired( props ) ).toBe( false );
+			expect( content.hasGoogleExpired( props ) ).toBe( false );
 		} );
 
 		test( 'returns false when media errors and not google service', () => {
@@ -95,9 +94,9 @@ describe( 'MediaLibraryContent', () => {
 				mediaValidationErrorTypes,
 				source: '',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.hasGoogleExpired( props ) ).toBe( false );
+			expect( content.hasGoogleExpired( props ) ).toBe( false );
 		} );
 
 		test( 'returns true when media errors and google service', () => {
@@ -105,9 +104,9 @@ describe( 'MediaLibraryContent', () => {
 				mediaValidationErrorTypes,
 				source: 'google_photos',
 			};
-			const wrapper = getMediaContentInstance();
+			const content = new MediaLibraryContent();
 
-			expect( wrapper.hasGoogleExpired( props ) ).toBe( true );
+			expect( content.hasGoogleExpired( props ) ).toBe( true );
 		} );
 	} );
 
@@ -119,9 +118,9 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: false,
 				googleConnection: null,
 			};
-			const wrapper = getMediaContentInstance( props );
+			const content = new MediaLibraryContent( props );
 
-			expect( wrapper.needsToBeConnected() ).toBe( false );
+			expect( content.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns false when google service, connected, and not expired', () => {
@@ -131,9 +130,9 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: true,
 				googleConnection,
 			};
-			const wrapper = getMediaContentInstance( props );
+			const content = new MediaLibraryContent( props );
 
-			expect( wrapper.needsToBeConnected() ).toBe( false );
+			expect( content.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns false when not google service, is connected, and expired', () => {
@@ -143,9 +142,9 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: true,
 				googleConnection,
 			};
-			const wrapper = getMediaContentInstance( props );
+			const content = new MediaLibraryContent( props );
 
-			expect( wrapper.needsToBeConnected() ).toBe( false );
+			expect( content.needsToBeConnected() ).toBe( false );
 		} );
 
 		test( 'returns true when google service, not connected, and expired', () => {
@@ -155,9 +154,9 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: false,
 				googleConnection,
 			};
-			const wrapper = getMediaContentInstance( props );
+			const content = new MediaLibraryContent( props );
 
-			expect( wrapper.needsToBeConnected() ).toBe( true );
+			expect( content.needsToBeConnected() ).toBe( true );
 		} );
 
 		test( 'returns true when google service, not connected, and not expired', () => {
@@ -167,31 +166,47 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: false,
 				googleConnection,
 			};
-			const wrapper = getMediaContentInstance( props );
+			const content = new MediaLibraryContent( props );
 
-			expect( wrapper.needsToBeConnected() ).toBe( true );
+			expect( content.needsToBeConnected() ).toBe( true );
 		} );
 	} );
 
 	describe( 'componentDidUpdate', () => {
 		test( 'deleteKeyringConnection issued when google service goes from ok to expired', () => {
-			const props = { source: 'google_photos', isConnected: true, googleConnection };
-			const wrapper = getMediaContent( props );
 			const deleteKeyringConnection = jest.fn();
+			const props = {
+				source: 'google_photos',
+				isConnected: true,
+				googleConnection,
+				deleteKeyringConnection,
+			};
+			const { rerender } = render( <MediaLibraryContent { ...defaultProps } { ...props } /> );
 
-			wrapper.setProps( { mediaValidationErrorTypes, deleteKeyringConnection } );
+			rerender(
+				<MediaLibraryContent
+					{ ...defaultProps }
+					{ ...props }
+					mediaValidationErrorTypes={ mediaValidationErrorTypes }
+				/>
+			);
 
-			expect( deleteKeyringConnection.mock.calls.length ).toEqual( 1 );
+			expect( deleteKeyringConnection ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'deleteKeyringConnection not issued if no service expires', () => {
-			const props = { source: 'google_photos', isConnected: true, googleConnection };
-			const wrapper = getMediaContent( props );
 			const deleteKeyringConnection = jest.fn();
+			const props = {
+				source: 'google_photos',
+				isConnected: true,
+				googleConnection,
+				deleteKeyringConnection,
+			};
+			const { rerender } = render( <MediaLibraryContent { ...defaultProps } { ...props } /> );
 
-			wrapper.setProps( { deleteKeyringConnection } );
+			rerender( <MediaLibraryContent { ...defaultProps } { ...props } /> );
 
-			expect( deleteKeyringConnection.mock.calls.length ).toEqual( 0 );
+			expect( deleteKeyringConnection ).toHaveBeenCalledTimes( 0 );
 		} );
 
 		test( 'sourceChanged issued when expired google service goes from invalid to ok', () => {
@@ -208,12 +223,11 @@ describe( 'MediaLibraryContent', () => {
 				isConnected: false,
 				googleConnection,
 				changeMediaSource,
+				mediaValidationErrorTypes,
 			};
-			const wrapper = getMediaContent( propsBefore );
+			const { rerender } = render( <MediaLibraryContent { ...defaultProps } { ...propsBefore } /> );
 
-			changeMediaSource.mockReset();
-			wrapper.setProps( propsAfter );
-
+			rerender( <MediaLibraryContent { ...defaultProps } { ...propsAfter } /> );
 			expect( changeMediaSource ).toHaveBeenCalledTimes( 1 );
 		} );
 
@@ -226,10 +240,10 @@ describe( 'MediaLibraryContent', () => {
 				googleConnection: googleConnectionInvalid,
 				changeMediaSource,
 			};
-			const wrapper = getMediaContent( propsBefore );
+			const { rerender } = render( <MediaLibraryContent { ...defaultProps } { ...propsBefore } /> );
 
 			changeMediaSource.mockReset();
-			wrapper.setProps( propsBefore );
+			rerender( <MediaLibraryContent { ...defaultProps } { ...propsBefore } /> );
 
 			expect( changeMediaSource ).toHaveBeenCalledTimes( 0 );
 		} );
