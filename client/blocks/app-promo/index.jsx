@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
-import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -144,30 +143,27 @@ export class AppPromo extends Component {
 		const { location } = this.props;
 
 		return (
-			<div className="app-promo">
-				<Button
-					onClick={ this.recordClickEvent }
-					className="app-promo__link"
-					title="Try the desktop app!"
-					href={ this.props.getPromoLink( location, promoItem ) }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<p className="app-promo__paragraph">{ promoItem.message }</p>
-				</Button>
-				{ this.dismissButton() }
-			</div>
+			<Button
+				onClick={ this.recordClickEvent }
+				className="app-promo__link"
+				title="Try the desktop app!"
+				href={ getPromoLink( location, promoItem ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				<img className="app-promo__icon" src={ wordpressLogoImage } width="32" height="32" alt="" />
+				<p className="app-promo__paragraph">{ promoItem.message }</p>
+			</Button>
 		);
 	};
 
-	mobilePromo = () => {
-		const { translate } = this.props;
+	mobilePromo = ( promoItem ) => {
+		const { location } = this.props;
 
 		const message = displayJetpackAppBranding
-			? translate( '{{a}}Get the Jetpack app{{/a}} to use Reader anywhere, any time.', {
+			? translate( '{{span}}Get the Jetpack app{{/span}} to use Reader anywhere, any time.', {
 					components: {
-						a: <a href="https://wp.com/app" className="app-promo__jetpack-app-link" />,
+						span: <span className="app-promo__jetpack-app-link" />,
 					},
 			  } )
 			: translate(
@@ -180,18 +176,14 @@ export class AppPromo extends Component {
 			  );
 
 		return (
-			<div className="app-promo">
-				<Button
-					className={ classNames( 'app-promo__link', {
-						'app-promo_jetpack-app-button': displayJetpackAppBranding,
-					} ) }
-					title="Try the mobile app!"
-				>
-					<p className="app-promo__paragraph">{ message }</p>
-				</Button>
-				{ this.dismissButton() }
-			</div>
+			<Button
 				onClick={ this.recordClickEvent }
+				className="app-promo__link"
+				title="Try the mobile app!"
+				href={ getPromoLink( location, promoItem ) }
+				target="_blank"
+				rel="noopener noreferrer"
+			>
 				<img
 					className="app-promo__icon"
 					src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
@@ -199,6 +191,8 @@ export class AppPromo extends Component {
 					height={ displayJetpackAppBranding ? 43 : 32 }
 					alt=""
 				/>
+				<p className="app-promo__paragraph">{ message }</p>
+			</Button>
 		);
 	};
 
@@ -207,7 +201,12 @@ export class AppPromo extends Component {
 			return null;
 		}
 		const { promoItem } = this.state;
-		return promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo( promoItem );
+		return (
+			<div className="app-promo">
+				{ promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo( promoItem ) }
+				{ this.dismissButton() }
+			</div>
+		);
 	}
 }
 

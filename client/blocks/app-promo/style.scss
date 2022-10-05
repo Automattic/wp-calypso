@@ -16,7 +16,7 @@
 .app-promo .app-promo__dismiss {
 	cursor: pointer;
 	padding: 4px;
-	align-self: center;
+	align-items: flex-start;
 
 	svg {
 		fill: var(--color-text-subtle);
@@ -28,55 +28,38 @@
 	height: auto;
 	border-radius: 0;
 	line-height: 1.5;
-	color: var(--color-primary);
+	color: var(--color-text);
 	font-size: $font-body-extra-small;
 	font-weight: 400;
+	align-items: flex-start;
 
-	&:hover {
-		color: var(--color-primary);
-		text-decoration: underline;
-		cursor: pointer;
-	}
-}
-
-.app-promo .app-promo__paragraph {
-	margin-bottom: 0;
-	padding: 0 10px;
-}
 	span {
 		font-weight: 700;
 
-.app-promo .app-promo__jetpack-app-link {
-	color: var(--studio-jetpack-green-40);
-	font-weight: 700;
-	border-bottom: 1.5px solid var(--studio-jetpack-green-40);
+		&.app-promo__jetpack-app-link {
+			color: var(--studio-jetpack-green-40);
+			border-bottom: 1.5px solid var(--studio-jetpack-green-40);
+		}
 
-	&:hover {
-		color: var(--studio-jetpack-green-60);
-		border-bottom: none;
 		&.app-promo__desktop-app-link {
 			color: var(--color-link);
 			border-bottom: 1.5px solid var(--color-link);
 		}
 	}
-}
-
-.app-promo .app-promo_jetpack-app-button {
-	color: var(--color-text);
 
 	&:active,
 	&:focus,
 	&:hover {
 		color: var(--color-text);
-		text-decoration: none;
-		cursor: inherit;
-	}
-}
+		cursor: pointer;
+
 		span {
 			border-bottom: none;
 
-.app-promo__dialog {
-	max-width: 480px;
+			&.app-promo__jetpack-app-link {
+				color: var(--studio-jetpack-green-60);
+			}
+
 			&.app-promo__desktop-app-link {
 				color: var(--color-link-dark);
 			}
@@ -84,6 +67,7 @@
 	}
 }
 
-button.app-promo__link {
-	text-align: left;
+.app-promo .app-promo__paragraph {
+	margin-bottom: 0;
+	padding: 0 10px;
 }
