@@ -37,11 +37,6 @@ export type productIconProps = {
 	productSlug: string;
 };
 
-export interface ViewFilterProps {
-	currentView: ViewType;
-	setCurrentView: ( currentView: ViewType ) => void;
-}
-
 export type ProductsListProps = ProductStoreBaseProps & {
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
 	duration: Duration;

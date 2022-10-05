@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 .jetpack-product-store {
 	display: flex;
@@ -14,14 +14,14 @@
 	}
 
 	a.button {
-		font-family: "SF Pro Text", $sans;
+		font-family: 'SF Pro Text', $sans;
 		font-size: $font-body;
 		font-weight: 600;
 	}
 
-	.button:not([disabled], :disabled, .is-primary) {
-		color: var(--color-neutral-100);
-		border: 1px solid var(--color-neutral-100);
+	.button:not( [disabled], :disabled, .is-primary ) {
+		color: var( --color-neutral-100 );
+		border: 1px solid var( --color-neutral-100 );
 	}
 	.button:focus {
 		border-width: 1px;
@@ -33,17 +33,110 @@
 	}
 }
 
-:is(.product-lightbox__modal, .jetpack-product-store) :is(.button[disabled], .button:disabled, .button.disabled) {
+:is( .product-lightbox__modal, .jetpack-product-store )
+	:is( .button[disabled], .button:disabled, .button.disabled ) {
 	pointer-events: none;
 }
 
-.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .jetpack-product-store .header .header__main-title .formatted-header__title {
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing
+	.jetpack-product-store
+	.header
+	.header__main-title
+	.formatted-header__title {
 	margin: 0 auto;
 	font-size: $font-title-large;
-	line-height: rem(38px);
+	line-height: rem( 38px );
 
 	@include break-large {
 		font-size: $font-headline-small;
-		line-height: rem(40px);
+		line-height: rem( 40px );
+	}
+}
+
+/* Tabs */
+
+@mixin jetpack-product-store__tab-focus {
+	outline: solid 2px var( --color-text );
+	outline-offset: 2px;
+}
+
+.jetpack-product-store__items-tabs [role='tablist'] {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+
+	width: 100%;
+	margin: 0 auto;
+	padding: 2px;
+
+	background: var( --color-surface-backdrop );
+	border-radius: calc( 2 * 4px );
+
+	@include break-medium {
+		position: relative;
+		left: 50%;
+		transform: translateX( -50% );
+
+		width: auto;
+	}
+}
+
+.jetpack-product-store__items-tabs [role='tab'] {
+	display: initial;
+	flex-grow: 1;
+
+	padding: 0.5rem 1rem;
+	min-height: 44px;
+
+	border-radius: inherit;
+	color: var( --color-text );
+
+	font-size: 0.875rem;
+	font-weight: 600;
+	text-align: center;
+
+	transition: background-color 0.1s;
+
+	cursor: pointer;
+
+	@include break-medium {
+		min-width: 170px;
+	}
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&:focus {
+		outline: none;
+
+		@supports not selector( :focus-visible ) {
+			/* Fallback for browsers without :focus-visible support */
+			@include jetpack-product-store__tab-focus;
+		}
+	}
+
+	&:focus-visible {
+		@include jetpack-product-store__tab-focus;
+	}
+
+	&[aria-selected='true'] {
+		background-color: var( --color-surface );
+		box-shadow: 0 4px 8px rgba( 0, 0, 0, 0.1 );
+	}
+
+	&:not( [aria-selected='true'] ) {
+		&:hover {
+			text-decoration: underline;
+		}
+
+		&:focus {
+			box-shadow: none;
+		}
+
+		&:active {
+			background-color: var( --studio-gray-5 );
+			text-decoration: none;
+		}
 	}
 }
