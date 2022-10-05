@@ -8,6 +8,10 @@ interface LinkCardContainerProps {
 	background?: string;
 }
 
+interface LinkCardElementsProps {
+	dark?: boolean;
+}
+
 interface LinkCardProps {
 	label?: ReactChild;
 	title: ReactChild;
@@ -15,6 +19,7 @@ interface LinkCardProps {
 	background?: string;
 	url: string;
 	external?: boolean;
+	dark?: boolean;
 	onClick?: () => void;
 }
 
@@ -28,20 +33,23 @@ const LinkCardContainer = styled.div< LinkCardContainerProps >`
 	background: var( --${ ( props ) => props.background || 'studio-white' } );
 `;
 
-const LinkCardLabel = styled.div`
+const LinkCardLabel = styled.div< LinkCardElementsProps >`
 	margin-bottom: 8px;
 	font-size: var( --scss-font-body-extra-small );
-	color: rgba( var( --studio-white-rgb ), 0.75 );
+	color: rgba(
+		var( --${ ( props ) => ( props.dark ? 'studio-celadon-60-rgb' : 'studio-purple-5-rgb' ) } ),
+		0.75
+	);
 	line-height: 1.25rem;
 `;
 
-const LinkCardTitle = styled.div`
+const LinkCardTitle = styled.div< LinkCardElementsProps >`
 	@media ( max-width: 1090px ) {
 		-webkit-line-clamp: 4; // trunk text to 4 lines then ellipsis
 		line-clamp: 4;
 	}
 
-	color: var( --color-text-inverted );
+	color: var( --${ ( props ) => ( props.dark ? 'studio-celadon-60' : 'studio-purple-5' ) } );
 	margin-bottom: 32px;
 	font-size: var( --scss-font-title-small );
 	text-overflow: ellipsis;
@@ -54,23 +62,26 @@ const LinkCardTitle = styled.div`
 	line-height: 1.5rem;
 `;
 
-const LinkCardCta = styled.div`
+const LinkCardCta = styled.div< LinkCardElementsProps >`
 	font-size: var( --scss-font-body-small );
-	color: rgba( var( --studio-white-rgb ), 0.75 );
+	color: rgba(
+		var( --${ ( props ) => ( props.dark ? 'studio-celadon-60-rgb' : 'studio-purple-5-rgb' ) } ),
+		0.75
+	);
 	line-height: 1.25rem;
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, url, external, onClick } = props;
+	const { label, title, cta, background, url, external, dark, onClick } = props;
 
 	const Link = external ? ExternalLink : 'a';
 
 	return (
 		<Link href={ url } onClick={ onClick }>
 			<LinkCardContainer background={ background }>
-				<LinkCardLabel>{ label }</LinkCardLabel>
-				<LinkCardTitle>{ title }</LinkCardTitle>
-				<LinkCardCta>{ cta }</LinkCardCta>
+				<LinkCardLabel dark={ dark }>{ label }</LinkCardLabel>
+				<LinkCardTitle dark={ dark }>{ title }</LinkCardTitle>
+				<LinkCardCta dark={ dark }>{ cta }</LinkCardCta>
 			</LinkCardContainer>
 		</Link>
 	);
