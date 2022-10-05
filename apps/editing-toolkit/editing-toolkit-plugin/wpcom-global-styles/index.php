@@ -202,6 +202,19 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
 
 /**
+ * Checks if the current blog has custom styles in use.
+ *
+ * @return bool Returns true if custom styles are in use.
+ */
+function wpcom_global_styles_in_use() {
+	$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( wp_get_theme() );
+
+	$global_style_keys = array_keys( json_decode( $user_cpt['post_content'], true ) ?? array() );
+
+	return count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+}
+
+/**
  * Adds the global style notice banner to the custom launch bar controls.
  *
  * @param array $custom_controls List of custom controls.
@@ -210,7 +223,7 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  */
 function wpcom_display_global_styles_banner( $custom_controls ) {
 	// Do not show the banner if the user can use global styles.
-	if ( ! wpcom_should_limit_global_styles() ) {
+	if ( ! wpcom_should_limit_global_styles() || ! wpcom_global_styles_in_use() ) {
 		return;
 	}
 
