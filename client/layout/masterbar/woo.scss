@@ -18,6 +18,7 @@
 
 		.masterbar__login-back-link {
 			margin-top: -10px;
+			font-weight: 500;
 
 			@media screen and ( max-width: 660px ) {
 				display: none;
@@ -30,6 +31,7 @@
 	color: var(--studio-gray-100);
 	text-decoration: none;
 	display: flex;
+	font-weight: 500;
 }
 
 .masterbar__woo-mobile-nav {
@@ -64,9 +66,9 @@
 	$woo-label-color: #50575e;
 	$woo-gray-100: #101517;
 	$woo-gray-40: #787c82;
-	$woo-font-size-small: 12px;
-	$woo-font-size-base: 14px;
-	$woo-font-size-input: 14px;
+	$woo-font-size-small: $font-body-extra-small;
+	$woo-font-size-base: $font-body-small;
+	$woo-font-size-input: $font-body-small;
 	$woo-radius-input: 4px;
 	$woo-form-whitespace: 60px;
 	$woo-form-whitespace-660: 20px;
@@ -76,6 +78,10 @@
 
 	background: #fdfdfd;
 	min-height: 100%;
+
+	* {
+		font-family: proxima-nova, sans-serif;
+	}
 
 	&.layout.is-section-login {
 		min-height: 100%;
@@ -208,16 +214,7 @@
 		text-align: center;
 		margin: 0 auto;
 		line-height: 28px;
-		> p {
-			color: $woo-gray-40;
-			font-size: $woo-font-size-base;
-			font-weight: 400;
-			line-height: 18px;
-			margin: 0;
-			a {
-				font-size: inherit;
-			}
-		}
+
 		h3 {
 			font-weight: 600;
 			font-size: 2.75rem;
@@ -233,12 +230,14 @@
 	.login__header-subtitle,
 	.formatted-header__subtitle {
 		color: $gray-60;
-		font-size: $woo-font-size-base;
+		font-size: $font-body;
 		padding-bottom: 0;
+		margin: 0;
 
 		a {
 			color: var(--studio-gray-100);
 			font-weight: 400;
+			font-size: 1rem;
 		}
 
 		@media screen and ( max-width: 660px ) {
@@ -466,9 +465,9 @@
 		padding: 0 0 8px;
 	}
 
-	.logged-out-form label,
-	.login__form-userdata label {
-		font-weight: 500;
+	.logged-out-form label.form-label,
+	.login__form-userdata label.form-label {
+		font-weight: normal;
 		font-size: $woo-font-size-base;
 		line-height: 20px;
 		color: $woo-label-color;
@@ -529,18 +528,6 @@
 		display: none;
 	}
 
-	.wp-login__footer {
-		background: #fff;
-		a,
-		a:visited {
-			color: $woo-purple-60;
-			font-weight: 500;
-			font-size: $woo-font-size-base;
-			line-height: 28px;
-			padding: 0 14px;
-		}
-	}
-
 	.login__divider span {
 		padding: 0 27px;
 		background-color: #fdfdfd;
@@ -568,29 +555,7 @@
 		color: $gray-50;
 		margin-bottom: 32px;
 		font-weight: 400;
-	}
-
-	.wp-login__links,
-	.logged-out-form__links,
-	.magic-login__footer {
-		margin-top: 16px;
-
-		a,
-		a:visited,
-		button,
-		.logged-out-form__link-item {
-			border: none;
-			font-weight: 400;
-			font-size: $woo-font-size-base;
-			line-height: 28px;
-			text-align: center;
-			color: $woo-purple-60;
-			padding: 8px 24px;
-			text-decoration: none;
-			&:hover {
-				text-decoration: underline;
-			}
-		}
+		margin-top: -14px;
 	}
 
 	.logged-out-form__footer {

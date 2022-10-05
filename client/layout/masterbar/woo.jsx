@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { localize } from 'i18n-calypso';
 import WooLogo from 'calypso/assets/images/icons/woocommerce-logo.svg';
 import SVGIcon from 'calypso/components/svg-icon';
+import './typekit';
 import './woo.scss';
 
 const WooOauthMasterbar = () => {
