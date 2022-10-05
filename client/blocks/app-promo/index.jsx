@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { Dialog, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
@@ -10,7 +10,6 @@ import store from 'store';
 import wordpressLogoImage from 'calypso/assets/images/illustrations/logo-jpc.svg';
 import jetpackLogoImage from 'calypso/assets/images/jetpack/wp-to-jp-vertical.svg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { sendEmailLogin } from 'calypso/state/auth/actions';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
@@ -104,7 +103,6 @@ export class AppPromo extends Component {
 		this.state = {
 			promoItem,
 			showPromo: true,
-			showDialog: false,
 		};
 	}
 
@@ -129,22 +127,6 @@ export class AppPromo extends Component {
 			promo_location: this.props.location,
 			promo_code: this.state.promoItem.promoCode,
 		} );
-	};
-
-	sendMagicLink = () => {
-		this.recordClickEvent();
-		const email = this.props.userSettings.user_email;
-		this.props.sendEmailLogin( email, { showGlobalNotices: false, isMobileAppLogin: true } );
-		this.onShowDialog();
-		return false;
-	};
-
-	onShowDialog = () => {
-		this.setState( { showDialog: true } );
-	};
-
-	onCloseDialog = () => {
-		this.setState( { showDialog: false } );
 	};
 
 	dismissButton = () => (
@@ -181,7 +163,6 @@ export class AppPromo extends Component {
 
 	mobilePromo = () => {
 		const { translate } = this.props;
-		const buttons = [ { action: 'cancel', label: translate( 'OK' ) } ];
 
 		const message = displayJetpackAppBranding
 			? translate( '{{a}}Get the Jetpack app{{/a}} to use Reader anywhere, any time.', {
@@ -201,7 +182,6 @@ export class AppPromo extends Component {
 		return (
 			<div className="app-promo">
 				<Button
-					onClick={ ! displayJetpackAppBranding ? this.sendMagicLink : undefined }
 					className={ classNames( 'app-promo__link', {
 						'app-promo_jetpack-app-button': displayJetpackAppBranding,
 					} ) }
@@ -209,21 +189,9 @@ export class AppPromo extends Component {
 				>
 					<p className="app-promo__paragraph">{ message }</p>
 				</Button>
-				<Dialog
-					className="app-promo__dialog"
-					isVisible={ this.state.showDialog }
-					buttons={ buttons }
-					onClose={ this.onCloseDialog }
-				>
-					<h1>{ translate( 'Check your mail!' ) }</h1>
-					<p>
-						{ translate(
-							"We've sent you an email with links to download and effortlessly log in to the mobile app. Be sure to use them from your mobile device!"
-						) }
-					</p>
-				</Dialog>
 				{ this.dismissButton() }
 			</div>
+				onClick={ this.recordClickEvent }
 				<img
 					className="app-promo__icon"
 					src={ displayJetpackAppBranding ? jetpackLogoImage : wordpressLogoImage }
@@ -253,5 +221,5 @@ export default connect(
 	( state ) => ( {
 		userSettings: getUserSettings( state ),
 	} ),
-	{ fetchUserSettings, recordTracksEvent, sendEmailLogin }
+	{ fetchUserSettings, recordTracksEvent }
 )( localize( AppPromo ) );
