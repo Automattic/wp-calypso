@@ -409,7 +409,11 @@ class PurchaseItem extends Component {
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
 
-		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+		if (
+			purchase.isAutoRenewEnabled &&
+			! hasPaymentMethod( purchase ) &&
+			! isPartnerPurchase( purchase )
+		) {
 			return (
 				<div className={ 'purchase-item__no-payment-method' }>
 					<Icon icon={ warningIcon } />
