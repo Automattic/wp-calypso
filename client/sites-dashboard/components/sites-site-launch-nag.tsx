@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -60,10 +60,12 @@ const SiteLaunchDonut = () => {
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView();
+	const hasRecordedInView = useRef( false );
 
 	useEffect( () => {
-		if ( inView ) {
+		if ( inView && ! hasRecordedInView.current ) {
 			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
+			hasRecordedInView.current = true;
 		}
 	}, [ inView ] );
 
