@@ -26,10 +26,11 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		intro: 0,
 		user: 1,
 		options: 2,
-		chooseADomain: 3,
-		chooseAPlan: 4,
-		processing: 5,
-		launchpad: 6,
+		videomakerSetup: 3,
+		chooseADomain: 4,
+		chooseAPlan: 5,
+		processing: 6,
+		launchpad: 7,
 	},
 };
 

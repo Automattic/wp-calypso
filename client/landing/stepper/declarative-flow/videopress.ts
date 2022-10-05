@@ -20,6 +20,7 @@ export const videopress: Flow = {
 		return [
 			'intro',
 			'options',
+			'videomakerSetup',
 			'chooseADomain',
 			'chooseAPlan',
 			'completingPurchase',
@@ -110,18 +111,24 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
+					return navigate( 'videomakerSetup' );
+				}
+
+				case 'videomakerSetup': {
 					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain':
+				case 'chooseADomain': {
 					return navigate( 'chooseAPlan' );
+				}
 
 				case 'chooseAPlan': {
 					return navigate( 'processing' );
 				}
 
-				case 'completingPurchase':
+				case 'completingPurchase': {
 					return navigate( 'launchpad' );
+				}
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();

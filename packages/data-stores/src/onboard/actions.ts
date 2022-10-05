@@ -54,7 +54,7 @@ export function* createVideoPressSite( {
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = 'premium/videomaker';
+	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
