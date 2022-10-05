@@ -57,6 +57,27 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 		displayBadge: false,
 	},
+	{
+		id: 'videopress_setup',
+		isCompleted: true,
+		actionUrl: '#',
+		taskType: 'blog',
+		displayBadge: false,
+	},
+	{
+		id: 'videopress_upload',
+		isCompleted: false,
+		actionUrl: '#',
+		taskType: 'blog',
+		displayBadge: false,
+	},
+	{
+		id: 'videopress_launched',
+		isCompleted: false,
+		actionUrl: '#',
+		taskType: 'blog',
+		displayBadge: false,
+	},
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
@@ -68,4 +89,5 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'links_added',
 		'link_in_bio_launched',
 	],
+	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };

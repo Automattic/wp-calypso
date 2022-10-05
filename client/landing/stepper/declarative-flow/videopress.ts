@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
-import { redirect } from './internals/steps-repository/import/util';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import './internals/videopress.scss';
@@ -132,7 +131,7 @@ export const videopress: Flow = {
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();
-					return redirect( `/page/${ _siteSlug }/home` );
+					return navigate( 'processing' );
 				}
 			}
 			return providedDependencies;

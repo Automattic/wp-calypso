@@ -1,5 +1,5 @@
 import { SiteDetails, useSiteLogoMutation } from '@automattic/data-stores';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { isTailoredSignupFlow, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { patterns } from '@automattic/pattern-picker';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useMemo } from 'react';
@@ -71,14 +71,14 @@ export function useSetupOnboardingSite( options: SetupOnboardingSiteOptions ) {
 	};
 
 	const setIntent = ( site: SiteDetails, flow: string ) => {
-		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+		if ( isTailoredSignupFlow( flow ) ) {
 			return setIntentOnSite( site.ID.toString(), flow );
 		}
 		return Promise.resolve();
 	};
 
 	const setLaunchpadScreen = ( site: SiteDetails, flow: string ) => {
-		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+		if ( isTailoredSignupFlow( flow ) ) {
 			return saveSiteSettings( site.ID, {
 				launchpad_screen: 'full',
 			} );
