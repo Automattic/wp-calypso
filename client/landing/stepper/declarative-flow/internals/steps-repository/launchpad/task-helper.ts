@@ -108,7 +108,7 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						title: translate( 'Launch Video Site' ),
+						title: translate( 'Launch Video site' ),
 						isCompleted: siteLaunchCompleted,
 						dependencies: [ videoPressUploadCompleted ],
 						actionDispatch: () => {
