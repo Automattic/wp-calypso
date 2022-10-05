@@ -16,16 +16,21 @@ import { useSelector } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const UpgradeNudge = ( {
-	selectedSite,
-	sitePlan,
-	isVip,
-	jetpackNonAtomic,
-	siteSlug,
-	paidPlugins,
-} ) => {
+const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
+	const selectedSite = useSelector( getSelectedSite );
+	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
+	const jetpackNonAtomic = useSelector(
+		( state ) =>
+			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
+	);
+	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
+
 	const hasInstallPlugins = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
 	);

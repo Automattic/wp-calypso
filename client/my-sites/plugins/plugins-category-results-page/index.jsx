@@ -1,12 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import isVipSite from 'calypso/state/selectors/is-vip-site';
-import { getSitePlan, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
 import Header from './header';
@@ -33,25 +28,9 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 		} );
 	}
 
-	const selectedSite = useSelector( getSelectedSite );
-	const sitePlan = useSelector( ( state ) => getSitePlan( state, selectedSite?.ID ) );
-	const jetpackNonAtomic = useSelector(
-		( state ) =>
-			isJetpackSite( state, selectedSite?.ID ) && ! isAtomicSite( state, selectedSite?.ID )
-	);
-	const isVip = useSelector( ( state ) => isVipSite( state, selectedSite?.ID ) );
-
 	return (
 		<>
-			<UpgradeNudge
-				siteSlug={ siteSlug }
-				jetpackNonAtomic={ jetpackNonAtomic }
-				selectedSite={ selectedSite }
-				sitePlan={ sitePlan }
-				isVip={ isVip }
-				sites={ sites }
-				paidPlugins={ true }
-			/>
+			<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
 			<Header title={ categoryName } count={ title } subtitle={ categoryDescription } />
 
 			<FullListView
