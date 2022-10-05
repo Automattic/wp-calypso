@@ -63,7 +63,7 @@ export const CreateButton = () => {
 	return (
 		<Button
 			isPressed
-			href={ '/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp' }
+			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
 			className={ 'create-button' }
 			onClick={ handleBannerCtaClick }
 		>
