@@ -1,15 +1,18 @@
+import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -109,13 +112,16 @@ function ThemeBlock( props ) {
 }
 
 function Empty( { emptyContent, translate } ) {
-	const shouldUpgrade = true;
+	const selectedSite = useSelector( getSelectedSite );
+	const shouldUpgradeToInstallThemes = useSelector(
+		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
+	);
 
 	if ( emptyContent ) {
 		return emptyContent;
 	}
 
-	return shouldUpgrade ? (
+	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
 			<span className="themes-list__not-found-text">
 				{ translate( 'No themes match your search' ) }
