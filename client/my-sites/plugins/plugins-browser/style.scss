@@ -47,13 +47,13 @@
 	&::before {
 		box-sizing: border-box;
 		content: "";
-		background-color: #fdfdfd;
+		background-color: #fff;
 		position: absolute;
 		height: 100%;
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		border-top: 1px solid #eee;
+		border-top: 1px solid #f6f7f7;
 	}
 }
 
