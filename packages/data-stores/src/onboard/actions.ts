@@ -55,6 +55,7 @@ export function* createVideoPressSite( {
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
+	const siteVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
@@ -76,6 +77,7 @@ export function* createVideoPressSite( {
 				font_headings: selectedFonts.headings,
 			} ),
 			use_patterns: true,
+			site_vertical_name: siteVertical,
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),

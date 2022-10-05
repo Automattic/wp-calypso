@@ -22,8 +22,6 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 	const handleSubmit = async ( event: FormEvent ) => {
 		event.preventDefault();
 
-		// Set some flow meta here?
-
 		submit?.();
 	};
 
