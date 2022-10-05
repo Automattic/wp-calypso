@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { useEffect, useRef } from 'react';
 
 function getFormAction( redirectTo ) {
-	const subdomainRegExp = /^https?:\/\/(?!public-api)([a-z0-9-]+)\.wordpress\.com(?:$|\/)/;
+	const subdomainRegExp = /^https?:\/\/([a-z0-9-]+)\.wordpress\.com(?:$|\/)/;
 	const hostname = config( 'hostname' );
 	let subdomain = '';
 
@@ -11,7 +11,10 @@ function getFormAction( redirectTo ) {
 		hostname !== 'wpcalypso.wordpress.com' &&
 		hostname !== 'horizon.wordpress.com'
 	) {
-		subdomain = redirectTo.match( subdomainRegExp )[ 1 ] + '.';
+		const subdomainMatch = redirectTo.match( subdomainRegExp );
+		if ( subdomainMatch && subdomainMatch[ 1 ] !== 'public-api' ) {
+			subdomain = subdomainMatch[ 1 ] + '.';
+		}
 	}
 
 	return `https://${ subdomain }wordpress.com/wp-login.php`;
