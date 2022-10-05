@@ -31,7 +31,7 @@ export interface Article {
 	id?: string;
 	post_id?: string;
 	blog_id?: string;
-	url?: string;
+	url?: { pathname: string; search: string } | string;
 	is_external?: boolean;
 }
 

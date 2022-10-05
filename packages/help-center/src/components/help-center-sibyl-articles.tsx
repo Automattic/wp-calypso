@@ -6,6 +6,8 @@ import {
 	SiteDetails,
 	useSiteIntent,
 	getContextResults,
+	RESULT_TOUR,
+	RESULT_VIDEO,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
@@ -74,8 +76,14 @@ function getPostUrl( article: Article, query: string, canNavigateBack: string | 
 			search,
 		};
 	}
-	return article.link;
 }
+
+const getFilteredContextResults = ( sectionName: string, siteIntent: string ) => {
+	return getContextResults( sectionName, siteIntent ).filter( ( article ) => {
+		const type = ( 'type' in article && article.type ) || '';
+		return ! [ RESULT_VIDEO, RESULT_TOUR ].includes( type );
+	} );
+};
 
 export function SibylArticles( { message = '', supportSite, title }: Props ) {
 	const { __ } = useI18n();
@@ -99,15 +107,18 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
-		return sibylArticles?.length
-			? sibylArticles.map( ( article ) => {
-					return {
-						...article,
-						url: getPostUrl( article, message, canNavigateBack ),
-						is_external: 'en' !== locale || ! article.post_id,
-					};
-			  } )
-			: getContextResults( sectionName, intent?.site_intent ?? '' );
+		return (
+			sibylArticles?.length
+				? sibylArticles
+				: getFilteredContextResults( sectionName, intent?.site_intent ?? '' )
+		 ).map( ( article ) => {
+			const hasPostId = 'post_id' in article && article.post_id;
+			return {
+				...article,
+				url: hasPostId ? getPostUrl( article as Article, message, canNavigateBack ) : article.link,
+				is_external: 'en' !== locale || ! hasPostId,
+			};
+		} );
 	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, canNavigateBack ] );
 
 	return (
@@ -120,14 +131,11 @@ export function SibylArticles( { message = '', supportSite, title }: Props ) {
 				aria-labelledby="help-center--contextual_help"
 			>
 				{ articles.map( ( article, index ) => {
-					if ( 'type' in article && [ 'video', 'tour' ].includes( article.type ) ) {
-						return;
-					}
 					return (
 						<li key={ article.link + index }>
 							<ConfigurableLink
-								to={ ( article as Article ).url }
-								external={ ( article as Article ).is_external ?? false }
+								to={ article.url }
+								external={ article.is_external }
 								fullUrl={ article.link }
 								article={ article }
 							>
