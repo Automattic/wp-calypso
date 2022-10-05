@@ -7743,16 +7743,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:^17.0.1":
-  version: 17.0.5
-  resolution: "@types/yargs@npm:17.0.5"
-  dependencies:
-    "@types/yargs-parser": "*"
-  checksum: 12a996ec586ba6e53be94e4a3186d89e85bd35084cd9b497b7de4bd4ab08dd0ad3b3eba85dd326d0c6fe879edbbb1479b3c8735e87b6db209a92720c600bf47b
-  languageName: node
-  linkType: hard
-
-"@types/yargs@npm:^17.0.8":
+"@types/yargs@npm:^17.0.1, @types/yargs@npm:^17.0.8":
   version: 17.0.13
   resolution: "@types/yargs@npm:17.0.13"
   dependencies:
