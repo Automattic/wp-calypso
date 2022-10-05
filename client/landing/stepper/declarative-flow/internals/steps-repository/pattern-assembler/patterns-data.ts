@@ -2,6 +2,18 @@ import type { Pattern } from './types';
 
 const headerPatterns: Pattern[] = [
 	{
+		id: 5603,
+		name: 'Header with Site Title and Menu Button',
+	},
+	{
+		id: 5608,
+		name: 'Centred Header with Logo and Navigation',
+	},
+	{
+		id: 5579,
+		name: 'Centered header',
+	},
+	{
 		id: 5605,
 		name: 'Header with Site Title and Vertical Navigation',
 	},
