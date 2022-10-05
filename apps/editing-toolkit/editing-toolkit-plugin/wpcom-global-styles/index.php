@@ -223,11 +223,9 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 
 	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug;
 
-	$title = __( 'Styles hidden', 'full-site-editing' );
-
 	$custom_controls[] = array(
-		'desktop_message'    => $title,
-		'mobile_message'     => $title,
+		'desktop_message'    => __( 'Styles hidden', 'full-site-editing' ),
+		'mobile_message'     => __( 'Styles', 'full-site-editing' ),
 		'track_button_name'  => 'wpcom_gs_notice',
 		'tooltip'            => __( 'You need to be on a paid plan for your style changes to be made public.', 'full-site-editing' ),
 		'tooltip_link_title' => __( 'Upgrade your plan', 'full-site-editing' ),
