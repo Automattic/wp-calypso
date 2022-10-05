@@ -36,7 +36,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
 	}, [ query, link, sectionName ] );
 
-	const redirectToSearchOrHome = () => {
+	const redirectBack = () => {
 		if ( canNavigateBack ) {
 			history.goBack();
 		} else if ( query ) {
@@ -51,7 +51,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			<div className="help-center-embed-result">
 				<Flex justify="space-between">
 					<FlexItem>
-						<BackButton onClick={ redirectToSearchOrHome } />
+						<BackButton onClick={ redirectBack } />
 					</FlexItem>
 					<FlexItem>
 						<Button
