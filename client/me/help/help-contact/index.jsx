@@ -1,7 +1,9 @@
 import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
+import { HelpCenter } from '@automattic/data-stores';
 import {
+	shouldShowHelpCenterToUser,
 	SUPPORT_CHAT_OVERFLOW,
 	SUPPORT_DIRECTLY,
 	SUPPORT_FORUM,
@@ -10,6 +12,7 @@ import {
 	SUPPORT_UPWORK_TICKET,
 } from '@automattic/help-center';
 import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
+import { dispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -34,6 +37,7 @@ import HelpContactForm from 'calypso/me/help/help-contact-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	getCurrentUser,
+	getCurrentUserId,
 	getCurrentUserLocale,
 	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
@@ -64,6 +68,8 @@ import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import HelpUnverifiedWarning from '../help-unverified-warning';
+
+const HELP_CENTER_STORE = HelpCenter.register();
 
 import './style.scss';
 
@@ -117,19 +123,23 @@ class HelpContact extends Component {
 	};
 
 	startHappychat = ( contactForm ) => {
-		this.recordCompactSubmit( 'happychat' );
-		this.props.openHappychat();
 		const { message, site } = contactForm;
+		this.recordCompactSubmit( 'happychat' );
+		this.recordSubmitWithActiveTickets( 'chat' );
 
-		this.props.sendUserInfo( this.props.getUserInfo( { site } ) );
-		this.props.sendHappychatMessage( message, { includeInSummary: true } );
+		if ( this.props.shouldShowHelpCenterToUser ) {
+			dispatch( HELP_CENTER_STORE ).startHelpCenterChat( site, message );
+		} else {
+			this.props.openHappychat();
+
+			this.props.sendUserInfo( this.props.getUserInfo( { site } ) );
+			this.props.sendHappychatMessage( message, { includeInSummary: true } );
+		}
 
 		recordTracksEvent( 'calypso_help_live_chat_begin', {
 			site_plan_product_id: site ? site.plan.product_id : null,
 			is_automated_transfer: site ? site.options.is_automated_transfer : null,
 		} );
-
-		this.recordSubmitWithActiveTickets( 'chat' );
 
 		this.setState( {
 			isSubmitting: false,
@@ -703,7 +713,7 @@ class HelpContact extends Component {
 				) }
 				{ ! this.props.compact && ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				<Card className="help-contact__form">{ this.getView() }</Card>
-				{ this.props.shouldStartHappychatConnection && <HappychatConnection /> }
+				{ this.props.shouldStartHappychatConnection && <HappychatConnection isHappychatEnabled /> }
 				<QueryTicketSupportConfiguration />
 				<QueryUserPurchases />
 				<QueryLanguageNames />
@@ -739,6 +749,7 @@ export default connect(
 			shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
 			isRequestingSites: isRequestingSites( state ),
 			supportVariation: getInlineHelpSupportVariation( state ),
+			shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
 		};
 	},
 	{
