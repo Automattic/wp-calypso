@@ -620,6 +620,12 @@
 		color: var(--color-primary);
 	}
 
+	&:hover {
+		.follow-button__label {
+			color: var(--color-success);
+		}
+	}
+
 	&.is-following {
 		.gridicon {
 			fill: var(--color-success);
