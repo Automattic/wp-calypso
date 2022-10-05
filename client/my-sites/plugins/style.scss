@@ -4,14 +4,14 @@
 @import "./woocommerce-box.scss";
 
 .is-section-plugins .main {
-	padding-top: 35px; // Compensate for the fixed header.
+	padding-top: 24px; // Compensate for the fixed header.
 
 	@media ( max-width: 782px ) {
-		padding-top: 50px;
+		padding-top: 45px;
 	}
 
 	@media ( max-width: 660px ) {
-		padding-top: 70px;
+		padding-top: 60px;
 	}
 }
 
@@ -324,6 +324,7 @@ body.is-section-plugins #primary {
 		.plugin-sections {
 			margin-top: 20px;
 		}
+
 		.section-nav-tabs__list {
 			box-shadow: none;
 		}
