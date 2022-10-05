@@ -147,7 +147,7 @@ export class AppPromo extends Component {
 				onClick={ this.recordClickEvent }
 				className="app-promo__link"
 				title="Try the desktop app!"
-				href={ getPromoLink( location, promoItem ) }
+				href={ this.props.getPromoLink( location, promoItem ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
@@ -180,7 +180,7 @@ export class AppPromo extends Component {
 				onClick={ this.recordClickEvent }
 				className="app-promo__link"
 				title="Try the mobile app!"
-				href={ getPromoLink( location, promoItem ) }
+				href={ this.props.getPromoLink( location, promoItem ) }
 				target="_blank"
 				rel="noopener noreferrer"
 			>
