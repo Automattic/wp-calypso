@@ -1,7 +1,4 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
-.plugins-browser-list {
+.plugins-results-header {
 	margin-bottom: 8px; // 32 + 8 = 40 gap
 
 	.feature-example & {
@@ -26,12 +23,6 @@
 		padding: 0 16px;
 	}
 
-	.spotlight {
-		margin-top: 20px;
-	}
-}
-
-.plugins-browser-list__header {
 	color: var(--color-gray-90);
 	display: flex;
 	align-items: center;
@@ -39,27 +30,20 @@
 	flex-wrap: wrap;
 
 	padding-top: 32px;
-
-	.plugins-browser-list__titles {
+	.plugins-results-header__titles {
 		margin-bottom: 4px; // +20 from elements = 24 gap
 
-		.plugins-browser-list__title {
+		.plugins-results-header__title {
 			@extend .wp-brand-font;
 			font-size: $font-title-medium;
 			font-weight: 500;
-
-			&[class*="plugins-browser-list__search-for"] {
-				font-weight: 400;
-			}
 		}
 
-		.plugins-browser-list__subtitle {
-			margin-top: 4px;
+		.plugins-results-header__subtitle {
 			font-size: $font-body-small;
 		}
 	}
-
-	.plugins-browser-list__actions {
+	.plugins-results-header__actions {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -67,15 +51,7 @@
 		margin-top: auto;
 		margin-bottom: 4px; // +20 from elements = 24 gap
 
-		> div {
-			flex-grow: 4;
-
-			.select-dropdown__container {
-				width: 100%;
-			}
-		}
-
-		.plugins-browser-list__browse-all {
+		.plugins-results-header__action {
 			font-size: $font-body-small;
 			display: flex;
 			justify-content: flex-end;
@@ -88,7 +64,7 @@
 	}
 }
 
-.plugins-browser-list__elements {
+.plugins-results-header__elements {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;

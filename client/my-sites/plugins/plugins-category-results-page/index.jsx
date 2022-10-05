@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
-import Header from './header';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
@@ -29,8 +29,11 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	return (
 		<>
-			<Header title={ categoryName } count={ title } subtitle={ categoryDescription } />
-
+			<PluginsResultsHeader
+				title={ categoryName }
+				subtitle={ categoryDescription }
+				resultCount={ title }
+			/>
 			<FullListView
 				plugins={ plugins }
 				listName={ category }
