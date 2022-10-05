@@ -203,7 +203,9 @@ export class AppPromo extends Component {
 		const { promoItem } = this.state;
 		return (
 			<div className="app-promo">
-				{ promoItem.type === 'mobile' ? this.mobilePromo() : this.desktopPromo( promoItem ) }
+				{ promoItem.type === 'mobile'
+					? this.mobilePromo( promoItem )
+					: this.desktopPromo( promoItem ) }
 				{ this.dismissButton() }
 			</div>
 		);
