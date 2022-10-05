@@ -6,6 +6,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import {
 	emailManagementEdit,
 	emailManagementPurchaseNewEmailAccount,
@@ -75,7 +76,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		components: {
 			contactSupportLink: (
 				<a
-					href="https://wordpress.com/help/contact"
+					href={ CALYPSO_CONTACT }
 					onClick={ () => onClickLink( 'support' ) }
 					rel="noopener noreferrer"
 					target="_blank"

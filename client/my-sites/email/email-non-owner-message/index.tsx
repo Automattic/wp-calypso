@@ -4,6 +4,7 @@ import { stringify } from 'qs';
 import { useEmailOwnerUserName } from 'calypso/components/data/query-email-owner-username';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { emailManagementEdit } from 'calypso/my-sites/email/paths';
 
 import './style.scss';
@@ -54,7 +55,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 		components: {
 			contactSupportLink: (
 				<a
-					href="https://wordpress.com/help/contact"
+					href={ CALYPSO_CONTACT }
 					onClick={ () => onClickLink( 'support' ) }
 					rel="noopener noreferrer"
 					target="_blank"
