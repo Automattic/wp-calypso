@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
 import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.png';
 import * as Banner from './link-in-bio-banner-parts';
-import { handleBannerViewed } from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
 	padding: 32,
@@ -23,7 +21,6 @@ const Details = styled( 'div' )( {
 } );
 
 export const LinkInBioRowBanner = () => {
-	useEffect( handleBannerViewed, [] );
 	return (
 		<Root data-testid="row-banner">
 			<Banner.Image src={ image } />

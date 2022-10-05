@@ -1,10 +1,10 @@
-//todo use variables where possible and check fontSize use in code base to make sure consistent
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button } from '@wordpress/components';
+import { Button as IconButton } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
-import { ComponentProps } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { savePreference } from 'calypso/state/preferences/actions';
 
@@ -34,21 +34,14 @@ Description.defaultProps = {
 	children: __( 'Show the world what you have to offer with a Link to Bio site.' ),
 };
 
-export const DismissButton = ( props: ComponentProps< typeof Button > ) => {
+export const DismissButton = () => {
 	const dispatch = useDispatch();
 
 	const handleDismissBanner = () => {
 		recordTracksEvent( 'calypso_link_in_bio_banner_dismiss_click' );
 		dispatch( savePreference( LINK_IN_BIO_BANNER_PREFERENCE, false ) );
 	};
-	return (
-		<Button
-			icon={ close }
-			onClick={ handleDismissBanner }
-			{ ...props }
-			className="dismiss-button"
-		/>
-	);
+	return <IconButton icon={ close } onClick={ handleDismissBanner } className="dismiss-button" />;
 };
 
 export const Image = ( { src }: { src: string } ) => {
@@ -59,19 +52,44 @@ const handleBannerCtaClick = () => {
 	recordTracksEvent( 'calypso_link_in_bio_banner_cta_click' );
 };
 
+export const handleBannerViewed = () => {
+	recordTracksEvent( 'calypso_link_in_bio_banner_viewed' );
+};
+
+// Based on steps-repository/intro/styles.scss and entry-stepper.css
+// which are used for flow `/setup/intro`. We should probably have
+// a ready-made button in this style.
+const LinkButton = styled( Button )( {
+	color: 'var(--color-surface)',
+	backgroundColor: 'var(--studio-gray-100)',
+	fontWeight: 500,
+	letterSpacing: '0.32px',
+	padding: '10px 24px',
+	border: 'none',
+	boxShadow: 'none',
+	'&:visited': {
+		color: 'var(--color-surface)',
+	},
+	'&:hover': {
+		backgroundColor: 'var(--studio-gray-70)',
+	},
+	'&:focus': {
+		backgroundColor: 'var(--studio-gray-70)',
+		outline: 'solid 2px var(--studio-gray-70)',
+		outlineOffset: 2,
+		boxShadow: 'none !important',
+	},
+} );
+
 export const CreateButton = () => {
+	useEffect( handleBannerViewed, [] );
 	return (
-		<Button
-			isPressed
+		<LinkButton
 			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
 			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>
 			{ __( 'Create your bio site' ) }
-		</Button>
+		</LinkButton>
 	);
-};
-
-export const handleBannerViewed = () => {
-	recordTracksEvent( 'calypso_link_in_bio_banner_viewed' );
 };

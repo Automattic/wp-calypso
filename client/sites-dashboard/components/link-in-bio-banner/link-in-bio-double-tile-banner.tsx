@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
-import { useEffect } from 'react';
 import image from 'calypso/assets/images/onboarding/link-in-bio-banner-large.png';
 import * as Banner from './link-in-bio-banner-parts';
-import { handleBannerViewed } from './link-in-bio-banner-parts';
 
 const Wrapper = styled( 'div' )( {
 	// this is the height of the "footer" div in `SitesGridTile`.
@@ -50,7 +48,6 @@ const Details = styled( 'div' )( {
 } );
 
 export const LinkInBioDoubleTileBanner = () => {
-	useEffect( handleBannerViewed, [] );
 	return (
 		<Wrapper data-testid="double-tile-banner">
 			<Root>
