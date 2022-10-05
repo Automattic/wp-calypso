@@ -1,5 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -229,6 +230,17 @@ export default function useCreatePaymentCompleteCallback( {
 				// We use window.location instead of page() so that the cookies are
 				// detected on fresh page load. Using page(url) will take us to the
 				// log-in page which we don't want.
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
+				return;
+			}
+
+			// We need to do a hard redirect if we're redirecting to the stepper.
+			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
+			if ( isURL( url ) || url.includes( '/setup/' ) ) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: transactionResult.order_id,

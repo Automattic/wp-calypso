@@ -25,6 +25,7 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -158,6 +159,26 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setSelectedDesign( undefined );
 		setSelectedStyleVariation( undefined );
 	}, [] );
+
+	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
+	const themeFromQueryString = useQuery().get( 'theme' );
+	useEffect( () => {
+		if ( ! themeFromQueryString || ! allDesigns ) {
+			return;
+		}
+
+		const { generated: generatedDesigns, static: staticDesigns } = allDesigns;
+
+		const designs = [ ...generatedDesigns.designs, ...staticDesigns.designs ];
+
+		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
+		if ( ! requestedDesign ) {
+			return;
+		}
+
+		setSelectedDesign( requestedDesign );
+		setIsPreviewingDesign( true );
+	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
