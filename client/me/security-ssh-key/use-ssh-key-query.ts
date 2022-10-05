@@ -1,9 +1,20 @@
 import { useQuery } from 'react-query';
 import wp from 'calypso/lib/wp';
 
+export const SSH_KEY_FORMATS = [
+	'ssh-rsa',
+	'ssh-ed25519',
+	'ssh-dss',
+	'ecdsa-sha2-nistp256',
+	'ecdsa-sha2-nistp384',
+	'ecdsa-sha2-nistp521',
+] as const;
+
 export interface SSHKeyData {
 	name: string;
 	key: string;
+	type: typeof SSH_KEY_FORMATS[ number ];
+	sha256: string;
 }
 
 export const SSH_KEY_QUERY_KEY = [ 'me', 'ssh-keys' ];

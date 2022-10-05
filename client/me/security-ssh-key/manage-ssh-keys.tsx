@@ -35,7 +35,7 @@ const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 
 	return (
 		<SSHKeyItemCard>
-			<SSHPublicKey>{ sshKey.key }</SSHPublicKey>
+			<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
 			<Button
 				busy={ keyBeingDeleted === sshKey.name }
 				disabled={ !! keyBeingDeleted }

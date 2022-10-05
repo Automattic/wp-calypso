@@ -6,17 +6,9 @@ import { ChangeEvent, useReducer } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
+import { SSH_KEY_FORMATS } from './use-ssh-key-query';
 
 const PUBLIC_SSH_KEY_INPUT_ID = 'public_ssh_key';
-
-const keyFormats = [
-	'ssh-rsa',
-	'ssh-ed25519',
-	'ssh-dss',
-	'ecdsa-sha2-nistp256',
-	'ecdsa-sha2-nistp384',
-	'ecdsa-sha2-nistp521',
-];
 
 const initialState = {
 	touched: false,
@@ -24,7 +16,7 @@ const initialState = {
 	value: '',
 };
 
-const sshKeyValidation = new RegExp( `^(?:${ keyFormats.join( '|' ) })\\s.+` );
+const sshKeyValidation = new RegExp( `^(?:${ SSH_KEY_FORMATS.join( '|' ) })\\s.+` );
 
 type ReducerAction = { type: 'setValue'; value: string };
 
@@ -54,7 +46,7 @@ export const AddSSHKeyForm = ( { addSSHKey, isAdding }: AddSSHKeyFormProps ) => 
 	const formats = new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
 		style: 'long',
 		type: 'disjunction',
-	} ).format( keyFormats );
+	} ).format( SSH_KEY_FORMATS );
 
 	const showSSHKeyError = touched && ! isValid;
 
