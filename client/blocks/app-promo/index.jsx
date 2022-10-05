@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Dialog, Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -21,30 +21,62 @@ const noop = () => {};
 const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const getRandomPromo = () => {
+	const desktopAppLink = <span className="app-promo__desktop-app-link" />;
+
 	const promoOptions = [
 		{
 			promoCode: 'a0001',
-			message: 'WordPress.com your way — desktop app now available for Mac, Windows, and Linux.',
+			message: translate(
+				'WordPress.com your way — {{span}}desktop app now available for Mac, Windows, and Linux{{/span}}.',
+				{
+					components: {
+						span: desktopAppLink,
+					},
+				}
+			),
 			type: 'desktop',
 		},
 		{
 			promoCode: 'a0002',
-			message: 'Get the WordPress.com app for your desktop.',
+			message: translate( 'Get the {{span}}WordPress.com app{{/span}} for your desktop.', {
+				components: {
+					span: desktopAppLink,
+				},
+			} ),
 			type: 'desktop',
 		},
 		{
 			promoCode: 'a0003',
-			message: 'WordPress.com app now available for desktop.',
+			message: translate( '{{span}}WordPress.com app{{/span}} now available for desktop.', {
+				components: {
+					span: desktopAppLink,
+				},
+			} ),
 			type: 'desktop',
 		},
 		{
 			promoCode: 'a0005',
-			message: 'Fast, distraction-free WordPress.com — download the desktop app.',
+			message: translate(
+				'Fast, distraction-free WordPress.com — {{span}}download the desktop app{{/span}}.',
+				{
+					components: {
+						span: desktopAppLink,
+					},
+				}
+			),
 			type: 'desktop',
 		},
 		{
 			promoCode: 'a0006',
-			message: 'WordPress.com in the palm of your hands — download the mobile app.',
+			message: translate(
+				'WordPress.com in the palm of your hands — {{span}}download the mobile app{{/span}}.',
+				{
+					components: {
+						span: desktopAppLink,
+					},
+				}
+			),
+
 			type: 'mobile',
 		},
 	];
@@ -157,7 +189,14 @@ export class AppPromo extends Component {
 						a: <a href="https://wp.com/app" className="app-promo__jetpack-app-link" />,
 					},
 			  } )
-			: translate( 'WordPress.com in the palm of your hands — download the mobile app.' );
+			: translate(
+					'WordPress.com in the palm of your hands — {{span}}download the mobile app{{/span}}.',
+					{
+						components: {
+							span: <span className="app-promo__desktop-app-link" />,
+						},
+					}
+			  );
 
 		return (
 			<div className="app-promo">

@@ -43,6 +43,8 @@
 	margin-bottom: 0;
 	padding: 0 10px;
 }
+	span {
+		font-weight: 700;
 
 .app-promo .app-promo__jetpack-app-link {
 	color: var(--studio-jetpack-green-40);
@@ -52,21 +54,34 @@
 	&:hover {
 		color: var(--studio-jetpack-green-60);
 		border-bottom: none;
+		&.app-promo__desktop-app-link {
+			color: var(--color-link);
+			border-bottom: 1.5px solid var(--color-link);
+		}
 	}
 }
 
 .app-promo .app-promo_jetpack-app-button {
 	color: var(--color-text);
 
+	&:active,
+	&:focus,
 	&:hover {
 		color: var(--color-text);
 		text-decoration: none;
 		cursor: inherit;
 	}
 }
+		span {
+			border-bottom: none;
 
 .app-promo__dialog {
 	max-width: 480px;
+			&.app-promo__desktop-app-link {
+				color: var(--color-link-dark);
+			}
+		}
+	}
 }
 
 button.app-promo__link {
