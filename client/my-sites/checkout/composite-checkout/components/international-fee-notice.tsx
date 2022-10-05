@@ -1,4 +1,3 @@
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
@@ -11,18 +10,7 @@ export const InternationalFeeNotice = () => {
 
 	if ( contactInfo.countryCode?.value !== 'US' ) {
 		const internationalFeeAgreement = translate(
-			`The selected country and postal code may be processed as an international transaction, you agree to pay any associated fees. {{link}}Learn more{{/link}}`,
-			{
-				components: {
-					link: (
-						<a
-							href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-							target="_blank"
-							rel="noopener noreferrer"
-						/>
-					),
-				},
-			}
+			`Your issuing bank may choose to charge an international transaction fee or a currency exchange fee. Your bank may be able to provide more information as to when this is necessary.`
 		);
 		return <CheckoutTermsItem>{ internationalFeeAgreement }</CheckoutTermsItem>;
 	}
