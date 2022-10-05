@@ -1,6 +1,6 @@
 /* global Typekit */
 
-if ( typeof document !== 'undefined' && process.env.NODE_ENV !== 'test' ) {
+if ( typeof document !== 'undefined' && process.env.NODE_CONFIG_ENV !== 'test' ) {
 	// Load fonts - https://helpx.adobe.com/fonts/using/embed-codes.html
 	( function ( d ) {
 		const config = {
