@@ -75,14 +75,17 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	}
 
 	const validSiteIntent =
-		site.options?.site_intent && -1 !== [ 'link-in-bio' ].indexOf( site.options?.site_intent )
-			? site.options?.site_intent
+		site.options.launchpad_screen === 'full' &&
+		site.options.site_intent &&
+		[ 'link-in-bio' ].includes( site.options.site_intent )
+			? site.options.site_intent
 			: false;
 
 	const link = validSiteIntent
 		? getLaunchpadUrl( site.slug, validSiteIntent )
 		: getDashboardUrl( site.slug );
-	const text = site.options?.site_intent ? __( 'Launch guide' ) : __( 'Launch checklist' );
+	const text = validSiteIntent ? __( 'Launch guide' ) : __( 'Launch checklist' );
+
 	return (
 		<SiteLaunchNagLink
 			ref={ ref }

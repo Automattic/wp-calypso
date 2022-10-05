@@ -22,6 +22,7 @@ export const SITE_EXCERPT_REQUEST_OPTIONS = [
 	'admin_url',
 	'is_redirect',
 	'is_wpforteams_site',
+	'launchpad_screen',
 	'site_intent',
 	'unmapped_url',
 	'updated_at',
