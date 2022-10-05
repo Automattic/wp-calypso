@@ -324,11 +324,11 @@ export function generateFlows( {
 		},
 		{
 			name: 'launch-site',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
+			steps: [ 'confirm-email', 'domains-launch', 'plans-launch', 'launch' ],
 			destination: getLaunchDestination,
 			description: 'A flow to launch a private site.',
 			providesDependenciesInQuery: [ 'siteSlug' ],
-			lastModified: '2019-11-22',
+			lastModified: '2022-07-05',
 			get pageTitle() {
 				return translate( 'Launch your site' );
 			},

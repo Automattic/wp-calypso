@@ -7,6 +7,7 @@ const stepNameToModuleName = {
 	'clone-jetpack': 'clone-jetpack',
 	'clone-ready': 'clone-ready',
 	'clone-cloning': 'clone-cloning',
+	'confirm-email': 'confirm-email',
 	courses: 'courses',
 	'creds-confirm': 'creds-confirm',
 	'creds-complete': 'creds-complete',

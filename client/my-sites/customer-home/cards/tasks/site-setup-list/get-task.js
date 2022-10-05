@@ -7,7 +7,10 @@ import { verifyEmail } from 'calypso/state/current-user/email-verification/actio
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
 
-const getTaskDescription = ( task, { isDomainUnverified } ) => {
+const getTaskDescription = (
+	task,
+	{ isDomainUnverified, isEmailUnverified, hasUserPurchases }
+) => {
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			if ( isDomainUnverified ) {
@@ -17,6 +20,16 @@ const getTaskDescription = ( task, { isDomainUnverified } ) => {
 						<br />
 						<br />
 						{ translate( 'Verify the email address for your domain before launching your site.' ) }
+					</>
+				);
+			}
+			if ( isEmailUnverified && ! hasUserPurchases ) {
+				return (
+					<>
+						{ task.description }
+						<br />
+						<br />
+						{ translate( 'Confirm your email address before launching your site.' ) }
 					</>
 				);
 			}
@@ -34,7 +47,7 @@ const isTaskDisabled = (
 		case CHECKLIST_KNOWN_TASKS.EMAIL_VERIFIED:
 			return 'requesting' === emailVerificationStatus || ! isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
-			return isDomainUnverified;
+			return isDomainUnverified || isEmailUnverified;
 		case CHECKLIST_KNOWN_TASKS.PROFESSIONAL_EMAIL_MAILBOX_CREATED:
 			return task.isCompleted;
 		default:
@@ -55,6 +68,7 @@ export const getTask = (
 		userEmail,
 		isBlogger,
 		isFSEActive,
+		hasUserPurchases,
 	} = {}
 ) => {
 	let taskData = {};
@@ -302,7 +316,11 @@ export const getTask = (
 
 	return {
 		...enhancedTask,
-		description: getTaskDescription( enhancedTask, { isDomainUnverified, isEmailUnverified } ),
+		description: getTaskDescription( enhancedTask, {
+			isDomainUnverified,
+			isEmailUnverified,
+			hasUserPurchases,
+		} ),
 		isDisabled: isTaskDisabled( enhancedTask, {
 			emailVerificationStatus,
 			isDomainUnverified,

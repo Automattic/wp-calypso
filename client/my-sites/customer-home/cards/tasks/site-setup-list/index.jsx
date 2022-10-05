@@ -1,10 +1,12 @@
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
+import { createHigherOrderComponent } from '@wordpress/compose';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import useSkipCurrentViewMutation from 'calypso/data/home/use-skip-current-view-mutation';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { getTaskList } from 'calypso/lib/checklist';
@@ -15,6 +17,7 @@ import { resetVerifyEmailState } from 'calypso/state/current-user/email-verifica
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
@@ -114,6 +117,7 @@ const SiteSetupList = ( {
 	tasks,
 	taskUrls,
 	userEmail,
+	hasUserPurchases,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -187,6 +191,7 @@ const SiteSetupList = ( {
 				taskUrls,
 				userEmail,
 				isBlogger,
+				hasUserPurchases,
 				isFSEActive,
 			} );
 			setCurrentTask( newCurrentTask );
@@ -206,6 +211,7 @@ const SiteSetupList = ( {
 		taskUrls,
 		userEmail,
 		isBlogger,
+		hasUserPurchases,
 		isFSEActive,
 	] );
 
@@ -354,6 +360,7 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		emailVerificationStatus,
 		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		hasUserPurchases: !! getUserPurchases( state )?.length,
 		isFSEActive,
 		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getCustomizerUrl( state, siteId, null, null, 'add-menu' ),
@@ -365,4 +372,16 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 	};
 } )( SiteSetupList );
 
-export default withIsFSEActive( ConnectedSiteSetupList );
+const withUserPurchases = createHigherOrderComponent(
+	( Wrapped ) => ( props ) => {
+		return (
+			<>
+				<QueryUserPurchases />
+				<Wrapped { ...props } />
+			</>
+		);
+	},
+	'withUserPurchases'
+);
+
+export default withUserPurchases( withIsFSEActive( ConnectedSiteSetupList ) );
