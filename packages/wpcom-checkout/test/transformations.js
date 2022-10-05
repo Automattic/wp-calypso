@@ -21,6 +21,7 @@ const cart = {
 	credits_integer: 0,
 	credits_display: 'JPY 0',
 	tax: { display_taxes: false },
+	peer_referral_limit: false,
 	products: [
 		{
 			uuid: 'test1',
@@ -254,6 +255,22 @@ describe( 'getCreditsLineItemFromCart', function () {
 				currency: 'JPY',
 				value: 75000,
 				displayValue: '- JPY 75,000',
+			},
+		};
+
+		expect( getCreditsLineItemFromCart( cartWithCredits ) ).toStrictEqual( expected );
+	} );
+
+	it( 'returns line item for credits not applicable if Peer Referral Fraud', () => {
+		const cartWithCredits = { ...cart, credits_integer: 80000, peer_referral_limit: true };
+		const expected = {
+			id: 'credits',
+			type: 'credits',
+			label: 'Credits',
+			amount: {
+				currency: 'JPY',
+				value: 0,
+				displayValue: 'Not applicable',
 			},
 		};
 
