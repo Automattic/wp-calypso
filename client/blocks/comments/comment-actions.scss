@@ -31,11 +31,13 @@
 		}
 
 		&:hover,
-		button.is-active {
+		button.is-active,
+		&.like-button.is-liked {
 			color: var( --color-primary );
 
 			svg.reader-star path {
-				stroke: var(--color-link);
+				stroke: var( --color-primary );
+				fill: var( --color-primary );
 			}
 		}
 

@@ -343,19 +343,6 @@
 	gap: 5px;
 	justify-content: center;
 
-	.like-button,
-	.gridicons-not-visible,
-	.comment-button {
-		&:hover,
-		button.is-active {
-			color: var( --color-primary );
-
-			svg.reader-comment path, svg.reader-star path {
-				stroke: var(--color-link);
-			}
-		}
-	}
-
 	@include breakpoint-deprecated( '<660px' ) {
 		align-items: flex-start;
 		background: white;
@@ -596,17 +583,27 @@
 	display: none;
 }
 
-.reader-post-actions__item {
+.reader-post-actions__item,
+.reader-full-post__sidebar-comment-like {
 	&:hover,
-	button.is-active {
+	button.is-active,
+	.like-button.is-liked {
 		svg.reader-external path {
 			fill: var(--color-link);
 		}
 
 		svg.reader-comment path,
-		svg.reader-star path,
 		svg.reader-share path {
 			stroke: var(--color-link);
+		}
+		svg.reader-star path {
+			stroke: var( --color-link );
+		}
+	}
+
+	.like-button.is-liked {
+		svg.reader-star path {
+			fill: var( --color-link );
 		}
 	}
 }
