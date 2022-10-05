@@ -64,7 +64,7 @@ export const CreateButton = () => {
 		<Button
 			isPressed
 			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
-			className={ 'create-button' }
+			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>
 			{ __( 'Create your bio site' ) }
