@@ -63,7 +63,7 @@ $modal-breakpoint-mobile: 480px;
 		}
 
 		@media ( max-width: $modal-breakpoint-mobile ) {
-			padding: 48px 24px;
+			padding: 48px 24px 0;
 		}
 	}
 
@@ -138,10 +138,6 @@ $modal-breakpoint-mobile: 480px;
 		margin: 0;
 		text-align: left;
 
-		@media ( max-width: $modal-breakpoint-tablet ) {
-			margin-bottom: 48px;
-		}
-
 		li {
 			display: grid;
 			grid-template-columns: 32px 1fr;
@@ -150,13 +146,37 @@ $modal-breakpoint-mobile: 480px;
 	}
 
 	&.--with-domain-feature {
+
+		.remove-plan-dialog__grid-colmn {
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				padding: 48px 24px;
+			}
+		}
+
 		.remove-plan-dialog__list-plan-features {
+			margin-bottom: 98px;
+
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				margin-bottom: 98px;
 			}
 
 			@media ( max-width: $modal-breakpoint-mobile ) {
 				margin-bottom: 58px;
+			}
+		}
+
+		&.--with-screenshot {
+
+			.remove-plan-dialog__list-plan-features {
+				margin-bottom: 0;
+				
+				@media ( max-width: $modal-breakpoint-tablet ) {
+					margin-bottom: 98px;
+				}
+
+				@media ( max-width: $modal-breakpoint-mobile ) {
+					margin-bottom: 58px;
+				}
 			}
 		}
 
