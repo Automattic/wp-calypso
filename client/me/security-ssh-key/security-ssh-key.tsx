@@ -100,15 +100,10 @@ export const SecuritySSHKey = () => {
 			<DocumentHead title={ __( 'SSH Key' ) } />
 
 			<CompactCard>
-				<p>
-					{ __(
-						'Add a SSH key to connect to our servers and manage your plugin-enabled WordPress.com website via command-line tools.'
-					) }
-				</p>
 				<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
 					{ createInterpolateElement(
 						__(
-							'Site-level Business plan is required to connect with SSH keys. <a>Read more.</a>'
+							'Add a SSH key to manage your SSH-enabled WordPress.com website via command-line tools. Site-level Business plan is required to connect with SSH keys. <a>Read more.</a>'
 						),
 						{
 							a: (
