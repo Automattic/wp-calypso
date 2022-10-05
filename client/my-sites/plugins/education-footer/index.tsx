@@ -100,7 +100,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
-						background="studio-celadon-50"
+						backgroundColor="#e5f3f0"
 						onClick={ () => onClickLinkCard( 'website_building' ) }
 					/>
 					<LinkCard
@@ -111,7 +111,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
-						background="studio-blue-50"
+						backgroundColor="#f9f0f6"
 						onClick={ () => onClickLinkCard( 'customization' ) }
 					/>
 					<LinkCard
@@ -122,8 +122,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
 						) }
-						background="studio-blue-10"
-						dark
+						backgroundColor="#e5f4ff"
 						onClick={ () => onClickLinkCard( 'seo' ) }
 					/>
 				</ThreeColumnContainer>
