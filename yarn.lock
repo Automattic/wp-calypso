@@ -968,20 +968,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/newspack-blocks@npm:^1.37.1":
-  version: 1.57.0
-  resolution: "@automattic/newspack-blocks@npm:1.57.0"
+"@automattic/newspack-blocks@npm:^1.58.0":
+  version: 1.58.0
+  resolution: "@automattic/newspack-blocks@npm:1.58.0"
   dependencies:
-    "@stripe/stripe-js": ^1.35.0
-    classnames: ^2.3.1
+    "@stripe/stripe-js": ^1.36.0
+    classnames: ^2.3.2
     lodash: ^4.17.21
     newspack-components: ^2.1.0
     react: ^17.0.2
     redux: ^4.2.0
     redux-saga: ^1.2.1
     regenerator-runtime: ^0.13.9
-    swiper: 8.3.2
-  checksum: 648ec643876f5ecec2f4f931e528ae54d3c48d3f7ca243a9d1220bde727f3b6f2f1efa85da4cd05f55b7fcf3de78dff3b7ad0f168d571adfb453598d776b4755
+    swiper: 8.4.2
+  checksum: d8888a53e73c9f10dee0d3b277b74f005b54e299cda9dbec90934be78691efa2bcb44bb2705c045eb448647f37c6483e9c53afc7e84d24f58e9aae251c04735e
   languageName: node
   linkType: hard
 
@@ -1646,7 +1646,7 @@ __metadata:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/launch": "workspace:^"
-    "@automattic/newspack-blocks": ^1.37.1
+    "@automattic/newspack-blocks": ^1.58.0
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
     "@automattic/plans-grid": "workspace:^"
@@ -5992,10 +5992,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@stripe/stripe-js@npm:^1.35.0":
-  version: 1.36.0
-  resolution: "@stripe/stripe-js@npm:1.36.0"
-  checksum: b72d4d111bc137d20c6b842932c76093f7dec7babc21fa196d0fd64b2d12d2f816fb16b97a936a842ea30d70faf163b01a2f480c86f256215f17a029f1874722
+"@stripe/stripe-js@npm:^1.36.0":
+  version: 1.38.1
+  resolution: "@stripe/stripe-js@npm:1.38.1"
+  checksum: 78624ce14b956e0137cc8c8391c750fbd7527a802a7fc8bb3b731e5a0fcee193fac634ac2edf7d4ba64938e3f1caecde8eb2923aa1325be589c92f04c452b08c
   languageName: node
   linkType: hard
 
@@ -12572,7 +12572,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"classnames@npm:^2.1.1":
+"classnames@npm:^2.1.1, classnames@npm:^2.3.2":
   version: 2.3.2
   resolution: "classnames@npm:2.3.2"
   checksum: cd50ead57b4f97436aaa9f9885c6926323efc7c2bea8e3d4eb10e4e972aa6a1cfca1c7a0e06f8a199ca7498d4339e30bb6002e589e61c9f21248cbf3e8b0b18d
@@ -31539,6 +31539,16 @@ resolve@^2.0.0-next.3:
     dom7: ^4.0.4
     ssr-window: ^4.0.2
   checksum: 04b78f30495fd6e78304f4fdb397d2e56eb0e768c667b77c4c4531410fca5b621679cb387c92b7ec34891f1e67613e19a79105356292340013d49db61c37b7f1
+  languageName: node
+  linkType: hard
+
+"swiper@npm:8.4.2":
+  version: 8.4.2
+  resolution: "swiper@npm:8.4.2"
+  dependencies:
+    dom7: ^4.0.4
+    ssr-window: ^4.0.2
+  checksum: b0af71aef64d9651c9f7f99f92ac9a766366b8cbb4f16407d09f83c910b7c51fcdaee712a947b1c6b9636241952e1a1bfe799a63148db1ffeaa6af527c35fabc
   languageName: node
   linkType: hard
 
