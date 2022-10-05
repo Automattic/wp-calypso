@@ -109,4 +109,15 @@ describe( 'WpcomLoginForm', () => {
 			'https://wordpress.com/wp-login.php'
 		);
 	} );
+
+	test( 'its action should has no subdomain when `redirectTo` prop contains public-api.wordpress.com', () => {
+		const { container } = render(
+			<WpcomLoginForm { ...props } redirectTo="https://public-api.wordpress.com/" />
+		);
+
+		expect( container.firstChild ).toHaveAttribute(
+			'action',
+			'https://wordpress.com/wp-login.php'
+		);
+	} );
 } );

@@ -11,7 +11,10 @@ function getFormAction( redirectTo ) {
 		hostname !== 'wpcalypso.wordpress.com' &&
 		hostname !== 'horizon.wordpress.com'
 	) {
-		subdomain = redirectTo.match( subdomainRegExp )[ 1 ] + '.';
+		const subdomainMatch = redirectTo.match( subdomainRegExp );
+		if ( subdomainMatch && subdomainMatch[ 1 ] !== 'public-api' ) {
+			subdomain = subdomainMatch[ 1 ] + '.';
+		}
 	}
 
 	return `https://${ subdomain }wordpress.com/wp-login.php`;
