@@ -197,9 +197,8 @@ class HelpContact extends Component {
 			payload.blog_url = site.URL;
 		}
 
-		// Endpoint url has 'kayako', but actually submits to Zendesk.
 		wpcom.req
-			.post( '/help/tickets/kayako/new', payload )
+			.post( '/help/tickets/zendesk/new', payload )
 			.then( () => {
 				this.setState( {
 					isSubmitting: false,

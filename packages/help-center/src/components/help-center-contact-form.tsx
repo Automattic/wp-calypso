@@ -277,11 +277,11 @@ export const HelpCenterContactForm = () => {
 
 					const ticketMeta = [ 'Site I need help with: ' + supportSite.URL, 'Plan: ' + planName ];
 
-					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
+					const emailMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
 					submitTicket( {
 						subject: subject ?? '',
-						message: kayakoMessage,
+						message: emailMessage,
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: overflow,
@@ -289,7 +289,7 @@ export const HelpCenterContactForm = () => {
 					} )
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-								support_variation: 'kayako',
+								support_variation: 'ticket',
 								location: 'help-center',
 								section: sectionName,
 							} );

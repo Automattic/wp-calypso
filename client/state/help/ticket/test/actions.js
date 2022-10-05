@@ -35,7 +35,7 @@ describe( 'ticket-support/configuration actions', () => {
 	} );
 
 	const apiUrl = 'https://public-api.wordpress.com:443';
-	const endpoint = '/rest/v1.1/help/tickets/kayako/mine';
+	const endpoint = '/rest/v1.1/help/tickets/zendesk/mine';
 
 	describe( '#ticketSupportConfigurationRequest success', () => {
 		const spy = jest.fn();

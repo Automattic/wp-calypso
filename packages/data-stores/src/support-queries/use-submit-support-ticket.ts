@@ -13,7 +13,7 @@ type Ticket = {
 export function useSubmitTicketMutation() {
 	return useMutation( ( newTicket: Ticket ) =>
 		wpcomRequest( {
-			path: '/help/tickets/kayako/new',
+			path: '/help/tickets/zendesk/new',
 			apiVersion: '1.1',
 			method: 'POST',
 			body: newTicket,
