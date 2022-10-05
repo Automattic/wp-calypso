@@ -28,7 +28,7 @@ import './style.scss';
  */
 const SHORT_LIST_LENGTH = 6;
 
-const UpgradeNudge = ( {
+export const UpgradeNudge = ( {
 	selectedSite,
 	sitePlan,
 	isVip,
