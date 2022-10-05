@@ -11,7 +11,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { AddSSHKeyForm } from './add-ssh-key-form';
 import { ManageSSHKeys } from './manage-ssh-keys';
 import { useAddSSHKeyMutation } from './use-add-ssh-key-mutation';
@@ -34,6 +34,12 @@ const Placeholders = () => (
 	</>
 );
 
+const noticeOptions = {
+	duration: 3000,
+};
+
+const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
+
 export const SecuritySSHKey = () => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
@@ -42,10 +48,11 @@ export const SecuritySSHKey = () => {
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_add_request' ) );
+			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_add_success' ) );
-			dispatch( successNotice( __( 'SSH key has been successfully added!' ) ) );
+			dispatch( successNotice( __( 'SSH key has been successfully added!' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -56,7 +63,11 @@ export const SecuritySSHKey = () => {
 			dispatch(
 				errorNotice(
 					// translators: "reason" is why adding the ssh key failed.
-					sprintf( __( 'Saving SSH key failed: %(reason)s' ), { reason: error.message } )
+					sprintf( __( 'Saving SSH key failed: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+						id: sshKeySaveFailureNoticeId,
+					}
 				)
 			);
 		},
@@ -68,7 +79,7 @@ export const SecuritySSHKey = () => {
 		},
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_success' ) );
-			dispatch( successNotice( __( 'SSH key has been successfully removed!' ) ) );
+			dispatch( successNotice( __( 'SSH key has been successfully removed!' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -79,7 +90,8 @@ export const SecuritySSHKey = () => {
 			dispatch(
 				errorNotice(
 					// translators: "reason" is why deleting the ssh key failed.
-					sprintf( __( 'Deleting SSH key failed: %(reason)s' ), { reason: error.message } )
+					sprintf( __( 'Deleting SSH key failed: %(reason)s' ), { reason: error.message } ),
+					noticeOptions
 				)
 			);
 		},
