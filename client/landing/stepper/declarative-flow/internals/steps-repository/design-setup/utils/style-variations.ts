@@ -1,4 +1,3 @@
-import { shuffle } from '@automattic/js-utils';
 import { Design } from 'calypso/../packages/design-picker/src/types';
 
 /**
@@ -20,13 +19,15 @@ export function removeLegacyDesignVariations( designs: Design[] ) {
  * Promote designs with style variations by having them at the beginning of the list.
  */
 export function promoteDesignVariations( designs: Design[] ) {
-	const designsWithVariations = designs.filter(
-		( design ) => design.style_variations && design.style_variations.length > 0
-	);
+	return designs.sort( ( a, b ) => {
+		if ( ! a.style_variations || a.style_variations.length === 0 ) {
+			return 1;
+		}
 
-	const designsWithoutVariations = designs.filter(
-		( design ) => design.style_variations && design.style_variations.length === 0
-	);
+		if ( ! b.style_variations || b.style_variations.length === 0 ) {
+			return -1;
+		}
 
-	return shuffle( designsWithVariations ).concat( shuffle( designsWithoutVariations ) );
+		return 0;
+	} );
 }
