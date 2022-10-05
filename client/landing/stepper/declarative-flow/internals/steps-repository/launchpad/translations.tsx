@@ -20,7 +20,7 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			break;
 		case VIDEOPRESS_FLOW:
 			translatedStrings.flowName = translate( 'Video' );
-			translatedStrings.sidebarTitle = translate( 'Your Video Site is ready to launch!' );
+			translatedStrings.sidebarTitle = translate( 'Your Video site is ready to launch!' );
 			break;
 		case 'podcast':
 			translatedStrings.flowName = translate( 'Podcast' );
