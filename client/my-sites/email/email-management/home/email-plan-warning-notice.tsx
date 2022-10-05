@@ -1,5 +1,8 @@
 import { SiteDetails } from '@automattic/data-stores';
-import { isDomainAndEmailSubscriptionsOwnedByDifferentUsers, getCurrentUserCannotAddEmailReason } from 'calypso/lib/domains';
+import {
+	isDomainAndEmailSubscriptionsOwnedByDifferentUsers,
+	getCurrentUserCannotAddEmailReason,
+} from 'calypso/lib/domains';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import {
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
