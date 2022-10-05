@@ -26,6 +26,7 @@ export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: 
 		{
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
+			enabled: !! query,
 		}
 	);
 }
