@@ -26,9 +26,8 @@ export interface NewPostParams {
 	content?: string;
 }
 
-export interface SettingsParams< T, U > {
-	key: T;
-	value: U;
+export interface SettingsParams {
+	[ key: string ]: string | number;
 }
 
 /* Response Interfaces */
