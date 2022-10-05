@@ -4,6 +4,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import titleCase from 'to-title-case';
+import Badge from 'calypso/components/badge';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -21,7 +22,12 @@ import {
 	hasGSuiteWithUs,
 } from 'calypso/lib/gsuite';
 import { handleRenewNowClick, isExpired } from 'calypso/lib/purchases';
-import { getTitanProductName, getTitanSubscriptionId, hasTitanMailWithUs } from 'calypso/lib/titan';
+import {
+	getTitanProductName,
+	getTitanSubscriptionId,
+	hasTitanMailWithUs,
+	isDomainEligibleForTitanIntroductoryOffer,
+} from 'calypso/lib/titan';
 import { TITAN_CONTROL_PANEL_CONTEXT_CREATE_EMAIL } from 'calypso/lib/titan/constants';
 import EmailPlanHeader from 'calypso/my-sites/email/email-management/home/email-plan-header';
 import EmailPlanMailboxesList from 'calypso/my-sites/email/email-management/home/email-plan-mailboxes-list';
@@ -47,6 +53,8 @@ import {
 } from 'calypso/state/purchases/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
+import './style.scss';
+
 const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 	const translate = useTranslate();
 
@@ -59,7 +67,10 @@ const UpgradeNavItem = ( { currentRoute, domain, selectedSiteSlug } ) => {
 			path={ emailManagementPurchaseNewEmailAccount( selectedSiteSlug, domain.name, currentRoute ) }
 			onClick={ () => recordTracksEvent( 'calypso_upsell_email', { context: 'email-forwarding' } ) }
 		>
-			{ translate( 'Upgrade to a hosted email' ) }
+			{ translate( 'Upgrade to Professional Email' ) }
+			{ isDomainEligibleForTitanIntroductoryOffer( domain ) && (
+				<Badge type="info-green">{ translate( 'Try 3 months free' ) }</Badge>
+			) }
 		</VerticalNavItem>
 	);
 };
