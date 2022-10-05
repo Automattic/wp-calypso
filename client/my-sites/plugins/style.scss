@@ -311,6 +311,7 @@ body.is-section-plugins #primary {
 			&.is-pressed {
 				&::before {
 					background: var(--studio-blue-90);
+					border-radius: 4px;
 				}
 			}
 		}
