@@ -19,7 +19,7 @@ const noop = () => {};
 const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const getRandomPromo = () => {
-	const desktopAppLink = <span className="app-promo__desktop-app-link" />;
+	const desktopAppLink = <span className="app-promo__wp-app-link" />;
 
 	const promoOptions = [
 		{
@@ -169,7 +169,7 @@ export class AppPromo extends Component {
 					'WordPress.com in the palm of your hands — {{span}}download the mobile app{{/span}}.',
 					{
 						components: {
-							span: <span className="app-promo__desktop-app-link" />,
+							span: <span className="app-promo__wp-app-link" />,
 						},
 					}
 			  );
