@@ -122,12 +122,11 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	return (
 		<>
-			{ usePromoCard && (
+			{ usePromoCard ? (
 				<PromoCard className="email-non-domain-owner-message__non-owner-notice">
 					<p>{ reasonText }</p>
 				</PromoCard>
-			) }
-			{ ! usePromoCard && (
+			) : (
 				<p className={ 'email-non-domain-owner-message__non-owner-message' }>{ reasonText }</p>
 			) }
 			<TrackComponentView
