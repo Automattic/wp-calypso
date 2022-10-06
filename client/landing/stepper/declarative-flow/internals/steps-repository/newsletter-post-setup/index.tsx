@@ -1,9 +1,15 @@
-import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
+import {
+	StepContainer,
+	base64ImageToBlob,
+	uploadAndSetSiteLogo,
+	hexToRgb,
+} from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -18,7 +24,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
-
+	const fetchedAccentColor = useAccentColor();
 	const newsletterFormText = {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
@@ -41,6 +47,16 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 		setComponentSiteTitle( site?.name || '' );
 		setTagline( site?.description || '' );
 	}, [ site ] );
+
+	useEffect( () => {
+		if ( fetchedAccentColor ) {
+			setAccentColor( {
+				hex: fetchedAccentColor,
+				rgb: hexToRgb( fetchedAccentColor ),
+				default: false,
+			} );
+		}
+	}, [ fetchedAccentColor ] );
 
 	useEffect( () => {
 		setIsSubmitError( false );
