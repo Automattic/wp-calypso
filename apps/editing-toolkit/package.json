@@ -19,6 +19,7 @@
 		"build:common": " calypso-build --env source='common','common/data-stores','common/hide-plugin-buttons-mobile','common/disable-heic-images','common/override-preview-button-url'",
 		"build:error-reporting": "calypso-build --env source='error-reporting'",
 		"build:event-countdown-block": "calypso-build --env source='event-countdown-block'",
+		"build:frontend-screenshots": "calypso-build --env source='frontend-screenshots'",
 		"build:global-styles": "calypso-build --env source='global-styles'",
 		"build:global-styles-customizer-fonts": "calypso-build --env source='global-styles/customizer-fonts'",
 		"build:help-center": "calypso-build --env source='help-center'",

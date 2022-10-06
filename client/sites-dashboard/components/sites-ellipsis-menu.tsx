@@ -126,6 +126,35 @@ const WpAdminItem = ( { site, recordTracks }: SitesMenuItemProps ) => {
 	);
 };
 
+const Screenshot = ( { site }: SitesMenuItemProps ) => {
+	const { __ } = useI18n();
+
+	return (
+		<MenuItemLink onClick={ () => takeScreenshot( site.URL ) }>{ __( 'Screenshot' ) }</MenuItemLink>
+	);
+};
+
+function takeScreenshot( url: string ) {
+	const iframe = document.createElement( 'iframe' );
+	iframe.width = '1366';
+	iframe.height = '768';
+	iframe.src = url + '?enable-frontend-screenshots';
+	document.body.appendChild( iframe );
+	setTimeout( () => {
+		iframe.contentWindow?.postMessage( {
+			type: 'CAPTURE_SCREEN',
+		} );
+	}, 9000 );
+	window.addEventListener( 'message', ( e ) => {
+		switch ( e.data?.type ) {
+			case 'RETURN_SCREEN':
+				console.log( e.data?.dataUrl );
+				iframe.remove();
+				break;
+		}
+	} );
+}
+
 const SiteMenuGroup = styled( MenuGroup )( {
 	'> div[role="group"]': {
 		display: 'flex',
@@ -172,6 +201,7 @@ export const SitesEllipsisMenu = ( {
 					<ManagePluginsItem { ...props } />
 					{ ! isNotAtomicJetpack( site ) && <HostingConfigItem { ...props } /> }
 					<WpAdminItem { ...props } />
+					<Screenshot { ...props } />
 				</SiteMenuGroup>
 			) }
 		</SiteDropdownMenu>
