@@ -10,6 +10,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
+import useSaveAccentColor from 'calypso/landing/stepper/hooks/use-save-accent-color';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -25,6 +26,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const site = useSite();
 	const fetchedAccentColor = useAccentColor();
+	const saveAccentColor = useSaveAccentColor();
 	const newsletterFormText = {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
@@ -77,6 +79,9 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					blogname: siteTitle,
 					blogdescription: tagline,
 				} );
+				if ( accentColor.hex !== fetchedAccentColor ) {
+					await saveAccentColor( site.ID, accentColor.hex );
+				}
 				if ( base64Image ) {
 					await uploadAndSetSiteLogo(
 						site.ID,
