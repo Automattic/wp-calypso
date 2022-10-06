@@ -22,7 +22,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 			count: pagination.results,
 			textOnly: true,
 			args: {
-				total: pagination.results,
+				total: pagination.results.toLocaleString(),
 			},
 		} );
 	}
