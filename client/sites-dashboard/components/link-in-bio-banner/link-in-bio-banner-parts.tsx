@@ -60,7 +60,7 @@ export const handleBannerViewed = () => {
 // which are used for flow `/setup/intro`. We should probably have
 // a ready-made button in this style.
 const LinkButton = styled( Button )( {
-	color: 'var(--color-surface)',
+	color: 'var(--studio-gray-0)',
 	backgroundColor: 'var(--studio-gray-100)',
 	fontWeight: 500,
 	letterSpacing: '0.32px',
@@ -69,7 +69,7 @@ const LinkButton = styled( Button )( {
 	boxShadow: 'none',
 	flexShrink: 0,
 	'&:visited': {
-		color: 'var(--color-surface)',
+		color: 'var(--studio-gray-0)',
 	},
 	'&:hover': {
 		backgroundColor: 'var(--studio-gray-70)',
