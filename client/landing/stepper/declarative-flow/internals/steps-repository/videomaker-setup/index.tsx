@@ -7,9 +7,9 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import React, { FormEvent } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { ONBOARD_STORE } from '../../../../stores';
-import type { Step } from '../../types';
+import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
 import './styles.scss';
 
