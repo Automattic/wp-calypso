@@ -765,7 +765,14 @@ class ThemeSheet extends Component {
 					forceHref
 					feature={ FEATURE_UPLOAD_THEMES }
 					forceDisplay
-					href={ ! siteId ? '/plans' : null }
+					href={
+						! siteId
+							? addQueryArgs( '/plans', {
+									feature: FEATURE_PREMIUM_THEMES,
+									plan: PLAN_BUSINESS,
+							  } )
+							: null
+					}
 					showIcon
 				/>
 			);
