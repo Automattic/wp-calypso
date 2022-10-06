@@ -2,19 +2,30 @@ import { QueryClient, QueryCache, dehydrate, QueryOptions, QueryKey } from 'reac
 import { MAX_AGE, BASE_STALE_TIME } from 'calypso/state/initial-state';
 import type { Query, QueryState } from 'react-query/types/core/query';
 
-class QueryClientSSR extends QueryClient {
-	fetchedQueryHashes = new Set< string >();
+const fetchedQueryHashes = new WeakMap< QueryClient, Set< string > >();
+
+function addQueryHash( client: QueryClient, queryHash: string ) {
+	let queryHashes = fetchedQueryHashes.get( client );
+	if ( ! queryHashes ) {
+		queryHashes = new Set();
+		fetchedQueryHashes.set( client, queryHashes );
+	}
+	queryHashes.add( queryHash );
+}
+
+function hasQueryHash( client: QueryClient, queryHash: string ) {
+	return fetchedQueryHashes.get( client )?.has( queryHash ) ?? false;
 }
 
 class QueryCacheSSR extends QueryCache {
 	build< TQueryFnData, TError, TData, TQueryKey extends QueryKey >(
-		client: QueryClient | QueryClientSSR,
+		client: QueryClient,
 		options: QueryOptions< TQueryFnData, TError, TData, TQueryKey >,
 		state?: QueryState< TData, TError >
 	): Query< TQueryFnData, TError, TData, TQueryKey > {
 		const query = super.build( client, options, state );
-		if ( client instanceof QueryClientSSR && query.state.status === 'success' ) {
-			client.fetchedQueryHashes.add( query.queryHash );
+		if ( query.state.status === 'success' ) {
+			addQueryHash( client, query.queryHash );
 		}
 		return query;
 	}
@@ -23,7 +34,7 @@ class QueryCacheSSR extends QueryCache {
 const sharedCache = new QueryCacheSSR();
 
 export function createQueryClientSSR() {
-	const queryClient = new QueryClientSSR( {
+	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { cacheTime: MAX_AGE, staleTime: BASE_STALE_TIME } },
 		queryCache: sharedCache,
 	} );
@@ -31,14 +42,14 @@ export function createQueryClientSSR() {
 	return queryClient;
 }
 
-export function dehydrateQueryClient( queryClient: QueryClientSSR ) {
+export function dehydrateQueryClient( queryClient: QueryClient ) {
 	if ( ! queryClient ) {
 		return null;
 	}
 
 	return dehydrate( queryClient, {
 		shouldDehydrateQuery: ( { queryHash } ) => {
-			return queryClient.fetchedQueryHashes.has( queryHash );
+			return hasQueryHash( queryClient, queryHash );
 		},
 	} );
 }
