@@ -5,6 +5,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
 import { tasks } from './tasks';
@@ -50,7 +51,7 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
-		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep );
+		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep, flow );
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
@@ -95,7 +96,10 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink
 					direction="forward"
-					handleClick={ goNext }
+					handleClick={ () => {
+						recordTracksEvent( 'calypso_launchpad_go_to_admin_clicked', { flow: flow } );
+						goNext();
+					} }
 					label={ translate( 'Go to Admin' ) }
 					borderless={ true }
 				/>
