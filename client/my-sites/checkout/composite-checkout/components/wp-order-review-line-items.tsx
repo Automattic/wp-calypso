@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { isAtomicSite } from 'calypso/state/selectors/is-site-automated-transfer';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
