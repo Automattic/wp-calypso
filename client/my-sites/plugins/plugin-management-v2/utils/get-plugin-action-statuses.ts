@@ -8,7 +8,7 @@ export const getPluginActionStatuses = ( state: AppState ) => {
 	const inProgressStatuses = getPluginStatusesByType( state, 'inProgress' );
 	const completedStatuses = getPluginStatusesByType( state, 'completed' );
 	const errorStatuses = getPluginStatusesByType( state, 'error' );
-	const updtoDateStatuses = getPluginStatusesByType( state, 'upToDate' );
+	const uptoDateStatuses = getPluginStatusesByType( state, 'up-to-date' );
 
-	return [ ...inProgressStatuses, ...completedStatuses, ...errorStatuses, ...updtoDateStatuses ];
+	return [ ...inProgressStatuses, ...completedStatuses, ...errorStatuses, ...uptoDateStatuses ];
 };
