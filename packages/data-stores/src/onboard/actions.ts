@@ -323,6 +323,11 @@ export const setDomainForm = ( step ) => {
 	};
 };
 
+export const setDomainSuggested = ( domainSuggested: string ) => ( {
+	type: 'SET_DOMAIN_SUGGESTED' as const,
+	domainSuggested,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -333,6 +338,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
+	| typeof setDomainSuggested
 	| typeof setFonts
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
