@@ -108,8 +108,23 @@
 	}
 }
 
-.reader-share__popover {
+.reader-popover.reader-share__popover {
 	min-width: 240px;
+
+	.site-selector {
+		height: auto;
+		max-height: 220px;
+	}
+
+	&.is-top .popover__arrow::before,
+	&.is-top-left .popover__arrow::before,
+	&.is-top-right .popover__arrow::before {
+		border-top: 10px solid #FFF;
+	}
+
+	&.is-bottom-right .popover__arrow::before {
+		border: 10px solid #FFF;
+	}
 }
 
 .reader-share__site-selector.site-selector {
@@ -117,7 +132,6 @@
 }
 
 .reader-share__site-selector .site-selector__sites {
-	max-height: 25vh;
 	overflow-y: auto;
 	text-align: left;
 }
