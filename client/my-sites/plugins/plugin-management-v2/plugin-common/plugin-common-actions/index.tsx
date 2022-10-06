@@ -10,7 +10,7 @@ interface Props {
 	item: any;
 }
 
-export default function PluginCommonActions( { renderActions, item }: Props ): ReactElement {
+export default function PluginCommonActions( { renderActions, item }: Props ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const buttonActionRef = useRef< HTMLButtonElement | null >( null );

@@ -1,10 +1,14 @@
-import { Gridicon, SitesTableSortKey, SitesTableSortOrder } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuGroup, MenuItem } from '@wordpress/components';
+import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMemo } from 'react';
-import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
+import {
+	stringifySitesSorting,
+	parseSitesSorting,
+	useSitesSorting,
+} from 'calypso/state/sites/hooks/use-sites-sorting';
 import { SMALL_MEDIA_QUERY } from '../utils';
 
 const SortingButton = styled( Button )( {
@@ -18,68 +22,50 @@ const SortingButtonIcon = styled( Gridicon )( {
 	marginRight: '0 !important',
 } );
 
-const SEPARATOR = '-' as const;
-
-type SitesSorting = `${ SitesTableSortKey }${ typeof SEPARATOR }${ SitesTableSortOrder }`;
-
-const DEFAULT_SITES_SORTING = {
-	sortKey: 'updatedAt',
-	sortOrder: 'desc',
-} as const;
-
-export const parseSitesSorting = ( sorting: SitesSorting | 'none' ) => {
-	if ( sorting === 'none' ) {
-		return DEFAULT_SITES_SORTING;
-	}
-
-	const [ sortKey, sortOrder ] = sorting.split( SEPARATOR );
-
-	return {
-		sortKey: sortKey as SitesTableSortKey,
-		sortOrder: sortOrder as SitesTableSortOrder,
-	};
-};
-
-export const useSitesSortingPreference = () =>
-	useAsyncPreference< SitesSorting >( {
-		defaultValue: `${ DEFAULT_SITES_SORTING.sortKey }-${ DEFAULT_SITES_SORTING.sortOrder }`,
-		preferenceName: 'sites-sorting',
-	} );
-
-interface SitesSortingDropdownProps {
-	onSitesSortingChange( newValue: SitesSorting ): void;
-	sitesSorting: ReturnType< typeof useSitesSortingPreference >[ 0 ];
-}
+type SitesSortingDropdownProps = ReturnType< typeof useSitesSorting >;
 
 export const SitesSortingDropdown = ( {
 	onSitesSortingChange,
 	sitesSorting,
+	hasSitesSortingPreferenceLoaded,
 }: SitesSortingDropdownProps ) => {
 	const isSmallScreen = useMediaQuery( SMALL_MEDIA_QUERY );
 	const { __ } = useI18n();
 
-	const label = useMemo( () => {
-		if ( sitesSorting === 'none' ) {
-			return null;
-		}
-
-		switch ( sitesSorting ) {
-			case `lastInteractedWith${ SEPARATOR }desc`:
-				return __( 'Sorted automagically' );
-
-			case `alphabetically${ SEPARATOR }asc`:
-				return __( 'Sorted alphabetically' );
-
-			case `updatedAt${ SEPARATOR }desc`:
-				return __( 'Sorted by last published' );
-
-			default:
-				throw new Error( `invalid sort value ${ sitesSorting }` );
-		}
-	}, [ __, sitesSorting ] );
-
-	if ( sitesSorting === 'none' ) {
+	if ( ! hasSitesSortingPreferenceLoaded ) {
 		return null;
+	}
+
+	const choices = [
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'alphabetically',
+				sortOrder: 'asc',
+			} ),
+			label: __( 'Name' ),
+		},
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'desc',
+			} ),
+			/* translators: name of sorting mode where the details about how best to sort sites are left up to the software */
+			label: __( 'Magic' ),
+		},
+		{
+			value: stringifySitesSorting( {
+				sortKey: 'updatedAt',
+				sortOrder: 'desc',
+			} ),
+			label: __( 'Last published' ),
+		},
+	];
+
+	const currentSortingValue = stringifySitesSorting( sitesSorting );
+	const currentSortingLabel = choices.find( ( { value } ) => value === currentSortingValue )?.label;
+
+	if ( currentSortingLabel === undefined ) {
+		throw new Error( `invalid sort value ${ sitesSorting }` );
 	}
 
 	return (
@@ -89,39 +75,26 @@ export const SitesSortingDropdown = ( {
 				<SortingButton
 					icon={ <SortingButtonIcon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
 					iconSize={ 16 }
+					// translators: %s is the current sorting mode.
+					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSortingLabel ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
 				>
-					{ label }
+					{
+						// translators: %s is the current sorting mode.
+						sprintf( __( 'Sort: %s' ), currentSortingLabel )
+					}
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<MenuGroup>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `alphabetically${ SEPARATOR }asc` );
-							onClose();
-						} }
-					>
-						{ __( 'Alphabetically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `lastInteractedWith${ SEPARATOR }desc` );
-							onClose();
-						} }
-					>
-						{ __( 'Automagically' ) }
-					</MenuItem>
-					<MenuItem
-						onClick={ () => {
-							onSitesSortingChange( `updatedAt${ SEPARATOR }desc` );
-							onClose();
-						} }
-					>
-						{ __( 'Last published' ) }
-					</MenuItem>
-				</MenuGroup>
+				<MenuItemsChoice
+					value={ currentSortingValue }
+					onSelect={ ( value: typeof choices[ 0 ][ 'value' ] ) => {
+						onSitesSortingChange( parseSitesSorting( value ) );
+						onClose();
+					} }
+					choices={ choices }
+				/>
 			) }
 		/>
 	);

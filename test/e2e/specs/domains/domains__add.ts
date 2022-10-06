@@ -18,7 +18,6 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-// eslint-disable-next-line jest/no-disabled-tests
 describe.skip( DataHelper.createSuiteTitle( 'Domains: Add to current site' ), function () {
 	let page: Page;
 	let sidebarComponent: SidebarComponent;

@@ -33,6 +33,7 @@ import {
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
@@ -58,7 +59,10 @@ import { showSelectedPost } from 'calypso/reader/utils';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
+import {
+	getReaderFollowForFeed,
+	hasReaderFollowOrganization,
+} from 'calypso/state/reader/follows/selectors';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
@@ -471,6 +475,8 @@ export class FullPostView extends Component {
 		const postKey = { blogId, feedId, postId };
 		const featuredImageAlt = getFeaturedImageAlt( post );
 
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
+
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
@@ -507,7 +513,7 @@ export class FullPostView extends Component {
 							<AuthorCompactProfile
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
-								feedIcon={ get( feed, 'image' ) }
+								feedIcon={ feedIcon }
 								siteName={ siteName }
 								siteUrl={ post.site_URL }
 								feedUrl={ get( feed, 'feed_URL' ) }
@@ -524,6 +530,7 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
+									icon={ ReaderCommentIcon( { iconSize: 20 } ) }
 								/>
 							) }
 
@@ -664,6 +671,12 @@ export default connect(
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
+
+			// Add site icon to feed object so have icon for external feeds
+			if ( props.feed ) {
+				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+				props.feed.site_icon = follow?.site_icon;
+			}
 		}
 		if ( ownProps.referral ) {
 			props.referralPost = getPostByKey( state, ownProps.referral );

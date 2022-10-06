@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import tipIcon from 'calypso/assets/images/jetpack/tip-icon.svg';
 import Banner from 'calypso/components/banner';
@@ -19,7 +19,7 @@ export default function SiteWelcomeBanner( {
 }: {
 	isDashboardView?: boolean;
 	bannerKey?: string;
-} ): ReactElement | null {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

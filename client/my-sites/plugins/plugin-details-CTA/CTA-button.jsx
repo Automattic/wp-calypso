@@ -11,7 +11,6 @@ import { useCallback, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import EligibilityWarnings from 'calypso/blocks/eligibility-warnings';
 import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
@@ -75,10 +74,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		getPrimaryDomainBySiteId( state, selectedSite?.ID )
 	);
 
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
 	const pluginRequiresCustomPrimaryDomain =
 		( primaryDomain?.isWPCOMDomain || primaryDomain?.isWpcomStagingDomain ) && !! plugin?.tags?.seo;
 	const domains = useSelector( ( state ) => getDomainsBySiteId( state, selectedSite?.ID ) );
@@ -102,7 +97,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const productsList = useSelector( getProductsList );
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
-	const pluginsPlansPage = `/plugins/plans/${ selectedSite?.slug }`;
+	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
 
 	return (
 		<>
@@ -121,7 +116,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
-						eligibleForProPlan,
 						productsList,
 					} );
 				} }
@@ -136,6 +130,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
+				showCloseIcon={ true }
 			>
 				<EligibilityWarnings
 					currentContext={ 'plugin-details' }
@@ -149,7 +144,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 							upgradeAndInstall: shouldUpgrade,
 							isMarketplaceProduct,
 							billingPeriod,
-							eligibleForProPlan,
 							productsList,
 						} )
 					}
@@ -175,7 +169,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 						upgradeAndInstall: shouldUpgrade,
 						isMarketplaceProduct,
 						billingPeriod,
-						eligibleForProPlan,
 						isPreinstalledPremiumPlugin,
 						preinstalledPremiumPluginProduct,
 						productsList,
@@ -223,12 +216,11 @@ function onClickInstallPlugin( {
 	upgradeAndInstall,
 	isMarketplaceProduct,
 	billingPeriod,
-	eligibleForProPlan,
 	isPreinstalledPremiumPlugin,
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
-	dispatch( removePluginStatuses( 'completed', 'error' ) );
+	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
 		recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug )
@@ -263,8 +255,7 @@ function onClickInstallPlugin( {
 			return page(
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
-					billingPeriod,
-					eligibleForProPlan
+					billingPeriod
 				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
 					selectedSite.slug
 				}`
@@ -289,8 +280,7 @@ function onClickInstallPlugin( {
 		return page(
 			`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 				selectedSite?.plan,
-				billingPeriod,
-				eligibleForProPlan
+				billingPeriod
 			) }?redirect_to=${ installPluginURL }#step2`
 		);
 	}

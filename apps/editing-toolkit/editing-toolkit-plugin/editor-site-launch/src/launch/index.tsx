@@ -6,8 +6,6 @@ import NameStep from '../launch-steps/name-step';
 import PlanStep from '../launch-steps/plan-step';
 import { LAUNCH_STORE } from '../stores';
 
-import './styles.scss';
-
 interface Props {
 	onSubmit?: () => void;
 }

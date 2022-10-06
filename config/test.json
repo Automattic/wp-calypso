@@ -24,7 +24,6 @@
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
-		"build/sites-dashboard": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -70,7 +69,7 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plugins/plugin-details-layout": true,
+		"plugins/ssr-landing": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

@@ -69,6 +69,13 @@ describe( 'component rendering', () => {
 		await userEvent.keyboard( '[Space]' );
 		expect( btn ).toHaveAttribute( 'aria-expanded', 'true' );
 	} );
+
+	test( 'should render a header with custom label', () => {
+		renderDropdown( { ariaLabel: 'Custom Field Label' } );
+
+		const btn = screen.getByRole( 'button' );
+		expect( btn.firstChild.firstChild ).toHaveAttribute( 'aria-label', 'Custom Field Label' );
+	} );
 } );
 
 describe( 'selected items', () => {

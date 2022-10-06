@@ -1,13 +1,21 @@
+import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import { setSectionMiddleware } from 'calypso/controller';
 import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
+import { createQueryClientSSR } from 'calypso/state/query-client-ssr';
 import { setRoute } from 'calypso/state/route/actions';
+
+const debug = debugFactory( 'calypso:pages' );
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
 		expressApp.get(
 			route,
+			( req, res, next ) => {
+				debug( `Using SSR pipeline for path: ${ req.path } with handler ${ route }` );
+				next();
+			},
 			setUpRoute,
 			combineMiddlewares(
 				setSectionMiddleware( section ),
@@ -45,8 +53,8 @@ function setRouteMiddleware( context, next ) {
 }
 
 function combineMiddlewares( ...middlewares ) {
-	return function ( req, res, expressNext ) {
-		req.context = getEnhancedContext( req, res );
+	return async function ( req, res, expressNext ) {
+		req.context = await getEnhancedContext( req, res );
 		applyMiddlewares(
 			req.context,
 			...middlewares,
@@ -63,11 +71,12 @@ function combineMiddlewares( ...middlewares ) {
 }
 
 // TODO: Maybe merge into getDefaultContext().
-function getEnhancedContext( req, res ) {
+async function getEnhancedContext( req, res ) {
 	return Object.assign( {}, req.context, {
 		isServerSide: true,
 		originalUrl: req.originalUrl,
 		path: req.url,
+		queryClient: await createQueryClientSSR(),
 		pathname: req.path,
 		params: req.params,
 		query: req.query,

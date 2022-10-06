@@ -1,11 +1,8 @@
 .reader-share__button.button {
 	color: var(--color-text-subtle);
-	padding: 4px;
-	position: relative;
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	font-size: 100%;
-	line-height: 22px;
+	padding: 0;
 
 	&:hover,
 	&:active {
@@ -20,7 +17,6 @@
 		.gridicon {
 			margin-right: 0;
 			margin-top: 0;
-			top: 0;
 		}
 	}
 
@@ -65,17 +61,18 @@
 	}
 
 	.gridicon,
-	.social-logo {
-		height: 24px;
-		width: 24px;
+	.reader-twitter,
+	.reader-facebook {
+		height: 20px;
+		width: 20px;
 		position: absolute;
 		top: 8px;
 		left: 18px;
 		padding: 0;
 		fill: var(--color-neutral-light);
 
-		@include breakpoint-deprecated( ">480px" ) {
-			left: 11px;
+		@include breakpoint-deprecated( '>480px' ) {
+			left: 14px;
 		}
 	}
 
@@ -83,33 +80,48 @@
 		fill: var(--color-primary);
 	}
 
-	.social-logo.twitter {
-		fill: var(--color-twitter);
+	.reader-twitter {
+		fill: var( --color-twitter );
 	}
 
-	.social-logo.facebook {
-		fill: var(--color-facebook);
+	.reader-facebook {
+		fill: var( --color-facebook );
 	}
 
 	&:hover,
 	&:focus {
 		.gridicon,
-		.social-logo {
-			fill: var(--color-text-inverted);
+		.reader-twitter,
+		.reader-facebook {
+			fill: var( --color-text-inverted );
 		}
 	}
 }
 
-.reader-share__popover {
+.reader-popover.reader-share__popover {
 	min-width: 240px;
+
+	.site-selector {
+		height: auto;
+		max-height: 220px;
+	}
+
+	&.is-top .popover__arrow::before,
+	&.is-top-left .popover__arrow::before,
+	&.is-top-right .popover__arrow::before {
+		border-top: 10px solid #FFF;
+	}
+
+	&.is-bottom-right .popover__arrow::before {
+		border: 10px solid #FFF;
+	}
 }
 
 .reader-share__site-selector.site-selector {
-	border-top: 1px solid var(--color-neutral-10);
+	border-top: 1px solid var( --color-neutral-5 );
 }
 
 .reader-share__site-selector .site-selector__sites {
-	max-height: 25vh;
 	overflow-y: auto;
 	text-align: left;
 }
@@ -122,6 +134,7 @@
 .reader-share__site-selector .site__domain {
 	&::after {
 		@include long-content-fade( $color: var( --color-surface-rgb ) );
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
 }

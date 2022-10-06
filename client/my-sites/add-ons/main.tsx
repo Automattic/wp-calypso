@@ -59,7 +59,7 @@ const ContainerMain = styled.div`
 	}
 `;
 
-const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactElement } ) => {
 	const translate = useTranslate();
 	const isWide = useDesktopBreakpoint();
 	const selectedSite = useSelector( getSelectedSite );

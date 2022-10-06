@@ -15,6 +15,7 @@
 	.onboarding-title {
 		color: var(--studio-gray-100);
 		font-size: 2rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1em;
 		margin-bottom: 1.5rem;
 	}
@@ -22,6 +23,7 @@
 	.onboarding-subtitle {
 		color: var(--studio-gray-40);
 		font-size: 0.875rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.5rem;
 
 		span {

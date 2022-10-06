@@ -41,15 +41,14 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		filter: blur(0);
 	}
 
+	.mshots-image__container {
+		display: block;
+		height: 100%;
+		width: 100%;
+	}
+
 	.mshots-image-visible {
 		max-width: 100%;
-
-		// compensate for the item border to avoid cropping the image's top.
-		margin-top: 10px;
-
-		@media ( max-height: 375px ) {
-			margin-top: 16px;
-		}
 	}
 }
 
@@ -80,6 +79,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	direction: ltr;
 	padding: 20px;
 	box-sizing: border-box;
+	pointer-events: none;
 
 	@include break-small {
 		display: flex;
@@ -93,13 +93,13 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	background: #fff;
 	border: 1px solid #eee;
 	align-items: center;
-	// stylelint-disable-next-line scales/radii
 	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	border-radius: 50%;
 	opacity: 0.5;
 	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
 	transition: opacity 0.3s ease-in-out;
+	pointer-events: all;
 
 	cursor: pointer;
 
@@ -110,6 +110,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	&.is-hidden {
 		visibility: hidden;
+		pointer-events: none;
 	}
 }
 

@@ -49,6 +49,11 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+
+				svg {
+					height: 20px;
+					width: 20px;
+				}
 			}
 		}
 	}
@@ -86,6 +91,7 @@
 						0 3px 10px rgb(0 0 0 / 4%);
 
 					@include break-large {
+						border: $frame-border-width solid var(--color-print);
 						border-radius: 20px; /* stylelint-disable-line scales/radii */
 						box-shadow:
 							0 15px 20px rgb(0 0 0 / 4%),
@@ -109,7 +115,16 @@
 	&--is-phone {
 		.theme-preview__frame-wrapper {
 			.theme-preview__frame {
-				max-width: 460px;
+				border-radius: 40px; /* stylelint-disable-line scales/radii */
+				box-shadow:
+					0 76px 65px rgb(0 0 0 / 4%),
+					0 50px 40px rgb(0 0 0 / 3%),
+					0 30px 20px rgb(0 0 0 / 3%),
+					0 15px 13px rgb(0 0 0 / 2%),
+					0 6px 5px rgb(0 0 0 / 2%),
+					0 2px 3px rgb(0 0 0 / 1%);
+				height: 680px;
+				max-width: 340px;
 			}
 		}
 	}
@@ -117,10 +132,11 @@
 
 .theme-preview__toolbar {
 	display: none;
-	margin-bottom: 24px;
 
 	.theme-preview__toolbar-devices {
 		display: flex;
+		height: 58px;
+		margin-bottom: 28px;
 		justify-content: center;
 
 		> button {

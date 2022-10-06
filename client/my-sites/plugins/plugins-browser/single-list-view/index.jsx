@@ -40,6 +40,8 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const categoryDescription = categories[ category ]?.categoryDescription || null;
+
 	const { localizePath } = useLocalizedPlugins();
 
 	const installedPlugins = useSelector( ( state ) =>
@@ -64,6 +66,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
 			title={ categoryName }
+			subtitle={ categoryDescription }
 			site={ siteSlug }
 			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }

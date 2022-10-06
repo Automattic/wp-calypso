@@ -26,7 +26,6 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProvidersStackedCardProps, ProviderCardProps } from './provider-card-props';
-import type { ReactElement } from 'react';
 
 import './professional-email-card.scss';
 
@@ -66,7 +65,7 @@ const professionalEmailCardInformation: ProviderCardProps = {
 	},
 };
 
-const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactElement => {
+const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 	const {
 		detailsExpanded,
 		intervalLength,
@@ -107,8 +106,8 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ): ReactEl
 
 	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
-
 	professionalEmail.onExpandedChange = onExpandedChange;
+
 	professionalEmail.priceBadge = (
 		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />
 	);

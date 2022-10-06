@@ -12,7 +12,10 @@ interface PreviewProps {
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
+	recordDeviceClick: ( device: string ) => void;
 }
+
+const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
 
 const getVariationBySlug = ( variations: StyleVariation[], slug: string ) =>
 	variations.find( ( variation ) => variation.slug === slug );
@@ -25,13 +28,15 @@ const Preview: React.FC< PreviewProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 	actionButtons,
+	recordDeviceClick,
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
-			return (
+			const inlineCss =
 				selectedVariation.inline_css ??
-				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' )
-			);
+				( getVariationBySlug( variations, selectedVariation.slug )?.inline_css || '' );
+
+			return inlineCss + INJECTED_CSS;
 		}
 
 		return '';
@@ -47,7 +52,11 @@ const Preview: React.FC< PreviewProps > = ( {
 				onSelectVariation={ onSelectVariation }
 				actionButtons={ actionButtons }
 			/>
-			<SitePreview url={ previewUrl } inlineCss={ sitePreviewInlineCss } />
+			<SitePreview
+				url={ previewUrl }
+				inlineCss={ sitePreviewInlineCss }
+				recordDeviceClick={ recordDeviceClick }
+			/>
 		</div>
 	);
 };

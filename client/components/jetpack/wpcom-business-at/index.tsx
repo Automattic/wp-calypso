@@ -1,9 +1,9 @@
-import { Dialog } from '@automattic/components';
+import { CompactCard, Dialog } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import {
@@ -68,7 +68,7 @@ const content = {
 	},
 };
 
-function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement | null {
+function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ) {
 	const { eligibilityHolds: holds } = useSelector( ( state ) => getEligibility( state, siteId ) );
 	if ( ! holds ) {
 		return null;
@@ -92,9 +92,7 @@ function BlockingHoldNotice( { siteId }: BlockingHoldNoticeProps ): ReactElement
 	);
 }
 
-function TransferFailureNotice( {
-	transferStatus,
-}: TransferFailureNoticeProps ): ReactElement | null {
+function TransferFailureNotice( { transferStatus }: TransferFailureNoticeProps ) {
 	if ( transferStatus !== transferStates.FAILURE && transferStatus !== transferStates.ERROR ) {
 		return null;
 	}
@@ -116,7 +114,7 @@ function TransferFailureNotice( {
 	);
 }
 
-export default function WPCOMBusinessAT(): ReactElement {
+export default function WPCOMBusinessAT() {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug ) as string;
 
@@ -250,14 +248,23 @@ export default function WPCOMBusinessAT(): ReactElement {
 						isPrimary: true,
 					},
 				] }
-				className={ classNames( 'wpcom-business-at__dialog', 'eligibility-warnings', {
-					'eligibility-warnings--with-indent': warnings?.length,
-				} ) }
+				className={ classNames(
+					'wpcom-business-at__dialog',
+					'eligibility-warnings',
+					'eligibility-warnings--without-title',
+					{
+						'eligibility-warnings--with-indent': warnings?.length,
+					}
+				) }
 			>
 				{ !! holds?.length && (
 					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />
 				) }
-				{ !! warnings?.length && <WarningList warnings={ warnings } context={ 'backup' } /> }
+				{ !! warnings?.length && (
+					<CompactCard className="eligibility-warnings__warnings-card">
+						<WarningList warnings={ warnings } context={ 'backup' } />
+					</CompactCard>
+				) }
 			</Dialog>
 		</Main>
 	);

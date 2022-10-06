@@ -243,6 +243,7 @@
 
 	.checkout-thank-you__header-text,
 	.checkout-thank-you__success-message-item {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 2em;
 		margin-bottom: 8px;
 		margin-top: 15px;

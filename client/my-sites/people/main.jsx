@@ -12,6 +12,7 @@ import P2TeamBanner from 'calypso/my-sites/people/p2-team-banner';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
 import TeamList from 'calypso/my-sites/people/team-list';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -146,6 +147,7 @@ class People extends Component {
 			isPrivate,
 			translate,
 			isWPForTeamsSite,
+			includeSubscriberImporter,
 		} = this.props;
 
 		if ( siteId && ! canViewPeople ) {
@@ -162,6 +164,7 @@ class People extends Component {
 				</Main>
 			);
 		}
+
 		return (
 			<Main>
 				<ScreenOptionsTab wpAdminPath="users.php" />
@@ -187,6 +190,7 @@ class People extends Component {
 							search={ search }
 							filter={ filter }
 							site={ site }
+							includeSubscriberImporter={ includeSubscriberImporter }
 						/>
 					}
 					{ isWPForTeamsSite && <P2TeamBanner context={ filter } site={ site } /> }
@@ -199,6 +203,7 @@ class People extends Component {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
+
 	return {
 		siteId,
 		site: getSelectedSite( state ),
@@ -208,5 +213,6 @@ export default connect( ( state ) => {
 		isComingSoon: isSiteComingSoon( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		isP2HubSite: isSiteP2Hub( state, siteId ),
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 	};
 } )( localize( People ) );

@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 5
+  version: 6
   cacheKey: 8c0
 
 "5to6-codemod@npm:^1.8.0":
@@ -249,7 +249,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.23
+    playwright: ^1.25
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -675,6 +675,7 @@ __metadata:
     "@wordpress/icons": ^8.3.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
+    copy-webpack-plugin: ^10.1.0
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
@@ -1057,6 +1058,7 @@ __metadata:
     "@wordpress/icons": ^9.5.0
     "@wordpress/is-shallow-equal": ^4.9.0
     "@wordpress/primitives": ^3.7.0
+    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     classnames: ^2.3.1
     enzyme: ^3.11.0
     jest: ^27.3.1
@@ -1297,6 +1299,23 @@ __metadata:
     "@wordpress/i18n": ^4.9.0
     "@wordpress/icons": ^9.0.0
     classnames: ^2.3.1
+    typescript: ^4.7.4
+  peerDependencies:
+    "@wordpress/data": ^6.1.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
+"@automattic/sites@workspace:^, @automattic/sites@workspace:packages/sites":
+  version: 0.0.0-use.local
+  resolution: "@automattic/sites@workspace:packages/sites"
+  dependencies:
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
     typescript: ^4.7.4
   peerDependencies:
     "@wordpress/data": ^6.1.5
@@ -10155,7 +10174,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.23
+    playwright: ^1.25
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -10295,12 +10314,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.4, acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.7.0":
-  version: 8.7.0
-  resolution: "acorn@npm:8.7.0"
+"acorn@npm:^8.0.4, acorn@npm:^8.2.4, acorn@npm:^8.4.1, acorn@npm:^8.5.0, acorn@npm:^8.7.0":
+  version: 8.8.0
+  resolution: "acorn@npm:8.8.0"
   bin:
     acorn: bin/acorn
-  checksum: 8168e567c2f0b9fb7a418d2651b4b614326a0814b4937ebddee0f5e5e25ddd6320aec0c20d3a67efd97a02d836cc7f9e5c84befe3daeeea68ed89a48ee8f7a5d
+  checksum: 5efce4f59554e0ab766f32932cba34b86cc2ecdf24fcd27463beff41d8a1b1b9575c21f92c1b9f7f82b93374a9d5aed33c91f93e2d0cb1bdf3f1e06ec131e816
   languageName: node
   linkType: hard
 
@@ -12587,6 +12606,7 @@ __metadata:
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@automattic/sites": "workspace:^"
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
@@ -26976,23 +26996,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.23.2":
-  version: 1.23.2
-  resolution: "playwright-core@npm:1.23.2"
+"playwright-core@npm:1.25.1":
+  version: 1.25.1
+  resolution: "playwright-core@npm:1.25.1"
   bin:
     playwright: cli.js
-  checksum: d2b5c4787a30db6368e9005ee8d2c2bf2baf27f32755f47bd124744d682b7da31302d562359f33918af53bee7743a0b3cba0fe8e7f0be91313253e973bf3c079
+  checksum: 59b393ba8a62421b4278934a8277e57d956965f2e0497211d5e94120889bf65f7304596684ab9f68242bed33e2705c76b77cb1ef56f74f2ff08d7cd05aa3d341
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.23":
-  version: 1.23.2
-  resolution: "playwright@npm:1.23.2"
+"playwright@npm:^1.25":
+  version: 1.25.1
+  resolution: "playwright@npm:1.25.1"
   dependencies:
-    playwright-core: 1.23.2
+    playwright-core: 1.25.1
   bin:
     playwright: cli.js
-  checksum: 5e4b0df82c23880086f57d1c64c1f0be25887ac7db733c3aa9eae05f77edc50f62bcde36e2084cceae81c39e7934f4a506a64085a4695653234223942d2bb120
+  checksum: e7112e7c125bac78253f1288a08a8f0023130a9c8bb49e9d8645e8763bdca7a1a04fe77b652a5525931346281b91a5a8737696584941fd99e8d6099df24dd21e
   languageName: node
   linkType: hard
 
@@ -28684,6 +28704,15 @@ __metadata:
   peerDependencies:
     react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
   checksum: a555a32c581361dc71954df47329f007f5cc8280b79c24377b5b03622e036749fd4a8cc80489f6956a084faf49532621af8715a540c42d7bb37686951359f661
+  languageName: node
+  linkType: hard
+
+"react-intersection-observer@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "react-intersection-observer@npm:9.4.0"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: abd076bbc0ed011c0a531deb6eacf27d05ff76c174b00c15cbe7a7bc064091f62813b7271bbfcee1bc3c90817a654075f35f9cbafa213ab547c7c92bdbf884aa
   languageName: node
   linkType: hard
 
@@ -34094,11 +34123,11 @@ swiper@4.5.1:
 
 "typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.7.4
-  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=493e53"
+  resolution: "typescript@patch:typescript@npm%3A4.7.4#~builtin<compat/typescript>::version=4.7.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 9648156f08ecb48f34d5223d890147a59a66d4c03a419032c9e8a31befaa00497623b544569a8efc434f9ad845495871d3d4bda67dae3ee6d479d711e4ff5309
+  checksum: 2eb6e31b04fabec84a4d07b5d567deb5ef0a2971d89d9adb16895f148f7d8508adfb12074abc2efc6966805d3664e68ab67925060e5b0ebd8da616db4b151906
   languageName: node
   linkType: hard
 
@@ -35812,6 +35841,7 @@ swiper@4.5.1:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-intersection-observer: ^9.4.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14
@@ -35874,7 +35904,7 @@ swiper@4.5.1:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.23
+    playwright: ^1.25
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

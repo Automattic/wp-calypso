@@ -1,3 +1,5 @@
+@import "./keyframes";
+
 @font-face {
 	font-family: Inter;
 	font-weight: 500;
@@ -40,25 +42,18 @@ $font-family: "SF Pro Text", $sans;
 		box-sizing: border-box;
 		margin-top: 50px;
 		margin-bottom: 32px;
-	}
-
-	.pattern-assembler__preview {
-		flex-basis: 100%;
-		margin-inline-start: 32px;
-		background: #f6f6f6;
-		box-shadow: 0 0 2px rgba(0, 0, 0, 10%);
-		border-radius: 4px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		margin-bottom: 32px;
-		margin-top: -25px;
+		position: relative;
+		z-index: 0;
 	}
 
 	.pattern-layout {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		width: 100%;
+		background: #fdfdfd;
+		position: absolute;
+		top: 0;
 
 		.pattern-layout__header {
 			h2 {
@@ -84,9 +79,10 @@ $font-family: "SF Pro Text", $sans;
 
 		.pattern-action-bar {
 			display: flex;
-			visibility: hidden;
+			opacity: 0;
 			align-items: center;
 			position: absolute;
+			z-index: 1;
 			background: #fff;
 			height: 27px;
 			right: 0;
@@ -104,10 +100,16 @@ $font-family: "SF Pro Text", $sans;
 
 				svg {
 					fill: #2c3338;
+
+					&:hover {
+						transform: scale(1.05);
+						transition: transform 0.1s ease-in;
+						transform-origin: center;
+					}
 				}
 
 				&:not(:disabled):hover svg {
-					fill: #0675c4;
+					fill: var(--studio-blue-50);
 				}
 
 				&--move-up,
@@ -145,13 +147,30 @@ $font-family: "SF Pro Text", $sans;
 					white-space: nowrap;
 				}
 
-				&:hover {
+				button {
+					display: flex;
+					align-items: center;
+					border: 0;
+					padding: 0;
+					font-family: inherit;
+					color: var(--studio-blue-50);
+				}
+
+				&:hover,
+				&:focus,
+				&:focus-within {
+					button {
+						color: var(--color-accent-60);
+						transition: color 0.2s ease-in;
+					}
+
 					.pattern-layout__list-item-text {
 						max-width: 154px;
 					}
 
 					.pattern-action-bar {
-						visibility: visible;
+						animation: slideInShort 0.2s forwards, fadeIn 0.3s forwards;
+						animation-timing-function: cubic-bezier(0.445, 0.05, 0.55, 0.95);
 					}
 				}
 
@@ -162,15 +181,6 @@ $font-family: "SF Pro Text", $sans;
 				&:first-child {
 					margin-top: auto;
 				}
-
-				button {
-					display: flex;
-					align-items: center;
-					border: 0;
-					padding: 0;
-					font-family: inherit;
-					color: #0675c4;
-				}
 			}
 
 			.pattern-layout__list-item {
@@ -178,12 +188,12 @@ $font-family: "SF Pro Text", $sans;
 				display: flex;
 				align-items: center;
 
-				&--section {
-					background: url(./images/icon-section.svg) no-repeat 5px center;
-				}
-
 				&--header {
 					background: url(./images/icon-header.svg) no-repeat 5px center;
+				}
+
+				&--section {
+					background: url(./images/icon-section.svg) no-repeat 5px center;
 				}
 
 				&--footer {
@@ -212,9 +222,24 @@ $font-family: "SF Pro Text", $sans;
 	}
 
 	.pattern-selector {
-		height: 100%;
 		display: flex;
 		flex-direction: column;
+		height: 100%;
+		width: 100%;
+		background: #fdfdfd;
+		position: absolute;
+		top: 0;
+
+		&--active {
+			height: 100%;
+			overflow: initial;
+			animation: 1s slideIn cubic-bezier(0.445, 0.05, 0.55, 0.95), fadeIn 0.3s ease-in;
+		}
+
+		&--hide {
+			animation: 0.25s fadeOut forwards;
+			pointer-events: none;
+		}
 
 		.pattern-selector__header h1 {
 			font-family: $font-family;
@@ -267,43 +292,6 @@ $font-family: "SF Pro Text", $sans;
 					box-shadow: 0 0 0 2px var(--color-primary-light);
 					outline: 0;
 				}
-			}
-		}
-	}
-
-	.pattern-action-bar {
-		display: flex;
-		visibility: hidden;
-		align-items: center;
-		position: absolute;
-		background: #fff;
-		height: 27px;
-		right: 0;
-
-		.pattern-action-bar__block {
-			flex-direction: column;
-			display: flex;
-			align-items: center;
-		}
-
-		.pattern-action-bar__action {
-			padding: 0;
-			min-width: 30px;
-			max-width: 30px;
-
-			svg {
-				fill: #2c3338;
-			}
-
-			&:not(:disabled):hover svg {
-				fill: #0675c4;
-			}
-
-			&--move-up,
-			&--move-down {
-				height: 13px;
-				display: flex;
-				align-items: center;
 			}
 		}
 	}

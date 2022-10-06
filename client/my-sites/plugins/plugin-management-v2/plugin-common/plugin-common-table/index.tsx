@@ -25,7 +25,7 @@ export default function PluginCommonTable( {
 	primaryKey,
 	renderActions,
 	className,
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<table className={ classNames( 'plugin-common-table__table', className ) }>
 			<thead>

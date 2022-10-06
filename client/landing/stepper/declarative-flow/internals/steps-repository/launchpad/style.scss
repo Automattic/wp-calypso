@@ -105,10 +105,16 @@
 	background: #f6f7f7;
 	border: 1px solid var(--studio-gray-0);
 	border-radius: 4px;
+	display: flex;
+	align-items: center;
 	height: 48px;
-	line-height: 48px;
 	margin: 32px 0;
 	padding: 0 20px;
+
+	// truncate long domain names
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .launchpad__url-box-top-level-domain {
@@ -119,8 +125,13 @@
 	padding: 80px 20px 10px;
 	display: none;
 
-	button {
+	.button.navigation-link {
 		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var(--studio-blue-50);
+		}
 	}
 
 	@include break-large {
@@ -132,6 +143,13 @@
 
 .launchpad__progress-bar-container {
 	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {
@@ -213,15 +231,9 @@
 	font-weight: 600;
 }
 
-// change badge color on hover (Choose a Plan step)
-.launchpad__task:hover {
-	.launchpad__checklist-item .badge {
-		background: var(--studio-blue-10);
-	}
-}
-
 // completed tasks
-.launchpad__task.is-completed {
+.launchpad__task.completed-and-inactive,
+.launchpad__task.completed-and-active {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
@@ -233,8 +245,11 @@
 	}
 }
 
-// completed tasks that are kept active
-.launchpad__task.keep-active:hover {
+// not-completed && completed-and-active tasks
+.launchpad__task.completed-and-active:hover,
+.launchpad__task.not-completed:hover,
+.launchpad__task.completed-and-active > a:focus,
+.launchpad__task.not-completed > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
@@ -242,6 +257,11 @@
 	.launchpad__checklist-item-chevron,
 	.launchpad__checklist-item-checkmark {
 		fill: var(--studio-blue-50);
+	}
+
+	// change badge color on hover (Choose a Plan step)
+	.badge {
+		background: var(--studio-blue-10);
 	}
 }
 

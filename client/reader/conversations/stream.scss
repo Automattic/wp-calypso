@@ -41,16 +41,13 @@
 	}
 
 	.reader-post-card__title-link {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 17px;
 	}
 
 	.reader-excerpt__content {
 		margin-top: 2px;
 		width: 100%;
-
-		&::before {
-			@include long-content-fade( $size: 35px );
-		}
 	}
 
 	.comments__comment-author .gravatar {

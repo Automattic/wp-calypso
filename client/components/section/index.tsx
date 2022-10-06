@@ -5,6 +5,7 @@ import './style.scss';
 
 interface SectionProps {
 	header: ReactChild;
+	subheader?: ReactChild;
 	children: ReactChild | ReactChild[];
 	dark?: boolean;
 }
@@ -28,36 +29,49 @@ const SectionContainer = styled.div< SectionContainerProps >`
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		margin-top: -96px;
+		margin-top: -56px;
 	}
-	padding: 96px 0;
+	padding: 56px 0;
 `;
 
 const SectionHeader = styled.div< SectionHeaderProps >`
-	@media ( max-width: 660px ) {
-		padding: 0 16px;
-	}
-
 	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	text-align: left;
-	margin-bottom: 25px;
 	font-size: var( --scss-font-title-large );
-	max-width: 377px;
 	line-height: 40px;
+`;
+
+const SectionSubHeader = styled.div< SectionHeaderProps >`
+	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
+	font-weight: 400;
+	text-align: left;
+	font-size: var( --scss-font-body-small );
+	margin-top: 8px;
+`;
+
+const SectionHeaderContainer = styled.div< SectionHeaderProps >`
+	@media ( max-width: 660px ) {
+		padding: 0 16px;
+	}
+	margin-bottom: 25px;
+	max-width: 377px;
 `;
 
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header, dark } = props;
+	const { children, header, subheader, dark } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<SectionContainer dark={ dark }>
-			<SectionHeader dark={ dark } className="wp-brand-font">
-				{ header }
-			</SectionHeader>
+			<SectionHeaderContainer>
+				<SectionHeader dark={ dark } className="wp-brand-font">
+					{ header }
+				</SectionHeader>
+				{ subheader && <SectionSubHeader>{ subheader }</SectionSubHeader> }
+			</SectionHeaderContainer>
 			<SectionContent>{ children }</SectionContent>
 		</SectionContainer>
 	);

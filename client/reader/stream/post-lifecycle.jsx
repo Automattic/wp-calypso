@@ -2,7 +2,6 @@ import { omit, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import CombinedCard from 'calypso/blocks/reader-combined-card';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 import QueryReaderPost from 'calypso/components/data/query-reader-post';
 import compareProps from 'calypso/lib/compare-props';
@@ -26,7 +25,7 @@ class PostLifecycle extends Component {
 	};
 
 	render() {
-		const { post, postKey, followSource, isSelected, recsStreamKey, streamKey } = this.props;
+		const { post, postKey, isSelected, recsStreamKey, streamKey } = this.props;
 
 		if ( postKey.isRecommendationBlock ) {
 			return (
@@ -35,18 +34,6 @@ class PostLifecycle extends Component {
 					index={ postKey.index }
 					streamKey={ recsStreamKey }
 					followSource={ IN_STREAM_RECOMMENDATION }
-				/>
-			);
-		} else if ( postKey.isCombination ) {
-			return (
-				<CombinedCard
-					postKey={ postKey }
-					index={ this.props.index }
-					onClick={ this.props.handleClick }
-					selectedPostKey={ this.props.selectedPostKey }
-					followSource={ followSource }
-					showFollowButton={ this.props.showPrimaryFollowButtonOnCards }
-					blockedSites={ this.props.blockedSites }
 				/>
 			);
 		} else if ( streamKey.indexOf( 'rec' ) > -1 ) {

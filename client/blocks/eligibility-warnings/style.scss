@@ -1,13 +1,102 @@
 .eligibility-warnings {
-	margin-top: 16px;
+	// 16px from card padding + 32 = 48 gap from top|bottom
+	// 24px from card padding + 24 = 48 gab from left|right
+	padding: 32px 24px;
+	overflow-wrap: anywhere;
+	background: #fff;
 	font-size: $font-body-small;
+	margin: 0;
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	.eligibility-warnings__confirm-buttons {
+		display: flex;
+		justify-content: space-between;
+
+		@media ( max-width: 660px ) {
+			display: block;
+
+			.button {
+				width: 100%;
+				margin-top: 20px;
+			}
+		}
+	}
+
+	.support-block {
+		align-items: center;
+		display: flex;
+		gap: 5px;
+		color: var(--color-text-subtle);
+		font-size: 1rem;
+	}
+
+	.card {
+		box-shadow: none;
+
+		.notice {
+			margin-bottom: 0;
+		}
+	}
+
+	.eligibility-warnings__hold-list {
+		background: #fff;
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 4px;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 26px 24px;
+		gap: 10px;
+
+		h1.card-heading.card-heading-20 {
+			font-size: unset;
+			font-weight: 600;
+			margin: unset;
+			color: unset;
+		}
+
+		.eligibility-warnings__hold {
+			padding: unset;
+			margin: unset;
+			width: 100%;
+		}
+
+		.eligibility-warnings__message {
+			padding: 16px 0;
+			margin: unset;
+			border-top: 1px solid var(--studio-gray-5);
+		}
+		.eligibility-warnings__message:last-of-type {
+			padding-bottom: 0;
+		}
+	}
+
+	&.eligibility-warnings--without-title {
+		padding-top: 3em;
+	}
+}
+
+.dialog .eligibility-warnings {
+	box-shadow: none;
+	max-width: 650px;
+}
+
+.eligibility-warnings__title {
+	font-family: $brand-serif;
+	font-size: $font-title-large;
+	overflow-wrap: anywhere;
+	line-height: 40px;
+	color: var(--studio-gray-100);
+	font-weight: 400;
+}
+
+.eligibility-warnings__primary-text {
+	color: var(--color-text-subtle);
+	font-size: 1rem;
+	margin-top: 16px;
 }
 
 .eligibility-warnings--with-indent {
-	.eligibility-warnings__message {
-		padding: 0 16px;
-		margin-left: 24px;
-	}
 	.gridicon + .eligibility-warnings__message {
 		margin-left: 0;
 	}
@@ -45,19 +134,9 @@
 
 .eligibility-warnings__hold,
 .eligibility-warnings__warning {
-	align-items: center;
 	display: flex;
 	flex-direction: row;
-}
-
-.eligibility-warnings__hold,
-.eligibility-warnings__warning {
 	align-items: flex-start;
-	margin-bottom: 16px;
-
-	&:first-of-type {
-		padding-top: 6px;
-	}
 }
 
 .eligibility-warnings__hold .gridicon,
@@ -77,6 +156,7 @@
 	flex-grow: 1;
 	line-height: 24px;
 	padding: 0;
+	margin-bottom: 10px;
 
 	.eligibility-warnings__message-title {
 		font-weight: 600;
@@ -84,6 +164,7 @@
 
 	.eligibility-warnings__message-description {
 		color: var(--color-text-subtle);
+		font-size: $font-body;
 	}
 }
 
@@ -117,7 +198,8 @@
 }
 
 .eligibility-warnings__hold-list-dim .eligibility-warnings__hold-heading,
-.eligibility-warnings__hold-list-dim .eligibility-warnings__hold {
+.eligibility-warnings__hold-list-dim .eligibility-warnings__hold,
+.eligibility-warnings--blocking-hold .eligibility-warnings__header {
 	opacity: 0.2;
 }
 
@@ -125,4 +207,43 @@
 	margin-top: 20px;
 	margin-bottom: 20px;
 	max-width: 300px;
+}
+
+.eligibility-warnings__domain-names {
+	margin-top: 20px;
+
+	.card {
+		padding: 10px 24px;
+		margin-bottom: 5px;
+	}
+
+	.badge {
+		position: absolute;
+		right: 20px;
+		border-radius: 4px;
+	}
+}
+
+.eligibility-warnings__warnings-card {
+	background: #f6f7f7;
+	margin: 0 24px;
+	border-radius: 4px;
+
+	@media ( max-width: 480px ) {
+		margin: 0 16px;
+	}
+
+	.eligibility-warnings__message {
+		border-bottom: 1px solid var(--color-border-subtle);
+		padding-bottom: 10px;
+	}
+}
+
+.eligibility-warnings__warning:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
+
+	.eligibility-warnings__message {
+		border-bottom: none;
+	}
 }

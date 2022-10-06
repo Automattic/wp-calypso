@@ -39,16 +39,9 @@ export const launchSiteOrRedirectToLaunchSignupFlow =
 
 		const siteSlug = getSiteSlug( getState(), siteId );
 
-		// Adding domain queries auto-populate the domain suggestions in the domain step.
-		const domainQuery = {
-			new: siteSlug,
-			search: 'yes',
-			hide_initial_query: 'yes',
-		};
-
 		// TODO: consider using the `page` library instead of calling using `location.href` here
 		window.location.href = addQueryArgs(
-			{ siteSlug, source, ...domainQuery },
+			{ siteSlug, source, hide_initial_query: 'yes' },
 			'/start/launch-site'
 		);
 	};

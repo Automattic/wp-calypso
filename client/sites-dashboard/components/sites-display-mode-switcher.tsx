@@ -2,6 +2,8 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { useSelector } from 'react-redux';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
 const container = css( {
@@ -11,11 +13,13 @@ const container = css( {
 
 type SitesDisplayMode = 'tile' | 'list';
 
-export const useSitesDisplayMode = () =>
-	useAsyncPreference< SitesDisplayMode >( {
-		defaultValue: 'tile',
+export const useSitesDisplayMode = () => {
+	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+	return useAsyncPreference< SitesDisplayMode >( {
+		defaultValue: siteCount && siteCount > 6 ? 'list' : 'tile',
 		preferenceName: 'sites-management-dashboard-display-mode',
 	} );
+};
 
 interface SitesDisplayModeSwitcherProps {
 	onDisplayModeChange( newValue: SitesDisplayMode ): void;

@@ -25,6 +25,7 @@ import {
 	PLUGIN_UPDATE_REQUEST,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_FAILURE,
+	PLUGIN_ALREADY_UP_TO_DATE,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE,
@@ -247,7 +248,7 @@ export function updatePlugin( siteId, plugin ) {
 		};
 
 		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
-			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
+			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
 		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
@@ -575,6 +576,9 @@ export function fetchAllPlugins() {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
+				// Cast the enumerable string-keyed property to a number.
+				siteId = Number( siteId );
+
 				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {

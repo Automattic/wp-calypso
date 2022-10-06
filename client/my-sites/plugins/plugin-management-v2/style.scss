@@ -39,3 +39,9 @@
 		inset-inline-end: 10px;
 	}
 }
+
+.button-group.plugin-management-v2__table-button-group {
+	.button:active {
+		border-width: 1px;
+	}
+}

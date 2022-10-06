@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -10,7 +10,7 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import './style.scss';
 
-export default function SelectPartnerKeyDropdown(): ReactElement | null {
+export default function SelectPartnerKeyDropdown() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );

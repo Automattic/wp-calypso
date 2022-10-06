@@ -1,8 +1,8 @@
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement, useState, useEffect } from 'react';
+import { CSSProperties, useState, useEffect } from 'react';
 import StepContent from './step-content';
 
-export default function Progress( { progress }: { progress: number } ): ReactElement {
+export default function Progress( { progress }: { progress: number } ) {
 	const { __ } = useI18n();
 	const [ step, setStep ] = useState( __( 'Building your store' ) );
 
@@ -39,9 +39,7 @@ export default function Progress( { progress }: { progress: number } ): ReactEle
 		<StepContent title={ step }>
 			<div
 				className="transfer__progress-bar"
-				style={
-					{ '--progress': simulatedProgress > 1 ? 1 : simulatedProgress } as React.CSSProperties
-				}
+				style={ { '--progress': simulatedProgress > 1 ? 1 : simulatedProgress } as CSSProperties }
 			/>
 		</StepContent>
 	);

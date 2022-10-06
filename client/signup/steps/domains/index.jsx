@@ -37,7 +37,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -483,6 +483,7 @@ class DomainsStep extends Component {
 
 		// Search using the initial query but do not show the query on the search input field.
 		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+		initialState.hideInitialQuery = hideInitialQuery;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -497,7 +498,6 @@ class DomainsStep extends Component {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
 
@@ -549,6 +549,7 @@ class DomainsStep extends Component {
 					}
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
+					isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -765,7 +766,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned } = this.props;
+		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -774,7 +775,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
-		const sitesBackLabelText = translate( 'Back to Sites' );
+		const [ sitesBackLabelText, defaultBackUrl ] =
+			userSiteCount && userSiteCount === 1
+				? [ translate( 'Back to My Home' ), '/home' ]
+				: [ translate( 'Back to Sites' ), '/sites' ];
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -795,10 +799,10 @@ class DomainsStep extends Component {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
-				backUrl = '/sites';
+				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
-				backUrl = '/sites/';
+				backUrl = defaultBackUrl;
 				backLabelText = sitesBackLabelText;
 			}
 
@@ -890,6 +894,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
+			userSiteCount: getCurrentUserSiteCount( state ),
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),

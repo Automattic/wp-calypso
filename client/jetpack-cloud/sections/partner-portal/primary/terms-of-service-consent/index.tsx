@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
@@ -20,7 +20,7 @@ import {
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
-export default function TermsOfServiceConsent(): ReactElement | null {
+export default function TermsOfServiceConsent() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const consent = useTOSConsentMutation( {

@@ -18,6 +18,7 @@
 	a {
 		color: var(--color-neutral-50);
 		display: block;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 4em;
 		font-size: $font-body-small;
 		font-weight: 600;

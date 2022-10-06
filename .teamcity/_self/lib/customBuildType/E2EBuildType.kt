@@ -87,7 +87,7 @@ open class E2EBuildType(
 			param("env.NODE_CONFIG_ENV", "test")
 			param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
 			param("env.TEAMCITY_VERSION", "2021")
-			param("env.HEADLESS", "false")
+			param("env.HEADLESS", "true")
 			param("env.LOCALE", "en")
 			param("env.DEBUG", "")
 			buildParams()
@@ -150,7 +150,7 @@ open class E2EBuildType(
 					find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
 
 					mkdir -p logs
-					find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+					find test/e2e/ -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
 
 					mkdir -p trace
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace

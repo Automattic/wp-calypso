@@ -62,7 +62,7 @@
 		max-width: 100%;
 		height: 22px;
 		border: 1px solid rgba(0, 0, 0, 0.12);
-		border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
+		border-radius: 4px 4px 0 0;
 		margin: 0 auto;
 		box-sizing: border-box;
 		transition: border-color 0.15s ease-in-out;
@@ -130,7 +130,7 @@
 		}
 
 		&.design-picker__image-frame-no-header {
-			border-radius: 0; /* stylelint-disable-line scales/radii */
+			border-radius: 0;
 		}
 
 		img {
@@ -162,7 +162,7 @@
 		}
 
 		&.design-picker__image-frame-no-header::after {
-			border-radius: 0; /* stylelint-disable-line scales/radii */
+			border-radius: 0;
 		}
 
 	}
@@ -211,12 +211,17 @@
 		display: inline-flex;
 		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
 		margin-top: 8px;
-		width: 100%;
+		flex: 1;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
 			min-height: 2em;
 		}
+	}
+
+	.design-picker__option-overlay {
+		display: flex;
+		align-items: center;
 	}
 
 	.design-picker__option-name {
@@ -233,7 +238,7 @@
 		justify-content: flex-end;
 		flex-grow: 1;
 		flex-wrap: wrap;
-		gap: 2px;
+		gap: 4px;
 	}
 
 	.design-picker__pricing-description {
@@ -631,7 +636,7 @@
 .generated-design-preview {
 	.generated-design-preview__header {
 		align-items: center;
-		border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
+		border-radius: 4px 4px 0 0;
 		border: 1px solid var(--studio-gray-5);
 		box-sizing: border-box;
 		display: flex;

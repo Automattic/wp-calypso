@@ -9,13 +9,12 @@ import ProfessionalEmailPrice from 'calypso/my-sites/email/email-providers-compa
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { EmailProviderPriceProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-import type { ReactElement } from 'react';
 
 const EmailProviderPrice = ( {
 	emailProviderSlug,
 	intervalLength,
 	selectedDomainName,
-}: EmailProviderPriceProps ): ReactElement => {
+}: EmailProviderPriceProps ) => {
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );

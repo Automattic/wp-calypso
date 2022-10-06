@@ -35,6 +35,7 @@
 	.formatted-header__title {
 		font-weight: 400;
 		margin: 0 0 4px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 100%;
 
 		@include break-zoomed-in {

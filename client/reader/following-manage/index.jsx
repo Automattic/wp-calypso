@@ -13,6 +13,8 @@ import QueryReaderRecommendedSites from 'calypso/components/data/query-reader-re
 import HeaderCake from 'calypso/components/header-cake';
 import SearchInput from 'calypso/components/search';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'calypso/lib/url';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import FollowButton from 'calypso/reader/follow-button';
 import {
@@ -245,6 +247,8 @@ class FollowingManage extends Component {
 									} ) }
 									siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 									followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+									followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+									followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 								/>
 							</div>
 						) }

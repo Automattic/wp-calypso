@@ -3,10 +3,6 @@
 $font-family: "SF Pro Text", $sans;
 
 .link-in-bio-setup {
-	form {
-		padding: 0 20px;
-	}
-
 	.step-container__content {
 		display: flex;
 		justify-content: center;
@@ -23,57 +19,6 @@ $font-family: "SF Pro Text", $sans;
 			@include break-medium {
 				font-size: $font-headline-medium;
 			}
-		}
-	}
-
-	.link-in-bio-setup-form__field,
-	fieldset {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-	}
-
-	.link-in-bio-setup__form {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		position: relative;
-		width: 335px;
-
-		@include break-medium {
-			width: 368px;
-		}
-
-		label,
-		input,
-		textarea {
-			font-family: $font-family;
-			font-weight: 400;
-		}
-		input,
-		textarea,
-		pre {
-			min-height: 44px;
-			line-height: 20px;
-			padding: 12px 16px;
-		}
-
-		input {
-			height: 44px;
-		}
-	}
-
-	.link-in-bio-setup-form__submit {
-		color: var(--color-surface);
-		background-color: var(--studio-blue-50);
-		border-radius: 4px;
-		font-weight: 500;
-		border: none;
-		width: 100%;
-		height: 40px;
-
-		&:hover {
-			background-color: var(--wp-admin-theme-color-darker-10);
 		}
 	}
 }

@@ -7,6 +7,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_WPCOM_PRO,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
+	PLAN_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -14,6 +15,7 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 import { includes } from 'lodash';
 import page from 'page';
 import { connect, useSelector } from 'react-redux';
+import ActionPanelLink from 'calypso/components/action-panel/link';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -22,17 +24,17 @@ import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
+import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
 import getRequest from 'calypso/state/selectors/get-request';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { isSavingSiteSettings } from 'calypso/state/site-settings/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import HoldList, { hasBlockingHold } from './hold-list';
+import HoldList, { hasBlockingHold, HardBlockingNotice, getBlockingMessages } from './hold-list';
 import { isAtomicSiteWithoutBusinessPlan } from './utils';
 import WarningList from './warning-list';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
-
 import './style.scss';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -84,6 +86,8 @@ export const EligibilityWarnings = ( {
 		{
 			'eligibility-warnings__placeholder': isPlaceholder,
 			'eligibility-warnings--with-indent': showWarnings,
+			'eligibility-warnings--blocking-hold': hasBlockingHold( listHolds ),
+			'eligibility-warnings--without-title': context !== 'plugin-details',
 		},
 		className
 	);
@@ -116,6 +120,17 @@ export const EligibilityWarnings = ( {
 	const showThisSiteIsEligibleMessage =
 		isEligible && 0 === listHolds.length && 0 === warnings.length;
 
+	const blockingMessages = getBlockingMessages( translate );
+
+	let filteredHolds = listHolds;
+	if ( context === 'plugin-details' ) {
+		filteredHolds = listHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
+	}
+
+	const monthlyCost = useSelector( ( state ) =>
+		getProductDisplayCost( state, PLAN_BUSINESS_MONTHLY )
+	);
+
 	return (
 		<div className={ classes }>
 			<QueryEligibility siteId={ siteId } />
@@ -123,12 +138,38 @@ export const EligibilityWarnings = ( {
 				eventName="calypso_automated_transfer_eligibility_show_warnings"
 				eventProperties={ { context } }
 			/>
+			{ ! isPlaceholder && context === 'plugin-details' && hasBlockingHold( listHolds ) && (
+				<CompactCard>
+					<HardBlockingNotice
+						holds={ listHolds }
+						translate={ translate }
+						blockingMessages={ blockingMessages }
+					/>
+				</CompactCard>
+			) }
+			{ ! isPlaceholder &&
+				context === 'plugin-details' &&
+				listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1 && (
+					<CompactCard>
+						<div className="eligibility-warnings__header">
+							<div className="eligibility-warnings__title">
+								{ translate( 'Upgrade your plan to install plugins' ) }
+							</div>
+							<div className="eligibility-warnings__primary-text">
+								{ translate(
+									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+									{ args: { monthlyCost } }
+								) }
+							</div>
+						</div>
+					</CompactCard>
+				) }
 
-			{ ( isPlaceholder || listHolds.length > 0 ) && (
+			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
 				<CompactCard>
 					<HoldList
 						context={ context }
-						holds={ listHolds }
+						holds={ filteredHolds }
 						isPlaceholder={ isPlaceholder }
 						isMarketplace={ isMarketplace }
 					/>
@@ -146,11 +187,19 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					<WarningList context={ context } warnings={ warnings } />
+					<WarningList context={ context } warnings={ warnings } showContact={ false } />
 				</CompactCard>
 			) }
 			<CompactCard>
 				<div className="eligibility-warnings__confirm-buttons">
+					<div className="support-block">
+						<span>{ translate( 'Need help?' ) }</span>
+						{ translate( '{{a}}Contact support{{/a}}', {
+							components: {
+								a: <ActionPanelLink href="/help/contact" />,
+							},
+						} ) }
+					</div>
 					<Button
 						primary={ true }
 						disabled={
@@ -161,7 +210,7 @@ export const EligibilityWarnings = ( {
 						busy={ siteIsLaunching || siteIsSavingSettings }
 						onClick={ logEventAndProceed }
 					>
-						{ getProceedButtonText( listHolds, translate ) }
+						{ getProceedButtonText( listHolds, translate, context ) }
 					</Button>
 				</div>
 			</CompactCard>
@@ -184,8 +233,15 @@ function getSiteIsEligibleMessage(
 	}
 }
 
-function getProceedButtonText( holds: string[], translate: LocalizeProps[ 'translate' ] ) {
+function getProceedButtonText(
+	holds: string[],
+	translate: LocalizeProps[ 'translate' ],
+	context: string | null
+) {
 	if ( siteRequiresUpgrade( holds ) ) {
+		if ( context === 'plugin-details' || context === 'plugins' ) {
+			return translate( 'Upgrade and activate plugin' );
+		}
 		return translate( 'Upgrade and continue' );
 	}
 	if ( siteRequiresLaunch( holds ) ) {

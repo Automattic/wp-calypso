@@ -1,7 +1,6 @@
 import { WPCOM_FEATURES_FULL_ACTIVITY_LOG } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -23,7 +22,7 @@ import './style.scss';
 
 const trackEventName = 'calypso_jetpack_backup_business_upsell';
 
-export default function WPCOMUpsellPage(): ReactElement {
+export default function WPCOMUpsellPage() {
 	const onUpgradeClick = useTrackCallback( undefined, trackEventName );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );

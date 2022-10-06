@@ -1,7 +1,7 @@
 import PluginCommonCard from '../plugin-common/plugin-common-card';
 import type { Columns, PluginRowFormatterArgs, Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 interface Props {
 	item: Plugin;
@@ -11,6 +11,6 @@ interface Props {
 	hasMoreActions: boolean;
 }
 
-export default function PluginCard( props: Props ): ReactElement {
+export default function PluginCard( props: Props ) {
 	return <PluginCommonCard { ...props } />;
 }

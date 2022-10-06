@@ -29,6 +29,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
+		getCustomLabel,
 	} = useStoreItemInfoContext();
 
 	const wrapperClassName = classNames( 'jetpack-product-store__all-items', className );
@@ -52,6 +53,7 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const customLabel = getCustomLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -92,7 +94,8 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 							key={ item.productSlug }
 							onClickCta={ getOnClickPurchase( item ) }
 							price={ price }
-							title={ item.shortName }
+							title={ item.displayName }
+							customLabel={ customLabel }
 						/>
 					);
 				} ) }

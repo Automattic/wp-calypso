@@ -8,3 +8,5 @@ export const getUserDeclaredSiteUrl = ( state: State ) => state.userDeclaredSite
 export const getIframe = ( state: State ) => state.iframe;
 export const getDirectly = ( state: State ) => state.directlyData;
 export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
+export const getUnreadCount = ( state: State ) => state.unreadCount;
+export const getIsMinimized = ( state: State ) => state.isMinimized;

@@ -58,6 +58,7 @@ button {
 .newsletter-setup,
 .patterns,
 .link-in-bio-setup,
+.link-in-bio-post-setup,
 .completing-purchase,
 .anchor-fm,
 .subscribers,
@@ -145,7 +146,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio,
+.setup-form__form {
 	button {
 		&[type="submit"] {
 			font-size: $font-body-small;
@@ -155,34 +157,48 @@ button {
 
 		&.components-button {
 			border-radius: 4px;
+			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
 				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
-				border: 1px solid var(--studio-gray-10);
 
 				svg {
-					transition: ease 300ms;
-					fill: var(--studio-blue-50);
+					fill: var(--studio-gray-30);
 				}
 
 				span {
 					font-size: $font-body-extra-small;
 				}
 
-				&:hover,
-				&:focus {
+				&:hover {
 					box-shadow: none;
 					outline: none;
-					background-color: var(--studio-blue-50);
 
 					svg {
-						fill: #fff;
+						fill: var(--studio-blue-50);
 					}
 
 					span {
 						font-size: $font-body-extra-small;
+
+						&.add {
+							color: var(--studio-blue-50);
+						}
+
+						&.replace {
+							color: var(--studio-blue-50);
+						}
+					}
+				}
+				&:focus {
+					background-color: var(--studio-blue-50);
+					box-shadow: none;
+					svg {
+						fill: #fff;
+					}
+					span {
 						color: var(--studio-blue-50);
 					}
 				}

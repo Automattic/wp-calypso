@@ -163,6 +163,7 @@ class ThemesSelection extends Component {
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
 					fetchNextPage={ this.fetchNextPage }
+					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
 					getButtonOptions={ this.getOptions }
 					onScreenshotClick={ this.onScreenshotClick }
@@ -176,6 +177,7 @@ class ThemesSelection extends Component {
 					placeholderCount={ this.props.placeholderCount }
 					bookmarkRef={ this.props.bookmarkRef }
 					siteId={ siteId }
+					searchTerm={ query.search }
 				/>
 			</div>
 		);
@@ -280,8 +282,23 @@ class ThemesSelectionWithPage extends React.Component {
 		page: 1,
 	};
 
+	componentDidUpdate( nextProps ) {
+		if (
+			nextProps.search !== this.props.search ||
+			nextProps.tier !== this.props.tier ||
+			nextProps.filter !== this.props.filter ||
+			nextProps.vertical !== this.props.vertical
+		) {
+			this.resetPage();
+		}
+	}
+
 	incrementPage = () => {
 		this.setState( ( prevState ) => ( { page: prevState.page + 1 } ) );
+	};
+
+	resetPage = () => {
+		this.setState( { page: 1 } );
 	};
 
 	render() {
@@ -295,21 +312,4 @@ class ThemesSelectionWithPage extends React.Component {
 	}
 }
 
-/**
- * Key component instances by search, tier, filter and vertical
- * to ensure that as any of them is changed, pagination is reset.
- */
-function KeyedThemesSelectionWithPage( { search, tier, filter, vertical, ...restProps } ) {
-	return (
-		<ThemesSelectionWithPage
-			key={ `themes-selection-${ search }-${ tier }-${ filter }-${ vertical }` }
-			search={ search }
-			tier={ tier }
-			filter={ filter }
-			vertical={ vertical }
-			{ ...restProps }
-		/>
-	);
-}
-
-export default KeyedThemesSelectionWithPage;
+export default ThemesSelectionWithPage;

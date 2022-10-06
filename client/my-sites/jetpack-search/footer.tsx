@@ -1,11 +1,10 @@
-import { ReactElement, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-export default function JetpackSearchFooter(): ReactElement | null {
+export default function JetpackSearchFooter() {
 	const siteId = useSelector( getSelectedSiteId );
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const isCloud = isJetpackCloud();
@@ -15,9 +14,5 @@ export default function JetpackSearchFooter(): ReactElement | null {
 		return null;
 	}
 
-	return (
-		<Fragment>
-			<WhatIsJetpack />
-		</Fragment>
-	);
+	return <WhatIsJetpack />;
 }

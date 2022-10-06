@@ -7,6 +7,11 @@ export function upload( context, next ) {
 }
 
 export function plans( context, next ) {
-	context.primary = <Plans />;
+	context.primary = (
+		<Plans
+			intervalType={ context.params.intervalType }
+			pluginSlug={ context.params.pluginSlug || false }
+		/>
+	);
 	next();
 }

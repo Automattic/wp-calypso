@@ -1,5 +1,5 @@
 import page from 'page';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import {
@@ -23,7 +23,7 @@ export default function InstallPlugins( {
 }: {
 	onFailure: ( type: FailureInfo ) => void;
 	trackRedirect: () => void;
-} ): ReactElement | null {
+} ) {
 	const dispatch = useDispatch();
 	// selectedSiteId is set by the controller whenever site is provided as a query param.
 	const siteId = useSelector( getSelectedSiteId ) as number;

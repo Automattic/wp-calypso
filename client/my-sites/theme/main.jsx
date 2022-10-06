@@ -42,7 +42,6 @@ import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -640,12 +639,8 @@ class ThemeSheet extends Component {
 	};
 
 	goBack = () => {
-		const { previousRoute, backPath, locale, isLoggedIn } = this.props;
-		if ( previousRoute ) {
-			page.back( previousRoute );
-		} else {
-			page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
-		}
+		const { backPath, locale, isLoggedIn } = this.props;
+		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 
 	renderSheet = () => {
@@ -664,7 +659,6 @@ class ThemeSheet extends Component {
 			isVip,
 			translate,
 			canUserUploadThemes,
-			previousRoute,
 			isWPForTeamsSite,
 		} = this.props;
 
@@ -799,7 +793,7 @@ class ThemeSheet extends Component {
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
+					backText={ translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
 					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
@@ -918,7 +912,6 @@ export default connect(
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
-			previousRoute: getPreviousRoute( state ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},

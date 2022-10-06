@@ -1,24 +1,10 @@
 import moment from 'moment';
-import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
+import { sameDay, sameSite, injectRecommendations } from '../utils';
 
 describe( 'reader stream', () => {
 	const today = moment().toDate();
 	const postKey1 = { feedId: 'feed1', postId: 'postId1', date: today };
 	const postKey2 = { feedId: 'feed1', postId: 'postId2', date: today };
-	const postIds34 = [ 'postId3', 'postId4' ];
-	const postIds57 = [ 'postId5', 'postId6', 'postId7' ];
-	const combinedCardPostKey1 = {
-		feedId: postKey1.feedId,
-		postIds: postIds34,
-		date: today,
-		isCombination: true,
-	};
-	const combinedCardPostKey2 = {
-		feedId: postKey1.feedId,
-		postIds: postIds57,
-		date: today,
-		isCombination: true,
-	};
 
 	describe( '#sameDay', () => {
 		const datePostKey = ( date ) => ( { date } );
@@ -51,123 +37,12 @@ describe( 'reader stream', () => {
 			expect( isSame ).toBe( true );
 		} );
 
-		test( 'should return true when samesite and one item is a combinedCard', () => {
-			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
-			expect( isSame ).toBe( true );
-		} );
-
-		test( 'should return false when different site and one item is a combinedCard', () => {
-			const isSame = sameSite( { ...combinedCardPostKey1, feedId: 'feed3' }, combinedCardPostKey2 );
-			expect( isSame ).toBe( false );
-		} );
-
-		test( 'should work when both postKeys represent combinedCards', () => {
-			const isSame = sameSite( combinedCardPostKey1, combinedCardPostKey2 );
-			expect( isSame ).toBe( true );
-		} );
-
 		test( 'recs should never be marked as sameSite', () => {
 			const isSame = sameSite(
 				{ ...postKey1, isRecommendationBlock: 'isRecommendationBlock' },
 				postKey1
 			);
 			expect( isSame ).toBe( false );
-		} );
-	} );
-
-	describe( '#combine', () => {
-		test( 'should combine two regular postkeys', () => {
-			const combined = combine( postKey1, postKey2 );
-			expect( combined ).toEqual( {
-				feedId: postKey1.feedId,
-				postIds: [ postKey1.postId, postKey2.postId ],
-				isCombination: true,
-				date: today,
-			} );
-		} );
-
-		test( 'should return null if either postKey is null', () => {
-			const combined = combine( postKey1, null );
-			expect( combined ).toBeNull();
-		} );
-
-		test( 'should combine a combined card with a regular postKey', () => {
-			const combined = combine( combinedCardPostKey1, postKey1 );
-			expect( combined ).toEqual( {
-				...combinedCardPostKey1,
-				postIds: combinedCardPostKey1.postIds.concat( postKey1.postId ),
-			} );
-		} );
-
-		test( 'should combine two combined cards correctly', () => {
-			const combined = combine( combinedCardPostKey1, combinedCardPostKey2 );
-			expect( combined ).toEqual( {
-				...combinedCardPostKey1,
-				postIds: combinedCardPostKey1.postIds.concat( combinedCardPostKey2.postIds ),
-			} );
-		} );
-	} );
-
-	describe( '#combineCards', () => {
-		const date = new Date();
-		const site1Key1 = { blogId: '1', postId: '11', date };
-		const site1Key2 = { blogId: '1', postId: '12', date };
-		const site1Key3 = { blogId: '1', postId: '13', date };
-		const site2Key2 = { blogId: '2', postId: '22', date };
-		const site3Key1 = { blogId: '3', postId: '31', date };
-		const site4Key1 = { blogId: '4', postId: '41', date };
-
-		test( 'should combine series with 2 in a rows', () => {
-			const postKeysSet1 = [ site1Key1, site1Key2 ];
-			const combinedItems1 = combineCards( postKeysSet1 );
-			expect( combinedItems1 ).toEqual( [ combine( site1Key1, site1Key2 ) ] );
-
-			const postKeysSet2 = [ site4Key1, site1Key1, site1Key2, site3Key1 ];
-			const combinedItems2 = combineCards( postKeysSet2 );
-			expect( combinedItems2 ).toEqual( [ site4Key1, combine( site1Key1, site1Key2 ), site3Key1 ] );
-		} );
-
-		test( 'should combine cards with series of 3 in a row', () => {
-			const combinedCard = combine( combine( site1Key1, site1Key2 ), site1Key3 );
-
-			const postKeys1 = [ site1Key1, site1Key2, site1Key3 ];
-			const combinedItems1 = combineCards( postKeys1 );
-			expect( combinedItems1 ).toEqual( [ combinedCard ] );
-
-			const postKeys2 = [ site4Key1, site1Key1, site1Key2, site1Key3, site3Key1 ];
-			const combinedItems2 = combineCards( postKeys2 );
-			expect( combinedItems2 ).toEqual( [ site4Key1, combinedCard, site3Key1 ] );
-		} );
-
-		test( 'should not combine any cards when no series exist', () => {
-			const postKeys = [ site1Key1, site2Key2, site3Key1, site4Key1 ];
-			const combinedItems = combineCards( postKeys );
-			expect( combinedItems ).toEqual( postKeys );
-		} );
-
-		test( 'should not combine discover cards', () => {
-			const discoverFeedId = 41325786;
-			const discoverSiteId = 53424024;
-			const discoverFeedPostKeys = [
-				{ feedId: discoverFeedId, postId: '1', date },
-				{ feedId: discoverFeedId, postId: '2', date },
-			];
-			const discoverSitePostKeys = [
-				{ blogId: discoverSiteId, postId: '1', date },
-				{ blogId: discoverSiteId, postId: '2', date },
-			];
-			const combinedFeedItems = combineCards( discoverFeedPostKeys );
-			const combinedSiteItems = combineCards( discoverSitePostKeys );
-
-			expect( combinedFeedItems ).toEqual( discoverFeedPostKeys );
-			expect( combinedSiteItems ).toEqual( discoverSitePostKeys );
-		} );
-
-		test( 'should not combine cards that are greater than a day apart', () => {
-			const theDistantPast = moment().year( -1 ).toDate();
-			const postKeys = [ site1Key1, { ...site1Key2, date: theDistantPast } ];
-			const combinedItems = combineCards( postKeys );
-			expect( combinedItems ).toEqual( postKeys );
 		} );
 	} );
 

@@ -57,6 +57,7 @@ class RemovePurchase extends Component {
 		onClickTracks: PropTypes.func,
 		purchaseListUrl: PropTypes.string,
 		activeSubscriptions: PropTypes.array,
+		linkIcon: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -357,7 +358,7 @@ class RemovePurchase extends Component {
 			<>
 				<Wrapper tagName="button" className={ wrapperClassName } onClick={ this.openDialog }>
 					{ this.props.children ? this.props.children : defaultContent }
-					<Gridicon className="card__link-indicator" icon="trash" />
+					<Gridicon className="card__link-indicator" icon={ this.props.linkIcon || 'trash' } />
 				</Wrapper>
 				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
 				{ this.shouldHandleMarketplaceSubscriptions() &&

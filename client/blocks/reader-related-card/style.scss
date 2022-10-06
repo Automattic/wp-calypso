@@ -4,7 +4,6 @@
 	font-weight: 600;
 	margin-bottom: 20px;
 	display: -webkit-box;
-	letter-spacing: 0.01em;
 	max-height: 14px * 1.6;
 	overflow: hidden;
 	position: relative;
@@ -125,6 +124,7 @@
 
 	&.has-thumbnail {
 		.reader-related-card__title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 17px;
 		}
 
@@ -253,8 +253,46 @@
 	border: 1px solid var(--color-neutral-0);
 	min-height: 78px;
 
-	@include breakpoint-deprecated( ">960px" ) {
+	&.reader-featured-image {
+		max-height: 150px;
+
+	}
+	@include breakpoint-deprecated( '>960px' ) {
 		min-height: 153px;
+	}
+}
+.reader-related-card {
+	.reader-related-card__link-block {
+		margin-bottom: 16px;
+	}
+	.reader-related-card__title {
+		display: -webkit-box;
+    overflow: hidden;
+    word-wrap: break-word;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+	}
+}
+.reader-stream__recommended-post-dismiss {
+	display: none;
+}
+@include breakpoint-deprecated( '<660px' ) {
+	.reader-stream__recommended-posts {
+		border-bottom: 5px solid var(--color-neutral-0) !important;
+		margin: 0 !important;
+
+		.reader-stream__recommended-posts-header {
+			margin: 15px;
+		}
+		.reader-stream__recommended-posts-list {
+			margin: 0 15px;
+		}
+		.reader-related-card__link-block {
+			margin-bottom: 0;
+		}
+		.reader-stream__recommended-posts-list-item .card.reader-related-card {
+			width: 100%;
+		}
 	}
 }
 
@@ -269,6 +307,7 @@
 }
 
 .reader-related-card__title {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 25px;
@@ -297,20 +336,11 @@
 }
 
 .reader-related-card__excerpt {
+	display: -webkit-box;
+	overflow: hidden;
 	word-wrap: break-word;
-
-	&.post-excerpt {
-		display: -webkit-box;
-		font-size: $font-body;
-		line-height: 25px;
-		max-height: none;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: initial;
-		word-wrap: break-word;
-		word-break: break-word; // Wrap long words in WebKit
-	}
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 // Follow buttons in recommended posts
@@ -325,8 +355,8 @@
 	padding: 0;
 	z-index: z-index(".reader-related-card__meta", ".follow-button");
 
-	.gridicons-reader-follow {
-		fill: var(--color-primary);
+	.reader-follow-feed {
+		fill: var( --color-primary );
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {

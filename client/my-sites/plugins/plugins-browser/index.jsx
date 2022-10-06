@@ -1,9 +1,9 @@
-import { useTranslate } from 'i18n-calypso';
+import { useLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
-import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpack-sites-plugins';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -14,6 +14,7 @@ import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -35,13 +36,20 @@ import './style.scss';
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( selectedSiteId ) {
 		analyticsPath += '/:site';
 	}
 
 	if ( trackPageViews ) {
-		return <PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />;
+		return (
+			<PageViewTracker
+				path={ analyticsPath }
+				title={ analyticsPageTitle }
+				properties={ { is_logged_in: isLoggedIn } }
+			/>
+		);
 	}
 
 	return null;
@@ -75,10 +83,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
 
-	const translate = useTranslate();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const categoryName = categories[ category ]?.name || __( 'Plugins' );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -113,23 +122,19 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	};
 
 	if ( ! isRequestingSitesData && noPermissionsError ) {
-		return <NoPermissionsError title={ translate( 'Plugins', { textOnly: true } ) } />;
+		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
 
 	return (
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
-			{ selectedSite ? (
-				<QueryJetpackPlugins siteIds={ [ selectedSite.ID ] } />
-			) : (
-				<QueryAllJetpackSitesPlugins />
-			) }
+			<QueryPlugins siteId={ selectedSite?.ID } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
 				trackPageViews={ trackPageViews }
 			/>
-			<DocumentHead title={ translate( 'Plugins' ) } />
+			<DocumentHead title={ __( 'Plugins' ) } />
 
 			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
@@ -143,12 +148,17 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<JetpackDisconnectedNotice />
 			<SearchBoxHeader
 				searchRef={ searchRef }
-				popularSearchesRef={ searchHeaderRef }
+				stickySearchBoxRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }
-				title={ translate( 'Plugins you need to get your projects done' ) }
+				title={
+					'en' === locale || hasTranslation( 'Flex your site’s features with plugins' )
+						? __( 'Flex your site’s features with plugins' )
+						: __( 'Plugins you need to get your projects done' )
+				}
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				renderTitleInH1={ ! category }
 			/>
 
 			{ ! search && <Categories selected={ category } /> }

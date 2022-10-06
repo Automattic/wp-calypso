@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import jetpackCredentials from 'calypso/assets/images/jetpack/jetpack-icon-key.svg';
 import Banner from 'calypso/components/banner';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -16,14 +17,14 @@ const EnableRestoresBanner: FunctionComponent = () => {
 		<Banner
 			className="backup__restore-banner"
 			callToAction={ translate( 'Enable restores' ) as string }
-			title={ translate( 'Set up your server credentials to get back online quickly' ) as string }
+			title={ translate( 'Add your server credentials' ) as string }
 			description={ translate(
-				'Add SSH, SFTP or FTP credentials to enable one click site restores.'
+				'Enter your SSH, SFTP or FTP credentials to enable one-click site restores and faster backups.'
 			) }
 			href={
 				isJetpackCloud() ? `/settings/${ siteSlug }` : `/settings/jetpack/${ siteSlug }#credentials`
 			}
-			icon="cloud-upload"
+			iconPath={ jetpackCredentials }
 			event="calypso_backup_enable_restores_banner"
 			tracksImpressionName="calypso_backup_enable_restores_banner_view"
 			tracksClickName="calypso_backup_enable_restores_banner_click"

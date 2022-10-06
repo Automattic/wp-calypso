@@ -28,6 +28,9 @@ class FoldableCard extends Component {
 		summary: PropTypes.node,
 		hideSummary: PropTypes.bool,
 		highlight: PropTypes.string,
+		smooth: PropTypes.bool,
+		contentExpandedStyle: PropTypes.object,
+		contentCollapsedStyle: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -38,6 +41,7 @@ class FoldableCard extends Component {
 		icon: 'chevron-down',
 		expanded: false,
 		screenReaderText: false,
+		smooth: false,
 	};
 
 	state = {
@@ -109,7 +113,14 @@ class FoldableCard extends Component {
 	}
 
 	renderContent() {
-		return <div className="foldable-card__content">{ this.props.children }</div>;
+		const additionalStyle = this.state.expanded
+			? this.props.contentExpandedStyle
+			: this.props.contentCollapsedStyle;
+		return (
+			<div className="foldable-card__content" style={ additionalStyle }>
+				{ this.props.children }
+			</div>
+		);
 	}
 
 	renderHeader() {
@@ -150,12 +161,13 @@ class FoldableCard extends Component {
 			'is-disabled': !! this.props.disabled,
 			'is-expanded': !! this.state.expanded,
 			'has-expanded-summary': !! this.props.expandedSummary,
+			'is-smooth': !! this.props.smooth,
 		} );
 
 		return (
 			<Container className={ itemSiteClasses } highlight={ this.props.highlight }>
 				{ this.renderHeader() }
-				{ this.state.expanded && this.renderContent() }
+				{ ( this.state.expanded || this.props.smooth ) && this.renderContent() }
 			</Container>
 		);
 	}

@@ -10,11 +10,16 @@ import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
-import wp from 'calypso/lib/wp';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import {
+	deleteCredentials,
+	updateCredentials,
+	testCredentials,
+	markCredentialsAsInvalid,
+} from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import getJetpackCredentialsTestStatus from 'calypso/state/selectors/get-jetpack-credentials-test-status';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
@@ -89,26 +94,38 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
 
+	const credentialsTestStatus = useSelector( ( state ) =>
+		getJetpackCredentialsTestStatus( state, siteId, role )
+	);
+
 	const isRequestingCredentials = useSelector(
 		( state ) => isRequestingSiteCredentials( state, siteId as number ) || testCredentialsLoading
 	);
 
 	useEffect( () => {
-		try {
-			( async () => {
-				const results: { ok: boolean } = await wp.req.post( {
-					path: '/sites/' + siteId + '/rewind/credentials/test?role=main',
-					apiNamespace: 'wpcom/v2',
-				} );
-				const { ok } = results;
-				setTestCredentialsLoading( false );
-				setTestCredentialsResult( ok );
-			} )();
-		} catch ( error: any ) {
-			setTestCredentialsLoading( false );
-			setTestCredentialsResult( false );
+		if ( hasCredentials ) {
+			dispatch( testCredentials( siteId, role ) );
+		} else {
+			dispatch( markCredentialsAsInvalid( siteId, role ) );
 		}
-	}, [] );
+	}, [ hasCredentials ] );
+
+	useEffect(
+		function () {
+			if ( 'pending' !== credentialsTestStatus ) {
+				setTestCredentialsLoading( false );
+			}
+
+			if ( 'valid' === credentialsTestStatus ) {
+				setTestCredentialsResult( true );
+			}
+
+			if ( 'invalid' === credentialsTestStatus ) {
+				setTestCredentialsResult( false );
+			}
+		},
+		[ credentialsTestStatus ]
+	);
 
 	const statusState = useMemo( (): StatusState => {
 		if ( isRequestingCredentials ) {

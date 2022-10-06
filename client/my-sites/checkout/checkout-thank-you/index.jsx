@@ -20,7 +20,7 @@ import {
 	isPro,
 	isSiteRedirect,
 	isStarter,
-	isTheme,
+	isThemePurchase,
 	isTitanMail,
 	shouldFetchSitePlans,
 } from '@automattic/calypso-products';
@@ -273,7 +273,7 @@ export class CheckoutThankYou extends Component {
 		if (
 			this.props.receipt.hasLoadedFromServer &&
 			purchases.length > 0 &&
-			purchases.every( isTheme )
+			purchases.every( isThemePurchase )
 		) {
 			const themeId = purchases[ 0 ].meta;
 			// Mark that we've done the redirect, and do the actual redirect once the state is recorded

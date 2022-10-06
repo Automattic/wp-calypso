@@ -38,7 +38,6 @@ const PluginsBrowserListElement = ( props ) => {
 		isPlaceholder,
 		site,
 		plugin = {},
-		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
 		search,
@@ -152,7 +151,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	if ( isPlaceholder ) {
 		// eslint-disable-next-line no-use-before-define
-		return <Placeholder iconSize={ iconSize } />;
+		return <Placeholder />;
 	}
 
 	const classNames = classnames( 'plugins-browser-item', variant, {
@@ -173,7 +172,7 @@ const PluginsBrowserListElement = ( props ) => {
 				onClick={ trackPluginLinkClick }
 			>
 				<div className="plugins-browser-item__info">
-					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					<div className="plugins-browser-item__title">
 						<TextHighlight text={ plugin.name } highlight={ search } />
 					</div>
@@ -347,12 +346,12 @@ const InstalledInOrPricing = ( {
 	);
 };
 
-const Placeholder = ( { iconSize } ) => {
+const Placeholder = () => {
 	return (
 		<li className="plugins-browser-item is-placeholder">
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon size={ iconSize } isPlaceholder={ true } />
+					<PluginIcon isPlaceholder={ true } />
 					<div className="plugins-browser-item__title">…</div>
 					<div className="plugins-browser-item__author">…</div>
 					<div className="plugins-browser-item__description">…</div>

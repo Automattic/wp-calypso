@@ -256,17 +256,18 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 
 function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const bundledText = translate( 'free for one year' );
-	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
-		components: {
-			strong: <strong />,
-		},
-		args: {
-			domain: domain.meta,
-			bundled: bundledText,
-		},
-		comment: 'domain name and bundling message, separated by a dash',
-	} );
+	const bundledDomain = translate(
+		'{{strong}}%(domain)s{{/strong}} domain registration free for one year',
+		{
+			components: {
+				strong: <strong />,
+			},
+			args: {
+				domain: domain.meta,
+			},
+			comment: 'domain name and bundling message',
+		}
+	);
 
 	// If domain is using existing credit or bundled with cart, show bundled text.
 	if ( domain.is_bundled ) {

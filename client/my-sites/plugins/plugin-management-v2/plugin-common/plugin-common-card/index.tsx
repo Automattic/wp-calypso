@@ -23,7 +23,7 @@ export default function PluginCommonCard( {
 	rowFormatter,
 	columns,
 	renderActions,
-}: Props ): ReactElement {
+}: Props ) {
 	const columnKeys: { [ key: string ]: boolean } = columns.reduce(
 		( obj, cur ) => ( { ...obj, [ cur.key ]: true } ),
 		{}

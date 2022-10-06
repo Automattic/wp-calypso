@@ -3,6 +3,7 @@ import {
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
+	isEcommerce,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
@@ -145,9 +146,14 @@ export class PlansStep extends Component {
 				window.redux
 			);
 		} else {
-			this.props.submitSignupStep( step, {
-				cartItem,
-			} );
+			const signupVals = { cartItem };
+
+			// Buying an eCommerce plan defaults to the pub/twentytwentytwo theme (All remaining flows)
+			if ( cartItem && isEcommerce( cartItem ) ) {
+				signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+			}
+
+			this.props.submitSignupStep( step, signupVals );
 			this.props.goToNextStep();
 		}
 	};
@@ -244,7 +250,7 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_faq_202209_v1"
+					name="calypso_signup_plans_step_faq_202209_v2"
 					options={ {
 						isEligible:
 							[ 'en-gb', 'en' ].includes( locale ) &&
