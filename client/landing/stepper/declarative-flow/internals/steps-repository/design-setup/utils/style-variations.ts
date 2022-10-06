@@ -20,14 +20,20 @@ export function removeLegacyDesignVariations( designs: Design[] ) {
  */
 export function promoteDesignVariations( designs: Design[] ) {
 	return designs.sort( ( a, b ) => {
-		if ( ! a.style_variations || a.style_variations.length === 0 ) {
-			return 1;
+		const a_style_variations = a.style_variations || [];
+		const b_style_variations = b.style_variations || [];
+
+		// Keep original order if:
+		// (1) neither a or b have style variations or
+		// (2) both a and b have style variations
+		if (
+			( a_style_variations.length === 0 && b_style_variations.length === 0 ) ||
+			( a_style_variations.length > 0 && b_style_variations.length > 0 )
+		) {
+			return 0;
 		}
 
-		if ( ! b.style_variations || b.style_variations.length === 0 ) {
-			return -1;
-		}
-
-		return 0;
+		// Sort b before a if it has style variations.
+		return b_style_variations.length > a_style_variations.length ? 1 : -1;
 	} );
 }
