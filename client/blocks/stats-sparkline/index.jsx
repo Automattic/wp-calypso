@@ -14,14 +14,14 @@ const DEFAULT_HEIGHT = 20;
 const FAKE_HOURLY_PERIOD = 48;
 const FAKE_HIGHEST_VIEWS = 10;
 
-const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT } ) => {
-	const translate = useTranslate();
-	const highestViews = Math.max( ...hourlyViews );
-	const title = translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } );
-
-	const chartHeight = height - 7; // remove the 5px + 2px = 7px total top+bottom padding
-	const chartWidth = 2 * hourlyViews.length - 1; // 1px bars with 1px space in between
-
+const SparklineChart = ( {
+	className,
+	highestViews,
+	hourlyViews,
+	chartHeight,
+	chartWidth,
+	title,
+} ) => {
 	return (
 		<div
 			className={ classnames( 'stats-sparkline', className ) }
@@ -59,6 +59,26 @@ const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT 
 	);
 };
 
+const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT } ) => {
+	const translate = useTranslate();
+	const highestViews = Math.max( ...hourlyViews );
+	const title = translate( 'Highest hourly views %(highestViews)s', { args: { highestViews } } );
+
+	const chartHeight = height - 7; // remove the 5px + 2px = 7px total top+bottom padding
+	const chartWidth = 2 * hourlyViews.length - 1; // 1px bars with 1px space in between
+
+	return (
+		<SparklineChart
+			className={ className }
+			title={ title }
+			chartHeight={ chartHeight }
+			chartWidth={ chartWidth }
+			hourlyViews={ hourlyViews }
+			highestViews={ highestViews }
+		></SparklineChart>
+	);
+};
+
 const generateFakeHourlyViews = () => {
 	const hourlyViews = [];
 	while ( hourlyViews.length < FAKE_HOURLY_PERIOD ) {
@@ -86,39 +106,14 @@ const StatsSparklineChartLoader = ( { className, height = DEFAULT_HEIGHT } ) => 
 	const chartWidth = 2 * fakeHourlyViews.length - 1; // 1px bars with 1px space in between
 
 	return (
-		<div
-			className={ classnames( 'stats-sparkline', className ) }
+		<SparklineChart
+			className={ className }
 			title={ title }
-			style={ { height: chartHeight + 'px', width: chartWidth + 'px' } }
-		>
-			<svg
-				width={ chartWidth }
-				height={ chartHeight }
-				viewBox={ `0 0 ${ chartWidth } ${ chartHeight }` }
-			>
-				{ fakeHourlyViews.map( ( value, i ) => {
-					// for zero value, we show a baseline bar with 1px height
-					let lineHeight = 1;
-
-					// if the chart is all zeros, show just the flat baseline
-					if ( FAKE_HIGHEST_VIEWS > 0 ) {
-						// fill the remaining height with the bar scaled according to the value
-						lineHeight += ( value / FAKE_HIGHEST_VIEWS ) * ( chartHeight - 1 );
-					}
-
-					return (
-						<rect
-							x={ i * 2 }
-							y={ chartHeight - lineHeight }
-							height={ lineHeight }
-							width={ 1 }
-							key={ i }
-							className="stats-sparkline__bar"
-						/>
-					);
-				} ) }
-			</svg>
-		</div>
+			chartHeight={ chartHeight }
+			chartWidth={ chartWidth }
+			hourlyViews={ fakeHourlyViews }
+			highestViews={ FAKE_HIGHEST_VIEWS }
+		></SparklineChart>
 	);
 };
 
