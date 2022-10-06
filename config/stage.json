@@ -41,6 +41,7 @@
 		"gdpr-banner": false,
 		"google-my-business": true,
 		"happychat": true,
+		"hosting/ssh-keys": false,
 		"help": true,
 		"i18n/empathy-mode": true,
 		"inline-help": true,
