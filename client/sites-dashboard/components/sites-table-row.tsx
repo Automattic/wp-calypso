@@ -3,7 +3,8 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
@@ -81,6 +82,14 @@ const SitePlanIcon = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const { ref, inView } = useInView();
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+
+	useEffect( () => {
+		if ( inView ) {
+			setInViewOnce( true );
+		}
+	}, [ inView, setInViewOnce ] );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
@@ -138,10 +147,12 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>
-				<a href={ `/stats/day/${ site.slug }` }>
-					<StatsSparkline siteId={ site.ID }></StatsSparkline>
-				</a>
+			<Column ref={ ref } mobileHidden>
+				{ inViewOnce && (
+					<a href={ `/stats/day/${ site.slug }` }>
+						<StatsSparkline siteId={ site.ID }></StatsSparkline>
+					</a>
+				) }
 			</Column>
 			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />
