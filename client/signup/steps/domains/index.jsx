@@ -125,6 +125,8 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 		};
+
+		console.log( 'showExampleSuggestions', this.props.showExampleSuggestions );
 	}
 
 	componentDidMount() {

@@ -53,3 +53,6 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 	hasSelectedDesign( state ) && ! state.selectedFonts;
 
 export const getEditEmail = ( state: State ) => state.editEmail;
+
+export const getDomainForm = ( state: State ) => state.domainForm;
+export const getDomainSuggested = ( state: State ) => state.domainSuggested;
