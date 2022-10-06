@@ -27,8 +27,9 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	useEffect( () => {
 		// launchpadScreenOption changes from undefined to either 'off' or 'full'
 		// we need to check if it's defined to avoid recording the same action twice
-		if ( launchpadScreenOption ) {
-			if ( launchpadScreenOption === 'off' ) {
+		if ( launchpadScreenOption !== undefined ) {
+			// The screen option returns false for sites with no option set
+			if ( launchpadScreenOption === false || launchpadScreenOption === 'off' ) {
 				window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
 				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
 			} else {
