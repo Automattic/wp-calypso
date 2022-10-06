@@ -29,8 +29,8 @@ export const useDeleteSSHKeyMutation = (
 			} ),
 		{
 			...options,
-			onSuccess( ...args ) {
-				queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
+			onSuccess: async ( ...args ) => {
+				await queryClient.invalidateQueries( SSH_KEY_QUERY_KEY );
 				options.onSuccess?.( ...args );
 			},
 		}
