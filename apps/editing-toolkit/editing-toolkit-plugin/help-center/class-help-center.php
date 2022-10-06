@@ -71,6 +71,7 @@ class Help_Center {
 			);
 		}
 	}
+
 	/**
 	 * Enqueue block editor assets.
 	 */

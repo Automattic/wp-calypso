@@ -28,10 +28,6 @@ import Happychat from './happychat';
 import { requestDataFromParent } from './request-auth-data-from-parent';
 import './happychat.scss';
 
-function timeout( ms ) {
-	return new Promise( ( _, reject ) => setTimeout( reject, ms, 'Request has timed out' ) );
-}
-
 async function AppBoot() {
 	const rootReducer = combineReducers( {
 		currentUser,
@@ -59,7 +55,7 @@ async function AppBoot() {
 	let user;
 
 	try {
-		auth = await Promise.race( [ requestHappyChatAuth(), timeout( 5000 ) ] );
+		auth = await requestHappyChatAuth();
 		user = filterUserObject( auth.fullUser );
 	} catch ( _error ) {
 		// this error most likely means we couldn't auth the user due to 3rd party cookies blockage
