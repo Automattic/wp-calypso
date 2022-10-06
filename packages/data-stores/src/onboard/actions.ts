@@ -314,6 +314,15 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
+export const setDomainForm = ( step ) => {
+	const lastUpdated = Date.now();
+
+	return {
+		type: 'SET_DOMAIN_FORM',
+		step: { ...step, lastUpdated },
+	};
+};
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -355,6 +364,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setDomainForm
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor

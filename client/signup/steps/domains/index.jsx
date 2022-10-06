@@ -376,6 +376,7 @@ class DomainsStep extends Component {
 	};
 
 	handleSave = ( sectionName, state ) => {
+		console.log( 'SAVE', sectionName, state );
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			stepSectionName: this.props.stepSectionName,
