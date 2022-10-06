@@ -33,6 +33,8 @@ export function register(): typeof STORE_KEY {
 			'anchorSpotifyUrl',
 			'domain',
 			'domainSearch',
+			'domainSuggested',
+			'domainForm',
 			'goals',
 			'hasUsedDomainsStep',
 			'hasUsedPlansStep',

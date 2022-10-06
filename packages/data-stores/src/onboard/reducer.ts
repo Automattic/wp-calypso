@@ -409,13 +409,25 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 
 const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_DOMAIN_FORM' ) {
-		console.log( 'domainForm reducer', action );
 		return {
 			...state,
 			...action.step,
 		};
 	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return {};
+	}
 
+	return state;
+};
+
+const domainSuggested: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_DOMAIN_SUGGESTED' ) {
+		return action.domainSuggested;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
 	return state;
 };
 
@@ -428,6 +440,7 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
+	domainSuggested,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,

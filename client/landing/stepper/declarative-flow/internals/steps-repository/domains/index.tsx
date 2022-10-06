@@ -66,23 +66,27 @@ import { useEffect, useState } from 'react';
 import { Search } from './types';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { productsList, signupDependencies, signupProgress, userLoggedIn, selectedSite } =
-		useSelector( ( state ) => {
+	const { productsList, signupDependencies, userLoggedIn, selectedSite } = useSelector(
+		( state ) => {
 			return {
 				productsList: getAvailableProductsList( state ),
 				signupDependencies: getSignupDependencyStore( state ),
-				signupProgress: getSignupProgress( state ),
 				userLoggedIn: isUserLoggedIn( state ),
 				selectedSite: getSelectedSite( state ),
 			};
-		} );
+		}
+	);
 
-	const { siteTitle, siteAccentColor } = useSelect( ( select ) => {
+	const { siteTitle, siteAccentColor, domainForm, domainSuggested } = useSelect( ( select ) => {
 		return {
 			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
+			domainForm: select( ONBOARD_STORE ).getDomainForm(),
+			domainSuggested: select( ONBOARD_STORE ).getDomainSuggested(),
 		};
 	} );
+
+	console.log( 'DOMAIN FORM', domainForm );
 
 	const { setDomainForm } = useDispatch( ONBOARD_STORE );
 
@@ -109,17 +113,22 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const showSkipButton = undefined;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	let showExampleSuggestions: boolean | undefined = undefined;
-	const includeWordPressDotCom = undefined;
+	let includeWordPressDotCom = undefined;
 	const promoTlds = undefined;
+	const isManageSiteFlow = undefined;
+
+	if ( isManageSiteFlow ) {
+		showExampleSuggestions = false;
+		includeWordPressDotCom = false;
+	}
 
 	const locale = useLocale();
-	const suggestedDomain = get( signupDependencies, 'suggestedDomain' );
 	const path = '/start/link-in-bio/domains?new=test&search=yes&hide_initial_query=yes';
 
 	const search = false; //get( props, 'queryObject.search', false ) === 'yes';
 	// // If we landed anew from `/domains` and it's the `new-flow` variation
-	// // or there's a suggestedDomain from previous steps, always rerun the search.
-	if ( ( search && path.indexOf( '?' ) !== -1 ) || suggestedDomain ) {
+	// // or there's a domainSuggested from previous steps, always rerun the search.
+	if ( domainSuggested ) {
 		setSearchOnInitialRender( true );
 	}
 
@@ -440,8 +449,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return true;
 		}
 
+		console.log( 'LASTQUERT', domainForm?.lastQuery );
+
 		// const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
-		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
+		return typeof domainForm?.lastQuery === 'string' && domainForm?.lastQuery.includes( '.blog' );
 	}
 
 	function getLocale() {
@@ -455,8 +466,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const handleSave = ( state ) => {
-		console.log( 'SAVE', state );
-
 		setDomainForm( state );
 
 		dispatch(
@@ -663,21 +672,18 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
-	const domainForm = () => {
-		const initialState: Search = {};
-		// if ( this.props.step ) {
-		// 	initialState = this.props.step.domainForm;
-		// }
-
-		// If it's the first load, rerun the search with whatever we get from the query param or signup dependencies.
-		const initialQuery = siteTitle || suggestedDomain;
+	const renderDomainForm = () => {
+		let initialState: Search = {};
+		if ( domainForm ) {
+			initialState = domainForm;
+		}
 
 		// Search using the initial query but do not show the query on the search input field.
 		//const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			initialQuery &&
+			domainSuggested &&
 			searchOnInitialRender
 		) {
 			setSearchOnInitialRender( false );
@@ -687,12 +693,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				// If length is less than 2 it will not fetch any data.
 				// filter before counting length
 				initialState.loadingResults =
-					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
+					getDomainSuggestionSearch( getFixedDomainSearch( domainSuggested ) ).length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
 
-		// let showExampleSuggestions = this.props.showExampleSuggestions;
 		if ( 'undefined' === typeof showExampleSuggestions ) {
 			showExampleSuggestions = true;
 		}
@@ -729,7 +734,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
-					suggestion={ initialQuery }
+					suggestion={ domainSuggested }
 					transferDomainUrl={ getUseYourDomainUrl() }
 					useYourDomainUrl={ getUseYourDomainUrl() }
 					vendor={ getSuggestionsVendor( {
@@ -751,7 +756,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		// }
 
 		if ( ! stepSectionName || isDomainOnly ) {
-			content = domainForm();
+			content = renderDomainForm();
 		}
 
 		if ( ! stepSectionName && isReskinned && ! isTailoredFlow() ) {
