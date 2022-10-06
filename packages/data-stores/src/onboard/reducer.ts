@@ -407,6 +407,18 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 	return state;
 };
 
+const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
+	if ( action.type === 'SET_DOMAIN_FORM' ) {
+		console.log( 'domainForm reducer', action );
+		return {
+			...state,
+			...action.step,
+		};
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -415,6 +427,7 @@ const reducer = combineReducers( {
 	patternContent,
 	domainSearch,
 	domainCategory,
+	domainForm,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,

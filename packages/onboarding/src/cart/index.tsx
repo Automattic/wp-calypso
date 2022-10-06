@@ -300,17 +300,20 @@ function processItemCart(
 			callback( undefined, providedDependencies );
 		}
 	};
-	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
-		// setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
-		// fetchSitesAndUser(
-		// 	siteSlug,
-		// 	setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-		// 	reduxStore
-		// );
-	} else if ( userIsLoggedIn && siteSlug ) {
-		fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
-	} else {
-		addToCartAndProceed();
-	}
+
+	addToCartAndProceed();
+
+	// if ( ! userIsLoggedIn && isFreeThemePreselected ) {
+	// 	// setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+	// } else if ( userIsLoggedIn && isFreeThemePreselected ) {
+	// 	// fetchSitesAndUser(
+	// 	// 	siteSlug,
+	// 	// 	setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+	// 	// 	reduxStore
+	// 	// );
+	// } else if ( userIsLoggedIn && siteSlug ) {
+	// 	fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
+	// } else {
+	// 	addToCartAndProceed();
+	// }
 }
