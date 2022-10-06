@@ -96,7 +96,7 @@ const StatsSparklineChartLoader = ( { className, height = DEFAULT_HEIGHT } ) => 
 	useEffect( () => {
 		const t = setInterval( () => {
 			setFakeHourlyViews( generateFakeHourlyViews() );
-		}, 350 );
+		}, 250 );
 		return () => {
 			clearInterval( t );
 		};
