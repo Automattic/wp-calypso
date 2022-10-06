@@ -39,7 +39,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move up' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_bcpa_moveup_pattern_click' );
+							recordTracksEvent( 'calypso_signup_bcpa_pattern_moveup_click' );
 							onMoveUp?.();
 						} }
 						icon={ chevronUp }
@@ -51,7 +51,7 @@ const PatternActionBar = ( {
 						role="menuitem"
 						label={ translate( 'Move down' ) }
 						onClick={ () => {
-							recordTracksEvent( 'calypso_signup_bcpa_movedown_pattern_click' );
+							recordTracksEvent( 'calypso_signup_bcpa_pattern_movedown_click' );
 							onMoveDown?.();
 						} }
 						icon={ chevronDown }
