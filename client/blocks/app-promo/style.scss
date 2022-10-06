@@ -1,8 +1,9 @@
 .app-promo {
+	align-items: flex-start;
 	display: flex;
 	max-width: 300px;
 	margin: 10px;
-	padding: 10px;
+	padding: 3px;
 	overflow: hidden;
 	background-color: var(--color-surface);
 	box-shadow: 0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5), 0 1px 2px var(--color-neutral-0);
@@ -15,8 +16,8 @@
 
 .app-promo .app-promo__dismiss {
 	cursor: pointer;
-	padding: 4px;
-	align-items: flex-start;
+	height: auto;
+	padding: 8px;
 
 	svg {
 		fill: var(--color-text-subtle);
@@ -24,10 +25,10 @@
 }
 
 .app-promo .app-promo__link {
-	padding: 0;
 	height: auto;
 	border-radius: 0;
 	line-height: 1.5;
+	padding: 8px 0 8px 8px;
 	color: var(--color-text);
 	font-size: $font-body-extra-small;
 	font-weight: 400;
