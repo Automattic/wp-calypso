@@ -14,8 +14,11 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { isAtomicSite } from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -170,6 +173,10 @@ function LineItemWrapper( {
 	const variants = useGetProductVariants( siteId, product.product_slug );
 	const areThereVariants = variants.length > 1;
 
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
@@ -184,17 +191,20 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ areThereVariants && shouldShowVariantSelector && ! isEditingTerm && (
-					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
-				) }
-				{ areThereVariants && shouldShowVariantSelector && isEditingTerm && (
-					<ItemVariationPicker
-						selectedItem={ product }
-						onChangeItemVariant={ onChangePlanLength }
-						isDisabled={ isDisabled }
-						variants={ variants }
-					/>
-				) }
+				{ ! isJetpackSelfHosted &&
+					areThereVariants &&
+					shouldShowVariantSelector &&
+					! isEditingTerm && <TermVariantEditButton onClick={ () => setEditingTerm( true ) } /> }
+				{ areThereVariants &&
+					shouldShowVariantSelector &&
+					( isJetpackSelfHosted || isEditingTerm ) && (
+						<ItemVariationPicker
+							selectedItem={ product }
+							onChangeItemVariant={ onChangePlanLength }
+							isDisabled={ isDisabled }
+							variants={ variants }
+						/>
+					) }
 			</LineItem>
 		</WPOrderReviewListItem>
 	);
