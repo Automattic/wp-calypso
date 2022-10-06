@@ -2,12 +2,32 @@ import type { Pattern } from './types';
 
 const headerPatterns: Pattern[] = [
 	{
-		id: 5605,
-		name: 'Header with Site Title and Vertical Navigation',
+		id: 5588,
+		name: 'Simple Header',
 	},
 	{
 		id: 5601,
 		name: 'Simple Header With Tagline',
+	},
+	{
+		id: 5582,
+		name: 'Simple Header With Large Font Size',
+	},
+	{
+		id: 5603,
+		name: 'Header with Site Title and Menu Button',
+	},
+	{
+		id: 5605,
+		name: 'Header with Site Title and Vertical Navigation',
+	},
+	{
+		id: 5608,
+		name: 'Centred Header with Logo and Navigation',
+	},
+	{
+		id: 5579,
+		name: 'Centered header',
 	},
 	{
 		id: 5590,
@@ -21,17 +41,17 @@ const headerPatterns: Pattern[] = [
 		id: 5593,
 		name: 'Simple Header With Dark background',
 	},
-	{
-		id: 5588,
-		name: 'Simple Header',
-	},
-	{
-		id: 5582,
-		name: 'Simple Header With Large Font Size',
-	},
 ];
 
 const footerPatterns: Pattern[] = [
+	{
+		id: 5877,
+		name: 'Centered footer with social links',
+	},
+	{
+		id: 1622,
+		name: 'Contact',
+	},
 	{
 		id: 5316,
 		name: 'Footer with Social Icons, Address, E-mail, and Telephone Number',
@@ -41,12 +61,12 @@ const footerPatterns: Pattern[] = [
 		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
 	},
 	{
-		id: 5877,
-		name: 'Centered footer with social links',
-	},
-	{
 		id: 5880,
 		name: 'Footer with background color and three columns',
+	},
+	{
+		id: 5886,
+		name: 'Footer with large font size',
 	},
 	{
 		id: 5883,
@@ -55,6 +75,10 @@ const footerPatterns: Pattern[] = [
 	{
 		id: 5888,
 		name: 'Footer with navigation and credit line',
+	},
+	{
+		id: 5873,
+		name: 'Simple centered footer',
 	},
 ];
 
