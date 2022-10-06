@@ -15,8 +15,9 @@ $font-family: 'SF Pro Text', $sans;
 
 	.videomaker-setup__theme-picker {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		margin-block-end: 36px;
+		align-items: center;
 
 		.videomaker-setup__light-button img {
 			background-color: #FFFFFF;
@@ -36,10 +37,11 @@ $font-family: 'SF Pro Text', $sans;
 			transform: scale( 1.0 );
 			z-index: 0;
 			cursor: pointer;
+			max-width: 76%;
 
 			img {
 				display: block;
-				max-width: 400px;
+				width: 100%;
 				height: auto;
 				border-radius: 6px;
 				flex-grow: 1;
@@ -47,7 +49,7 @@ $font-family: 'SF Pro Text', $sans;
 			}
 
 			&:first-of-type {
-				margin-inline-end: 30px;
+				margin-bottom: 30px;
 			}
 
 			&:hover, &.selected {
@@ -55,6 +57,23 @@ $font-family: 'SF Pro Text', $sans;
 				z-index: 1;
 				background-color: $videopress-theme-yellow;
 				border: 8px solid $videopress-theme-yellow;
+			}
+		}
+
+		@include break-medium {
+			flex-direction: row;
+			padding: 0 16px;
+
+			button {
+
+				&:first-of-type {
+					margin-bottom: 0px;
+					margin-inline-end: 30px;
+				}
+			}
+
+			img {
+				max-width: 400px;
 			}
 		}
 	}
@@ -68,6 +87,7 @@ $font-family: 'SF Pro Text', $sans;
 	.step-container__header {
 		margin-top: 100px;
 		margin-bottom: 36px;
+		padding: 0 24px;
 
 		h1.formatted-header__title {
 			font-size: $font-title-medium;
