@@ -30,9 +30,9 @@ const ChartTabShape = PropTypes.shape( {
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
-		activeLegend: PropTypes.arrayOf( PropTypes.string ),
+		activeLegend: PropTypes.arrayOf( PropTypes.string ), // used by chart legend
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ),
+		availableLegend: PropTypes.arrayOf( PropTypes.string ), // used by chart legend
 		charts: PropTypes.arrayOf( ChartTabShape ),
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -46,7 +46,7 @@ class StatModuleChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
-		onChangeLegend: PropTypes.func.isRequired,
+		onChangeLegend: PropTypes.func.isRequired, // used by chart legend
 	};
 
 	intervalId = null;
@@ -62,24 +62,6 @@ class StatModuleChartTabs extends Component {
 			this.startQueryInterval();
 		}
 	}
-
-	onLegendClick = ( chartItem ) => {
-		const activeLegend = this.props.activeLegend.slice();
-		const chartIndex = activeLegend.indexOf( chartItem );
-		let gaEventAction;
-		if ( -1 === chartIndex ) {
-			activeLegend.push( chartItem );
-			gaEventAction = ' on';
-		} else {
-			activeLegend.splice( chartIndex );
-			gaEventAction = ' off';
-		}
-		this.props.recordGoogleEvent(
-			'Stats',
-			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
-		);
-		this.props.onChangeLegend( activeLegend );
-	};
 
 	startQueryInterval() {
 		// NOTE: Unpredictable behavior will arise if DEFAULT_HEARTBEAT < request duration!
@@ -141,7 +123,7 @@ const connectComponent = connect(
 
 		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
+		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate ); // `activeLegend` is used to display additional bar chard
 		const loadingTabs = getLoadingTabs( state, siteId, period );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;
