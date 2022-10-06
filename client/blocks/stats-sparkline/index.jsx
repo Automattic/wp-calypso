@@ -11,7 +11,6 @@ import './style.scss';
 
 const DEFAULT_HEIGHT = 20;
 
-const FAKE_HOURLY_VIEWS_SEED = [ 1, 2, 3, 4, 3, 2, 1, 1, 1, 1, 1, 1 ];
 const FAKE_HOURLY_PERIOD = 48;
 const FAKE_HIGHEST_VIEWS = 10;
 
@@ -60,32 +59,28 @@ const StatsSparklineChart = ( { className, hourlyViews, height = DEFAULT_HEIGHT 
 	);
 };
 
+const generateFakeHourlyViews = () => {
+	const hourlyViews = [];
+	while ( hourlyViews.length < FAKE_HOURLY_PERIOD ) {
+		hourlyViews.push( Math.floor( Math.random() * ( 2 - 1 + 1 ) + 1 ) );
+	}
+	return hourlyViews;
+};
+
 const StatsSparklineChartLoader = ( { className, height = DEFAULT_HEIGHT } ) => {
 	const translate = useTranslate();
 	const title = translate( 'Loading chart…' );
 
-	let seed = [];
-	while ( seed.length <= FAKE_HOURLY_PERIOD ) {
-		seed = [ ...seed, ...FAKE_HOURLY_VIEWS_SEED ];
-	}
-
-	const [ offset, setOffset ] = useState( Math.floor( Math.random() * ( 8 - 1 + 1 ) + 1 ) );
-	const [ fakeHourlyViews, setFakeHourlyViews ] = useState(
-		seed.slice( offset, offset + FAKE_HOURLY_PERIOD )
-	);
+	const [ fakeHourlyViews, setFakeHourlyViews ] = useState( generateFakeHourlyViews() );
 
 	useEffect( () => {
-		const t = setTimeout( () => {
-			setOffset( offset < 8 ? offset + 1 : 0 );
+		const t = setInterval( () => {
+			setFakeHourlyViews( generateFakeHourlyViews() );
 		}, 350 );
 		return () => {
-			clearTimeout( t );
+			clearInterval( t );
 		};
-	}, [ offset ] );
-
-	useEffect( () => {
-		setFakeHourlyViews( seed.slice( offset, offset + FAKE_HOURLY_PERIOD ) );
-	}, [ offset, setFakeHourlyViews ] );
+	}, [] );
 
 	const chartHeight = height - 7; // remove the 5px + 2px = 7px total top+bottom padding
 	const chartWidth = 2 * fakeHourlyViews.length - 1; // 1px bars with 1px space in between
