@@ -100,8 +100,57 @@ $accent-blue: #117ac9;
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
+		.domain-picker__domain-tld {
+			font-weight: 500;
+			color: unset;
+		}
+		.domain-picker__badge {
+			color: var(--studio-green-80);
+			background-color: var(--studio-green-5);
+			border-radius: 4px;
+			text-transform: unset;
+			font-size: $font-body-extra-small;
+		}
+		.domain-picker__price {
+			display: flex;
+			flex-direction: column-reverse;
+
+			// show the "Default" label for free domains on mobile
+			// applies only when domain-item is in individual-item mode
+			&:not(.is-paid) {
+				display: block;
+			}
+
+			@include break-medium {
+				display: block;
+			}
+		}
+		.domain-picker__price-inclusive {
+			display: block;
+			line-height: 20px;
+
+			strong {
+				font-weight: 500;
+			}
+		}
 		&.is-selected {
 			border-color: $accent-blue;
+
+			.domain-picker__suggestion-item-name {
+				color: $accent-blue;
+			}
+
+			.domain-picker__badge {
+				color: #0f6cb3;
+				background-color: #ddebf8;
+			}
+			.domain-picker__price-inclusive {
+				color: $accent-blue;
+			}
+			.domain-picker__price-cost {
+				color: $accent-blue;
+				opacity: 0.68;
+			}
 		}
 
 		&:hover {
@@ -263,12 +312,6 @@ $accent-blue: #117ac9;
 	}
 }
 
-.domain-picker__suggestion-item.type-individual-item.is-selected {
-	.domain-picker__suggestion-item-name {
-		color: $accent-blue;
-	}
-}
-
 .domain-picker__domain-tld {
 	color: var(--studio-blue-40);
 	// keep TLDs intact as they're hard to read if they were across-lines
@@ -297,13 +340,6 @@ $accent-blue: #117ac9;
 	}
 }
 
-.domain-picker__suggestion-item.type-individual-item {
-	.domain-picker__domain-tld {
-		font-weight: 500;
-		color: unset;
-	}
-}
-
 .domain-picker__info-tooltip {
 	margin-right: 10px;
 	cursor: pointer;
@@ -325,23 +361,6 @@ $accent-blue: #117ac9;
 	background-color: var(--studio-blue-50);
 	color: var(--color-text-inverted);
 	margin: 2px 0; // harmless in desktop, useful in mobile (when the badge is below the text)
-}
-
-.domain-picker__suggestion-item.type-individual-item {
-	.domain-picker__badge {
-		color: var(--studio-green-80);
-		background-color: var(--studio-green-5);
-		border-radius: 4px;
-		text-transform: unset;
-		font-size: $font-body-extra-small;
-	}
-
-	&.is-selected {
-		.domain-picker__badge {
-			color: #0f6cb3;
-			background-color: #ddebf8;
-		}
-	}
 }
 
 .domain-picker__price {
@@ -382,23 +401,6 @@ $accent-blue: #117ac9;
 	}
 }
 
-.domain-picker__suggestion-item.type-individual-item {
-	.domain-picker__price {
-		display: flex;
-		flex-direction: column-reverse;
-
-		// show the "Default" label for free domains on mobile
-		// applies only when domain-item is in individual-item mode
-		&:not(.is-paid) {
-			display: block;
-		}
-
-		@include break-medium {
-			display: block;
-		}
-	}
-}
-
 .domain-picker__price-inclusive {
 	color: var(--studio-green-40);
 	display: none;
@@ -417,31 +419,8 @@ $accent-blue: #117ac9;
 	font-size: $font-body-extra-small;
 }
 
-.domain-picker__suggestion-item.type-individual-item {
-	.domain-picker__price-inclusive {
-		display: block;
-		line-height: 20px;
-
-		strong {
-			font-weight: 500;
-		}
-	}
-	&.is-selected {
-		.domain-picker__price-inclusive {
-			color: $accent-blue;
-		}
-	}
-}
-
 .domain-picker__price-cost {
 	text-decoration: line-through;
-}
-
-.domain-picker__suggestion-item.type-individual-item.is-selected {
-	.domain-picker__price-cost {
-		color: $accent-blue;
-		opacity: 0.68;
-	}
 }
 
 .domain-picker__suggestion-item.type-button {

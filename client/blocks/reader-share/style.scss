@@ -43,6 +43,7 @@
 }
 
 .reader-share__popover {
+	min-width: 240px;
 	@include breakpoint-deprecated( "<480px" ) {
 		width: 152px;
 		padding-right: 2px;
@@ -71,7 +72,7 @@
 		padding: 0;
 		fill: var(--color-neutral-light);
 
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			left: 14px;
 		}
 	}
@@ -81,11 +82,11 @@
 	}
 
 	.reader-twitter {
-		fill: var( --color-twitter );
+		fill: var(--color-twitter);
 	}
 
 	.reader-facebook {
-		fill: var( --color-facebook );
+		fill: var(--color-facebook);
 	}
 
 	&:hover,
@@ -93,7 +94,7 @@
 		.gridicon,
 		.reader-twitter,
 		.reader-facebook {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 	}
 }
@@ -109,16 +110,16 @@
 	&.is-top .popover__arrow::before,
 	&.is-top-left .popover__arrow::before,
 	&.is-top-right .popover__arrow::before {
-		border-top: 10px solid #FFF;
+		border-top: 10px solid #fff;
 	}
 
 	&.is-bottom-right .popover__arrow::before {
-		border: 10px solid #FFF;
+		border: 10px solid #fff;
 	}
 }
 
 .reader-share__site-selector.site-selector {
-	border-top: 1px solid var( --color-neutral-5 );
+	border-top: 1px solid var(--color-neutral-5);
 }
 
 .reader-share__site-selector .site-selector__sites {

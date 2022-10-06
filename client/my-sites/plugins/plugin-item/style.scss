@@ -28,6 +28,8 @@
 	position: relative;
 	display: flex;
 	overflow: hidden; // lazy clearfix
+	box-sizing: border-box;
+	border: 0 solid var(--color-neutral-0);
 
 	&.disabled {
 		opacity: 0.5;
@@ -190,9 +192,4 @@
 	@include breakpoint-deprecated( ">1040px" ) {
 		margin-right: 8px;
 	}
-}
-
-.plugin-item {
-	box-sizing: border-box;
-	border: 0 solid var(--color-neutral-0);
 }

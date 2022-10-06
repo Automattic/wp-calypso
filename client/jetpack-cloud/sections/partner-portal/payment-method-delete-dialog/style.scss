@@ -23,6 +23,14 @@
 			font-weight: 600;
 			text-decoration: underline;
 		}
+
+		button {
+			width: 100%;
+
+			@include break-mobile {
+				width: auto;
+			}
+		}
 	}
 
 	&__heading {
@@ -37,16 +45,6 @@
 			margin: -24px -24px 24px;
 			padding: 9px 24px;
 			line-height: 36px;
-		}
-	}
-
-	.dialog__action-buttons {
-		button {
-			width: 100%;
-
-			@include break-mobile {
-				width: auto;
-			}
 		}
 	}
 }

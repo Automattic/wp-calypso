@@ -9,26 +9,8 @@
 	z-index: z-index("root", ".reader-following-search");
 }
 
-// Following intro
 .following__intro {
 	border: 1px solid var(--color-neutral-0);
-
-	.following__intro-copy {
-		color: #045182;
-
-		a {
-			color: #1785be;
-			border-bottom: 1px #1785be solid;
-
-			&:hover {
-				color: var(--color-primary);
-				border-bottom: 1px solid var(--color-primary);
-			}
-		}
-	}
-}
-
-.following__intro {
 	background-position: 100% 20px;
 	background-repeat: no-repeat;
 	background-size: 450px;
@@ -66,6 +48,7 @@
 }
 
 .following__intro .following__intro-copy {
+	color: #045182;
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
@@ -76,6 +59,16 @@
 	@media ( min-width: 661px ) and ( max-width: 773px ) {
 		margin-bottom: 20px;
 		margin-top: 20px;
+	}
+
+	a {
+		color: #1785be;
+		border-bottom: 1px #1785be solid;
+
+		&:hover {
+			color: var(--color-primary);
+			border-bottom: 1px solid var(--color-primary);
+		}
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {
@@ -110,7 +103,7 @@
 	.following__intro-close-icon {
 		position: absolute;
 		z-index: z-index("root", ".following__intro-close-icon");
-		fill: var(--color-text-inverted);
+		fill: var(--color-neutral-20);
 
 		// Fix for 1px (0.5pt) misalignment in Safari under retina. See
 		// https://github.com/Automattic/wp-calypso/pull/11282/#issuecomment-289837131
@@ -128,7 +121,7 @@
 	}
 
 	.following__intro-close-icon-bg {
-		background-color: #5ca8a6;
+		background-color: var(--color-surface);
 		border-radius: 10px; /* stylelint-disable-line scales/radii */
 		display: block;
 		height: 20px;
@@ -137,15 +130,5 @@
 		top: 2px;
 		z-index: z-index("root", ".following__intro-close-icon-bg");
 		width: 20px;
-	}
-}
-
-.following__intro .following__intro-close {
-	.following__intro-close-icon {
-		fill: var(--color-neutral-20);
-	}
-
-	.following__intro-close-icon-bg {
-		background-color: var(--color-surface);
 	}
 }

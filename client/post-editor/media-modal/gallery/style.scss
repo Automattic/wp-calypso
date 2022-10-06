@@ -162,9 +162,6 @@ input.editor-media-modal-gallery__caption.form-text-input[type="text"] {
 	& .shortcode-frame {
 		width: 100%;
 	}
-}
-
-.editor-media-modal-gallery__preview-shortcode {
 	&.is-loading {
 		animation: loading-fade 0.8s ease-in-out infinite;
 	}
@@ -253,11 +250,6 @@ input[type].editor-media-modal-gallery__input-width-auto {
 	margin: 0 auto;
 	text-align: center;
 	font-family: $serif;
-}
-
-// Copied from TinyMCE iframe.scss:
-
-.editor-media-modal-gallery__preview-individual .wp-caption {
 	background: none;
 	box-sizing: border-box;
 	border: none;

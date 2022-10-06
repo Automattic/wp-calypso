@@ -14,10 +14,20 @@
 	.header {
 		position: relative !important;
 		z-index: z-index("root", ".jpcom-masterbar") !important;
+		top: 0;
+		left: 0;
+		width: 100%;
+		padding: 2rem 0;
+		color: #101517;
+		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		transition: background 0.1s;
 	}
-
 	.header__nav-wrapper {
 		text-align: left;
+		display: flex;
+		justify-content: space-between;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.header__sections-list,
@@ -42,7 +52,25 @@
 
 		&::after {
 			display: none !important;
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: 100%;
+			border-style: solid;
+			border-color: transparent;
+			border-width: 0 8px 8px 8px;
+			border-bottom-color: white;
+			transform: translateX(-50%);
 		}
+		position: absolute;
+		top: calc(100% + 16px);
+		min-width: 160px;
+		padding: 0.5rem 1rem;
+		background-color: white;
+		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.15), 1px 1px 2px rgba(0, 0, 0, 0.15);
+		font-size: 0.875rem;
+		text-align: center;
 	}
 
 	@media ( max-width: 900px ) {
@@ -97,17 +125,6 @@
 		}
 	}
 
-	.header {
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 2;
-		width: 100%;
-		padding: 2rem 0;
-		color: #101517;
-		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
-		transition: background 0.1s;
-	}
 	@media ( max-width: 900px ) {
 		.header {
 			position: relative;
@@ -163,12 +180,6 @@
 		}
 	}
 
-	.header__nav-wrapper {
-		display: flex;
-		justify-content: space-between;
-		flex: 1;
-		min-width: 0;
-	}
 	@media ( max-width: 900px ) {
 		.header__nav-wrapper {
 			position: absolute;
@@ -426,7 +437,7 @@
 	.header__search-btn:focus-visible {
 		border-radius: 2px;
 		outline: solid 2px currentColor;
-		outline-offset: 4px;
+		outline-offset: 0;
 	}
 	@media ( max-width: 900px ) {
 		.header__search-btn {
@@ -442,9 +453,6 @@
 	.header__search-btn:any-link:hover {
 		background-color: #101517;
 		color: white;
-	}
-	.header__search-btn:focus-visible {
-		outline-offset: 0;
 	}
 	.header__search-btn:active {
 		transform: scale(0.9);
@@ -979,32 +987,6 @@
 
 	.mobile-btn__label {
 		margin-inline-start: 0.75rem;
-	}
-
-	.tooltip {
-		position: absolute;
-		top: calc(100% + 16px);
-		left: 50%;
-		min-width: 160px;
-		padding: 0.5rem 1rem;
-		background-color: white;
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.15), 1px 1px 2px rgba(0, 0, 0, 0.15);
-		font-size: 0.875rem;
-		text-align: center;
-		transform: translateX(-50%);
-	}
-	.tooltip::after {
-		content: "";
-		position: absolute;
-		left: 50%;
-		bottom: 100%;
-		display: block;
-		border-style: solid;
-		border-color: transparent;
-		border-width: 0 8px 8px 8px;
-		border-bottom-color: white;
-		transform: translateX(-50%);
 	}
 	.tooltip a {
 		color: #008710;

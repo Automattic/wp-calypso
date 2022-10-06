@@ -737,10 +737,6 @@
 			padding-right: $woo-form-whitespace-660;
 		}
 	}
-	.magic-login__form .logged-out-form {
-		padding-left: 0;
-		padding-right: 0;
-	}
 
 	.magic-login__form-header {
 		margin-bottom: 0;
@@ -749,6 +745,8 @@
 	.magic-login__form {
 		border: none;
 		.logged-out-form {
+			padding-left: 0;
+			padding-right: 0;
 			max-width: 100%;
 			box-shadow: none;
 			padding-bottom: 32px;
@@ -915,7 +913,7 @@
 
 	.signup-form__social {
 		p {
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 
 		.social-buttons__button {

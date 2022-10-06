@@ -23,10 +23,6 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 		outline: none;
 	}
 
-	&::-ms-clear {
-		display: none;
-	}
-
 	@include break-small {
 		@include onboarding-heading-text;
 	}

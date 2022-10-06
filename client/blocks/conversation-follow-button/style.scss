@@ -4,21 +4,21 @@ button.conversation-follow-button {
 	padding: 0;
 
 	.reader-follow-conversation {
-		fill: var( --color-primary );
+		fill: var(--color-primary);
 		pointer-events: auto;
 	}
 
 	.conversation-follow-button__label {
-		color: var( --color-primary );
+		color: var(--color-primary);
 		position: relative;
 	}
 
 	&:hover,
 	&:focus {
-		color: var( --color-primary );
+		color: var(--color-primary);
 
 		.reader-follow-conversation {
-			fill: var( --color-primary );
+			fill: var(--color-primary);
 		}
 	}
 
@@ -29,11 +29,13 @@ button.conversation-follow-button {
 				color: white;
 			}
 
-			.gridicon, .reader-follow-conversation, .reader-following-conversation {
-				fill: var( --color-text-inverted );
+			.gridicon,
+			.reader-follow-conversation,
+			.reader-following-conversation {
+				fill: var(--color-text-inverted);
 				g {
 					fill: white;
-					stroke: var( --color-success );
+					stroke: var(--color-success);
 				}
 			}
 		}
@@ -56,7 +58,7 @@ button.conversation-follow-button {
 			fill: var(--color-success);
 			g {
 				fill: white;
-				stroke: var( --color-success );
+				stroke: var(--color-success);
 			}
 		}
 
@@ -72,13 +74,13 @@ button.conversation-follow-button {
 
 		&:hover,
 		&:focus {
-			color: var( --color-success );
+			color: var(--color-success);
 
 			.reader-following-conversation {
-				fill: var( --color-success );
+				fill: var(--color-success);
 				g {
 					fill: white;
-					stroke: var( --color-success );
+					stroke: var(--color-success);
 				}
 			}
 		}
@@ -88,14 +90,12 @@ button.conversation-follow-button {
 				color: white;
 			}
 
-			.gridicon, .reader-follow-conversation, .reader-following-conversation {
-				fill: var( --color-text-inverted );
+			.gridicon,
+			.reader-follow-conversation,
+			.reader-following-conversation {
+				fill: var(--color-text-inverted);
 			}
 		}
-	}
-
-	.reader-following-conversation {
-		pointer-events: none;
 	}
 
 	.gridicon {

@@ -13,11 +13,6 @@
 		color: var(--color-text-inverted);
 	}
 
-	.banner__icon-circle,
-	.banner__icon {
-		margin-top: -2px;
-		margin-right: 0.25em;
-	}
 	.dismissible-card__close-button {
 		fill: var(--color-text-inverted);
 		margin-right: -6px;
@@ -45,6 +40,8 @@
 	}
 	.banner__icon-circle,
 	.banner__icon {
+		margin-top: -2px;
+		margin-right: 0.25em;
 		width: auto;
 		height: auto;
 		color: var(--color-text-inverted);
