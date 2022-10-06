@@ -46,6 +46,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 		const properties = {
 			action: eventType,
 			source,
+			context: 'email-different-owner',
 		};
 
 		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
@@ -93,7 +94,7 @@ export const EmailNonOwnerMessage = ( props: EmailNonOwnerMessageProps ) => {
 		<>
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"
-				eventProperties={ { source } }
+				eventProperties={ { source, context: 'email-different-owner' } }
 			/>
 			<p className="email-non-owner-message__non-owner-message">{ reasonText }</p>
 		</>
