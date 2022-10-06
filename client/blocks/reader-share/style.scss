@@ -1,13 +1,8 @@
 .reader-share__button.button {
 	color: var(--color-text-subtle);
-	padding: 4px;
-	position: relative;
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 100%;
-	line-height: 22px;
-	top: 2px;
+	padding: 0;
 
 	&:hover,
 	&:active {
@@ -22,7 +17,6 @@
 		.gridicon {
 			margin-right: 0;
 			margin-top: 0;
-			top: 0;
 		}
 	}
 
@@ -37,10 +31,6 @@
 			fill: var(--color-primary);
 		}
 	}
-}
-
-.reader-full-post__story .reader-share__button.button {
-	padding: 0 4px;
 }
 
 .reader-share__button-label {
@@ -147,8 +137,4 @@
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
-}
-
-.reader-post-actions__item .reader-share {
-	margin-right: 2px;
 }
