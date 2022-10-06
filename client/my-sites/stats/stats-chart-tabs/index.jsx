@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -98,13 +97,6 @@ class StatModuleChartTabs extends Component {
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
-				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
-				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart
