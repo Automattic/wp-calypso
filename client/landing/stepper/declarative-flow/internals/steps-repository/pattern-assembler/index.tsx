@@ -198,7 +198,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							moveDownSection( position );
 						} }
 						onAddFooter={ () => {
-							trackEventPatternAdd( 'header' );
+							trackEventPatternAdd( 'footer' );
 							setShowPatternSelectorType( 'footer' );
 						} }
 						onReplaceFooter={ () => {
