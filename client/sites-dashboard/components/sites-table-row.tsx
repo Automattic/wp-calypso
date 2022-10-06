@@ -150,7 +150,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			<Column ref={ ref } mobileHidden>
 				{ inViewOnce && (
 					<a href={ `/stats/day/${ site.slug }` }>
-						<StatsSparkline siteId={ site.ID }></StatsSparkline>
+						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
 					</a>
 				) }
 			</Column>
