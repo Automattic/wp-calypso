@@ -13,6 +13,7 @@ interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
 	isBusy?: boolean;
+	siteID: number;
 	onSelect?: ( vertical: Vertical ) => void;
 	onSubmit?: ( event: React.FormEvent, userInput: string ) => void;
 }
@@ -21,6 +22,7 @@ const SiteVerticalForm: React.FC< Props > = ( {
 	defaultVertical,
 	isSkipSynonyms,
 	isBusy,
+	siteID,
 	onSelect,
 	onSubmit,
 } ) => {
@@ -48,6 +50,7 @@ const SiteVerticalForm: React.FC< Props > = ( {
 				<SelectVertical
 					defaultVertical={ defaultVertical }
 					isSkipSynonyms={ isSkipSynonyms }
+					seed={ siteID }
 					onInputChange={ handleInputChange }
 					onSelect={ onSelect }
 				/>

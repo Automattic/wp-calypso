@@ -14,6 +14,8 @@ import type { SiteVerticalsResponse } from 'calypso/data/site-verticals';
 interface Props {
 	defaultVertical?: string;
 	isSkipSynonyms?: boolean;
+	/** Use to randomize the featured verticals */
+	seed?: string;
 	onInputChange?: ( searchTerm: string ) => void;
 	onSelect?: ( vertical: Vertical ) => void;
 }
@@ -21,6 +23,7 @@ interface Props {
 const SelectVertical: React.FC< Props > = ( {
 	defaultVertical,
 	isSkipSynonyms,
+	seed,
 	onInputChange,
 	onSelect,
 } ) => {
@@ -39,7 +42,7 @@ const SelectVertical: React.FC< Props > = ( {
 		skip_synonyms: isSkipSynonyms,
 	} );
 
-	const { data: featured } = useSiteVerticalsFeatured();
+	const { data: featured } = useSiteVerticalsFeatured( seed );
 
 	const mapOneSiteVerticalsResponseToVertical = ( vertical: SiteVerticalsResponse ): Vertical => ( {
 		value: vertical.id,

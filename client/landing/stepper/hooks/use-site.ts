@@ -3,7 +3,13 @@ import { SITE_STORE } from '../stores';
 import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
 
-export function useSite() {
+export interface Site {
+	ID: number;
+	name: string;
+	URL: string;
+}
+
+export function useSite(): Site | null {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
 	const siteId = useSelect(

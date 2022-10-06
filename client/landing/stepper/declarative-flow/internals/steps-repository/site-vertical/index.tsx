@@ -86,6 +86,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 						defaultVertical={ siteVertical }
 						isSkipSynonyms={ Boolean( isSkipSynonyms ) }
 						isBusy={ isBusy }
+						siteID={ site?.ID }
 						onSelect={ handleSiteVerticalSelect }
 						onSubmit={ handleSubmit }
 					/>
