@@ -100,23 +100,44 @@ describe( 'Search view', () => {
 	const myProps = {
 		search: 'searchterm',
 	};
+	const initialState = {
+		purchases: {
+			data: [],
+			error: null,
+			isFetchingSitePurchases: false,
+			isFetchingUserPurchases: false,
+			hasLoadedSitePurchasesFromServer: true,
+			hasLoadedUserPurchasesFromServer: false,
+		},
+	};
 
 	test( 'should show NoResults when there are no results', () => {
-		render( <PluginsBrowser { ...myProps } /> );
+		render( <PluginsBrowser { ...myProps } />, { initialState } );
 		expect( screen.getByText( /no plugins match your search/i ) ).toBeVisible();
 	} );
 	test( 'should show plugin list when there are results', () => {
 		mockPlugins = [ {} ];
-		render( <PluginsBrowser { ...myProps } /> );
+		render( <PluginsBrowser { ...myProps } />, { initialState } );
 		expect( screen.getByText( /found 0 plugins for/i ) ).toBeVisible();
 	} );
 } );
 
 describe( 'Upsell Nudge should get appropriate plan constant', () => {
+	const purchases = {
+		data: [],
+		error: null,
+		isFetchingSitePurchases: false,
+		isFetchingUserPurchases: false,
+		hasLoadedSitePurchasesFromServer: true,
+		hasLoadedUserPurchasesFromServer: false,
+	};
 	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
 		`Business 1 year for (%s)`,
 		( product_slug ) => {
-			const initialState = { sites: { items: { 1: { jetpack: false, plan: { product_slug } } } } };
+			const initialState = {
+				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
+				purchases,
+			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
@@ -129,6 +150,7 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		( product_slug ) => {
 			const initialState = {
 				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
+				purchases,
 			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );
@@ -139,14 +161,25 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 } );
 
 describe( 'PluginsBrowser basic tests', () => {
+	const purchases = {
+		data: [],
+		error: null,
+		isFetchingSitePurchases: false,
+		isFetchingUserPurchases: false,
+		hasLoadedSitePurchasesFromServer: true,
+		hasLoadedUserPurchasesFromServer: false,
+	};
+
 	test( 'should not blow up and have proper CSS class', () => {
-		render( <PluginsBrowser /> );
+		const initialState = { purchases };
+		render( <PluginsBrowser />, { initialState } );
 		const main = screen.getByRole( 'main' );
 		expect( main ).toBeVisible();
 	} );
 
 	test( 'should show upsell nudge when appropriate', () => {
-		render( <PluginsBrowser /> );
+		const initialState = { purchases };
+		render( <PluginsBrowser />, { initialState } );
 		expect( screen.getByTestId( 'upsell-nudge' ) ).toBeVisible();
 	} );
 
