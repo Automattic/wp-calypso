@@ -105,6 +105,27 @@ describe( '<UpdatePlugin>', () => {
 		).toEqual( 'Update successful' );
 	} );
 
+	test( 'should render correctly and show up-to-date status for plugin update', () => {
+		const updatedInitialState = {
+			...initialState,
+		};
+		updatedInitialState.plugins.installed.status = {
+			[ `${ site.ID }` ]: {
+				[ plugin.id ]: { status: 'up-to-date', action: UPDATE_PLUGIN },
+			},
+		};
+		const store = mockStore( updatedInitialState );
+		const { container } = render(
+			<Provider store={ store }>
+				<UpdatePlugin { ...props } />
+			</Provider>
+		);
+
+		expect(
+			container.getElementsByClassName( 'update-plugin__plugin-action-status' )[ 0 ].textContent
+		).toEqual( 'Plugin already up to date' );
+	} );
+
 	test( 'should render correctly and show error status of plugin update', async () => {
 		const updatedInitialState = {
 			...initialState,
