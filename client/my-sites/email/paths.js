@@ -298,29 +298,3 @@ export function emailManagementInbox( siteName = null ) {
 export function isUnderEmailManagementAll( path ) {
 	return path?.startsWith( emailManagementAllSitesPrefix + '/' );
 }
-
-/**
- *
- * @param { string } ownerUserName The username that will appear in the log in screen
- * @param { string | null | undefined } selectedSiteSlug The selected site slug
- * @param { string } selectedDomainName The domain name to purchase email subscription
- * @returns {string} Login Url with email_address and redirect_to parameters included in the URI
- */
-export function loginUrlWithUserNameAndRedirectToEmailProvidersComparison(
-	ownerUserName,
-	selectedSiteSlug,
-	selectedDomainName,
-) {
-	const redirectUrlParameter = encodeURIComponent(
-		emailManagementPurchaseNewEmailAccount(
-			selectedSiteSlug ?? '',
-			selectedDomainName,
-			null,
-			'login-redirect',
-		)
-	);
-	const loginUrl = `https://wordpress.com/log-in${
-		ownerUserName ? userNameUrlParameter : ''
-	}&redirect_to=${ redirectUrlParameter }`;
-	return loginUrl;
-}
