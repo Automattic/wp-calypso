@@ -1,7 +1,8 @@
-import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
+import { FEATURE_INSTALL_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { useCallback } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -117,6 +118,12 @@ function Empty( { emptyContent, translate } ) {
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
 
+	const onUpgradeClick = useCallback( () => {
+		return page(
+			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
+		);
+	}, [ selectedSite ] );
+
 	if ( emptyContent ) {
 		return emptyContent;
 	}
@@ -133,11 +140,11 @@ function Empty( { emptyContent, translate } ) {
 				</div>
 				<div className="themes-list__upgrade-section-subtitle">
 					{ translate(
-						'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a paid plan.'
+						'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
 					) }
 				</div>
 
-				<Button primary className="themes-list__upgrade-section-cta">
+				<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
 					{ translate( 'Upgrade your plan' ) }
 				</Button>
 
