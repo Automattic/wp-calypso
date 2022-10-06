@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import { useFlowProgress, LINK_IN_BIO_FLOW, createSiteWithCart } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
+import { createSiteWithCart } from '../lib/signup/utils';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
@@ -21,7 +22,14 @@ export const linkInBio: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_link_in_bio', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'linkInBioSetup', 'patterns', 'processing', 'launchpad' ] as StepPath[];
+		return [
+			'intro',
+			'linkInBioSetup',
+			'domains',
+			'patterns',
+			'processing',
+			'launchpad',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -68,11 +76,15 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return window.location.assign(
-						`/start/${ flowName }/domains?new=${ encodeURIComponent(
-							providedDependencies.siteTitle as string
-						) }&search=yes&hide_initial_query=yes`
-					);
+					return navigate( 'domains' );
+				// return window.location.assign(
+				// 	`/start/${ flowName }/domains?new=${ encodeURIComponent(
+				// 		providedDependencies.siteTitle as string
+				// 	) }&search=yes&hide_initial_query=yes`
+				// );
+
+				case 'domains':
+					return navigate( 'plans' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
