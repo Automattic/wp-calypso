@@ -87,7 +87,7 @@ const PluginsSearchResultPage = ( {
 					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
-						total: pluginsPagination.results,
+						total: pluginsPagination.results.toLocaleString(),
 						searchTerm,
 					},
 				}
@@ -101,7 +101,7 @@ const PluginsSearchResultPage = ( {
 						count: pluginsPagination.results,
 						textOnly: true,
 						args: {
-							total: pluginsPagination.results,
+							total: pluginsPagination.results.toLocaleString(),
 							searchTerm,
 							categoryName,
 						},
