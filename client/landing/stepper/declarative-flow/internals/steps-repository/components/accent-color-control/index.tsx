@@ -73,7 +73,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
+				<FormLabel htmlFor="accentColor">{ __( 'Favorite color' ) }</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
 					className="accent-color-control__accent-color-input"

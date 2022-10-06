@@ -27,7 +27,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder: __( 'Add a site icon' ),
+		iconPlaceholder: __( 'Add a logo or profile picture' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -96,7 +96,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Newsletter' ), {
+					headerText={ createInterpolateElement( __( 'Set up your<br />Newsletter' ), {
 						br: <br />,
 					} ) }
 					align={ 'center' }
