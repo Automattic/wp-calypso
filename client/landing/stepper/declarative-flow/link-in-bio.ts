@@ -80,9 +80,9 @@ export const linkInBio: Flow = {
 				// );
 
 				case 'domains':
-					return window.location.assign(
-						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
-					);
+					//Still in development
+					//return navigate( 'plans' );
+					break;
 
 				case 'launchpad': {
 					return navigate( 'processing' );

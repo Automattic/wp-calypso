@@ -84,6 +84,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		};
 	} );
 
+	const { setDomainForm } = useDispatch( ONBOARD_STORE );
+
 	const { __ } = useI18n();
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
 
@@ -235,43 +237,45 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			submitSignupStep: () => dispatch( submitSignupStep ),
 		} );
 
-		const siteAccentColor = flow === 'newsletter' && queryObject?.siteAccentColor;
-
 		console.log( 'siteUrl', siteUrl );
-		console.log( 'productSlug', sitesuggestion.product_slugUrl );
+		console.log( 'productSlug', suggestion.product_slugUrl );
 
 		//This should be added to the things to be done after Plans
-		// createSiteWithCart(
-		// 	name,
-		// 	siteUrl,
-		// 	false,
-		// 	{
-		// 		domainItem: {
-		// 			is_domain_registration: true,
-		// 			meta: siteUrl,
-		// 			product_slug:  suggestion.product_slug,
-		// 		},
-		// 		flowName: undefined,
-		// 		lastKnownFlow: name,
-		// 		googleAppsCartItem: undefined,
-		// 		isPurchasingItem: true,
-		// 		siteUrl: providedDependencies.siteSlug,
-		// 		themeSlugWithRepo: undefined,
-		// 		themeItem: undefined,
-		// 		siteAccentColor: '#0675C4',
-		// 	},
-		// 	userIsLoggedIn,
-		// 	false,
-		// 	( error, siteDependencies ) => {
-		// 		//With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
-		// 		//Currently we only pass siteSlug, but we shall save domainItem in the store
-		// 		return window.location.assign(
-		// 			`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
-		// 				siteDependencies.siteSlug as string
-		// 			) }`
-		// 		);
-		// 	}
-		// );
+		createSiteWithCart(
+			flow,
+			siteUrl,
+			false,
+			{
+				domainItem: {
+					is_domain_registration: true,
+					meta: siteUrl,
+					product_slug: suggestion.product_slug,
+				},
+				flowName: undefined,
+				lastKnownFlow: name,
+				googleAppsCartItem: undefined,
+				isPurchasingItem: true,
+				siteUrl,
+				themeSlugWithRepo: undefined,
+				themeItem: undefined,
+				siteAccentColor,
+			},
+			userLoggedIn,
+			false,
+			( error, siteDependencies ) => {
+				console.log( 'sitedep', siteDependencies );
+				return window.location.assign(
+					`/checkout/${ encodeURIComponent( siteUrl as string ) }?signup=1#step2`
+				);
+				// //With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
+				// //Currently we only pass siteSlug, but we shall save domainItem in the store
+				// return window.location.assign(
+				// 	`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
+				// 		siteDependencies.siteSlug as string
+				// 	) }`
+				// );
+			}
+		);
 
 		// setDomainResult( {
 		// 	domainItem,
@@ -303,7 +307,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		// dispatch( setDesignType( getDesignType() ) );
 		// Start the username suggestion process.
 		// siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
-		submit?.( { siteSlug: siteUrl, productSlug: suggestion.product_slug } ); //this.props.goToNextStep();
+		submit?.();
 	};
 
 	const handleSkip = ( googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
@@ -451,6 +455,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const handleSave = ( state ) => {
+		console.log( 'SAVE', state );
+
+		setDomainForm( state );
+
 		dispatch(
 			saveSignupStep( {
 				stepName: 'domains', //this.props.stepName,
