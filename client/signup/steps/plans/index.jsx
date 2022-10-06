@@ -250,7 +250,6 @@ export class PlansStep extends Component {
 								isLaunchPage={ isLaunchPage }
 								intervalType={ this.getIntervalType() }
 								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
 								domainName={ this.getDomainName() }
 								customerType={ this.getCustomerType() }
 								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
