@@ -52,6 +52,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		const properties = {
 			action: eventType,
 			source,
+			context: 'domain-different-owner',
 		};
 
 		recordTracksEvent( `calypso_email_providers_nonowner_click`, properties );
@@ -112,7 +113,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 			</PromoCard>
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"
-				eventProperties={ { source } }
+				eventProperties={ { source, context: 'domain-different-owner' } }
 			/>
 		</>
 	);
