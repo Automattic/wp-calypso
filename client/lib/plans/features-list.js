@@ -314,7 +314,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'CSS customization' ),
 		getDescription: () =>
-			i18n.translate( 'Customize your CSS, giving you complete control over how your site looks.' ),
+			i18n.translate(
+				'Add your own CSS code, giving you complete control over how your site looks.'
+			),
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
@@ -638,7 +640,9 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ADVANCED_DESIGN,
 		getTitle: () => i18n.translate( 'CSS customization' ),
 		getDescription: () =>
-			i18n.translate( 'Customize your CSS, giving you complete control over how your site looks.' ),
+			i18n.translate(
+				'Add your own CSS code, giving you complete control over how your site looks.'
+			),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
 
