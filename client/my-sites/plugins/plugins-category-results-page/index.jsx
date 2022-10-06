@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
 import Header from './header';
@@ -29,6 +30,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	return (
 		<>
+			<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
 			<Header title={ categoryName } count={ title } subtitle={ categoryDescription } />
 
 			<FullListView
