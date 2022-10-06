@@ -60,7 +60,7 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	// retrieve WPCom plugin data
 	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
 	const softwareSlug = wpComPluginData
-		? wpComPluginData.software_slug || wpComPluginData.org_slug || wpComPluginData.slug
+		? wpComPluginData.software_slug || wpComPluginData.org_slug
 		: productSlug;
 
 	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, softwareSlug ) );
