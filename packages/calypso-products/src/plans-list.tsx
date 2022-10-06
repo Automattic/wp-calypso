@@ -411,10 +411,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getSignupCompareAvailableFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_HOSTING,
-		WPCOM_FEATURES_GLOBAL_STYLES,
 		FEATURE_NO_ADS,
 		FEATURE_COLLECT_PAYMENTS_V2,
 		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		WPCOM_FEATURES_GLOBAL_STYLES,
 	],
 	getNewsletterDescription: () =>
 		i18n.translate(
@@ -560,10 +560,10 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
 			FEATURE_EMAIL_SUPPORT_SIGNUP,
+			WPCOM_FEATURES_GLOBAL_STYLES,
 			FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			WPCOM_FEATURES_GLOBAL_STYLES,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_INSTALL_PLUGINS,
 			FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -725,10 +725,10 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_COLLECT_PAYMENTS_V2,
 			FEATURE_EMAIL_SUPPORT_SIGNUP,
+			WPCOM_FEATURES_GLOBAL_STYLES,
 			FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			FEATURE_EARN_AD,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
-			WPCOM_FEATURES_GLOBAL_STYLES,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
 	getCondensedExperimentFeatures: () =>

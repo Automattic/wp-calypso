@@ -299,7 +299,7 @@ export const FEATURES_LIST = {
 	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
 		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
 		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
+			i18n.translate( 'Advanced design customization', {
 				components: {
 					strong: <strong />,
 				},
