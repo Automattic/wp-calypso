@@ -100,7 +100,7 @@ export const MarketingTools: FunctionComponent = () => {
 				<MarketingToolsFeature
 					title={ translate( 'Get more traffic by promoting your content' ) }
 					description={ translate(
-						'Promote your content on millions of sites across WordPress.com and Tumbler with our new promoted post tool. Get new users to your best content for as little as $1 a day.'
+						'Promote your content on millions of sites across WordPress.com and Tumblr with our new promoted post tool. Get new users to your best content, spending less than you would on a cup of coffee..'
 					) }
 					imagePath={ promotionIcon }
 				>
