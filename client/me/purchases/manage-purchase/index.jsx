@@ -63,6 +63,7 @@ import {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
+	isAutoRenewing,
 	isPaidWithCredits,
 	isCancelable,
 	isExpired,
@@ -629,9 +630,19 @@ class ManagePurchase extends Component {
 
 	getCancellationFlowType = () => {
 		const { purchase } = this.props;
-		return hasAmountAvailableToRefund( purchase )
-			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
-			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		const isPlanRefundable = isRefundable( purchase );
+		const isPlanAutoRenewing = isAutoRenewing( purchase );
+
+		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
+			// If the subscription is refundable the subscription should be removed immediately.
+			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+			// If the subscription is not refundable and auto-renew is on turn off auto-renew.
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
+		return CANCEL_FLOW_TYPE.REMOVE;
 	};
 
 	renderCancelForm() {

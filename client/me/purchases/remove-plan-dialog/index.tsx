@@ -17,6 +17,7 @@ interface RemovePlanDialogProps {
 	site: SiteExcerptData;
 	hasDomain: boolean;
 	isRefundable: boolean;
+	isAutoRenewing: boolean;
 	primaryDomain: string;
 	wpcomURL: string;
 }
@@ -28,6 +29,7 @@ export const RemovePlanDialog = ( {
 	site,
 	hasDomain,
 	isRefundable,
+	isAutoRenewing,
 	primaryDomain,
 	wpcomURL,
 }: RemovePlanDialogProps ) => {
@@ -44,9 +46,15 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
-	const subTitle = isRefundable
-		? translate( 'If you cancel your plan, once it expires, you will lose:' )
-		: translate( 'If you cancel your plan, you will lose:' );
+	let subTitle = '';
+
+	if ( isRefundable && isAutoRenewing ) {
+		subTitle = translate( 'If you cancel your plan, you will lose:' );
+	} else if ( ! isRefundable && isAutoRenewing ) {
+		subTitle = translate( 'If you cancel your plan, once it expires, you will lose:' );
+	} else if ( ! isRefundable && ! isAutoRenewing ) {
+		translate( 'If you remove your plan, you will lose:' );
+	}
 
 	/**
 	 * Click events, buttons tracking and action.
