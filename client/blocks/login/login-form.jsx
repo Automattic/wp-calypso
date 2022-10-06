@@ -17,9 +17,13 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
+import {
+	getSignupUrl,
+	pathWithLeadingSlash,
+	isReactLostPasswordScreenEnabled,
+} from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { login } from 'calypso/lib/paths';
+import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -491,6 +495,42 @@ export class LoginForm extends Component {
 			: this.props.translate( 'Email Address or Username' );
 	}
 
+	renderLostPasswordLink() {
+		if ( isReactLostPasswordScreenEnabled() ) {
+			return (
+				<a
+					className="login__form-forgot-password"
+					href="/"
+					onClick={ ( event ) => {
+						event.preventDefault();
+						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
+						page(
+							login( {
+								redirectTo: this.props.redirectTo,
+								locale: this.props.locale,
+								action: 'lostpassword',
+								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
+							} )
+						);
+					} }
+				>
+					{ this.props.translate( 'Forgot password?' ) }
+				</a>
+			);
+		}
+
+		return (
+			<a
+				className="login__form-forgot-password"
+				href={ lostPassword( this.props.locale ) }
+				onClick={ () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ) }
+				rel="external"
+			>
+				{ this.props.translate( 'Forgot password?' ) }
+			</a>
+		);
+	}
+
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
@@ -515,7 +555,6 @@ export class LoginForm extends Component {
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
-			redirectTo,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -685,26 +724,7 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ this.props.isWoo && ! this.props.isPartnerSignup && (
-						<a
-							className="login__form-forgot-password"
-							href="/"
-							onClick={ ( event ) => {
-								event.preventDefault();
-								this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-								page(
-									login( {
-										redirectTo,
-										locale,
-										action: 'lostpassword',
-										oauth2ClientId: oauth2Client && oauth2Client.id,
-									} )
-								);
-							} }
-						>
-							{ this.props.translate( 'Forgot password?' ) }
-						</a>
-					) }
+					{ this.props.isWoo && ! this.props.isPartnerSignup && this.renderLostPasswordLink() }
 					<div className="login__form-action">
 						<FormsButton primary disabled={ isSubmitButtonDisabled }>
 							{ this.getLoginButtonText() }
