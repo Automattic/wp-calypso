@@ -311,7 +311,7 @@ export const HelpCenterContactForm = () => {
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
-			<div>
+			<>
 				<button
 					className="help-center-contact-form__site-picker-forum-privacy-info"
 					ref={ ref }
@@ -334,7 +334,7 @@ export const HelpCenterContactForm = () => {
 						) }
 					</span>
 				</Popover>
-			</div>
+			</>
 		);
 	};
 
