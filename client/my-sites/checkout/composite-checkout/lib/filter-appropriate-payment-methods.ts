@@ -16,7 +16,8 @@ export default function filterAppropriatePaymentMethods( {
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	responseCart: ResponseCart;
 } ): PaymentMethod[] {
-	const isPurchaseFree = responseCart.total_cost_integer === 0;
+	const forcePaymentMethod = true;
+	const isPurchaseFree = responseCart.total_cost_integer === 0 && ! forcePaymentMethod;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 
 	return paymentMethodObjects

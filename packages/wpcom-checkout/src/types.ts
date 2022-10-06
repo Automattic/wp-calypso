@@ -13,7 +13,7 @@ export type WPCOMTransactionEndpointResponse = {
 	receipt_id?: number;
 	order_id?: number;
 	redirect_url?: string;
-	message?: { payment_intent_client_secret: string };
+	message?: { payment_intent_client_secret?: string; setup_intent_client_secret?: string };
 };
 
 export interface Purchase {

@@ -1,4 +1,8 @@
-import { confirmStripePaymentIntent, createStripePaymentMethod } from '@automattic/calypso-stripe';
+import {
+	confirmStripePaymentIntent,
+	createStripePaymentMethod,
+	confirmStripeSetupIntent,
+} from '@automattic/calypso-stripe';
 import {
 	makeSuccessResponse,
 	makeRedirectResponse,
@@ -139,6 +143,19 @@ async function stripeCardProcessor(
 				await confirmStripePaymentIntent(
 					submitData.stripe,
 					stripeResponse?.message?.payment_intent_client_secret
+				);
+				// We must return the original authentication response in order to have
+				// access to the order_id so that we can display a pending page while
+				// we wait for Stripe to send a webhook to complete the purchase.
+			}
+			if ( stripeResponse?.message?.setup_intent_client_secret ) {
+				debug( 'transaction requires authentication for Stripe SetupIntent' );
+				// 3DS authentication required
+				reduxDispatch( recordTracksEvent( 'calypso_checkout_modal_authorization', {} ) );
+				// If this fails, it will reject (throw) and we'll end up in the catch block below.
+				await confirmStripeSetupIntent(
+					submitData.stripe,
+					stripeResponse.message.setup_intent_client_secret
 				);
 				// We must return the original authentication response in order to have
 				// access to the order_id so that we can display a pending page while

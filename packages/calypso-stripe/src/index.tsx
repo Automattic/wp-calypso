@@ -276,6 +276,24 @@ export async function confirmStripePaymentIntent(
 	return paymentIntent;
 }
 
+// Confirm any SetupIntent from Stripe response and carry out 3DS or
+// other next_actions if they are required.
+export async function confirmStripeSetupIntent(
+	stripe: Stripe,
+	setupIntentClientSecret: string
+): Promise< StripeAuthenticationResponse > {
+	debug( 'Confirming setupIntent...', setupIntentClientSecret );
+	const { setupIntent, error } = await stripe.confirmCardSetup( setupIntentClientSecret );
+	if ( error || ! setupIntent ) {
+		debug( 'Confirming setupIntent failed', error );
+		// Note that this is a promise rejection
+		throw new StripePaymentMethodError(
+			new Error( error?.message ?? 'Unknown error while confirming Stripe setup intent' )
+		);
+	}
+	return setupIntent;
+}
+
 /**
  * Extract validation errors from a Stripe error
  *
