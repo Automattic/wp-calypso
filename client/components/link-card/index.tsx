@@ -6,14 +6,12 @@ import './style.scss';
 
 interface LinkCardContainerProps {
 	background?: string;
-	backgroundColor?: string;
 }
 interface LinkCardProps {
 	label?: ReactChild;
 	title: ReactChild;
 	cta?: ReactChild;
 	background?: string;
-	backgroundColor?: string;
 	url: string;
 	external?: boolean;
 	onClick?: () => void;
@@ -26,12 +24,7 @@ const LinkCardContainer = styled.div< LinkCardContainerProps >`
 
 	border-radius: 5px;
 	padding: 24px;
-	background: ${ ( props ) => {
-		if ( props.backgroundColor ) {
-			return props.backgroundColor;
-		}
-		return 'var( --' + props.background || 'studio-white' + ');';
-	} };
+	background: ${ ( props ) => props.background || 'var(--studio-white)' };
 `;
 
 const LinkCardLabel = styled.div`
@@ -67,13 +60,13 @@ const LinkCardCta = styled.div`
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, backgroundColor, url, external, onClick } = props;
+	const { label, title, cta, background, url, external, onClick } = props;
 
 	const Link = external ? ExternalLink : 'a';
 
 	return (
 		<Link href={ url } onClick={ onClick }>
-			<LinkCardContainer background={ background } backgroundColor={ backgroundColor }>
+			<LinkCardContainer background={ background }>
 				<LinkCardLabel>{ label }</LinkCardLabel>
 				<LinkCardTitle>{ title }</LinkCardTitle>
 				<LinkCardCta>{ cta }</LinkCardCta>
