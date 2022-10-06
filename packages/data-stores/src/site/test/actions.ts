@@ -454,11 +454,11 @@ describe( 'Site Actions', () => {
 			);
 		} );
 
-		it( 'should not send vertical_id to theme-setup API if the design is not verticalizable', () => {
+		it( 'should not send vertical_id to theme-setup API if the design is not verticalized', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const generator = setDesignOnSite( siteSlug, {
 				...mockedDesign,
-				verticalizable: false,
+				is_verticalized: false,
 			} );
 
 			// First iteration: WP_COM_REQUEST to /sites/${ siteSlug }/themes/mine is fired
@@ -477,14 +477,14 @@ describe( 'Site Actions', () => {
 			);
 		} );
 
-		it( 'should send vertical_id to theme-setup API if the design is verticalizable and vertical id is passed', () => {
+		it( 'should send vertical_id to theme-setup API if the design is verticalized and vertical id is passed', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const mockedSiteVerticalId = '1';
 			const generator = setDesignOnSite(
 				siteSlug,
 				{
 					...mockedDesign,
-					verticalizable: true,
+					is_verticalized: true,
 				},
 				{ verticalId: mockedSiteVerticalId }
 			);

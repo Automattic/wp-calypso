@@ -82,6 +82,7 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
+	is_verticalized?: boolean;
 	is_premium: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
@@ -91,7 +92,6 @@ export interface Design {
 	design_type?: DesignType;
 	style_variations?: StyleVariation[];
 	price?: string;
-	verticalizable?: boolean;
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
 
