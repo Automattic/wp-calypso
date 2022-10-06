@@ -4,6 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
+import { useEffect } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -40,6 +41,17 @@ export const HelpCenterContactPage: React.FC = () => {
 	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
 		staleTime: 30 * 60 * 1000,
 	} );
+
+	useEffect( () => {
+		if ( renderChat.isLoading || isLoadingTickets ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
+			location: 'help-center',
+			chat_available: renderChat.state === 'AVAILABLE',
+			email_available: renderEmail,
+		} );
+	}, [ isLoadingTickets, renderChat.isLoading, renderChat.state, renderEmail ] );
 
 	if ( renderChat.isLoading || isLoadingTickets ) {
 		return (
