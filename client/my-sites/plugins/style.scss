@@ -292,7 +292,7 @@ body.is-section-plugins header .select-dropdown__item {
 }
 
 body.is-section-plugins #primary {
-	&::before {
+	.search-box-header::before {
 		box-sizing: border-box;
 		content: "";
 		background-color: #fdfdfd;
