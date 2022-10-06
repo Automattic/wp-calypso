@@ -89,7 +89,6 @@ const EducationFooter = () => {
 			<Section
 				header={ __( 'Get started with plugins' ) }
 				subheader={ __( 'Our favorite how-to guides to get you started with plugins' ) }
-				whiteBackground
 			>
 				<ThreeColumnContainer>
 					<LinkCard

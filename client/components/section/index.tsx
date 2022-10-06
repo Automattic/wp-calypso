@@ -8,12 +8,10 @@ interface SectionProps {
 	subheader?: ReactChild;
 	children: ReactChild | ReactChild[];
 	dark?: boolean;
-	whiteBackground?: boolean;
 }
 
 interface SectionContainerProps {
 	dark?: boolean;
-	whiteBackground?: boolean;
 }
 
 interface SectionHeaderProps {
@@ -24,12 +22,8 @@ const SectionContainer = styled.div< SectionContainerProps >`
 	::before {
 		box-sizing: border-box;
 		content: '';
-		background-color: ${ ( props ) => {
-			if ( props.whiteBackground ) {
-				return 'var( --studio-white )';
-			}
-			return props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-gray-0 )';
-		} };
+		background-color: ${ ( props ) =>
+			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
@@ -68,10 +62,10 @@ const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 const SectionContent = styled.div``;
 
 const Section = ( props: SectionProps ) => {
-	const { children, header, subheader, dark, whiteBackground } = props;
+	const { children, header, subheader, dark } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer dark={ dark } whiteBackground={ whiteBackground }>
+		<SectionContainer dark={ dark }>
 			<SectionHeaderContainer>
 				<SectionHeader dark={ dark } className="wp-brand-font">
 					{ header }
