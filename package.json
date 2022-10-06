@@ -252,7 +252,6 @@
 		"husky": "^7.0.4",
 		"jest": "^27.3.1",
 		"jest-canvas-mock": "^2.4.0",
-		"jest-each": "^29.1.2",
 		"jest-environment-jsdom": "^27.3.1",
 		"jest-teamcity": "^1.9.0",
 		"loader-utils": "^1.2.3",

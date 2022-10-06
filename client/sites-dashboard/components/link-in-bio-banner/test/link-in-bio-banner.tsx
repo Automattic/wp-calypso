@@ -3,7 +3,6 @@
  */
 import * as viewport from '@automattic/viewport-react';
 import { render, screen } from '@testing-library/react';
-import each from 'jest-each';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state/index';
@@ -12,7 +11,7 @@ import { LinkInBioBanner } from '../link-in-bio-banner';
 import { LINK_IN_BIO_BANNER_PREFERENCE } from '../link-in-bio-banner-parts';
 
 describe( '<LinkInBioBanner>', () => {
-	each( [
+	test.each( [
 		//visible and right amount of rows - show
 		[ true, 1, 'row', 'row-banner', true, false ],
 		[ true, 1, 'grid', 'double-tile-banner', true, false ],
@@ -31,7 +30,7 @@ describe( '<LinkInBioBanner>', () => {
 		[ true, 2, 'grid', 'tile-banner', true, true ],
 		//visible and right amount of rows, but already has Link in Bio site - don't show
 		[ true, 1, 'row', 'row-banner', false, false, 'link-in-bio' ],
-	] ).test(
+	] )(
 		'Parameters: visible: %s, site count: %s, type: %s, expectValue: %s, isMobile: %s, siteIntent: %s',
 		( visible, siteCount, type, output, expectValue, isMobile, siteIntent = 'other' ) => {
 			if ( isMobile ) {
@@ -45,10 +44,10 @@ describe( '<LinkInBioBanner>', () => {
 				</Provider>
 			);
 			if ( expectValue ) {
-				// eslint-disable-next-line jest/no-standalone-expect
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( screen.getByTestId( output ) ).toBeInTheDocument();
 			} else {
-				// eslint-disable-next-line jest/no-standalone-expect
+				// eslint-disable-next-line jest/no-conditional-expect
 				expect( screen.queryByTestId( output ) ).not.toBeInTheDocument();
 			}
 		}

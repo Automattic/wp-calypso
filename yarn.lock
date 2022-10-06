@@ -4237,15 +4237,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/schemas@npm:^29.0.0":
-  version: 29.0.0
-  resolution: "@jest/schemas@npm:29.0.0"
-  dependencies:
-    "@sinclair/typebox": ^0.24.1
-  checksum: 08c2f6b0237f52ab9448eb6633561ee1e499871082ac41a51b581e91571f6da317b4be0529307caf4cb3fd50798f7c096665db6bb2b5dde999a2c0c08b8775c9
-  languageName: node
-  linkType: hard
-
 "@jest/source-map@npm:^24.9.0":
   version: 24.9.0
   resolution: "@jest/source-map@npm:24.9.0"
@@ -4384,20 +4375,6 @@ __metadata:
     "@types/yargs": ^16.0.0
     chalk: ^4.0.0
   checksum: 4598b302398db0eb77168b75a6c58148ea02cc9b9f21c5d1bbe985c1c9257110a5653cf7b901c3cab87fba231e3fed83633687f1c0903b4bc6939ab2a8452504
-  languageName: node
-  linkType: hard
-
-"@jest/types@npm:^29.1.2":
-  version: 29.1.2
-  resolution: "@jest/types@npm:29.1.2"
-  dependencies:
-    "@jest/schemas": ^29.0.0
-    "@types/istanbul-lib-coverage": ^2.0.0
-    "@types/istanbul-reports": ^3.0.0
-    "@types/node": "*"
-    "@types/yargs": ^17.0.8
-    chalk: ^4.0.0
-  checksum: 931b864bca5e7f99f86de02d6efc0ee1a86eef7fc2b6db7103f84cf8dd73278122855b0e5b964087f391169c73887a6c069aa8dbc8a722c00c5cb0f33cc42b63
   languageName: node
   linkType: hard
 
@@ -5148,13 +5125,6 @@ __metadata:
     parse-css-font: ^4.0.0
     postcss-values-parser: ^6.0.1
   checksum: 09b948c7615b3fc2b946a3ee59ac4772861abce98ce1509030c239355f389d61efa97a10154dbd8a207ed0d65784ed2b8b00d7b46db359b1c87f9dc2c5eb6dea
-  languageName: node
-  linkType: hard
-
-"@sinclair/typebox@npm:^0.24.1":
-  version: 0.24.44
-  resolution: "@sinclair/typebox@npm:0.24.44"
-  checksum: 51f54cec2f94fbb26019d96d2316490bd2a0244b494ce34a7958cc68d650a47230813b9fc04549d68dd6a84ac0d0529c11cbbfaa4b3875d4b6348a7958605b7f
   languageName: node
   linkType: hard
 
@@ -7743,7 +7713,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:^17.0.1, @types/yargs@npm:^17.0.8":
+"@types/yargs@npm:^17.0.1":
   version: 17.0.13
   resolution: "@types/yargs@npm:17.0.13"
   dependencies:
@@ -21638,19 +21608,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-each@npm:^29.1.2":
-  version: 29.1.2
-  resolution: "jest-each@npm:29.1.2"
-  dependencies:
-    "@jest/types": ^29.1.2
-    chalk: ^4.0.0
-    jest-get-type: ^29.0.0
-    jest-util: ^29.1.2
-    pretty-format: ^29.1.2
-  checksum: e1900b8d489088470fba306f59a07cdb66a08bcb68d52da97d787ee76dd85244bcd16bfb75b35d4beb99e803aca3e410009dd26fec22204e3f63c9366d3f8040
-  languageName: node
-  linkType: hard
-
 "jest-environment-enzyme@npm:^7.1.2":
   version: 7.1.2
   resolution: "jest-environment-enzyme@npm:7.1.2"
@@ -21742,13 +21699,6 @@ __metadata:
   version: 27.5.1
   resolution: "jest-get-type@npm:27.5.1"
   checksum: 42ee0101336bccfc3c1cff598b603c6006db7876b6117e5bd4a9fb7ffaadfb68febdb9ae68d1c47bc3a4174b070153fc6cfb59df995dcd054e81ace5028a7269
-  languageName: node
-  linkType: hard
-
-"jest-get-type@npm:^29.0.0":
-  version: 29.0.0
-  resolution: "jest-get-type@npm:29.0.0"
-  checksum: 953a32cef3034764c0e2ac53e8192fe1fa3e5e56465086f0b57cd1a45aebbfceecca1f8cf890004be41b99fa7c4585b3c183a2dee5017c088a8a5b760dca31d0
   languageName: node
   linkType: hard
 
@@ -22172,20 +22122,6 @@ __metadata:
     graceful-fs: ^4.2.9
     picomatch: ^2.2.3
   checksum: 0f60cd2a2e09a6646ccd4ff489f1970282c0694724104979e897bd5164f91204726f5408572bf5e759d09e59d5c4e4dc65a643d2b630e06a10402bba07bf2a2e
-  languageName: node
-  linkType: hard
-
-"jest-util@npm:^29.1.2":
-  version: 29.1.2
-  resolution: "jest-util@npm:29.1.2"
-  dependencies:
-    "@jest/types": ^29.1.2
-    "@types/node": "*"
-    chalk: ^4.0.0
-    ci-info: ^3.2.0
-    graceful-fs: ^4.2.9
-    picomatch: ^2.2.3
-  checksum: 59e1c7bd99684e9be39a789f05f34e7c00309d7d18ea7fa52f3405b2df1a74dae7ae32293d8548ed15b4c9231a1dbd48a03cbbca56b1b71bbabcc3390fe522ff
   languageName: node
   linkType: hard
 
@@ -27921,17 +27857,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^29.1.2":
-  version: 29.1.2
-  resolution: "pretty-format@npm:29.1.2"
-  dependencies:
-    "@jest/schemas": ^29.0.0
-    ansi-styles: ^5.0.0
-    react-is: ^18.0.0
-  checksum: 7b9b37ca8412aa05a5db359f88b0497174c8520c687e6ee06b2f16b7369161cb11469f9ae9ff5bf6bf0ced95f86752b8a0fa796476fe3b2da7596ea02e8f77a0
-  languageName: node
-  linkType: hard
-
 "pretty-hrtime@npm:^1.0.3":
   version: 1.0.3
   resolution: "pretty-hrtime@npm:1.0.3"
@@ -28802,13 +28727,6 @@ __metadata:
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
   checksum: 33977da7a5f1a287936a0c85639fec6ca74f4f15ef1e59a6bc20338fc73dc69555381e211f7a3529b8150a1f71e4225525b41b60b52965bda53ce7d47377ada1
-  languageName: node
-  linkType: hard
-
-"react-is@npm:^18.0.0":
-  version: 18.2.0
-  resolution: "react-is@npm:18.2.0"
-  checksum: 6eb5e4b28028c23e2bfcf73371e72cd4162e4ac7ab445ddae2afe24e347a37d6dc22fae6e1748632cd43c6d4f9b8f86dcf26bf9275e1874f436d129952528ae0
   languageName: node
   linkType: hard
 
@@ -35904,7 +35822,6 @@ swiper@4.5.1:
     i18n-calypso-cli: "workspace:^"
     jest: ^27.3.1
     jest-canvas-mock: ^2.4.0
-    jest-each: ^29.1.2
     jest-environment-jsdom: ^27.3.1
     jest-teamcity: ^1.9.0
     loader-utils: ^1.2.3
