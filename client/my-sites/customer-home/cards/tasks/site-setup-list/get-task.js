@@ -64,7 +64,16 @@ export const getTask = (
 
 	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
-	const jetpackAppBanner = displayJetpackAppBranding && {
+	const wpAppBanner = {
+		title: translate( 'Try the WordPress app' ),
+		description: isBlogger
+			? translate( 'Write posts, check stats, and reply to comments on the go!' )
+			: translate(
+					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
+			  ),
+	};
+
+	const jetpackAppBanner = {
 		title: translate( 'Try the Jetpack app' ),
 		subtitle: translate( 'Put your site in your pocket' ),
 		icon: (
@@ -138,13 +147,8 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
+				...( displayJetpackAppBranding ? jetpackAppBanner : wpAppBanner ),
 				timing: 3,
-				title: translate( 'Try the WordPress app' ),
-				description: isBlogger
-					? translate( 'Write posts, check stats, and reply to comments on the go!' )
-					: translate(
-							'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-					  ),
 				actionText: isBlogger
 					? translate( 'Download the app' )
 					: translate( 'Download mobile app' ),
@@ -154,7 +158,6 @@ export const getTask = (
 					actionDispatchArgs: [ siteId, task.id ],
 				} ),
 				isSkippable: true,
-				...jetpackAppBanner,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.WOOCOMMERCE_SETUP:
