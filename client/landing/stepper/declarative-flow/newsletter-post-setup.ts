@@ -22,7 +22,7 @@ export const newsletterPostSetup: Flow = {
 			switch ( currentStep ) {
 				case 'newsletterPostSetup':
 					return window.location.assign(
-						`/setup/launchpad?flow=newsletter&siteSlug=${ siteSlug }`
+						`/setup/launchpad?flow=newsletter&siteSlug=${ siteSlug }&clearCache=true`
 					);
 			}
 		}
