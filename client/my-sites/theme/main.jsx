@@ -3,10 +3,11 @@ import {
 	FEATURE_UPLOAD_THEMES,
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES,
+	FEATURE_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
 import page from 'page';
@@ -669,7 +670,11 @@ class ThemeSheet extends Component {
 			section ? ' > ' + titlecase( section ) : ''
 		}${ siteId ? ' > Site' : '' }`;
 
-		const plansUrl = siteSlug ? `/plans/${ siteSlug }/?plan=value_bundle` : '/plans';
+		const plansUrl = siteSlug ? `/plans/${ siteSlug }/` : '/plans';
+		const plansUrlWithArgs = addQueryArgs( plansUrl, {
+			feature: FEATURE_PREMIUM_THEMES,
+			plan: PLAN_PREMIUM,
+		} );
 
 		const { canonicalUrl, description, name: themeName } = this.props;
 		const title =
@@ -738,9 +743,9 @@ class ThemeSheet extends Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
+					feature={ FEATURE_PREMIUM_THEMES }
 					forceHref={ true }
-					href={ plansUrl }
+					href={ plansUrlWithArgs }
 					showIcon={ true }
 				/>
 			);
@@ -906,7 +911,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
