@@ -147,23 +147,25 @@ export const EligibilityWarnings = ( {
 					/>
 				</CompactCard>
 			) }
-			{ ! isPlaceholder &&
-				context === 'plugin-details' &&
-				listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1 && (
-					<CompactCard>
-						<div className="eligibility-warnings__header">
-							<div className="eligibility-warnings__title">
-								{ translate( 'Upgrade your plan to install plugins' ) }
-							</div>
-							<div className="eligibility-warnings__primary-text">
-								{ translate(
-									'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
-									{ args: { monthlyCost } }
-								) }
-							</div>
+			{ ! isPlaceholder && context === 'plugin-details' && (
+				<CompactCard>
+					<div className="eligibility-warnings__header">
+						<div className="eligibility-warnings__title">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate( 'Upgrade your plan to install plugins' )
+								: translate( 'Before you continue' ) }
 						</div>
-					</CompactCard>
-				) }
+						<div className="eligibility-warnings__primary-text">
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate(
+										'Installing plugins is a premium feature. Unlock the ability to install this and 50,000 other plugins by upgrading to the Business plan for %(monthlyCost)s/month.',
+										{ args: { monthlyCost } }
+								  )
+								: '' }
+						</div>
+					</div>
+				</CompactCard>
+			) }
 
 			{ ( isPlaceholder || filteredHolds.length > 0 ) && (
 				<CompactCard>
