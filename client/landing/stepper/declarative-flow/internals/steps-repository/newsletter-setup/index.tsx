@@ -20,14 +20,16 @@ const defaultAccentColor = {
 
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const site = useSite();
 
 	const newsletterFormText = {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder: __( 'Add a logo or profile picture' ),
+		iconPlaceholder: hasTranslation( 'Add a logo or profile picture' )
+			? __( 'Add a logo or profile picture' )
+			: __( 'Add a site icon' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -96,9 +98,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ createInterpolateElement( __( 'Set up your<br />Newsletter' ), {
-						br: <br />,
-					} ) }
+					headerText={ createInterpolateElement(
+						hasTranslation( 'Personalize your<br />Newsletter' )
+							? __( 'Personalize your<br />Newsletter' )
+							: __( 'Set up your<br />Newsletter' ),
+						{
+							br: <br />,
+						}
+					) }
 					align={ 'center' }
 				/>
 			}

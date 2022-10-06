@@ -42,7 +42,7 @@ function generateSwatchSVG( color: string | undefined ) {
 }
 
 const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
 
@@ -73,7 +73,9 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">{ __( 'Favorite color' ) }</FormLabel>
+				<FormLabel htmlFor="accentColor">
+					{ hasTranslation( 'Favorite color' ) ? __( 'Favorite color' ) : __( 'Accent color' ) }
+				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
 					className="accent-color-control__accent-color-input"
