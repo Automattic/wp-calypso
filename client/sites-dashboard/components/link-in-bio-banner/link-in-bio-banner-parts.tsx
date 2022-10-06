@@ -67,6 +67,7 @@ const LinkButton = styled( Button )( {
 	padding: '10px 24px',
 	border: 'none',
 	boxShadow: 'none',
+	flexShrink: 0,
 	'&:visited': {
 		color: 'var(--color-surface)',
 	},
