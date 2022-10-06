@@ -1,5 +1,4 @@
-import { Button } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
+import { Button, ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -219,7 +218,7 @@ class AutoRenewToggle extends Component {
 				'…'
 			) : (
 				<Button
-					link
+					isLink
 					className="is-link"
 					onClick={ this.onToggleAutoRenew }
 					disabled={ shouldDisable }

@@ -8,14 +8,16 @@ export type DIFMPriceTierProduct = Pick< Product, 'price_tier_list' > & {
 /**
  * Returns meaningful DIFM purchase details related to tiered difm prices if available
  * Returns null if this is not a DIFM purchase or the proper related price tier information is not available.
+ * Returns just the price details if noOfPages is not passed.
+ * Returns the price details alongwith calculated values of extraPageCount and extraPagesPrice is noOfPages is passed.
  *
  * @param { Product | any } product  product to get details from
  * @param { number } noOfPages  the number of pages required
  * @returns {object} with the relevent tier details
  */
 export function getDIFMTieredPriceDetails(
-	product: undefined | DIFMPriceTierProduct,
-	noOfPages: number
+	product: undefined | null | DIFMPriceTierProduct,
+	noOfPages?: number
 ): null | {
 	extraPageCount: number | null;
 	oneTimeFee: number;
@@ -29,8 +31,7 @@ export function getDIFMTieredPriceDetails(
 		! isDIFMProduct( product ) ||
 		! product.price_tier_list ||
 		! Array.isArray( product.price_tier_list ) ||
-		product.price_tier_list.length === 0 ||
-		noOfPages < 0
+		product.price_tier_list.length === 0
 	) {
 		return null;
 	}
@@ -46,7 +47,7 @@ export function getDIFMTieredPriceDetails(
 
 	let extraPagesPrice: number | null = null;
 	let extraPageCount: number | null = null;
-	if ( numberOfIncludedPages ) {
+	if ( numberOfIncludedPages && noOfPages ) {
 		if ( noOfPages <= numberOfIncludedPages ) {
 			return {
 				extraPageCount: 0,

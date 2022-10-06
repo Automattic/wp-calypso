@@ -1,5 +1,6 @@
-import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/components';
+import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
+import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -9,6 +10,7 @@ import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
+import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
@@ -38,6 +40,12 @@ export const siteThumbnail = css( {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
+} );
+
+const SitesGridItemSecondary = styled.div( {
+	display: 'flex',
+	gap: '32px',
+	justifyContent: 'space-between',
 } );
 
 const ellipsis = css( {
@@ -101,9 +109,12 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 				</>
 			}
 			secondary={
-				<SiteUrl href={ siteUrl } title={ siteUrl }>
-					<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
-				</SiteUrl>
+				<SitesGridItemSecondary>
+					<SiteUrl href={ siteUrl } title={ siteUrl }>
+						<Truncated>{ displaySiteUrl( siteUrl ) }</Truncated>
+					</SiteUrl>
+					<SiteLaunchNag site={ site } />
+				</SitesGridItemSecondary>
 			}
 		/>
 	);

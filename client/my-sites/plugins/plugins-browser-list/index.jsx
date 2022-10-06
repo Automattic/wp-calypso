@@ -1,4 +1,4 @@
-import { Card, Gridicon } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { times } from 'lodash';
@@ -96,8 +96,7 @@ const PluginsBrowserList = ( {
 					<div className="plugins-browser-list__actions">
 						{ expandedListLink && (
 							<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
-								{ __( 'Browse All' ) }
-								<Gridicon icon="arrow-right" size="18" />
+								{ __( 'Browse all' ) }
 							</a>
 						) }
 					</div>

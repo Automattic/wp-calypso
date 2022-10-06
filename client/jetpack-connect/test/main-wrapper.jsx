@@ -2,68 +2,61 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'calypso/components/data/document-head', () => 'DocumentHead' );
-
-import { shallow } from 'enzyme';
-import Main from 'calypso/components/main';
+import { render, within } from '@testing-library/react';
 import { JetpackConnectMainWrapper } from '../main-wrapper';
+
+jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
 
 describe( 'JetpackConnectMainWrapper', () => {
 	const translate = ( string ) => string;
 
-	test( 'should render a <Main> instance', () => {
-		const wrapper = shallow( <JetpackConnectMainWrapper translate={ translate } /> );
-
-		expect( wrapper.find( Main ) ).toHaveLength( 1 );
-	} );
-
 	test( 'should render the passed children as children of the component', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackConnectMainWrapper translate={ translate }>
-				<span className="test__child" />
+				<span data-testid="test__child" />
 			</JetpackConnectMainWrapper>
-		).render();
+		);
 
-		expect( wrapper.find( '.test__child' ) ).toHaveLength( 1 );
+		expect( within( container.firstChild ).getByTestId( 'test__child' ) ).toBeVisible();
 	} );
 
 	test( 'should always specify the jetpack-connect__main class', () => {
-		const wrapper = shallow( <JetpackConnectMainWrapper translate={ translate } /> );
+		const { container } = render( <JetpackConnectMainWrapper translate={ translate } /> );
 
-		expect( wrapper.hasClass( 'jetpack-connect__main' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'jetpack-connect__main' );
 	} );
 
 	test( 'should allow more classes to be added', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackConnectMainWrapper className="test__class" translate={ translate } />
 		);
 
-		expect( wrapper.hasClass( 'jetpack-connect__main' ) ).toBe( true );
-		expect( wrapper.hasClass( 'test__class' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'jetpack-connect__main' );
+		expect( container.firstChild ).toHaveClass( 'test__class' );
 	} );
 
 	test( 'should not contain the is-wide modifier class by default', () => {
-		const wrapper = shallow( <JetpackConnectMainWrapper translate={ translate } /> );
+		const { container } = render( <JetpackConnectMainWrapper translate={ translate } /> );
 
-		expect( wrapper.hasClass( 'is-wide' ) ).toBe( false );
+		expect( container.firstChild ).not.toHaveClass( 'is-wide' );
 	} );
 
 	test( 'should contain the is-wide modifier class if prop is specified', () => {
-		const wrapper = shallow( <JetpackConnectMainWrapper isWide translate={ translate } /> );
+		const { container } = render( <JetpackConnectMainWrapper isWide translate={ translate } /> );
 
-		expect( wrapper.hasClass( 'is-wide' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'is-wide' );
 	} );
 
 	test( 'should not contain the is-mobile-app-flow modifier class by default', () => {
-		const wrapper = shallow( <JetpackConnectMainWrapper translate={ translate } /> );
+		const { container } = render( <JetpackConnectMainWrapper translate={ translate } /> );
 
-		expect( wrapper.hasClass( 'is-mobile-app-flow' ) ).toBe( false );
+		expect( container.firstChild ).not.toHaveClass( 'is-mobile-app-flow' );
 	} );
 
 	test( 'should contain the is-mobile-app-flow modifier if cookie is set', () => {
 		document.cookie = 'jetpack_connect_mobile_redirect=some url';
-		const wrapper = shallow( <JetpackConnectMainWrapper isWide translate={ translate } /> );
+		const { container } = render( <JetpackConnectMainWrapper isWide translate={ translate } /> );
 
-		expect( wrapper.hasClass( 'is-mobile-app-flow' ) ).toBe( true );
+		expect( container.firstChild ).toHaveClass( 'is-mobile-app-flow' );
 	} );
 } );

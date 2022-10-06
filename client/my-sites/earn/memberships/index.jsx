@@ -497,7 +497,7 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_success === 'earn' && (
+				{ this.props?.query?.stripe_connect_success === 'earn' && (
 					<Notice
 						status="is-success"
 						showDismiss={ false }
@@ -600,7 +600,7 @@ class MembershipsSection extends Component {
 	renderConnectStripe() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_cancelled && (
+				{ this.props?.query?.stripe_connect_cancelled && (
 					<Notice
 						showDismiss={ false }
 						text={ this.props.translate(

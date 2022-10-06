@@ -28,9 +28,8 @@ interface Props {
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const { isLoading: campaignsIsLoading, data: campaignsData } = useCampaignsQuery(
-		selectedSiteId ?? 0
-	);
+	const test = useCampaignsQuery( selectedSiteId ?? 0 );
+	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = test;
 
 	const tabs: TabOption[] = [
 		{ id: 'posts', name: translate( 'Ready to promote' ) },
@@ -75,8 +74,12 @@ export default function PromotedPosts( { tab }: Props ) {
 			<SitePreview />
 			{ ! campaignsData?.length && ! campaignsIsLoading && <PostsListBanner /> }
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
-			{ selectedTab === 'campaigns' && campaignsData && (
-				<CampaignsList isLoading={ campaignsIsLoading } campaigns={ campaignsData } />
+			{ selectedTab === 'campaigns' && (
+				<CampaignsList
+					isError={ isError }
+					isLoading={ campaignsIsLoading }
+					campaigns={ campaignsData || [] }
+				/>
 			) }
 			{ selectedTab === 'posts' && <PostsList /> }
 

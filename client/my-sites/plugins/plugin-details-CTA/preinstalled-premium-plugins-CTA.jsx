@@ -1,9 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
-import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { useSelector } from 'react-redux';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -22,8 +19,6 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	isPluginInstalledOnsite,
 	plugin,
 } ) {
-	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -64,13 +59,6 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 					}
 				</PluginPrice>
 			</div>
-			{ ! legacyVersion && (
-				<BillingIntervalSwitcher
-					billingPeriod={ billingPeriod }
-					onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-					plugin={ plugin }
-				/>
-			) }
 		</>
 	);
 

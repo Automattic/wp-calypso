@@ -23,6 +23,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
 	const [ sections, setSections ] = useState< Pattern[] >( [] );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
+	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
 	const { goBack, goNext, submit } = navigation;
 	const { setDesignOnSite } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
@@ -54,6 +55,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		return pageTemplate;
 	};
 
+	const setScrollToSelectorByPosition = ( position: number ) => {
+		const patternPosition = header ? position + 1 : position;
+		setScrollToSelector( `.entry-content > .wp-block-group:nth-child( ${ patternPosition + 1 } )` );
+	};
+
 	const addSection = ( pattern: Pattern ) => {
 		if ( sectionPosition !== null ) {
 			setSections( [
@@ -61,8 +67,10 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				pattern,
 				...sections.slice( sectionPosition + 1 ),
 			] );
+			setScrollToSelectorByPosition( sectionPosition );
 		} else {
 			setSections( [ ...( sections as Pattern[] ), pattern ] );
+			setScrollToSelectorByPosition( sections.length );
 		}
 	};
 
@@ -121,9 +129,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						footer={ footer }
 						onSelectHeader={ () => {
 							setShowPatternSelectorType( 'header' );
+							setScrollToSelector( null );
 						} }
 						onDeleteHeader={ () => {
 							setHeader( null );
+							setScrollToSelector( null );
 						} }
 						onSelectSection={ ( position: number | null ) => {
 							setSectionPosition( position );
@@ -131,18 +141,23 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						} }
 						onDeleteSection={ ( position: number ) => {
 							deleteSection( position );
+							setScrollToSelectorByPosition( position - 1 );
 						} }
 						onMoveUpSection={ ( position: number ) => {
 							moveUpSection( position );
+							setScrollToSelectorByPosition( position - 1 );
 						} }
 						onMoveDownSection={ ( position: number ) => {
 							moveDownSection( position );
+							setScrollToSelectorByPosition( position + 1 );
 						} }
 						onSelectFooter={ () => {
 							setShowPatternSelectorType( 'footer' );
+							setScrollToSelector( 'footer' );
 						} }
 						onDeleteFooter={ () => {
 							setFooter( null );
+							setScrollToSelector( null );
 						} }
 						onContinueClick={ () => {
 							if ( siteSlugOrId ) {
@@ -161,7 +176,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					/>
 				) }
 			</div>
-			<PatternAssemblerPreview header={ header } sections={ sections } footer={ footer } />
+			<PatternAssemblerPreview
+				header={ header }
+				sections={ sections }
+				footer={ footer }
+				scrollToSelector={ scrollToSelector }
+			/>
 		</div>
 	);
 

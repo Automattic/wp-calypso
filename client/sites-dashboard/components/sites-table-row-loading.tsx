@@ -1,6 +1,7 @@
 import { LoadingPlaceholder } from '@automattic/components';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
+import { MEDIA_QUERIES } from '../utils';
 
 type cssSize = number | string;
 
@@ -24,11 +25,15 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	padding-block-start: 12px;
 	padding-block-end: 12px;
 	padding-inline-end: 24px;
-	vertical-align: block-start;
+	vertical-align: middle;
+	${ MEDIA_QUERIES.mediumOrSmaller } {
+		${ ( props ) => props.mobileHidden && 'display: none;' };
+	}
 `;
 
 const TitleRow = styled.div`
 	display: flex;
+	align-items: center;
 `;
 
 const FullWidth = styled.div`

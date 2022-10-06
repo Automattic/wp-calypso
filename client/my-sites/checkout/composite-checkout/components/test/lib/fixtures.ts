@@ -1,8 +1,11 @@
+import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import moment from 'moment';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
-export const responseCartWithRenewal = {
+export const responseCartWithRenewal: Pick< ResponseCart, 'products' > = {
 	products: [
 		{
+			...getEmptyResponseCartProduct(),
 			product_id: 74,
 			product_name: '.live Domain Registration',
 			product_slug: 'dotlive_domain',
@@ -13,13 +16,8 @@ export const responseCartWithRenewal = {
 			currency: 'USD',
 			volume: 1,
 			extra: {
-				purchaseId: '1234',
 				purchaseType: 'renewal',
 				context: 'calypstore',
-				registrar: 'OpenSRS',
-				domain_registration_agreement_url:
-					'https://opensrs.com/wp-content/uploads/Tucows_ExhibitA.html',
-				privacy_available: true,
 				premium: false,
 			},
 			is_domain_registration: true,
@@ -31,7 +29,6 @@ export const responseCartWithRenewal = {
 			subscription_id: '3',
 			is_renewal: true,
 			uuid: '123',
-			price: 38000,
 			product_type: 'dotlive_domain',
 			included_domain_purchase_amount: 3800,
 		},

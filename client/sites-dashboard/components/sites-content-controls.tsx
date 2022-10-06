@@ -1,4 +1,4 @@
-import { FilterableSiteLaunchStatuses, useSitesTableFiltering } from '@automattic/components';
+import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,7 +16,7 @@ export interface SitesDashboardQueryParams {
 	perPage?: number;
 	search?: string;
 	showHidden?: boolean;
-	status?: FilterableSiteLaunchStatuses;
+	status?: GroupableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
@@ -77,7 +77,7 @@ const ControlsSelectDropdown = styled( SelectDropdown )( {
 	},
 } );
 
-type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
+type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
 type SitesContentControlsProps = {
 	initialSearch?: string;
@@ -135,12 +135,28 @@ export const SitesContentControls = ( {
 					selectedText={ sprintf( __( 'Status: %(siteStatus)s' ), {
 						siteStatus: selectedStatus.title,
 					} ) }
+					ariaLabel={
+						'all' === selectedStatus.name
+							? __( 'Displaying all sites.' )
+							: sprintf(
+									// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+									__( 'Filtering to sites with status "%(siteStatus)s".' ),
+									{
+										siteStatus: selectedStatus.title,
+									}
+							  )
+					}
 				>
 					{ statuses.map( ( { name, title, count } ) => (
 						<SelectDropdown.Item
 							key={ name }
 							selected={ name === selectedStatus.name }
 							count={ count }
+							// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
+							ariaLabel={ sprintf( __( '%(siteStatus)s (%(count)d sites)' ), {
+								siteStatus: title,
+								count,
+							} ) }
 							onClick={ () =>
 								handleQueryParamChange( {
 									status: 'all' !== name ? name : undefined,

@@ -1,7 +1,12 @@
 .reader-featured-image {
-	border: 1px solid var(--color-neutral-0);
-	display: flex;
 	align-items: center;
-	justify-content: center;
+	border-radius: 6px;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	max-height: 300px;
+	overflow-y: hidden;
+	img {
+		border-radius: 6px;
+	}
 }

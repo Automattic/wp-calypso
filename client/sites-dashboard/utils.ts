@@ -1,5 +1,9 @@
 import { SiteExcerptNetworkData } from 'calypso/data/sites/site-excerpt-types';
 
+export const getLaunchpadUrl = ( slug: string, flow: string ) => {
+	return `/setup/launchpad?flow=${ flow }&siteSlug=${ slug }`;
+};
+
 export const getDashboardUrl = ( slug: string ) => {
 	return `/home/${ slug }`;
 };

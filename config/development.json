@@ -28,7 +28,6 @@
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
 		"ad-tracking": false,
-		"build/sites-dashboard": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -126,7 +125,6 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plugins/plugin-details-layout": true,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
@@ -144,6 +142,7 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
+		"settings/featured-image-template-toggle": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,

@@ -565,7 +565,7 @@ export default connect(
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
-			hasSitePlans: sitePlans && sitePlans.length > 0,
+			hasSitePlans: sitePlans ? sitePlans.length > 0 : undefined,
 			product,
 			productDisplayCost: getProductDisplayCost( state, productSlug ?? '' ),
 			planRawPrice: annualPrice,

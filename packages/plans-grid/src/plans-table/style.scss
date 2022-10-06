@@ -4,9 +4,6 @@
 @import "@automattic/typography/styles/variables";
 @import "../variables.scss";
 
-/* stylelint-disable scales/font-size */
-// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
-
 .plans-table {
 	width: 100%;
 	display: flex;
@@ -224,7 +221,6 @@
 	font-size: $font-body-small;
 	color: var(--studio-gray-90);
 
-	// stylelint-disable-next-line scales/radii
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-10);
 

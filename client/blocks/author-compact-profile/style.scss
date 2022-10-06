@@ -20,8 +20,8 @@
 		border-radius: 0;
 		padding: 0;
 
-		.gridicons-reader-follow {
-			fill: var(--color-primary);
+		.reader-follow-feed {
+			fill: var( --color-primary );
 		}
 
 		.follow-button__label {
@@ -39,8 +39,8 @@
 		// No hover if already following
 		&.is-following {
 			&:hover {
-				.gridicons-reader-follow {
-					fill: var(--color-success);
+				.reader-follow-feed {
+					fill: var( --color-success );
 				}
 
 				.follow-button__label {
@@ -80,7 +80,7 @@
 .author-compact-profile__follow {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 11px 0;
+	margin: 11px 0 5px;
 
 	.follow-button {
 		padding: 5px;

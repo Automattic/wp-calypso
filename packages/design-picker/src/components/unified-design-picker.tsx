@@ -26,6 +26,7 @@ import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
 import StyleVariationBadges from './style-variation-badges';
 import ThemePreview from './theme-preview';
+import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
 import './style.scss';
@@ -84,6 +85,9 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const isEnableThemeStyleVariations = isEnabled( 'signup/design-picker-style-selection' );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
+	const showBundledBadge =
+		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
+
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
 		if ( isPremium && shouldUpgrade ) {
@@ -126,14 +130,21 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			text = __( 'Free' );
 		}
 
+		let badge: React.ReactNode = null;
+		if ( showBundledBadge ) {
+			badge = <WooCommerceBundledBadge />;
+		} else if ( isPremium ) {
+			badge = (
+				<PremiumBadge
+					tooltipPosition="bottom right"
+					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+				/>
+			);
+		}
+
 		return (
 			<div className="design-picker__pricing-description">
-				{ isPremium && (
-					<PremiumBadge
-						tooltipPosition="bottom right"
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					/>
-				) }
+				{ badge }
 				<span>{ text }</span>
 			</div>
 		);

@@ -7,6 +7,7 @@ import type {
 	Category,
 	Design,
 	DesignRecipe,
+	SoftwareSet,
 	StyleVariation,
 } from '@automattic/design-picker/src/types';
 
@@ -35,6 +36,7 @@ interface StaticDesign {
 	categories: Category[];
 	price?: string;
 	style_variations?: StyleVariation[];
+	software_sets?: SoftwareSet[];
 }
 
 interface GeneratedDesign {
@@ -77,9 +79,14 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, description, recipe, categories, price, style_variations } = design;
+	const { slug, title, description, recipe, categories, price, style_variations, software_sets } =
+		design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+
+	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+		( { slug } ) => slug === 'woo-on-plans'
+	);
 
 	return {
 		slug,
@@ -88,7 +95,9 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		recipe,
 		categories,
 		is_premium,
+		is_bundled_with_woo_commerce,
 		price,
+		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		verticalizable: isThemeVerticalizable( recipe.stylesheet ),

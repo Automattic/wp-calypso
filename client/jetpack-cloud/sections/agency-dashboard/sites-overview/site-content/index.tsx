@@ -16,12 +16,13 @@ const addPageArgs = ( pageNumber: number ) => {
 };
 
 interface Props {
-	data: { sites: Array< any >; total: number; perPage: number } | undefined;
+	data: { sites: Array< any >; total: number; perPage: number; totalFavorites: number } | undefined;
 	isLoading: boolean;
 	currentPage: number;
+	isFavoritesTab: boolean;
 }
 
-export default function SiteContent( { data, isLoading, currentPage }: Props ) {
+export default function SiteContent( { data, isLoading, currentPage, isFavoritesTab }: Props ) {
 	const isMobile = useMobileBreakpoint();
 
 	const sites = formatSites( data?.sites );
@@ -54,7 +55,7 @@ export default function SiteContent( { data, isLoading, currentPage }: Props ) {
 					compact={ isMobile }
 					page={ currentPage }
 					perPage={ data.perPage }
-					total={ data.total }
+					total={ isFavoritesTab ? data.totalFavorites : data.total }
 					pageClick={ handlePageClick }
 				/>
 			) }

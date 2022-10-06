@@ -607,7 +607,6 @@ $masterbar-color-secondary: #101517;
 	border-radius: 0 2px 2px 0;
 	position: relative;
 	transition: all 0.2s ease-out;
-	// stylelint-disable-next-line scales/font-weights
 	font-weight: 500;
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
@@ -865,10 +864,6 @@ a.masterbar__quick-language-switcher {
 
 	svg {
 		fill: var(--color-masterbar-text);
-	}
-
-	&.is-active {
-		background: #1e1e1e;
 	}
 }
 

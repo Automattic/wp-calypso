@@ -253,7 +253,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				// Use `test_fn_start` event instead of `test_start` to filter
 				// out hooks.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
-				this.allure?.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.startTestStep( event.test, state, this.testFilename );
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
@@ -261,7 +261,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_skip':
-				this.allure?.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.startTestStep( event.test, state, this.testFilename );
 				this.allure?.pendingTestStep( event.test );
 				break;
 			case 'test_fn_success': {

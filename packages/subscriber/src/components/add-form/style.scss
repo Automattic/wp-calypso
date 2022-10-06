@@ -48,7 +48,7 @@
 
 	.onboarding-title {
 		margin-bottom: 1.5rem;
-		font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+		font-size: 2.75rem;
 		line-height: 3.5rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
 	}
 
@@ -70,6 +70,7 @@
 		font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		color: var(--color-text);
 		text-decoration: underline;
+		border: none;
 
 		&:hover {
 			color: var(--color-text-subtle);
@@ -81,11 +82,11 @@
 	max-width: 368px;
 
 	label {
-		display: inline-block;
+		display: block;
 		width: 100%;
 		font-size: 0.875rem;
 		line-height: 1.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		margin: 0.75rem 0 1.5rem;
+		margin: 1rem 0;
 
 		&.add-subscriber__form-label-links {
 			.components-button {
@@ -126,7 +127,7 @@
 	.add-subscriber__form-skip-btn {
 		display: block;
 		width: 100%;
-		margin-bottom: 2rem;
+		margin: 2rem 0;
 	}
 
 	.add-subscriber__form-skip-btn {
@@ -156,15 +157,29 @@
 		padding: 0;
 		padding-inline-start: 2rem;
 		padding-inline-end: 0;
-		margin-bottom: 1.5rem;
+		margin-bottom: 1rem;
 
 		svg {
 			position: absolute;
 			margin-inline-start: -2rem;
 		}
 
-		&.is-warning {
+		&:not(.is-error):not(.is-warning) {
 			color: var(--studio-gray-40);
+		}
+
+		&.is-warning {
+			color: var(--studio-gray-100);
+
+			svg * {
+				stroke: var(--studio-yellow-40);
+			}
+		}
+
+		&:not(.is-error) {
+			svg {
+				fill: none;
+			}
 		}
 	}
 

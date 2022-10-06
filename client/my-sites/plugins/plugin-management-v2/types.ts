@@ -32,7 +32,7 @@ export interface Plugin {
 	name: string;
 	pluginsOnSites: Array< any >;
 	slug: string;
-	wporg: string;
+	wporg: boolean;
 	[ key: string ]: any;
 }
 

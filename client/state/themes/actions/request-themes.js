@@ -79,6 +79,18 @@ export function requestThemes( siteId, query = {}, locale ) {
 						results_first_page: themes.map( property( 'id' ) ).join(),
 					} );
 					dispatch( trackShowcaseSearch );
+
+					if ( found === 0 ) {
+						const trackShowcaseEmptySearch = recordTracksEvent(
+							'calypso_themeshowcase_search_empty_results',
+							{
+								search_term: search_term || null,
+								response_time_in_ms: responseTime,
+							}
+						);
+
+						dispatch( trackShowcaseEmptySearch );
+					}
 				}
 
 				dispatch( receiveThemes( themes, siteId, query, found ) );

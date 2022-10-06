@@ -1,6 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { Design, useDesignsBySite, isBlankCanvasDesign } from '@automattic/design-picker';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -75,13 +75,8 @@ export const siteSetupFlow: Flow = {
 			'difmStartingPoint',
 		] as StepPath[];
 	},
-	useSideEffect() {
-		// Prefetch designs for a smooth design picker UX.
-		// Except for Unified Design Picker which uses a separate API endpoint (wpcom/v2/starter-designs).
-		const site = useSite();
-		useDesignsBySite( site, { enabled: !! site && ! isEnabled( 'signup/design-picker-unified' ) } );
-	},
 	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
 		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
 		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -166,7 +161,7 @@ export const siteSetupFlow: Flow = {
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
-			recordSubmitStep( providedDependencies, intent, currentStep );
+			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			switch ( currentStep ) {
 				case 'options': {

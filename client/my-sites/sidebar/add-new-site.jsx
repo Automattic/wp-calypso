@@ -22,7 +22,7 @@ export const AddNewSite = ( { title } ) => {
 	return (
 		<li className="sidebar__actions">
 			<Button transparent href={ `${ onboardingUrl() }?ref=calypso-sidebar` } onClick={ onClick }>
-				<span class="sidebar__action--collapsed dashicons dashicons-plus-alt"></span>
+				<span className="sidebar__action--collapsed dashicons dashicons-plus-alt"></span>
 				<span>{ title }</span>
 			</Button>
 		</li>

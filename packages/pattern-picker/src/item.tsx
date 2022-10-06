@@ -71,14 +71,12 @@ export function Item( { style, onClick, pattern, className }: Props ) {
 				style={ style }
 				className={ cx( 'pattern-picker__item', className ) }
 			>
-				<div className="pattern-picker__item-iframe-wrapper">
-					<MShotsImage
-						url={ getPatternPreviewUrl( pattern ) }
-						options={ { w: 400, vpw: 400, vph: 872, format: 'png' } }
-						alt={ pattern.title }
-						aria-labelledby=""
-					/>
-				</div>
+				<MShotsImage
+					url={ getPatternPreviewUrl( pattern ) }
+					options={ { w: 400, vpw: 400, vph: 872, format: 'png' } }
+					alt={ pattern.title }
+					aria-labelledby=""
+				/>
 			</button>
 		</div>
 	);

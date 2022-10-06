@@ -19,9 +19,7 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
-import { includeSubscriberImporterGradually } from '../helpers';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -260,11 +258,8 @@ class Followers extends Component {
 }
 
 const mapStateToProps = ( state ) => {
-	const userId = getCurrentUserId( state );
-	const a8cTeamMember = isA8cTeamMember( state );
-
 	return {
-		includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 	};
 };
 
