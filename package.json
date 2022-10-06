@@ -186,8 +186,10 @@
 		"@wordpress/url": "^3.10.0",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",
+		"bufferutil": "^4.0.6",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
+		"canvas": "^2.10.1",
 		"config": "^3.3.6",
 		"debug": "^4.3.3",
 		"enhanced-resolve": "5.9.3",
@@ -203,6 +205,7 @@
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"request": "^2.88.2",
+		"utf-8-validate": "^5.0.9",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
@@ -301,7 +304,8 @@
 		"https-proxy-agent": "^5.0.1",
 		"nwsapi": "^2.2.2",
 		"tough-cookie": "^4.1.2",
-		"ws": "^8.9.0"
+		"ws": "^8.9.0",
+		"node-gyp-build": "^4.2.1"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
