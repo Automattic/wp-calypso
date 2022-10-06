@@ -12,7 +12,7 @@ import {
 	SUPPORT_UPWORK_TICKET,
 } from '@automattic/help-center';
 import { isDefaultLocale, localizeUrl } from '@automattic/i18n-utils';
-import { dispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -128,7 +128,7 @@ class HelpContact extends Component {
 		this.recordSubmitWithActiveTickets( 'chat' );
 
 		if ( this.props.shouldShowHelpCenterToUser ) {
-			dispatch( HELP_CENTER_STORE ).startHelpCenterChat( site, message );
+			this.props.startHelpCenterChat( site, message );
 		} else {
 			this.props.openHappychat();
 
@@ -726,39 +726,44 @@ class HelpContact extends Component {
 	}
 }
 
-export default connect(
-	( state ) => {
-		const selectedSite = getHelpSelectedSite( state );
-		const isChatEligible = isHappychatUserEligible( state );
-		return {
-			selectedSite,
-			currentUserLocale: getCurrentUserLocale( state ),
-			currentUser: getCurrentUser( state ),
-			getUserInfo: getHappychatUserInfo( state ),
-			hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
-			hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-			isDirectlyFailed: isDirectlyFailed( state ),
-			isDirectlyReady: isDirectlyReady( state ),
-			isDirectlyUninitialized: isDirectlyUninitialized( state ),
-			isEmailVerified: isCurrentUserEmailVerified( state ),
-			isHappychatUserEligible: isChatEligible,
-			localizedLanguageNames: getLocalizedLanguageNames( state ),
-			ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
-			ticketSupportRequestError: getTicketSupportRequestError( state ),
-			hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
-			shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
-			isRequestingSites: isRequestingSites( state ),
-			supportVariation: getInlineHelpSupportVariation( state ),
-			shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
-		};
-	},
-	{
-		askDirectlyQuestion,
-		errorNotice,
-		initializeDirectly,
-		openHappychat,
-		recordTracksEventAction,
-		sendHappychatMessage,
-		sendUserInfo,
-	}
-)( localize( withActiveSupportTickets( HelpContact ) ) );
+export default withDispatch( ( dataStoresDispatch ) => {
+	return { dataStoresDispatch };
+} )(
+	connect(
+		( state, ownProps ) => {
+			const selectedSite = getHelpSelectedSite( state );
+			const isChatEligible = isHappychatUserEligible( state );
+			return {
+				selectedSite,
+				currentUserLocale: getCurrentUserLocale( state ),
+				currentUser: getCurrentUser( state ),
+				getUserInfo: getHappychatUserInfo( state ),
+				hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
+				hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
+				isDirectlyFailed: isDirectlyFailed( state ),
+				isDirectlyReady: isDirectlyReady( state ),
+				isDirectlyUninitialized: isDirectlyUninitialized( state ),
+				isEmailVerified: isCurrentUserEmailVerified( state ),
+				isHappychatUserEligible: isChatEligible,
+				localizedLanguageNames: getLocalizedLanguageNames( state ),
+				ticketSupportConfigurationReady: isTicketSupportConfigurationReady( state ),
+				ticketSupportRequestError: getTicketSupportRequestError( state ),
+				hasMoreThanOneSite: getCurrentUserSiteCount( state ) > 1,
+				shouldStartHappychatConnection: ! isRequestingSites( state ) && isChatEligible,
+				isRequestingSites: isRequestingSites( state ),
+				supportVariation: getInlineHelpSupportVariation( state ),
+				shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
+				startHelpCenterChat: ownProps.dataStoresDispatch( HELP_CENTER_STORE ).startHelpCenterChat,
+			};
+		},
+		{
+			askDirectlyQuestion,
+			errorNotice,
+			initializeDirectly,
+			openHappychat,
+			recordTracksEventAction,
+			sendHappychatMessage,
+			sendUserInfo,
+		}
+	)( localize( withActiveSupportTickets( HelpContact ) ) )
+);
