@@ -55,7 +55,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 			handleUpdatePlugins( plugins, updateAction, pluginsOnSites );
 			recordEvent( 'Clicked Update all Plugins' );
 			recordTracksEvent( 'calypso_plugins_update_all_click' );
-			dispatch( removePluginStatuses( 'completed', 'error' ) );
+			dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 		}
 	}
 

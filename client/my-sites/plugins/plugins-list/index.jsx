@@ -223,7 +223,7 @@ export class PluginsList extends Component {
 	};
 
 	removePluginStatuses() {
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 	}
 
 	doActionOverSelected( actionName, action, selectedPlugins ) {
