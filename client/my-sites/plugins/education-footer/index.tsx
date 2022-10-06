@@ -25,7 +25,20 @@ const ThreeColumnContainer = styled.div`
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 48px;
+	margin-top: 40px;
+
+	> div:first-child {
+		padding: 0;
+		margin-bottom: 60px;
+
+		.wp-brand-font {
+			font-size: var( --scss-font-title-medium );
+		}
+
+		> div:first-child {
+			margin-bottom: 24px;
+		}
+	}
 `;
 
 export const MarketplaceFooter = () => {
@@ -86,7 +99,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
-						background="studio-celadon-60"
+						background="#e5f3f0"
 						onClick={ () => onClickLinkCard( 'website_building' ) }
 					/>
 					<LinkCard
@@ -97,7 +110,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
-						background="studio-purple-80"
+						background="#f9f0f6"
 						onClick={ () => onClickLinkCard( 'customization' ) }
 					/>
 					<LinkCard
@@ -108,7 +121,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
 						) }
-						background="studio-wordpress-blue-80"
+						background="#e5f4ff"
 						onClick={ () => onClickLinkCard( 'seo' ) }
 					/>
 				</ThreeColumnContainer>
