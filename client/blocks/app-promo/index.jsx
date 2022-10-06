@@ -130,7 +130,6 @@ export class AppPromo extends Component {
 
 	dismissButton = () => (
 		<Button
-			tabIndex="0"
 			className="app-promo__dismiss"
 			onClick={ this.dismiss }
 			aria-label={ this.props.translate( 'Dismiss' ) }
