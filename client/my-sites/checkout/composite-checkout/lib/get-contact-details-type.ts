@@ -39,8 +39,9 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	const forcePaymentMethod = true;
 
-	if ( isPurchaseFree && ! isFullCredits ) {
+	if ( ! forcePaymentMethod && isPurchaseFree && ! isFullCredits ) {
 		return 'none';
 	}
 
