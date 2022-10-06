@@ -30,7 +30,8 @@
 		flex-direction: column;
 		align-items: center;
 		padding-top: 64px;
-
+		background: #fff;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
 
 	.themes-list__upgrade-section-title {
@@ -49,5 +50,6 @@
 	.themes-list__upgrade-section-cta,
 	.themes-list__themes-images {
 		margin-top: 32px;
+		display: flex;
 	}
 }

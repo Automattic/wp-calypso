@@ -28,7 +28,14 @@ export const ThemesList = ( props ) => {
 	);
 
 	if ( ! props.loading && props.themes.length === 0 ) {
-		return <Empty emptyContent={ props.emptyContent } translate={ props.translate } />;
+		return (
+			<Empty
+				emptyContent={ props.emptyContent }
+				searchTerm={ props.searchTerm }
+				translate={ props.translate }
+				recordTracksEvent={ props.recordTracksEvent }
+			/>
+		);
 	}
 
 	return (
@@ -112,17 +119,21 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Empty( { emptyContent, translate } ) {
+function Empty( { emptyContent, searchTerm, translate, recordTracksEvent } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
 
 	const onUpgradeClick = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
+			search_term: searchTerm,
+		} );
+
 		return page(
 			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
 		);
-	}, [ selectedSite ] );
+	}, [ selectedSite, searchTerm ] );
 
 	if ( emptyContent ) {
 		return emptyContent;
@@ -130,9 +141,9 @@ function Empty( { emptyContent, translate } ) {
 
 	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
-			<span className="themes-list__not-found-text">
+			<div className="themes-list__not-found-text">
 				{ translate( 'No themes match your search' ) }
-			</span>
+			</div>
 
 			<div className="themes-list__upgrade-section-wrapper">
 				<div className="themes-list__upgrade-section-title">
