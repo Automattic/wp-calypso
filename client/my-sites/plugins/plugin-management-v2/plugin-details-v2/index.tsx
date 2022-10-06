@@ -97,7 +97,11 @@ export default function PluginDetailsV2( {
 				<div className="plugin-details__page legacy">
 					<div className="plugin-details__layout plugin-details__top-section">
 						<div className="plugin-details__layout-col-left">
-							<PluginDetailsHeader plugin={ fullPlugin } isPlaceholder={ showPlaceholder } />
+							<PluginDetailsHeader
+								isJetpackCloud
+								plugin={ fullPlugin }
+								isPlaceholder={ showPlaceholder }
+							/>
 						</div>
 					</div>
 				</div>

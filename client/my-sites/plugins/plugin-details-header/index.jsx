@@ -11,7 +11,7 @@ import { useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
-const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
+const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
@@ -30,26 +30,28 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder } ) => {
 					<h1 className="plugin-details-header__name">{ plugin.name }</h1>
 					<div className="plugin-details-header__subtitle">
 						<span className="plugin-details-header__author">
-							{ translate( 'By {{author/}}', {
-								components: {
-									author: (
-										<a
-											href={ localizePath(
-												`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
-													plugin
-												) }"`
-											) }
-										>
-											{ plugin.author_name }
-										</a>
-									),
-								},
-							} ) }
+							{ isJetpackCloud
+								? plugin.author_name
+								: translate( 'By {{author/}}', {
+										components: {
+											author: (
+												<a
+													href={ localizePath(
+														`/plugins/${ selectedSite?.slug || '' }?s=developer:"${ getPluginAuthor(
+															plugin
+														) }"`
+													) }
+												>
+													{ plugin.author_name }
+												</a>
+											),
+										},
+								  } ) }
 						</span>
 
 						<span className="plugin-details-header__subtitle-separator">·</span>
 
-						<Tags plugin={ plugin } />
+						{ ! isJetpackCloud && <Tags plugin={ plugin } /> }
 					</div>
 				</div>
 			</div>
