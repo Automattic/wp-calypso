@@ -2,22 +2,31 @@
 
 import { Button, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import './notice.scss';
 
 const GlobalStylesNotice = () => {
-	const { globalStylesId, otherDirtyEntityRecords } = useSelect( ( select ) => {
-		const { __experimentalGetCurrentGlobalStylesId, __experimentalGetDirtyEntityRecords } =
-			select( 'core' );
+	const { globalStylesConfig, globalStylesId, siteChanges } = useSelect( ( select ) => {
+		const {
+			getEditedEntityRecord,
+			__experimentalGetCurrentGlobalStylesId,
+			__experimentalGetDirtyEntityRecords,
+		} = select( 'core' );
+
+		const _globalStylesId = __experimentalGetCurrentGlobalStylesId
+			? __experimentalGetCurrentGlobalStylesId()
+			: null;
+		const globalStylesRecord = getEditedEntityRecord( 'root', 'globalStyles', _globalStylesId );
+
 		return {
-			globalStylesId: __experimentalGetCurrentGlobalStylesId
-				? __experimentalGetCurrentGlobalStylesId()
-				: null,
-			otherDirtyEntityRecords: __experimentalGetDirtyEntityRecords
-				? __experimentalGetDirtyEntityRecords().filter( ( { name } ) => name !== 'globalStyles' )
-				: [],
+			globalStylesConfig: {
+				styles: globalStylesRecord?.styles ?? {},
+				settings: globalStylesRecord?.settings ?? {},
+			},
+			globalStylesId: _globalStylesId,
+			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
 		};
 	}, [] );
 
@@ -32,11 +41,12 @@ const GlobalStylesNotice = () => {
 			styles: {},
 			settings: {},
 		} );
+	};
 
-		if ( ! otherDirtyEntityRecords.length ) {
+	// Closes the sidebar if there are no more changes to be saved.
+	useEffect( () => {
+		if ( ! siteChanges.length ) {
 			/*
-			 * Closes the sidebar if there are no more changes to be saved.
-			 *
 			 * This uses a fragile CSS selector to target the cancel button which might be broken on
 			 * future releases of Gutenberg. Unfortunately, Gutenberg doesn't provide any mechanism
 			 * for closing the sidebar – everything is handled using an internal state that it is not
@@ -44,12 +54,17 @@ const GlobalStylesNotice = () => {
 			 *
 			 * See https://github.com/WordPress/gutenberg/blob/0b30a4cb34d39c9627b6a3795a18aee21019ce25/packages/edit-site/src/components/editor/index.js#L137-L138.
 			 */
-			const closeSidebarButton = document.querySelector(
-				'.entities-saved-states__panel-header button:last-child'
-			);
-			closeSidebarButton?.click();
+			document.querySelector( '.entities-saved-states__panel-header button:last-child' )?.click();
 		}
-	};
+	}, [ siteChanges ] );
+
+	// Do not show the notice if the use is trying to save the default styles.
+	if (
+		Object.keys( globalStylesConfig.styles ).length === 0 &&
+		Object.keys( globalStylesConfig.settings ).length === 0
+	) {
+		return null;
+	}
 
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
@@ -64,7 +79,7 @@ const GlobalStylesNotice = () => {
 			) }
 			&nbsp;
 			{ canRevertGlobalStyles &&
-				createInterpolateElement( __( 'You can <a>revert your styles</a>.', 'full-site-editing' ), {
+				createInterpolateElement( __( 'You can <a>reset your styles</a>.', 'full-site-editing' ), {
 					a: <Button variant="link" onClick={ revertGlobalStyles } />,
 				} ) }
 		</Notice>
