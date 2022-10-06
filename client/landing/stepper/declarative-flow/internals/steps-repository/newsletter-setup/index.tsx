@@ -102,9 +102,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
 					headerText={ createInterpolateElement(
-						hasTranslation( 'Personalize your<br />Newsletter' ) || locale === 'en'
-							? __( 'Personalize your<br />Newsletter' )
-							: __( 'Set up your<br />Newsletter' ),
+						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
+							? __( 'Set up your<br />Newsletter' )
+							: __( 'Personalize your<br />Newsletter' ),
 						{
 							br: <br />,
 						}
