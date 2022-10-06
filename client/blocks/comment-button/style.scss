@@ -10,11 +10,7 @@
 
 	&:hover,
 	&:active {
-		color: var(--color-primary);
-	}
-
-	.comment-button__label-count {
-		margin-right: 4px;
+		color: var(--color-link);
 	}
 
 	.comment-button__label-status {
@@ -24,16 +20,32 @@
 	}
 }
 
+.reader-full-post__story .comment-button {
+	padding: 0;
+	top: -1px;
+}
+
 .comment-button__label {
-	font-size: $font-body-small;
-	margin-left: 4px;
+	font-size: 13px;
+	font-weight: 500;
+	margin-left: -1px;
+	position: relative;
+	top: 1px;
 
 	&:empty {
 		display: none;
+	}
+
+	.comment-button__label-count {
+		font-size: 13px;
+		margin-right: 4px;
+		position: relative;
+		top: 5px;
 	}
 }
 
 .comment-button__icon {
 	position: relative;
 	top: 2px;
+	margin-right: 5px;
 }

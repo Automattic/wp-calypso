@@ -1,13 +1,15 @@
 // Actions for Individual Comments
 .comments__comment-actions {
-	color: var(--color-text-subtle);
+	align-items: center;
+	color: var( --color-text-subtle );
+	display: flex;
 	font-size: $font-body-small;
+	justify-content: flex-start;
 	list-style: none;
-	margin-top: -6px;
 
 	.components-button {
+		color: var( --color-text-subtle );
 		display: inline-block;
-		color: var(--color-text-subtle);
 		padding: 4px;
 		height: auto;
 		margin-right: 8px;
@@ -15,63 +17,51 @@
 		font-size: $font-body-small;
 		font-weight: 400;
 
-		.is-compact.gridicon,
-		.gridicon {
-			position: relative;
-			top: 4px;
-			margin-right: 4px;
-		}
-
-		.gridicons-star,
-		.gridicons-star-outline {
-			top: 3px;
-		}
-
-		.like-button__like-icons {
-			margin-right: 18px;
-		}
-
 		&.comments__comment-actions-reply {
 			margin-left: -7px;
 		}
 
-		&.like-button {
-			.gridicon {
-				position: absolute;
+		.gridicons-reply {
+			margin-right: 2px;
+			vertical-align: bottom;
+		}
+
+		svg.reader-star path {
+			fill: none;
+		}
+
+		&:hover,
+		button.is-active,
+		&.like-button.is-liked {
+			color: var( --color-link );
+
+			svg.reader-star path {
+				stroke: var( --color-link );
 			}
 		}
 
-		&:hover {
-			color: var(--color-primary);
+		&.like-button.is-liked {
+			svg.reader-star path {
+				fill: var( --color-link );
+			}
 		}
 
 		&.comments__comment-actions-cancel-reply {
 			float: right;
-			margin-top: 4px;
-			margin-right: 0;
+			margin-top: 2px;
+			margin-right: 8px;
 			padding-right: 0;
 		}
 
 		&.comments__comment-actions-read-more {
-			color: var(--color-primary);
+			color: var(--color-link);
 			margin: 0 10px 0 -3px;
 			padding-left: 0;
 
 			.comments__comment-actions-read-more-icon {
-				fill: var(--color-primary);
+				fill: var( --color-link );
+				vertical-align: bottom;
 			}
-		}
-	}
-
-	// Aligns Like icon to comment text when it's by itself
-	> :only-child {
-		left: -3px;
-		top: 3px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		.like-button .like-button__label-status {
-			display: inline;
 		}
 	}
 }

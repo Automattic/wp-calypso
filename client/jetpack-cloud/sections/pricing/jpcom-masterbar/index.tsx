@@ -125,7 +125,11 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 
 	const onLinkClick = useCallback( ( e ) => {
 		recordTracksEvent( 'calypso_jetpack_nav_item_click', {
-			nav_item: e.currentTarget.getAttribute( 'href' )?.replace( JETPACK_COM_BASE_URL, '' ),
+			nav_item: e.currentTarget
+				.getAttribute( 'href' )
+				// Remove the hostname https://jetpack.com/ from the href
+				// (including other languages, ie. es.jetpack.com, fr.jetpack.com, etc.)
+				?.replace( /https?:\/\/[a-z]{0,2}.?jetpack.com/, '' ),
 		} );
 	}, [] );
 

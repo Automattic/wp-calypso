@@ -8,9 +8,9 @@ import { isWpMobileApp } from 'calypso/lib/mobile-app';
 export function shouldShowHelpCenterToUser( userId: number ) {
 	const isNonProdEnv = [ 'stage', 'development', 'horizon' ].includes( config( 'env_id' ) );
 
-	// const currentSegment = 30; //percentage of users that will see the Help Center, not the FAB
-	// const userSegment = userId % 100;
-	return isNonProdEnv; // || userSegment < currentSegment;
+	const currentSegment = 10; //percentage of users that will see the Help Center, not the FAB
+	const userSegment = userId % 100;
+	return isNonProdEnv || userSegment < currentSegment;
 }
 
 export function shouldLoadInlineHelp( sectionName: string, currentRoute: string ) {

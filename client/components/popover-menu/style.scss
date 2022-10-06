@@ -38,8 +38,22 @@
 		box-shadow: none;
 		color: white;
 
-		.gridicon {
-			color: var(--color-text-inverted);
+		.gridicon, .reader-follow-conversation, .reader-following-conversation {
+			color: var( --color-text-inverted );
+		}
+
+		svg.reader-external path {
+			fill: var( --color-text-inverted );
+		}
+
+		svg.reader-follow-conversation path, svg.reader-following-conversation path {
+			fill: none;
+			stroke: var( --color-text-inverted );
+
+			&.status {
+				fill: var( --color-primary );
+				stroke: none;
+			}
 		}
 	}
 
@@ -75,8 +89,15 @@
 		position: relative;
 		top: 2px;
 	}
-	.gridicons-external {
-		top: 0;
+
+	.reader-external, .reader-follow-conversation, .reader-following-conversation {
+		margin: 0 6px -2px 0;
+		vertical-align: middle;
+		position: static;
+	}
+
+	&.reader-post-options-menu__blog-sticker-menu-item {
+		width: 100%;
 	}
 }
 

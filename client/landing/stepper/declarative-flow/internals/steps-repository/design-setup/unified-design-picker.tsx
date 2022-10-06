@@ -25,6 +25,7 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -153,6 +154,32 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
 
+	// Unset the selected design, thus restarting the design picking experience.
+	useEffect( () => {
+		setSelectedDesign( undefined );
+		setSelectedStyleVariation( undefined );
+	}, [] );
+
+	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
+	const themeFromQueryString = useQuery().get( 'theme' );
+	useEffect( () => {
+		if ( ! themeFromQueryString || ! allDesigns ) {
+			return;
+		}
+
+		const { generated: generatedDesigns, static: staticDesigns } = allDesigns;
+
+		const designs = [ ...generatedDesigns.designs, ...staticDesigns.designs ];
+
+		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
+		if ( ! requestedDesign ) {
+			return;
+		}
+
+		setSelectedDesign( requestedDesign );
+		setIsPreviewingDesign( true );
+	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
+
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
 			variation && variation.slug !== 'default' ? `-${ variation.slug }` : '';
@@ -218,9 +245,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	const isPluginBundleEligible = useIsPluginBundleEligible();
-	const isBundledWithWooCommerce = ( selectedDesign?.software_sets || [] ).some(
-		( set ) => set.slug === 'woo-on-plans'
-	);
+	const isBundledWithWooCommerce = selectedDesign?.is_bundled_with_woo_commerce;
 
 	const shouldUpgrade =
 		( selectedDesign?.is_premium && ! isPremiumThemeAvailable && ! didPurchaseSelectedTheme ) ||
@@ -235,6 +260,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	function upgradePlan() {
+		if ( selectedDesign ) {
+			recordTracksEvent(
+				'calypso_signup_design_preview_unlock_theme_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+		}
+
 		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
 			return goToCheckout();
 		}
@@ -420,7 +452,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
-						title={ designTitle }
+						title={ headerDesignTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
 						selectedVariation={ selectedStyleVariation }

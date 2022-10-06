@@ -6,15 +6,14 @@
 
 .reader-feed-header__seen-button {
 	cursor: pointer;
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
+	display: flex;
+	position: relative;
 
 	svg {
 		display: inline-block;
-		top: 4px;
 		margin-right: 6px;
-		width: 18px;
-		position: relative;
-		color: var(--color-neutral-20);
+		color: var( --color-neutral-20 );
 	}
 
 	&:disabled {
@@ -25,7 +24,11 @@
 
 .reader-feed-header__site-icon {
 	align-self: center;
-	padding-bottom: 20px;
+	padding-bottom: 16px;
+	img,
+	.site-icon.is-blank {
+		border-radius: 100%;
+	}
 }
 
 .reader-feed-header .reader-feed-header__site-badge {
@@ -37,19 +40,21 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
-	align-self: stretch;
+	align-items: center;
+	display: flex;
 	font-family: $serif;
-	font-size: $font-title-small;
+	font-size: $font-title-large;
 	font-weight: 600;
+	justify-content: center;
 	max-height: 16px * 4;
+	margin-bottom: 6px;
 	overflow: hidden;
 	position: relative;
-	text-align: center;
 	white-space: normal;
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: var(--color-primary);
+		color: var( --color-neutral-100 );
 	}
 
 	&::after {
@@ -60,6 +65,11 @@
 
 	@include breakpoint-deprecated( "<960px" ) {
 		max-height: 16px * 5.9;
+	}
+
+	.blog-stickers {
+		position: relative;
+		top: 2px;
 	}
 }
 
@@ -75,8 +85,7 @@
 
 	.reader-feed-header__back-and-follow {
 		display: flex;
-		justify-content: flex-end;
-		height: 0;
+		justify-content: center;
 		margin-left: auto;
 
 		@include breakpoint-deprecated( "<960px" ) {
@@ -102,17 +111,23 @@
 	.reader-feed-header__follow-count {
 		color: var(--color-text-subtle);
 		font-size: $font-body-small;
-		margin-right: 15px;
+		flex: 0 0 100%;
+		margin-bottom: 24px;
+		justify-content:center;
+		text-align:center;
 
-		@include breakpoint-deprecated( "<960px" ) {
+		@include breakpoint-deprecated( '<960px' ) {
 			display: none;
 		}
 	}
 
 	.reader-feed-header__follow-and-settings {
+		align-items: flex-start;
 		display: flex;
-		flex-direction: column;
-		justify-content: flex-start;
+		flex-direction: row;
+		justify-content: center;
+		flex: 0 0 100%;
+		gap: 20px;
 	}
 
 	.reader-feed-header__follow-button .follow-button {
@@ -142,10 +157,12 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
-		font-size: $font-body-small;
+		font-size: 1.0625em;
 		overflow: hidden;
 		text-align: center;
 		position: relative;
+		margin-bottom: 8px;
+		top:-4px;
 
 		.reader-feed-header__description {
 			display: block;
@@ -189,6 +206,11 @@
 	}
 }
 
+.reader-feed-header__email-settings {
+	position: relative;
+	top: -2px;
+}
+
 .reader-feed-header__email-settings .reader-site-notification-settings .gridicons-cog {
 
 	@include breakpoint-deprecated( "<660px" ) {
@@ -197,6 +219,7 @@
 }
 
 .reader-feed-header__email-settings .reader-site-notification-settings__button-label {
+	display: inline-block;
 
 	@include breakpoint-deprecated( "<660px" ) {
 		display: inline;
@@ -208,6 +231,8 @@
 }
 
 .reader-feed-header__seen-button .reader-feed-header__visibility {
+	position: relative;
+	top: 2px;
 
 	@include breakpoint-deprecated( "<480px" ) {
 		display: none;

@@ -18,19 +18,18 @@ import './pattern-assembler-preview.scss';
 
 interface Props {
 	header: Pattern | null;
-	sections?: Pattern[];
+	sections: Pattern[];
 	footer: Pattern | null;
+	scrollToSelector: string | null;
 }
 
-const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => {
+const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelector }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const site = useSite();
 	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
 		null
 	);
-	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
-
 	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
@@ -50,14 +49,6 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 	useEffect( () => {
 		setWebPreviewFrameContainer( document.querySelector( '.web-preview__frame-wrapper' ) );
 	}, [] );
-
-	useEffect( () => {
-		setScrollToSelector( null );
-	}, [ header, sections ] );
-
-	useEffect( () => {
-		setScrollToSelector( footer ? 'footer' : null );
-	}, [ footer ] );
 
 	return (
 		<div

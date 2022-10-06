@@ -12,7 +12,7 @@ import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
-import { keysAreEqual, keyToString, keyForPost } from 'calypso/reader/post-key';
+import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -61,7 +61,6 @@ class ReaderStream extends Component {
 		placeholderFactory: PropTypes.func,
 		followSource: PropTypes.string,
 		isDiscoverStream: PropTypes.bool,
-		shouldCombineCards: PropTypes.bool,
 		useCompactCards: PropTypes.bool,
 		isMain: PropTypes.bool,
 		intro: PropTypes.object,
@@ -78,7 +77,6 @@ class ReaderStream extends Component {
 		showDefaultEmptyContentIfMissing: true,
 		showPrimaryFollowButtonOnCards: true,
 		isDiscoverStream: false,
-		shouldCombineCards: true,
 		isMain: true,
 		useCompactCards: false,
 		intro: null,
@@ -289,18 +287,6 @@ class ReaderStream extends Component {
 				}
 			}
 
-			const candidateItem = items[ index ];
-			// is this a combo card?
-			if ( candidateItem.isCombination ) {
-				// pick the first item
-				const postKey = {
-					postId: candidateItem.postIds[ 0 ],
-					feedId: candidateItem.feedId,
-					blogId: candidateItem.blogId,
-				};
-				this.props.selectItem( { streamKey, postKey } );
-			}
-
 			// find the index of the post / gap in the items array.
 			// Start the search from the index in the items array, which has to be equal to or larger than
 			// the index in the items array.
@@ -384,7 +370,7 @@ class ReaderStream extends Component {
 		const showPost = ( args ) =>
 			this.props.showSelectedPost( {
 				...args,
-				postKey: postKey.isCombination ? keyForPost( args ) : postKey,
+				postKey: postKey,
 				streamKey,
 			} );
 
@@ -401,7 +387,7 @@ class ReaderStream extends Component {
 					showPrimaryFollowButtonOnCards={ this.props.showPrimaryFollowButtonOnCards }
 					isDiscoverStream={ this.props.isDiscoverStream }
 					showSiteName={ this.props.showSiteNameOnCards }
-					selectedPostKey={ postKey.isCombination ? selectedPostKey : undefined }
+					selectedPostKey={ undefined }
 					followSource={ this.props.followSource }
 					blockedSites={ this.props.blockedSites }
 					streamKey={ streamKey }
@@ -473,7 +459,7 @@ class ReaderStream extends Component {
 }
 
 export default connect(
-	( state, { streamKey, recsStreamKey, shouldCombineCards = true } ) => {
+	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
 
@@ -482,7 +468,6 @@ export default connect(
 			items: getTransformedStreamItems( state, {
 				streamKey,
 				recsStreamKey,
-				shouldCombine: shouldCombineCards,
 			} ),
 			notificationsOpen: isNotificationsOpen( state ),
 			stream,

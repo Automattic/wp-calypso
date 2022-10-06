@@ -50,10 +50,25 @@ function head_error_handler() {
  * @param {string} $tag string containing the def of a script tag.
  */
 function add_crossorigin_to_script_els( $tag ) {
+	$end_of_tag = strpos( $tag, '>' );
+	if ( false === $end_of_tag ) {
+		return $tag;
+	}
+
+	// Get JUST the <script ...> tag, not anything else. $tag can include the content of the script as well.
+	// Assumes that $tag begins with <script..., which does seem to be the case in our testing.
+	$script_tag = substr( $tag, 0, $end_of_tag + 1 );
+
+	// If the src of that script tag points to an internal domain, set crossorigin=anonymous.
 	// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript
-	if ( preg_match( '/<script\s.*src=.*(s0\.wp\.com|stats\.wp\.com|widgets\.wp\.com).*>/', $tag ) ) {
-		return str_replace( ' src=', ' crossorigin="anonymous" src=', $tag );
+	if ( preg_match( '/<script.*src=.*(s0\.wp\.com|stats\.wp\.com|widgets\.wp\.com).*>/', $script_tag ) ) {
+		// Update the src of the <script...> tag.
+		$new_tag = str_replace( ' src=', " crossorigin='anonymous' src=", $script_tag );
+		// Then, find the original script_tag within the ENTIRE $tag, and replace
+		// it with the updated version. Now the script includes crossorigin=anonymous.
+		return str_replace( $script_tag, $new_tag, $tag );
 	};
+
 	return $tag;
 }
 

@@ -43,7 +43,6 @@ class PostResults extends Component {
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				placeholderFactory={ this.placeholderFactory }
-				shouldCombineCards={ true }
 				transformStreamItems={ transformStreamItems }
 				isMain={ false }
 			>

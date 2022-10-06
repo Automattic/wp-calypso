@@ -200,3 +200,40 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	}
 }
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
+
+/**
+ * Adds the global style notice banner to the custom launch bar controls.
+ *
+ * @param array $custom_controls List of custom controls.
+ *
+ * return array The collection of launch bar custom controls to render.
+ */
+function wpcom_display_global_styles_banner( $custom_controls ) {
+	// Do not show the banner if the user can use global styles.
+	if ( ! wpcom_should_limit_global_styles() ) {
+		return;
+	}
+
+	if ( method_exists( '\WPCOM_Masterbar', 'get_calypso_site_slug' ) ) {
+		$site_slug = WPCOM_Masterbar::get_calypso_site_slug( get_current_blog_id() );
+	} else {
+		$home_url  = home_url( '/' );
+		$site_slug = wp_parse_url( $home_url, PHP_URL_HOST );
+	}
+
+	$upgrade_url = 'https://wordpress.com/plans/' . $site_slug;
+
+	$custom_controls[] = array(
+		'desktop_message'    => __( 'Styles hidden', 'full-site-editing' ),
+		'mobile_message'     => __( 'Styles', 'full-site-editing' ),
+		'track_button_name'  => 'wpcom_gs_notice',
+		'tooltip'            => __( 'You need to be on a paid plan for your style changes to be made public.', 'full-site-editing' ),
+		'tooltip_link_title' => __( 'Upgrade your plan', 'full-site-editing' ),
+		'tooltip_link_url'   => $upgrade_url,
+		'icon_path'          => 'M13 9h-2V7h2v2zm0 2h-2v6h2v-6zm-1-7c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8m0-2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z',
+		'icon_color'         => 'orange',
+	);
+
+	return $custom_controls;
+}
+add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );

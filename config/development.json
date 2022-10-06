@@ -143,6 +143,7 @@
 		"security/security-checkup": true,
 		"seller-experience": true,
 		"server-side-rendering": true,
+		"settings/featured-image-template-toggle": true,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,

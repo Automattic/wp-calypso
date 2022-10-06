@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, FormInputValidation } from '@automattic/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { Dispatch, FormEvent, SetStateAction, useEffect } from 'react';
+import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -10,6 +10,14 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 
+import './style.scss';
+
+interface TranslatedStrings {
+	titlePlaceholder?: string;
+	titleMissing?: string;
+	taglinePlaceholder?: string;
+	iconPlaceholder?: string;
+}
 interface SetupFormProps {
 	site: SiteDetails | null;
 	siteTitle: string;
@@ -22,8 +30,10 @@ interface SetupFormProps {
 	setSelectedFile: Dispatch< SetStateAction< File | undefined > >;
 	setBase64Image: Dispatch< SetStateAction< string | null | undefined > >;
 	handleSubmit: ( event: FormEvent< Element > ) => void;
+	translatedText?: TranslatedStrings;
 	isLoading?: boolean;
 	isSubmitError?: boolean;
+	children?: ReactChild | ReactChild[];
 }
 
 const SetupForm = ( {
@@ -38,8 +48,10 @@ const SetupForm = ( {
 	setSelectedFile,
 	setBase64Image,
 	handleSubmit,
+	translatedText,
 	isLoading = false,
 	isSubmitError = false,
+	children,
 }: SetupFormProps ) => {
 	const { __ } = useI18n();
 	const usesSite = !! useSiteSlugParam();
@@ -53,9 +65,9 @@ const SetupForm = ( {
 
 	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
 		switch ( event.currentTarget.name ) {
-			case 'link-in-bio-input-name':
+			case 'setup-form-input-name':
 				return setComponentSiteTitle( event.currentTarget.value );
-			case 'link-in-bio-input-description':
+			case 'setup-form-input-description':
 				return setTagline( event.currentTarget.value );
 		}
 	};
@@ -67,10 +79,10 @@ const SetupForm = ( {
 	}, [ siteTitle, invalidSiteTitle, setInvalidSiteTitle ] );
 
 	return (
-		<form className="link-in-bio-setup__form" onSubmit={ handleSubmit }>
+		<form className="setup-form__form" onSubmit={ handleSubmit }>
 			<SiteIconWithPicker
 				site={ site }
-				placeholderText={ __( 'Upload a profile image' ) }
+				placeholderText={ translatedText?.iconPlaceholder || __( 'Upload a profile image' ) }
 				onSelect={ ( file ) => {
 					setSelectedFile( file );
 					imageFileToBase64( file );
@@ -79,39 +91,38 @@ const SetupForm = ( {
 				selectedFile={ selectedFile }
 			/>
 			<FormFieldset>
-				<FormLabel htmlFor="link-in-bio-input-name">{ __( 'Site name' ) }</FormLabel>
+				<FormLabel htmlFor="setup-form-input-name">{ __( 'Site name' ) }</FormLabel>
 				<FormInput
-					name="link-in-bio-input-name"
-					id="link-in-bio-input-name"
+					name="setup-form-input-name"
+					id="setup-form-input-name"
 					value={ siteTitle }
 					onChange={ onChange }
-					placeholder={ __( 'My Link in Bio' ) }
+					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
 					isError={ invalidSiteTitle }
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation
 						isError
-						text={ __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ) }
+						text={
+							translatedText?.titleMissing ||
+							__( `Oops. Looks like your site doesn't have a name yet.` )
+						}
 					/>
 				) }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="link-in-bio-input-description">{ __( 'Brief description' ) }</FormLabel>
+				<FormLabel htmlFor="setup-form-input-description">{ __( 'Brief description' ) }</FormLabel>
 				<ForwardedAutoresizingFormTextarea
-					name="link-in-bio-input-description"
-					id="link-in-bio-input-description"
+					name="setup-form-input-description"
+					id="setup-form-input-description"
 					value={ tagline }
-					placeholder={ __( 'Add a short biography here' ) }
+					placeholder={ translatedText?.taglinePlaceholder || __( 'Add a short description here' ) }
 					enableAutoFocus={ false }
 					onChange={ onChange }
 				/>
 			</FormFieldset>
-			<Button
-				className="link-in-bio-setup-form__submit"
-				disabled={ isLoading }
-				primary
-				type="submit"
-			>
+			{ children }
+			<Button className="setup-form__submit" disabled={ isLoading } primary type="submit">
 				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
 			</Button>
 			{ isSubmitError && (

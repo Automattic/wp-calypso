@@ -1,6 +1,6 @@
 import {
-	PRODUCT_JETPACK_CRM,
-	PRODUCT_JETPACK_CRM_MONTHLY,
+	JETPACK_CRM_PRODUCTS,
+	JETPACK_SOCIAL_PRODUCTS,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { useMemo } from 'react';
@@ -163,6 +163,15 @@ const useItemPrice = (
 			discountedPrice = introductoryOfferPrices.introOfferCost
 				? getMonthlyPrice( introductoryOfferPrices.introOfferCost )
 				: undefined;
+
+			// Override Jetpack Social price by hard-coding it for now
+			if (
+				JETPACK_SOCIAL_PRODUCTS.includes(
+					item?.productSlug as typeof JETPACK_SOCIAL_PRODUCTS[ number ]
+				)
+			) {
+				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
+			}
 		}
 	}
 
@@ -171,7 +180,10 @@ const useItemPrice = (
 	}
 
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
-	if ( item && [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ].includes( item.productSlug ) ) {
+	if (
+		item &&
+		JETPACK_CRM_PRODUCTS.includes( item.productSlug as typeof JETPACK_CRM_PRODUCTS[ number ] )
+	) {
 		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;
 	}

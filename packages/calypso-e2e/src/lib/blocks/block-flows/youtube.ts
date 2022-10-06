@@ -5,7 +5,7 @@ interface ConfigurationData {
 	expectedVideoTitle: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Embed"]:has-text("YouTube URL")';
+const blockParentSelector = '[aria-label="Block: YouTube"]:has-text("YouTube URL")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,
