@@ -42,6 +42,7 @@ export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
+export { default as domains } from './domains';
 
 export type StepPath =
 	| 'courses'
@@ -87,4 +88,5 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'getCurrentThemeSoftwareSets';
+	| 'getCurrentThemeSoftwareSets'
+	| 'domains';
