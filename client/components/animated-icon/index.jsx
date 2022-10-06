@@ -26,7 +26,7 @@ const AnimatedIcon = ( { icon, className } ) => {
 	}, [ icon ] );
 
 	return (
-		<div ref={ iconEl } className={ classNames( 'app-animated-icon__container', className ) }></div>
+		<div ref={ iconEl } className={ classNames( 'animated-icon', className ) }></div>
 	);
 };
 
