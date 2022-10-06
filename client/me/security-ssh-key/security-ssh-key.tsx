@@ -47,7 +47,6 @@ export const SecuritySSHKey = () => {
 
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
-			dispatch( recordTracksEvent( 'calypso_ssh_key_add_request' ) );
 			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
 		onSuccess: () => {
@@ -74,9 +73,6 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const { deleteSSHKey, keyBeingDeleted } = useDeleteSSHKeyMutation( {
-		onMutate: () => {
-			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_request' ) );
-		},
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_success' ) );
 			dispatch( successNotice( __( 'SSH key has been successfully removed!' ), noticeOptions ) );
