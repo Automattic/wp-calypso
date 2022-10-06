@@ -334,16 +334,16 @@ class ManagePurchase extends Component {
 	};
 
 	getUpgradeUrl() {
-		const { purchase, siteId } = this.props;
+		const { purchase, siteSlug } = this.props;
 
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteId }`;
+			return `/plans/storage/${ siteSlug }`;
 		}
 
-		return `/plans/${ siteId }`;
+		return `/plans/${ siteSlug }`;
 	}
 
 	renderUpgradeNavItem() {
@@ -409,7 +409,7 @@ class ManagePurchase extends Component {
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
-		if ( ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -870,11 +870,12 @@ class ManagePurchase extends Component {
 						</div>
 					) }
 				</Card>
-				<PurchasePlanDetails
-					purchaseId={ this.props.purchaseId }
-					isProductOwner={ isProductOwner }
-				/>
-
+				{ ! isPartnerPurchase( purchase ) && (
+					<PurchasePlanDetails
+						purchaseId={ this.props.purchaseId }
+						isProductOwner={ isProductOwner }
+					/>
+				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
