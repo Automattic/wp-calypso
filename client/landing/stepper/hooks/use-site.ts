@@ -2,14 +2,9 @@ import { useSelect } from '@wordpress/data';
 import { SITE_STORE } from '../stores';
 import { useSiteIdParam } from './use-site-id-param';
 import { useSiteSlugParam } from './use-site-slug-param';
+import type { SiteDetails } from '@automattic/data-stores';
 
-export interface Site {
-	ID: number;
-	name: string;
-	URL: string;
-}
-
-export function useSite(): Site | null {
+export function useSite(): SiteDetails | null {
 	const siteSlug = useSiteSlugParam();
 	const siteIdParam = useSiteIdParam();
 	const siteId = useSelect(
