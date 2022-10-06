@@ -4,9 +4,7 @@ import wp from 'calypso/lib/wp';
 export const SSH_KEY_FORMATS = [
 	'ssh-rsa',
 	'ssh-ed25519',
-	'ssh-dss',
 	'ecdsa-sha2-nistp256',
-	'ecdsa-sha2-nistp384',
 	'ecdsa-sha2-nistp521',
 ] as const;
 
