@@ -1,0 +1,25 @@
+import { useEffect, useState } from 'react';
+import wpcom from 'calypso/lib/wp';
+import { useSite } from './use-site';
+
+const useAccentColor = () => {
+	const ID = useSite()?.ID;
+	const [ color, setColor ] = useState( '' );
+
+	useEffect( () => {
+		if ( ID ) {
+			wpcom.req
+				.get( {
+					path: `/sites/${ ID }/global-styles-variation/site-accent-color`,
+					apiNamespace: 'wpcom/v2',
+				} )
+				.then( ( color: string ) => {
+					setColor( color );
+				} );
+		}
+	}, [ ID ] );
+
+	return color;
+};
+
+export default useAccentColor;
