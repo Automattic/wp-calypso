@@ -1,12 +1,11 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, LINK_IN_BIO_FLOW, createSiteWithCart } from '@automattic/onboarding';
+import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { createSiteWithCart } from '../lib/signup/utils';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
@@ -81,7 +80,9 @@ export const linkInBio: Flow = {
 				// );
 
 				case 'domains':
-					return navigate( 'plans' );
+					return window.location.assign(
+						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
+					);
 
 				case 'launchpad': {
 					return navigate( 'processing' );

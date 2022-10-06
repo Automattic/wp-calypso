@@ -62,7 +62,6 @@ import type { Step } from '../../types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useTranslate } from 'i18n-calypso';
 
-import './styles.scss';
 import { useEffect, useState } from 'react';
 import { Search } from './types';
 
@@ -90,6 +89,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const dispatch = useReduxDispatch();
 
+	const queryObject = {};
 	const isDomainOnly = false; //useSelect( ( select ) => select( ONBOARD_STORE ) ).getIsDomainOnly();
 	const stepSectionName = undefined;
 	const forceHideFreeDomainExplainerAndStrikeoutUi = undefined;
@@ -235,38 +235,43 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			submitSignupStep: () => dispatch( submitSignupStep ),
 		} );
 
+		const siteAccentColor = flow === 'newsletter' && queryObject?.siteAccentColor;
+
+		console.log( 'siteUrl', siteUrl );
+		console.log( 'productSlug', sitesuggestion.product_slugUrl );
+
 		//This should be added to the things to be done after Plans
-		createSiteWithCart(
-			name,
-			providedDependencies.siteSlug,
-			false,
-			{
-				domainItem: {
-					is_domain_registration: true,
-					meta: providedDependencies.siteSlug,
-					product_slug: providedDependencies.productSlug,
-				},
-				flowName: undefined,
-				lastKnownFlow: name,
-				googleAppsCartItem: undefined,
-				isPurchasingItem: true,
-				siteUrl: providedDependencies.siteSlug,
-				themeSlugWithRepo: undefined,
-				themeItem: undefined,
-				siteAccentColor: '#0675C4',
-			},
-			userIsLoggedIn,
-			false,
-			( error, siteDependencies ) => {
-				//With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
-				//Currently we only pass siteSlug, but we shall save domainItem in the store
-				return window.location.assign(
-					`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
-						siteDependencies.siteSlug as string
-					) }`
-				);
-			}
-		);
+		// createSiteWithCart(
+		// 	name,
+		// 	siteUrl,
+		// 	false,
+		// 	{
+		// 		domainItem: {
+		// 			is_domain_registration: true,
+		// 			meta: siteUrl,
+		// 			product_slug:  suggestion.product_slug,
+		// 		},
+		// 		flowName: undefined,
+		// 		lastKnownFlow: name,
+		// 		googleAppsCartItem: undefined,
+		// 		isPurchasingItem: true,
+		// 		siteUrl: providedDependencies.siteSlug,
+		// 		themeSlugWithRepo: undefined,
+		// 		themeItem: undefined,
+		// 		siteAccentColor: '#0675C4',
+		// 	},
+		// 	userIsLoggedIn,
+		// 	false,
+		// 	( error, siteDependencies ) => {
+		// 		//With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
+		// 		//Currently we only pass siteSlug, but we shall save domainItem in the store
+		// 		return window.location.assign(
+		// 			`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
+		// 				siteDependencies.siteSlug as string
+		// 			) }`
+		// 		);
+		// 	}
+		// );
 
 		// setDomainResult( {
 		// 	domainItem,
