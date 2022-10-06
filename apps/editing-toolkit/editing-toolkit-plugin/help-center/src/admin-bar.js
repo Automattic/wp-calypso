@@ -12,23 +12,35 @@ function AdminHelpCenterContent() {
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const show = useSelect( ( select ) => select( 'automattic/help-center' ).isHelpCenterShown() );
 	const { data } = useHappychatAvailable();
+	const button = document.getElementById( 'wp-admin-bar-help-center' );
 
 	useEffect( () => {
 		if ( data?.status === 'assigned' ) {
 			setShowHelpCenter( true );
 		}
-	}, [ data, setShowHelpCenter ] );
+
+		if ( show ) {
+			button.classList.add( 'active' );
+		} else {
+			button.classList.remove( 'active' );
+		}
+	}, [ data, setShowHelpCenter, show, button ] );
 
 	const handleToggleHelpCenter = () => {
 		if ( show ) {
-			recordTracksEvent( 'calypso_inlinehelp_close', { location: 'help-center-dashboard' } );
+			recordTracksEvent( 'calypso_inlinehelp_close', {
+				location: 'help-center-dashboard',
+				sectionName: 'wp-admin',
+			} );
 		} else {
-			recordTracksEvent( 'calypso_inlinehelp_show', { location: 'help-center-dashboard' } );
+			recordTracksEvent( 'calypso_inlinehelp_show', {
+				location: 'help-center-dashboard',
+				sectionName: 'wp-admin',
+			} );
 		}
 		setShowHelpCenter( ! show );
 	};
 
-	const button = document.getElementById( 'help-center__icon' );
 	button.onclick = handleToggleHelpCenter;
 
 	return <>{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }</>;

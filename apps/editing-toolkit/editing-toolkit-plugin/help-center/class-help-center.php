@@ -166,7 +166,8 @@ class Help_Center {
 				'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
 				'parent' => 'top-secondary',
 				'meta'   => array(
-					'html' => '<div id="help-center-masterbar" />',
+					'html'  => '<div id="help-center-masterbar" />',
+					'class' => 'menupop',
 				),
 			)
 		);

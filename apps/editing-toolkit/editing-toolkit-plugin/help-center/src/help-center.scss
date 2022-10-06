@@ -1,10 +1,9 @@
-/* stylelint-disable selector-max-id */
 .help-center.entry-point-button {
 	&.is-active {
 		background: #1e1e1e;
 
 		svg {
-			fill: white;
+			fill: #fff;
 		}
 	}
 }
@@ -30,29 +29,57 @@
  * WP-ADMIN Masterbar Styling
  */
 .wp-toolbar {
-	#wpadminbar #wp-admin-bar-help .ab-item {
+	#wp-admin-bar-help-center {
 		position: relative;
 		padding: 0;
 		width: 36px;
+		right: 5px;
 
-		&:hover {
+		svg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 4px 6px;
+
+			#notification-bubble {
+				display: none;
+			}
+		}
+
+		&.unseen-notification {
+			svg {
+				> path {
+					display: none;
+				}
+
+				#notification-bubble {
+					display: block;
+				}
+			}
+		}
+
+		.ab-item.ab-empty-item {
+			transition: 250ms ease;
+		}
+
+		.ab-item:hover {
 			cursor: pointer;
 		}
-	}
 
-	svg#help-center__icon {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		padding: 4px 6px;
+		&.active,
+		&.active:hover {
+			.ab-item.ab-empty-item {
+				background: #fff !important;
 
-		// Need to set this up for notifications
-		#has-notification {
-			display: none;
+				svg {
+					fill: var(--wp-admin-theme-color-darker-20);
+				}
+			}
 		}
 	}
+
 
 	.help-center {
 		button.components-button {
