@@ -296,13 +296,25 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced customization' ),
+	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
+		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				"Access extended color schemes and customization tools. Change all of your site's fonts, colours and more."
 			),
+	},
+
+	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'CSS customization' ),
+		getDescription: () =>
+			i18n.translate( 'Customize your CSS, giving you complete control over how your site looks.' ),
 	},
 
 	[ FEATURE_FREE_BLOG_DOMAIN ]: {
@@ -624,23 +636,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
 		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( 'CSS customization' ),
 		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
+			i18n.translate( 'Customize your CSS, giving you complete control over how your site looks.' ),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
-		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
-		getTitle: () => i18n.translate( 'Premium design tools' ),
-		getDescription: () => i18n.translate( "Change all of your site's fonts, colours and more." ),
 	},
 
 	[ FEATURE_NO_ADS ]: {
