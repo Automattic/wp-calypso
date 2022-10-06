@@ -25,9 +25,7 @@ const AnimatedIcon = ( { icon, className } ) => {
 		return () => animation.destroy();
 	}, [ icon ] );
 
-	return (
-		<div ref={ iconEl } className={ classNames( 'animated-icon', className ) }></div>
-	);
+	return <div ref={ iconEl } className={ classNames( 'animated-icon', className ) }></div>;
 };
 
 export default AnimatedIcon;
