@@ -627,6 +627,13 @@ class ManagePurchase extends Component {
 		this.props.successNotice( successMessage, { isPersistent: true } );
 	};
 
+	getCancellationFlowType = () => {
+		const { purchase } = this.props;
+		return hasAmountAvailableToRefund( purchase )
+			? CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND
+			: CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+	};
+
 	renderCancelForm() {
 		const { purchase } = this.props;
 
@@ -638,7 +645,7 @@ class ManagePurchase extends Component {
 				isVisible={ this.state.isCancelFormVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.removePurchase }
-				flowType={ CANCEL_FLOW_TYPE.REMOVE }
+				flowType={ this.getCancellationFlowType() }
 			/>
 		);
 	}
