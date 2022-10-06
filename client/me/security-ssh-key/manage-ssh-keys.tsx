@@ -1,6 +1,8 @@
 import { Button, CompactCard } from '@automattic/components';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import i18n from 'i18n-calypso';
 import accept from 'calypso/lib/accept';
 import { SSHKeyData } from './use-ssh-key-query';
 
@@ -20,7 +22,13 @@ const SSHPublicKey = styled.code( {
 	overflow: 'hidden',
 	textOverflow: 'ellipsis',
 	whiteSpace: 'nowrap',
-	marginRight: '1rem',
+} );
+
+const SSHKeyAddedDate = styled.span( {
+	display: 'block',
+	fontStyle: 'italic',
+	fontSize: '0.875rem',
+	color: 'var( --color-text-subtle )',
 } );
 
 const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
@@ -35,7 +43,21 @@ const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 
 	return (
 		<SSHKeyItemCard>
-			<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
+			<div style={ { marginRight: '1rem' } }>
+				<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
+				<SSHKeyAddedDate>
+					{ sprintf(
+						// translators: addedOn is when the SSH key was added.
+						__( 'Added on %(addedOn)s' ),
+						{
+							addedOn: new Intl.DateTimeFormat( i18n.getLocaleSlug() ?? 'en', {
+								dateStyle: 'long',
+								timeStyle: 'medium',
+							} ).format( new Date( sshKey.created_at ) ),
+						}
+					) }
+				</SSHKeyAddedDate>
+			</div>
 			<Button
 				busy={ keyBeingDeleted === sshKey.name }
 				disabled={ !! keyBeingDeleted }

@@ -13,6 +13,7 @@ export interface SSHKeyData {
 	key: string;
 	type: typeof SSH_KEY_FORMATS[ number ];
 	sha256: string;
+	created_at: string;
 }
 
 export const SSH_KEY_QUERY_KEY = [ 'me', 'ssh-keys' ];
