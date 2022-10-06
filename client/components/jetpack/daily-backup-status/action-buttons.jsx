@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getAreJetpackCredentialsInvalid from 'calypso/state/jetpack/credentials/selectors';
+import { getAreJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

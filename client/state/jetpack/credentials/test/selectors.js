@@ -1,4 +1,4 @@
-import getAreJetpackCredentialsInvalid from 'calypso/state/jetpack/credentials/selectors';
+import { getAreJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { sites as SITES_CREDENTIALS_FIXTURE } from 'calypso/state/selectors/test/fixtures/jetpack-credentials-test-status';
 
 describe( 'getAreJetpackCredentialsInvalid()', () => {
