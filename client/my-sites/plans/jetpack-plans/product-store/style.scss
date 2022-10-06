@@ -69,7 +69,7 @@
 	margin: 0 auto;
 	padding: 2px;
 
-	background: var(--color-surface-backdrop);
+	background: var(--studio-gray-5);
 	border-radius: calc(2 * 4px);
 
 	@include break-medium {
@@ -78,6 +78,10 @@
 		transform: translateX(-50%);
 
 		width: auto;
+	}
+
+	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing & {
+		background: var(--color-surface-backdrop);
 	}
 }
 
@@ -135,8 +139,12 @@
 		}
 
 		&:active {
-			background-color: var(--studio-gray-5);
+			background-color: var(--studio-gray-10);
 			text-decoration: none;
+
+			.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing & {
+				background: var(--studio-gray-5);
+			}
 		}
 	}
 }
