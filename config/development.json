@@ -3,7 +3,6 @@
 	"env_id": "development",
 	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
 	"client_slug": "browser",
-	"directly_rtm_widget_environment": "sandbox",
 	"protocol": "http",
 	"hostname": "calypso.localhost",
 	"port": 3000,

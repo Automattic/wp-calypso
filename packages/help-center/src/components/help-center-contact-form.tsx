@@ -27,8 +27,7 @@ import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { askDirectlyQuestion, execute } from '../directly';
-import { HELP_CENTER_STORE, USER_STORE } from '../stores';
+import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
@@ -105,20 +104,6 @@ const titles: {
 		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
 		buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
 	},
-	DIRECTLY: {
-		formTitle: __( 'Start live chat with an expert', __i18n_text_domain__ ),
-		formSubtitle: __(
-			'These are others, like yourself, who have been selected because of their WordPress.com knowledge to help answer questions.',
-			__i18n_text_domain__
-		),
-		trayText: __( 'An expert user will be with you right away', __i18n_text_domain__ ),
-		formDisclaimer: __(
-			'Please do not provide financial or contact information when submitting this form.',
-			__i18n_text_domain__
-		),
-		buttonLabel: __( 'Ask an expert', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Connecting you to an expert', __i18n_text_domain__ ),
-	},
 	FORUM: {
 		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
 		formDisclaimer: __(
@@ -131,7 +116,7 @@ const titles: {
 	},
 };
 
-type Mode = 'CHAT' | 'EMAIL' | 'DIRECTLY' | 'FORUM';
+type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
 	const { search } = useLocation();
@@ -154,23 +139,18 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { selectedSite, subject, message, userDeclaredSiteUrl, directlyData } = useSelect(
-		( select ) => {
-			return {
-				selectedSite: select( HELP_CENTER_STORE ).getSite(),
-				subject: select( HELP_CENTER_STORE ).getSubject(),
-				message: select( HELP_CENTER_STORE ).getMessage(),
-				userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
-				directlyData: select( HELP_CENTER_STORE ).getDirectly(),
-			};
-		}
-	);
-	const userData = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		return {
+			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			subject: select( HELP_CENTER_STORE ).getSubject(),
+			message: select( HELP_CENTER_STORE ).getMessage(),
+			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+		};
+	} );
 
 	const {
 		setSite,
 		resetStore,
-		setShowHelpCenter,
 		setUserDeclaredSiteUrl,
 		setUserDeclaredSite,
 		setSubject,
@@ -191,13 +171,6 @@ export const HelpCenterContactForm = () => {
 			setSitePickerChoice( 'OTHER_SITE' );
 		}
 	}, [ userWithNoSites ] );
-
-	useEffect( () => {
-		if ( directlyData?.hasSession ) {
-			execute( [ 'maximize', {} ] );
-			setShowHelpCenter( false );
-		}
-	}, [ directlyData, setShowHelpCenter ] );
 
 	const formTitles = titles[ mode ];
 
@@ -242,7 +215,7 @@ export const HelpCenterContactForm = () => {
 
 	function handleCTA() {
 		switch ( mode ) {
-			case 'CHAT': {
+			case 'CHAT':
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 						support_variation: 'happychat',
@@ -260,9 +233,8 @@ export const HelpCenterContactForm = () => {
 					break;
 				}
 				break;
-			}
 
-			case 'EMAIL': {
+			case 'EMAIL':
 				if ( supportSite ) {
 					let planName = supportSite.plan?.product_slug;
 
@@ -307,9 +279,8 @@ export const HelpCenterContactForm = () => {
 						} );
 				}
 				break;
-			}
 
-			case 'FORUM': {
+			case 'FORUM':
 				submitTopic( {
 					ownershipResult,
 					site: supportSite,
@@ -332,17 +303,6 @@ export const HelpCenterContactForm = () => {
 						setHasSubmittingError( true );
 					} );
 				break;
-			}
-			case 'DIRECTLY': {
-				askDirectlyQuestion( message ?? '', userData?.display_name ?? '', userData?.email ?? '' );
-				recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
-					support_variation: 'directly',
-					location: 'help-center',
-					section: sectionName,
-				} );
-				setShowHelpCenter( false );
-				break;
-			}
 		}
 	}
 
@@ -397,7 +357,6 @@ export const HelpCenterContactForm = () => {
 		switch ( mode ) {
 			case 'CHAT':
 			case 'EMAIL':
-			case 'DIRECTLY':
 				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 			case 'FORUM': {
 				if ( ownershipStatusLoading ) {
@@ -417,12 +376,14 @@ export const HelpCenterContactForm = () => {
 					{ formTitles.formSubtitle }
 				</p>
 			) }
+
 			{ formTitles.formDisclaimer && (
 				<p className="help-center-contact-form__site-picker-form-warning">
 					{ formTitles.formDisclaimer }
 				</p>
 			) }
-			{ mode !== 'DIRECTLY' && ! userWithNoSites && (
+
+			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
 						enabled={ mode === 'FORUM' }
@@ -437,6 +398,7 @@ export const HelpCenterContactForm = () => {
 					/>
 				</section>
 			) }
+
 			{ sitePickerChoice === 'OTHER_SITE' && (
 				<>
 					<section>

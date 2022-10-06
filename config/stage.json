@@ -3,7 +3,6 @@
 	"env_id": "stage",
 	"favicon_url": "/calypso/images/favicons/favicon-staging.ico",
 	"client_slug": "browser",
-	"directly_rtm_widget_environment": "sandbox",
 	"hostname": "wordpress.com",
 	"i18n_default_locale_slug": "en",
 	"signup_url": "/start",

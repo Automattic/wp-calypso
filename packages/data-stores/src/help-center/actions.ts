@@ -7,12 +7,6 @@ export const setShowHelpCenter = ( show: boolean ) =>
 		show,
 	} as const );
 
-export const setDirectlyData = ( data: { isLoaded: boolean; hasSession: boolean } ) =>
-	( {
-		type: 'HELP_CENTER_SET_DIRECTLY_DATA',
-		data,
-	} as const );
-
 export const setRouterState = ( history: Location[], index: number ) =>
 	( {
 		type: 'HELP_CENTER_SET_ROUTER_STATE',
@@ -94,7 +88,6 @@ export const resetStore = () =>
 
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
-	| typeof setDirectlyData
 	| typeof setSite
 	| typeof setSubject
 	| typeof setRouterState

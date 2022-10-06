@@ -5,7 +5,6 @@ import { HelpCenter } from '@automattic/data-stores';
 import {
 	shouldShowHelpCenterToUser,
 	SUPPORT_CHAT_OVERFLOW,
-	SUPPORT_DIRECTLY,
 	SUPPORT_FORUM,
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_TICKET,
@@ -50,10 +49,6 @@ import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happycha
 import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
-import {
-	askQuestion as askDirectlyQuestion,
-	initialize as initializeDirectly,
-} from 'calypso/state/help/directly/actions';
 import { getHelpSelectedSite } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
@@ -62,10 +57,6 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import getInlineHelpSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
-import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import HelpUnverifiedWarning from '../help-unverified-warning';
 
@@ -95,17 +86,6 @@ class HelpContact extends Component {
 		isSubmitting: false,
 		wasAdditionalSupportOptionShown: false,
 	};
-
-	componentDidMount() {
-		this.prepareDirectlyWidget();
-	}
-
-	componentDidUpdate() {
-		// Directly initialization is a noop if it's already happened. This catches
-		// instances where a state/prop change moves a user to Directly support from
-		// some other variation.
-		this.prepareDirectlyWidget();
-	}
 
 	backToHelp = () => {
 		const searchParams = new URLSearchParams( window.location.search );
@@ -156,27 +136,6 @@ class HelpContact extends Component {
 		if ( ! this.props.compact ) {
 			page( '/help' );
 		}
-	};
-
-	prepareDirectlyWidget = () => {
-		if ( this.props.isDirectlyUninitialized ) {
-			this.props.initializeDirectly();
-		}
-	};
-
-	submitDirectlyQuestion = ( contactForm ) => {
-		this.recordCompactSubmit( 'directly' );
-		const { display_name, email } = this.props.currentUser;
-
-		this.props.askDirectlyQuestion( contactForm.message, display_name, email );
-
-		this.clearSavedContactForm();
-
-		if ( ! this.props.compact ) {
-			page( '/help' );
-		}
-
-		this.recordSubmitWithActiveTickets( 'directly' );
 	};
 
 	submitSupportTicket = ( contactForm ) => {
@@ -439,30 +398,6 @@ class HelpContact extends Component {
 					showQASuggestions: true,
 				};
 
-			case SUPPORT_DIRECTLY:
-				return {
-					onSubmit: this.submitDirectlyQuestion,
-					buttonLabel: translate( 'Ask an Expert' ),
-					formDescription: translate(
-						'Get help from an {{strong}}Expert User{{/strong}} of WordPress.com. ' +
-							'These are other users, like yourself, who have been selected because ' +
-							'of their knowledge to help answer your questions.' +
-							'{{br/}}{{br/}}' +
-							'{{strong}}Please do not{{/strong}} provide financial or contact ' +
-							'information when submitting this form.',
-						{
-							components: {
-								// Need to use linebreaks since the entire text is wrapped in a <p>...</p>
-								br: <br />,
-								strong: <strong />,
-							},
-						}
-					),
-					showSubjectField: false,
-					showSiteField: false,
-					showQASuggestions: true,
-				};
-
 			default:
 				return {
 					onSubmit: this.submitSupportForumsTopic,
@@ -563,18 +498,12 @@ class HelpContact extends Component {
 			this.props.ticketSupportConfigurationReady || null != this.props.ticketSupportRequestError;
 		const happychatReadyOrDisabled =
 			! config.isEnabled( 'happychat' ) || this.props.isHappychatUserEligible !== null;
-		const directlyReadyOrError = this.props.isDirectlyReady || this.props.isDirectlyFailed;
 
-		return ticketReadyOrError && happychatReadyOrDisabled && directlyReadyOrError;
+		return ticketReadyOrError && happychatReadyOrDisabled;
 	};
 
 	shouldShowPreloadForm = () => {
-		const { supportVariation } = this.props;
-		const waitingOnDirectly = supportVariation === SUPPORT_DIRECTLY && ! this.props.isDirectlyReady;
-
-		return (
-			this.props.isRequestingSites || ! this.hasDataToDetermineVariation() || waitingOnDirectly
-		);
+		return this.props.isRequestingSites || ! this.hasDataToDetermineVariation();
 	};
 
 	// Modifies passed props for the "compact" contact form style.
@@ -618,36 +547,14 @@ class HelpContact extends Component {
 			);
 		}
 
-		if ( supportVariation === SUPPORT_DIRECTLY && this.props.hasAskedADirectlyQuestion ) {
-			// We're taking the Directly confirmation outside the standard `confirmation` state object
-			// that other variations use, because we need this to persist even if the component is
-			// removed and re-mounted. Using `confirmation` in component state would mean you could
-			// ask a new Directy question every time you left the help section and came back.
-			const directlyConfirmation = {
-				title: translate( "We're on it!" ),
-				message: translate(
-					'We sent your question to our {{strong}}Expert Users{{/strong}}. ' +
-						'You will hear back via email as soon as an Expert has responded ' +
-						'(usually within an hour). For now you can close this window or ' +
-						'continue using WordPress.com.',
-					{
-						components: {
-							strong: <strong />,
-						},
-					}
-				),
-			};
-			return <HelpContactConfirmation { ...directlyConfirmation } />;
-		}
-
 		const contactFormProps = Object.assign(
 			this.getContactFormCommonProps( supportVariation ),
 			this.contactFormPropsCompactFilter( this.getContactFormPropsVariation( supportVariation ) )
 		);
 
-		// Customers sent to Directly, Forums, and Upwork are not affected by live chat closures
+		// Customers sent to Forums, and Upwork are not affected by live chat closures
 		const isUserAffectedByLiveChatClosure =
-			[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
+			[ SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
 		return (
 			<div>
@@ -739,10 +646,6 @@ export default withDispatch( ( dataStoresDispatch ) => {
 				currentUser: getCurrentUser( state ),
 				getUserInfo: getHappychatUserInfo( state ),
 				hasHappychatLocalizedSupport: hasHappychatLocalizedSupport( state ),
-				hasAskedADirectlyQuestion: hasUserAskedADirectlyQuestion( state ),
-				isDirectlyFailed: isDirectlyFailed( state ),
-				isDirectlyReady: isDirectlyReady( state ),
-				isDirectlyUninitialized: isDirectlyUninitialized( state ),
 				isEmailVerified: isCurrentUserEmailVerified( state ),
 				isHappychatUserEligible: isChatEligible,
 				localizedLanguageNames: getLocalizedLanguageNames( state ),
@@ -757,9 +660,7 @@ export default withDispatch( ( dataStoresDispatch ) => {
 			};
 		},
 		{
-			askDirectlyQuestion,
 			errorNotice,
-			initializeDirectly,
 			openHappychat,
 			recordTracksEventAction,
 			sendHappychatMessage,
