@@ -50,12 +50,12 @@ export const SecuritySSHKey = () => {
 			dispatch( removeNotice( sshKeySaveFailureNoticeId ) );
 		},
 		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_ssh_key_add_success' ) );
+			dispatch( recordTracksEvent( 'calypso_security_ssh_key_add_success' ) );
 			dispatch( successNotice( __( 'SSH key has been successfully added!' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_ssh_key_add_failure', {
+				recordTracksEvent( 'calypso_security_ssh_key_add_failure', {
 					code: error.code,
 				} )
 			);
@@ -74,12 +74,12 @@ export const SecuritySSHKey = () => {
 
 	const { deleteSSHKey, keyBeingDeleted } = useDeleteSSHKeyMutation( {
 		onSuccess: () => {
-			dispatch( recordTracksEvent( 'calypso_ssh_key_delete_success' ) );
+			dispatch( recordTracksEvent( 'calypso_security_ssh_key_delete_success' ) );
 			dispatch( successNotice( __( 'SSH key has been successfully removed!' ), noticeOptions ) );
 		},
 		onError: ( error ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_ssh_key_delete_failure', {
+				recordTracksEvent( 'calypso_security_ssh_key_delete_failure', {
 					code: error.code,
 				} )
 			);
