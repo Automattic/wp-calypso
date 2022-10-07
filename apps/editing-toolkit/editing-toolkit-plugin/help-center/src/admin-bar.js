@@ -23,12 +23,12 @@ function AdminHelpCenterContent() {
 	const handleToggleHelpCenter = () => {
 		if ( show ) {
 			recordTracksEvent( 'calypso_inlinehelp_close', {
-				location: 'help-center-dashboard',
+				location: 'help-center',
 				sectionName: 'wp-admin',
 			} );
 		} else {
 			recordTracksEvent( 'calypso_inlinehelp_show', {
-				location: 'help-center-dashboard',
+				location: 'help-center',
 				sectionName: 'wp-admin',
 			} );
 		}
