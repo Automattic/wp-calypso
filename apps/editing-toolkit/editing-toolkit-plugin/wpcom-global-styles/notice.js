@@ -1,5 +1,6 @@
 /* global wpcomGlobalStyles */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
@@ -32,7 +33,7 @@ const GlobalStylesNotice = () => {
 
 	const { editEntityRecord } = useDispatch( 'core' );
 	const canRevertGlobalStyles = !! globalStylesId;
-	const revertGlobalStyles = () => {
+	const resetGlobalStyles = () => {
 		if ( ! canRevertGlobalStyles ) {
 			return;
 		}
@@ -41,7 +42,13 @@ const GlobalStylesNotice = () => {
 			styles: {},
 			settings: {},
 		} );
+
+		recordTracksEvent( 'calypso_global_styles_paid_feature_notice_reset_click' );
 	};
+	// Do not show the notice if the use is trying to save the default styles.
+	const isVisible =
+		Object.keys( globalStylesConfig.styles ).length ||
+		Object.keys( globalStylesConfig.settings ).length;
 
 	// Closes the sidebar if there are no more changes to be saved.
 	useEffect( () => {
@@ -58,11 +65,13 @@ const GlobalStylesNotice = () => {
 		}
 	}, [ siteChanges ] );
 
-	// Do not show the notice if the use is trying to save the default styles.
-	if (
-		Object.keys( globalStylesConfig.styles ).length === 0 &&
-		Object.keys( globalStylesConfig.settings ).length === 0
-	) {
+	useEffect( () => {
+		if ( isVisible ) {
+			recordTracksEvent( 'calypso_global_styles_paid_feature_notice_show' );
+		}
+	}, [ isVisible ] );
+
+	if ( ! isVisible ) {
 		return null;
 	}
 
@@ -74,13 +83,22 @@ const GlobalStylesNotice = () => {
 					'full-site-editing'
 				),
 				{
-					a: <Button variant="link" href={ wpcomGlobalStyles.upgradeUrl } target="_top" />,
+					a: (
+						<Button
+							variant="link"
+							href={ wpcomGlobalStyles.upgradeUrl }
+							target="_top"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_global_styles_paid_feature_notice_upgrade_click' )
+							}
+						/>
+					),
 				}
 			) }
 			&nbsp;
 			{ canRevertGlobalStyles &&
 				createInterpolateElement( __( 'You can <a>reset your styles</a>.', 'full-site-editing' ), {
-					a: <Button variant="link" onClick={ revertGlobalStyles } />,
+					a: <Button variant="link" onClick={ resetGlobalStyles } />,
 				} ) }
 		</Notice>
 	);

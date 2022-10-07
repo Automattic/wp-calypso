@@ -1,5 +1,6 @@
 /* global wpcomGlobalStyles */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -22,6 +23,17 @@ const GlobalStylesModal = () => {
 		setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
 	}, [ setPreference ] );
 
+	useEffect( () => {
+		if ( isVisible ) {
+			recordTracksEvent( 'calypso_global_styles_paid_feature_modal_show' );
+		}
+	}, [ isVisible ] );
+
+	const closeModal = () => {
+		dismissModal();
+		recordTracksEvent( 'calypso_global_styles_paid_feature_modal_dismiss' );
+	};
+
 	if ( ! isVisible ) {
 		return null;
 	}
@@ -29,7 +41,7 @@ const GlobalStylesModal = () => {
 	return (
 		<Modal
 			className="wpcom-global-styles-modal"
-			onRequestClose={ dismissModal }
+			onRequestClose={ closeModal }
 			// set to false so that 1Password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
@@ -44,10 +56,17 @@ const GlobalStylesModal = () => {
 					) }
 				</p>
 				<div className="wpcom-global-styles-modal__actions">
-					<Button variant="secondary" onClick={ dismissModal }>
+					<Button variant="secondary" onClick={ closeModal }>
 						{ __( 'Try it out', 'full-site-editing' ) }
 					</Button>
-					<Button variant="primary" href={ wpcomGlobalStyles.upgradeUrl } target="_top">
+					<Button
+						variant="primary"
+						href={ wpcomGlobalStyles.upgradeUrl }
+						target="_top"
+						onClick={ () =>
+							recordTracksEvent( 'calypso_global_styles_paid_feature_modal_upgrade_click' )
+						}
+					>
 						{ __( 'Upgrade plan', 'full-site-editing' ) }
 					</Button>
 				</div>
