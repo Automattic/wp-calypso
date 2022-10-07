@@ -1,15 +1,4 @@
-import {
-	planMatches,
-	isBloggerPlan,
-	isPersonalPlan,
-	isPremiumPlan,
-	isBusinessPlan,
-	isEcommercePlan,
-	GROUP_JETPACK,
-	GROUP_WPCOM,
-	WPCOM_FEATURES_NO_ADVERTS,
-	isFreePlanProduct,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS, isFreePlanProduct } from '@automattic/calypso-products';
 import classnames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
@@ -87,17 +76,7 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	const classes = classnames(
-		'upsell-nudge',
-		className,
-		{ 'is-upgrade-blogger': plan && isBloggerPlan( plan ) },
-		{ 'is-upgrade-personal': plan && isPersonalPlan( plan ) },
-		{ 'is-upgrade-premium': plan && isPremiumPlan( plan ) },
-		{ 'is-upgrade-business': plan && isBusinessPlan( plan ) },
-		{ 'is-upgrade-ecommerce': plan && isEcommercePlan( plan ) },
-		{ 'is-jetpack-plan': plan && planMatches( plan, { group: GROUP_JETPACK } ) },
-		{ 'is-wpcom-plan': plan && planMatches( plan, { group: GROUP_WPCOM } ) }
-	);
+	const classes = classnames( 'upsell-nudge', className );
 
 	if ( dismissPreferenceName && forceHref && href ) {
 		debug(
