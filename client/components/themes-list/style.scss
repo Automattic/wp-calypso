@@ -21,8 +21,8 @@
 .themes-list__empty-container {
 	.themes-list__not-found-text {
 		color: var(--studio-gray-60);
-		margin-top: 40px;
-		margin-bottom: 20px;
+		margin-top: 48px;
+		margin-bottom: 32px;
 	}
 
 	.themes-list__upgrade-section-wrapper {
@@ -40,7 +40,8 @@
 	}
 
 	.themes-list__upgrade-section-subtitle {
-		width: 680px;
+		max-width: 680px;
+		padding: 0 2rem;
 		margin-top: 8px;
 		text-align: center;
 		font-size: $font-body;
