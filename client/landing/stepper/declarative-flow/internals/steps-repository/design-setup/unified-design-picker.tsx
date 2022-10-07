@@ -36,7 +36,6 @@ import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
-import { removeLegacyDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { StarterDesigns } from '@automattic/data-stores';
@@ -82,10 +81,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
-			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
-		}
-
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build intent
@@ -141,10 +136,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const isEnabledStyleSelection = isEnabled( 'signup/design-picker-style-selection' );
-	const selectedDesignHasStyleVariations =
-		isEnabledStyleSelection && ( selectedDesign?.style_variations || [] ).length > 0;
-
+	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
@@ -199,7 +191,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: isEnabledStyleSelection && ( design.style_variations || [] ).length > 0,
+			has_style_variations: ( design.style_variations || [] ).length > 0,
 		};
 	}
 
@@ -357,8 +349,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			flow,
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations:
-				isEnabledStyleSelection && ( _selectedDesign?.style_variations || [] ).length > 0,
+			has_style_variations: ( _selectedDesign?.style_variations || [] ).length > 0,
 		} );
 
 		submit?.( providedDependencies );
