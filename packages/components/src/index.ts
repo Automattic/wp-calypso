@@ -1,5 +1,5 @@
 export { default as Button } from './button';
-export { default as Animation } from './animation';
+export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
 export { default as Dialog } from './dialog';

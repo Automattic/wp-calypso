@@ -1,4 +1,4 @@
-const loadFramerFeatures = async ( feature: string ) => {
+export const loadFramerFeatures = async ( feature: string ) => {
 	let featurePath = '';
 	switch ( feature ) {
 		case 'domAnimation':
@@ -11,5 +11,3 @@ const loadFramerFeatures = async ( feature: string ) => {
 	const mod = await import( `${ featurePath }` );
 	return mod.default;
 };
-
-export default loadFramerFeatures;
