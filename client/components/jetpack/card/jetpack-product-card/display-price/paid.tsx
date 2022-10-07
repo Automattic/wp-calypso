@@ -7,6 +7,7 @@ import type { Moment } from 'moment';
 import type { ReactNode } from 'react';
 
 type OwnProps = {
+	discountDurationInMonths?: number;
 	discountedPrice?: number;
 	discountedPriceFirst?: boolean;
 	originalPrice?: number;
@@ -19,6 +20,7 @@ type OwnProps = {
 };
 
 const Paid: React.FC< OwnProps > = ( {
+	discountDurationInMonths,
 	discountedPrice,
 	discountedPriceFirst,
 	originalPrice,
@@ -43,7 +45,11 @@ const Paid: React.FC< OwnProps > = ( {
 				/>
 				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
 				<PlanPrice discounted rawPrice={ 0.01 } currencyCode={ '$' } />
-				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+				<TimeFrame
+					expiryDate={ expiryDate }
+					billingTerm={ billingTerm }
+					discountDurationInMonths={ discountDurationInMonths }
+				/>
 			</>
 		);
 	}
@@ -88,7 +94,11 @@ const Paid: React.FC< OwnProps > = ( {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			<TimeFrame
+				expiryDate={ expiryDate }
+				billingTerm={ billingTerm }
+				discountDurationInMonths={ discountDurationInMonths }
+			/>
 		</>
 	);
 };

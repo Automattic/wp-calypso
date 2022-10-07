@@ -8,13 +8,24 @@ import type { Moment } from 'moment';
 interface TimeFrameProps {
 	expiryDate?: Moment;
 	billingTerm: Duration;
+	discountDurationInMonths?: number;
 }
 
-const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) => {
+interface RegularTimeFrameProps {
+	billingTerm: Duration;
+}
+
+interface ExpiringDateTimeFrameProps {
+	productExpiryDate: Moment;
+}
+
+interface IntroDiscountTimeFrameProps {
+	billingTerm: Duration;
+	discountDurationInMonths: number;
+}
+
+const RegularTimeFrame = ( { billingTerm }: RegularTimeFrameProps ) => {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const productExpiryDate =
-		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
 	const billingTermText = useMemo( () => {
 		if ( billingTerm === TERM_MONTHLY ) {
@@ -34,27 +45,78 @@ const TimeFrame: React.FC< TimeFrameProps > = ( { expiryDate, billingTerm } ) =>
 		};
 	}, [ billingTerm, translate ] );
 
-	return productExpiryDate ? (
-		<div>
-			<time
-				className="display-price__expiration-date"
-				dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
-			>
-				{ translate( 'expires %(date)s', {
-					args: {
-						date: productExpiryDate.format( 'L' ),
-					},
-				} ) }
-			</time>
-		</div>
-	) : (
-		<div>
-			<span className="display-price__billing-time-frame">
-				<span className="normal">{ billingTermText.normal }</span>
-				<span className="compact">{ billingTermText.compact }</span>
-			</span>
-		</div>
+	return (
+		<span className="display-price__billing-time-frame">
+			<span className="normal">{ billingTermText.normal }</span>
+			<span className="compact">{ billingTermText.compact }</span>
+		</span>
 	);
+};
+
+const ExpiringDateTimeFrame = ( { productExpiryDate }: ExpiringDateTimeFrameProps ) => {
+	const translate = useTranslate();
+	return (
+		<time
+			className="display-price__expiration-date"
+			dateTime={ productExpiryDate.format( 'YYYY-DD-YY' ) }
+		>
+			{ translate( 'expires %(date)s', {
+				args: {
+					date: productExpiryDate.format( 'L' ),
+				},
+			} ) }
+		</time>
+	);
+};
+
+const IntroDiscountTimeFrame = ( {
+	billingTerm,
+	discountDurationInMonths,
+}: IntroDiscountTimeFrameProps ) => {
+	const translate = useTranslate();
+
+	const BillingTermText = useMemo( () => {
+		if ( billingTerm === TERM_MONTHLY ) {
+			return discountDurationInMonths > 1
+				? translate( 'for the first %(months)d months, billed monthly', {
+						args: { months: discountDurationInMonths },
+				  } )
+				: translate( 'for the first month, billed monthly' );
+		}
+
+		return discountDurationInMonths > 1
+			? translate( 'for the first %(months)d months, billed yearly', {
+					args: { months: discountDurationInMonths },
+			  } )
+			: translate( 'for the first month, billed yearly' );
+	}, [ discountDurationInMonths, billingTerm, translate ] );
+
+	return <span className="display-price__billing-time-frame">{ BillingTermText }</span>;
+};
+
+const TimeFrame: React.FC< TimeFrameProps > = ( {
+	expiryDate,
+	billingTerm,
+	discountDurationInMonths,
+} ) => {
+	const moment = useLocalizedMoment();
+	const productExpiryDate =
+		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
+
+	if ( productExpiryDate ) {
+		return <ExpiringDateTimeFrame productExpiryDate={ productExpiryDate } />;
+	}
+
+	if ( discountDurationInMonths ) {
+		return (
+			<IntroDiscountTimeFrame
+				billingTerm={ billingTerm }
+				discountDurationInMonths={ discountDurationInMonths }
+			/>
+		);
+	}
+
+	return <RegularTimeFrame billingTerm={ billingTerm } />;
 };
 
 export default TimeFrame;
