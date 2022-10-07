@@ -32,7 +32,7 @@ interface StaticDesign {
 	title: string;
 	description: string;
 	recipe: DesignRecipe;
-	is_verticalized: boolean;
+	verticalizable: boolean;
 	categories: Category[];
 	price?: string;
 	style_variations?: StyleVariation[];
@@ -43,7 +43,7 @@ interface GeneratedDesign {
 	slug: string;
 	title: string;
 	recipe: DesignRecipe;
-	is_verticalized: boolean;
+	verticalizable: boolean;
 }
 
 export function useStarterDesignsQuery(
@@ -85,7 +85,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		title,
 		description,
 		recipe,
-		is_verticalized,
+		verticalizable,
 		categories,
 		price,
 		style_variations,
@@ -103,10 +103,10 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		title,
 		description,
 		recipe,
-		is_verticalized,
+		verticalizable,
+		categories,
 		is_premium,
 		is_bundled_with_woo_commerce,
-		categories,
 		price,
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
@@ -119,13 +119,13 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 }
 
 function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe, is_verticalized } = design;
+	const { slug, title, recipe, verticalizable } = design;
 
 	return {
 		slug,
 		title,
 		recipe,
-		is_verticalized,
+		verticalizable,
 		is_premium: false,
 		categories: [],
 		features: [],

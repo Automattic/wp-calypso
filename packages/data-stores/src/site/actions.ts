@@ -318,7 +318,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				trim_content: true,
 			};
 
-			if ( selectedDesign.is_verticalized ) {
+			if ( selectedDesign.verticalizable ) {
 				themeSetupOptions.vertical_id = options?.verticalId;
 			}
 

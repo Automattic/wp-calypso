@@ -82,7 +82,7 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
-	is_verticalized?: boolean;
+	verticalizable?: boolean;
 	is_premium: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
