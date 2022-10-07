@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import AsyncLoad from 'calypso/components/async-load';
 import PatternActionBar from './pattern-action-bar';
 import type { Pattern } from './types';
 
@@ -71,29 +72,35 @@ const PatternLayout = ( {
 							</Button>
 						</li>
 					) }
-					{ sections?.map( ( section, index ) => {
-						const { id, name } = section;
-						return (
-							<li
-								key={ `${ index }-${ id }` }
-								className="pattern-layout__list-item pattern-layout__list-item--section"
-							>
-								<span className="pattern-layout__list-item-text" title={ name }>
-									{ name }
-								</span>
-								<PatternActionBar
-									patternType="section"
-									onReplace={ () => onReplaceSection( index ) }
-									onDelete={ () => onDeleteSection( index ) }
-									onMoveUp={ () => onMoveUpSection( index ) }
-									onMoveDown={ () => onMoveDownSection( index ) }
-									enableMoving={ true }
-									disableMoveUp={ index === 0 }
-									disableMoveDown={ sections?.length === index + 1 }
-								/>
-							</li>
-						);
-					} ) }
+					<AsyncLoad require="./animate-list" featureName={ 'domMax' }>
+						{ ( m: any ) =>
+							sections?.map( ( section, index ) => {
+								const { name, key } = section as Pattern;
+								return (
+									<m.li
+										layout={ 'position' }
+										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
+										key={ `${ key }` }
+										className="pattern-layout__list-item pattern-layout__list-item--section"
+									>
+										<span className="pattern-layout__list-item-text" title={ name }>
+											{ name }
+										</span>
+										<PatternActionBar
+											patternType="section"
+											onReplace={ () => onReplaceSection( index ) }
+											onDelete={ () => onDeleteSection( index ) }
+											onMoveUp={ () => onMoveUpSection( index ) }
+											onMoveDown={ () => onMoveDownSection( index ) }
+											enableMoving={ true }
+											disableMoveUp={ index === 0 }
+											disableMoveDown={ sections?.length === index + 1 }
+										/>
+									</m.li>
+								);
+							} )
+						}
+					</AsyncLoad>
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
 						<Button onClick={ () => onAddSection() }>
 							<span className="pattern-layout__add-icon">+</span>{ ' ' }
