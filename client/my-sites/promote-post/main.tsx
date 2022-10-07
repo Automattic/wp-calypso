@@ -31,8 +31,8 @@ export default function PromotedPosts( { tab }: Props ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = selectedSite?.ID;
 
-	const test = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = test;
+	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
+	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
 
 	const tabs: TabOption[] = [
 		{ id: 'posts', name: translate( 'Ready to promote' ) },

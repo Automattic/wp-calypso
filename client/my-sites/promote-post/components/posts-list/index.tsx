@@ -7,10 +7,11 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PostItem, { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import './style.scss';
 import { getPostsForQuery, isRequestingPostsForQuery } from 'calypso/state/posts/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export default function PostsList() {
 	// todo use for searching
+
 	const query = {
 		// author,
 		// category,
@@ -23,6 +24,7 @@ export default function PostsList() {
 		// type: 'post',
 	};
 
+	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const posts = useSelector( ( state ) => {
 		const posts = getPostsForQuery( state, selectedSiteId, query );
@@ -31,6 +33,14 @@ export default function PostsList() {
 	const isLoading = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, query )
 	);
+
+	const getStartWritingUrl = () => {
+		const wpPostUrl = 'https://wordpress.com/post';
+		if ( ! selectedSite?.domain ) {
+			return wpPostUrl;
+		}
+		return `${ wpPostUrl }/${ selectedSite.domain }`;
+	};
 
 	const isEmpty = ! posts || ! posts.length;
 	return (
@@ -43,11 +53,12 @@ export default function PostsList() {
 			) }
 			{ ! isLoading && isEmpty && (
 				<EmptyContent
-					title={ translate( 'No promoted posts' ) }
-					line={ 'attributes.line' }
-					action={ 'attributes.action' }
-					actionURL={ 'attributes.actionURL' }
-					// actionHoverCallback={ preloadEditor }
+					title={ translate( 'No posts to promote' ) }
+					line={ translate(
+						'Start publishing posts and pages and promote them to reach people in your blog or site'
+					) }
+					action={ translate( 'Add new post' ) }
+					actionURL={ getStartWritingUrl() }
 					illustration={ megaphoneIllustration }
 					illustrationWidth={ 150 }
 				/>
