@@ -148,9 +148,11 @@ class Help_Center {
 		global $wp_admin_bar, $current_screen;
 
 		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-		if ( ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+		if ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
 			return;
 		}
+
+		l( is_admin() );
 
 		wp_localize_script(
 			'help-center-script',
