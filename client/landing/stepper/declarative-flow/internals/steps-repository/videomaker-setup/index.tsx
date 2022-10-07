@@ -1,11 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import classNames from 'classnames';
-import React, { FormEvent } from 'react';
+import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,38 +15,27 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
-	const { selectedDesign } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
-	const handleSubmit = async ( event: FormEvent ) => {
-		event.preventDefault();
+	const onSelectTheme = ( slug: string ) => {
+		setSelectedDesign( {
+			slug: 'videomaker',
+			theme: slug,
+			is_premium: true,
+			title: 'Videomaker',
+			categories: [],
+			features: [],
+			template: '',
+		} );
 
 		submit?.();
 	};
-
-	const lightClasses = classNames( 'videomaker-setup__light-button', {
-		selected: 'premium/videomaker-white' === selectedDesign?.theme,
-	} );
-
-	const darkClasses = classNames( 'videomaker-setup__dark-button', {
-		selected: 'premium/videomaker' === selectedDesign?.theme,
-	} );
 
 	const stepContent = (
 		<div className="videomaker-setup__step-content">
 			<div className="videomaker-setup__theme-picker">
 				<button
-					className={ darkClasses }
-					onClick={ () =>
-						setSelectedDesign( {
-							slug: 'videomaker',
-							theme: 'premium/videomaker',
-							is_premium: true,
-							title: 'Videomaker',
-							categories: [],
-							features: [],
-							template: '',
-						} )
-					}
+					className="videomaker-setup__dark-button"
+					onClick={ () => onSelectTheme( 'premium/videomaker' ) }
 				>
 					<img
 						src="https://videopress2.files.wordpress.com/2022/10/videomaker-theme-dark.jpg"
@@ -56,18 +43,8 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					/>
 				</button>
 				<button
-					className={ lightClasses }
-					onClick={ () =>
-						setSelectedDesign( {
-							slug: 'videomaker',
-							theme: 'premium/videomaker-white',
-							is_premium: true,
-							title: 'Videomaker',
-							categories: [],
-							features: [],
-							template: '',
-						} )
-					}
+					className="videomaker-setup__light-button"
+					onClick={ () => onSelectTheme( 'premium/videomaker-white' ) }
 				>
 					<img
 						src="https://videopress2.files.wordpress.com/2022/10/videomaker-theme-light.jpg"
@@ -75,11 +52,6 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 					/>
 				</button>
 			</div>
-			<form className="videomaker-setup__form" onSubmit={ handleSubmit }>
-				<Button className="videomaker-setup-form__submit" primary type="submit">
-					{ __( 'Continue' ) }
-				</Button>
-			</form>
 		</div>
 	);
 

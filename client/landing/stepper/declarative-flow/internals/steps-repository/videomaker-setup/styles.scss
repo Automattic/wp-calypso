@@ -52,7 +52,7 @@ $font-family: 'SF Pro Text', $sans;
 				margin-bottom: 30px;
 			}
 
-			&:hover, &.selected {
+			&:hover {
 				transform: scale( 1.05 );
 				z-index: 1;
 				background-color: $videopress-theme-yellow;
@@ -75,6 +75,12 @@ $font-family: 'SF Pro Text', $sans;
 
 			img {
 				max-width: 400px;
+			}
+		}
+
+		@include break-large {
+			img {
+				max-width: 500px;
 			}
 		}
 	}
