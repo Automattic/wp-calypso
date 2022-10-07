@@ -389,6 +389,7 @@ export const normalizers = {
 				label: item.title,
 				value: item.views,
 				page: detailPage,
+				public: item.public,
 				actions: [
 					{
 						type: 'link',
