@@ -42,7 +42,6 @@ import BackupDatePicker from '..';
 import { useCanGoToDate } from '../hooks';
 
 const realDateNow = Date.now;
-const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
 
 describe( 'BackupDatePicker', () => {
 	beforeEach( () => {
@@ -150,105 +149,93 @@ describe( 'BackupDatePicker', () => {
 
 	// --- NAVIGATION ---
 
-	test( 'Navigates backward when the previous date is clicked', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
+	test( 'Navigates backward when the previous date is clicked', async () => {
+		const user = userEvent.setup();
 
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( -1 );
-				done();
-			};
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
 
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-			const button = screen.getByText( 'Dec 31, 2019' );
-			user.click( button );
-		} ) );
+		const button = screen.getByText( 'Dec 31, 2019' );
+		await user.click( button );
 
-	test( 'Navigates forward when the next date is clicked', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.subtract( 1, 'day' ) );
+	} );
 
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( 1 );
-				done();
-			};
+	test( 'Navigates forward when the next date is clicked', async () => {
+		const user = userEvent.setup();
 
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
 
-			const button = screen.getByText( 'Jan 2, 2020' );
-			user.click( button );
-		} ) );
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-	test( 'Navigates backward when the previous date is focused and the spacebar is pressed', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
+		const button = screen.getByText( 'Jan 2, 2020' );
+		await user.click( button );
 
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( -1 );
-				done();
-			};
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );
+	} );
 
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+	test( 'Navigates backward when the previous date is focused and the spacebar is pressed', async () => {
+		const user = userEvent.setup();
 
-			const button = screen.getByText( 'Dec 31, 2019' );
-			user.type( button, '[Space]' );
-		} ) );
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
 
-	test( 'Navigates forward when the next date is focused and the spacebar is pressed', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( 1 );
-				done();
-			};
+		const button = screen.getByText( 'Dec 31, 2019' );
+		button.focus();
+		await user.keyboard( '[Space]' );
 
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.subtract( 1, 'day' ) );
+	} );
 
-			const button = screen.getByText( 'Jan 2, 2020' );
-			user.type( button, '[Space]' );
-		} ) );
+	test( 'Navigates forward when the next date is focused and the spacebar is pressed', async () => {
+		const user = userEvent.setup();
+
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
+
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+
+		const button = screen.getByText( 'Jan 2, 2020' );
+		button.focus();
+		await user.keyboard( '[Space]' );
+
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );
+	} );
 
 	// --- ANALYTICS ---
 
-	test( 'Records a Tracks event for backward navigation', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
-			const selectedDate = moment( '2020-01-01' );
+	test( 'Records a Tracks event for backward navigation', async () => {
+		const user = userEvent.setup();
+		const selectedDate = moment( '2020-01-01' );
 
-			const checkPreviousDateTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_date_previous' );
-				done();
-			};
+		const dispatchMock = jest.fn();
+		useDispatch.mockImplementation( () => dispatchMock );
 
-			useDispatch.mockImplementation( () => checkPreviousDateTracksEvent );
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
+		await user.click( screen.getByText( 'Dec 31, 2019' ) );
+		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
+			'calypso_jetpack_backup_date_previous'
+		);
+	} );
 
-			user.click( screen.getByText( 'Dec 31, 2019' ) );
-		} ) );
+	test( 'Records a Tracks event for forward navigation', async () => {
+		const user = userEvent.setup();
+		const selectedDate = moment( '2020-01-01' );
 
-	test( 'Records a Tracks event for forward navigation', () =>
-		new Promise( ( done ) => {
-			const user = userEvent.setup();
-			const selectedDate = moment( '2020-01-01' );
+		const dispatchMock = jest.fn();
+		useDispatch.mockImplementation( () => dispatchMock );
 
-			const checkNextDateTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_date_next' );
-				done();
-			};
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
-			useDispatch.mockImplementation( () => checkNextDateTracksEvent );
-
-			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
-
-			user.click( screen.getByText( 'Jan 2, 2020' ) );
-		} ) );
+		await user.click( screen.getByText( 'Jan 2, 2020' ) );
+		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
+			'calypso_jetpack_backup_date_next'
+		);
+	} );
 } );

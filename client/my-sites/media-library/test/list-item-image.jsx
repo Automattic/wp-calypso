@@ -29,24 +29,24 @@ describe( 'MediaLibraryListItem image', () => {
 		test( 'defaults to photon when no thumbnail parameter is passed', () => {
 			render( getItem( 0 ) );
 
-			expect( screen.getByTestId( getResizedUrl() ) ).toBeInTheDocument();
+			expect( screen.getByTestId( getResizedUrl() ) ).toBeVisible();
 		} );
 		test( 'returns a resized private thumbnail for type MEDIA_IMAGE_RESIZER', () => {
 			render( getItem( 0, 'MEDIA_IMAGE_RESIZER' ) );
 
-			expect( screen.getByTestId( getResizedUrl() ) ).toBeInTheDocument();
+			expect( screen.getByTestId( getResizedUrl() ) ).toBeVisible();
 		} );
 
 		test( 'returns existing medium thumbnail for type MEDIA_IMAGE_THUMBNAIL', () => {
 			render( getItem( 0, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( screen.getByTestId( fixtures.media[ 0 ].thumbnails.medium ) ).toBeInTheDocument();
+			expect( screen.getByTestId( fixtures.media[ 0 ].thumbnails.medium ) ).toBeVisible();
 		} );
 
 		test( 'returns resized thumbnail for type MEDIA_IMAGE_THUMBNAIL when no medium thumbnail', () => {
 			render( getItem( 1, 'MEDIA_IMAGE_THUMBNAIL' ) );
 
-			expect( screen.getByTestId( getResizedUrl() ) ).toBeInTheDocument();
+			expect( screen.getByTestId( getResizedUrl() ) ).toBeVisible();
 		} );
 	} );
 } );
