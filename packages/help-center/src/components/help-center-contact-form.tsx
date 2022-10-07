@@ -530,9 +530,6 @@ export const HelpCenterContactForm = () => {
 					onInput={ ( event ) => setMessage( event.currentTarget.value ) }
 					className="help-center-contact-form__message"
 				/>
-				{ shouldShowHelpLanguagePrompt() && (
-					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
-				) }
 			</section>
 
 			{ mode === 'FORUM' && (
@@ -557,6 +554,9 @@ export const HelpCenterContactForm = () => {
 				>
 					{ getCTALabel() }
 				</Button>
+				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt() && (
+					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+				) }
 				{ hasSubmittingError && (
 					<FormInputValidation
 						isError
