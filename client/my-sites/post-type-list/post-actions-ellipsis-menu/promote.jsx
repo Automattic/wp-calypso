@@ -11,6 +11,7 @@ import {
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function PostActionsEllipsisMenuPromote( {
@@ -26,12 +27,20 @@ function PostActionsEllipsisMenuPromote( {
 	const translate = useTranslate();
 	const isSitePrivate =
 		useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+
+	const isComingSoon =
+		useSelector( ( state ) => siteId && isSiteComingSoon( state, siteId ) ) || false;
+
 	const keyValue = globalId;
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	if ( isSitePrivate ) {
+		return null;
+	}
+
+	if ( isComingSoon ) {
 		return null;
 	}
 
