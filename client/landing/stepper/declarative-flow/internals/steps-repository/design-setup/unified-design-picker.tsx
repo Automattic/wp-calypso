@@ -136,10 +136,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const isEnabledStyleSelection = isEnabled( 'signup/design-picker-style-selection' );
-	const selectedDesignHasStyleVariations =
-		isEnabledStyleSelection && ( selectedDesign?.style_variations || [] ).length > 0;
-
+	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
@@ -194,7 +191,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: isEnabledStyleSelection && ( design.style_variations || [] ).length > 0,
+			has_style_variations: ( design.style_variations || [] ).length > 0,
 		};
 	}
 
@@ -352,8 +349,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			flow,
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations:
-				isEnabledStyleSelection && ( _selectedDesign?.style_variations || [] ).length > 0,
+			has_style_variations: ( _selectedDesign?.style_variations || [] ).length > 0,
 		} );
 
 		submit?.( providedDependencies );
