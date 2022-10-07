@@ -51,8 +51,8 @@ export function imageIsBigEnoughForGallery( image ) {
 
 export function imageWithCorrectRatio( image ) {
 	const imageRatio = image.height / image.width;
-	const minRatio = 9 / 17;
-	const maxRatio = 17 / 9;
+	const minRatio = 1 / 3;
+	const maxRatio = 3;
 	return imageRatio >= minRatio && imageRatio <= maxRatio;
 }
 
