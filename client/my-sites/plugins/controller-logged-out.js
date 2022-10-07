@@ -8,7 +8,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 
-const PREFETCH_TIMEOUT = 500;
+const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
 
 function getQueryOptions( { path, lang } ) {
