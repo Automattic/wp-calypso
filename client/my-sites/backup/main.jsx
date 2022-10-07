@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 import BackupStorageSpace from 'calypso/components/backup-storage-space';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
@@ -145,6 +146,7 @@ function AdminContent( { selectedDate } ) {
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
 			<QueryRewindState siteId={ siteId } />
+			<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
 
 			{ isFiltering && <SearchResults /> }
 
