@@ -24,7 +24,7 @@ interface PartialDiscountTimeFrameProps {
 	discountedPriceDuration: number;
 }
 
-const RegularTimeFrame = ( { billingTerm }: RegularTimeFrameProps ) => {
+const RegularTimeFrame: React.FC< RegularTimeFrameProps > = ( { billingTerm } ) => {
 	const translate = useTranslate();
 
 	const billingTermText = useMemo( () => {
@@ -53,7 +53,7 @@ const RegularTimeFrame = ( { billingTerm }: RegularTimeFrameProps ) => {
 	);
 };
 
-const ExpiringDateTimeFrame = ( { productExpiryDate }: ExpiringDateTimeFrameProps ) => {
+const ExpiringDateTimeFrame: React.FC< ExpiringDateTimeFrameProps > = ( { productExpiryDate } ) => {
 	const translate = useTranslate();
 	return (
 		<time
@@ -69,10 +69,10 @@ const ExpiringDateTimeFrame = ( { productExpiryDate }: ExpiringDateTimeFrameProp
 	);
 };
 
-const PartialDiscountTimeFrame = ( {
+const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps > = ( {
 	billingTerm,
 	discountedPriceDuration,
-}: PartialDiscountTimeFrameProps ) => {
+} ) => {
 	const translate = useTranslate();
 
 	const BillingTermText = useMemo( () => {
