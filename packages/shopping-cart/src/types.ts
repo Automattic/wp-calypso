@@ -585,7 +585,6 @@ export type DomainContactDetails = {
 	lastName?: string;
 	organization?: string;
 	email?: string;
-	alternateEmail?: string;
 	phone?: string;
 	address1?: string;
 	address2?: string;

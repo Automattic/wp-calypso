@@ -468,7 +468,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 
 			@include break-xlarge {
-				font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+				font-size: 2.75rem;
 			}
 		}
 
@@ -797,7 +797,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 				line-height: 2.5rem;
 
 				@include break-mobile {
-					font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+					font-size: 2.75rem;
 					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;
 				}

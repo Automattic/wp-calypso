@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback } from 'react';
 import { connect } from 'react-redux';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
@@ -21,21 +21,7 @@ export const ThemesList = ( props ) => {
 		[ props.fetchNextPage ]
 	);
 
-	const noThemesFound = useMemo(
-		() => props.isRequestFulfilled && props.themes.length === 0,
-		[ props.isRequestFulfilled, props.themes.length ]
-	);
-
-	useEffect( () => {
-		if ( noThemesFound && props.searchTerm ) {
-			props.recordTracksEvent( 'calypso_themeshowcase_search_empty', {
-				search_term: props.searchTerm,
-				blog_id: props.siteId,
-			} );
-		}
-	}, [ noThemesFound, props.searchTerm ] );
-
-	if ( noThemesFound ) {
+	if ( ! props.loading && props.themes.length === 0 ) {
 		return <Empty emptyContent={ props.emptyContent } translate={ props.translate } />;
 	}
 
@@ -56,7 +42,6 @@ ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
 	emptyContent: PropTypes.element,
 	loading: PropTypes.bool.isRequired,
-	isRequestFulfilled: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
 	fetchNextPage: PropTypes.func.isRequired,
 	getButtonOptions: PropTypes.func,
@@ -80,7 +65,6 @@ ThemesList.propTypes = {
 
 ThemesList.defaultProps = {
 	loading: false,
-	isRequestFulfilled: false,
 	searchTerm: '',
 	themes: [],
 	recordTracksEvent: noop,

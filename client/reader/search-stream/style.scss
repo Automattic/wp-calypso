@@ -1,5 +1,5 @@
 .is-reader-page .main.search-stream {
-	max-width: 960px;
+	max-width: 905px;
 }
 
 .search-stream__intro {
@@ -30,7 +30,6 @@
 }
 
 .search-stream .search-stream__input-card.card {
-	box-shadow: 0 0 0 2px var(--color-neutral-10), 0 1px 2px var(--color-neutral-10);
 	margin-bottom: 0;
 }
 
@@ -262,7 +261,6 @@
 	.section-nav-tab__text {
 		font-weight: 600;
 		font-size: $font-body-small;
-		letter-spacing: 0.04em;
 		text-transform: uppercase;
 		width: 100%;
 	}

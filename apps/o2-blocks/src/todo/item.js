@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
-import Dashicon from '@wordpress/icon';
+import { Icon, check, cancelCircleFilled, arrowDown, arrowUp } from '@wordpress/icons';
 
 export const ItemEditor = class extends Component {
 	constructor() {
@@ -50,7 +50,7 @@ export const ItemEditor = class extends Component {
 			<li className={ classNames }>
 				{ /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */ }
 				<span className="item-status" onClick={ this.toggleDone } role="button" tabindex="0">
-					{ done && <Dashicon icon="yes" /> }
+					{ done && <Icon icon={ check } /> }
 				</span>
 				{ /* { 0 < item.level && <Button onClick={ moveLeft }>&lt;</Button> }
 				{ 2 > item.level && <Button onClick={ moveRight }>&gt;</Button> }
@@ -68,16 +68,16 @@ export const ItemEditor = class extends Component {
 				<span className="move-buttons">
 					{ canMoveUp && (
 						<Button onClick={ moveUp }>
-							<Dashicon icon="arrow-up-alt2" />
+							<Icon icon={ arrowUp } />
 						</Button>
 					) }
 					{ canMoveDown && (
 						<Button onClick={ moveDown }>
-							<Dashicon icon="arrow-down-alt2" />
+							<Icon icon={ arrowDown } />
 						</Button>
 					) }
 					<Button onClick={ onDelete }>
-						<Dashicon icon="no" />
+						<Icon icon={ cancelCircleFilled } />
 					</Button>
 				</span>
 			</li>

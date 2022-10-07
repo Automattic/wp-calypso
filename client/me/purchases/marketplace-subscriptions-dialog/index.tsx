@@ -1,5 +1,5 @@
 import { Dialog } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Fragment } from 'react';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 
@@ -10,6 +10,9 @@ interface MarketPlaceSubscriptionsDialogProps {
 	isDialogVisible: boolean;
 	isRemoving: boolean;
 	activeSubscriptions: Array< { id: number; productName: string } >;
+	sectionHeadingText?: TranslateResult;
+	primaryButtonText?: TranslateResult;
+	bodyParagraphText?: TranslateResult;
 }
 
 export const MarketPlaceSubscriptionsDialog = ( {
@@ -18,6 +21,9 @@ export const MarketPlaceSubscriptionsDialog = ( {
 	removePlan,
 	isDialogVisible,
 	activeSubscriptions,
+	sectionHeadingText,
+	primaryButtonText,
+	bodyParagraphText,
 }: MarketPlaceSubscriptionsDialogProps ) => {
 	const translate = useTranslate();
 
@@ -30,10 +36,12 @@ export const MarketPlaceSubscriptionsDialog = ( {
 		{
 			isPrimary: true,
 			action: 'removePlanAndAllSubscriptions',
-			label: translate( 'Remove Plan & All Subscriptions', {
-				comment:
-					'This button removes the active plan and all active Marketplace subscriptions on the site',
-			} ),
+			label:
+				primaryButtonText ??
+				translate( 'Remove Plan & All Subscriptions', {
+					comment:
+						'This button removes the active plan and all active Marketplace subscriptions on the site',
+				} ),
 			onClick: removePlan,
 		},
 	];
@@ -47,9 +55,10 @@ export const MarketPlaceSubscriptionsDialog = ( {
 		>
 			<Fragment>
 				<FormSectionHeading>
-					{ translate( 'Remove %(plan)s', {
-						args: { plan: planName },
-					} ) }
+					{ sectionHeadingText ??
+						translate( 'Remove %(plan)s', {
+							args: { plan: planName },
+						} ) }
 				</FormSectionHeading>
 				<p>
 					{ translate(
@@ -64,11 +73,12 @@ export const MarketPlaceSubscriptionsDialog = ( {
 					} ) }
 				</ul>
 				<p>
-					{ translate(
-						'You should remove this subscription before downgrading your plan. Would you like to remove this subscription and downgrade your plan?',
-						'You should remove these subscriptions before downgrading your plan. Would you like to remove all subscriptions and downgrade your plan?',
-						{ count: activeSubscriptions.length }
-					) }
+					{ bodyParagraphText ??
+						translate(
+							'You should remove this subscription before downgrading your plan. Would you like to remove this subscription and downgrade your plan?',
+							'You should remove these subscriptions before downgrading your plan. Would you like to remove all subscriptions and downgrade your plan?',
+							{ count: activeSubscriptions.length }
+						) }
 				</p>
 			</Fragment>
 		</Dialog>

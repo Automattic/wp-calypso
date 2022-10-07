@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { Interval, EVERY_TEN_SECONDS } from 'calypso/lib/interval';
+import { Interval, EVERY_TEN_SECONDS, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { urlToSlug } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -194,27 +194,33 @@ export class SectionMigrate extends Component {
 		this.setState( { siteInfo }, () => {
 			const selectedSiteSlug = urlToSlug( siteInfo.site_url.replace( /\/$/, '' ) );
 			this.setState( { selectedSiteSlug } );
-			wpcom
-				.site( selectedSiteSlug )
-				.get( {
-					apiVersion: '1.2',
-				} )
-				.then( ( site ) => {
-					if ( ! ( site && site.capabilities ) ) {
-						// A site isn't connected if we cannot manage it.
-						return this.setState( { isJetpackConnected: false } );
-					}
-
-					// Update the site in the state tree.
-					this.props.receiveSite( omit( site, '_headers' ) );
-					this.setState( { isJetpackConnected: true } );
-				} )
-				.catch( () => {
-					// @TODO: Do we need to better handle this? It most-likely means the site isn't connected.
-					this.setState( { isJetpackConnected: false } );
-				} )
-				.finally( callback );
+			this.updateSiteInfo( selectedSiteSlug, callback );
 		} );
+	};
+
+	updateSiteInfo = ( selectedSiteSlug, callback = () => {} ) => {
+		selectedSiteSlug = selectedSiteSlug || this.state.selectedSiteSlug;
+		if ( ! selectedSiteSlug ) return;
+		return wpcom
+			.site( selectedSiteSlug )
+			.get( {
+				apiVersion: '1.2',
+			} )
+			.then( ( site ) => {
+				if ( ! ( site && site.capabilities ) ) {
+					// A site isn't connected if we cannot manage it.
+					return this.setState( { isJetpackConnected: false } );
+				}
+
+				// Update the site in the state tree.
+				this.props.receiveSite( omit( site, '_headers' ) );
+				this.setState( { isJetpackConnected: true } );
+			} )
+			.catch( () => {
+				// @TODO: Do we need to better handle this? It most-likely means the site isn't connected.
+				this.setState( { isJetpackConnected: false } );
+			} )
+			.finally( callback );
 	};
 
 	setSourceSiteId = ( sourceSiteId ) => {
@@ -625,14 +631,17 @@ export class SectionMigrate extends Component {
 						break;
 					case 'migrateOrImport':
 						migrationElement = (
-							<StepImportOrMigrate
-								onJetpackSelect={ this.handleJetpackSelect }
-								sourceSiteInfo={ this.state.siteInfo }
-								targetSite={ targetSite }
-								targetSiteSlug={ targetSiteSlug }
-								sourceHasJetpack={ this.state.isJetpackConnected }
-								isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
-							/>
+							<>
+								<Interval onTick={ this.updateSiteInfo } period={ EVERY_FIVE_SECONDS } />
+								<StepImportOrMigrate
+									onJetpackSelect={ this.handleJetpackSelect }
+									sourceSiteInfo={ this.state.siteInfo }
+									targetSite={ targetSite }
+									targetSiteSlug={ targetSiteSlug }
+									sourceHasJetpack={ this.state.isJetpackConnected }
+									isTargetSiteAtomic={ this.props.isTargetSiteAtomic }
+								/>
+							</>
 						);
 						break;
 					case 'upgrade':

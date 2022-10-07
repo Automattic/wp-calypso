@@ -1,14 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { MediaListData } from 'calypso/components/data/media-list-data';
 
 /**
  * Module variables
  */
 
-const DUMMY_SITE_ID = 1;
+const DUMMY_SITE_ID = 123456789;
 
 const EMPTY_COMPONENT = () => {
 	return <div />;
@@ -16,39 +16,45 @@ const EMPTY_COMPONENT = () => {
 
 describe( 'EditorMediaModal', () => {
 	test( 'should pass search parameter to media query', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+		const search = 'arbitrary-search-term';
+
+		render(
+			<MediaListData siteId={ DUMMY_SITE_ID } setQuery={ setQuery } search={ search }>
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { search: true };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( query );
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, { search } );
 	} );
 
 	test( 'should pass and process filter parameter to media query', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+
+		render(
+			<MediaListData siteId={ DUMMY_SITE_ID } setQuery={ setQuery } filter="images">
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { filter: 'images' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( { mime_type: 'image/' } );
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, { mime_type: 'image/' } );
 	} );
 
 	test( 'should pass and process filter parameter for google photos', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+
+		render(
+			<MediaListData
+				siteId={ DUMMY_SITE_ID }
+				setQuery={ setQuery }
+				filter="images"
+				source="google_photos"
+			>
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { filter: 'images', source: 'google_photos' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( {
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
 			source: 'google_photos',
 			path: 'recent',
 			filter: [ 'mediaType=photo' ],
@@ -56,39 +62,46 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should not pass and process filter parameter for pexels', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+
+		render(
+			<MediaListData siteId={ DUMMY_SITE_ID } setQuery={ setQuery } filter="images" source="pexels">
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { filter: 'images', source: 'pexels' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( { source: 'pexels', path: 'recent' } );
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, { source: 'pexels', path: 'recent' } );
 	} );
 
 	test( 'should pass source parameter and set recent path to media query', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+
+		render(
+			<MediaListData siteId={ DUMMY_SITE_ID } setQuery={ setQuery } source="anything">
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { source: 'anything' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( { path: 'recent', source: 'anything' } );
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
+			path: 'recent',
+			source: 'anything',
+		} );
 	} );
 
 	test( 'should pass categoryFilter parameter to media query for Google Photos', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+		render(
+			<MediaListData
+				siteId={ DUMMY_SITE_ID }
+				setQuery={ setQuery }
+				categoryFilter="cats"
+				source="google_photos"
+			>
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { categoryFilter: 'cats', source: 'google_photos' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( {
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {
 			filter: [ 'categoryInclude=cats' ],
 			path: 'recent',
 			source: 'google_photos',
@@ -96,14 +109,14 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'should not pass categoryFilter parameter to media query for other sources', () => {
-		const tree = shallow(
-			<MediaListData siteId={ DUMMY_SITE_ID }>
+		const setQuery = jest.fn();
+
+		render(
+			<MediaListData siteId={ DUMMY_SITE_ID } setQuery={ setQuery } categoryFilter="cats">
 				<EMPTY_COMPONENT />
 			</MediaListData>
-		).instance();
-		const query = { categoryFilter: 'cats', source: '' };
-		const result = tree.getQuery( query );
+		);
 
-		expect( result ).toEqual( {} );
+		expect( setQuery ).toHaveBeenCalledWith( DUMMY_SITE_ID, {} );
 	} );
 } );

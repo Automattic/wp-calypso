@@ -1,7 +1,6 @@
 import { stringify } from 'qs';
 import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
-import { isThemeVerticalizable } from './utils';
 import type { StarterDesigns } from './types';
 import type {
 	Category,
@@ -29,10 +28,11 @@ interface StarterDesignsResponse {
 }
 
 interface StaticDesign {
-	recipe: DesignRecipe;
 	slug: string;
 	title: string;
 	description: string;
+	recipe: DesignRecipe;
+	verticalizable: boolean;
 	categories: Category[];
 	price?: string;
 	style_variations?: StyleVariation[];
@@ -43,6 +43,7 @@ interface GeneratedDesign {
 	slug: string;
 	title: string;
 	recipe: DesignRecipe;
+	verticalizable: boolean;
 }
 
 export function useStarterDesignsQuery(
@@ -79,23 +80,37 @@ function fetchStarterDesigns(
 }
 
 function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
-	const { slug, title, description, recipe, categories, price, style_variations, software_sets } =
-		design;
+	const {
+		slug,
+		title,
+		description,
+		recipe,
+		verticalizable,
+		categories,
+		price,
+		style_variations,
+		software_sets,
+	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
+
+	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
+		( { slug } ) => slug === 'woo-on-plans'
+	);
 
 	return {
 		slug,
 		title,
 		description,
 		recipe,
+		verticalizable,
 		categories,
 		is_premium,
+		is_bundled_with_woo_commerce,
 		price,
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
-		verticalizable: isThemeVerticalizable( recipe.stylesheet ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
@@ -104,18 +119,18 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 }
 
 function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe } = design;
+	const { slug, title, recipe, verticalizable } = design;
 
 	return {
 		slug,
 		title,
 		recipe,
+		verticalizable,
 		is_premium: false,
 		categories: [],
 		features: [],
 		template: '',
 		theme: '',
 		design_type: 'vertical',
-		verticalizable: true,
 	};
 }

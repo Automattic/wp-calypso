@@ -1,13 +1,24 @@
-.billing-dashboard {
-	&__header {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
+.billing-dashboard__header {
+	display: flex;
+	align-items: center;
 
-		@include breakpoint-deprecated( ">960px" ) {
-			> * + * {
-				margin-left: 24px;
-			}
+	> * + * {
+		margin-left: 24px;
+	}
+
+	a.button {
+		margin-left: auto;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-wrap: wrap;
+		> * {
+			width: 100%;
+			margin-bottom: 16px;
+		}
+
+		> * + * {
+			margin-left: 0;
 		}
 	}
 }

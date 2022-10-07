@@ -9,6 +9,8 @@ import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-image
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 import { decodeEntities } from 'calypso/lib/formatting';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { getTagImages } from 'calypso/state/reader/tags/images/selectors';
 
 const TAG_HEADER_WIDTH = 800;
@@ -99,6 +101,8 @@ class TagStreamHeader extends Component {
 							iconSize={ 24 }
 							following={ following }
 							onFollowToggle={ onFollowToggle }
+							followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+							followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 						/>
 					) }
 				</div>

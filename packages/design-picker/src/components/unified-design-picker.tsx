@@ -82,12 +82,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const { style_variations = [], is_premium: isPremium = false } = design;
-	const isEnableThemeStyleVariations = isEnabled( 'signup/design-picker-style-selection' );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) &&
-		( design.software_sets || [] ).some( ( { slug } ) => slug === 'woo-on-plans' );
+		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -172,7 +170,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				<span className="design-picker__option-overlay">
 					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
 						<span className="design-picker__option-name">{ design.title }</span>
-						{ isEnableThemeStyleVariations && style_variations.length > 0 && (
+						{ style_variations.length > 0 && (
 							<div className="design-picker__options-style-variations">
 								<StyleVariationBadges
 									variations={ style_variations }

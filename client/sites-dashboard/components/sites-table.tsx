@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { MEDIA_QUERIES } from '../utils';
+import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -115,36 +116,39 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	}, [ masterbarHeight ] );
 
 	return (
-		<Table className={ className }>
-			<THead
-				blockOffset={ masterbarHeight }
-				ref={ headerRef }
-				style={ isHeaderStuck ? headerShadow : undefined }
-			>
-				<Row>
-					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
-					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
-					<th>{ __( 'Last Publish' ) }</th>
-					<th>{ __( 'Status' ) }</th>
-					<th style={ { width: '24px' } }></th>
-				</Row>
-			</THead>
-			<tbody>
-				{ isLoading &&
-					Array( N_LOADING_ROWS )
-						.fill( null )
-						.map( ( _, i ) => (
-							<SitesTableRowLoading
-								key={ i }
-								columns={ 5 }
-								delayMS={ i * 150 }
-								logoProps={ { width: 108, height: 78 } }
-							/>
-						) ) }
-				{ sites.map( ( site ) => (
-					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
-				) ) }
-			</tbody>
-		</Table>
+		<>
+			<Table className={ className }>
+				<THead
+					blockOffset={ masterbarHeight }
+					ref={ headerRef }
+					style={ isHeaderStuck ? headerShadow : undefined }
+				>
+					<Row>
+						<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
+						<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
+						<th>{ __( 'Status' ) }</th>
+						<th>{ __( 'Last Publish' ) }</th>
+						<th style={ { width: '24px' } }></th>
+					</Row>
+				</THead>
+				<tbody>
+					{ isLoading &&
+						Array( N_LOADING_ROWS )
+							.fill( null )
+							.map( ( _, i ) => (
+								<SitesTableRowLoading
+									key={ i }
+									columns={ 5 }
+									delayMS={ i * 150 }
+									logoProps={ { width: 108, height: 78 } }
+								/>
+							) ) }
+					{ sites.map( ( site ) => (
+						<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+					) ) }
+				</tbody>
+			</Table>
+			<LinkInBioBanner sites={ sites } displayMode="row" />
+		</>
 	);
 }

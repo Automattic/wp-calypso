@@ -10,6 +10,7 @@ import {
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
+	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { MomentInput } from 'moment';
@@ -32,7 +33,7 @@ export interface Plugin {
 	name: string;
 	pluginsOnSites: Array< any >;
 	slug: string;
-	wporg: string;
+	wporg: boolean;
 	[ key: string ]: any;
 }
 
@@ -77,5 +78,6 @@ export type PluginActionStatusMessage = {
 		[ PLUGIN_INSTALLATION_IN_PROGRESS ]: ReactNode;
 		[ PLUGIN_INSTALLATION_COMPLETED ]?: ReactNode;
 		[ PLUGIN_INSTALLATION_ERROR ]: ReactNode;
+		[ PLUGIN_INSTALLATION_UP_TO_DATE ]?: ReactNode;
 	};
 };

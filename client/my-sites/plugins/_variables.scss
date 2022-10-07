@@ -14,11 +14,3 @@ $plugin-details-header-padding: 100px;
 	justify-content: center;
 	padding: 0;
 }
-
-.legacy %plugin-header {
-	padding: $plugin-details-header-padding 0;
-
-	@media screen and ( max-width: 1040px ) {
-		padding: 0;
-	}
-}
