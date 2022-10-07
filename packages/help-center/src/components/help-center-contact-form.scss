@@ -80,7 +80,6 @@
 	width: 100%;
 	display: block;
 	box-sizing: border-box;
-	margin-bottom: 8px;
 
 	&:focus {
 		box-shadow: none;
@@ -135,6 +134,10 @@ section.contact-form-submit {
 			border-color: var(--color-neutral-5) !important;
 			color: var(--color-neutral-20) !important;
 		}
+	}
+
+	.components-tip {
+		margin-top: 8px;
 	}
 }
 
