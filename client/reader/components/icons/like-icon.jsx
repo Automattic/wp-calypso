@@ -11,6 +11,7 @@ export default function ReaderLikeIcon( { liked, iconSize } ) {
 	return (
 		<span className="like-button__like-icons">
 			<svg
+				key="like"
 				fill="none"
 				height={ iconSize }
 				className={ className }
