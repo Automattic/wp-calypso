@@ -60,63 +60,45 @@ describe( 'BackupDatePicker', () => {
 
 	test( "Shows 'Yesterday' as the previous date if the current date is today", () => {
 		const today = moment();
-		render( <BackupDatePicker selectedDate={ today } onDateChange={ () => {} } /> );
-
-		const yesterdayTextNode = screen.getByText( 'Yesterday' );
-		expect( yesterdayTextNode ).toBeVisible();
-		expect( yesterdayTextNode ).toHaveClass( 'backup-date-picker__display-date' );
-		expect( yesterdayTextNode.parentElement ).toHaveClass(
-			'backup-date-picker__select-date--previous'
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ today } onDateChange={ () => {} } />
 		);
+
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows only the month and date for the previous date if it's the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const november4Of2020 = moment().subtract( 1, 'month' );
-		expect( november4Of2020.isSame( moment( '2020-11-04' ), 'day' ) ).toEqual( true );
 
-		render( <BackupDatePicker selectedDate={ november4Of2020 } onDateChange={ () => {} } /> );
-
-		const expectedText = moment( november4Of2020 ).subtract( 1, 'day' ).format( 'MMM D' );
-
-		const previousDateText = screen.getByText( expectedText );
-		expect( previousDateText ).toBeVisible();
-		expect( previousDateText ).toHaveClass( 'backup-date-picker__display-date' );
-		expect( previousDateText.parentElement ).toHaveClass(
-			'backup-date-picker__select-date--previous'
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ november4Of2020 } onDateChange={ () => {} } />
 		);
+
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows month, date, and year for the previous date if it's not the same year as today", () => {
 		const oneYearAgo = moment().subtract( 1, 'year' );
 
-		render( <BackupDatePicker selectedDate={ oneYearAgo } onDateChange={ () => {} } /> );
-
-		const expectedText = moment( oneYearAgo ).subtract( 1, 'day' ).format( 'MMM D, YYYY' );
-
-		const previousDateText = screen.getByText( expectedText );
-		expect( previousDateText ).toBeVisible();
-		expect( previousDateText ).toHaveClass( 'backup-date-picker__display-date' );
-		expect( previousDateText.parentElement ).toHaveClass(
-			'backup-date-picker__select-date--previous'
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ oneYearAgo } onDateChange={ () => {} } />
 		);
+
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows month and date for the next date if it's in the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const december4Of2020 = moment();
-		expect( december4Of2020.isSame( moment( '2020-12-04' ), 'day' ) ).toEqual( true );
 
-		render( <BackupDatePicker selectedDate={ december4Of2020 } onDateChange={ () => {} } /> );
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ december4Of2020 } onDateChange={ () => {} } />
+		);
 
-		const expectedText = moment( december4Of2020 ).add( 1, 'day' ).format( 'MMM D' );
-
-		const nextDateText = screen.getByText( expectedText );
-		expect( nextDateText ).toBeVisible();
-		expect( nextDateText ).toHaveClass( 'backup-date-picker__display-date' );
-		expect( nextDateText.parentElement ).toHaveClass( 'backup-date-picker__next-date-link' );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Does not show the next date as 'Yesterday' even if it is yesterday", () => {
@@ -137,14 +119,11 @@ describe( 'BackupDatePicker', () => {
 	test( "Shows month, date, and year for the next date if it's not the same year as today", () => {
 		const twoYearsAgo = moment().subtract( 2, 'years' );
 
-		render( <BackupDatePicker selectedDate={ twoYearsAgo } onDateChange={ () => {} } /> );
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ twoYearsAgo } onDateChange={ () => {} } />
+		);
 
-		const expectedText = moment( twoYearsAgo ).add( 1, 'day' ).format( 'MMM D, YYYY' );
-
-		const nextDateText = screen.getByText( expectedText );
-		expect( nextDateText ).toBeVisible();
-		expect( nextDateText ).toHaveClass( 'backup-date-picker__display-date' );
-		expect( nextDateText.parentElement ).toHaveClass( 'backup-date-picker__next-date-link' );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	// --- NAVIGATION ---
