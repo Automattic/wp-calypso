@@ -23,14 +23,14 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
-	const emailVerified = useQuery().get( 'emailVerified' );
+	const verifiedParam = useQuery().get( 'verified' );
 	const flow = useFlowParam();
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if ( emailVerified ) {
+		if ( verifiedParam ) {
 			const message = translate( 'Email confirmed!' );
 			dispatch(
 				successNotice( message, {
@@ -38,7 +38,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 				} )
 			);
 		}
-	}, [ emailVerified, translate, dispatch ] );
+	}, [ verifiedParam, translate, dispatch ] );
 
 	useEffect( () => {
 		// launchpadScreenOption changes from undefined to either 'off' or 'full'
