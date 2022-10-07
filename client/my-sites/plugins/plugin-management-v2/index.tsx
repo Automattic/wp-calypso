@@ -16,6 +16,7 @@ import './style.scss';
 interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
+	requestError: boolean;
 	selectedSite: SiteDetails;
 	searchTerm: string;
 	isBulkManagementActive: boolean;
@@ -34,7 +35,8 @@ export default function PluginManagementV2( {
 	removePluginNotice,
 	updatePlugin,
 	isJetpackCloud,
-}: Props ): ReactElement {
+	requestError,
+}: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -107,6 +109,9 @@ export default function PluginManagementV2( {
 	];
 
 	if ( ! plugins.length && ! isLoading ) {
+		if ( requestError ) {
+			return null;
+		}
 		let emptyStateMessage = translate( 'No plugins found' );
 		if ( searchTerm ) {
 			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
