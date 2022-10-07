@@ -32,7 +32,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { getLocaleSlug, localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -542,7 +542,12 @@ class ManagePurchase extends Component {
 			let customDomain = false;
 			let wordpressComURL = '';
 
-			if ( isPlan( purchase ) && ! isJetpackPlan( purchase ) ) {
+			if (
+				isPlan( purchase ) &&
+				! isJetpackPlan( purchase ) &&
+				! isGSuiteOrGoogleWorkspace( purchase ) &&
+				'en' === getLocaleSlug() // TODO: remove this when the translations are completed.
+			) {
 				const isPlanRefundable = isRefundable( purchase );
 				const actionFunction = isPlanRefundable ? this.goToCancelLink : this.showRemovePlanDialog;
 
