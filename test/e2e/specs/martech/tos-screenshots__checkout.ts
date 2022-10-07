@@ -98,7 +98,7 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 
 	afterAll( async function () {
 		await restAPIClient.clearShoppingCart(
-			SecretsManager.secrets.testAccounts.martechTosUser.testSites?.primary.id
+			SecretsManager.secrets.testAccounts.martechTosUser.testSites?.primary.id as number
 		);
 	} );
 } );
