@@ -151,7 +151,9 @@ export const EligibilityWarnings = ( {
 				<CompactCard>
 					<div className="eligibility-warnings__header">
 						<div className="eligibility-warnings__title">
-							{ translate( 'Upgrade your plan to install plugins' ) }
+							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1
+								? translate( 'Upgrade your plan to install plugins' )
+								: translate( 'Before you continue' ) }
 						</div>
 						<div className="eligibility-warnings__primary-text">
 							{ listHolds.indexOf( 'NO_BUSINESS_PLAN' ) !== -1

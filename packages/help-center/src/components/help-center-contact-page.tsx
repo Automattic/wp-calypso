@@ -86,6 +86,7 @@ export const HelpCenterContactPage: React.FC = () => {
 							</div>
 						</ConditionalLink>
 					) }
+
 					{ renderEmail && (
 						<Link
 							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket

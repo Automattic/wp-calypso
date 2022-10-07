@@ -1,5 +1,4 @@
 .search-box-header {
-	margin: 40px 0 48px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -22,11 +21,15 @@
 			.search-component {
 				height: 52px;
 				z-index: 0;
+				max-width: 400px;
+				margin: 0 auto;
+				border-radius: 4px;
+
 				&.is-expanded-to-container {
 					height: 100%;
 				}
 
-				box-shadow: 0 0 0 1px var(--studio-gray-10);
+				box-shadow: 0 0 0 1px var(--studio-gray-5);
 
 				.search-component__icon-navigation:focus {
 					box-shadow: none;
@@ -34,7 +37,7 @@
 
 				.search-component__open-icon,
 				.search-component__close-icon {
-					color: var(--studio-black);
+					color: var(--studio-gray-5);
 				}
 
 				&.is-searching {
@@ -44,6 +47,18 @@
 					}
 				}
 
+				.search-component__input-fade {
+					right: 3px;
+				}
+				.search-component__icon-navigation:first-of-type {
+					margin-left: 3px;
+				}
+				.search-component__icon-navigation:not(:first-of-type) {
+					margin-right: 3px;
+					.search-component__close-icon {
+						color: #757575;
+					}
+				}
 			}
 		}
 	}
@@ -56,6 +71,10 @@
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
+		padding-top: 40px;
+	}
+	.search-box-header__sticky-ref {
+		padding-bottom: 48px;
 	}
 
 	.search-box-header__recommended-searches {

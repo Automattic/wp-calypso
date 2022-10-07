@@ -1,6 +1,8 @@
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
+$stats-tab-outer-padding: 10px;
+
 .stats-tabs {
 	@include clear-fix;
 	background: var(--color-surface);
@@ -44,10 +46,7 @@
 
 			a,
 			.no-link {
-				display: block;
-				min-height: 35px;
-				padding-top: 10px;
-				padding-bottom: 0;
+				padding-bottom: 0; // needed to avoid double bottom spacing (because of min-height)
 			}
 
 			.label {
@@ -95,11 +94,12 @@
 		.no-link {
 			display: block;
 			min-height: 35px;
-			padding-top: 10px;
+			padding-top: $stats-tab-outer-padding;
 
 			@include breakpoint-deprecated( ">480px" ) {
 				@include mobile-link-element;
 				@include clear-fix;
+				padding-bottom: $stats-tab-outer-padding;
 				-webkit-touch-callout: none;
 			}
 		}
@@ -229,6 +229,7 @@
 	}
 
 	// If there's only one tab (used on the Post/Video Details page)
+	// forced "mobile view" that takes the whole width (e.g. visible for stats for a specific blog page)
 	li:only-child {
 		width: auto;
 		float: none;
@@ -236,7 +237,11 @@
 
 		a {
 			line-height: 24px;
-			padding-top: 10px;
+			padding-top: $stats-tab-outer-padding;
+		}
+
+		.no-link {
+			padding-bottom: 0; // reset bottom padding until min-width is removed
 		}
 
 		.label {

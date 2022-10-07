@@ -56,6 +56,10 @@ export function isRequestingForAllSites( state ) {
 	return state.plugins.installed.isRequestingAll;
 }
 
+export function requestPluginsError( state ) {
+	return state.plugins.installed.requestError;
+}
+
 export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,

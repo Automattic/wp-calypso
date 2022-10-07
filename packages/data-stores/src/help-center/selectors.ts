@@ -6,7 +6,7 @@ export const getSubject = ( state: State ) => state.subject;
 export const getMessage = ( state: State ) => state.message;
 export const getUserDeclaredSiteUrl = ( state: State ) => state.userDeclaredSiteUrl;
 export const getIframe = ( state: State ) => state.iframe;
-export const getDirectly = ( state: State ) => state.directlyData;
 export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
+export const getRouterState = ( state: State ) => state.routerState;

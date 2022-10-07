@@ -7,7 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
-import SetupForm from './setup-form';
+import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -16,6 +16,13 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
+
+	const linkInBioFormText = {
+		titlePlaceholder: __( 'My Link in Bio' ),
+		titleMissing: __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ),
+		taglinePlaceholder: __( 'Add a short biography here' ),
+		iconPlaceholder: __( 'Upload a profile image' ),
+	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
 	const [ selectedFile, setSelectedFile ] = React.useState< File | undefined >();
@@ -93,6 +100,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
+					translatedText={ linkInBioFormText }
 				/>
 			}
 			recordTracksEvent={ recordTracksEvent }

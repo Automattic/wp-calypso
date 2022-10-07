@@ -1,26 +1,4 @@
 .plugin-sections__content {
-	position: relative;
-}
-
-.plugin-sections__content.trimmed {
-	overflow: hidden;
-	max-height: 150px;
-}
-
-.plugin-sections__content {
-	font-family: $sans;
-	font-size: $font-body-small;
-	font-weight: 400;
-	line-height: 21px;
-	word-wrap: break-word;
-	hyphens: auto;
-
-	div {
-		margin-bottom: 20px;
-	}
-}
-
-.plugin-sections__content {
 	h1,
 	h2,
 	h3,
@@ -66,6 +44,22 @@
 		padding: 8px;
 		border-radius: 0;
 	}
+	div {
+		margin-bottom: 20px;
+	}
+
+	position: relative;
+	font-family: $sans;
+	font-size: $font-body-small;
+	font-weight: 400;
+	line-height: 21px;
+	word-wrap: break-word;
+	hyphens: auto;
+}
+
+.plugin-sections__content.trimmed {
+	overflow: hidden;
+	max-height: 150px;
 }
 
 .plugin-sections__support {
@@ -141,11 +135,5 @@
 
 	.plugin-sections__banner {
 		padding-bottom: 50px;
-	}
-}
-
-.legacy {
-	.plugin-details__plugins-sections .card {
-		padding-top: 44px;
 	}
 }

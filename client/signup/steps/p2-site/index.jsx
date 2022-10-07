@@ -39,7 +39,6 @@ const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
 	'blog_name_reserved',
 	'blog_name_reserved_but_may_be_available',
-	'dotblog_subdomain_not_available',
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];

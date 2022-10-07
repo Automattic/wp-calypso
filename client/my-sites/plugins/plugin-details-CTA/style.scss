@@ -4,10 +4,6 @@
 	@extend %plugin-header;
 }
 
-.legacy .plugin-details-cta__container {
-	padding-bottom: 0;
-}
-
 .plugin-details-cta__modal-overlay.dialog__backdrop {
 	background-color: rgba(var(--color-neutral-100-rgb), 0.7);
 }
@@ -135,20 +131,6 @@
 
 	.plugin-details-cta__autoupdate-text-version {
 		color: var(--studio-gray-60);
-	}
-}
-
-.legacy {
-	.plugin-details-cta__t-and-c {
-		margin-bottom: 0;
-	}
-
-	.plugin-details-cta__period {
-		padding-left: 0;
-	}
-
-	.plugin-details-cta__price {
-		margin: 32px 0 16px;
 	}
 }
 

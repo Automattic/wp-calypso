@@ -23,7 +23,7 @@ const SectionContainer = styled.div< SectionContainerProps >`
 		box-sizing: border-box;
 		content: '';
 		background-color: ${ ( props ) =>
-			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-gray-0 )' };
+			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
