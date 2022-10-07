@@ -43,7 +43,7 @@ const GlobalStylesNotice = () => {
 			settings: {},
 		} );
 
-		recordTracksEvent( 'calypso_global_styles_paid_feature_notice_reset_click', {
+		recordTracksEvent( 'calypso_global_styles_gating_notice_reset_click', {
 			context: 'site-editor',
 		} );
 	};
@@ -69,7 +69,7 @@ const GlobalStylesNotice = () => {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			recordTracksEvent( 'calypso_global_styles_paid_feature_notice_show', {
+			recordTracksEvent( 'calypso_global_styles_gating_notice_show', {
 				context: 'site-editor',
 			} );
 		}
@@ -93,7 +93,7 @@ const GlobalStylesNotice = () => {
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_top"
 							onClick={ () =>
-								recordTracksEvent( 'calypso_global_styles_paid_feature_notice_upgrade_click', {
+								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
 									context: 'site-editor',
 								} )
 							}

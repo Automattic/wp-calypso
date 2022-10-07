@@ -25,7 +25,7 @@ const GlobalStylesModal = () => {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			recordTracksEvent( 'calypso_global_styles_paid_feature_modal_show', {
+			recordTracksEvent( 'calypso_global_styles_gating_modal_show', {
 				context: 'site-editor',
 			} );
 		}
@@ -33,7 +33,7 @@ const GlobalStylesModal = () => {
 
 	const closeModal = () => {
 		dismissModal();
-		recordTracksEvent( 'calypso_global_styles_paid_feature_modal_dismiss', {
+		recordTracksEvent( 'calypso_global_styles_gating_modal_dismiss', {
 			context: 'site-editor',
 		} );
 	};
@@ -68,7 +68,7 @@ const GlobalStylesModal = () => {
 						href={ wpcomGlobalStyles.upgradeUrl }
 						target="_top"
 						onClick={ () =>
-							recordTracksEvent( 'calypso_global_styles_paid_feature_modal_upgrade_click', {
+							recordTracksEvent( 'calypso_global_styles_gating_modal_upgrade_click', {
 								context: 'site-editor',
 							} )
 						}
