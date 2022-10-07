@@ -133,6 +133,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
+		"ssr/log-prefetch-timeout": true,
 		"stepper-woocommerce-poc": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": false,
