@@ -189,7 +189,6 @@
 		"bufferutil": "^4.0.6",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
-		"canvas": "^2.10.1",
 		"config": "^3.3.6",
 		"debug": "^4.3.3",
 		"enhanced-resolve": "5.9.3",
