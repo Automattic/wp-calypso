@@ -243,7 +243,7 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 	$custom_controls[] = array(
 		'desktop_message'    => __( 'Styles hidden', 'full-site-editing' ),
 		'mobile_message'     => __( 'Styles', 'full-site-editing' ),
-		'track_button_name'  => 'wpcom_gs_notice',
+		'track_button_name'  => 'wpcom_global_styles_gating_notice',
 		'tooltip'            => __( 'You need to be on a paid plan for your style changes to be made public.', 'full-site-editing' ),
 		'tooltip_link_title' => __( 'Upgrade your plan', 'full-site-editing' ),
 		'tooltip_link_url'   => $upgrade_url,
