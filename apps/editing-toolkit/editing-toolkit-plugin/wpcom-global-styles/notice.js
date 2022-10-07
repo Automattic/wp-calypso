@@ -1,5 +1,6 @@
 /* global wpcomGlobalStyles */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
@@ -37,11 +38,20 @@ const GlobalStylesNotice = () => {
 			return;
 		}
 
+		recordTracksEvent( 'calypso_core_global_styles_gating_notice_reset_click', {
+			context: 'site-editor',
+		} );
+
 		editEntityRecord( 'root', 'globalStyles', globalStylesId, {
 			styles: {},
 			settings: {},
 		} );
 	};
+
+	const trackGlobalStylesNoticeUpgrade = () =>
+		recordTracksEvent( 'calypso_core_global_styles_gating_notice_upgrade_click', {
+			context: 'site-editor',
+		} );
 
 	// Closes the sidebar if there are no more changes to be saved.
 	useEffect( () => {
@@ -74,7 +84,14 @@ const GlobalStylesNotice = () => {
 					'full-site-editing'
 				),
 				{
-					a: <Button variant="link" href={ wpcomGlobalStyles.upgradeUrl } target="_top" />,
+					a: (
+						<Button
+							href={ wpcomGlobalStyles.upgradeUrl }
+							onClick={ trackGlobalStylesNoticeUpgrade }
+							target="_top"
+							variant="link"
+						/>
+					),
 				}
 			) }
 			&nbsp;
