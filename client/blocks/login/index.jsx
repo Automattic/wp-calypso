@@ -12,7 +12,7 @@ import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
-import { getSignupUrl } from 'calypso/lib/login';
+import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -510,7 +510,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( action === 'lostpassword' ) {
+		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
 			return (
 				<Fragment>
 					<AsyncLoad
