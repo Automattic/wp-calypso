@@ -21,6 +21,8 @@ import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
 
+const COMPONENT_CSS_CLASS_NAME = 'is-chart-tabs';
+
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
 	gridicon: PropTypes.string,
@@ -74,7 +76,11 @@ class StatModuleChartTabs extends Component {
 
 	render() {
 		const { isActiveTabLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+		const classes = [
+			'stats-module',
+			COMPONENT_CSS_CLASS_NAME,
+			{ 'is-loading': isActiveTabLoading },
+		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
