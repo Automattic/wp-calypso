@@ -31,7 +31,8 @@
 	}
 
 	&.is-selected,
-	&:hover {
+	&:hover,
+	&:focus {
 		background-color: var(--color-primary);
 		border: 0;
 		box-shadow: none;
