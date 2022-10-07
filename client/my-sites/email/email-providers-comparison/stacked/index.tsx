@@ -23,9 +23,9 @@ import {
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
-import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
-import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
+import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-non-owner-notices/email-existing-forwards-notice';
+import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-owner-notices/email-non-domain-owner-message';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';

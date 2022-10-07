@@ -9,8 +9,8 @@ import {
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
 } from 'calypso/lib/emails/email-provider-constants';
 import { EmailDifferentDomainOwnerMessage } from 'calypso/my-sites/email/email-different-domain-owner-message';
-import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
-import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-message';
+import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-owner-notices/email-non-domain-owner-message';
+import { EmailNonOwnerMessage } from 'calypso/my-sites/email/email-non-owner-notices/email-non-owner-message';
 
 type EmailPlanWarningNoticeProps = {
 	domain: ResponseDomain;
