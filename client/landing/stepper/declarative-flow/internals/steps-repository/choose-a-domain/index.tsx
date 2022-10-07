@@ -61,6 +61,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					vendor={ flow }
 					basePath={ '' }
 					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
