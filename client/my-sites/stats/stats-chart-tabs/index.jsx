@@ -34,7 +34,6 @@ class StatModuleChartTabs extends Component {
 	static propTypes = {
 		activeLegend: PropTypes.arrayOf( PropTypes.string ), // used by chart legend
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ), // used by chart legend
 		charts: PropTypes.arrayOf( ChartTabShape ),
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -48,7 +47,6 @@ class StatModuleChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
-		onChangeLegend: PropTypes.func.isRequired, // used by chart legend
 	};
 
 	intervalId = null;
@@ -129,7 +127,9 @@ const connectComponent = connect(
 
 		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
-		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate ); // `activeLegend` is used to display additional bar chard
+		// `activeLegend` is used to display additional bar chart when available. After removing the legend it's redundant.
+		// Passing an empty array instead of activeLegend in `connect()` breaks memoization of `buildChartData()` and breaks x-axis label positioning.
+		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;
 		const timezoneOffset = getSiteOption( state, siteId, 'gmt_offset' ) || 0;

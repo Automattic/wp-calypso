@@ -29,7 +29,6 @@ const ChartTabShape = PropTypes.shape( {
 class WordAdsChartTabs extends Component {
 	static propTypes = {
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ), // was used for a legend on `trafic` page, wasn't used here
 		charts: PropTypes.arrayOf( ChartTabShape ),
 		data: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -42,7 +41,6 @@ class WordAdsChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
-		onChangeLegend: PropTypes.func.isRequired, // not used on this page - it was used for a legend on the `traffic` page and this page copies the structure
 	};
 
 	buildTooltipData( item ) {
