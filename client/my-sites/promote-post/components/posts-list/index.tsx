@@ -15,10 +15,10 @@ export default function PostsList() {
 		// author,
 		// category,
 		number: 20, // max supported by /me/posts endpoint for all-sites mode
+		status: 'publish', // do not allow private or unpublished posts
 		// order: 'DESC',
 		// search: 'world',
 		// site_visibility: ! siteId ? 'visible' : undefined,
-		// status: 'publish',
 		// tag,
 		// type: 'post',
 	};

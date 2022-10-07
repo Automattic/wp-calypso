@@ -1,7 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	recordDSPEntryPoint,
@@ -10,15 +10,23 @@ import {
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status, type } ) {
+function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status, type, siteId } ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
+	const isSitePrivate =
+		useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const keyValue = globalId;
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	if ( isSitePrivate ) {
+		return null;
+	}
+
 	if ( ! widgetEnabled ) {
 		return null;
 	}
@@ -59,6 +67,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 		type: post.type,
 		postId: post.ID,
 		status: post.status,
+		siteId: getSelectedSiteId( state ),
 	};
 };
 
