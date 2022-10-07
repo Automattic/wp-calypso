@@ -24,6 +24,10 @@ const cleanNode = ( html ) => {
 };
 
 const runTests = ( isSSR = false ) => {
+	beforeEach( () => {
+		overrideSanitizeSectionRoot( isSSR ? jsdomWindow : window );
+	} );
+
 	test( 'should not strip allowed tags', () =>
 		expect( clean( '<div>👍</div>' ) ).toBe( '<div>👍</div>' ) );
 
@@ -218,7 +222,6 @@ const runTests = ( isSSR = false ) => {
 
 	fixtures.forEach( ( { title, payload, expected, expectedSSR }, index ) => {
 		test( `Fixture test #${ index }: ${ title } `, () => {
-			overrideSanitizeSectionRoot( isSSR ? jsdomWindow : window );
 			const toBeExpected = isSSR ? expectedSSR || expected : expected;
 			expect( clean( payload ) ).toBe( toBeExpected );
 		} );
