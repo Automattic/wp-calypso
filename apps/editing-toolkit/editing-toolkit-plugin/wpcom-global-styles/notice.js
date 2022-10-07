@@ -43,7 +43,9 @@ const GlobalStylesNotice = () => {
 			settings: {},
 		} );
 
-		recordTracksEvent( 'calypso_global_styles_paid_feature_notice_reset_click' );
+		recordTracksEvent( 'calypso_global_styles_paid_feature_notice_reset_click', {
+			context: 'site-editor',
+		} );
 	};
 	// Do not show the notice if the use is trying to save the default styles.
 	const isVisible =
@@ -67,7 +69,9 @@ const GlobalStylesNotice = () => {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			recordTracksEvent( 'calypso_global_styles_paid_feature_notice_show' );
+			recordTracksEvent( 'calypso_global_styles_paid_feature_notice_show', {
+				context: 'site-editor',
+			} );
 		}
 	}, [ isVisible ] );
 
@@ -89,7 +93,9 @@ const GlobalStylesNotice = () => {
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_top"
 							onClick={ () =>
-								recordTracksEvent( 'calypso_global_styles_paid_feature_notice_upgrade_click' )
+								recordTracksEvent( 'calypso_global_styles_paid_feature_notice_upgrade_click', {
+									context: 'site-editor',
+								} )
 							}
 						/>
 					),
