@@ -30,7 +30,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 		if ( launchpadScreenOption !== undefined ) {
 			// The screen option returns false for sites that have never set the option
 			if ( launchpadScreenOption === false || launchpadScreenOption === 'off' ) {
-				window.location.replace( `/home/${ siteSlug }/?forceLoadLaunchpadData=true` );
+				window.location.replace( `/home/${ siteSlug }` );
 				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
 			} else {
 				recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
