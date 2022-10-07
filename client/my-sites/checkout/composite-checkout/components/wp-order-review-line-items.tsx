@@ -1,4 +1,4 @@
-import { isPremium } from '@automattic/calypso-products';
+import { isJetpackPurchasableItem, isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
 import {
 	canItemBeRemovedFromCart,
@@ -14,11 +14,8 @@ import {
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -173,9 +170,9 @@ function LineItemWrapper( {
 	const variants = useGetProductVariants( siteId, product.product_slug );
 	const areThereVariants = variants.length > 1;
 
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isAtomicSite( state, siteId ) );
-	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+	const isJetpack = responseCart.products.some( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -191,20 +188,17 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ! isJetpackSelfHosted &&
-					areThereVariants &&
-					shouldShowVariantSelector &&
-					! isEditingTerm && <TermVariantEditButton onClick={ () => setEditingTerm( true ) } /> }
-				{ areThereVariants &&
-					shouldShowVariantSelector &&
-					( isJetpackSelfHosted || isEditingTerm ) && (
-						<ItemVariationPicker
-							selectedItem={ product }
-							onChangeItemVariant={ onChangePlanLength }
-							isDisabled={ isDisabled }
-							variants={ variants }
-						/>
-					) }
+				{ ! isJetpack && areThereVariants && shouldShowVariantSelector && ! isEditingTerm && (
+					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
+				) }
+				{ areThereVariants && shouldShowVariantSelector && ( isJetpack || isEditingTerm ) && (
+					<ItemVariationPicker
+						selectedItem={ product }
+						onChangeItemVariant={ onChangePlanLength }
+						isDisabled={ isDisabled }
+						variants={ variants }
+					/>
+				) }
 			</LineItem>
 		</WPOrderReviewListItem>
 	);
