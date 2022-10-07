@@ -41,9 +41,10 @@ export const HelpCenterContactPage: React.FC = () => {
 	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
 		staleTime: 30 * 60 * 1000,
 	} );
+	const isLoading = renderChat.isLoading || isLoadingTickets;
 
 	useEffect( () => {
-		if ( renderChat.isLoading || isLoadingTickets ) {
+		if ( isLoading ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
@@ -51,9 +52,9 @@ export const HelpCenterContactPage: React.FC = () => {
 			chat_available: renderChat.state === 'AVAILABLE',
 			email_available: renderEmail,
 		} );
-	}, [ isLoadingTickets, renderChat.isLoading, renderChat.state, renderEmail ] );
+	}, [ isLoading, renderChat.state, renderEmail ] );
 
-	if ( renderChat.isLoading || isLoadingTickets ) {
+	if ( isLoading ) {
 		return (
 			<div className="help-center-contact-page__loading">
 				<Spinner baseClassName="" />
