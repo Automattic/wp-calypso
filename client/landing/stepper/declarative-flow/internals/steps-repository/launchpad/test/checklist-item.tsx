@@ -28,7 +28,7 @@ describe( 'ChecklistItem', () => {
 		} );
 		it( 'disables the task', () => {
 			render( <ChecklistItem task={ buildTask( { isCompleted: true } ) } /> );
-			const taskButton = screen.queryByRole( 'link' );
+			const taskButton = screen.queryByRole( 'button' );
 			expect( taskButton ).toHaveAttribute( 'disabled' );
 		} );
 
@@ -40,7 +40,7 @@ describe( 'ChecklistItem', () => {
 			} );
 			it( 'enables the task', () => {
 				render( <ChecklistItem task={ buildTask( { isCompleted: true, keepActive: true } ) } /> );
-				const taskButton = screen.queryByRole( 'link' );
+				const taskButton = screen.queryByRole( 'button' );
 				expect( taskButton ).not.toHaveAttribute( 'disabled' );
 			} );
 		} );
@@ -71,7 +71,7 @@ describe( 'ChecklistItem', () => {
 						task={ buildTask( { isCompleted: false, dependencies: [ otherTaskCompleted ] } ) }
 					/>
 				);
-				const taskButton = screen.queryByRole( 'link' );
+				const taskButton = screen.queryByRole( 'button' );
 				expect( taskButton ).toHaveAttribute( 'disabled' );
 			} );
 		} );
@@ -84,7 +84,7 @@ describe( 'ChecklistItem', () => {
 			} );
 			it( 'enables the task', () => {
 				render( <ChecklistItem task={ buildTask( { isCompleted: false } ) } /> );
-				const taskButton = screen.queryByRole( 'link' );
+				const taskButton = screen.queryByRole( 'button' );
 				expect( taskButton ).not.toHaveAttribute( 'disabled' );
 			} );
 		} );
