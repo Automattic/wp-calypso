@@ -7,8 +7,7 @@ import { Task } from './types';
 
 const ChecklistItem = ( { task }: { task: Task } ) => {
 	const isRtl = useRtl();
-	const { id, isCompleted, keepActive, actionUrl, title, actionDispatch } = task;
-	const action = actionDispatch ? { onClick: actionDispatch } : { href: actionUrl };
+	const { id, isCompleted, keepActive, title, actionDispatch } = task;
 	const taskDisabled = isTaskDisabled( task );
 
 	// Display chevron if task is incomplete. Don't display chevron and badge at the same time.
@@ -26,9 +25,8 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 			<Button
 				className="launchpad__checklist-item"
 				disabled={ taskDisabled }
-				href={ actionUrl }
 				data-task={ id }
-				{ ...action }
+				onClick={ actionDispatch }
 			>
 				{ isCompleted && (
 					// show checkmark for completed tasks regardless if they are disabled or kept active

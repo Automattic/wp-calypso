@@ -3,7 +3,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-import { find, isEqual } from 'lodash';
+import { find, isEqual, cloneDeep } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -610,8 +610,14 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = { settings: editedEntity.settings, styles: editedEntity.styles };
-		const updatedContent = { settings: updates.settings, styles: updates.styles };
+		const entityContent = {
+			settings: cloneDeep( editedEntity.settings ),
+			styles: cloneDeep( editedEntity.styles ),
+		};
+		const updatedContent = {
+			settings: cloneDeep( updates.settings ),
+			styles: cloneDeep( updates.styles ),
+		};
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
 		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
@@ -654,8 +660,14 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 	} );
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
-		const entityContent = { settings: savedEntity.settings, styles: savedEntity.styles };
-		const updatedContent = { settings: editedEntity.settings, styles: editedEntity.styles };
+		const entityContent = {
+			settings: cloneDeep( savedEntity.settings ),
+			styles: cloneDeep( savedEntity.styles ),
+		};
+		const updatedContent = {
+			settings: cloneDeep( editedEntity.settings ),
+			styles: cloneDeep( editedEntity.styles ),
+		};
 
 		buildGlobalStylesContentEvents(
 			updatedContent,

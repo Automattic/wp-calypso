@@ -8,7 +8,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
-import SetupForm from '../link-in-bio-setup/setup-form';
+import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 
 import '../link-in-bio-setup/styles.scss';
@@ -17,6 +17,12 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
 	const site = useSite();
+
+	const linkInBioFormText = {
+		titlePlaceholder: __( 'My Link in Bio' ),
+		titleMissing: __( `Oops. Looks like your Link in Bio name is missing.` ),
+		taglinePlaceholder: __( 'Add a short biography here' ),
+	};
 
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
@@ -95,6 +101,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 					setSelectedFile={ setSelectedFile }
 					setBase64Image={ setBase64Image }
 					handleSubmit={ handleSubmit }
+					translatedText={ linkInBioFormText }
 					isLoading={ isLoading }
 					isSubmitError={ isSubmitError }
 				/>

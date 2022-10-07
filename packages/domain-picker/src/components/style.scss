@@ -293,14 +293,12 @@ $accent-blue: #117ac9;
 	}
 
 	&.with-bold-text {
-		// stylelint-disable-next-line scales/font-weight
 		font-weight: 500;
 	}
 }
 
 .domain-picker__suggestion-item.type-individual-item {
 	.domain-picker__domain-tld {
-		// stylelint-disable-next-line scales/font-weight
 		font-weight: 500;
 		color: unset;
 	}
@@ -333,7 +331,6 @@ $accent-blue: #117ac9;
 	.domain-picker__badge {
 		color: var(--studio-green-80);
 		background-color: var(--studio-green-5);
-		// stylelint-disable-next-line scales/radii
 		border-radius: 4px;
 		text-transform: unset;
 		font-size: $font-body-extra-small;
@@ -426,7 +423,6 @@ $accent-blue: #117ac9;
 		line-height: 20px;
 
 		strong {
-			// stylelint-disable-next-line scales/font-weight
 			font-weight: 500;
 		}
 	}

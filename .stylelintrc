@@ -1,6 +1,8 @@
 {
 	"extends": [ "@wordpress/stylelint-config/scss" ],
 	"plugins": [ "@signal-noise/stylelint-scales" ],
+	"reportInvalidScopeDisables": true,
+	"reportNeedlessDisables": true,
 	"rules": {
 		"at-rule-empty-line-before": null,
 		"at-rule-no-unknown": null,

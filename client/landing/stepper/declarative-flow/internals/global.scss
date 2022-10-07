@@ -146,7 +146,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio,
+.setup-form__form {
 	button {
 		&[type="submit"] {
 			font-size: $font-body-small;
@@ -252,6 +253,22 @@ button {
 		}
 	}
 }
+
+/**
+ * Global notices
+ */
+#notices {
+	top: 0;
+
+	@media (min-width: 661px) {
+		top: 16px;
+	}
+
+	.gridicon {
+		fill: currentColor;
+	}
+}
+
 
 @media ( max-width: 660px ) {
 	body.is-section-stepper .wpcom-site {

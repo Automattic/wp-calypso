@@ -104,6 +104,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	const googleWorkspace: ProviderCardProps = { ...googleWorkspaceCardInformation };
 	googleWorkspace.detailsExpanded = isGSuiteSupported && detailsExpanded;
 	googleWorkspace.showExpandButton = isGSuiteSupported;
+
 	googleWorkspace.priceBadge = (
 		<GoogleWorkspacePrice
 			domain={ domain }

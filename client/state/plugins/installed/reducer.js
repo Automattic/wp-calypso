@@ -42,6 +42,27 @@ export function isRequestingAll( state = false, action ) {
 	}
 }
 
+/**
+ * Returns the updated requesting error state after an action has been dispatched.
+ * requestingError state tracks whether a network request is failed for all
+ * plugins on all sites.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export function requestError( state = false, action ) {
+	switch ( action.type ) {
+		case PLUGINS_ALL_REQUEST:
+		case PLUGINS_ALL_REQUEST_SUCCESS:
+			return false;
+		case PLUGINS_ALL_REQUEST_FAILURE:
+			return true;
+		default:
+			return state;
+	}
+}
+
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
  */
@@ -144,6 +165,7 @@ function plugin( state, action ) {
 export default combineReducers( {
 	isRequesting,
 	isRequestingAll,
+	requestError,
 	plugins,
 	status,
 } );

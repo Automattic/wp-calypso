@@ -96,7 +96,6 @@
 				color: var(--color-text-inverted);
 				display: inline;
 				font-size: $font-body-extra-small;
-				letter-spacing: 0.01em;
 			}
 
 			.reader-post-actions {
@@ -132,7 +131,7 @@
 	}
 
 	.reader-post-actions {
-		margin: 10px 0 0;
+		margin: 16px 0 0;
 	}
 
 	.reader-post-actions__item {
@@ -237,12 +236,6 @@
 	.comments__comment-actions {
 		display: flex;
 		justify-content: flex-start;
-	}
-	.comments__comment-actions .components-button.like-button {
-		.like-button__label-count {
-			position: relative;
-			top: 1px;
-		}
 	}
 	.reader-post-card__byline {
 		margin-top: 16px;
@@ -509,7 +502,6 @@
 	color: var( --color-neutral-80 );
 	font-family: $sans;
 	font-size: $font-body;
-	letter-spacing: -0.24px;
 	line-height: 22px;
 	font-weight: 400;
 	margin-top: 7px;
@@ -547,48 +539,23 @@
 
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
-	font-size: $font-body-small;
-	height: 22px;
-
-	&.reader-post-actions__visit .gridicon {
-		position: relative;
-		left: -2px;
-		top: -1px;
-	}
 
 	.reader-share__button .gridicon {
-		position: relative;
-		top: 0;
 		margin-right: 0;
-		margin-top: 0;
-	}
-
-	.comment-button {
-		align-items: flex-start;
 	}
 
 	.comment-button .gridicon {
-		top: 4px;
 		margin-right: 2px;
 	}
 
 	.like-button {
-		display: inline-block;
-		padding: 4px 0 4px 4px;
+		align-items: center;
+		display: flex;
+		height: 20px;
 		text-align: left;
-		vertical-align: top;
 		.like-button__like-icons {
-			height: 18px;
-			width: 18px;
-			display: inline-block;
-			margin-right: 5px;
-			vertical-align: top;
 			position: relative;
 			top: 1px;
-		}
-		.like-button__label-count {
-			position: relative;
-			top: 5px;
 		}
 	}
 
@@ -607,10 +574,6 @@
 
 // Follow button for stream cards
 .reader-post-card.card .follow-button {
-	flex-shrink: 0;
-	align-self: flex-start;
-	margin-right: 8px;
-	margin-top: 6px;
 
 	.gridicon {
 		fill: var(--color-primary);
@@ -660,7 +623,6 @@
 }
 
 .reader-post-card__gallery-item {
-	border: 1px solid var(--color-neutral-0);
 	cursor: pointer;
 	flex: 1;
 	height: auto;
@@ -687,7 +649,7 @@
 
 .reader-post-card__gallery-image {
 	border-radius: 6px;
-	box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.1);
 	height: 300px;
 }
 

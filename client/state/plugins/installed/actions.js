@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -25,6 +26,7 @@ import {
 	PLUGIN_UPDATE_REQUEST,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_FAILURE,
+	PLUGIN_ALREADY_UP_TO_DATE,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE,
@@ -39,6 +41,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
@@ -247,7 +250,7 @@ export function updatePlugin( siteId, plugin ) {
 		};
 
 		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
-			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
+			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
 		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
@@ -590,6 +593,7 @@ export function fetchAllPlugins() {
 
 		const receivePluginsDispatchFail = ( error ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_FAILURE, error } );
+			dispatch( errorNotice( translate( 'Failed to retrieve plugins. Please try again later.' ) ) );
 		};
 
 		return wpcom.req
