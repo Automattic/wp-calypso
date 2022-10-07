@@ -577,6 +577,7 @@ export class PluginsList extends Component {
 					removePluginNotice={ this.removePluginDialog }
 					updatePlugin={ this.updatePlugin }
 					isJetpackCloud={ this.props.isJetpackCloud }
+					requestError={ this.props.requestPluginsError }
 				/>
 			</div>
 		);
