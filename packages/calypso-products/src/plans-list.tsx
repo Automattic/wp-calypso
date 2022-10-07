@@ -525,6 +525,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_SEO,
 			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_UPLOAD_THEMES,
+			FEATURE_SFTP_DATABASE,
 			FEATURE_NO_BRANDING,
 			FEATURE_ACCEPT_PAYMENTS,
 			FEATURE_SHIPPING_CARRIERS,
@@ -802,6 +803,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_ADVANCED_SEO,
 			FEATURE_UPLOAD_PLUGINS,
 			FEATURE_UPLOAD_THEMES,
+			FEATURE_SFTP_DATABASE,
 			FEATURE_NO_BRANDING,
 		] ),
 	getPromotedFeatures: () => [

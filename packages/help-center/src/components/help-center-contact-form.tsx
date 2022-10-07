@@ -11,6 +11,7 @@ import {
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
+	useSibylQuery,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
@@ -22,6 +23,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
@@ -213,7 +215,28 @@ export const HelpCenterContactForm = () => {
 		supportSite = selectedSite || currentSite;
 	}
 
+	const isAtomic = Boolean(
+		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
+	);
+	const isJetpack = Boolean(
+		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
+	);
+
+	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+
+	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
+
+	const showingSibylResults = params.get( 'show-results' ) === 'true';
+
 	function handleCTA() {
+		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+			params.set( 'show-results', 'true' );
+			history.push( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
@@ -311,7 +334,7 @@ export const HelpCenterContactForm = () => {
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
-			<div>
+			<>
 				<button
 					className="help-center-contact-form__site-picker-forum-privacy-info"
 					ref={ ref }
@@ -334,7 +357,7 @@ export const HelpCenterContactForm = () => {
 						) }
 					</span>
 				</Popover>
-			</div>
+			</>
 		);
 	};
 
@@ -354,10 +377,18 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const getCTALabel = () => {
+		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+			return __( 'Continue', __i18n_text_domain__ );
+		}
 		switch ( mode ) {
 			case 'CHAT':
+				if ( showingSibylResults ) {
+					return __( 'Still chat with us', __i18n_text_domain__ );
+				}
 			case 'EMAIL':
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
+				if ( showingSibylResults ) {
+					return __( 'Still email us', __i18n_text_domain__ );
+				}
 			case 'FORUM': {
 				if ( ownershipStatusLoading ) {
 					return formTitles.buttonLoadingLabel;
@@ -367,7 +398,33 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
-	return (
+	return showingSibylResults ? (
+		<div className="help-center__sibyl-articles-page">
+			<BackButton />
+			<SibylArticles
+				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
+				supportSite={ supportSite }
+				message={ message }
+				articleCanNavigateBack
+			/>
+			<section className="contact-form-submit">
+				<Button
+					disabled={ isCTADisabled() }
+					onClick={ handleCTA }
+					primary
+					className="help-center-contact-form__site-picker-cta"
+				>
+					{ getCTALabel() }
+				</Button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
+			</section>
+		</div>
+	) : (
 		<main className="help-center-contact-form">
 			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
@@ -480,7 +537,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles supportSite={ supportSite } message={ message } />
+			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
 		</main>
 	);
 };

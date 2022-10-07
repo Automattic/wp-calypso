@@ -274,7 +274,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 							Button: createElement( Button, {
 								isLink: true,
 								target: '__blank',
-								href: localizeUrl( 'https://wordpress.com/support/user-roles/' ),
+								href: localizeUrl(
+									'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+								),
 							} ),
 						}
 					) }

@@ -24,14 +24,14 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Set up your Newsletter' ),
+			buttonText: __( 'Get started' ),
 		},
 		'link-in-bio': {
 			title: createInterpolateElement(
 				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Set up your Link in Bio' ),
+			buttonText: __( 'Get started' ),
 		},
 	};
 
