@@ -52,7 +52,7 @@ export const UpsellNudge = ( {
 	onDismissClick,
 	plan,
 	price,
-	primaryButton,
+	primaryButton = true,
 	selectedSiteHasFeature,
 	showIcon = false,
 	icon = 'star',
@@ -140,10 +140,6 @@ export const UpsellNudge = ( {
 			tracksImpressionProperties={ tracksImpressionProperties }
 		/>
 	);
-};
-
-UpsellNudge.defaultProps = {
-	primaryButton: true,
 };
 
 export default connect( ( state, ownProps ) => {
