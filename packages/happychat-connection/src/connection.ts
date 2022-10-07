@@ -66,10 +66,12 @@ export class Connection {
 			auth
 				.then( ( { url, user: { signer_user_id, jwt, groups, skills, geoLocation } } ) => {
 					// not so clean way to check if the happychat URL is staging or prod one.
-					if ( ( url as string ).includes( 'staging' ) ) {
-						dispatch( this.receiveHappychatEnv?.( 'staging' ) );
-					} else {
-						dispatch( this.receiveHappychatEnv?.( 'production' ) );
+					if ( typeof url === 'string' ) {
+						if ( url.includes( 'staging' ) ) {
+							dispatch( this.receiveHappychatEnv?.( 'staging' ) );
+						} else {
+							dispatch( this.receiveHappychatEnv?.( 'production' ) );
+						}
 					}
 					const socket = buildConnection( url );
 					return socket
