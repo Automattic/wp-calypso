@@ -25,7 +25,7 @@ function sortByRegistrationDateCompareFunction(
 	return 1;
 }
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => {
+const StepContent = ( { submit, goNext, goToStep }: StepContentProps ) => {
 	const site = useSite();
 
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
@@ -42,14 +42,16 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	const wpcomDomains = domains.filter( ( domain ) => domain.isWPCOMDomain );
 
-	const sidebarURL =
-		domains &&
-		( nonWpcomDomains?.length > 0 ? nonWpcomDomains[ 0 ]?.domain : wpcomDomains[ 0 ]?.domain );
+	const sidebarURL = nonWpcomDomains?.length
+		? nonWpcomDomains[ 0 ]?.domain
+		: wpcomDomains[ 0 ]?.domain;
+
+	const iFrameURL = wpcomDomains.length ? wpcomDomains[ 0 ]?.domain : nonWpcomDomains[ 0 ]?.domain;
 
 	return (
 		<div className="launchpad__content">
 			<Sidebar siteSlug={ sidebarURL } submit={ submit } goNext={ goNext } goToStep={ goToStep } />
-			<LaunchpadSitePreview siteSlug={ siteSlug } />
+			<LaunchpadSitePreview siteSlug={ iFrameURL } />
 		</div>
 	);
 };
