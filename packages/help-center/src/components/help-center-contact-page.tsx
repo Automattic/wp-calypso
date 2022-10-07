@@ -41,7 +41,7 @@ export const HelpCenterContactPage: React.FC = () => {
 	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
 		staleTime: 30 * 60 * 1000,
 	} );
-	const isLoading = renderChat.isLoading || isLoadingTickets;
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 
 	useEffect( () => {
 		if ( isLoading ) {
@@ -50,9 +50,9 @@ export const HelpCenterContactPage: React.FC = () => {
 		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
 			location: 'help-center',
 			chat_available: renderChat.state === 'AVAILABLE',
-			email_available: renderEmail,
+			email_available: renderEmail.render,
 		} );
-	}, [ isLoading, renderChat.state, renderEmail ] );
+	}, [ isLoading, renderChat.state, renderEmail.render ] );
 
 	if ( isLoading ) {
 		return (
@@ -100,7 +100,7 @@ export const HelpCenterContactPage: React.FC = () => {
 						</ConditionalLink>
 					) }
 
-					{ renderEmail && (
+					{ renderEmail.render && (
 						<Link
 							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
 							to={ `/contact-form?mode=EMAIL&overflow=${ (
