@@ -77,6 +77,7 @@ const LinkButton = styled( Button )( {
 	},
 	'&:focus': {
 		backgroundColor: 'var(--studio-gray-70)',
+		color: 'var(--studio-gray-0)',
 		outline: 'solid 2px var(--studio-gray-70)',
 		outlineOffset: 2,
 		boxShadow: 'none !important',
