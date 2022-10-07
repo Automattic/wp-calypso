@@ -32,7 +32,7 @@ jest.mock( '../hooks', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -64,7 +64,7 @@ describe( 'BackupDatePicker', () => {
 		render( <BackupDatePicker selectedDate={ today } onDateChange={ () => {} } /> );
 
 		const yesterdayTextNode = screen.getByText( 'Yesterday' );
-		expect( yesterdayTextNode ).toBeInTheDocument();
+		expect( yesterdayTextNode ).toBeVisible();
 		expect( yesterdayTextNode ).toHaveClass( 'backup-date-picker__display-date' );
 		expect( yesterdayTextNode.parentElement ).toHaveClass(
 			'backup-date-picker__select-date--previous'
@@ -82,7 +82,7 @@ describe( 'BackupDatePicker', () => {
 		const expectedText = moment( november4Of2020 ).subtract( 1, 'day' ).format( 'MMM D' );
 
 		const previousDateText = screen.getByText( expectedText );
-		expect( previousDateText ).toBeInTheDocument();
+		expect( previousDateText ).toBeVisible();
 		expect( previousDateText ).toHaveClass( 'backup-date-picker__display-date' );
 		expect( previousDateText.parentElement ).toHaveClass(
 			'backup-date-picker__select-date--previous'
@@ -97,7 +97,7 @@ describe( 'BackupDatePicker', () => {
 		const expectedText = moment( oneYearAgo ).subtract( 1, 'day' ).format( 'MMM D, YYYY' );
 
 		const previousDateText = screen.getByText( expectedText );
-		expect( previousDateText ).toBeInTheDocument();
+		expect( previousDateText ).toBeVisible();
 		expect( previousDateText ).toHaveClass( 'backup-date-picker__display-date' );
 		expect( previousDateText.parentElement ).toHaveClass(
 			'backup-date-picker__select-date--previous'
@@ -115,7 +115,7 @@ describe( 'BackupDatePicker', () => {
 		const expectedText = moment( december4Of2020 ).add( 1, 'day' ).format( 'MMM D' );
 
 		const nextDateText = screen.getByText( expectedText );
-		expect( nextDateText ).toBeInTheDocument();
+		expect( nextDateText ).toBeVisible();
 		expect( nextDateText ).toHaveClass( 'backup-date-picker__display-date' );
 		expect( nextDateText.parentElement ).toHaveClass( 'backup-date-picker__next-date-link' );
 	} );
@@ -143,7 +143,7 @@ describe( 'BackupDatePicker', () => {
 		const expectedText = moment( twoYearsAgo ).add( 1, 'day' ).format( 'MMM D, YYYY' );
 
 		const nextDateText = screen.getByText( expectedText );
-		expect( nextDateText ).toBeInTheDocument();
+		expect( nextDateText ).toBeVisible();
 		expect( nextDateText ).toHaveClass( 'backup-date-picker__display-date' );
 		expect( nextDateText.parentElement ).toHaveClass( 'backup-date-picker__next-date-link' );
 	} );
@@ -184,6 +184,8 @@ describe( 'BackupDatePicker', () => {
 
 	test( 'Navigates backward when the previous date is focused and the spacebar is pressed', () =>
 		new Promise( ( done ) => {
+			const user = userEvent.setup();
+
 			const selectedDate = moment( '2020-01-01' );
 			const onDateChange = ( date ) => {
 				expect( date.diff( selectedDate, 'days' ) ).toEqual( -1 );
@@ -193,13 +195,13 @@ describe( 'BackupDatePicker', () => {
 			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
 			const button = screen.getByText( 'Dec 31, 2019' );
-			button.focus();
-
-			fireEvent.keyDown( button, { code: 'Space', key: ' ' } );
+			user.type( button, '[Space]' );
 		} ) );
 
 	test( 'Navigates forward when the next date is focused and the spacebar is pressed', () =>
 		new Promise( ( done ) => {
+			const user = userEvent.setup();
+
 			const selectedDate = moment( '2020-01-01' );
 			const onDateChange = ( date ) => {
 				expect( date.diff( selectedDate, 'days' ) ).toEqual( 1 );
@@ -209,9 +211,7 @@ describe( 'BackupDatePicker', () => {
 			render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
 			const button = screen.getByText( 'Jan 2, 2020' );
-			button.focus();
-
-			fireEvent.keyDown( button, { code: 'Space', key: ' ' } );
+			user.type( button, '[Space]' );
 		} ) );
 
 	// --- ANALYTICS ---

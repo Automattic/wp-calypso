@@ -9,7 +9,7 @@ import fixtures from './fixtures';
 const WIDTH = 450;
 
 jest.mock( 'calypso/my-sites/media-library/media-image', () => {
-	return ( props ) => <div data-testid={ props.src }>{ props.children }</div>;
+	return ( { src, children } ) => <div data-testid={ src }>{ children }</div>;
 } );
 
 describe( 'MediaLibraryListItem image', () => {

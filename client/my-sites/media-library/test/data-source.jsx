@@ -12,7 +12,7 @@ const noop = () => {};
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
 jest.mock( 'calypso/components/popover-menu', () => {
-	return ( props ) => <div data-test={ props[ 'data-source' ] }>{ props.children }</div>;
+	return ( { children } ) => <div>{ children }</div>;
 } );
 // only enable the external-media options, enabling everything causes an
 // electron related build error
@@ -37,8 +37,8 @@ describe( 'MediaLibraryDataSource', () => {
 				</ReduxProvider>
 			);
 
-			expect( screen.queryByText( 'Google Photos' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Pexels free photos' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Google Photos' ) ).toBeVisible();
+			expect( screen.getByText( 'Pexels free photos' ) ).toBeVisible();
 		} );
 
 		test( 'excludes data sources listed in disabledSources', () => {
@@ -54,7 +54,7 @@ describe( 'MediaLibraryDataSource', () => {
 					/>
 				</ReduxProvider>
 			);
-			expect( screen.queryByText( 'Google Photos' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Google Photos' ) ).toBeVisible();
 			expect( screen.queryByText( 'Pexels free photos' ) ).not.toBeInTheDocument();
 		} );
 	} );
