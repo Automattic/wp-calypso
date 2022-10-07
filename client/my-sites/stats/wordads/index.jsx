@@ -164,9 +164,9 @@ class WordAds extends Component {
 						<div id="my-stats-content" className="wordads">
 							<WordAdsChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
+								activeLegend={ this.state.activeLegend } // was a part of a legend, looks like it wasn't used
+								availableLegend={ this.getAvailableLegend() } // was a part of legend on `trafic` page, not used in code on WordAds page
+								onChangeLegend={ this.onChangeLegend } // was used by a legend
 								barClick={ this.barClick }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }
