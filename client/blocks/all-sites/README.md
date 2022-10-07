@@ -14,7 +14,6 @@ function render() {
 
 ## Props
 
-- `sites (array)` - An array of `site` objects.
 - `onSelect (func)` - A function to handle the event callback when clicking/tapping on the site.
 - `href (string)` - A URL to add to the anchor.
 - `isSelected (bool)` - Whether the site should be marked as selected.

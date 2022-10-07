@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import AllSitesIcon from './all-sites-icon';
 
 import './style.scss';
 
@@ -45,8 +44,7 @@ class AllSites extends Component {
 	}
 
 	render() {
-		const { title, href, domain, sites, translate, isHighlighted, isSelected, showCount } =
-			this.props;
+		const { title, href, domain, translate, isHighlighted, isSelected, showCount } = this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
 		const allSitesClass = classNames( {
@@ -70,7 +68,6 @@ class AllSites extends Component {
 							{ title || translate( 'All My Sites' ) }
 						</span>
 						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
-						<AllSitesIcon sites={ sites } />
 					</div>
 				</a>
 			</div>
@@ -81,15 +78,11 @@ class AllSites extends Component {
 // don't instantiate function in `connect`
 const isSiteVisible = ( { visible = true } ) => visible;
 
-export default connect( ( state, props ) => {
-	// If sites or count are not specified as props, fetch the default values from Redux
-	const { sites = getSites( state ), userSitesCount = getCurrentUserVisibleSiteCount( state ) } =
-		props;
-
-	const visibleSites = sites?.filter( isSiteVisible );
+export default connect( ( state ) => {
+	const visibleSites = getSites( state )?.filter( isSiteVisible );
+	const userSitesCount = getCurrentUserVisibleSiteCount( state );
 
 	return {
-		sites: config.isEnabled( 'realtime-site-count' ) ? visibleSites : sites,
 		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
 	};
 } )( localize( AllSites ) );
