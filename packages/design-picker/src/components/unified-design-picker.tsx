@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
@@ -8,7 +9,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -60,6 +61,30 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 			scrollable={ true }
 		/>
 	);
+};
+
+interface TrackDesignViewProps {
+	categorization?: string | null;
+	design: Design;
+	isPremiumThemeAvailable?: boolean;
+}
+
+const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
+	categorization,
+	design,
+	isPremiumThemeAvailable,
+} ) => {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_design_picker_design_display', {
+			category: categorization,
+			design_type: design.design_type,
+			is_premium: design.is_premium,
+			is_premium_available: isPremiumThemeAvailable,
+			slug: design.slug,
+		} );
+	} );
+
+	return null;
 };
 
 interface DesignButtonProps {
@@ -171,22 +196,34 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
+	categorization?: string | null;
 	onSelect: ( design: Design ) => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
+	categorization,
 	onSelect,
 	...props
 } ) => {
 	const isBlankCanvas = isBlankCanvasDesign( props.design );
-	if ( isBlankCanvas ) {
-		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
-	}
 
-	return (
+	const designButtonContents = isBlankCanvas ? (
+		<PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />
+	) : (
 		<div className="design-button-container">
 			<DesignButton { ...props } />
 		</div>
+	);
+
+	return (
+		<>
+			<TrackDesignView
+				categorization={ categorization }
+				design={ props.design }
+				isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
+			/>
+			{ designButtonContents }
+		</>
 	);
 };
 
@@ -357,6 +394,71 @@ export interface UnifiedDesignPickerProps {
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 }
+
+interface StaticDesignPickerProps {
+	locale: string;
+	verticalId?: string;
+	onSelect: ( design: Design ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	designs: Design[];
+	categorization?: Categorization;
+	isPremiumThemeAvailable?: boolean;
+	onCheckout?: any;
+	purchasedThemes?: string[];
+	currentPlanFeatures?: string[];
+}
+
+const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
+	locale,
+	onSelect,
+	onPreview,
+	designs,
+	categorization,
+	isPremiumThemeAvailable,
+	onCheckout,
+	verticalId,
+	purchasedThemes,
+	currentPlanFeatures,
+} ) => {
+	const hasCategories = !! categorization?.categories.length;
+
+	const filteredDesigns = useMemo( () => {
+		if ( categorization?.selection ) {
+			return filterDesignsByCategory( designs, categorization.selection );
+		}
+
+		return designs;
+	}, [ designs, categorization?.selection ] );
+
+	return (
+		<div>
+			{ categorization && hasCategories && (
+				<UnifiedDesignPickerCategoryFilter
+					categories={ categorization.categories }
+					onSelect={ categorization.onSelect }
+					selectedSlug={ categorization.selection }
+				/>
+			) }
+			<div className="design-picker__grid">
+				{ filteredDesigns.map( ( design ) => (
+					<DesignButtonContainer
+						key={ design.slug }
+						design={ design }
+						locale={ locale }
+						onSelect={ onSelect }
+						onPreview={ onPreview }
+						isPremiumThemeAvailable={ isPremiumThemeAvailable }
+						onCheckout={ onCheckout }
+						verticalId={ verticalId }
+						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+						currentPlanFeatures={ currentPlanFeatures }
+						categorization={ categorization?.selection }
+					/>
+				) ) }
+			</div>
+		</div>
+	);
+};
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
