@@ -25,7 +25,8 @@ export default function PostsList() {
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const posts = useSelector( ( state ) => {
-		return getPostsForQuery( state, selectedSiteId, query );
+		const posts = getPostsForQuery( state, selectedSiteId, query );
+		return posts?.filter( ( post: any ) => ! post.password );
 	} );
 	const isLoading = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, query )

@@ -183,7 +183,7 @@ class StatsListItem extends Component {
 				}
 			}, this );
 
-			if ( this.props.moduleName === 'posts' ) {
+			if ( this.props.moduleName === 'posts' && data.public ) {
 				actionItems.push(
 					<Promote
 						postId={ data.id }

@@ -13,7 +13,15 @@ import { getPost } from 'calypso/state/posts/selectors';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status, type, siteId } ) {
+function PostActionsEllipsisMenuPromote( {
+	globalId,
+	postId,
+	bumpStatKey,
+	status,
+	password,
+	type,
+	siteId,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isSitePrivate =
@@ -24,6 +32,10 @@ function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status
 	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	if ( isSitePrivate ) {
+		return null;
+	}
+
+	if ( password !== '' ) {
 		return null;
 	}
 
@@ -67,6 +79,7 @@ const mapStateToProps = ( state, { globalId } ) => {
 		type: post.type,
 		postId: post.ID,
 		status: post.status,
+		password: post.password,
 		siteId: getSelectedSiteId( state ),
 	};
 };
