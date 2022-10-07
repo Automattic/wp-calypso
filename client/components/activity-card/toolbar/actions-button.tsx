@@ -80,7 +80,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				>
 					{ translate( 'Restore to this point' ) }
 				</Button>
-				{ doesRewindNeedCredentials && (
+				{ ( doesRewindNeedCredentials || areJetpackCredentialsInvalid ) && (
 					<div className="toolbar__credentials-warning">
 						<img src={ missingCredentialsIcon } alt="" role="presentation" />
 						<div className="toolbar__credentials-warning-text">
