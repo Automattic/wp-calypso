@@ -45,6 +45,7 @@ import {
 	sendMessage as sendHappychatMessage,
 	sendUserInfo,
 } from 'calypso/state/happychat/connection/actions';
+import getHappychatEnv from 'calypso/state/happychat/selectors/get-happychat-env';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 import hasHappychatLocalizedSupport from 'calypso/state/happychat/selectors/has-happychat-localized-support';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
@@ -375,6 +376,7 @@ class HelpContact extends Component {
 						enabled: true,
 						label: translate( 'Email us' ),
 						onSubmit: this.submitSupportTicket,
+						showChatStagingNotice: this.props.happychatEnv === 'staging',
 					};
 				}
 
@@ -385,6 +387,7 @@ class HelpContact extends Component {
 					showSubjectField: false,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
+					showChatStagingNotice: this.props.happychatEnv === 'staging',
 				};
 			}
 			case SUPPORT_CHAT_OVERFLOW:
@@ -396,6 +399,8 @@ class HelpContact extends Component {
 					showSubjectField: true,
 					showSiteField: hasMoreThanOneSite,
 					showQASuggestions: true,
+					// still show notice for email support to explain why chat is unavailable
+					showChatStagingNotice: this.props.happychatEnv === 'staging',
 				};
 
 			default:
@@ -633,11 +638,11 @@ class HelpContact extends Component {
 	}
 }
 
-export default withDispatch( ( dataStoresDispatch ) => {
-	return { dataStoresDispatch };
+export default withDispatch( ( dispatch ) => {
+	return { startHelpCenterChat: dispatch( HELP_CENTER_STORE ).startHelpCenterChat };
 } )(
 	connect(
-		( state, ownProps ) => {
+		( state ) => {
 			const selectedSite = getHelpSelectedSite( state );
 			const isChatEligible = isHappychatUserEligible( state );
 			return {
@@ -656,7 +661,7 @@ export default withDispatch( ( dataStoresDispatch ) => {
 				isRequestingSites: isRequestingSites( state ),
 				supportVariation: getInlineHelpSupportVariation( state ),
 				shouldShowHelpCenterToUser: shouldShowHelpCenterToUser( getCurrentUserId( state ) ),
-				startHelpCenterChat: ownProps.dataStoresDispatch( HELP_CENTER_STORE ).startHelpCenterChat,
+				happychatEnv: getHappychatEnv( state ),
 			};
 		},
 		{
