@@ -13,13 +13,13 @@ type StepContentProps = {
 	goToStep?: NavigationControls[ 'goToStep' ];
 };
 
-function sortByRegistrationDateCompareFunction(
-	firstDomainObject: ResponseDomain,
-	secondDomainObject: ResponseDomain
-) {
-	if ( firstDomainObject.registrationDate > secondDomainObject.registrationDate ) {
+function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: ResponseDomain ) {
+	const registrationDateA = domainObjectA.registrationDate;
+	const registrationDateB = domainObjectB.registrationDate;
+
+	if ( registrationDateA > registrationDateB ) {
 		return -1;
-	} else if ( firstDomainObject.registrationDate < secondDomainObject.registrationDate ) {
+	} else if ( registrationDateA < registrationDateB ) {
 		return 1;
 	}
 	return 1;
@@ -38,7 +38,7 @@ const StepContent = ( { submit, goNext, goToStep }: StepContentProps ) => {
 	// We want the first domain object to be the most recently registered domain
 	const nonWpcomDomains = domains
 		.filter( ( domain ) => ! domain.isWPCOMDomain )
-		.sort( sortByRegistrationDateCompareFunction );
+		.sort( sortByRegistrationDate );
 
 	const wpcomDomains = domains.filter( ( domain ) => domain.isWPCOMDomain );
 
