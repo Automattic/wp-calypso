@@ -18,7 +18,7 @@ function AdminHelpCenterContent() {
 		} else {
 			button.classList.remove( 'active' );
 		}
-	}, [ setShowHelpCenter, show, button ] );
+	}, [ show, button ] );
 
 	const handleToggleHelpCenter = () => {
 		if ( show ) {
