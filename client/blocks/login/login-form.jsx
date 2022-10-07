@@ -555,7 +555,6 @@ export class LoginForm extends Component {
 			showSocialLoginFormOnly,
 			isWoo,
 			isPartnerSignup,
-			redirectTo,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
