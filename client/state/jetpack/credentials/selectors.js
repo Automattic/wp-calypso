@@ -5,5 +5,5 @@ export function getAreJetpackCredentialsInvalid( state, siteId, role ) {
 }
 
 export function isRequestingJetpackCredentialsTest( state, siteId, role ) {
-	return state.jetpack.credentials.testRequestStatus?.[ siteId ]?.[ role ];
+	return state.jetpack.credentials.testRequestStatus?.[ siteId ]?.[ role ] || false;
 }
