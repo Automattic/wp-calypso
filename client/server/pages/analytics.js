@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { throttle } from 'lodash';
-import analytics from '../lib/analytics';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 
 // Compute the number of milliseconds between each call to recordTiming
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
@@ -20,7 +20,7 @@ const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, use
 			type: 'timing',
 		},
 	];
-	analytics.statsd.recordEvents( sectionName, events );
+	logServerEvent( sectionName, events );
 }, THROTTLE_MILLIS );
 
 /*
