@@ -1,11 +1,14 @@
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { UseQueryOptions } from 'react-query';
 
 export const getCacheKey = ( siteId: number | null ) => [ 'sites', siteId, 'domains' ];
 
-type UseGetDomainsQueryData = ResponseDomain[];
+export type Domain = {
+	domain: string;
+	registration_date: string;
+};
+type UseGetDomainsQueryData = Domain[];
 
 export const useGetDomainsQuery = (
 	siteId: number | null,

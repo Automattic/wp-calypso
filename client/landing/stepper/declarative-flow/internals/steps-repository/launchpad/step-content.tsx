@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
+import { useGetDomainsQuery, Domain } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import LaunchpadSitePreview from './launchpad-site-preview';
@@ -12,30 +12,77 @@ type StepContentProps = {
 	goToStep?: NavigationControls[ 'goToStep' ];
 };
 
-const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => {
+enum UseFor {
+	IFrameDomain,
+	PreviewDomain,
+}
+
+function findBestDomain( domains: Domain[], useFor: UseFor ) {
+	const mostRecentlyRegisteredDomain: {
+		domain: string | null;
+		timestamp: number | null;
+	} = {
+		domain: null,
+		timestamp: null,
+	};
+
+	for ( let i = 0; i < domains.length; i++ ) {
+		const currentDomainObject = domains[ i ];
+
+		if ( useFor === UseFor.IFrameDomain ) {
+			// if trying to find the best domain for the iFrame (find the .wordpress.com domain if it exists)
+			if ( currentDomainObject.domain.endsWith( '.wordpress.com' ) ) {
+				return currentDomainObject.domain;
+			}
+		} else if ( useFor === UseFor.PreviewDomain ) {
+			// if trying to find the best domain for the domain preview (find the most recently registered one)
+			const currentDomainRegisteredTimestamp = new Date(
+				currentDomainObject.registration_date
+			).getTime();
+
+			if (
+				currentDomainRegisteredTimestamp > ( mostRecentlyRegisteredDomain.timestamp as number )
+			) {
+				mostRecentlyRegisteredDomain.domain = currentDomainObject.domain;
+				mostRecentlyRegisteredDomain.timestamp = currentDomainRegisteredTimestamp;
+			}
+		}
+	}
+
+	return mostRecentlyRegisteredDomain.domain;
+}
+
+const StepContent = ( { submit, goNext, goToStep }: StepContentProps ) => {
 	const site = useSite();
 
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
 	} );
 
-	const [ freeDomain, setFreeDomain ] = useState< string | null >( null );
+	const [ iFrameDomain, setIFrameDomain ] = useState< string | null >( null );
+	const [ previewDomain, setPreviewDomain ] = useState< string | null >( null );
 
 	useEffect( () => {
-		if ( allDomains ) {
-			allDomains.forEach( ( domainObject ) => {
-				// find the free .wordpress.com domain which will always be secure (will have SSL certificate)
-				if ( domainObject.domain.endsWith( '.wordpress.com' ) ) {
-					setFreeDomain( domainObject.domain );
-				}
-			} );
+		if ( allDomains.length ) {
+			if ( ! iFrameDomain ) {
+				setIFrameDomain( findBestDomain( allDomains, UseFor.IFrameDomain ) );
+			}
+
+			if ( ! previewDomain ) {
+				setPreviewDomain( findBestDomain( allDomains, UseFor.PreviewDomain ) );
+			}
 		}
-	}, [ allDomains ] );
+	}, [ allDomains, iFrameDomain, previewDomain ] );
 
 	return (
 		<div className="launchpad__content">
-			<Sidebar siteSlug={ siteSlug } submit={ submit } goNext={ goNext } goToStep={ goToStep } />
-			<LaunchpadSitePreview siteSlug={ freeDomain } />
+			<Sidebar
+				siteSlug={ previewDomain }
+				submit={ submit }
+				goNext={ goNext }
+				goToStep={ goToStep }
+			/>
+			<LaunchpadSitePreview siteSlug={ iFrameDomain } />
 		</div>
 	);
 };
