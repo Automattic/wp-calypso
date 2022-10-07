@@ -1,9 +1,9 @@
-import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -36,7 +36,6 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
 import {
@@ -124,9 +123,11 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	);
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
-	const hasAtomicFeature = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
-	);
+	const supportsAtomicUpgrade = useRef< boolean >();
+	useEffect( () => {
+		supportsAtomicUpgrade.current =
+			selectedSite?.plan && planHasFeature( selectedSite.plan.product_slug, WPCOM_FEATURES_ATOMIC );
+	}, [ selectedSite ] );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -138,9 +139,9 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
+		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
 			waitFor( 2 ).then( () => {
-				if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
+				if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
 					setNonInstallablePlanError( true );
 				}
 			} );
@@ -185,7 +186,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				dispatch( installPlugin( siteId, wporgPlugin, false ) );
 
 				triggerInstallFlow();
-			} else if ( hasAtomicFeature ) {
+			} else if ( supportsAtomicUpgrade.current ) {
 				// initialize atomic flow
 				setAtomicFlow( true );
 				dispatch( initiateTransfer( siteId, null, productSlug ) );
@@ -203,10 +204,9 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		wporgPlugin,
 		productSlug,
 		dispatch,
-		hasAtomicFeature,
 	] );
 
-	// Validate completition of atomic transfer flow
+	// Validate completion of atomic transfer flow
 	useEffect( () => {
 		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
 			setCurrentStep( 2 );
