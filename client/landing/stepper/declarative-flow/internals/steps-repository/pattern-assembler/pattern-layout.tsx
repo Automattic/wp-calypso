@@ -7,13 +7,16 @@ type PatternLayoutProps = {
 	header: Pattern | null;
 	sections: Pattern[] | null;
 	footer: Pattern | null;
-	onSelectHeader: () => void;
+	onAddHeader: () => void;
+	onReplaceHeader: () => void;
 	onDeleteHeader: () => void;
-	onSelectSection: ( position: number | null ) => void;
+	onAddSection: () => void;
+	onReplaceSection: ( position: number ) => void;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
-	onSelectFooter: () => void;
+	onAddFooter: () => void;
+	onReplaceFooter: () => void;
 	onDeleteFooter: () => void;
 	onContinueClick: () => void;
 };
@@ -22,13 +25,16 @@ const PatternLayout = ( {
 	header,
 	sections,
 	footer,
-	onSelectHeader,
+	onAddHeader,
+	onReplaceHeader,
 	onDeleteHeader,
-	onSelectSection,
+	onAddSection,
+	onReplaceSection,
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
-	onSelectFooter,
+	onAddFooter,
+	onReplaceFooter,
 	onDeleteFooter,
 	onContinueClick,
 }: PatternLayoutProps ) => {
@@ -51,11 +57,15 @@ const PatternLayout = ( {
 							<span className="pattern-layout__list-item-text" title={ header.name }>
 								{ header.name }
 							</span>
-							<PatternActionBar onReplace={ onSelectHeader } onDelete={ onDeleteHeader } />
+							<PatternActionBar
+								patternType="header"
+								onReplace={ onReplaceHeader }
+								onDelete={ onDeleteHeader }
+							/>
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--header">
-							<Button onClick={ onSelectHeader }>
+							<Button onClick={ onAddHeader }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ translate( 'Choose a header' ) }
 							</Button>
@@ -72,7 +82,8 @@ const PatternLayout = ( {
 									{ name }
 								</span>
 								<PatternActionBar
-									onReplace={ () => onSelectSection( index ) }
+									patternType="section"
+									onReplace={ () => onReplaceSection( index ) }
 									onDelete={ () => onDeleteSection( index ) }
 									onMoveUp={ () => onMoveUpSection( index ) }
 									onMoveDown={ () => onMoveDownSection( index ) }
@@ -84,7 +95,7 @@ const PatternLayout = ( {
 						);
 					} ) }
 					<li className="pattern-layout__list-item pattern-layout__list-item--section">
-						<Button onClick={ () => onSelectSection( null ) }>
+						<Button onClick={ () => onAddSection() }>
 							<span className="pattern-layout__add-icon">+</span>{ ' ' }
 							{ sections?.length
 								? translate( 'Add another section' )
@@ -96,11 +107,15 @@ const PatternLayout = ( {
 							<span className="pattern-layout__list-item-text" title={ footer.name }>
 								{ footer.name }
 							</span>
-							<PatternActionBar onReplace={ onSelectFooter } onDelete={ onDeleteFooter } />
+							<PatternActionBar
+								patternType="footer"
+								onReplace={ onReplaceFooter }
+								onDelete={ onDeleteFooter }
+							/>
 						</li>
 					) : (
 						<li className="pattern-layout__list-item pattern-layout__list-item--footer">
-							<Button onClick={ onSelectFooter }>
+							<Button onClick={ onAddFooter }>
 								<span className="pattern-layout__add-icon">+</span>{ ' ' }
 								{ translate( 'Choose a footer' ) }
 							</Button>

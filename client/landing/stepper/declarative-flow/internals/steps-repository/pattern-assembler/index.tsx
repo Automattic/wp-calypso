@@ -34,6 +34,43 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 
+	const getPatterns = () =>
+		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
+
+	const trackEventPatternAdd = ( patternType: string ) => {
+		recordTracksEvent( 'calypso_signup_bcpa_pattern_add_click', {
+			pattern_type: patternType,
+		} );
+	};
+
+	const trackEventPatternSelect = ( {
+		patternType,
+		patternId,
+	}: {
+		patternType: string;
+		patternId: number;
+	} ) => {
+		recordTracksEvent( 'calypso_signup_bcpa_pattern_select_click', {
+			pattern_type: patternType,
+			pattern_id: patternId,
+		} );
+	};
+
+	const trackEventContinue = () => {
+		const patterns = getPatterns();
+		recordTracksEvent( 'calypso_signup_bcpa_continue_click', {
+			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
+			pattern_count: patterns.length,
+		} );
+		patterns.forEach( ( { id, name } ) => {
+			recordTracksEvent( 'calypso_signup_bcpa_pattern_final_select', {
+				pattern_id: id,
+				pattern_name: name,
+			} );
+		} );
+	};
+
 	const getDesign = () =>
 		( {
 			...selectedDesign,
@@ -103,6 +140,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
 			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
 			if ( 'section' === showPatternSelectorType ) addSection( pattern );
+
+			if ( showPatternSelectorType ) {
+				trackEventPatternSelect( {
+					patternType: showPatternSelectorType,
+					patternId: pattern.id,
+				} );
+			}
 		}
 		setShowPatternSelectorType( null );
 	};
@@ -111,6 +155,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		if ( showPatternSelectorType ) {
 			setShowPatternSelectorType( null );
 		} else {
+			const patterns = getPatterns();
+			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+				has_selected_patterns: patterns.length > 0,
+				pattern_count: patterns.length,
+			} );
+
 			goBack();
 		}
 	};
@@ -127,7 +177,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						header={ header }
 						sections={ sections }
 						footer={ footer }
-						onSelectHeader={ () => {
+						onAddHeader={ () => {
+							trackEventPatternAdd( 'header' );
+							setShowPatternSelectorType( 'header' );
+						} }
+						onReplaceHeader={ () => {
 							setShowPatternSelectorType( 'header' );
 							setScrollToSelector( null );
 						} }
@@ -135,7 +189,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							setHeader( null );
 							setScrollToSelector( null );
 						} }
-						onSelectSection={ ( position: number | null ) => {
+						onAddSection={ () => {
+							trackEventPatternAdd( 'section' );
+							setSectionPosition( null );
+							setShowPatternSelectorType( 'section' );
+						} }
+						onReplaceSection={ ( position: number ) => {
 							setSectionPosition( position );
 							setShowPatternSelectorType( 'section' );
 						} }
@@ -151,7 +210,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							moveDownSection( position );
 							setScrollToSelectorByPosition( position + 1 );
 						} }
-						onSelectFooter={ () => {
+						onAddFooter={ () => {
+							trackEventPatternAdd( 'footer' );
+							setShowPatternSelectorType( 'footer' );
+						} }
+						onReplaceFooter={ () => {
 							setShowPatternSelectorType( 'footer' );
 							setScrollToSelector( 'footer' );
 						} }
@@ -169,6 +232,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 										reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
 									)
 								);
+
+								trackEventContinue();
 
 								submit?.();
 							}
@@ -194,6 +259,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 			hideSkip={ true }
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			stepSectionName={ showPatternSelectorType ? 'pattern-selector' : undefined }
 		/>
 	);
 };
