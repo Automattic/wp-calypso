@@ -34,18 +34,16 @@ function findBestDomain( domains: Domain[], useFor: UseFor ) {
 			if ( currentDomainObject.domain.endsWith( '.wordpress.com' ) ) {
 				return currentDomainObject.domain;
 			}
-		} else if ( useFor === UseFor.PreviewDomain ) {
-			// if trying to find the best domain for the domain preview (find the most recently registered one)
-			const currentDomainRegisteredTimestamp = new Date(
-				currentDomainObject.registration_date
-			).getTime();
+		}
 
-			if (
-				currentDomainRegisteredTimestamp > ( mostRecentlyRegisteredDomain.timestamp as number )
-			) {
-				mostRecentlyRegisteredDomain.domain = currentDomainObject.domain;
-				mostRecentlyRegisteredDomain.timestamp = currentDomainRegisteredTimestamp;
-			}
+		// continue with finding the most recently registered domain
+		const currentDomainRegisteredTimestamp = new Date(
+			currentDomainObject.registration_date
+		).getTime();
+
+		if ( currentDomainRegisteredTimestamp > ( mostRecentlyRegisteredDomain.timestamp as number ) ) {
+			mostRecentlyRegisteredDomain.domain = currentDomainObject.domain;
+			mostRecentlyRegisteredDomain.timestamp = currentDomainRegisteredTimestamp;
 		}
 	}
 
