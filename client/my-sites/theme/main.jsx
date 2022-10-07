@@ -4,6 +4,7 @@ import {
 	PLAN_BUSINESS,
 	PLAN_PREMIUM,
 	FEATURE_PREMIUM_THEMES,
+	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -918,7 +919,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
-			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, FEATURE_PREMIUM_THEMES ),
+			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
 			canUserUploadThemes: siteHasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// Remove the trailing slash because the page URL doesn't have one either.
