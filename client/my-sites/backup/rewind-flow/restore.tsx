@@ -94,7 +94,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</p>
 			<h4 className="rewind-flow__cta">{ translate( 'Choose the items you wish to restore:' ) }</h4>
 			<RewindConfigEditor currentConfig={ rewindConfig } onConfigChange={ setRewindConfig } />
-
 			<RewindFlowNotice
 				gridicon="notice"
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }
