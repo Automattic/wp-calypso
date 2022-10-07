@@ -97,6 +97,7 @@
 		"legal-updates-banner": true,
 		"limit-global-styles": true,
 		"login/magic-login": true,
+		"login/react-lost-password-screen": true,
 		"logmein": true,
 		"mailchimp": true,
 		"manage/import/site-importer-endpoints": true,
