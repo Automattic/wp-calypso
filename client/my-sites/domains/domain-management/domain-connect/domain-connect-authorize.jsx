@@ -145,6 +145,7 @@ class DomainConnectAuthorize extends Component {
 					<DomainConnectAuthorizeDescription
 						isPlaceholder={ ! this.state.dnsTemplateRecordsRetrieved }
 						providerId={ this.props.providerId }
+						serviceId={ this.props.serviceId }
 						dnsTemplateError={ this.state.dnsTemplateError }
 					/>
 					<DomainConnectAuthorizeRecords
