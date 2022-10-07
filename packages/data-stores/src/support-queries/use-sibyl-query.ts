@@ -2,8 +2,9 @@ import config from '@automattic/calypso-config';
 import { useQuery } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 
-type Result = {
+export type SupportArticleResult = {
 	id: string;
+	post_id?: string;
 	title: string;
 	description: string;
 	link: string;
@@ -15,7 +16,7 @@ const jetpackSupportBlog = config( 'jetpack_support_blog' ) as string;
 export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: boolean ) {
 	const site = ! isJetpackSite || isAtomic ? wpcomSupportBlog : jetpackSupportBlog;
 
-	return useQuery< Result[] >(
+	return useQuery< SupportArticleResult[] >(
 		query,
 		async () =>
 			await wpcomRequest( {

@@ -113,7 +113,7 @@ export const HelpCenterContactPage: React.FC = () => {
 					) }
 				</div>
 			</div>
-			<SibylArticles />
+			<SibylArticles articleCanNavigateBack />
 		</div>
 	);
 };
