@@ -17,19 +17,25 @@ const _filters = {
 		return true;
 	},
 	active: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	inactive: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return ! site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	updates: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.update && ! site.update.recentlyUpdated;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.update && ! site.update.recentlyUpdated;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;

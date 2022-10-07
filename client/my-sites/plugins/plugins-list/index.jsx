@@ -235,7 +235,6 @@ export class PluginsList extends Component {
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
 		this.removePluginStatuses();
-
 		const pluginAndSiteObjects = selectedPlugins
 			.filter( ( plugin ) => ! isDeactivatingOrRemovingAndJetpackSelected( plugin ) ) // ignore sites that are deactivating, activating or removing jetpack
 			.map( ( p ) => {
@@ -553,9 +552,7 @@ export class PluginsList extends Component {
 					selected={ this.getSelected() }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					updateSelected={ this.updateSelected }
-					activateSelected={ this.activateSelected }
 					deactiveAndDisconnectSelected={ this.deactiveAndDisconnectSelected }
-					deactivateSelected={ this.deactivateSelected }
 					setAutoupdateSelected={ this.setAutoupdateSelected }
 					unsetAutoupdateSelected={ this.unsetAutoupdateSelected }
 					removePluginNotice={ () => this.removePluginDialog() }
