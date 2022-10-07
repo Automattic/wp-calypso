@@ -396,6 +396,7 @@ __metadata:
     "@wordpress/base-styles": ^4.5.0
     classnames: ^2.3.1
     enzyme: ^3.11.0
+    framer-motion: 6.2.8
     gridicons: ^3.4.0
     i18n-calypso: "workspace:^"
     lodash: ^4.17.21
@@ -7714,11 +7715,11 @@ __metadata:
   linkType: hard
 
 "@types/yargs@npm:^17.0.1":
-  version: 17.0.5
-  resolution: "@types/yargs@npm:17.0.5"
+  version: 17.0.13
+  resolution: "@types/yargs@npm:17.0.13"
   dependencies:
     "@types/yargs-parser": "*"
-  checksum: 12a996ec586ba6e53be94e4a3186d89e85bd35084cd9b497b7de4bd4ab08dd0ad3b3eba85dd326d0c6fe879edbbb1479b3c8735e87b6db209a92720c600bf47b
+  checksum: 5005e1e7408b9fea96c356becf19256f1a9bca02120852d3c0089ba7123528b0b6891185e9c92bac25cb5c04090a7a714b201523a6bf4a8a226852205c631208
   languageName: node
   linkType: hard
 
@@ -18339,6 +18340,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"framer-motion@npm:6.2.8":
+  version: 6.2.8
+  resolution: "framer-motion@npm:6.2.8"
+  dependencies:
+    "@emotion/is-prop-valid": ^0.8.2
+    framesync: 6.0.1
+    hey-listen: ^1.0.8
+    popmotion: 11.0.3
+    style-value-types: 5.0.0
+    tslib: ^2.1.0
+  peerDependencies:
+    react: ">=16.8 || ^17.0.0 || ^18.0.0"
+    react-dom: ">=16.8 || ^17.0.0 || ^18.0.0"
+  dependenciesMeta:
+    "@emotion/is-prop-valid":
+      optional: true
+  checksum: 148ee1be89f214f3d4d2d0ce5592b850a5577974673a4efe8528f50ff6722e9855cf8e4fdc32036981a0d55c95d474e1ac23380634da1f2fb481b7243da66454
+  languageName: node
+  linkType: hard
+
 "framer-motion@npm:^2.1.0":
   version: 2.9.5
   resolution: "framer-motion@npm:2.9.5"
@@ -28707,6 +28728,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-intersection-observer@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "react-intersection-observer@npm:9.4.0"
+  peerDependencies:
+    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
+  checksum: abd076bbc0ed011c0a531deb6eacf27d05ff76c174b00c15cbe7a7bc064091f62813b7271bbfcee1bc3c90817a654075f35f9cbafa213ab547c7c92bdbf884aa
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -35832,6 +35862,7 @@ swiper@4.5.1:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-intersection-observer: ^9.4.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14

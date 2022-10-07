@@ -26,8 +26,10 @@ export const SitesGridTile = ( { leading, primary, secondary }: SitesGridTilePro
 	return (
 		<div className={ container }>
 			{ leading }
-			<div className={ primaryContainer }>{ primary }</div>
-			{ secondary }
+			<div>
+				<div className={ primaryContainer }>{ primary }</div>
+				{ secondary }
+			</div>
 		</div>
 	);
 };

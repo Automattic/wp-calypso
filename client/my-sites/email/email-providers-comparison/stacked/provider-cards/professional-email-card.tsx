@@ -106,8 +106,8 @@ const ProfessionalEmailCard = ( props: EmailProvidersStackedCardProps ) => {
 
 	const professionalEmail: ProviderCardProps = { ...professionalEmailCardInformation };
 	professionalEmail.detailsExpanded = detailsExpanded;
-
 	professionalEmail.onExpandedChange = onExpandedChange;
+
 	professionalEmail.priceBadge = (
 		<ProfessionalEmailPrice { ...{ domain, intervalLength, isDomainInCart } } />
 	);

@@ -10,12 +10,16 @@ class ConversationFollowButton extends Component {
 		isFollowing: PropTypes.bool.isRequired,
 		onFollowToggle: PropTypes.func,
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
 		isFollowing: false,
 		onFollowToggle: noop,
 		tagName: 'button',
+		followIcon: null,
+		followingIcon: null,
 	};
 
 	toggleFollow = ( event ) => {
@@ -43,10 +47,10 @@ class ConversationFollowButton extends Component {
 			buttonClasses.push( 'is-following' );
 		}
 
-		const followingIcon = (
+		const followingIcon = this.props.followingIcon || (
 			<Gridicon key="following" icon="reader-following-conversation" size={ iconSize } />
 		);
-		const followIcon = (
+		const followIcon = this.props.followIcon || (
 			<Gridicon key="follow" icon="reader-follow-conversation" size={ iconSize } />
 		);
 		const followLabelElement = (

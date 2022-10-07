@@ -9,21 +9,19 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const Cloudflare = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const showCloudflare = config.isEnabled( 'cloudflare' );
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) ) || 0;
-	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state, siteId ) );
 	const hasCloudflareCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CLOUDFLARE_CDN )
 	);
 	const hasJetpackCDN = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_CDN )
 	);
-	const upgradeLink = `/checkout/${ siteSlug }/pro`;
 
 	const recordClick = () => {
 		dispatch(
@@ -62,7 +60,7 @@ const Cloudflare = () => {
 					{ ! hasJetpackCDN && (
 						<UpsellNudge
 							title={ translate( 'Available on Business plan or higher' ) }
-							href={ upgradeLink }
+							feature={ WPCOM_FEATURES_CDN }
 							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
 							showIcon={ true }
 							forceDisplay
@@ -101,7 +99,7 @@ const Cloudflare = () => {
 							description={ translate(
 								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
 							) }
-							href={ upgradeLink }
+							feature={ WPCOM_FEATURES_CLOUDFLARE_CDN }
 							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
 							showIcon={ true }
 							forceDisplay

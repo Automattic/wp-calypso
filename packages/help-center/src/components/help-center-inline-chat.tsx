@@ -34,9 +34,9 @@ function PersistentIframe( { src }: { src: string } ) {
 
 		let isMouseDown = false;
 
-		function handler( event: MouseEvent | ResizeObserverEntry[] | null ) {
+		function handler( event: MouseEvent | ResizeObserverEntry[] | UIEvent | null ) {
 			// when it's an array, it means it came from ResizeObserver
-			if ( isMouseDown || Array.isArray( event ) ) {
+			if ( isMouseDown || Array.isArray( event ) || event?.type === 'resize' ) {
 				const box = containerElement.getBoundingClientRect();
 				theIframe.style.display = 'block';
 				theIframe.style.left = box.left + 'px';
@@ -58,6 +58,7 @@ function PersistentIframe( { src }: { src: string } ) {
 			isMouseDown = false;
 		}
 
+		window.addEventListener( 'resize', handler );
 		window.addEventListener( 'mousemove', handler );
 		window.addEventListener( 'mouseup', mouseUpHandler );
 		window.addEventListener( 'mousedown', mouseDownHandler );
@@ -67,6 +68,7 @@ function PersistentIframe( { src }: { src: string } ) {
 
 		return () => {
 			theIframe.style.display = 'none';
+			window.removeEventListener( 'resize', handler );
 			window.removeEventListener( 'mousemove', handler );
 			window.removeEventListener( 'mouseup', mouseUpHandler );
 			window.removeEventListener( 'mousedown', mouseDownHandler );

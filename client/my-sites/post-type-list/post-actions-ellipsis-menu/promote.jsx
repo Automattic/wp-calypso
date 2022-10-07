@@ -38,7 +38,7 @@ function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status
 
 	return (
 		<PopoverMenuItem onClick={ showDSPWidget } icon={ 'speaker' }>
-			{ type === 'post' ? translate( 'Promote Post' ) : translate( 'Promote Page' ) }
+			{ type === 'post' ? translate( 'Promote post' ) : translate( 'Promote page' ) }
 		</PopoverMenuItem>
 	);
 }

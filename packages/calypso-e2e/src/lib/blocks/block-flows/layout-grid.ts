@@ -50,6 +50,15 @@ export class LayoutGridBlockFlow implements BlockFlow {
 		const twoColumnButtonLocator = context.editorLocator.locator( selectors.twoColumnButton );
 		await twoColumnButtonLocator.click();
 
+		/**
+		 * Workaround for the issue where the inline inserter of the Layout Grid
+		 * block disappears when the "+" button is clicked too early after a
+		 * column count has been selected.
+		 *
+		 * @see {@link https://github.com/Automattic/block-experiments/issues/294}
+		 */
+		await context.page.waitForTimeout( 1000 );
+
 		await this.addTextToColumn(
 			{
 				columnNumber: 1,

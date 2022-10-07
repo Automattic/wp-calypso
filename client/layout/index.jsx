@@ -243,8 +243,8 @@ class Layout extends Component {
 		};
 
 		const loadHelpCenter =
-			// we want to show only the Help center in my home
-			( this.props.sectionName === 'home' ||
+			// we want to show only the Help center in my home and the help section (but not the FAB)
+			( [ 'home', 'help' ].includes( this.props.sectionName ) ||
 				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
@@ -262,6 +262,7 @@ class Layout extends Component {
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
+					layoutFocus={ this.props.currentLayoutFocus }
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }

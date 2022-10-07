@@ -33,12 +33,10 @@ body.slider-width-workaround {
 		@include font-smoothing-antialiased;
 
 		// Overriding an existing core WP rule so the ID selector is necessary
-		// stylelint-disable-next-line selector-max-id
 		#wpwrap {
 			@include font-smoothing-antialiased;
 		}
 
-		// stylelint-disable-next-line selector-max-id
 		#wpadminbar * {
 			@include font-smoothing-antialiased;
 		}

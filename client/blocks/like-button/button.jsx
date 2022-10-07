@@ -20,6 +20,7 @@ class LikeButton extends PureComponent {
 		animateLike: PropTypes.bool,
 		postId: PropTypes.number,
 		slug: PropTypes.string,
+		icon: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -31,6 +32,7 @@ class LikeButton extends PureComponent {
 		animateLike: true,
 		postId: null,
 		slug: null,
+		icon: null,
 	};
 
 	constructor( props ) {
@@ -55,9 +57,9 @@ class LikeButton extends PureComponent {
 			showZeroCount,
 			postId,
 			slug,
-			translate,
 			onMouseEnter,
 			onMouseLeave,
+			icon,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
 		const isLink = containerTag === 'a';
@@ -69,37 +71,18 @@ class LikeButton extends PureComponent {
 			'has-count': showLikeCount,
 			'has-label': this.props.showLabel,
 		};
-		let likeLabel = translate( 'Like', {
-			context: 'verb: imperative',
-			comment: 'Label for a button to "like" a post.',
-		} );
 
 		if ( this.props.liked ) {
 			containerClasses[ 'is-liked' ] = true;
-
-			if ( this.props.likedLabel ) {
-				likeLabel = this.props.likedLabel;
-			} else {
-				likeLabel = translate( 'Liked', { comment: 'Displayed when a person "likes" a post.' } );
-			}
-		}
-
-		// Override the label with a counter
-		if ( showLikeCount ) {
-			likeLabel = translate( 'Like', 'Likes', {
-				count: likeCount,
-				context: 'noun',
-				comment: 'Number of likes.',
-			} );
 		}
 
 		const labelElement = (
 			<span className="like-button__label">
 				<span className="like-button__label-count">{ showLikeCount ? likeCount : '' }</span>
-				{ this.props.showLabel && <span className="like-button__label-status">{ likeLabel }</span> }
 			</span>
 		);
 
+		const likeIcons = icon || <LikeIcons size={ this.props.iconSize } />;
 		const href = isLink ? `/stats/post/${ postId }/${ slug }` : null;
 		return createElement(
 			containerTag,
@@ -113,7 +96,7 @@ class LikeButton extends PureComponent {
 				},
 				( prop ) => prop === null
 			),
-			<LikeIcons size={ this.props.iconSize } />,
+			likeIcons,
 			labelElement
 		);
 	}

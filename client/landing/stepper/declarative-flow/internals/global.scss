@@ -146,7 +146,8 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio,
+.setup-form__form {
 	button {
 		&[type="submit"] {
 			font-size: $font-body-small;

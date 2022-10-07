@@ -183,14 +183,16 @@ class StatsListItem extends Component {
 				}
 			}, this );
 
-			actionItems.push(
-				<Promote
-					postId={ data.id }
-					key={ 'promote-post-' + data.id }
-					moduleName={ moduleName }
-					onToggleVisibility={ onTogglePromoteWidget }
-				/>
-			);
+			if ( this.props.moduleName === 'posts' ) {
+				actionItems.push(
+					<Promote
+						postId={ data.id }
+						key={ 'promote-post-' + data.id }
+						moduleName={ moduleName }
+						onToggleVisibility={ onTogglePromoteWidget }
+					/>
+				);
+			}
 
 			if ( actionItems.length > 0 ) {
 				actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;

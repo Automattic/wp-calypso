@@ -1,49 +1,20 @@
-import { Gridicon } from '@automattic/components';
-import { get, values } from 'lodash';
+import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import ReaderAuthorLink from 'calypso/blocks/reader-author-link';
 import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import TagsList from 'calypso/blocks/reader-post-card/tags-list';
+import ReaderPostEllipsisMenu from 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu';
 import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import TimeSince from 'calypso/components/time-since';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
+import FollowButton from 'calypso/reader/follow-button';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
 import { getStreamUrl } from 'calypso/reader/route';
-import {
-	recordAction,
-	recordGaEvent,
-	recordTrackForPost,
-	recordPermalinkClick,
-} from 'calypso/reader/stats';
-
-const TAGS_TO_SHOW = 3;
-
-class TagLink extends Component {
-	recordSingleTagClick = () => {
-		const tag = this.props.tag;
-		recordAction( 'click_tag' );
-		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug,
-		} );
-	};
-
-	render() {
-		const tag = this.props.tag;
-		return (
-			<span className="reader-post-card__tag">
-				<a
-					href={ '/tag/' + tag.slug }
-					className="reader-post-card__tag-link ignore-click"
-					onClick={ this.recordSingleTagClick }
-				>
-					{ tag.name }
-				</a>
-			</span>
-		);
-	}
-}
+import { recordPermalinkClick } from 'calypso/reader/stats';
 
 class PostByline extends Component {
 	static propTypes = {
@@ -53,6 +24,10 @@ class PostByline extends Component {
 		isDiscoverPost: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		showAvatar: PropTypes.bool,
+		teams: PropTypes.array,
+		showFollow: PropTypes.bool,
+		showPrimaryFollowButton: PropTypes.bool,
+		followSource: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -64,10 +39,28 @@ class PostByline extends Component {
 		recordPermalinkClick( 'timestamp_card', this.props.post );
 	};
 
+	recordStubClick = () => {
+		recordPermalinkClick( 'stub_url_card', this.props.post );
+	};
+
 	render() {
-		const { post, site, feed, isDiscoverPost, showSiteName, showAvatar } = this.props;
-		const feedId = get( post, 'feed_ID' );
+		const {
+			post,
+			site,
+			feed,
+			isDiscoverPost,
+			showSiteName,
+			showAvatar,
+			teams,
+			showPrimaryFollowButton,
+			followSource,
+		} = this.props;
+		const followUrl = feed ? feed.feed_URL : post.site_URL;
+		const feedId = feed ? feed.feed_ID : get( post, 'feed_ID' );
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 		const siteId = get( site, 'ID' );
+		const siteSlug = get( site, 'slug' );
+		const siteUrl = get( site, 'URL' );
 		const siteName = getSiteName( { site, feed, post } );
 		const hasAuthorName = !! get( post, 'author.name', null );
 		const hasMatchingAuthorAndSiteNames =
@@ -79,12 +72,6 @@ class PostByline extends Component {
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
-		const feedIcon = get( feed, 'image' );
-		const tagsInOccurrenceOrder = values( post.tags );
-		tagsInOccurrenceOrder.sort( ( a, b ) => b.post_count - a.post_count );
-		const tags = tagsInOccurrenceOrder
-			.slice( 0, TAGS_TO_SHOW )
-			.map( ( tag ) => <TagLink tag={ tag } key={ tag.slug } /> );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
@@ -129,6 +116,16 @@ class PostByline extends Component {
 						{ post.date && post.URL && (
 							<span className="reader-post-card__timestamp">
 								<a
+									className="reader-post-card__timestamp-slug"
+									onClick={ this.recordStubClick }
+									href={ siteUrl }
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									{ siteSlug }
+								</a>
+								<span className="reader-post-card__timestamp-bullet">·</span>
+								<a
 									className="reader-post-card__timestamp-link"
 									onClick={ this.recordDateClick }
 									href={ post.URL }
@@ -139,14 +136,19 @@ class PostByline extends Component {
 								</a>
 							</span>
 						) }
-						{ tags.length > 0 && (
-							<span className="reader-post-card__tags">
-								<Gridicon icon="tag" />
-								{ tags }
-							</span>
-						) }
 					</div>
+					<TagsList post={ post } />
 				</div>
+				{ showPrimaryFollowButton && followUrl && (
+					<FollowButton
+						siteUrl={ followUrl }
+						followSource={ followSource }
+						railcar={ post.railcar }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+					/>
+				) }
+				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */

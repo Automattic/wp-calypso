@@ -3,18 +3,13 @@
 	box-sizing: border-box;
 	color: var(--color-text-subtle);
 	cursor: pointer;
-	display: inline-flex;
-	list-style-type: none;
-	padding: 4px;
-	position: relative;
+	display: flex;
+	height: 20px;
 
+	// highlight button
 	&:hover,
 	&:active {
-		color: var(--color-primary);
-	}
-
-	.comment-button__label-count {
-		margin-right: 4px;
+		color: var(--color-link);
 	}
 
 	.comment-button__label-status {
@@ -25,15 +20,24 @@
 }
 
 .comment-button__label {
-	font-size: $font-body-small;
-	margin-left: 4px;
+	font-size: 13px;
+	font-weight: 500;
 
 	&:empty {
 		display: none;
 	}
+
+	.comment-button__label-count {
+		font-size: 13px;
+		font-weight: 500;
+	}
+}
+
+.reader-full-post .reader-post-actions .comment-button__label {
+	font-size: 13px;
+	font-weight: 500;
 }
 
 .comment-button__icon {
-	position: relative;
-	top: 2px;
+	margin-right: 4px;
 }

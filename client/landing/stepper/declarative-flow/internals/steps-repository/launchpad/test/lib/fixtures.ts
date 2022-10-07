@@ -1,4 +1,5 @@
 import { SiteDetails } from '@automattic/data-stores/src/site';
+import { Task } from '../../types';
 
 export const defaultSiteDetails: SiteDetails = {
 	ID: 211078228,
@@ -141,7 +142,9 @@ export const defaultSiteDetails: SiteDetails = {
 		site_intent: 'link-in-bio',
 		site_vertical_id: null,
 		launchpad_screen: 'full',
-		launchpad_checklist_tasks_statuses: [],
+		launchpad_checklist_tasks_statuses: {
+			links_edited: false,
+		},
 	},
 	plan: {
 		product_id: 1,
@@ -182,9 +185,25 @@ export const defaultSiteDetails: SiteDetails = {
 	user_interactions: [ '2022-10-01' ],
 };
 
-export function generateSiteDetails( details ) {
+export const defaultTask: Task = {
+	id: 'foo_task',
+	isCompleted: false,
+	actionUrl: '#',
+	taskType: 'blog',
+	displayBadge: false,
+	title: 'Foo Task',
+};
+
+export function buildSiteDetails( details ) {
 	return {
 		...defaultSiteDetails,
 		...details,
+	};
+}
+
+export function buildTask( overrides ) {
+	return {
+		...defaultTask,
+		...overrides,
 	};
 }

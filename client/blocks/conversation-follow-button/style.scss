@@ -3,20 +3,39 @@ button.conversation-follow-button {
 	border: 0;
 	padding: 0;
 
-	.gridicons-reader-follow-conversation {
-		fill: var(--color-primary);
+	.reader-follow-conversation {
+		fill: var( --color-primary );
 		pointer-events: auto;
 	}
 
 	.conversation-follow-button__label {
-		color: var(--color-primary);
+		color: var( --color-primary );
+		position: relative;
 	}
 
-	&:hover {
-		color: var(--color-primary);
+	&:hover,
+	&:focus {
+		color: var( --color-primary );
 
-		.gridicons-reader-follow-conversation {
-			fill: var(--color-primary);
+		.reader-follow-conversation {
+			fill: var( --color-primary );
+		}
+	}
+
+	&.popover__menu-item {
+		&:hover,
+		&:focus {
+			.conversation-follow-button__label {
+				color: white;
+			}
+
+			.gridicon, .reader-follow-conversation, .reader-following-conversation {
+				fill: var( --color-text-inverted );
+				g {
+					fill: white;
+					stroke: var( --color-success );
+				}
+			}
 		}
 	}
 
@@ -25,16 +44,20 @@ button.conversation-follow-button {
 	}
 
 	// Hides Following icon by default
-	.gridicons-reader-following-conversation {
+	.reader-following-conversation {
 		display: none;
 		pointer-events: none;
 	}
 
 	&.is-following {
-		.gridicons-reader-following-conversation {
+		.reader-following-conversation {
 			display: inline-block;
-			fill: var(--color-success);
 			pointer-events: auto;
+			fill: var(--color-success);
+			g {
+				fill: white;
+				stroke: var( --color-success );
+			}
 		}
 
 		.conversation-follow-button__label {
@@ -42,21 +65,36 @@ button.conversation-follow-button {
 		}
 
 		// Hides Follow icon if already following
-		.gridicons-reader-follow-conversation {
+		.reader-follow-conversation {
 			display: none;
 			pointer-events: none;
 		}
 
-		&:hover {
-			color: var(--color-success);
+		&:hover,
+		&:focus {
+			color: var( --color-success );
 
-			.gridicons-reader-following-conversation {
-				fill: var(--color-success);
+			.reader-following-conversation {
+				fill: var( --color-success );
+				g {
+					fill: white;
+					stroke: var( --color-success );
+				}
+			}
+		}
+
+		&.popover__menu-item:hover {
+			.conversation-follow-button__label {
+				color: white;
+			}
+
+			.gridicon, .reader-follow-conversation, .reader-following-conversation {
+				fill: var( --color-text-inverted );
 			}
 		}
 	}
 
-	.gridicons-reader-following-conversation {
+	.reader-following-conversation {
 		pointer-events: none;
 	}
 

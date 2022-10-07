@@ -2,6 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import { addSchemeIfMissing, withoutHttp } from 'calypso/lib/url';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { addReaderListFeedByUrl, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 
@@ -45,6 +47,8 @@ export default function FeedUrlAdder( { list, query } ) {
 							  )
 					)
 				}
+				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 			/>
 		</div>
 	);

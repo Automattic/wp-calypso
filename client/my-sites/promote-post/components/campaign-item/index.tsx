@@ -1,13 +1,13 @@
 import './style.scss';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Dialog } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Dialog, Gridicon } from '@automattic/components';
+import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
-import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -34,6 +34,7 @@ export default function CampaignItem( { campaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
 	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
+	const translate = useTranslate();
 
 	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 
@@ -73,9 +74,7 @@ export default function CampaignItem( { campaign }: Props ) {
 		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
-	const totalBudgetLeftString = totalBudgetLeft
-		? `($${ formatCents( totalBudgetLeft ) } ${ __( 'left' ) })`
-		: '';
+	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 
 	const estimatedImpressions = useMemo(
 		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
@@ -173,8 +172,29 @@ export default function CampaignItem( { campaign }: Props ) {
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
 				{ campaignStatus === 'rejected' && moderation_reason && (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ __( 'Your ad is rejected: ' ) } { moderation_reason }
+					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
+						{ translate(
+							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
+							{
+								components: {
+									wpcomTos: (
+										<a
+											href="https://wordpress.com/tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									advertisingTos: (
+										<a
+											href="https://automattic.com/advertising-policy/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</Notice>
 				) }
 
