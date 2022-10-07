@@ -1,5 +1,8 @@
 import { css } from '@emotion/css';
 import classnames from 'classnames';
+import { LinkInBioTiledBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-tile-banner';
+import { LinkInBioTileStretchBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-tile-stretch-banner';
+import { useLinkInBioBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/use-link-in-bio-banner';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
@@ -29,6 +32,20 @@ interface SitesGridProps {
 }
 
 export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
+	// TODO just for testing the PR - will be removed.
+	const params = new URLSearchParams( window.location.search );
+	if ( params.get( 'sitecount' ) ) {
+		sites = sites.slice( 0, Number( params.get( 'sitecount' ) ) );
+	}
+	const { showBanner } = useLinkInBioBanner();
+	let banner = null;
+	if ( showBanner ) {
+		if ( sites.length === 1 ) {
+			banner = <LinkInBioTileStretchBanner />;
+		} else if ( sites.length === 2 ) {
+			banner = <LinkInBioTiledBanner />;
+		}
+	}
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading
@@ -36,6 +53,7 @@ export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => 
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
 				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
+			{ banner }
 		</div>
 	);
 };

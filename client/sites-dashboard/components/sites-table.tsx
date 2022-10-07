@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
+import { LinkInBioRowBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/link-in-bio-row-banner';
+import { useLinkInBioBanner } from 'calypso/sites-dashboard/components/link-in-bio-banner/use-link-in-bio-banner';
 import { MEDIA_QUERIES } from '../utils';
 import SitesTableRow from './sites-table-row';
 import SitesTableRowLoading from './sites-table-row-loading';
@@ -54,11 +56,18 @@ const Row = styled.tr`
 `;
 
 export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
+	// TODO just for testing the PR - will be removed.
+	const params = new URLSearchParams( window.location.search );
+	if ( params.get( 'sitecount' ) ) {
+		sites = sites.slice( 0, Number( params.get( 'sitecount' ) ) );
+	}
+	const { showBanner } = useLinkInBioBanner();
 	const { __ } = useI18n();
 
 	const headerRef = useRef< HTMLTableSectionElement >( null );
 	const [ isHeaderStuck, setIsHeaderStuck ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
+	const banner = showBanner && sites.length === 1 ? <LinkInBioRowBanner /> : null;
 
 	// Measure height of masterbar as we need it for the THead styles
 	useLayoutEffect( () => {
@@ -115,36 +124,39 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	}, [ masterbarHeight ] );
 
 	return (
-		<Table className={ className }>
-			<THead
-				blockOffset={ masterbarHeight }
-				ref={ headerRef }
-				style={ isHeaderStuck ? headerShadow : undefined }
-			>
-				<Row>
-					<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
-					<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
-					<th>{ __( 'Status' ) }</th>
-					<th>{ __( 'Last Publish' ) }</th>
-					<th style={ { width: '24px' } }></th>
-				</Row>
-			</THead>
-			<tbody>
-				{ isLoading &&
-					Array( N_LOADING_ROWS )
-						.fill( null )
-						.map( ( _, i ) => (
-							<SitesTableRowLoading
-								key={ i }
-								columns={ 5 }
-								delayMS={ i * 150 }
-								logoProps={ { width: 108, height: 78 } }
-							/>
-						) ) }
-				{ sites.map( ( site ) => (
-					<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
-				) ) }
-			</tbody>
-		</Table>
+		<>
+			<Table className={ className }>
+				<THead
+					blockOffset={ masterbarHeight }
+					ref={ headerRef }
+					style={ isHeaderStuck ? headerShadow : undefined }
+				>
+					<Row>
+						<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
+						<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
+						<th>{ __( 'Last Publish' ) }</th>
+						<th>{ __( 'Status' ) }</th>
+						<th style={ { width: '24px' } }></th>
+					</Row>
+				</THead>
+				<tbody>
+					{ isLoading &&
+						Array( N_LOADING_ROWS )
+							.fill( null )
+							.map( ( _, i ) => (
+								<SitesTableRowLoading
+									key={ i }
+									columns={ 5 }
+									delayMS={ i * 150 }
+									logoProps={ { width: 108, height: 78 } }
+								/>
+							) ) }
+					{ sites.slice( 0, 1 ).map( ( site ) => (
+						<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+					) ) }
+				</tbody>
+			</Table>
+			{ banner }
+		</>
 	);
 }
