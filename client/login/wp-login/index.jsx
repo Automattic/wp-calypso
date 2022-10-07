@@ -49,6 +49,7 @@ export class Login extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		action: PropTypes.string,
 	};
 
 	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
@@ -233,6 +234,7 @@ export class Login extends Component {
 			isLoginView,
 			path,
 			signupUrl,
+			action,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -267,6 +269,7 @@ export class Login extends Component {
 
 		return (
 			<LoginBlock
+				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
