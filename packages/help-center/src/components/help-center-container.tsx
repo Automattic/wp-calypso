@@ -78,7 +78,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
 			<FeatureFlagProvider>
 				<OptionalDraggable
-					draggable={ ! isMobile }
+					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"
