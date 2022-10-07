@@ -3,10 +3,11 @@ import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { Icon, starFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { Dispatch, SetStateAction, useState, useRef } from 'react';
+import Badge from 'calypso/components/badge';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
@@ -79,6 +80,10 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					{ hasTranslation( 'Favorite color' ) || locale === 'en'
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
+					<Badge type="info">
+						<Icon icon={ starFilled } />
+						<span>{ __( 'Premium' ) }</span>
+					</Badge>
 				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
