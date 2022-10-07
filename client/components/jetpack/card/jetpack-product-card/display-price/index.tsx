@@ -16,8 +16,8 @@ type OwnProps = {
 	belowPriceText?: TranslateResult;
 	billingTerm: Duration;
 	currencyCode?: string | null;
-	discountDurationInMonths?: number;
 	discountedPrice?: number;
+	discountedPriceDuration?: number;
 	discountedPriceFirst?: boolean;
 	displayFrom?: boolean;
 	expiryDate?: Moment;
@@ -37,8 +37,8 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	belowPriceText,
 	billingTerm,
 	currencyCode,
-	discountDurationInMonths,
 	discountedPrice,
+	discountedPriceDuration,
 	discountedPriceFirst,
 	displayFrom,
 	expiryDate,
@@ -77,7 +77,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 
 	return (
 		<Paid
-			discountDurationInMonths={ discountDurationInMonths }
+			discountedPriceDuration={ discountedPriceDuration }
 			discountedPrice={ discountedPrice }
 			discountedPriceFirst={ discountedPriceFirst }
 			originalPrice={ originalPrice }

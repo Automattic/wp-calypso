@@ -16,7 +16,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	siteId,
 	isMultiSiteIncompatible,
 } ) => {
-	const { originalPrice, discountedPrice, discountDurationInMonths, isFetching } = useItemPrice(
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
 		siteId,
 		item,
 		item?.monthlyProductSlug || ''
@@ -40,7 +40,7 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 			<DisplayPrice
 				isFree={ item.isFree }
 				isOwned={ isOwned }
-				discountDurationInMonths={ discountDurationInMonths }
+				discountedPriceDuration={ discountedPriceDuration }
 				discountedPrice={ discountedPrice }
 				discountedPriceFirst
 				currencyCode={ item.displayCurrency || currencyCode }

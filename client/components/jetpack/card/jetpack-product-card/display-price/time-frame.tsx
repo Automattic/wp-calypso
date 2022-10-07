@@ -8,7 +8,7 @@ import type { Moment } from 'moment';
 interface TimeFrameProps {
 	expiryDate?: Moment;
 	billingTerm: Duration;
-	discountDurationInMonths?: number;
+	discountedPriceDuration?: number;
 }
 
 interface RegularTimeFrameProps {
@@ -19,9 +19,9 @@ interface ExpiringDateTimeFrameProps {
 	productExpiryDate: Moment;
 }
 
-interface IntroDiscountTimeFrameProps {
+interface PartialDiscountTimeFrameProps {
 	billingTerm: Duration;
-	discountDurationInMonths: number;
+	discountedPriceDuration: number;
 }
 
 const RegularTimeFrame = ( { billingTerm }: RegularTimeFrameProps ) => {
@@ -69,27 +69,27 @@ const ExpiringDateTimeFrame = ( { productExpiryDate }: ExpiringDateTimeFrameProp
 	);
 };
 
-const IntroDiscountTimeFrame = ( {
+const PartialDiscountTimeFrame = ( {
 	billingTerm,
-	discountDurationInMonths,
-}: IntroDiscountTimeFrameProps ) => {
+	discountedPriceDuration,
+}: PartialDiscountTimeFrameProps ) => {
 	const translate = useTranslate();
 
 	const BillingTermText = useMemo( () => {
 		if ( billingTerm === TERM_MONTHLY ) {
-			return discountDurationInMonths > 1
+			return discountedPriceDuration > 1
 				? translate( 'for the first %(months)d months, billed monthly', {
-						args: { months: discountDurationInMonths },
+						args: { months: discountedPriceDuration },
 				  } )
 				: translate( 'for the first month, billed monthly' );
 		}
 
-		return discountDurationInMonths > 1
+		return discountedPriceDuration > 1
 			? translate( 'for the first %(months)d months, billed yearly', {
-					args: { months: discountDurationInMonths },
+					args: { months: discountedPriceDuration },
 			  } )
 			: translate( 'for the first month, billed yearly' );
-	}, [ discountDurationInMonths, billingTerm, translate ] );
+	}, [ discountedPriceDuration, billingTerm, translate ] );
 
 	return <span className="display-price__billing-time-frame">{ BillingTermText }</span>;
 };
@@ -97,7 +97,7 @@ const IntroDiscountTimeFrame = ( {
 const TimeFrame: React.FC< TimeFrameProps > = ( {
 	expiryDate,
 	billingTerm,
-	discountDurationInMonths,
+	discountedPriceDuration,
 } ) => {
 	const moment = useLocalizedMoment();
 	const productExpiryDate =
@@ -107,11 +107,11 @@ const TimeFrame: React.FC< TimeFrameProps > = ( {
 		return <ExpiringDateTimeFrame productExpiryDate={ productExpiryDate } />;
 	}
 
-	if ( discountDurationInMonths ) {
+	if ( discountedPriceDuration ) {
 		return (
-			<IntroDiscountTimeFrame
+			<PartialDiscountTimeFrame
 				billingTerm={ billingTerm }
-				discountDurationInMonths={ discountDurationInMonths }
+				discountedPriceDuration={ discountedPriceDuration }
 			/>
 		);
 	}
