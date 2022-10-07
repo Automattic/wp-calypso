@@ -7,7 +7,6 @@ const useSiteVerticalsFeatured = (): UseQueryResult< SiteVerticalsResponse[] > =
 		enabled: true,
 		staleTime: Infinity,
 		refetchInterval: false,
-		refetchOnMount: 'always',
 	} );
 };
 

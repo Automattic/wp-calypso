@@ -11,8 +11,10 @@ declare global {
 function overrideCoreDocumentationLinksToWpcom( translation: string, text: string ) {
 	switch ( text ) {
 		case 'https://wordpress.org/support/article/excerpt/':
+		case 'https://wordpress.org/support/article/settings-sidebar/#excerpt':
 			return 'https://wordpress.com/support/excerpts/';
 		case 'https://wordpress.org/support/article/writing-posts/#post-field-descriptions':
+		case 'https://wordpress.org/support/article/settings-sidebar/#permalink':
 			return 'https://wordpress.com/support/permalinks-and-slugs/';
 		case 'https://wordpress.org/support/article/wordpress-editor/':
 			return 'https://wordpress.com/support/wordpress-editor/';

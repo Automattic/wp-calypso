@@ -8,7 +8,7 @@ import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
-import { defaultSiteDetails, generateSiteDetails } from './lib/fixtures';
+import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
 
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
@@ -76,7 +76,7 @@ describe( 'Sidebar', () => {
 	describe( 'when the tailored flow includes a task to launch the site', () => {
 		describe( 'and all tasks except the launch site task are complete', () => {
 			it( 'shows a launch title', () => {
-				const siteDetails = generateSiteDetails( {
+				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
 						launchpad_checklist_tasks_statuses: {

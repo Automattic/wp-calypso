@@ -1,14 +1,10 @@
 .like-button {
 	align-items: center;
-	display: inline-flex;
-	padding: 4px;
+	display: flex;
 	color: var(--color-text-subtle);
-	position: relative;
 	box-sizing: border-box;
-
-	.gridicon {
-		vertical-align: bottom;
-	}
+	height: 20px;
+	gap: 4px;
 
 	.gridicons-star {
 		opacity: 0;
@@ -73,10 +69,6 @@
 }
 
 .like-button__label {
-	// this keeps the label from collapsing and making the icon drop down
-	margin-left: 1px;
-	font-size: $font-body-small;
-	min-width: 10px;
 
 	&:empty {
 		display: none;
@@ -85,7 +77,5 @@
 	.like-button__label-count {
 		font-size: 13px;
 		font-weight: 500;
-		position: relative;
-		top: 1px;
 	}
 }

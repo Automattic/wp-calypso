@@ -50,7 +50,7 @@ describe( 'PluginDetailsHeader', () => {
 		isPlaceholder: false,
 		plugin,
 	};
-	// configEnabled mocks whether plugins/plugin-details-layout feature is enabled.
+
 	test.each( [ { configEnabled: true }, { configEnabled: false } ] )(
 		'should render the correct author url (configEnabled: $configEnabled)',
 		( { configEnabled } ) => {

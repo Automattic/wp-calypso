@@ -3,9 +3,8 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useCurrentRoute } from 'calypso/components/route';
 import { setQueryArgs } from 'calypso/lib/query-args';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 function pageToSearch( s ) {
@@ -38,74 +37,12 @@ const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
 	);
 };
 
-const SearchLink = ( { searchTerm, currentTerm, onSelect } ) => {
-	const classes = [ 'search-box-header__recommended-searches-list-item' ];
-	const route = useCurrentRoute();
-
-	if ( searchTerm === currentTerm ) {
-		classes.push( 'search-box-header__recommended-searches-list-item-selected' );
-
-		return <span className={ classes.join( ' ' ) }>{ searchTerm }</span>;
-	}
-
-	return (
-		<a
-			href={ `${ route.currentRoute }?s=${ searchTerm }` }
-			className={ classes.join( ' ' ) }
-			onClick={ onSelect }
-			onKeyPress={ onSelect }
-		>
-			{ searchTerm }
-		</a>
-	);
-};
-
-const PopularSearches = ( props ) => {
-	const { searchTerms, searchedTerm, searchBoxRef, popularSearchesRef } = props;
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-	const clickHandler = ( searchTerm ) => ( event ) => {
-		event.preventDefault();
-
-		dispatch(
-			recordTracksEvent( 'calypso_plugins_popular_searches_click', {
-				search_term: searchTerm,
-			} )
-		);
-
-		// When loading a search via click instead of interacting with the search
-		// box input directly we need to set the search term separately.
-		searchBoxRef?.current?.setKeyword( searchTerm );
-		pageToSearch( searchTerm );
-	};
-
-	return (
-		<div className="search-box-header__recommended-searches" ref={ popularSearchesRef }>
-			<div className="search-box-header__recommended-searches-title">
-				{ translate( 'Most popular searches' ) }
-			</div>
-
-			<div className="search-box-header__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm, n ) => (
-					<SearchLink
-						key={ 'search-box-item' + n }
-						onSelect={ clickHandler( searchTerm ) }
-						searchTerm={ searchTerm }
-						currentTerm={ searchedTerm }
-					/>
-				) ) }
-			</div>
-		</div>
-	);
-};
-
 const SearchBoxHeader = ( props ) => {
 	const {
 		searchTerm,
 		title,
-		searchTerms,
 		isSticky,
-		popularSearchesRef,
+		stickySearchBoxRef,
 		isSearching,
 		searchRef,
 		renderTitleInH1,
@@ -132,12 +69,7 @@ const SearchBoxHeader = ( props ) => {
 					isSearching={ isSearching }
 				/>
 			</div>
-			<PopularSearches
-				searchBoxRef={ searchRef }
-				searchedTerm={ searchTerm }
-				searchTerms={ searchTerms }
-				popularSearchesRef={ popularSearchesRef }
-			/>
+			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
 		</div>
 	);
 };

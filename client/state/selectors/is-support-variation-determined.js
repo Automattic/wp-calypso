@@ -5,9 +5,6 @@ import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
 } from 'calypso/state/help/ticket/selectors';
-import isDirectlyFailed from 'calypso/state/selectors/is-directly-failed';
-import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
-import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 
 /**
  * @param {object} state Global state tree
@@ -23,8 +20,5 @@ export default function isSupportVariationDetermined( state ) {
 		! isHappychatUserEligible( state ) ||
 		! isHappyChatConnecting;
 
-	const directlyIsReadyOrFailed =
-		isDirectlyFailed( state ) || isDirectlyUninitialized( state ) || isDirectlyReady( state );
-
-	return ticketReadyOrError && happychatReadyOrDisabled && directlyIsReadyOrFailed;
+	return ticketReadyOrError && happychatReadyOrDisabled;
 }

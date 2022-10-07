@@ -29,7 +29,7 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		this.props.togglePluginAutoUpdate( site.ID, plugin );
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		if ( plugin.autoupdate ) {
 			recordGAEvent(

@@ -26,6 +26,8 @@
 		flex: 0 0 auto;
 		display: flex;
 		align-items: center;
+		border-bottom-left-radius: 6px;
+    border-top-left-radius: 6px;
 		background-color: var(--color-surface);
 		height: 100%;
 
@@ -148,7 +150,10 @@
 
 	.search__input,
 	.search__close-icon {
+		border-bottom-right-radius: 6px;
+    border-top-right-radius: 6px;
 		opacity: 1;
+		padding: 6px 0;
 	}
 
 	.search__input {
