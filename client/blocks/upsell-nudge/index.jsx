@@ -14,7 +14,6 @@ import classnames from 'classnames';
 import debugFactory from 'debug';
 import { connect } from 'react-redux';
 import Banner from 'calypso/components/banner';
-import { addQueryArgs } from 'calypso/lib/url';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -22,7 +21,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -31,7 +30,6 @@ const debug = debugFactory( 'calypso:upsell-nudge' );
 export const UpsellNudge = ( {
 	callToAction,
 	canManageSite,
-	canUserUpgrade,
 	className,
 	compact,
 	customerType,
@@ -60,7 +58,6 @@ export const UpsellNudge = ( {
 	showIcon = false,
 	icon = 'star',
 	site,
-	siteSlug,
 	target,
 	title,
 	tracksClickName,
@@ -91,13 +88,6 @@ export const UpsellNudge = ( {
 		return null;
 	}
 
-	if ( ! href && siteSlug && canUserUpgrade ) {
-		href = addQueryArgs( { feature, plan }, `/plans/${ siteSlug }` );
-		if ( customerType ) {
-			href = `/plans/${ siteSlug }?customerType=${ customerType }`;
-		}
-	}
-
 	const classes = classnames(
 		'upsell-nudge',
 		className,
@@ -121,6 +111,7 @@ export const UpsellNudge = ( {
 			callToAction={ callToAction }
 			className={ classes }
 			compact={ compact }
+			customerType={ customerType }
 			description={ description }
 			disableHref={ disableHref }
 			dismissPreferenceName={ dismissPreferenceName }
@@ -167,8 +158,6 @@ export default connect( ( state, ownProps ) => {
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
 		currentPlan: getCurrentPlan( state, siteId ),
-		siteSlug: ownProps.disableHref ? null : getSelectedSiteSlug( state ),
-		canUserUpgrade: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
 } )( UpsellNudge );
