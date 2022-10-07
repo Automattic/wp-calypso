@@ -6,7 +6,7 @@ import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import { Interval, EVERY_SECOND } from 'calypso/lib/interval';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
@@ -119,7 +119,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			>
 				{ translate( 'Confirm restore' ) }
 			</Button>
-			<Interval onTick={ refreshBackups } period={ EVERY_SECOND } />
+			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 		</>
 	);
 
