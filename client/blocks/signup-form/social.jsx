@@ -57,6 +57,7 @@ class SocialSignupForm extends Component {
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
+			client_id: this.props.oauth2Client?.id,
 		} );
 	};
 
@@ -146,6 +147,7 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
 		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 	} ),
 	{ recordTracksEvent }
