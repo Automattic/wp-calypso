@@ -1,10 +1,18 @@
 import config from '@automattic/calypso-config';
 
-interface BeaconData {
+interface CountingBeacon {
+	name: string;
+	value?: number;
+	type: 'counting';
+}
+
+interface TimingBeacon {
 	name: string;
 	value: number;
-	type: 'counting' | 'timing';
+	type: 'timing';
 }
+
+export type BeaconData = CountingBeacon | TimingBeacon;
 
 function createBeacon( calypsoSection: string, { name, value, type }: BeaconData ) {
 	const event = name.replace( '-', '_' );
