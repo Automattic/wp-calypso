@@ -19,7 +19,6 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -157,7 +156,6 @@ export default connect( ( state, ownProps ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isAtomic: isSiteAutomatedTransfer( state, siteId ),
 		isVip: isVipSite( state, siteId ),
-		currentPlan: getCurrentPlan( state, siteId ),
 		siteIsWPForTeams: isSiteWPForTeams( state, getSelectedSiteId( state ) ),
 	};
 } )( UpsellNudge );
