@@ -73,6 +73,7 @@ const LinkButton = styled( Button )( {
 	},
 	'&:hover': {
 		backgroundColor: 'var(--studio-gray-70)',
+		color: 'var(--studio-gray-0)',
 	},
 	'&:focus': {
 		backgroundColor: 'var(--studio-gray-70)',
