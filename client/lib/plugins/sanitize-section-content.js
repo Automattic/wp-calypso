@@ -4,6 +4,7 @@ import validUrl from 'valid-url';
 import { allowedTags, customTags } from './allowed-tags';
 
 let root = 'undefined' !== typeof window && window;
+let parser;
 
 /**
  * Replace global root object with compatible one
@@ -14,6 +15,7 @@ let root = 'undefined' !== typeof window && window;
  */
 export function overrideSanitizeSectionRoot( newRoot ) {
 	root = newRoot;
+	parser = new root.DOMParser();
 }
 
 /**
@@ -105,7 +107,7 @@ const replacementFor = ( node ) => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = ( content ) => {
-	const parser = new root.DOMParser();
+	parser = parser || new root.DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
 	if ( ! doc ) {
