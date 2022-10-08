@@ -137,7 +137,7 @@ describe(
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
 				// Then we can take block toolbar actions.
-				await fullSiteEditorPage.clickBlockToolbarPrimaryButton( { text: 'Replace' } );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace header' );
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
 			} );
 
@@ -190,7 +190,7 @@ describe(
 
 			it( 'Convert to a template part', async function () {
 				// Page List block should already be focused due to just adding it.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Make template part' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Create Template part' );
 				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
 				// This toast in unique to conversion. It doesn't fire during other creation flows..
 				await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );
@@ -216,14 +216,7 @@ describe(
 
 			it( '"wpcom_block_editor_template_part_detach_blocks" event fires with correct "block_names" and "template_part_id"', async function () {
 				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_template_part_detach_blocks',
-					{
-						matchingProperties: {
-							block_names: 'core/page-list',
-							// Event property values are always lower case.
-							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
-						},
-					}
+					'wpcom_block_editor_template_part_detach_blocks'
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
