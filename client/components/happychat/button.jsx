@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
+import { shouldShowHelpCenterToUser } from '@automattic/help-center';
 import { isMobile } from '@automattic/viewport';
 import { withDispatch } from '@wordpress/data';
 import classnames from 'classnames';
@@ -8,6 +9,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { initConnection } from 'calypso/state/happychat/connection/actions';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import hasUnreadMessages from 'calypso/state/happychat/selectors/has-unread-messages';
@@ -37,6 +39,7 @@ export class HappychatButton extends Component {
 		openChat: PropTypes.func,
 		translate: PropTypes.func,
 		openHelpCenter: PropTypes.bool,
+		userId: PropTypes.number,
 	};
 
 	static defaultProps = {
@@ -56,7 +59,7 @@ export class HappychatButton extends Component {
 	};
 
 	onClick = ( event ) => {
-		if ( this.props.openHelpCenter ) {
+		if ( this.props.openHelpCenter || shouldShowHelpCenterToUser( this.props.userId ) ) {
 			this.props.setHelpCenterVisible( true );
 		} else if ( this.props.allowMobileRedirect && isMobile() ) {
 			// For mobile clients, happychat will always use the
@@ -121,6 +124,7 @@ export default withDispatch( ( dataStoresDispatch ) => {
 			hasUnread: hasUnreadMessages( state ),
 			getAuth: getHappychatAuth( state ),
 			isChatAvailable: isHappychatAvailable( state ),
+			userId: getCurrentUserId( state ),
 			isChatActive: hasActiveHappychatSession( state ),
 			isConnectionUninitialized: isHappychatConnectionUninitialized( state ),
 			setHelpCenterVisible: ownProps.dataStoresDispatch( HELP_CENTER_STORE ).setShowHelpCenter,

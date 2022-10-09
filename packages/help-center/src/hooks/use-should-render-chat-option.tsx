@@ -6,6 +6,7 @@ type Result = {
 	state: 'AVAILABLE' | 'UNAVAILABLE' | 'CLOSED';
 	isLoading: boolean;
 	eligible: boolean;
+	env?: 'staging' | 'production';
 };
 
 export function useShouldRenderChatOption(): Result {
@@ -23,6 +24,7 @@ export function useShouldRenderChatOption(): Result {
 			isLoading,
 			state: chatStatus?.is_chat_closed ? 'CLOSED' : 'UNAVAILABLE',
 			eligible: false,
+			env: data?.env,
 		};
 	} else if ( chatStatus?.is_chat_closed ) {
 		return {
@@ -30,6 +32,7 @@ export function useShouldRenderChatOption(): Result {
 			state: 'CLOSED',
 			isLoading,
 			eligible: true,
+			env: data?.env,
 		};
 	} else if ( data?.available ) {
 		return {
@@ -37,6 +40,7 @@ export function useShouldRenderChatOption(): Result {
 			state: 'AVAILABLE',
 			isLoading,
 			eligible: true,
+			env: data.env,
 		};
 	}
 	return {
@@ -44,5 +48,6 @@ export function useShouldRenderChatOption(): Result {
 		state: 'UNAVAILABLE',
 		isLoading,
 		eligible: true,
+		env: data?.env,
 	};
 }

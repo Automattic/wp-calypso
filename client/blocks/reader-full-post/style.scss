@@ -339,8 +339,9 @@
 .reader-full-post__sidebar-comment-like {
 	align-items: center;
 	display: flex;
-	gap: 5px;
+	gap: 24px;
 	justify-content: center;
+	margin-top: 10px;
 
 	@include breakpoint-deprecated( '<660px' ) {
 		align-items: flex-start;
@@ -366,15 +367,6 @@
 
 	@include breakpoint-deprecated( "<660px" ) {
 		top: 9px;
-	}
-
-	.like-button__like-icons {
-		margin-right: 0;
-		position: relative;
-		top: 5px;
-		svg {
-			position: static;
-		}
 	}
 
 	.like-button__label-status {
@@ -627,37 +619,21 @@
 	}
 }
 
-.reader-full-post__content .reader-post-actions__item {
-	margin-right: 18px;
-
-	.comment-button__label-count {
-		top: 0;
+.reader-full-post__content {
+	.like-button__label {
+		height: 20px;
 	}
 	.like-button__like-icons {
-		margin-right: 0;
-		> svg {
-			position: static;
-		}
-	}
-	.like-button__label-count {
-		margin-left: 4px;
-		top: -1px;
-	}
-	.reader-share {
-		position: relative;
-		top: -1px;
-	}
-	.reader-share {
-		margin-right: 0;
+		height: 20px;
 	}
 }
-
-.reader-full-post__content .reader-full-post__sidebar {
-	.comment-button__label-count {
-		top: 2px;
-	}
-	.like-button__label-count {
+.reader-full-post__story {
+	.comment-button__label {
 		position: relative;
-		top: 2px;
+		top: -1px;
+	}
+	.like-button__label {
+		position: relative;
+		top: -1px;
 	}
 }

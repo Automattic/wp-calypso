@@ -153,6 +153,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
+			const editLineItem = await screen.findByLabelText(
+				'Change the billing term for this product'
+			);
+			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -175,6 +179,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
+			const editLineItem = await screen.findByLabelText(
+				'Change the billing term for this product'
+			);
+			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -196,7 +204,9 @@ describe( 'CheckoutMain with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
+			await expect(
+				screen.findByLabelText( 'Change the billing term for this product' )
+			).toNeverAppear();
 		}
 	);
 
@@ -210,6 +220,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
+			const editLineItem = await screen.findByLabelText(
+				'Change the billing term for this product'
+			);
+			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -251,6 +265,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
+			const editLineItem = await screen.findByLabelText(
+				'Change the billing term for this product'
+			);
+			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -266,7 +284,9 @@ describe( 'CheckoutMain with a variant picker', () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
-		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
+		await expect(
+			screen.findByLabelText( 'Change the billing term for this product' )
+		).toNeverAppear();
 	} );
 
 	it.each( [
@@ -281,7 +301,9 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
+			await expect(
+				screen.findByLabelText( 'Change the billing term for this product' )
+			).toNeverAppear();
 		}
 	);
 
@@ -290,6 +312,8 @@ describe( 'CheckoutMain with a variant picker', () => {
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
-		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
+		await expect(
+			screen.findByLabelText( 'Change the billing term for this product' )
+		).toNeverAppear();
 	} );
 } );

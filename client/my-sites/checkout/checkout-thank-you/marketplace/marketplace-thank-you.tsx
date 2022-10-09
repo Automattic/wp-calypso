@@ -56,7 +56,14 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
-	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, productSlug ) );
+
+	// retrieve WPCom plugin data
+	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
+	const softwareSlug = wpComPluginData
+		? wpComPluginData.software_slug || wpComPluginData.org_slug
+		: productSlug;
+
+	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, siteId, softwareSlug ) );
 	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
 	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
@@ -116,9 +123,6 @@ const MarketplaceThankYou = ( { productSlug }: { productSlug: string } ) => {
 			setPluginIcon( successImage );
 		}
 	}, [ wporgPlugin ] );
-
-	// retrieve WPCom plugin data
-	const { data: wpComPluginData } = useWPCOMPlugin( productSlug );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.

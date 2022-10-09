@@ -12,6 +12,7 @@ import {
 	PLUGIN_INSTALLATION_COMPLETED,
 	PLUGIN_INSTALLATION_ERROR,
 	PLUGIN_INSTALLATION_IN_PROGRESS,
+	PLUGIN_INSTALLATION_UP_TO_DATE,
 } from 'calypso/state/plugins/installed/status/constants';
 import { PluginActionStatusMessage } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -157,6 +158,7 @@ export const getPluginActionStatusMessages = (
 			[ PLUGIN_INSTALLATION_ERROR ]: selectedSite
 				? translate( 'Failed' )
 				: translate( 'Failed on %(count)s site', 'Failed on %(count)s sites', translationArgs ),
+			[ PLUGIN_INSTALLATION_UP_TO_DATE ]: translate( 'Plugin already up to date' ),
 		},
 	};
 };
