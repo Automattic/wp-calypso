@@ -2,7 +2,6 @@ export interface Task {
 	id: string;
 	isCompleted: boolean;
 	keepActive?: boolean;
-	actionUrl: string;
 	taskType: string;
 	title?: string;
 	displayBadge: boolean;

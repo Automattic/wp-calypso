@@ -36,6 +36,7 @@ export interface ConnectionProps {
 	receiveDisconnect?: ( reason: string ) => void;
 	receiveError?: ( error: string ) => void;
 	receiveInit?: ( init: HappychatUser ) => void;
+	receiveHappychatEnv?: ( env: 'staging' | 'production' ) => void;
 	receiveLocalizedSupport?: ( accept: boolean ) => void;
 	receiveMessage?: ( message: string ) => void;
 	receiveMessageOptimistic?: ( message: string ) => void;
@@ -51,6 +52,7 @@ export interface AvailabilityConnectionProps {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveUnauthorized?: ( message: string ) => void;
 	receiveStatus?: ( status: string ) => void;
+	receiveHappychatEnv?: ( env: 'staging' | 'production' ) => void;
 }
 
 export interface HappychatAuth {

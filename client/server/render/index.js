@@ -21,6 +21,7 @@ import {
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
+import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
@@ -228,6 +229,8 @@ export function serverRender( req, res ) {
 			req
 		);
 	}
+
+	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
 		attachHead( context );

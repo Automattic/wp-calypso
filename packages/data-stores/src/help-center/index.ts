@@ -19,14 +19,7 @@ export function register(): typeof STORE_KEY {
 			reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
 			controls,
 			selectors,
-			persist: [
-				'site',
-				'message',
-				'userDeclaredSite',
-				'userDeclaredSiteUrl',
-				'directlyData',
-				'subject',
-			],
+			persist: [ 'site', 'message', 'userDeclaredSite', 'userDeclaredSiteUrl', 'subject' ],
 		} );
 		isRegistered = true;
 	}

@@ -6,6 +6,7 @@ import {
 	HAPPYCHAT_IO_RECEIVE_DISCONNECT,
 	HAPPYCHAT_IO_RECEIVE_ERROR,
 	HAPPYCHAT_IO_RECEIVE_INIT,
+	HAPPYCHAT_IO_RECEIVE_ENV,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE,
 	HAPPYCHAT_IO_RECEIVE_MESSAGE_OPTIMISTIC,
@@ -103,6 +104,17 @@ export const receiveReconnecting = () => ( { type: HAPPYCHAT_IO_RECEIVE_RECONNEC
 export const receiveAccept = ( isAvailable ) => ( {
 	type: HAPPYCHAT_IO_RECEIVE_ACCEPT,
 	isAvailable,
+} );
+
+/**
+ * Returns an action object for the Happychat target env (staging, production)
+ *
+ * @param  {'staging|production'} env Whether Happychat is available
+ * @returns {object} Action object
+ */
+export const receiveHappychatEnv = ( env ) => ( {
+	type: HAPPYCHAT_IO_RECEIVE_ENV,
+	env,
 } );
 
 /**

@@ -85,15 +85,31 @@ button.conversation-follow-button {
 			}
 		}
 
-		&.popover__menu-item:hover {
-			.conversation-follow-button__label {
+		&.popover__menu-item {
+			&:hover,
+			&:focus {
 				color: white;
-			}
 
-			.gridicon,
-			.reader-follow-conversation,
-			.reader-following-conversation {
-				fill: var(--color-text-inverted);
+				.gridicon,
+				.reader-follow-conversation,
+				.reader-following-conversation {
+					color: var(--color-text-inverted);
+				}
+
+				svg.reader-external path {
+					fill: var(--color-text-inverted);
+				}
+
+				svg.reader-follow-conversation path,
+				svg.reader-following-conversation path {
+					fill: none;
+					stroke: var(--color-text-inverted);
+
+					&.status {
+						fill: var(--color-primary);
+						stroke: none;
+					}
+				}
 			}
 		}
 	}

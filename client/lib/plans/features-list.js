@@ -186,6 +186,7 @@ import {
 	FEATURE_FREE_THEMES_V2,
 	FEATURE_VIDEO_UPLOADS_V2,
 	/* END - condensed_plan_features_v1 test */
+	WPCOM_FEATURES_GLOBAL_STYLES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -295,12 +296,26 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced customization' ),
+	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
+		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
+		getTitle: () =>
+			i18n.translate( 'Advanced design customization', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				"Access extended color schemes and customization tools. Change all of your site's fonts, colours and more."
+			),
+	},
+
+	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'CSS customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Add your own CSS code, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -623,15 +638,10 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
 		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+		getTitle: () => i18n.translate( 'CSS customization' ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				'Add your own CSS code, giving you complete control over how your site looks.'
 			),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
@@ -1414,7 +1424,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
-		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
+		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
 		getDescription: () => {},
 	},
 
