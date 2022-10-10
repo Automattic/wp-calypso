@@ -33,6 +33,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
 import { newsletter } from './declarative-flow/newsletter';
+import { importFlow } from './declarative-flow/import-flow';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
@@ -64,6 +65,7 @@ interface configurableFlows {
 
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
+	{ flowName: 'import-focused', pathToFlow: importFlow },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
