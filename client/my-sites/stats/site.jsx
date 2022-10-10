@@ -269,14 +269,6 @@ class StatsSite extends Component {
 								query={ query }
 								summary={ false }
 							/>
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-							/>
 						</div>
 						<div className="stats__module-column">
 							<StatsModule
