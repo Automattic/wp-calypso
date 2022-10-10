@@ -119,10 +119,11 @@ try {
 } catch ( e ) {
 	console.log( chalk.red( `Error processing search term '${ process.argv[ 2 ] }'` ) );
 	console.log(
-		chalk.red(
-			'\nPlease make sure your search is a valid regular expression or does not contain any special characters (for simple string searches).',
-			'\n[' + e.name + '] ' + e.message;
-		)
+		chalk.red( `
+Please make sure your search is a valid regular expression or does not contain any special characters (for simple string searches).
+
+[${ e.name }] ${ e.message }
+		` )
 	);
 	process.exit( 1 );
 }
