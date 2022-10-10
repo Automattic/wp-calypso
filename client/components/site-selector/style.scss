@@ -15,7 +15,6 @@
 	z-index: z-index("root", ".site-selector");
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - var(--masterbar-height));
 
 	&.is-large .search {
 		display: flex;
