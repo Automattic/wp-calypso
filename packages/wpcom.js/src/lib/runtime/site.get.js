@@ -11,7 +11,7 @@ export default [
 	{ name: 'postTypesList', subpath: 'post-types' },
 	{ name: 'shortcodesList', subpath: 'shortcodes' },
 	{ name: 'stats', subpath: 'stats' },
-	{ name: 'statsClicks', subpath: 'stats/clicks' },
+	{ name: 'statsClicks', subpath: 'stats/clicks' }, // is this just a url definition?
 	{ name: 'statsCommentFollowers', subpath: 'stats/comment-followers' },
 	{ name: 'statsComments', subpath: 'stats/comments' },
 	{ name: 'statsCountryViews', subpath: 'stats/country-views' },

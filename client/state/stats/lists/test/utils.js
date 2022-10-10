@@ -1315,148 +1315,149 @@ describe( 'utils', () => {
 			} );
 		} );
 
-		describe( 'statsClicks()', () => {
-			test( 'should return an empty array if not data is passed', () => {
-				expect( normalizers.statsClicks() ).toEqual( [] );
-			} );
+		// TODO: consider removing as well
+		// describe( 'statsClicks()', () => {
+		// 	test( 'should return an empty array if not data is passed', () => {
+		// 		expect( normalizers.statsClicks() ).toEqual( [] );
+		// 	} );
 
-			test( 'should return an empty array if query.period is null', () => {
-				expect( normalizers.statsClicks( {}, { date: '2016-12-25' } ) ).toEqual( [] );
-			} );
+		// 	test( 'should return an empty array if query.period is null', () => {
+		// 		expect( normalizers.statsClicks( {}, { date: '2016-12-25' } ) ).toEqual( [] );
+		// 	} );
 
-			test( 'should return an empty array if query.date is null', () => {
-				expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
-			} );
+		// 	test( 'should return an empty array if query.date is null', () => {
+		// 		expect( normalizers.statsClicks( {}, { period: 'day' } ) ).toEqual( [] );
+		// 	} );
 
-			test( 'should return an a properly parsed data array', () => {
-				expect(
-					normalizers.statsClicks(
-						{
-							date: '2017-01-12',
-							days: {
-								'2017-01-12': {
-									clicks: [
-										{
-											icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-											name: 'wordpress.com/support',
-											url: null,
-											views: 45,
-											children: [
-												{
-													name: 'wordpress.com/support',
-													url: 'https://wordpress.com/support/',
-													views: 5,
-												},
-											],
-										},
-										{
-											children: null,
-											icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-											name: 'en.forums.wordpress.com',
-											url: 'https://en.forums.wordpress.com/',
-											views: 6,
-										},
-									],
-								},
-							},
-						},
-						{
-							period: 'day',
-							date: '2017-01-12',
-						}
-					)
-				).toEqual( [
-					{
-						children: [
-							{
-								children: null,
-								label: 'wordpress.com/support',
-								labelIcon: 'external',
-								link: 'https://wordpress.com/support/',
-								value: 5,
-							},
-						],
-						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'wordpress.com/support',
-						labelIcon: null,
-						link: null,
-						value: 45,
-					},
-					{
-						children: null,
-						icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-						label: 'en.forums.wordpress.com',
-						labelIcon: 'external',
-						link: 'https://en.forums.wordpress.com/',
-						value: 6,
-					},
-				] );
-			} );
+		// 	test( 'should return an a properly parsed data array', () => {
+		// 		expect(
+		// 			normalizers.statsClicks(
+		// 				{
+		// 					date: '2017-01-12',
+		// 					days: {
+		// 						'2017-01-12': {
+		// 							clicks: [
+		// 								{
+		// 									icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+		// 									name: 'wordpress.com/support',
+		// 									url: null,
+		// 									views: 45,
+		// 									children: [
+		// 										{
+		// 											name: 'wordpress.com/support',
+		// 											url: 'https://wordpress.com/support/',
+		// 											views: 5,
+		// 										},
+		// 									],
+		// 								},
+		// 								{
+		// 									children: null,
+		// 									icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+		// 									name: 'en.forums.wordpress.com',
+		// 									url: 'https://en.forums.wordpress.com/',
+		// 									views: 6,
+		// 								},
+		// 							],
+		// 						},
+		// 					},
+		// 				},
+		// 				{
+		// 					period: 'day',
+		// 					date: '2017-01-12',
+		// 				}
+		// 			)
+		// 		).toEqual( [
+		// 			{
+		// 				children: [
+		// 					{
+		// 						children: null,
+		// 						label: 'wordpress.com/support',
+		// 						labelIcon: 'external',
+		// 						link: 'https://wordpress.com/support/',
+		// 						value: 5,
+		// 					},
+		// 				],
+		// 				icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+		// 				label: 'wordpress.com/support',
+		// 				labelIcon: null,
+		// 				link: null,
+		// 				value: 45,
+		// 			},
+		// 			{
+		// 				children: null,
+		// 				icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+		// 				label: 'en.forums.wordpress.com',
+		// 				labelIcon: 'external',
+		// 				link: 'https://en.forums.wordpress.com/',
+		// 				value: 6,
+		// 			},
+		// 		] );
+		// 	} );
 
-			test( 'should return an a properly parsed summary data array', () => {
-				expect(
-					normalizers.statsClicks(
-						{
-							date: '2017-01-12',
-							summary: {
-								clicks: [
-									{
-										icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-										name: 'wordpress.com/support',
-										url: null,
-										views: 50,
-										children: [
-											{
-												name: 'wordpress.com/support',
-												url: 'https://wordpress.com/support/',
-												views: 50,
-											},
-										],
-									},
-									{
-										children: null,
-										icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-										name: 'en.forums.wordpress.com',
-										url: 'https://en.forums.wordpress.com/',
-										views: 10,
-									},
-								],
-							},
-						},
-						{
-							period: 'day',
-							date: '2017-01-12',
-							summarize: 1,
-						}
-					)
-				).toEqual( [
-					{
-						children: [
-							{
-								children: null,
-								label: 'wordpress.com/support',
-								labelIcon: 'external',
-								link: 'https://wordpress.com/support/',
-								value: 50,
-							},
-						],
-						icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
-						label: 'wordpress.com/support',
-						labelIcon: null,
-						link: null,
-						value: 50,
-					},
-					{
-						children: null,
-						icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
-						label: 'en.forums.wordpress.com',
-						labelIcon: 'external',
-						link: 'https://en.forums.wordpress.com/',
-						value: 10,
-					},
-				] );
-			} );
-		} );
+		// 	test( 'should return an a properly parsed summary data array', () => {
+		// 		expect(
+		// 			normalizers.statsClicks(
+		// 				{
+		// 					date: '2017-01-12',
+		// 					summary: {
+		// 						clicks: [
+		// 							{
+		// 								icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+		// 								name: 'wordpress.com/support',
+		// 								url: null,
+		// 								views: 50,
+		// 								children: [
+		// 									{
+		// 										name: 'wordpress.com/support',
+		// 										url: 'https://wordpress.com/support/',
+		// 										views: 50,
+		// 									},
+		// 								],
+		// 							},
+		// 							{
+		// 								children: null,
+		// 								icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+		// 								name: 'en.forums.wordpress.com',
+		// 								url: 'https://en.forums.wordpress.com/',
+		// 								views: 10,
+		// 							},
+		// 						],
+		// 					},
+		// 				},
+		// 				{
+		// 					period: 'day',
+		// 					date: '2017-01-12',
+		// 					summarize: 1,
+		// 				}
+		// 			)
+		// 		).toEqual( [
+		// 			{
+		// 				children: [
+		// 					{
+		// 						children: null,
+		// 						label: 'wordpress.com/support',
+		// 						labelIcon: 'external',
+		// 						link: 'https://wordpress.com/support/',
+		// 						value: 50,
+		// 					},
+		// 				],
+		// 				icon: 'https://secure.gravatar.com/blavatar/94ea57385f5018d2b84169cab22d3b33?s=48',
+		// 				label: 'wordpress.com/support',
+		// 				labelIcon: null,
+		// 				link: null,
+		// 				value: 50,
+		// 			},
+		// 			{
+		// 				children: null,
+		// 				icon: 'https://secure.gravatar.com/blavatar/3dbcb399a9112e3bb46f706b01c80062?s=48',
+		// 				label: 'en.forums.wordpress.com',
+		// 				labelIcon: 'external',
+		// 				link: 'https://en.forums.wordpress.com/',
+		// 				value: 10,
+		// 			},
+		// 		] );
+		// 	} );
+		// } );
 
 		describe( 'statsReferrers()', () => {
 			test( 'should return an empty array if not data is passed', () => {

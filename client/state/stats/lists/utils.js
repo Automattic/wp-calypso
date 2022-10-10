@@ -725,48 +725,48 @@ export const normalizers = {
 		} );
 	},
 
-	/*
-	 * Returns a normalized statsClicks array, ready for use in stats-module
-	 *
-	 * @param  {object} data   Stats data
-	 * @param  {object} query  Stats query
-	 * @returns {Array}        Parsed data array
-	 */
-	statsClicks( data, query ) {
-		if ( ! data || ! query.period || ! query.date ) {
-			return [];
-		}
+	// /*
+	//  * Returns a normalized statsClicks array, ready for use in stats-module
+	//  *
+	//  * @param  {object} data   Stats data
+	//  * @param  {object} query  Stats query
+	//  * @returns {Array}        Parsed data array
+	//  */
+	// statsClicks( data, query ) {
+	// 	if ( ! data || ! query.period || ! query.date ) {
+	// 		return [];
+	// 	}
 
-		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
-		const statsData = get( data, dataPath, [] );
+	// 	const { startOf } = rangeOfPeriod( query.period, query.date );
+	// 	const dataPath = query.summarize ? [ 'summary', 'clicks' ] : [ 'days', startOf, 'clicks' ];
+	// 	const statsData = get( data, dataPath, [] );
 
-		return statsData.map( ( item ) => {
-			const hasChildren = item.children && item.children.length > 0;
-			const newRecord = {
-				label: item.name,
-				value: item.views,
-				children: null,
-				link: item.url,
-				icon: item.icon,
-				labelIcon: hasChildren ? null : 'external',
-			};
+	// 	return statsData.map( ( item ) => {
+	// 		const hasChildren = item.children && item.children.length > 0;
+	// 		const newRecord = {
+	// 			label: item.name,
+	// 			value: item.views,
+	// 			children: null,
+	// 			link: item.url,
+	// 			icon: item.icon,
+	// 			labelIcon: hasChildren ? null : 'external',
+	// 		};
 
-			if ( item.children ) {
-				newRecord.children = item.children.map( ( child ) => {
-					return {
-						label: child.name,
-						value: child.views,
-						children: null,
-						link: child.url,
-						labelIcon: 'external',
-					};
-				} );
-			}
+	// 		if ( item.children ) {
+	// 			newRecord.children = item.children.map( ( child ) => {
+	// 				return {
+	// 					label: child.name,
+	// 					value: child.views,
+	// 					children: null,
+	// 					link: child.url,
+	// 					labelIcon: 'external',
+	// 				};
+	// 			} );
+	// 		}
 
-			return newRecord;
-		} );
-	},
+	// 		return newRecord;
+	// 	} );
+	// },
 
 	/*
 	 * Returns a normalized statsReferrers array, ready for use in stats-module

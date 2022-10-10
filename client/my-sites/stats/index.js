@@ -28,7 +28,6 @@ export default function () {
 	const validModules = [
 		'posts',
 		'referrers',
-		'clicks',
 		'countryviews',
 		'authors',
 		'videoplays',
