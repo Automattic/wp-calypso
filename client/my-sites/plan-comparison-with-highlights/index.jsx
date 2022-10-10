@@ -9,8 +9,20 @@ import {
 	isFreePlan,
 	isMonthly,
 	TERM_MONTHLY,
-	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FREE_DOMAIN,
+	FEATURE_STORAGE_BANDWIDTH,
+	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
+	FEATURE_PREMIUM_THEMES,
+	FEATURE_ADVANCED_CUSTOMIZATION,
+	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
+	FEATURE_INSTALL_THEMES_PLUGINS,
+	FEATURE_ADVANCED_SEO_TOOLS,
+	FEATURE_DEVELOPER_TOOLS_V1,
+	FEATURE_PRODUCT_LISTINGS,
+	FEATURE_ACCEPT_PAYMENTS,
+	FEATURE_SHIPPING_CARRIERS,
 } from '@automattic/calypso-products';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { compact, get, map, reduce } from 'lodash';
@@ -24,7 +36,7 @@ import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
 	getHighlightedFeatures,
 	getPlanFeatureAccessor,
-} from 'calypso/my-sites/plan-features-comparison/util';
+} from 'calypso/my-sites/plan-comparison-with-highlights/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -48,6 +60,21 @@ import './style.scss';
 
 const noop = () => {};
 
+const iconMapping = {
+	[ FEATURE_FREE_DOMAIN ]: 'public',
+	[ FEATURE_STORAGE_BANDWIDTH ]: 'cloud_done',
+	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: 'mail',
+	[ FEATURE_PREMIUM_THEMES ]: 'mail',
+	[ FEATURE_ADVANCED_CUSTOMIZATION ]: 'design_services',
+	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: 'support_agent',
+	[ FEATURE_INSTALL_THEMES_PLUGINS ]: 'power',
+	[ FEATURE_ADVANCED_SEO_TOOLS ]: 'travel_explore',
+	[ FEATURE_DEVELOPER_TOOLS_V1 ]: 'terminal',
+	[ FEATURE_PRODUCT_LISTINGS ]: '',
+	[ FEATURE_ACCEPT_PAYMENTS ]: 'monetization',
+	[ FEATURE_SHIPPING_CARRIERS ]: 'local_shipping',
+};
+
 export class PlanComparisonWithHighlights extends Component {
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
@@ -55,9 +82,9 @@ export class PlanComparisonWithHighlights extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate, isFAQCondensedExperiment } = this.props;
+		const { isInSignup, planProperties, translate } = this.props;
 		const tableClasses = classNames(
-			'plan-features-comparison__table',
+			'plan-comparison-with-highlights__table',
 			`has-${ planProperties.length }-cols`
 		);
 		const planClasses = classNames( 'plan-features', {
@@ -71,24 +98,33 @@ export class PlanComparisonWithHighlights extends Component {
 			<div className={ planWrapperClasses }>
 				<QueryActivePromotions />
 				<div className={ planClasses }>
-					<div ref={ this.contentRef } className="plan-features-comparison__content">
+					<div ref={ this.contentRef } className="plan-comparison-with-highlights__content">
 						<div>
 							<table className={ tableClasses }>
-								<caption className="plan-features-comparison__screen-reader-text screen-reader-text">
+								<caption className="plan-comparison-with-highlights__screen-reader-text screen-reader-text">
 									{ translate( 'Available plans to choose from' ) }
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
+									{ this.renderHighlightFeatures() }
 									<tr>{ this.renderTopButtons() }</tr>
-									{ isFAQCondensedExperiment
-										? this.renderPlanFeatureRowsTest()
-										: this.renderPlanFeatureRows() }
+									{ this.renderPlanFeatureRows() }
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 			</div>
+		);
+	}
+
+	renderHighlightFeatures() {
+		return (
+			<>
+				<tr className="plan-comparison-with-highlights__row">
+					{ this.renderPlanUniqueFeatures() }
+				</tr>
+			</>
 		);
 	}
 
@@ -114,7 +150,7 @@ export class PlanComparisonWithHighlights extends Component {
 				rawPriceForMonthlyPlan,
 			} = properties;
 
-			const classes = classNames( 'plan-features-comparison__table-item', {
+			const classes = classNames( 'plan-comparison-with-highlights__table-item', {
 				'has-border-top': ! isReskinned,
 			} );
 			const audience = planConstantObj.getAudience?.();
@@ -172,7 +208,7 @@ export class PlanComparisonWithHighlights extends Component {
 				planConstantObj,
 				popular,
 			} = properties;
-			const classes = classNames( 'plan-features-comparison__table-item', 'is-top-buttons' );
+			const classes = classNames( 'plan-comparison-with-highlights__table-item', 'is-top-buttons' );
 
 			return (
 				<td key={ planName } className={ classes }>
@@ -212,24 +248,11 @@ export class PlanComparisonWithHighlights extends Component {
 		const longestFeatures = this.getLongestFeaturesList();
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
 			return (
-				<tr key={ rowIndex } className="plan-features-comparison__row">
+				<tr key={ rowIndex } className="plan-comparison-with-highlights__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
 				</tr>
 			);
 		} );
-	}
-
-	renderPlanFeatureRowsTest() {
-		return (
-			<>
-				<tr className="plan-features-comparison__row">
-					{ this.renderPlanUniqueFeatureColumnsTest() }
-				</tr>
-				<tr className="plan-features-comparison__row">
-					{ this.renderPlanCommonFeatureColumnsTest() }
-				</tr>
-			</>
-		);
 	}
 
 	renderAnnualPlansFeatureNotice( feature ) {
@@ -244,17 +267,19 @@ export class PlanComparisonWithHighlights extends Component {
 		}
 
 		return (
-			<span className="plan-features-comparison__item-annual-plan">
+			<span className="plan-comparison-with-highlights__item-annual-plan">
 				{ translate( 'Included with annual plans' ) }
 			</span>
 		);
 	}
 
-	renderFeatureItem( feature, index ) {
-		const classes = classNames( 'plan-features-comparison__item-info', {
+	renderFeatureItem( feature, index, isHighlightsSection = false ) {
+		const classes = classNames( 'plan-comparison-with-highlights__item-info', {
 			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
 			'is-available': feature.availableForCurrentPlan,
 		} );
+
+		const featureSlug = feature.getSlug();
 
 		return (
 			<>
@@ -262,9 +287,10 @@ export class PlanComparisonWithHighlights extends Component {
 					key={ index }
 					annualOnlyContent={ this.renderAnnualPlansFeatureNotice( feature ) }
 					isFeatureAvailable={ feature.availableForCurrentPlan }
+					materialIconName={ isHighlightsSection && iconMapping[ featureSlug ] }
 				>
 					<span className={ classes }>
-						<span className="plan-features-comparison__item-title">
+						<span className="plan-comparison-with-highlights__item-title">
 							{ feature.getTitle( this.props.domainName ) }
 						</span>
 					</span>
@@ -281,14 +307,16 @@ export class PlanComparisonWithHighlights extends Component {
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
+			const shouldBoldFeature =
+				currentFeature?.isHighlightedFeature && isNewsletterOrLinkInBioFlow( this.props.flowName );
 			const classes = classNames(
-				'plan-features-comparison__table-item',
+				'plan-comparison-with-highlights__table-item',
 				getPlanClass( planName ),
 				{
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-					'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
+					'is-bold': rowIndex === 0 || shouldBoldFeature,
 				}
 			);
 
@@ -297,7 +325,7 @@ export class PlanComparisonWithHighlights extends Component {
 					{ this.renderFeatureItem( currentFeature, mapIndex ) }
 				</td>
 			) : (
-				<td key={ `${ planName }-none` } className="plan-features-comparison__table-item" />
+				<td key={ `${ planName }-none` } className="plan-comparison-with-highlights__table-item" />
 			);
 		} );
 	}
@@ -307,66 +335,31 @@ export class PlanComparisonWithHighlights extends Component {
 
 		return map( features, ( currentFeature, featureIndex ) => {
 			const classes = classNames( '', getPlanClass( planName ), {
-				'is-last-feature': featureIndex + 1 === features.length,
 				'is-highlighted':
 					selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-				'is-bold': currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN,
 			} );
-
-			if ( currentFeature.isUniqueFeature ) {
-				return (
-					<li key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-						{ this.renderFeatureItem( currentFeature, mapIndex ) }
-					</li>
-				);
-			}
+			const isHighlightsSection = true;
 
 			return (
 				<div key={ `${ currentFeature.getSlug() }-${ featureIndex }` } className={ classes }>
-					{ this.renderFeatureItem( currentFeature, mapIndex ) }
+					{ this.renderFeatureItem( currentFeature, mapIndex, isHighlightsSection ) }
 				</div>
 			);
 		} );
 	}
 
-	renderPlanUniqueFeatureColumnsTest() {
+	renderPlanUniqueFeatures() {
 		const { planProperties } = this.props;
 		return map( planProperties, ( properties, mapIndex ) => {
 			const { planName } = properties;
-			const features = properties.features.filter( ( feature ) => feature.isUniqueFeature );
+			const features = properties.featuredBenefits;
 
 			return (
 				<td
 					key={ `${ planName }-unique-${ mapIndex }` }
-					className="plan-features-comparison__table-item plan-features-comparison__unique-features"
+					className="plan-comparison-with-highlights__table-item plan-comparison-with-highlights__unique-features"
 				>
-					<ul>{ this.renderPlanFeatures( features, planName, mapIndex ) }</ul>
-				</td>
-			);
-		} );
-	}
-
-	renderPlanCommonFeatureColumnsTest() {
-		const { planProperties } = this.props;
-		let previousPlanName = 'Free';
-		let currentPlanName = 'Free';
-
-		return map( planProperties, ( properties, mapIndex ) => {
-			const { planName, planObject } = properties;
-			previousPlanName = currentPlanName;
-			currentPlanName = planObject.product_name_short;
-			const features = properties.features.filter( ( feature ) => ! feature.isUniqueFeature );
-			const planFeatureTitle =
-				mapIndex === 0
-					? `Get basic features with ${ currentPlanName }:`
-					: `Everything in ${ previousPlanName }, plus:`;
-
-			return (
-				<td key={ `${ planName }-${ mapIndex }` } className="plan-features-comparison__table-item">
-					<div className="plan-features-comparison__item plan-features-comparison__common-title is-bold">
-						{ planFeatureTitle }
-					</div>
-					{ this.renderPlanFeatures( features, planName, mapIndex ) }
+					<div>{ this.renderPlanFeatures( features, planName, mapIndex ) }</div>
 				</td>
 			);
 		} );
@@ -491,19 +484,30 @@ export default connect(
 				// This is the per month price of a monthly plan. E.g. $14 for Premium monthly.
 				const rawPriceForMonthlyPlan = getPlanRawPrice( state, monthlyPlanProductId, true );
 				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
-				const planUniqueFeatures = planConstantObj.getCondensedExperimentUniqueFeatures?.() || [];
+				let planFeaturedBenefits = getPlanFeaturesObject(
+					planConstantObj.getOnboardingHighlightedFeatures?.() || []
+				);
 				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
 						);
-						const isUniqueFeature = planUniqueFeatures.includes( feature.getSlug() );
 
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
-							isUniqueFeature,
+						};
+					} );
+
+					planFeaturedBenefits = planFeaturedBenefits.map( ( feature ) => {
+						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+							feature.getSlug()
+						);
+						return {
+							...feature,
+							availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 						};
 					} );
 				}
@@ -536,6 +540,7 @@ export default connect(
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					discountPrice,
 					features: planFeatures,
+					featuredBenefits: planFeaturedBenefits,
 					isLandingPage,
 					isPlaceholder,
 					planConstantObj,

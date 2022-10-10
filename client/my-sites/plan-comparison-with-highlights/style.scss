@@ -2,8 +2,6 @@ $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
 .plan-pill.is-in-signup {
-	right: 52%;
-	transform: translate(50%);
 	border-radius: 4px;
 	background-color: var(--studio-green-5);
 	color: var(--studio-gray-80);
@@ -57,13 +55,12 @@ $plan-features-sidebar-width: 272px;
 
 .plan-comparison-with-highlights__header {
 	position: relative;
-	display: flex;
-	align-items: flex-start;
+	display: block;
 	padding: 12px 24px 12px 15px;
 	background-color: var(--color-surface);
-	justify-content: center;
 	font-weight: 400;
 	margin-top: 30px;
+	text-align: left;
 }
 
 .plan-comparison-with-highlights__header-text {
@@ -139,7 +136,6 @@ $plan-features-sidebar-width: 272px;
 	}
 
 	.plan-comparison-with-highlights__table-item {
-		text-align: center;
 		transition: opacity 0.05s;
 		border-right: solid 1px var(--color-neutral-5);
 		border-left: solid 1px var(--color-neutral-5);
@@ -210,6 +206,7 @@ $plan-features-sidebar-width: 272px;
 
 	.plan-comparison-with-highlights__header-annual-discount {
 		color: var(--studio-green-60);
+		font-size: 0.75rem;
 		&-is-loading {
 			@include placeholder();
 		}
@@ -330,6 +327,11 @@ $plan-features-sidebar-width: 272px;
 
 		&.is-bold {
 			font-weight: bold;
+		}
+
+		.plan-comparison-with-highlights__item-material-icon {
+			width: 18px;
+			height: 18px;
 		}
 	}
 }
@@ -474,6 +476,9 @@ body.is-section-signup.is-white-signup {
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.25rem;
 		padding: 0 8px;
+		left: 6%;
+		width: fit-content;
+
 	}
 
 	.plan-comparison-with-highlights__item-title {
@@ -485,6 +490,12 @@ body.is-section-signup.is-white-signup {
 		.plan-comparison-with-highlights__item-annual-plan {
 			color: var(--studio-orange-40);
 		}
+	}
+
+	.plan-comparison-with-highlights__audience {
+		display: block;
+		color: var(--color-text-subtle);
+		padding: 35px 16px 10px;
 	}
 }
 

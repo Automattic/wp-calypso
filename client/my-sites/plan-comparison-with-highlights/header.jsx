@@ -31,10 +31,10 @@ export class PlanComparisonWithHighlightsHeader extends Component {
 	}
 
 	renderPlansHeaderNoTabs() {
-		const { planType, popular, selectedPlan, title } = this.props;
+		const { planType, popular, selectedPlan, title, audience } = this.props;
 
 		const headerClasses = classNames(
-			'plan-features-comparison__header',
+			'plan-comparison-with-highlights__header',
 			getPlanClass( planType )
 		);
 
@@ -46,13 +46,14 @@ export class PlanComparisonWithHighlightsHeader extends Component {
 					) }
 				</div>
 				<header className={ headerClasses }>
-					<h4 className="plan-features-comparison__header-title">{ title }</h4>
+					<h4 className="plan-comparison-with-highlights__header-title">{ title }</h4>
 				</header>
-				<div className="plan-features-comparison__pricing">
+				<div className="plan-comparison-with-highlights__pricing">
 					{ this.renderPriceGroup() }
 					{ this.getBillingTimeframe() }
+					{ this.getAnnualDiscount() }
 				</div>
-				{ this.getAnnualDiscount() }
+				<div className="plan-comparison-with-highlights__audience">{ audience }:</div>
 			</span>
 		);
 	}
@@ -100,8 +101,8 @@ export class PlanComparisonWithHighlightsHeader extends Component {
 			return (
 				<div
 					className={ classNames( {
-						'plan-features-comparison__header-annual-discount': true,
-						'plan-features-comparison__header-annual-discount-is-loading': isLoading,
+						'plan-comparison-with-highlights__header-annual-discount': true,
+						'plan-comparison-with-highlights__header-annual-discount-is-loading': isLoading,
 					} ) }
 				>
 					<span>{ annualDiscountText }</span>
@@ -115,7 +116,7 @@ export class PlanComparisonWithHighlightsHeader extends Component {
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 
 		return (
-			<div className="plan-features-comparison__header-billing-info">
+			<div className="plan-comparison-with-highlights__header-billing-info">
 				<span>{ perMonthDescription }</span>
 			</div>
 		);
@@ -126,8 +127,8 @@ export class PlanComparisonWithHighlightsHeader extends Component {
 
 		if ( discountPrice ) {
 			return (
-				<span className="plan-features-comparison__header-price-group">
-					<div className="plan-features-comparison__header-price-group-prices">
+				<span className="plan-comparison-with-highlights__header-price-group">
+					<div className="plan-comparison-with-highlights__header-price-group-prices">
 						<PlanPrice
 							currencyCode={ currencyCode }
 							rawPrice={ rawPrice }
