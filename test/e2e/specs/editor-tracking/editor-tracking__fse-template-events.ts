@@ -216,7 +216,14 @@ describe(
 
 			it( '"wpcom_block_editor_template_part_detach_blocks" event fires with correct "block_names" and "template_part_id"', async function () {
 				const eventDidFire = await editorTracksEventManager.didEventFire(
-					'wpcom_block_editor_template_part_detach_blocks'
+					'wpcom_block_editor_template_part_detach_blocks',
+					{
+						matchingProperties: {
+							block_names: 'core/page-list',
+							// Event property values are always lower case.
+							template_part_id: `pub/blockbase//${ templatePartName.toLowerCase() }`,
+						},
+					}
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
