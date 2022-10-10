@@ -88,16 +88,16 @@ const configs = [
 
 if ( process.argv.length !== 3 ) {
 	const helpText = `
-${ chalk.yellow.bold( 'Usage: node bin/config-check.js {flag-search}' ) }
+${ chalk.yellow.bold( 'Usage: yarn feature-search {flag-search}' ) }
 ${ chalk.cyan(
-	'\nThis script makes it easy to search for particular feature flags across config environments. The value of {flag-search} can be a simple string or a regular expression.'
+	'\nThis script makes it easy to search for particular feature flags across config environments. The value of {flag-search} can be a simple string (letters and numbers, no special characters) or a valid regular expression.'
 ) }
 
 ${ chalk.cyan( 'Example: Searching by simple string' ) }
-${ chalk.bgBlue( '\tnode bin/feature-search.js plugin' ) }
+${ chalk.bgBlue( '\tyarn feature-search plugin' ) }
 
 ${ chalk.cyan( 'Example: Searching by regex' ) }
-${ chalk.bgBlue( `\tnode bin/feature-search.js 'bundl(e|ing)'` ) }
+${ chalk.bgBlue( `\tyarn feature-search 'bundl(e|ing)'` ) }
 	`;
 
 	console.log( helpText );

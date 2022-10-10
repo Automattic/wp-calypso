@@ -27,7 +27,7 @@ Please make sure to add new feature flags alphabetically so they are easy to fin
 
 You can search for feature flags by partial string or regular expression with the [bin/feature-search.js](bin/feature-search.js) tool.
 
-Run `node bin/feature-search.js` from the root calypso directory to see example searches.
+Run `yarn feature-search [search]` from the root calypso directory to see example searches.
 
 ### Progression of Environments
 
