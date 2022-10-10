@@ -1,4 +1,3 @@
-import { flatten } from 'lodash';
 import type {
 	RawFailedReceiptPurchase,
 	RawFailedReceiptPurchases,
@@ -63,7 +62,7 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
  * @returns {Array<RawReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
 function flattenPurchases( purchases: RawReceiptPurchases ): Array< RawReceiptPurchase > {
-	return flatten( Object.values( purchases ) );
+	return Object.values( purchases ).flat();
 }
 
 /**
@@ -76,5 +75,5 @@ function flattenPurchases( purchases: RawReceiptPurchases ): Array< RawReceiptPu
 function flattenFailedPurchases(
 	purchases: RawFailedReceiptPurchases
 ): Array< RawFailedReceiptPurchase > {
-	return flatten( Object.values( purchases ) );
+	return Object.values( purchases ).flat();
 }
