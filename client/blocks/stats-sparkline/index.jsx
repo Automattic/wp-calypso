@@ -26,12 +26,13 @@ const SparklineChart = ( {
 		<div
 			className={ classnames( 'stats-sparkline', className ) }
 			title={ title }
-			style={ { height: chartHeight + 'px', width: chartWidth + 'px' } }
+			style={ { height: chartHeight + 'px', width: chartWidth + 'px', maxWidth: '100%' } }
 		>
 			<svg
 				width={ chartWidth }
 				height={ chartHeight }
 				viewBox={ `0 0 ${ chartWidth } ${ chartHeight }` }
+				style={ { maxWidth: '100%' } }
 			>
 				{ hourlyViews.map( ( value, i ) => {
 					// for zero value, we show a baseline bar with 1px height
