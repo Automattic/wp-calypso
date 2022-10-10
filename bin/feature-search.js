@@ -31,7 +31,7 @@ function sortResult( result ) {
 			return -1;
 		}
 
-		if ( a.config > b ) {
+		if ( a.config > b.config ) {
 			return 1;
 		}
 
