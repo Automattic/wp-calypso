@@ -3,7 +3,7 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -82,14 +82,7 @@ const SitePlanIcon = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const { ref, inView } = useInView();
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-
-	useEffect( () => {
-		if ( inView ) {
-			setInViewOnce( true );
-		}
-	}, [ inView, setInViewOnce ] );
+	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
