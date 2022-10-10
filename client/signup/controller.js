@@ -285,15 +285,6 @@ export default {
 		const isManageSiteFlow =
 			! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
-		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
-		if (
-			! providesDependenciesInQuery?.includes( 'siteId' ) &&
-			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
-			! isManageSiteFlow
-		) {
-			context.store.dispatch( setSelectedSiteId( null ) );
-		}
-
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
 		if ( refParameter ) {
@@ -329,6 +320,17 @@ export default {
 		} );
 
 		next();
+
+		// If the flow has siteId or siteSlug as query dependencies, we should not clear selected site id
+		if (
+			! providesDependenciesInQuery?.includes( 'siteId' ) &&
+			! providesDependenciesInQuery?.includes( 'siteSlug' ) &&
+			! isManageSiteFlow
+		) {
+			// We do this after `next()`; otherwise, components that are currently rendered and depend
+			// on `getSelectedSite` etc. will break.
+			context.store.dispatch( setSelectedSiteId( null ) );
+		}
 	},
 	setSelectedSiteForSignup( context, next ) {
 		const { getState, dispatch } = context.store;
