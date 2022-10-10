@@ -40,7 +40,7 @@ const ReaderExcerpt = ( { post } ) => {
 	}
 
 	if ( excerpt === undefined ) {
-		excerpt = post.content_no_html;
+		excerpt = post.content_no_html || '';
 	}
 
 	return (
