@@ -8,7 +8,7 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 import AllSites from 'calypso/blocks/all-sites';
 
 function render() {
-	return <AllSites sites={ sitesArray } />;
+	return <AllSites />;
 }
 ```
 
