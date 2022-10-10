@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useExperiment } from 'calypso/lib/explat';
 import DIFMLink from './difm-link';
-import { useGoals } from './goals';
+import { CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME, useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
 
@@ -45,7 +45,7 @@ export const SelectGoals = ( {
 }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals( displayAllGoals );
-	const [ isDIFMxperimentsLoading ] = useExperiment( 'calypso_difm_goal_change_prototype' );
+	const [ isDIFMxperimentsLoading ] = useExperiment( CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME );
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );

@@ -4,20 +4,21 @@ import { useTranslate } from 'i18n-calypso';
 import { useExperiment } from 'calypso/lib/explat';
 import type { Goal } from './types';
 
+export const CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME = 'calypso_difm_goal_change_prototype';
+
 const SiteGoal = Onboard.SiteGoal;
 const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
-
 const shouldDisplayGoal = ( { key }: Goal ) => ! HIDE_GOALS.includes( key );
 
 export const useGoals = ( displayAllGoals = false ): Goal[] => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
-	const [ , experimentAssignment ] = useExperiment( 'calypso_difm_goal_change_prototype' );
+	const [ , experimentAssignment ] = useExperiment( CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME );
 	const showTreatmentDifmGoal = experimentAssignment?.variationName === 'treatment';
 
 	let difmGoalDisplayText = translate( 'Hire a professional to design my website' );
 	if ( showTreatmentDifmGoal ) {
-		difmGoalDisplayText = translate( '[Treatment] Hire a professional' );
+		difmGoalDisplayText = translate( 'Hire an expert' );
 	}
 
 	const goals = [
