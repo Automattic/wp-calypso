@@ -63,6 +63,8 @@ function outputResults( results ) {
 				setStr = chalk.green( set );
 			} else if ( set === false ) {
 				setStr = chalk.red( set );
+			} else if ( set === null ) {
+				setStr = chalk.yellow( '(not set)' );
 			} else {
 				setStr = chalk.yellow( set );
 			}
