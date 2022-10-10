@@ -25,7 +25,7 @@ The config files contain a features object that can be used to determine whether
 
 Please make sure to add new feature flags alphabetically so they are easy to find and add any new feature flags in all config files (client.json, development.json, production.json, horizon.json, stage.json, test.json, wpcalypso.json).
 
-You can search for feature flags by partial string or regular expression with the [bin/feature-search.js](bin/feature-search.js) too.
+You can search for feature flags by partial string or regular expression with the [bin/feature-search.js](bin/feature-search.js) tool.
 
 Run `node bin/feature-search.js` from the root calypso directory to see example searches.
 
