@@ -1,8 +1,10 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
@@ -17,8 +19,16 @@ interface Props {
 
 export default function SiteCard( { rows, columns }: Props ) {
 	const dispatch = useDispatch();
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const blogId = rows.site.value.blog_id;
+
+	// eslint-disable-next-line
+	const { data, isError, isLoading, refetch } = useFetchTestConnection(
+		isPartnerOAuthTokenLoaded,
+		blogId
+	);
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
