@@ -127,18 +127,16 @@ const main = async () => {
 	for ( const key in results ) {
 		const keys = [];
 
-		for ( const item of results[ key ] ) {
-			keys.push( item.config );
-		}
+		const knownConfigs = results[ key ].map( ( item ) => item.config );
 
-		for ( const config of configs ) {
-			if ( ! keys.includes( config ) ) {
-				results[ key ].push( {
-					config,
-					set: 'NA',
-				} );
-			}
-		}
+		const missingConfigs = configs.filter( ( config ) => ! knownConfigs.includes( config ) );
+
+		missingConfigs.forEach( ( missingConfig ) => {
+			results[ key ].push( {
+				config,
+				set: null, // or 'NA'
+			} );
+		} );
 	}
 
 	outputResults( results );
