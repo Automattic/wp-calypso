@@ -69,7 +69,7 @@ class Help_Center {
 	}
 
 	/**
-	 * Enqueue block editor assets.
+	 * Enqueue Help Center assets.
 	 */
 	public function enqueue_script() {
 		$script_dependencies = $this->asset_file['dependencies'];
