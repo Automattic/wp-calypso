@@ -137,7 +137,7 @@ describe(
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
 				// Then we can take block toolbar actions.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace header-minimal' );
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
 			} );
 
