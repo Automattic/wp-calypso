@@ -42,6 +42,11 @@ function sortResult( result ) {
 function outputResults( results ) {
 	const resultKeys = Object.keys( results ).sort();
 
+	if ( resultKeys.length === 0 ) {
+		console.log( 'No matching features found.' );
+		return;
+	}
+
 	for ( const key of resultKeys ) {
 		const result = results[ key ];
 		const maxLength = calcLongestConfig( result );
