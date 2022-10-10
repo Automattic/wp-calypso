@@ -104,7 +104,18 @@ ${ chalk.bgBlue( `\tyarn feature-search 'bundl(e|ing)'` ) }
 	process.exit( 1 );
 }
 
-const searchRe = new RegExp( process.argv[ 2 ], 'g' );
+let searchRe = null;
+try {
+	searchRe = new RegExp( process.argv[ 2 ], 'g' );
+} catch ( e ) {
+	console.log( chalk.red( `Error processing search term '${ process.argv[ 2 ] }'` ) );
+	console.log(
+		chalk.red(
+			'\nPlease make sure your search is a valid regular expression or does not contain any special characters (for simple string searches).'
+		)
+	);
+	process.exit( 1 );
+}
 
 const main = async () => {
 	const results = {};
