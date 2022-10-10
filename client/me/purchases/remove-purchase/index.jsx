@@ -22,7 +22,7 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isRefundable, isRemovable } from 'calypso/lib/purchases';
+import { getName, isAutoRenewing, isRefundable, isRemovable } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
@@ -232,8 +232,8 @@ class RemovePurchase extends Component {
 			isPlan( purchase ) &&
 			! isJetpackPlan( purchase ) &&
 			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			'en' === getLocaleSlug()
-		); // TODO: remove this when the translations are completed. ;
+			'en' === getLocaleSlug() // TODO: remove this when the translations are completed.
+		);
 	}
 
 	renderPlanWarningDialog() {
@@ -256,6 +256,7 @@ class RemovePurchase extends Component {
 				site={ site }
 				hasDomain={ hasCustomDomain }
 				isRefundable={ isRefundable( purchase ) }
+				isAutoRenewing={ isAutoRenewing( purchase ) }
 				primaryDomain={ primaryDomainName }
 				wpcomURL={ wordpressComURL }
 			/>

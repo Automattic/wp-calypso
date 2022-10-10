@@ -570,6 +570,7 @@ class ManagePurchase extends Component {
 						site={ site }
 						hasDomain={ customDomain }
 						isRefundable={ isPlanRefundable }
+						isAutoRenewing={ isAutoRenewing }
 						primaryDomain={ primaryDomainName }
 						wpcomURL={ wordpressComURL }
 					/>
