@@ -12,7 +12,7 @@ async function getConfigFeatures( config ) {
 }
 
 function calcLongestConfig( result ) {
-	const configLengths = result.map( ( item ) => item.config.length );
+	const configLengths = result.map( ( item ) => ( item.config ? item.config.length : 0 ) );
 	return Math.max( ...configLengths );
 }
 
@@ -130,16 +130,14 @@ const main = async () => {
 	// Add any configs that aren't part of the result set because they didn't have a flag match.
 	// This ensures that our output is the same for each flag.
 	for ( const key in results ) {
-		const keys = [];
-
 		const knownConfigs = results[ key ].map( ( item ) => item.config );
 
 		const missingConfigs = configs.filter( ( config ) => ! knownConfigs.includes( config ) );
 
 		missingConfigs.forEach( ( missingConfig ) => {
 			results[ key ].push( {
-				config,
-				set: null, // or 'NA'
+				config: missingConfig,
+				set: null,
 			} );
 		} );
 	}
