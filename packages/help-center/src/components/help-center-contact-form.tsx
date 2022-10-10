@@ -381,24 +381,28 @@ export const HelpCenterContactForm = () => {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
-		switch ( mode ) {
-			case 'CHAT':
-				if (
-					showingSibylResults &&
-					( hasTranslation( 'Still chat with us' ) || locale === 'en' )
-				) {
-					return __( 'Still chat with us', __i18n_text_domain__ );
-				}
-			case 'EMAIL':
-				if ( showingSibylResults && ( hasTranslation( 'Still email us' ) || locale === 'en' ) ) {
-					return __( 'Still email us', __i18n_text_domain__ );
-				}
-			case 'FORUM':
-				if ( ownershipStatusLoading ) {
-					return formTitles.buttonLoadingLabel;
-				}
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
+
+		if (
+			mode === 'CHAT' &&
+			showingSibylResults &&
+			( hasTranslation( 'Still chat with us' ) || locale === 'en' )
+		) {
+			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
+
+		if (
+			mode === 'EMAIL' &&
+			showingSibylResults &&
+			( hasTranslation( 'Still email us' ) || locale === 'en' )
+		) {
+			return __( 'Still email us', __i18n_text_domain__ );
+		}
+
+		if ( ownershipStatusLoading ) {
+			return formTitles.buttonLoadingLabel;
+		}
+
+		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
 	return showingSibylResults ? (
