@@ -266,7 +266,7 @@ class PluginSections extends Component {
 			availableSections.find( ( section ) => section.key === 'description' );
 
 		return (
-			<div className={ classNames( 'plugin-sections', this.props.className ) }>
+			<div className="plugin-sections">
 				{ ! hasOnlyDescriptionSection && (
 					<div className="plugin-sections__header">
 						<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>

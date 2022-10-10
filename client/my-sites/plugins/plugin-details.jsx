@@ -309,12 +309,7 @@ function PluginDetails( props ) {
 								) }
 
 								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections
-										className="plugin-details__plugins-sections"
-										plugin={ fullPlugin }
-										isWpcom={ isWpcom }
-										addBanner
-									/>
+									<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
 								) }

@@ -13,12 +13,7 @@ export default function PluginDetailsBody( { fullPlugin, isMarketplaceProduct, i
 		<div className="plugin-details__layout plugin-details__body">
 			<div className="plugin-details__layout-col-left">
 				{ fullPlugin.wporg || isMarketplaceProduct ? (
-					<PluginSections
-						className="plugin-details__plugins-sections"
-						plugin={ fullPlugin }
-						isWpcom={ isWpcom }
-						addBanner
-					/>
+					<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 				) : (
 					<PluginSectionsCustom plugin={ fullPlugin } />
 				) }
