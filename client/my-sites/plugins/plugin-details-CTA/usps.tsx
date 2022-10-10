@@ -39,11 +39,6 @@ const StyledLi = styled.li`
 	svg {
 		margin-right: 8px;
 	}
-
-	&.legacy {
-		color: var( --studio-gray-50 );
-		font-size: 12px;
-	}
 `;
 
 const GreenGridicon = styled( Gridicon )`
@@ -72,25 +67,8 @@ interface Props {
 	billingPeriod: IntervalLength;
 }
 
-export const USPS: React.FC< Props > = ( {
-	shouldUpgrade,
-	isFreePlan,
-	isMarketplaceProduct,
-	billingPeriod,
-} ) => {
+export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod } ) => {
 	const translate = useTranslate();
-	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
-
-	if ( legacyVersion ) {
-		return (
-			<LegacyUSPS
-				shouldUpgrade={ shouldUpgrade }
-				isFreePlan={ isFreePlan }
-				isMarketplaceProduct={ isMarketplaceProduct }
-				billingPeriod={ billingPeriod }
-			/>
-		);
-	}
 
 	if ( ! isMarketplaceProduct ) {
 		return null;
@@ -185,108 +163,5 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 		/>
 	);
 };
-
-function LegacyUSPS( { shouldUpgrade, isFreePlan, isMarketplaceProduct, billingPeriod }: Props ) {
-	const translate = useTranslate();
-
-	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
-	const requiredPlan = useRequiredPlan( shouldUpgrade );
-	const planDisplayCost = useSelector( ( state ) => {
-		return getProductDisplayCost( state, requiredPlan || '' );
-	} );
-	const supportText = usePluginsSupportText();
-
-	let planText;
-	switch ( requiredPlan ) {
-		case PLAN_PERSONAL:
-		case PLAN_PERSONAL_MONTHLY:
-			planText = translate( 'Included in the Personal plan (%s):', {
-				args: [ planDisplayCost ],
-			} );
-			break;
-		case PLAN_BUSINESS:
-		case PLAN_BUSINESS_MONTHLY:
-			planText = translate( 'Included in the Business plan (%s):', {
-				args: [ planDisplayCost ],
-			} );
-			break;
-	}
-
-	const filteredUSPS = [
-		...( isMarketplaceProduct
-			? [
-					{
-						id: 'updates',
-						image: <Gridicon icon="gift" size={ 16 } />,
-						text: translate( 'Plugin updates' ),
-						eligibilities: [ 'marketplace' ],
-					},
-			  ]
-			: [] ),
-		...( isMarketplaceProduct
-			? [
-					{
-						id: 'refund',
-						image: <Gridicon icon="refund" size={ 16 } />,
-						text: translate( '%(days)d-day money-back guarantee', {
-							args: { days: billingPeriod === IntervalLength.ANNUALLY ? 14 : 7 },
-						} ),
-						eligibilities: [ 'marketplace' ],
-					},
-			  ]
-			: [] ),
-		...( shouldUpgrade
-			? [
-					{
-						id: 'plan',
-						className: 'title',
-						text: planText,
-						eligibilities: [ 'needs-upgrade' ],
-					},
-			  ]
-			: [] ),
-		...( isFreePlan && isAnnualPeriod
-			? [
-					{
-						id: 'domain',
-						image: <Gridicon icon="domains" size={ 16 } />,
-						text: translate( 'Free domain for one year' ),
-						eligibilities: [ 'free-plan' ],
-					},
-			  ]
-			: [] ),
-		...( shouldUpgrade
-			? [
-					{
-						id: 'hosting',
-						image: <Gridicon icon="star-outline" size={ 16 } />,
-						text: translate( 'Best-in-class hosting' ),
-						eligibilities: [ 'needs-upgrade' ],
-					},
-			  ]
-			: [] ),
-		...( shouldUpgrade
-			? [
-					{
-						id: 'support',
-						image: <Gridicon icon="chat" size={ 16 } />,
-						text: supportText,
-						eligibilities: [ 'needs-upgrade', 'marketplace' ],
-					},
-			  ]
-			: [] ),
-	];
-
-	return (
-		<StyledUl>
-			{ filteredUSPS.map( ( usp ) => (
-				<StyledLi key={ usp.id } className="usps__li legacy">
-					{ usp?.image }
-					<span className={ usp.className }>{ usp.text }</span>
-				</StyledLi>
-			) ) }
-		</StyledUl>
-	);
-}
 
 export default USPS;

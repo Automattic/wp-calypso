@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Popover } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -42,7 +43,8 @@ function generateSwatchSVG( color: string | undefined ) {
 }
 
 const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
 
@@ -73,7 +75,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">{ __( 'Accent Color' ) }</FormLabel>
+				<FormLabel htmlFor="accentColor">
+					{ hasTranslation( 'Favorite color' ) || locale === 'en'
+						? __( 'Favorite color' )
+						: __( 'Accent color' ) }
+				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
 					className="accent-color-control__accent-color-input"

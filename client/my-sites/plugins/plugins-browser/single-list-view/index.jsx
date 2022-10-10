@@ -40,7 +40,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
-	const categoryDescription = categories[ category ]?.categoryDescription || null;
+	const categoryDescription = categories[ category ]?.description || null;
 
 	const { localizePath } = useLocalizedPlugins();
 

@@ -40,14 +40,14 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
-	align-items: center;
+	align-items: flex-start;
 	display: flex;
 	font-family: $serif;
 	font-size: $font-title-large;
 	font-weight: 600;
+	line-height: 2.5rem;
 	justify-content: center;
-	max-height: 16px * 4;
-	margin-bottom: 6px;
+	margin-bottom: 19px;
 	overflow: hidden;
 	position: relative;
 	white-space: normal;
@@ -63,13 +63,14 @@
 		top: auto;
 	}
 
-	@include breakpoint-deprecated( "<960px" ) {
-		max-height: 16px * 5.9;
+	// Center title
+	a {
+		text-align: center;
 	}
 
 	.blog-stickers {
 		position: relative;
-		top: 2px;
+		top: 11px;
 	}
 }
 

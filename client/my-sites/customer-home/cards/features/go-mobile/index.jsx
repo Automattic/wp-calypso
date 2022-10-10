@@ -35,8 +35,8 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 					<img
 						className="go-mobile__icon"
 						src={ wpToJpImage }
-						width="46"
-						height="27"
+						width="49"
+						height="29"
 						alt="WordPress and Jetpack app"
 					/>
 					<div className="go-mobile__title">

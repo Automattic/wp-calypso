@@ -64,11 +64,17 @@
 // when this is shipped to all users.
 .go-mobile--jetpack {
 	.go-mobile__icon {
-		margin-bottom: 15px;
+		margin-bottom: 6px;
 	}
 
 	.go-mobile__title {
 		margin-bottom: 20px;
+		line-height: 1.3;
+	}
+
+	.go-mobile__subheader {
+		font-size: 0.9375rem; //typography-exception
+		line-height: 1.3;
 	}
 
 	// Reset preexisting, global styles for store buttons.

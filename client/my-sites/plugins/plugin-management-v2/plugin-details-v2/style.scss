@@ -42,44 +42,6 @@
 		padding: 12px 8px !important;
 	}
 
-	.legacy .plugin-details__layout {
-		grid-template-columns: unset;
-		max-width: 800px;
-		background: var(--color-surface);
-		margin: 0 -16px;
-		padding: 0 16px 16px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			background: unset;
-			margin: 0;
-			padding: 0;
-		}
-	}
-
-	.legacy .plugin-details-header__container {
-		@include breakpoint-deprecated( ">660px" ) {
-			padding: 20px 0;
-		}
-
-		@include break-xlarge {
-			padding: 30px 0;
-		}
-	}
-
-	.legacy .plugin-details-header__additional-info {
-		.plugin-details-header__info {
-			padding: 0;
-
-			@media screen and (max-width: 1040px) {
-				padding-block-end: 12px;
-			}
-		}
-
-		.plugin-details-header__info-value {
-			font-size: 0.875rem;
-		}
-	}
-
 	.plugin-ratings__rating-stars {
 		display: flex;
 		margin: 10px 0;
@@ -104,10 +66,6 @@
 
 		.section-nav-tabs__list {
 			box-shadow: none;
-		}
-
-		.plugin-details__plugins-sections .card {
-			padding-top: 24px;
 		}
 
 		.plugin-details__layout-col-left {

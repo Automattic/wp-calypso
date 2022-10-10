@@ -13,7 +13,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
-import { execute } from '../directly';
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { HELP_CENTER_STORE, USER_STORE } from '../stores';
@@ -57,21 +56,8 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	// prefetch the current site and user
 	useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const { setDirectlyData } = useDispatch( HELP_CENTER_STORE );
 	useSupportAvailability( 'CHAT', isSimpleSite );
-	const { data: supportData } = useSupportAvailability( 'OTHER', isSimpleSite );
 	useStillNeedHelpURL();
-
-	useEffect( () => {
-		if ( supportData?.is_user_eligible_for_directly ) {
-			execute( [
-				'onReady',
-				( { session } ) => {
-					setDirectlyData( { isLoaded: true, hasSession: session } );
-				},
-			] );
-		}
-	}, [ supportData, setDirectlyData ] );
 
 	useEffect( () => {
 		const classes = [ 'help-center' ];

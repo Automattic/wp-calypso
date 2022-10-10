@@ -85,7 +85,7 @@ const ReaderAvatar = ( {
 	} );
 
 	const defaultIconElement = ! hasSiteIcon && ! hasAvatar && ! showPlaceholder && (
-		<Gridicon icon="globe" size={ siteIconSize } />
+		<Gridicon key="globe-icon" icon="globe" size={ siteIconSize } />
 	);
 	const siteIconElement = hasSiteIcon && (
 		<SiteIcon key="site-icon" size={ siteIconSize } site={ fakeSite } />
