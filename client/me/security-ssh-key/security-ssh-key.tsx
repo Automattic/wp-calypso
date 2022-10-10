@@ -112,13 +112,13 @@ export const SecuritySSHKey = () => {
 				<div>
 					<p>
 						{ __(
-							'Add a SSH key to your WordPress.com account to use it for authentication on sites with a Business or eCommerce plan.'
+							'Add a SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
 						) }
 					</p>
 					<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
 						{ createInterpolateElement(
 							__(
-								'Once added, the SSH key will need to be attached to each site as well. <a>Read more.</a>'
+								'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site. <a>Read more.</a>'
 							),
 							{
 								br: <br />,
