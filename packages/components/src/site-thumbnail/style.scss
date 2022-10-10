@@ -14,6 +14,8 @@
 .site-thumbnail__image {
 	align-self: start;
 	width: 100%;
+	height: 100%;
+    object-fit: cover;
 }
 
 .site-thumbnail__image-bg {

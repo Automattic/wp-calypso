@@ -21,8 +21,6 @@ interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbn
 export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 
-	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
-
 	const siteUrl = addQueryArgs( `https://public-api.wordpress.com/wpcom/v2/screenshots`, {
 		site_url: site.URL,
 	} );
@@ -30,7 +28,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 	return (
 		<SiteThumbnail
 			{ ...props }
-			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
+			mShotsUrl={ siteUrl }
 			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
