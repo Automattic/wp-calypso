@@ -43,6 +43,7 @@ import router from '../index';
 const validModules = [
 	'posts',
 	'referrers',
+	'clicks',
 	'countryviews',
 	'authors',
 	'videoplays',

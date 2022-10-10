@@ -73,6 +73,21 @@ class StatsSummary extends Component {
 				);
 				break;
 
+			case 'clicks':
+				title = translate( 'Clicks' );
+				summaryView = (
+					<StatsModule
+						key="clicks-summary"
+						path="clicks"
+						moduleStrings={ StatsStrings.clicks }
+						period={ this.props.period }
+						query={ merge( {}, statsQueryOptions, query ) }
+						statType="statsClicks"
+						summary
+					/>
+				);
+				break;
+
 			case 'countryviews':
 				title = translate( 'Countries' );
 				summaryView = (

@@ -278,6 +278,7 @@ export function summary( context, next ) {
 	const validModules = [
 		'posts',
 		'referrers',
+		'clicks',
 		'countryviews',
 		'authors',
 		'videoplays',

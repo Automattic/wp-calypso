@@ -105,6 +105,7 @@ class StatsModule extends Component {
 			'statsCountryViews',
 			'statsTopPosts',
 			'statsSearchTerms',
+			'statsClicks',
 			'statsReferrers',
 		];
 		return summary && includes( summarizedTypes, statType );
