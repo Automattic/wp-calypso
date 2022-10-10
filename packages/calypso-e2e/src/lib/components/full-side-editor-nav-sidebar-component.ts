@@ -3,7 +3,7 @@ import { Page, Locator } from 'playwright';
 const panel = '.edit-site-navigation-panel';
 const selectors = {
 	exitLink: `${ panel } a.edit-site-navigation-panel__back-to-dashboard`,
-	templatePartsLink: `${ panel } ul ul > li:nth-of-type(3) a`,
+	templatePartsLink: `${ panel } a:has-text("Template Parts")`,
 };
 
 /**
