@@ -46,7 +46,7 @@ export const RemovePlanDialog = ( {
 	const launchedStatus = site.launch_status === 'launched' ? true : false;
 	const shouldUseSiteThumbnail =
 		isComingSoon === false && isPrivate === false && launchedStatus === true;
-	let subTitle = '';
+	let subTitle = translate( 'If you cancel your plan, once it expires, you will lose:' );
 
 	if ( isRefundable && isAutoRenewing ) {
 		subTitle = translate( 'If you cancel your plan, you will lose:' );
