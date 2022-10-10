@@ -39,14 +39,14 @@ describe( 'PluginsBrowserList basic tests', () => {
 		render( <PluginsBrowserList { ...props } /> );
 		const header = screen.getByText( props.title );
 		expect( header ).toBeVisible();
-		expect( header ).toHaveClass( 'plugins-browser-list__title' );
+		expect( header ).toHaveClass( 'plugins-results-header__title' );
 	} );
 
 	test( 'should render the section header with subtitle', () => {
 		render( <PluginsBrowserList { ...props } /> );
 		const subtitle = screen.getByText( props.subtitle );
 		expect( subtitle ).toBeVisible();
-		expect( subtitle ).toHaveClass( 'plugins-browser-list__subtitle' );
+		expect( subtitle ).toHaveClass( 'plugins-results-header__subtitle' );
 	} );
 
 	test( 'should render a given number of list items when the size prop is set', () => {
