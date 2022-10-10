@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -23,11 +23,9 @@ export default function SiteTableRow( { columns, item }: Props ) {
 
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
-	// eslint-disable-next-line
-	const { data, isError, isLoading, refetch } = useFetchTestConnection(
-		isPartnerOAuthTokenLoaded,
-		blogId
-	);
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
+
+	const isSiteConnected = useMemo( () => ( data ? data.connected : true ), [ data ] );
 
 	return (
 		<Fragment>
@@ -59,7 +57,7 @@ export default function SiteTableRow( { columns, item }: Props ) {
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
 			</tr>
-			{ site.error ? (
+			{ site.error || ! isSiteConnected ? (
 				<tr className="site-table__connection-error">
 					<td colSpan={ Object.keys( item ).length + 1 }>
 						{ <SiteErrorContent siteUrl={ site.value.url } /> }

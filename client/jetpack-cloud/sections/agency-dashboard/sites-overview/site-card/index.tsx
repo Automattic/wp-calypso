@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
+import { useState, useCallback, MouseEvent, KeyboardEvent, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -24,11 +24,9 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const blogId = rows.site.value.blog_id;
 
-	// eslint-disable-next-line
-	const { data, isError, isLoading, refetch } = useFetchTestConnection(
-		isPartnerOAuthTokenLoaded,
-		blogId
-	);
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
+
+	const isSiteConnected = useMemo( () => ( data ? data.connected : true ), [ data ] );
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
@@ -77,7 +75,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ site.error && <SiteErrorContent siteUrl={ siteUrl } /> }
+					{ ( site.error || ! isSiteConnected ) && <SiteErrorContent siteUrl={ siteUrl } /> }
 					{ columns
 						.filter( ( column ) => column.key !== 'site' )
 						.map( ( column, index ) => {
