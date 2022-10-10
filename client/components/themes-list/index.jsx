@@ -127,6 +127,7 @@ function Empty( { emptyContent, searchTerm, translate, recordTracksEvent } ) {
 
 	const onUpgradeClick = useCallback( () => {
 		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
+			blog_id: selectedSite?.ID,
 			search_term: searchTerm,
 		} );
 
