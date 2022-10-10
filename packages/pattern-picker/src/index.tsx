@@ -16,7 +16,6 @@ export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
 	const swiperInstance = useRef< Swiper | null >( null );
-	const swiperContainer = useRef< HTMLDivElement >( null );
 
 	useEffect( () => {
 		if ( patterns ) {
@@ -46,7 +45,7 @@ export default function PatternPicker( { onPick }: Props ) {
 
 	return (
 		<div className="pattern-picker">
-			<div className="pattern-picker__carousel swiper-container" ref={ swiperContainer }>
+			<div className="pattern-picker__carousel swiper-container">
 				<div className="swiper-wrapper">
 					{ patterns.map( ( pattern ) => (
 						<div
