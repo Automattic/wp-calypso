@@ -2,25 +2,43 @@ import { Gridicon } from '@automattic/components';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useRef, useState } from 'react';
-import { Navigation, Mousewheel, Keyboard } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Swiper as SwiperClass } from 'swiper/types';
+import React, { useEffect, useRef } from 'react';
+import Swiper from 'swiper';
 import { PATTERN_SOURCE_SITE_SLUG } from './constants';
 import { Item } from './item';
 import useQueryPatterns from './use-query-patterns';
 import type { Pattern } from './types';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import 'swiper/dist/css/swiper.css';
 
 type Props = { onPick: ( pattern: Pattern ) => void };
 
 export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
 	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
-	const [ swiper, setSwiper ] = useState< SwiperClass | null >( null );
-	const prevRef = useRef< HTMLButtonElement >( null );
-	const nextRef = useRef< HTMLButtonElement >( null );
+	const swiperInstance = useRef< Swiper | null >( null );
+	const swiperContainer = useRef< HTMLDivElement >( null );
+
+	useEffect( () => {
+		if ( patterns ) {
+			swiperInstance.current = new Swiper( '.swiper-container', {
+				autoHeight: true,
+				mousewheel: true,
+				keyboard: true,
+				threshold: 5,
+				slideToClickedSlide: true,
+				slidesPerView: 'auto',
+				spaceBetween: 20,
+				centeredSlides: true,
+				navigation: {
+					prevEl: '.pattern-picker__carousel-nav-button--back',
+					nextEl: '.pattern-picker__carousel-nav-button--next',
+				},
+			} );
+		}
+		return () => {
+			swiperInstance.current?.destroy();
+		};
+	}, [ patterns ] );
 
 	if ( ! patterns ) {
 		return null;
@@ -28,52 +46,33 @@ export default function PatternPicker( { onPick }: Props ) {
 
 	return (
 		<div className="pattern-picker">
-			<Swiper
-				autoHeight={ true }
-				mousewheel={ true }
-				keyboard={ true }
-				threshold={ 5 }
-				slideToClickedSlide={ true }
-				slidesPerView={ 'auto' }
-				spaceBetween={ 20 }
-				modules={ [ Navigation, Mousewheel, Keyboard ] }
-				onSwiper={ setSwiper }
-				className="pattern-picker__carousel"
-				navigation={ {
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					prevEl: prevRef.current!,
-					// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-					nextEl: nextRef.current!,
-				} }
-				centeredSlides={ true }
-			>
-				{ patterns.map( ( pattern ) => (
-					<SwiperSlide key={ `${ pattern.ID }-slide` } className="pattern-picker__slide">
-						<Item key={ `${ pattern.ID }-slide-item` } pattern={ pattern } />
-					</SwiperSlide>
-				) ) }
+			<div className="pattern-picker__carousel swiper-container" ref={ swiperContainer }>
+				<div className="swiper-wrapper">
+					{ patterns.map( ( pattern ) => (
+						<div
+							className="pattern-picker__slide swiper-slide"
+							key={ `${ pattern.ID }-slide-item` }
+						>
+							<Item pattern={ pattern } />
+						</div>
+					) ) }
+				</div>
 				<div className="pattern-picker__controls">
-					<button
-						ref={ prevRef }
-						className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back"
-					>
+					<button className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--back">
 						<Icon icon={ chevronLeft } />
 					</button>
-					<button
-						ref={ nextRef }
-						className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next"
-					>
+					<button className="pattern-picker__carousel-nav-button pattern-picker__carousel-nav-button--next">
 						<Icon icon={ chevronRight } />
 					</button>
 				</div>
-			</Swiper>
+			</div>
 			<div className="pattern-picker__cta">
 				<Button
 					className="pattern-picker__select"
 					isPrimary
 					onClick={ () => {
-						if ( swiper ) {
-							onPick( patterns[ swiper.activeIndex ] );
+						if ( swiperInstance.current ) {
+							onPick( patterns[ swiperInstance.current?.activeIndex ] );
 						}
 					} }
 				>
