@@ -39,6 +39,22 @@ function sortResult( result ) {
 	} );
 }
 
+function getFormattedFeatureString( set ) {
+	if ( set === true ) {
+		return chalk.green( set );
+	}
+
+	if ( set === false ) {
+		return chalk.red( set );
+	}
+
+	if ( set === null ) {
+		return chalk.yellow( '(not set)' );
+	}
+
+	return chalk.yellow( set );
+}
+
 function outputResults( results ) {
 	const resultKeys = Object.keys( results ).sort();
 
@@ -57,17 +73,7 @@ function outputResults( results ) {
 		for ( const item of result ) {
 			const { config, set } = item;
 			const configStr = chalk.cyan( `\t${ config }:` );
-
-			let setStr = '';
-			if ( set === true ) {
-				setStr = chalk.green( set );
-			} else if ( set === false ) {
-				setStr = chalk.red( set );
-			} else if ( set === null ) {
-				setStr = chalk.yellow( '(not set)' );
-			} else {
-				setStr = chalk.yellow( set );
-			}
+			const setStr = getFormattedFeatureString( set );
 
 			console.log( `${ configStr }${ getPadding( maxLength - config.length + 5 ) }${ setStr }` );
 		}
