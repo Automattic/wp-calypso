@@ -33,6 +33,7 @@
 		"@automattic/onboarding": "workspace:^",
 		"classnames": "^2.3.1",
 		"react-query": "^3.32.1",
+		"swiper": "^8.4.1",
 		"tslib": "^2.3.0",
 		"utility-types": "^3.10.0",
 		"wpcom-proxy-request": "workspace:^"
