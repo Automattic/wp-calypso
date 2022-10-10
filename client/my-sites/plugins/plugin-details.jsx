@@ -314,7 +314,6 @@ function PluginDetails( props ) {
 										plugin={ fullPlugin }
 										isWpcom={ isWpcom }
 										addBanner
-										removeReadMore
 									/>
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />

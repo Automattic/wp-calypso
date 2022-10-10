@@ -18,7 +18,6 @@ export default function PluginDetailsBody( { fullPlugin, isMarketplaceProduct, i
 						plugin={ fullPlugin }
 						isWpcom={ isWpcom }
 						addBanner
-						removeReadMore
 					/>
 				) : (
 					<PluginSectionsCustom plugin={ fullPlugin } />
