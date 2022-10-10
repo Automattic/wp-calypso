@@ -30,6 +30,20 @@ interface SitesGridProps {
 }
 
 export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
+	// TODO just for testing the PR - will be removed.
+	const params = new URLSearchParams( window.location.search );
+	if ( params.get( 'sitecount' ) ) {
+		sites = sites
+			.sort( ( a, b ) => {
+				if ( a.options?.site_intent === 'link-in-bio' ) {
+					return -1;
+				} else if ( b.options?.site_intent === 'link-in-bio' ) {
+					return 1;
+				}
+				return 0;
+			} )
+			.slice( 0, Number( params.get( 'sitecount' ) ) );
+	}
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading

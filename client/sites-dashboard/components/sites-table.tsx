@@ -61,6 +61,21 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 	const [ isHeaderStuck, setIsHeaderStuck ] = useState( false );
 	const [ masterbarHeight, setMasterbarHeight ] = useState( 0 );
 
+	// TODO just for testing the PR - will be removed.
+	const params = new URLSearchParams( window.location.search );
+	if ( params.get( 'sitecount' ) ) {
+		sites = sites
+			.sort( ( a, b ) => {
+				if ( a.options?.site_intent === 'link-in-bio' ) {
+					return -1;
+				} else if ( b.options?.site_intent === 'link-in-bio' ) {
+					return 1;
+				}
+				return 0;
+			} )
+			.slice( 0, Number( params.get( 'sitecount' ) ) );
+	}
+
 	// Measure height of masterbar as we need it for the THead styles
 	useLayoutEffect( () => {
 		const masterbarElement = document.querySelector< HTMLDivElement >( 'header.masterbar' );
