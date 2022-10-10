@@ -1,7 +1,7 @@
 import { flatten } from 'lodash';
 import type {
-	RawFailedPurchase,
-	RawFailedPurchases,
+	RawFailedReceiptPurchase,
+	RawFailedReceiptPurchases,
 	RawReceiptData,
 	RawReceiptPurchase,
 	RawReceiptPurchases,
@@ -71,8 +71,10 @@ function flattenPurchases( purchases: RawReceiptPurchases ): Array< RawReceiptPu
  * so we need to flatten them to get a list of purchases
  *
  * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array<RawFailedPurchase>} of product objects [ { productId: ... }, ... ]
+ * @returns {Array<RawFailedReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
-function flattenFailedPurchases( purchases: RawFailedPurchases ): Array< RawFailedPurchase > {
+function flattenFailedPurchases(
+	purchases: RawFailedReceiptPurchases
+): Array< RawFailedReceiptPurchase > {
 	return flatten( Object.values( purchases ) );
 }

@@ -16,7 +16,7 @@ export interface RawReceiptPurchase {
 	will_auto_renew?: boolean;
 }
 
-export interface RawFailedPurchase {
+export interface RawFailedReceiptPurchase {
 	product_meta: string;
 	product_id: string | number;
 	product_slug: string;
@@ -64,10 +64,10 @@ export interface RawReceiptData {
 	/**
 	 * Will only be an array if it is empty.
 	 */
-	failed_purchases: RawFailedPurchases | Array< void >;
+	failed_purchases: RawFailedReceiptPurchases | Array< void >;
 }
 
-export type RawFailedPurchases = Record< string, RawFailedPurchase[] >;
+export type RawFailedReceiptPurchases = Record< string, RawFailedReceiptPurchase[] >;
 
 export type RawReceiptPurchases = Record< string, RawReceiptPurchase[] >;
 
