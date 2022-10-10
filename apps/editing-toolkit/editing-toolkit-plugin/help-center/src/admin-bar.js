@@ -40,11 +40,13 @@ function AdminHelpCenterContent() {
 	return <HelpCenter handleClose={ () => setShowHelpCenter( false ) } />;
 }
 
-ReactDOM.render(
-	<QueryClientProvider client={ whatsNewQueryClient }>
-		<CalypsoStateProvider>
-			<AdminHelpCenterContent />
-		</CalypsoStateProvider>
-	</QueryClientProvider>,
-	document.getElementById( 'help-center-masterbar' )
-);
+if ( window.helpCenterAdminBar?.isLoaded ) {
+	ReactDOM.render(
+		<QueryClientProvider client={ whatsNewQueryClient }>
+			<CalypsoStateProvider>
+				<AdminHelpCenterContent />
+			</CalypsoStateProvider>
+		</QueryClientProvider>,
+		document.getElementById( 'help-center-masterbar' )
+	);
+}
