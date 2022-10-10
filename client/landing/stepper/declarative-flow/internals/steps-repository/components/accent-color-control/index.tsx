@@ -1,8 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, RGB } from '@automattic/onboarding';
-import { ColorPicker } from '@wordpress/components';
+import { ColorPicker, Tooltip } from '@wordpress/components';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -80,10 +81,20 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					{ hasTranslation( 'Favorite color' ) || locale === 'en'
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
-					<Badge type="info">
-						<Icon icon={ starFilled } />
-						<span>{ __( 'Premium' ) }</span>
-					</Badge>
+					{ isEnabled( 'limit-global-styles' ) && (
+						<Tooltip
+							text={ __(
+								'Upgrade to a paid plan for color changes to take affect and to unlock all premium design tools'
+							) }
+						>
+							<span className="accent-color-control__premium-label">
+								<Badge type="info">
+									<Icon icon={ starFilled } size={ 18 } />
+									<span>{ __( 'Premium' ) }</span>
+								</Badge>
+							</span>
+						</Tooltip>
+					) }
 				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }
