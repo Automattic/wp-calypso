@@ -3,15 +3,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { fetchIsRedirect } from './fetch-is-redirect';
 
 export function mshotsUrl( targetUrl: string, options: MShotsOptions, countToRefresh = 0 ): string {
-	if ( ! targetUrl ) {
-		return '';
-	}
-	const mshotsUrl = 'https://s0.wp.com/mshots/v1/';
-	const mshotsRequest = addQueryArgs( mshotsUrl + encodeURIComponent( targetUrl ), {
-		...options,
-		countToRefresh,
-	} );
-	return mshotsRequest;
+	return targetUrl;
 }
 const MAXTRIES = 10;
 

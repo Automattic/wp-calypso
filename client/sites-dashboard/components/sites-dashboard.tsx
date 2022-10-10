@@ -211,7 +211,7 @@ export function SitesDashboard( {
 					grouping={ { status, showHidden: true } }
 				>
 					{ ( { sites, statuses } ) => {
-						const paginatedSites = sites.slice( ( page - 1 ) * perPage, page * perPage );
+						const paginatedSites = sites.slice( 0, 3 );
 
 						const selectedStatus =
 							statuses.find( ( { name } ) => name === status ) || statuses[ 0 ];

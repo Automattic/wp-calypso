@@ -23,20 +23,9 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
-	let siteUrl = site.URL;
-	if ( site.options?.updated_at ) {
-		const updatedAt = new Date( site.options.updated_at );
-		updatedAt.setMinutes( 0 );
-		updatedAt.setSeconds( 0 );
-		siteUrl = addQueryArgs( siteUrl, {
-			v: updatedAt.getTime() / 1000,
-
-			// This combination of flags stops free site headers and cookie banners from appearing.
-			iframe: true,
-			preview: true,
-			hide_banners: true,
-		} );
-	}
+	const siteUrl = addQueryArgs( `https://public-api.wordpress.com/wpcom/v2/screenshots`, {
+		site_url: site.URL,
+	} );
 
 	return (
 		<SiteThumbnail

@@ -69,27 +69,12 @@ export const SiteThumbnail = ( {
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
-			{ !! bgColorImgUrl && ! mshotIsFullyLoaded && (
-				<div
-					className={ `site-thumbnail__image-bg site-thumbnail__image-blur-${ blurSize }` }
-					style={ { backgroundImage: `url(${ bgColorImgUrl })` } }
-				></div>
-			) }
-			{ isLoading && (
-				<div
-					className={ classnames( { 'site-thumbnail-loader': showLoader }, 'site-thumbnail-icon' ) }
-				>
-					{ children }
-				</div>
-			) }
-			{ imgProps.src && ! isLoading && (
-				<img
-					className="site-thumbnail__image"
-					alt={ alt }
-					sizes={ sizesAttr || `${ width }px` }
-					{ ...imgProps }
-				/>
-			) }
+			<img
+				className="site-thumbnail__image"
+				alt={ alt }
+				sizes={ sizesAttr || `${ width }px` }
+				src={ mShotsUrl }
+			/>
 		</div>
 	);
 };
