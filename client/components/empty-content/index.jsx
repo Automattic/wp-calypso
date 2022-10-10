@@ -12,6 +12,7 @@ class EmptyContent extends Component {
 		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
+		illustrationHeight: PropTypes.number,
 		line: PropTypes.node,
 		action: PropTypes.node,
 		actionURL: PropTypes.string,
@@ -91,6 +92,7 @@ class EmptyContent extends Component {
 				src={ this.props.illustration }
 				alt=""
 				width={ this.props.illustrationWidth }
+				height={ this.props.illustrationHeight }
 				className="empty-content__illustration"
 			/>
 		);

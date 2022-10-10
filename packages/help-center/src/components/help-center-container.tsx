@@ -83,7 +83,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable
-					draggable={ ! isMobile }
+					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"

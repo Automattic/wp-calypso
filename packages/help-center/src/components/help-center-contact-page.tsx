@@ -4,6 +4,8 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Spinner } from '@automattic/components';
+import { Notice } from '@wordpress/components';
+import { useEffect } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
@@ -40,8 +42,20 @@ export const HelpCenterContactPage: React.FC = () => {
 	const { data: tickets, isLoading: isLoadingTickets } = useActiveSupportTicketsQuery( email, {
 		staleTime: 30 * 60 * 1000,
 	} );
+	const isLoading = renderChat.isLoading || renderEmail.isLoading || isLoadingTickets;
 
-	if ( renderChat.isLoading || isLoadingTickets ) {
+	useEffect( () => {
+		if ( isLoading ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_helpcenter_contact_options_impression', {
+			location: 'help-center',
+			chat_available: renderChat.state === 'AVAILABLE',
+			email_available: renderEmail.render,
+		} );
+	}, [ isLoading, renderChat.state, renderEmail.render ] );
+
+	if ( isLoading ) {
 		return (
 			<div className="help-center-contact-page__loading">
 				<Spinner baseClassName="" />
@@ -61,33 +75,45 @@ export const HelpCenterContactPage: React.FC = () => {
 					} ) }
 				>
 					{ renderChat.render && (
-						<ConditionalLink
-							active={ renderChat.state === 'AVAILABLE' }
-							to="/contact-form?mode=CHAT"
-						>
-							<div
-								className={ classnames( 'help-center-contact-page__box', 'chat', {
-									'is-disabled': renderChat.state !== 'AVAILABLE',
-								} ) }
-								role="button"
-								tabIndex={ 0 }
+						<div>
+							<ConditionalLink
+								active={ renderChat.state === 'AVAILABLE' }
+								to="/contact-form?mode=CHAT"
 							>
-								<div className="help-center-contact-page__box-icon">
-									<Icon icon={ comment } />
+								<div
+									className={ classnames( 'help-center-contact-page__box', 'chat', {
+										'is-disabled': renderChat.state !== 'AVAILABLE',
+									} ) }
+									role="button"
+									tabIndex={ 0 }
+								>
+									<div className="help-center-contact-page__box-icon">
+										<Icon icon={ comment } />
+									</div>
+									<div>
+										<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
+										<p>
+											{ renderChat.state !== 'AVAILABLE'
+												? __( 'Chat is unavailable right now', __i18n_text_domain__ )
+												: __( 'Get an immediate reply', __i18n_text_domain__ ) }
+										</p>
+									</div>
 								</div>
-								<div>
-									<h2>{ __( 'Live chat', __i18n_text_domain__ ) }</h2>
-									<p>
-										{ renderChat.state !== 'AVAILABLE'
-											? __( 'Chat is unavailable right now', __i18n_text_domain__ )
-											: __( 'Get an immediate reply', __i18n_text_domain__ ) }
-									</p>
-								</div>
-							</div>
-						</ConditionalLink>
+								{ renderChat.env === 'staging' && (
+									<Notice
+										status="warning"
+										actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
+										className="help-center-contact-page__staging-notice"
+										isDismissible={ false }
+									>
+										Using HappyChat staging
+									</Notice>
+								) }
+							</ConditionalLink>
+						</div>
 					) }
 
-					{ renderEmail && (
+					{ renderEmail.render && (
 						<Link
 							// set overflow flag when chat is not available nor closed, and the user is eligible to chat, but still sends a support ticket
 							to={ `/contact-form?mode=EMAIL&overflow=${ (
@@ -113,7 +139,7 @@ export const HelpCenterContactPage: React.FC = () => {
 					) }
 				</div>
 			</div>
-			<SibylArticles />
+			<SibylArticles articleCanNavigateBack />
 		</div>
 	);
 };

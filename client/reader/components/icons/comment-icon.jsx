@@ -8,6 +8,7 @@ export default function ReaderCommentIcon( { iconSize } ) {
 
 	return (
 		<svg
+			key="comment"
 			fill="none"
 			viewBox="0 0 20 20"
 			width={ iconSize }

@@ -11,6 +11,7 @@ import {
 	useSiteAnalysis,
 	useUserSites,
 	AnalysisReport,
+	useSibylQuery,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
@@ -18,10 +19,12 @@ import { TextControl, CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { useDebounce } from 'use-debounce';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
@@ -81,40 +84,40 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	);
 };
 
-const titles: {
-	[ key: string ]: {
-		formTitle: string;
-		formSubtitle?: string;
-		trayText?: string;
-		formDisclaimer?: string;
-		buttonLabel: string;
-		buttonSubmittingLabel: string;
-		buttonLoadingLabel?: string;
-	};
-} = {
-	CHAT: {
-		formTitle: __( 'Start live chat', __i18n_text_domain__ ),
-		trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
-		buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
-	},
-	EMAIL: {
-		formTitle: __( 'Send us an email', __i18n_text_domain__ ),
-		trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
-		buttonLabel: __( 'Email us', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
-	},
-	FORUM: {
-		formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
-		formDisclaimer: __(
-			'Please do not provide financial or contact information when submitting this form.',
-			__i18n_text_domain__
-		),
-		buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
-		buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
-		buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
-	},
-};
+function useFormTitles( mode: Mode ): {
+	formTitle: string;
+	formSubtitle?: string;
+	trayText?: string;
+	formDisclaimer?: string;
+	buttonLabel: string;
+	buttonSubmittingLabel: string;
+	buttonLoadingLabel?: string;
+} {
+	return {
+		CHAT: {
+			formTitle: __( 'Start live chat', __i18n_text_domain__ ),
+			trayText: __( 'Our WordPress experts will be with you right away', __i18n_text_domain__ ),
+			buttonLabel: __( 'Chat with us', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Connecting to chat', __i18n_text_domain__ ),
+		},
+		EMAIL: {
+			formTitle: __( 'Send us an email', __i18n_text_domain__ ),
+			trayText: __( 'Our WordPress experts will get back to you soon', __i18n_text_domain__ ),
+			buttonLabel: __( 'Email us', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Sending email', __i18n_text_domain__ ),
+		},
+		FORUM: {
+			formTitle: __( 'Ask in our community forums', __i18n_text_domain__ ),
+			formDisclaimer: __(
+				'Please do not provide financial or contact information when submitting this form.',
+				__i18n_text_domain__
+			),
+			buttonLabel: __( 'Ask in the forums', __i18n_text_domain__ ),
+			buttonSubmittingLabel: __( 'Posting in the forums', __i18n_text_domain__ ),
+			buttonLoadingLabel: __( 'Analyzing site…', __i18n_text_domain__ ),
+		},
+	}[ mode ];
+}
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
@@ -135,7 +138,7 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
 	const email = useSelector( getCurrentUserEmail );
-
+	const { hasTranslation } = useI18n();
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -172,7 +175,7 @@ export const HelpCenterContactForm = () => {
 		}
 	}, [ userWithNoSites ] );
 
-	const formTitles = titles[ mode ];
+	const formTitles = useFormTitles( mode );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
@@ -213,7 +216,28 @@ export const HelpCenterContactForm = () => {
 		supportSite = selectedSite || currentSite;
 	}
 
+	const isAtomic = Boolean(
+		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
+	);
+	const isJetpack = Boolean(
+		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
+	);
+
+	const [ debouncedMessage ] = useDebounce( message || '', 500 );
+
+	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
+
+	const showingSibylResults = params.get( 'show-results' ) === 'true';
+
 	function handleCTA() {
+		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+			params.set( 'show-results', 'true' );
+			history.push( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
@@ -311,7 +335,7 @@ export const HelpCenterContactForm = () => {
 		const [ isOpen, setOpen ] = useState( false );
 
 		return (
-			<div>
+			<>
 				<button
 					className="help-center-contact-form__site-picker-forum-privacy-info"
 					ref={ ref }
@@ -334,7 +358,7 @@ export const HelpCenterContactForm = () => {
 						) }
 					</span>
 				</Popover>
-			</div>
+			</>
 		);
 	};
 
@@ -354,20 +378,64 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const getCTALabel = () => {
-		switch ( mode ) {
-			case 'CHAT':
-			case 'EMAIL':
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
-			case 'FORUM': {
-				if ( ownershipStatusLoading ) {
-					return formTitles.buttonLoadingLabel;
-				}
-				return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
-			}
+		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+			return __( 'Continue', __i18n_text_domain__ );
 		}
+
+		if (
+			mode === 'CHAT' &&
+			showingSibylResults &&
+			( hasTranslation( 'Still chat with us' ) || locale === 'en' )
+		) {
+			return __( 'Still chat with us', __i18n_text_domain__ );
+		}
+
+		if (
+			mode === 'EMAIL' &&
+			showingSibylResults &&
+			( hasTranslation( 'Still email us' ) || locale === 'en' )
+		) {
+			return __( 'Still email us', __i18n_text_domain__ );
+		}
+
+		if ( ownershipStatusLoading ) {
+			return formTitles.buttonLoadingLabel;
+		}
+
+		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	return (
+	return showingSibylResults ? (
+		<div className="help-center__sibyl-articles-page">
+			<BackButton />
+			<SibylArticles
+				title={
+					hasTranslation( 'These are some helpful articles' ) || locale === 'en'
+						? __( 'These are some helpful articles', __i18n_text_domain__ )
+						: ''
+				}
+				supportSite={ supportSite }
+				message={ message }
+				articleCanNavigateBack
+			/>
+			<section className="contact-form-submit">
+				<Button
+					disabled={ isCTADisabled() }
+					onClick={ handleCTA }
+					primary
+					className="help-center-contact-form__site-picker-cta"
+				>
+					{ getCTALabel() }
+				</Button>
+				{ hasSubmittingError && (
+					<FormInputValidation
+						isError
+						text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+					/>
+				) }
+			</section>
+		</div>
+	) : (
 		<main className="help-center-contact-form">
 			<BackButton />
 			<h1 className="help-center-contact-form__site-picker-title">{ formTitles.formTitle }</h1>
@@ -480,7 +548,7 @@ export const HelpCenterContactForm = () => {
 					</div>
 				</section>
 			) }
-			<SibylArticles supportSite={ supportSite } message={ message } />
+			<SibylArticles supportSite={ supportSite } message={ message } articleCanNavigateBack />
 		</main>
 	);
 };

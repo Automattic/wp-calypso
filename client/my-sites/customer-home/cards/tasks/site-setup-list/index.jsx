@@ -1,7 +1,7 @@
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, useRtl } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -131,6 +131,7 @@ const SiteSetupList = ( {
 
 	const siteIntent = useSiteOption( 'site_intent' );
 	const isBlogger = siteIntent === 'write';
+	const isRtl = useRtl();
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
@@ -188,6 +189,7 @@ const SiteSetupList = ( {
 				userEmail,
 				isBlogger,
 				isFSEActive,
+				isRtl,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -207,6 +209,7 @@ const SiteSetupList = ( {
 		userEmail,
 		isBlogger,
 		isFSEActive,
+		isRtl,
 	] );
 
 	useEffect( () => {

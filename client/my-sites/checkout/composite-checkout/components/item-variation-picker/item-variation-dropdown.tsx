@@ -3,7 +3,6 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
-import { useGetProductVariants } from '../../hooks/product-variants';
 import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps, WPCOMProductVariant } from './types';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
@@ -91,12 +90,10 @@ const OptionList = styled.ul`
 export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps > = ( {
 	isDisabled,
 	onChangeItemVariant,
-	productSlug,
 	selectedItem,
-	siteId,
+	variants,
 } ) => {
 	const translate = useTranslate();
-	const variants = useGetProductVariants( siteId, productSlug );
 
 	const [ open, setOpen ] = useState( false );
 	const [ highlightedVariantIndex, setHighlightedVariantIndex ] = useState< number | null >( null );
