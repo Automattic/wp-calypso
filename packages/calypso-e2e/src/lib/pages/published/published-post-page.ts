@@ -123,7 +123,7 @@ export class PublishedPostPage {
 	 * @param {string} category Category to validate on page.
 	 */
 	async validateCategory( category: string ): Promise< void > {
-		await this.page.waitForSelector( `.cat-links :text("${ category }")` );
+		await this.page.waitForSelector( `a:text-is("${ category }")` );
 	}
 
 	/**
@@ -132,6 +132,6 @@ export class PublishedPostPage {
 	 * @param {string} tag Tag to validate on page.
 	 */
 	async validateTags( tag: string ): Promise< void > {
-		await this.page.waitForSelector( `.tags-links :text("${ tag }")` );
+		await this.page.waitForSelector( `a:text-is("${ tag }")` );
 	}
 }

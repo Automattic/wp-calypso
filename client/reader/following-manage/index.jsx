@@ -31,6 +31,7 @@ import {
 import {
 	getReaderAliasedFollowFeedUrl,
 	getReaderFollowsCount,
+	isReaderFollowsLoading,
 } from 'calypso/state/reader/follows/selectors';
 import {
 	getReaderRecommendedSites,
@@ -41,6 +42,7 @@ import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selector
 import FollowingManageEmptyContent from './empty';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import FollowingManageSubscriptions from './subscriptions';
+import FollowingManageSubscriptionsPlaceholder from './subscriptions-placeholder';
 import './style.scss';
 
 const PAGE_SIZE = 4;
@@ -183,6 +185,7 @@ class FollowingManage extends Component {
 			blockedSites,
 			dismissedSites,
 			followsCount,
+			isFollowsLoading,
 			readerAliasedFollowFeedUrl,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
@@ -277,7 +280,8 @@ class FollowingManage extends Component {
 							windowScrollerRef={ this.handleWindowScrollerMounted }
 						/>
 					) }
-					{ ! hasFollows && <FollowingManageEmptyContent /> }
+					{ ! hasFollows && isFollowsLoading && <FollowingManageSubscriptionsPlaceholder /> }
+					{ ! hasFollows && ! isFollowsLoading && <FollowingManageEmptyContent /> }
 				</ReaderMain>
 			</Fragment>
 		);
@@ -306,6 +310,7 @@ export default connect(
 		dismissedSites: getDismissedSites( state ),
 		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 		followsCount: getReaderFollowsCount( state ),
+		isFollowsLoading: isReaderFollowsLoading( state ),
 	} ),
 	{ recordReaderTracksEvent }
 )( localize( FollowingManage ) );
