@@ -4,6 +4,8 @@ import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
@@ -80,6 +82,7 @@ const SitePlanIcon = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
@@ -136,6 +139,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
+			</Column>
+			<Column ref={ ref } mobileHidden>
+				{ inViewOnce && (
+					<a href={ `/stats/day/${ site.slug }` }>
+						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
+					</a>
+				) }
 			</Column>
 			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />

@@ -1,6 +1,8 @@
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
+$stats-chart-top-spacing: 16px;
+
 ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var(--color-neutral-0);
@@ -228,5 +230,11 @@ ul.module-tabs {
 		a {
 			background: var(--color-neutral-0);
 		}
+	}
+}
+
+.is-chart-tabs {
+	.chart {
+		padding-top: $stats-chart-top-spacing;
 	}
 }

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import { MEDIA_QUERIES } from '../utils';
 import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import SitesTableRow from './sites-table-row';
@@ -53,6 +54,29 @@ const Row = styled.tr`
 		color: var( --studio-gray-60 );
 	}
 `;
+
+const SiteTh = styled.th( {
+	width: '40%',
+	[ MEDIA_QUERIES.large ]: {
+		width: '50%',
+	},
+} );
+
+const PlanTh = styled.th( {
+	[ MEDIA_QUERIES.wide ]: {
+		width: '15%',
+	},
+} );
+
+const StatsTh = styled.th( {
+	width: '120px',
+} );
+
+const StatsThInner = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	gap: '6px',
+} );
 
 export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
 	const { __ } = useI18n();
@@ -124,10 +148,15 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					style={ isHeaderStuck ? headerShadow : undefined }
 				>
 					<Row>
-						<th style={ { width: '50%' } }>{ __( 'Site' ) }</th>
-						<th style={ { width: '20%' } }>{ __( 'Plan' ) }</th>
+						<SiteTh>{ __( 'Site' ) }</SiteTh>
+						<PlanTh>{ __( 'Plan' ) }</PlanTh>
 						<th>{ __( 'Status' ) }</th>
 						<th>{ __( 'Last Publish' ) }</th>
+						<StatsTh>
+							<StatsThInner>
+								<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
+							</StatsThInner>
+						</StatsTh>
 						<th style={ { width: '24px' } }></th>
 					</Row>
 				</THead>
@@ -138,7 +167,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 							.map( ( _, i ) => (
 								<SitesTableRowLoading
 									key={ i }
-									columns={ 5 }
+									columns={ 6 }
 									delayMS={ i * 150 }
 									logoProps={ { width: 108, height: 78 } }
 								/>
