@@ -7,6 +7,7 @@ type Ticket = {
 	locale: string;
 	client: string;
 	is_chat_overflow: boolean;
+	is_help_center: boolean;
 	blog_url: string;
 };
 
