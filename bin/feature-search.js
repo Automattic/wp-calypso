@@ -12,14 +12,8 @@ async function getConfigFeatures( config ) {
 }
 
 function calcLongestConfig( result ) {
-	let longestConfig = '';
-	for ( const item of result ) {
-		if ( item.config.length > longestConfig.length ) {
-			longestConfig = item.config;
-		}
-	}
-
-	return longestConfig.length;
+	const configLengths = result.map( ( item ) => item.config.length );
+	return Math.max( ...configLengths );
 }
 
 function getPadding( count ) {
