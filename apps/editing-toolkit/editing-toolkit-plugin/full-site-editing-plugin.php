@@ -441,7 +441,6 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_global_styles' );
 function load_frontend_screenshots() {
 	if ( isset( $_GET['enable-frontend-screenshots'] ) ) {
 		require_once __DIR__ . '/frontend-screenshots/index.php';
-		\A8C\FSE\Frontend_Screenshots\enqueue();
 	}
 }
-add_action( 'wp_enqueue_scripts', __NAMESPACE__ . '\load_frontend_screenshots' );
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_frontend_screenshots' );
