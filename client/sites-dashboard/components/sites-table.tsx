@@ -63,9 +63,13 @@ const SiteTh = styled.th( {
 } );
 
 const PlanTh = styled.th( {
-	[ MEDIA_QUERIES.large ]: {
-		width: '20%',
+	[ MEDIA_QUERIES.wide ]: {
+		width: '15%',
 	},
+} );
+
+const StatsTh = styled.th( {
+	width: '120px',
 } );
 
 const StatsThInner = styled.div( {
@@ -148,11 +152,11 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 						<PlanTh>{ __( 'Plan' ) }</PlanTh>
 						<th>{ __( 'Status' ) }</th>
 						<th>{ __( 'Last Publish' ) }</th>
-						<th>
+						<StatsTh>
 							<StatsThInner>
 								<JetpackLogo size={ 16 } /> <span>{ __( 'Stats' ) }</span>
 							</StatsThInner>
-						</th>
+						</StatsTh>
 						<th style={ { width: '24px' } }></th>
 					</Row>
 				</THead>

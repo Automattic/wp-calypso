@@ -39,4 +39,5 @@ export const MEDIA_QUERIES = {
 	mediumOrSmaller: '@media screen and ( max-width: 781px )',
 	mediumOrLarger: '@media screen and ( min-width: 660px )',
 	large: '@media screen and ( min-width: 960px )',
+	wide: '@media screen and ( min-width: 1280px )',
 };
