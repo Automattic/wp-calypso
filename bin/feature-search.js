@@ -106,6 +106,7 @@ ${ chalk.bgBlue( '\tyarn feature-search plugin' ) }
 
 ${ chalk.cyan( 'Example: Searching by regex' ) }
 ${ chalk.bgBlue( `\tyarn feature-search 'bundl(e|ing)'` ) }
+${ chalk.cyan.italic( 'Note: Regular expression searches should be surrounded by quotes.' ) }
 	`;
 
 	console.log( helpText );
