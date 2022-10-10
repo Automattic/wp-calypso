@@ -55,50 +55,46 @@ export function useCategories(
 		discover: { name: __( 'Discover' ), slug: 'discover', tags: [] },
 		paid: {
 			name: __( 'Must-have premium plugins' ),
-			categoryDescription: __( 'Add the best-loved plugins on WordPress.com' ),
+			description: __( 'Add the best-loved plugins on WordPress.com' ),
 			slug: 'paid',
 			tags: [],
 		},
 		popular: {
 			name: __( 'The free essentials' ),
-			categoryDescription: __( 'Add and install the very best free plugins' ),
+			description: __( 'Add and install the very best free plugins' ),
 			slug: 'popular',
 			tags: [],
 		},
 		featured: {
 			name: __( 'Our developers’ favorites' ),
-			categoryDescription: __( 'Start fast with these WordPress.com team picks' ),
+			description: __( 'Start fast with these WordPress.com team picks' ),
 			slug: 'featured',
 			tags: [],
 		},
 		seo: {
 			name: __( 'Search Engine Optimization' ),
-			description: __( 'Search Optimization' ),
+			description: __( 'Fine-tune your site’s content and metadata for search engine success.' ),
 			icon: 'grid',
 			slug: 'seo',
 			tags: [ 'seo' ],
 		},
 		ecommerce: {
 			name: __( 'Ecommerce & Business' ),
-			description: __( 'Ecommerce' ),
-			categoryDescription: __(
-				'Everything you need to turn your WordPress site into a powerful online store.'
-			),
+			description: __( 'Turn your site into a powerful online store.' ),
 			icon: 'grid',
 			slug: 'ecommerce',
 			tags: [ 'ecommerce', 'e-commerce', 'woocommerce', 'business', 'business-directory' ],
 		},
 		booking: {
 			name: __( 'Booking & Scheduling' ),
-			description: __( 'Booking' ),
-			categoryDescription: __( 'Add a fully functional booking system to your site.' ),
+			description: __( 'Take bookings and manage your availability right from your site.' ),
 			icon: 'grid',
 			slug: 'booking',
 			tags: [ 'booking', 'scheduling', 'appointment', 'reservation', 'booking-calendar' ],
 		},
 		events: {
 			name: __( 'Events Calendar' ),
-			description: __( 'Events Calendar' ),
+			description: __( 'Build buzz and set the scene with an on-site events calendar.' ),
 			icon: 'grid',
 			slug: 'events',
 			tags: [ 'events-calendar', 'calendar', 'calendar-event' ],
@@ -106,35 +102,39 @@ export function useCategories(
 
 		social: {
 			name: __( 'Social' ),
-			description: __( 'Social' ),
+			description: __( 'Connect to your audience and amplify your content on social.' ),
 			icon: 'grid',
 			slug: 'social',
 			tags: [ 'social', 'facebook', 'twitter', 'instagram', 'tiktok', 'youtube', 'pinterest' ],
 		},
 		email: {
 			name: __( 'Email' ),
-			description: __( 'Email' ),
+			description: __( 'Forge a direct connection with your readers through email.' ),
 			icon: 'grid',
 			slug: 'email',
 			tags: [ 'email' ],
 		},
 		security: {
 			name: __( 'Security' ),
-			description: __( 'Security' ),
+			description: __( 'Take advanced control of your site’s security.' ),
 			icon: 'grid',
 			slug: 'security',
 			tags: [ 'security' ],
 		},
 		finance: {
 			name: __( 'Finance & Payments' ),
-			description: __( 'Finance' ),
+			description: __(
+				'Sell products, subscriptions, and services while keeping on top of every transaction.'
+			),
 			icon: 'grid',
 			slug: 'finance',
 			tags: [ 'finance', 'payment', 'credit-card', 'payment-gateway' ],
 		},
 		shipping: {
 			name: __( 'Shipping & Delivery' ),
-			description: __( 'Shipping & Delivery' ),
+			description: __(
+				'Create a seamless shipping experience with advanced delivery integrations.'
+			),
 			icon: 'grid',
 			slug: 'shipping',
 			tags: [
@@ -150,48 +150,46 @@ export function useCategories(
 		},
 		analytics: {
 			name: __( 'Analytics' ),
-			description: __( 'Analytics' ),
-			categoryDescription: __(
-				`Tools to help you better understand your site's visitors and performance.`
-			),
+			description: __( 'Go deeper and learn faster with site visitor and performance insights.' ),
 			icon: 'grid',
 			slug: 'analytics',
 			tags: [ 'analytics' ],
 		},
 		marketing: {
 			name: __( 'Marketing' ),
-			description: __( 'Marketing' ),
+			description: __(
+				'Bring in new business and shine a spotlight on your projects or products.'
+			),
 			icon: 'grid',
 			slug: 'marketing',
 			tags: [ 'marketing' ],
 		},
 		design: {
 			name: __( 'Design' ),
-			description: __( 'Design' ),
-			categoryDescription: __(
-				'A collection of tools that will give you more control over the design of your site.'
-			),
+			description: __( 'Finesse your site’s design with advanced customization tools.' ),
 			icon: 'grid',
 			slug: 'design',
 			tags: [ 'design', 'blocks', 'editor' ],
 		},
 		photo: {
 			name: __( 'Photo & Video' ),
-			description: __( 'Photo & Video' ),
+			description: __(
+				'Create, share, edit, and manage beautiful images and video {with added precision and flexibility.'
+			),
 			icon: 'grid',
 			slug: 'photo',
 			tags: [ 'photo', 'video', 'media' ],
 		},
 		customer: {
 			name: __( 'CRM & Live Chat' ),
-			description: __( 'Customer Service' ),
+			description: __( 'Create stand-out customer service experiences for your site visitors.' ),
 			icon: 'grid',
 			slug: 'customer',
 			tags: [ 'customer-service', 'live-chat', 'crm' ],
 		},
 		donations: {
 			name: __( 'Crowdfunding' ),
-			description: __( 'Crowdfunding' ),
+			description: __( 'Launch and run crowdfunding campaigns right from your site.' ),
 			icon: 'grid',
 			slug: 'donations',
 			tags: [
@@ -207,21 +205,21 @@ export function useCategories(
 		},
 		education: {
 			name: __( 'Learning Management Systems' ),
-			description: __( 'Education' ),
+			description: __( 'Create, run, and manage interactive courses and learning experiences.' ),
 			icon: 'grid',
 			slug: 'education',
 			tags: [ 'education', 'lms', 'learning-management-systems', 'elearning' ],
 		},
 		widgets: {
 			name: __( 'Widgets' ),
-			description: __( 'Widgets' ),
+			description: __( 'Take widgets to the next level with advanced control and customization.' ),
 			icon: 'grid',
 			slug: 'widgets',
 			tags: [ 'widgets' ],
 		},
 		posts: {
 			name: __( 'Posts & Posting' ),
-			description: __( 'Posts & Posting' ),
+			description: __( 'Unlock advanced content planning, publishing, and scheduling features.' ),
 			icon: 'grid',
 			slug: 'posts',
 			tags: [ 'posts', 'post', 'page', 'pages' ],
