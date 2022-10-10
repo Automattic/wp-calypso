@@ -3,7 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
@@ -47,34 +47,30 @@ const SupportModeTitle = () => {
 };
 
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
-	const headerRef = useRef< HTMLDivElement >( null );
 	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	const handleMouseup = useCallback(
+	const handleClick = useCallback(
 		( event ) => {
-			if ( isMinimized && ! [ 'BUTTON', 'svg' ].includes( event.target.parentNode.tagName ) ) {
+			if ( isMinimized && event.target === event.currentTarget ) {
 				onMaximize?.();
 			}
 		},
 		[ isMinimized, onMaximize ]
 	);
 
-	useEffect( () => {
-		const elementRef = headerRef.current;
-		elementRef?.addEventListener( 'mouseup', handleMouseup );
-
-		return () => {
-			elementRef?.removeEventListener( 'mouseup', handleMouseup );
-		};
-	}, [ handleMouseup ] );
-
 	return (
-		<CardHeader className={ classNames } ref={ headerRef }>
-			<Flex>
-				<p id="header-text" className="help-center-header__text">
+		<CardHeader className={ classNames }>
+			<Flex onClick={ handleClick }>
+				<p
+					id="header-text"
+					className="help-center-header__text"
+					onClick={ handleClick }
+					onKeyUp={ handleClick }
+					role="presentation"
+				>
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>
