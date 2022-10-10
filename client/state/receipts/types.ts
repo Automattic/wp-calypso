@@ -80,3 +80,10 @@ export interface ReceiptData {
 	purchases: ReceiptPurchase[];
 	failedPurchases: FailedReceiptPurchase[];
 }
+
+export interface ReceiptState {
+	data: null | ReceiptData;
+	error: null | string;
+	hasLoadedFromServer: boolean;
+	isRequesting: boolean;
+}
