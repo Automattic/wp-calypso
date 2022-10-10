@@ -637,7 +637,7 @@ class ManagePurchase extends Component {
 	getCancellationFlowType = () => {
 		const { purchase } = this.props;
 		const isPlanRefundable = isRefundable( purchase );
-		const isPlanAutoRenewing = isAutoRenewing( purchase );
+		const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
 
 		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
 			// If the subscription is refundable the subscription should be removed immediately.
