@@ -34,6 +34,20 @@
 			margin-bottom: 0.75em;
 		}
 
+		.qr-code-login__notice {
+			.gridicon {
+				margin-right: 5px;
+				margin-left: -5px;
+				vertical-align: text-bottom;
+				fill: var(--color-error-60);
+			}
+			font-size: $font-body-small;
+
+			@include break-small {
+				text-align: left;
+			}
+		}
+
 		a {
 			font-weight: 500;
 		}
