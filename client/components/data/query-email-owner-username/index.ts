@@ -1,9 +1,9 @@
+import { isTitanMail, isGoogleWorkspace } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { InfiniteData } from 'react-query';
 
 type User = {
@@ -16,39 +16,36 @@ type UsersData = {
 	users: User[];
 };
 
-export function useDomainOwnerUserName(
+export function useEmailOwnerUserName(
 	selectedSite: SiteDetails | null | undefined,
-	domain: ResponseDomain | null | undefined
+	domainName: string
 ): string {
 	useQuerySitePurchases( selectedSite?.ID ?? -1 );
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 
-	const selectedSubscriptionId = domain?.subscriptionId ?? '0';
-
-	const domainSubscription = purchases.find(
-		( purchase ) => purchase.id === parseInt( selectedSubscriptionId )
+	const emailSubscription = purchases.find(
+		( purchase ) =>
+			( isTitanMail( purchase ) || isGoogleWorkspace( purchase ) ) &&
+			purchase.meta === domainName &&
+			purchase.active
 	);
 
 	const { data, isLoading } = useUsersQuery(
 		selectedSite?.ID,
 		{},
 		{
-			enabled: domainSubscription !== undefined,
+			enabled: emailSubscription !== undefined,
 		}
 	);
 
-	if ( isLoading || ! domainSubscription ) {
+	if ( isLoading || ! emailSubscription ) {
 		return '';
 	}
 
 	const teams = data as InfiniteData< UsersData > & UsersData;
-
-	//Due to Jetpack sites overriding the user.ID with a completely different thing,
-	//when Jetpack overrides this property, the original WordPress.com user Id
-	//ends stored as user.linked_user_ID, so in those cases, that's the ID we have to use.
 	const ownerUser = teams.users?.find(
-		( user ) => ( user.linked_user_ID ?? user.ID ) === domainSubscription?.userId
+		( user ) => ( user.linked_user_ID ?? user.ID ) === emailSubscription?.userId
 	);
 
 	return ownerUser?.login ?? '';
