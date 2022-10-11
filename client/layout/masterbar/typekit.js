@@ -1,13 +1,9 @@
 /* global Typekit */
 import calypsoConfig from '@automattic/calypso-config';
 
-if ( typeof document !== 'undefined' ) {
+if ( typeof document !== 'undefined' && calypsoConfig( 'env_id' ) !== 'wpcalypso' ) {
 	// Load fonts - https://helpx.adobe.com/fonts/using/embed-codes.html
 	( function ( d ) {
-		if ( calypsoConfig( 'env_id' ) === 'test' ) {
-			return;
-		}
-
 		const config = {
 			kitId: 'ivy2obh',
 			scriptTimeout: 3000,
