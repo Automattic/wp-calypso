@@ -14,18 +14,10 @@ type StepContentProps = {
 };
 
 function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: ResponseDomain ) {
-	const registrationDateA = domainObjectA.registrationDate;
-	const registrationDateB = domainObjectB.registrationDate;
-
-	if ( registrationDateA > registrationDateB ) {
-		return -1;
-	} else if ( registrationDateA < registrationDateB ) {
-		return 1;
-	}
-	return 1;
+	return domainObjectA.registrationDate > domainObjectB.registrationDate ? -1 : 1;
 }
 
-const StepContent = ( { submit, goNext, goToStep }: StepContentProps ) => {
+const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps ) => {
 	const site = useSite();
 
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
@@ -50,7 +42,13 @@ const StepContent = ( { submit, goNext, goToStep }: StepContentProps ) => {
 
 	return (
 		<div className="launchpad__content">
-			<Sidebar siteSlug={ sidebarURL } submit={ submit } goNext={ goNext } goToStep={ goToStep } />
+			<Sidebar
+				sidebarURL={ sidebarURL }
+				siteSlug={ siteSlug }
+				submit={ submit }
+				goNext={ goNext }
+				goToStep={ goToStep }
+			/>
 			<LaunchpadSitePreview siteSlug={ iFrameURL } />
 		</div>
 	);
