@@ -23,7 +23,7 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 			{ featuresList.map( ( { features, icon, included, slug, title } ) => (
 				<div key={ slug } className="features-list__group">
 					<div className="features-list__group--title">
-						<img className="features-list__group--icon" alt={ title } src={ icon } />
+						<img className="features-list__group--icon" alt="" src={ icon } />
 						{ title }
 					</div>
 					<ul className="features-list__group--features">
