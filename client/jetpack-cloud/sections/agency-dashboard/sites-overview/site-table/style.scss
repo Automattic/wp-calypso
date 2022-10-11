@@ -2,12 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .site-table__table {
-	display: none;
-
-	@include break-large() {
-		display: table;
-	}
-
 	border: 1px solid var(--studio-gray-5);
 	border-collapse: collapse;
 
