@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import PreviewToolbar from '../design-setup/preview-toolbar';
+import { SITE_LOGO_URL } from './constants';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
@@ -79,6 +80,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
 								disable_viewport_height: true,
+								site_logo_url: SITE_LOGO_URL,
 						  } )
 						: 'about:blank'
 				}

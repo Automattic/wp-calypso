@@ -126,6 +126,7 @@ export interface DesignPreviewOptions {
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
+	site_logo_url?: string;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */
