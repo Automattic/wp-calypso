@@ -194,8 +194,6 @@ export const createSiteWithCart = async (
 		userIsLoggedIn
 	);
 
-	console.log( 'AFTER PROCESS ITEM CART' );
-
 	return providedDependencies;
 };
 

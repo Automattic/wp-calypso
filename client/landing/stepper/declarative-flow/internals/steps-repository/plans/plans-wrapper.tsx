@@ -4,7 +4,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { useLocale } from '@automattic/i18n-utils';
 import { addPlanToCart } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
@@ -69,6 +69,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	} );
 
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+
 	const site = useSite();
 	const locale = useLocale();
 	const { __ } = useI18n();
@@ -92,7 +94,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	useEffect( () => {
 		setIsDesktop( isDesktop );
 	}, [] );
-
 
 	const onSelectPlan = async ( cartItem: any ) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = props;
@@ -127,9 +128,18 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 			// props.processStep( step );
 
-			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+			// await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+			// props.onSubmit?.();
+			// console.log( 'Added to plan!', siteSlug, cartItem, flowName, userLoggedIn );
+
+			setPendingAction( async ( dependencies ) => {
+				const { siteSlug } = dependencies;
+				await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+
+				return dependencies;
+			}, true );
+
 			props.onSubmit?.();
-			console.log( 'Added to plan!', siteSlug, cartItem, flowName, userLoggedIn );
 			//TODO: How to deal with the theme pub/lynx? We do not use completesignupstep here
 
 			// addPlanToCart(
@@ -148,7 +158,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getDomainName = () => {
-		console.log( 'GETDOMAINNAME', domainItem );
 		return domainItem && domainItem.meta;
 	};
 

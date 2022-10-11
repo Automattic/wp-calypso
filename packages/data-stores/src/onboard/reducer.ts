@@ -305,13 +305,22 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const pendingAction: Reducer< undefined | ( () => Promise< any > ), OnboardAction > = (
-	state,
-	action
-) => {
+const pendingAction: Reducer<
+	undefined | ( () => Promise< any > ) | [ () => Promise< any > ],
+	OnboardAction
+> = ( state, action ) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
 		return action.pendingAction;
 	}
+
+	if ( action.type === 'SET_PENDING_ACTIONS' ) {
+		if ( state ) {
+			return [ ...state, action.pendingAction ];
+		}
+
+		return [ action.pendingAction ];
+	}
+
 	if (
 		action.type === 'RESET_ONBOARD_STORE' &&
 		! action.skipFlags.includes( 'skipPendingAction' )

@@ -85,7 +85,6 @@ export const linkInBio: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
-					console.log( 'processing providedDependencies', providedDependencies );
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent( providedDependencies?.siteSlug ) }`
 					);

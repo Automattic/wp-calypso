@@ -38,6 +38,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { getStepUrl } from 'calypso/signup/utils';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -265,7 +266,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			);
 
 			return createSiteResult;
-		} );
+		}, true );
 
 		// setDomainResult( {
 		// 	domainItem,
@@ -297,7 +298,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		// dispatch( setDesignType( getDesignType() ) );
 		// Start the username suggestion process.
 		// siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
-		submit?.( site);
+		submit?.();
 	};
 
 	const handleSkip = ( googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
