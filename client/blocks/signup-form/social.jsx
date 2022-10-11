@@ -6,9 +6,11 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import SocialSignupToS from './social-signup-tos';
 
@@ -55,6 +57,7 @@ class SocialSignupForm extends Component {
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
+			client_id: this.props.oauth2Client?.id,
 		} );
 	};
 
@@ -132,9 +135,9 @@ class SocialSignupForm extends Component {
 								isWpccFlow( this.props.flowName ) ? window.location.search.slice( 1 ) : null
 							}
 						/>
-
-						{ ! this.props.disableTosText && <SocialSignupToS /> }
+						{ ! this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
 					</div>
+					{ this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
 				</div>
 			)
 		);
@@ -144,6 +147,8 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

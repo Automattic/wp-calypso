@@ -67,6 +67,7 @@
 		"layout/support-article-dialog": true,
 		"legal-updates-banner": false,
 		"login/magic-login": true,
+		"login/react-lost-password-screen": true,
 		"mailchimp": true,
 		"marketplace-domain-bundle": true,
 		"marketplace-jetpack-plugin-search": true,
