@@ -100,7 +100,6 @@ export type FeaturedItemCardProps = {
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
-	customLabel?: React.ReactNode;
 };
 
 export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
