@@ -37,7 +37,6 @@ import {
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -54,7 +53,6 @@ import {
 	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
@@ -348,11 +346,6 @@ class Signup extends Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
-			// We don't want to show the loading screen for the Woo signup flow.
-			return;
-		}
-
 		const hasInvalidSteps = !! getFirstInvalidStep(
 			this.props.flowName,
 			progress,
@@ -830,7 +823,6 @@ export default connect(
 			siteId,
 			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
 		};
 	},
 	{

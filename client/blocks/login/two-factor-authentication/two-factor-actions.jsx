@@ -1,17 +1,13 @@
 import { Button, Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, Fragment } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendSmsCode } from 'calypso/state/login/actions';
 import { isTwoFactorAuthTypeSupported } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
-import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import Divider from '../divider';
+
 import './two-factor-actions.scss';
 
 class TwoFactorActions extends Component {
@@ -68,30 +64,25 @@ class TwoFactorActions extends Component {
 		}
 
 		return (
-			<Fragment>
-				{ this.props.isWoo && ! this.props.isPartnerSignup && (
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
+			<Card className="two-factor-authentication__actions">
+				{ isSecurityKeyAvailable && (
+					<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
+						{ translate( 'Continue with your security\u00A0key' ) }
+					</Button>
 				) }
-				<Card className="two-factor-authentication__actions">
-					{ isSecurityKeyAvailable && (
-						<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
-							{ translate( 'Continue with your security\u00A0key' ) }
-						</Button>
-					) }
 
-					{ isSmsAvailable && (
-						<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
-							{ translate( 'Send code via\u00A0text\u00A0message' ) }
-						</Button>
-					) }
+				{ isSmsAvailable && (
+					<Button data-e2e-link="2fa-sms-link" onClick={ this.sendSmsCode }>
+						{ translate( 'Send code via\u00A0text\u00A0message' ) }
+					</Button>
+				) }
 
-					{ isAuthenticatorAvailable && (
-						<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
-							{ translate( 'Continue with your authenticator\u00A0app' ) }
-						</Button>
-					) }
-				</Card>
-			</Fragment>
+				{ isAuthenticatorAvailable && (
+					<Button data-e2e-link="2fa-otp-link" onClick={ this.recordAuthenticatorLinkClick }>
+						{ translate( 'Continue with your authenticator\u00A0app' ) }
+					</Button>
+				) }
+			</Card>
 		);
 	}
 }
@@ -101,8 +92,6 @@ export default connect(
 		isAuthenticatorSupported: isTwoFactorAuthTypeSupported( state, 'authenticator' ),
 		isSmsSupported: isTwoFactorAuthTypeSupported( state, 'sms' ),
 		isSecurityKeySupported: isTwoFactorAuthTypeSupported( state, 'webauthn' ),
-		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordTracksEvent,

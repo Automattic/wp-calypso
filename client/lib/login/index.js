@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import cookie from 'cookie';
 import { get, includes, startsWith } from 'lodash';
 import {
 	isAkismetOAuth2Client,
@@ -138,11 +137,3 @@ export function getSignupUrl(
 
 	return signupUrl;
 }
-
-export const isReactLostPasswordScreenEnabled = () => {
-	const cookies = typeof document === 'undefined' ? {} : cookie.parse( document.cookie );
-	return (
-		config.isEnabled( 'login/react-lost-password-screen' ) ||
-		cookies.enable_react_password_screen === 'yes'
-	);
-};

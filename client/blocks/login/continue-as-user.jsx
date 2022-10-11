@@ -37,7 +37,6 @@ function ContinueAsUser( {
 	onChangeAccount,
 	redirectPath,
 	isSignUpFlow,
-	isWooOAuth2Client,
 } ) {
 	const translate = useTranslate();
 	const [ validatedRedirectUrl, setValidatedRedirectUrl ] = useState( null );
@@ -81,52 +80,23 @@ function ContinueAsUser( {
 				comment: 'Link to continue login as different user',
 		  } );
 
-	const gravatarLink = (
-		<a
-			style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
-			href={ validatedRedirectUrl || redirectPath || '/' }
-			className="continue-as-user__gravatar-link"
-		>
-			<Gravatar
-				user={ currentUser }
-				className="continue-as-user__gravatar"
-				imgSize={ 400 }
-				size={ 110 }
-			/>
-			<div className="continue-as-user__username">{ userName }</div>
-			<div className="continue-as-user__email">{ currentUser.email }</div>
-		</a>
-	);
-
-	if ( isWooOAuth2Client ) {
-		return (
-			<div className="continue-as-user">
-				<div className="continue-as-user__user-info">
-					{ gravatarLink }
-					<div className="continue-as-user__not-you">
-						<button
-							type="button"
-							id="loginAsAnotherUser"
-							className="continue-as-user__change-user-link"
-							onClick={ onChangeAccount }
-						>
-							{ translate( 'Log in with a different WordPress.com account' ) }
-						</button>
-					</div>
-					<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
-						{ `${ translate( 'Continue as', {
-							context: 'Continue as an existing WordPress.com user',
-						} ) } ${ userName }` }
-					</Button>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="continue-as-user">
 			<div className="continue-as-user__user-info">
-				{ gravatarLink }
+				<a
+					style={ { pointerEvents: isLoading ? 'none' : 'auto' } }
+					href={ validatedRedirectUrl || redirectPath || '/' }
+					className="continue-as-user__gravatar-link"
+				>
+					<Gravatar
+						user={ currentUser }
+						className="continue-as-user__gravatar"
+						imgSize={ 400 }
+						size={ 110 }
+					/>
+					<div className="continue-as-user__username">{ userName }</div>
+					<div className="continue-as-user__email">{ currentUser.email }</div>
+				</a>
 				<Button busy={ isLoading } primary href={ validatedRedirectUrl || redirectPath || '/' }>
 					{ translate( 'Continue' ) }
 				</Button>

@@ -9,51 +9,13 @@
 }
 
 .woo .two-factor-authentication__verification-code-form {
-	margin-bottom: 52px;
-	padding-bottom: 0;
 	text-align: center;
-
-	@media screen and ( max-width: 660px ) {
-		text-align: left;
-	}
-
-	p {
-		margin: 0;
-	}
-
-	strong {
-		color: #50575e;
-	}
-
-	button {
-		text-transform: inherit;
-		padding: 12px 24px;
-	}
-
-	.form-label {
-		font-weight: 500;
-		text-align: left;
-		margin-bottom: 8px;
-	}
-
-	.form-fieldset {
-		margin: 40px 0 -8px;
-	}
-
-	.form-button {
-		margin: 24px 0 0;
-	}
-
-	.form-fieldset,
-	.form-button {
-		@media screen and ( max-width: 617px ) {
-			margin-left: 0;
-			margin-right: 0;
-			width: 100%;
-		}
-	}
 }
 
+.woo .two-factor-authentication__verification-code-form .form-button {
+	float: none;
+	margin: 0;
+}
 
 .security-key-form__add-wait-for-key {
 	text-align: center;
