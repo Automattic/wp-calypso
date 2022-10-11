@@ -10,8 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -33,7 +32,6 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
-	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
@@ -186,6 +184,7 @@ import {
 	FEATURE_FREE_THEMES_V2,
 	FEATURE_VIDEO_UPLOADS_V2,
 	/* END - condensed_plan_features_v1 test */
+	WPCOM_FEATURES_GLOBAL_STYLES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -295,12 +294,26 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced customization' ),
+	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
+		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
+		getTitle: () =>
+			i18n.translate( 'Advanced design customization', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () =>
 			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				"Access extended color schemes and customization tools. Change all of your site's fonts, colours and more."
+			),
+	},
+
+	[ FEATURE_CSS_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_CSS_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'CSS customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Add your own CSS code, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -608,32 +621,6 @@ export const FEATURES_LIST = {
 				'The easiest way to upload audio files that use any major audio file format. '
 			),
 		getStoreSlug: () => 'videopress',
-	},
-
-	[ FEATURE_BASIC_DESIGN ]: {
-		getSlug: () => FEATURE_BASIC_DESIGN,
-		getTitle: () => i18n.translate( 'Basic design customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Customize your selected theme with pre-set color schemes, ' +
-					'background designs, and font styles.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-	},
-
-	[ FEATURE_ADVANCED_DESIGN ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN,
-		getTitle: () =>
-			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
-		getDescription: () =>
-			i18n.translate(
-				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
-			),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
 
 	[ FEATURE_NO_ADS ]: {
