@@ -49,7 +49,7 @@ export const newsletter: Flow = {
 				apiNamespace: 'wpcom/v2/',
 			},
 			{
-				flow: name,
+				flow: flowName,
 				step: _currentStep,
 			}
 		);
