@@ -202,9 +202,7 @@ describe( 'BackupDatePicker', () => {
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
 		await user.click( screen.getByText( 'Dec 31, 2019' ) );
-		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
-			'calypso_jetpack_backup_date_previous'
-		);
+
 		expect( dispatchMock ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				meta: {
@@ -228,9 +226,6 @@ describe( 'BackupDatePicker', () => {
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
 		await user.click( screen.getByText( 'Jan 2, 2020' ) );
-		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
-			'calypso_jetpack_backup_date_next'
-		);
 
 		expect( dispatchMock ).toHaveBeenCalledWith(
 			expect.objectContaining( {
