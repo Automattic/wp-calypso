@@ -32,6 +32,7 @@ const Subscribers: Step = function ( { navigation } ) {
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }
 							allowEmptyFormSubmit={ true }
+							manualListEmailInviting={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 						/>
