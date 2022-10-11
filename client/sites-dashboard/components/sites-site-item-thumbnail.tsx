@@ -5,6 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -55,6 +56,28 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		);
 	}
 
+	function renderFallback() {
+		if ( site.options.is_wpforteams_site && getSiteLaunchStatus( site ) !== 'public' ) {
+			return <P2Thumbnail site={ site } />;
+		}
+
+		if ( site.icon ) {
+			return (
+				<Image
+					src={ site.icon.img }
+					alt={ __( 'Site Icon' ) }
+					style={ { height: '50px', width: '50px' } }
+				/>
+			);
+		}
+
+		return (
+			<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
+				{ getFirstGrapheme( site.title ?? '' ) }
+			</NoIcon>
+		);
+	}
+
 	return (
 		<SiteThumbnail
 			{ ...props }
@@ -62,17 +85,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
-			{ site.icon ? (
-				<Image
-					src={ site.icon.img }
-					alt={ __( 'Site Icon' ) }
-					style={ { height: '50px', width: '50px' } }
-				/>
-			) : (
-				<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
-					{ getFirstGrapheme( site.title ?? '' ) }
-				</NoIcon>
-			) }
+			{ renderFallback() }
 		</SiteThumbnail>
 	);
 };
