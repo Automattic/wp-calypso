@@ -1,11 +1,11 @@
 import {
-	getAreJetpackCredentialsInvalid,
+	areJetpackCredentialsInvalid,
 	isRequestingJetpackCredentialsTest,
 } from 'calypso/state/jetpack/credentials/selectors';
 import { sites as SITES_CREDENTIALS_FIXTURE } from 'calypso/state/selectors/test/fixtures/jetpack-credentials-test-status';
 
 describe( 'selectors', () => {
-	describe( 'getAreJetpackCredentialsInvalid()', () => {
+	describe( 'areJetpackCredentialsInvalid()', () => {
 		test( 'should return false when when siteId not exists in state', () => {
 			const stateIn = {
 				jetpack: {
@@ -18,7 +18,7 @@ describe( 'selectors', () => {
 			const siteId = 9990000;
 			const role = 'main';
 
-			const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
+			const output = areJetpackCredentialsInvalid( stateIn, siteId, role );
 			expect( output ).toEqual( false );
 		} );
 
@@ -34,7 +34,7 @@ describe( 'selectors', () => {
 			const siteId = 2340000;
 			const role = 'main';
 
-			const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
+			const output = areJetpackCredentialsInvalid( stateIn, siteId, role );
 			expect( output ).toEqual( false );
 		} );
 
@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 			const siteId = 3450000;
 			const role = 'main';
 
-			const output = getAreJetpackCredentialsInvalid( stateIn, siteId, role );
+			const output = areJetpackCredentialsInvalid( stateIn, siteId, role );
 			expect( output ).toEqual( true );
 		} );
 	} );
