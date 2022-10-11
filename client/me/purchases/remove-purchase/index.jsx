@@ -11,7 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { getLocaleSlug, localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -229,10 +229,7 @@ class RemovePurchase extends Component {
 	shouldShowPlanWarning() {
 		const { purchase } = this.props;
 		return (
-			isPlan( purchase ) &&
-			! isJetpackPlan( purchase ) &&
-			! isGSuiteOrGoogleWorkspace( purchase ) &&
-			'en' === getLocaleSlug() // TODO: remove this when the translations are completed.
+			isPlan( purchase ) && ! isJetpackPlan( purchase ) && ! isGSuiteOrGoogleWorkspace( purchase )
 		);
 	}
 
