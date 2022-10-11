@@ -6,6 +6,7 @@ import { Site } from '@automattic/data-stores';
 import { render } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { useQuery } from 'react-query';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createReduxStore } from 'calypso/state';
@@ -15,9 +16,15 @@ import { setStore } from 'calypso/state/redux-store';
 import Launchpad from '../index';
 import { buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
 
+const mockUseQuery = () => () => ( { isLoading: true, data: null } );
+
 jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
 } );
+
+jest.mock( 'react-query', () => ( {
+	useQuery: jest.fn(),
+} ) );
 
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
@@ -65,6 +72,9 @@ function renderLaunchpad( props = {}, siteDetails = defaultSiteDetails ): void {
 }
 
 describe( 'Launchpad', () => {
+	beforeEach( () => {
+		useQuery.mockImplementation( mockUseQuery );
+	} );
 	const props = {
 		siteSlug,
 		/* eslint-disable @typescript-eslint/no-empty-function */
