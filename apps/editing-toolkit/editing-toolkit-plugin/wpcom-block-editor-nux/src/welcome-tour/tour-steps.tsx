@@ -46,6 +46,12 @@ function getTourAssets( key: string ): TourAsset | undefined {
 				type: 'image/gif',
 			},
 		},
+		videomakerWelcome: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-welcome.png`, type: 'image/png' },
+		},
+		videomakerEdit: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-edit.png`, type: 'image/png' },
+		},
 	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
@@ -54,7 +60,8 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
-	isSiteEditor = false
+	isSiteEditor = false,
+	theme = null
 ): WpcomStep[] {
 	return [
 		{
@@ -68,7 +75,7 @@ function getTourSteps(
 					),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'welcome' ),
+				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomaker-welcome' : 'welcome' ),
 			},
 			options: {
 				classNames: {
@@ -139,7 +146,7 @@ function getTourSteps(
 					),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'makeBold' ),
+				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomaker-edit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {
