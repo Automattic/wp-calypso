@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import InfoPopover from 'calypso/components/info-popover';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { BrowserView } from 'calypso/signup/difm/components/BrowserView';
 import {
@@ -24,7 +25,10 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 } from 'calypso/signup/difm/constants';
-import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
+import {
+	useTranslatedPageDescriptions,
+	useTranslatedPageTitles,
+} from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
@@ -86,6 +90,10 @@ const CellLabelContainer = styled.div`
 	@media ( min-width: 960px ) {
 		justify-content: left;
 	}
+
+	.info-popover {
+		margin-inline-start: auto;
+	}
 `;
 
 const PageCellBadge = styled.div`
@@ -117,6 +125,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 	const isDisabled =
 		! config.isEnabled( 'difm/allow-extra-pages' ) && PAGE_LIMIT <= totalSelections;
 	const title = useTranslatedPageTitles()[ pageId ];
+	const description = useTranslatedPageDescriptions()[ pageId ];
 
 	return (
 		<GridCellContainer isSelected={ isSelected } isClickDisabled={ isDisabled }>
@@ -131,6 +140,9 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
+				<InfoPopover showOnHover={ true } position="top">
+					{ description }
+				</InfoPopover>
 			</CellLabelContainer>
 		</GridCellContainer>
 	);
