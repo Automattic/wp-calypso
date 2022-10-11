@@ -20,6 +20,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
+	isSaasProduct as isSaasProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -44,6 +45,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
+	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin.slug ) );
 
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );
@@ -178,14 +180,13 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				{
-					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
-						? translate( 'Purchase and activate' )
-						: shouldUpgrade
-						? translate( 'Upgrade and activate' )
-						: translate( 'Install and activate' )
-				}
+				<CTAButtonText
+					translate={ translate }
+					isMarketplaceProduct={ isMarketplaceProduct }
+					isPreinstalledPremiumPlugin={ isPreinstalledPremiumPlugin }
+					isSaasProduct={ isSaasProduct }
+					shouldUpgrade={ shouldUpgrade }
+				/>
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">
@@ -207,6 +208,27 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			) }
 		</>
 	);
+}
+
+function CTAButtonText( {
+	translate,
+	isMarketplaceProduct,
+	isPreinstalledPremiumPlugin,
+	isSaasProduct,
+	shouldUpgrade,
+} ) {
+	if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
+		return translate( 'Purchase and activate' );
+	}
+
+	if ( isSaasProduct ) {
+		return translate( 'Purchase Third Party' );
+	}
+	if ( shouldUpgrade ) {
+		return translate( 'Upgrade and activate' );
+	}
+
+	return translate( 'Install and activate' );
 }
 
 function onClickInstallPlugin( {

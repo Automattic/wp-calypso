@@ -44,6 +44,7 @@ import {
 } from 'calypso/state/plugins/wporg/selectors';
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
+	isSaasProduct as isSaasProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -124,14 +125,21 @@ function PluginDetails( props ) {
 		isMarketplaceProductSelector( state, props.pluginSlug )
 	);
 
+	const isSaasProduct = useSelector( ( state ) =>
+		isSaasProductSelector( state, props.pluginSlug )
+	);
+
+	const isPurchaseableProduct = isMarketplaceProduct || isSaasProduct;
+
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
-		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
+		if ( isProductListFetched && ! isPurchaseableProduct && ! isWporgPluginFetched ) {
 			dispatch( wporgFetchPluginData( props.pluginSlug, translate.localeSlug ) );
 		}
 	}, [
 		isProductListFetched,
-		isMarketplaceProduct,
+		isPurchaseableProduct,
+		isSaasProduct,
 		isWporgPluginFetched,
 		props.pluginSlug,
 		dispatch,
@@ -143,7 +151,9 @@ function PluginDetails( props ) {
 		data: wpComPluginData,
 		isFetched: isWpComPluginFetched,
 		isFetching: isWpComPluginFetching,
-	} = useWPCOMPlugin( props.pluginSlug, { enabled: isProductListFetched && isMarketplaceProduct } );
+	} = useWPCOMPlugin( props.pluginSlug, {
+		enabled: isProductListFetched && isPurchaseableProduct,
+	} );
 
 	// Unify plugin details
 	const fullPlugin = useMemo( () => {
@@ -157,14 +167,14 @@ function PluginDetails( props ) {
 			...wporgPlugin,
 			...plugin,
 			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
-			isMarketplaceProduct,
+			isPurchaseableProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
+	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isPurchaseableProduct ] );
 
 	const existingPlugin = useMemo( () => {
 		if (
-			( ! isMarketplaceProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
-			( isMarketplaceProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
+			( ! isPurchaseableProduct && ( isWporgPluginFetching || ! isWporgPluginFetched ) ) ||
+			( isPurchaseableProduct && ( isWpComPluginFetching || ! isWpComPluginFetched ) )
 		) {
 			return 'unknown';
 		}
@@ -184,7 +194,7 @@ function PluginDetails( props ) {
 
 		return false;
 	}, [
-		isMarketplaceProduct,
+		isPurchaseableProduct,
 		isWpComPluginFetching,
 		isWpComPluginFetched,
 		isWporgPluginFetching,
@@ -308,7 +318,7 @@ function PluginDetails( props ) {
 									</Notice>
 								) }
 
-								{ fullPlugin.wporg || isMarketplaceProduct ? (
+								{ fullPlugin.wporg || isPurchaseableProduct ? (
 									<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
@@ -326,7 +336,7 @@ function PluginDetails( props ) {
 					</div>
 				</div>
 			</div>
-			{ isMarketplaceProduct && ! showPlaceholder && <MarketplaceFooter /> }
+			{ isPurchaseableProduct && ! showPlaceholder && <MarketplaceFooter /> }
 		</MainComponent>
 	);
 }

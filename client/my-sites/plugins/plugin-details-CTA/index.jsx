@@ -23,7 +23,10 @@ import {
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import {
+	isMarketplaceProduct as isMarketplaceProductSelector,
+	isSaasProduct as isSaasProductSelector,
+} from 'calypso/state/products-list/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -49,6 +52,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		isMarketplaceProductSelector( state, pluginSlug )
 	);
 
+	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, pluginSlug ) );
+
+	const isPurchaseableProduct = isMarketplaceProduct || isSaasProduct;
+
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -57,7 +64,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const pluginFeature = isMarketplaceProduct
+	const pluginFeature = isPurchaseableProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( pluginSlug );
@@ -103,7 +110,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	 * marketplace addon which provides the ATOMIC feature, then we can ignore this
 	 * hold.
 	 */
-	if ( typeof eligibilityHolds !== 'undefined' && isMarketplaceProduct && ! shouldUpgrade ) {
+	if ( typeof eligibilityHolds !== 'undefined' && isPurchaseableProduct && ! shouldUpgrade ) {
 		eligibilityHolds = eligibilityHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
@@ -235,22 +242,23 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		<div className="plugin-details-cta__container">
 			<div className="plugin-details-cta__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
-					{ ( { isFetching, price, period } ) =>
-						isFetching ? (
-							<div className="plugin-details-cta__price-placeholder">...</div>
-						) : (
-							<>
-								{ price ? (
-									<>
-										{ price + ' ' }
-										<span className="plugin-details-cta__period">{ period }</span>
-									</>
-								) : (
-									translate( 'Free' )
-								) }
-							</>
-						)
-					}
+					{ ( { isFetching, price, period, isSaasProduct: isSaasProductPrice } ) => {
+						if ( isFetching ) {
+							return <div className="plugin-details-cta__price-placeholder">...</div>;
+						}
+						if ( price ) {
+							return (
+								<>
+									{ price + ' ' }
+									<span className="plugin-details-cta__period">{ period }</span>
+								</>
+							);
+						}
+						if ( isSaasProductPrice ) {
+							return 'SaaS';
+						}
+						return translate( 'Free' );
+					} }
 				</PluginPrice>
 			</div>
 			{ isMarketplaceProduct && (

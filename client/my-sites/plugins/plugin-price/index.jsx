@@ -6,6 +6,7 @@ import {
 	getProductDisplayCost,
 	isProductsListFetching,
 	getProductsList,
+	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
 
 export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
@@ -14,9 +15,9 @@ export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 	const productList = useSelector( getProductsList );
 	const variation = plugin?.variations?.[ variationPeriod ];
 	const priceSlug = getProductSlugByPeriodVariation( variation, productList );
-
 	const price = useSelector( ( state ) => getProductDisplayCost( state, priceSlug ) );
 	const isFetching = useSelector( isProductsListFetching );
+	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin?.slug ) );
 
 	const getPeriodText = ( periodValue ) => {
 		switch ( periodValue ) {
@@ -33,7 +34,7 @@ export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 		isFetching,
 		price,
 		period: getPeriodText( variationPeriod ),
-		isSaasProduct: isSaasProduct( plugin.slug, productList ),
+		isSaasProduct,
 	} );
 };
 
@@ -47,9 +48,4 @@ export function getPeriodVariationValue( billingPeriod ) {
 		default:
 			return '';
 	}
-}
-
-function isSaasProduct( pluginSlug, productList ) {
-	const camelSlug = pluginSlug.replace( /-/g, '_' );
-	return productList[ camelSlug ]?.product_type === 'saas_plugin';
 }
