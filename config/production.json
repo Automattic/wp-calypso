@@ -132,7 +132,7 @@
 		"signup/stepper-flow": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
-		"ssr/log-prefetch-timeout": true,
+		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stepper-woocommerce-poc": true,

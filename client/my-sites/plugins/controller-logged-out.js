@@ -9,7 +9,8 @@ import wpcom from 'calypso/lib/wp';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 
 const PREFETCH_TIMEOUT = 2000;
-const PREFETCH_TIMEOUT_ERROR = 'plugin-prefetch-timeout';
+const PREFETCH_TIMEOUT_BOTS = 10000;
+const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
 
 function getQueryOptions( { path, lang } ) {
 	const props = {
@@ -51,27 +52,32 @@ const prefetchProductList = ( queryClient, store ) => {
 		} );
 };
 
-const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
+const prefetchTimebox = ( prefetchPromises, context, key, timeout ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
+	const isBot = context.res?.req?.useragent?.isBot;
+
+	if ( ! timeout ) {
+		timeout = isBot ? PREFETCH_TIMEOUT_BOTS : PREFETCH_TIMEOUT;
+	}
 
 	if ( config.isEnabled( 'ssr/prefetch-timebox' ) ) {
 		const timeboxPromise = new Promise( ( _, reject ) =>
-			setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR )
+			setTimeout( reject, timeout, new Error( PREFETCH_TIMEOUT_ERROR ) )
 		);
 
 		racingPromises.push( timeboxPromise );
 	}
 
 	return Promise.race( racingPromises ).catch( ( err ) => {
-		if ( context.res?.req?.useragent?.isBot ) {
+		if ( isBot ) {
 			context.res.status( 504 );
 		}
 		context.serverSideRender = false;
 
-		if ( err === PREFETCH_TIMEOUT_ERROR && config.isEnabled( 'ssr/log-prefetch-timeout' ) ) {
+		if ( config.isEnabled( 'ssr/log-prefetch-errors' ) ) {
 			logToLogstash( {
 				feature: 'calypso_ssr',
-				message: 'plugins prefetch timeout',
+				message: err?.message || err || 'unknown error',
 				extra: {
 					key,
 					'user-agent': context.res?.req?.useragent?.source,
