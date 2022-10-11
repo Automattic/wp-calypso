@@ -55,16 +55,11 @@ const prefetchProductList = ( queryClient, store ) => {
 };
 
 const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
-	let timeboxResolve;
-	const timeboxPromise = new Promise( ( resolve, reject ) => {
-		timeboxResolve = resolve;
-		setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR );
-	} );
+	const timeboxPromise = new Promise( ( _, reject ) =>
+		setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR )
+	);
 
-	return Promise.race( [
-		Promise.all( prefetchPromises ).then( timeboxResolve ),
-		timeboxPromise,
-	] ).catch( ( err ) => {
+	return Promise.race( [ Promise.all( prefetchPromises ), timeboxPromise ] ).catch( ( err ) => {
 		if ( err === PREFETCH_TIMEOUT_ERROR ) {
 			if ( context.res?.req?.useragent?.isBot ) {
 				context.res.status( 504 );
