@@ -45,38 +45,39 @@ const prefetchProductList = ( queryClient, store ) => {
 	const query = { type: 'all' };
 
 	return queryClient
-		.fetchQuery( 'products-list', () => wpcom.req.get( '/products', query ) )
-		.then(
-			( productsList ) => {
-				return store.dispatch( receiveProductsList( productsList, query.type ) );
-			},
-			() => {}
-		);
+		.fetchQuery( [ 'products-list', query.type ], () => wpcom.req.get( '/products', query ) )
+		.then( ( productsList ) => {
+			return store.dispatch( receiveProductsList( productsList, query.type ) );
+		} );
 };
 
 const prefetchTimebox = ( prefetchPromises, context, key, timeout = PREFETCH_TIMEOUT ) => {
-	const timeboxPromise = new Promise( ( _, reject ) =>
-		setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR )
-	);
+	const racingPromises = [ Promise.all( prefetchPromises ) ];
 
-	return Promise.race( [ Promise.all( prefetchPromises ), timeboxPromise ] ).catch( ( err ) => {
-		if ( err === PREFETCH_TIMEOUT_ERROR ) {
-			if ( context.res?.req?.useragent?.isBot ) {
-				context.res.status( 504 );
-			}
-			context.serverSideRender = false;
+	if ( config.isEnabled( 'ssr/prefetch-timebox' ) ) {
+		const timeboxPromise = new Promise( ( _, reject ) =>
+			setTimeout( reject, timeout, PREFETCH_TIMEOUT_ERROR )
+		);
 
-			if ( config.isEnabled( 'ssr/log-prefetch-timeout' ) ) {
-				logToLogstash( {
-					feature: 'calypso_ssr',
-					message: 'plugins prefetch timeout',
-					extra: {
-						key,
-						'user-agent': context.res?.req?.useragent?.source,
-						path: context.path,
-					},
-				} );
-			}
+		racingPromises.push( timeboxPromise );
+	}
+
+	return Promise.race( racingPromises ).catch( ( err ) => {
+		if ( context.res?.req?.useragent?.isBot ) {
+			context.res.status( 504 );
+		}
+		context.serverSideRender = false;
+
+		if ( err === PREFETCH_TIMEOUT_ERROR && config.isEnabled( 'ssr/log-prefetch-timeout' ) ) {
+			logToLogstash( {
+				feature: 'calypso_ssr',
+				message: 'plugins prefetch timeout',
+				extra: {
+					key,
+					'user-agent': context.res?.req?.useragent?.source,
+					path: context.path,
+				},
+			} );
 		}
 	} );
 };

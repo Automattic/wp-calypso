@@ -87,6 +87,7 @@
 		"signup/social": true,
 		"signup/stepper-flow": true,
 		"site-indicator": true,
+		"ssr/prefetch-timebox": true,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
