@@ -6,6 +6,7 @@ import QueryJetpackPlugins from '../query-jetpack-plugins';
 export default function QueryPlugins( { siteId }: { siteId?: number } ) {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
+	// Sites plugins can only be retrieved by logged in users
 	if ( isLoggedIn === false ) {
 		return false;
 	}
