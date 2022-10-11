@@ -557,14 +557,14 @@ object CheckCodeStyleBranch : BuildType({
 				fi
 			"""
 		}
-	}
 
-	bashNodeScript {
-		name = "Run stylelint"
-		scriptContent = """
-			# In the future, we may add the stylelint cache here.
-			yarn run lint:css
-		"""
+		bashNodeScript {
+			name = "Run stylelint"
+			scriptContent = """
+				# In the future, we may add the stylelint cache here.
+				yarn run lint:css
+			"""
+		}
 	}
 
 	triggers {
