@@ -1,5 +1,6 @@
 .reader-featured-image {
 	align-items: center;
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
 	cursor: pointer;
 	display: flex;
@@ -7,6 +8,7 @@
 	max-height: 300px;
 	overflow-y: hidden;
 	img {
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
 	}
 }

@@ -83,8 +83,6 @@ h3 {
 	width: 300px;
 }
 
-.image-container .image-summary {}
-
 .image-container .image-summary span {
 	display: block;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
