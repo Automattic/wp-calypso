@@ -124,6 +124,7 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 	const originalCreatePortal = ReactDOM.createPortal;
 	beforeAll( () => {
 		ReactDOM.createPortal = ( elem ) => elem;
+		// Necessary to trick `PlanFeatures.getBannerContainer()` into retrieving the notice container.
 		jest.spyOn( document, 'querySelector' ).mockImplementation( ( selector ) => {
 			switch ( selector ) {
 				case '.plans-features-main__notice': {
