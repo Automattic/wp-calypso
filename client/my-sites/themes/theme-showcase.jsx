@@ -384,6 +384,7 @@ class ThemeShowcase extends Component {
 				<PageViewTracker
 					path={ this.props.analyticsPath }
 					title={ this.props.analyticsPageTitle }
+					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
