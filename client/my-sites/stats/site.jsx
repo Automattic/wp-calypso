@@ -241,14 +241,6 @@ class StatsSite extends Component {
 								statType="statsTopPosts"
 								showSummaryLink
 							/>
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink
-							/>
 							{ fileDownloadList }
 						</div>
 						<div className="stats__module-column">
