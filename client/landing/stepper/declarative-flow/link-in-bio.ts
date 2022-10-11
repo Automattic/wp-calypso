@@ -73,20 +73,17 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return navigate( 'domains' );
-				// return window.location.assign(
-				// 	`/start/${ flowName }/domains?new=${ encodeURIComponent(
-				// 		providedDependencies.siteTitle as string
-				// 	) }&search=yes&hide_initial_query=yes`
-				// );
 
 				case 'domains':
-					//Still in development
-					//return navigate( 'plans' );
-					break;
+					return navigate( 'plans' );
 
 				case 'plans':
+					return navigate( 'processing' );
+
+				case 'processing':
+					console.log( 'processing providedDependencies', providedDependencies );
 					return window.location.assign(
-						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
+						`/checkout/${ encodeURIComponent( providedDependencies?.siteSlug ) }`
 					);
 
 				case 'launchpad': {

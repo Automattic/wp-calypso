@@ -125,8 +125,6 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 		};
-
-		console.log( 'showExampleSuggestions', this.props.showExampleSuggestions );
 	}
 
 	componentDidMount() {
@@ -378,7 +376,6 @@ class DomainsStep extends Component {
 	};
 
 	handleSave = ( sectionName, state ) => {
-		console.log( 'SAVE', sectionName, state );
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
 			stepSectionName: this.props.stepSectionName,

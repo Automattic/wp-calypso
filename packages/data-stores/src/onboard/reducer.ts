@@ -401,6 +401,16 @@ const domainSuggested: Reducer< string, OnboardAction > = ( state = '', action )
 	return state;
 };
 
+const domainItem: Reducer< object, OnboardAction > = ( state = {}, action ) => {
+	if ( action.type === 'SET_DOMAIN_ITEM' ) {
+		return action.domainItem;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -411,6 +421,7 @@ const reducer = combineReducers( {
 	domainCategory,
 	domainForm,
 	domainSuggested,
+	domainItem,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
