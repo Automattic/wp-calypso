@@ -12,6 +12,7 @@ import {
 	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -55,17 +56,19 @@ export class PlansStep extends Component {
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		// trigger guides on this step, we don't care about failures or response
-		wp.req.post(
-			'guides/trigger',
-			{
-				apiNamespace: 'wpcom/v2/',
-			},
-			{
-				flow: this.props.flowName,
-				step: 'plans',
-			}
-		);
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wp.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'plans',
+				}
+			);
+		}
 	}
 
 	componentWillUnmount() {
