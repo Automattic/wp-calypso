@@ -3,13 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import GreenCheckmark from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
 import RedCross from 'calypso/assets/images/jetpack/jetpack-red-cross.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import { BUNDLE_FEATURES_LIST } from './features';
+import { useBundleFeaturesList } from './features';
 import type { FeaturesListProps } from '../types';
 
 import './style.scss';
 
 export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
-	const featuresList = BUNDLE_FEATURES_LIST[ item.productSlug ];
+	const featuresList = useBundleFeaturesList( item.productSlug );
 
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
