@@ -8,7 +8,6 @@ import {
 	isJetpackCloudOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import CrowdsignalOauthMasterbar from './crowdsignal';
-import WooOauthMasterbar from './woo';
 import './oauth-client.scss';
 
 const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
@@ -57,10 +56,6 @@ const DefaultOauthClientMasterbar = ( { oauth2Client } ) => (
 const OauthClientMasterbar = ( { oauth2Client } ) => {
 	if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		return <CrowdsignalOauthMasterbar oauth2Client={ oauth2Client } />;
-	}
-
-	if ( isWooOAuth2Client( oauth2Client ) ) {
-		return <WooOauthMasterbar />;
 	}
 
 	return <DefaultOauthClientMasterbar oauth2Client={ oauth2Client } />;

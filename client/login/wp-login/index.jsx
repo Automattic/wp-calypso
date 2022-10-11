@@ -13,14 +13,13 @@ import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import Main from 'calypso/components/main';
 import TranslatorInvite from 'calypso/components/translator-invite';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -38,7 +37,6 @@ export class Login extends Component {
 		isLoginView: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
 		isGutenboarding: PropTypes.bool.isRequired,
-		isPartnerSignup: PropTypes.bool.isRequired,
 		locale: PropTypes.string.isRequired,
 		oauth2Client: PropTypes.object,
 		path: PropTypes.string.isRequired,
@@ -49,7 +47,6 @@ export class Login extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
-		action: PropTypes.string,
 	};
 
 	static defaultProps = { isJetpack: false, isGutenboarding: false, isLoginView: true };
@@ -234,7 +231,6 @@ export class Login extends Component {
 			isLoginView,
 			path,
 			signupUrl,
-			action,
 		} = this.props;
 
 		if ( privateSite && isLoggedIn ) {
@@ -244,11 +240,7 @@ export class Login extends Component {
 		const isJetpackMagicLinkSignUpFlow =
 			isJetpack && config.isEnabled( 'jetpack/magic-link-signup' );
 
-		const shouldRenderFooter =
-			! socialConnect &&
-			! isJetpackMagicLinkSignUpFlow &&
-			// We don't want to render the footer for woo oauth2 flows but render it if it's partner signup
-			! ( isWooOAuth2Client( this.props.oauth2Client ) && ! this.props.isPartnerSignup );
+		const shouldRenderFooter = ! socialConnect && ! isJetpackMagicLinkSignUpFlow;
 
 		const footer = (
 			<>
@@ -269,7 +261,6 @@ export class Login extends Component {
 
 		return (
 			<LoginBlock
-				action={ action }
 				twoFactorAuthType={ twoFactorAuthType }
 				socialConnect={ socialConnect }
 				privateSite={ privateSite }
@@ -324,7 +315,6 @@ export default connect(
 		emailQueryParam:
 			getCurrentQueryArguments( state ).email_address ||
 			getInitialQueryArguments( state ).email_address,
-		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 	} ),
 	{
 		recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
