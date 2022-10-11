@@ -25,7 +25,7 @@ export const linkInBio: Flow = {
 			'patterns',
 			'processing',
 			'launchpad',
-			'plansLinkInBio',
+			'plans',
 		] as StepPath[];
 	},
 
@@ -64,12 +64,10 @@ export const linkInBio: Flow = {
 						) }&search=yes&hide_initial_query=yes`
 					);
 
-				case 'plansLinkInBio':
+				case 'plans':
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
 					);
-
-				// return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
