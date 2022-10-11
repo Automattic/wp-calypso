@@ -794,7 +794,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/plugins/#managing-plugins' );
+				return localizeUrl( 'https://wordpress.com/support/plugins/use-your-plugins/' );
 			},
 			post_id: 206930,
 			get title() {
