@@ -125,9 +125,7 @@ export function generateFlows( {
 			name: 'link-in-bio',
 			steps: [ 'domains' ],
 			destination: ( dependencies ) =>
-				`/setup/plansLinkInBio?flow=link-in-bio&siteSlug=${ encodeURIComponent(
-					dependencies.siteSlug
-				) }`,
+				`/setup/plans?flow=link-in-bio&siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-09-20',
 			dependencies: [ 'siteSlug' ],

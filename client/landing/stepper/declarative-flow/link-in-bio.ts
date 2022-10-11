@@ -84,12 +84,10 @@ export const linkInBio: Flow = {
 					//return navigate( 'plans' );
 					break;
 
-				case 'plansLinkInBio':
+				case 'plans':
 					return window.location.assign(
 						`/checkout/${ encodeURIComponent( siteSlug as string ) }?signup=1#step2`
 					);
-
-				// return navigate( 'launchpad' );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
