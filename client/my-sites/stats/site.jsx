@@ -277,15 +277,6 @@ class StatsSite extends Component {
 								showSummaryLink
 							/>
 							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className="stats__author-views"
-								showSummaryLink
-							/>
-							<StatsModule
 								path="videoplays"
 								moduleStrings={ moduleStrings.videoplays }
 								period={ this.props.period }
