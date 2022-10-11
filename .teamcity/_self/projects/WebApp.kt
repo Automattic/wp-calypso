@@ -578,7 +578,7 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 201
+		executionTimeoutMin = 20
 	}
 
 	features {
