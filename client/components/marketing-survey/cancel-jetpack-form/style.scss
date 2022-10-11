@@ -74,21 +74,28 @@
 	}
 
 	&__card-content {
-		display: flex;
 		align-items: center;
+		display: flex;
+		flex-direction: column;
 		justify-content: center;
+
 		width: 100%;
+
+		text-align: left;
 
 		@include break-medium {
 			justify-content: flex-start;
 		}
 	}
+
+	&__choice-item-text-input-label {
+		font-size: 0.875rem;
+		width: 100%;
+	}
 }
 
 input[type="text"].form-text-input.jetpack-cancellation-survey__choice-item-text-input {
-	border: none;
-	padding: 0;
-	margin-left: 1rem;
+	margin-top: 0.5em;
 }
 
 // Cancellation offer step

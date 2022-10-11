@@ -41,22 +41,25 @@ export default function JetpackCancellationSurvey( {
 			id: 'could-not-activate',
 			answerText: translate( 'I was unable to activate or use the product.' ),
 		},
+		{
+			id: 'dont-need-website',
+			answerText: translate( 'I no longer need a website.' ),
+		},
+		{
+			id: 'another-reason',
+			answerText: translate( 'Other' ),
+		},
 	];
-
-	const choiceOther: Choice = {
-		id: 'another-reason',
-		answerText: translate( 'Other:' ),
-	};
 
 	const selectAnswer = useCallback(
 		( answerId: string ) => {
-			// prevent from sending the answer text if it's not a custom answer
-			const surveyAnswerText =
-				choiceOther.id === answerId && customAnswerText ? customAnswerText : '';
+			// Reset custom answer text anytime an answer changes
+			const textFieldValue = selectedAnswerId === answerId ? customAnswerText : '';
 
-			onAnswerChange( answerId, surveyAnswerText );
+			onAnswerChange( answerId, textFieldValue );
+			setCustomAnswerText( textFieldValue );
 		},
-		[ choiceOther.id, customAnswerText, onAnswerChange ]
+		[ onAnswerChange, setCustomAnswerText, customAnswerText, selectedAnswerId ]
 	);
 
 	const onChangeCustomAnswerText = useCallback(
@@ -70,17 +73,41 @@ export default function JetpackCancellationSurvey( {
 	);
 
 	const renderChoiceCard = ( choice: Choice ) => {
+		const isSelected = choice.id === selectedAnswerId;
+		const textAnswerLabel =
+			choice.id === 'another-reason'
+				? translate( 'Share your experience (required)' )
+				: translate( 'Are there any details you would like to share?' );
+
 		return (
 			<Card
 				className={ classnames( 'jetpack-cancellation-survey__card', {
-					'is-selected': choice.id === selectedAnswerId,
+					'is-selected': isSelected,
 				} ) }
-				tagName="button"
-				onClick={ () => selectAnswer( choice.id ) }
+				id={ choice.id }
 				key={ choice.id }
+				onClick={ () => selectAnswer( choice.id ) }
+				tagName="button"
 			>
 				<div className="jetpack-cancellation-survey__card-content">
-					<span>{ choice.answerText }</span>
+					<p>{ choice.answerText }</p>
+					{ isSelected && (
+						<>
+							<label
+								className="jetpack-cancellation-survey__choice-item-text-input-label"
+								htmlFor={ `${ choice.id }-text-answer` }
+							>
+								{ textAnswerLabel }
+							</label>
+							<FormTextInput
+								className="jetpack-cancellation-survey__choice-item-text-input"
+								id={ `${ choice.id }-text-answer` }
+								inputRef={ customAnswerInputRef }
+								onChange={ onChangeCustomAnswerText }
+								value={ customAnswerText }
+							/>
+						</>
+					) }
 				</div>
 			</Card>
 		);
@@ -95,30 +122,6 @@ export default function JetpackCancellationSurvey( {
 				isSecondary={ true }
 			/>
 			{ choices.map( renderChoiceCard ) }
-
-			{ /* The card for the 'other' option */ }
-			<Card
-				key={ choiceOther.id }
-				className={ classnames( 'jetpack-cancellation-survey__card', {
-					'is-selected': choiceOther.id === selectedAnswerId,
-				} ) }
-				tagName="button"
-				onClick={ () => {
-					selectAnswer( choiceOther.id );
-					customAnswerInputRef?.current?.focus();
-				} }
-			>
-				<div className="jetpack-cancellation-survey__card-content">
-					<span>{ choiceOther.answerText }</span>
-					<FormTextInput
-						inputRef={ customAnswerInputRef }
-						className="jetpack-cancellation-survey__choice-item-text-input"
-						value={ customAnswerText }
-						onChange={ onChangeCustomAnswerText }
-						placeholder={ translate( 'share your experience' ) }
-					/>
-				</div>
-			</Card>
 		</>
 	);
 }
