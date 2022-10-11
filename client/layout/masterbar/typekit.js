@@ -1,9 +1,13 @@
 /* global Typekit */
-import { isCalypsoLive } from '@automattic/calypso-config';
+import calypsoConfig from '@automattic/calypso-config';
 
-if ( typeof document !== 'undefined' && typeof isCalypsoLive === 'function' && ! isCalypsoLive() ) {
+if ( typeof document !== 'undefined' ) {
 	// Load fonts - https://helpx.adobe.com/fonts/using/embed-codes.html
 	( function ( d ) {
+		if ( calypsoConfig( 'env_id' ) === 'test' ) {
+			return;
+		}
+
 		const config = {
 			kitId: 'ivy2obh',
 			scriptTimeout: 3000,
