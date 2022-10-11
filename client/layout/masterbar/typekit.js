@@ -1,7 +1,7 @@
 /* global Typekit */
-// import { isCalypsoLive } from '@automattic/calypso-config';
+import calypsoConfig from '@automattic/calypso-config';
 
-if ( typeof document !== 'undefined' ) {
+if ( typeof document !== 'undefined' && calypsoConfig( 'env_id' ) !== 'test' ) {
 	// Load fonts - https://helpx.adobe.com/fonts/using/embed-codes.html
 	( function ( d ) {
 		const config = {
