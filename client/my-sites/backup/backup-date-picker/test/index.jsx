@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * Default mock implementations
  */
 const mockUseDispatch = () => () => null;
@@ -28,7 +32,8 @@ jest.mock( '../hooks', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useQuery } from 'react-query';
@@ -37,7 +42,6 @@ import BackupDatePicker from '..';
 import { useCanGoToDate } from '../hooks';
 
 const realDateNow = Date.now;
-const getTracksEventName = ( event ) => event.meta.analytics[ 0 ].payload.name;
 
 describe( 'BackupDatePicker', () => {
 	beforeEach( () => {
@@ -55,206 +59,189 @@ describe( 'BackupDatePicker', () => {
 	// --- DATE DISPLAY ---
 
 	test( "Shows 'Yesterday' as the previous date if the current date is today", () => {
+		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+
 		const today = moment();
-
-		const picker = shallow( <BackupDatePicker selectedDate={ today } onDateChange={ () => {} } /> );
-
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--previous .backup-date-picker__display-date'
+		const { asFragment } = render(
+			<BackupDatePicker selectedDate={ today } onDateChange={ () => {} } />
 		);
-		expect( previousDate.text() ).toEqual( 'Yesterday' );
+
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows only the month and date for the previous date if it's the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const november4Of2020 = moment().subtract( 1, 'month' );
-		expect( november4Of2020.isSame( moment( '2020-11-04' ), 'day' ) ).toEqual( true );
 
-		const picker = shallow(
+		const { asFragment } = render(
 			<BackupDatePicker selectedDate={ november4Of2020 } onDateChange={ () => {} } />
 		);
 
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--previous .backup-date-picker__display-date'
-		);
-
-		const expectedText = moment( november4Of2020 ).subtract( 1, 'day' ).format( 'MMM D' );
-		expect( previousDate.text() ).toEqual( expectedText );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows month, date, and year for the previous date if it's not the same year as today", () => {
+		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const oneYearAgo = moment().subtract( 1, 'year' );
 
-		const picker = shallow(
+		const { asFragment } = render(
 			<BackupDatePicker selectedDate={ oneYearAgo } onDateChange={ () => {} } />
 		);
 
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--previous .backup-date-picker__display-date'
-		);
-
-		const expectedText = moment( oneYearAgo ).subtract( 1, 'day' ).format( 'MMM D, YYYY' );
-		expect( previousDate.text() ).toEqual( expectedText );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Shows month and date for the next date if it's in the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const december4Of2020 = moment();
-		expect( december4Of2020.isSame( moment( '2020-12-04' ), 'day' ) ).toEqual( true );
 
-		const picker = shallow(
+		const { asFragment } = render(
 			<BackupDatePicker selectedDate={ december4Of2020 } onDateChange={ () => {} } />
 		);
 
-		const nextDate = picker.find(
-			'.backup-date-picker__select-date--next .backup-date-picker__display-date'
-		);
-
-		const expectedText = moment( december4Of2020 ).add( 1, 'day' ).format( 'MMM D' );
-		expect( nextDate.text() ).toEqual( expectedText );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	test( "Does not show the next date as 'Yesterday' even if it is yesterday", () => {
-		const today = moment();
+		const twoDaysBefore = moment().subtract( 2, 'days' );
+		render( <BackupDatePicker selectedDate={ twoDaysBefore } onDateChange={ () => {} } /> );
 
-		const picker = shallow( <BackupDatePicker selectedDate={ today } onDateChange={ () => {} } /> );
-
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--next .backup-date-picker__display-date'
-		);
-		expect( previousDate.text() ).not.toEqual( 'Yesterday' );
+		expect( screen.queryByText( 'Yesterday' ) ).not.toBeInTheDocument();
 	} );
 
 	test( "Does not show the next date as 'Today', even if it is today", () => {
 		const yesterday = moment().subtract( 1, 'day' );
 
-		const picker = shallow(
-			<BackupDatePicker selectedDate={ yesterday } onDateChange={ () => {} } />
-		);
+		render( <BackupDatePicker selectedDate={ yesterday } onDateChange={ () => {} } /> );
 
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--next .backup-date-picker__display-date'
-		);
-		expect( previousDate.text() ).not.toEqual( 'Today' );
+		expect( screen.queryByText( 'Today' ) ).not.toBeInTheDocument();
 	} );
 
 	test( "Shows month, date, and year for the next date if it's not the same year as today", () => {
+		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const twoYearsAgo = moment().subtract( 2, 'years' );
 
-		const picker = shallow(
+		const { asFragment } = render(
 			<BackupDatePicker selectedDate={ twoYearsAgo } onDateChange={ () => {} } />
 		);
 
-		const previousDate = picker.find(
-			'.backup-date-picker__select-date--next .backup-date-picker__display-date'
-		);
-
-		const expectedText = moment( twoYearsAgo ).add( 1, 'day' ).format( 'MMM D, YYYY' );
-		expect( previousDate.text() ).toEqual( expectedText );
+		expect( asFragment() ).toMatchSnapshot();
 	} );
 
 	// --- NAVIGATION ---
 
-	test( 'Navigates backward when the previous date is clicked', () =>
-		new Promise( ( done ) => {
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( -1 );
-				done();
-			};
+	test( 'Navigates backward when the previous date is clicked', async () => {
+		const user = userEvent.setup();
 
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } />
-			);
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
 
-			const button = picker.find( '.backup-date-picker__select-date--previous' );
-			button.simulate( 'click' );
-		} ) );
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-	test( 'Navigates forward when the next date is clicked', () =>
-		new Promise( ( done ) => {
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( 1 );
-				done();
-			};
+		const button = screen.getByText( 'Dec 31, 2019' );
+		await user.click( button );
 
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } />
-			);
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.subtract( 1, 'day' ) );
+	} );
 
-			const button = picker.find( '.backup-date-picker__select-date--next' );
-			button.simulate( 'click' );
-		} ) );
+	test( 'Navigates forward when the next date is clicked', async () => {
+		const user = userEvent.setup();
 
-	test( 'Navigates backward when the previous date is focused and the spacebar is pressed', () =>
-		new Promise( ( done ) => {
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( -1 );
-				done();
-			};
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
 
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } />
-			);
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-			const button = picker.find( '.backup-date-picker__select-date--previous' );
-			button.simulate( 'keydown', { key: ' ' } );
-		} ) );
+		const button = screen.getByText( 'Jan 2, 2020' );
+		await user.click( button );
 
-	test( 'Navigates forward when the next date is focused and the spacebar is pressed', () =>
-		new Promise( ( done ) => {
-			const selectedDate = moment( '2020-01-01' );
-			const onDateChange = ( date ) => {
-				expect( date.diff( selectedDate, 'days' ) ).toEqual( 1 );
-				done();
-			};
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );
+	} );
 
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } />
-			);
+	test( 'Navigates backward when the previous date is focused and the spacebar is pressed', async () => {
+		const user = userEvent.setup();
 
-			const button = picker.find( '.backup-date-picker__select-date--next' );
-			button.simulate( 'keydown', { key: ' ' } );
-		} ) );
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
+
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+
+		const button = screen.getAllByRole( 'button' )[ 0 ];
+		button.focus();
+		await user.keyboard( '[Space]' );
+
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.subtract( 1, 'day' ) );
+	} );
+
+	test( 'Navigates forward when the next date is focused and the spacebar is pressed', async () => {
+		const user = userEvent.setup();
+
+		const selectedDate = moment( '2020-01-01' );
+		const onDateChange = jest.fn();
+
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
+
+		const button = screen.getAllByRole( 'button' )[ 2 ];
+		button.focus();
+		await user.keyboard( '[Space]' );
+
+		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );
+	} );
 
 	// --- ANALYTICS ---
 
-	test( 'Records a Tracks event for backward navigation', () =>
-		new Promise( ( done ) => {
-			const checkPreviousDateTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_date_previous' );
-				done();
-			};
+	test( 'Records a Tracks event for backward navigation', async () => {
+		const user = userEvent.setup();
+		const selectedDate = moment( '2020-01-01' );
 
-			useDispatch.mockImplementation( () => checkPreviousDateTracksEvent );
+		const dispatchMock = jest.fn();
+		useDispatch.mockImplementation( () => dispatchMock );
 
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ moment() } onDateChange={ () => {} } />
-			);
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
-			picker.find( '.backup-date-picker__select-date--previous' ).simulate( 'click' );
-		} ) );
+		await user.click( screen.getByText( 'Dec 31, 2019' ) );
+		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
+			'calypso_jetpack_backup_date_previous'
+		);
+		expect( dispatchMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				meta: {
+					analytics: [
+						expect.objectContaining( {
+							payload: expect.objectContaining( { name: 'calypso_jetpack_backup_date_previous' } ),
+						} ),
+					],
+				},
+			} )
+		);
+	} );
 
-	test( 'Records a Tracks event for forward navigation', () =>
-		new Promise( ( done ) => {
-			const checkNextDateTracksEvent = ( event ) => {
-				const name = getTracksEventName( event );
-				expect( name ).toEqual( 'calypso_jetpack_backup_date_next' );
-				done();
-			};
+	test( 'Records a Tracks event for forward navigation', async () => {
+		const user = userEvent.setup();
+		const selectedDate = moment( '2020-01-01' );
 
-			useDispatch.mockImplementation( () => checkNextDateTracksEvent );
+		const dispatchMock = jest.fn();
+		useDispatch.mockImplementation( () => dispatchMock );
 
-			const sometimeInThePast = moment().subtract( 1, 'year' );
-			const picker = shallow(
-				<BackupDatePicker selectedDate={ sometimeInThePast } onDateChange={ () => {} } />
-			);
+		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
 
-			picker.find( '.backup-date-picker__select-date--next' ).simulate( 'click' );
-		} ) );
+		await user.click( screen.getByText( 'Jan 2, 2020' ) );
+		expect( dispatchMock.mock.calls[ 0 ][ 0 ].meta.analytics[ 0 ].payload.name ).toEqual(
+			'calypso_jetpack_backup_date_next'
+		);
+
+		expect( dispatchMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				meta: {
+					analytics: [
+						expect.objectContaining( {
+							payload: expect.objectContaining( { name: 'calypso_jetpack_backup_date_next' } ),
+						} ),
+					],
+				},
+			} )
+		);
+	} );
 } );

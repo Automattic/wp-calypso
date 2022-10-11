@@ -1,0 +1,526 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current date is today 1`] = `
+<DocumentFragment>
+  <div
+    class="backup-date-picker"
+  >
+    <div
+      class="backup-date-picker__select-date-container"
+    >
+      <div
+        class="backup-date-picker__select-date backup-date-picker__select-date--with-date-calendar-picker"
+      >
+        <div
+          class="backup-date-picker__select-date--previous"
+          role="button"
+          tabindex="0"
+        >
+          <button
+            class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
+            locale="en"
+            type="submit"
+          >
+            <svg
+              class="gridicon gridicons-chevron-left"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-chevron-left"
+              />
+            </svg>
+          </button>
+          <span
+            class="backup-date-picker__display-date"
+          >
+            Yesterday
+          </span>
+        </div>
+        <div
+          class="backup-date-picker__current-date"
+        >
+          <b>
+            Today
+          </b>
+        </div>
+        <div
+          class="backup-date-picker__select-date--next"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="backup-date-picker__next-date-link"
+          >
+            <span
+              class="backup-date-picker__display-date"
+            >
+              Dec 5
+            </span>
+            <button
+              class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
+              locale="en"
+              type="submit"
+            >
+              <svg
+                class="gridicon gridicons-chevron-right"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-chevron-right"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="backup-date-picker__date-button-container"
+    >
+      <button
+        class="button backup-date-picker__date-button-button"
+        type="button"
+      >
+        <svg
+          class="gridicon gridicons-calendar"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-calendar"
+          />
+        </svg>
+        Select Date
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`BackupDatePicker Shows month and date for the next date if it's in the same year as today 1`] = `
+<DocumentFragment>
+  <div
+    class="backup-date-picker"
+  >
+    <div
+      class="backup-date-picker__select-date-container"
+    >
+      <div
+        class="backup-date-picker__select-date backup-date-picker__select-date--with-date-calendar-picker"
+      >
+        <div
+          class="backup-date-picker__select-date--previous"
+          role="button"
+          tabindex="0"
+        >
+          <button
+            class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
+            locale="en"
+            type="submit"
+          >
+            <svg
+              class="gridicon gridicons-chevron-left"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-chevron-left"
+              />
+            </svg>
+          </button>
+          <span
+            class="backup-date-picker__display-date"
+          >
+            Yesterday
+          </span>
+        </div>
+        <div
+          class="backup-date-picker__current-date"
+        >
+          <b>
+            Today
+          </b>
+        </div>
+        <div
+          class="backup-date-picker__select-date--next"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="backup-date-picker__next-date-link"
+          >
+            <span
+              class="backup-date-picker__display-date"
+            >
+              Dec 5
+            </span>
+            <button
+              class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
+              locale="en"
+              type="submit"
+            >
+              <svg
+                class="gridicon gridicons-chevron-right"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-chevron-right"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="backup-date-picker__date-button-container"
+    >
+      <button
+        class="button backup-date-picker__date-button-button"
+        type="button"
+      >
+        <svg
+          class="gridicon gridicons-calendar"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-calendar"
+          />
+        </svg>
+        Select Date
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`BackupDatePicker Shows month, date, and year for the next date if it's not the same year as today 1`] = `
+<DocumentFragment>
+  <div
+    class="backup-date-picker"
+  >
+    <div
+      class="backup-date-picker__select-date-container"
+    >
+      <div
+        class="backup-date-picker__select-date backup-date-picker__select-date--with-date-calendar-picker"
+      >
+        <div
+          class="backup-date-picker__select-date--previous"
+          role="button"
+          tabindex="0"
+        >
+          <button
+            class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
+            locale="en"
+            type="submit"
+          >
+            <svg
+              class="gridicon gridicons-chevron-left"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-chevron-left"
+              />
+            </svg>
+          </button>
+          <span
+            class="backup-date-picker__display-date"
+          >
+            Dec 3, 2018
+          </span>
+        </div>
+        <div
+          class="backup-date-picker__current-date"
+        >
+          <b>
+            Dec 4, 2018
+          </b>
+        </div>
+        <div
+          class="backup-date-picker__select-date--next"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="backup-date-picker__next-date-link"
+          >
+            <span
+              class="backup-date-picker__display-date"
+            >
+              Dec 5, 2018
+            </span>
+            <button
+              class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
+              locale="en"
+              type="submit"
+            >
+              <svg
+                class="gridicon gridicons-chevron-right"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-chevron-right"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="backup-date-picker__date-button-container"
+    >
+      <button
+        class="button backup-date-picker__date-button-button"
+        type="button"
+      >
+        <svg
+          class="gridicon gridicons-calendar"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-calendar"
+          />
+        </svg>
+        Select Date
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`BackupDatePicker Shows month, date, and year for the previous date if it's not the same year as today 1`] = `
+<DocumentFragment>
+  <div
+    class="backup-date-picker"
+  >
+    <div
+      class="backup-date-picker__select-date-container"
+    >
+      <div
+        class="backup-date-picker__select-date backup-date-picker__select-date--with-date-calendar-picker"
+      >
+        <div
+          class="backup-date-picker__select-date--previous"
+          role="button"
+          tabindex="0"
+        >
+          <button
+            class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
+            locale="en"
+            type="submit"
+          >
+            <svg
+              class="gridicon gridicons-chevron-left"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-chevron-left"
+              />
+            </svg>
+          </button>
+          <span
+            class="backup-date-picker__display-date"
+          >
+            Dec 3, 2019
+          </span>
+        </div>
+        <div
+          class="backup-date-picker__current-date"
+        >
+          <b>
+            Dec 4, 2019
+          </b>
+        </div>
+        <div
+          class="backup-date-picker__select-date--next"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="backup-date-picker__next-date-link"
+          >
+            <span
+              class="backup-date-picker__display-date"
+            >
+              Dec 5, 2019
+            </span>
+            <button
+              class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
+              locale="en"
+              type="submit"
+            >
+              <svg
+                class="gridicon gridicons-chevron-right"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-chevron-right"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="backup-date-picker__date-button-container"
+    >
+      <button
+        class="button backup-date-picker__date-button-button"
+        type="button"
+      >
+        <svg
+          class="gridicon gridicons-calendar"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-calendar"
+          />
+        </svg>
+        Select Date
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`BackupDatePicker Shows only the month and date for the previous date if it's the same year as today 1`] = `
+<DocumentFragment>
+  <div
+    class="backup-date-picker"
+  >
+    <div
+      class="backup-date-picker__select-date-container"
+    >
+      <div
+        class="backup-date-picker__select-date backup-date-picker__select-date--with-date-calendar-picker"
+      >
+        <div
+          class="backup-date-picker__select-date--previous"
+          role="button"
+          tabindex="0"
+        >
+          <button
+            class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
+            locale="en"
+            type="submit"
+          >
+            <svg
+              class="gridicon gridicons-chevron-left"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-chevron-left"
+              />
+            </svg>
+          </button>
+          <span
+            class="backup-date-picker__display-date"
+          >
+            Nov 3
+          </span>
+        </div>
+        <div
+          class="backup-date-picker__current-date"
+        >
+          <b>
+            Nov 4
+          </b>
+        </div>
+        <div
+          class="backup-date-picker__select-date--next"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="backup-date-picker__next-date-link"
+          >
+            <span
+              class="backup-date-picker__display-date"
+            >
+              Nov 5
+            </span>
+            <button
+              class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
+              locale="en"
+              type="submit"
+            >
+              <svg
+                class="gridicon gridicons-chevron-right"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <use
+                  xlink:href="gridicons.svg#gridicons-chevron-right"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="backup-date-picker__date-button-container"
+    >
+      <button
+        class="button backup-date-picker__date-button-button"
+        type="button"
+      >
+        <svg
+          class="gridicon gridicons-calendar"
+          height="24"
+          viewBox="0 0 24 24"
+          width="24"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <use
+            xlink:href="gridicons.svg#gridicons-calendar"
+          />
+        </svg>
+        Select Date
+      </button>
+    </div>
+  </div>
+</DocumentFragment>
+`;
