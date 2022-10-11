@@ -4,7 +4,6 @@
 	"reportInvalidScopeDisables": true,
 	"reportNeedlessDisables": true,
 	"rules": {
-		"no-duplicate-selectors": [ true, { "severity": "warning" } ],
 		"declaration-block-no-duplicate-properties": [ true, { "severity": "warning" } ],
 		"color-named": [ "never", { "severity": "warning" } ],
 		"at-rule-empty-line-before": null,

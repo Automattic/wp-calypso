@@ -536,6 +536,7 @@
 
 .reader-full-post .reader-post-card__tag-link {
 	color: var(--color-neutral-80);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	margin-top: 2px;
 	white-space: nowrap;
