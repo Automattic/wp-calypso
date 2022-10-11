@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { isPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
@@ -85,7 +85,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsiteWithSubscription =
 		isPluginInstalledOnsite && ! isMarketplaceProduct
 			? true
-			: isPluginPurchased( plugin, purchases, isMarketplaceProduct );
+			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);

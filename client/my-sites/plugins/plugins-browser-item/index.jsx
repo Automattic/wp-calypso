@@ -11,7 +11,7 @@ import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
-import { isPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -286,7 +286,7 @@ const InstalledInOrPricing = ( {
 	const isPluginActiveOnsiteWithSubscription =
 		active && ! isMarketplaceProduct
 			? true
-			: isPluginPurchased( plugin, purchases, isMarketplaceProduct );
+			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 

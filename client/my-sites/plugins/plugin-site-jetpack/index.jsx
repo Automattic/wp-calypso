@@ -7,6 +7,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
+import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
@@ -35,15 +36,7 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 	);
 	const [ isMobileLayout, setIsMobileLayout ] = useState();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
-	const currentPurchase =
-		plugin.isMarketplaceProduct &&
-		purchases.find( ( purchase ) =>
-			Object.values( plugin?.variations ).some(
-				( variation ) =>
-					variation.product_slug === purchase.productSlug ||
-					variation.product_id === purchase.productId
-			)
-		);
+	const currentPurchase = getPluginPurchased( plugin, purchases, plugin.isMarketplaceProduct );
 
 	useEffect( () => {
 		if ( isWithinBreakpoint( '<1040px' ) ) {
