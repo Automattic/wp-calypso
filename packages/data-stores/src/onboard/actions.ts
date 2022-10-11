@@ -262,10 +262,22 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
-export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
-	type: 'SET_PENDING_ACTION' as const,
-	pendingAction,
-} );
+export const setPendingAction = (
+	pendingAction: undefined | ( () => Promise< any > ),
+	multipleActions = false
+) => {
+	if ( multipleActions ) {
+		return {
+			type: 'SET_PENDING_ACTIONS' as const,
+			pendingAction,
+		};
+	}
+
+	return {
+		type: 'SET_PENDING_ACTION' as const,
+		pendingAction,
+	};
+};
 
 export const setProgress = ( progress: number ) => ( {
 	type: 'SET_PROGRESS' as const,
