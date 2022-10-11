@@ -44,7 +44,7 @@ import {
 	withAnalytics,
 } from 'calypso/state/analytics/actions';
 import { updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
-import { getAreJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
@@ -430,13 +430,13 @@ class ActivityLog extends Component {
 			isJetpack,
 			isIntroDismissed,
 			isMultisite,
-			areJetpackCredentialsInvalid,
+			areCredentialsInvalid,
 		} = this.props;
 
 		const disableRestore =
 			! enableRewind ||
 			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
-			areJetpackCredentialsInvalid ||
+			areCredentialsInvalid ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
@@ -692,7 +692,7 @@ export default connect(
 			hasFullActivityLog: siteHasFeature( state, siteId, WPCOM_FEATURES_FULL_ACTIVITY_LOG ),
 			isIntroDismissed: getPreference( state, 'dismissible-card-activity-introduction-banner' ),
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
-			areJetpackCredentialsInvalid: getAreJetpackCredentialsInvalid( state, siteId, 'main' ),
+			areCredentialsInvalid: areJetpackCredentialsInvalid( state, siteId, 'main' ),
 		};
 	},
 	{

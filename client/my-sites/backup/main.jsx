@@ -23,7 +23,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getAreJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -127,8 +127,8 @@ function AdminContent( { selectedDate } ) {
 	const activityLogFilter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const isFiltering = ! isFilterEmpty( activityLogFilter );
 
-	const areJetpackCredentialsInvalid = useSelector( ( state ) =>
-		getAreJetpackCredentialsInvalid( state, siteId, 'main' )
+	const areCredentialsInvalid = useSelector( ( state ) =>
+		areJetpackCredentialsInvalid( state, siteId, 'main' )
 	);
 
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
@@ -159,7 +159,7 @@ function AdminContent( { selectedDate } ) {
 						onDateChange={ onDateChange }
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
-						areJetpackCredentialsInvalid={ areJetpackCredentialsInvalid }
+						areCredentialsInvalid={ areCredentialsInvalid }
 					/>
 				</>
 			) }
@@ -167,12 +167,7 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( {
-	selectedDate,
-	needCredentials,
-	onDateChange,
-	areJetpackCredentialsInvalid,
-} ) {
+function BackupStatus( { selectedDate, needCredentials, onDateChange, areCredentialsInvalid } ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 
@@ -188,8 +183,8 @@ function BackupStatus( {
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				{ ( needCredentials || areJetpackCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ! areJetpackCredentialsInvalid && hasRealtimeBackups && (
+				{ ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
+				{ ! needCredentials && ! areCredentialsInvalid && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
 
