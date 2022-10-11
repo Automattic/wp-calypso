@@ -1,6 +1,6 @@
 # Query Jetpack Credentials Status
 
-`<QueryJetpackCredentialsStatus />` is a React component which dispatches actions for testing Jetpack Credentials to determinate if they are still valid or not.
+`<QueryJetpackCredentialsStatus />` is a React component that dispatches actions for testing Jetpack Credentials to determine whether they are still valid.
 ## Usage
 
 Render the component, passing `siteId` and `role`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
