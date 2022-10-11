@@ -1,15 +1,18 @@
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
 import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
+import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const defaultDevice = DEVICE_TYPE.COMPUTER;
+	const flow = useFlowParam();
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
+	const defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
