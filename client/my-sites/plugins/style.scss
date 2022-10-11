@@ -305,7 +305,7 @@ body.is-section-plugins #primary {
 
 	.categories__menu {
 		.components-button {
-			&:not(.is-pressed) {
+			&:not(.is-pressed):not(.is-selected) {
 				color: var(--studio-blue-90);
 			}
 			&.is-pressed {

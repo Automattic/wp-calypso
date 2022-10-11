@@ -26,7 +26,7 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 	const inviteMessage = `Test invite for role of ${ role }`;
 	const credentials = SecretsManager.secrets.testAccounts.defaultUser;
 
-	let adjustedInviteLink: string;
+	let acceptInviteLink: string;
 	let peoplePage: PeoplePage;
 	let page: Page;
 	let restAPIClient: RestAPIClient;
@@ -50,13 +50,9 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 				sentTo: testEmailAddress,
 			} );
 			const links = await emailClient.getLinksFromMessage( message );
-			const acceptInviteLink = links.find( ( link: string ) =>
+			acceptInviteLink = links.find( ( link: string ) =>
 				link.includes( 'accept-invite' )
 			) as string;
-
-			expect( acceptInviteLink ).toBeDefined();
-
-			adjustedInviteLink = DataHelper.adjustInviteLink( acceptInviteLink );
 		} );
 	} );
 
@@ -83,10 +79,9 @@ describe( DataHelper.createSuiteTitle( `Invite: Revoke` ), function () {
 			revoked = true;
 		} );
 
-		// see: https://a8c.slack.com/archives/C02DQP0FP/p1663592311997839
-		it.skip( `Ensure invite link is no longer valid`, async function () {
+		it( `Ensure invite link is no longer valid`, async function () {
 			const newPage = await browser.newPage();
-			await newPage.goto( adjustedInviteLink );
+			await newPage.goto( acceptInviteLink );
 
 			// Text selector will suffice for now.
 			await newPage.waitForSelector( `:text("Oops, that invite is not valid")` );

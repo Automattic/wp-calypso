@@ -175,6 +175,13 @@
 	&.notice {
 		margin-bottom: 16px;
 	}
+	.button {
+		margin-bottom: 16px;
+	}
+	.migrate__info {
+		width: 100%;
+		margin: 10px auto 0;
+	}
 }
 
 .migrate__card-footer {
@@ -311,14 +318,4 @@
 
 .migrate__buttons-wrapper {
 	margin: 24px 0 8px;
-}
-
-.migrate__error {
-	.button {
-		margin-bottom: 16px;
-	}
-	.migrate__info {
-		width: 100%;
-		margin: 10px auto 0;
-	}
 }

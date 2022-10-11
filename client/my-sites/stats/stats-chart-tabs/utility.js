@@ -35,6 +35,11 @@ export function getQueryDate( queryDate, timezoneOffset, period, quantity ) {
 }
 
 const EMPTY_RESULT = [];
+
+// `activeLegend` is used to display a (chart) bar in a bar. After deleting a legend on the Stats page, the property is redudnant and
+// always receives an empty array. I didn't remove the argument in case other places use it.
+// Side note: passing an empty array in a connect() method breaks the memoization, it has to come as a prop, not from within connect() - otherwise,
+// chart's x-axis width or the amount of visible points is calclulated incorrectly
 export const buildChartData = memoizeLast( ( activeLegend, chartTab, data, period, queryDate ) => {
 	if ( ! data ) {
 		return EMPTY_RESULT;

@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
 import { DEFAULT_HEARTBEAT } from 'calypso/components/data/query-site-stats/constants';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -22,6 +21,8 @@ import { buildChartData, getQueryDate } from './utility';
 
 import './style.scss';
 
+const COMPONENT_CSS_CLASS_NAME = 'is-chart-tabs';
+
 const ChartTabShape = PropTypes.shape( {
 	attr: PropTypes.string,
 	gridicon: PropTypes.string,
@@ -31,9 +32,8 @@ const ChartTabShape = PropTypes.shape( {
 
 class StatModuleChartTabs extends Component {
 	static propTypes = {
-		activeLegend: PropTypes.arrayOf( PropTypes.string ),
+		activeLegend: PropTypes.arrayOf( PropTypes.string ), // used by chart legend
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ),
 		charts: PropTypes.arrayOf( ChartTabShape ),
 		counts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -47,7 +47,6 @@ class StatModuleChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
-		onChangeLegend: PropTypes.func.isRequired,
 	};
 
 	intervalId = null;
@@ -64,24 +63,6 @@ class StatModuleChartTabs extends Component {
 		}
 	}
 
-	onLegendClick = ( chartItem ) => {
-		const activeLegend = this.props.activeLegend.slice();
-		const chartIndex = activeLegend.indexOf( chartItem );
-		let gaEventAction;
-		if ( -1 === chartIndex ) {
-			activeLegend.push( chartItem );
-			gaEventAction = ' on';
-		} else {
-			activeLegend.splice( chartIndex );
-			gaEventAction = ' off';
-		}
-		this.props.recordGoogleEvent(
-			'Stats',
-			`Toggled Nested Chart ${ chartItem } ${ gaEventAction }`
-		);
-		this.props.onChangeLegend( activeLegend );
-	};
-
 	startQueryInterval() {
 		// NOTE: Unpredictable behavior will arise if DEFAULT_HEARTBEAT < request duration!
 		Number.isFinite( this.intervalId ) && clearInterval( this.intervalId );
@@ -93,18 +74,15 @@ class StatModuleChartTabs extends Component {
 
 	render() {
 		const { isActiveTabLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+		const classes = [
+			'stats-module',
+			COMPONENT_CSS_CLASS_NAME,
+			{ 'is-loading': isActiveTabLoading },
+		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return (
 			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
-				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
-				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart
@@ -149,6 +127,8 @@ const connectComponent = connect(
 
 		const quantity = 'year' === period ? 10 : 30;
 		const counts = getCountRecords( state, siteId, period );
+		// `activeLegend` is used to display additional bar chart when available. After removing the legend it's redundant.
+		// Passing an empty array instead of activeLegend in `connect()` breaks memoization of `buildChartData()` and breaks x-axis label positioning.
 		const chartData = buildChartData( activeLegend, chartTab, counts, period, queryDate );
 		const loadingTabs = getLoadingTabs( state, siteId, period );
 		const isActiveTabLoading = loadingTabs.includes( chartTab ) || chartData.length !== quantity;

@@ -660,6 +660,7 @@ class ThemeSheet extends Component {
 			translate,
 			canUserUploadThemes,
 			isWPForTeamsSite,
+			isLoggedIn,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -785,7 +786,11 @@ class ThemeSheet extends Component {
 				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } />
-				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
+				<PageViewTracker
+					path={ analyticsPath }
+					title={ analyticsPageTitle }
+					properties={ { is_logged_in: isLoggedIn } }
+				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source={ 'details' } />

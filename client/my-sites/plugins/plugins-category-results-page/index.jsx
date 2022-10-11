@@ -14,7 +14,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.name || category;
-	const categoryDescription = categories[ category ]?.categoryDescription;
+	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
 
 	let title = '';

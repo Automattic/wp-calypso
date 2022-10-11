@@ -22,7 +22,12 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					</div>
 				) }
 				{ ! useAccordionLayout && (
-					<h3 className="site-setup-list__task-title task__title">{ currentTask.title }</h3>
+					<>
+						{ currentTask.icon }
+						<h3 className="site-setup-list__task-title task__title">
+							{ currentTask.subtitle || currentTask.title }
+						</h3>
+					</>
 				) }
 				<p className="site-setup-list__task-description task__description">
 					{ currentTask.description }
@@ -33,6 +38,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						<Button
 							className={ classnames( 'site-setup-list__task-action', 'task__action', {
 								'is-link': currentTask.actionIsLink,
+								'is-jetpack-branded': currentTask.jetpackBranding,
 							} ) }
 							primary={ ! currentTask.actionIsLink }
 							onClick={ () => startTask() }

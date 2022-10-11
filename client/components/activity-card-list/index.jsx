@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -321,6 +322,7 @@ class ActivityCardList extends Component {
 				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
+				<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
 
 				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
 				{ logs && this.renderData() }

@@ -128,7 +128,7 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://learn.wordpress.com' ) }
+							href={ localizeUrl( 'https://www.wordpress.com/support' ) }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__format-list-numbered"
@@ -148,7 +148,6 @@ export const HelpCenterMoreResources = () => {
 							{ showWhatsNewDot && (
 								<Icon className="inline-help__new-releases_dot" icon={ circle } size={ 16 } />
 							) }
-							<Icon icon={ external } size={ 20 } />
 						</Button>
 					</div>
 				</li>

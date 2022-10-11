@@ -4,6 +4,7 @@ import page from 'page';
 import { useSelector } from 'react-redux';
 import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
@@ -13,7 +14,7 @@ import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-li
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -27,9 +28,11 @@ interface Props {
 
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const test = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = test;
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteId = selectedSite?.ID;
+
+	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
+	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
 
 	const tabs: TabOption[] = [
 		{ id: 'posts', name: translate( 'Ready to promote' ) },
@@ -60,6 +63,28 @@ export default function PromotedPosts( { tab }: Props ) {
 				}
 		  );
 
+	if ( selectedSite?.is_coming_soon ) {
+		return (
+			<EmptyContent
+				className="campaigns-empty"
+				title={ translate( 'Site is not published' ) }
+				line={ translate( 'Start promoting posts by publishing your site' ) }
+				illustration={ null }
+			/>
+		);
+	}
+
+	if ( selectedSite?.is_private ) {
+		return (
+			<EmptyContent
+				className="campaigns-empty"
+				title={ translate( 'Site is private' ) }
+				line={ translate( 'Start promoting posts by making public your site' ) }
+				illustration={ null }
+			/>
+		);
+	}
+
 	return (
 		<Main wideLayout className="promote-post">
 			<DocumentHead title={ translate( 'Advertising' ) } />
@@ -72,6 +97,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				align="left"
 			/>
 			<SitePreview />
+
 			{ ! campaignsData?.length && ! campaignsIsLoading && <PostsListBanner /> }
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && (

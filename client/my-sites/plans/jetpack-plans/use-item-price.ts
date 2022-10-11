@@ -25,6 +25,7 @@ interface ItemPrices {
 	isFetching: boolean | null;
 	originalPrice: number;
 	discountedPrice?: number;
+	discountedPriceDuration?: number;
 	priceTierList: PriceTierEntry[];
 }
 
@@ -155,6 +156,7 @@ const useItemPrice = (
 
 	let originalPrice = 0;
 	let discountedPrice = undefined;
+	let discountedPriceDuration = undefined;
 
 	if ( item && itemCost ) {
 		originalPrice = itemCost;
@@ -171,6 +173,7 @@ const useItemPrice = (
 				)
 			) {
 				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
+				discountedPriceDuration = 1;
 			}
 		}
 	}
@@ -192,6 +195,7 @@ const useItemPrice = (
 		isFetching,
 		originalPrice,
 		discountedPrice,
+		discountedPriceDuration,
 		priceTierList,
 	};
 };

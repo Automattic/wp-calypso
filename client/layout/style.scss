@@ -163,6 +163,7 @@ body.is-focus-sites {
 		left: 0;
 		pointer-events: none;
 		transform: translateX(calc(-1 * var(--sidebar-width-max)));
+		height: calc(100vh - var(--masterbar-height));
 
 		&.is-large .site-selector__sites {
 			border-color: var(--color-sidebar-border);
@@ -220,7 +221,7 @@ body.is-focus-sites {
 		border-color: var(--color-sidebar-text);
 	}
 
-	.app-promo .app-promo__link {
+	.app-promo {
 		box-shadow: 0 0 0 1px var(--color-sidebar-border), 0 1px 2px var(--color-sidebar-border);
 	}
 }

@@ -16,9 +16,8 @@ export type ItemVariationPickerProps = {
 	selectedItem: ResponseCartProduct;
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
-	siteId: number | undefined;
-	productSlug: string;
 	isLoading?: boolean;
+	variants: WPCOMProductVariant[];
 };
 
 export type OnChangeItemVariant = (

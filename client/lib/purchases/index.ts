@@ -41,51 +41,166 @@ import type { ReactChild } from 'react';
 
 const debug = debugFactory( 'calypso:purchases' );
 
-export interface SiteWithPurchases {
+interface PurchaseWithStatus extends Purchase {
+	currentPurchaseStatus: string;
+}
+
+interface PurchaseStatus {
+	[ key: string ]: number;
+}
+
+interface SiteStatus {
+	[ key: string ]: number;
+}
+
+interface SiteWithPurchases {
 	id: number;
 	name: string;
 	slug: string;
 	isDomainOnly: boolean;
 	title: string;
-	purchases: Purchase[];
+	purchases: PurchaseWithStatus[];
+	isConnected: boolean;
 	domain: string;
+	currentStatus?: string;
 }
+
 export type TracksProps = Record< string, string | number | boolean >;
+
+// Site Sort order: (all purchases are grouped by site) - Sorted by if
+// the site or purchases of the site require some action.
+const siteStatus: SiteStatus = {
+	disconnected: 10,
+	pendingActivation: 20,
+	hasExpired: 30,
+	hasExpiringSoon: 40,
+	hasPaymentMethodExpired: 50,
+	noPaymentActionNeeded: 60,
+	hasCannotManage: 100,
+};
+
+// Sort order of the Purchases of each site (sorted by purchase status)
+const purchaseStatus: PurchaseStatus = {
+	expired: 10,
+	paymentMethodExpired: 20,
+	expiringSoon: 30,
+	noPaymentActionNeeded: 40,
+	cannotManage: 100,
+};
+
+function getSitePurchasesStatus( site: SiteWithPurchases ) {
+	if ( ! site.isConnected ) {
+		if ( site.slug === 'siteless.jetpack.com' ) {
+			return 'pendingActivation';
+		}
+		return 'disconnected';
+	}
+	const { purchases } = site;
+
+	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'cannotManage' ) ) {
+		return 'hasCannotManage';
+	}
+	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'expired' ) ) {
+		return 'hasExpired';
+	}
+	if (
+		purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'paymentMethodExpired' )
+	) {
+		return 'hasPaymentMethodExpired';
+	}
+	if ( purchases.some( ( purchase ) => purchase.currentPurchaseStatus === 'expiringSoon' ) ) {
+		return 'hasExpiringSoon';
+	}
+
+	return 'noPaymentActionNeeded';
+}
+
+function getPurchaseStatus( purchase: PurchaseWithStatus ) {
+	const expiry = moment( purchase.expiryDate );
+
+	if ( purchase.isInAppPurchase || isPartnerPurchase( purchase ) ) {
+		return 'cannotManage';
+	}
+	if ( isExpired( purchase ) ) {
+		return 'expired';
+	}
+	if ( creditCardHasAlreadyExpired( purchase ) ) {
+		return 'paymentMethodExpired';
+	}
+	if (
+		( isExpiring( purchase ) &&
+			expiry < moment().add( 30, 'days' ) &&
+			! isRecentMonthlyPurchase( purchase ) ) ||
+		( isRenewing( purchase ) &&
+			purchase.renewDate &&
+			creditCardExpiresBeforeSubscription( purchase ) )
+	) {
+		return 'expiringSoon';
+	}
+
+	return 'noPaymentActionNeeded';
+}
 
 /**
  * Returns an array of sites objects, each of which contains an array of purchases.
+ * (Sorted by action needed, if any. (ie-. disconnected, pending activation, expired, etc..)
  */
 export function getPurchasesBySite(
 	purchases: Purchase[],
 	sites: SiteDetails[]
 ): SiteWithPurchases[] {
-	return purchases
-		.reduce( ( result: SiteWithPurchases[], currentValue ) => {
-			const site = result.find( ( site ) => site.id === currentValue.siteId );
+	const purchasesBySite = purchases.reduce( ( result: SiteWithPurchases[], currentValue ) => {
+		const site = result.find( ( site ) => site.id === currentValue.siteId );
 
-			if ( site ) {
-				site.purchases = site.purchases
-					.concat( currentValue )
-					.sort( ( a, b ) => ( a.id > b.id ? 1 : -1 ) );
-				return result;
-			}
+		if ( site ) {
+			site.purchases = site.purchases.concat( {
+				...currentValue,
+				currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
+			} ) as PurchaseWithStatus[];
+			site.isConnected = true;
+			return result;
+		}
 
-			const siteObject = sites.find( ( site ) => site.ID === currentValue.siteId );
+		const siteObject = sites.find( ( site ) => site.ID === currentValue.siteId );
 
-			return result.concat( {
-				id: currentValue.siteId,
-				name: currentValue.siteName,
-				/* if the purchase is attached to a deleted site,
-				 * there will be no site with this ID in `sites`, so
-				 * we fall back on the domain. */
-				slug: siteObject ? siteObject.slug : currentValue.domain,
-				isDomainOnly: siteObject?.options?.is_domain_only ?? false,
-				title: currentValue.siteName || currentValue.domain || '',
-				purchases: [ currentValue ],
-				domain: siteObject ? siteObject.domain : currentValue.domain,
-			} );
-		}, [] )
-		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
+		const accum = result.concat( {
+			id: currentValue.siteId,
+			name: currentValue.siteName,
+			/* if the purchase is attached to a deleted site,
+			 * there will be no site with this ID in `sites`, so
+			 * we fall back on the domain. */
+			slug: siteObject ? siteObject.slug : currentValue.domain,
+			isDomainOnly: siteObject?.options?.is_domain_only ?? false,
+			title: currentValue.siteName || currentValue.domain || '',
+			purchases: [
+				{
+					...currentValue,
+					currentPurchaseStatus: getPurchaseStatus( currentValue as PurchaseWithStatus ),
+				},
+			],
+			isConnected: siteObject ? true : false,
+			domain: siteObject ? siteObject.domain : currentValue.domain,
+		} );
+		return accum;
+	}, [] );
+
+	// Sort sites and each sites purchases by status importance.
+	return (
+		purchasesBySite
+			.map( ( site ) => ( {
+				...site,
+				// Sort site's purchases by currentPurchaseStatus importance (which is defined by the 'purchaseStatus' obj.)
+				purchases: site.purchases.sort(
+					( a, b ) =>
+						purchaseStatus[ a.currentPurchaseStatus ] - purchaseStatus[ b.currentPurchaseStatus ]
+				),
+				currentStatus: getSitePurchasesStatus( site ),
+			} ) )
+			// Sort sites by the importance of currentStatus (which is defined by the 'siteStatus' obj.)
+			.sort( ( a, b ) => {
+				return siteStatus[ a.currentStatus ] - siteStatus[ b.currentStatus ];
+			} )
+	);
 }
 
 /**

@@ -392,6 +392,7 @@ export class HelpContactForm extends PureComponent {
 			showQASuggestions,
 			showHelpLanguagePrompt,
 			showHidingUrlOption,
+			showChatStagingNotice,
 			translate,
 		} = this.props;
 		const hasQASuggestions = this.state.qanda.length > 0;
@@ -555,6 +556,18 @@ export class HelpContactForm extends PureComponent {
 								{ actionMessage }
 							</NoticeAction>
 						) }
+					</Notice>
+				) }
+				{ showChatStagingNotice && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text={ 'Targeting HappyChat staging' }
+					>
+						<NoticeAction href="https://hud-staging.happychat.io/" external>
+							HUD
+						</NoticeAction>
 					</Notice>
 				) }
 

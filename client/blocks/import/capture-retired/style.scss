@@ -73,10 +73,6 @@ $placeholder-color: #909398;
 			color: $placeholder-color;
 			line-height: normal;
 		}
-
-		&::-ms-clear {
-			display: none;
-		}
 	}
 
 	.capture__input-error-msg {

@@ -231,11 +231,6 @@
 	.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
 	.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		background-color: var(--color-primary);
-	}
-
-	.DayPicker-Day--range:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
-	.DayPicker-Day--start:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside),
-	.DayPicker-Day--end:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
 		.date-picker__day {
 			&:hover,
 			&:focus {
