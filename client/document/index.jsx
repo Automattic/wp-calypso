@@ -212,9 +212,15 @@ class Document extends Component {
 					{ chunkFiles.js.map( ( chunk ) => (
 						<script key={ chunk } src={ chunk } />
 					) ) }
-					<script nonce={ inlineScriptNonce } type="text/javascript">
+					<script
+						nonce={ inlineScriptNonce }
+						type="text/javascript"
+						dangerouslySetInnerHTML={ {
+							__html: `
 						window.AppBoot();
-					</script>
+						`,
+						} }
+					/>
 					<script
 						nonce={ inlineScriptNonce }
 						dangerouslySetInnerHTML={ {
