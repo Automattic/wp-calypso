@@ -74,9 +74,10 @@ const usePlugins = ( {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
-	const searchHook = isEnabled( 'marketplace-jetpack-plugin-search' )
-		? useESPluginsInfinite
-		: useWPORGInfinitePlugins;
+	const searchHook =
+		isEnabled( 'marketplace-jetpack-plugin-search' ) && search
+			? useESPluginsInfinite
+			: useWPORGInfinitePlugins;
 
 	const { localeSlug = '' } = useTranslate();
 	const wporgPluginsOptions = {
