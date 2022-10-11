@@ -30,11 +30,10 @@ class WP_REST_Help_Center_Fetch_Post extends \WP_REST_Controller {
 			$this->namespace,
 			'/' . $this->rest_base,
 			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_post' ),
-					'permission_callback' => array( $this, 'permission_callback' ),
-				),
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_post' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'show_in_index'       => false,
 			)
 		);
 	}

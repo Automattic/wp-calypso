@@ -30,18 +30,17 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 			$this->namespace,
 			'/' . $this->rest_base,
 			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_search_results' ),
-					'permission_callback' => array( $this, 'permission_callback' ),
-					'args'                => array(
-						'query'  => array(
-							'type' => 'string',
-						),
-						'locale' => array(
-							'type'    => 'string',
-							'default' => 'en',
-						),
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_search_results' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'show_in_index'       => false,
+				'args'                => array(
+					'query'  => array(
+						'type' => 'string',
+					),
+					'locale' => array(
+						'type'    => 'string',
+						'default' => 'en',
 					),
 				),
 			)

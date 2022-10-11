@@ -30,11 +30,10 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 			$this->namespace,
 			$this->rest_base . '/all',
 			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_all_support_eligibility' ),
-					'permission_callback' => array( $this, 'permission_callback' ),
-				),
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_all_support_eligibility' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'show_in_index'       => false,
 			)
 		);
 
@@ -42,11 +41,10 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 			$this->namespace,
 			$this->rest_base . '/chat',
 			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_chat_support_eligibility' ),
-					'permission_callback' => array( $this, 'permission_callback' ),
-				),
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_chat_support_eligibility' ),
+				'permission_callback' => array( $this, 'permission_callback' ),
+				'show_in_index'       => false,
 			)
 		);
 	}
