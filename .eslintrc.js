@@ -87,6 +87,7 @@ module.exports = {
 					'brace-style': 'off',
 					'comma-dangle': 'off',
 					'comma-spacing': 'off',
+					curly: 'error', // The base curly rule does not seem to apply to TS files as well.
 					'default-param-last': 'off',
 					'dot-notation': 'off',
 					'func-call-spacing': 'off',
@@ -293,6 +294,9 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		//
+		curly: 'error',
 
 		'no-constant-condition': [ 'error', { checkLoops: false } ],
 
