@@ -17,13 +17,8 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Notice from 'calypso/components/notice';
 import TextControl from 'calypso/components/text-control';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import {
-	getSignupUrl,
-	pathWithLeadingSlash,
-	isReactLostPasswordScreenEnabled,
-} from 'calypso/lib/login';
+import { getSignupUrl, pathWithLeadingSlash } from 'calypso/lib/login';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
-import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
@@ -43,7 +38,7 @@ import {
 	getSocialAccountLinkService,
 	isFormDisabled as isFormDisabledSelector,
 } from 'calypso/state/login/selectors';
-import { isPartnerSignupQuery, isRegularAccount } from 'calypso/state/login/utils';
+import { isRegularAccount } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
@@ -77,9 +72,7 @@ export class LoginForm extends Component {
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
 		isGutenboarding: PropTypes.bool,
-		isPartnerSignup: PropTypes.bool,
 		locale: PropTypes.string,
-		showSocialLoginFormOnly: PropTypes.bool,
 	};
 
 	state = {
@@ -161,32 +154,19 @@ export class LoginForm extends Component {
 	isFullView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			socialAccountIsLinking ||
-			( hasAccountTypeLoaded && isRegularAccount( accountType ) ) ||
-			( this.props.isWoo && ! this.props.isPartnerSignup )
-		);
+		return socialAccountIsLinking || ( hasAccountTypeLoaded && isRegularAccount( accountType ) );
 	}
 
 	isPasswordView() {
 		const { accountType, hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			! socialAccountIsLinking &&
-			hasAccountTypeLoaded &&
-			isRegularAccount( accountType ) &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
-		);
+		return ! socialAccountIsLinking && hasAccountTypeLoaded && isRegularAccount( accountType );
 	}
 
 	isUsernameOrEmailView() {
 		const { hasAccountTypeLoaded, socialAccountIsLinking } = this.props;
 
-		return (
-			! socialAccountIsLinking &&
-			! hasAccountTypeLoaded &&
-			! ( this.props.isWoo && ! this.props.isPartnerSignup )
-		);
+		return ! socialAccountIsLinking && ! hasAccountTypeLoaded;
 	}
 
 	resetView = ( event ) => {
@@ -220,10 +200,7 @@ export class LoginForm extends Component {
 	onSubmitForm = ( event ) => {
 		event.preventDefault();
 
-		const isWooAndNotPartnerSignup = this.props.isWoo && ! this.props.isPartnerSignup;
-
-		// Skip this step if we're in the Woo and not the partner signup flow, and hasAccountTypeLoaded.
-		if ( ! isWooAndNotPartnerSignup && ! this.props.hasAccountTypeLoaded ) {
+		if ( ! this.props.hasAccountTypeLoaded ) {
 			// Google Chrome on iOS will autofill without sending events, leading the user
 			// to see a filled box but getting an error. We fetch the value directly from
 			// the DOM as a workaround.
@@ -315,12 +292,12 @@ export class LoginForm extends Component {
 	};
 
 	recordWooCommerceLoginTracks( method ) {
-		const { isJetpackWooCommerceFlow, isWoo, wccomFrom } = this.props;
+		const { isJetpackWooCommerceFlow, oauth2Client, wccomFrom } = this.props;
 		if ( isJetpackWooCommerceFlow ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_login_jetpack_account', {
 				login_method: method,
 			} );
-		} else if ( isWoo && 'cart' === wccomFrom ) {
+		} else if ( isWooOAuth2Client( oauth2Client ) && 'cart' === wccomFrom ) {
 			this.props.recordTracksEvent( 'wcadmin_storeprofiler_payment_login', {
 				login_method: method,
 			} );
@@ -336,19 +313,6 @@ export class LoginForm extends Component {
 		}
 		this.recordWooCommerceLoginTracks( 'email' );
 		this.loginUser();
-	};
-
-	getLoginButtonText = () => {
-		const { translate, isWoo, wccomFrom } = this.props;
-		if ( this.isPasswordView() || this.isFullView() ) {
-			if ( isWoo && ! wccomFrom ) {
-				return translate( 'Get started' );
-			}
-
-			return translate( 'Log In' );
-		}
-
-		return translate( 'Continue' );
 	};
 
 	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
@@ -448,7 +412,9 @@ export class LoginForm extends Component {
 								onClick={ this.handleWooCommerceSubmit }
 								type="submit"
 							>
-								{ this.getLoginButtonText() }
+								{ this.isPasswordView() || this.isFullView()
+									? this.props.translate( 'Log In' )
+									: this.props.translate( 'Continue' ) }
 							</Button>
 						</div>
 
@@ -486,7 +452,7 @@ export class LoginForm extends Component {
 	}
 
 	renderUsernameorEmailLabel() {
-		if ( this.props.isP2Login || ( this.props.isWoo && ! this.props.isPartnerSignup ) ) {
+		if ( this.props.isP2Login ) {
 			return this.props.translate( 'Your email address or username' );
 		}
 
@@ -495,49 +461,9 @@ export class LoginForm extends Component {
 			: this.props.translate( 'Email Address or Username' );
 	}
 
-	renderLostPasswordLink() {
-		if ( isReactLostPasswordScreenEnabled() ) {
-			return (
-				<a
-					className="login__form-forgot-password"
-					href="/"
-					onClick={ ( event ) => {
-						event.preventDefault();
-						this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' );
-						page(
-							login( {
-								redirectTo: this.props.redirectTo,
-								locale: this.props.locale,
-								action: 'lostpassword',
-								oauth2ClientId: this.props.oauth2Client && this.props.oauth2Client.id,
-							} )
-						);
-					} }
-				>
-					{ this.props.translate( 'Forgot password?' ) }
-				</a>
-			);
-		}
-
-		return (
-			<a
-				className="login__form-forgot-password"
-				href={ lostPassword( this.props.locale ) }
-				onClick={ () => this.props.recordTracksEvent( 'calypso_login_reset_password_link_click' ) }
-				rel="external"
-			>
-				{ this.props.translate( 'Forgot password?' ) }
-			</a>
-		);
-	}
-
 	render() {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 
-		const isSubmitButtonDisabled =
-			this.props.isWoo && ! this.props.isPartnerSignup
-				? this.state.usernameOrEmail.trim().length === 0 || this.state.password.trim().length === 0
-				: isFormDisabled;
 		const {
 			accountType,
 			oauth2Client,
@@ -552,9 +478,6 @@ export class LoginForm extends Component {
 			currentQuery,
 			pathname,
 			locale,
-			showSocialLoginFormOnly,
-			isWoo,
-			isPartnerSignup,
 		} = this.props;
 		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
@@ -588,24 +511,6 @@ export class LoginForm extends Component {
 			}
 		);
 
-		if ( showSocialLoginFormOnly ) {
-			return config.isEnabled( 'signup/social' ) ? (
-				<Fragment>
-					<Divider>{ this.props.translate( 'or' ) }</Divider>
-					<SocialLoginForm
-						linkingSocialService={
-							this.props.socialAccountIsLinking ? this.props.socialAccountLinkService : null
-						}
-						onSuccess={ this.props.onSuccess }
-						socialService={ this.props.socialService }
-						socialServiceResponse={ this.props.socialServiceResponse }
-						uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-						shouldRenderToS={ true }
-					/>
-				</Fragment>
-			) : null;
-		}
-
 		if ( isJetpackWooCommerceFlow ) {
 			return this.renderWooCommerce( { socialToS } );
 		}
@@ -617,7 +522,7 @@ export class LoginForm extends Component {
 			} );
 		}
 
-		if ( isWoo && wccomFrom ) {
+		if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			return this.renderWooCommerce( { socialToS } );
 		}
 
@@ -696,11 +601,7 @@ export class LoginForm extends Component {
 								'is-hidden': isPasswordHidden,
 							} ) }
 						>
-							<FormLabel htmlFor="password">
-								{ this.props.isWoo && ! this.props.isPartnerSignup
-									? this.props.translate( 'Your password' )
-									: this.props.translate( 'Password' ) }
-							</FormLabel>
+							<FormLabel htmlFor="password">{ this.props.translate( 'Password' ) }</FormLabel>
 
 							<FormPasswordInput
 								autoCapitalize="off"
@@ -724,10 +625,12 @@ export class LoginForm extends Component {
 					</div>
 
 					<p className="login__form-terms">{ socialToS }</p>
-					{ this.props.isWoo && ! this.props.isPartnerSignup && this.renderLostPasswordLink() }
+
 					<div className="login__form-action">
-						<FormsButton primary disabled={ isSubmitButtonDisabled }>
-							{ this.getLoginButtonText() }
+						<FormsButton primary disabled={ isFormDisabled }>
+							{ this.isPasswordView() || this.isFullView()
+								? this.props.translate( 'Log In' )
+								: this.props.translate( 'Continue' ) }
 						</FormsButton>
 					</div>
 
@@ -756,7 +659,6 @@ export class LoginForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							uxMode={ this.shouldUseRedirectLoginFlow() ? 'redirect' : 'popup' }
-							shouldRenderToS={ this.props.isWoo && ! isPartnerSignup }
 						/>
 					</Fragment>
 				) }
@@ -787,8 +689,6 @@ export default connect(
 			isJetpackWooCommerceFlow:
 				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
 			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
-			isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
 			redirectTo: getRedirectToOriginal( state ),
 			requestError: getRequestError( state ),
 			socialAccountIsLinking: getSocialAccountIsLinking( state ),
