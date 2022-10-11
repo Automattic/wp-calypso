@@ -33,6 +33,7 @@ export const PluginPrice = ( { plugin, billingPeriod, children } ) => {
 		isFetching,
 		price,
 		period: getPeriodText( variationPeriod ),
+		isSaasProduct: isSaasProduct( plugin.slug, productList ),
 	} );
 };
 
@@ -46,4 +47,9 @@ export function getPeriodVariationValue( billingPeriod ) {
 		default:
 			return '';
 	}
+}
+
+function isSaasProduct( pluginSlug, productList ) {
+	const camelSlug = pluginSlug.replace( /-/g, '_' );
+	return productList[ camelSlug ]?.product_type === 'saas_plugin';
 }
