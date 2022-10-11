@@ -2,12 +2,14 @@
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { useLocale } from '@automattic/i18n-utils';
+import { addPlanToCart } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
-// import { useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { connect } from 'react-redux';
 import {
 	isNewsletterOrLinkInBioFlow,
@@ -22,14 +24,15 @@ import MarketingMessage from 'calypso/components/marketing-message';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ProvideExperimentData } from 'calypso/lib/explat';
-import { addPlanToCart } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { completeSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { ONBOARD_STORE } from '../../../../stores';
 import './style.scss';
 // import PlansStep from 'calypso/signup/steps/plans';
 
@@ -54,6 +57,18 @@ interface Props {
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
+	const { userLoggedIn } = useSelector( ( state ) => {
+		return {
+			userLoggedIn: isUserLoggedIn( state ),
+		};
+	} );
+
+	const { domainItem } = useSelect( ( select ) => {
+		return {
+			domainItem: select( ONBOARD_STORE ).getDomainItem(),
+		};
+	} );
+
 	const site = useSite();
 	const locale = useLocale();
 	const { __ } = useI18n();
@@ -70,7 +85,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const planTypes = undefined;
 	const headerText = 'Choose a plan';
 	const signupDependencies = {
-		domainItem: undefined,
 		emailItem: undefined,
 		shouldHideFreePlan: false,
 	};
@@ -79,7 +93,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		setIsDesktop( isDesktop );
 	}, [] );
 
-	const onSelectPlan = ( cartItem: any ) => {
+
+	const onSelectPlan = async ( cartItem: any ) => {
 		const { additionalStepData, stepSectionName, stepName, flowName } = props;
 
 		if ( cartItem ) {
@@ -110,25 +125,31 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			// link-in-bio flow always uses pub/lynx
 			submitSignupStep( step, {} );
 
-			props.processStep( step );
+			// props.processStep( step );
 
-			addPlanToCart(
-				() => {
-					completeSignupStep( step, {
-						cartItem,
-						themeSlugWithRepo: 'pub/lynx',
-					} );
-					props.goToNextStep( 'lanchpad' );
-				},
-				{ siteSlug: siteSlug },
-				step,
-				window.redux
-			);
+			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+			props.onSubmit?.();
+			console.log( 'Added to plan!', siteSlug, cartItem, flowName, userLoggedIn );
+			//TODO: How to deal with the theme pub/lynx? We do not use completesignupstep here
+
+			// addPlanToCart(
+			// 	() => {
+			// 		completeSignupStep( step, {
+			// 			cartItem,
+			// 			themeSlugWithRepo: 'pub/lynx',
+			// 		} );
+			// 		props.goToNextStep( 'lanchpad' );
+			// 	},
+			// 	{ siteSlug: siteSlug },
+			// 	step,
+			// 	window.redux
+			// );
 		}
 	};
 
 	const getDomainName = () => {
-		return signupDependencies.domainItem && signupDependencies.domainItem.meta;
+		console.log( 'GETDOMAINNAME', domainItem );
+		return domainItem && domainItem.meta;
 	};
 
 	const handleFreePlanButtonClick = () => {

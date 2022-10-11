@@ -1,4 +1,4 @@
-import { get, startsWith } from 'lodash';
+import { get, startsWith, isEmpty } from 'lodash';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import wpcom from 'calypso/lib/wp';
@@ -96,7 +96,7 @@ export const getNewSiteParams = ( {
 	return newSiteParams;
 };
 
-const createSiteWithCart = async (
+export const createSiteWithCart = async (
 	flowName,
 	siteUrl,
 	isManageSiteFlow,
@@ -198,8 +198,7 @@ const createSiteWithCart = async (
 
 	return providedDependencies;
 };
-( 'fdsfdsfsdfsdfsdfdsf533785833.wordpress.com' );
-211357354;
+
 export function addDomainToCart(
 	dependencies,
 	domainData,
@@ -225,6 +224,17 @@ function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
 			...( lastKnownFlow && { signup_flow: lastKnownFlow } ),
 		},
 	};
+}
+
+export async function addPlanToCart( siteSlug, cartItem, flowName, userIsLoggedIn ) {
+	if ( isEmpty( cartItem ) ) {
+		// the user selected the free plan
+		return;
+	}
+
+	const newCartItems = [ cartItem ].filter( ( item ) => item );
+
+	await processItemCart( newCartItems, siteSlug, null, null, flowName, userIsLoggedIn );
 }
 
 async function processItemCart(
@@ -275,5 +285,3 @@ async function processItemCart(
 	// 	addToCartAndProceed();
 	// }
 }
-
-export default createSiteWithCart;

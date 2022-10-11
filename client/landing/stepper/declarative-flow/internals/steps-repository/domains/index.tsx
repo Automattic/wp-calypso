@@ -1,17 +1,19 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	StepContainer,
 	isNewsletterOrLinkInBioFlow,
 	createSiteWithCart,
 } from '@automattic/onboarding';
-import { useLocale } from '@automattic/i18n-utils';
-import { createInterpolateElement } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { getUrlParts } from '@automattic/calypso-url';
+import { createInterpolateElement } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
 import { defer, get, isEmpty, find } from 'lodash';
+import { useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	getDomainProductSlug,
 	getDomainSuggestionSearch,
@@ -20,6 +22,7 @@ import {
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { parse } from 'qs';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
@@ -42,11 +45,6 @@ import {
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import {
-	removeStep,
-	saveSignupStep,
-	submitSignupStep,
-} from 'calypso/state/signup/progress/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	composeAnalytics,
@@ -56,15 +54,10 @@ import {
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { ONBOARD_STORE } from '../../../../stores';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import type { Step } from '../../types';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { useTranslate } from 'i18n-calypso';
-
-import { useEffect, useState } from 'react';
 import { Search } from './types';
+import type { Step } from '../../types';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { productsList, signupDependencies, userLoggedIn, selectedSite } = useSelector(
@@ -304,7 +297,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		// dispatch( setDesignType( getDesignType() ) );
 		// Start the username suggestion process.
 		// siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
-		submit?.();
+		submit?.( site);
 	};
 
 	const handleSkip = ( googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
