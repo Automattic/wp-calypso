@@ -19,6 +19,7 @@ export const videopress: Flow = {
 		return [
 			'intro',
 			'options',
+			'videomakerSetup',
 			'chooseADomain',
 			'chooseAPlan',
 			'completingPurchase',
@@ -47,7 +48,7 @@ export const videopress: Flow = {
 		}
 
 		const name = this.name;
-		const { setDomain, setSiteDescription, setSiteTitle, setStepProgress } =
+		const { setDomain, setSelectedDesign, setSiteDescription, setSiteTitle, setStepProgress } =
 			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
@@ -59,6 +60,7 @@ export const videopress: Flow = {
 			setSiteTitle( '' );
 			setSiteDescription( '' );
 			setDomain( undefined );
+			setSelectedDesign( undefined );
 		};
 
 		const stepValidateUserIsLoggedIn = () => {
@@ -109,18 +111,24 @@ export const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
+					return navigate( 'videomakerSetup' );
+				}
+
+				case 'videomakerSetup': {
 					return navigate( 'chooseADomain' );
 				}
 
-				case 'chooseADomain':
+				case 'chooseADomain': {
 					return navigate( 'chooseAPlan' );
+				}
 
 				case 'chooseAPlan': {
 					return navigate( 'processing' );
 				}
 
-				case 'completingPurchase':
+				case 'completingPurchase': {
 					return navigate( 'launchpad' );
+				}
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();

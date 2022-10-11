@@ -1,0 +1,112 @@
+@import '../../videopress.scss';
+
+$font-family: 'SF Pro Text', $sans;
+
+.videomaker-setup {
+	form {
+		padding: 0 20px;
+	}
+
+	.videomaker-setup__step-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.videomaker-setup__theme-picker {
+		display: flex;
+		flex-direction: column;
+		margin-block-end: 36px;
+		align-items: center;
+
+		.videomaker-setup__light-button img {
+			background-color: #FFFFFF;
+		}
+
+		.videomaker-setup__dark-button img {
+			background-color: #000000;
+		}
+
+		button {
+			background-color: $videopress-theme-border-color;
+			border: 10px solid $videopress-theme-border-color;
+			border-radius: 8px;
+			padding: 0;
+			margin: 0;
+			transition: all 0.2s ease-in-out;
+			transform: scale( 1.0 );
+			z-index: 0;
+			cursor: pointer;
+			max-width: 76%;
+
+			img {
+				display: block;
+				width: 100%;
+				height: auto;
+				border-radius: 6px;
+				flex-grow: 1;
+				object-fit: cover;
+			}
+
+			&:first-of-type {
+				margin-bottom: 30px;
+			}
+
+			&:hover {
+				transform: scale( 1.05 );
+				z-index: 1;
+				background-color: $videopress-theme-yellow;
+				border: 8px solid $videopress-theme-yellow;
+			}
+		}
+
+		@include break-medium {
+			flex-direction: row;
+			padding: 0 16px;
+			min-height: 312px;
+
+			button {
+
+				&:first-of-type {
+					margin-bottom: 0px;
+					margin-inline-end: 30px;
+				}
+			}
+
+			img {
+				max-width: 400px;
+			}
+		}
+
+		@include break-large {
+			img {
+				max-width: 500px;
+			}
+		}
+	}
+
+	.step-container__content {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 30px;
+	}
+
+	.step-container__header {
+		margin-top: 100px;
+		margin-bottom: 36px;
+		padding: 0 24px;
+
+		h1.formatted-header__title {
+			font-size: $font-title-medium;
+
+			@include break-medium {
+				font-size: $font-headline-medium;
+			}
+		}
+	}
+
+	.videomaker-setup-form__submit {
+		border: none;
+		min-width: 240px;
+	}
+}
