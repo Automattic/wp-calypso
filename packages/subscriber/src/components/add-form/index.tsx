@@ -2,7 +2,7 @@
 import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -348,10 +348,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			</div>
 
 			<div className={ 'add-subscriber__form--container' }>
-				{ inProgress && (
-					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
-				) }
-
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
 					{ emailFormControls.map( ( placeholder, i ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
