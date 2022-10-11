@@ -87,10 +87,6 @@ export const testRequestStatus = keyedReducer( 'siteId', ( state, { type, role }
 
 export const testStatus = keyedReducer( 'siteId', ( state, { type, role } ) => {
 	switch ( type ) {
-		// Do not affect current state if executing a new test
-		case JETPACK_CREDENTIALS_TEST:
-			return state;
-
 		case JETPACK_CREDENTIALS_TEST_VALID:
 			return {
 				...state,
