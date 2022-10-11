@@ -1,7 +1,7 @@
 import { ProgressBar } from '@automattic/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import WordPressLogo from 'calypso/components/wordpress-logo';
@@ -38,6 +38,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
+	const [ previousProgress, setPreviousProgress ] = useState(
+		stepProgress ? stepProgress.progress : 0
+	);
+	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
+
 	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
 		setStepData( {
@@ -51,6 +59,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			: generatePath( '/' + path + search );
 
 		history.push( _path, stepPaths );
+		setPreviousProgress( stepProgress?.progress ?? 0 );
 	} );
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
@@ -67,9 +76,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
@@ -83,6 +89,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		const StepComponent = Steps[ path ];
 		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
+
+	let progressBarExtraStyle: React.CSSProperties = {};
+	if ( 'videopress' === flow.name ) {
+		progressBarExtraStyle = {
+			'--previous-progress': Math.min( 100, Math.ceil( previousProgressValue * 100 ) ) + '%',
+			'--current-progress': Math.min( 100, Math.ceil( progressValue * 100 ) ) + '%',
+		} as React.CSSProperties;
+	}
 
 	return (
 		<Switch>
@@ -102,6 +116,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 								className="flow-progress"
 								value={ progressValue * 100 }
 								total={ 100 }
+								style={ progressBarExtraStyle }
 							/>
 							<SignupHeader pageTitle={ flow.title } />
 							{ renderStep( path ) }
