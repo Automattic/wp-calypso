@@ -34,6 +34,7 @@ export function register(): typeof STORE_KEY {
 			'domain',
 			'domainSearch',
 			'domainSuggested',
+			'domainItem',
 			'domainForm',
 			'goals',
 			'hasUsedDomainsStep',

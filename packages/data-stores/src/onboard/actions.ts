@@ -396,6 +396,11 @@ export const setDomainSuggested = ( domainSuggested: string ) => ( {
 	domainSuggested,
 } );
 
+export const setDomainItem = ( domainItem: object ) => ( {
+	type: 'SET_DOMAIN_ITEM' as const,
+	domainItem,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -407,6 +412,7 @@ export type OnboardAction = ReturnType<
 	| typeof setDomainCategory
 	| typeof setDomainSearch
 	| typeof setDomainSuggested
+	| typeof setDomainItem
 	| typeof setFonts
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
@@ -445,4 +451,5 @@ export type OnboardAction = ReturnType<
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
+	| typeof setSiteSlug
 >;

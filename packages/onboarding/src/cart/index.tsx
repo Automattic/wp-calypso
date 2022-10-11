@@ -96,22 +96,19 @@ export const getNewSiteParams = ( {
 	return newSiteParams;
 };
 
-export default function createSiteWithCart(
-	flowToCheck,
-	siteSlug,
+const createSiteWithCart = async (
+	flowName,
+	siteUrl,
 	isManageSiteFlow,
 	domainData,
 	userIsLoggedIn,
-	shouldHideFreePlan,
-	callback
-) {
+	shouldHideFreePlan
+) => {
 	const {
 		domainItem,
-		flowName,
 		lastKnownFlow,
 		googleAppsCartItem,
 		isPurchasingItem: isPurchasingDomainItem,
-		siteUrl,
 		themeSlugWithRepo,
 		themeItem,
 		siteAccentColor,
@@ -123,7 +120,7 @@ export default function createSiteWithCart(
 	};
 
 	// flowName isn't always passed in
-	// const flowToCheck = flowName || lastKnownFlow;
+	const flowToCheck = flowName || lastKnownFlow;
 	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
@@ -132,14 +129,13 @@ export default function createSiteWithCart(
 
 	if ( isManageSiteFlow ) {
 		//Just for testing
-		const siteSlug = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteSlugManaged = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
 		const siteId = 210841991; //getSiteId( state, siteSlug );
-		const providedDependencies = { domainItem, siteId, siteSlug, themeItem };
+		const providedDependencies = { domainItem, siteId, siteUrl, themeItem };
 		addDomainToCart(
-			callback,
 			dependencies,
 			domainData,
-			siteSlug,
+			siteSlugManaged,
 			providedDependencies,
 			userIsLoggedIn
 		);
@@ -163,71 +159,48 @@ export default function createSiteWithCart(
 
 	const locale = getLocaleSlug();
 
-	wpcom.req.post(
-		'/sites/new',
-		{
-			...newSiteParams,
-			locale,
-			lang_id: getLanguage( locale ).value,
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
-		},
-		function ( error, response ) {
-			if ( error ) {
-				callback( error );
-				return;
-			}
+	const siteCreationResponse = await wpcom.req.post( '/sites/new', {
+		...newSiteParams,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+	} );
 
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
+	if ( ! siteCreationResponse.success ) {
+		callback( siteCreationResponse.errors );
+		return;
+	}
 
-			const siteSlug = parsedBlogURL.hostname;
-			const siteId = response.blog_details.blogid;
-			const providedDependencies = {
-				siteId,
-				siteSlug,
-				domainItem,
-				themeItem,
-			};
+	const parsedBlogURL = getUrlParts( siteCreationResponse?.blog_details.url );
+	const siteSlug = parsedBlogURL.hostname;
+	const siteId = siteCreationResponse?.blog_details.blogid;
+	const providedDependencies = {
+		siteId,
+		siteSlug,
+		domainItem,
+		themeItem,
+	};
+	// if ( isTailoredSignupFlow( flowToCheck ) ) {
+	// 	await setupSiteAfterCreation( { siteId, flowName: flowToCheck } );
+	// }
 
-			processItemCart(
-				providedDependencies,
-				newCartItems,
-				callback,
-				siteSlug,
-				isFreeThemePreselected,
-				themeSlugWithRepo,
-				flowToCheck,
-				userIsLoggedIn
-			);
-			// if ( isTailoredSignupFlow( flowToCheck ) ) {
-			// 	setupSiteAfterCreation( { siteId, flowName: flowToCheck } ).then( () => {
-			// 		processItemCart(
-			// 			providedDependencies,
-			// 			newCartItems,
-			// 			callback,
-			// 			reduxStore,
-			// 			siteSlug,
-			// 			isFreeThemePreselected,
-			// 			themeSlugWithRepo
-			// 		);
-			// 	} );
-			// } else {
-			// 	processItemCart(
-			// 		providedDependencies,
-			// 		newCartItems,
-			// 		callback,
-			// 		reduxStore,
-			// 		siteSlug,
-			// 		isFreeThemePreselected,
-			// 		themeSlugWithRepo
-			// 	);
-			// }
-		}
+	await processItemCart(
+		newCartItems,
+		siteSlug,
+		isFreeThemePreselected,
+		themeSlugWithRepo,
+		flowToCheck,
+		userIsLoggedIn
 	);
-}
 
+	console.log( 'AFTER PROCESS ITEM CART' );
+
+	return providedDependencies;
+};
+( 'fdsfdsfsdfsdfsdfdsf533785833.wordpress.com' );
+211357354;
 export function addDomainToCart(
-	callback,
 	dependencies,
 	domainData,
 	siteSlug,
@@ -240,16 +213,7 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		slug,
-		null,
-		null,
-		null,
-		userIsLoggedIn
-	);
+	processItemCart( newCartItems, slug, null, null, null, userIsLoggedIn );
 }
 
 function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
@@ -263,45 +227,39 @@ function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
 	};
 }
 
-function processItemCart(
-	providedDependencies,
+async function processItemCart(
 	newCartItems,
-	callback,
 	siteSlug,
 	isFreeThemePreselected,
 	themeSlugWithRepo,
 	lastKnownFlow,
 	userIsLoggedIn
 ) {
-	const addToCartAndProceed = async () => {
-		debug( 'preparing to add cart items (if any) from', newCartItems );
-		// const reduxState = reduxStore.getState();
-		const newCartItemsToAdd = newCartItems
-			// .map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-			.map( ( item ) => prepareItemForAddingToCart( item, lastKnownFlow ) );
+	//This is function addToCartAndProceed
+	const newCartItemsToAdd = newCartItems
+		// .map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
+		.map( ( item ) => prepareItemForAddingToCart( item, lastKnownFlow ) );
 
-		if ( newCartItemsToAdd.length ) {
-			debug( 'adding products to cart', newCartItemsToAdd );
-			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
-			cartManagerClient
+	if ( newCartItemsToAdd.length ) {
+		debug( 'adding products to cart', newCartItemsToAdd );
+		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+
+		try {
+			const updatedCart = await cartManagerClient
 				.forCartKey( cartKey )
-				.actions.addProductsToCart( newCartItemsToAdd )
-				.then( ( updatedCart ) => {
-					debug( 'product add request complete', updatedCart );
-					callback( undefined, providedDependencies );
-				} )
-				.catch( ( error ) => {
-					debug( 'product add request had an error', error );
-					// reduxStore.dispatch( errorNotice( error.message ) );
-					callback( error, providedDependencies );
-				} );
-		} else {
-			debug( 'no cart items to add' );
-			callback( undefined, providedDependencies );
-		}
-	};
+				.actions.addProductsToCart( newCartItemsToAdd );
 
-	addToCartAndProceed();
+			debug( 'product add request complete', updatedCart );
+		} catch ( error ) {
+			debug( 'product add request had an error', error );
+			//TODO Manage error
+			// reduxStore.dispatch( errorNotice( error.message ) );
+		}
+	} else {
+		debug( 'no cart items to add' );
+	}
+
+	// addToCartAndProceed();
 
 	// if ( ! userIsLoggedIn && isFreeThemePreselected ) {
 	// 	// setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
@@ -317,3 +275,5 @@ function processItemCart(
 	// 	addToCartAndProceed();
 	// }
 }
+
+export default createSiteWithCart;

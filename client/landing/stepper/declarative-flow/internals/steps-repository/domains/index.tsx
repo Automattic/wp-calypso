@@ -8,6 +8,7 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { getUrlParts } from '@automattic/calypso-url';
 import { defer, get, isEmpty, find } from 'lodash';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -86,9 +87,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		};
 	} );
 
-	console.log( 'DOMAIN FORM', domainForm );
-
-	const { setDomainForm } = useDispatch( ONBOARD_STORE );
+	const { setDomainForm, setDomainItem, setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
@@ -234,6 +233,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			  } )
 			: undefined;
 
+		setDomainItem( domainItem );
+
 		if ( suggestion ) {
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 		}
@@ -246,45 +247,32 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			submitSignupStep: () => dispatch( submitSignupStep ),
 		} );
 
-		console.log( 'siteUrl', siteUrl );
-		console.log( 'productSlug', suggestion.product_slugUrl );
-
-		//This should be added to the things to be done after Plans
-		createSiteWithCart(
-			flow,
-			siteUrl,
-			false,
-			{
-				domainItem: {
-					is_domain_registration: true,
-					meta: siteUrl,
-					product_slug: suggestion.product_slug,
-				},
-				flowName: undefined,
-				lastKnownFlow: name,
-				googleAppsCartItem: undefined,
-				isPurchasingItem: true,
+		setPendingAction( async () => {
+			const createSiteResult = await createSiteWithCart(
+				flow,
 				siteUrl,
-				themeSlugWithRepo: undefined,
-				themeItem: undefined,
-				siteAccentColor,
-			},
-			userLoggedIn,
-			false,
-			( error, siteDependencies ) => {
-				console.log( 'sitedep', siteDependencies );
-				return window.location.assign(
-					`/checkout/${ encodeURIComponent( siteUrl as string ) }?signup=1#step2`
-				);
-				// //With createSiteWithCart we have the right siteSlug and domainItem to pass to plans.
-				// //Currently we only pass siteSlug, but we shall save domainItem in the store
-				// return window.location.assign(
-				// 	`/start/${ name }/plans-link-in-bio?siteSlug=${ encodeURIComponent(
-				// 		siteDependencies.siteSlug as string
-				// 	) }`
-				// );
-			}
-		);
+				false,
+				{
+					domainItem: {
+						is_domain_registration: true,
+						meta: siteUrl,
+						product_slug: suggestion.product_slug,
+					},
+					flowName: undefined,
+					lastKnownFlow: name,
+					googleAppsCartItem: undefined,
+					isPurchasingItem: true,
+					siteUrl,
+					themeSlugWithRepo: undefined,
+					themeItem: undefined,
+					siteAccentColor,
+				},
+				userLoggedIn,
+				false
+			);
+
+			return createSiteResult;
+		} );
 
 		// setDomainResult( {
 		// 	domainItem,
@@ -324,23 +312,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			{
 				section: getAnalyticsSection(),
 				flow,
-				step: 'domains', //this.props.stepName,
+				step: 'domains',
 			},
 			isDependencyShouldHideFreePlanProvided() ? { should_hide_free_plan: shouldHideFreePlan } : {}
 		);
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
-		const stepData = {
-			stepName: 'domains', //this.props.stepName,
-			suggestion: undefined,
-		};
-
-		dispatch( saveSignupStep( stepData ) );
-
-		defer( () => {
-			submitWithDomain( undefined, googleAppsCartItem, shouldHideFreePlan );
-		} );
+		submitWithDomain( undefined, googleAppsCartItem, shouldHideFreePlan );
 	};
 
 	const getSubHeaderText = () => {
@@ -449,8 +428,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return true;
 		}
 
-		console.log( 'LASTQUERT', domainForm?.lastQuery );
-
 		// const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
 		return typeof domainForm?.lastQuery === 'string' && domainForm?.lastQuery.includes( '.blog' );
 	}
@@ -467,14 +444,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const handleSave = ( state ) => {
 		setDomainForm( state );
-
-		dispatch(
-			saveSignupStep( {
-				stepName: 'domains', //this.props.stepName,
-				stepSectionName,
-				domainForm: state,
-			} )
-		);
 	};
 
 	const shouldHideDomainExplainer = () => {
@@ -581,11 +550,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const handleAddDomain = ( suggestion ) => {
-		const stepData = {
-			stepName: 'domains',
-			suggestion,
-		};
-
 		dispatch(
 			recordAddDomainButtonClick(
 				suggestion.domain_name,
@@ -593,8 +557,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				suggestion?.is_premium
 			)
 		);
-
-		dispatch( saveSignupStep( stepData ) );
 
 		submitWithDomain( suggestion );
 	};
