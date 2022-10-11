@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { isPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
@@ -50,16 +51,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
-	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-
-	const currentPurchase =
-		isMarketplaceProduct &&
-		purchases.find( ( purchase ) =>
-			Object.values( plugin?.variations ).some(
-				( variation ) => variation.product_id === purchase.productId
-			)
-		);
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -90,7 +83,9 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const isPluginInstalledOnsiteWithSubscription =
-		isPluginInstalledOnsite && ! isMarketplaceProduct ? true : currentPurchase?.active;
+		isPluginInstalledOnsite && ! isMarketplaceProduct
+			? true
+			: isPluginPurchased( plugin, purchases, isMarketplaceProduct );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);

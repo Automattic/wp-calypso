@@ -11,6 +11,7 @@ import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import { isPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -54,7 +55,7 @@ const PluginsBrowserListElement = ( props ) => {
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug || '' )
 	);
-	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const sitesWithPlugin = useSelector( ( state ) =>
 		currentSites
 			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
@@ -280,18 +281,12 @@ const InstalledInOrPricing = ( {
 		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
-
-	const currentPurchase =
-		isMarketplaceProduct &&
-		purchases.find( ( purchase ) =>
-			Object.values( plugin?.variations ).some(
-				( variation ) => variation.product_id === purchase.productId
-			)
-		);
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
 	const isPluginActiveOnsiteWithSubscription =
-		active && ! isMarketplaceProduct ? true : currentPurchase?.active;
+		active && ! isMarketplaceProduct
+			? true
+			: isPluginPurchased( plugin, purchases, isMarketplaceProduct );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 
