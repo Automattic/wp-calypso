@@ -1,0 +1,61 @@
+.plans-step {
+	margin: 0 auto;
+	max-width: 700px;
+
+	.plans__loading-container {
+		margin-top: 18em;
+	}
+
+	&.is-wide-layout {
+		margin: auto;
+		max-width: 1200px;
+	}
+
+	.formatted-header.is-without-subhead {
+		margin-bottom: 15px;
+	}
+
+	.step-wrapper {
+		&.is-wide-layout {
+			max-width: 1200px;
+		}
+	}
+}
+
+.plans-step__compare-plans-link {
+	clear: both;
+	display: block;
+	font-size: $font-body-extra-small;
+	margin: 20px 0 0;
+	text-align: center;
+
+	.gridicon {
+		margin: -2px 3px 0 0;
+		vertical-align: middle;
+	}
+}
+
+.plans-step__compare {
+	margin-top: 25px;
+}
+
+.signup__step.is-plans-link-in-bio .formatted-header__subtitle .button.is-borderless,
+.signup__step.is-plans-newsletter .formatted-header__subtitle .button.is-borderless,
+.signup__step.is-plans .formatted-header__subtitle .button.is-borderless,
+.signup__step.is-plans-launch .formatted-header__subtitle .button.is-borderless,
+.signup__step.is-mailbox-plan .formatted-header__subtitle .button.is-borderless {
+	padding: 0;
+	color: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	text-decoration: underline;
+}
+
+.plans__loading {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	position: relative;
+}

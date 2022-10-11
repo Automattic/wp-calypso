@@ -4,7 +4,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { Step } from '../../types';
 
-const PlansLinkInBio: Step = function PlansLinkInBio( { navigation } ) {
+const plans: Step = function plans( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 
 	const handleSubmit = () => {
@@ -13,17 +13,22 @@ const PlansLinkInBio: Step = function PlansLinkInBio( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'plans-link-in-bio' }
-			className={ 'test' }
+			stepName={ flow }
+			className={ 'test__plans' }
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <PlansWrapper onSubmit={ handleSubmit } /> }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow || 'link-in-bio' }
+					stepName={ 'plans' }
+					onSubmit={ handleSubmit }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
-			// showJetpackPowered={ flow === NEWSLETTER_FLOW }
 		/>
 	);
 };
 
-export default PlansLinkInBio;
+export default plans;
