@@ -60,6 +60,22 @@ const ProcessingStep: Step = function ( props ) {
 					captureFlowException( e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
+			} else if ( Array.isArray( action ) ) {
+				const destination = await action.reduce( async ( promise, func ) => {
+					const promiseReturn = await promise;
+					try {
+						const actionReturn = await func( promiseReturn );
+						return actionReturn;
+					} catch ( e ) {
+						// eslint-disable-next-line no-console
+						console.error( 'ProcessingStep failed:', e );
+						captureFlowException( e );
+						submit?.( {}, ProcessingResult.FAILURE );
+					}
+				}, Promise.resolve() );
+
+				setDestinationState( destination );
+				setHasActionSuccessfullyRun( true );
 			} else {
 				submit?.( {}, ProcessingResult.NO_ACTION );
 			}
