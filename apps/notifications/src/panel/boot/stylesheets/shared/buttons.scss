@@ -5,18 +5,7 @@
 .wpnc__main {
 	// resets button styles
 	.wpnc__button {
-		background: transparent;
 		border: none;
-		outline: 0;
-		padding: 0;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 14px;
-		-webkit-appearance: none;
-		appearance: none;
-		vertical-align: baseline;
-	}
-
-	.wpnc__button {
 		background: var(--color-surface);
 		border-color: var(--color-neutral-10);
 		border-style: solid;

@@ -3,10 +3,14 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
+import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -37,6 +41,15 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const [ rewindConfig, setRewindConfig ] = useState< RewindConfig >( defaultRewindConfig );
+
+	const refreshBackups = useCallback(
+		() => dispatch( requestRewindBackups( siteId ) ),
+		[ dispatch, siteId ]
+	);
+	const backupCurrentlyInProgress = useSelector( ( state ) =>
+		getInProgressBackupForSite( state, siteId )
+	);
+
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
@@ -86,6 +99,17 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				title={ translate( 'Restoring will override and remove all content after this point.' ) }
 				type={ RewindFlowNoticeLevel.WARNING }
 			/>
+			<>
+				{ backupCurrentlyInProgress && (
+					<RewindFlowNotice
+						gridicon="notice"
+						title={ translate(
+							'A backup is currently in progress; restoring now will stop the backup.'
+						) }
+						type={ RewindFlowNoticeLevel.WARNING }
+					/>
+				) }
+			</>
 			<Button
 				className="rewind-flow__primary-button"
 				primary
@@ -94,6 +118,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			>
 				{ translate( 'Confirm restore' ) }
 			</Button>
+			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 		</>
 	);
 
@@ -202,6 +227,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	return (
 		<>
+			<QueryRewindBackups siteId={ siteId } />
 			<QueryRewindState siteId={ siteId } />
 			{ restoreId && 'running' === inProgressRewindStatus && (
 				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />

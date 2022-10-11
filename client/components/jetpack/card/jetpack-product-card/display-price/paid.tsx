@@ -8,6 +8,7 @@ import type { ReactNode } from 'react';
 
 type OwnProps = {
 	discountedPrice?: number;
+	discountedPriceDuration?: number;
 	discountedPriceFirst?: boolean;
 	originalPrice?: number;
 	pricesAreFetching?: boolean | null;
@@ -20,6 +21,7 @@ type OwnProps = {
 
 const Paid: React.FC< OwnProps > = ( {
 	discountedPrice,
+	discountedPriceDuration,
 	discountedPriceFirst,
 	originalPrice,
 	pricesAreFetching,
@@ -88,7 +90,11 @@ const Paid: React.FC< OwnProps > = ( {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			<TimeFrame
+				expiryDate={ expiryDate }
+				billingTerm={ billingTerm }
+				discountedPriceDuration={ discountedPriceDuration }
+			/>
 		</>
 	);
 };

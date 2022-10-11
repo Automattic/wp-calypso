@@ -49,6 +49,10 @@
 	line-height: rem(29px);
 	margin-bottom: 0 !important;
 	color: var(--studio-gray-100);
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	align-items: center;
 }
 
 .simple-item-card__cta {
@@ -67,10 +71,9 @@
 }
 
 .simple-item-card__custom-label {
+	display: inline-block;
 	span {
-		display: inline-block;
 		padding: 0.125rem 0.5rem;
-		margin: 0.4rem 1rem 0 0;
 		background-color: var(--studio-yellow-10);
 		border-radius: 4px;
 		font-size: 0.875rem;

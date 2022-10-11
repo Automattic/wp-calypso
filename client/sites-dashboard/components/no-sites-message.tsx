@@ -173,6 +173,8 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 			action={ __( 'Create your first site' ) }
 			actionURL={ '/start?source=sites-dashboard&ref=calypso-nosites' }
 			illustration={ '/calypso/images/illustrations/illustration-empty-sites.svg' }
+			illustrationWidth={ 124 }
+			illustrationHeight={ 101 }
 		/>
 	);
 };

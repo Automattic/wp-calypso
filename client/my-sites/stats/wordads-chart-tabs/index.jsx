@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Chart from 'calypso/components/chart';
-import Legend from 'calypso/components/chart/legend';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import compareProps from 'calypso/lib/compare-props';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
@@ -30,7 +29,6 @@ const ChartTabShape = PropTypes.shape( {
 class WordAdsChartTabs extends Component {
 	static propTypes = {
 		activeTab: ChartTabShape,
-		availableLegend: PropTypes.arrayOf( PropTypes.string ),
 		charts: PropTypes.arrayOf( ChartTabShape ),
 		data: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -43,7 +41,6 @@ class WordAdsChartTabs extends Component {
 			} )
 		),
 		isActiveTabLoading: PropTypes.bool,
-		onChangeLegend: PropTypes.func.isRequired,
 	};
 
 	buildTooltipData( item ) {
@@ -124,11 +121,6 @@ class WordAdsChartTabs extends Component {
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
 				<Card className={ classNames( ...classes ) }>
-					<Legend
-						activeCharts={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						tabs={ this.props.charts }
-					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
 					<Chart

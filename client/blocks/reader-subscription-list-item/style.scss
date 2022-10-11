@@ -1,8 +1,3 @@
-.reader-subscription-list-item {
-	display: flex;
-	flex-direction: row;
-}
-
 .reader-subscription-list-item__byline {
 	color: var(--color-text);
 	margin-right: 16px;
@@ -61,6 +56,7 @@
 
 .reader-subscription-list-item {
 	display: flex;
+	flex-direction: row;
 	font-size: $font-body-small;
 	padding: 15px 0;
 
@@ -184,14 +180,11 @@
 
 	.reader-subscription-list-item__site-excerpt {
 		margin-top: 2px;
+		max-width: 80%;
 	}
 
 	.reader-subscription-list-item__site-title {
 		max-width: 60%;
-	}
-
-	.reader-subscription-list-item__site-excerpt {
-		max-width: 80%;
 	}
 
 	.reader-subscription-list-item__site-url {

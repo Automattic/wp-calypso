@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { HappychatButton } from '../button';
 
 describe( 'Button', () => {

@@ -1,6 +1,7 @@
 export default function ReaderTwitterIcon( { iconSize } ) {
 	return (
 		<svg
+			key="twitter"
 			fill="none"
 			className="reader-twitter"
 			viewBox="0 0 24 24"

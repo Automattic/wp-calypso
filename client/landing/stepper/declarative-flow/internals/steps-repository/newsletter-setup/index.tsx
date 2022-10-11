@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,14 +21,18 @@ const defaultAccentColor = {
 
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const locale = useLocale();
 	const site = useSite();
 
 	const newsletterFormText = {
 		titlePlaceholder: __( 'My newsletter' ),
 		titleMissing: __( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: __( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder: __( 'Add a site icon' ),
+		iconPlaceholder:
+			hasTranslation( 'Add a logo or profile picture' ) || locale === 'en'
+				? __( 'Add a logo or profile picture' )
+				: __( 'Add a site icon' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -96,9 +101,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id={ 'newsletter-setup-header' }
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Newsletter' ), {
-						br: <br />,
-					} ) }
+					headerText={ createInterpolateElement(
+						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
+							? __( 'Set up your<br />Newsletter' )
+							: __( 'Personalize your<br />Newsletter' ),
+						{
+							br: <br />,
+						}
+					) }
 					align={ 'center' }
 				/>
 			}

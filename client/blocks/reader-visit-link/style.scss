@@ -1,13 +1,12 @@
 .reader-visit-link__icon {
-	fill: var( --color-link );
+	fill: var(--color-link);
 }
 
 .reader-visit-link__label {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 13px;
 	font-weight: 500;
-	position: relative;
-	top: 2px;
 }
 
 .reader-visit-link:hover,

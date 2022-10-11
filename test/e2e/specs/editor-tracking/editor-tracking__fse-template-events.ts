@@ -137,7 +137,7 @@ describe(
 				await fullSiteEditorPage.focusBlock( `#${ blockId }` );
 
 				// Then we can take block toolbar actions.
-				await fullSiteEditorPage.clickBlockToolbarPrimaryButton( { text: 'Replace' } );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Replace header-minimal' );
 				await fullSiteEditorPage.selectExistingTemplatePartFromModal( 'header-linear' );
 			} );
 
@@ -190,7 +190,7 @@ describe(
 
 			it( 'Convert to a template part', async function () {
 				// Page List block should already be focused due to just adding it.
-				await fullSiteEditorPage.clickBlockToolbarOption( 'Make template part' );
+				await fullSiteEditorPage.clickBlockToolbarOption( 'Create Template part' );
 				await fullSiteEditorPage.nameAndFinalizeTemplatePart( templatePartName );
 				// This toast in unique to conversion. It doesn't fire during other creation flows..
 				await fullSiteEditorPage.waitForConfirmationToast( 'Template part created' );

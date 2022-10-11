@@ -6,11 +6,6 @@ $design-button-primary-color: var(--color-primary);
 $design-button-primary-hover-color: var(--color-primary-60);
 
 .step-container.login-step {
-	.components-text-control__input {
-		font-size: $font-body-small;
-		line-height: 17px;
-		max-width: 400px;
-	}
 
 	.login__submit-button {
 		background: $design-button-primary-color;

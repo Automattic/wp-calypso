@@ -2,18 +2,19 @@
 	display: flex;
 	flex-direction: column;
 	padding-top: 5px;
+	z-index: z-index(".reader-feed-header", ".reader-feed-header__site");
 }
 
 .reader-feed-header__seen-button {
 	cursor: pointer;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	position: relative;
 
 	svg {
 		display: inline-block;
 		margin-right: 6px;
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 	}
 
 	&:disabled {
@@ -27,6 +28,7 @@
 	padding-bottom: 16px;
 	img,
 	.site-icon.is-blank {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 	}
 }
@@ -40,21 +42,22 @@
 }
 
 .reader-feed-header__site .reader-feed-header__site-title {
-	align-items: center;
+	align-items: flex-start;
 	display: flex;
 	font-family: $serif;
 	font-size: $font-title-large;
 	font-weight: 600;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 2.5rem;
 	justify-content: center;
-	max-height: 16px * 4;
-	margin-bottom: 6px;
+	margin-bottom: 19px;
 	overflow: hidden;
 	position: relative;
 	white-space: normal;
 
 	.reader-feed-header__site-title-link,
 	.reader-feed-header__site-title-link:visited {
-		color: var( --color-neutral-100 );
+		color: var(--color-neutral-100);
 	}
 
 	&::after {
@@ -63,13 +66,14 @@
 		top: auto;
 	}
 
-	@include breakpoint-deprecated( "<960px" ) {
-		max-height: 16px * 5.9;
+	// Center title
+	a {
+		text-align: center;
 	}
 
 	.blog-stickers {
 		position: relative;
-		top: 2px;
+		top: 11px;
 	}
 }
 
@@ -113,10 +117,10 @@
 		font-size: $font-body-small;
 		flex: 0 0 100%;
 		margin-bottom: 24px;
-		justify-content:center;
-		text-align:center;
+		justify-content: center;
+		text-align: center;
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			display: none;
 		}
 	}
@@ -157,12 +161,13 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.0625em;
 		overflow: hidden;
 		text-align: center;
 		position: relative;
 		margin-bottom: 8px;
-		top:-4px;
+		top: -4px;
 
 		.reader-feed-header__description {
 			display: block;
@@ -179,10 +184,6 @@
 				}
 			}
 		}
-	}
-
-	.reader-feed-header__site {
-		z-index: z-index(".reader-feed-header", ".reader-feed-header__site");
 	}
 }
 

@@ -63,7 +63,6 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	&.button.is-borderless {
 		padding: 10px 14px;
 	}
-	&.components-button.is-link:not(:disabled),
 	&.components-button.is-link:not(:disabled) {
 		color: var(--studio-gray-40);
 	}

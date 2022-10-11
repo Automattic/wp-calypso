@@ -72,10 +72,9 @@ class WP_REST_Help_Center_Support_Availability extends \WP_REST_Controller {
 			$chat_eligibility   = \WPCOM_Help_Eligibility::get_user_chat_support_eligibility();
 
 			$response = array(
-				'is_user_eligible_for_upwork'   => $other_eligibility['upwork'],
-				'is_user_eligible_for_directly' => $other_eligibility['directly'],
-				'is_user_eligible_for_tickets'  => $ticket_eligibility['is_user_eligible'],
-				'is_user_eligible_for_chat'     => $chat_eligibility['is_user_eligible'],
+				'is_user_eligible_for_upwork'  => $other_eligibility['upwork'],
+				'is_user_eligible_for_tickets' => $ticket_eligibility['is_user_eligible'],
+				'is_user_eligible_for_chat'    => $chat_eligibility['is_user_eligible'],
 			);
 		} else {
 			$body = Client::wpcom_json_api_request_as_user( 'help/eligibility/all/mine' );

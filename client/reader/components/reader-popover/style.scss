@@ -56,12 +56,11 @@
 .reader-popover__wrapper {
 	display: flex;
 	flex-direction: column;
-	min-width: 300px;
 }
 
 .reader-popover__header {
-	border-bottom: 1px solid var( --color-neutral-5 );
-	color: var( --color-neutral-70 );
+	border-bottom: 1px solid var(--color-neutral-5);
+	color: var(--color-neutral-70);
 	display: flex;
 	font-size: $font-body-small;
 	font-weight: bold;

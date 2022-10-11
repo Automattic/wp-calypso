@@ -20,6 +20,10 @@
 	padding-top: 10px;
 }
 
+.following-manage__subscriptions-placeholder > div {
+	border-bottom: 1px solid var(--color-border-subtle);
+}
+
 // Load more results
 .following-manage__show-more {
 	border-top: 1px solid var(--color-neutral-10);

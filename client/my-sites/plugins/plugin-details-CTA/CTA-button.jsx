@@ -220,7 +220,7 @@ function onClickInstallPlugin( {
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
-	dispatch( removePluginStatuses( 'completed', 'error' ) );
+	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
 		recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug )

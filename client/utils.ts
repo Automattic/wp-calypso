@@ -1,3 +1,4 @@
+import { addQueryArgs } from 'calypso/lib/url';
 // Adapts route paths to also include wildcard
 // subroutes under the root level section.
 
@@ -19,8 +20,20 @@ export function debounce< T, U >( callback: ( ...args: T[] ) => U, timeout: numb
 	};
 }
 
-export function redirectToLaunchpad( siteSlug: string, launchpadFlow: string ) {
-	window.location.replace( `/setup/launchpad?flow=${ launchpadFlow }&siteSlug=${ siteSlug }` );
+export function redirectToLaunchpad(
+	siteSlug: string,
+	launchpadFlow: string,
+	verifiedParam: boolean
+) {
+	const launchpadRedirectionURL = addQueryArgs(
+		{
+			flow: launchpadFlow,
+			siteSlug,
+			verified: verifiedParam ? 1 : undefined,
+		},
+		'/setup/launchpad'
+	);
+	window.location.replace( launchpadRedirectionURL );
 }
 
 /**
