@@ -4,9 +4,10 @@ import { Component } from 'react';
 
 class DomainConnectAuthorizeDescription extends Component {
 	static propTypes = {
+		dnsTemplateError: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
 		providerId: PropTypes.string.isRequired,
-		dnsTemplateError: PropTypes.bool,
+		serviceId: PropTypes.string.isRequired,
 	};
 
 	static defaultProps = {
@@ -24,57 +25,46 @@ class DomainConnectAuthorizeDescription extends Component {
 	};
 
 	render() {
-		const { dnsTemplateError, isPlaceholder, providerId, translate } = this.props;
+		const { dnsTemplateError, isPlaceholder, providerId, serviceId, translate } = this.props;
 
 		if ( isPlaceholder ) {
 			return this.placeholder();
 		}
 
-		// Note: these are only examples. The exact templates that we will use haven't yet been determined.
-		const templateDescription = {
-			'g-suite': translate(
-				'Howdy! It looks like you want to make your domain work with ' +
-					"{{strong}}Google's G Suite email service{{/strong}}.",
-				{
-					components: {
-						strong: <strong />,
-					},
-				}
-			),
+		if ( providerId === 'google.com' && serviceId === 'gmail-setup' ) {
+			return (
+				<p>
+					{ translate(
+						'Howdy! It looks like you want to make your domain work with the ' +
+							'{{strong}}Google Workspace email service{{/strong}}.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+			);
+		}
 
-			'microsoft-office365': translate(
-				'Howdy! It looks like you want to set up your domain to ' +
-					'work with the {{strong}}Microsoft Office 365 service{{/strong}}.',
-				{
-					components: {
-						strong: <strong />,
-					},
-				}
-			),
-
-			'zoho-mail': translate(
-				'Howdy! It looks like you want to set up ' +
-					'{{strong}}Zoho Mail service{{/strong}} to work with your domain.',
-				{
-					components: {
-						strong: <strong />,
-					},
-				}
-			),
-
-			'template-error': translate(
-				'There seems to be a problem with the information we received ' +
-					"about the service you're trying to set up. Contact your service providers support and " +
-					'let them know about this error message.'
-			),
-		};
-
-		if ( templateDescription[ providerId ] ) {
-			return <p>{ templateDescription[ providerId ] }</p>;
+		if ( providerId === 'microsoft.com' && serviceId === 'O365' ) {
+			return (
+				<p>
+					{ translate(
+						'Howdy! It looks like you want to set up your domain to ' +
+							'work with the {{strong}}Microsoft Office 365 service{{/strong}}.',
+						{ components: { strong: <strong /> } }
+					) }
+				</p>
+			);
 		}
 
 		if ( dnsTemplateError ) {
-			return <p>{ templateDescription[ 'template-error' ] }</p>;
+			return (
+				<p>
+					{ translate(
+						'There seems to be a problem with the information we received ' +
+							"about the service you're trying to set up. Contact your service providers support and " +
+							'let them know about this error message.'
+					) }
+				</p>
+			);
 		}
 
 		return null;
