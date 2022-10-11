@@ -135,6 +135,18 @@ a.rewind-flow-notice__title-warning:visited {
 	}
 }
 
+.rewind-flow__back-button {
+	margin-bottom: 10px;
+	text-align: center;
+	width: 100%;
+
+	@include breakpoint-deprecated( ">660px" ) {
+		width: auto;
+		text-align: auto;
+		margin-right: 1rem;
+	}
+}
+
 .rewind-flow__progress-bar {
 	margin-bottom: 22.5px;
 

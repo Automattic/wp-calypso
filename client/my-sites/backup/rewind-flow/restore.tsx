@@ -110,6 +110,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					/>
 				) }
 			</>
+			<Button className="rewind-flow__back-button">{ translate( 'Go back' ) }</Button>
 			<Button
 				className="rewind-flow__primary-button"
 				primary
