@@ -126,26 +126,80 @@ function wpcom_get_free_global_stylesheet() {
 		}
 	}
 
-	$tree = new WP_Theme_JSON_Gutenberg();
-
-	// Merge theme and core data.
-	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_theme_data() );
-	$tree->merge( WP_Theme_JSON_Resolver_Gutenberg::get_core_data() );
-
-	// Generate the default spacing sizes presets.
-	$tree->set_spacing_sizes();
-
-	// We only get the stylesheet for variables and styles of the theme.
-	$stylesheet = $tree->get_stylesheet( array( 'variables', 'styles' ), array( 'theme' ) );
-
-	if ( $can_use_cached ) {
-		// This cache can be long since it only applies to customers that can't load global styles.
-		// Once the customer is on a paid plan this code isn't executed and will use the default
-		// Gutenberg global styles loading mechanism instead.
-		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
+	$tree                = WP_Theme_JSON_Resolver_Gutenberg::get_merged_data( 'theme' );
+	$supports_theme_json = WP_Theme_JSON_Resolver_Gutenberg::theme_has_support();
+	if ( ! $supports_theme_json ) {
+		$types = array( 'variables', 'styles', 'presets' );
+	} else {
+		$types = array( 'variables', 'presets', 'base-layout-styles' );
 	}
 
+	/*
+	 * If variables are part of the stylesheet,
+	 * we add them for all origins (default, theme, user).
+	 * This is so themes without a theme.json still work as before 5.9:
+	 * they can override the default presets.
+	 * See https://core.trac.wordpress.org/ticket/54782
+	 */
+	$styles_variables = '';
+	if ( in_array( 'variables', $types, true ) ) {
+		$styles_variables = $tree->get_stylesheet( array( 'variables' ) );
+		$types            = array_diff( $types, array( 'variables' ) );
+	}
+
+	/*
+	 * For the remaining types (presets, styles), we do consider origins:
+	 *
+	 * - themes without theme.json: only the classes for the presets defined by core
+	 * - themes with theme.json: the presets and styles classes, both from core and the theme
+	 */
+	$styles_rest = '';
+	if ( ! empty( $types ) ) {
+		$origins = array( 'default', 'theme', 'custom' );
+		if ( ! $supports_theme_json ) {
+			$origins = array( 'default' );
+		}
+		$styles_rest = $tree->get_stylesheet( $types, $origins );
+	}
+	$stylesheet = $styles_variables . $styles_rest;
+	if ( $can_use_cached ) {
+		// Cache for a minute.
+		// This cache doesn't need to be any longer, we only want to avoid spikes on high-traffic sites.
+		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
+	}
 	return $stylesheet;
+}
+
+/**
+ * Enqueues the default variation of the global styles.
+ */
+function wpcom_enqueue_default_global_styles() {
+	$separate_assets  = wp_should_load_separate_core_block_assets();
+	$is_block_theme   = wp_is_block_theme();
+	$is_classic_theme = ! $is_block_theme;
+
+	/*
+	 * Global styles should be printed in the head when loading all styles combined.
+	 * The footer should only be used to print global styles for classic themes with separate core assets enabled.
+	 *
+	 * See https://core.trac.wordpress.org/ticket/53494.
+	 */
+	if (
+		( $is_block_theme && doing_action( 'wp_footer' ) ) ||
+		( $is_classic_theme && doing_action( 'wp_footer' ) && ! $separate_assets ) ||
+		( $is_classic_theme && doing_action( 'wp_enqueue_scripts' ) && $separate_assets )
+	) {
+		return;
+	}
+
+	$stylesheet = wpcom_get_free_global_stylesheet();
+	if ( empty( $stylesheet ) ) {
+		return;
+	}
+
+	wp_register_style( 'wpcom-global-styles', false, array(), true, true );
+	wp_add_inline_style( 'wpcom-global-styles', $stylesheet );
+	wp_enqueue_style( 'wpcom-global-styles' );
 }
 
 /**
@@ -158,13 +212,20 @@ function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
 		$blog_id = get_current_blog_id();
 	}
 
-	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
-	if ( wpcom_should_limit_global_styles( $blog_id ) ) {
-		global $wp_styles;
-		$wp_styles->add_data( 'global-styles', 'after', array( wpcom_get_free_global_stylesheet() ) );
+	if ( ! wpcom_should_limit_global_styles( $blog_id ) ) {
+		return;
 	}
+
+	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
+	remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
+	remove_action( 'wp_footer', 'wp_enqueue_global_styles', 1 );
+	remove_action( 'wp_enqueue_scripts', 'gutenberg_enqueue_global_styles' );
+	remove_action( 'wp_footer', 'gutenberg_enqueue_global_styles', 1 );
+
+	add_action( 'wp_enqueue_scripts', 'wpcom_enqueue_default_global_styles' );
+	add_action( 'wp_footer', 'wpcom_enqueue_default_global_styles', 1 );
 }
-add_action( 'wp_print_styles', 'wpcom_global_styles_override_for_free_site' );
+add_action( 'init', 'wpcom_global_styles_override_for_free_site' );
 
 /**
  * Tracks when global styles are updated or reset after the post has actually been saved.
