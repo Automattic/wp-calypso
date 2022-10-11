@@ -537,7 +537,7 @@ object CheckCodeStyleBranch : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run linters"
+			name = "Run eslint"
 			scriptContent = """
 				export NODE_ENV="test"
 
@@ -559,6 +559,14 @@ object CheckCodeStyleBranch : BuildType({
 		}
 	}
 
+	bashNodeScript {
+		name = "Run stylelint"
+		scriptContent = """
+			# In the future, we may add the stylelint cache here.
+			yarn run lint:css
+		"""
+	}
+
 	triggers {
 		vcs {
 			branchFilter = """
@@ -570,7 +578,7 @@ object CheckCodeStyleBranch : BuildType({
 	}
 
 	failureConditions {
-		executionTimeoutMin = 20
+		executionTimeoutMin = 201
 	}
 
 	features {
