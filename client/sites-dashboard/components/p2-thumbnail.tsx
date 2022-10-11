@@ -12,9 +12,23 @@ const Container = styled.div( {
 	left: 0,
 	width: '100%',
 	height: '100%',
-	backgroundSize: 'contain',
-	backgroundRepeat: 'no-repeat',
-	backgroundPosition: 'top center',
+	overflow: 'hidden',
+} );
+
+const HeaderImage = styled.img( {
+	width: '100%',
+} );
+
+const ColorGradient = styled.div( {
+	height: '144px',
+
+	'::before': {
+		content: '""',
+		display: 'block',
+		width: '100%',
+		height: '100%',
+		background: 'linear-gradient( 80.15deg, rgba( 0, 0, 0, .3 ) 0%, rgba( 0, 0, 0, 0 ) 100% )',
+	},
 } );
 
 const SiteIcon = styled.img( {
@@ -35,27 +49,37 @@ export function P2Thumbnail( { site }: P2ThumbnailProps ) {
 	const { ref, inView } = useInView( { triggerOnce: true } );
 	const { data, isLoading } = useP2ThumbnailElementsQuery( site.ID, { enabled: inView } );
 
-	const inlineStyles =
-		isLoading || ! data
-			? {}
-			: {
-					backgroundColor: data.color_sidebar_background,
-					backgroundImage: data.header_image ? `url("${ data.header_image }")` : undefined,
-			  };
+	function renderContents() {
+		if ( isLoading || ! data ) {
+			return null;
+		}
 
-	const siteIcon =
-		isLoading || ! data || ! site.icon ? null : (
-			<SiteIcon src={ site.icon.img } alt="" width="64" height="64" />
+		return (
+			<>
+				{ data.header_image ? (
+					<HeaderImage src={ data.header_image } alt="" />
+				) : (
+					<ColorGradient style={ { backgroundColor: data.color_link } } />
+				) }
+				{ site.icon && <SiteIcon src={ site.icon.img } alt="" width="64" height="64" /> }
+			</>
 		);
+	}
 
 	return (
-		<Container ref={ ref } role={ 'img' } aria-label={ __( 'Site Icon' ) } style={ inlineStyles }>
-			{ siteIcon }
+		<Container
+			ref={ ref }
+			role={ 'img' }
+			aria-label={ __( 'Site Icon' ) }
+			style={ { backgroundColor: data?.color_sidebar_background } }
+		>
+			{ renderContents() }
 		</Container>
 	);
 }
 
 interface P2ThumbnailElements {
+	color_link: string;
 	color_sidebar_background: string;
 	header_image: string | null;
 }
