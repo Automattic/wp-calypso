@@ -75,6 +75,33 @@ describe( 'reducer', () => {
 				},
 			} );
 		} );
+
+		test( 'should keep existing sites data after requesting a credentials test for a new site', () => {
+			const stateIn = {
+				123456: {
+					main: false,
+					alternate: false,
+				},
+				987654: {
+					main: false,
+				},
+			};
+			const action = testCredentials( 999000, 'main' );
+			const stateOut = testRequestStatus( stateIn, action );
+
+			expect( stateOut ).toEqual( {
+				123456: {
+					main: false,
+					alternate: false,
+				},
+				987654: {
+					main: false,
+				},
+				999000: {
+					main: true,
+				},
+			} );
+		} );
 	} );
 
 	describe( 'testStatus', () => {
@@ -152,6 +179,66 @@ describe( 'reducer', () => {
 				678000: {
 					main: 'valid',
 					alternate: 'invalid',
+				},
+			} );
+		} );
+
+		test( 'should keep existing sites data after marking a role for a new site as valid', () => {
+			const stateIn = {
+				123000: {
+					main: 'valid',
+				},
+				456000: {
+					main: 'invalid',
+					alternate: 'valid',
+				},
+				999000: {
+					main: 'pending',
+				},
+			};
+			const action = markCredentialsAsValid( 999000, 'main' );
+
+			const stateOut = testStatus( stateIn, action );
+			expect( stateOut ).toEqual( {
+				123000: {
+					main: 'valid',
+				},
+				456000: {
+					main: 'invalid',
+					alternate: 'valid',
+				},
+				999000: {
+					main: 'valid',
+				},
+			} );
+		} );
+
+		test( 'should keep existing sites data after marking a role for a new site as invalid', () => {
+			const stateIn = {
+				123000: {
+					main: 'valid',
+				},
+				456000: {
+					main: 'invalid',
+					alternate: 'valid',
+				},
+				999000: {
+					main: 'pending',
+				},
+			};
+			const action = markCredentialsAsInvalid( 999000, 'main' );
+
+			const stateOut = testStatus( stateIn, action );
+			expect( stateOut ).toEqual( {
+				123000: {
+					main: 'valid',
+				},
+				456000: {
+					main: 'invalid',
+					alternate: 'valid',
+				},
+				999000: {
+					main: 'invalid',
 				},
 			} );
 		} );
