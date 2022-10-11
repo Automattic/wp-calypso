@@ -41,17 +41,24 @@
 	}
 
 	&.compact {
+		.plugin-icon {
+			width: 40px;
+			height: 40px;
+			margin-right: 16px;
+		}
+
 		.plugins-browser-item__link {
 			padding: 16px;
 		}
 
 		.plugins-browser-item__title {
 			font-size: $font-body-small;
+			margin-left: 0;
 		}
 
 		.plugins-browser-item__description {
 			font-size: $font-body-extra-small;
-			margin: 5px 0 0 calc(60px + 16px); // icon width + margin
+			margin: 5px 0 0 0;
 		}
 
 		@include breakpoint-deprecated(">960px") {
