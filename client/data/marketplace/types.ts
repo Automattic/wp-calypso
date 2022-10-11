@@ -52,6 +52,7 @@ export type ESIndexResult = {
 	'plugin.tested'?: string;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
+	'plugin.active_installs'?: number;
 	plugin: {
 		author: string;
 		title: string;
@@ -59,7 +60,6 @@ export type ESIndexResult = {
 		icons: string;
 		rating: number;
 		num_ratings: number;
-		active_installs: number;
 	};
 };
 
@@ -83,7 +83,6 @@ export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: stri
 export type SearchParams = {
 	query: string | undefined;
 	author: string | undefined;
-	category: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;
