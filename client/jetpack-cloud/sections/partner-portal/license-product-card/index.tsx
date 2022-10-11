@@ -65,8 +65,8 @@ export default function LicenseProductCard( props: Props ) {
 							{ formatCurrency( product.amount, product.currency ) }
 						</div>
 						<div className="license-product-card__price-interval">
-							{ product.price_interval === 'day' && translate( '/per license per day' ) }
-							{ product.price_interval === 'month' && translate( '/per license per month' ) }
+							{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
+							{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
 						</div>
 					</div>
 				</div>
