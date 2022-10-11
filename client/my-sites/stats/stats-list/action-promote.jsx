@@ -9,15 +9,13 @@ import {
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId, onToggleVisibility } = props;
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-
-	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const keyValue = 'post-' + postId;
 	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
@@ -26,6 +24,10 @@ const PromotePost = ( props ) => {
 	);
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
+	const site = useSelector( getSelectedSite );
+	const { is_private, is_coming_soon } = site;
+	const showPromotePost =
+		usePromoteWidget() === PromoteWidgetStatus.ENABLED && ! is_private && ! is_coming_soon;
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();

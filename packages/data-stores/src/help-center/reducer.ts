@@ -1,6 +1,7 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
+import type { Location } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -15,17 +16,6 @@ const isMinimized: Reducer< boolean, HelpCenterAction > = ( state = false, actio
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_MINIMIZED':
 			return action.minimized;
-	}
-	return state;
-};
-
-const directlyData: Reducer<
-	{ isLoaded: boolean; hasSession: boolean } | undefined,
-	HelpCenterAction
-> = ( state, action ) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_DIRECTLY_DATA':
-			return action.data;
 	}
 	return state;
 };
@@ -99,8 +89,18 @@ const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > 
 	return state;
 };
 
+const routerState: Reducer< { history: Location[] | undefined; index: number | undefined } > = (
+	state = { history: undefined, index: undefined },
+	action
+) => {
+	switch ( action.type ) {
+		case 'HELP_CENTER_SET_ROUTER_STATE':
+			return { history: action.history, index: action.index };
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
-	directlyData,
 	showHelpCenter,
 	site,
 	subject,
@@ -110,6 +110,7 @@ const reducer = combineReducers( {
 	isMinimized,
 	unreadCount,
 	iframe,
+	routerState,
 } );
 
 export type State = ReturnType< typeof reducer >;

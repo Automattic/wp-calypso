@@ -4,7 +4,6 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -14,7 +13,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { deleteInvites } from 'calypso/state/invites/actions';
 import {
 	isRequestingInvitesForSite,
@@ -24,11 +22,10 @@ import {
 	isDeletingAnyInvite,
 } from 'calypso/state/invites/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { isA8cTeamMember } from 'calypso/state/teams/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { includeSubscriberImporterGradually } from '../helpers';
 import InviteButton from '../invite-button';
 import InvitesListEnd from './invites-list-end';
 
@@ -83,7 +80,6 @@ class PeopleInvites extends PureComponent {
 		return (
 			<Main className="people-invites">
 				<PageViewTracker path="/people/invites/:site" title="People > Invites" />
-				<QueryReaderTeams />
 				{ siteId && <QuerySiteInvites siteId={ siteId } /> }
 				<FormattedHeader
 					brandFont
@@ -263,8 +259,6 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = site && site.ID;
-		const userId = getCurrentUserId( state );
-		const a8cTeamMember = isA8cTeamMember( state );
 
 		return {
 			site,
@@ -276,7 +270,7 @@ export default connect(
 			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
 			deleting: isDeletingAnyInvite( state, siteId ),
 			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
-			includeSubscriberImporter: includeSubscriberImporterGradually( userId, a8cTeamMember ),
+			includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 		};
 	},
 	{ deleteInvites }

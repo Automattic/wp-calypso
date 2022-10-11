@@ -5,6 +5,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import NoResults from 'calypso/my-sites/no-results';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
 import usePlugins from '../use-plugins';
@@ -87,7 +88,7 @@ const PluginsSearchResultPage = ( {
 					count: pluginsPagination.results,
 					textOnly: true,
 					args: {
-						total: pluginsPagination.results,
+						total: pluginsPagination.results.toLocaleString(),
 						searchTerm,
 					},
 				}
@@ -101,7 +102,7 @@ const PluginsSearchResultPage = ( {
 						count: pluginsPagination.results,
 						textOnly: true,
 						args: {
-							total: pluginsPagination.results,
+							total: pluginsPagination.results.toLocaleString(),
 							searchTerm,
 							categoryName,
 						},
@@ -112,6 +113,7 @@ const PluginsSearchResultPage = ( {
 
 		return (
 			<>
+				<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }

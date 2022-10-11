@@ -29,7 +29,7 @@ export class PluginActivateToggle extends Component {
 		}
 
 		this.props.togglePluginActivation( site.ID, plugin );
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );

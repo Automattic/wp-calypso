@@ -3,6 +3,7 @@ import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useCallback } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
@@ -44,20 +45,32 @@ const SupportModeTitle = () => {
 		}
 	}
 };
+
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
 	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	const handleClose = () => {
-		onDismiss();
-	};
+	const handleClick = useCallback(
+		( event ) => {
+			if ( isMinimized && event.target === event.currentTarget ) {
+				onMaximize?.();
+			}
+		},
+		[ isMinimized, onMaximize ]
+	);
 
 	return (
 		<CardHeader className={ classNames }>
-			<Flex>
-				<p id="header-text" className="help-center-header__text">
+			<Flex onClick={ handleClick }>
+				<p
+					id="header-text"
+					className="help-center-header__text"
+					onClick={ handleClick }
+					onKeyUp={ handleClick }
+					role="presentation"
+				>
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>
@@ -101,7 +114,7 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 						label={ __( 'Close Help Center', __i18n_text_domain__ ) }
 						tooltipPosition="top left"
 						icon={ closeSmall }
-						onClick={ handleClose }
+						onClick={ onDismiss }
 					/>
 				</div>
 			</Flex>

@@ -41,7 +41,12 @@ import { getHappychatAuth } from 'calypso/state/happychat/utils';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
-import { createQueryClient } from 'calypso/state/query-client';
+import {
+	createQueryClient,
+	getInitialQueryState,
+	hydrateBrowserState,
+	hydrateServerState,
+} from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { setRoute } from 'calypso/state/route/actions';
@@ -413,7 +418,12 @@ const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
 	await loadPersistedState();
-	const queryClient = await createQueryClient( currentUser?.ID );
+	const queryClient = createQueryClient();
+
+	await hydrateBrowserState( queryClient, currentUser?.ID );
+	const initialQueryState = getInitialQueryState();
+	hydrateServerState( queryClient, initialQueryState );
+
 	const initialState = getInitialState( initialReducer, currentUser?.ID );
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );

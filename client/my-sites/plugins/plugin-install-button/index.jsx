@@ -69,7 +69,7 @@ export class PluginInstallButton extends Component {
 			return;
 		}
 
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 		this.props.installPlugin( siteId, plugin );
 
 		if ( isEmbed ) {

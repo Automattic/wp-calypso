@@ -3,28 +3,16 @@
  */
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from '../task-helper';
 import { tasks, launchpadFlowTasks } from '../tasks';
-import { Task } from '../types';
-
-function getTask( taskData = {} ) {
-	const task: Task = {
-		id: 'foo_task',
-		isCompleted: false,
-		actionUrl: '#',
-		taskType: 'blog',
-		displayBadge: false,
-	};
-
-	return { ...task, ...taskData };
-}
+import { buildTask } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
 	describe( 'getEnhancedTasks', () => {
 		describe( 'when a task should not be enhanced', () => {
 			it( 'then it is not enhanced', () => {
 				const fakeTasks = [
-					getTask( { id: 'fake-task-1' } ),
-					getTask( { id: 'fake-task-2' } ),
-					getTask( { id: 'fake-task-3' } ),
+					buildTask( { id: 'fake-task-1' } ),
+					buildTask( { id: 'fake-task-2' } ),
+					buildTask( { id: 'fake-task-3' } ),
 				];
 				// eslint-disable-next-line @typescript-eslint/no-empty-function
 				expect( getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} ) ).toEqual(
@@ -34,7 +22,7 @@ describe( 'Task Helpers', () => {
 		} );
 		describe( 'when it is link_in_bio_launched task', () => {
 			it( 'then it receives launchtask property = true', () => {
-				const fakeTasks = [ getTask( { id: 'link_in_bio_launched' } ) ];
+				const fakeTasks = [ buildTask( { id: 'link_in_bio_launched' } ) ];
 				// eslint-disable-next-line @typescript-eslint/no-empty-function
 				const enhancedTasks = getEnhancedTasks( fakeTasks, 'fake.wordpress.com', null, () => {} );
 				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
@@ -68,7 +56,7 @@ describe( 'Task Helpers', () => {
 			describe( 'and the other tasks are incomplete', () => {
 				it( 'then the given task is disabled', () => {
 					const dependencies = [ true, false ];
-					const task = getTask( { dependencies, isCompleted: false } );
+					const task = buildTask( { dependencies, isCompleted: false } );
 					expect( isTaskDisabled( task ) ).toBe( true );
 				} );
 			} );
@@ -76,19 +64,19 @@ describe( 'Task Helpers', () => {
 				const dependencies = [ true, true ];
 				describe( 'and the task can be revisited', () => {
 					it( 'then the task is enabled', () => {
-						const task = getTask( { dependencies, keepActive: true, isCompleted: false } );
+						const task = buildTask( { dependencies, keepActive: true, isCompleted: false } );
 						expect( isTaskDisabled( task ) ).toBe( false );
 					} );
 				} );
 				describe( 'and the given task complete', () => {
 					it( 'then the task is disabled', () => {
-						const task = getTask( { dependencies, keepActive: false, isCompleted: true } );
+						const task = buildTask( { dependencies, keepActive: false, isCompleted: true } );
 						expect( isTaskDisabled( task ) ).toBe( true );
 					} );
 				} );
 				describe( 'and the given task is incomplete', () => {
 					it( 'then the given task is enabled', () => {
-						const task = getTask( { dependencies, keepActive: false, isCompleted: false } );
+						const task = buildTask( { dependencies, keepActive: false, isCompleted: false } );
 						expect( isTaskDisabled( task ) ).toBe( false );
 					} );
 				} );

@@ -13,6 +13,8 @@ import QueryReaderRecommendedSites from 'calypso/components/data/query-reader-re
 import HeaderCake from 'calypso/components/header-cake';
 import SearchInput from 'calypso/components/search';
 import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'calypso/lib/url';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import FollowButton from 'calypso/reader/follow-button';
 import {
@@ -29,6 +31,7 @@ import {
 import {
 	getReaderAliasedFollowFeedUrl,
 	getReaderFollowsCount,
+	isReaderFollowsLoading,
 } from 'calypso/state/reader/follows/selectors';
 import {
 	getReaderRecommendedSites,
@@ -39,6 +42,7 @@ import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selector
 import FollowingManageEmptyContent from './empty';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import FollowingManageSubscriptions from './subscriptions';
+import FollowingManageSubscriptionsPlaceholder from './subscriptions-placeholder';
 import './style.scss';
 
 const PAGE_SIZE = 4;
@@ -181,6 +185,7 @@ class FollowingManage extends Component {
 			blockedSites,
 			dismissedSites,
 			followsCount,
+			isFollowsLoading,
 			readerAliasedFollowFeedUrl,
 		} = this.props;
 		const searchPlaceholderText = translate( 'Search or enter URL to follow…' );
@@ -245,6 +250,8 @@ class FollowingManage extends Component {
 									} ) }
 									siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
 									followSource={ READER_FOLLOWING_MANAGE_URL_INPUT }
+									followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+									followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 								/>
 							</div>
 						) }
@@ -273,7 +280,8 @@ class FollowingManage extends Component {
 							windowScrollerRef={ this.handleWindowScrollerMounted }
 						/>
 					) }
-					{ ! hasFollows && <FollowingManageEmptyContent /> }
+					{ ! hasFollows && isFollowsLoading && <FollowingManageSubscriptionsPlaceholder /> }
+					{ ! hasFollows && ! isFollowsLoading && <FollowingManageEmptyContent /> }
 				</ReaderMain>
 			</Fragment>
 		);
@@ -302,6 +310,7 @@ export default connect(
 		dismissedSites: getDismissedSites( state ),
 		readerAliasedFollowFeedUrl: sitesQuery && getReaderAliasedFollowFeedUrl( state, sitesQuery ),
 		followsCount: getReaderFollowsCount( state ),
+		isFollowsLoading: isReaderFollowsLoading( state ),
 	} ),
 	{ recordReaderTracksEvent }
 )( localize( FollowingManage ) );

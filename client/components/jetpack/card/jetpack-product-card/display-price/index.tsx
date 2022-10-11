@@ -17,6 +17,7 @@ type OwnProps = {
 	billingTerm: Duration;
 	currencyCode?: string | null;
 	discountedPrice?: number;
+	discountedPriceDuration?: number;
 	discountedPriceFirst?: boolean;
 	displayFrom?: boolean;
 	expiryDate?: Moment;
@@ -37,6 +38,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 	billingTerm,
 	currencyCode,
 	discountedPrice,
+	discountedPriceDuration,
 	discountedPriceFirst,
 	displayFrom,
 	expiryDate,
@@ -75,6 +77,7 @@ const DisplayPrice: React.FC< OwnProps > = ( {
 
 	return (
 		<Paid
+			discountedPriceDuration={ discountedPriceDuration }
 			discountedPrice={ discountedPrice }
 			discountedPriceFirst={ discountedPriceFirst }
 			originalPrice={ originalPrice }

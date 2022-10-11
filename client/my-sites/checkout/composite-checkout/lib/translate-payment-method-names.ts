@@ -1,4 +1,4 @@
-import { snakeCase } from 'lodash';
+import { camelToSnakeCase } from '@automattic/js-utils';
 import type { CheckoutPaymentMethodSlug, WPCOMPaymentMethod } from '@automattic/wpcom-checkout';
 
 /**
@@ -172,7 +172,7 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 		case 'google-pay':
 			return 'web_payment';
 	}
-	return snakeCase( paymentMethodSlug );
+	return camelToSnakeCase( paymentMethodSlug );
 }
 
 export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): boolean {

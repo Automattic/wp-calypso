@@ -1,3 +1,12 @@
+// Disable scroll when Site Picker is active. In future,
+// the Site Picker's Site List could be made compatible
+// SidebarScrollSynchronizer. Currently, it is not and
+// sometimes fixed content gets rendered outside of the
+// viewport. See `BodySectionCssClass` also.
+body.is-focus-sites {
+	overflow: hidden;
+}
+
 /**
  * /*
  * 	Layout Elements
@@ -129,37 +138,8 @@
 	.has-no-sidebar & {
 		display: none;
 	}
-}
 
-// Setup the site-selector element. Its default
-// position is off screen.
-.layout__secondary .site-selector {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	pointer-events: none;
-	transform: translateX(calc(-1 * var(--sidebar-width-max)));
-
-	.site,
-	.all-sites {
-		.site__title,
-		.site__domain {
-			&::after {
-				@include long-content-fade( $color: var( --color-sidebar-background ) );
-			}
-		}
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		-webkit-overflow-scrolling: touch;
-		transform: translateX(-100%);
-	}
-}
-
-// Secondary Layout overrides
-.layout__secondary {
+	// Secondary Layout overrides
 	.site__title {
 		color: var(--color-sidebar-text);
 	}
@@ -174,6 +154,17 @@
 	}
 
 	.site-selector {
+		// Setup the site-selector element. Its default
+		// position is off screen.
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		pointer-events: none;
+		transform: translateX(calc(-1 * var(--sidebar-width-max)));
+		height: calc(100vh - var(--masterbar-height));
+
 		&.is-large .site-selector__sites {
 			border-color: var(--color-sidebar-border);
 		}
@@ -208,6 +199,21 @@
 		.all-sites {
 			border-color: var(--color-sidebar-border);
 		}
+
+		.site,
+		.all-sites {
+			.site__title,
+			.site__domain {
+				&::after {
+					@include long-content-fade( $color: var( --color-sidebar-background ) );
+				}
+			}
+		}
+
+		@include breakpoint-deprecated( "<660px" ) {
+			-webkit-overflow-scrolling: touch;
+			transform: translateX(-100%);
+		}
 	}
 
 	.all-sites .count {
@@ -215,7 +221,7 @@
 		border-color: var(--color-sidebar-text);
 	}
 
-	.app-promo .app-promo__link {
+	.app-promo {
 		box-shadow: 0 0 0 1px var(--color-sidebar-border), 0 1px 2px var(--color-sidebar-border);
 	}
 }

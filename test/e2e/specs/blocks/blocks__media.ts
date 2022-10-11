@@ -36,16 +36,16 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	let editorPage: EditorPage;
 	let page: Page;
 	let testFiles: {
-		image_modal: TestFile;
-		image_reserved_name: TestFile;
+		image: TestFile;
+		imageReservedName: TestFile;
 		audio: TestFile;
 	};
 
 	beforeAll( async () => {
 		page = await browser.newPage();
 		testFiles = {
-			image_modal: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
-			image_reserved_name: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
+			image: await MediaHelper.createTestFile( TEST_IMAGE_PATH ),
+			imageReservedName: await MediaHelper.createTestFile( TEST_IMAGE_PATH, {
 				postfix: 'filewith#?#?reservedurlchars',
 			} ),
 			audio: await MediaHelper.createTestFile( TEST_AUDIO_PATH ),
@@ -55,13 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		await testAccount.authenticate( page );
 
 		editorPage = new EditorPage( page, { target: features.siteType } );
-	} );
-
-	it( 'Go to new post page', async function () {
 		await editorPage.visit( 'post' );
-	} );
-
-	it( 'Enter post title', async function () {
 		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );
 
@@ -72,7 +66,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector
 			);
 			const imageBlock = new ImageBlock( blockHandle );
-			await imageBlock.upload( testFiles.image_reserved_name.fullpath );
+			await imageBlock.upload( testFiles.imageReservedName.fullpath );
 		} );
 
 		it( `${ ImageBlock.blockName } block: upload image file using Calypso media modal `, async function () {
@@ -81,9 +75,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 				ImageBlock.blockEditorSelector
 			);
 			const imageBlock = new ImageBlock( blockHandle );
-
-			await imageBlock.selectImageSource( 'Media Library' );
-			await imageBlock.uploadFromModal( testFiles.image_modal.fullpath );
+			await imageBlock.uploadThroughMediaLibrary( testFiles.image.fullpath );
 		} );
 
 		it( `${ AudioBlock.blockName } block: upload audio file`, async function () {
@@ -113,12 +105,12 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 	describe( 'Validate published post', function () {
 		it( `Image with reserved characters in filename is visible`, async function () {
 			await ImageBlock.validatePublishedContent( page, [
-				testFiles.image_reserved_name.filename.replace( /[^a-zA-Z ]/g, '' ),
+				testFiles.imageReservedName.filename.replace( /[^a-zA-Z ]/g, '' ),
 			] );
 		} );
 
 		it( 'Image added via Calypso modal is visible', async function () {
-			await ImageBlock.validatePublishedContent( page, [ testFiles.image_modal.filename ] );
+			await ImageBlock.validatePublishedContent( page, [ testFiles.image.filename ] );
 		} );
 
 		it( `Audio block is visible`, async function () {

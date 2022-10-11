@@ -163,21 +163,4 @@ $c-gray-100: #101517 !default;
 		font-size: 18px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin: 10px 0 10px 70px;
 	}
-
-	&.post-theme-info {
-		margin: 0 0 20px;
-		padding: 0;
-
-		.fl {
-			float: none;
-			padding: 15px 0 5px;
-			text-align: center;
-		}
-
-		.fr {
-			float: none;
-			padding: 5px 0 15px;
-			text-align: center;
-		}
-	}
 }

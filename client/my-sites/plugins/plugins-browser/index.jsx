@@ -148,7 +148,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<JetpackDisconnectedNotice />
 			<SearchBoxHeader
 				searchRef={ searchRef }
-				popularSearchesRef={ searchHeaderRef }
+				stickySearchBoxRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
 				isSearching={ isFetchingPluginsBySearchTerm }

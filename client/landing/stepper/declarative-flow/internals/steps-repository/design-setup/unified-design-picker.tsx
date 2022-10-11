@@ -10,6 +10,7 @@ import {
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
+import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -25,6 +26,7 @@ import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
+import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
@@ -35,7 +37,6 @@ import DesignPickerDesignTitle from './design-picker-design-title';
 import PreviewToolbar from './preview-toolbar';
 import UpgradeModal from './upgrade-modal';
 import getThemeIdFromDesign from './utils/get-theme-id-from-design';
-import { removeLegacyDesignVariations } from './utils/style-variations';
 import type { Step, ProvidedDependencies } from '../../types';
 import './style.scss';
 import type { StarterDesigns } from '@automattic/data-stores';
@@ -81,10 +82,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		if ( isEnabled( 'signup/design-picker-style-selection' ) ) {
-			allDesigns.static.designs = removeLegacyDesignVariations( allDesigns?.static?.designs || [] );
-		}
-
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build intent
@@ -120,7 +117,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
 				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				has_vertical_images: generatedDesigns.length > 0,
+				has_vertical_images:
+					generatedDesigns.some( ( design ) => design.verticalizable ) ||
+					staticDesigns.some( ( design ) => design.verticalizable ),
 			} );
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
@@ -140,10 +139,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const { setSelectedDesign } = useDispatch( ONBOARD_STORE );
 
-	const isEnabledStyleSelection = isEnabled( 'signup/design-picker-style-selection' );
-	const selectedDesignHasStyleVariations =
-		isEnabledStyleSelection && ( selectedDesign?.style_variations || [] ).length > 0;
-
+	const selectedDesignHasStyleVariations = ( selectedDesign?.style_variations || [] ).length > 0;
 	const { data: selectedDesignDetails } = useStarterDesignBySlug( selectedDesign?.slug || '', {
 		enabled: isPreviewingDesign && selectedDesignHasStyleVariations,
 	} );
@@ -152,6 +148,32 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		select( ONBOARD_STORE ).getSelectedStyleVariation()
 	);
 	const { setSelectedStyleVariation } = useDispatch( ONBOARD_STORE );
+
+	// Unset the selected design, thus restarting the design picking experience.
+	useEffect( () => {
+		setSelectedDesign( undefined );
+		setSelectedStyleVariation( undefined );
+	}, [] );
+
+	// When the theme query string parameter is present, automatically switch to previewing that theme (if it's a valid theme)
+	const themeFromQueryString = useQuery().get( 'theme' );
+	useEffect( () => {
+		if ( ! themeFromQueryString || ! allDesigns ) {
+			return;
+		}
+
+		const { generated: generatedDesigns, static: staticDesigns } = allDesigns;
+
+		const designs = [ ...generatedDesigns.designs, ...staticDesigns.designs ];
+
+		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
+		if ( ! requestedDesign ) {
+			return;
+		}
+
+		setSelectedDesign( requestedDesign );
+		setIsPreviewingDesign( true );
+	}, [ themeFromQueryString, allDesigns, setSelectedDesign ] );
 
 	function getEventPropsByDesign( design: Design, variation?: StyleVariation ) {
 		const variationSlugSuffix =
@@ -172,7 +194,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			...( design.recipe?.footer_pattern_ids && {
 				footer_pattern_ids: design.recipe.footer_pattern_ids.join( ',' ),
 			} ),
-			has_style_variations: isEnabledStyleSelection && ( design.style_variations || [] ).length > 0,
+			has_style_variations: ( design.style_variations || [] ).length > 0,
 		};
 	}
 
@@ -233,6 +255,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	);
 
 	function upgradePlan() {
+		if ( selectedDesign ) {
+			recordTracksEvent(
+				'calypso_signup_design_preview_unlock_theme_click',
+				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
+			);
+		}
+
 		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
 			return goToCheckout();
 		}
@@ -300,6 +329,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			recordTracksEvent( 'calypso_signup_select_design', {
 				...getEventPropsByDesign( _selectedDesign, selectedStyleVariation ),
 				...( positionIndex >= 0 && { position_index: positionIndex } ),
+				device: resolveDeviceTypeByViewPort(),
 			} );
 
 			if ( _selectedDesign.verticalizable ) {
@@ -323,8 +353,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			flow,
 			intent,
 			design_type: _selectedDesign?.design_type ?? 'default',
-			has_style_variations:
-				isEnabledStyleSelection && ( _selectedDesign?.style_variations || [] ).length > 0,
+			has_style_variations: ( _selectedDesign?.style_variations || [] ).length > 0,
 		} );
 
 		submit?.( providedDependencies );
@@ -418,7 +447,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						require="@automattic/design-preview"
 						placeholder={ null }
 						previewUrl={ previewUrl }
-						title={ designTitle }
+						title={ headerDesignTitle }
 						description={ selectedDesign.description }
 						variations={ selectedDesignDetails?.style_variations }
 						selectedVariation={ selectedStyleVariation }

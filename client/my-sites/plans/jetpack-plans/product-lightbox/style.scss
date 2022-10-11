@@ -42,6 +42,8 @@
 
 	&.ReactModal__Overlay--after-open {
 		background-color: rgb(0 0 0 / 70%);
+		max-height: 100vh;
+		overflow-y: auto;
 	}
 }
 
@@ -70,6 +72,8 @@
 	height: 100%;
 	width: 60%;
 	overflow-y: auto;
+	background-color: #f6f7f7;
+	border-radius: 8px 0 0 8px; /* stylelint-disable-line scales/radii */
 
 	hr {
 		margin: 0.75rem 0;
