@@ -41,8 +41,6 @@ export function login( {
 	signupUrl = undefined,
 	useQRCode = undefined,
 	isPartnerSignup = undefined,
-	action = undefined,
-	lostpasswordFlow = undefined,
 } = {} ) {
 	let url = '/log-in';
 
@@ -64,8 +62,6 @@ export function login( {
 		url += '/link';
 	} else if ( useQRCode ) {
 		url += '/qr';
-	} else if ( action ) {
-		url += '/' + action;
 	}
 
 	if ( locale && locale !== 'en' ) {
@@ -108,10 +104,6 @@ export function login( {
 
 	if ( isPartnerSignup ) {
 		url = addQueryArgs( { is_partner_signup: true }, url );
-	}
-
-	if ( lostpasswordFlow ) {
-		url = addQueryArgs( { lostpassword_flow: true }, url );
 	}
 
 	return url;

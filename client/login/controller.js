@@ -12,7 +12,7 @@ import WPLogin from './wp-login';
 
 const enhanceContextWithLogin = ( context ) => {
 	const {
-		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType, action },
+		params: { flow, isJetpack, isGutenboarding, socialService, twoFactorAuthType },
 		path,
 		query,
 		isServerSide,
@@ -48,7 +48,6 @@ const enhanceContextWithLogin = ( context ) => {
 
 	context.primary = (
 		<WPLogin
-			action={ action }
 			isJetpack={ isJetpack === 'jetpack' }
 			isGutenboarding={ isGutenboarding === 'new' }
 			isP2Login={ query && query.from === 'p2' }
