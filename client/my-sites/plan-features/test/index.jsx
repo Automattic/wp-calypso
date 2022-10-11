@@ -136,6 +136,7 @@ describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 
 	afterAll( () => {
 		ReactDOM.createPortal = originalCreatePortal;
+		document.querySelector.mockRestore();
 	} );
 
 	test( 'Should display a notice when component is fully rendered and user is unable to buy a plan', () => {
