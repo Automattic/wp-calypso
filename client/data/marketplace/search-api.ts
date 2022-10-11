@@ -32,6 +32,7 @@ function generateApiQueryString( {
 	query,
 	author,
 	groupId,
+	category,
 	pageHandle,
 	pageSize,
 	locale,
@@ -46,6 +47,7 @@ function generateApiQueryString( {
 		sort: string;
 		size: number;
 		group_id: string;
+		category?: string;
 		from?: number;
 		lang: string;
 	} = {
@@ -56,6 +58,7 @@ function generateApiQueryString( {
 		size: pageSize,
 		lang: locale,
 		group_id: groupId,
+		category: category,
 	};
 
 	if ( author ) {

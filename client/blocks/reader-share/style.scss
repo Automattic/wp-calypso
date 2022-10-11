@@ -48,6 +48,25 @@
 		width: 152px;
 		padding-right: 2px;
 	}
+	.search {
+		border-radius: 6px;
+		.search__icon-navigation {
+			border-bottom-left-radius: 6px;
+			border-top-left-radius: 6px;
+		}
+		.search__input.form-text-input[type="search"],
+		.search__close-icon {
+			border-bottom-right-radius: 6px;
+			border-top-right-radius: 6px;
+			padding: 6px 0;
+		}
+		&.is-open.has-focus {
+			box-shadow: none;
+			&:hover {
+				box-shadow: none;
+			}
+		}
+	}
 }
 
 .reader-share__popover-item {

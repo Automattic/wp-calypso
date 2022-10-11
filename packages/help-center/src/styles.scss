@@ -98,6 +98,12 @@ $head-foot-height: 50px;
 
 			&.is-minimized {
 				min-height: $head-foot-height;
+				top: unset;
+				bottom: calc(#{$header-height} + 16px);
+
+				.help-center__container-header {
+					cursor: pointer;
+				}
 			}
 		}
 

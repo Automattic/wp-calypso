@@ -6,21 +6,26 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { emailManagementPurchaseNewEmailAccount } from 'calypso/my-sites/email/paths';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import {
+	emailManagementEdit,
+	emailManagementPurchaseNewEmailAccount,
+} from 'calypso/my-sites/email/paths';
 
 import './style.scss';
 
 type EmailNonDomainOwnerMessageProps = {
 	domain?: ResponseDomain;
 	selectedSite?: SiteDetails | null;
-	source: string;
+	source: 'email-comparison' | 'email-management';
+	usePromoCard?: boolean;
 };
 
 const buildQueryString = ( parameters = {} ) =>
 	parameters ? stringify( parameters, { addQueryPrefix: true, skipNulls: true } ) : '';
 
 export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessageProps ) => {
-	const { domain, selectedSite, source } = props;
+	const { domain, selectedSite, source, usePromoCard = true } = props;
 
 	const translate = useTranslate();
 
@@ -29,12 +34,21 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const isPrivacyAvailable = domain?.privacyAvailable;
 
 	const buildLoginUrl = () => {
-		const redirectUrlParameter = emailManagementPurchaseNewEmailAccount(
-			selectedSite?.slug ?? '',
-			domain?.name ?? '',
-			null,
-			'login-redirect'
-		);
+		const redirectUrlParameter =
+			source === 'email-comparison'
+				? emailManagementPurchaseNewEmailAccount(
+						selectedSite?.slug ?? '',
+						domain?.name ?? '',
+						null,
+						'login-redirect'
+				  )
+				: emailManagementEdit(
+						selectedSite?.slug ?? '',
+						domain?.name ?? '',
+						'manage',
+						null,
+						'login-redirect'
+				  );
 
 		return `/log-in/${ buildQueryString( {
 			email_address: ownerUserName,
@@ -62,7 +76,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 		components: {
 			contactSupportLink: (
 				<a
-					href="https://wordpress.com/help/contact"
+					href={ CALYPSO_CONTACT }
 					onClick={ () => onClickLink( 'support' ) }
 					rel="noopener noreferrer"
 					target="_blank"
@@ -108,9 +122,13 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 
 	return (
 		<>
-			<PromoCard className="email-non-domain-owner-message__non-owner-notice">
-				<p>{ reasonText }</p>
-			</PromoCard>
+			{ usePromoCard ? (
+				<PromoCard className="email-non-domain-owner-message__non-owner-notice">
+					<p>{ reasonText }</p>
+				</PromoCard>
+			) : (
+				<p className={ 'email-non-domain-owner-message__non-owner-message' }>{ reasonText }</p>
+			) }
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"
 				eventProperties={ { source, context: 'domain-different-owner' } }
