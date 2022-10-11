@@ -22,11 +22,6 @@
 		top: 0;
 		left: 0;
 
-		&.gridicons-cross {
-			top: 32px;
-			left: 40px;
-		}
-
 		&.gridicons-mail {
 			fill: var(--color-neutral-50);
 
@@ -37,6 +32,8 @@
 		}
 
 		&.gridicons-cross {
+			top: 32px;
+			left: 40px;
 			fill: white;
 			background: var(--color-neutral-70);
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */

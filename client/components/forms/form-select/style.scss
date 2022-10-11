@@ -38,6 +38,14 @@
 		outline: 0;
 		-moz-outline: none;
 		-moz-user-focus: ignore;
+
+		&.is-error {
+			box-shadow: 0 0 0 2px var(--color-error-10);
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px var(--color-error-20);
+		}
 	}
 
 	&:disabled,
@@ -95,16 +103,6 @@
 
 	&:disabled {
 		color: var(--color-neutral-10);
-	}
-
-	&:focus {
-		&.is-error {
-			box-shadow: 0 0 0 2px var(--color-error-10);
-		}
-
-		&.is-error:hover {
-			box-shadow: 0 0 0 2px var(--color-error-20);
-		}
 	}
 }
 

@@ -56,6 +56,7 @@ $font-size: rem(14px);
 	display: none;
 }
 
+/* stylelint-disable-next-line no-duplicate-selectors */
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
@@ -234,17 +235,14 @@ $font-size: rem(14px);
 			}
 		}
 
-		// Is togglable but selected
-		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
-			&::after {
-				display: block;
-			}
-		}
-
 		// Is toggled open
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
 				background: var(--color-sidebar-menu-hover-background);
+
+				&::after {
+					display: block;
+				}
 
 				&:hover {
 					.sidebar__menu-icon {
@@ -627,9 +625,6 @@ $font-size: rem(14px);
 					overflow: initial;
 				}
 			}
-		}
-
-		&.is-sidebar-overflow {
 			.is-section-theme {
 				.layout__secondary {
 					transform: translateX(-100%);

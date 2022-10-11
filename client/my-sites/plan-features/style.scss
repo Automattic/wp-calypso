@@ -731,13 +731,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 }
 
-.plans-wrapper {
-	margin: 0 auto;
-	padding: 20px 0 10px;
-	transform: translateY(-20px);
-	overflow-x: auto;
-}
-
 .plan-features--signup {
 	margin: 0 auto;
 
@@ -1188,6 +1181,11 @@ button.plan-features__scroll-button {
 
 /* stylelint-disable-next-line no-duplicate-selectors */
 .plans-wrapper {
+	margin: 0 auto;
+	padding: 20px 0 10px;
+	transform: translateY(-20px);
+	overflow-x: auto;
+
 	.plan-features__item-annual-plan {
 		font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
 		text-transform: uppercase;
