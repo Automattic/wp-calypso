@@ -23,8 +23,8 @@ const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_cale
 
 const onSpace =
 	( fn: () => void ) =>
-	( { code }: { code?: string } ) => {
-		if ( code === 'Space' ) {
+	( { key }: { key?: string } ) => {
+		if ( key === ' ' ) {
 			fn();
 		}
 	};
