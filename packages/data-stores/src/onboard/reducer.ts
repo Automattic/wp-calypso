@@ -313,7 +313,7 @@ const pendingAction: Reducer<
 		return action.pendingAction;
 	}
 
-	if ( action.type === 'SET_PENDING_ACTIONS' ) {
+	if ( action.type === 'SET_MULTIPLE_PENDING_ACTIONS' ) {
 		if ( state ) {
 			return [ ...state, action.pendingAction ];
 		}
@@ -400,22 +400,24 @@ const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
 	return state;
 };
 
-const domainSuggested: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_DOMAIN_SUGGESTED' ) {
-		return action.domainSuggested;
+const signupValues: Reducer< object, OnboardAction > = ( state = {}, action ) => {
+	if ( action.type === 'SET_SIGNUP_VALUES' ) {
+		console.log( 'ACTION', action );
+		if ( ! action.signupValues ) {
+			return state;
+		}
+		const lol = {
+			...state,
+			...action.signupValues,
+		};
+		console.log( 'LOL', lol );
+		return {
+			...state,
+			...action.signupValues,
+		};
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
-const domainItem: Reducer< object, OnboardAction > = ( state = {}, action ) => {
-	if ( action.type === 'SET_DOMAIN_ITEM' ) {
-		return action.domainItem;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
+		return {};
 	}
 	return state;
 };
@@ -429,8 +431,6 @@ const reducer = combineReducers( {
 	domainSearch,
 	domainCategory,
 	domainForm,
-	domainSuggested,
-	domainItem,
 	isRedirecting,
 	hasUsedDomainsStep,
 	hasUsedPlansStep,
@@ -454,6 +454,7 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
+	signupValues,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
