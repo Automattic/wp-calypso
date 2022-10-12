@@ -10,11 +10,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import { useSelector, connect } from 'react-redux';
-import {
-	isNewsletterOrLinkInBioFlow,
-	NEWSLETTER_FLOW,
-	Notice,
-} from 'calypso/../packages/onboarding/src';
+import { NEWSLETTER_FLOW, Notice } from 'calypso/../packages/onboarding/src';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
@@ -37,7 +33,6 @@ interface Props {
 	planSlug: string;
 	site: any;
 	onSubmit: () => void;
-	hasInitializedSitesBackUrl: boolean;
 	plansLoaded: boolean;
 	processStep: ( step: any ) => void;
 }
@@ -250,24 +245,14 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					{ components: { link: freePlanButton } }
 			  );
 	};
-	const isTailoredFlow = () => {
-		return isNewsletterOrLinkInBioFlow( props.flowName );
-	};
+
 	const plansFeaturesSelection = () => {
-		const { flowName, stepName, hasInitializedSitesBackUrl } = props;
+		const { flowName, stepName } = props;
 
 		const headerText = getHeaderText();
 		const fallbackHeaderText = headerText;
 		const subHeaderText = getSubHeaderText();
 		const fallbackSubHeaderText = subHeaderText;
-
-		let backUrl;
-		let backLabelText;
-
-		if ( hasInitializedSitesBackUrl ) {
-			backUrl = hasInitializedSitesBackUrl;
-			backLabelText = __( 'Back to Sites' );
-		}
 
 		let queryParams;
 
@@ -277,14 +262,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					flowName={ flowName }
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
-					shouldHideNavButtons={ isTailoredFlow() }
+					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ true }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
-					backUrl={ backUrl }
-					backLabelText={ backLabelText }
 					queryParams={ queryParams }
 				/>
 			</>
@@ -309,7 +292,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		siteType: getSiteType( state ),
-		hasInitializedSitesBackUrl: false,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	};
 } )( localize( PlansWrapper ) );
