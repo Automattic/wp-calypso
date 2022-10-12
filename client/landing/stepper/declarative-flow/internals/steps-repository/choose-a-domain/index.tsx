@@ -32,6 +32,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	const getVideoPressFlowStepContent = () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const onAddDomain = ( selectedDomain: any ) => {
 			setDomain( selectedDomain );
 			submit?.( { domain: selectedDomain } );
