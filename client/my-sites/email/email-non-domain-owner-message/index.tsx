@@ -32,7 +32,6 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 	const ownerUserName = useDomainOwnerUserName( selectedSite, domain );
 
 	const isPrivacyAvailable = domain?.privacyAvailable;
-
 	const buildLoginUrl = () => {
 		const redirectUrlParameter =
 			source === 'email-comparison'

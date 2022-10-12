@@ -29,7 +29,6 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
 	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
-
 	if ( ! requiredAction && canCurrentUserAddEmail( domain ) ) {
 		return null;
 	}
