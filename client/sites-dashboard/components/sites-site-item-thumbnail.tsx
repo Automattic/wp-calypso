@@ -7,6 +7,7 @@ import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
 import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
+import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
@@ -16,11 +17,12 @@ const NoIcon = styled.div( {
 } );
 
 interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbnail >, 'alt' > {
+	displayMode: SitesDisplayMode;
 	site: SiteExcerptData;
 	alt?: string;
 }
 
-export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
+export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
@@ -57,7 +59,11 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 	}
 
 	function renderFallback() {
-		if ( site.options.is_wpforteams_site && getSiteLaunchStatus( site ) !== 'public' ) {
+		if (
+			displayMode === 'tile' &&
+			site.options.is_wpforteams_site &&
+			getSiteLaunchStatus( site ) !== 'public'
+		) {
 			return <P2Thumbnail site={ site } />;
 		}
 

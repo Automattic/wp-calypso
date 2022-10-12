@@ -85,6 +85,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail
+						displayMode="tile"
 						className={ siteThumbnail }
 						site={ site }
 						width={ THUMBNAIL_DIMENSION.width }
