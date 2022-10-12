@@ -4,7 +4,6 @@ import {
 	getWPCOMPluginsQueryParams,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
-import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 
@@ -74,17 +73,15 @@ const prefetchTimebox = ( prefetchPromises, context, key, timeout ) => {
 		}
 		context.serverSideRender = false;
 
-		if ( config.isEnabled( 'ssr/log-prefetch-errors' ) ) {
-			logToLogstash( {
-				feature: 'calypso_ssr',
-				message: err?.message || err || 'unknown error',
-				extra: {
-					key,
-					'user-agent': context.res?.req?.useragent?.source,
-					path: context.path,
-				},
-			} );
-		}
+		context.res.req.logger.error( {
+			feature: 'calypso_ssr',
+			message: err?.message || err || 'unknown error',
+			extra: {
+				key,
+				'user-agent': context.res?.req?.useragent?.source,
+				path: context.path,
+			},
+		} );
 	} );
 };
 
