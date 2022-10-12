@@ -40,19 +40,21 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
 	if ( post.excerpt.length > 0 ) {
-		if ( post.short_excerpt !== undefined ) {
-			// Remove … from short_excerpt
-			const short_excerpt = post.short_excerpt.replaceAll( '…', '' );
-			// Remove any non-alphanumeric chars to avoid string comparison issues and trim
-			const short_excerpt_chars = trim( short_excerpt.replace( /\W/g, '' ) );
-			const custom_excerpt_chars = trim(
-				post.excerpt.substring( 0, short_excerpt_chars.length ).replace( /\W/g, '' )
-			);
-			if ( short_excerpt_chars !== custom_excerpt_chars ) {
-				// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)
-				// This is an indication of a custom excerpt which we should default to when display excerpts in the reader
-				return post.excerpt;
-			}
+		if ( post.short_excerpt === undefined ) {
+			// If there is no short_excerpt, then there is no better_excerpt
+			return post.excerpt;
+		}
+		// Remove … from short_excerpt
+		const short_excerpt = post.short_excerpt.replaceAll( '…', '' );
+		// Remove any non-alphanumeric chars to avoid string comparison issues, then trim
+		const short_excerpt_chars = trim( short_excerpt.replace( /\W/g, '' ) );
+		const custom_excerpt_chars = trim(
+			post.excerpt.substring( 0, short_excerpt.length ).replace( /\W/g, '' )
+		);
+		if ( short_excerpt_chars !== custom_excerpt_chars ) {
+			// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)
+			// This is an indication of a custom excerpt which we should default to when display excerpts in the reader
+			return post.excerpt;
 		}
 	}
 
