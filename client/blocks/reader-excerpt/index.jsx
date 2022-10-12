@@ -41,7 +41,9 @@ const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
 	if ( post.excerpt.length > 0 ) {
 		if ( post.short_excerpt !== undefined ) {
+			// Remove … from short_excerpt
 			const short_excerpt = post.short_excerpt.replaceAll( '…', '' );
+			// Remove any non-alphanumeric chars to avoid string comparison issues and trim
 			const short_excerpt_chars = trim( short_excerpt.replace( /\W/g, '' ) );
 			const custom_excerpt_chars = trim(
 				post.excerpt.substring( 0, short_excerpt_chars.length ).replace( /\W/g, '' )
