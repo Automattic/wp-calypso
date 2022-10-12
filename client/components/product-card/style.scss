@@ -171,7 +171,6 @@
 .product-card__options {
 	display: flex;
 	flex-flow: column nowrap;
-	justify-content: space-around; // IE11 fallback.
 	justify-content: space-evenly;
 
 	@include breakpoint-deprecated( ">480px" ) {

@@ -128,7 +128,6 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	text-align: center;
 	overflow: hidden;
-	display: -ms-flex;
 	display: flex;
 }
 
@@ -346,7 +345,6 @@ $y-axis-padding: 0 20px 0 10px;
 
 				.wrapper {
 					display: block;
-					line-height: inherit;
 					line-height: 24px;
 					clear: both;
 				}
