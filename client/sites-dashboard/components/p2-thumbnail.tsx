@@ -33,13 +33,18 @@ const ColorGradient = styled.div( {
 	},
 } );
 
-const SiteIcon = styled.img( {
+const SiteIconContainer = styled.div( {
 	background: '#fff',
 	padding: '3px',
-	borderRadius: '3px',
+	borderRadius: '4px',
 	position: 'absolute',
-	bottom: '16px',
-	left: '16px',
+	left: '32px',
+	top: '109px',
+} );
+
+const SiteIcon = styled.img( {
+	borderRadius: '2px',
+	display: 'block',
 } );
 
 interface P2ThumbnailProps {
@@ -63,7 +68,11 @@ export function P2Thumbnail( { site }: P2ThumbnailProps ) {
 				) : (
 					<ColorGradient style={ { backgroundColor: data.color_link } } />
 				) }
-				{ site.icon && <SiteIcon src={ site.icon.img } alt="" width="64" height="64" /> }
+				{ site.icon && (
+					<SiteIconContainer>
+						<SiteIcon src={ site.icon.img } alt="" width="64" height="64" />
+					</SiteIconContainer>
+				) }
 			</>
 		);
 	}
