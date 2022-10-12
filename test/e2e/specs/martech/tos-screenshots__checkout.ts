@@ -97,8 +97,11 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 	} );
 
 	afterAll( async function () {
-		await restAPIClient.clearShoppingCart(
-			SecretsManager.secrets.testAccounts.martechTosUser.testSites?.primary.id as number
-		);
+		const blogID = SecretsManager.secrets.testAccounts.martechTosUser.testSites?.primary
+			.id as number;
+		const response = await restAPIClient.clearShoppingCart( blogID );
+		if ( response.success !== true ) {
+			console.error( `Failed to clear the shopping cart for blogID ${ blogID }` );
+		}
 	} );
 } );
