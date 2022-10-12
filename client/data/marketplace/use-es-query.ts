@@ -20,7 +20,9 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
-	if ( ! icons ) return defaultIconUrl;
+	if ( ! icons ) {
+		return defaultIconUrl;
+	}
 
 	let iconsObject: Record< string, Icon > = {};
 	try {
@@ -47,7 +49,9 @@ const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 		iconByResolution.svg ||
 		iconByResolution.default;
 
-	if ( ! icon ) return defaultIconUrl;
+	if ( ! icon ) {
+		return defaultIconUrl;
+	}
 
 	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
 };
@@ -63,7 +67,9 @@ function buildDefaultIconUrl( pluginSlug: string ) {
 const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
-	if ( ! results ) return [];
+	if ( ! results ) {
+		return [];
+	}
 	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin: Plugin = {
 			name: hit.plugin.title, // TODO: add localization
