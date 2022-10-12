@@ -107,148 +107,18 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
 
 /**
- * Returns the stylesheet resulting of merging core and theme data.
+ * Removes the data provided by the user from a site with limited global styles.
  *
- * This is mostly copied from `gutenberg_get_global_stylesheet`.
- *
- * @param array $types Types of styles to load. Optional.
- *                     It accepts 'variables', 'styles', 'presets' as values.
- *                     If empty, it'll load all for themes with theme.json support
- *                     and only [ 'variables', 'presets' ] for themes without theme.json support.
- *
- * @return string Stylesheet.
+ * @param WP_Theme_JSON_Data_Gutenberg $theme_json Class to access and update the underlying data.
+ * @return WP_Theme_JSON_Data_Gutenberg Filtered data.
  */
-function wpcom_get_free_global_stylesheet( $types = array() ) {
-	// Return cached value if it can be used and exists.
-	// It's cached by theme to make sure that theme switching clears the cache.
-	$can_use_cached = (
-		( empty( $types ) ) &&
-		( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) &&
-		( ! defined( 'SCRIPT_DEBUG' ) || ! SCRIPT_DEBUG ) &&
-		( ! defined( 'REST_REQUEST' ) || ! REST_REQUEST ) &&
-		! is_admin()
-	);
-	$transient_name = 'wpcom_free_global_styles_' . get_stylesheet();
-	if ( $can_use_cached ) {
-		$cached = get_transient( $transient_name );
-		if ( $cached ) {
-			return $cached;
-		}
+function wpcom_block_global_styles_frontend( $theme_json ) {
+	if ( ! wpcom_should_limit_global_styles() ) {
+		return $theme_json;
 	}
-	$tree                = WP_Theme_JSON_Resolver::get_merged_data( 'theme' );
-	$supports_theme_json = WP_Theme_JSON_Resolver::theme_has_support();
-	if ( empty( $types ) && ! $supports_theme_json ) {
-		$types = array( 'variables', 'presets', 'base-layout-styles' );
-	} elseif ( empty( $types ) ) {
-		$types = array( 'variables', 'styles', 'presets' );
-	}
-
-	/*
-	 * If variables are part of the stylesheet,
-	 * we add them.
-	 *
-	 * This is so themes without a theme.json still work as before 5.9:
-	 * they can override the default presets.
-	 * See https://core.trac.wordpress.org/ticket/54782
-	 */
-	$styles_variables = '';
-	if ( in_array( 'variables', $types, true ) ) {
-		/*
-		 * We only use the default, theme, and custom origins.
-		 * This is because styles for blocks origin are added
-		 * at a later phase (render cycle) so we only render the ones in use.
-		 * @see wp_add_global_styles_for_blocks
-		 */
-		$origins          = array( 'default', 'theme', 'custom' );
-		$styles_variables = $tree->get_stylesheet( array( 'variables' ), $origins );
-		$types            = array_diff( $types, array( 'variables' ) );
-	}
-
-	/*
-	 * For the remaining types (presets, styles), we do consider origins:
-	 *
-	 * - themes without theme.json: only the classes for the presets defined by core
-	 * - themes with theme.json: the presets and styles classes, both from core and the theme
-	 */
-	$styles_rest = '';
-	if ( ! empty( $types ) ) {
-		/*
-		 * We only use the default, theme, and custom origins.
-		 * This is because styles for blocks origin are added
-		 * at a later phase (render cycle) so we only render the ones in use.
-		 * @see wp_add_global_styles_for_blocks
-		 */
-		$origins = array( 'default', 'theme', 'custom' );
-		if ( ! $supports_theme_json ) {
-			$origins = array( 'default' );
-		}
-		$styles_rest = $tree->get_stylesheet( $types, $origins );
-	}
-	$stylesheet = $styles_variables . $styles_rest;
-	if ( $can_use_cached ) {
-		// Cache for a minute.
-		// This cache doesn't need to be any longer, we only want to avoid spikes on high-traffic sites.
-		set_transient( $transient_name, $stylesheet, MINUTE_IN_SECONDS );
-	}
-	return $stylesheet;
+	return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
 }
-
-/**
- * Enqueues the default variation of the global styles.
- */
-function wpcom_enqueue_default_global_styles() {
-	$separate_assets  = wp_should_load_separate_core_block_assets();
-	$is_block_theme   = wp_is_block_theme();
-	$is_classic_theme = ! $is_block_theme;
-
-	/*
-	 * Global styles should be printed in the head when loading all styles combined.
-	 * The footer should only be used to print global styles for classic themes with separate core assets enabled.
-	 *
-	 * See https://core.trac.wordpress.org/ticket/53494.
-	 */
-	if (
-		( $is_block_theme && doing_action( 'wp_footer' ) ) ||
-		( $is_classic_theme && doing_action( 'wp_footer' ) && ! $separate_assets ) ||
-		( $is_classic_theme && doing_action( 'wp_enqueue_scripts' ) && $separate_assets )
-	) {
-		return;
-	}
-
-	$stylesheet = wpcom_get_free_global_stylesheet();
-	if ( empty( $stylesheet ) ) {
-		return;
-	}
-
-	wp_register_style( 'wpcom-global-styles', false, array(), true, true );
-	wp_add_inline_style( 'wpcom-global-styles', $stylesheet );
-	wp_enqueue_style( 'wpcom-global-styles' );
-}
-
-/**
- * De-queues Global Styles if the given site is on a free plan.
- *
- * @param  int $blog_id Blog ID.
- */
-function wpcom_global_styles_override_for_free_site( $blog_id = 0 ) {
-	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
-	}
-
-	if ( ! wpcom_should_limit_global_styles( $blog_id ) ) {
-		return;
-	}
-
-	// If the site does not meet the required criteria we override Global Styles with the free version of global styles.
-	remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
-	remove_action( 'wp_footer', 'wp_enqueue_global_styles', 1 );
-	remove_action( 'wp_enqueue_scripts', 'gutenberg_enqueue_global_styles' );
-	remove_action( 'wp_footer', 'gutenberg_enqueue_global_styles', 1 );
-
-	add_action( 'wp_enqueue_scripts', 'wpcom_enqueue_default_global_styles' );
-	add_action( 'wp_footer', 'wpcom_enqueue_default_global_styles', 1 );
-}
-add_action( 'init', 'wpcom_global_styles_override_for_free_site' );
+add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend', 10, 3 );
 
 /**
  * Tracks when global styles are updated or reset after the post has actually been saved.
