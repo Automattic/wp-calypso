@@ -11,4 +11,9 @@
 		fill: var(--color-neutral-0);
 		vertical-align: top;
 	}
+
+	.components-tooltip .components-popover__content {
+		width: min(300px, 100vw);
+		white-space: normal;
+	}
 }
