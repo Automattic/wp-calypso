@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { Fragment, useMemo } from 'react';
+import { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
@@ -25,7 +25,7 @@ export default function SiteTableRow( { columns, item }: Props ) {
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
 
-	const isSiteConnected = useMemo( () => ( data ? data.connected : true ), [ data ] );
+	const isSiteConnected = data ? data.connected : true;
 
 	return (
 		<Fragment>

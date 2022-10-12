@@ -1,6 +1,6 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { useState, useCallback, MouseEvent, KeyboardEvent, useMemo } from 'react';
+import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -26,7 +26,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
 
-	const isSiteConnected = useMemo( () => ( data ? data.connected : true ), [ data ] );
+	const isSiteConnected = data ? data.connected : true;
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
@@ -53,7 +53,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error || rows.monitor.error;
+	const siteError = site.error || rows.monitor.error || ! isSiteConnected;
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
