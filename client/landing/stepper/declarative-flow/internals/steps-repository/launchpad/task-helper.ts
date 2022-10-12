@@ -137,6 +137,10 @@ export function getEnhancedTasks(
 						title: translate( 'Upload your first video' ),
 						actionUrl: `/site-editor/${ siteSlug }`,
 						completed: videoPressUploadCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( `/site-editor/${ siteSlug }` );
+						},
 					};
 					break;
 				case 'videopress_launched':
