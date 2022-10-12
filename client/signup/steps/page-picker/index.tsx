@@ -205,15 +205,30 @@ function PageSelector( {
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ SERVICES_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				popular
+				pageId={ SERVICES_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 			<PageCell
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ PRICING_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				popular
+				pageId={ PRICING_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
-			<PageCell pageId={ FAQ_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				popular
+				pageId={ FAQ_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 			<PageCell
 				pageId={ TESTIMONIALS_PAGE }
 				selectedPages={ selectedPages }
