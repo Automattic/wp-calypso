@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-const SHORT_LIST_LENGTH = 6;
+export const SHORT_LIST_LENGTH = 4;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
