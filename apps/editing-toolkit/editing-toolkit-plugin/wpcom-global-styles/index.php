@@ -125,8 +125,8 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 
 	/*
 	 * If both `WP_Theme_JSON_Data` and `WP_Theme_JSON_Data_Gutenberg` are missing,
-	 * then the site is running and old version of WordPress and Gutenberg where we
-	 * cannot actually block the user styles.
+	 * then the site is running an old version of WordPress and Gutenberg where we
+	 * cannot block the user styles properly.
 	 */
 	return $theme_json;
 }
