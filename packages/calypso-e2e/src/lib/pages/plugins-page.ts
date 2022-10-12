@@ -10,13 +10,13 @@ const selectors = {
 	// React modal buttons
 	modalButtonWithText: ( text: string ) => `.dialog__action-buttons button:has-text("${ text }")`,
 
-	listTitle: ( section: string ) => `.plugins-browser-list__title:text("${ section }")`,
-	listSubtitle: ( section: string ) => `.plugins-browser-list__subtitle:text("${ section }")`,
-	headerTitle: ( section: string ) => `.plugin-category-results-header__title:text("${ section }")`,
+	listTitle: ( section: string ) => `.plugins-results-header__title:text("${ section }")`,
+	listSubtitle: ( section: string ) => `.plugins-results-header__subtitle:text("${ section }")`,
+	headerTitle: ( section: string ) => `.plugins-results-header__title:text("${ section }")`,
 	pluginTitle: ( plugin: string ) => `.plugins-browser-item__title:text("${ plugin }")`,
 	pluginTitleOnSection: ( section: string, plugin: string ) =>
-		`.plugins-browser-list:has(.plugins-browser-list__title.${ section }) :text-is("${ plugin }")`,
-	sectionTitles: '.plugins-browser-list__title',
+		`.plugins-browser-list:has(.plugins-results-header__title:text("${ section }")) :text-is("${ plugin }")`,
+	sectionTitles: '.plugins-results-header__title',
 	browseAllFree: 'a[href^="/plugins/browse/popular"]',
 	browseAllPaid: 'a[href^="/plugins/browse/paid"]',
 	browseFirstCategory: 'button:has-text("Search Engine Optimization")',

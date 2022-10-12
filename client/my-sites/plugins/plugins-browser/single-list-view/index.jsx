@@ -68,7 +68,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
-			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
+			browseAllLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
