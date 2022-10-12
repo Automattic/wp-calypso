@@ -395,6 +395,7 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
+		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 
 		// enforce our classname namespacing rules
 		'wpcalypso/jsx-classname-namespace': 'error',
