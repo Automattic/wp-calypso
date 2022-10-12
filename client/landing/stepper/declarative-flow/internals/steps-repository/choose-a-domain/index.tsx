@@ -38,29 +38,11 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		};
 
 		const domainSuggestion = domain ? domain.domain_name : siteTitle;
-		const promoTlds = [
-			'video',
-			'tube',
-			'movie',
-			'live',
-			'network',
-			'news',
-			'show',
-			'watch',
-			'media',
-			'productions',
-			'digital',
-			'plus',
-			'online',
-			'film',
-			'tv',
-			'studio',
-			'com',
-		];
 
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
+					vendor={ flow }
 					basePath={ '' }
 					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
@@ -70,7 +52,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					showAlreadyOwnADomain={ false }
 					onAddDomain={ onAddDomain }
 					onSkip={ onSkip }
-					promoTlds={ promoTlds }
 					products={ productsList }
 					useProvidedProductsList={ true }
 				/>
