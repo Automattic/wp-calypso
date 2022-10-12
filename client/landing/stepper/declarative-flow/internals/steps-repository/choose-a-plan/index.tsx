@@ -207,6 +207,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 											onSelect={ ( id ) => onPlanSelect( id, plan ) }
 											onPickDomainClick={ undefined }
 											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
+											// translators: Placeholder refers to the name of a WordPress.com plan.
 											CTAButtonLabel={ __( 'Get %s' ).replace( '%s', plan.title ) }
 											popularBadgeText={ __( 'Best for Video' ) }
 										/>
