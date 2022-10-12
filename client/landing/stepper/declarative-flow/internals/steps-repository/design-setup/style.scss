@@ -207,7 +207,6 @@ $break-design-preview: 1024px;
 				color: #101517;
 				font-size: 2rem;
 				font-weight: 400;
-				letter-spacing: -0.4px;
 				letter-spacing: 0.2px;
 				margin: 0;
 
@@ -259,7 +258,6 @@ $break-design-preview: 1024px;
 			}
 
 			.web-preview__inner .spinner-line {
-				width: 100%;
 				width: calc(100% - 1px);
 				top: unset;
 				left: unset;
