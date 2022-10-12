@@ -402,15 +402,9 @@ const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
 
 const signupValues: Reducer< object, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_SIGNUP_VALUES' ) {
-		console.log( 'ACTION', action );
 		if ( ! action.signupValues ) {
 			return state;
 		}
-		const lol = {
-			...state,
-			...action.signupValues,
-		};
-		console.log( 'LOL', lol );
 		return {
 			...state,
 			...action.signupValues,
