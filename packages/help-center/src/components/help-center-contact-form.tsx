@@ -120,6 +120,26 @@ function useFormTitles( mode: Mode ): {
 	}[ mode ];
 }
 
+const getSupportedLanguages = ( supportType: string, locale: string ) => {
+	const isLiveChatLanguageSupported = (
+		config( 'livechat_support_locales' ) as Array< string >
+	 ).includes( locale );
+
+	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+		locale
+	);
+
+	switch ( supportType ) {
+		case 'CHAT':
+			return ! isLiveChatLanguageSupported;
+		case 'EMAIL':
+			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
+
+		default:
+			return false;
+	}
+};
+
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
@@ -363,6 +383,8 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
+	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+
 	const isCTADisabled = () => {
 		if ( isSubmitting || ! message || ownershipStatusLoading ) {
 			return true;
@@ -377,28 +399,6 @@ export const HelpCenterContactForm = () => {
 				return ! subject;
 		}
 	};
-
-	const getSupportedLanguages = ( supportType: string, locale: string ) => {
-		const isLiveChatLanguageSupported = (
-			config( 'livechat_support_locales' ) as Array< string >
-		 ).includes( locale );
-
-		const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
-			locale
-		);
-
-		switch ( supportType ) {
-			case 'CHAT':
-				return ! isLiveChatLanguageSupported;
-			case 'EMAIL':
-				return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
-
-			default:
-				return false;
-		}
-	};
-
-	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale ); 
 
 	const getCTALabel = () => {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
@@ -552,7 +552,7 @@ export const HelpCenterContactForm = () => {
 				>
 					{ getCTALabel() }
 				</Button>
-				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt() && (
+				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
 					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
 				) }
 				{ hasSubmittingError && (
