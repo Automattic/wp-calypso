@@ -235,7 +235,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 			FEATURE_SPELLING_CORRECTION_V2,
 			FEATURE_SUPPORTS_WOOCOMMERCE_V2,
 		],
-		getProductId: () => 2130, // TODO: Update to actual product ID
+		getProductId: () => 2130,
 		getStoreSlug: () => PRODUCT_JETPACK_SEARCH_FREE,
 	},
 	[ PRODUCT_JETPACK_ANTI_SPAM ]: {
