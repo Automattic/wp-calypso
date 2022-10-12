@@ -17,6 +17,8 @@ const Container = styled.div( {
 
 const HeaderImage = styled.img( {
 	width: '100%',
+	height: '144px',
+	objectFit: 'cover',
 } );
 
 const ColorGradient = styled.div( {
