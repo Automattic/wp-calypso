@@ -49,7 +49,7 @@ const getTranslation = ( lang?: string ) => {
 	return text;
 };
 
-export const SiteComingSoon = ( { siteName = '', lang = '', style }: Props ) => {
+export const SiteComingSoon = ( { siteName = '', lang, style }: Props ) => {
 	const comingSoon = getTranslation( lang );
 	return (
 		<Root style={ style }>
