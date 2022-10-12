@@ -1,6 +1,6 @@
+import { trim } from 'lodash';
 import PropTypes from 'prop-types';
 import AutoDirection from 'calypso/components/auto-direction';
-
 import './style.scss';
 
 // Excerpt is set to use webkit-line-clamp to limit number of lines of text to show inside container
@@ -37,26 +37,44 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 	return excerpt;
 };
 
+const chooseExcerpt = ( post ) => {
+	// Need to figure out if custom excerpt is different to better_excerpt
+	if ( post.excerpt.length > 0 ) {
+		if ( post.short_excerpt !== undefined ) {
+			const short_excerpt = post.short_excerpt.replaceAll( '…', '' );
+			const short_excerpt_chars = trim( short_excerpt.replace( /\W/g, '' ) );
+			const custom_excerpt_chars = trim(
+				post.excerpt.substring( 0, short_excerpt_chars.length ).replace( /\W/g, '' )
+			);
+			if ( short_excerpt_chars !== custom_excerpt_chars ) {
+				// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)
+				// This is an indication of a custom excerpt which we should default to when display excerpts in the reader
+				return post.excerpt;
+			}
+		}
+	}
+
+	if ( post.better_excerpt !== undefined && post.better_excerpt.length > 0 ) {
+		// If there is no custom excerpt then we should show the post's better_excerpt
+		// We need to first update this excerpt to work with webkit-line-clamp so that it displays correctly in the reader
+		return convertExcerptNewlinesToBreaks( post.better_excerpt );
+	}
+
+	if ( post.content_no_html !== undefined && post.content_no_html.length > 0 ) {
+		// If there is no excerpt, then we fallback to displaying the post's content_no_html
+		return post.content_no_html;
+	}
+
+	// If the post has no excerpt or content_no_html then we return null
+	return null;
+};
+
 const ReaderExcerpt = ( { post } ) => {
-	// post.excerpt - custom excerpt
-	// post.better_excerpt - HTML excerpt generated from post content
-	let excerpt = post.excerpt || post.better_excerpt;
-
-	if ( excerpt !== undefined ) {
-		// Update excerpt to work with webkit-line-clamp
-		excerpt = convertExcerptNewlinesToBreaks( excerpt );
-	}
-
-	// If no valid excerpt, use either `content_no_html` or null
-	if ( excerpt === undefined ) {
-		excerpt = post.content_no_html || null;
-	}
-
 	return (
 		<AutoDirection>
 			<div
 				className="reader-excerpt__content reader-excerpt"
-				dangerouslySetInnerHTML={ { __html: excerpt } } // eslint-disable-line react/no-danger
+				dangerouslySetInnerHTML={ { __html: chooseExcerpt( post ) } } // eslint-disable-line react/no-danger
 			/>
 		</AutoDirection>
 	);
