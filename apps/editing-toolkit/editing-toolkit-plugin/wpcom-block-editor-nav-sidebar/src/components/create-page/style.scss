@@ -14,7 +14,7 @@ $create-page-text-color: #a2aab2;
 
 	&:focus {
 		color: var(--color-text-inverted);
-		border: 1px solid var(--color-text-inverted);
+		border: 1px solid var(--studio-white);
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
@@ -22,8 +22,8 @@ $create-page-text-color: #a2aab2;
 	}
 
 	svg {
-		background: var(--color-text-inverted);
-		color: #000;
+		background: var(--studio-white);
+		color: var(--studio-black);
 		border-radius: 2px;
 	}
 }

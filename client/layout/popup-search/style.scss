@@ -7,7 +7,7 @@
 		width: 50%;
 		margin: 0 auto;
 		margin-top: 50px;
-		background-color: var(--color-text-inverted);
+		background-color: var(--studio-white);
 		padding: 15px;
 		min-width: 270px;
 		box-shadow: 0 0.8px 8.2px #bcbcbc;
@@ -39,7 +39,7 @@
 				border-radius: 2px;
 				padding: 19px;
 				cursor: pointer;
-				color: #000;
+				color: var(--studio-black);
 				&:hover {
 					border: 1px solid #32373c;
 					background-color: #32373c;

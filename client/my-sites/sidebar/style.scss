@@ -332,7 +332,7 @@ $font-size: rem(14px);
 	// client/blocks/upsell-nudge/style.scss
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
-			background-color: var(--color-text-inverted);
+			background-color: var(--studio-white);
 			color: #000;
 		}
 
