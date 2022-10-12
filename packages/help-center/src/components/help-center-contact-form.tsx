@@ -398,9 +398,7 @@ export const HelpCenterContactForm = () => {
 		}
 	};
 
-	const shouldShowHelpLanguagePrompt = () => {
-		return getSupportedLanguages( mode, locale );
-	};
+	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale ); 
 
 	const getCTALabel = () => {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
