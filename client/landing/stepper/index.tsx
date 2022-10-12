@@ -55,6 +55,7 @@ function generateGetSuperProps() {
 	} );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );

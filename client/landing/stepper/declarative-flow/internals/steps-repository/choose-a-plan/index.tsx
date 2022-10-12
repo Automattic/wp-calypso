@@ -131,6 +131,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 					newSite?.site_slug as string
 				);
 
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const productsToAdd: any[] = [
 					{
 						product_slug: planProductObject?.storeSlug,
