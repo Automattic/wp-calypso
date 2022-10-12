@@ -109,7 +109,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				setProgress( 0 );
 				try {
 					await createVideoPressSite( {
-						username: currentUser!.username,
+						username: currentUser ? currentUser?.username : '',
 						languageSlug: locale,
 						visibility,
 					} );
