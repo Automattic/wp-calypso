@@ -157,7 +157,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				setProgress( 1.0 );
 
 				const redirectTo = encodeURIComponent(
-					`/setup/completingPurchase?flow=videopress&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+					`/setup/launchpad?flow=videopress&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 				);
 
 				window.location.replace(

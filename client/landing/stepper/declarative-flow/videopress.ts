@@ -22,7 +22,6 @@ export const videopress: Flow = {
 			'videomakerSetup',
 			'chooseADomain',
 			'chooseAPlan',
-			'completingPurchase',
 			'processing',
 			'launchpad',
 		] as StepPath[];
@@ -124,10 +123,6 @@ export const videopress: Flow = {
 
 				case 'chooseAPlan': {
 					return navigate( 'processing' );
-				}
-
-				case 'completingPurchase': {
-					return navigate( 'launchpad' );
 				}
 
 				case 'launchpad': {
