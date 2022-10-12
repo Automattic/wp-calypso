@@ -483,6 +483,8 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
 			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
+			isCancelFormVisible: false,
 			cancelLink,
 		} );
 	}
@@ -491,6 +493,8 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: true,
+			isRemoving: false,
+			isCancelFormVisible: false,
 			cancelLink,
 		} );
 	}
@@ -499,6 +503,7 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
 			isCancelFormVisible: true,
 			cancelLink,
 		} );
@@ -508,6 +513,8 @@ class ManagePurchase extends Component {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
 			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
+			isCancelFormVisible: false,
 			cancelLink: null,
 		} );
 	};
