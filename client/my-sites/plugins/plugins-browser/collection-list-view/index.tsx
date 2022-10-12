@@ -143,7 +143,8 @@ export default function CollectionListView( {
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			showPlaceholders={ false }
-			expandedListLink={ false }
+			browseAllLink={ false }
+			resultCount={ false }
 			search={ '' }
 			extended={ false }
 		/>
