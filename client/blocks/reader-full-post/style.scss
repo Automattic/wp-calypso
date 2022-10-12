@@ -552,7 +552,25 @@
 }
 
 .reader-full-post__featured-image {
+	display: inline-flex;
 	margin: 28px 0 26px;
+	position: relative;
+	&::after {
+		content: "";
+		position: absolute;
+		pointer-events: none;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+		border-radius: 5px;
+	}
+	img {
+		box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+		border-radius: 4px;
+		position: relative;
+	}
 }
 
 .reader-full-post__unavailable {
