@@ -700,6 +700,18 @@ const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
 };
 
 /**
+ * Track block install.
+ *
+ * @param {object} block block instance object
+ * @returns {void}
+ */
+const trackInstallBlockType = ( block ) => {
+	tracksRecordEvent( 'wpcom_block_install', {
+		block_slug: block.id,
+	} );
+};
+
+/**
  * Tracker can be
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
@@ -725,6 +737,9 @@ const REDUX_TRACKING = {
 		editEntityRecord: trackEditEntityRecord,
 		saveEditedEntityRecord: trackSaveEditedEntityRecord,
 		__experimentalSaveSpecifiedEntityEdits: trackSaveSpecifiedEntityEdits,
+	},
+	'core/block-directory': {
+		installBlockType: trackInstallBlockType,
 	},
 	'core/block-editor': {
 		moveBlocksUp: getBlocksTracker( 'wpcom_block_moved_up' ),
