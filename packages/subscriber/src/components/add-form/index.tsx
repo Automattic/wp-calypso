@@ -2,7 +2,7 @@
 import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Title, NextButton, SkipButton } from '@automattic/onboarding';
-import { TextControl, FormFileUpload, Button, Notice } from '@wordpress/components';
+import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -32,6 +32,7 @@ interface Props {
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
 	allowEmptyFormSubmit?: boolean;
+	manualListEmailInviting?: boolean;
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
@@ -51,6 +52,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showCsvUpload,
 		submitBtnName = __( 'Add subscribers' ),
 		allowEmptyFormSubmit,
+		manualListEmailInviting,
 		recordTracksEvent,
 		onSkipBtnClick,
 		onImportFinished,
@@ -114,13 +116,19 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		e.preventDefault();
 
 		const validEmails = isValidEmails
-			.map( ( x, i ) => {
-				if ( x ) return emails[ i ];
-			} )
+			.map( ( x, i ) => x && emails[ i ] )
 			.filter( ( x ) => !! x ) as string[];
 
-		validEmails.length && addSubscribers( siteId, validEmails );
-		selectedFile && importCsvSubscribers( siteId, selectedFile );
+		if ( manualListEmailInviting ) {
+			// add subscribers with invite email
+			validEmails.length && addSubscribers( siteId, validEmails );
+			// import subscribers providing only CSV list of emails
+			selectedFile && importCsvSubscribers( siteId, selectedFile );
+		} else {
+			// import subscribers proving CSV and manual list of emails
+			( selectedFile || validEmails.length ) &&
+				importCsvSubscribers( siteId, selectedFile, validEmails );
+		}
 
 		! validEmails.length && ! selectedFile && allowEmptyFormSubmit && onImportFinished?.();
 	}
@@ -340,10 +348,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			</div>
 
 			<div className={ 'add-subscriber__form--container' }>
-				{ inProgress && (
-					<Notice isDismissible={ false }>{ __( 'Your email list is being uploaded' ) }...</Notice>
-				) }
-
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
 					{ emailFormControls.map( ( placeholder, i ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
