@@ -109,14 +109,26 @@ add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_
 /**
  * Removes the data provided by the user from a site with limited global styles.
  *
- * @param WP_Theme_JSON_Data_Gutenberg $theme_json Class to access and update the underlying data.
- * @return WP_Theme_JSON_Data_Gutenberg Filtered data.
+ * @param WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg $theme_json Class to access and update the underlying data.
+ * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Filtered data.
  */
 function wpcom_block_global_styles_frontend( $theme_json ) {
 	if ( ! wpcom_should_limit_global_styles() ) {
 		return $theme_json;
 	}
-	return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
+
+	if ( class_exists( 'WP_Theme_JSON_Data' ) ) {
+		return new WP_Theme_JSON_Data( array(), 'custom' );
+	} elseif ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
+		return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
+	}
+
+	/*
+	 * If both `WP_Theme_JSON_Data` and `WP_Theme_JSON_Data_Gutenberg` are missing,
+	 * then the site is running and old version of WordPress and Gutenberg where we
+	 * cannot actually block the user styles.
+	 */
+	return $theme_json;
 }
 add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
 
