@@ -27,6 +27,9 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	if ( displayJetpackAppBranding ) {
 		const showIosBadge = ! isAndroid && ! isDesktop;
 		const showAndroidBadge = ! isIos && ! isDesktop;
+		const showBadge = showIosBadge || showAndroidBadge;
+
+		const badgeStoreName = showIosBadge ? 'ios' : 'android';
 
 		return (
 			<Card className="go-mobile go-mobile--jetpack customer-home__card">
@@ -44,23 +47,22 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 							{ translate( 'Everything you need to build and grow your site from any device.' ) }
 						</h3>
 					</div>
-					<div className="go-mobile__app-badges">
-						{ showIosBadge && (
-							<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-customer-home' }></AppsBadge>
-						) }
-						{ showAndroidBadge && (
-							<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
-						) }
-					</div>
+					{ showBadge ? (
+						<div className="go-mobile__app-badges">
+							<AppsBadge
+								storeName={ badgeStoreName }
+								utm_source={ 'calypso-customer-home' }
+							></AppsBadge>
+						</div>
+					) : (
+						<Button
+							className="go-mobile__email-link-button is-link"
+							href="https://apps.wordpress.com/get?campaign=calypso-customer-home"
+						>
+							{ translate( 'Get the Jetpack app' ) }
+						</Button>
+					) }
 				</div>
-				{ ! showIosBadge && ! showAndroidBadge && ! isDesktopApp && (
-					<Button
-						className="go-mobile__email-link-button is-link"
-						href="https://apps.wordpress.com/get?campaign=calypso-customer-home"
-					>
-						{ translate( 'Get the Jetpack app' ) }
-					</Button>
-				) }
 			</Card>
 		);
 	}
