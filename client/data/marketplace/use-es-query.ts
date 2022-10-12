@@ -77,7 +77,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			num_ratings: hit.plugin.num_ratings,
 			support_threads: hit[ 'plugin.support_threads' ],
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
-			active_installs: hit[ 'plugin.active_installs' ],
+			active_installs: hit.plugin.active_installs,
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
