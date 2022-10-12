@@ -1,7 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
+import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
+import { useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { StepPath } from './internals/steps-repository';
 import { Flow, ProvidedDependencies } from './internals/types';
 
@@ -21,6 +26,8 @@ export const importFlow: Flow = {
 			'importerMedium',
 			'importerSquarespace',
 			'importerWordpress',
+			'designSetup',
+			'patternAssembler',
 			'processing',
 		] as StepPath[];
 	},
@@ -28,6 +35,8 @@ export const importFlow: Flow = {
 	useStepNavigation( _currentStep, navigate ) {
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
+		const isDesktop = useViewportMatch( 'large' );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		const appendFlowQueryParam = ( path: string ) => {
 			const joinChar = path.includes( '?' ) ? '&' : '?';
@@ -75,6 +84,32 @@ export const importFlow: Flow = {
 						appendFlowQueryParam( providedDependencies?.url as string ) as StepPath
 					);
 				}
+
+				case 'designSetup': {
+					if (
+						isDesktop &&
+						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
+					) {
+						return navigate( 'patternAssembler' );
+					}
+
+					return navigate( 'processing' );
+				}
+
+				case 'patternAssembler':
+					return navigate( 'processing' );
+
+				case 'processing': {
+					// End of Pattern Assembler flow
+					if (
+						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
+						isBlankCanvasDesign( selectedDesign as Design )
+					) {
+						return exitFlow( `/site-editor/${ siteSlugParam }` );
+					}
+
+					return exitFlow( `/home/${ siteSlugParam }` );
+				}
 			}
 		};
 
@@ -96,13 +131,12 @@ export const importFlow: Flow = {
 				case 'importReadyNot':
 				case 'importReadyWpcom':
 				case 'importReadyPreview':
-					return navigate( 'import' );
-
 				case 'importerWix':
 				case 'importerBlogger':
 				case 'importerMedium':
 				case 'importerSquarespace':
 				case 'importerWordpress':
+				case 'designSetup':
 					return navigate( 'import' );
 			}
 		};
