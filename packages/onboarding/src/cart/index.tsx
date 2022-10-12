@@ -125,8 +125,6 @@ export const createSiteWithCart = async (
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
 	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
-	// const isManageSiteFlow = get( getSignupDependencyStore( state ), 'isManageSiteFlow', false );
-
 	if ( isManageSiteFlow ) {
 		//Just for testing
 		const siteSlugManaged = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
