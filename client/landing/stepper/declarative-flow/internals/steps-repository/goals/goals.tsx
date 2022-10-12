@@ -5,6 +5,9 @@ import { useExperiment } from 'calypso/lib/explat';
 import type { Goal } from './types';
 
 export const CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME = 'calypso_difm_goal_change_prototype';
+export const VARIATION_CONTROL = 'control';
+export const VARIATION_BUY = 'variation_buy';
+export const VARIOATION_GET = 'variation_get';
 
 const SiteGoal = Onboard.SiteGoal;
 const HIDE_GOALS = [ SiteGoal.DIFM, SiteGoal.Import ];
@@ -14,11 +17,20 @@ export const useGoals = ( displayAllGoals = false ): Goal[] => {
 	const translate = useTranslate();
 	const isEnglishLocale = useIsEnglishLocale();
 	const [ , experimentAssignment ] = useExperiment( CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME );
-	const showTreatmentDifmGoal = experimentAssignment?.variationName === 'treatment';
+	let variationName = experimentAssignment?.variationName;
 
-	let difmGoalDisplayText = translate( 'Hire a professional to design my website' );
-	if ( showTreatmentDifmGoal ) {
-		difmGoalDisplayText = translate( 'Hire an expert' );
+	let difmGoalDisplayText;
+	variationName = VARIOATION_GET;
+	switch ( variationName ) {
+		case VARIATION_BUY:
+			difmGoalDisplayText = translate( 'Buy a website' );
+			break;
+		case VARIOATION_GET:
+			difmGoalDisplayText = translate( 'Get a website quickly' );
+			break;
+		case VARIATION_CONTROL:
+		default:
+			difmGoalDisplayText = translate( 'Hire a professional to design my website' );
 	}
 
 	const goals = [
