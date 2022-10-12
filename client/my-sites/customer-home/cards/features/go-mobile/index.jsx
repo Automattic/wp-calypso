@@ -56,7 +56,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 				{ ! showIosBadge && ! showAndroidBadge && ! isDesktopApp && (
 					<Button
 						className="go-mobile__email-link-button is-link"
-						href="https://jetpack.com/mobile/"
+						href="https://apps.wordpress.com/get?campaign=calypso-customer-home"
 					>
 						{ translate( 'Get the Jetpack app' ) }
 					</Button>
