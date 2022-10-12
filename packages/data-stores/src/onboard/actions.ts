@@ -266,15 +266,10 @@ export const setPendingAction = (
 	pendingAction: undefined | ( () => Promise< any > ),
 	multipleActions = false
 ) => {
-	if ( multipleActions ) {
-		return {
-			type: 'SET_PENDING_ACTIONS' as const,
-			pendingAction,
-		};
-	}
-
 	return {
-		type: 'SET_PENDING_ACTION' as const,
+		type: multipleActions
+			? ( 'SET_MULTIPLE_PENDING_ACTIONS' as const )
+			: ( 'SET_PENDING_ACTION' as const ),
 		pendingAction,
 	};
 };
@@ -335,15 +330,21 @@ export const setDomainForm = ( step ) => {
 	};
 };
 
-export const setDomainSuggested = ( domainSuggested: string ) => ( {
-	type: 'SET_DOMAIN_SUGGESTED' as const,
-	domainSuggested,
+// export const setDomainSuggested = ( domainSuggested: string ) => ( {
+// 	type: 'SET_DOMAIN_SUGGESTED' as const,
+// 	domainSuggested,
+// } );
+
+// export const setDomainItem = ( domainItem: object ) => ( {
+// 	type: 'SET_DOMAIN_ITEM' as const,
+// 	domainItem,
+// } );
+
+export const setSignupValues = ( signupValues: object ) => ( {
+	type: 'SET_SIGNUP_VALUES' as const,
+	signupValues,
 } );
 
-export const setDomainItem = ( domainItem: object ) => ( {
-	type: 'SET_DOMAIN_ITEM' as const,
-	domainItem,
-} );
 
 export type OnboardAction = ReturnType<
 	| typeof addFeature
@@ -355,8 +356,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
-	| typeof setDomainSuggested
-	| typeof setDomainItem
 	| typeof setFonts
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
@@ -392,5 +391,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
-	| typeof setSiteSlug
+	| typeof setSignupValues
 >;

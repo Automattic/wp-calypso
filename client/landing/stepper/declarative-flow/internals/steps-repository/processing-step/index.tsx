@@ -61,11 +61,14 @@ const ProcessingStep: Step = function ( props ) {
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
 			} else if ( Array.isArray( action ) ) {
-				const destination = await action.reduce( async ( promise, func ) => {
-					const promiseReturn = await promise;
+				//In this case we have multiple actions that will be executed one after the other
+				//and the result of a function will be passed to the next one. The result of the last one will
+				//be used as destination
+				const destination = await action.reduce( async ( prevFunctionPromise, currentFunction ) => {
+					const prevFunctionResult = await prevFunctionPromise;
+
 					try {
-						const actionReturn = await func( promiseReturn );
-						return actionReturn;
+						return await currentFunction( prevFunctionResult );
 					} catch ( e ) {
 						// eslint-disable-next-line no-console
 						console.error( 'ProcessingStep failed:', e );
