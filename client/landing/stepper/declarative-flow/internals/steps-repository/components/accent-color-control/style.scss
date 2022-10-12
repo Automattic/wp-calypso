@@ -52,20 +52,3 @@
 		width: unset !important;
 	}
 }
-
-.accent-color-control__premium-label {
-	position: relative;
-
-	.badge {
-		background-color: var(--color-neutral-80);
-		color: var(--color-neutral-0);
-		font-size: 0.75rem;
-		margin-left: 8px;
-		padding-left: 6px;
-	}
-
-	svg {
-		fill: var(--color-neutral-0);
-		vertical-align: top;
-	}
-}
