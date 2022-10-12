@@ -338,7 +338,15 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Unlimited premium themes' ),
+		getTitle: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation( 'Unlimited premium themes' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Unlimited premium themes' )
+				: i18n.translate( 'Premium themes' );
+		},
 		getDescription: () => {
 			const shouldShowNewString =
 				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
