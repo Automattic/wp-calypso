@@ -16,6 +16,8 @@ class PostUnavailable extends PureComponent {
 			return null;
 		}
 
+		const message = error.message || this.props.translate( 'An error occurred loading this post.' );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Card tagName="article" className="reader__card is-error">
@@ -29,7 +31,8 @@ class PostUnavailable extends PureComponent {
 
 				<div className="reader__post-excerpt">
 					<p>
-						{ error.status }: { error.message }
+						{ error.status ? `${ error.status }: ` : null }
+						{ message }
 					</p>
 					{ config.isEnabled( 'reader/full-errors' ) ? (
 						<pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
