@@ -90,6 +90,7 @@ const PluginsBrowserList = ( {
 					subtitle={ subtitle }
 					resultCount={ resultCount }
 					browseAllLink={ browseAllLink }
+					listName={ listName }
 				/>
 			) }
 			{ listName === 'paid' && (
