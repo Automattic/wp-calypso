@@ -49,9 +49,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	} );
 
-	const { domainItem } = useSelect( ( select ) => {
+	const { signupValues } = useSelect( ( select ) => {
 		return {
-			domainItem: select( ONBOARD_STORE ).getDomainItem(),
+			signupValues: select( ONBOARD_STORE ).getSignupValues(),
 		};
 	} );
 
@@ -63,7 +63,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const [ isDesktop, setIsDesktop ] = React.useState( true );
 
 	const disableBloggerPlanWithNonBlogDomain = undefined;
-	const hideFreePlan = false;
+	const hideFreePlan = signupValues?.shouldHideFreePlan;
 	const isLaunchPage = undefined;
 	const showTreatmentPlansReorderTest = false;
 	const isReskinned = true;
@@ -74,7 +74,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const headerText = 'Choose a plan';
 	// const signupDependencies = {
 	// 	emailItem: undefined,
-	// 	shouldHideFreePlan: false,
 	// };
 	const translate = useTranslate();
 	useEffect( () => {
@@ -120,7 +119,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getDomainName = () => {
-		return domainItem && domainItem.meta;
+		return signupValues?.domainItem && signupValues.domainItem.meta;
 	};
 
 	const handleFreePlanButtonClick = () => {

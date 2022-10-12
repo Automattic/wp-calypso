@@ -391,14 +391,9 @@ export const setDomainForm = ( step ) => {
 	};
 };
 
-export const setDomainSuggested = ( domainSuggested: string ) => ( {
-	type: 'SET_DOMAIN_SUGGESTED' as const,
-	domainSuggested,
-} );
-
-export const setDomainItem = ( domainItem: object ) => ( {
-	type: 'SET_DOMAIN_ITEM' as const,
-	domainItem,
+export const setSignupValues = ( signupValues: object ) => ( {
+	type: 'SET_SIGNUP_VALUES' as const,
+	signupValues,
 } );
 
 export type OnboardAction = ReturnType<
@@ -411,8 +406,6 @@ export type OnboardAction = ReturnType<
 	| typeof setDomain
 	| typeof setDomainCategory
 	| typeof setDomainSearch
-	| typeof setDomainSuggested
-	| typeof setDomainItem
 	| typeof setFonts
 	| typeof setHasUsedDomainsStep
 	| typeof setHasUsedPlansStep
@@ -451,5 +444,5 @@ export type OnboardAction = ReturnType<
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
-	| typeof setSiteSlug
+	| typeof setSignupValues
 >;

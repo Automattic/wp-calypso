@@ -36,7 +36,6 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { useI18n } from '@wordpress/react-i18n';
 import { getStepUrl } from 'calypso/signup/utils';
-import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import {
@@ -72,16 +71,16 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		}
 	);
 
-	const { siteTitle, siteAccentColor, domainForm, domainSuggested } = useSelect( ( select ) => {
+	const { siteTitle, siteAccentColor, domainForm, signupValues } = useSelect( ( select ) => {
 		return {
 			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			domainForm: select( ONBOARD_STORE ).getDomainForm(),
-			domainSuggested: select( ONBOARD_STORE ).getDomainSuggested(),
+			signupValues: select( ONBOARD_STORE ).getSignupValues(),
 		};
 	} );
 
-	const { setDomainForm, setDomainItem, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setDomainForm, setSignupValues, setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
@@ -94,10 +93,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const forceHideFreeDomainExplainerAndStrikeoutUi = undefined;
 	const isReskinned = true;
 	const isAllDomains = false;
-	const forceDesignType = undefined;
 	const hideInitialQuery = true;
 	const premium = undefined;
-	const designType = '';
 	const domainsWithPlansOnly = true;
 	const tld = undefined;
 	const theme = undefined;
@@ -121,7 +118,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const search = false; //get( props, 'queryObject.search', false ) === 'yes';
 	// // If we landed anew from `/domains` and it's the `new-flow` variation
 	// // or there's a domainSuggested from previous steps, always rerun the search.
-	if ( domainSuggested ) {
+	if ( signupValues?.domainSuggested ) {
 		setSearchOnInitialRender( true );
 	}
 
@@ -140,18 +137,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const isPurchasingTheme = () => {
 		return premium;
-	};
-
-	const getDesignType = () => {
-		if ( forceDesignType ) {
-			return forceDesignType;
-		}
-
-		if ( signupDependencies && signupDependencies.designType ) {
-			return signupDependencies.designType;
-		}
-
-		return designType;
 	};
 
 	const getThemeSlugWithRepo = ( themeSlug ) => {
@@ -207,11 +192,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const submitWithDomain = ( suggestion, googleAppsCartItem?: any, shouldHideFreePlan = false ) => {
-		const useThemeAnnotation = shouldUseThemeAnnotation();
-		const useThemeHeadstartItem = useThemeAnnotation
-			? { useThemeHeadstart: useThemeAnnotation }
-			: {};
-
 		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
 
 		const siteUrl =
@@ -227,19 +207,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			  } )
 			: undefined;
 
-		setDomainItem( domainItem );
+		setSignupValues( { domainItem, shouldHideFreePlan } );
 
 		if ( suggestion ) {
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 		}
-
-		maybeExcludeEmailsStep( {
-			domainItem,
-			resetSignupStep: () => dispatch( removeStep ),
-			siteUrl: suggestion?.domain_name,
-			stepName: 'emails',
-			submitSignupStep: () => dispatch( submitSignupStep ),
-		} );
 
 		setPendingAction( async () => {
 			const createSiteResult = await createSiteWithCart(
@@ -254,7 +226,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					},
 					flowName: undefined,
 					lastKnownFlow: name,
-					googleAppsCartItem: undefined,
+					googleAppsCartItem,
 					isPurchasingItem: true,
 					siteUrl,
 					themeSlugWithRepo: undefined,
@@ -268,36 +240,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return createSiteResult;
 		}, true );
 
-		// setDomainResult( {
-		// 	domainItem,
-		// 	shouldHideFreePlan: isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
-		// } );
-
-		// dispatch(
-		// 	submitSignupStep(
-		// 		Object.assign(
-		// 			{
-		// 				stepName: 'domains', //this.props.stepName,
-		// 				domainItem,
-		// 				googleAppsCartItem,
-		// 				isPurchasingItem,
-		// 				siteUrl,
-		// 				stepSectionName,
-		// 				...( flow === 'newsletter' && siteAccentColor && { siteAccentColor } ),
-		// 			},
-		// 			getThemeArgs()
-		// 		),
-		// 		Object.assign(
-		// 			{ domainItem },
-		// 			isDependencyShouldHideFreePlanProvided() ? { shouldHideFreePlan } : {},
-		// 			useThemeHeadstartItem
-		// 		)
-		// 	)
-		// );
-
-		// dispatch( setDesignType( getDesignType() ) );
-		// Start the username suggestion process.
-		// siteUrl && dispatch( fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] ) );
 		submit?.();
 	};
 
@@ -639,7 +581,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			domainSuggested &&
+			signupValues?.domainSuggested &&
 			searchOnInitialRender
 		) {
 			setSearchOnInitialRender( false );
@@ -649,7 +591,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				// If length is less than 2 it will not fetch any data.
 				// filter before counting length
 				initialState.loadingResults =
-					getDomainSuggestionSearch( getFixedDomainSearch( domainSuggested ) ).length >= 2;
+					getDomainSuggestionSearch( getFixedDomainSearch( signupValues?.domainSuggested ) )
+						.length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
@@ -666,7 +609,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					analyticsSection={ getAnalyticsSection() }
 					basePath={ path }
 					deemphasiseTlds={ flow === 'ecommerce' ? [ 'blog' ] : [] }
-					designType={ getDesignType() }
+					designType={ undefined }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
 					forceHideFreeDomainExplainerAndStrikeoutUi={ forceHideFreeDomainExplainerAndStrikeoutUi }
 					includeDotBlogSubdomain={ shouldIncludeDotBlogSubdomain() }
@@ -690,7 +633,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
-					suggestion={ domainSuggested }
+					suggestion={ signupValues?.domainSuggested }
 					transferDomainUrl={ getUseYourDomainUrl() }
 					useYourDomainUrl={ getUseYourDomainUrl() }
 					vendor={ getSuggestionsVendor( {
