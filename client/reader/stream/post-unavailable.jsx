@@ -11,7 +11,7 @@ class PostUnavailable extends PureComponent {
 			return null;
 		}
 
-		if ( error.status === 404 ) {
+		if ( error.status === 404 || error.error === 404 ) {
 			// don't render a card for 404s. These are posts that we once had but were deleted.
 			return null;
 		}
@@ -28,7 +28,9 @@ class PostUnavailable extends PureComponent {
 				</div>
 
 				<div className="reader__post-excerpt">
-					<p>{ error.message }</p>
+					<p>
+						{ error.status }: { error.message }
+					</p>
 					{ config.isEnabled( 'reader/full-errors' ) ? (
 						<pre>{ JSON.stringify( this.props.post, null, '  ' ) }</pre>
 					) : null }
