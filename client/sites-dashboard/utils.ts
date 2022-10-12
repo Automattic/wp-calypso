@@ -32,6 +32,10 @@ export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
 };
 
+export const isExpiredAtomic = ( site: SiteExcerptNetworkData ) => {
+	return site.is_wpcom_atomic && site.plan?.expired;
+};
+
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';
 
 export const MEDIA_QUERIES = {
