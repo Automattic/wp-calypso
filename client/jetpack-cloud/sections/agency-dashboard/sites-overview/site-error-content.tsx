@@ -12,14 +12,11 @@ export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
 	};
 
 	return (
-		<div className="sites-overview__error-container" data-testid="site-error-container">
+		<div className="sites-overview__error-container">
 			<span className="sites-overview__error-icon">
 				<Gridicon size={ 18 } icon="notice-outline" />
 			</span>
-			<span
-				className="sites-overview__error-message sites-overview__error-message-large-screen"
-				data-testid="site-error-message"
-			>
+			<span className="sites-overview__error-message sites-overview__error-message-large-screen">
 				{ translate( 'Jetpack is unable to connect to %(siteUrl)s', {
 					args: {
 						siteUrl,
@@ -33,7 +30,6 @@ export default function SiteErrorContent( { siteUrl }: { siteUrl: string } ) {
 				onClick={ handleClickFixNow }
 				className="sites-overview__error-message-link"
 				href={ `/settings/disconnect-site/${ siteUrl }?type=down` }
-				data-testid="site-error-message-link"
 			>
 				{ translate( 'Fix now' ) }
 			</a>

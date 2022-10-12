@@ -91,7 +91,7 @@ describe( '<SiteTableRow>', () => {
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
-	const { getByTestId } = render(
+	const { getByText } = render(
 		<Provider store={ store }>
 			<QueryClientProvider client={ queryClient }>
 				<table>
@@ -105,10 +105,8 @@ describe( '<SiteTableRow>', () => {
 
 	test( 'should render correctly and have the error message and the link to fix the issue', async () => {
 		await waitFor( () => {
-			expect( getByTestId( 'site-error-message' ).textContent ).toEqual(
-				'Jetpack is unable to connect to test.jurassic.ninja'
-			);
-			expect( getByTestId( 'site-error-message-link' ).textContent ).toEqual( 'Fix now' );
+			expect( getByText( 'Jetpack is unable to connect to test.jurassic.ninja' ) ).toBeVisible();
+			expect( getByText( /fix now/i ) ).toBeVisible();
 		} );
 	} );
 } );
