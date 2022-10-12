@@ -624,6 +624,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			isAtomicAndEditingToolkitDeactivated,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -652,7 +653,9 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+				{ this.props.isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated
+					? this.renderLaunchSite()
+					: this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
