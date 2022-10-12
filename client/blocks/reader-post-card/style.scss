@@ -558,6 +558,28 @@
 			@include hide-content-accessibly();
 		}
 	}
+
+	&:hover,
+	button.is-active,
+	.like-button.is-liked {
+		svg.reader-external path {
+			fill: var(--color-link);
+		}
+
+		svg.reader-comment path,
+		svg.reader-share path {
+			stroke: var(--color-link);
+		}
+		svg.reader-star path {
+			stroke: var(--color-link);
+		}
+	}
+
+	.like-button.is-liked {
+		svg.reader-star path {
+			fill: var(--color-link);
+		}
+	}
 }
 
 // Follow button for stream cards
