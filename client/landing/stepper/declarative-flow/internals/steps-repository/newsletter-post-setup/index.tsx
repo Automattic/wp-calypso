@@ -89,7 +89,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					);
 				}
 				setIsLoading( false );
-				submit?.();
+				submit?.( { color: accentColor.hex.replace( '#', '' ) } );
 			}
 		} catch {
 			setIsSubmitError( true );

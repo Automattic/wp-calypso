@@ -10,7 +10,7 @@ import PreviewToolbar from '../design-setup/preview-toolbar';
 
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
-	const clearCache = useQuery().get( 'clearCache' );
+	const color = useQuery().get( 'color' );
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const flow = useFlowParam();
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
@@ -29,7 +29,7 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: true,
-			clearmemcache: clearCache ? 'brisket' : '',
+			...( color && { preview_accent_color: color } ),
 		} );
 	}
 
