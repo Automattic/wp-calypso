@@ -1,14 +1,14 @@
 // Actions for Individual Comments
 .comments__comment-actions {
 	align-items: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	font-size: $font-body-small;
 	justify-content: flex-start;
 	list-style: none;
 
 	.components-button {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: inline-block;
 		padding: 4px;
 		height: auto;
@@ -33,16 +33,16 @@
 		&:hover,
 		button.is-active,
 		&.like-button.is-liked {
-			color: var( --color-link );
+			color: var(--color-link);
 
 			svg.reader-star path {
-				stroke: var( --color-link );
+				stroke: var(--color-link);
 			}
 		}
 
 		&.like-button.is-liked {
 			svg.reader-star path {
-				fill: var( --color-link );
+				fill: var(--color-link);
 			}
 		}
 
@@ -59,7 +59,7 @@
 			padding-left: 0;
 
 			.comments__comment-actions-read-more-icon {
-				fill: var( --color-link );
+				fill: var(--color-link);
 				vertical-align: bottom;
 			}
 		}

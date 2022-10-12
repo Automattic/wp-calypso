@@ -87,6 +87,7 @@ module.exports = {
 					'brace-style': 'off',
 					'comma-dangle': 'off',
 					'comma-spacing': 'off',
+					curly: 'error', // The base curly rule does not seem to apply to TS files.
 					'default-param-last': 'off',
 					'dot-notation': 'off',
 					'func-call-spacing': 'off',
@@ -293,6 +294,9 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		// Curly is not added by existing presets and is needed for WordPress style compatibility.
+		curly: 'error',
 
 		'no-constant-condition': [ 'error', { checkLoops: false } ],
 

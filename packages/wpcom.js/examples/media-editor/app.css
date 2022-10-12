@@ -79,14 +79,9 @@ h3 {
 	padding: 9px;
 	margin-left: 15px;
 	float: left;
-}
-
-.image-container {
 	position: relative;
 	width: 300px;
 }
-
-.image-container .image-summary {}
 
 .image-container .image-summary span {
 	display: block;

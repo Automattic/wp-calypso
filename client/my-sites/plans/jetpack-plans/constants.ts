@@ -32,10 +32,7 @@ import {
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
-	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
-	SOCIAL_SHARES_1000,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
@@ -143,46 +140,12 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY = (): SelectorProduct => ( {
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 } );
 
-export const EXTERNAL_PRODUCT_SOCIAL_BASIC = (): SelectorProduct => ( {
-	// This is a virtual, non-purchasable product for Jetpack Social that
-	// points to an external landing page.
-	productSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
-	term: TERM_ANNUALLY,
-	type: ITEM_TYPE_PRODUCT,
-	costProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
-	monthlyProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC,
-	iconSlug: 'jetpack_crm',
-	displayName: translate( 'Social' ),
-	shortName: translate( 'Social' ),
-	tagline: translate( 'Easily share your website content on your social media channels' ),
-	description: translate(
-		'Easily share your website content on your social media channels from one place.'
-	),
-	shortDescription: translate( 'Write once, post everywhere.' ),
-	buttonLabel: translate( 'Get Social' ),
-	features: {
-		items: buildCardFeaturesFromItem( [ SOCIAL_SHARES_1000 ] ),
-	},
-	hidePrice: true,
-	externalUrl: 'https://jetpack.com/social/',
-} );
-
-export const EXTERNAL_PRODUCT_SOCIAL_BASIC_MONTHLY = (): SelectorProduct => ( {
-	...EXTERNAL_PRODUCT_SOCIAL_BASIC(),
-	productSlug: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-	term: TERM_MONTHLY,
-	displayTerm: TERM_ANNUALLY,
-	costProductSlug: PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-} );
-
 // List of products showcased in the Plans grid but not sold through Calypso
 export const EXTERNAL_PRODUCTS_LIST = [
 	PRODUCT_JETPACK_CRM_FREE,
 	PRODUCT_JETPACK_CRM_FREE_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_BASIC,
-	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 ];
 
 // External Product slugs to SelectorProduct.
@@ -191,8 +154,6 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, () => SelectorProduct >
 	[ PRODUCT_JETPACK_CRM_FREE_MONTHLY ]: EXTERNAL_PRODUCT_CRM_FREE_MONTHLY,
 	[ PRODUCT_JETPACK_CRM ]: EXTERNAL_PRODUCT_CRM,
 	[ PRODUCT_JETPACK_CRM_MONTHLY ]: EXTERNAL_PRODUCT_CRM_MONTHLY,
-	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: EXTERNAL_PRODUCT_SOCIAL_BASIC,
-	[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: EXTERNAL_PRODUCT_SOCIAL_BASIC_MONTHLY,
 };
 
 /**

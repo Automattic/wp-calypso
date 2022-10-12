@@ -231,6 +231,12 @@
 	.wp-block-gallery {
 		margin-left: 0;
 		margin-bottom: 1em;
+		// Non cropped images.
+		&:not(.is-cropped) {
+			.blocks-gallery-item {
+				align-self: flex-start;
+			}
+		}
 	}
 
 	.blocks-gallery-caption {
@@ -415,14 +421,6 @@
 		&.aligncenter {
 			.blocks-gallery-item figure {
 				justify-content: center;
-			}
-		}
-	}
-	.wp-block-gallery {
-		// Non cropped images.
-		&:not(.is-cropped) {
-			.blocks-gallery-item {
-				align-self: flex-start;
 			}
 		}
 	}

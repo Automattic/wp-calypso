@@ -1,13 +1,11 @@
 import { Card } from '@automattic/components';
-import { useI18n } from '@wordpress/react-i18n';
-import classnames from 'classnames';
 import { times } from 'lodash';
 import PropTypes from 'prop-types';
 import AsyncLoad from 'calypso/components/async-load';
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
 import { PluginsBrowserElementVariant } from 'calypso/my-sites/plugins/plugins-browser-item/types';
+import PluginsResultsHeader from 'calypso/my-sites/plugins/plugins-results-header';
 import { PluginsBrowserListVariant } from './types';
-
 import './style.scss';
 
 const DEFAULT_PLACEHOLDER_NUMBER = 6;
@@ -17,17 +15,16 @@ const PluginsBrowserList = ( {
 	variant = PluginsBrowserListVariant.Fixed,
 	title,
 	subtitle,
+	resultCount,
 	extended,
 	showPlaceholders,
 	site,
 	currentSites,
 	listName,
-	expandedListLink,
+	browseAllLink,
 	size,
 	search,
 } ) => {
-	const { __ } = useI18n();
-
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
 			// Needs a beter fix but something is leaking empty objects into this list.
@@ -87,20 +84,13 @@ const PluginsBrowserList = ( {
 
 	return (
 		<div className="plugins-browser-list">
-			{ ( title || subtitle ) && (
-				<div className="plugins-browser-list__header">
-					<div className="plugins-browser-list__titles">
-						<div className={ classnames( 'plugins-browser-list__title', listName ) }>{ title }</div>
-						<div className="plugins-browser-list__subtitle">{ subtitle }</div>
-					</div>
-					<div className="plugins-browser-list__actions">
-						{ expandedListLink && (
-							<a className="plugins-browser-list__browse-all" href={ expandedListLink }>
-								{ __( 'Browse all' ) }
-							</a>
-						) }
-					</div>
-				</div>
+			{ ( title || subtitle || resultCount || browseAllLink ) && (
+				<PluginsResultsHeader
+					title={ title }
+					subtitle={ subtitle }
+					resultCount={ resultCount }
+					browseAllLink={ browseAllLink }
+				/>
 			) }
 			{ listName === 'paid' && (
 				<AsyncLoad

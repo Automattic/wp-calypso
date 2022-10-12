@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
-import FullListView from '../plugins-browser/full-list-view';
 import usePlugins from '../use-plugins';
-import Header from './header';
 
 const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const { plugins, isFetching, fetchNextPage, pagination } = usePlugins( {
@@ -17,9 +17,9 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
 
-	let title = '';
+	let resultCount = '';
 	if ( categoryName && pagination ) {
-		title = translate( '%(total)s plugin', '%(total)s plugins', {
+		resultCount = translate( '%(total)s plugin', '%(total)s plugins', {
 			count: pagination.results,
 			textOnly: true,
 			args: {
@@ -31,18 +31,19 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	return (
 		<>
 			<UpgradeNudge siteSlug={ siteSlug } paidPlugins={ true } />
-			<Header title={ categoryName } count={ title } subtitle={ categoryDescription } />
-
-			<FullListView
+			<PluginsBrowserList
+				title={ categoryName }
+				subtitle={ categoryDescription }
+				resultCount={ resultCount }
 				plugins={ plugins }
 				listName={ category }
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
-				sites={ sites }
+				currentSites={ sites }
 				variant={ PluginsBrowserListVariant.InfiniteScroll }
-				fetchNextPage={ fetchNextPage }
 				extended
 			/>
+			<InfiniteScroll nextPageMethod={ fetchNextPage } />
 		</>
 	);
 };

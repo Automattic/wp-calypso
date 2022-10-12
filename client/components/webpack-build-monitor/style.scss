@@ -23,6 +23,15 @@
 	&.is-error {
 		background: var(--color-error);
 	}
+
+	.spinner__outer {
+		border-top-color: currentColor;
+	}
+
+	.spinner__inner {
+		border-top-color: currentColor;
+		border-right-color: currentColor;
+	}
 }
 
 .webpack-build-monitor__spinner {
@@ -32,15 +41,4 @@
 .webpack-build-monitor__text {
 	margin-left: 6px;
 	display: block;
-}
-
-.webpack-build-monitor {
-	.spinner__outer {
-		border-top-color: currentColor;
-	}
-
-	.spinner__inner {
-		border-top-color: currentColor;
-		border-right-color: currentColor;
-	}
 }

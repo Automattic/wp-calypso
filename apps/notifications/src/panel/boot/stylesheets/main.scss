@@ -676,10 +676,6 @@
 		}
 	}
 
-	.wpnc__body {
-		@extend %container;
-	}
-
 	.wpnc__summary {
 		@extend %container;
 		padding: $wpnc__padding-large 0;
@@ -695,6 +691,7 @@
 	}
 
 	.wpnc__body {
+		@extend %container;
 		.wpnc__paragraph {
 			word-wrap: break-word;
 			margin-top: $wpnc__padding-large;
@@ -899,9 +896,6 @@
 			}
 
 			-webkit-transform: translate3d(0, 0, 0); // fix for getting scrollbar in right z-index
-		}
-
-		.wpnc__single-view {
 			animation-name: wpnc__slideIn;
 			animation-timing-function: ease-out;
 			animation-fill-mode: forwards;

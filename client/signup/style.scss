@@ -19,6 +19,21 @@ body.is-section-signup {
 				opacity: 1;
 			}
 		}
+		/**
+		* Removed the navigation back button step from mobile viewports.
+		* This is done because the there is usally already a back button displayed to the user (Browser back button)
+		* and the current back button is redundent.
+		*/
+		.signup__step.is-plans-link-in-bio .step-wrapper__navigation,
+		.signup__step.is-plans-newsletter .step-wrapper__navigation,
+		.signup__step.is-mailbox-plan .step-wrapper__navigation,
+		.signup__step.is-plans .step-wrapper__navigation,
+		.signup__step.is-domains .step-wrapper__navigation,
+		.signup__step.is-mailbox-domain .step-wrapper__navigation {
+			@include breakpoint-deprecated( "<660px" ) {
+				display: none;
+			}
+		}
 	}
 	&.is-videopress-signup {
 		background: var(--videopress-color-background-dark);
@@ -874,23 +889,6 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.inline-help {
 		@include breakpoint-deprecated( "<660px" ) {
 			bottom: 74px;
-		}
-	}
-}
-/**
- * Removed the navigation back button step from mobile viewports.
- * This is done because the there is usally already a back button displayed to the user (Browser back button)
- * and the current back button is redundent.
-*/
-body.is-section-signup.is-white-signup {
-	.signup__step.is-plans-link-in-bio .step-wrapper__navigation,
-	.signup__step.is-plans-newsletter .step-wrapper__navigation,
-	.signup__step.is-mailbox-plan .step-wrapper__navigation,
-	.signup__step.is-plans .step-wrapper__navigation,
-	.signup__step.is-domains .step-wrapper__navigation,
-	.signup__step.is-mailbox-domain .step-wrapper__navigation {
-		@include breakpoint-deprecated( "<660px" ) {
-			display: none;
 		}
 	}
 }

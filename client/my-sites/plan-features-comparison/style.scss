@@ -35,26 +35,6 @@ $plan-features-sidebar-width: 272px;
 	padding-top: 8px;
 }
 
-.plan-features-comparison__table-item.plan-features-comparison__unique-features {
-	padding-bottom: 0.5rem;
-	ul {
-		margin-bottom: 0;
-	}
-
-	& .is-last-feature {
-		.plan-features-comparison__item {
-			padding-bottom: 0;
-
-			margin-left: 0;
-			padding-left: 0;
-
-			svg {
-				display: none;
-			}
-		}
-	}
-}
-
 .plan-features-comparison__header {
 	position: relative;
 	display: flex;
@@ -146,7 +126,6 @@ $plan-features-sidebar-width: 272px;
 		background-color: var(--color-surface);
 		position: relative;
 
-		.is-bold,
 		&.is-bold {
 			font-weight: bold;
 		}
@@ -326,10 +305,6 @@ $plan-features-sidebar-width: 272px;
 
 		.plan-features-comparison__item-cross {
 			fill: #a7aaad;
-		}
-
-		&.is-bold {
-			font-weight: bold;
 		}
 	}
 }

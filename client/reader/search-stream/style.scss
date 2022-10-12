@@ -10,14 +10,19 @@
 
 .search-stream .search {
 	margin-bottom: 0;
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
 	.search__icon-navigation {
+		/* stylelint-disable-next-line scales/radii */
 		border-bottom-left-radius: 6px;
+		/* stylelint-disable-next-line scales/radii */
 		border-top-left-radius: 6px;
 	}
 	.search__input.form-text-input[type="search"],
 	.search__close-icon {
+		/* stylelint-disable-next-line scales/radii */
 		border-bottom-right-radius: 6px;
+		/* stylelint-disable-next-line scales/radii */
 		border-top-right-radius: 6px;
 		padding: 6px 0;
 	}

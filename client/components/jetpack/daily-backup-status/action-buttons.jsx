@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -41,9 +42,15 @@ const RestoreButton = ( { disabled, rewindId, primary } ) => {
 	const needsCredentials = useSelector( ( state ) =>
 		getDoesRewindNeedCredentials( state, siteId )
 	);
+
+	const areCredentialsInvalid = useSelector( ( state ) =>
+		areJetpackCredentialsInvalid( state, siteId, 'main' )
+	);
+
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
-	const isRestoreDisabled = disabled || needsCredentials || isRestoreInProgress;
+	const isRestoreDisabled =
+		disabled || needsCredentials || isRestoreInProgress || areCredentialsInvalid;
 	const href = ! isRestoreDisabled ? backupRestorePath( siteSlug, rewindId ) : undefined;
 	const onRestore = () =>
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore', { rewind_id: rewindId } ) );
