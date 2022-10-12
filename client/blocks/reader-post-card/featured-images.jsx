@@ -29,7 +29,8 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 			classNames = classnames( 'reader-post-card__featured-images', 'four-images' );
 		} else if ( imagesToDisplay.length === 3 ) {
 			if ( index !== 0 ) {
-				imageHeight = imageHeight / 2;
+				// leave space for a 2px gap, always round down to an integer
+				imageHeight = Math.floor( imageHeight / 2 ) - 1;
 			}
 			classNames = classnames( 'reader-post-card__featured-images', 'three-images' );
 		} else if ( imagesToDisplay.length === 2 ) {
