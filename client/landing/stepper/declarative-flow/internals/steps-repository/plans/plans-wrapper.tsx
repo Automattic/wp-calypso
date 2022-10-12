@@ -9,19 +9,15 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { connect } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
 import {
 	isNewsletterOrLinkInBioFlow,
-	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
 	Notice,
 } from 'calypso/../packages/onboarding/src';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
-// import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -29,29 +25,19 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
-import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { completeSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import './style.scss';
-// import PlansStep from 'calypso/signup/steps/plans';
 
 interface Props {
 	flowName: string;
 	stepName: string;
-	positionInFlow: number;
-	signupProgress: any[];
-	translate: ( ...args: any[] ) => string;
-	errorNotice: ( message: string ) => void;
-	hasInitializedSites: boolean;
-	isTreatmentPlansReorderTest: boolean;
 	siteType: string;
 	planSlug: string;
 	site: any;
-	isInVerticalScrollingPlansExperiment: boolean;
-	additionalStepData: any;
-	stepSectionName: string;
-	goToNextStep: () => void;
+	onSubmit: () => void;
+	hasInitializedSitesBackUrl: boolean;
 	plansLoaded: boolean;
 	processStep: ( step: any ) => void;
 }
@@ -83,20 +69,20 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isReskinned = true;
 	const customerType = 'personal';
 	const positionInFlow = undefined;
-	const siteSlug = useQuery().get( 'siteSlug' );
+	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
 	const headerText = 'Choose a plan';
-	const signupDependencies = {
-		emailItem: undefined,
-		shouldHideFreePlan: false,
-	};
+	// const signupDependencies = {
+	// 	emailItem: undefined,
+	// 	shouldHideFreePlan: false,
+	// };
 	const translate = useTranslate();
 	useEffect( () => {
 		setIsDesktop( isDesktop );
 	}, [] );
 
 	const onSelectPlan = async ( cartItem: any ) => {
-		const { additionalStepData, stepSectionName, stepName, flowName } = props;
+		const { stepSectionName, stepName, flowName } = props;
 
 		if ( cartItem ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
@@ -114,47 +100,23 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			stepName,
 			stepSectionName,
 			cartItem,
-			...additionalStepData,
 		};
 
-		if ( flowName === 'newsletter' ) {
+		if ( flowName === NEWSLETTER_FLOW ) {
 			submitSignupStep( step, {
 				comingSoon: 0,
 			} );
-			props.goToNextStep();
-		} else if ( flowName === LINK_IN_BIO_FLOW ) {
-			// link-in-bio flow always uses pub/lynx
+		} else {
 			submitSignupStep( step, {} );
-
-			// props.processStep( step );
-
-			// await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
-			// props.onSubmit?.();
-			// console.log( 'Added to plan!', siteSlug, cartItem, flowName, userLoggedIn );
-
-			setPendingAction( async ( dependencies ) => {
-				const { siteSlug } = dependencies;
-				await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
-
-				return dependencies;
-			}, true );
-
-			props.onSubmit?.();
-			//TODO: How to deal with the theme pub/lynx? We do not use completesignupstep here
-
-			// addPlanToCart(
-			// 	() => {
-			// 		completeSignupStep( step, {
-			// 			cartItem,
-			// 			themeSlugWithRepo: 'pub/lynx',
-			// 		} );
-			// 		props.goToNextStep( 'lanchpad' );
-			// 	},
-			// 	{ siteSlug: siteSlug },
-			// 	step,
-			// 	window.redux
-			// );
 		}
+		setPendingAction( async ( dependencies ) => {
+			const { siteSlug } = dependencies;
+			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+
+			return dependencies;
+		}, true );
+
+		props.onSubmit?.();
 	};
 
 	const getDomainName = () => {
@@ -163,7 +125,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const handleFreePlanButtonClick = () => {
 		onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-		props.goToNextStep();
+		props.onSubmit();
 	};
 
 	const renderLoading = () => {
@@ -187,7 +149,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesList = () => {
-		const { flowName, isInVerticalScrollingPlansExperiment } = props;
+		const { flowName } = props;
 
 		let errorDisplay;
 		if ( 'invalid' === props.step?.status ) {
@@ -293,7 +255,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		return isNewsletterOrLinkInBioFlow( props.flowName );
 	};
 	const plansFeaturesSelection = () => {
-		const { flowName, stepName, hasInitializedSitesBackUrl, steps } = props;
+		const { flowName, stepName, hasInitializedSitesBackUrl } = props;
 
 		const headerText = getHeaderText();
 		const fallbackHeaderText = headerText;
@@ -309,20 +271,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		let queryParams;
-		if ( ! isNaN( Number( positionInFlow ) ) ) {
-			const previousStepName = steps[ positionInFlow - 1 ];
-			const previousStep = props.progress?.[ previousStepName ];
-
-			const isComingFromUseYourDomainStep = 'use-your-domain' === previousStep?.stepSectionName;
-
-			if ( isComingFromUseYourDomainStep ) {
-				queryParams = {
-					...props.queryParams,
-					step: 'transfer-or-connect',
-					initialQuery: previousStep?.siteUrl,
-				};
-			}
-		}
 
 		return (
 			<>
@@ -335,7 +283,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ true }
 					stepContent={ plansFeaturesList() }
-					allowBackFirstStep={ !! hasInitializedSitesBackUrl }
+					allowBackFirstStep={ false }
 					backUrl={ backUrl }
 					backLabelText={ backLabelText }
 					queryParams={ queryParams }
@@ -345,7 +293,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const classes = classNames( 'plans plans-step', {
-		'in-vertically-scrolled-plans-experiment': props.isInVerticalScrollingPlansExperiment,
+		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
 		'is-wide-layout': true,
 	} );
@@ -362,8 +310,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 export default connect( ( state ) => {
 	return {
 		siteType: getSiteType( state ),
-		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isInVerticalScrollingPlansExperiment: true,
+		hasInitializedSitesBackUrl: false,
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	};
 } )( localize( PlansWrapper ) );

@@ -98,7 +98,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return flow.title;
 		}
 	};
-
 	return (
 		<>
 			<DocumentHead title={ getDocumentHeadTitle() } />
