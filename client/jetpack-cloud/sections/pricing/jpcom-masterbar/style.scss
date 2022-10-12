@@ -59,14 +59,14 @@
 			border-style: solid;
 			border-color: transparent;
 			border-width: 0 8px 8px 8px;
-			border-bottom-color: white;
+			border-bottom-color: var(--studio-white);
 			transform: translateX(-50%);
 		}
 		position: absolute;
 		top: calc(100% + 16px);
 		min-width: 160px;
 		padding: 0.5rem 1rem;
-		background-color: white;
+		background-color: var(--studio-white);
 		border-radius: 3px; /* stylelint-disable-line scales/radii */
 		box-shadow: -1px -1px 2px rgba(0, 0, 0, 0.15), 1px 1px 2px rgba(0, 0, 0, 0.15);
 		font-size: 0.875rem;
