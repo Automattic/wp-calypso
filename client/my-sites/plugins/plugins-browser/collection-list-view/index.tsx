@@ -1,5 +1,6 @@
+import { shuffle } from '@automattic/js-utils';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
@@ -139,17 +140,20 @@ export default function CollectionListView( {
 
 	const collections = useCollections();
 
+	const plugins = useRef< Array< Plugin > >();
+	useEffect( () => {
+		plugins.current = shuffle( collections[ collection ].plugins.slice( 0, 6 ) );
+	}, [] );
+
 	if ( isJetpackSelfHosted ) {
 		return null;
 	}
 
-	const plugins = collections[ collection ].plugins.slice( 0, 6 );
-
 	return (
 		<PluginsBrowserList
 			listName={ 'collection-' + collection }
-			plugins={ plugins }
-			size={ plugins.length }
+			plugins={ plugins.current || [] }
+			size={ plugins.current?.length }
 			title={ collections[ collection ].name }
 			subtitle={ collections[ collection ].description }
 			site={ siteSlug }
