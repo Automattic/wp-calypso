@@ -832,7 +832,7 @@ object AuthenticationE2ETests : E2EBuildType(
 			}
 			branchFilter = "+:<default>"
 			triggerBuild = always()
-			withPendingChangesOnly = false
+			withPendingChangesOnly = true
 		}
 	}
 )
