@@ -61,7 +61,7 @@ function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
 	isSiteEditor = false,
-	theme = null
+	theme: string | null = null
 ): WpcomStep[] {
 	return [
 		{
@@ -75,7 +75,7 @@ function getTourSteps(
 					),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomaker-welcome' : 'welcome' ),
+				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomakerWelcome' : 'welcome' ),
 			},
 			options: {
 				classNames: {
@@ -140,13 +140,19 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Use the toolbar to change the appearance of a selected block. Try making it bold.',
-						'full-site-editing'
-					),
+					desktop:
+						'videomaker' === theme
+							? __(
+									'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
+									'full-site-editing'
+							  )
+							: __(
+									'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+									'full-site-editing'
+							  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomaker-edit' : 'makeBold' ),
+				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomakerEdit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {
