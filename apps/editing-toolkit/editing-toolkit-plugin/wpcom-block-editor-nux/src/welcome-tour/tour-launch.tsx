@@ -54,9 +54,10 @@ function WelcomeTour() {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+	const currentTheme = useSelect( ( select ) => select( 'core' ).getCurrentTheme() );
+	const themeName = currentTheme?.name?.raw?.toLowerCase() ?? null;
 
-	const theme = 'videomaker';
-	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext(), isSiteEditor, theme );
+	const tourSteps = getTourSteps( localeSlug, isWelcomeTourNext(), isSiteEditor, themeName );
 
 	// Only keep Payment block step if user comes from seller simple flow
 	if ( ! ( 'sell' === intent && sitePlan && 'ecommerce-bundle' !== sitePlan.product_slug ) ) {
@@ -169,6 +170,11 @@ function WelcomeTour() {
 			portalParentElement: document.getElementById( 'wpwrap' ),
 		},
 	};
+
+	// Theme isn't immediately available, so we prevent rendering so the content doesn't switch after it is presented, since some content is based on theme
+	if ( null === themeName ) {
+		return null;
+	}
 
 	return <WpcomTourKit config={ tourConfig } />;
 }

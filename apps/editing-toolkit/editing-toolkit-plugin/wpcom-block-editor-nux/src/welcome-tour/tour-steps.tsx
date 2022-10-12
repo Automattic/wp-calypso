@@ -61,8 +61,9 @@ function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
 	isSiteEditor = false,
-	theme: string | null = null
+	themeName: string | null = null
 ): WpcomStep[] {
+	const isVideoMaker = [ 'videomaker', 'videomaker white' ].indexOf( themeName ) >= 0;
 	return [
 		{
 			slug: 'welcome',
@@ -75,7 +76,7 @@ function getTourSteps(
 					),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomakerWelcome' : 'welcome' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
 			},
 			options: {
 				classNames: {
@@ -140,19 +141,18 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
-					desktop:
-						'videomaker' === theme
-							? __(
-									'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
-									'full-site-editing'
-							  )
-							: __(
-									'Use the toolbar to change the appearance of a selected block. Try making it bold.',
-									'full-site-editing'
-							  ),
+					desktop: isVideoMaker
+						? __(
+								'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
+								'full-site-editing'
+						  )
+						: __(
+								'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'videomaker' === theme ? 'videomakerEdit' : 'makeBold' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerEdit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {
