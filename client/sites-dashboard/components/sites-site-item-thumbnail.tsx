@@ -44,7 +44,15 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 			width: props.width || DEFAULT_THUMBNAIL_SIZE.width,
 			height: props.height || DEFAULT_THUMBNAIL_SIZE.height,
 		};
-		return <SiteComingSoon siteName={ site.name } style={ style } lang={ site.lang } />;
+		return (
+			<SiteComingSoon
+				{ ...props }
+				siteName={ site.name }
+				width={ style.width }
+				height={ style.height }
+				lang={ site.lang }
+			/>
+		);
 	}
 
 	return (

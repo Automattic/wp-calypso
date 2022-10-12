@@ -1,20 +1,24 @@
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
-import { CSSProperties } from 'react';
 
 type Props = {
 	siteName?: string;
 	className?: string;
-	style?: CSSProperties;
 	lang?: string;
+	width: number;
+	height: number;
 };
 
 const Root = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
+	justifyContent: 'center',
 	backgroundColor: '#117ac9',
 	borderRadius: 4,
-	boxSizing: 'border-box',
+	boxSizing: 'content-box',
+	border: '1px solid rgb(238, 238, 238)',
+	position: 'relative',
+	overflow: 'hidden',
 } );
 
 const comingSoonTranslations: Record< string, string > = {
@@ -49,11 +53,17 @@ const getTranslation = ( lang?: string ) => {
 	return text;
 };
 
-export const SiteComingSoon = ( { siteName = '', lang, style }: Props ) => {
+export const SiteComingSoon = ( { siteName = '', className, lang, width, height }: Props ) => {
 	const comingSoon = getTranslation( lang );
 	return (
-		<Root style={ style }>
-			<svg width="100%" viewBox="0 0 375 272" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<Root className={ className }>
+			<svg
+				width={ width }
+				height={ height }
+				viewBox="0 0 375 272"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
 				<title>{ comingSoon }</title>
 				<text
 					fill="white"
