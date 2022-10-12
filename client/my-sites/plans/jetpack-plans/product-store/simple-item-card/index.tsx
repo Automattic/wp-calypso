@@ -14,7 +14,6 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	onClickCta,
 	price,
 	title,
-	customLabel,
 } ) => {
 	return (
 		<div className="simple-item-card">
@@ -22,14 +21,7 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 			<div className="simple-item-card__body">
 				<div className="simple-item-card__header">
 					<div>
-						<h3 className="simple-item-card__title">
-							{ title }
-							{ customLabel && (
-								<div className="simple-item-card__custom-label">
-									<span>{ customLabel }</span>
-								</div>
-							) }
-						</h3>
+						<h3 className="simple-item-card__title">{ title }</h3>
 						<div className="simple-item-card__price">{ price }</div>
 					</div>
 					<Button
