@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	findPlansKeys,
@@ -117,7 +117,6 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
-			isFAQCondensedExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -158,7 +157,6 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
-					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 				/>
 			</div>
 		);
@@ -460,17 +458,21 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, isFAQExperiment, showFAQ } = this.props;
-
-		if ( isInSignup ) {
-			if ( isFAQExperiment ) {
-				return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
-			}
-			return null;
-		}
+		const { isInSignup, titanMonthlyRenewalCost, showFAQ, locale } = this.props;
 
 		if ( ! showFAQ ) {
 			return;
+		}
+
+		if ( isInSignup ) {
+			const isEnglish = config( 'english_locales' ).includes( locale );
+
+			// Remove this check after translations are completed for the PlanFAQ component.
+			if ( ! isEnglish ) {
+				return null;
+			}
+
+			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
 		}
 
 		return <WpcomFAQ />;

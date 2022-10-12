@@ -169,23 +169,6 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - condensed_plan_features_v1 test */
-	FEATURE_HOSTING_TEST,
-	FEATURE_PRIORITY_SUPPORT_TEST,
-	FEATURE_PLUGINS_TEST,
-	FEATURE_SFTP_DATABASE_TEST,
-	FEATURE_FREE_NEWSLETTER_V1,
-	FEATURE_PAID_NEWSLETTER_V1,
-	FEATURE_REPUBLICIZE_V3,
-	FEATURE_MONETISE_V2,
-	FEATURE_EDGE_CACHING_V2,
-	FEATURE_UPLOAD_THEMES_V3,
-	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
-	FEATURE_SITE_STATS_V2,
-	FEATURE_COLLECT_PAYMENTS_V3,
-	FEATURE_FREE_THEMES_V2,
-	FEATURE_VIDEO_UPLOADS_V2,
-	/* END - condensed_plan_features_v1 test */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1585,105 +1568,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
-	/* START - condensed_plan_features_v1 test */
-	[ FEATURE_HOSTING_TEST ]: {
-		getSlug: () => FEATURE_HOSTING_TEST,
-		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
-		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
-		getTitle: () => '24/7 live chat support',
-		getDescription: () => {},
-	},
-	[ FEATURE_PLUGINS_TEST ]: {
-		getSlug: () => FEATURE_PLUGINS_TEST,
-		getTitle: () => 'Install WordPress plugins',
-		getDescription: () => {},
-	},
-	[ FEATURE_SFTP_DATABASE_TEST ]: {
-		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
-		getTitle: () => 'SFTP and Database Access',
-		getDescription: () => {},
-	},
-	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_FREE_NEWSLETTER_V1,
-		getTitle: () => 'Free newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_PAID_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_PAID_NEWSLETTER_V1,
-		getTitle: () => 'Paid newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_REPUBLICIZE_V3 ]: {
-		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => 'Advanced social media tools',
-		getDescription: () => {},
-	},
-	[ FEATURE_MONETISE_V2 ]: {
-		getSlug: () => FEATURE_MONETISE,
-		getTitle: () => 'Earn money from ads',
-		getDescription: () => {},
-	},
-	[ FEATURE_UPLOAD_THEMES_V3 ]: {
-		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
-		getTitle: () => 'Upload custom WordPress themes',
-		getDescription: () => {},
-	},
-	[ FEATURE_EDGE_CACHING_V2 ]: {
-		getSlug: () => FEATURE_EDGE_CACHING_V2,
-		getTitle: () => 'High-performance edge caching',
-		getDescription: () => {},
-	},
-	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_SITE_STATS_V2 ]: {
-		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Built-in site stats' ),
-		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
-	},
-	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
-		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
-		getTitle: () => i18n.translate( 'Collect payments and donations' ),
-		getDescription: () =>
-			i18n.translate(
-				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
-							/>
-						),
-					},
-				}
-			),
-	},
-	[ FEATURE_FREE_THEMES_V2 ]: {
-		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to a wide range of professional themes ' +
-					"so you can find a design that's just right for your site."
-			),
-	},
-	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
-		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
-		getDescription: () =>
-			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats.'
-			),
-		getStoreSlug: () => 'videopress',
-	},
-	/* END - condensed_plan_features_v1 test */
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
 		getTitle: () => i18n.translate( 'Unlimited traffic' ),
