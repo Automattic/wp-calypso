@@ -107,7 +107,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_and_styles' );
 
 /**
- * Removes the data provided by the user from a site with limited global styles.
+ * Removes the user styles from a site with limited global styles.
  *
  * @param WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg $theme_json Class to access and update the underlying data.
  * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Filtered data.
