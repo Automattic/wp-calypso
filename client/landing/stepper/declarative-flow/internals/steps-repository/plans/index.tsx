@@ -19,6 +19,7 @@ const plans: Step = function plans( { navigation, flow } ) {
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
+			hideBack={ true }
 			stepContent={
 				<PlansWrapper
 					flowName={ flow || 'link-in-bio' }
