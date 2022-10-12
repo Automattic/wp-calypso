@@ -27,6 +27,7 @@ const SiteRenewNotice = styled.div`
 
 export const SiteRenew = ( { site }: SiteRenewProps ) => {
 	const { __ } = useI18n();
+	const isSiteOwner = site.plan?.user_is_owner;
 	const renewText = __( 'Renew' );
 	return (
 		<SiteRenewContainer>
@@ -34,9 +35,11 @@ export const SiteRenew = ( { site }: SiteRenewProps ) => {
 				<Gridicon icon="notice" />
 				{ `${ site.plan?.product_name_short } - Expired` }
 			</SiteRenewNotice>
-			<SiteRenewLink href={ `/checkout/${ site.slug }` } title={ renewText }>
-				{ renewText }
-			</SiteRenewLink>
+			{ isSiteOwner && (
+				<SiteRenewLink href={ `/checkout/${ site.slug }` } title={ renewText }>
+					{ renewText }
+				</SiteRenewLink>
+			) }
 		</SiteRenewContainer>
 	);
 };
