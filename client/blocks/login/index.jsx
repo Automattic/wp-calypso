@@ -154,6 +154,8 @@ class Login extends Component {
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					isPartnerSignup: this.props.isPartnerSignup,
+					oauth2ClientId: this.props.oauth2Client?.id,
+					redirectTo: this.props.redirectTo,
 				} )
 			);
 		}
