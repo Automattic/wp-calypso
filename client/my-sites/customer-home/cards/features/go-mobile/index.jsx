@@ -18,8 +18,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const { isDesktop, isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
 	const isDesktopApp = config.isEnabled( 'desktop' );
-	const displayJetpackAppBranding =
-		config.isEnabled( 'jetpack/app-branding' ) && ( isAndroid || isIos );
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 	const emailLogin = () => {
 		sendMobileLoginEmail( email );
