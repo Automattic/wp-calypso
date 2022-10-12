@@ -17,6 +17,7 @@ export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_mont
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
+export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
@@ -87,6 +88,7 @@ export const JETPACK_ANTI_SPAM_PRODUCTS = <const>[
 // Search
 export const JETPACK_SEARCH_PRODUCTS = <const>[
 	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_FREE,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
