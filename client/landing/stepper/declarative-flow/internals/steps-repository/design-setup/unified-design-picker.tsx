@@ -290,7 +290,16 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			} );
 		}
 
-		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
+			( set ) => set.slug === 'woo-on-plans'
+		);
+
+		let plan;
+		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+			plan = 'business-bundle';
+		} else {
+			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		}
 
 		if ( siteSlugOrId ) {
 			const params = new URLSearchParams();
