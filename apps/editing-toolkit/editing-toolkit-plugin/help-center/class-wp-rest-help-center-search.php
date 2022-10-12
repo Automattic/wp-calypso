@@ -17,9 +17,8 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 	 * WP_REST_Help_Center_Search constructor.
 	 */
 	public function __construct() {
-		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'help-center/search';
-		$this->wpcom_is_site_specific_endpoint = false;
+		$this->namespace = 'help-center';
+		$this->rest_base = '/search';
 	}
 
 	/**
@@ -33,7 +32,6 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_search_results' ),
 				'permission_callback' => array( $this, 'permission_callback' ),
-				'show_in_index'       => false,
 				'args'                => array(
 					'query'  => array(
 						'type' => 'string',
@@ -45,15 +43,6 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 				),
 			)
 		);
-	}
-
-	/**
-	 * Callback to determine whether the request can proceed.
-	 *
-	 * @return boolean
-	 */
-	public function permission_callback() {
-		return is_user_logged_in();
 	}
 
 	/**
@@ -82,5 +71,14 @@ class WP_REST_Help_Center_Search extends \WP_REST_Controller {
 		$response = json_decode( wp_remote_retrieve_body( $body ) );
 
 		return rest_ensure_response( $response );
+	}
+
+	/**
+	 * Callback to determine whether the request can proceed.
+	 *
+	 * @return boolean
+	 */
+	public function permission_callback() {
+		return is_user_logged_in();
 	}
 }
