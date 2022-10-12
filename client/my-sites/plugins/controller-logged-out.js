@@ -42,12 +42,12 @@ const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );
 
 const prefetchProductList = ( queryClient, store ) => {
-	const query = { type: 'all' };
+	const type = 'all';
 
 	return queryClient
-		.fetchQuery( [ 'products-list', query.type ], () => wpcom.req.get( '/products', query ) )
+		.fetchQuery( [ 'products-list', type ], () => wpcom.req.get( '/productst', { type } ) )
 		.then( ( productsList ) => {
-			return store.dispatch( receiveProductsList( productsList, query.type ) );
+			return store.dispatch( receiveProductsList( productsList, type ) );
 		} );
 };
 
