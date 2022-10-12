@@ -30,7 +30,7 @@ const defaultProps = {
 	mediaScale: 1,
 	mediaValidationErrorTypes: [],
 	selectedItems: [],
-	site: { ID: 1 },
+	site: { ID: 123456789 },
 	translate: () => {},
 };
 
