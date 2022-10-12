@@ -1,4 +1,10 @@
 .global-styles-premium-badge {
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+	position: relative;
+
 	.badge {
 		background-color: var(--color-neutral-80);
 		color: var(--color-neutral-0);
@@ -11,9 +17,21 @@
 		fill: var(--color-neutral-0);
 		vertical-align: top;
 	}
+}
 
-	.components-tooltip .components-popover__content {
+.global-styles-premium-badge__popover {
+	margin-left: -35px;
+
+	.components-popover__content {
 		width: min(300px, 100vw);
-		white-space: normal;
+		background-color: var(--color-neutral-80);
+		color: var(--color-neutral-0);
+		text-align: center;
+		font-size: 0.75rem;
+		padding: 8px;
+		line-height: 1.4;
+		border-width: 0;
+		outline: none;
+		box-shadow: none;
 	}
 }
