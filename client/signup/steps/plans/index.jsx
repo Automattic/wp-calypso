@@ -228,6 +228,7 @@ export class PlansStep extends Component {
 				{ errorDisplay }
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+					showFAQ={ this.state.isDesktop && ! this.isTailoredFlow() }
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
@@ -349,9 +350,11 @@ export class PlansStep extends Component {
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
+
 	isTailoredFlow() {
 		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
+
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
 			this.props;
