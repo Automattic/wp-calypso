@@ -120,6 +120,7 @@
 			padding-right: 24px;
 		}
 
+		/* stylelint-disable-next-line selector-id-pattern */
 		input#siteTitle,
 		textarea#tagline {
 			border: solid 1px #c3c4c7;
@@ -136,7 +137,7 @@
 			margin-top: 24px;
 			width: 100%;
 			background-color: #0675c4;
-			border: 0px none;
+			border: 0 none;
 		}
 	}
 }

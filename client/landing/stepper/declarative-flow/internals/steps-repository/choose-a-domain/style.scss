@@ -15,14 +15,14 @@ $videopress-mobile-layout-width: 1200px;
 		}
 
 		padding: 20px;
-		margin-bottom: 0px;
+		margin-bottom: 0;
 	}
 
 	.register-domain-step__search {
 		@media (min-width: $videopress-mobile-layout-width) {
 			padding-top: 8px;
-			padding-left: 0px;
-			padding-right: 0px;
+			padding-left: 0;
+			padding-right: 0;
 		}
 
 		padding: 20px;
@@ -76,12 +76,14 @@ $videopress-mobile-layout-width: 1200px;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 14px;
 				font-weight: normal;
 				gap: 12px;
-	
+
 				h2 {
 					color: #fff;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					font-size: 20px;
 					font-weight: normal;
 				}
@@ -120,14 +122,14 @@ $videopress-mobile-layout-width: 1200px;
 		button,
 		.components-button:focus:not(:disabled),
 		input {
-			border: 0px;
+			border: 0;
 			outline: none;
 		}
 	}
 
 	.search-filters__dropdown-filters {
 		button {
-			border: 0px;
+			border: 0;
 		}
 	}
 
@@ -147,7 +149,7 @@ $videopress-mobile-layout-width: 1200px;
 		.domain-registration-suggestion__badges {
 			.badge--info-green {
 				background-color: #b8e6bf;
-				color: #00450C;
+				color: #00450c;
 			}
 			.badge--info-purple {
 				background-color: #e5cfe8;
@@ -158,7 +160,7 @@ $videopress-mobile-layout-width: 1200px;
 		.domain-suggestion__action {
 			border: solid 1px rgba(255, 255, 255, 0.2);
 			border-radius: 4px;
-			color: #FFF;
+			color: #fff;
 			background: none;
 		}
 	}
@@ -185,7 +187,7 @@ $videopress-mobile-layout-width: 1200px;
 		.domain-suggestion {
 			margin-bottom: 12px;
 			background-color: rgba(255, 255, 255, 0.15);
-			border: 0px none;
+			border: 0 none;
 			box-shadow: none;
 
 			.domain-registration-suggestion__domain-title-name,
@@ -210,7 +212,7 @@ $videopress-mobile-layout-width: 1200px;
 		.register-domain-step__next-page-button {
 			border: solid 1px rgba(255, 255, 255, 0.2);
 			border-radius: 4px;
-			color: #FFF;
+			color: #fff;
 			background: none;
 		}
 	}

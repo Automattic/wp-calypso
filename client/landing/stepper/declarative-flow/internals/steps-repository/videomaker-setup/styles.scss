@@ -1,6 +1,6 @@
-@import '../../videopress.scss';
+@import "../../videopress.scss";
 
-$font-family: 'SF Pro Text', $sans;
+$font-family: "SF Pro Text", $sans;
 
 .videomaker-setup {
 	form {
@@ -20,21 +20,21 @@ $font-family: 'SF Pro Text', $sans;
 		align-items: center;
 
 		.videomaker-setup__light-button img {
-			background-color: #FFFFFF;
+			background-color: #fff;
 		}
 
 		.videomaker-setup__dark-button img {
-			background-color: #000000;
+			background-color: #000;
 		}
 
 		button {
 			background-color: $videopress-theme-border-color;
 			border: 10px solid $videopress-theme-border-color;
-			border-radius: 8px;
+			border-radius: 4px;
 			padding: 0;
 			margin: 0;
 			transition: all 0.2s ease-in-out;
-			transform: scale( 1.0 );
+			transform: scale(1);
 			z-index: 0;
 			cursor: pointer;
 			max-width: 76%;
@@ -43,7 +43,7 @@ $font-family: 'SF Pro Text', $sans;
 				display: block;
 				width: 100%;
 				height: auto;
-				border-radius: 6px;
+				border-radius: 4px;
 				flex-grow: 1;
 				object-fit: cover;
 			}
@@ -53,7 +53,7 @@ $font-family: 'SF Pro Text', $sans;
 			}
 
 			&:hover {
-				transform: scale( 1.05 );
+				transform: scale(1.05);
 				z-index: 1;
 				background-color: $videopress-theme-yellow;
 				border: 8px solid $videopress-theme-yellow;
@@ -68,7 +68,7 @@ $font-family: 'SF Pro Text', $sans;
 			button {
 
 				&:first-of-type {
-					margin-bottom: 0px;
+					margin-bottom: 0;
 					margin-inline-end: 30px;
 				}
 			}
