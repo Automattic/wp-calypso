@@ -47,6 +47,7 @@ import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanComparisonWithHighlights from 'calypso/my-sites/plan-comparison-with-highlights';
 import PlanFeatures from 'calypso/my-sites/plan-features';
+import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -122,6 +123,9 @@ export class PlansFeaturesMain extends Component {
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+		const FeaturesComponent = isPlanTaglineExperiment
+			? PlanComparisonWithHighlights
+			: PlanFeaturesComparison;
 
 		return (
 			<div
@@ -135,7 +139,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
-				<PlanComparisonWithHighlights
+				<FeaturesComponent
 					basePlansPath={ basePlansPath }
 					domainName={ domainName }
 					isInSignup={ isInSignup }
@@ -158,7 +162,6 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
-					isPlanTaglineExperiment={ isPlanTaglineExperiment }
 				/>
 			</div>
 		);

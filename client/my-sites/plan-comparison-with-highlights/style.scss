@@ -1,13 +1,6 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
-.plan-pill.is-in-signup {
-	border-radius: 4px;
-	background-color: var(--studio-green-5);
-	color: var(--studio-gray-80);
-	font-size: $font-body-small;
-}
-
 .plan-features--loading-container {
 	margin-top: 300px;
 }
@@ -422,6 +415,20 @@ body.is-section-signup.is-white-signup {
 		&:last-of-type {
 			border-right: none;
 		}
+
+		.plan-pill.is-in-signup {
+			font-size: 0.75rem;
+			font-weight: 500;
+			letter-spacing: 0.2px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 1.25rem;
+			padding: 0 8px;
+			left: 6%;
+			width: fit-content;
+			border-radius: 4px;
+			background-color: var(--studio-green-5);
+			color: var(--studio-gray-80);
+		}
 	}
 
 	.plan-comparison-with-highlights__header {
@@ -448,18 +455,6 @@ body.is-section-signup.is-white-signup {
 		.plan-comparison-with-highlights__header-billing-info {
 			font-weight: 500;
 		}
-	}
-
-	.plan-pill.is-in-signup {
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.2px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.25rem;
-		padding: 0 8px;
-		left: 6%;
-		width: fit-content;
-
 	}
 
 	.plan-comparison-with-highlights__item-title {
