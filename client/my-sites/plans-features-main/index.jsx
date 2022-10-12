@@ -117,6 +117,7 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
+			isPlanTaglineExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -157,6 +158,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
+					isPlanTaglineExperiment={ isPlanTaglineExperiment }
 				/>
 			</div>
 		);

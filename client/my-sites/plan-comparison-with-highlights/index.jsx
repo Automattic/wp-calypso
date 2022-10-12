@@ -82,7 +82,7 @@ export class PlanComparisonWithHighlights extends Component {
 	}
 
 	render() {
-		const { isInSignup, planProperties, translate } = this.props;
+		const { isInSignup, planProperties, translate, isPlanTaglineExperiment } = this.props;
 		const tableClasses = classNames(
 			'plan-comparison-with-highlights__table',
 			`has-${ planProperties.length }-cols`
@@ -106,7 +106,7 @@ export class PlanComparisonWithHighlights extends Component {
 								</caption>
 								<tbody>
 									<tr>{ this.renderPlanHeaders() }</tr>
-									{ this.renderHighlightFeatures() }
+									{ isPlanTaglineExperiment ? this.renderHighlightFeatures() : null }
 									<tr>{ this.renderTopButtons() }</tr>
 									{ this.renderPlanFeatureRows() }
 								</tbody>
@@ -418,6 +418,7 @@ export default connect(
 			visiblePlans,
 			popularPlanSpec,
 			isFAQCondensedExperiment,
+			isPlanTaglineExperiment,
 		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
