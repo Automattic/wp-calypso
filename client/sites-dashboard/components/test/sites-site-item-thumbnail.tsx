@@ -90,7 +90,7 @@ function defineCommonSiteInitialTests() {
 
 	test( 'shows "Coming soon" tile if site has not launched', () => {
 		render( <SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true } ) } /> );
-		expect( screen.getByTestId( 'site-coming-soon' ) ).toBeInTheDocument();
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
 
 	test( 'shows "Coming soon" translated to site language', () => {
@@ -106,6 +106,6 @@ function defineCommonSiteInitialTests() {
 		render(
 			<SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'zz' } ) } />
 		);
-		expect( screen.getByTitle( 'Coming soon' ) ).toBeInTheDocument();
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
 }

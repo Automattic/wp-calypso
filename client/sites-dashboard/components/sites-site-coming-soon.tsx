@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { __ } from '@wordpress/i18n';
 import { CSSProperties } from 'react';
 
 type Props = {
@@ -38,7 +39,7 @@ const comingSoonTranslations: Record< string, string > = {
 };
 
 const getTranslation = ( lang?: string ) => {
-	let text = 'Coming soon';
+	let text = __( 'Coming Soon' );
 	if ( lang ) {
 		lang = lang.split( '-' )[ 0 ];
 		if ( comingSoonTranslations[ lang ] ) {
@@ -48,10 +49,10 @@ const getTranslation = ( lang?: string ) => {
 	return text;
 };
 
-export const SiteComingSoon = ( { siteName = '', lang = '', className, style }: Props ) => {
+export const SiteComingSoon = ( { siteName = '', lang = '', style }: Props ) => {
 	const comingSoon = getTranslation( lang );
 	return (
-		<Root className={ className } style={ style } data-testid="site-coming-soon">
+		<Root style={ style }>
 			<svg width="100%" viewBox="0 0 375 272" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<title>{ comingSoon }</title>
 				<text
