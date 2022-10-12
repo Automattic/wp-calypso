@@ -59,7 +59,7 @@ export function imageWithCorrectRatio( image ) {
 export function getImagesFromPostToDisplay( post, numberOfImagesToDisplay ) {
 	const images = ( post.images && [ ...post.images ] ) || [];
 
-	//Remove duplicates, small images and images that are outside ideal aspect ratio
+	// Remove duplicates, small images and images that are outside ideal aspect ratio
 	return images
 		.filter(
 			( element, index ) => index === images.findIndex( ( elem ) => elem.src === element.src )
