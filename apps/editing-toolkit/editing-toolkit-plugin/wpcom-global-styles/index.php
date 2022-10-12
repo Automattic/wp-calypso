@@ -118,7 +118,7 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 	}
 	return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
 }
-add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend', 10, 3 );
+add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
 
 /**
  * Tracks when global styles are updated or reset after the post has actually been saved.
