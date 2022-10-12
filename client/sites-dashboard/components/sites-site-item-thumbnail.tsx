@@ -1,10 +1,11 @@
-import { SiteThumbnail } from '@automattic/components';
+import { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from '@automattic/components';
 import { getSiteLaunchStatus } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
@@ -36,6 +37,14 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 			preview: true,
 			hide_banners: true,
 		} );
+	}
+
+	if ( site.is_coming_soon ) {
+		const style = {
+			width: props.width || DEFAULT_THUMBNAIL_SIZE.width,
+			height: props.height || DEFAULT_THUMBNAIL_SIZE.height,
+		};
+		return <SiteComingSoon siteName={ site.name } style={ style } lang={ site.lang } />;
 	}
 
 	return (

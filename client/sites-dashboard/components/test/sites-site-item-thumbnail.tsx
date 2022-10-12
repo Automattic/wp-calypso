@@ -4,7 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import { SiteItemThumbnail } from '../sites-site-item-thumbnail';
 
-function makeTestSite( { title = 'test' } = {} ) {
+function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } = {} ) {
 	return {
 		ID: 1,
 		title,
@@ -13,6 +13,8 @@ function makeTestSite( { title = 'test' } = {} ) {
 		launch_status: 'launched',
 		options: {},
 		jetpack: false,
+		is_coming_soon,
+		lang,
 	};
 }
 
@@ -84,5 +86,26 @@ function defineCommonSiteInitialTests() {
 
 		render( <SiteItemThumbnail site={ testSite } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
+	} );
+
+	test( 'shows "Coming soon" tile if site has not launched', () => {
+		render( <SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true } ) } /> );
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows "Coming soon" translated to site language', () => {
+		render(
+			<SiteItemThumbnail
+				site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'de-DE' } ) }
+			/>
+		);
+		expect( screen.getByTitle( 'Demnächst verfügbar' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows "Coming soon" in English when site language is not translated', () => {
+		render(
+			<SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'zz' } ) } />
+		);
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
 }

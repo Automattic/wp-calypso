@@ -14,6 +14,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'jetpack',
 	'is_wpcom_atomic',
 	'user_interactions',
+	'lang',
 ] as const;
 
 export const SITE_EXCERPT_COMPUTED_FIELDS = [ 'slug' ] as const;
