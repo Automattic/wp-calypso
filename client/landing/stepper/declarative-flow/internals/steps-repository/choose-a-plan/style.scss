@@ -45,7 +45,7 @@ $videopress-mobile-layout-width: 700px;
 			margin-top: 46px;
 
 			&.is-popular {
-				margin-top: 0px;
+				margin-top: 0;
 				.plan-item__badge {
 					background-color: #b8e6bf;
 					color: #00450c;
@@ -54,7 +54,7 @@ $videopress-mobile-layout-width: 700px;
 					font-weight: 500;
 					margin: auto;
 					border-radius: 4px;
-					padding: 0px 10px;
+					padding: 0 10px;
 					margin-bottom: 22px;
 				}
 			}
@@ -74,6 +74,7 @@ $videopress-mobile-layout-width: 700px;
 
 					.plan-item__heading {
 						display: block;
+						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 						font-size: 20px;
 					}
 				}
@@ -133,13 +134,7 @@ $videopress-mobile-layout-width: 700px;
 				.selected-plan-item {
 					background-color: #ffe61c !important;
 					color: #000 !important;
-					background-image: repeating-linear-gradient(
-						-45deg,
-						transparent,
-						transparent 1rem,
-						rgba(0, 0, 0, 0.1) 1rem,
-						rgba(0, 0, 0, 0.1) 2rem
-					) !important;
+					background-image: repeating-linear-gradient(-45deg, transparent, transparent 1rem, rgba(0, 0, 0, 0.1) 1rem, rgba(0, 0, 0, 0.1) 2rem) !important;
 					background-size: 200% 200% !important;
 					animation: videopress-selected-plan-item 10s linear infinite !important;
 				}
