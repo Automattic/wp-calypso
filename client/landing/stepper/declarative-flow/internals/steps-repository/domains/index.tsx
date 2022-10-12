@@ -13,13 +13,14 @@ import { defer, get, isEmpty, find } from 'lodash';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
+import Notice from 'calypso/components/notice';
 import {
 	getDomainProductSlug,
 	getDomainSuggestionSearch,
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
-import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import { parse } from 'qs';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -59,17 +60,14 @@ import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/
 import { Search } from './types';
 import type { Step } from '../../types';
 
-const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
-	const { productsList, signupDependencies, userLoggedIn, selectedSite } = useSelector(
-		( state ) => {
-			return {
-				productsList: getAvailableProductsList( state ),
-				signupDependencies: getSignupDependencyStore( state ),
-				userLoggedIn: isUserLoggedIn( state ),
-				selectedSite: getSelectedSite( state ),
-			};
-		}
-	);
+const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
+	const { productsList, userLoggedIn, selectedSite } = useSelector( ( state ) => {
+		return {
+			productsList: getAvailableProductsList( state ),
+			userLoggedIn: isUserLoggedIn( state ),
+			selectedSite: getSelectedSite( state ),
+		};
+	} );
 
 	const { siteTitle, siteAccentColor, domainForm, signupValues } = useSelect( ( select ) => {
 		return {
@@ -84,22 +82,33 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const { __ } = useI18n();
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
+	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
+	const { submit } = navigation;
 
-	const queryObject = {};
-	const isDomainOnly = false; //useSelect( ( select ) => select( ONBOARD_STORE ) ).getIsDomainOnly();
+	const search = data?.search ?? false;
+	const hideInitialQuery = data?.hideInitialQuery ?? false;
+	const suggestedDomain = signupValues?.suggestedDomain;
+	const domain = data?.new;
+	const siteType = signupValues?.siteType ?? '';
+	const path = '/start/link-in-bio/domains?new=test';
+	const lastQuery = domainForm?.lastQuery;
+	// If we landed anew from `/domains` and it's the `new-flow` variation
+	// or there's a suggestedDomain from previous steps, always rerun the search.
+	if ( ! searchOnInitialRender && ( search || suggestedDomain ) ) {
+		setSearchOnInitialRender( true );
+	}
+	const isDomainOnly = signupValues?.isDomainOnly ?? false;
+
 	const stepSectionName = undefined;
 	const forceHideFreeDomainExplainerAndStrikeoutUi = undefined;
 	const isReskinned = true;
 	const isAllDomains = false;
-	const hideInitialQuery = true;
 	const premium = undefined;
 	const domainsWithPlansOnly = true;
 	const tld = undefined;
 	const theme = undefined;
-	const siteType = '';
-	const lastQuery = '';
 	const showSkipButton = undefined;
 	const isPlanSelectionAvailableLaterInFlow = true;
 	let showExampleSuggestions: boolean | undefined = undefined;
@@ -113,16 +122,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	}
 
 	const locale = useLocale();
-	const path = '/start/link-in-bio/domains?new=test&search=yes&hide_initial_query=yes';
-
-	const search = false; //get( props, 'queryObject.search', false ) === 'yes';
-	// // If we landed anew from `/domains` and it's the `new-flow` variation
-	// // or there's a domainSuggested from previous steps, always rerun the search.
-	if ( signupValues?.domainSuggested ) {
-		setSearchOnInitialRender( true );
-	}
-
-	const { submit } = navigation;
 
 	const isDependencyShouldHideFreePlanProvided = () => {
 		/**
@@ -199,7 +198,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			( isPurchasingItem
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
-
+		debugger;
 		const domainItem = isPurchasingItem
 			? domainRegistration( {
 					domain: suggestion.domain_name,
@@ -219,15 +218,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				siteUrl,
 				false,
 				{
-					domainItem: {
-						is_domain_registration: true,
-						meta: siteUrl,
-						product_slug: suggestion.product_slug,
-					},
+					domainItem,
 					flowName: undefined,
-					lastKnownFlow: name,
+					lastKnownFlow: flow,
 					googleAppsCartItem,
-					isPurchasingItem: true,
+					isPurchasingItem,
 					siteUrl,
 					themeSlugWithRepo: undefined,
 					themeItem: undefined,
@@ -358,14 +353,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		// If we detect a 'blog' site type from Signup data
 		if (
 			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' ) ||
 			'blog' === siteType
 		) {
 			return true;
 		}
 
-		// const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
-		return typeof domainForm?.lastQuery === 'string' && domainForm?.lastQuery.includes( '.blog' );
+		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
 	function getLocale() {
@@ -375,49 +368,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const getUseYourDomainUrl = () => {
 		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
 		//it always throws window.AppBoot is not a function
-		return '/start/link-in-bio/domains/use-your-domain'; //getStepUrl( flow, 'domains', 'use-your-domain', getLocale() );
+		return '/setup/domains?flow=link-in-bio&section=use-your-domain'; //getStepUrl( flow, 'domains', 'use-your-domain', getLocale() );
 	};
 
 	const handleSave = ( state ) => {
 		setDomainForm( state );
 	};
-
-	const shouldHideDomainExplainer = () => {
-		return [
-			'free',
-			'personal',
-			'personal-monthly',
-			'premium',
-			'premium-monthly',
-			'business',
-			'business-monthly',
-			'ecommerce',
-			'ecommerce-monthly',
-			'domain',
-		].includes( flow as string );
-	};
-
-	// function insertUrlParams( params ) {
-	// 	if ( history.pushState ) {
-	// 		const searchParams = new URLSearchParams( window.location.search );
-
-	// 		Object.entries( params ).forEach( ( [ key, value ] ) => searchParams.set( key, value ) );
-	// 		const newUrl =
-	// 			window.location.protocol +
-	// 			'//' +
-	// 			window.location.host +
-	// 			window.location.pathname +
-	// 			'?' +
-	// 			decodeURIComponent( searchParams.toString() );
-	// 		window.history.pushState( { path: newUrl }, '', newUrl );
-	// 	}
-	// }
-
-	// const setCurrentFlowStep = ( { mode, domain } ) => {
-	// 	this.setState( { currentStep: mode }, () => {
-	// 		this.insertUrlParams( { step: this.state.currentStep, initialQuery: domain } );
-	// 	} );
-	// }
 
 	const handleAddTransfer = ( { domain, authCode } ) => {
 		const domainItem = domainTransfer( {
@@ -435,22 +391,34 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection() ) );
 
-		dispatch(
-			submitSignupStep(
-				Object.assign(
-					{
-						stepName: 'domains',
-						transfer: {},
-						domainItem,
-						isPurchasingItem,
-						siteUrl: domain,
-						stepSectionName: stepSectionName,
-					},
-					getThemeArgs()
-				),
-				Object.assign( { domainItem }, useThemeHeadstartItem )
+		setSignupValues(
+			Object.assign(
+				{ domainItem, siteUrl: domain, transfer: {} },
+				getThemeArgs(),
+				useThemeHeadstartItem
 			)
 		);
+
+		setPendingAction( async () => {
+			const createSiteResult = await createSiteWithCart(
+				flow,
+				domain,
+				false,
+				{
+					domainItem,
+					flowName: undefined,
+					lastKnownFlow: flow,
+					isPurchasingItem,
+					domain,
+					themeSlugWithRepo: undefined,
+					themeItem: undefined,
+				},
+				userLoggedIn,
+				false
+			);
+
+			return createSiteResult;
+		}, true );
 
 		submit?.();
 	};
@@ -465,24 +433,36 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection() ) );
 
-		dispatch(
-			submitSignupStep(
-				Object.assign(
-					{
-						stepName: 'domains', //this.props.stepName,
-						[ sectionName ]: state,
-						domainItem,
-						isPurchasingItem,
-						siteUrl: domain,
-						stepSectionName: this.props.stepSectionName,
-					},
-					getThemeArgs()
-				),
-				Object.assign( { domainItem }, useThemeHeadstartItem )
-			)
+		setSignupValues(
+			Object.assign( { domainItem, siteUrl: domain }, getThemeArgs(), useThemeHeadstartItem )
 		);
 
+		setPendingAction( async () => {
+			const createSiteResult = await createSiteWithCart(
+				flow,
+				domain,
+				true,
+				{
+					domainItem,
+					flowName: undefined,
+					lastKnownFlow: flow,
+					isPurchasingItem,
+					domain,
+					themeSlugWithRepo: undefined,
+					themeItem: undefined,
+				},
+				userLoggedIn,
+				false
+			);
+
+			return createSiteResult;
+		}, true );
+
 		submit?.(); //this.props.goToNextStep();
+	};
+
+	const onUseMyDomainConnect = ( { domain } ) => {
+		handleAddMapping( 'useYourDomainForm', domain, null );
 	};
 
 	const handleAddDomain = ( suggestion ) => {
@@ -497,75 +477,22 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		submitWithDomain( suggestion );
 	};
 
-	// const useYourDomainForm = () => {
-	// 	const queryObject = parse( window.location.search.replace( '?', '' ) );
-	// 	const initialQuery =
-	// 		get( currentStepProgress, 'domainForm.lastQuery' ) || queryObject.initialQuery;
-
-	// 	return (
-	// 		<div className="domains__step-section-wrapper" key="useYourDomainForm">
-	// 			<CalypsoShoppingCartProvider>
-	// 				<UseMyDomain
-	// 					analyticsSection={ getAnalyticsSection() }
-	// 					basePath={ path }
-	// 					initialQuery={ initialQuery }
-	// 					initialMode={ queryObject.step ?? inputMode.domainInput }
-	// 					onNextStep={ this.setCurrentFlowStep }
-	// 					isSignupStep
-	// 					showHeader={ false }
-	// 					onTransfer={ handleAddTransfer }
-	// 					onConnect={ this.onUseMyDomainConnect }
-	// 				/>
-	// 			</CalypsoShoppingCartProvider>
-	// 		</div>
-	// 	);
-	// };
-
-	const handleDomainExplainerClick = () => {
-		const hideFreePlan = true;
-		handleSkip( undefined, hideFreePlan );
-	};
-
-	// const handleUseYourDomainClick = () => {
-	// 	dispatch( recordUseYourDomainButtonClick( getAnalyticsSection() ) );
-	// 	page( getUseYourDomainUrl() );
-	// };
-
-	const shouldHideUseYourDomain = () => {
-		return [ 'domain' ].includes( flow as string );
-	};
-
-	const shouldDisplayDomainOnlyExplainer = () => {
-		return [ 'domain' ].includes( flow as string );
-	};
-
-	const getSideContent = () => {
-		// const useYourDomain = ! shouldHideUseYourDomain() ? (
-		// 	<div className="domains__domain-side-content">
-		// 		<ReskinSideExplainer onClick={ handleUseYourDomainClick } type={ 'use-your-domain' } />
-		// 	</div>
-		// ) : null;
-
+	const renderYourDomainForm = () => {
 		return (
-			<div className="domains__domain-side-content-container">
-				{ ! shouldHideDomainExplainer() && isPlanSelectionAvailableLaterInFlow && (
-					<div className="domains__domain-side-content domains__free-domain">
-						<ReskinSideExplainer
-							onClick={ handleDomainExplainerClick }
-							type={ 'free-domain-explainer' }
-							flowName={ flow }
-						/>
-					</div>
-				) }
-				{ /* { useYourDomain } */ }
-				{ shouldDisplayDomainOnlyExplainer() && (
-					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
-							onClick={ handleDomainExplainerClick }
-							type={ 'free-domain-only-explainer' }
-						/>
-					</div>
-				) }
+			<div className="domains__step-section-wrapper" key="useYourDomainForm">
+				<CalypsoShoppingCartProvider>
+					<UseMyDomain
+						analyticsSection={ getAnalyticsSection() }
+						basePath={ path }
+						initialQuery={ lastQuery }
+						initialMode={ inputMode.domainInput }
+						onNextStep={ null }
+						isSignupStep
+						showHeader={ false }
+						onTransfer={ handleAddTransfer }
+						onConnect={ onUseMyDomainConnect }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	};
@@ -576,12 +503,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			initialState = domainForm;
 		}
 
-		// Search using the initial query but do not show the query on the search input field.
-		//const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
-
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			signupValues?.domainSuggested &&
+			suggestedDomain &&
 			searchOnInitialRender
 		) {
 			setSearchOnInitialRender( false );
@@ -591,8 +515,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				// If length is less than 2 it will not fetch any data.
 				// filter before counting length
 				initialState.loadingResults =
-					getDomainSuggestionSearch( getFixedDomainSearch( signupValues?.domainSuggested ) )
-						.length >= 2;
+					getDomainSuggestionSearch( getFixedDomainSearch( suggestedDomain ) ).length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
@@ -629,13 +552,13 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					path={ path }
 					products={ productsList }
 					promoTlds={ undefined }
-					reskinSideContent={ getSideContent() }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
-					suggestion={ signupValues?.domainSuggested }
+					suggestion={ suggestedDomain }
 					transferDomainUrl={ getUseYourDomainUrl() }
 					useYourDomainUrl={ getUseYourDomainUrl() }
+					handleClickUseYourDomain={ () => setShowUseYourDomain( true ) }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: isDomainOnly,
@@ -648,25 +571,26 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const renderContent = () => {
 		let content;
-		let sideContent;
 
-		// if ( 'use-your-domain' === stepSectionName ) {
-		// 	content = useYourDomainForm();
-		// }
-
-		if ( ! stepSectionName || isDomainOnly ) {
+		if ( showUseYourDomain ) {
+			content = renderYourDomainForm();
+		} else if ( ! showUseYourDomain || isDomainOnly ) {
 			content = renderDomainForm();
 		}
 
-		if ( ! stepSectionName && isReskinned && ! isTailoredFlow() ) {
-			sideContent = getSideContent();
-		}
+		// if ( 'invalid' === this.props.step.status ) {
+		// 	content = (
+		// 		<div className="domains__step-section-wrapper">
+		// 			<Notice status="is-error" showDismiss={ false }>
+		// 				{ this.props.step.errors.message }
+		// 			</Notice>
+		// 			{ content }
+		// 		</div>
+		// 	);
+		// }
 
 		return (
-			<div className="domains__step-content domains__step-content-domain-step">
-				{ content }
-				{ sideContent }
-			</div>
+			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
 		);
 	};
 

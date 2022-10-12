@@ -72,7 +72,7 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return navigate( 'domains' );
+					return navigate( 'domains', { search: true, hideInitialQuery: true } );
 
 				case 'domains':
 					return navigate( 'plans' );
