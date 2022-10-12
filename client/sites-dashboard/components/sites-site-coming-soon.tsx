@@ -6,7 +6,7 @@ type Props = {
 	siteName?: string;
 	className?: string;
 	style?: CSSProperties;
-	lang: string;
+	lang?: string;
 };
 
 const Root = styled.div( {
