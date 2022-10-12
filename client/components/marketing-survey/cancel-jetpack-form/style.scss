@@ -84,7 +84,7 @@
 		text-align: left;
 
 		@include break-medium {
-			justify-content: flex-start;
+			align-items: flex-start;
 		}
 	}
 
