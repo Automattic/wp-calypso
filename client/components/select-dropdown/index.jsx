@@ -2,10 +2,9 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { filter, find, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { createRef, Children, cloneElement, Component } from 'react';
+import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import { v4 as uuid } from 'uuid';
 import Count from 'calypso/components/count';
-import MaterialIcon from 'calypso/components/material-icon';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';
@@ -21,6 +20,7 @@ class SelectDropdown extends Component {
 	static Label = DropdownLabel;
 
 	static propTypes = {
+		id: PropTypes.string,
 		selectedText: TranslatableString,
 		selectedIcon: PropTypes.element,
 		selectedCount: PropTypes.number,
@@ -58,13 +58,16 @@ class SelectDropdown extends Component {
 		selected: this.getInitialSelectedItem(),
 	};
 
-	dropdownContainerRef = createRef();
-
 	itemRefs = [];
 
 	setItemRef = ( index ) => ( itemEl ) => {
 		this.itemRefs[ index ] = itemEl;
 	};
+
+	constructor( props ) {
+		super( props );
+		this.dropdownContainerRef = props.innerRef ?? createRef();
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'click', this.handleOutsideClick );
@@ -192,7 +195,7 @@ class SelectDropdown extends Component {
 		const selectedIcon = this.getSelectedIcon();
 
 		return (
-			<div style={ this.props.style } className={ dropdownClassName }>
+			<div id={ this.props.id } style={ this.props.style } className={ dropdownClassName }>
 				<div
 					ref={ this.dropdownContainerRef }
 					className="select-dropdown__container"
@@ -209,9 +212,7 @@ class SelectDropdown extends Component {
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
 						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
-							{ selectedIcon && [ Gridicon, MaterialIcon ].includes( selectedIcon.type )
-								? selectedIcon
-								: null }
+							{ selectedIcon }
 							{ selectedText }
 						</span>
 						{ 'number' === typeof this.props.selectedCount && (
@@ -372,3 +373,7 @@ class SelectDropdown extends Component {
 }
 
 export default SelectDropdown;
+
+export const SelectDropdownForwardingRef = forwardRef( ( props, ref ) => (
+	<SelectDropdown { ...props } innerRef={ ref } />
+) );

@@ -4,12 +4,21 @@
 	background-size: 25px, auto;
 	background-position: left 13px center, 95% !important;
 	background-repeat: no-repeat, no-repeat !important;
-	padding-left: 50px !important;
 
 	/* Overwrites the transition value set by FormInput component.
     It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
 	transition: none;
 	cursor: pointer;
+
+	.select-dropdown__container {
+		width: 100%;
+
+		.select-dropdown__header-text > svg,
+		.select-dropdown__item-text > svg {
+			vertical-align: middle;
+			margin-right: 8px;
+		}
+	}
 }
 
 .accent-color-control__popover {

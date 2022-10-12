@@ -1,20 +1,20 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { hasMinContrast, RGB } from '@automattic/onboarding';
+import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { Icon, color } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { Dispatch, SetStateAction, useState, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInput from 'calypso/components/forms/form-text-input';
 import PremiumBadge from 'calypso/components/premium-badge';
+import { SelectDropdownForwardingRef as SelectDropdown } from 'calypso/components/select-dropdown';
 import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { tip } from 'calypso/signup/icons';
-
 import './style.scss';
+import ColorSwatch from './color-swatch';
 
 interface AccentColorControlProps {
 	accentColor: AccentColor;
@@ -27,29 +27,63 @@ export type AccentColor = {
 	default?: boolean;
 };
 
-/**
- * Generates an inline SVG for the color picker swatch
- *
- * @param color the color in HEX
- * @returns a value for background-image
- */
-function generateSwatchSVG( color: string | undefined ) {
-	return `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' stroke='%23000' stroke-opacity='0.2' stroke-width='1' fill='${ encodeURIComponent(
-		color || '#fff'
-	) }'%3E%3C/circle%3E${
-		// render a line when a color isn't selected
-		! color
-			? `%3Cline x1='18' y1='4' x2='7' y2='20' stroke='%23ccc' stroke-width='1'%3E%3C/line%3E`
-			: ''
-	}%3C/svg%3E")`;
+enum COLORS {
+	Lettre = '#1D39EB',
+	Black = '#000000',
+	LuminousVividOrange = '#F4732B',
+	VividPurple = '#925CD9',
 }
+
+const COLOR_OPTIONS = [
+	{
+		label: 'Lettre',
+		value: COLORS.Lettre,
+		icon: <ColorSwatch color={ COLORS.Lettre } />,
+	},
+	{
+		label: 'Black',
+		value: COLORS.Black,
+		icon: <ColorSwatch color={ COLORS.Black } />,
+	},
+	{
+		label: 'Luminous vivid orange',
+		value: COLORS.LuminousVividOrange,
+		icon: <ColorSwatch color={ COLORS.LuminousVividOrange } />,
+	},
+	{
+		label: 'Vivid purple',
+		value: COLORS.VividPurple,
+		icon: <ColorSwatch color={ COLORS.VividPurple } />,
+	},
+	{
+		label: 'Custom',
+		value: 'custom',
+		icon: <Icon icon={ color } width={ 22 } height={ 22 } />,
+	},
+];
 
 const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
+	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	const handleColorSelect = ( { value }: { value: string } ) => {
+		if ( value === 'custom' ) {
+			setColorPickerOpen( true );
+			return;
+		}
+		// New pre-defined color was selected
+		// Therefore clear custom color if one was set
+		customColor && setCustomColor( null );
+
+		setAccentColor( {
+			hex: value,
+			rgb: hexToRgb( value ),
+		} );
+	};
 
 	return (
 		<>
@@ -72,7 +106,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 						disableAlpha
 						color={ accentColor.hex }
 						onChangeComplete={ ( { hex, rgb } ) =>
-							setAccentColor( { hex, rgb: rgb as unknown as RGB } )
+							setCustomColor( { hex, rgb: rgb as unknown as RGB } )
 						}
 					/>
 				</form>
@@ -91,18 +125,18 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 						/>
 					) }
 				</FormLabel>
-				<FormInput
-					inputRef={ accentColorRef }
+
+				<SelectDropdown
+					ref={ accentColorRef }
+					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					className="accent-color-control__accent-color-input"
-					style={ {
-						backgroundImage: generateSwatchSVG( accentColor.hex ),
-						...( accentColor.default && { color: 'var( --studio-gray-30 )' } ),
-					} }
-					name="accentColor"
+					// name="accentColor" - Currently name prop is not applicable, SelectDropdown is built with div's and the name prop applies only to form elements
 					id="accentColor"
 					onFocus={ () => setColorPickerOpen( true ) }
-					readOnly
 					value={ accentColor.hex }
+					onSelect={ handleColorSelect }
+					selectedIcon={ customColor && <ColorSwatch color={ customColor.hex } /> }
+					options={ COLOR_OPTIONS }
 				/>
 			</FormFieldset>
 			<div
