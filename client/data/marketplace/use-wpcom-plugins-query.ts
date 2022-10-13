@@ -41,10 +41,10 @@ export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): [ QueryKey, QueryFunction< unknown[] > ] => {
+): [ QueryKey, QueryFunction< any[] > ] => {
 	const cacheKey = getCacheKey( type + searchTerm + tag );
 	const fetchFn = () =>
-		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: unknown[] } ) =>
+		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
 			normalizePluginsList( data.results )
 		);
 	return [ cacheKey, fetchFn ];
@@ -89,7 +89,7 @@ const fetchWPCOMPlugin = ( slug: string ) => {
 export const useWPCOMPlugin = (
 	slug: string,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
-): UseQueryResult< unknown > => {
+): UseQueryResult< any > => {
 	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
 		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
 		enabled: enabled,
@@ -98,7 +98,7 @@ export const useWPCOMPlugin = (
 	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< unknown[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
 	const cacheKey = 'plugins-featured-list';
 	const fetchFn = () =>
 		wpcom.req
