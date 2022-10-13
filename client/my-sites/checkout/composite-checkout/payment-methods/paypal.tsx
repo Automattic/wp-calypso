@@ -10,6 +10,7 @@ import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
 import { Fragment, useMemo } from 'react';
 import TaxFields from 'calypso/my-sites/checkout/composite-checkout/components/tax-fields';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
@@ -229,6 +230,7 @@ function PayPalSubmitButton( {
 			buttonType="paypal"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
+			aria-label={ i18n.translate( 'Pay with PayPal' ) }
 		>
 			<PayPalButtonContents formStatus={ formStatus } transactionStatus={ transactionStatus } />
 		</Button>
