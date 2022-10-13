@@ -272,6 +272,7 @@ $font-family: "SF Pro Text", $sans;
 				position: absolute;
 				border-radius: 4px;
 				pointer-events: none;
+				overflow: hidden;
 			}
 
 			div {
