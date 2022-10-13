@@ -95,7 +95,7 @@ export const useWPORGInfinitePlugins = (
 					pagination: extractPagination( data.pages ),
 				};
 			},
-			getNextPageParam: ( lastPage ) => {
+			getNextPageParam: ( lastPage: { info: { page: number; pages: number } } ) => {
 				// When on last page, the next page is undefined, according to docs.
 				// @see: https://tanstack.com/query/v4/docs/reference/useInfiniteQuery
 				if ( lastPage.info.pages <= lastPage.info.page ) {
