@@ -59,6 +59,12 @@
 .is-reader-page .reader-full-post__story-content {
 	padding-top: 0 !important;
 
+	.wp-block-jetpack-slideshow_slide img,
+	.wp-block-media-text__media img,
+	.wp-block-image img {
+		border-radius: 6px;
+		display: inherit;
+	}
 	.wp-block-gallery .wp-block-image {
 		position: relative;
 		&::after {
@@ -76,10 +82,6 @@
 		figcaption {
 			border-bottom-left-radius: 6px;
 			border-bottom-right-radius: 6px;
-		}
-		img {
-			border-radius: 6px;
-			display: inherit;
 		}
 	}
 }
