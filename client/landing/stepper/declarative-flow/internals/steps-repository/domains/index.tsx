@@ -11,7 +11,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { defer, get, isEmpty, find } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
@@ -82,16 +82,17 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const { setDomainForm, setSignupValues, setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
-	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( false );
+	const search = data?.search ?? false;
+	const suggestedDomain = signupValues?.suggestedDomain;
+	const domain = data?.new;
+
+	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( search || suggestedDomain );
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
-	const { submit } = navigation;
 
-	const search = data?.search ?? false;
+	const { submit } = navigation;
 	const hideInitialQuery = data?.hideInitialQuery ?? false;
-	const suggestedDomain = signupValues?.suggestedDomain;
-	const domain = data?.new;
 	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
@@ -102,14 +103,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
 	// check pau2Xa-1Io-p2#comment-6759.
-	const { excludeFromManageSiteFlows } = flows.getFlow( flow, userLoggedIn );
-	// const isAddNewSiteFlow = searchParams.has( 'ref' );
+	const searchParams = new URLSearchParams( window.location.search );
+	const isAddNewSiteFlow = searchParams.has( 'ref' );
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	const isReEnteringSignupViaBrowserBack =
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
-	const isManageSiteFlow = false;
-		//! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
+	const isManageSiteFlow = ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
 
 	if ( isManageSiteFlow ) {
 		showExampleSuggestions = false;
@@ -117,11 +118,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		showSkipButton = true;
 	}
 
-	// If we landed anew from `/domains` and it's the `new-flow` variation
-	// or there's a suggestedDomain from previous steps, always rerun the search.
-	if ( ! searchOnInitialRender && ( search || suggestedDomain ) ) {
-		setSearchOnInitialRender( true );
-	}
 	const isDomainOnly = signupValues?.isDomainOnly ?? false;
 
 	const stepSectionName = undefined;
@@ -244,6 +240,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				userLoggedIn,
 				false
 			);
+
+			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
 
 			return createSiteResult;
 		}, true );
@@ -430,6 +428,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				false
 			);
 
+			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
+
 			return createSiteResult;
 		}, true );
 
@@ -467,6 +467,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				userLoggedIn,
 				false
 			);
+
+			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
 
 			return createSiteResult;
 		}, true );
@@ -515,10 +517,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
+		const initialQuery = domain || suggestedDomain;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
-			suggestedDomain &&
+			initialQuery &&
 			searchOnInitialRender
 		) {
 			setSearchOnInitialRender( false );
@@ -528,7 +531,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				// If length is less than 2 it will not fetch any data.
 				// filter before counting length
 				initialState.loadingResults =
-					getDomainSuggestionSearch( getFixedDomainSearch( suggestedDomain ) ).length >= 2;
+					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 				initialState.hideInitialQuery = hideInitialQuery;
 			}
 		}
@@ -568,7 +571,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
-					suggestion={ suggestedDomain }
+					suggestion={ initialQuery }
 					transferDomainUrl={ getUseYourDomainUrl() }
 					useYourDomainUrl={ getUseYourDomainUrl() }
 					handleClickUseYourDomain={ () => setShowUseYourDomain( true ) }
