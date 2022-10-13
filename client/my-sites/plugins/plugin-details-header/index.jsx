@@ -132,7 +132,9 @@ function PluginDetailsHeaderPlaceholder() {
 }
 
 function getPluginAuthor( plugin ) {
-	if ( config.isEnabled( 'marketplace-jetpack-plugin-search' ) ) return plugin.author_name;
+	if ( config.isEnabled( 'marketplace-jetpack-plugin-search' ) ) {
+		return plugin.author_name;
+	}
 
 	return getPluginAuthorKeyword( plugin );
 }

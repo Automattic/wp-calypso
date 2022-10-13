@@ -347,7 +347,9 @@ function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } )
 			isWpComEcommercePlan( currentPlanSlug ) ) &&
 		! isMonthly( currentPlanSlug );
 
-	if ( ! isChatAvailable ) return null;
+	if ( ! isChatAvailable ) {
+		return null;
+	}
 
 	return (
 		<CheckoutSummaryFeaturesListItem>

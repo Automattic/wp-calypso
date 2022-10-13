@@ -41,7 +41,9 @@ interface WPCOMResponse {
  * @returns
  */
 function updateWpComRating( plugin: Plugin ) {
-	if ( ! plugin || ! plugin.rating ) return plugin;
+	if ( ! plugin || ! plugin.rating ) {
+		return plugin;
+	}
 
 	plugin.rating *= 20;
 

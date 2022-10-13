@@ -148,9 +148,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const onSelect = ( pattern: Pattern | null ) => {
 		if ( pattern ) {
-			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
-			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
-			if ( 'section' === showPatternSelectorType ) addSection( pattern );
+			if ( 'header' === showPatternSelectorType ) {
+				setHeader( pattern );
+			}
+			if ( 'footer' === showPatternSelectorType ) {
+				setFooter( pattern );
+			}
+			if ( 'section' === showPatternSelectorType ) {
+				addSection( pattern );
+			}
 
 			if ( showPatternSelectorType ) {
 				trackEventPatternSelect( {

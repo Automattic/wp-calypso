@@ -18,7 +18,9 @@ function useResizeObserver() {
 
 	const observe = useCallback( () => {
 		observer.current = new ResizeObserver( ( [ entry ] ) => setObserverEntry( entry ) );
-		if ( node ) observer.current.observe( node );
+		if ( node ) {
+			observer.current.observe( node );
+		}
 	}, [ node ] );
 
 	useLayoutEffect( () => {

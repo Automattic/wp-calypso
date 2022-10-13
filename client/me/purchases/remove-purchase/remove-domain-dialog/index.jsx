@@ -185,7 +185,9 @@ class RemoveDomainDialog extends Component {
 				} );
 				break;
 			case 2:
-				if ( isEmailBasedOnDomain ) break;
+				if ( isEmailBasedOnDomain ) {
+					break;
+				}
 				this.setState( {
 					step: 3,
 				} );

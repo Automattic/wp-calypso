@@ -65,7 +65,9 @@ export default function DesignPickerStep( props ) {
 			: 'free';
 
 	const getThemeFilters = () => {
-		if ( props.useDIFMThemes ) return 'do-it-for-me';
+		if ( props.useDIFMThemes ) {
+			return 'do-it-for-me';
+		}
 
 		return 'auto-loading-homepage,full-site-editing';
 	};

@@ -550,7 +550,9 @@ const renderServerError =
 	( err, req, res, next ) => {
 		// If the response is not writable it means someone else already rendered a page, do nothing
 		// Hopefully they logged the error as well.
-		if ( res.writableEnded ) return;
+		if ( res.writableEnded ) {
+			return;
+		}
 
 		try {
 			req.logger.error( err );

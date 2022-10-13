@@ -415,13 +415,19 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
  * - undefined product is not found by productId in productsList
  */
 export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
-	if ( ! periodVariation ) return periodVariation;
+	if ( ! periodVariation ) {
+		return periodVariation;
+	}
 
 	const productSlug = periodVariation.product_slug;
-	if ( productSlug ) return productSlug;
+	if ( productSlug ) {
+		return productSlug;
+	}
 
 	const productId = periodVariation.product_id;
-	if ( productId === undefined || productId === null ) return productId;
+	if ( productId === undefined || productId === null ) {
+		return productId;
+	}
 
 	return Object.values( productsList ).find( ( product ) => product.product_id === productId )
 		?.product_slug;
