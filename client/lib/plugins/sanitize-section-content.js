@@ -75,16 +75,10 @@ const isValidYoutubeEmbed = ( node ) => {
 	const link = root.document.createElement( 'a' );
 	link.href = node.getAttribute( 'src' );
 
-	try {
-		const url = new URL( link.href );
-
-		return (
-			validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
-			( url.hostname === 'youtube.com' || url.hostname === 'www.youtube.com' )
-		);
-	} catch ( e ) {
-		return false;
-	}
+	return (
+		validUrl.isWebUri( node.getAttribute( 'src' ) ) &&
+		( link.hostname === 'youtube.com' || link.hostname === 'www.youtube.com' )
+	);
 };
 
 const replacementFor = ( node ) => {
@@ -114,8 +108,7 @@ export const sanitizeSectionContent = ( content ) => {
 		return '';
 	}
 	// this will let us visit every single DOM node programmatically
-	// the third & fourth arguments are required by IE 11
-	const walker = doc.createTreeWalker( doc.body, root.NodeFilter.SHOW_ALL, null, false );
+	const walker = doc.createTreeWalker( doc.body, root.NodeFilter.SHOW_ALL );
 
 	/**
 	 * we don't want to remove nodes while walking the tree
