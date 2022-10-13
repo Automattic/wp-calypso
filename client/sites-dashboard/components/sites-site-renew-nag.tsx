@@ -28,25 +28,30 @@ const SiteRenewNotice = styled.div`
 	align-items: center;
 	color: #ea303f;
 	margin-top: -6px;
+	> .gridicon {
+		margin-right: 4px;
+	}
 `;
 
-export const SiteRenew = ( { site }: SiteRenewProps ) => {
+export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
 	const { __ } = useI18n();
 	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
+	const isSiteOwner = site.plan?.user_is_owner || false;
+
 	useEffect( () => {
 		if ( inViewOnce ) {
-			recordTracksEvent( SITE_RENEW_NAG_IN_VIEW );
+			recordTracksEvent( SITE_RENEW_NAG_IN_VIEW, { is_site_owner: isSiteOwner } );
 		}
-	}, [ inViewOnce ] );
+	}, [ inViewOnce, isSiteOwner ] );
 
-	const isSiteOwner = site.plan?.user_is_owner;
 	const renewText = __( 'Renew' );
+	const expiredText = __( 'Expired' );
 	return (
 		<SiteRenewContainer ref={ ref }>
 			<SiteRenewNotice>
 				<Gridicon icon="notice" />
-				{ `${ site.plan?.product_name_short } - Expired` }
+				{ `${ site.plan?.product_name_short } - ${ expiredText }` }
 			</SiteRenewNotice>
 			{ isSiteOwner && (
 				<SiteRenewLink

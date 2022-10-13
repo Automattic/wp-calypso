@@ -8,19 +8,13 @@ import { useInView } from 'react-intersection-observer';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import {
-	displaySiteUrl,
-	getDashboardUrl,
-	isExpiredAtomic,
-	isNotAtomicJetpack,
-	MEDIA_QUERIES,
-} from '../utils';
+import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
-import { SiteRenew } from './sites-site-renew';
+import { SiteRenewNag } from './sites-site-renew-nag';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -142,8 +136,8 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
-					{ isExpiredAtomic( site ) ? (
-						<SiteRenew site={ site } />
+					{ site.plan?.expired ? (
+						<SiteRenewNag site={ site } />
 					) : (
 						<>{ site.plan?.product_name_short }</>
 					) }
