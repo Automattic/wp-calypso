@@ -138,6 +138,8 @@ function AdminContent( { selectedDate } ) {
 		[ siteSlug ]
 	);
 
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
 	return (
 		<>
 			<QuerySiteSettings siteId={ siteId } />
@@ -160,6 +162,7 @@ function AdminContent( { selectedDate } ) {
 						selectedDate={ selectedDate }
 						needCredentials={ needCredentials }
 						areCredentialsInvalid={ areCredentialsInvalid }
+						isAtomic={ isAtomic }
 					/>
 				</>
 			) }
@@ -167,7 +170,13 @@ function AdminContent( { selectedDate } ) {
 	);
 }
 
-function BackupStatus( { selectedDate, needCredentials, onDateChange, areCredentialsInvalid } ) {
+function BackupStatus( {
+	selectedDate,
+	needCredentials,
+	onDateChange,
+	areCredentialsInvalid,
+	isAtomic,
+} ) {
 	const isFetchingSiteFeatures = useSelectedSiteSelector( isRequestingSiteFeatures );
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 
@@ -183,7 +192,7 @@ function BackupStatus( { selectedDate, needCredentials, onDateChange, areCredent
 	return (
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
-				{ ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
+				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
 				{ ! needCredentials && ! areCredentialsInvalid && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
