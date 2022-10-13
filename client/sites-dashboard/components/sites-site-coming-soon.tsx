@@ -44,18 +44,21 @@ const comingSoonTranslations: Record< string, string > = {
 
 const getTranslation = ( lang?: string ) => {
 	let text = __( 'Coming Soon' );
+	let isRtl = isRTL();
+
 	if ( lang ) {
 		lang = lang.split( '-' )[ 0 ];
 		if ( comingSoonTranslations[ lang ] ) {
 			text = comingSoonTranslations[ lang ];
+			isRtl = lang === 'ar' || lang === 'he';
 		}
 	}
-	return text;
+
+	return { text, isRtl };
 };
 
 export const SiteComingSoon = ( { siteName = '', className, lang, width, height }: Props ) => {
-	const comingSoon = getTranslation( lang );
-	const isRtl = isRTL();
+	const { text: comingSoon, isRtl } = getTranslation( lang );
 	const x = isRtl ? 375 - 31 : 31;
 	return (
 		<Root className={ className }>
@@ -66,6 +69,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
 				textAnchor={ 'start' }
+				direction={ isRtl ? 'rtl' : 'ltr' }
 			>
 				<title>{ comingSoon }</title>
 				<text
