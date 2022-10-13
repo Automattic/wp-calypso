@@ -20,18 +20,25 @@
 }
 
 .global-styles-premium-badge__popover {
-	margin-left: -35px;
+	margin-left: 4px;
+	outline: none;
 
-	.components-popover__content {
-		width: min(300px, 100vw);
+	.popover__inner {
 		background-color: var(--color-neutral-80);
 		color: var(--color-neutral-0);
+		max-width: 320px;
 		text-align: center;
-		font-size: 0.75rem;
 		padding: 8px;
-		line-height: 1.4;
-		border-width: 0;
-		outline: none;
+		border: none;
 		box-shadow: none;
+	}
+
+	&.is-top .popover__arrow {
+		border-top-color: var(--color-neutral-80);
+		bottom: 4px;
+
+		&::before {
+			display: none;
+		}
 	}
 }

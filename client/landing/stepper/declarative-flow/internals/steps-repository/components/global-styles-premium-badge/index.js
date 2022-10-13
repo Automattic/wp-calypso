@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Popover } from '@wordpress/components';
+import { Popover } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { Icon, starFilled } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -49,22 +49,16 @@ const GlobalStylesPremiumBadge = () => {
 					<span>{ __( 'Premium' ) }</span>
 				</Badge>
 			</button>
-			{ isPopoverVisible && (
-				<Popover
-					anchor={ popoverAnchor }
-					animate={ false }
-					className="global-styles-premium-badge__popover"
-					focusOnMount={ false }
-					offset={ 8 }
-					placement="bottom"
-				>
-					<span>
-						{ __(
-							'Upgrade to a paid plan for color changes to take affect and to unlock all premium design tools'
-						) }
-					</span>
-				</Popover>
-			) }
+			<Popover
+				className="global-styles-premium-badge__popover"
+				context={ popoverAnchor }
+				isVisible={ isPopoverVisible }
+				onClose={ () => setIsPopoverVisible( false ) }
+			>
+				{ __(
+					'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
+				) }
+			</Popover>
 		</>
 	);
 };
