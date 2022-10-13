@@ -48,16 +48,19 @@
 }
 
 .reader-full-post__visit-site-container {
-	background: var(--color-surface);
-	border-bottom: 1px solid var(--color-neutral-0);
+	align-items: center;
+	background: rgba(255, 255, 255, 0.8);
+	display: flex;
 	font-size: $font-body-extra-small;
 	font-weight: 600;
 	height: 46px;
+	justify-content: center;
 	margin: 0;
 	position: fixed;
 	right: 0;
 	top: 0;
 	text-transform: uppercase;
+	width: 46px;
 	z-index: z-index(".reader-full-post__sidebar-comment-like", ".reader-full-post__visit-site-container");
 
 	@include breakpoint-deprecated( ">660px" ) {
@@ -66,21 +69,16 @@
 
 	.external-link .gridicons-external {
 		fill: var(--color-neutral-40);
-		top: 5px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			top: 3px;
-		}
+		top: 0;
 	}
 
 	.external-link {
 		color: var(--color-neutral-40);
 		display: block;
-		padding: 10px 10px 15px 6px;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			padding: 10px 20px 15px;
-		}
+		height: 18px;
+		margin-left: -3px;
+		position: relative;
+		top: -1px;
 
 		&:hover {
 			color: var(--color-accent);
@@ -127,10 +125,7 @@
 	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
-	margin-left: 2px;
-	padding: 4px;
-	position: relative;
-	top: 1px;
+	margin-left: -4px;
 	user-select: none;
 
 	@include breakpoint-deprecated( "<660px" ) {
