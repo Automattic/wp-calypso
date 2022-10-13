@@ -12,13 +12,5 @@
 
 	.newsletter-setup .step-container__header {
 		margin-bottom: 32px;
-
-		h1.formatted-header__title {
-			font-size: $font-title-medium;
-
-			@include break-medium {
-				font-size: $font-headline-medium;
-			}
-		}
 	}
 }
