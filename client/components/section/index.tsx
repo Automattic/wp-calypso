@@ -48,7 +48,6 @@ const SectionSubHeader = styled.div< SectionHeaderProps >`
 	font-weight: 400;
 	text-align: left;
 	font-size: var( --scss-font-body-small );
-	margin-top: 8px;
 `;
 
 const SectionHeaderContainer = styled.div< SectionHeaderProps >`
