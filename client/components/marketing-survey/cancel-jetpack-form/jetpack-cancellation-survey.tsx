@@ -77,7 +77,7 @@ export default function JetpackCancellationSurvey( {
 		const textAnswerLabel =
 			choice.id === 'another-reason'
 				? translate( 'Share your experience (required)' )
-				: translate( 'Are there any details you would like to share?' );
+				: translate( 'Please share any additional details.' );
 
 		return (
 			<Card
