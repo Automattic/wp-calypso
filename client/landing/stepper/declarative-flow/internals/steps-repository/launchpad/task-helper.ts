@@ -35,7 +35,12 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
 						keepActive: true,
-						actionUrl: `/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace(
+								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
+							);
+						},
 					};
 					break;
 				case 'plan_selected':
