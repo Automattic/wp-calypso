@@ -262,17 +262,19 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
-export const setPendingAction = (
+export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
+	type: 'SET_PENDING_ACTION' as const,
+	pendingAction,
+} );
+
+export const setMultiplePendingAction = (
 	pendingAction: undefined | ( () => Promise< any > ),
-	multipleActions = false
-) => {
-	return {
-		type: multipleActions
-			? ( 'SET_MULTIPLE_PENDING_ACTIONS' as const )
-			: ( 'SET_PENDING_ACTION' as const ),
-		pendingAction,
-	};
-};
+	key: string
+) => ( {
+	type: 'SET_MULTIPLE_PENDING_ACTIONS' as const,
+	key,
+	pendingAction,
+} );
 
 export const setProgress = ( progress: number ) => ( {
 	type: 'SET_PROGRESS' as const,
@@ -330,21 +332,10 @@ export const setDomainForm = ( step ) => {
 	};
 };
 
-// export const setDomainSuggested = ( domainSuggested: string ) => ( {
-// 	type: 'SET_DOMAIN_SUGGESTED' as const,
-// 	domainSuggested,
-// } );
-
-// export const setDomainItem = ( domainItem: object ) => ( {
-// 	type: 'SET_DOMAIN_ITEM' as const,
-// 	domainItem,
-// } );
-
 export const setSignupValues = ( signupValues: object ) => ( {
 	type: 'SET_SIGNUP_VALUES' as const,
 	signupValues,
 } );
-
 
 export type OnboardAction = ReturnType<
 	| typeof addFeature
@@ -377,6 +368,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
+	| typeof setMultiplePendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
 	| typeof setStepProgress
