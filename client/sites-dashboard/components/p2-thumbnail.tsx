@@ -3,7 +3,18 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';
 import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
+import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+
+const LARGE_ICON_PX = 64;
+const SMALL_ICON_PX = 32;
+const ICON_BORDER_PX = 3;
+
+const headerImageSize = {
+	width: '100%',
+	height: 'auto',
+	aspectRatio: '5/2',
+};
 
 const Container = styled.div( {
 	userSelect: 'none',
@@ -13,16 +24,20 @@ const Container = styled.div( {
 	width: '100%',
 	height: '100%',
 	overflow: 'hidden',
+
+	// Using flex to remove an unexplained gap between the header image and site icon
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'start',
 } );
 
 const HeaderImage = styled.img( {
-	width: '100%',
-	height: '144px',
+	...headerImageSize,
 	objectFit: 'cover',
 } );
 
 const ColorGradient = styled.div( {
-	height: '144px',
+	...headerImageSize,
 
 	'::before': {
 		content: '""',
@@ -33,25 +48,48 @@ const ColorGradient = styled.div( {
 	},
 } );
 
-const SiteIconContainer = styled.div( {
-	background: '#fff',
-	padding: '3px',
-	borderRadius: '4px',
-	position: 'absolute',
-	left: '32px',
-	top: '109px',
-} );
+const SiteIconContainer = styled.div< { isSmall: boolean } >(
+	{
+		background: '#fff',
+		padding: ICON_BORDER_PX,
+		borderRadius: '4px',
+		position: 'relative',
+	},
+	( { isSmall } ) =>
+		isSmall
+			? {
+					left: '8px',
+					top: `${ -SMALL_ICON_PX / 2 - ICON_BORDER_PX }px`,
+			  }
+			: {
+					left: '32px',
+					top: `${ -LARGE_ICON_PX / 2 - ICON_BORDER_PX }px`,
+			  }
+);
 
-const SiteIcon = styled.img( {
-	borderRadius: '2px',
-	display: 'block',
-} );
+const SiteIcon = styled.img< { isSmall: boolean } >(
+	{
+		borderRadius: '2px',
+		display: 'block',
+	},
+	( { isSmall } ) =>
+		isSmall
+			? {
+					width: SMALL_ICON_PX,
+					height: SMALL_ICON_PX,
+			  }
+			: {
+					width: LARGE_ICON_PX,
+					height: LARGE_ICON_PX,
+			  }
+);
 
 interface P2ThumbnailProps {
 	site: SiteExcerptData;
+	displayMode: SitesDisplayMode;
 }
 
-export function P2Thumbnail( { site }: P2ThumbnailProps ) {
+export function P2Thumbnail( { site, displayMode }: P2ThumbnailProps ) {
 	const { __ } = useI18n();
 	const { ref, inView } = useInView( { triggerOnce: true } );
 	const { data, isLoading } = useP2ThumbnailElementsQuery( site.ID, { enabled: inView } );
@@ -61,6 +99,8 @@ export function P2Thumbnail( { site }: P2ThumbnailProps ) {
 			return null;
 		}
 
+		const isSmall = displayMode === 'list';
+
 		return (
 			<>
 				{ data.header_image ? (
@@ -69,8 +109,8 @@ export function P2Thumbnail( { site }: P2ThumbnailProps ) {
 					<ColorGradient style={ { backgroundColor: data.color_link } } />
 				) }
 				{ site.icon && (
-					<SiteIconContainer>
-						<SiteIcon src={ site.icon.img } alt="" width="64" height="64" />
+					<SiteIconContainer isSmall={ isSmall }>
+						<SiteIcon src={ site.icon.img } alt="" isSmall={ isSmall } />
 					</SiteIconContainer>
 				) }
 			</>

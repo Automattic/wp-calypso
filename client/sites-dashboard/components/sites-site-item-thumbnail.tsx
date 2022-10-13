@@ -59,12 +59,8 @@ export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThum
 	}
 
 	function renderFallback() {
-		if (
-			displayMode === 'tile' &&
-			site.options.is_wpforteams_site &&
-			getSiteLaunchStatus( site ) !== 'public'
-		) {
-			return <P2Thumbnail site={ site } />;
+		if ( site.options.is_wpforteams_site && getSiteLaunchStatus( site ) !== 'public' ) {
+			return <P2Thumbnail site={ site } displayMode={ displayMode } />;
 		}
 
 		if ( site.icon ) {
