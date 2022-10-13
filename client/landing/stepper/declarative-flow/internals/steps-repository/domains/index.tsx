@@ -79,7 +79,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		};
 	} );
 
-	const { setDomainForm, setSignupValues, setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setDomainForm, setSignupValues, setMultiplePendingAction } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 	const search = data?.search ?? false;
@@ -221,7 +221,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 		}
 
-		setPendingAction( async () => {
+		setMultiplePendingAction( async () => {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				siteUrl,
@@ -244,7 +244,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
 
 			return createSiteResult;
-		}, true );
+		}, 'domains' );
 
 		submit?.();
 	};
@@ -410,7 +410,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			)
 		);
 
-		setPendingAction( async () => {
+		setMultiplePendingAction( async () => {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				domain,
@@ -431,7 +431,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
 
 			return createSiteResult;
-		}, true );
+		}, 'domains' );
 
 		submit?.();
 	};
@@ -450,7 +450,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			Object.assign( { domainItem, siteUrl: domain }, getThemeArgs(), useThemeHeadstartItem )
 		);
 
-		setPendingAction( async () => {
+		setMultiplePendingAction( async () => {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				domain,
@@ -471,7 +471,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
 
 			return createSiteResult;
-		}, true );
+		}, 'domains' );
 
 		submit?.();
 	};
