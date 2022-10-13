@@ -102,6 +102,7 @@ class StatsSite extends Component {
 	// getDerivedStateFromProps will set the state both on init and tab switch
 	state = {
 		activeTab: null,
+		activeLegend: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -112,9 +113,15 @@ class StatsSite extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
+				activeLegend: activeTab.legendOptions || [],
 			};
 		}
 		return null;
+	}
+
+	getAvailableLegend() {
+		const activeTab = getActiveTab( this.props.chartTab );
+		return activeTab.legendOptions || [];
 	}
 
 	barClick = ( bar ) => {
@@ -122,6 +129,8 @@ class StatsSite extends Component {
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
+
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
@@ -208,7 +217,9 @@ class StatsSite extends Component {
 				<div id="my-stats-content">
 					<ChartTabs
 						activeTab={ getActiveTab( this.props.chartTab ) }
-						activeLegend={ [] } // previously used by chart legend, now only needed to maintain memoization of `buildChartData()`
+						activeLegend={ this.state.activeLegend }
+						availableLegend={ this.getAvailableLegend() }
+						onChangeLegend={ this.onChangeLegend }
 						barClick={ this.barClick }
 						switchTab={ this.switchChart }
 						charts={ CHARTS }
