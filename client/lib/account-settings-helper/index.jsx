@@ -12,7 +12,7 @@ import './style.scss';
 export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
-	const updateLanguage = async ( event ) => {
+	const updateLanguage = ( event ) => {
 		const { value } = event.target;
 		dispatch( setUserSetting( 'language', value ) );
 		dispatch( saveUnsavedUserSettings( [ 'language' ] ) ).then( () => {
