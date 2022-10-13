@@ -25,7 +25,11 @@ function InlineHelpContactViewLoaded() {
 		);
 	}, [ dispatch, supportVariation, sectionName ] );
 
-	return supportVariation === SUPPORT_FORUM ? <InlineHelpForumView /> : <HelpContact compact />;
+	return supportVariation === SUPPORT_FORUM ? (
+		<InlineHelpForumView />
+	) : (
+		<HelpContact compact source="inline-help" />
+	);
 }
 
 export default function InlineHelpContactView() {
