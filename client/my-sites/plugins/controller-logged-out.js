@@ -45,7 +45,7 @@ const prefetchProductList = ( queryClient, store ) => {
 	const type = 'all';
 
 	return queryClient
-		.fetchQuery( [ 'products-list', type ], () => wpcom.req.get( '/productst', { type } ) )
+		.fetchQuery( [ 'products-list', type ], () => wpcom.req.get( '/products', { type } ) )
 		.then( ( productsList ) => {
 			return store.dispatch( receiveProductsList( productsList, type ) );
 		} );
