@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 
 type Props = {
 	siteName?: string;
@@ -55,6 +55,8 @@ const getTranslation = ( lang?: string ) => {
 
 export const SiteComingSoon = ( { siteName = '', className, lang, width, height }: Props ) => {
 	const comingSoon = getTranslation( lang );
+	const isRtl = isRTL();
+	const x = isRtl ? 375 - 31 : 31;
 	return (
 		<Root className={ className }>
 			<svg
@@ -63,6 +65,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 				viewBox="0 0 375 272"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
+				textAnchor={ 'start' }
 			>
 				<title>{ comingSoon }</title>
 				<text
@@ -70,7 +73,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 					fontFamily="Recoleta, Georgia, 'Times New Roman', Times, serif"
 					fontSize="30"
 				>
-					<tspan x="31" y="153.016">
+					<tspan x={ x } y="153.016">
 						{ comingSoon }
 					</tspan>
 				</text>
@@ -79,7 +82,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 					fontFamily='-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif'
 					fontSize="14"
 				>
-					<tspan x="31" y="120.102">
+					<tspan x={ x } y="120.102">
 						{ siteName }
 					</tspan>
 				</text>
