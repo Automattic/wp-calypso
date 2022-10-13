@@ -3,13 +3,25 @@
  */
 
 import { render } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SiteContent from '../index';
 
+jest.mock( '@automattic/viewport-react', () => ( {
+	useDesktopBreakpoint: () => true,
+	useMobileBreakpoint: () => false,
+} ) );
+
 describe( '<SiteContent>', () => {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=1' )
+		.reply( 200, {
+			connected: true,
+		} );
 	const sites = [
 		{
 			blog_id: 1234,
@@ -21,7 +33,13 @@ describe( '<SiteContent>', () => {
 		isLoading: false,
 		currentPage: 1,
 	};
-	const initialState = {};
+	const initialState = {
+		partnerPortal: {
+			partner: {
+				isPartnerOAuthTokenLoaded: true,
+			},
+		},
+	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
