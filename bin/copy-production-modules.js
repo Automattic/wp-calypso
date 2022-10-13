@@ -78,7 +78,9 @@ function processPackage( pkgName, context ) {
 	// collect dependencies from various fields
 	const depFields = [ 'dependencies', 'peerDependencies', 'optionalDependencies' ];
 	const pkgDeps = depFields.flatMap( ( type ) => Object.keys( pkgJson[ type ] || {} ) );
-	const optionalPkgDeps = Object.keys( pkgJson.peerDependenciesMeta || [] );
+	const optionalPkgDeps = Object.keys( pkgJson.peerDependenciesMeta || [] ).filter(
+		( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
+	);
 
 	// bail out if package has no dependencies
 	if ( ! pkgDeps.length ) {
