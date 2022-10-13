@@ -76,6 +76,7 @@
 		}
 
 		@include break-wide {
+			// select first row for a 3 column grid
 			&:first-of-type,
 			&:nth-of-type(2),
 			&:nth-of-type(3) {
