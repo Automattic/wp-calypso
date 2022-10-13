@@ -1,4 +1,5 @@
 import { combineReducers } from '@wordpress/data';
+import { find, some } from 'lodash';
 import { SiteGoal } from './constants';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
@@ -306,7 +307,7 @@ const storeType: Reducer< string, OnboardAction > = ( state = '', action ) => {
 };
 
 const pendingAction: Reducer<
-	undefined | ( () => Promise< any > ) | [ () => Promise< any > ],
+	undefined | ( () => Promise< any > ) | [ { key: string; pendingAction: () => Promise< any > } ],
 	OnboardAction
 > = ( state, action ) => {
 	if ( action.type === 'SET_PENDING_ACTION' ) {
@@ -315,10 +316,21 @@ const pendingAction: Reducer<
 
 	if ( action.type === 'SET_MULTIPLE_PENDING_ACTIONS' ) {
 		if ( state ) {
-			return [ ...state, action.pendingAction ];
+			if (
+				some(
+					state as [ { key: string; pendingAction: () => Promise< any > } ],
+					( obj ) => obj.key === action.key
+				)
+			) {
+				const actionToBeOveridden = find( state, { key: action.key } );
+				actionToBeOveridden.pendingAction = action.pendingAction;
+				return state;
+			}
+
+			return [ ...state, { key: action.key, pendingAction: action.pendingAction } ];
 		}
 
-		return [ action.pendingAction ];
+		return [ { key: action.key, pendingAction: action.pendingAction } ];
 	}
 
 	if (

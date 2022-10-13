@@ -427,6 +427,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
+	| typeof setMultiplePendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
 	| typeof setStepProgress

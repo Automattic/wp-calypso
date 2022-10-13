@@ -51,7 +51,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	} );
 
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setMultiplePendingAction } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const locale = useLocale();
@@ -99,12 +99,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} else {
 			submitSignupStep( step, {} );
 		}
-		setPendingAction( async ( dependencies ) => {
+		setMultiplePendingAction( async ( dependencies ) => {
 			const { siteSlug } = dependencies;
 			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
 
 			return dependencies;
-		}, true );
+		}, 'plans' );
 
 		props.onSubmit?.();
 	};
