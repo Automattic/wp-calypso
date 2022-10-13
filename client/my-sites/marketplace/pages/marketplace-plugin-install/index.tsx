@@ -1,4 +1,4 @@
-import { planHasFeature, WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_ATOMIC } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
@@ -36,6 +36,7 @@ import getUploadedPluginId from 'calypso/state/selectors/get-uploaded-plugin-id'
 import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-complete';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
 import {
@@ -123,11 +124,13 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	);
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 
+	const hasAtomicFeature = useSelector( ( state ) =>
+		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
+	);
 	const supportsAtomicUpgrade = useRef< boolean >();
 	useEffect( () => {
-		supportsAtomicUpgrade.current =
-			selectedSite?.plan && planHasFeature( selectedSite.plan.product_slug, WPCOM_FEATURES_ATOMIC );
-	}, [ selectedSite ] );
+		supportsAtomicUpgrade.current = hasAtomicFeature;
+	}, [ hasAtomicFeature ] );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -186,7 +189,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				dispatch( installPlugin( siteId, wporgPlugin, false ) );
 
 				triggerInstallFlow();
-			} else if ( supportsAtomicUpgrade.current ) {
+			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
 				setAtomicFlow( true );
 				dispatch( initiateTransfer( siteId, null, productSlug ) );
@@ -204,6 +207,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		wporgPlugin,
 		productSlug,
 		dispatch,
+		hasAtomicFeature,
 	] );
 
 	// Validate completion of atomic transfer flow
