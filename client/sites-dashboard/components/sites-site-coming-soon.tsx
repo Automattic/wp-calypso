@@ -24,6 +24,7 @@ const Root = styled.div( {
 const comingSoonTranslations: Record< string, string > = {
 	ar: 'قريبًا',
 	de: 'Demnächst verfügbar',
+	en: 'Coming Soon',
 	es: 'Próximamente',
 	fr: 'Bientôt disponible',
 	he: 'בקרוב',
