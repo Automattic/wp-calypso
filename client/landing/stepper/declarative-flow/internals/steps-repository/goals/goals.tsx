@@ -20,10 +20,9 @@ export const useGoals = ( displayAllGoals = false ): Goal[] => {
 	const [ , experimentAssignment ] = useExperiment(
 		CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
 	);
-	let variationName = experimentAssignment?.variationName;
+	const variationName = experimentAssignment?.variationName;
 
 	let builtByExpressGoalDisplayText;
-	variationName = VARIATION_GET;
 	switch ( variationName ) {
 		case VARIATION_BUY:
 			builtByExpressGoalDisplayText = translate( 'Buy a website' );
