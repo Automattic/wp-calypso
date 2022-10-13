@@ -10,7 +10,6 @@
 	img {
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 6px;
-		height: 300px;
-		max-width: unset;
+		object-fit: cover;
 	}
 }
