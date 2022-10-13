@@ -1,7 +1,12 @@
+import { shuffle } from '@automattic/js-utils';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactElement } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 export type Plugin = {
 	slug: string;
@@ -128,15 +133,27 @@ export default function CollectionListView( {
 	siteSlug: string;
 	sites: any;
 } ): ReactElement | null {
+	const selectedSite = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
+	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+
 	const collections = useCollections();
 
-	const plugins = collections[ collection ].plugins.slice( 0, 6 );
+	const plugins = useRef< Array< Plugin > >();
+	useEffect( () => {
+		plugins.current = shuffle( collections[ collection ].plugins.slice( 0, 6 ) );
+	}, [] );
+
+	if ( isJetpackSelfHosted ) {
+		return null;
+	}
 
 	return (
 		<PluginsBrowserList
 			listName={ 'collection-' + collection }
-			plugins={ plugins }
-			size={ plugins.length }
+			plugins={ plugins.current || [] }
+			size={ plugins.current?.length }
 			title={ collections[ collection ].name }
 			subtitle={ collections[ collection ].description }
 			site={ siteSlug }

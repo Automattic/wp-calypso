@@ -1,8 +1,10 @@
 import { Card, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { useState, useCallback, MouseEvent, KeyboardEvent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import useFetchTestConnection from 'calypso/data/agency-dashboard/use-fetch-test-connection';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteStatusContent from '../site-status-content';
@@ -17,8 +19,14 @@ interface Props {
 
 export default function SiteCard( { rows, columns }: Props ) {
 	const dispatch = useDispatch();
+	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const blogId = rows.site.value.blog_id;
+
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
+
+	const isSiteConnected = data ? data.connected : true;
 
 	const toggleIsExpanded = useCallback(
 		( event: MouseEvent< HTMLSpanElement > | KeyboardEvent< HTMLSpanElement > ) => {
@@ -45,7 +53,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error || rows.monitor.error;
+	const siteError = site.error || rows.monitor.error || ! isSiteConnected;
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
@@ -67,7 +75,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ site.error && <SiteErrorContent siteUrl={ siteUrl } /> }
+					{ ( site.error || ! isSiteConnected ) && <SiteErrorContent siteUrl={ siteUrl } /> }
 					{ columns
 						.filter( ( column ) => column.key !== 'site' )
 						.map( ( column, index ) => {

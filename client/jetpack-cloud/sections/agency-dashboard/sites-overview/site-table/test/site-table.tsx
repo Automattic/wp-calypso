@@ -4,6 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -12,6 +13,12 @@ import SiteTable from '../index';
 import type { SiteData } from '../../types';
 
 describe( '<SiteTable>', () => {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=1' )
+		.reply( 200, {
+			connected: true,
+		} );
 	const scanThreats = 4;
 	const blogId = 1234;
 	const pluginUpdates = [ 'plugin-1', 'plugin-2', 'plugin-3' ];
@@ -77,7 +84,13 @@ describe( '<SiteTable>', () => {
 		isLoading: false,
 		columns: siteColumns,
 	};
-	const initialState = {};
+	const initialState = {
+		partnerPortal: {
+			partner: {
+				isPartnerOAuthTokenLoaded: true,
+			},
+		},
+	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();

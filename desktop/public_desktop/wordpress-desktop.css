@@ -5,7 +5,6 @@ body {
 #title-bar {
 	-webkit-app-region: drag;
 	display: block;
-	user-select: none;
 	background-color: #24282d;
 	position: absolute;
 	height: 38px;

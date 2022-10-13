@@ -45,12 +45,6 @@
 			width: 100%;
 		}
 	}
-	.like-button__label {
-		height: 20px;
-	}
-	.like-button__like-icons {
-		height: 20px;
-	}
 }
 
 .reader-full-post__visit-site-container {
@@ -388,6 +382,10 @@
 		svg.reader-star path {
 			fill: var(--color-link);
 		}
+	}
+	.like-button__like-icons {
+		position: relative;
+		top: 2px;
 	}
 }
 
