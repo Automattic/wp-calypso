@@ -92,7 +92,6 @@
 		"settings/featured-image-template-toggle": false,
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
-		"signup/add-ons": false,
 		"signup/anchor-fm": true,
 		"signup/design-picker-pattern-assembler": false,
 		"signup/design-picker-categories": true,
