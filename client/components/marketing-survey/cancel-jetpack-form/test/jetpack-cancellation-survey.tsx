@@ -7,7 +7,7 @@ import JetpackCancellationSurvey from '../jetpack-cancellation-survey';
 
 const customAnswerText = {
 	other: 'Share your experience (required)',
-	rest: 'Are there any details you would like to share?',
+	rest: 'Please share any additional details.',
 };
 
 describe( 'JetpackCancellationSurvey', () => {
