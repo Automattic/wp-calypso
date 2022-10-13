@@ -19,10 +19,6 @@ jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
 } );
 
-jest.mock( 'react-query', () => ( {
-	useQuery: () => ( { isLoading: true, data: null } ),
-} ) );
-
 jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	useGetDomainsQuery: () => ( {
 		isLoading: true,
