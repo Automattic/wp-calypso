@@ -40,7 +40,6 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	letter-spacing: -0.4px;
 	text-align: left;
 	font-size: var( --scss-font-title-large );
-	line-height: 40px;
 `;
 
 const SectionSubHeader = styled.div< SectionHeaderProps >`

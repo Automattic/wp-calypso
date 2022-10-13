@@ -20,7 +20,7 @@ const ThreeColumnContainer = styled.div`
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 40px;
+	margin-top: 32px;
 
 	> div:first-child {
 		padding: 0;
