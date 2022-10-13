@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useExperiment } from 'calypso/lib/explat';
 import DIFMLink from './difm-link';
-import { CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME, useGoals } from './goals';
+import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME, useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
 
@@ -45,7 +45,9 @@ export const SelectGoals = ( {
 }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals( displayAllGoals );
-	const [ isDIFMxperimentsLoading ] = useExperiment( CALYPSO_DIFM_GOAL_TEXT_EXPERIMENT_NAME );
+	const [ isBuiltByExpressExperimentLoading ] = useExperiment(
+		CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
+	);
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
@@ -85,7 +87,7 @@ export const SelectGoals = ( {
 			) }
 
 			<div className="select-goals__cards-container">
-				{ isDIFMxperimentsLoading
+				{ isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (
 							<div
 								className="select-card__container"
