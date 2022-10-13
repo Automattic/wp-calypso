@@ -9,6 +9,10 @@ import {
 	HOSTING_SSH_ACCESS_SET,
 	HOSTING_SSH_ACCESS_ENABLE,
 	HOSTING_SSH_ACCESS_DISABLE,
+	HOSTING_SSH_KEYS_REQUEST,
+	HOSTING_SSH_KEYS_SET,
+	HOSTING_SSH_KEY_ATTACH,
+	HOSTING_SSH_KEY_DETACH,
 	HOSTING_PHP_VERSION_REQUEST,
 	HOSTING_PHP_VERSION_SET_REQUEST,
 	HOSTING_CLEAR_CACHE_REQUEST,
@@ -19,6 +23,7 @@ import {
 import 'calypso/state/data-layer/wpcom/sites/hosting/restore-database-password';
 import 'calypso/state/data-layer/wpcom/sites/hosting/sftp-user';
 import 'calypso/state/data-layer/wpcom/sites/hosting/ssh-access';
+import 'calypso/state/data-layer/wpcom/sites/hosting/ssh-key';
 import 'calypso/state/data-layer/wpcom/sites/hosting/php-version';
 import 'calypso/state/data-layer/wpcom/sites/hosting/static-file-404';
 import 'calypso/state/data-layer/wpcom/sites/hosting/clear-cache';
@@ -77,6 +82,29 @@ export const enableAtomicSshAccess = ( siteId ) => ( {
 export const disableAtomicSshAccess = ( siteId ) => ( {
 	type: HOSTING_SSH_ACCESS_DISABLE,
 	siteId,
+} );
+
+export const attachAtomicSshKey = ( siteId, name ) => ( {
+	type: HOSTING_SSH_KEY_ATTACH,
+	siteId,
+	name,
+} );
+
+export const detachAtomicSshKey = ( siteId, name ) => ( {
+	type: HOSTING_SSH_KEY_DETACH,
+	siteId,
+	name,
+} );
+
+export const requestAtomicSshKeys = ( siteId ) => ( {
+	type: HOSTING_SSH_KEYS_REQUEST,
+	siteId,
+} );
+
+export const setAtomicSshKeys = ( siteId, keys ) => ( {
+	type: HOSTING_SSH_KEYS_SET,
+	siteId,
+	keys,
 } );
 
 export const updateAtomicPhpVersion = ( siteId, version ) => ( {

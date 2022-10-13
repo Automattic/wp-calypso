@@ -4,6 +4,7 @@ import {
 	HOSTING_SFTP_USER_UPDATE,
 	HOSTING_SFTP_USERS_SET,
 	HOSTING_SSH_ACCESS_SET,
+	HOSTING_SSH_KEYS_SET,
 	HOSTING_STATIC_FILE_404_SET,
 	HOSTING_CLEAR_CACHE_REQUEST,
 } from 'calypso/state/action-types';
@@ -50,6 +51,15 @@ const sshAccess = ( state = null, { type, status } ) => {
 	return state;
 };
 
+const sshKeys = ( state = [], { type, keys } ) => {
+	switch ( type ) {
+		case HOSTING_SSH_KEYS_SET:
+			return keys;
+	}
+
+	return state;
+};
+
 const staticFile404 = ( state = null, { type, setting } ) => {
 	switch ( type ) {
 		case HOSTING_STATIC_FILE_404_SET:
@@ -75,6 +85,7 @@ const atomicHostingReducer = combineReducers( {
 	phpVersion,
 	sftpUsers,
 	sshAccess,
+	sshKeys,
 	staticFile404,
 	lastCacheClearTimestamp,
 } );
