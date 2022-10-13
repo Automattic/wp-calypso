@@ -341,6 +341,7 @@
 	position: relative;
 	padding: 0;
 	z-index: z-index(".reader-related-card__meta", ".follow-button");
+	left: 50px;
 
 	.reader-follow-feed {
 		fill: var(--color-primary);
@@ -351,11 +352,7 @@
 	}
 
 	.follow-button__label {
-		color: var(--color-primary);
-
-		@include breakpoint-deprecated( "<960px" ) {
-			display: none;
-		}
+		display: none;
 	}
 
 	.gridicon {
