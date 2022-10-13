@@ -5,44 +5,63 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 300px;
 }
 
-.plan-features-comparison__table.has-2-cols {
+.plan-comparison-with-highlights__table.has-2-cols {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	max-width: 800px;
 }
 
-.plan-features-comparison__table.has-1-cols {
+.plan-comparison-with-highlights__table.has-1-cols {
 	margin-left: auto;
 	margin-right: auto;
 	max-width: 337px;
 }
 
-.plan-features-comparison__table-item.has-border-top {
+.plan-comparison-with-highlights__table-item.has-border-top {
 	border-top: solid 1px var(--color-neutral-5);
 }
 
-.plan-features-comparison__table-item.is-top-buttons {
+.plan-comparison-with-highlights__table-item.is-top-buttons {
 	padding-top: 8px;
 }
 
-.plan-features-comparison__header {
-	position: relative;
-	display: flex;
-	align-items: flex-start;
-	padding: 12px 24px 12px 15px;
-	background-color: var(--color-surface);
-	justify-content: center;
-	font-weight: 400;
-	margin-top: 30px;
+.plan-comparison-with-highlights__table-item.plan-comparison-with-highlights__unique-features {
+	padding-bottom: 0.5rem;
+	ul {
+		margin-bottom: 0;
+	}
+
+	& .is-last-feature {
+		.plan-comparison-with-highlights__item {
+			padding-bottom: 0;
+
+			margin-left: 0;
+			padding-left: 0;
+
+			svg {
+				display: none;
+			}
+		}
+	}
 }
 
-.plan-features-comparison__header-text {
+.plan-comparison-with-highlights__header {
+	position: relative;
+	display: block;
+	padding: 12px 24px 12px 15px;
+	background-color: var(--color-surface);
+	font-weight: 400;
+	margin-top: 30px;
+	text-align: left;
+}
+
+.plan-comparison-with-highlights__header-text {
 	flex: 1;
 	padding: 6px 0 0;
 }
 
-.plan-features-comparison__actions-buttons {
+.plan-comparison-with-highlights__actions-buttons {
 	text-align: center;
 }
 
@@ -68,7 +87,7 @@ $plan-features-sidebar-width: 272px;
 		max-width: 100%;
 	}
 
-	.plan-features-comparison__table {
+	.plan-comparison-with-highlights__table {
 		display: none;
 		font-size: $font-body-small;
 		color: var(--color-text-subtle);
@@ -96,7 +115,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__header-title {
+	.plan-comparison-with-highlights__header-title {
 		margin-bottom: 5px;
 		font-size: $font-title-small;
 		line-height: 0.7;
@@ -104,30 +123,30 @@ $plan-features-sidebar-width: 272px;
 		font-weight: 400;
 	}
 
-	.is-premium-plan .plan-features-comparison__header-title {
+	.is-premium-plan .plan-comparison-with-highlights__header-title {
 		color: var(--studio-gray-100);
 		font-weight: 600;
 	}
 
-	.plan-features-comparison__table-item {
-		text-align: center;
+	.plan-comparison-with-highlights__table-item {
 		transition: opacity 0.05s;
 		border-right: solid 1px var(--color-neutral-5);
 		border-left: solid 1px var(--color-neutral-5);
 		background-color: var(--color-surface);
 		position: relative;
 
+		.is-bold,
 		&.is-bold {
 			font-weight: bold;
 		}
 	}
 
-	.plan-features-comparison__pricing,
+	.plan-comparison-with-highlights__pricing,
 	.plan-price.is-discounted {
 		color: var(--color-neutral-70);
 	}
 
-	.plan-features-comparison__pricing {
+	.plan-comparison-with-highlights__pricing {
 		padding: 8px 16px;
 		margin: 0;
 
@@ -157,7 +176,7 @@ $plan-features-sidebar-width: 272px;
 			font-weight: 400;
 		}
 
-		.plan-features-comparison__header-billing-info {
+		.plan-comparison-with-highlights__header-billing-info {
 			color: var(--studio-gray-40);
 			font-weight: 600;
 			font-size: $font-body-extra-small;
@@ -178,8 +197,9 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__header-annual-discount {
+	.plan-comparison-with-highlights__header-annual-discount {
 		color: var(--studio-green-60);
+		font-size: 0.75rem;
 		&-is-loading {
 			@include placeholder();
 		}
@@ -190,14 +210,14 @@ $plan-features-sidebar-width: 272px;
 		margin: 5px auto;
 	}
 
-	.plan-features-comparison__item-info {
+	.plan-comparison-with-highlights__item-info {
 		padding: 0 5px;
 		display: flex;
 		flex-direction: column;
 		flex: 1 0 0;
 		width: 100%;
 
-		.plan-features-comparison__item-title {
+		.plan-comparison-with-highlights__item-title {
 			line-height: 18px;
 			overflow-wrap: break-word;
 			margin: 0;
@@ -208,14 +228,14 @@ $plan-features-sidebar-width: 272px;
 		&:not(.is-available) {
 			color: var(--studio-gray-20);
 
-			.plan-features-comparison__item-title {
+			.plan-comparison-with-highlights__item-title {
 				text-decoration: line-through;
 				color: var(--color-neutral-30);
 			}
 		}
 	}
 
-	.plan-features-comparison__actions {
+	.plan-comparison-with-highlights__actions {
 		padding: 0 15px 15px;
 
 		@include breakpoint-deprecated( "<1040px" ) {
@@ -228,7 +248,7 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__actions-button {
+	.plan-comparison-with-highlights__actions-button {
 		margin-top: 8px;
 		width: 100%;
 
@@ -242,33 +262,33 @@ $plan-features-sidebar-width: 272px;
 		}
 	}
 
-	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+	.plan-comparison-with-highlights__row:last-of-type .plan-comparison-with-highlights__table-item {
 		border-bottom: solid 1px var(--color-neutral-5);
 
 		&.is-last-feature {
-			.plan-features-comparison__item-info {
+			.plan-comparison-with-highlights__item-info {
 				padding-bottom: 30px;
 			}
 		}
 	}
 
-	.plan-features-comparison__item {
+	.plan-comparison-with-highlights__item {
 		padding: 0.5rem;
 		margin: 0 15px;
 		text-align: left;
 
-		&.plan-features-comparison__item-available {
+		&.plan-comparison-with-highlights__item-available {
 			display: flex;
 			flex-direction: column;
 			position: relative;
 
-			& .plan-features-comparison__item-annual-plan-container {
+			& .plan-comparison-with-highlights__item-annual-plan-container {
 				display: flex;
 				position: absolute;
 				margin-left: 21px;
 				top: 5px;
 
-				& .plan-features-comparison__item-annual-plan {
+				& .plan-comparison-with-highlights__item-annual-plan {
 					font-weight: 600;
 					color: var(--color-error);
 					font-size: 0.6rem; /* stylelint-disable-line scales/font-sizes */
@@ -276,17 +296,17 @@ $plan-features-sidebar-width: 272px;
 				}
 			}
 
-			& .plan-features-comparison__item-info-container {
+			& .plan-comparison-with-highlights__item-info-container {
 				display: flex;
 
-				&.plan-features-comparison__item-info-annual-only {
+				&.plan-comparison-with-highlights__item-info-annual-only {
 					margin-top: 10px;
 				}
 			}
 		}
 
-		.plan-features-comparison__item-checkmark,
-		.plan-features-comparison__item-cross {
+		.plan-comparison-with-highlights__item-checkmark,
+		.plan-comparison-with-highlights__item-cross {
 			fill: var(--studio-green-50);
 			width: 16px;
 			height: 16px;
@@ -294,13 +314,24 @@ $plan-features-sidebar-width: 272px;
 			flex: 0 0 auto;
 		}
 
-		.plan-features-comparison__item-cross {
+		.plan-comparison-with-highlights__item-cross {
 			fill: #a7aaad;
+		}
+
+		&.is-bold {
+			font-weight: bold;
+		}
+
+		.plan-comparison-with-highlights__item-material-icon {
+			width: 18px;
+			height: 18px;
+			fill: var(--studio-gray-80);
 		}
 	}
 }
 
-.plan-features-comparison__content {
+
+.plan-comparison-with-highlights__content {
 	.plans-features-main__group.is-scrollable & {
 		margin: -16px 0 0;
 		padding-top: $plan-features-header-banner-height;
@@ -364,7 +395,7 @@ $plan-features-sidebar-width: 272px;
 	border-radius: 4px;
 }
 
-.plan-features-comparison__header-price-group {
+.plan-comparison-with-highlights__header-price-group {
 	display: inline;
 	width: calc(100% + 20px);
 
@@ -373,12 +404,12 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features-comparison__header-price-group-prices {
+.plan-comparison-with-highlights__header-price-group-prices {
 	display: inline-block;
 }
 
 body.is-section-signup.is-white-signup {
-	.plan-features-comparison__table-item {
+	.plan-comparison-with-highlights__table-item {
 		border-left: none;
 		background-color: transparent;
 
@@ -393,27 +424,27 @@ body.is-section-signup.is-white-signup {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.25rem;
 			padding: 0 8px;
-			right: 52%;
-			transform: translate(50%);
+			left: 6%;
+			width: fit-content;
 			border-radius: 4px;
 			background-color: var(--studio-green-5);
 			color: var(--studio-gray-80);
 		}
 	}
 
-	.plan-features-comparison__header {
+	.plan-comparison-with-highlights__header {
 		background-color: transparent;
 	}
 
-	.plan-features-comparison__row:last-of-type .plan-features-comparison__table-item {
+	.plan-comparison-with-highlights__row:last-of-type .plan-comparison-with-highlights__table-item {
 		border-bottom: none;
 	}
 
-	.plan-features--signup .is-premium-plan .plan-features-comparison__header-title {
+	.plan-features--signup .is-premium-plan .plan-comparison-with-highlights__header-title {
 		font-weight: 500;
 	}
 
-	.plan-features--signup .plan-features-comparison__pricing {
+	.plan-features--signup .plan-comparison-with-highlights__pricing {
 		.plan-price {
 			font-weight: 500;
 
@@ -422,20 +453,30 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 
-		.plan-features-comparison__header-billing-info {
+		.plan-comparison-with-highlights__header-billing-info {
 			font-weight: 500;
 		}
 	}
 
-	.plan-features-comparison__item-title {
+	.plan-comparison-with-highlights__item-title {
 		color: var(--studio-gray-60);
 	}
 
-	.plan-features-comparison__item.plan-features-comparison__item-available {
-		.plan-features-comparison__item-annual-plan-container
-		.plan-features-comparison__item-annual-plan {
+	.plan-comparison-with-highlights__unique-features .plan-comparison-with-highlights__item-title {
+		color: var(--studio-gray-80);
+	}
+
+	.plan-comparison-with-highlights__item.plan-comparison-with-highlights__item-available {
+		.plan-comparison-with-highlights__item-annual-plan-container
+		.plan-comparison-with-highlights__item-annual-plan {
 			color: var(--studio-orange-40);
 		}
+	}
+
+	.plan-comparison-with-highlights__audience {
+		display: block;
+		color: var(--color-text-subtle);
+		padding: 35px 16px 10px;
 	}
 }
 
