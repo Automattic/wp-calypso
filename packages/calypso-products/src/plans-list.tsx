@@ -232,6 +232,7 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	/* END - PLAN TAGLINE EXPERIMENT */
 } from './constants';
 import type {
@@ -709,7 +710,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	getOnboardingHighlightedFeatures: () => [
 		FEATURE_PREMIUM_THEMES,
-		FEATURE_ADVANCED_CUSTOMIZATION,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
 	],
 	// Features not displayed but used for checking plan abilities

@@ -176,6 +176,7 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	/* END - PLAN TAGLINE EXPERIMENT */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -1623,6 +1624,14 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_PRODUCT_LISTINGS,
 		getTitle: () => 'Unlimited product listings',
 		getDescription: () => {},
+	},
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+			),
 	},
 	/* END - PLAN TAGLINE EXPERIMENT */
 };

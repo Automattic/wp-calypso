@@ -104,6 +104,7 @@ export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
 export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
 export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
 export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
 /* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
