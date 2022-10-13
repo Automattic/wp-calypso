@@ -279,7 +279,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
 				// Store the failing test's artifact path if it hasn't yet.
-				if ( this.testFailureArtifacts.indexOf( this.testArtifactsPath ) === -1 ) {
+				if ( ! this.testFailureArtifacts.includes( this.testArtifactsPath ) ) {
 					this.testFailureArtifacts.push( this.testArtifactsPath );
 				}
 				break;
