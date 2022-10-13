@@ -1,7 +1,10 @@
-import { ProgressBar } from '@automattic/components';
+import { Gridicon, ProgressBar } from '@automattic/components';
+import { useRef } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Tooltip from 'calypso/components/tooltip';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
@@ -60,6 +63,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
+	const clipboardButtonEl = useRef( null );
 	if ( sidebarDomain ) {
 		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
 	}
@@ -93,6 +97,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						<span>{ siteName }</span>
 						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 					</div>
+					<ClipboardButton
+						text={ siteSlug }
+						className="launchpad__clipboard-button"
+						borderless
+						compact
+						// TODO: Consider onCopy callback
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						onCopy={ () => {} }
+						ref={ clipboardButtonEl }
+					>
+						<Gridicon icon="clipboard" />
+					</ClipboardButton>
+					<Tooltip context={ clipboardButtonEl.current } isVisible={ true } position="top">
+						{ 'Copy Codes' }
+					</Tooltip>
 					{ sidebarDomain?.isWPCOMDomain && (
 						<a href={ `/domains/add/${ siteSlug }` }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
