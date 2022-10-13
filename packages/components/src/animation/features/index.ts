@@ -8,6 +8,6 @@ export const loadFramerFeatures = async ( feature: string ) => {
 			featurePath = './domMax';
 			break;
 	}
-	const mod = await import( featurePath );
+	const mod = await import( `${ featurePath }` );
 	return mod.default;
 };
