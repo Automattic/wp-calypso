@@ -78,9 +78,9 @@ class AllSites extends Component {
 // don't instantiate function in `connect`
 const isSiteVisible = ( { visible = true } ) => visible;
 
-export default connect( ( state ) => {
+export default connect( ( state, props ) => {
 	const visibleSites = getSites( state )?.filter( isSiteVisible );
-	const userSitesCount = getCurrentUserVisibleSiteCount( state );
+	const userSitesCount = props.count ?? getCurrentUserVisibleSiteCount( state );
 
 	return {
 		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
