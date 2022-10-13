@@ -10,10 +10,10 @@ import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
 
-const sidebarURL = 'https://testlinkinbio.wordpress.com';
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
+const sidebarURL = `https://${ siteName }.${ secondAndTopLevelDomain }`;
 
 const props = {
 	sidebarURL,
