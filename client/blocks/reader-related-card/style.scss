@@ -23,7 +23,7 @@
 
 	&:hover,
 	&:active {
-		color: var(--color-accent);
+		color: var(--color-text-subtle);
 	}
 
 	&:focus {
@@ -196,10 +196,10 @@
 }
 
 .reader-related-card__meta .gravatar {
-	height: 32px;
+	height: 40px;
 	margin: 5px 8px 0 0;
 	vertical-align: middle;
-	width: 32px;
+	width: 40px;
 }
 
 .reader-related-card__byline {
@@ -207,32 +207,35 @@
 	flex: 1 1 auto;
 	flex-direction: column;
 	font-size: $font-body-small;
-	margin-top: 3px;
+	margin-top: 4px;
 	min-height: 38px;
 }
 
-.reader-related-card__byline-author {
-	margin-top: -5px;
-}
-
 .reader-related-card__byline-site {
-	margin-top: -4px;
-}
-
-.reader-related-card__byline-author,
-.reader-related-card__byline-site {
-	color: var(--color-accent);
-	display: flex;
+	font-family: $sans;
 	font-weight: 600;
-	max-height: 14px * 1.75;
 	overflow: hidden;
-	overflow-wrap: break-word;
 	position: relative;
+	height: 20px;
 	text-overflow: ellipsis;
-	word-wrap: break-word;
+	width: calc(100% - 25px);
 
 	&::after {
-		@include long-content-fade( $size: 15% );
+		@include long-content-fade( $size: 10% );
+	}
+}
+.reader-related-card__byline-author {
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 2px;
+  white-space: nowrap;
+
+  &::after {
+		@include long-content-fade( $size: 10% );
+	}
+
+	a.reader-related-card__link {
+		color: var(--color-neutral-40);
 	}
 }
 
