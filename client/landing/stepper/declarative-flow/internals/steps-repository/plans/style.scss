@@ -46,6 +46,22 @@
 		padding: 0;
 		text-decoration: underline;
 	}
+
+	.price-toggle {
+		border-radius: 4px;
+		color: var(--color-text);
+		background-color: #f2f2f2;
+
+		.segmented-control__item.is-selected {
+			.segmented-control__link {
+				border-radius: 4px;
+				box-shadow: 0 3px 8px #0000001f, 0 3px 1px #0000000a;
+				padding: 6px 11px;
+				background-color: var(--studio-white);
+				color: var(--color-text);
+			}
+		}
+	}
 }
 
 .plans-step__compare-plans-link {

@@ -4,11 +4,12 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { addPlanToCart } from '@automattic/onboarding';
+import { useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector, connect } from 'react-redux';
 import { NEWSLETTER_FLOW, Notice } from 'calypso/../packages/onboarding/src';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -55,7 +56,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const site = useSite();
 	const locale = useLocale();
 	const { __ } = useI18n();
-	const [ isDesktop, setIsDesktop ] = React.useState( true );
+	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 
 	const disableBloggerPlanWithNonBlogDomain = undefined;
 	const hideFreePlan = signupValues?.shouldHideFreePlan;
@@ -69,10 +70,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const headerText = 'Choose a plan';
 
 	const translate = useTranslate();
-
-	useEffect( () => {
-		setIsDesktop( isDesktop );
-	}, [] );
 
 	const onSelectPlan = async ( cartItem: any ) => {
 		const { stepSectionName, stepName, flowName } = props;
@@ -210,12 +207,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( headerText ) {
-			return headerText;
-		}
-
 		if ( isDesktop ) {
-			return __( 'Choose a plan' );
+			return headerText;
 		}
 
 		return __( "Pick a plan that's right for you." );
