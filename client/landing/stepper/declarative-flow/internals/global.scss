@@ -59,18 +59,11 @@ button {
 .patterns,
 .link-in-bio-setup,
 .link-in-bio-post-setup,
-.completing-purchase,
 .anchor-fm,
 .subscribers,
-.blazepress,
 .intro {
 	padding: 60px 0 0;
 	box-sizing: border-box;
-
-	// very narrow wide screens (mobile landscape)
-	@media screen and ( max-height: 512px ) {
-		padding: 5px 0 0;
-	}
 
 	&.courses {
 		padding: 0;
@@ -145,6 +138,27 @@ button {
 /**
  * Tailored flow stylings
  */
+.newsletter,
+.link-in-bio {
+	&:not(.launchpad):not(.subscribers) {
+		@include onboarding-break-mobile-landscape {
+			padding: 40px 0 0;
+		}
+	}
+
+	.step-container {
+		.step-container__content h1,
+		.step-container__header h1.formatted-header__title {
+			font-size: $font-title-medium;
+			line-height: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
+
+			@include break-medium {
+				font-size: $font-headline-medium;
+			}
+		}
+	}
+}
+
 .newsletter,
 .link-in-bio,
 .setup-form__form {
