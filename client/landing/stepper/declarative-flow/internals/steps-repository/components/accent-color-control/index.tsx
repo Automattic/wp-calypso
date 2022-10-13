@@ -72,6 +72,12 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 
 	const handleColorSelect = ( { value }: { value: string } ) => {
 		if ( value === 'custom' ) {
+			/**
+			 * Color picker is opened with the current accentColor selected by default
+			 * Color picker can be closed with escape, or by clicking outside, without making any explicit choice
+			 * In that case the previously selected accentColor value will now be selected as "Custom"
+			 */
+			setCustomColor( accentColor );
 			setColorPickerOpen( true );
 			return;
 		}
@@ -130,13 +136,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					ref={ accentColorRef }
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					className="accent-color-control__accent-color-input"
-					// name="accentColor" - Currently name prop is not applicable, SelectDropdown is built with div's and the name prop applies only to form elements
 					id="accentColor"
 					onFocus={ () => setColorPickerOpen( true ) }
 					value={ accentColor.hex }
 					onSelect={ handleColorSelect }
 					selectedIcon={ customColor && <ColorSwatch color={ customColor.hex } /> }
 					options={ COLOR_OPTIONS }
+					showSelectedOption={ !! customColor } // hide a selected option with the exception of "Custom" option
 				/>
 			</FormFieldset>
 			<div

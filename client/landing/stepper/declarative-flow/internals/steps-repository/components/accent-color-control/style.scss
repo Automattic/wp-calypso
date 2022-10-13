@@ -1,4 +1,5 @@
 @import "../../style";
+@import "@automattic/typography/styles/variables";
 
 .accent-color-control__accent-color-input {
 	background-size: 25px, auto;
@@ -10,11 +11,35 @@
 	transition: none;
 	cursor: pointer;
 
+	/* Outline select-dropdown on focus */
+	.accessible-focus & {
+		.select-dropdown__container:focus,
+		&.select-dropdown:not(.is-open) .select-dropdown__container:focus,
+		&.select-dropdown.is-open .select-dropdown__container {
+			.select-dropdown__header {
+				box-shadow: inset 0 0 0 2px #e2eaf1;
+				border-color: var(--color-neutral-10);
+			}
+		}
+
+		&.select-dropdown.is-open .select-dropdown__container {
+			box-shadow: 0 0 0 2px #e2eaf1;
+			border-color: var(--color-neutral-10);
+		}
+
+
+		.select-dropdown__options {
+			box-shadow: 0 0 0 2px #e2eaf1;
+			border-color: var(--color-neutral-10);
+		}
+	}
+	/* End of outline select-dropdown on focus */
+
 	.select-dropdown__container {
 		width: 100%;
 
-		.select-dropdown__header-text > svg,
-		.select-dropdown__item-text > svg {
+		.select-dropdown__header .select-dropdown__header-text > svg,
+		.select-dropdown__options .select-dropdown__item-text > svg {
 			vertical-align: middle;
 			margin-right: 8px;
 		}

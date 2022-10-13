@@ -42,6 +42,7 @@ class SelectDropdown extends Component {
 		),
 		isLoading: PropTypes.bool,
 		ariaLabel: PropTypes.string,
+		showSelectedOption: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -49,6 +50,7 @@ class SelectDropdown extends Component {
 		onSelect: noop,
 		onToggle: noop,
 		style: {},
+		showSelectedOption: true,
 	};
 
 	instanceId = uuid();
@@ -158,28 +160,35 @@ class SelectDropdown extends Component {
 			} );
 		}
 
-		return this.props.options.map( ( item, index ) => {
-			if ( ! item ) {
-				return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
-			}
+		return this.props.options
+			.filter( ( item ) => {
+				if ( this.props.showSelectedOption ) {
+					return true;
+				}
+				return item.value !== this.state.selected;
+			} )
+			.map( ( item, index ) => {
+				if ( ! item ) {
+					return <DropdownSeparator key={ 'dropdown-separator-' + index } />;
+				}
 
-			if ( item.isLabel ) {
-				return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
-			}
+				if ( item.isLabel ) {
+					return <DropdownLabel key={ 'dropdown-label-' + index }>{ item.label }</DropdownLabel>;
+				}
 
-			return (
-				<DropdownItem
-					key={ 'dropdown-item-' + item.value }
-					ref={ this.setItemRef( refIndex++ ) }
-					selected={ this.state.selected === item.value }
-					onClick={ this.onSelectItem( item ) }
-					path={ item.path }
-					icon={ item.icon }
-				>
-					{ item.label }
-				</DropdownItem>
-			);
-		} );
+				return (
+					<DropdownItem
+						key={ 'dropdown-item-' + item.value }
+						ref={ this.setItemRef( refIndex++ ) }
+						selected={ this.state.selected === item.value }
+						onClick={ this.onSelectItem( item ) }
+						path={ item.path }
+						icon={ item.icon }
+					>
+						{ item.label }
+					</DropdownItem>
+				);
+			} );
 	}
 
 	render() {
