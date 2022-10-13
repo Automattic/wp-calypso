@@ -734,7 +734,7 @@ class InvitePeople extends Component {
 					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 					/>
 				</Main>
 			);

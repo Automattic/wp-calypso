@@ -263,7 +263,7 @@ export default function WrapperWebsiteContent(
 			goToNextStep={ false }
 			hideFormattedHeader={ false }
 			hideBack={ false }
-			align={ 'left' }
+			align="left"
 			isHorizontalLayout={ true }
 			isWideLayout={ true }
 		/>

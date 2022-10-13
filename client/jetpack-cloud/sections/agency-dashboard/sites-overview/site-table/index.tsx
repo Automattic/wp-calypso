@@ -84,7 +84,7 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 								{ site.error ? (
 									<tr className="site-table__connection-error">
 										<td colSpan={ Object.keys( item ).length + 1 }>
-											{ <SiteErrorContent siteUrl={ site.value.url } /> }
+											<SiteErrorContent siteUrl={ site.value.url } />
 										</td>
 									</tr>
 								) : null }

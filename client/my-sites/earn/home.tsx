@@ -557,7 +557,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
-			{ <QueryMembershipsSettings siteId={ siteId } /> }
+			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection

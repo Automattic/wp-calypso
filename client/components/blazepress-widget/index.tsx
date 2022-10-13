@@ -87,13 +87,13 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	return (
 		<>
 			{ isVisible && (
-				<BlankCanvas className={ 'blazepress-widget' }>
-					<div className={ 'blazepress-widget__header-bar' }>
+				<BlankCanvas className="blazepress-widget">
+					<div className="blazepress-widget__header-bar">
 						<WordPressLogo />
 						<h2>Advertising</h2>
 						<span
 							role="button"
-							className={ 'blazepress-widget__cancel' }
+							className="blazepress-widget__cancel"
 							onKeyDown={ () => setShowCancelDialog( true ) }
 							tabIndex={ 0 }
 							onClick={ () => setShowCancelDialog( true ) }
@@ -115,7 +115,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							<p>{ __( 'All progress in this session will be lost.' ) }</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
-						<div className={ 'blazepress-widget__widget-container' } ref={ widgetContainer }></div>
+						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>
 					</div>
 				</BlankCanvas>
 			) }

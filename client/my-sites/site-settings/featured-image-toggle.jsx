@@ -10,16 +10,14 @@ const FeaturedImageTemplateToggle = ( props ) => {
 		<div className="featured-image-template-toggle-settings">
 			<SettingsSectionHeader
 				id="featured-image-template-toggle-header"
-				title={ 'Featured Image' } /* TODO: this will need to be translated */
+				title="Featured Image" /* TODO: this will need to be translated */
 			/>
 			<Card className="featured-image-template-toggle-card">
 				<ToggleControl /* TODO: Update props as needed. Currently the toggle does nothing */
 					checked={ false }
 					disabled={ isDisabled }
 					onChange={ null }
-					label={
-						'Enable Featured image in the New Post email template'
-					} /* TODO: this will need to be translated */
+					label="Enable Featured image in the New Post email template" /* TODO: this will need to be translated */
 				/>
 			</Card>
 		</div>

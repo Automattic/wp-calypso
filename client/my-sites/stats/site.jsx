@@ -180,7 +180,7 @@ class StatsSite extends Component {
 
 		return (
 			<>
-				<JetpackBackupCredsBanner event={ 'stats-backup-credentials' } />
+				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				<FormattedHeader
 					brandFont
 					className="stats__section-header"
@@ -196,7 +196,7 @@ class StatsSite extends Component {
 					) }
 				/>
 				<StatsNavigation
-					selectedItem={ 'traffic' }
+					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }

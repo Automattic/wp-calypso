@@ -203,7 +203,7 @@ export default function WPCOMBusinessAT() {
 		<Main className="wpcom-business-at">
 			<QueryAutomatedTransferEligibility siteId={ siteId } />
 			<DocumentHead title={ content.documentHeadTitle } />
-			<PageViewTracker path={ `/backup/:site` } title="Business Plan Automated Transfer" />
+			<PageViewTracker path="/backup/:site" title="Business Plan Automated Transfer" />
 
 			<FormattedHeader
 				id="wpcom-business-at-header"
@@ -258,11 +258,11 @@ export default function WPCOMBusinessAT() {
 				) }
 			>
 				{ !! holds?.length && (
-					<HoldList holds={ holds } context={ 'backup' } isPlaceholder={ false } />
+					<HoldList holds={ holds } context="backup" isPlaceholder={ false } />
 				) }
 				{ !! warnings?.length && (
 					<CompactCard className="eligibility-warnings__warnings-card">
-						<WarningList warnings={ warnings } context={ 'backup' } />
+						<WarningList warnings={ warnings } context="backup" />
 					</CompactCard>
 				) }
 			</Dialog>

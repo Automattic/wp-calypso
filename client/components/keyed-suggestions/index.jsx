@@ -378,7 +378,7 @@ class KeyedSuggestions extends Component {
 					{ key === this.state.showAll && (
 						<SuggestionsButtonAll
 							onClick={ this.onShowAllClick }
-							category={ '' }
+							category=""
 							label={ i18n.translate( 'Show less' ) }
 						/>
 					) }

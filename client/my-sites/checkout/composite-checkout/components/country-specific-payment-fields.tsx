@@ -399,7 +399,7 @@ export function CountrySpecificPaymentFieldsUnstyled( {
 					getErrorMessages={ getErrorMessages }
 					handleFieldChange={ handleFieldChange }
 					disabled={ disableFields }
-					inputMode={ 'numeric' }
+					inputMode="numeric"
 					label={ translate( 'Street Number', {
 						comment: 'Street number associated with address on credit card form',
 					} ) }

@@ -466,7 +466,7 @@ export class SectionMigrate extends Component {
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
+						src="/calypso/images/illustrations/waitTime-plain.svg"
 						alt=""
 					/>
 					<FormattedHeader

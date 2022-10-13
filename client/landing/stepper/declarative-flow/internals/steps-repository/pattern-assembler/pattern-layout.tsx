@@ -72,13 +72,13 @@ const PatternLayout = ( {
 							</Button>
 						</li>
 					) }
-					<AsyncLoad require="./animate-list" featureName={ 'domMax' }>
+					<AsyncLoad require="./animate-list" featureName="domMax">
 						{ ( m: any ) =>
 							sections?.map( ( section, index ) => {
 								const { name, key } = section as Pattern;
 								return (
 									<m.li
-										layout={ 'position' }
+										layout="position"
 										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
 										key={ `${ key }` }
 										className="pattern-layout__list-item pattern-layout__list-item--section"

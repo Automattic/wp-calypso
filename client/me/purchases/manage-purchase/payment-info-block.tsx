@@ -111,7 +111,7 @@ export default function PaymentInfoBlock( {
 	if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className={ 'manage-purchase__no-payment-method' }>
+				<div className="manage-purchase__no-payment-method">
 					<Icon icon={ warning } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
@@ -126,7 +126,7 @@ export default function PaymentInfoBlock( {
 	) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className={ 'manage-purchase__no-payment-method' }>
+				<div className="manage-purchase__no-payment-method">
 					<Icon icon={ warning } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>

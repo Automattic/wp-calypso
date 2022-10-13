@@ -45,7 +45,7 @@ export const DismissButton = () => {
 };
 
 export const Image = ( { src }: { src: string } ) => {
-	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className={ 'banner-image' } />;
+	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className="banner-image" />;
 };
 
 const handleBannerCtaClick = () => {

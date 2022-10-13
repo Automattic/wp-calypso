@@ -45,7 +45,7 @@ class SiteBlocked extends Component {
 						},
 						comment: '%s is a site name - for example, "Discover"',
 					} ) }
-					illustration={ '/calypso/images/illustrations/error.svg' }
+					illustration="/calypso/images/illustrations/error.svg"
 					illustrationWidth={ 500 }
 				/>
 			</ReaderMain>

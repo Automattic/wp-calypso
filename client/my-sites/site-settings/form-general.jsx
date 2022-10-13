@@ -324,7 +324,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
 					&nbsp;
-					<a href={ '/me/account' }>
+					<a href="/me/account">
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>

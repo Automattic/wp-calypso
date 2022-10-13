@@ -121,7 +121,7 @@ export function RelatedPostCard( {
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 				href={ postLink }
 				onThumbnailClick={ postClickTracker }
 				allowPlaying={ false }
@@ -135,7 +135,7 @@ export function RelatedPostCard( {
 				imageWidth={ READER_RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }
 				href={ postLink }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 			/>
 		);
 	}

@@ -45,7 +45,7 @@ class SearchEmptyContent extends Component {
 				title={ this.props.translate( 'No results' ) }
 				line={ message }
 				action={ action }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 400 }
 			/>
 		);
