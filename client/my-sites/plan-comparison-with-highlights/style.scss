@@ -325,6 +325,7 @@ $plan-features-sidebar-width: 272px;
 		.plan-comparison-with-highlights__item-material-icon {
 			width: 18px;
 			height: 18px;
+			fill: var(--studio-gray-80);
 		}
 	}
 }
@@ -459,6 +460,10 @@ body.is-section-signup.is-white-signup {
 
 	.plan-comparison-with-highlights__item-title {
 		color: var(--studio-gray-60);
+	}
+
+	.plan-comparison-with-highlights__unique-features .plan-comparison-with-highlights__item-title {
+		color: var(--studio-gray-80);
 	}
 
 	.plan-comparison-with-highlights__item.plan-comparison-with-highlights__item-available {

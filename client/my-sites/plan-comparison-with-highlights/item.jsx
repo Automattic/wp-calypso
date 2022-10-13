@@ -2,6 +2,19 @@ import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import MaterialIcon from 'calypso/components/material-icon';
 
+function renderIcon( gridIconClasses, gridIconName, materialIconName ) {
+	if ( materialIconName ) {
+		return (
+			<MaterialIcon
+				icon={ materialIconName }
+				className="plan-comparison-with-highlights__item-material-icon"
+			/>
+		);
+	}
+
+	return <Gridicon className={ gridIconClasses } size={ 18 } icon={ gridIconName } />;
+}
+
 export function PlanFeaturesItem( props ) {
 	const itemInfoClasses = classNames( 'plan-comparison-with-highlights__item-info-container', {
 		'plan-comparison-with-highlights__item-info-annual-only': props.annualOnlyContent,
@@ -19,21 +32,11 @@ export function PlanFeaturesItem( props ) {
 					{ props.annualOnlyContent }
 				</div>
 			) }
-			{ props.materialIconName && (
-				<div className={ itemInfoClasses }>
-					<MaterialIcon
-						icon={ props.materialIconName }
-						className="plan-comparison-with-highlights__item-material-icon"
-					/>
-					{ props.children }
-				</div>
-			) }
-			{ ! props.materialIconName && (
-				<div className={ itemInfoClasses }>
-					<Gridicon className={ gridIconClasses } size={ 18 } icon={ gridIconName } />
-					{ props.children }
-				</div>
-			) }
+
+			<div className={ itemInfoClasses }>
+				{ renderIcon( gridIconClasses, gridIconName, props.materialIconName ) }
+				{ props.children }
+			</div>
 		</div>
 	);
 }
