@@ -1,5 +1,6 @@
 import {
 	__unstableInserterMenuExtension,
+	// eslint-disable-next-line import/named
 	__experimentalInserterMenuExtension,
 } from '@wordpress/block-editor';
 import { useSelect } from '@wordpress/data';
@@ -42,11 +43,33 @@ const InserterMenuTrackingEvent = function () {
 		tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
 	}, 500 );
 
+	const debouncedSetFilterValueDiscovery = debounce( ( search_term ) => {
+		if ( search_term.length < 3 ) {
+			return;
+		}
+
+		const blockDirectoryResults = document.querySelectorAll(
+			'.block-directory-downloadable-block-list-item'
+		).length;
+
+		if ( blockDirectoryResults ) {
+			tracksRecordEvent( 'wpcom_block_discovery_results', {
+				search_term,
+				results: blockDirectoryResults,
+			} );
+		} else {
+			tracksRecordEvent( 'wpcom_block_discovery_no_results', {
+				search_term,
+			} );
+		}
+	}, 2000 );
+
 	return (
 		<InserterMenuExtension>
 			{ ( { filterValue, hasItems } ) => {
 				if ( searchTerm !== filterValue ) {
 					debouncedSetFilterValue( filterValue, hasItems );
+					debouncedSetFilterValueDiscovery( filterValue );
 				}
 
 				return null;
