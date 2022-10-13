@@ -98,7 +98,7 @@ export const useWPCOMPlugin = (
 	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< unknown[] > ] => {
 	const cacheKey = 'plugins-featured-list';
 	const fetchFn = () =>
 		wpcom.req
