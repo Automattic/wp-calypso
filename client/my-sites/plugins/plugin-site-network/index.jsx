@@ -45,7 +45,6 @@ class PluginSiteNetwork extends Component {
 		return (
 			<div className="plugin-site-network__header">
 				<AllSites
-					sites={ this.props.secondarySites }
 					count={ this.props.secondarySites.length }
 					domain={ this.props.site.domain }
 					title={ this.props.translate( "%(mainSiteName)s's Network", {
