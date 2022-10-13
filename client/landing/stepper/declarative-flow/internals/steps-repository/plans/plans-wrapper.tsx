@@ -1,9 +1,9 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
 import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { addPlanToCart } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -67,10 +67,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
 	const headerText = 'Choose a plan';
-	// const signupDependencies = {
-	// 	emailItem: undefined,
-	// };
+
 	const translate = useTranslate();
+
 	useEffect( () => {
 		setIsDesktop( isDesktop );
 	}, [] );
@@ -274,7 +273,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		);
 	};
 
-	const classes = classNames( 'plans plans-step', {
+	const classes = classNames( 'plans-step', {
 		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
 		'is-wide-layout': true,
