@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import image from 'calypso/assets/images/onboarding/link-in-bio-banner-large.png';
+import image from 'calypso/assets/images/onboarding/link-in-bio-banner-large.jpg';
 import * as Banner from './link-in-bio-banner-parts';
 
 const Wrapper = styled( 'div' )( {

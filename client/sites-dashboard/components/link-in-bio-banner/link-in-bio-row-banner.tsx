@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.png';
+import image from 'calypso/assets/images/onboarding/link-in-bio-banner-small.jpg';
 import * as Banner from './link-in-bio-banner-parts';
 
 const Root = styled( Banner.Root )( {
@@ -11,6 +11,15 @@ const Root = styled( Banner.Root )( {
 	},
 	'.create-button': {
 		whiteSpace: 'nowrap',
+	},
+	[ '@media screen and ( max-width: 960px )' ]: {
+		'.banner-image': {
+			display: 'none',
+		},
+		h3: {
+			fontSize: 16,
+		},
+		fontSize: 'smaller',
 	},
 } );
 
