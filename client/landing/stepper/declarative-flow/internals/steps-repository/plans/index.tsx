@@ -18,6 +18,7 @@ const plans: Step = function plans( { navigation, flow } ) {
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
+			hideFormattedHeader={ true }
 			isLargeSkipLayout={ false }
 			hideBack={ true }
 			stepContent={
