@@ -13,7 +13,7 @@ $create-page-text-color: #a2aab2;
 	min-height: 45px;
 
 	&:focus {
-		color: var(--color-text-inverted);
+		color: $white;
 		border: 1px solid var(--studio-white);
 		box-shadow: none !important;
 		outline: none !important;
