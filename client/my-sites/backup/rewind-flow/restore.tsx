@@ -114,17 +114,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					/>
 				) }
 			</>
-			<Button className="rewind-flow__back-button" href={ backupMainPath( siteSlug ) }>
-				{ translate( 'Go back' ) }
-			</Button>
-			<Button
-				className="rewind-flow__primary-button"
-				primary
-				onClick={ onConfirm }
-				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
-			>
-				{ translate( 'Confirm restore' ) }
-			</Button>
+			<div className="rewind-flow__btn-group">
+				<Button className="rewind-flow__back-button" href={ backupMainPath( siteSlug ) }>
+					{ translate( 'Go back' ) }
+				</Button>
+				<Button
+					className="rewind-flow__primary-button"
+					primary
+					onClick={ onConfirm }
+					disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+				>
+					{ translate( 'Confirm restore' ) }
+				</Button>
+			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 		</>
 	);
