@@ -6,6 +6,7 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	createSiteWithCart,
 } from '@automattic/onboarding';
+import flows from 'calypso/signup/config/flows';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -17,16 +18,18 @@ import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import {
+	retrieveSignupDestination,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from 'calypso/signup/storageUtils';
+import {
 	getDomainProductSlug,
 	getDomainSuggestionSearch,
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
-import { parse } from 'qs';
-import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import {
@@ -36,8 +39,6 @@ import {
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
 import { useI18n } from '@wordpress/react-i18n';
-import { getStepUrl } from 'calypso/signup/utils';
-import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	recordAddDomainButtonClick,
@@ -94,6 +95,20 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
+
+	// Checks if the user entered the signup flow via browser back from checkout page,
+	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
+	// check pau2Xa-1Io-p2#comment-6759.
+	const { excludeFromManageSiteFlows } = flows.getFlow( flow, userLoggedIn );
+
+	const isAddNewSiteFlow = searchParams.has( 'ref' );
+	const signupDestinationCookieExists = retrieveSignupDestination();
+	const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+	const isReEnteringSignupViaBrowserBack =
+		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
+	const isManageSiteFlow =
+		! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
 	// If we landed anew from `/domains` and it's the `new-flow` variation
 	// or there's a suggestedDomain from previous steps, always rerun the search.
 	if ( ! searchOnInitialRender && ( search || suggestedDomain ) ) {
@@ -114,7 +129,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom = undefined;
 	const promoTlds = undefined;
-	const isManageSiteFlow = undefined;
 
 	if ( isManageSiteFlow ) {
 		showExampleSuggestions = false;
@@ -198,7 +212,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			( isPurchasingItem
 				? suggestion.domain_name
 				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
-		debugger;
 		const domainItem = isPurchasingItem
 			? domainRegistration( {
 					domain: suggestion.domain_name,
@@ -216,7 +229,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				siteUrl,
-				false,
+				isManageSiteFlow,
 				{
 					domainItem,
 					flowName: undefined,
@@ -403,7 +416,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				domain,
-				false,
+				isManageSiteFlow,
 				{
 					domainItem,
 					flowName: undefined,
@@ -423,7 +436,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		submit?.();
 	};
 
-	const handleAddMapping = ( sectionName, domain, state ) => {
+	const handleAddMapping = ( domain, state ) => {
 		const domainItem = domainMapping( { domain } );
 		const isPurchasingItem = true;
 		const useThemeAnnotation = shouldUseThemeAnnotation();
@@ -441,7 +454,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			const createSiteResult = await createSiteWithCart(
 				flow,
 				domain,
-				true,
+				isManageSiteFlow,
 				{
 					domainItem,
 					flowName: undefined,
@@ -458,11 +471,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			return createSiteResult;
 		}, true );
 
-		submit?.(); //this.props.goToNextStep();
+		submit?.();
 	};
 
 	const onUseMyDomainConnect = ( { domain } ) => {
-		handleAddMapping( 'useYourDomainForm', domain, null );
+		handleAddMapping( domain, null );
 	};
 
 	const handleAddDomain = ( suggestion ) => {
