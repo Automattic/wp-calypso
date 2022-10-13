@@ -95,19 +95,27 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
+	let showExampleSuggestions: boolean | undefined = undefined;
+	let includeWordPressDotCom: boolean | undefined = undefined;
+	let showSkipButton: boolean | undefined = undefined;
 
 	// Checks if the user entered the signup flow via browser back from checkout page,
 	// and if they did, we'll show a modified domain step to prevent creating duplicate sites,
 	// check pau2Xa-1Io-p2#comment-6759.
 	const { excludeFromManageSiteFlows } = flows.getFlow( flow, userLoggedIn );
-
-	const isAddNewSiteFlow = searchParams.has( 'ref' );
+	// const isAddNewSiteFlow = searchParams.has( 'ref' );
 	const signupDestinationCookieExists = retrieveSignupDestination();
-	const isReEnteringFlow = getSignupCompleteFlowName() === flowName;
+	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	const isReEnteringSignupViaBrowserBack =
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow;
-	const isManageSiteFlow =
-		! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+	const isManageSiteFlow = false;
+		//! excludeFromManageSiteFlows && ! isAddNewSiteFlow && isReEnteringSignupViaBrowserBack;
+
+	if ( isManageSiteFlow ) {
+		showExampleSuggestions = false;
+		includeWordPressDotCom = false;
+		showSkipButton = true;
+	}
 
 	// If we landed anew from `/domains` and it's the `new-flow` variation
 	// or there's a suggestedDomain from previous steps, always rerun the search.
@@ -124,16 +132,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const domainsWithPlansOnly = true;
 	const tld = undefined;
 	const theme = undefined;
-	const showSkipButton = undefined;
 	const isPlanSelectionAvailableLaterInFlow = true;
-	let showExampleSuggestions: boolean | undefined = undefined;
-	let includeWordPressDotCom = undefined;
 	const promoTlds = undefined;
-
-	if ( isManageSiteFlow ) {
-		showExampleSuggestions = false;
-		includeWordPressDotCom = false;
-	}
 
 	const locale = useLocale();
 
