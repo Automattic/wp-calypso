@@ -31,6 +31,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'twitter',
 	'google_photos',
+	'google_drive',
 	'mailchimp',
 	'p2_slack',
 	'p2_github',
@@ -94,6 +95,28 @@ class SharingServiceExamples extends Component {
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to use photos stored in your Google Photos library directly inside the editor.',
+					{
+						components: {
+							strong: <strong />,
+						},
+					}
+				),
+			},
+		];
+	}
+
+	google_drive() {
+		return [
+			{
+				image: {
+					src: '/calypso/images/sharing/connections-google-photos.png',
+					alt: this.props.translate(
+						'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
+						{ textOnly: true }
+					),
+				},
+				label: this.props.translate(
+					'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
 					{
 						components: {
 							strong: <strong />,
