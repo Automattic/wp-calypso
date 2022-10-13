@@ -24,7 +24,10 @@ import { getPluginsListKey } from './utils';
 export const getWPORGPluginsQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
-): [ QueryKey, QueryFunction< { plugins: any[]; pagination: { page: number } }, QueryKey > ] => {
+): [
+	QueryKey,
+	QueryFunction< { plugins: unknown[]; pagination: { page: number } }, QueryKey >
+] => {
 	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY, options );
 	const fetchFn = () => {
 		const [ search, author ] = extractSearchInformation( options.searchTerm );
