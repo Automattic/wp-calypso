@@ -314,6 +314,18 @@ const InstalledInOrPricing = ( {
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
 				{ ( { isFetching, price, period, isSaasProduct } ) => {
+					if ( isSaasProduct ) {
+						// SaaS products do not display a price
+						return (
+							<>
+								{ ! canInstallPlugins && isLoggedIn && (
+									<span className="plugins-browser-item__requires-plan-upgrade">
+										{ translate( 'Requires a plan upgrade' ) }
+									</span>
+								) }
+							</>
+						);
+					}
 					if ( isFetching ) {
 						return <div className="plugins-browser-item__pricing-placeholder">...</div>;
 					}
@@ -326,18 +338,6 @@ const InstalledInOrPricing = ( {
 									<div className="plugins-browser-item__period">
 										{ translate( 'Requires a plan upgrade' ) }
 									</div>
-								) }
-							</>
-						);
-					}
-					if ( isSaasProduct ) {
-						return (
-							<>
-								{ 'SaaS' }
-								{ ! canInstallPlugins && isLoggedIn && (
-									<span className="plugins-browser-item__requires-plan-upgrade">
-										{ translate( 'Requires a plan upgrade' ) }
-									</span>
 								) }
 							</>
 						);

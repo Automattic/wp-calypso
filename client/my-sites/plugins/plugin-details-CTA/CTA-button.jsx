@@ -3,7 +3,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
-import { Button, Dialog } from '@automattic/components';
+import { Button, Dialog, Gridicon } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -180,7 +180,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				<CTAButtonText
+				<CTAButtonContent
 					translate={ translate }
 					isMarketplaceProduct={ isMarketplaceProduct }
 					isPreinstalledPremiumPlugin={ isPreinstalledPremiumPlugin }
@@ -210,20 +210,26 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	);
 }
 
-function CTAButtonText( {
+function CTAButtonContent( {
 	translate,
 	isMarketplaceProduct,
 	isPreinstalledPremiumPlugin,
 	isSaasProduct,
 	shouldUpgrade,
 } ) {
+	if ( isSaasProduct ) {
+		return (
+			<>
+				{ translate( 'Get started' ) }
+				<Gridicon icon="external" />
+			</>
+		);
+	}
+
 	if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
 		return translate( 'Purchase and activate' );
 	}
 
-	if ( isSaasProduct ) {
-		return translate( 'Purchase Third Party' );
-	}
 	if ( shouldUpgrade ) {
 		return translate( 'Upgrade and activate' );
 	}

@@ -54,8 +54,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, pluginSlug ) );
 
-	const isPurchaseableProduct = isMarketplaceProduct || isSaasProduct;
-
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -64,7 +62,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const pluginFeature = isPurchaseableProduct
+	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( pluginSlug );
@@ -110,7 +108,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	 * marketplace addon which provides the ATOMIC feature, then we can ignore this
 	 * hold.
 	 */
-	if ( typeof eligibilityHolds !== 'undefined' && isPurchaseableProduct && ! shouldUpgrade ) {
+	if ( typeof eligibilityHolds !== 'undefined' && isMarketplaceProduct && ! shouldUpgrade ) {
 		eligibilityHolds = eligibilityHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
@@ -240,28 +238,27 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	return (
 		<div className="plugin-details-cta__container">
-			<div className="plugin-details-cta__price">
-				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
-					{ ( { isFetching, price, period, isSaasProduct: isSaasProductPrice } ) => {
-						if ( isFetching ) {
-							return <div className="plugin-details-cta__price-placeholder">...</div>;
-						}
-						if ( price ) {
-							return (
-								<>
-									{ price + ' ' }
-									<span className="plugin-details-cta__period">{ period }</span>
-								</>
-							);
-						}
-						if ( isSaasProductPrice ) {
-							return 'SaaS';
-						}
-						return translate( 'Free' );
-					} }
-				</PluginPrice>
-			</div>
-			{ isMarketplaceProduct && (
+			{ ! isSaasProduct && (
+				<div className="plugin-details-cta__price">
+					<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
+						{ ( { isFetching, price, period } ) => {
+							if ( isFetching ) {
+								return <div className="plugin-details-cta__price-placeholder">...</div>;
+							}
+							if ( price ) {
+								return (
+									<>
+										{ price + ' ' }
+										<span className="plugin-details-cta__period">{ period }</span>
+									</>
+								);
+							}
+							return translate( 'Free' );
+						} }
+					</PluginPrice>
+				</div>
+			) }
+			{ isMarketplaceProduct && ! isSaasProduct && (
 				<BillingIntervalSwitcher
 					billingPeriod={ billingPeriod }
 					onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }

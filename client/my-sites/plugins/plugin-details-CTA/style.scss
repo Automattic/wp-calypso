@@ -59,6 +59,10 @@
 	.plugin-details-cta__install-button {
 		width: 100%;
 		padding: 12px 16px;
+
+		.gridicon {
+			margin: 0 0 0 5px;
+		}
 	}
 }
 
@@ -141,3 +145,4 @@
 		@extend %placeholder;
 	}
 }
+
