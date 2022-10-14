@@ -77,7 +77,10 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 								'A domain name is the site address people type in their browser to visit your site.'
 							) }
 						</span>
-						<button className="button navigation-link step-container__navigation-link has-underline is-borderless">
+						<button
+							className="button navigation-link step-container__navigation-link has-underline is-borderless"
+							onClick={ onSkip }
+						>
 							{ __( 'Use a domain I own' ) }
 						</button>
 					</div>
