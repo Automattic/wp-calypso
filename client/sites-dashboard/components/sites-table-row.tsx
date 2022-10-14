@@ -137,7 +137,10 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</SitePlanIcon>
 					) }
 					{ site.plan?.expired ? (
-						<PlanRenewNag plan={ site.plan } checkoutUrl={ `/checkout/${ site.slug }` } />
+						<PlanRenewNag
+							plan={ site.plan }
+							checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
+						/>
 					) : (
 						<>{ site.plan?.product_name_short }</>
 					) }
