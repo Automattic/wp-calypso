@@ -13,7 +13,10 @@ export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const updateLanguage = ( event ) => {
-		const { value } = event.target;
+		const { value, empathyMode } = event.target;
+		if ( typeof empathyMode !== 'undefined' ) {
+			setUserSetting( 'i18n_empathy_mode', empathyMode );
+		}
 		dispatch( setUserSetting( 'language', value ) );
 		dispatch( saveUnsavedUserSettings( [ 'language' ] ) ).then( () => {
 			window.location.reload();
@@ -28,6 +31,7 @@ export function AccountSettingsHelper() {
 					languages={ languages }
 					valueKey="langSlug"
 					value={ userSettings?.locale_variant || userSettings.language || '' }
+					empathyMode={ userSettings?.i18n_empathy_mode }
 					onChange={ updateLanguage }
 				/>
 			</div>
