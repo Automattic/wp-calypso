@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { isEnabled } from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, RGB } from '@automattic/onboarding';
@@ -10,8 +11,8 @@ import { Dispatch, SetStateAction, useState, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
+import PremiumBadge from 'calypso/components/premium-badge';
 import { tip } from 'calypso/signup/icons';
-import GlobalStylesPremiumBadge from '../global-styles-premium-badge';
 
 import './style.scss';
 
@@ -80,7 +81,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					{ hasTranslation( 'Favorite color' ) || locale === 'en'
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
-					<GlobalStylesPremiumBadge />
+					{ isEnabled( 'limit-global-styles' ) && (
+						<PremiumBadge
+							tooltipText={ __(
+								'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
+							) }
+						/>
+					) }
 				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }

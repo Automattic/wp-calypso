@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { useState } from '@wordpress/element';
 import { Icon, starFilled } from '@wordpress/icons';
@@ -8,14 +7,10 @@ import { hasTouch } from 'calypso/lib/touch-detect';
 
 import './style.scss';
 
-const GlobalStylesPremiumBadge = () => {
+const PremiumBadge = ( { tooltipText } ) => {
 	const { __ } = useI18n();
 	const [ popoverAnchor, setPopoverAnchor ] = useState();
 	const [ isPopoverVisible, setIsPopoverVisible ] = useState( false );
-
-	if ( ! isEnabled( 'limit-global-styles' ) ) {
-		return null;
-	}
 
 	const isTouch = hasTouch();
 
@@ -23,7 +18,7 @@ const GlobalStylesPremiumBadge = () => {
 		<>
 			<button
 				ref={ setPopoverAnchor }
-				className="global-styles-premium-badge"
+				className="premium-badge"
 				onClick={ () => {
 					if ( ! isTouch ) {
 						return;
@@ -49,18 +44,18 @@ const GlobalStylesPremiumBadge = () => {
 					<span>{ __( 'Premium' ) }</span>
 				</Badge>
 			</button>
-			<Popover
-				className="global-styles-premium-badge__popover"
-				context={ popoverAnchor }
-				isVisible={ isPopoverVisible }
-				onClose={ () => setIsPopoverVisible( false ) }
-			>
-				{ __(
-					'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
-				) }
-			</Popover>
+			{ tooltipText && (
+				<Popover
+					className="premium-badge__popover"
+					context={ popoverAnchor }
+					isVisible={ isPopoverVisible }
+					onClose={ () => setIsPopoverVisible( false ) }
+				>
+					{ tooltipText }
+				</Popover>
+			) }
 		</>
 	);
 };
 
-export default GlobalStylesPremiumBadge;
+export default PremiumBadge;
