@@ -48,7 +48,9 @@ export const importFlow: Flow = {
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
-					if ( ! siteSlugParam ) return;
+					if ( ! siteSlugParam ) {
+						return;
+					}
 
 					window.location.assign( to );
 				} );

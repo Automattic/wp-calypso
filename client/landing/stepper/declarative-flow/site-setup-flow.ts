@@ -133,7 +133,9 @@ export const siteSetupFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					if ( ! siteSlug ) return;
+					if ( ! siteSlug ) {
+						return;
+					}
 
 					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
 
