@@ -50,7 +50,9 @@ const DomainStepAuthCode = ( {
 				verificationData: getVerificationData(),
 			},
 			( error ) => {
-				if ( ! error ) return;
+				if ( ! error ) {
+					return;
+				}
 				if ( error.message ) {
 					setAuthCodeError( error.message );
 				}

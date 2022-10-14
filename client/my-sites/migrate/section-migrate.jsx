@@ -200,7 +200,9 @@ export class SectionMigrate extends Component {
 
 	updateSiteInfo = ( selectedSiteSlug, callback = () => {} ) => {
 		selectedSiteSlug = selectedSiteSlug || this.state.selectedSiteSlug;
-		if ( ! selectedSiteSlug ) return;
+		if ( ! selectedSiteSlug ) {
+			return;
+		}
 		return wpcom
 			.site( selectedSiteSlug )
 			.get( {

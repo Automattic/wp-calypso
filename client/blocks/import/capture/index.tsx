@@ -95,7 +95,9 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	};
 
 	const recordScanningEvent = () => {
-		if ( ! isAnalyzing ) return;
+		if ( ! isAnalyzing ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
@@ -104,7 +106,9 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	};
 
 	const recordScanningErrorEvent = () => {
-		if ( ! analyzerError ) return;
+		if ( ! analyzerError ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,

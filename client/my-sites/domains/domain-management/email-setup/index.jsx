@@ -105,7 +105,9 @@ class EmailSetup extends Component {
 		const selectedTemplate = this.state.templates.find(
 			( template ) => this.state.selectedTab === template.name
 		);
-		if ( ! selectedTemplate ) return null;
+		if ( ! selectedTemplate ) {
+			return null;
+		}
 
 		return <EmailProvider template={ selectedTemplate } domain={ this.props.selectedDomainName } />;
 	};
