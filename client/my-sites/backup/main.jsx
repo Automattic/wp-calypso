@@ -193,7 +193,7 @@ function BackupStatus( {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ! areCredentialsInvalid && hasRealtimeBackups && (
+				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
 
