@@ -3,64 +3,52 @@
 import { useLocale } from '@automattic/i18n-utils';
 import {
 	StepContainer,
-	isNewsletterOrLinkInBioFlow,
 	createSiteWithCart,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import { useTranslate } from 'i18n-calypso';
-import { defer, get, isEmpty, find } from 'lodash';
-import { useEffect, useState } from 'react';
+import { isEmpty } from 'lodash';
+import { useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
+import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
-import flows from 'calypso/signup/config/flows';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import {
-	retrieveSignupDestination,
-	getSignupCompleteFlowName,
-	wasSignupCheckoutPageUnloaded,
-} from 'calypso/signup/storageUtils';
-import {
-	getDomainProductSlug,
-	getDomainSuggestionSearch,
-	getFixedDomainSearch,
-} from 'calypso/lib/domains';
-import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import {
 	domainRegistration,
 	themeItem,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
+import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import {
+	retrieveSignupDestination,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+} from 'calypso/signup/storageUtils';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
-	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { ONBOARD_STORE } from '../../../../stores';
-import { Search } from './types';
 import type { Step } from '../../types';
 import './style.scss';
+import domainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const { productsList, userLoggedIn, selectedSite } = useSelector( ( state ) => {
@@ -71,9 +59,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		};
 	} );
 
-	const { siteTitle, siteAccentColor, domainForm, signupValues } = useSelect( ( select ) => {
+	const { siteAccentColor, domainForm, signupValues } = useSelect( ( select ) => {
 		return {
-			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			domainForm: select( ONBOARD_STORE ).getDomainForm(),
 			signupValues: select( ONBOARD_STORE ).getSignupValues(),
@@ -121,16 +108,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 
 	const isDomainOnly = signupValues?.isDomainOnly ?? false;
 
-	const stepSectionName = undefined;
 	const forceHideFreeDomainExplainerAndStrikeoutUi = undefined;
-	const isReskinned = true;
-	const isAllDomains = false;
 	const premium = undefined;
 	const domainsWithPlansOnly = true;
-	const tld = undefined;
 	const theme = undefined;
 	const isPlanSelectionAvailableLaterInFlow = true;
-	const promoTlds = undefined;
+	const promoTlds = data?.tld?.split( ',' );
 
 	const locale = useLocale();
 
@@ -236,6 +219,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					siteUrl,
 					themeSlugWithRepo: undefined,
 					themeItem: undefined,
+					siteTitle: domain,
 					siteAccentColor,
 				},
 				userLoggedIn,
@@ -266,76 +250,38 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	};
 
 	const getSubHeaderText = () => {
-		if ( isAllDomains ) {
-			return __( 'Find the domain that defines you' );
-		}
-
-		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
-			const decideLaterComponent = {
-				decide_later: (
-					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
-					<span
-						role="button"
-						className="tailored-flow-subtitle__cta-text"
-						onClick={ () => handleSkip() }
-					/>
-				),
-			};
-			return flow === 'newsletter'
-				? createInterpolateElement(
-						__(
-							'Help your Newsletter stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
-						),
-						decideLaterComponent
-				  )
-				: createInterpolateElement(
-						__(
-							'Set your Link in Bio apart with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
-						),
-						decideLaterComponent
-				  );
-		}
-
-		if ( isReskinned ) {
-			return ! stepSectionName && __( 'Enter some descriptive keywords to get started' );
-		}
-
-		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
-		const onboardingSubHeaderCopy =
-			siteType &&
-			flow === 'onboarding' &&
-			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
-
-		if ( onboardingSubHeaderCopy ) {
-			return onboardingSubHeaderCopy;
-		}
-
-		return 'transfer' === stepSectionName || 'mapping' === stepSectionName
-			? __( 'Use a domain you already own with your new WordPress.com site.' )
-			: __( "Enter your site's name or some keywords that describe it to get started." );
+		const decideLaterComponent = {
+			decide_later: (
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
+				<span
+					role="button"
+					className="tailored-flow-subtitle__cta-text"
+					onClick={ () => handleSkip() }
+				/>
+			),
+		};
+		return flow === 'newsletter'
+			? createInterpolateElement(
+					__(
+						'Help your Newsletter stand out with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+					),
+					decideLaterComponent
+			  )
+			: createInterpolateElement(
+					__(
+						'Set your Link in Bio apart with a custom domain. Not sure yet? <decide_later>Decide later</decide_later>.'
+					),
+					decideLaterComponent
+			  );
 	};
 
 	const getHeaderText = () => {
-		if ( stepSectionName === 'use-your-domain' ) {
+		if ( showUseYourDomain ) {
 			return '';
 		}
 
-		if ( isAllDomains ) {
-			return __( 'Your next big idea starts here' );
-		}
-
-		if ( isReskinned ) {
-			return ! stepSectionName && __( 'Choose a domain' );
-		}
-
-		const headerPropertyName = 'signUpFlowDomainsStepHeader';
-
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
+		return __( 'Choose a domain' );
 	};
-
-	function isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( flow );
-	}
 
 	function getAnalyticsSection() {
 		return isDomainOnly ? 'domain-first' : 'signup';
@@ -380,7 +326,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const getUseYourDomainUrl = () => {
 		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
 		//it always throws window.AppBoot is not a function
-		return '/setup/domains?flow=link-in-bio&section=use-your-domain'; //getStepUrl( flow, 'domains', 'use-your-domain', getLocale() );
+		return '/setup/domains?flow=link-in-bio&section=use-your-domain';
 	};
 
 	const handleSave = ( state ) => {
@@ -424,6 +370,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					domain,
 					themeSlugWithRepo: undefined,
 					themeItem: undefined,
+					siteTitle: domain,
 				},
 				userLoggedIn,
 				false
@@ -464,6 +411,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					domain,
 					themeSlugWithRepo: undefined,
 					themeItem: undefined,
+					siteTitle: domain,
+					useThemeHeadstart: useThemeAnnotation,
 				},
 				userLoggedIn,
 				false
@@ -514,7 +463,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	};
 
 	const renderDomainForm = () => {
-		let initialState: Search = {};
+		let initialState = {};
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
@@ -557,7 +506,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					initialState={ initialState }
 					isDomainOnly={ isDomainOnly }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
-					isReskinned={ isReskinned }
+					isReskinned={ true }
 					isSignupStep
 					key="domainForm"
 					mapDomainUrl={ getUseYourDomainUrl() }
@@ -568,13 +517,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					onSkip={ handleSkip }
 					path={ path }
 					products={ productsList }
-					promoTlds={ undefined }
+					promoTlds={ promoTlds }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
 					suggestion={ initialQuery }
 					transferDomainUrl={ getUseYourDomainUrl() }
-					useYourDomainUrl={ getUseYourDomainUrl() }
 					handleClickUseYourDomain={ () => setShowUseYourDomain( true ) }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
@@ -616,6 +564,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			stepName={ 'domains' }
 			isWideLayout={ true }
 			hideBack={ true }
+			hideSkip={ true }
 			flowName={ 'linkInBio' }
 			stepContent={
 				<div className="domains__content">

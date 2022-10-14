@@ -10,11 +10,9 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import debugFactory from 'debug';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import { errorNotice } from 'calypso/state/notices/actions';
 import e from 'express';
-import { connect } from 'react-redux';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -25,10 +23,11 @@ export const getNewSiteParams = ( {
 	isPurchasingDomainItem,
 	themeSlugWithRepo,
 	siteUrl,
+	siteTitle,
 	siteAccentColor,
+	useThemeHeadstart = false,
 } ) => {
 	const designType = ''; //getDesignType( state ).trim();
-	const siteTitle = ''; //getSiteTitle( state ).trim() || ( signupDependencies?.siteTitle || '' ).trim();
 	const siteType = ''; //getSiteType( state ).trim();
 	const siteSegment = null; //getSiteTypePropertyValue( 'slug', siteType, 'id' );
 	const siteTypeTheme = getSiteTypePropertyValue( 'slug', siteType, 'theme' );
@@ -58,7 +57,7 @@ export const getNewSiteParams = ( {
 		options: {
 			designType: designType || undefined,
 			theme,
-			use_theme_annotation: false, //get( signupDependencies, 'useThemeHeadstart', false ),
+			use_theme_annotation: useThemeHeadstart,
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,
 			site_segment: siteSegment || undefined,
 			site_information: {
@@ -111,7 +110,9 @@ export const createSiteWithCart = async (
 		isPurchasingItem: isPurchasingDomainItem,
 		themeSlugWithRepo,
 		themeItem,
+		siteTitle,
 		siteAccentColor,
+		useThemeHeadstart,
 	} = domainData;
 
 	const dependencies = {
@@ -126,7 +127,7 @@ export const createSiteWithCart = async (
 	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
 	if ( isManageSiteFlow ) {
-		//Just for testing
+		//TODO: STILL TO FIX
 		const siteSlugManaged = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
 		const siteId = 210841991; //getSiteId( state, siteSlug );
 		const providedDependencies = { domainItem, siteId, siteUrl, themeItem };
@@ -147,7 +148,9 @@ export const createSiteWithCart = async (
 		lastKnownFlow,
 		themeSlugWithRepo,
 		siteUrl,
+		siteTitle,
 		siteAccentColor,
+		useThemeHeadstart,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -222,29 +225,35 @@ function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
 	};
 }
 
-export async function addPlanToCart( siteSlug, cartItem, flowName, userIsLoggedIn ) {
+export async function addPlanToCart(
+	siteSlug,
+	cartItem,
+	flowName,
+	userIsLoggedIn,
+	themeSlugWithRepo
+) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
 		return;
 	}
 
+	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' )
 	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
-	await processItemCart( newCartItems, siteSlug, null, null, flowName, userIsLoggedIn );
+	await processItemCart(
+		newCartItems,
+		siteSlug,
+		isFreeThemePreselected,
+		themeSlugWithRepo,
+		flowName,
+		userIsLoggedIn
+	);
 }
 
-async function processItemCart(
-	newCartItems,
-	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo,
-	lastKnownFlow,
-	userIsLoggedIn
-) {
-	//This is function addToCartAndProceed
+const addToCartAndProceed = async ( newCartItems, siteSlug, flowName ) => {
 	const newCartItemsToAdd = newCartItems
 		// .map( ( item ) => addPrivacyProtectionIfSupported( item, reduxState ) )
-		.map( ( item ) => prepareItemForAddingToCart( item, lastKnownFlow ) );
+		.map( ( item ) => prepareItemForAddingToCart( item, flowName ) );
 
 	if ( newCartItemsToAdd.length ) {
 		debug( 'adding products to cart', newCartItemsToAdd );
@@ -264,20 +273,45 @@ async function processItemCart(
 	} else {
 		debug( 'no cart items to add' );
 	}
+};
 
-	// addToCartAndProceed();
+export async function setThemeOnSite( siteSlug, themeSlugWithRepo ) {
+	if ( isEmpty( themeSlugWithRepo ) ) {
+		return;
+	}
 
-	// if ( ! userIsLoggedIn && isFreeThemePreselected ) {
-	// 	// setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
-	// } else if ( userIsLoggedIn && isFreeThemePreselected ) {
-	// 	// fetchSitesAndUser(
-	// 	// 	siteSlug,
-	// 	// 	setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-	// 	// 	reduxStore
-	// 	// );
-	// } else if ( userIsLoggedIn && siteSlug ) {
-	// 	fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
-	// } else {
-	// 	addToCartAndProceed();
-	// }
+	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
+
+	try {
+		await wpcom.req.post( `/sites/${ siteSlug }/themes/mine`, { theme } );
+	} catch ( error ) {
+		//TODO: Manage error
+	}
+}
+
+async function processItemCart(
+	newCartItems,
+	siteSlug,
+	isFreeThemePreselected,
+	themeSlugWithRepo,
+	lastKnownFlow,
+	userIsLoggedIn
+) {
+	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
+		await setThemeOnSite( siteSlug, themeSlugWithRepo );
+		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow );
+	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
+		// fetchSitesAndUser(
+		// 	siteSlug,
+		// 	setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+		// 	reduxStore
+		// );
+		await setThemeOnSite( siteSlug, themeSlugWithRepo );
+		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow );
+	} else if ( userIsLoggedIn && siteSlug ) {
+		//fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
+		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow );
+	} else {
+		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow );
+	}
 }
