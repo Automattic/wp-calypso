@@ -1,0 +1,43 @@
+.step-container.domains {
+	padding: 0 20px;
+	margin-left: 20px;
+	max-width: 1280px;
+
+	.register-domain-step__search {
+		padding-top: 0;
+		padding-bottom: 16px;
+	}
+	.search-component.has-focus {
+		border-color: unset;
+		box-shadow: unset;
+	}
+
+	.register-domain-step__search-card {
+		background: var(--color-surface);
+		border: 1px solid #a7aaad;
+		border-radius: 4px;
+		box-shadow: none;
+		display: flex;
+		padding: 0;
+	}
+
+	.search-component__icon-search {
+		fill: #a7aaad;
+		margin: 8px 6px 8px 8px;
+	}
+
+	.featured-domain-suggestion {
+		background: var(--color-surface);
+		border-radius: 4px;
+		box-sizing: border-box;
+		margin-bottom: 12px;
+		padding: 16px 24px;
+		&:hover {
+			border: #646970;
+		}
+	}
+
+	.is-borderless {
+		border: 0;
+	}
+}
