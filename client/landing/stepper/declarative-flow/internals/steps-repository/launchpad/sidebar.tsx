@@ -1,6 +1,7 @@
-import { ProgressBar } from '@automattic/components';
+import { Button, ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
+import Badge from 'calypso/components/badge';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
@@ -19,6 +20,10 @@ type SidebarProps = {
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 };
+
+function upgradeDomain( siteSlug: null ) {
+	window.location.href = `/domains/add/${ siteSlug }`;
+}
 
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
@@ -87,10 +92,20 @@ const Sidebar = ( { sidebarURL, siteSlug, submit, goNext, goToStep }: SidebarPro
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
 				<div className="launchpad__url-box">
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div>
+					<div className="launchpad__url-box-domain-text">
 						<span>{ siteName }</span>
 						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 					</div>
+					{ true && (
+						<Button
+							className="launchpad__domain-upgrade-badge-button"
+							onClick={ () => upgradeDomain( siteSlug ) }
+						>
+							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+								{ translate( 'Customize' ) }
+							</Badge>
+						</Button>
+					) }
 				</div>
 				<Checklist tasks={ enhancedTasks } />
 			</div>
