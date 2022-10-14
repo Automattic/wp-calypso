@@ -188,7 +188,7 @@
 		border-color: var(--color-primary);
 		color: var(--color-text-inverted);
 
-		&:hover {
+		&:hover:not([disabled]) {
 			background-color: var(--color-primary-60);
 			border-color: var(--color-primary-60);
 			color: var(--color-text-inverted);
