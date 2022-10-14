@@ -41,7 +41,7 @@ export default function CollectionListView( {
 			listName={ 'collection-' + category }
 			plugins={ plugins.current || [] }
 			size={ plugins.current?.length }
-			title={ categories[ category ].name }
+			title={ categories[ category ].title }
 			subtitle={ categories[ category ].description }
 			site={ siteSlug }
 			currentSites={ sites }

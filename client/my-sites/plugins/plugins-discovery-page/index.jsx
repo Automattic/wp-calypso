@@ -94,7 +94,7 @@ const PluginsDiscoveryPage = ( props ) => {
 			/>
 			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
-			<CollectionListView category="onlinestore" { ...props } />
+			<CollectionListView category="ecommerce" { ...props } />
 		</>
 	);
 };
