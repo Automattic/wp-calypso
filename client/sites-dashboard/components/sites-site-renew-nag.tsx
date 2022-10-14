@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -50,7 +51,6 @@ export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
 	}, [ inViewOnce, isSiteOwner ] );
 
 	const renewText = __( 'Renew' );
-	const expiredText = __( 'Expired' );
 	return (
 		<SiteRenewContainer ref={ ref }>
 			<IconContainer>
@@ -58,8 +58,12 @@ export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
 				<Gridicon icon="notice" size={ 20 } />
 			</IconContainer>
 			<SiteRenewNotice>
-				{ `${ site.plan?.product_name_short } - ${ expiredText }` }
-				{ sSiteOwner && (
+				{ sprintf(
+					/* translators: %s - the plan's product name */
+					__( '%s - Expired' ),
+					site.plan?.product_name_short
+				) }
+				{ isSiteOwner && (
 					<SiteRenewLink
 						onClick={ () => {
 							recordTracksEvent( SITE_RENEW_NAG_ON_CLICK );
