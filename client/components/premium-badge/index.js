@@ -17,54 +17,44 @@ const PremiumBadge = ( { className, tooltipText } ) => {
 
 	const classes = classNames( 'premium-badge', className );
 
-	const badge = (
-		<Badge type="info">
-			<Icon icon={ starFilled } size={ 18 } />
-			<span>{ __( 'Premium' ) }</span>
-		</Badge>
-	);
-
 	return (
 		<>
-			{ tooltipText ? (
-				<button
-					ref={ setPopoverAnchor }
-					className={ classes }
-					onClick={ () => {
-						if ( ! isTouch ) {
-							return;
-						}
-						setIsPopoverVisible( ( state ) => ! state );
-					} }
-					onMouseEnter={ () => {
-						if ( isTouch ) {
-							return;
-						}
-						setIsPopoverVisible( true );
-					} }
-					onMouseLeave={ () => {
-						if ( isTouch ) {
-							return;
-						}
-						setIsPopoverVisible( false );
-					} }
-					type="button"
-				>
-					{ badge }
-				</button>
-			) : (
-				<div className={ classes }>{ badge }</div>
-			) }
-			{ tooltipText && (
-				<Popover
-					className="premium-badge__popover"
-					context={ popoverAnchor }
-					isVisible={ isPopoverVisible }
-					onClose={ () => setIsPopoverVisible( false ) }
-				>
-					{ tooltipText }
-				</Popover>
-			) }
+			<button
+				ref={ setPopoverAnchor }
+				className={ classes }
+				onClick={ () => {
+					if ( ! isTouch ) {
+						return;
+					}
+					setIsPopoverVisible( ( state ) => ! state );
+				} }
+				onMouseEnter={ () => {
+					if ( isTouch ) {
+						return;
+					}
+					setIsPopoverVisible( true );
+				} }
+				onMouseLeave={ () => {
+					if ( isTouch ) {
+						return;
+					}
+					setIsPopoverVisible( false );
+				} }
+				type="button"
+			>
+				<Badge type="info">
+					<Icon icon={ starFilled } size={ 18 } />
+					<span>{ __( 'Premium' ) }</span>
+				</Badge>
+			</button>
+			<Popover
+				className="premium-badge__popover"
+				context={ popoverAnchor }
+				isVisible={ isPopoverVisible }
+				onClose={ () => setIsPopoverVisible( false ) }
+			>
+				{ tooltipText }
+			</Popover>
 		</>
 	);
 };
