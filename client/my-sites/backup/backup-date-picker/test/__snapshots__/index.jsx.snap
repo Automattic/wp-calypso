@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current date is today 1`] = `
-<DocumentFragment>
+<div>
   <div
     class="backup-date-picker"
   >
@@ -17,6 +17,7 @@ exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current 
           tabindex="0"
         >
           <button
+            aria-label="Go to previous date"
             class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
             locale="en"
             type="submit"
@@ -60,6 +61,7 @@ exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current 
               Dec 5
             </span>
             <button
+              aria-label="Go to next date"
               class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
               locale="en"
               type="submit"
@@ -102,7 +104,7 @@ exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current 
       </button>
     </div>
   </div>
-</DocumentFragment>
+</div>
 `;
 
 exports[`BackupDatePicker Shows month and date for the next date if it's in the same year as today 1`] = `
@@ -122,6 +124,7 @@ exports[`BackupDatePicker Shows month and date for the next date if it's in the 
           tabindex="0"
         >
           <button
+            aria-label="Go to previous date"
             class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
             locale="en"
             type="submit"
@@ -165,6 +168,7 @@ exports[`BackupDatePicker Shows month and date for the next date if it's in the 
               Dec 5
             </span>
             <button
+              aria-label="Go to next date"
               class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
               locale="en"
               type="submit"
@@ -211,7 +215,7 @@ exports[`BackupDatePicker Shows month and date for the next date if it's in the 
 `;
 
 exports[`BackupDatePicker Shows month, date, and year for the next date if it's not the same year as today 1`] = `
-<DocumentFragment>
+<div>
   <div
     class="backup-date-picker"
   >
@@ -227,6 +231,7 @@ exports[`BackupDatePicker Shows month, date, and year for the next date if it's 
           tabindex="0"
         >
           <button
+            aria-label="Go to previous date"
             class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
             locale="en"
             type="submit"
@@ -270,6 +275,7 @@ exports[`BackupDatePicker Shows month, date, and year for the next date if it's 
               Dec 5, 2018
             </span>
             <button
+              aria-label="Go to next date"
               class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
               locale="en"
               type="submit"
@@ -312,11 +318,11 @@ exports[`BackupDatePicker Shows month, date, and year for the next date if it's 
       </button>
     </div>
   </div>
-</DocumentFragment>
+</div>
 `;
 
 exports[`BackupDatePicker Shows month, date, and year for the previous date if it's not the same year as today 1`] = `
-<DocumentFragment>
+<div>
   <div
     class="backup-date-picker"
   >
@@ -332,6 +338,7 @@ exports[`BackupDatePicker Shows month, date, and year for the previous date if i
           tabindex="0"
         >
           <button
+            aria-label="Go to previous date"
             class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
             locale="en"
             type="submit"
@@ -375,6 +382,7 @@ exports[`BackupDatePicker Shows month, date, and year for the previous date if i
               Dec 5, 2019
             </span>
             <button
+              aria-label="Go to next date"
               class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
               locale="en"
               type="submit"
@@ -417,11 +425,11 @@ exports[`BackupDatePicker Shows month, date, and year for the previous date if i
       </button>
     </div>
   </div>
-</DocumentFragment>
+</div>
 `;
 
 exports[`BackupDatePicker Shows only the month and date for the previous date if it's the same year as today 1`] = `
-<DocumentFragment>
+<div>
   <div
     class="backup-date-picker"
   >
@@ -437,6 +445,7 @@ exports[`BackupDatePicker Shows only the month and date for the previous date if
           tabindex="0"
         >
           <button
+            aria-label="Go to previous date"
             class="button backup-date-picker__button--previous form-button is-compact is-primary is-borderless"
             locale="en"
             type="submit"
@@ -480,6 +489,7 @@ exports[`BackupDatePicker Shows only the month and date for the previous date if
               Nov 5
             </span>
             <button
+              aria-label="Go to next date"
               class="button backup-date-picker__button--next form-button is-compact is-primary is-borderless"
               locale="en"
               type="submit"
@@ -522,5 +532,5 @@ exports[`BackupDatePicker Shows only the month and date for the previous date if
       </button>
     </div>
   </div>
-</DocumentFragment>
+</div>
 `;

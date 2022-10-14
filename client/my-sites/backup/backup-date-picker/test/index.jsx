@@ -62,11 +62,11 @@ describe( 'BackupDatePicker', () => {
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 
 		const today = moment();
-		const { asFragment } = render(
+		const { container } = render(
 			<BackupDatePicker selectedDate={ today } onDateChange={ () => {} } />
 		);
 
-		expect( asFragment() ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( "Shows only the month and date for the previous date if it's the same year as today", () => {
@@ -74,22 +74,22 @@ describe( 'BackupDatePicker', () => {
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const november4Of2020 = moment().subtract( 1, 'month' );
 
-		const { asFragment } = render(
+		const { container } = render(
 			<BackupDatePicker selectedDate={ november4Of2020 } onDateChange={ () => {} } />
 		);
 
-		expect( asFragment() ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( "Shows month, date, and year for the previous date if it's not the same year as today", () => {
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const oneYearAgo = moment().subtract( 1, 'year' );
 
-		const { asFragment } = render(
+		const { container } = render(
 			<BackupDatePicker selectedDate={ oneYearAgo } onDateChange={ () => {} } />
 		);
 
-		expect( asFragment() ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( "Shows month and date for the next date if it's in the same year as today", () => {
@@ -123,11 +123,11 @@ describe( 'BackupDatePicker', () => {
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const twoYearsAgo = moment().subtract( 2, 'years' );
 
-		const { asFragment } = render(
+		const { container } = render(
 			<BackupDatePicker selectedDate={ twoYearsAgo } onDateChange={ () => {} } />
 		);
 
-		expect( asFragment() ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	// --- NAVIGATION ---
@@ -153,8 +153,8 @@ describe( 'BackupDatePicker', () => {
 		const onDateChange = jest.fn();
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
-
 		const button = screen.getByText( 'Jan 2, 2020' );
+
 		await user.click( button );
 
 		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );
@@ -168,7 +168,8 @@ describe( 'BackupDatePicker', () => {
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-		const button = screen.getAllByRole( 'button' )[ 0 ];
+		const button = screen.getByRole( 'button', { name: 'Go to previous date' } );
+
 		button.focus();
 		await user.keyboard( '[Space]' );
 
@@ -183,8 +184,9 @@ describe( 'BackupDatePicker', () => {
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
-		const button = screen.getAllByRole( 'button' )[ 2 ];
+		const button = screen.getByRole( 'button', { name: 'Go to next date' } );
 		button.focus();
+
 		await user.keyboard( '[Space]' );
 
 		expect( onDateChange ).toHaveBeenCalledWith( selectedDate.add( 1, 'day' ) );

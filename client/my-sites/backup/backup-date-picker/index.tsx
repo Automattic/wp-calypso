@@ -161,7 +161,12 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 						onClick={ goToPreviousDate }
 						onKeyDown={ onSpace( goToPreviousDate ) }
 					>
-						<Button compact borderless className="backup-date-picker__button--previous">
+						<Button
+							compact
+							borderless
+							className="backup-date-picker__button--previous"
+							aria-label="Go to previous date"
+						>
 							<Gridicon
 								icon="chevron-left"
 								className={ ! canGoToPreviousDate ? 'disabled' : undefined }
@@ -197,7 +202,12 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 								{ nextDisplayDate }
 							</span>
 
-							<Button compact borderless className="backup-date-picker__button--next">
+							<Button
+								compact
+								borderless
+								className="backup-date-picker__button--next"
+								aria-label="Go to next date"
+							>
 								<Gridicon
 									icon="chevron-right"
 									className={ ! canGoToNextDate ? 'disabled' : undefined }
