@@ -37,6 +37,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
