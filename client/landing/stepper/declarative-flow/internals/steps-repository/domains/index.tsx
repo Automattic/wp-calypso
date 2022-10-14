@@ -6,15 +6,18 @@ import {
 	isNewsletterOrLinkInBioFlow,
 	createSiteWithCart,
 } from '@automattic/onboarding';
-import flows from 'calypso/signup/config/flows';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { defer, get, isEmpty, find } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
+import flows from 'calypso/signup/config/flows';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import {
@@ -28,9 +31,13 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import {
 	domainRegistration,
@@ -38,28 +45,22 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { useI18n } from '@wordpress/react-i18n';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
 	recordAddDomainButtonClickInTransferDomain,
 	recordAddDomainButtonClickInUseYourDomain,
 } from 'calypso/state/domains/actions';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import {
-	composeAnalytics,
-	recordGoogleEvent,
-	recordTracksEvent,
-} from 'calypso/state/analytics/actions';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import { ONBOARD_STORE } from '../../../../stores';
-import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { Search } from './types';
 import type { Step } from '../../types';
+import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const { productsList, userLoggedIn, selectedSite } = useSelector( ( state ) => {
