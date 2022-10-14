@@ -29,8 +29,6 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 		const showAndroidBadge = ! isIos && ! isDesktop;
 		const showBadge = showIosBadge || showAndroidBadge;
 
-		const badgeStoreName = showIosBadge ? 'ios' : 'android';
-
 		return (
 			<Card className="go-mobile go-mobile--jetpack customer-home__card">
 				<div className="go-mobile__row">
@@ -50,7 +48,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 					{ showBadge ? (
 						<div className="go-mobile__app-badges">
 							<AppsBadge
-								storeName={ badgeStoreName }
+								storeName={ showIosBadge ? 'ios' : 'android' }
 								utm_source={ 'calypso-customer-home' }
 							></AppsBadge>
 						</div>
