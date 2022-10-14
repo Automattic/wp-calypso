@@ -442,10 +442,14 @@ export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
  * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
  * @returns {object} The purchase object, if found.
  */
-export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) =>
-	isMarketplaceProduct &&
-	purchases.find( ( purchase ) =>
-		Object.values( plugin?.variations )?.some(
-			( variation ) => variation.product_id === purchase.productId
+export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
+	return (
+		isMarketplaceProduct &&
+		plugin?.variations &&
+		purchases.find( ( purchase ) =>
+			Object.values( plugin.variations ).some(
+				( variation ) => variation.product_id === purchase.productId
+			)
 		)
 	);
+};
