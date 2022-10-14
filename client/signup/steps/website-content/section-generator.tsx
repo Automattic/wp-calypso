@@ -1,8 +1,11 @@
 import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
+import {
+	ContactPageDetails,
+	FeedbackSection,
+	LogoUploadSection,
+} from 'calypso/signup/steps/website-content/section-types';
 import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
-import { ContactPageDetails } from './contact-page-details';
-import { LogoUploadSection } from './logo-upload-section';
 import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
 import type {
 	AccordionSectionProps,
@@ -141,12 +144,7 @@ const generateFeedbackSection = (
 					},
 					comment: 'This is the serial number: 1',
 				} ),
-				component: (
-					<LogoUploadSection
-						sectionID={ LOGO_SECTION_ID }
-						logoUrl={ formValues.siteLogoSection.siteLogoUrl }
-					/>
-				),
+				component: <FeedbackSection data={ formValues.feedbackSection } />,
 				showSkip: true,
 			},
 		],

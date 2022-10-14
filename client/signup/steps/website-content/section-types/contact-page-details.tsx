@@ -9,6 +9,10 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
+	MediaUploadData,
+	WordpressMediaUpload,
+} from 'calypso/signup/steps/website-content/wordpress-media-upload';
+import {
 	websiteContentFieldChanged,
 	imageUploaded,
 	imageRemoved,
@@ -16,7 +20,6 @@ import {
 	imageUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
 import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
 import type { TranslateResult } from 'i18n-calypso';
 
