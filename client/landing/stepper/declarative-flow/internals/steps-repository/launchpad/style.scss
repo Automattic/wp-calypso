@@ -178,6 +178,22 @@
 	@include break-large {
 		margin: 20px auto;
 	}
+
+	&-primary-button {
+		width: 100%;
+		font-weight: 500;
+		padding: 11px;
+		margin-top: 12px;
+		background-color: var(--color-primary);
+		border-color: var(--color-primary);
+		color: var(--color-text-inverted);
+
+		&:hover {
+			background-color: var(--color-primary-60);
+			border-color: var(--color-primary-60);
+			color: var(--color-text-inverted);
+		}
+	}
 }
 
 .launchpad__checklist-item {

@@ -23,7 +23,12 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 			} ) }
 		>
 			{ id === 'first_post_published' || id === 'link_in_bio_launched' ? (
-				<Button disabled={ taskDisabled } data-task={ id } onClick={ actionDispatch }>
+				<Button
+					className="launchpad__checklist-primary-button"
+					disabled={ taskDisabled }
+					data-task={ id }
+					onClick={ actionDispatch }
+				>
 					{ title }
 				</Button>
 			) : (
