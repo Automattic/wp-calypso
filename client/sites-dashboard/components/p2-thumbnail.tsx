@@ -1,8 +1,5 @@
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useInView } from 'react-intersection-observer';
-import { useQuery } from 'react-query';
-import wpcom from 'calypso/lib/wp';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -91,22 +88,22 @@ interface P2ThumbnailProps {
 
 export function P2Thumbnail( { site, displayMode }: P2ThumbnailProps ) {
 	const { __ } = useI18n();
-	const { ref, inView } = useInView( { triggerOnce: true } );
-	const { data, isLoading } = useP2ThumbnailElementsQuery( site.ID, { enabled: inView } );
+
+	if ( ! site.p2_thumbnail_elements ) {
+		return null;
+	}
+
+	const { color_link, color_sidebar_background, header_image } = site.p2_thumbnail_elements;
 
 	function renderContents() {
-		if ( isLoading || ! data ) {
-			return null;
-		}
-
 		const isSmall = displayMode === 'list';
 
 		return (
 			<>
-				{ data.header_image ? (
-					<HeaderImage src={ data.header_image } alt="" />
+				{ header_image ? (
+					<HeaderImage src={ header_image } alt="" />
 				) : (
-					<ColorGradient style={ { backgroundColor: data.color_link } } />
+					<ColorGradient style={ { backgroundColor: color_link } } />
 				) }
 				{ site.icon && (
 					<SiteIconContainer isSmall={ isSmall }>
@@ -119,32 +116,11 @@ export function P2Thumbnail( { site, displayMode }: P2ThumbnailProps ) {
 
 	return (
 		<Container
-			ref={ ref }
 			role={ 'img' }
 			aria-label={ __( 'Site Icon' ) }
-			style={ { backgroundColor: data?.color_sidebar_background } }
+			style={ { backgroundColor: color_sidebar_background } }
 		>
 			{ renderContents() }
 		</Container>
-	);
-}
-
-interface P2ThumbnailElements {
-	color_link: string;
-	color_sidebar_background: string;
-	header_image: string | null;
-}
-
-function useP2ThumbnailElementsQuery( siteId: number, { enabled = true } ) {
-	return useQuery(
-		[ 'p2-thumbnail-elements', siteId ],
-		(): Promise< P2ThumbnailElements > =>
-			wpcom.req.get( {
-				path: `/sites/${ siteId }/p2-thumbnail-elements`,
-				apiNamespace: 'wpcom/v2',
-			} ),
-		{
-			enabled,
-		}
 	);
 }
