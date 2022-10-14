@@ -20,7 +20,6 @@ export default function PatternPicker( { onPick }: Props ) {
 	useEffect( () => {
 		if ( patterns ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
-				autoHeight: true,
 				mousewheel: true,
 				keyboard: true,
 				threshold: 5,
@@ -47,12 +46,23 @@ export default function PatternPicker( { onPick }: Props ) {
 		<div className="pattern-picker">
 			<div className="pattern-picker__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ patterns.map( ( pattern ) => (
+					{ patterns.map( ( pattern, index ) => (
 						<div
 							className="pattern-picker__slide swiper-slide"
 							key={ `${ pattern.ID }-slide-item` }
 						>
 							<Item pattern={ pattern } />
+
+							<div className="pattern-picker__cta">
+								<Button
+									className="pattern-picker__select"
+									isPrimary
+									onClick={ () => onPick( patterns[ index ] ) }
+								>
+									<span>{ __( 'Continue' ) }</span>
+									<Gridicon icon="heart" size={ 18 } />
+								</Button>
+							</div>
 						</div>
 					) ) }
 				</div>
@@ -64,20 +74,6 @@ export default function PatternPicker( { onPick }: Props ) {
 						<Icon icon={ chevronRight } />
 					</button>
 				</div>
-			</div>
-			<div className="pattern-picker__cta">
-				<Button
-					className="pattern-picker__select"
-					isPrimary
-					onClick={ () => {
-						if ( swiperInstance.current ) {
-							onPick( patterns[ swiperInstance.current?.activeIndex ] );
-						}
-					} }
-				>
-					<span>{ __( 'Continue' ) }</span>
-					<Gridicon icon="heart" size={ 18 } />
-				</Button>
 			</div>
 		</div>
 	);
