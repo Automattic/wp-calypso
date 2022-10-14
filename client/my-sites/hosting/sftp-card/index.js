@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { Card, Button, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -33,6 +34,7 @@ import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-ho
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SshKeys from './ssh-keys';
 
 import './style.scss';
 
@@ -385,6 +387,9 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
+					{ siteHasSshFeature && isEnabled( 'hosting/ssh-keys' ) && (
+						<SshKeys disabled={ disabled } siteId={ siteId } />
+					) }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
