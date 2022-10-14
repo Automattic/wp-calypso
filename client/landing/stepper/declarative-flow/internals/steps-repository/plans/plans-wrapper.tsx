@@ -22,7 +22,6 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
-import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import './style.scss';
@@ -51,7 +50,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	} );
 
-	const { setMultiplePendingAction } = useDispatch( ONBOARD_STORE );
+	const { setMultiplePendingAction, setSignupValues } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const locale = useLocale();
@@ -86,27 +85,19 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
-		const step = {
-			stepName,
-			stepSectionName,
-			cartItem,
-		};
+		const themeSlugWithRepo = flowName === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx';
+		const comingSoon = flowName === NEWSLETTER_FLOW ? 0 : 1;
 
-		if ( flowName === NEWSLETTER_FLOW ) {
-			submitSignupStep( step, {
-				comingSoon: 0,
-			} );
-		} else {
-			submitSignupStep( step, {} );
-		}
+		//Do we need to add cartItem here?
+		setSignupValues( { comingSoon, themeSlugWithRepo } );
 
 		setMultiplePendingAction( async ( dependencies ) => {
 			const { siteSlug } = dependencies;
-			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
+			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn, themeSlugWithRepo );
 
 			return {
 				siteSlug,
-				cartItem
+				cartItem,
 			};
 		}, 'plans' );
 
