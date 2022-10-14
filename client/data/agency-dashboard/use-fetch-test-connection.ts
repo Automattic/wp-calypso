@@ -21,6 +21,7 @@ const useFetchTestConnection = (
 					apiNamespace: 'rest/v1.1',
 				},
 				{
+					// We call the current health state "stale", as it might be different than the actual state.
 					is_stale_connection_healthy: Boolean( isConnectionHealthy ),
 				}
 			),
