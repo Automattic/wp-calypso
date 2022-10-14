@@ -86,8 +86,14 @@ export const linkInBio: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.cartItem ) {
+						const returnUrl = encodeURIComponent(
+							`${ window.location.origin }/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
+						);
+
 						return window.location.assign(
-							`/checkout/${ encodeURIComponent( providedDependencies?.siteSlug ) }`
+							`/checkout/${ encodeURIComponent(
+								providedDependencies?.siteSlug
+							) }?redirect_to=${ returnUrl }`
 						);
 					}
 					return navigate(
