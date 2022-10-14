@@ -13,10 +13,22 @@ import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
-const sidebarURL = `https://${ siteName }.${ secondAndTopLevelDomain }`;
+const sidebarFreeDomainObject = {
+	domain: `${ siteName }.${ secondAndTopLevelDomain }`,
+	isWPCOMDomain: true,
+};
+
+const paidSiteName = 'paidtestlinkinbio';
+const paidSecondAndTopLevelDomain = '.com';
+const sidebarPaidDomainObject = {
+	domain: `${ paidSiteName }.${ paidSecondAndTopLevelDomain }`,
+	isWPCOMDomain: false,
+};
+const upgradeDomainBadgeText = 'Customize';
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarFreeDomainObject.domain }`;
 
 const props = {
-	sidebarURL,
+	sidebarDomainObject: sidebarFreeDomainObject,
 	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
@@ -49,6 +61,10 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 }
 
 describe( 'Sidebar', () => {
+	afterEach( () => {
+		props.sidebarDomainObject = sidebarFreeDomainObject;
+	} );
+
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
 		renderSidebar( props );
 
@@ -66,6 +82,25 @@ describe( 'Sidebar', () => {
 			content.includes( secondAndTopLevelDomain )
 		);
 		expect( renderedDomain ).toBeVisible();
+	} );
+
+	it( 'displays customize badge for wpcom domains (free)', () => {
+		renderSidebar( props );
+		expect( screen.getByRole( 'link', { name: upgradeDomainBadgeText } ) ).toHaveAttribute(
+			'href',
+			upgradeDomainBadgeLink
+		);
+	} );
+
+	it( 'does not display customize badge for non wpcom domains (paid)', () => {
+		props.sidebarDomainObject = sidebarPaidDomainObject;
+		renderSidebar( props );
+
+		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {
+			name: 'upgradeDomainBadgeText',
+		} );
+
+		expect( upgradeDomainBadgeElement ).not.toBeInTheDocument;
 	} );
 
 	it( 'displays a progress bar based off of task completion', () => {

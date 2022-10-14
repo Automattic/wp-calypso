@@ -1,4 +1,4 @@
-import { Button, ProgressBar } from '@automattic/components';
+import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
@@ -7,6 +7,7 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
 import { tasks } from './tasks';
@@ -14,16 +15,12 @@ import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
 type SidebarProps = {
-	sidebarURL: string | null;
+	sidebarDomainObject: ResponseDomain;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
 };
-
-function upgradeDomain( siteSlug: null ) {
-	window.location.href = `/domains/add/${ siteSlug }`;
-}
 
 function getUrlInfo( url: string ) {
 	const urlWithoutProtocol = url.replace( /^https?:\/\//, '' );
@@ -48,7 +45,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { sidebarURL, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { sidebarDomainObject, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -62,9 +59,10 @@ const Sidebar = ( { sidebarURL, siteSlug, submit, goNext, goToStep }: SidebarPro
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
+	const sidebarDomainIsWPCOMDomain = sidebarDomainObject?.isWPCOMDomain;
 
-	if ( sidebarURL ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( sidebarURL );
+	if ( sidebarDomainObject ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomainObject?.domain );
 	}
 
 	return (
@@ -96,15 +94,12 @@ const Sidebar = ( { sidebarURL, siteSlug, submit, goNext, goToStep }: SidebarPro
 						<span>{ siteName }</span>
 						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 					</div>
-					{ true && (
-						<Button
-							className="launchpad__domain-upgrade-badge-button"
-							onClick={ () => upgradeDomain( siteSlug ) }
-						>
+					{ sidebarDomainIsWPCOMDomain && (
+						<a href={ `/domains/add/${ siteSlug }` }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }
 							</Badge>
-						</Button>
+						</a>
 					) }
 				</div>
 				<Checklist tasks={ enhancedTasks } />

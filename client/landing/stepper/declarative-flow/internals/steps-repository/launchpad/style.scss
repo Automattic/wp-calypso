@@ -109,7 +109,7 @@
 	align-items: center;
 	height: 48px;
 	margin: 32px 0;
-	padding: 0 20px;
+	padding: 0 12px;
 
 	// truncate long domain names
 	white-space: nowrap;
@@ -126,13 +126,6 @@
 
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
-}
-
-.launchpad__domain-upgrade-badge-button {
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 100px;
-	padding: 0;
-	border-style: none;
 }
 
 .launchpad__domain-upgrade-badge {
