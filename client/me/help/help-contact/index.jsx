@@ -162,7 +162,7 @@ class HelpContact extends Component {
 			locale: currentUserLocale,
 			client: config( 'client_slug' ),
 			is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
-			source: 'inline-form',
+			source: 'inline-help',
 		};
 		if ( site ) {
 			payload.blog_url = site.URL;
