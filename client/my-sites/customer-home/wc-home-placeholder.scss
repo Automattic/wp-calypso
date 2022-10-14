@@ -1,7 +1,26 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .wc-home-placeholder {
+	// Push back the padding set by the layout content
+	// See https://github.com/Automattic/wp-calypso/blob/25c8f1c098072d086b0f5c365390686069c7d480/client/layout/style.scss#L36
 	margin: -47px -32px -33px -33px;
 	background-color: var(--studio-gray-0);
 	height: calc(100vh - 33px);
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin: -39px -24px -25px -25px;
+		height: calc(100vh - 31px);
+	}
+
+	@media ( max-width: 782px ) {
+		margin-top: -25px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 0;
+		height: calc(100vh - 46px);
+	}
 
 	.wc-home-placeholder__header {
 		background-color: var(--studio-white);
@@ -21,7 +40,7 @@
 		max-width: 682px;
 		margin-left: auto;
 		margin-right: auto;
-		margin-top: 60px;
+		padding: 60px;
 	}
 
 	.placeholder {
@@ -43,10 +62,10 @@
 
 	.placeholder-welcome {
 		width: 300px;
-		margin-bottom: 32px;
+		margin-bottom: 48px;
 	}
 
 	.placeholder-generic {
-		margin-bottom: 24px;
+		margin-bottom: 32px;
 	}
 }
