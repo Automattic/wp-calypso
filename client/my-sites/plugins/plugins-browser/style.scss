@@ -65,3 +65,14 @@
 		margin: 48px 0 0;
 	}
 }
+
+// Jetpack injects a banner on the /plugins page for jetpack sites
+.is-section-plugins .layout__content > .banner {
+	// This moves it down out from under our sticky header
+	margin-top: 50px;
+
+	// And removes the extra padding on the main content
+	+ .layout__secondary + .layout__primary main {
+		padding-top: 0;
+	}
+}
