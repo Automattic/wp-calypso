@@ -9,9 +9,17 @@ export type Category = {
 	name: string;
 	slug: string;
 	tags: string[];
+	preview: Plugin[];
 	description?: string;
 	icon?: string;
 	separator?: boolean;
+};
+
+export type Plugin = {
+	slug: string;
+	name: string;
+	short_description: string;
+	icon: string;
 };
 
 const Categories = ( { selected }: { selected?: string } ) => {

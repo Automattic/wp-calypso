@@ -85,16 +85,16 @@ const PluginsDiscoveryPage = ( props ) => {
 		<>
 			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
-			<CollectionListView collection="monetization" { ...props } />
+			<CollectionListView category="monetization" { ...props } />
 			<UpgradeNudge { ...props } />
 			<FeaturedPluginsSection
 				{ ...props }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
-			<CollectionListView collection="business" { ...props } />
+			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
-			<CollectionListView collection="ecommerce" { ...props } />
+			<CollectionListView category="onlinestore" { ...props } />
 		</>
 	);
 };
