@@ -45,7 +45,6 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 `;
 
 const SiteListTile = styled( ListTile )`
-	line-height: initial;
 	margin-inline-end: 0;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
