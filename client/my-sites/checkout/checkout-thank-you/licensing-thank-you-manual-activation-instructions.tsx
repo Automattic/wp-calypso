@@ -1,13 +1,15 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import licensingActivationPluginInstall from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
+import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
@@ -18,6 +20,17 @@ interface Props {
 const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const title = useMemo( () => {
+		if ( isEnabled( 'jetpack/onboarding-standalone-installation-v1' ) ) {
+			const product = slugToSelectorProduct( productSlug );
+			return translate( `Ok, let's install Jetpack %(pluginName)s`, {
+				args: { pluginName: product?.shortName },
+			} );
+		}
+
+		return translate( 'Be sure that you have the latest version of Jetpack' );
+	}, [ productSlug, translate ] );
 
 	const onContinue = useCallback( () => {
 		dispatch(
@@ -44,7 +57,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				title="Checkout > Jetpack Thank You Licensing Manual Activation Instructions"
 			/>
 			<LicensingActivation
-				title={ translate( 'Be sure that you have the latest version of Jetpack' ) }
+				title={ title }
 				footerImage={ licensingActivationPluginInstall }
 				showContactUs
 				showProgressIndicator
