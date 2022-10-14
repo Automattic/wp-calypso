@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommerce } from '@automattic/calypso-products/src';
 import { Button, Popover } from '@automattic/components';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
@@ -30,7 +31,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, getSitePlan } from 'calypso/state/sites/selectors';
 import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { activateNextLayoutFocus, setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
@@ -64,6 +65,7 @@ class MasterbarLoggedIn extends Component {
 		setNextLayoutFocus: PropTypes.func.isRequired,
 		currentLayoutFocus: PropTypes.string,
 		siteSlug: PropTypes.string,
+		isEcommercePlan: PropTypes.bool,
 		hasMoreThanOneSite: PropTypes.bool,
 		isCheckout: PropTypes.bool,
 		isCheckoutPending: PropTypes.bool,
@@ -322,8 +324,8 @@ class MasterbarLoggedIn extends Component {
 	}
 
 	renderPublish() {
-		const { domainOnlySite, translate, isMigrationInProgress } = this.props;
-		if ( ! domainOnlySite && ! isMigrationInProgress ) {
+		const { domainOnlySite, translate, isMigrationInProgress, isEcommercePlan } = this.props;
+		if ( ! domainOnlySite && ! isMigrationInProgress && ! isEcommercePlan ) {
 			return (
 				<AsyncLoad
 					require="./publish"
@@ -560,10 +562,13 @@ export default connect(
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, currentSelectedSiteId ) ||
 			isSiteMigrationActiveRoute( state );
+		// Default object state is needed here to protect the isEcommerce() type definitions.
+		const sitePlan = getSitePlan( state, siteId ) || { product_slug: '' };
 
 		return {
 			isCustomerHomeEnabled: canCurrentUserUseCustomerHome( state, siteId ),
 			isNotificationsShowing: isNotificationsOpen( state ),
+			isEcommercePlan: isEcommerce( sitePlan ),
 			siteSlug: getSiteSlug( state, siteId ),
 			sectionGroup,
 			domainOnlySite: isDomainOnlySite( state, siteId ),
