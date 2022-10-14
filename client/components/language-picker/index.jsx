@@ -13,6 +13,7 @@ const noop = () => {};
 
 export class LanguagePicker extends PureComponent {
 	static propTypes = {
+		isLoading: PropTypes.bool,
 		languages: PropTypes.array.isRequired,
 		valueKey: PropTypes.string,
 		value: PropTypes.any,
@@ -24,6 +25,7 @@ export class LanguagePicker extends PureComponent {
 	};
 
 	static defaultProps = {
+		isLoading: false,
 		languages: [],
 		valueKey: 'value',
 		onChange: noop,
@@ -147,7 +149,7 @@ export class LanguagePicker extends PureComponent {
 
 	render() {
 		const language = this.state.selectedLanguage;
-		if ( ! language ) {
+		if ( ! language || this.props.isLoading ) {
 			return this.renderPlaceholder();
 		}
 
