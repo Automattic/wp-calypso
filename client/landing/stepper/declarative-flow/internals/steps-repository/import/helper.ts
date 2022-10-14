@@ -32,7 +32,10 @@ export function getFinalImporterUrl(
 		} )
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
-		if ( platform === 'wordpress' && ! fromSite ) {
+
+		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
+			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
+		} else if ( platform === 'wordpress' && ! fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				option: WPImportOption.CONTENT_ONLY,
 			} );

@@ -48,7 +48,9 @@ export const importFlow: Flow = {
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				return new Promise( () => {
-					if ( ! siteSlugParam ) return;
+					if ( ! siteSlugParam ) {
+						return;
+					}
 
 					window.location.assign( to );
 				} );
@@ -60,7 +62,10 @@ export const importFlow: Flow = {
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
 			switch ( _currentStep ) {
 				case 'importReady': {
+					const depUrl = ( providedDependencies?.url as string ) || '';
+
 					if (
+						depUrl.startsWith( 'http' ) ||
 						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
 							providedDependencies?.platform as ImporterMainPlatform
 						) !== -1
