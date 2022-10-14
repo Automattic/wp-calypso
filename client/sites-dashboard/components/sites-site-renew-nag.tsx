@@ -14,8 +14,10 @@ interface SiteRenewProps {
 
 const SiteRenewContainer = styled.div`
 	display: flex;
-	flex-direction: column;
+	white-space: break-spaces;
+	justify-items: flex-start;
 	gap: 4px;
+	margin-top: -5px;
 `;
 
 const SiteRenewLink = styled.a( {
@@ -23,14 +25,16 @@ const SiteRenewLink = styled.a( {
 	textDecoration: 'underline',
 } );
 
+const IconContainer = styled.div`
+	color: #ea303f;
+	margin-top: -2px;
+`;
+
 const SiteRenewNotice = styled.div`
 	display: flex;
-	align-items: center;
+	flex-direction: column;
 	color: #ea303f;
-	margin-top: -6px;
-	> .gridicon {
-		margin-right: 4px;
-	}
+	gap: 4px;
 `;
 
 export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
@@ -49,21 +53,24 @@ export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
 	const expiredText = __( 'Expired' );
 	return (
 		<SiteRenewContainer ref={ ref }>
+			<IconContainer>
+				{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size*/ }
+				<Gridicon icon="notice" size={ 20 } />
+			</IconContainer>
 			<SiteRenewNotice>
-				<Gridicon icon="notice" />
 				{ `${ site.plan?.product_name_short } - ${ expiredText }` }
+				{ sSiteOwner && (
+					<SiteRenewLink
+						onClick={ () => {
+							recordTracksEvent( SITE_RENEW_NAG_ON_CLICK );
+						} }
+						href={ `/checkout/${ site.slug }` }
+						title={ renewText }
+					>
+						{ renewText }
+					</SiteRenewLink>
+				) }
 			</SiteRenewNotice>
-			{ isSiteOwner && (
-				<SiteRenewLink
-					onClick={ () => {
-						recordTracksEvent( SITE_RENEW_NAG_ON_CLICK );
-					} }
-					href={ `/checkout/${ site.slug }` }
-					title={ renewText }
-				>
-					{ renewText }
-				</SiteRenewLink>
-			) }
 		</SiteRenewContainer>
 	);
 };
