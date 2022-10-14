@@ -31,7 +31,7 @@ type Props = {
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	className = DEFAULT_CLASSNAME,
+	className,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
@@ -59,6 +59,7 @@ export const SiteThumbnail = ( {
 	const classes = classnames(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
+		DEFAULT_CLASSNAME,
 		className
 	);
 
