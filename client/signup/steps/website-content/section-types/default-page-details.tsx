@@ -15,14 +15,14 @@ import {
 	websiteContentFieldChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
+import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
 import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
 
-export function PageDetails( {
+export function DefaultPageDetails( {
 	page,
 	formErrors,
 	label,

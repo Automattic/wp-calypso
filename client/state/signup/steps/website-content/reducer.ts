@@ -72,7 +72,7 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoUrl: url,
+						siteLogoSection: { siteLogoUrl: url },
 					},
 					imageUploadStates: {
 						...state.imageUploadStates,
@@ -89,7 +89,7 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoUrl: '',
+						siteLogoSection: { siteLogoUrl: '' },
 					},
 					imageUploadStates: {
 						...state.imageUploadStates,
