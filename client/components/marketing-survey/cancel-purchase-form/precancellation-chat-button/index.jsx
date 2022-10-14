@@ -17,6 +17,7 @@ class PrecancellationChatButton extends Component {
 		surveyStep: PropTypes.string,
 		onClick: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
+		atBottom: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -38,15 +39,15 @@ class PrecancellationChatButton extends Component {
 	};
 
 	render() {
-		const { isAvailable, icon, translate } = this.props;
+		const { isAvailable, icon, translate, atBottom } = this.props;
 
 		if ( ! isAvailable ) {
-			return null;
+			// 	return null;
 		}
 
 		return (
 			<HappychatButton
-				className="precancellation-chat-button__main-button"
+				className={ `precancellation-chat-button__main-button ${ atBottom && 'at-bottom' }` }
 				onClick={ this.handleClick }
 			>
 				{ icon && <MaterialIcon icon={ icon } /> }

@@ -683,6 +683,8 @@ class CancelPurchaseForm extends Component {
 	render() {
 		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
 		const { surveyStep } = this.state;
+		const shouldShowChatButton =
+			( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT;
 
 		if ( ! surveyStep ) {
 			return null;
@@ -698,17 +700,27 @@ class CancelPurchaseForm extends Component {
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
 							{ this.getHeaderTitle() }
 							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+							{ shouldShowChatButton && (
+								<PrecancellationChatButton
+									icon="chat_bubble"
+									onClick={ this.closeDialog }
+									purchase={ purchase }
+									surveyStep={ surveyStep }
+									atBottom={ false }
+								/>
+							) }
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
 								<div className="cancel-purchase-form__buttons">{ this.renderStepButtons() }</div>
-								{ ( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT && (
+								{ shouldShowChatButton && (
 									<PrecancellationChatButton
 										icon="chat_bubble"
 										onClick={ this.closeDialog }
 										purchase={ purchase }
 										surveyStep={ surveyStep }
+										atBottom={ true }
 									/>
 								) }
 							</div>
