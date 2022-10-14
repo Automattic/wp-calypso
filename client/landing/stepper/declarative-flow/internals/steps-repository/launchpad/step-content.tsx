@@ -34,14 +34,14 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	const wpcomDomains = domains.filter( ( domain ) => domain.isWPCOMDomain );
 
-	const sidebarDomain = nonWpcomDomains?.length ? nonWpcomDomains[ 0 ] : wpcomDomains[ 0 ];
+	const sidebarDomainObject = nonWpcomDomains?.length ? nonWpcomDomains[ 0 ] : wpcomDomains[ 0 ];
 
 	const iFrameURL = wpcomDomains.length ? wpcomDomains[ 0 ]?.domain : nonWpcomDomains[ 0 ]?.domain;
 
 	return (
 		<div className="launchpad__content">
 			<Sidebar
-				sidebarDomainObject={ sidebarDomain }
+				sidebarDomainObject={ sidebarDomainObject }
 				siteSlug={ siteSlug }
 				submit={ submit }
 				goNext={ goNext }
