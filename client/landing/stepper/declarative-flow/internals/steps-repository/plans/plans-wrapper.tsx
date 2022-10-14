@@ -99,11 +99,15 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		} else {
 			submitSignupStep( step, {} );
 		}
+
 		setMultiplePendingAction( async ( dependencies ) => {
 			const { siteSlug } = dependencies;
 			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn );
 
-			return dependencies;
+			return {
+				siteSlug,
+				cartItem
+			};
 		}, 'plans' );
 
 		props.onSubmit?.();
