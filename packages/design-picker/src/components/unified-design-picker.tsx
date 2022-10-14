@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { isEnabled } from '@automattic/calypso-config';
+import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -69,7 +70,7 @@ interface DesignButtonProps {
 	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
-	hasWoopFeature?: boolean;
+	currentPlanFeatures?: string[];
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -80,18 +81,24 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	onCheckout,
 	verticalId,
-	hasWoopFeature = false,
+	currentPlanFeatures,
 } ) => {
 	const { __ } = useI18n();
 	const { style_variations = [], is_premium: isPremium = false } = design;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
+	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP );
 
 	const designIsBundledWithWoo =
 		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
-		if ( isPremium && shouldUpgrade ) {
+
+		if ( designIsBundledWithWoo ) {
+			text = currentSiteCanInstallWoo
+				? __( 'Included in your plan' )
+				: __( 'Available with WordPress.com Business' );
+		} else if ( isPremium && shouldUpgrade ) {
 			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
 				text = createInterpolateElement(
 					sprintf(
@@ -125,10 +132,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			}
 		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
-		} else if ( hasWoopFeature && designIsBundledWithWoo ) {
-			text = __( 'Included in your plan' );
-		} else if ( ! hasWoopFeature && designIsBundledWithWoo ) {
-			text = __( 'Available with Wordpress.com Business' );
 		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
 			text = __( 'Included in your plan' );
 		} else if ( ! isPremium ) {
@@ -230,7 +233,7 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
-	hasWoopFeature?: boolean;
+	currentPlanFeatures?: string[];
 }
 
 interface StaticDesignPickerProps {
@@ -243,7 +246,7 @@ interface StaticDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
-	hasWoopFeature?: boolean;
+	currentPlanFeatures?: string[];
 }
 
 interface GeneratedDesignPickerProps {
@@ -263,7 +266,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onCheckout,
 	verticalId,
 	purchasedThemes,
-	hasWoopFeature = false,
+	currentPlanFeatures,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 
@@ -296,7 +299,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-						hasWoopFeature={ hasWoopFeature }
+						currentPlanFeatures={ currentPlanFeatures }
 					/>
 				) ) }
 			</div>
@@ -354,7 +357,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	onCheckout,
 	purchasedThemes,
-	hasWoopFeature = false,
+	currentPlanFeatures,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
@@ -407,7 +410,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
-					hasWoopFeature={ hasWoopFeature }
+					currentPlanFeatures={ currentPlanFeatures }
 				/>
 			</div>
 		</div>
