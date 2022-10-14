@@ -170,6 +170,12 @@
 		top: 0;
 		left: 0;
 		border: 0;
+
+		&.loading-frame {
+			background-image: url(calypso/assets/images/onboarding/videopress-onboarding-video-poster.jpeg);
+			background-repeat: no-repeat;
+			background-size: cover;
+		}
 	}
 
 	.intro__button {
