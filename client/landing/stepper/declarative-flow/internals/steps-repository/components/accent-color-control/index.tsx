@@ -83,6 +83,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 						: __( 'Accent color' ) }
 					{ isEnabled( 'limit-global-styles' ) && (
 						<PremiumBadge
+							className="accent-color-control__premium-badge"
 							tooltipText={ __(
 								'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
 							) }
