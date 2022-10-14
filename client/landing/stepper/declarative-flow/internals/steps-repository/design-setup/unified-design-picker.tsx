@@ -530,6 +530,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
+	const hasWoopFeature = site?.plan?.features.active.includes( 'woop' ); // WooCommerce on Plans
+
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
@@ -543,6 +545,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
+			hasWoopFeature={ hasWoopFeature }
 		/>
 	);
 

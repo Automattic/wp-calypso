@@ -69,6 +69,7 @@ interface DesignButtonProps {
 	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
+	hasWoopFeature?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
@@ -79,12 +80,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	hasPurchasedTheme = false,
 	onCheckout,
 	verticalId,
+	hasWoopFeature = false,
 } ) => {
 	const { __ } = useI18n();
 	const { style_variations = [], is_premium: isPremium = false } = design;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
-	const showBundledBadge =
+	const designIsBundledWithWoo =
 		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
 
 	function getPricingDescription() {
@@ -123,6 +125,10 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 			}
 		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
+		} else if ( hasWoopFeature && designIsBundledWithWoo ) {
+			text = __( 'Included in your plan' );
+		} else if ( ! hasWoopFeature && designIsBundledWithWoo ) {
+			text = __( 'Available with Wordpress.com Business' );
 		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
 			text = __( 'Included in your plan' );
 		} else if ( ! isPremium ) {
@@ -130,7 +136,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		}
 
 		let badge: React.ReactNode = null;
-		if ( showBundledBadge ) {
+		if ( designIsBundledWithWoo ) {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
 			badge = (
@@ -224,6 +230,7 @@ export interface UnifiedDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	hasWoopFeature?: boolean;
 }
 
 interface StaticDesignPickerProps {
@@ -236,6 +243,7 @@ interface StaticDesignPickerProps {
 	isPremiumThemeAvailable?: boolean;
 	onCheckout?: any;
 	purchasedThemes?: string[];
+	hasWoopFeature?: boolean;
 }
 
 interface GeneratedDesignPickerProps {
@@ -255,6 +263,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 	onCheckout,
 	verticalId,
 	purchasedThemes,
+	hasWoopFeature = false,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 
@@ -287,6 +296,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+						hasWoopFeature={ hasWoopFeature }
 					/>
 				) ) }
 			</div>
@@ -344,6 +354,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	isPremiumThemeAvailable,
 	onCheckout,
 	purchasedThemes,
+	hasWoopFeature = false,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const translate = useTranslate();
@@ -396,6 +407,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
+					hasWoopFeature={ hasWoopFeature }
 				/>
 			</div>
 		</div>
