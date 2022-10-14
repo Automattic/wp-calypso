@@ -8,27 +8,22 @@ import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
-import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
+import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
-const sidebarFreeDomainObject = {
+
+const sidebarDomain = buildDomainResponse( {
 	domain: `${ siteName }.${ secondAndTopLevelDomain }`,
 	isWPCOMDomain: true,
-};
+} );
 
-const paidSiteName = 'paidtestlinkinbio';
-const paidSecondAndTopLevelDomain = '.com';
-const sidebarPaidDomainObject = {
-	domain: `${ paidSiteName }.${ paidSecondAndTopLevelDomain }`,
-	isWPCOMDomain: false,
-};
 const upgradeDomainBadgeText = 'Customize';
-const upgradeDomainBadgeLink = `/domains/add/${ sidebarFreeDomainObject.domain }`;
+const upgradeDomainBadgeLink = `/domains/add/${ sidebarDomain.domain }`;
 
 const props = {
-	sidebarDomainObject: sidebarFreeDomainObject,
+	sidebarDomain,
 	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
@@ -62,7 +57,7 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 
 describe( 'Sidebar', () => {
 	afterEach( () => {
-		props.sidebarDomainObject = sidebarFreeDomainObject;
+		props.sidebarDomain = sidebarDomain;
 	} );
 
 	it( 'displays an escape hatch from Launchpad that will take the user to Calypso my Home', () => {
@@ -93,7 +88,11 @@ describe( 'Sidebar', () => {
 	} );
 
 	it( 'does not display customize badge for non wpcom domains (paid)', () => {
-		props.sidebarDomainObject = sidebarPaidDomainObject;
+		props.sidebarDomain = buildDomainResponse( {
+			domain: 'paidtestlinkinbio.blog',
+			isWPCOMDomain: false,
+		} );
+
 		renderSidebar( props );
 
 		const upgradeDomainBadgeElement = screen.queryByRole( 'link', {

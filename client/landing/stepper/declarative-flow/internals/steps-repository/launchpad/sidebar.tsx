@@ -15,7 +15,7 @@ import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
 type SidebarProps = {
-	sidebarDomainObject: ResponseDomain;
+	sidebarDomain: ResponseDomain;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
@@ -45,7 +45,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { sidebarDomainObject, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -59,10 +59,9 @@ const Sidebar = ( { sidebarDomainObject, siteSlug, submit, goNext, goToStep }: S
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
-	const sidebarDomainIsWPCOMDomain = sidebarDomainObject?.isWPCOMDomain;
 
-	if ( sidebarDomainObject ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomainObject?.domain );
+	if ( sidebarDomain ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
 	}
 
 	return (
@@ -94,7 +93,7 @@ const Sidebar = ( { sidebarDomainObject, siteSlug, submit, goNext, goToStep }: S
 						<span>{ siteName }</span>
 						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 					</div>
-					{ sidebarDomainIsWPCOMDomain && (
+					{ sidebarDomain?.isWPCOMDomain && (
 						<a href={ `/domains/add/${ siteSlug }` }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
 								{ translate( 'Customize' ) }
