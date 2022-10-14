@@ -58,6 +58,32 @@
 
 .is-reader-page .reader-full-post__story-content {
 	padding-top: 0 !important;
+
+	.wp-block-jetpack-slideshow_slide img,
+	.wp-block-media-text__media img,
+	.wp-block-image img {
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
+		display: inherit;
+	}
+	.wp-block-gallery .wp-block-image {
+		position: relative;
+		&::after {
+			content: "";
+			position: absolute;
+			pointer-events: none;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
+		}
+
+		figcaption {
+			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
+			border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
+		}
+	}
 }
 
 .reader-full-post .embed-youtube,
