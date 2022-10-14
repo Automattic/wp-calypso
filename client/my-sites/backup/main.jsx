@@ -148,7 +148,7 @@ function AdminContent( { selectedDate } ) {
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
 			<QueryRewindState siteId={ siteId } />
-			<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 			{ isFiltering && <SearchResults /> }
 

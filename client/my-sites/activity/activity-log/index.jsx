@@ -476,7 +476,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryRewindBackups siteId={ siteId } />
-				<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
