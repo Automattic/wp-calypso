@@ -5,7 +5,7 @@ import { getActiveTheme } from 'calypso/state/themes/selectors';
 
 type HomeTemplateSettings = {
 	postType: string | null;
-	postId: number | null;
+	postId: string | null;
 };
 
 // is_fse_active property has been deprecated. Refer to the withIsFSEActive HOC to use the isFSEActive to determine if a theme is FSE enabled.

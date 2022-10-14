@@ -140,6 +140,7 @@
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
+		"unified-pages/virtual-pages": false,
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,

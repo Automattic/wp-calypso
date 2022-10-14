@@ -25,6 +25,7 @@ import BlogPostsPage from './blog-posts-page';
 import { sortPagesHierarchically } from './helpers';
 import Page from './page';
 import Placeholder from './placeholder';
+import VirtualPages from './virtual-pages';
 
 export default class PageList extends Component {
 	static propTypes = {
@@ -258,6 +259,16 @@ class Pages extends Component {
 		);
 	}
 
+	renderPostsPages() {
+		const { site } = this.props;
+
+		if ( config.isEnabled( 'unified-pages/virtual-pages' ) ) {
+			return <VirtualPages key="virtual-pages" site={ site } />;
+		}
+
+		return <BlogPostsPage key="blog-posts-page" site={ site } />;
+	}
+
 	renderPagesList( { pages } ) {
 		const { site, lastPage, query, showPublishedStatus } = this.props;
 
@@ -295,7 +306,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<BlogPostsPage key="blog-posts-page" site={ site } />
+				{ this.renderPostsPages() }
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
@@ -332,7 +343,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
+				{ showBlogPostsPage && this.renderPostsPages() }
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
@@ -349,7 +360,7 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
+				{ showBlogPostsPage && this.renderPostsPages() }
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
