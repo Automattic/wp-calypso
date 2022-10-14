@@ -35,18 +35,16 @@ export function AccountSettingsHelper() {
 			window.location.reload();
 		} );
 	};
-	const currentLanguage = isFetching
-		? null
-		: userSettings?.locale_variant || userSettings.language || '';
 	return (
 		<>
 			<QueryUserSettings />
 			<div>Account Settings</div>
 			<div className="account-settings-helper__popover">
 				<LanguagePicker
+					isLoading={ isFetching }
 					languages={ languages }
 					valueKey="langSlug"
-					value={ currentLanguage }
+					value={ userSettings?.locale_variant || userSettings.language || '' }
 					empathyMode={ userSettings?.i18n_empathy_mode }
 					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }

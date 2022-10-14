@@ -865,11 +865,6 @@ class Account extends Component {
 		const { isFetching, markChanged, translate } = this.props;
 		// Is a username change in progress?
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
-
-		const currentLanguage = isFetching
-			? null
-			: this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || '';
-
 		return (
 			<Main wideLayout className="account">
 				<QueryUserSettings />
@@ -937,10 +932,13 @@ class Account extends Component {
 							</FormLabel>
 							<LanguagePicker
 								disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
+								isLoading={ isFetching }
 								languages={ languages }
 								onClick={ this.getClickHandler( 'Interface Language Field' ) }
 								valueKey="langSlug"
-								value={ currentLanguage }
+								value={
+									this.getUserSetting( 'locale_variant' ) || this.getUserSetting( 'language' ) || ''
+								}
 								empathyMode={ this.getUserSetting( 'i18n_empathy_mode' ) }
 								useFallbackForIncompleteLanguages={ this.getUserSetting(
 									'use_fallback_for_incomplete_languages'
