@@ -247,6 +247,15 @@
 	font-weight: 600;
 }
 
+.launchpad__task:nth-last-child(2) {
+	// remove bottom border for last checklist item before the primary button
+	.launchpad__checklist-item,
+	.launchpad__checklist-item:hover,
+	.launchpad__checklist-item:focus {
+		border-bottom: none;
+	}
+}
+
 // completed tasks
 .launchpad__task.completed-and-inactive,
 .launchpad__task.completed-and-active {
