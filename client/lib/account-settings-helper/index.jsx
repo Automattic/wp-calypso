@@ -5,6 +5,7 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import LanguagePicker from 'calypso/components/language-picker';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 
 import './style.scss';
@@ -12,6 +13,7 @@ import './style.scss';
 export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
+	const isFetching = useSelector( isFetchingUserSettings );
 	const updateLanguage = ( event ) => {
 		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		if ( typeof empathyMode !== 'undefined' ) {
@@ -33,6 +35,9 @@ export function AccountSettingsHelper() {
 			window.location.reload();
 		} );
 	};
+	const currentLanguage = isFetching
+		? null
+		: userSettings?.locale_variant || userSettings.language || '';
 	return (
 		<>
 			<QueryUserSettings />
@@ -41,7 +46,7 @@ export function AccountSettingsHelper() {
 				<LanguagePicker
 					languages={ languages }
 					valueKey="langSlug"
-					value={ userSettings?.locale_variant || userSettings.language || '' }
+					value={ currentLanguage }
 					empathyMode={ userSettings?.i18n_empathy_mode }
 					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }
