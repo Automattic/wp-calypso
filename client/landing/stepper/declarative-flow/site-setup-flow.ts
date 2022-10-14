@@ -394,7 +394,10 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'importReady': {
+					const depUrl = ( providedDependencies?.url as string ) || '';
+
 					if (
+						depUrl.startsWith( 'http' ) ||
 						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
 							providedDependencies?.platform as ImporterMainPlatform
 						) !== -1
