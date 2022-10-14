@@ -48,9 +48,9 @@ class SelectDropdownItem extends Component {
 					className={ optionClassName }
 					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ label }
-					role="menuitem"
-					tabIndex="0"
-					aria-current={ this.props.selected }
+					role="option"
+					tabIndex={ 0 }
+					aria-selected={ this.props.selected }
 					aria-label={ ariaLabel }
 					data-e2e-title={ this.props.e2eTitle }
 				>

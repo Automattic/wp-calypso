@@ -211,7 +211,7 @@ class SelectDropdown extends Component {
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					role="button"
-					aria-haspopup="true"
+					aria-haspopup="listbox"
 					aria-owns={ 'select-submenu-' + this.instanceId }
 					aria-controls={ 'select-submenu-' + this.instanceId }
 					aria-expanded={ this.state.isOpen }
@@ -234,8 +234,10 @@ class SelectDropdown extends Component {
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
 						role="listbox"
+						aria-activedescendant={ this.state.selected }
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
+						tabIndex={ 0 }
 					>
 						{ this.dropdownOptions() }
 					</ul>
@@ -348,7 +350,17 @@ class SelectDropdown extends Component {
 		let focusedIndex;
 
 		if ( this.props.options.length ) {
-			items = filter( this.props.options, ( item ) => item && ! item.isLabel );
+			items = filter( this.props.options, ( item ) => {
+				if ( item.isLabel ) {
+					return false;
+				}
+
+				if ( ! this.props.showSelectedOption && item.value === this.state.selected ) {
+					return false;
+				}
+
+				return true;
+			} );
 
 			focusedIndex =
 				typeof this.focused === 'number'

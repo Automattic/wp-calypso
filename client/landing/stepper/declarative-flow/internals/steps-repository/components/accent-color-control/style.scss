@@ -27,7 +27,6 @@
 			border-color: var(--color-neutral-10);
 		}
 
-
 		.select-dropdown__options {
 			box-shadow: 0 0 0 2px #e2eaf1;
 			border-color: var(--color-neutral-10);
@@ -42,6 +41,11 @@
 		.select-dropdown__options .select-dropdown__item-text > svg {
 			vertical-align: middle;
 			margin-right: 8px;
+		}
+
+		.select-dropdown__item.is-selected {
+			background-color: unset;
+			color: var(--color-neutral-70);
 		}
 	}
 }
