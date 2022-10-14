@@ -22,15 +22,12 @@
 	}
 
 	label,
-	input,
 	textarea {
 		font-family: "SF Pro Text", $sans;
 		font-weight: 400;
 	}
 
-	input,
-	textarea,
-	input[type="text"].form-text-input,
+	textarea.form-textarea,
 	pre {
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
@@ -40,6 +37,11 @@
 		border-radius: 4px;
 		background-repeat: no-repeat;
 		background-position: 95%;
+		&:focus {
+			border-color: var(--wp-admin-theme-color);
+			box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
+			outline: 2px solid transparent;
+		}
 	}
 
 	.form-input-validation {
@@ -47,7 +49,7 @@
 	}
 
 	.form-label {
-		color: var(--studio-black);
+		color: var(--studio-gray-60);
 		margin-bottom: 8px;
 	}
 
@@ -56,8 +58,12 @@
 		font-size: $font-body;
 	}
 
-	input {
-		height: 44px;
+	input[type="text"] {
+		border-color: var(--studio-gray-10);
+		border-radius: 4px;
+		box-sizing: border-box;
+		font-size: 0.875rem;
+		padding: 0.875rem 1rem;
 	}
 
 	.setup-form__submit {
