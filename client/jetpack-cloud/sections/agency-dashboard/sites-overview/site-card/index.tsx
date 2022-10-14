@@ -23,8 +23,9 @@ export default function SiteCard( { rows, columns }: Props ) {
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const blogId = rows.site.value.blog_id;
+	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
-	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const isSiteConnected = data ? data.connected : true;
 
