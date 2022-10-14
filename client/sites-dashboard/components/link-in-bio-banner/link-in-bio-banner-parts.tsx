@@ -88,7 +88,7 @@ export const CreateButton = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
 		<LinkButton
-			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
+			href="/setup/intro?flow=link-in-bio&ref=sites-dashboard"
 			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>
