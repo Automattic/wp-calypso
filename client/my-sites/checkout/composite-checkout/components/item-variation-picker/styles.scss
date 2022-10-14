@@ -1,0 +1,54 @@
+.item-variation-dropdown__select.components-custom-select-control {
+	position: relative;
+
+	width: 100%;
+	margin: 1.25rem 0 0;
+
+	button.components-custom-select-control__button {
+		width: 100%;
+		height: auto;
+		min-height: 44px;
+		padding: 0.875em 2rem 0.875em 1em;
+
+		background: var(--color-surface);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: 4px;
+		color: var(--color-text);
+	}
+
+	.components-custom-select-control__menu {
+		box-sizing: border-box;
+		margin-inline-start: 0;
+
+		border: 1px solid var(--color-border-subtle);
+		border-bottom-left-radius: 4px;
+		border-bottom-right-radius: 4px;
+	}
+
+	.components-custom-select-control__item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		box-sizing: border-box;
+		min-height: 44px;
+		padding: 0.875em 0.25em 0.875em 1em;
+
+		color: var(--color-text-subtle);
+
+		font-size: 1rem;
+
+		&:hover {
+			background: var(--studio-blue-0);
+		}
+
+		&.is-highlighted {
+			background: var(--studio-blue-0);
+		}
+
+		> *:first-child {
+			// 24px is the width of the checkmark icon
+			width: calc(100% - 24px - 0.25em);
+		}
+	}
+}
