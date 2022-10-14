@@ -31,12 +31,15 @@
 		box-shadow: none;
 	}
 
-	&.is-top .popover__arrow {
-		border-top-color: var(--color-neutral-80);
-		bottom: 4px;
+	&.is-top,
+	&.is-top-right {
+		.popover__arrow {
+			border-top-color: var(--color-neutral-80);
+			bottom: 4px;
 
-		&::before {
-			display: none;
+			&::before {
+				display: none;
+			}
 		}
 	}
 }

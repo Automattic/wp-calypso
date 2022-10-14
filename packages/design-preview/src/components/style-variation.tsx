@@ -5,6 +5,8 @@ import Preview from '@wordpress/edit-site/build-module/components/global-styles/
 import { useMemo } from '@wordpress/element';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+// eslint-disable-next-line no-restricted-imports
+import PremiumBadge from 'calypso/components/premium-badge';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
@@ -54,7 +56,13 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 			>
-				{ isEnabled( 'limit-global-styles' ) && isPremium && <div>Premium</div> }
+				{ isEnabled( 'limit-global-styles' ) && isPremium && (
+					<PremiumBadge
+						tooltipText={ translate(
+							'You can try this premium style out before upgrading your plan.'
+						) }
+					/>
+				) }
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview label={ variation.title } />
 				</GlobalStylesContext.Provider>
