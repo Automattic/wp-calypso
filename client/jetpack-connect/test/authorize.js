@@ -354,14 +354,22 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'getRedirectionTarget', () => {
-		test( 'should redirect to pressable if partnerSlug is "pressable"', async () => {
-			const originalWindowLocation = global.window.location;
+		let originalWindowLocation;
+
+		beforeEach( () => {
+			originalWindowLocation = global.window.location;
 			delete global.window.location;
 			global.window.location = {
 				href: 'http://wwww.example.com',
 				origin: 'http://www.example.com',
 			};
+		} );
 
+		afterEach( () => {
+			global.window.location = originalWindowLocation;
+		} );
+
+		test( 'should redirect to pressable if partnerSlug is "pressable"', async () => {
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -379,19 +387,10 @@ describe( 'JetpackAuthorize', () => {
 
 			const target = global.window.location.href;
 
-			global.window.location = originalWindowLocation;
-
 			expect( target ).toBe( `/start/pressable-nux?blogid=${ DEFAULT_PROPS.authQuery.clientId }` );
 		} );
 
 		test( 'should redirect to /checkout if the selected plan/product is Jetpack plan/product', async () => {
-			const originalWindowLocation = global.window.location;
-			delete global.window.location;
-			global.window.location = {
-				href: 'http://wwww.example.com',
-				origin: 'http://www.example.com',
-			};
-
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -409,13 +408,10 @@ describe( 'JetpackAuthorize', () => {
 
 			const target = global.window.location.href;
 
-			global.window.location = originalWindowLocation;
-
 			expect( target ).toBe( `/checkout/${ SITE_SLUG }/${ OFFER_RESET_FLOW_TYPES[ 0 ] }` );
 		} );
 
 		test( 'should redirect to wp-admin when site has a purchased plan/product', async () => {
-			const originalWindowLocation = global.window.location;
 			delete global.window.location;
 			global.window.location = {
 				href: 'http://wwww.example.com',
@@ -439,19 +435,10 @@ describe( 'JetpackAuthorize', () => {
 
 			const target = global.window.location.href;
 
-			global.window.location = originalWindowLocation;
-
 			expect( target ).toBe( DEFAULT_PROPS.authQuery.redirectAfterAuth );
 		} );
 
 		test( 'should redirect to /jetpack/connect/plans when user has an unattached "user"(not partner) license key', async () => {
-			const originalWindowLocation = global.window.location;
-			delete global.window.location;
-			global.window.location = {
-				href: 'http://wwww.example.com',
-				origin: 'http://www.example.com',
-			};
-
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -469,8 +456,6 @@ describe( 'JetpackAuthorize', () => {
 
 			const target = global.window.location.href;
 
-			global.window.location = originalWindowLocation;
-
 			expect( target ).toBe(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
 					DEFAULT_PROPS.authQuery.redirectAfterAuth
@@ -479,13 +464,6 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'should redirect to redirect to the /jetpack/connect/plans page by default', async () => {
-			const originalWindowLocation = global.window.location;
-			delete global.window.location;
-			global.window.location = {
-				href: 'http://wwww.example.com',
-				origin: 'http://www.example.com',
-			};
-
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -501,8 +479,6 @@ describe( 'JetpackAuthorize', () => {
 			await userEvent.click( screen.getByText( 'Return to your site' ) );
 
 			const target = global.window.location.href;
-
-			global.window.location = originalWindowLocation;
 
 			expect( target ).toBe(
 				`${ JPC_PATH_PLANS }/${ SITE_SLUG }?redirect=${ encodeURIComponent(
