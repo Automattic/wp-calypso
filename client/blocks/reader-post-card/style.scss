@@ -719,7 +719,7 @@
 	}
 
 	&.four-images {
-		border-radius: 6px;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		height: 302px;
 		max-height: 302px;
 
@@ -741,34 +741,34 @@
 			.reader-featured-image,
 			.reader-featured-image::after,
 			img {
-				border-top-left-radius: 6px;
+				border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 		.reader-post-card__featured-images-item:nth-child(2) {
 			.reader-featured-image,
 			.reader-featured-image::after,
 			img {
-				border-top-right-radius: 6px;
+				border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 		.reader-post-card__featured-images-item:nth-child(3) {
 			.reader-featured-image,
 			.reader-featured-image::after,
 			img {
-				border-bottom-left-radius: 6px;
+				border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 		.reader-post-card__featured-images-item:last-child {
 			.reader-featured-image,
 			.reader-featured-image::after,
 			img {
-				border-bottom-right-radius: 6px;
+				border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 	}
 
 	&.three-images {
-		border-radius: 6px;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 		.reader-featured-image {
 			border-radius: 0;
@@ -782,19 +782,19 @@
 		}
 		/* First image */
 		.reader-post-card__featured-images-item:first-child {
-			border-top-left-radius: 6px;
-			border-bottom-left-radius: 6px;
+			border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
+			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			max-height: 302px;
 			overflow: hidden;
 			width: calc(50% - 1px);
 			.reader-featured-image::after {
-				border-top-left-radius: 6px;
-				border-bottom-left-radius: 6px;
+				border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
+				border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 		.reader-post-card__featured-images-item:first-child img {
-			border-bottom-left-radius: 6px;
-			border-top-left-radius: 6px;
+			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
+			border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			height: 100%;
 			max-width: none;
 			object-fit: cover;
@@ -815,17 +815,17 @@
 
 				img {
 					border-radius: 0;
-					border-top-right-radius: 6px;
+					border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					object-fit: cover;
 				}
 				.reader-featured-image {
 					border-radius: 0;
-					border-top-right-radius: 6px;
+					border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					height: 150px;
 					overflow: hidden;
 
 					&::after {
-						border-top-right-radius: 6px;
+						border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					}
 				}
 			}
@@ -834,17 +834,17 @@
 
 				img {
 					border-radius: 0;
-					border-bottom-right-radius: 6px;
+					border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					object-fit: cover;
 				}
 				.reader-featured-image {
 					border-radius: 0;
-					border-bottom-right-radius: 6px;
+					border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					max-height: 150px;
 					overflow: hidden;
 
 					&::after {
-						border-bottom-right-radius: 6px;
+						border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
 					}
 				}
 			}
@@ -852,7 +852,7 @@
 	}
 
 	&.two-images {
-		border-radius: 6px;
+		border-radius: 6px; /* stylelint-disable-line scales/radii */
 
 		.reader-post-card__featured-images-item {
 			width: calc(50% - 1px);
@@ -874,17 +874,17 @@
 		.reader-post-card__featured-images-item:first-child {
 			.reader-featured-image,
 			.reader-featured-image::after,
-			img  {
-				border-bottom-left-radius: 6px;
-				border-top-left-radius: 6px;
+			img {
+				border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
+				border-top-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 		.reader-post-card__featured-images-item:last-child {
 			.reader-featured-image,
 			.reader-featured-image::after,
 			img {
-				border-bottom-right-radius: 6px;
-				border-top-right-radius: 6px;
+				border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
+				border-top-right-radius: 6px; /* stylelint-disable-line scales/radii */
 			}
 		}
 	}
@@ -907,7 +907,7 @@
 			bottom: 0;
 			right: 0;
 			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
-			border-radius: 6px;
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
 	}
 }
