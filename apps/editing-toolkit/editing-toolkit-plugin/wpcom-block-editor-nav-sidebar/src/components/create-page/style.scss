@@ -14,7 +14,7 @@ $create-page-text-color: #a2aab2;
 
 	&:focus {
 		color: $white;
-		border: 1px solid $white;
+		border: 1px solid var(--studio-white);
 		box-shadow: none !important;
 		outline: none !important;
 		border-radius: 0;
@@ -22,8 +22,8 @@ $create-page-text-color: #a2aab2;
 	}
 
 	svg {
-		background: white;
-		color: black;
+		background: var(--studio-white);
+		color: var(--studio-black);
 		border-radius: 2px;
 	}
 }
