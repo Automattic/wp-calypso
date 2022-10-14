@@ -303,7 +303,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 		if ( siteSlugOrId ) {
 			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// If we have a theme selected, add &theme=slug to the query params
+			if ( selectedDesign?.slug ) {
+				destSearchP.set( 'theme', selectedDesign?.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
 
 			// The theme upsell link does not work with siteId and requires a siteSlug.
 			// See https://github.com/Automattic/wp-calypso/pull/64899
