@@ -170,6 +170,7 @@
 // The actual list of sites
 .site-selector__sites {
 	flex: 1;
+	max-height: calc(100% - 93px);
 	overflow-y: auto;
 	background: var(--color-surface);
 

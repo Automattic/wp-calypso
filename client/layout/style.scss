@@ -163,7 +163,7 @@ body.is-focus-sites {
 		left: 0;
 		pointer-events: none;
 		transform: translateX(calc(-1 * var(--sidebar-width-max)));
-		height: calc(100vh - var(--masterbar-height));
+		//height: calc(100vh - var(--masterbar-height));
 
 		&.is-large .site-selector__sites {
 			border-color: var(--color-sidebar-border);
