@@ -13,12 +13,23 @@ export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const updateLanguage = ( event ) => {
-		const { value, empathyMode } = event.target;
+		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		if ( typeof empathyMode !== 'undefined' ) {
-			setUserSetting( 'i18n_empathy_mode', empathyMode );
+			dispatch( setUserSetting( 'i18n_empathy_mode', empathyMode ) );
+		}
+		if ( typeof useFallbackForIncompleteLanguages !== 'undefined' ) {
+			dispatch(
+				setUserSetting( 'use_fallback_for_incomplete_languages', useFallbackForIncompleteLanguages )
+			);
 		}
 		dispatch( setUserSetting( 'language', value ) );
-		dispatch( saveUnsavedUserSettings( [ 'language' ] ) ).then( () => {
+		dispatch(
+			saveUnsavedUserSettings( [
+				'i18n_empathy_mode',
+				'use_fallback_for_incomplete_languages',
+				'language',
+			] )
+		).then( () => {
 			window.location.reload();
 		} );
 	};
@@ -32,6 +43,7 @@ export function AccountSettingsHelper() {
 					valueKey="langSlug"
 					value={ userSettings?.locale_variant || userSettings.language || '' }
 					empathyMode={ userSettings?.i18n_empathy_mode }
+					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }
 				/>
 			</div>
