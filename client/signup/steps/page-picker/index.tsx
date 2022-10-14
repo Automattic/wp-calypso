@@ -3,6 +3,7 @@ import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -140,7 +141,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
-				<InfoPopover showOnHover={ true } position="top">
+				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top' }>
 					{ description }
 				</InfoPopover>
 			</CellLabelContainer>
