@@ -110,17 +110,7 @@ const makeImagesSafe = ( maxWidth ) => ( post, dom ) => {
 	}
 
 	const images = dom.querySelectorAll( 'img[src]' );
-	forEach( images, ( image ) => {
-		makeImageSafe( post, image, maxWidth );
-		// Add container wrapper for img elements
-		const parent = image.parentNode;
-		const imageWrapper = document.createElement( 'div' );
-		imageWrapper.className = 'image-wrapper';
-		// set the wrapper as child (instead of the element)
-		parent.replaceChild( imageWrapper, image );
-		// set element as child of wrapper
-		imageWrapper.appendChild( image );
-	} );
+	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
 
 	return post;
 };
