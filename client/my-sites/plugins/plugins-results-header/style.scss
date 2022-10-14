@@ -10,7 +10,7 @@
 
 		.plugins-results-header__title {
 			@extend .wp-brand-font;
-			font-size: rem(26px); //typography-exception
+			font-size: $font-title-medium;
 			font-weight: 500;
 		}
 
