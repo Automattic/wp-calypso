@@ -72,7 +72,9 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function checkOriginSiteJetpackConnection() {
-		if ( ! fromSite ) return;
+		if ( ! fromSite ) {
+			return;
+		}
 
 		wpcom
 			.site( fromSite )

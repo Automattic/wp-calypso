@@ -15,7 +15,7 @@ import type { SiteData } from '../../types';
 describe( '<SiteTableRow>', () => {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
-		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=1' )
+		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
 		.reply( 200, {
 			connected: false,
 		} );

@@ -10,6 +10,12 @@ export function ReactQueryDevtoolsHelper() {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
 
+export function AccountSettingsHelper() {
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return <div className="environment is-account-settings" />;
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
 export function PreferencesHelper() {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return <div className="environment is-prefs" />;

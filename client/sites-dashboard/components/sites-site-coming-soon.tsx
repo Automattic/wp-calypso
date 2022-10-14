@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { __ } from '@wordpress/i18n';
+import { __, isRTL } from '@wordpress/i18n';
 
 type Props = {
 	siteName?: string;
@@ -24,6 +24,7 @@ const Root = styled.div( {
 const comingSoonTranslations: Record< string, string > = {
 	ar: 'قريبًا',
 	de: 'Demnächst verfügbar',
+	en: 'Coming Soon',
 	es: 'Próximamente',
 	fr: 'Bientôt disponible',
 	he: 'בקרוב',
@@ -44,17 +45,22 @@ const comingSoonTranslations: Record< string, string > = {
 
 const getTranslation = ( lang?: string ) => {
 	let text = __( 'Coming Soon' );
+	let isRtl = isRTL();
+
 	if ( lang ) {
 		lang = lang.split( '-' )[ 0 ];
 		if ( comingSoonTranslations[ lang ] ) {
 			text = comingSoonTranslations[ lang ];
+			isRtl = lang === 'ar' || lang === 'he';
 		}
 	}
-	return text;
+
+	return { text, isRtl };
 };
 
 export const SiteComingSoon = ( { siteName = '', className, lang, width, height }: Props ) => {
-	const comingSoon = getTranslation( lang );
+	const { text: comingSoon, isRtl } = getTranslation( lang );
+	const x = isRtl ? 375 - 31 : 31;
 	return (
 		<Root className={ className }>
 			<svg
@@ -63,6 +69,8 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 				viewBox="0 0 375 272"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
+				textAnchor={ 'start' }
+				direction={ isRtl ? 'rtl' : 'ltr' }
 			>
 				<title>{ comingSoon }</title>
 				<text
@@ -70,7 +78,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 					fontFamily="Recoleta, Georgia, 'Times New Roman', Times, serif"
 					fontSize="30"
 				>
-					<tspan x="31" y="153.016">
+					<tspan x={ x } y="153.016">
 						{ comingSoon }
 					</tspan>
 				</text>
@@ -79,7 +87,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 					fontFamily='-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif'
 					fontSize="14"
 				>
-					<tspan x="31" y="120.102">
+					<tspan x={ x } y="120.102">
 						{ siteName }
 					</tspan>
 				</text>

@@ -743,7 +743,9 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+			return null;
+		}
 
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
