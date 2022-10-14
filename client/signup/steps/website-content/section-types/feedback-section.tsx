@@ -24,6 +24,7 @@ export function FeedbackSection( {
 	};
 	return (
 		<TextAreaField
+			rows={ 3 }
 			name="generic_feedback"
 			onChange={ onContentChange }
 			value={ data.genericFeedback }

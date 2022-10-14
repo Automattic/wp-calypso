@@ -72,7 +72,7 @@ export function logoRemoved() {
 export function updateFeedback( feedback: string ) {
 	return {
 		type: BBE_UPDATE_GENERIC_FEEDBACK,
-		paylod: { feedback },
+		payload: { feedback },
 	};
 }
 

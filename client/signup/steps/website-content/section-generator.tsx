@@ -138,7 +138,7 @@ const generateFeedbackSection = (
 	return {
 		sectionsDetails: [
 			{
-				title: translate( '%(fieldNumber)d. Feedback Section', {
+				title: translate( '%(fieldNumber)d. Submit Content', {
 					args: {
 						fieldNumber,
 					},
