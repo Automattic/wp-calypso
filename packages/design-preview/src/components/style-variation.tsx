@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
 import Preview from '@wordpress/edit-site/build-module/components/global-styles/preview';
@@ -14,6 +15,7 @@ interface StyleVariationPreviewProps {
 	variation: StyleVariation;
 	base?: StyleVariation;
 	isSelected: boolean;
+	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
 }
 
@@ -21,6 +23,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
 	base = {},
 	isSelected,
+	isPremium,
 	onClick,
 } ) => {
 	const context = useMemo( () => {
@@ -51,6 +54,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 			>
+				{ isEnabled( 'limit-global-styles' ) && isPremium && <div>Premium</div> }
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview label={ variation.title } />
 				</GlobalStylesContext.Provider>
@@ -84,6 +88,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					variation={ variation }
 					base={ base }
 					isSelected={ variation.slug === selectedVariationSlug }
+					isPremium={ variation.slug !== DEFAULT_VARIATION_SLUG }
 					onClick={ onClick }
 				/>
 			) ) }
