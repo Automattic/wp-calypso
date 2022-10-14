@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
@@ -36,6 +36,7 @@ export const importFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
 		const isDesktop = useViewportMatch( 'large' );
+		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 		const appendFlowQueryParam = ( path: string ) => {
@@ -45,7 +46,13 @@ export const importFlow: Flow = {
 		};
 
 		const exitFlow = ( to: string ) => {
-			window.location.assign( to as string );
+			setPendingAction( () => {
+				return new Promise( () => {
+					if ( ! siteSlugParam ) return;
+
+					window.location.assign( to );
+				} );
+			} );
 
 			return navigate( 'processing' );
 		};
