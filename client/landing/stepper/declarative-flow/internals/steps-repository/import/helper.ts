@@ -55,8 +55,11 @@ export function generateStepPath(
 	stepName: string | StepPath,
 	stepSectionName?: string
 ): StepPath {
-	if ( stepName === 'intent' ) return 'goals';
-	else if ( stepName === 'capture' ) return BASE_ROUTE;
+	if ( stepName === 'intent' ) {
+		return 'goals';
+	} else if ( stepName === 'capture' ) {
+		return BASE_ROUTE;
+	}
 
 	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
 	const path = routes.join( '_' );
