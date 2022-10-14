@@ -11,10 +11,10 @@ import TimeSince from 'calypso/components/time-since';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
+import { PlanRenewNag } from './sites-plan-renew-nag';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
-import { SiteRenewNag } from './sites-site-renew-nag';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -137,7 +137,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</SitePlanIcon>
 					) }
 					{ site.plan?.expired ? (
-						<SiteRenewNag site={ site } />
+						<PlanRenewNag plan={ site.plan } checkoutUrl={ `/checkout/${ site.slug }` } />
 					) : (
 						<>{ site.plan?.product_name_short }</>
 					) }

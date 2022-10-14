@@ -1,19 +1,20 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
+import { SiteDetailsPlan } from '@automattic/launch/src/stores';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-const SITE_RENEW_NAG_IN_VIEW = 'calypso_sites_dashboard_site_renew_nag_inview';
-const SITE_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_site_renew_nag_click';
+const PLAN_RENEW_NAG_IN_VIEW = 'calypso_sites_dashboard_plan_renew_nag_inview';
+const PLAN_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_plan_renew_nag_click';
 
-interface SiteRenewProps {
-	site: SiteExcerptData;
+interface PlanRenewProps {
+	plan: SiteDetailsPlan;
+	checkoutUrl: string;
 }
 
-const SiteRenewContainer = styled.div`
+const PlanRenewContainer = styled.div`
 	display: flex;
 	white-space: break-spaces;
 	justify-items: flex-start;
@@ -21,7 +22,7 @@ const SiteRenewContainer = styled.div`
 	margin-top: -5px;
 `;
 
-const SiteRenewLink = styled.a( {
+const PlanRenewLink = styled.a( {
 	whiteSpace: 'nowrap',
 	textDecoration: 'underline',
 } );
@@ -31,50 +32,50 @@ const IconContainer = styled.div`
 	margin-top: -2px;
 `;
 
-const SiteRenewNotice = styled.div`
+const PlanRenewNotice = styled.div`
 	display: flex;
 	flex-direction: column;
 	color: #ea303f;
 	gap: 4px;
 `;
 
-export const SiteRenewNag = ( { site }: SiteRenewProps ) => {
+export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
-	const isSiteOwner = site.plan?.user_is_owner || false;
+	const isSiteOwner = plan.user_is_owner;
 
 	useEffect( () => {
 		if ( inViewOnce ) {
-			recordTracksEvent( SITE_RENEW_NAG_IN_VIEW, { is_site_owner: isSiteOwner } );
+			recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, { is_site_owner: isSiteOwner } );
 		}
 	}, [ inViewOnce, isSiteOwner ] );
 
 	const renewText = __( 'Renew' );
 	return (
-		<SiteRenewContainer ref={ ref }>
+		<PlanRenewContainer ref={ ref }>
 			<IconContainer>
 				{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size*/ }
 				<Gridicon icon="notice" size={ 20 } />
 			</IconContainer>
-			<SiteRenewNotice>
+			<PlanRenewNotice>
 				{ sprintf(
 					/* translators: %s - the plan's product name */
 					__( '%s - Expired' ),
-					site.plan?.product_name_short
+					plan.product_name_short
 				) }
 				{ isSiteOwner && (
-					<SiteRenewLink
+					<PlanRenewLink
 						onClick={ () => {
-							recordTracksEvent( SITE_RENEW_NAG_ON_CLICK );
+							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK );
 						} }
-						href={ `/checkout/${ site.slug }` }
+						href={ checkoutUrl }
 						title={ renewText }
 					>
 						{ renewText }
-					</SiteRenewLink>
+					</PlanRenewLink>
 				) }
-			</SiteRenewNotice>
-		</SiteRenewContainer>
+			</PlanRenewNotice>
+		</PlanRenewContainer>
 	);
 };
