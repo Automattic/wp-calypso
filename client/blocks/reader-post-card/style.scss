@@ -402,12 +402,10 @@
 
 .reader-post-card__byline .reader-avatar {
 	flex-shrink: 0;
+	margin-right: 6px;
 
-	&.has-gravatar {
-		margin-right: 6px;
-	}
-
-	.gravatar {
+	.gravatar,
+	.gridicon {
 		float: left;
 		height: 40px;
 		margin: 4px 6px 0 0;
