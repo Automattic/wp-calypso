@@ -13,60 +13,33 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
 type UpsellProps = {
-	href?: string;
-	buttonText: string;
-	disabled: boolean;
-	onClick?: () => void;
-	onDismiss?: () => void;
 	children: React.ReactChild;
 	image: string;
 };
 
-function Upsell( { buttonText, children, image, onDismiss, ...buttonProps }: UpsellProps ) {
-	const translate = useTranslate();
-
+function Upsell( { children, image }: UpsellProps ) {
 	return (
 		<div className="cancel-purchase-form__upsell">
 			<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
-			<div className="cancel-purchase-form__upsell-description">
-				{ children }
-				<Button { ...buttonProps } isPrimary>
-					{ buttonText }
-				</Button>
-				<Button onClick={ onDismiss }>{ translate( 'Dismiss' ) }</Button>
-			</div>
+			<div className="cancel-purchase-form__upsell-description">{ children }</div>
 		</div>
 	);
 }
 
 type StepProps = {
 	upsell: string;
-	purchase: Purchase;
 	site: SiteDetails;
-	disabled: boolean;
+	purchase: Purchase;
 	refundAmount: string;
 	downgradePlanPrice: number | null;
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: object;
-	freeMonthOfferClick?: () => void;
-	downgradeClick?: ( upsell: string ) => void;
 };
 
-export default function UpsellStep( { upsell, purchase, site, disabled, ...props }: StepProps ) {
-	const translate = useTranslate();
-
-	if ( ! upsell ) {
-		return null;
-	}
-
+export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	if ( upsell === 'business-atomic' ) {
 		return (
-			<Upsell
-				// onClick={ this.closeDialog }
-				buttonText={ translate( 'Keep my plan' ) }
-				image={ pluginsThemesImage }
-				disabled={ disabled }
-			>
+			<Upsell image={ pluginsThemesImage }>
 				<BusinessATStep />
 			</Upsell>
 		);
@@ -74,13 +47,7 @@ export default function UpsellStep( { upsell, purchase, site, disabled, ...props
 
 	if ( upsell === 'upgrade-atomic' ) {
 		return (
-			<Upsell
-				href={ `/checkout/${ site.slug }/business?coupon=BIZC25` }
-				onClick={ () => recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' ) }
-				buttonText={ translate( 'Upgrade my site' ) }
-				image={ pluginsThemesImage }
-				disabled={ disabled }
-			>
+			<Upsell image={ pluginsThemesImage }>
 				<UpgradeATStep selectedSite={ site } />
 			</Upsell>
 		);
@@ -88,12 +55,7 @@ export default function UpsellStep( { upsell, purchase, site, disabled, ...props
 
 	if ( upsell === 'free-month-offer' ) {
 		return (
-			<Upsell
-				onClick={ props.freeMonthOfferClick }
-				buttonText={ translate( 'Get a free month' ) }
-				image={ rocketImage }
-				disabled={ disabled }
-			>
+			<Upsell image={ rocketImage }>
 				<FreeMonthOfferStep productSlug={ purchase.productSlug } />
 			</Upsell>
 		);
@@ -102,18 +64,9 @@ export default function UpsellStep( { upsell, purchase, site, disabled, ...props
 	if ( upsell === 'downgrade-personal' || upsell === 'downgrade-monthly' ) {
 		const { precision } = getCurrencyDefaults( purchase.currencyCode );
 		const planCost = ( props.downgradePlanPrice || 0 ).toFixed( precision );
-		const buttonText =
-			upsell === 'downgrade-monthly'
-				? translate( 'Switch to a monthly subscription' )
-				: translate( 'Switch to Personal' );
 
 		return (
-			<Upsell
-				onClick={ () => props.downgradeClick?.( upsell ) }
-				buttonText={ buttonText }
-				image={ downgradeImage }
-				disabled={ disabled }
-			>
+			<Upsell image={ downgradeImage }>
 				<DowngradeStep
 					currencySymbol={ purchase.currencySymbol }
 					planCost={ planCost }
@@ -128,3 +81,67 @@ export default function UpsellStep( { upsell, purchase, site, disabled, ...props
 
 	return null;
 }
+
+type ButtonProps = {
+	upsell: string;
+	label: string;
+	disabled: boolean;
+	siteSlug: string;
+	closeDialog: () => void;
+	freeMonthOfferClick?: () => void;
+	downgradeClick?: ( upsell: string ) => void;
+};
+
+export function UpsellStepButton( { disabled, upsell, siteSlug, ...props }: ButtonProps ) {
+	const translate = useTranslate();
+	const buttonProps = {
+		disabled,
+		isPrimary: true,
+		isDefault: true,
+	};
+
+	if ( upsell === 'business-atomic' ) {
+		return (
+			<Button { ...buttonProps } onClick={ props.closeDialog }>
+				{ translate( 'Keep my plan' ) }
+			</Button>
+		);
+	}
+
+	if ( upsell === 'upgrade-atomic' ) {
+		return (
+			<Button
+				{ ...buttonProps }
+				href={ `/checkout/${ siteSlug }/business?coupon=BIZC25` }
+				onClick={ () => recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' ) }
+			>
+				{ translate( 'Upgrade my site' ) }
+			</Button>
+		);
+	}
+
+	if ( upsell === 'free-month-offer' && props.freeMonthOfferClick ) {
+		return (
+			<Button { ...buttonProps } onClick={ props.freeMonthOfferClick }>
+				{ translate( 'Get a free month' ) }
+			</Button>
+		);
+	}
+
+	if ( [ 'downgrade-monthly', 'downgrade-personal' ].includes( upsell ) && props.downgradeClick ) {
+		const buttonText =
+			upsell === 'downgrade-monthly'
+				? translate( 'Switch to a monthly subscription' )
+				: translate( 'Switch to Personal' );
+
+		return (
+			<Button { ...buttonProps } onClick={ () => props.downgradeClick?.( upsell ) }>
+				{ buttonText }
+			</Button>
+		);
+	}
+
+	return null;
+}
+
+UpsellStep.Button = UpsellStepButton;

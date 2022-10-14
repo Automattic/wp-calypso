@@ -381,6 +381,7 @@ class CancelPurchaseForm extends Component {
 				<UpsellStep
 					purchase={ purchase }
 					site={ site }
+					upsell={ this.state.upsell }
 					disabled={ this.state.isSubmitting }
 					downgradePlanPrice={ this.props.downgradePlanPrice }
 					downgradeClick={ this.downgradeClick }
@@ -553,6 +554,12 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( isPlan( purchase ) ) {
+			if ( this.state.surveyStep === UPSELL_STEP ) {
+				return isRemoveFlow
+					? translate( 'Remove my current plan' )
+					: translate( 'Cancel my current plan' );
+			}
+
 			return isRemoveFlow
 				? translate( 'Submit and remove plan' )
 				: translate( 'Submit and cancel plan' );
@@ -563,7 +570,7 @@ class CancelPurchaseForm extends Component {
 			: translate( 'Submit and cancel product' );
 	}
 
-	renderStepButton = () => {
+	renderStepButtons = () => {
 		const { translate, disableButtons } = this.props;
 		const { isSubmitting, surveyStep } = this.state;
 		const isCancelling = disableButtons || isSubmitting;
@@ -585,15 +592,28 @@ class CancelPurchaseForm extends Component {
 		}
 
 		return (
-			<GutenbergButton
-				isPrimary
-				isDefault
-				isBusy={ isCancelling }
-				disabled={ ! this.canGoNext() }
-				onClick={ this.onSubmit }
-			>
-				{ this.getFinalActionText() }
-			</GutenbergButton>
+			<>
+				<GutenbergButton
+					isPrimary={ surveyStep !== UPSELL_STEP }
+					isSecondary={ surveyStep === UPSELL_STEP }
+					isDefault={ surveyStep !== UPSELL_STEP }
+					isBusy={ isCancelling }
+					disabled={ ! this.canGoNext() }
+					onClick={ this.onSubmit }
+				>
+					{ this.getFinalActionText() }
+				</GutenbergButton>
+				{ surveyStep === UPSELL_STEP && (
+					<UpsellStep.Button
+						disabled={ isSubmitting }
+						siteSlug={ this.props.site.slug }
+						upsell={ this.state.upsell }
+						closeDialog={ this.closeDialog }
+						freeMonthOfferClick={ this.freeMonthOfferClick }
+						downgradeClick={ this.downgradeClick }
+					/>
+				) }
+			</>
 		);
 	};
 
@@ -661,14 +681,12 @@ class CancelPurchaseForm extends Component {
 	}
 
 	render() {
+		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
 		const { surveyStep } = this.state;
+
 		if ( ! surveyStep ) {
 			return null;
 		}
-
-		const { isChatActive, isChatAvailable, purchase, site, supportVariation, translate } =
-			this.props;
-		const steps = this.getAllSurveySteps();
 
 		return (
 			<>
@@ -680,21 +698,11 @@ class CancelPurchaseForm extends Component {
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
 							{ this.getHeaderTitle() }
 							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
-							{ steps.length > 1 && (
-								<span className="cancel-purchase-form__step">
-									{ translate( 'Step %(currentStep)d of %(totalSteps)d', {
-										args: {
-											currentStep: steps.indexOf( surveyStep ) + 1,
-											totalSteps: steps.length,
-										},
-									} ) }
-								</span>
-							) }
 						</BlankCanvas.Header>
 						<BlankCanvas.Content>{ this.surveyContent() }</BlankCanvas.Content>
 						<BlankCanvas.Footer>
 							<div className="cancel-purchase-form__actions">
-								<div className="cancel-purchase-form__buttons">{ this.renderStepButton() }</div>
+								<div className="cancel-purchase-form__buttons">{ this.renderStepButtons() }</div>
 								{ ( isChatAvailable || isChatActive ) && supportVariation === SUPPORT_HAPPYCHAT && (
 									<PrecancellationChatButton
 										icon="chat_bubble"
