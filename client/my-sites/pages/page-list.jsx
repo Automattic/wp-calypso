@@ -27,53 +27,6 @@ import Page from './page';
 import Placeholder from './placeholder';
 import VirtualPages from './virtual-pages';
 
-export default class PageList extends Component {
-	static propTypes = {
-		search: PropTypes.string,
-		siteId: PropTypes.number,
-		status: PropTypes.string,
-		query: PropTypes.shape( {
-			author: PropTypes.number, // User ID
-			status: PropTypes.string,
-			type: PropTypes.string.isRequired,
-		} ),
-	};
-
-	state = {
-		page: 1,
-	};
-
-	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
-	};
-
-	render() {
-		const { search, siteId, query } = this.props;
-		const { page } = this.state;
-
-		if ( config.isEnabled( 'page/export' ) ) {
-			// we need the raw content of the pages to be able to export them
-			query.context = 'edit';
-		}
-
-		// Since searches are across all statuses, the status needs to be shown
-		// next to each post.
-		const showPublishedStatus = Boolean( search );
-
-		return (
-			<div>
-				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
-				<ConnectedPages
-					incrementPage={ this.incrementPage }
-					query={ { ...query, page } }
-					siteId={ siteId }
-					showPublishedStatus={ showPublishedStatus }
-				/>
-			</div>
-		);
-	}
-}
-
 class Pages extends Component {
 	static propTypes = {
 		incrementPage: PropTypes.func.isRequired,
@@ -393,3 +346,50 @@ const mapState = ( state, { query, siteId } ) => ( {
 } );
 
 const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );
+
+export default class PageList extends Component {
+	static propTypes = {
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+		query: PropTypes.shape( {
+			author: PropTypes.number, // User ID
+			status: PropTypes.string,
+			type: PropTypes.string.isRequired,
+		} ),
+	};
+
+	state = {
+		page: 1,
+	};
+
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	};
+
+	render() {
+		const { search, siteId, query } = this.props;
+		const { page } = this.state;
+
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the raw content of the pages to be able to export them
+			query.context = 'edit';
+		}
+
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( search );
+
+		return (
+			<div>
+				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
+				<ConnectedPages
+					incrementPage={ this.incrementPage }
+					query={ { ...query, page } }
+					siteId={ siteId }
+					showPublishedStatus={ showPublishedStatus }
+				/>
+			</div>
+		);
+	}
+}
