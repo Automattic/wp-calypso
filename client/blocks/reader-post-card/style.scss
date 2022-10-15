@@ -363,10 +363,6 @@
 	&::after {
 		@include long-content-fade( $size: 10% );
 	}
-
-	@include breakpoint-deprecated( ">660px" ) {
-		width: calc(100% - 90px);
-	}
 }
 
 .reader-post-card__timestamp-and-tag {
@@ -407,11 +403,8 @@
 .reader-post-card__byline .reader-avatar {
 	flex-shrink: 0;
 
-	&.has-gravatar {
-		margin-right: 6px;
-	}
-
-	.gravatar {
+	.gravatar,
+	.gridicon {
 		float: left;
 		height: 40px;
 		margin: 4px 6px 0 0;
