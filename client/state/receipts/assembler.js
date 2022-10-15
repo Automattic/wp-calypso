@@ -50,7 +50,7 @@ export function createReceiptObject( data ) {
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
  *
- * @param {import('./types').RawReceiptPurchases} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+ * @param {import('./types').RawReceiptPurchases | Array<void>} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
  * @returns {Array<import('./types').RawReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
 function flattenPurchases( purchases ) {
@@ -61,7 +61,7 @@ function flattenPurchases( purchases ) {
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
  *
- * @param {import('./types').RawFailedReceiptPurchases} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
+ * @param {import('./types').RawFailedReceiptPurchases | Array<void>} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
  * @returns {Array<import('./types').RawFailedReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
 function flattenFailedPurchases( purchases ) {
