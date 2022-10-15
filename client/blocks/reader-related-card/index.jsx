@@ -14,7 +14,6 @@ import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-f
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
-import { READER_RELATED_IMAGE_WIDTH } from 'calypso/state/reader/posts/sizes';
 import { getSite } from 'calypso/state/reader/sites/selectors';
 
 import './style.scss';
@@ -132,10 +131,10 @@ export function RelatedPostCard( {
 			<ReaderFeaturedImage
 				canonicalMedia={ canonicalMedia }
 				imageUrl={ canonicalMedia.src }
-				imageWidth={ READER_RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }
 				href={ postLink }
 				className={ 'reader-related-card__featured-image' }
+				children={ <div style={ { width: 'auto' } } /> }
 			/>
 		);
 	}
