@@ -244,12 +244,13 @@
 	}
 }
 .reader-related-card__byline-author {
-  cursor: pointer;
-  font-size: 12px;
-  margin-top: 2px;
-  white-space: nowrap;
+	cursor: pointer;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 12px;
+	margin-top: 2px;
+	white-space: nowrap;
 
-  &::after {
+	&::after {
 		@include long-content-fade( $size: 10% );
 	}
 
