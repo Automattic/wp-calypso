@@ -1,5 +1,6 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
-import { useRef } from '@wordpress/element';
+import { useRef, useState } from '@wordpress/element';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
@@ -54,6 +55,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
+	const clipboardButtonEl = useRef( null );
+	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const [ showClipboardButton, setShowClipboardButton ] = useState( false );
+
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
@@ -63,7 +68,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
-	const clipboardButtonEl = useRef( null );
 	if ( sidebarDomain ) {
 		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
 	}
@@ -91,7 +95,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				<div className="launchpad__url-box">
+				<div
+					className="launchpad__url-box"
+					onMouseEnter={ () => setShowClipboardButton( true ) }
+					onMouseLeave={ () => setShowClipboardButton( false ) }
+				>
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
 					<div className="launchpad__url-box-domain-text">
 						<span>{ siteName }</span>
@@ -99,18 +107,23 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					</div>
 					<ClipboardButton
 						text={ siteSlug }
-						className="launchpad__clipboard-button"
+						className={ classNames( 'launchpad__clipboard-button', {
+							hidden: ! showClipboardButton,
+						} ) }
 						borderless
 						compact
-						// TODO: Consider onCopy callback
-						// eslint-disable-next-line @typescript-eslint/no-empty-function
-						onCopy={ () => {} }
+						onCopy={ () => setClipboardCopied( true ) }
+						onMouseLeave={ () => setClipboardCopied( false ) }
 						ref={ clipboardButtonEl }
 					>
 						<Gridicon icon="clipboard" />
 					</ClipboardButton>
-					<Tooltip context={ clipboardButtonEl.current } isVisible={ true } position="top">
-						{ 'Copy Codes' }
+					<Tooltip
+						context={ clipboardButtonEl.current }
+						isVisible={ clipboardCopied }
+						position="top"
+					>
+						{ translate( 'Copied to clipboard!' ) }
 					</Tooltip>
 					{ sidebarDomain?.isWPCOMDomain && (
 						<a href={ `/domains/add/${ siteSlug }` }>

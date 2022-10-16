@@ -115,6 +115,16 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+
+	.launchpad__clipboard-button {
+		padding-left: 10px;
+		padding-right: 10px;
+		visibility: visible;
+	}
+}
+
+.hidden {
+	visibility: hidden;
 }
 
 .launchpad__url-box-domain-text {
