@@ -57,23 +57,19 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 /**
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
- *
- * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array<RawReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
-function flattenPurchases( purchases: RawReceiptPurchases ): Array< RawReceiptPurchase > {
+function flattenPurchases(
+	purchases: RawReceiptPurchases | Array< void >
+): Array< RawReceiptPurchase > {
 	return Object.values( purchases ).flat();
 }
 
 /**
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
- *
- * @param {object} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array<RawFailedReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
 function flattenFailedPurchases(
-	purchases: RawFailedReceiptPurchases
+	purchases: RawFailedReceiptPurchases | Array< void >
 ): Array< RawFailedReceiptPurchase > {
 	return Object.values( purchases ).flat();
 }
