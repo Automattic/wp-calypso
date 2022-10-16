@@ -14,8 +14,8 @@ import type {
  * @returns {ReceiptData} The formatted receipt data
  */
 export function createReceiptObject( data: RawReceiptData ): ReceiptData {
-	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases;
-	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases;
+	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases ?? {};
+	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases ?? {};
 
 	return {
 		receiptId: data.receipt_id,
