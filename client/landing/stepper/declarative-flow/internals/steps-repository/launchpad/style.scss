@@ -111,10 +111,13 @@
 	margin: 32px 0;
 	padding: 0 12px;
 
-	// truncate long domain names
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+
+	> div {
+		// truncate long domain names
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
 	.launchpad__clipboard-button {
 		padding-left: 10px;
