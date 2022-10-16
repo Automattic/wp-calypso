@@ -1,8 +1,8 @@
-import 'calypso/state/receipts/init';
-
 import { initialReceiptState } from 'calypso/state/receipts/initial';
-import { AppState } from 'calypso/types';
-import { ReceiptState } from './types';
+import type { ReceiptState } from './types';
+import type { AppState } from 'calypso/types';
+
+import 'calypso/state/receipts/init';
 
 export function getReceiptById(
 	state: AppState,
