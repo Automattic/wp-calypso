@@ -1,4 +1,4 @@
-import { ReceiptState } from './types';
+import type { ReceiptState } from './types';
 
 export const initialReceiptState: ReceiptState = {
 	data: null,
