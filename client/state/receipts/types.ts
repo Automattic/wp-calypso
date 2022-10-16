@@ -59,12 +59,12 @@ export interface RawReceiptData {
 	/**
 	 * Will only be an array if it is empty.
 	 */
-	purchases: RawReceiptPurchases | Array< void > | undefined;
+	purchases: RawReceiptPurchases | Array< void > | undefined | false;
 
 	/**
 	 * Will only be an array if it is empty.
 	 */
-	failed_purchases: RawFailedReceiptPurchases | Array< void > | undefined;
+	failed_purchases: RawFailedReceiptPurchases | Array< void > | undefined | false;
 }
 
 export type RawFailedReceiptPurchases = Record< string, RawFailedReceiptPurchase[] >;
