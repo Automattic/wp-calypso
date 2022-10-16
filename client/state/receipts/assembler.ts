@@ -14,8 +14,8 @@ import type {
  * @returns {ReceiptData} The formatted receipt data
  */
 export function createReceiptObject( data: RawReceiptData ): ReceiptData {
-	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases ?? {};
-	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases ?? {};
+	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases;
+	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases;
 
 	return {
 		receiptId: data.receipt_id,
@@ -23,7 +23,7 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 		currency: data.currency,
 		priceInteger: data.price_integer,
 		priceFloat: data.price_float,
-		purchases: flattenPurchases( purchases ).map( ( purchase ) => {
+		purchases: flattenPurchases( purchases || {} ).map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: Boolean( purchase.free_trial ),
@@ -42,7 +42,7 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 				willAutoRenew: Boolean( purchase.will_auto_renew ),
 			};
 		} ),
-		failedPurchases: flattenFailedPurchases( failedPurchases ).map( ( purchase ) => {
+		failedPurchases: flattenFailedPurchases( failedPurchases || {} ).map( ( purchase ) => {
 			return {
 				meta: purchase.product_meta,
 				productId: purchase.product_id,
