@@ -351,6 +351,11 @@ export class SiteSelector extends Component {
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
 				title={ multiSiteContext && multiSiteContext.navigationLabel }
+				showCount={ false }
+				showIcon={ true }
+				icon={
+					<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+				}
 			/>
 		);
 	}
