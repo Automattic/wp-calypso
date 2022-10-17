@@ -110,11 +110,10 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: { googleDriveExample },
-					alt: this.props.translate(
-						'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
-						{ textOnly: true }
-					),
+					src: googleDriveExample,
+					alt: this.props.translate( 'Connect to use Google sheets in Jetpack forms.', {
+						textOnly: true,
+					} ),
 				},
 				label: this.props.translate(
 					'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
