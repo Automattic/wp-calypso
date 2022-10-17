@@ -4,6 +4,7 @@ import { includes } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import googleDriveExample from 'calypso/assets/images/connections/google-drive-screenshot.jpg';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -109,7 +110,7 @@ class SharingServiceExamples extends Component {
 		return [
 			{
 				image: {
-					src: '/calypso/images/sharing/connections-google-photos.png',
+					src: { googleDriveExample },
 					alt: this.props.translate(
 						'{{strong}}Connect{{/strong}} to use Google sheets in Jetpack forms.',
 						{ textOnly: true }
