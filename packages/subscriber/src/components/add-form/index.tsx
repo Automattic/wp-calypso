@@ -30,6 +30,7 @@ interface Props {
 	showTitle?: boolean;
 	showSubtitle?: boolean;
 	showCsvUpload?: boolean;
+	showFormManualListLabel?: boolean;
 	submitBtnName?: string;
 	allowEmptyFormSubmit?: boolean;
 	manualListEmailInviting?: boolean;
@@ -50,6 +51,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		showTitle = true,
 		showSubtitle,
 		showCsvUpload,
+		showFormManualListLabel,
 		submitBtnName = __( 'Add subscribers' ),
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
@@ -361,6 +363,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 						return (
 							<div key={ i }>
+								{ showFormManualListLabel && i === 0 && (
+									<label className={ 'add-subscriber__form-label-emails' }>
+										<strong>{ __( 'Emails' ) }</strong>
+									</label>
+								) }
 								<TextControl
 									className={ showError ? 'is-error' : '' }
 									disabled={ inProgress }
