@@ -1,5 +1,6 @@
 import { Button, Spinner } from '@automattic/components';
-import { localize, LocalizeProps } from 'i18n-calypso';
+import { createInterpolateElement } from '@wordpress/element';
+import { useI18n } from '@wordpress/react-i18n';
 import { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -15,11 +16,11 @@ import './ssh-keys.scss';
 interface SshKeysProps {
 	siteId: number;
 	userId: number | null;
-	translate: LocalizeProps[ 'translate' ];
 	disabled: boolean;
 }
 
-function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
+function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
+	const { __ } = useI18n();
 	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
 		enabled: ! disabled,
 	} );
@@ -52,7 +53,7 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 	return (
 		<div className="ssh-keys">
 			<label htmlFor="attach-ssh-key" className="form-label">
-				{ translate( 'SSH Keys' ) }
+				{ __( 'SSH Keys' ) }
 			</label>
 
 			{ keys?.map( ( { name, fingerprint } ) => (
@@ -60,7 +61,7 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 					key={ fingerprint }
 					name={ name }
 					fingerprint={ fingerprint }
-					deleteText={ translate( 'Detach' ) }
+					deleteText={ __( 'Detach' ) }
 					userId={ userId }
 					siteId={ siteId }
 				/>
@@ -88,23 +89,26 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 						disabled={ attachingKey }
 						busy={ attachingKey }
 					>
-						<span>{ translate( 'Attach SSH key to site' ) }</span>
+						<span>{ __( 'Attach SSH key to site' ) }</span>
 					</Button>
 				</FormFieldset>
 			) }
 			{ showLinkToAddUserKey && (
 				<div>
-					<a href="/me/security/ssh-key">{ translate( 'Add an SSH key to your account' ) }</a>{ ' ' }
-					{ translate( 'in order to use it with this site.' ) }
+					{ createInterpolateElement(
+						__( '<a>Add an SSH key to your account</a> in order to use it with this site.' ),
+						{
+							a: <a href="/me/security/ssh-key" />,
+						}
+					) }
 				</div>
 			) }
 		</div>
 	);
 }
 
-export default connect( ( state, { siteId }: SshKeysProps ) => {
+export default connect( ( state ) => {
 	return {
 		userId: getCurrentUserId( state ),
-		siteId,
 	};
-} )( localize( SshKeys ) );
+} )( SshKeys );
