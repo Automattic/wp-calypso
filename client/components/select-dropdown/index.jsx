@@ -209,7 +209,7 @@ class SelectDropdown extends Component {
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					role="button"
-					aria-haspopup="true"
+					aria-haspopup="listbox"
 					aria-owns={ 'select-submenu-' + this.instanceId }
 					aria-controls={ 'select-submenu-' + this.instanceId }
 					aria-expanded={ this.state.isOpen }
