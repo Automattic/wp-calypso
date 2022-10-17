@@ -64,7 +64,13 @@ export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThum
 			site.options.is_wpforteams_site &&
 			getSiteLaunchStatus( site ) !== 'public'
 		) {
-			return <P2Thumbnail site={ site } displayMode={ displayMode } />;
+			return (
+				<P2Thumbnail
+					site={ site }
+					displayMode={ displayMode }
+					alt={ site.title || __( 'Site thumbnail' ) }
+				/>
+			);
 		}
 
 		if ( site.icon ) {

@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useI18n } from '@wordpress/react-i18n';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -84,11 +83,10 @@ const SiteIcon = styled.img< { isSmall: boolean } >(
 interface P2ThumbnailProps {
 	site: SiteExcerptData;
 	displayMode: SitesDisplayMode;
+	alt: string;
 }
 
-export function P2Thumbnail( { site, displayMode }: P2ThumbnailProps ) {
-	const { __ } = useI18n();
-
+export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 	if ( ! site.p2_thumbnail_elements ) {
 		return null;
 	}
@@ -117,7 +115,7 @@ export function P2Thumbnail( { site, displayMode }: P2ThumbnailProps ) {
 	return (
 		<Container
 			role={ 'img' }
-			aria-label={ __( 'Site Icon' ) }
+			aria-label={ alt }
 			style={ { backgroundColor: color_sidebar_background } }
 		>
 			{ renderContents() }
