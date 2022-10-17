@@ -73,12 +73,14 @@ const ListTileSubtitle = styled.div`
 `;
 
 const SitePlan = styled.div`
-	display: flex;
-	line-height: 16px;
+	display: inline-flex;
+	align-items: center;
 `;
 
 const SitePlanIcon = styled.div`
+	display: inline-block;
 	margin-inline-end: 6px;
+	max-height: 16px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
