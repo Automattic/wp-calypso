@@ -146,10 +146,13 @@ export function useLicenseIssuing(
 			dispatch(
 				setPurchasedLicense( {
 					selectedSite: selectedSite?.domain,
-					selectedProduct: {
-						name: getProductTitle( selectedProduct.name ),
-						key: licenseKey,
-					},
+					selectedProducts: [
+						{
+							name: getProductTitle( selectedProduct.name ),
+							key: licenseKey,
+							status: 'fulfilled',
+						},
+					],
 				} )
 			);
 		}
@@ -277,6 +280,215 @@ export function useLicenseIssuing(
 
 		issueLicense.mutate( { product } );
 	}, [ isLoading, product, paymentMethodRequired, issueLicense.mutate ] );
+
+	return [ issue, isLoading ];
+}
+
+/**
+ * Handle license issuing - multiple
+ *
+ */
+export function useIssueMultipleLicenses(
+	selectedProducts: Array< string >,
+	selectedSite?: { ID: number; domain: string } | null
+): [ () => void, boolean ] {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const sites = useSelector( getSites ).length;
+	const products = useProductsQuery( {
+		select: selectAlphaticallySortedProductOptions,
+	} );
+
+	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
+
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
+
+	const assignLicense = useAssignLicenseMutation( {
+		onError: ( error: Error ) => {
+			dispatch( errorNotice( error.message ) );
+		},
+	} );
+
+	const issueLicense = useIssueLicenseMutation( {
+		onError: ( error: APIError ) => {
+			let errorMessage;
+
+			switch ( error.code ) {
+				case 'missing_valid_payment_method':
+					errorMessage = translate(
+						'A primary payment method is required.{{br/}} ' +
+							'{{a}}Try adding a new payment method{{/a}} or contact support.',
+						{
+							components: {
+								a: (
+									<a
+										href={
+											'/partner-portal/payment-methods/add?return=/partner-portal/issue-license'
+										}
+									/>
+								),
+								br: <br />,
+							},
+						}
+					);
+					break;
+
+				default:
+					errorMessage = error.message;
+					break;
+			}
+
+			dispatch( errorNotice( errorMessage ) );
+		},
+		retry: ( errorCount, error ) => {
+			// If the user has just added their payment method it's likely that there's a slight delay before the API
+			// is made aware of this and allows the creation of the license.
+			// In order to make this a smoother experience for the user, we retry a couple of times silently if the
+			// error is missing_valid_payment_method but our local state shows that the user has a payment method.
+			if ( ! paymentMethodRequired && error?.code === 'missing_valid_payment_method' ) {
+				return errorCount < 5;
+			}
+
+			return false;
+		},
+	} );
+
+	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
+
+	const issue = useCallback( async () => {
+		if ( isLoading ) {
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_issue_mutiple_licenses_submit', {
+				products: selectedProducts,
+			} )
+		);
+
+		if ( paymentMethodRequired ) {
+			const nextStep = addQueryArgs(
+				{
+					products: selectedProducts.join( ',' ),
+				},
+				partnerPortalBasePath( '/payment-methods/add' )
+			);
+			page( nextStep );
+			return;
+		}
+
+		const requests: any[] = [];
+
+		selectedProducts.forEach( ( product ) => {
+			requests.push( issueLicense.mutateAsync( { product } ) );
+		} );
+		const promises = await Promise.allSettled( requests );
+
+		const selectedSiteId = selectedSite?.ID;
+
+		const assignLicenseSuccessRequests: any = [];
+
+		const assignedProducts: Array< any > = [];
+
+		promises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			if ( status === 'fulfilled' ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					assignedProducts.push( getProductTitle( selectedProduct.name ) );
+				}
+				if ( selectedSiteId ) {
+					assignLicenseSuccessRequests.push(
+						assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
+					);
+				}
+			}
+		} );
+
+		// Return if no request succeeded
+		if ( ! assignedProducts.length ) {
+			return;
+		}
+
+		dispatch(
+			recordTracksEvent( 'calypso_partner_portal_multiple_linceses_issued', {
+				products: assignedProducts,
+			} )
+		);
+
+		if ( ! selectedSiteId ) {
+			let nextStep = partnerPortalBasePath( '/licenses' );
+			if ( sites > 0 ) {
+				nextStep = partnerPortalBasePath( '/assign-license' );
+			}
+			dispatch(
+				successNotice(
+					translate(
+						'{{strong}}%(assignedProducts)s{{/strong}} was succesfully issued',
+						'{{strong}}%(assignedProducts)s{{/strong}} were succesfully issued',
+
+						{
+							count: assignedProducts.length,
+							args: {
+								assignedProducts: assignedProducts.join( ', ' ),
+								selectedSite,
+							},
+							components: {
+								strong: <strong />,
+							},
+						}
+					),
+					{
+						displayOnNextPage: true,
+					}
+				)
+			);
+			page.redirect( nextStep );
+		}
+
+		const assignLicensePromises = await Promise.allSettled( assignLicenseSuccessRequests );
+
+		const allProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] = [];
+
+		assignLicensePromises.forEach( ( promise: any ) => {
+			const { status, value: license } = promise;
+			const licenseKey = license.license_key;
+			const productSlug = licenseKey.split( '_' )[ 0 ];
+			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+			if ( selectedProduct ) {
+				const item = {
+					key: licenseKey,
+					name: getProductTitle( selectedProduct.name ),
+					status,
+				};
+				allProducts.push( item );
+			}
+		} );
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allProducts,
+		};
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
+		if ( fromDashboard ) {
+			return page.redirect( '/dashboard' );
+		}
+		// Show status in license page
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
+	}, [
+		isLoading,
+		dispatch,
+		selectedProducts,
+		paymentMethodRequired,
+		selectedSite,
+		fromDashboard,
+		issueLicense,
+		products?.data,
+		assignLicense,
+		sites,
+		translate,
+	] );
 
 	return [ issue, isLoading ];
 }
