@@ -27,7 +27,6 @@ import './style.scss';
 interface Props {
 	siteId: number;
 	flowName?: string;
-	showTitleEmoji?: boolean;
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
@@ -47,7 +46,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const {
 		siteId,
 		flowName,
-		showTitleEmoji,
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName = __( 'Add subscribers' ),
@@ -343,7 +341,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	return (
 		<div className={ 'add-subscriber' }>
 			<div className={ 'add-subscriber__title-container' }>
-				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
 				<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
 			</div>
 
