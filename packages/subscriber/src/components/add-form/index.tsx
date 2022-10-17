@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Title, NextButton, SkipButton } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -28,6 +28,7 @@ interface Props {
 	siteId: number;
 	flowName?: string;
 	showTitle?: boolean;
+	showSubtitle?: boolean;
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
@@ -48,6 +49,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		siteId,
 		flowName,
 		showTitle = true,
+		showSubtitle,
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName = __( 'Add subscribers' ),
@@ -345,6 +347,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 			{ showTitle && (
 				<div className={ 'add-subscriber__title-container' }>
 					<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
+					{ showSubtitle && (
+						<SubTitle>
+							{ __(
+								'Your subscribers will receive an email notification whenever you publish a new post.'
+							) }
+						</SubTitle>
+					) }
 				</div>
 			) }
 
