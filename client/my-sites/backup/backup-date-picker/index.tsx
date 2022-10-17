@@ -165,7 +165,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 							compact
 							borderless
 							className="backup-date-picker__button--previous"
-							aria-label="Go to previous date"
+							aria-label={ translate( 'Go to previous date' ) }
 						>
 							<Gridicon
 								icon="chevron-left"
@@ -206,7 +206,7 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 								compact
 								borderless
 								className="backup-date-picker__button--next"
-								aria-label="Go to next date"
+								aria-label={ translate( 'Go to next date' ) }
 							>
 								<Gridicon
 									icon="chevron-right"

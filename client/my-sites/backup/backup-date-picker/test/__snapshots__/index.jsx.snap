@@ -108,7 +108,7 @@ exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current 
 `;
 
 exports[`BackupDatePicker Shows month and date for the next date if it's in the same year as today 1`] = `
-<DocumentFragment>
+<div>
   <div
     class="backup-date-picker"
   >
@@ -211,7 +211,7 @@ exports[`BackupDatePicker Shows month and date for the next date if it's in the 
       </button>
     </div>
   </div>
-</DocumentFragment>
+</div>
 `;
 
 exports[`BackupDatePicker Shows month, date, and year for the next date if it's not the same year as today 1`] = `

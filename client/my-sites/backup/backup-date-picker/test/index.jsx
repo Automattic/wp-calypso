@@ -97,11 +97,11 @@ describe( 'BackupDatePicker', () => {
 		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const december4Of2020 = moment();
 
-		const { asFragment } = render(
+		const { container } = render(
 			<BackupDatePicker selectedDate={ december4Of2020 } onDateChange={ () => {} } />
 		);
 
-		expect( asFragment() ).toMatchSnapshot();
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( "Does not show the next date as 'Yesterday' even if it is yesterday", () => {
