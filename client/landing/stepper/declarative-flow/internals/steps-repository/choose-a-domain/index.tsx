@@ -118,7 +118,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'chooseADomain' }
+			stepName="chooseADomain"
 			shouldHideNavButtons={ isVideoPressFlow }
 			goBack={ goBack }
 			goNext={ goNext }

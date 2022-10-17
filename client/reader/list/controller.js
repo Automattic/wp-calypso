@@ -74,7 +74,7 @@ export const editList = ( context, next ) => {
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
-			selectedSection={ 'details' }
+			selectedSection="details"
 		/>
 	);
 	next();
@@ -97,7 +97,7 @@ export const editListItems = ( context, next ) => {
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
-			selectedSection={ 'items' }
+			selectedSection="items"
 		/>
 	);
 	next();
@@ -120,7 +120,7 @@ export const exportList = ( context, next ) => {
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
-			selectedSection={ 'export' }
+			selectedSection="export"
 		/>
 	);
 	next();
@@ -143,7 +143,7 @@ export const deleteList = ( context, next ) => {
 			key="list-manage"
 			owner={ encodeURIComponent( context.params.user ) }
 			slug={ encodeURIComponent( context.params.list ) }
-			selectedSection={ 'delete' }
+			selectedSection="delete"
 		/>
 	);
 	next();

@@ -65,20 +65,20 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 		<>
 			<DocumentHead title={ headerText } />
 			<StepContainer
-				stepName={ 'site-vertical' }
+				stepName="site-vertical"
 				goBack={ goalsCaptureStepEnabled ? goBack : undefined }
 				goNext={ goNext }
 				headerImageUrl={ siteVerticalImage }
 				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign={ 'top' }
+				skipButtonAlign="top"
 				isHorizontalLayout={ true }
 				hideBack={ ! goalsCaptureStepEnabled }
 				formattedHeader={
 					<FormattedHeader
-						id={ 'site-vertical-header' }
+						id="site-vertical-header"
 						headerText={ headerText }
 						subHeaderText={ subHeaderText }
-						align={ 'left' }
+						align="left"
 					/>
 				}
 				stepContent={

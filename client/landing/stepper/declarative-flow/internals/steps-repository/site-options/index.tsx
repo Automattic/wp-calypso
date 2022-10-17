@@ -203,18 +203,18 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	return (
 		<StepContainer
 			shouldHideNavButtons={ isVideoPressFlow }
-			stepName={ 'site-options' }
+			stepName="site-options"
 			className={ `is-step-${ intent }` }
 			headerImageUrl={ headerImage }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ ! isVideoPressFlow }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'site-options-header' }
+					id="site-options-header"
 					headerText={ headerText }
-					align={ 'left' }
+					align="left"
 					subHeaderText={ subHeaderText }
 				/>
 			}

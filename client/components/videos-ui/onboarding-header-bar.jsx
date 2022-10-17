@@ -21,7 +21,7 @@ const OnboardingHeaderBar = ( { course = {}, onBackClick = () => {} } ) => {
 		} );
 	};
 	return (
-		<div className={ 'videos-ui__bar videos-ui__onboarding-header-bar' }>
+		<div className="videos-ui__bar videos-ui__onboarding-header-bar">
 			<div>
 				<Gridicon icon="my-sites" size={ 24 } />
 				<a href="/" className="videos-ui__back-link" onClick={ onBackLinkClick }>

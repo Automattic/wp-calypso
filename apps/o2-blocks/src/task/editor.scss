@@ -20,7 +20,7 @@
 
 .wp-block-todo__is-in-progress {
 	display: inline-block;
-	color: white;
+	color: var(--color-text-inverted);
 	background: #7a6ff0;
 	border-radius: 2px;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -87,7 +87,7 @@
 	width: 24px;
 	height: 24px;
 	margin-left: 10px;
-	color: rgba(white, 0.6);
+	color: rgba(255, 255, 255, 0.6);
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 14px;
 	text-transform: uppercase;

@@ -102,19 +102,19 @@ const EditEmail: Step = function EditEmail( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'edit-email' }
+			stepName="edit-email"
 			className={ `is-step-${ intent }` }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			goBack={ goBack }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'edit-email-header' }
+					id="edit-email-header"
 					headerText={ headerText }
 					subHeaderText={ __(
 						"We'll send you an email to the new address to verify that you own it."
 					) }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			intent={ intent }

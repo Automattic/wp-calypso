@@ -563,7 +563,7 @@ export class HelpContactForm extends PureComponent {
 						className="help-contact-form__site-notice"
 						status="is-warning"
 						showDismiss={ false }
-						text={ 'Targeting HappyChat staging' }
+						text="Targeting HappyChat staging"
 					>
 						<NoticeAction href="https://hud-staging.happychat.io/" external>
 							HUD

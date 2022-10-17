@@ -48,12 +48,12 @@ const SignupDefaultLayout = ( {
 
 	return (
 		<Modal
-			className={ 'signup-form' }
+			className="signup-form"
 			title={ __( 'Save your progress' ) }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ false }
-			overlayClassName={ 'signup-form__overlay' }
+			overlayClassName="signup-form__overlay"
 			// set to false so that 1password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>

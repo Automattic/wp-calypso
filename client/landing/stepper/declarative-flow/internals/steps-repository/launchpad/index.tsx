@@ -61,11 +61,11 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 		<>
 			<DocumentHead title={ almostReadyToLaunchText } />
 			<StepContainer
-				stepName={ 'launchpad' }
+				stepName="launchpad"
 				goNext={ navigation.goNext }
 				isWideLayout={ true }
 				skipLabelText={ translate( 'Go to Admin' ) }
-				skipButtonAlign={ 'bottom' }
+				skipButtonAlign="bottom"
 				hideBack={ true }
 				stepContent={
 					<StepContent
@@ -76,10 +76,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 					/>
 				}
 				formattedHeader={
-					<FormattedHeader
-						id={ 'launchpad-header' }
-						headerText={ <>{ almostReadyToLaunchText }</> }
-					/>
+					<FormattedHeader id="launchpad-header" headerText={ <>{ almostReadyToLaunchText }</> } />
 				}
 				recordTracksEvent={ recordTracksEvent }
 			/>

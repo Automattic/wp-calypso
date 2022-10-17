@@ -19,10 +19,10 @@ export default class extends PureComponent {
 			<div className="help-contact-confirmation">
 				<div className="help-contact-confirmation__contents">
 					<div className="help-contact-confirmation__large-gridicon">
-						<Gridicon icon={ 'checkmark-circle' } size={ 96 } />
+						<Gridicon icon="checkmark-circle" size={ 96 } />
 					</div>
 					<div className="help-contact-confirmation__small-gridicon">
-						<Gridicon icon={ 'checkmark-circle' } size={ 56 } />
+						<Gridicon icon="checkmark-circle" size={ 56 } />
 					</div>
 					<FormSectionHeading>{ this.props.title }</FormSectionHeading>
 					<p className="help-contact-confirmation__message">{ this.props.message }</p>

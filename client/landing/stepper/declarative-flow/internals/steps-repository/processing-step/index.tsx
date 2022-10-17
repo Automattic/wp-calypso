@@ -113,10 +113,10 @@ const ProcessingStep: Step = function ( props ) {
 		<StepContainer
 			shouldHideNavButtons={ true }
 			hideFormattedHeader={ true }
-			stepName={ 'processing-step' }
+			stepName="processing-step"
 			isHorizontalLayout={ true }
 			stepContent={
-				<div className={ 'processing-step' }>
+				<div className="processing-step">
 					<h1 className="processing-step__progress-step">{ getCurrentMessage() }</h1>
 					{ progress >= 0 ? (
 						<div className="processing-step__content woocommerce-install__content">

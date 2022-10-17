@@ -91,7 +91,7 @@ class GoogleMyBusinessNewAccount extends Component {
 
 						<div className="gmb-new-account__actions">
 							<Button
-								href={ 'https://business.google.com/create' }
+								href="https://business.google.com/create"
 								target="_blank"
 								onClick={ this.trackCreateListingClick }
 								primary

@@ -209,7 +209,7 @@ export class Translatable extends Component {
 						) }
 						<a
 							title={ translate( 'Settings' ) }
-							href={ '/me/account' }
+							href="/me/account"
 							className="community-translator__settings-link"
 						>
 							<Gridicon icon="cog" size={ 12 } onClick={ this.closeDialog } />

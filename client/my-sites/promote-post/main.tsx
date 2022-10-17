@@ -81,7 +81,19 @@ export default function PromotedPosts( { tab }: Props ) {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Site is private' ) }
-				line={ translate( 'Start promoting posts by making public your site' ) }
+				line={ translate(
+					'To start advertising, you must make your website public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					{
+						components: {
+							sitePrivacySettingsLink: (
+								<a
+									href={ `https://wordpress.com/settings/general/${ selectedSite.domain }#site-privacy-settings` }
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				) }
 				illustration={ null }
 			/>
 		);
@@ -117,10 +129,8 @@ export default function PromotedPosts( { tab }: Props ) {
 						'By promoting your post you agree to {{tosLink}}WordPress.com Terms{{/tosLink}} and {{advertisingTerms}}Advertising Terms{{/advertisingTerms}}.',
 						{
 							components: {
-								tosLink: (
-									<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer" />
-								),
-								advertisingTerms: <a href="https://automattic.com/privacy/" target={ 'blank' } />,
+								tosLink: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />,
+								advertisingTerms: <a href="https://automattic.com/privacy/" target="blank" />,
 							},
 						}
 					) }

@@ -46,6 +46,7 @@
 		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
+		"jetpack/standalone-plugin-onboarding-update-v1": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,

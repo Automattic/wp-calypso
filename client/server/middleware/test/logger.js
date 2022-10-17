@@ -45,7 +45,9 @@ const withCommitSha = ( sha ) => {
 
 const withEnv = ( env ) => {
 	config.mockImplementation( ( key ) => {
-		if ( key === 'env_id' ) return env;
+		if ( key === 'env_id' ) {
+			return env;
+		}
 	} );
 
 	afterAll( () => {

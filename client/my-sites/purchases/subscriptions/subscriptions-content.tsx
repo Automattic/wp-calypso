@@ -123,7 +123,7 @@ function NoPurchasesMessage() {
 				line={ translate( 'You have made no purchases for this site.' ) }
 				action={ translate( 'Upgrade now' ) }
 				actionURL={ selectedSite ? `/plans/${ selectedSite.slug }` : '/plans' }
-				illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+				illustration="/calypso/images/illustrations/illustration-nosites.svg"
 			/>
 		</CompactCard>
 	);

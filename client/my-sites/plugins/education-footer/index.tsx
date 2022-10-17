@@ -10,22 +10,17 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const ThreeColumnContainer = styled.div`
-	@media ( max-width: 960px ) {
-		grid-template-columns: repeat( 1, 1fr );
-	}
-
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	column-gap: 29px;
-	row-gap: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 40px;
+	margin-top: 32px;
 
 	> div:first-child {
 		padding: 0;
@@ -37,6 +32,17 @@ const EducationFooterContainer = styled.div`
 
 		> div:first-child {
 			margin-bottom: 24px;
+		}
+	}
+
+	.card-block {
+		display: flex;
+		width: calc( 33% - 10px );
+
+		@media ( max-width: 660px ) {
+			display: block;
+			width: 100%;
+			margin-top: 10px;
 		}
 	}
 `;

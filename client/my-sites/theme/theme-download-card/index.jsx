@@ -17,7 +17,7 @@ class ThemeDownloadCard extends PureComponent {
 			'This theme is available for download to be used on your {{a}}WordPress self-hosted{{/a}} installation.',
 			{
 				components: {
-					a: <a href={ 'https://wordpress.org' } />,
+					a: <a href="https://wordpress.org" />,
 				},
 			}
 		);

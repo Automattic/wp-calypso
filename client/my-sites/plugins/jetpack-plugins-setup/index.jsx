@@ -175,7 +175,7 @@ class PlansSetup extends Component {
 				title={ this.props.translate(
 					'Oh no! You need to select a Jetpack site to be able to setup your plan'
 				) }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};
@@ -210,7 +210,7 @@ class PlansSetup extends Component {
 				actionURL={ JETPACK_CONTACT_SUPPORT }
 				title={ translate( "Oh no! We can't install plugins on this site." ) }
 				line={ reason }
-				illustration={ '/calypso/images/jetpack/jetpack-manage.svg' }
+				illustration="/calypso/images/jetpack/jetpack-manage.svg"
 			/>
 		);
 	};

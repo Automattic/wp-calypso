@@ -17,7 +17,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	return (
 		<StepContainer
 			flowName={ flow as string }
-			stepName={ 'intro' }
+			stepName="intro"
 			className={ cx( { 'is-newsletter': flow === NEWSLETTER_FLOW } ) }
 			goBack={ goBack }
 			isHorizontalLayout={ false }

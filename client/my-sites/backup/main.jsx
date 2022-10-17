@@ -63,9 +63,9 @@ const BackupPage = ( { queryDate } ) => {
 	} );
 
 	const supportLink = isAtomic ? (
-		<InlineSupportLink supportContext={ 'backups' } showIcon={ false } />
+		<InlineSupportLink supportContext="backups" showIcon={ false } />
 	) : (
-		<ExternalLink href={ 'https://jetpack.com/support/backup/' }>{ 'Learn more' }</ExternalLink>
+		<ExternalLink href="https://jetpack.com/support/backup/">Learn more</ExternalLink>
 	);
 
 	return (
@@ -148,7 +148,7 @@ function AdminContent( { selectedDate } ) {
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
 			<QueryRewindState siteId={ siteId } />
-			<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 			{ isFiltering && <SearchResults /> }
 
@@ -193,7 +193,7 @@ function BackupStatus( {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ! areCredentialsInvalid && hasRealtimeBackups && (
+				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
 

@@ -134,7 +134,7 @@ class ClonePointStep extends Component {
 					className="clone-point__current"
 					buttonLabel={ translate( 'Clone current state' ) }
 					description={ translate( 'Create a clone of your site as it is right now.' ) }
-					image={ '/calypso/images/illustrations/clone-site-origin.svg' }
+					image="/calypso/images/illustrations/clone-site-origin.svg"
 					onClick={ this.selectCurrent }
 				/>
 				<Tile
@@ -143,7 +143,7 @@ class ClonePointStep extends Component {
 					description={ translate(
 						'Browse your event history and choose an earlier state to clone from.'
 					) }
-					image={ '/calypso/images/illustrations/backup.svg' }
+					image="/calypso/images/illustrations/backup.svg"
 					onClick={ this.selectPrevious }
 				/>
 			</TileGrid>
