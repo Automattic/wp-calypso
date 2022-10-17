@@ -32,10 +32,24 @@
 	}
 
 	&.is-top,
+	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
 			border-top-color: var(--color-neutral-80);
 			bottom: 4px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
+			border-bottom-color: var(--color-neutral-80);
+			top: 4px;
 
 			&::before {
 				display: none;
