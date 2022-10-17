@@ -65,7 +65,8 @@
 		border-radius: 6px; /* stylelint-disable-line scales/radii */
 		display: inherit;
 	}
-	.wp-block-gallery .wp-block-image {
+	.wp-block-gallery .wp-block-image,
+	.image-wrapper {
 		position: relative;
 		&::after {
 			content: "";
@@ -83,6 +84,9 @@
 			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
+	}
+	.image-wrapper img {
+		display: inherit;
 	}
 }
 
