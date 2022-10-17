@@ -39,7 +39,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 						/>
 					</div>
 				) }
-				<p className={ `launchpad__checklist-item-text` }>{ title }</p>
+				<p className="launchpad__checklist-item-text">{ title }</p>
 				{ task.badgeText ? <Badge type="info-blue">{ task.badgeText }</Badge> : null }
 				{ shouldDisplayChevron && (
 					<Gridicon

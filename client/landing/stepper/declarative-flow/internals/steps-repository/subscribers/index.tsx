@@ -21,16 +21,16 @@ const Subscribers: Step = function ( { navigation } ) {
 		<StepContainer
 			shouldHideNavButtons={ true }
 			hideFormattedHeader={ true }
-			stepName={ 'subscribers' }
-			flowName={ 'newsletter' }
+			stepName="subscribers"
+			flowName="newsletter"
 			isHorizontalLayout={ false }
 			showJetpackPowered={ true }
 			stepContent={
-				<div className={ 'subscribers' }>
+				<div className="subscribers">
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
-							flowName={ 'onboarding_subscribers' }
+							flowName="onboarding_subscribers"
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }
 							allowEmptyFormSubmit={ true }

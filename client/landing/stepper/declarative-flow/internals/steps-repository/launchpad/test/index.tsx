@@ -19,6 +19,18 @@ jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
 } );
 
+jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
+	useGetDomainsQuery: () => ( {
+		isLoading: true,
+		data: [
+			{
+				domain: 'testlinkinbio.wordpress.com',
+				wpcom_domain: true,
+			},
+		],
+	} ),
+} ) );
+
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
 const replaceMock = jest.fn();

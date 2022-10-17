@@ -13,6 +13,7 @@ import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
 type SidebarProps = {
+	sidebarURL: string | null;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
@@ -42,7 +43,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { sidebarURL, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -57,8 +58,8 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
-	if ( siteSlug ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
+	if ( sidebarURL ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( sidebarURL );
 	}
 
 	return (

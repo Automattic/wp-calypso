@@ -432,7 +432,7 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ '/help/contact/' }
+					href="/help/contact/"
 					onClick={ this.trackContactUsClick }
 				>
 					{ this.props.translate( 'Contact us' ) }
@@ -795,8 +795,8 @@ class ThemeSheet extends Component {
 				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source={ 'details' } />
-				<AutoLoadingHomepageModal source={ 'details' } />
+				<ThanksModal source="details" />
+				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"

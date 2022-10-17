@@ -118,10 +118,10 @@
 	position: relative;
 	margin: 0;
 	display: block;
-	background: black;
+	background: var(--studio-black);
 	text-align: center;
 	text-transform: uppercase;
-	color: white;
+	color: var(--color-text-inverted);
 	padding: 0 5px;
 	font-size: $font-body-extra-small;
 	margin-top: -24px;

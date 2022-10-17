@@ -11,6 +11,8 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { AddSSHKeyForm } from './add-ssh-key-form';
@@ -99,6 +101,7 @@ export const SecuritySSHKey = () => {
 	return (
 		<Main wideLayout className="security">
 			<PageViewTracker path="/me/security/ssh-key" title="Me > SSH Key" />
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
 

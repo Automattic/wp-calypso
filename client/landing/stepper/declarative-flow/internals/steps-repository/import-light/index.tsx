@@ -125,8 +125,8 @@ const ImportLight: Step = function ImportStep( props ) {
 			<DocumentHead title={ __( 'Import light' ) } />
 
 			<StepContainer
-				stepName={ 'import-step' }
-				className={ 'import__onboarding-page' }
+				stepName="import-step"
+				className="import__onboarding-page"
 				hideSkip={ false }
 				hideFormattedHeader={ true }
 				goBack={ navigation.goBack }

@@ -317,7 +317,7 @@ export class SiteSettingsFormSEO extends Component {
 						description={ translate(
 							'Get tools to optimize your site for improved search engine results.'
 						) }
-						event={ 'calypso_seo_settings_upgrade_nudge' }
+						event="calypso_seo_settings_upgrade_nudge"
 						showIcon={ true }
 					/>
 				) }

@@ -337,7 +337,6 @@ export class SiteSelector extends Component {
 		return (
 			<AllSites
 				key="selector-all-sites"
-				sites={ this.props.sites }
 				onSelect={ ( event ) =>
 					this.onAllSitesSelect(
 						event,

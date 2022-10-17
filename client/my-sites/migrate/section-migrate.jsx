@@ -200,7 +200,9 @@ export class SectionMigrate extends Component {
 
 	updateSiteInfo = ( selectedSiteSlug, callback = () => {} ) => {
 		selectedSiteSlug = selectedSiteSlug || this.state.selectedSiteSlug;
-		if ( ! selectedSiteSlug ) return;
+		if ( ! selectedSiteSlug ) {
+			return;
+		}
 		return wpcom
 			.site( selectedSiteSlug )
 			.get( {
@@ -466,7 +468,7 @@ export class SectionMigrate extends Component {
 				<Card className="migrate__pane">
 					<img
 						className="migrate__illustration"
-						src={ '/calypso/images/illustrations/waitTime-plain.svg' }
+						src="/calypso/images/illustrations/waitTime-plain.svg"
 						alt=""
 					/>
 					<FormattedHeader

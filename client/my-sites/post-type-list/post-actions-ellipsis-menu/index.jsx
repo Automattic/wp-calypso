@@ -30,7 +30,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
-			<PostActionsEllipsisMenuPromote key="promote" bumpStatKey={ 'posts-meatball-menu' } />,
+			<PostActionsEllipsisMenuPromote key="promote" bumpStatKey="posts-meatball-menu" />,
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuComments key="comments" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,

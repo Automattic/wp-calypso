@@ -138,7 +138,7 @@ class Page extends Component {
 			<PostActionsEllipsisMenuPromote
 				globalId={ this.props.page.global_ID }
 				key="promote"
-				bumpStatKey={ 'pages-meatball-menu' }
+				bumpStatKey="pages-meatball-menu"
 			/>
 		);
 	}
@@ -356,7 +356,7 @@ class Page extends Component {
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon="link">
 				{ translate( 'Copy link' ) }
 			</PopoverMenuItemClipboard>
 		);

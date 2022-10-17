@@ -50,7 +50,7 @@
 		&:hover,
 		&:focus {
 			background-color: var(--color-primary);
-			color: white;
+			color: var(--color-text-inverted);
 
 			.gridicon {
 				fill: var(--color-text-inverted);

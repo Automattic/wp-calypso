@@ -6,7 +6,7 @@ import './style.scss';
 const Importer = withImporterWrapper( WordpressImporter );
 
 const ImporterWordpress: Step = function ( props ) {
-	return <Importer importer={ 'wordpress' } { ...props } />;
+	return <Importer importer="wordpress" { ...props } />;
 };
 
 export default ImporterWordpress;

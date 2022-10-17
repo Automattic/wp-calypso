@@ -79,14 +79,18 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 
 	useEffect( () => {
-		if ( peerReferralLink ) return;
+		if ( peerReferralLink ) {
+			return;
+		}
 		wp.req.get( '/me/peer-referral-link', ( error: string, data: string ) => {
 			setPeerReferralLink( ! error && data ? data : '' );
 		} );
 	}, [ peerReferralLink ] );
 
 	const onPeerReferralCtaClick = () => {
-		if ( peerReferralLink ) return;
+		if ( peerReferralLink ) {
+			return;
+		}
 		wp.req.post(
 			'/me/peer-referral-link-enable',
 			{ enable: true },
@@ -557,7 +561,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	return (
 		<Fragment>
 			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
-			{ <QueryMembershipsSettings siteId={ siteId } /> }
+			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
 					<PromoSection

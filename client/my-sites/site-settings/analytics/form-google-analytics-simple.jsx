@@ -71,7 +71,7 @@ const GoogleAnalyticsSimpleForm = ( {
 				description={ translate(
 					"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 				) }
-				event={ 'google_analytics_settings' }
+				event="google_analytics_settings"
 				feature={ FEATURE_GOOGLE_ANALYTICS }
 				plan={ plan }
 				showIcon={ true }

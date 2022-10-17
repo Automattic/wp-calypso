@@ -5,6 +5,9 @@ import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
+// Import translatable strings so that translations get associated with the module and loaded properly.
+import './string';
+
 declare global {
 	interface Window {
 		BlazePress?: {

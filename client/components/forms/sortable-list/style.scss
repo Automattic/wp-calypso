@@ -17,7 +17,7 @@
 	display: inline-block;
 
 	&.is-active > * {
-		box-shadow: 0 0 0 2px white, 0 0 0 4px var(--color-accent);
+		box-shadow: 0 0 0 2px var(--studio-white), 0 0 0 4px var(--color-accent);
 		z-index: z-index("root", ".sortable-list__item.is-draggable.is-active");
 	}
 

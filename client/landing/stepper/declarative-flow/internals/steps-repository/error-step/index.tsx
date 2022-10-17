@@ -61,13 +61,13 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'error-step' }
+			stepName="error-step"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			formattedHeader={
 				<>
-					<FormattedHeader id={ 'step-error-header' } headerText={ headerText } align={ 'left' } />
+					<FormattedHeader id="step-error-header" headerText={ headerText } align="left" />
 					<p>{ bodyText }</p>
 				</>
 			}
