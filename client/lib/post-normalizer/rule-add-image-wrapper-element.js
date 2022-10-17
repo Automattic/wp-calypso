@@ -30,7 +30,7 @@ const getImageAspectRatioClass = ( image ) => {
 	if ( ratio === 1.0 ) {
 		return 'square';
 	} else if ( ratio > 0 && ratio < 9 / 16 ) {
-		return 'wide';
+		return 'tall';
 	} else if ( ratio >= 9 / 16 && ratio < 2 / 3 ) {
 		return 'nine-sixteen';
 	} else if ( ratio >= 2 / 3 && ratio < 4 / 5 ) {
@@ -44,7 +44,7 @@ const getImageAspectRatioClass = ( image ) => {
 	} else if ( ratio > 3 / 2 && ratio <= 16 / 9 ) {
 		return 'sixteen-nine';
 	} else if ( ratio > 16 / 9 ) {
-		return 'tall';
+		return 'wide';
 	}
 
 	// Not sure we can get here but...
