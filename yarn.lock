@@ -12740,7 +12740,6 @@ __metadata:
     react-day-picker: ^7.4.10
     react-dom: ^17.0.2
     react-element-to-jsx-string: ^14.3.2
-    react-intersection-observer: ^8.32.1
     react-live: ^2.3.0
     react-modal: ^3.14.3
     react-query: ^3.32.1
@@ -28719,16 +28718,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-intersection-observer@npm:^8.32.1":
-  version: 8.32.1
-  resolution: "react-intersection-observer@npm:8.32.1"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
-  checksum: a555a32c581361dc71954df47329f007f5cc8280b79c24377b5b03622e036749fd4a8cc80489f6956a084faf49532621af8715a540c42d7bb37686951359f661
-  languageName: node
-  linkType: hard
-
-"react-intersection-observer@npm:^9.4.0":
+"react-intersection-observer@npm:9.4.0":
   version: 9.4.0
   resolution: "react-intersection-observer@npm:9.4.0"
   peerDependencies:
@@ -35862,7 +35852,7 @@ swiper@4.5.1:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-intersection-observer: ^9.4.0
+    react-intersection-observer: 9.4.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14
