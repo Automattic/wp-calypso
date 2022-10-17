@@ -13,7 +13,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 
-const debug = debugFactory( 'calypso:stepper:get-current-theme-software-sets' );
+const debug = debugFactory( 'calypso:plugin-bundle:stepper:get-current-theme-software-sets' );
 
 const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep( { navigation } ) {
 	const site = useSite();
@@ -50,6 +50,11 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 			const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
 			if ( theme_software_set && siteSlug ) {
 				setBundledPluginSlug( siteSlug, theme_software_set[ 0 ].slug ); // only install first software set
+				debug( 'Proceeding because theme has bundled software', {
+					currentTheme,
+					theme_software_set,
+					siteSlug,
+				} );
 				goNext();
 			} else {
 				debug( 'Redirected because theme has no bundled software', {
