@@ -1,8 +1,11 @@
 import { CompactCard, Gridicon } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import InfoPopover from 'calypso/components/info-popover';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipboard';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -69,6 +72,26 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					} ) }
 				>
 					<span>{ decodedTitle }</span>
+					{ isHomepage && (
+						<InfoPopover position="right">
+							{ translate(
+								'The homepage is showing your Home template and only “Edit”, “View page” and “Copy link” are allowed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								{
+									components: {
+										learnMoreLink: (
+											<ExternalLink
+												href={ localizeUrl(
+													'https://wordpress.com/support/templates/#template-hierarchy'
+												) }
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						</InfoPopover>
+					) }
 				</a>
 				<div className="virtual-page__info">
 					{ description && <span>{ description }</span> }
@@ -88,10 +111,11 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 				{ previewUrl && (
 					<PopoverMenuItem onClick={ viewPage }>
 						<Gridicon icon="visible" size={ 18 } />
-						{ translate( 'Preview' ) }
+						{ translate( 'View page' ) }
 					</PopoverMenuItem>
 				) }
 				{ previewUrl && (
+					// @ts-expect-error The `className` property is not required
 					<PopoverMenuItemClipboard text={ previewUrl } onCopy={ copyPageLink } icon={ 'link' }>
 						{ translate( 'Copy link' ) }
 					</PopoverMenuItemClipboard>

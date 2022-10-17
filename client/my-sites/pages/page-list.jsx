@@ -21,7 +21,7 @@ import {
 } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getSite, getSiteFrontPage } from 'calypso/state/sites/selectors';
+import { getSite, getSiteFrontPage, getSiteFrontPageType } from 'calypso/state/sites/selectors';
 import BlogPostsPage from './blog-posts-page';
 import { sortPagesHierarchically } from './helpers';
 import Page from './page';
@@ -176,6 +176,39 @@ class Pages extends Component {
 		);
 	}
 
+	showBlogPostsPage() {
+		const { site, homepageType } = this.props;
+		const { search, status } = this.props.query;
+
+		return (
+			! config.isEnabled( 'unified-pages/virtual-home-page' ) &&
+			site &&
+			homepageType === 'posts' &&
+			/** under the "Published" tab */
+			status === 'publish,private' &&
+			/** without any search term */
+			! search
+		);
+	}
+
+	/**
+	 * Show the virtual homepage
+	 */
+	showVirtualHomepage() {
+		const { site, homepageType, blockEditorSettings, translate } = this.props;
+		const { search, status } = this.props.query;
+
+		return (
+			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
+			site &&
+			homepageType === 'posts' &&
+			blockEditorSettings?.home_template &&
+			/** under the "Published" tab without any search term or the search term is matched */
+			( ( status === 'publish,private' && ! search ) ||
+				( search && translate( 'Home' ).toLowerCase().includes( search.toLowerCase() ) ) )
+		);
+	}
+
 	addLoadingRows( rows, count ) {
 		for ( let i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
@@ -217,7 +250,7 @@ class Pages extends Component {
 	renderBlogPostsPage() {
 		const { site } = this.props;
 
-		if ( config.isEnabled( 'unified-pages/virtual-home-page' ) ) {
+		if ( ! this.showBlogPostsPage() ) {
 			return null;
 		}
 
@@ -226,9 +259,8 @@ class Pages extends Component {
 
 	renderVirtualHomePage() {
 		const { site, blockEditorSettings, translate } = this.props;
-		const home_template = blockEditorSettings && blockEditorSettings?.home_template;
 
-		if ( ! ( config.isEnabled( 'unified-pages/virtual-home-page' ) && home_template ) ) {
+		if ( ! this.showVirtualHomepage() ) {
 			return null;
 		}
 
@@ -236,8 +268,8 @@ class Pages extends Component {
 			<VirtualPage
 				key="virtual-home-page"
 				site={ site }
-				id={ home_template.postId }
-				type={ home_template.postType }
+				id={ blockEditorSettings?.home_template?.postId }
+				type={ blockEditorSettings?.home_template?.postType }
 				title={ translate( 'Home' ) }
 				previewUrl={ site.URL }
 				isHomepage
@@ -292,8 +324,6 @@ class Pages extends Component {
 	}
 
 	renderChronological( { pages, site, showPublishedStatus } ) {
-		const { search, status } = this.props.query;
-
 		const rows = pages.map( ( page ) => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
@@ -316,13 +346,11 @@ class Pages extends Component {
 			this.addLoadingRows( rows, 1 );
 		}
 
-		const showBlogPostsPage = site && status === 'publish,private' && ! search;
-
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && this.renderBlogPostsPage() }
+				{ this.renderBlogPostsPage() }
 				{ site && this.renderSectionHeader() }
-				{ showBlogPostsPage && this.renderVirtualHomePage() }
+				{ this.renderVirtualHomePage() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }
@@ -331,21 +359,19 @@ class Pages extends Component {
 	}
 
 	renderNoContent() {
-		const { site } = this.props;
-		const { search, status } = this.props.query;
-
-		const showBlogPostsPage = site && status === 'publish,private' && ! search;
+		const virtualHomepage = this.renderVirtualHomePage();
 
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && (
+				{ this.renderBlogPostsPage() }
+				{ virtualHomepage ? (
 					<>
-						{ this.renderBlogPostsPage() }
 						{ this.renderSectionHeader() }
-						{ this.renderVirtualHomePage() }
+						{ virtualHomepage }
 					</>
+				) : (
+					<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 				) }
-				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
 	}
@@ -374,6 +400,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 	site: getSite( state, siteId ),
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
+	homepageType: getSiteFrontPageType( state, siteId ),
 } );
 
 const ConnectedPages = flowRight(

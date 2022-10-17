@@ -7,12 +7,23 @@
 	flex-grow: 1;
 }
 
-.virtual-page__title,
-.virtual-page__title:visited {
-	font-size: 1.25rem;
-	font-weight: 600;
-	line-height: 1.2;
-	color: var(--color-neutral-70);
+.virtual-page__title {
+	.info-popover {
+		margin-left: 4px;
+	}
+
+	&,
+	&:visited {
+		font-size: 1.25rem;
+		font-weight: 600;
+		line-height: 1.2;
+		color: var(--color-neutral-70);
+
+		.gridicon {
+			color: var(--color-neutral-light);
+			margin: 2px 8px -2px 0;
+		}
+	}
 }
 
 .virtual-page__info {
