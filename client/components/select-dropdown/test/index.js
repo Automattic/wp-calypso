@@ -82,7 +82,7 @@ describe( 'selected items', () => {
 	test( 'should return the initially selected value (if any)', () => {
 		renderDropdown( { initialSelected: 'drafts' } );
 
-		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		const selected = screen.queryByRole( 'option', { selected: true } );
 		expect( selected ).toHaveTextContent( 'Drafts' );
 
 		const btn = screen.getByRole( 'button' );
@@ -92,7 +92,7 @@ describe( 'selected items', () => {
 	test( "should return `undefined`, when there aren't options", () => {
 		render( <SelectDropdown /> );
 
-		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		const selected = screen.queryByRole( 'option', { selected: true } );
 		expect( selected ).toBeNull();
 
 		const btn = screen.getByRole( 'button' );
@@ -102,7 +102,7 @@ describe( 'selected items', () => {
 	test( "should return the first not-label option, when there isn't a preselected value", () => {
 		renderDropdown();
 
-		const selected = screen.queryByRole( 'menuitem', { current: true } );
+		const selected = screen.queryByRole( 'option', { selected: true } );
 		expect( selected ).toHaveTextContent( 'Published' );
 
 		const btn = screen.getByRole( 'button' );
@@ -123,11 +123,11 @@ describe( 'selectItem', () => {
 
 		renderDropdown( { onSelect: onSelectSpy } );
 
-		const item = screen.getByRole( 'menuitem', { name: DROPDOWN_OPTIONS[ 2 ].label } );
+		const item = screen.getByRole( 'option', { name: DROPDOWN_OPTIONS[ 2 ].label } );
 
 		await userEvent.click( item );
 
-		const selected = screen.getByRole( 'menuitem', { current: true } );
+		const selected = screen.getByRole( 'option', { selected: true } );
 		expect( selected ).toHaveTextContent( DROPDOWN_OPTIONS[ 2 ].label );
 
 		expect( onSelectSpy ).toHaveBeenCalledTimes( 1 );
@@ -145,7 +145,7 @@ describe( 'navigateItem', () => {
 		await userEvent.tab();
 		await userEvent.keyboard( '[Space]' );
 
-		expect( screen.getByRole( 'menuitem', { current: true } ) ).toHaveTextContent( 'Scheduled' );
+		expect( screen.getByRole( 'option', { selected: true } ) ).toHaveTextContent( 'Scheduled' );
 	} );
 
 	test( 'permits to select an option by pressing ENTER', async () => {
@@ -192,7 +192,7 @@ describe( 'navigateItem', () => {
 		renderDropdown();
 
 		const btn = screen.getByRole( 'button' );
-		const items = screen.getAllByRole( 'menuitem' );
+		const items = screen.getAllByRole( 'option' );
 
 		await userEvent.tab();
 		await userEvent.keyboard( '[ArrowDown]' );

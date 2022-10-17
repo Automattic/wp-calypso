@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
-import { filter, find, get } from 'lodash';
+import { filter, find, get, noop } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Children, cloneElement, Component, forwardRef } from 'react';
 import { v4 as uuid } from 'uuid';
@@ -11,8 +11,6 @@ import DropdownLabel from './label';
 import DropdownSeparator from './separator';
 
 import './style.scss';
-
-const noop = () => {};
 
 class SelectDropdown extends Component {
 	static Item = DropdownItem;
@@ -211,7 +209,7 @@ class SelectDropdown extends Component {
 					onKeyDown={ this.navigateItem }
 					tabIndex={ this.props.tabIndex || 0 }
 					role="button"
-					aria-haspopup="listbox"
+					aria-haspopup="true"
 					aria-owns={ 'select-submenu-' + this.instanceId }
 					aria-controls={ 'select-submenu-' + this.instanceId }
 					aria-expanded={ this.state.isOpen }
@@ -234,10 +232,8 @@ class SelectDropdown extends Component {
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
 						role="listbox"
-						aria-activedescendant={ this.state.selected }
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
-						tabIndex={ 0 }
 					>
 						{ this.dropdownOptions() }
 					</ul>
@@ -351,7 +347,7 @@ class SelectDropdown extends Component {
 
 		if ( this.props.options.length ) {
 			items = filter( this.props.options, ( item ) => {
-				if ( item.isLabel ) {
+				if ( ! item || item.isLabel ) {
 					return false;
 				}
 
