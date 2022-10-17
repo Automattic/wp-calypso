@@ -19,7 +19,9 @@ const PremiumBadge = ( { className, tooltipText } ) => {
 
 	return (
 		<>
-			<button
+			<div
+				role="button"
+				tabIndex={ 0 }
 				ref={ setPopoverAnchor }
 				className={ classes }
 				onClick={ () => {
@@ -27,6 +29,13 @@ const PremiumBadge = ( { className, tooltipText } ) => {
 						return;
 					}
 					setIsPopoverVisible( ( state ) => ! state );
+				} }
+				onKeyDown={ ( e ) => {
+					if ( e.key === 'Space' || e.key === 'Enter' ) {
+						// Prevent the event from bubbling to the parent button.
+						e.stopPropagation();
+						setIsPopoverVisible( ( state ) => ! state );
+					}
 				} }
 				onMouseEnter={ () => {
 					if ( isTouch ) {
@@ -40,13 +49,12 @@ const PremiumBadge = ( { className, tooltipText } ) => {
 					}
 					setIsPopoverVisible( false );
 				} }
-				type="button"
 			>
 				<Badge type="info">
 					<Icon icon={ starFilled } size={ 18 } />
 					<span>{ __( 'Premium' ) }</span>
 				</Badge>
-			</button>
+			</div>
 			<Popover
 				className="premium-badge__popover"
 				context={ popoverAnchor }
