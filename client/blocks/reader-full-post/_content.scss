@@ -67,7 +67,8 @@
 	}
 	.wp-block-gallery .wp-block-image,
 	.image-wrapper.two-three,
-	.image-wrapper.three-two {
+	.image-wrapper.three-two,
+	.image-wrapper.wide {
 		position: relative;
 		&::after {
 			content: "";
