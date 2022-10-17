@@ -416,6 +416,8 @@ class ReaderStream extends Component {
 
 		const streamType = getStreamType( streamKey );
 
+		let baseClassnames = classnames( 'following', this.props.className );
+
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent;
@@ -450,6 +452,7 @@ class ReaderStream extends Component {
 						<div className="stream__right-column"></div>
 					</div>
 				);
+				baseClassnames = classnames( 'reader-two-column', baseClassnames );
 			} else {
 				body = bodyContent;
 			}
@@ -460,7 +463,7 @@ class ReaderStream extends Component {
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
 		return (
-			<TopLevel className={ classnames( 'following', this.props.className ) }>
+			<TopLevel className={ baseClassnames }>
 				{ shouldPoll && <Interval onTick={ this.poll } period={ EVERY_MINUTE } /> }
 
 				<UpdateNotice streamKey={ streamKey } onClick={ this.showUpdates } />

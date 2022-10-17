@@ -3,6 +3,14 @@
 // Overrides default 720px width
 .is-reader-page .following.main {
 	max-width: 600px;
+
+	&.reader-two-column {
+		max-width: 905px;
+
+		.reader__content {
+			max-width: 600px;
+		}
+	}
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
