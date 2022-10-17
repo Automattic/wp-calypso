@@ -10,6 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+	FEATURE_ADVANCED_CUSTOMIZATION,
 	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -176,7 +177,6 @@ import {
 	FEATURE_PRODUCT_LISTINGS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	/* END - PLAN TAGLINE EXPERIMENT */
-	WPCOM_FEATURES_GLOBAL_STYLES,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -286,8 +286,8 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ WPCOM_FEATURES_GLOBAL_STYLES ]: {
-		getSlug: () => WPCOM_FEATURES_GLOBAL_STYLES,
+	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
 		getTitle: () =>
 			i18n.translate( 'Advanced design customization', {
 				components: {
