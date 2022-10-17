@@ -14,11 +14,19 @@ interface Props {
 	plugin: Plugin;
 }
 
+type Purchase = {
+	id?: number;
+};
+
 export default function PluginManageSubcription( { site, plugin }: Props ): ReactElement | null {
 	const translate = useTranslate();
 
 	const purchases = useSelector( ( state ) => getSitePurchases( state, site.ID ) );
-	const currentPurchase = getPluginPurchased( plugin, purchases, plugin.isMarketplaceProduct );
+	const currentPurchase: Purchase = getPluginPurchased(
+		plugin,
+		purchases,
+		plugin.isMarketplaceProduct
+	);
 
 	return currentPurchase?.id ? (
 		<>
