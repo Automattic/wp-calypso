@@ -1,5 +1,4 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { isEnabled } from '@automattic/calypso-config';
 import { Popover } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, RGB } from '@automattic/onboarding';
@@ -12,6 +11,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import PremiumBadge from 'calypso/components/premium-badge';
+import { usePremiumGlobalStyles } from 'calypso/lib/premium-global-styles/use-premium-global-styles';
 import { tip } from 'calypso/signup/icons';
 
 import './style.scss';
@@ -49,6 +49,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const locale = useLocale();
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	return (
 		<>
@@ -81,7 +82,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					{ hasTranslation( 'Favorite color' ) || locale === 'en'
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
-					{ isEnabled( 'limit-global-styles' ) && (
+					{ shouldLimitGlobalStyles && (
 						<PremiumBadge
 							className="accent-color-control__premium-badge"
 							tooltipText={ __(
