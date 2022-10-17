@@ -344,9 +344,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className={ 'add-subscriber' }>
-			{ showTitle && (
+			{ ( showTitle || showSubtitle ) && (
 				<div className={ 'add-subscriber__title-container' }>
-					<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
+					{ showTitle && <Title>{ __( 'Let’s add your first subscribers' ) }</Title> }
 					{ showSubtitle && (
 						<SubTitle>
 							{ __(
