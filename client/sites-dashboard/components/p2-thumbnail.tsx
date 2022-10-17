@@ -88,7 +88,7 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 		return (
 			<>
 				{ header_image ? (
-					<HeaderImage src={ header_image } alt="" />
+					<HeaderImage { ...getHeaderImgProps( isSmall, header_image ) } />
 				) : (
 					<ColorGradient style={ { backgroundColor: color_link } } />
 				) }
@@ -110,6 +110,30 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 			{ renderContents() }
 		</Container>
 	);
+}
+
+function getHeaderImgProps( isSmall: boolean, imgSrc: string ) {
+	if ( isSmall ) {
+		return {
+			src: addQueryArgs( imgSrc, { w: 106 } ),
+			srcSet: addQueryArgs( imgSrc, { w: 2 * 106 } ) + ' 2x',
+		};
+	}
+
+	return {
+		src: imgSrc,
+		srcSet: [
+			addQueryArgs( imgSrc, { w: 360 } ) + ' 360w',
+			addQueryArgs( imgSrc, { w: 720 } ) + ' 720w',
+		].join( ',' ),
+		sizes: [
+			'(min-width: 1345px) 405px',
+			'(min-width: 960px) calc( ( 100vw - 128px ) / 3 )',
+			'(min-width: 780px) calc( ( 100vw - 96px ) / 2 )',
+			'(min-width: 660px) calc( ( 100vw - 64px ) / 2 )',
+			'calc( 100vw - 32px )',
+		].join( ',' ),
+	};
 }
 
 function getIconImgProps( isSmall: boolean, imgSrc: string ) {
