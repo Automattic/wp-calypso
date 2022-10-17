@@ -43,25 +43,28 @@ const InserterMenuTrackingEvent = function () {
 		tracksRecordEvent( 'wpcom_block_picker_no_results', eventProperties );
 	}, 500 );
 
-	const debouncedSetFilterValueDiscovery = debounce( ( search_term ) => {
+	const debouncedSetFilterValueDirectory = debounce( ( search_term ) => {
 		if ( search_term.length < 3 ) {
 			return;
 		}
 
-		const blockDirectoryResults = document.querySelectorAll(
-			'.block-directory-downloadable-block-list-item'
-		).length;
-
-		if ( blockDirectoryResults ) {
-			tracksRecordEvent( 'wpcom_block_discovery_results', {
-				search_term,
-				results: blockDirectoryResults,
-			} );
-		} else {
-			tracksRecordEvent( 'wpcom_block_discovery_no_results', {
-				search_term,
-			} );
+		// This is to avoid record an event on sites with a Free plan
+		if (
+			document.querySelectorAll( '.block-directory-downloadable-blocks-panel' ).length < 1 &&
+			document.querySelectorAll( '.block-editor-inserter__tips' ).length < 1
+		) {
+			return;
 		}
+
+		const trackEventName = document.querySelectorAll(
+			'.block-directory-downloadable-block-list-item'
+		).length
+			? 'wpcom_block_directory_has_results'
+			: 'wpcom_block_directory_no_results';
+
+		tracksRecordEvent( trackEventName, {
+			search_term,
+		} );
 	}, 2000 );
 
 	return (
@@ -69,7 +72,7 @@ const InserterMenuTrackingEvent = function () {
 			{ ( { filterValue, hasItems } ) => {
 				if ( searchTerm !== filterValue ) {
 					debouncedSetFilterValue( filterValue, hasItems );
-					debouncedSetFilterValueDiscovery( filterValue );
+					debouncedSetFilterValueDirectory( filterValue, hasItems );
 				}
 
 				return null;

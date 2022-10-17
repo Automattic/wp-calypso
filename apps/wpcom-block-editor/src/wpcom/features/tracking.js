@@ -706,7 +706,7 @@ const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
  * @returns {void}
  */
 const trackInstallBlockType = ( block ) => {
-	tracksRecordEvent( 'wpcom_block_install', {
+	tracksRecordEvent( 'wpcom_block_directory_install', {
 		block_slug: block.id,
 	} );
 };
