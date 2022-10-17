@@ -1,3 +1,4 @@
+import { DEFAULT_THUMBNAIL_SIZE } from '@automattic/components';
 import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
@@ -73,9 +74,10 @@ interface P2ThumbnailProps {
 	site: SiteExcerptData;
 	displayMode: SitesDisplayMode;
 	alt: string;
+	sizesAttr?: string;
 }
 
-export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
+export function P2Thumbnail( { site, displayMode, alt, sizesAttr }: P2ThumbnailProps ) {
 	if ( ! site.p2_thumbnail_elements ) {
 		return null;
 	}
@@ -88,7 +90,7 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 		return (
 			<>
 				{ header_image ? (
-					<HeaderImage { ...getHeaderImgProps( isSmall, header_image ) } />
+					<HeaderImage { ...getHeaderImgProps( isSmall, header_image ) } sizes={ sizesAttr } />
 				) : (
 					<ColorGradient style={ { backgroundColor: color_link } } />
 				) }
@@ -115,8 +117,8 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 function getHeaderImgProps( isSmall: boolean, imgSrc: string ) {
 	if ( isSmall ) {
 		return {
-			src: addQueryArgs( imgSrc, { w: 106 } ),
-			srcSet: addQueryArgs( imgSrc, { w: 2 * 106 } ) + ' 2x',
+			src: addQueryArgs( imgSrc, { w: DEFAULT_THUMBNAIL_SIZE.width } ),
+			srcSet: addQueryArgs( imgSrc, { w: 2 * DEFAULT_THUMBNAIL_SIZE.width } ) + ' 2x',
 		};
 	}
 
@@ -124,14 +126,7 @@ function getHeaderImgProps( isSmall: boolean, imgSrc: string ) {
 		src: imgSrc,
 		srcSet: [
 			addQueryArgs( imgSrc, { w: 360 } ) + ' 360w',
-			addQueryArgs( imgSrc, { w: 720 } ) + ' 720w',
-		].join( ',' ),
-		sizes: [
-			'(min-width: 1345px) 405px',
-			'(min-width: 960px) calc( ( 100vw - 128px ) / 3 )',
-			'(min-width: 780px) calc( ( 100vw - 96px ) / 2 )',
-			'(min-width: 660px) calc( ( 100vw - 64px ) / 2 )',
-			'calc( 100vw - 32px )',
+			addQueryArgs( imgSrc, { w: 720 } ) + ' 720w', // 720px is the recommended header width in the P2 customizer
 		].join( ',' ),
 	};
 }

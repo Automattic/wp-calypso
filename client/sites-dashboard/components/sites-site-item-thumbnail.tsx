@@ -69,6 +69,7 @@ export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThum
 					site={ site }
 					displayMode={ displayMode }
 					alt={ site.title || __( 'Site thumbnail' ) }
+					sizesAttr={ props.sizesAttr }
 				/>
 			);
 		}
