@@ -15,7 +15,6 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/s
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import type { Step } from '../../types';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -45,6 +44,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	const { createVideoPressSite, setSelectedSite, setPendingAction, setProgress } =
 		useDispatch( ONBOARD_STORE );
+	const { saveSiteSettings, setIntentOnSite } = useDispatch( SITE_STORE );
 
 	const getDefaultStepContent = () => <h1>Choose a plan step</h1>;
 
@@ -120,6 +120,8 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				const newSite = getNewSite();
 				setSelectedSite( newSite?.blogid );
+				setIntentOnSite( newSite?.site_slug as string, flow );
+				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
 				const planObject = supportedPlans.find(
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
@@ -189,12 +191,12 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 										id={ 'plan-item-' + plan.periodAgnosticSlug }
 									>
 										<PlanItem
-											popularBadgeVariation={ 'ON_TOP' }
+											popularBadgeVariation="ON_TOP"
 											allPlansExpanded={ allPlansExpanded }
 											key={ plan.periodAgnosticSlug }
 											slug={ plan.periodAgnosticSlug }
 											domain={ domain }
-											CTAVariation={ 'NORMAL' }
+											CTAVariation="NORMAL"
 											features={ plan.features ?? [] }
 											billingPeriod={ billingPeriod }
 											isPopular={ 'business' === plan.periodAgnosticSlug }
@@ -231,10 +233,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 		return (
 			<FormattedHeader
-				id={ 'choose-a-plan-header' }
+				id="choose-a-plan-header"
 				headerText="Choose a plan"
 				subHeaderText={ __( 'Unlock a powerful bundle of features for your video site.' ) }
-				align={ 'center' }
+				align="center"
 			/>
 		);
 	};
@@ -243,7 +245,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'chooseAPlan' }
+			stepName="chooseAPlan"
 			shouldHideNavButtons={ isVideoPressFlow }
 			goBack={ goBack }
 			goNext={ goNext }
