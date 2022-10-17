@@ -32,7 +32,7 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	const purchasedLicense = useSelector( getPurchasedLicense );
+	const purchasedLicenseInfo = useSelector( getPurchasedLicense );
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -132,8 +132,8 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						{ purchasedLicense && data?.sites && (
-							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
+						{ purchasedLicenseInfo && data?.sites && (
+							<SiteAddLicenseNotification licenseInfo={ purchasedLicenseInfo } />
 						) }
 						<div className="sites-overview__page-title-container">
 							<h2 className="sites-overview__page-title">{ pageTitle }</h2>

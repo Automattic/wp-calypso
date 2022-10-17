@@ -1,7 +1,7 @@
 import { getPreference } from 'calypso/state/preferences/selectors';
 import type {
 	Preference,
-	PurchasedProduct,
+	PurchasedProductsInfo,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { AppState } from 'calypso/types';
 
@@ -29,8 +29,8 @@ export function checkIfJetpackSiteGotDisconnected( state: AppState ): boolean {
 	return !! state.sites.jetpackSiteDisconnected;
 }
 
-export function getPurchasedLicense( state: AppState ): PurchasedProduct | null {
-	return state.agencyDashboard.purchasedLicense;
+export function getPurchasedLicense( state: AppState ): PurchasedProductsInfo | null {
+	return state.agencyDashboard.purchasedLicenseInfo;
 }
 
 /**
