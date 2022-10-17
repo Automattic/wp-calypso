@@ -27,6 +27,7 @@ import './style.scss';
 interface Props {
 	siteId: number;
 	flowName?: string;
+	showTitle?: boolean;
 	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
@@ -46,6 +47,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const {
 		siteId,
 		flowName,
+		showTitle = true,
 		showSkipBtn,
 		showCsvUpload,
 		submitBtnName = __( 'Add subscribers' ),
@@ -340,9 +342,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className={ 'add-subscriber' }>
-			<div className={ 'add-subscriber__title-container' }>
-				<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
-			</div>
+			{ showTitle && (
+				<div className={ 'add-subscriber__title-container' }>
+					<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
+				</div>
+			) }
 
 			<div className={ 'add-subscriber__form--container' }>
 				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
