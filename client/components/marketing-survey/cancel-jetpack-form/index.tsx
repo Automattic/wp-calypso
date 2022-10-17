@@ -240,7 +240,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	// Disable continuation button if "Other" is selected but no reason is written in
 	useEffect( () => {
-		if ( surveyAnswerId === 'another-reason' && surveyAnswerText === '' ) {
+		if ( surveyAnswerId === 'another-reason' && ( surveyAnswerText as string ).trim() === '' ) {
 			setDisableContinuation( true );
 		} else {
 			setDisableContinuation( false );
