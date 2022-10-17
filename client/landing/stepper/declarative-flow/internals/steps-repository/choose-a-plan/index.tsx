@@ -15,6 +15,7 @@ import { USER_STORE, ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/s
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import type { Step } from '../../types';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
