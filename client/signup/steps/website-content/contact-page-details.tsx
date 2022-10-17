@@ -98,7 +98,7 @@ export function ContactPageDetails( {
 	return (
 		<>
 			<TextAreaField
-				name={ 'content' }
+				name="content"
 				onChange={ onFieldChanged }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }

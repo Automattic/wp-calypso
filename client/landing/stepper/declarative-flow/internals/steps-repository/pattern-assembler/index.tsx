@@ -269,7 +269,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName={ 'pattern-assembler' }
+			stepName="pattern-assembler"
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

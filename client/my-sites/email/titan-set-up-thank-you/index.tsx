@@ -192,7 +192,7 @@ const TitanSetUpThankYou = ( {
 	return (
 		<ThankYou
 			containerClassName={ classNames( 'titan-set-up-thank-you__container', containerClassName ) }
-			headerClassName={ 'titan-set-up-thank-you__header' }
+			headerClassName="titan-set-up-thank-you__header"
 			sections={ [ titanThankYouSection ] }
 			showSupportSection={ true }
 			thankYouImage={ thankYouImage }

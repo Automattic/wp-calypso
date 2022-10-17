@@ -29,7 +29,7 @@ export const ManagePluginMenu = ( { plugin } ) => {
 	return (
 		<>
 			{ plugin.isMarketplaceProduct && <QueryUserPurchases /> }
-			<EllipsisMenu position={ 'bottom' }>
+			<EllipsisMenu position="bottom">
 				{ currentPurchase?.id && (
 					<PopoverMenuItem
 						icon="credit-card"

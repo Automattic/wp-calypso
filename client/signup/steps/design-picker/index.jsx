@@ -237,7 +237,7 @@ export default function DesignPickerStep( props ) {
 					recommendedCategorySlug={ getCategorizationOptionsForStep().defaultSelection }
 					categoriesHeading={
 						<FormattedHeader
-							id={ 'step-header' }
+							id="step-header"
 							headerText={ headerText() }
 							subHeaderText={ subHeaderText() }
 							align="left"
@@ -355,8 +355,8 @@ export default function DesignPickerStep( props ) {
 				className="design-picker__preview"
 				fallbackHeaderText={ designTitle }
 				headerText={ designTitle }
-				fallbackSubHeaderText={ '' }
-				subHeaderText={ '' }
+				fallbackSubHeaderText=""
+				subHeaderText=""
 				stepContent={ renderDesignPreview() }
 				align={ isMobile ? 'left' : 'center' }
 				hideSkip

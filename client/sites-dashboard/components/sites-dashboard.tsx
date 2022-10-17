@@ -304,7 +304,7 @@ export function SitesDashboard( {
 				title={ __( 'Scroll to top' ) }
 				aria-label={ __( 'Scroll to top' ) }
 			>
-				<Gridicon icon={ 'arrow-up' } size={ 18 } />
+				<Gridicon icon="arrow-up" size={ 18 } />
 			</ScrollButton>
 		</main>
 	);

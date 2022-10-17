@@ -120,7 +120,7 @@ export function RelatedPostCard( {
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 				href={ postLink }
 				onThumbnailClick={ postClickTracker }
 				allowPlaying={ false }
@@ -133,7 +133,7 @@ export function RelatedPostCard( {
 				imageUrl={ canonicalMedia.src }
 				onClick={ postClickTracker }
 				href={ postLink }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 				children={ <div style={ { width: 'auto' } } /> }
 			/>
 		);

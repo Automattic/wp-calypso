@@ -205,7 +205,7 @@ const GoogleAnalyticsJetpackForm = ( {
 						description={ translate(
 							"Monitor your site's views, clicks, and other important metrics"
 						) }
-						event={ 'google_analytics_settings' }
+						event="google_analytics_settings"
 						feature={ FEATURE_GOOGLE_ANALYTICS }
 						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }

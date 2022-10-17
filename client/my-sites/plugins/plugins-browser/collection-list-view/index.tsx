@@ -49,7 +49,7 @@ export default function CollectionListView( {
 			browseAllLink={ getCategoryUrl( category ) }
 			showPlaceholders={ false }
 			resultCount={ false }
-			search={ '' }
+			search=""
 			extended={ false }
 		/>
 	);

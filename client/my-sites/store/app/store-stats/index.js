@@ -57,12 +57,7 @@ class StoreStats extends Component {
 						'Learn valuable insights about the purchases made on your store.'
 					) }
 				/>
-				<StatsNavigation
-					selectedItem={ 'store' }
-					siteId={ siteId }
-					slug={ slug }
-					interval={ unit }
-				/>
+				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 				<Chart
 					query={ orderQuery }
 					selectedDate={ endSelectedDate }

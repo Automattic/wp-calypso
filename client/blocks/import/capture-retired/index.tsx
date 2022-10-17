@@ -133,7 +133,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								dir="ltr"
 							/>
 							{ showSubmitButton && (
-								<NextButton type={ 'submit' }>
+								<NextButton type="submit">
 									<Icon className="capture__next-button-icon" icon={ chevronRight } />
 								</NextButton>
 							) }

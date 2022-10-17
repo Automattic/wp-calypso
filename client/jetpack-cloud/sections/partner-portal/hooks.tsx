@@ -223,11 +223,7 @@ export function useLicenseIssuing(
 						{
 							components: {
 								a: (
-									<a
-										href={
-											'/partner-portal/payment-methods/add?return=/partner-portal/issue-license'
-										}
-									/>
+									<a href="/partner-portal/payment-methods/add?return=/partner-portal/issue-license" />
 								),
 								br: <br />,
 							},

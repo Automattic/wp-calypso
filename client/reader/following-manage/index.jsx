@@ -204,12 +204,12 @@ class FollowingManage extends Component {
 		return (
 			<Fragment>
 				<div className="following-manage__header">
-					<HeaderCake backHref={ '/read' }>
+					<HeaderCake backHref="/read">
 						<h1>{ translate( 'Manage Followed Sites' ) }</h1>
 					</HeaderCake>
 				</div>
 				<ReaderMain className="following-manage">
-					<DocumentHead title={ 'Manage Following' } />
+					<DocumentHead title="Manage Following" />
 					{ ! searchResults && sitesQuery && (
 						<QueryReaderFeedsSearch query={ sitesQuery } excludeFollowed={ true } />
 					) }

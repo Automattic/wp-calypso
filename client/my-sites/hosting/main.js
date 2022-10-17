@@ -136,9 +136,7 @@ class Hosting extends Component {
 							) }
 							icon="globe"
 						>
-							<TrackComponentView
-								eventName={ 'calypso_hosting_configuration_activate_impression' }
-							/>
+							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
 							<NoticeAction
 								onClick={ clickActivate }
 								href={ `/hosting-config/activate/${ siteSlug }` }

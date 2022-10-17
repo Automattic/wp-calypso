@@ -30,8 +30,8 @@ export const ImportWrapper: Step = function ( props ) {
 
 			<StepContainer
 				stepName={ stepName || 'import-step' }
-				flowName={ 'importer' }
-				className={ 'import__onboarding-page' }
+				flowName="importer"
+				className="import__onboarding-page"
 				hideSkip={ isEnabledImportLight || shouldHideSkipBtn }
 				hideBack={ shouldHideBackBtn }
 				hideFormattedHeader={ true }

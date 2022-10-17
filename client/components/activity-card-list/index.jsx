@@ -229,11 +229,11 @@ class ActivityCardList extends Component {
 						compact={ isMobile }
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
+						prevLabel="Newer"
 						total={ visibleLogs.length }
 					/>
 				) }
@@ -246,11 +246,11 @@ class ActivityCardList extends Component {
 						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
+						prevLabel="Newer"
 						total={ visibleLogs.length }
 					/>
 				) }

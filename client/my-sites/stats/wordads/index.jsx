@@ -156,7 +156,7 @@ class WordAds extends Component {
 				{ canAccessAds && (
 					<Fragment>
 						<StatsNavigation
-							selectedItem={ 'wordads' }
+							selectedItem="wordads"
 							interval={ period }
 							siteId={ siteId }
 							slug={ slug }

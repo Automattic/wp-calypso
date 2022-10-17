@@ -380,8 +380,8 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backup"
 						title={ translate( 'Create downloadable backup' ) }
-						type={ 'backup' }
-						icon={ 'cloud-download' }
+						type="backup"
+						icon="cloud-download"
 						disableButton={ this.state.disableDownloadButton }
 					>
 						{ translate(

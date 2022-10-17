@@ -22,7 +22,7 @@ const Patterns: Step = function Patterns( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'patterns' }
+			stepName="patterns"
 			goBack={ goBack }
 			goNext={ goNext }
 			shouldHideNavButtons
@@ -37,9 +37,9 @@ const Patterns: Step = function Patterns( { navigation } ) {
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'seller-step-header' }
+					id="seller-step-header"
 					headerText={ __( 'Choose a design to start' ) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 		/>

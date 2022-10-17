@@ -280,7 +280,7 @@ function UseMyDomain( props ) {
 	const renderOwnershipVerificationFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
 				isOwnershipVerificationFlow={ true }
@@ -294,7 +294,7 @@ function UseMyDomain( props ) {
 	const renderTransferDomainFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				isFetchingAvailability={ isFetchingAvailability }
 				initialMode={ initialMode }

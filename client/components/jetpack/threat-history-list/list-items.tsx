@@ -67,7 +67,7 @@ const ListItems = ( { items }: { items: Threat[] } ) => {
 					onConfirmation={ fixThreat }
 					siteName={ siteName ?? '' }
 					threat={ selectedThreat }
-					action={ 'fix' }
+					action="fix"
 				/>
 			) }
 		</>
