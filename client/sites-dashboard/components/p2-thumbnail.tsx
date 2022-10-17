@@ -115,18 +115,24 @@ export function P2Thumbnail( { site, displayMode, alt, sizesAttr }: P2ThumbnailP
 }
 
 function getHeaderImgProps( isSmall: boolean, imgSrc: string ) {
+	const param = getWidthParam( imgSrc );
+
+	if ( ! param ) {
+		return { src: imgSrc };
+	}
+
 	if ( isSmall ) {
 		return {
-			src: addQueryArgs( imgSrc, { w: DEFAULT_THUMBNAIL_SIZE.width } ),
-			srcSet: addQueryArgs( imgSrc, { w: 2 * DEFAULT_THUMBNAIL_SIZE.width } ) + ' 2x',
+			src: addQueryArgs( imgSrc, { [ param ]: DEFAULT_THUMBNAIL_SIZE.width } ),
+			srcSet: addQueryArgs( imgSrc, { [ param ]: 2 * DEFAULT_THUMBNAIL_SIZE.width } ) + ' 2x',
 		};
 	}
 
 	return {
 		src: imgSrc,
 		srcSet: [
-			addQueryArgs( imgSrc, { w: 360 } ) + ' 360w',
-			addQueryArgs( imgSrc, { w: 720 } ) + ' 720w', // 720px is the recommended header width in the P2 customizer
+			addQueryArgs( imgSrc, { [ param ]: 360 } ) + ' 360w',
+			addQueryArgs( imgSrc, { [ param ]: 720 } ) + ' 720w', // 720px is the recommended header width in the P2 customizer
 		].join( ',' ),
 	};
 }
@@ -134,10 +140,31 @@ function getHeaderImgProps( isSmall: boolean, imgSrc: string ) {
 function getIconImgProps( isSmall: boolean, imgSrc: string ) {
 	const width = isSmall ? SMALL_ICON_PX : LARGE_ICON_PX;
 
+	const param = getWidthParam( imgSrc );
+
+	if ( ! param ) {
+		return {
+			src: imgSrc,
+			width: `${ width }px`,
+			height: `${ width }px`,
+		};
+	}
+
 	return {
-		src: addQueryArgs( imgSrc, { s: width } ),
-		srcSet: addQueryArgs( imgSrc, { s: 2 * width } ) + ' 2x',
+		src: addQueryArgs( imgSrc, { [ param ]: width } ),
+		srcSet: addQueryArgs( imgSrc, { [ param ]: 2 * width } ) + ' 2x',
 		width: `${ width }px`,
 		height: `${ width }px`,
 	};
+}
+
+function getWidthParam( imgSrc: string ) {
+	const { hostname } = new URL( imgSrc, 'http://example.com' );
+	if ( hostname.endsWith( 'gravatar.com' ) ) {
+		return 's';
+	}
+	if ( hostname.endsWith( 'files.wordpress.com' ) ) {
+		return 'w';
+	}
+	return null;
 }
