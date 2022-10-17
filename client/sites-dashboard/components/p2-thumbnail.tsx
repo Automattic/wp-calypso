@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { addQueryArgs } from '@wordpress/url';
 import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -63,22 +64,10 @@ const SiteIconContainer = styled.div< { isSmall: boolean } >(
 			  }
 );
 
-const SiteIcon = styled.img< { isSmall: boolean } >(
-	{
-		borderRadius: '2px',
-		display: 'block',
-	},
-	( { isSmall } ) =>
-		isSmall
-			? {
-					width: SMALL_ICON_PX,
-					height: SMALL_ICON_PX,
-			  }
-			: {
-					width: LARGE_ICON_PX,
-					height: LARGE_ICON_PX,
-			  }
-);
+const SiteIcon = styled.img( {
+	borderRadius: '2px',
+	display: 'block',
+} );
 
 interface P2ThumbnailProps {
 	site: SiteExcerptData;
@@ -105,7 +94,7 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 				) }
 				{ site.icon && (
 					<SiteIconContainer isSmall={ isSmall }>
-						<SiteIcon src={ site.icon.img } alt="" isSmall={ isSmall } />
+						<SiteIcon { ...getIconImgProps( isSmall, site.icon.img ) } />
 					</SiteIconContainer>
 				) }
 			</>
@@ -121,4 +110,15 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 			{ renderContents() }
 		</Container>
 	);
+}
+
+function getIconImgProps( isSmall: boolean, imgSrc: string ) {
+	const width = isSmall ? SMALL_ICON_PX : LARGE_ICON_PX;
+
+	return {
+		src: addQueryArgs( imgSrc, { s: width } ),
+		srcSet: addQueryArgs( imgSrc, { s: 2 * width } ) + ' 2x',
+		width: `${ width }px`,
+		height: `${ width }px`,
+	};
 }
