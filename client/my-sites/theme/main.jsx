@@ -53,6 +53,7 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isSiteEligibleForBundledSoftware,
 	isWpcomTheme as isThemeWpcom,
 	isWporgTheme,
 	getCanonicalTheme,
@@ -431,7 +432,7 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ '/help/contact/' }
+					href="/help/contact/"
 					onClick={ this.trackContactUsClick }
 				>
 					{ this.props.translate( 'Contact us' ) }
@@ -654,6 +655,7 @@ class ThemeSheet extends Component {
 			isAtomic,
 			isPremium,
 			isBundledSoftwareSet,
+			isSiteBundleEligible,
 			isJetpack,
 			isWpcomTheme,
 			isVip,
@@ -707,42 +709,42 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
-			! isJetpack &&
-			isPremium &&
-			! isBundledSoftwareSet &&
-			! hasUnlimitedPremiumThemes &&
-			! isVip &&
-			! retired;
+			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
+			isBundledSoftwareSet;
 		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
 			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic =
-			isAtomic &&
-			isPremium &&
-			! isBundledSoftwareSet &&
-			! canUserUploadThemes &&
-			! hasUnlimitedPremiumThemes;
+			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
 		if ( hasWpComThemeUpsellBanner ) {
+			const upsellTitle = isBundledSoftwareSet
+				? translate( 'Access this WooCommerce theme with a Business plan!' )
+				: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+			const upsellDescription = isBundledSoftwareSet
+				? translate(
+						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+				  )
+				: translate(
+						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+				  );
+
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
-					description={ preventWidows(
-						translate(
-							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-						)
-					) }
+					title={ upsellTitle }
+					description={ preventWidows( upsellDescription ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
+					forceDisplay={ isBundledSoftwareSet && ! isSiteBundleEligible }
 				/>
 			);
 		}
@@ -793,8 +795,8 @@ class ThemeSheet extends Component {
 				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source={ 'details' } />
-				<AutoLoadingHomepageModal source={ 'details' } />
+				<ThanksModal source="details" />
+				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
@@ -910,6 +912,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
+			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),

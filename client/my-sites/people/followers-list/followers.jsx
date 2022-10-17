@@ -1,10 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
@@ -136,11 +134,11 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
-									flowName={ 'people' }
+									flowName="people"
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
-										page.redirect( `/people/invites/${ this.props.site.slug }` );
+										this.props?.refetch?.();
 									} }
 								/>
 							</EmailVerificationGate>

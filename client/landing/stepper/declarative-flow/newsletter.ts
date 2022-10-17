@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -40,6 +41,18 @@ export const newsletter: Flow = {
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`
 				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`;
 		};
+
+		// trigger guides on step movement, we don't care about failures or response
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: flowName,
+				step: _currentStep,
+			}
+		);
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );

@@ -131,12 +131,12 @@ export function getEnhancedTasks(
 // Records a generic task click Tracks event
 function recordTaskClickTracksEvent(
 	flow: string | null | undefined,
-	isCompleted: boolean,
-	taskId: string
+	is_completed: boolean,
+	task_id: string
 ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		taskId,
-		isCompleted,
+		task_id,
+		is_completed,
 		flow,
 	} );
 }

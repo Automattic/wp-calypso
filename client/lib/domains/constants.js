@@ -122,3 +122,8 @@ export const domainInfoContext = {
 	DOMAIN_ROW: 'DOMAIN_ROW',
 	PAGE_TITLE: 'PAGE_TITLE',
 };
+
+export const freeSiteAddressType = {
+	MANAGED: 'managed',
+	BLOG: 'blog',
+};

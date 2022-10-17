@@ -76,7 +76,7 @@ const renderHelpBubble = ( item: Item ) => {
 	}
 
 	return (
-		<HelpBuble icon="help-outline" position={ 'right' }>
+		<HelpBuble icon="help-outline" position="right">
 			{ item.helpBubble }
 		</HelpBuble>
 	);

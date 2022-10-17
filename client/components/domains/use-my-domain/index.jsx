@@ -67,7 +67,9 @@ function UseMyDomain( props ) {
 	const baseClassName = 'use-my-domain';
 
 	useEffect( () => {
-		if ( initialMode ) setMode( initialMode );
+		if ( initialMode ) {
+			setMode( initialMode );
+		}
 	}, [ initialMode ] );
 
 	const onGoBack = () => {
@@ -88,7 +90,9 @@ function UseMyDomain( props ) {
 				if ( prevTransferDomainStepsDefinition ) {
 					setTransferDomainFlowPageSlug( prevTransferDomainStepsDefinition );
 				} else {
-					if ( wasInitialModeSet ) return goBack();
+					if ( wasInitialModeSet ) {
+						return goBack();
+					}
 					setMode( inputMode.transferOrConnect );
 				}
 				return;
@@ -225,8 +229,9 @@ function UseMyDomain( props ) {
 	}, [ initialMode, initialQuery, onNext ] );
 
 	useEffect( () => {
-		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode )
+		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {
 			setDomainTransferData();
+		}
 	}, [ mode, setDomainTransferData, initialMode ] );
 
 	const showOwnershipVerificationFlow = () => {
@@ -275,7 +280,7 @@ function UseMyDomain( props ) {
 	const renderOwnershipVerificationFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domain={ domainName }
 				initialPageSlug={ ownershipVerificationFlowPageSlug }
 				isOwnershipVerificationFlow={ true }
@@ -289,7 +294,7 @@ function UseMyDomain( props ) {
 	const renderTransferDomainFlow = () => {
 		return (
 			<ConnectDomainSteps
-				baseClassName={ 'connect-domain-step' }
+				baseClassName="connect-domain-step"
 				domainInboundTransferStatusInfo={ domainInboundTransferStatusInfo }
 				isFetchingAvailability={ isFetchingAvailability }
 				initialMode={ initialMode }

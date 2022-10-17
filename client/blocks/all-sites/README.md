@@ -8,13 +8,12 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 import AllSites from 'calypso/blocks/all-sites';
 
 function render() {
-	return <AllSites sites={ sitesArray } />;
+	return <AllSites />;
 }
 ```
 
 ## Props
 
-- `sites (array)` - An array of `site` objects.
 - `onSelect (func)` - A function to handle the event callback when clicking/tapping on the site.
 - `href (string)` - A URL to add to the anchor.
 - `isSelected (bool)` - Whether the site should be marked as selected.

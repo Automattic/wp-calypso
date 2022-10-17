@@ -117,7 +117,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 			}
 		);
 
-		if ( noticeText && statusClass )
+		if ( noticeText && statusClass ) {
 			return (
 				<div className="settings-header__domain-notice">
 					<Icon
@@ -135,6 +135,7 @@ export default function SettingsHeader( { domain, site, purchase }: SettingsHead
 					<div className="settings-header__domain-notice-message">{ noticeText }</div>
 				</div>
 			);
+		}
 
 		return null;
 	};

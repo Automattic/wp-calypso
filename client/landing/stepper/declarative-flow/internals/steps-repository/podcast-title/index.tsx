@@ -105,7 +105,7 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'podcast-title-step' }
+			stepName="podcast-title-step"
 			goBack={ goBack }
 			hideBack
 			isFullLayout

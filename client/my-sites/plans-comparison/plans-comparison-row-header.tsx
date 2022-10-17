@@ -51,7 +51,7 @@ export const PlansComparisonRowHeader: React.FunctionComponent< Props > = ( {
 	scope,
 } ) => {
 	return (
-		<th scope={ scope } className={ `is-first` }>
+		<th scope={ scope } className="is-first">
 			<Wrapper>
 				<InfoPopover position="top" iconSize={ 18 } showOnHover={ true }>
 					{ description }

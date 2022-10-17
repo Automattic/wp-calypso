@@ -24,7 +24,7 @@ export const connect: PageJS.Callback = ( context, next ) => {
 
 		window.location.replace( authUrl.toString() );
 	} else {
-		context.primary = <p>{ 'Oauth un-enabled or client id missing!' }</p>;
+		context.primary = <p>Oauth un-enabled or client id missing!</p>;
 	}
 	next();
 };

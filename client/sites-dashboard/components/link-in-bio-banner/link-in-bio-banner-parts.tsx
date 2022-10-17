@@ -45,7 +45,7 @@ export const DismissButton = () => {
 };
 
 export const Image = ( { src }: { src: string } ) => {
-	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className={ 'banner-image' } />;
+	return <img src={ src } alt={ __( 'Link to Bio banner image' ) } className="banner-image" />;
 };
 
 const handleBannerCtaClick = () => {
@@ -88,7 +88,7 @@ export const CreateButton = () => {
 	useEffect( handleBannerViewed, [] );
 	return (
 		<LinkButton
-			href="/setup/intro?flow=link-in-bio&ref=logged-out-homepage-lp"
+			href="/setup/intro?flow=link-in-bio&ref=sites-dashboard"
 			className="create-button"
 			onClick={ handleBannerCtaClick }
 		>

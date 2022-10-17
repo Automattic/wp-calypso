@@ -347,11 +347,13 @@ function CheckoutSummaryChatIfAvailable( props: { siteId: number | undefined } )
 			isWpComEcommercePlan( currentPlanSlug ) ) &&
 		! isMonthly( currentPlanSlug );
 
-	if ( ! isChatAvailable ) return null;
+	if ( ! isChatAvailable ) {
+		return null;
+	}
 
 	return (
 		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+			<WPCheckoutCheckIcon id="annual-live-chat" />
 			{ translate( 'Live chat support' ) }
 		</CheckoutSummaryFeaturesListItem>
 	);
@@ -379,12 +381,12 @@ function CheckoutSummaryAnnualUpsell( props: {
 			</CheckoutSummaryFeaturesTitle>
 			<CheckoutSummaryFeaturesListWrapper>
 				<CheckoutSummaryFeaturesListItem isSupported={ false }>
-					<WPCheckoutCheckIcon id={ 'annual-domain-credit' } />
+					<WPCheckoutCheckIcon id="annual-domain-credit" />
 					{ translate( 'Free domain for one year' ) }
 				</CheckoutSummaryFeaturesListItem>
 				{ ! isWpComPersonalPlan( productSlug ) && (
 					<CheckoutSummaryFeaturesListItem isSupported={ false }>
-						<WPCheckoutCheckIcon id={ 'annual-live-chat' } />
+						<WPCheckoutCheckIcon id="annual-live-chat" />
 						{ translate( 'Live chat support' ) }
 					</CheckoutSummaryFeaturesListItem>
 				) }

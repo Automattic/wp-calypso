@@ -49,7 +49,9 @@ const PrePurchaseNotices = () => {
 	 * Ensure site rewind capabilities are loaded, for use by isPlanIncludingSiteBackup().
 	 */
 	useEffect( () => {
-		if ( ! siteId ) return;
+		if ( ! siteId ) {
+			return;
+		}
 		dispatch( requestRewindCapabilities( siteId ) );
 	}, [ dispatch, siteId ] );
 
@@ -76,7 +78,9 @@ const PrePurchaseNotices = () => {
 	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
 		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
 
-		if ( ! planSlugInCart ) return null;
+		if ( ! planSlugInCart ) {
+			return null;
+		}
 
 		if (
 			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&

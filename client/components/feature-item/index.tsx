@@ -10,6 +10,12 @@ interface FeatureItemProps {
 
 const FeatureItemContainer = styled.div`
 	margin-top: calc( 64px - 25px ); // adds the margin needed for 64px
+	width: calc( 33% - 10px );
+
+	@media ( max-width: 660px ) {
+		width: 100%;
+		margin-top: 10px;
+	}
 `;
 
 const FeatureItemHeader = styled.div`

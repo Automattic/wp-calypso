@@ -34,8 +34,9 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 		if (
 			isJetpackSiteMultiSite( state, siteId ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) )
-		)
+		) {
 			return false;
+		}
 	}
 
 	return (

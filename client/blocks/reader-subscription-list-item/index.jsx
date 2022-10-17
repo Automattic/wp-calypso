@@ -85,15 +85,13 @@ function ReaderSubscriptionListItem( {
 			</div>
 			<div className="reader-subscription-list-item__byline">
 				<span className="reader-subscription-list-item__site-title">
-					{
-						<a
-							href={ streamUrl }
-							className="reader-subscription-list-item__link"
-							onClick={ recordTitleClick }
-						>
-							{ siteTitle }
-						</a>
-					}
+					<a
+						href={ streamUrl }
+						className="reader-subscription-list-item__link"
+						onClick={ recordTitleClick }
+					>
+						{ siteTitle }
+					</a>
 				</span>
 				<div className="reader-subscription-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isMultiAuthor && ! isEmpty( authorName ) && (

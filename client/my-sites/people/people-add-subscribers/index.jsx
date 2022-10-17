@@ -51,7 +51,7 @@ class PeopleInvites extends PureComponent {
 					/>
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -74,11 +74,11 @@ class PeopleInvites extends PureComponent {
 					>
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
-							flowName={ 'people' }
+							flowName="people"
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
-								page.redirect( `/people/invites/${ this.props.site.slug }` );
+								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 							} }
 						/>
 					</EmailVerificationGate>

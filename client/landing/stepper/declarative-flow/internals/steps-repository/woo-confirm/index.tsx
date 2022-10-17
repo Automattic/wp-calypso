@@ -281,16 +281,16 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'woo-confirm' }
+			stepName="woo-confirm"
 			goBack={ goBack }
 			hideSkip
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'woo-confirm-title-header' }
+					id="woo-confirm-title-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			stepContent={ getContent() }

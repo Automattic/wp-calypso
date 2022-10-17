@@ -57,6 +57,7 @@ import {
 	removeUnsavedUserSetting,
 	setUserSetting,
 } from 'calypso/state/user-settings/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
 
@@ -861,10 +862,9 @@ class Account extends Component {
 	};
 
 	render() {
-		const { markChanged, translate } = this.props;
+		const { isFetching, markChanged, translate } = this.props;
 		// Is a username change in progress?
 		const renderUsernameForm = this.hasUnsavedUserSetting( 'user_login' );
-
 		return (
 			<Main wideLayout className="account">
 				<QueryUserSettings />
@@ -932,6 +932,7 @@ class Account extends Component {
 							</FormLabel>
 							<LanguagePicker
 								disabled={ this.getDisabledState( INTERFACE_FORM_NAME ) }
+								isLoading={ isFetching }
 								languages={ languages }
 								onClick={ this.getClickHandler( 'Interface Language Field' ) }
 								valueKey="langSlug"
@@ -987,6 +988,7 @@ export default compose(
 			currentUserDate: getCurrentUserDate( state ),
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
+			isFetching: isFetchingUserSettings( state ),
 			requestingMissingSites: isRequestingMissingSites( state ),
 			userSettings: getUserSettings( state ),
 			unsavedUserSettings: getUnsavedUserSettings( state ),

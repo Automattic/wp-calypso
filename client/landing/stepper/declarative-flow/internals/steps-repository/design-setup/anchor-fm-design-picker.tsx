@@ -92,13 +92,13 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 		<StepContainer
 			stepName={ STEP_NAME }
 			hideSkip
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			hideFormattedHeader
-			backLabelText={ 'Back' }
+			backLabelText="Back"
 			stepContent={
 				<DesignPicker
 					designs={ ANCHOR_FM_THEMES as Design[] }
-					theme={ 'light' }
+					theme="light"
 					locale={ locale }
 					onSelect={ pickDesign }
 					isGridMinimal
@@ -108,7 +108,7 @@ const AnchorFmDesignPicker: Step = ( { navigation, flow } ) => {
 					anchorHeading={
 						<FormattedHeader
 							className="anchor-fm-design-picker__header"
-							id={ 'step-header' }
+							id="step-header"
 							headerText={ translate( 'Choose a design' ) }
 							subHeaderText={ translate(
 								'Pick a homepage layout for your podcast site. You can customize or change it later.'
