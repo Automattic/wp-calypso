@@ -59,7 +59,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	useEffect( () => {
 		debug(
 			'Deciding to redirect, proceed, or wait',
-			JSON.stringify( { hasRequested, isRequestingActiveTheme, currentTheme } )
+			JSON.stringify( { hasRequested, isRequestingActiveTheme, currentThemeId: currentTheme?.id } )
 		);
 		if ( hasRequested && ! isRequestingActiveTheme && currentTheme ) {
 			const theme_software_set = currentTheme?.taxonomies?.theme_software_set;
@@ -68,7 +68,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 				debug(
 					'Proceeding because theme has bundled software',
 					JSON.stringify( {
-						currentTheme,
+						currentThemeId: currentTheme?.id,
 						theme_software_set,
 						siteSlug,
 					} )
@@ -78,7 +78,7 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 				debug(
 					'Redirected because theme has no bundled software',
 					JSON.stringify( {
-						currentTheme,
+						currentThemeId: currentTheme?.id,
 						theme_software_set,
 						siteSlug,
 					} )
