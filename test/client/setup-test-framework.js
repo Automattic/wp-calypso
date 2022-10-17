@@ -1,9 +1,7 @@
 import '@testing-library/jest-dom';
-const { TextEncoder, TextDecoder } = require( 'util' );
+
 const nock = require( 'nock' );
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
 // Disables all network requests for all tests.
 nock.disableNetConnect();
 
