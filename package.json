@@ -296,15 +296,7 @@
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"@types/react": "^17.0.39",
 		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
-		"lzma-native": "^8.0.5",
-		"abab": "^2.0.6",
-		"acorn-walk": "^8.2.0",
-		"decimal.js": "^10.4.1",
-		"https-proxy-agent": "^5.0.1",
-		"nwsapi": "^2.2.2",
-		"tough-cookie": "^4.1.2",
-		"ws": "^8.9.0",
-		"node-gyp-build": "^4.2.1"
+		"lzma-native": "^8.0.5"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
