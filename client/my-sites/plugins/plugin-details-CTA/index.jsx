@@ -305,7 +305,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					) }
 				</div>
 			) }
-			{ shouldUpgrade && isLoggedIn && (
+			{ ! isSaasProduct && shouldUpgrade && isLoggedIn && (
 				<div className="plugin-details-cta__upgrade-required">
 					<span className="plugin-details-cta__upgrade-required-icon">
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
@@ -315,6 +315,23 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					<span className="plugin-details-cta__upgrade-required-text">
 						{ translate( 'You need to upgrade your plan to install plugins.' ) }
 					</span>
+				</div>
+			) }
+			{ shouldUpgrade && isLoggedIn && (
+				<div className="plugin-details-cta__upgrade-required-card">
+					<div className="plugin-details-cta__upgrade-required">
+						<span className="plugin-details-cta__upgrade-required-icon">
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon="notice-outline" size={ 20 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+						</span>
+						<span className="plugin-details-cta__upgrade-required-text">
+							{ translate( 'You need to upgrade your plan to install plugins.' ) }
+						</span>
+					</div>
+					<Button className="plugin-details-cta__install-button" primary onClick={ () => {} }>
+						{ translate( 'Upgrade to Business' ) }
+					</Button>
 				</div>
 			) }
 		</div>

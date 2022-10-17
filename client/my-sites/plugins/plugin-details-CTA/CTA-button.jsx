@@ -153,7 +153,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			</Dialog>
 			<Button
 				className="plugin-details-cta__install-button"
-				primary
+				primary={ ! isSaasProduct }
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {
 						return setShowAddCustomDomain( true );
