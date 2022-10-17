@@ -12,6 +12,7 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
 import * as Steps from './steps-repository';
+import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow } from './types';
 import type { StepPath } from './steps-repository';
 import './global.scss';
@@ -121,13 +122,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					return (
 						<Route key={ path } path={ `/${ path }` }>
 							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-								{ 'videopress' === flow.name && 'intro' === path && (
-									<iframe
-										className="intro__video"
-										title="Video"
-										src="https://video.wordpress.com/v/l9GrBaPw?autoPlay=true&amp;controls=false&amp;muted=true&amp;loop=true&amp;cover=true&amp;playsinline=true"
-									></iframe>
-								) }
+								{ 'videopress' === flow.name && 'intro' === path && <VideoPressIntroBackground /> }
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="flow-progress"
