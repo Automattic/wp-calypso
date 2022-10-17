@@ -32,7 +32,7 @@ const SERVICES_WITH_EXAMPLES = [
 	'tumblr',
 	'twitter',
 	'google_photos',
-	'google_drive',
+	'google-drive',
 	'mailchimp',
 	'p2_slack',
 	'p2_github',
