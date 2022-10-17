@@ -179,9 +179,13 @@ describe( 'JetpackAuthorize', () => {
 	} );
 
 	describe( 'shouldAutoAuthorize', () => {
-		test( 'should authorize if isSso', () => {
-			const authorizeMock = jest.fn();
+		let authorizeMock;
 
+		beforeEach( () => {
+			authorizeMock = jest.fn();
+		} );
+
+		test( 'should authorize if isSso', () => {
 			const authQuery = {
 				...DEFAULT_PROPS.authQuery,
 				from: 'sso',
@@ -200,8 +204,6 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'should auto-authorize for WOO services', () => {
-			const authorizeMock = jest.fn();
-
 			const authQuery = {
 				...DEFAULT_PROPS.authQuery,
 				from: 'woocommerce-services-auto-authorize',
@@ -219,8 +221,6 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'should not auto-authorize for WOO onboarding', () => {
-			const authorizeMock = jest.fn();
-
 			const authQuery = {
 				...DEFAULT_PROPS.authQuery,
 				from: 'woocommerce-onboarding',
@@ -238,8 +238,6 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'should auto-authorize for the old WOO setup wizard', () => {
-			const authorizeMock = jest.fn();
-
 			const authQuery = {
 				...DEFAULT_PROPS.authQuery,
 				from: 'woocommerce-setup-wizard',
