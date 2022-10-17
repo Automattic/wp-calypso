@@ -114,7 +114,7 @@ export function P2Thumbnail( { site, displayMode, alt }: P2ThumbnailProps ) {
 
 	return (
 		<Container
-			role={ 'img' }
+			role="img"
 			aria-label={ alt }
 			style={ { backgroundColor: color_sidebar_background } }
 		>
