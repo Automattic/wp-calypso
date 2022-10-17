@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Title, SubTitle, NextButton, SkipButton } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -29,7 +29,6 @@ interface Props {
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
-	showSkipBtn?: boolean;
 	showCsvUpload?: boolean;
 	submitBtnName?: string;
 	allowEmptyFormSubmit?: boolean;
@@ -50,7 +49,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		flowName,
 		showTitle = true,
 		showSubtitle,
-		showSkipBtn,
 		showCsvUpload,
 		submitBtnName = __( 'Add subscribers' ),
 		allowEmptyFormSubmit,
@@ -400,14 +398,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					>
 						{ submitBtnName }
 					</NextButton>
-					{ showSkipBtn && (
-						<SkipButton
-							className={ 'add-subscriber__form-skip-btn' }
-							onClick={ () => onSkipBtnClick?.() }
-						>
-							{ __( 'Not yet' ) }
-						</SkipButton>
-					) }
 				</form>
 			</div>
 		</div>
