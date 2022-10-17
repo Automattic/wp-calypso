@@ -18,7 +18,7 @@ const IconContainer = styled.div( {
 	alignSelf: 'center',
 	borderRadius: 0,
 	display: 'inline-flex',
-	marginRight: '8px',
+	marginInlineEnd: '8px',
 	padding: 0,
 	height: '32px',
 	width: '32px',
