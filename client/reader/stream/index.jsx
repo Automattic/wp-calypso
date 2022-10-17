@@ -414,6 +414,8 @@ class ReaderStream extends Component {
 			isRequesting = true;
 		}
 
+		const streamType = getStreamType( streamKey );
+
 		// @TODO: has error of invalid tag?
 		if ( hasNoPosts ) {
 			body = this.props.emptyContent;
@@ -423,7 +425,7 @@ class ReaderStream extends Component {
 			showingStream = false;
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
-			body = (
+			const bodyContent = (
 				<InfiniteList
 					ref={ this.listRef }
 					className="reader__content"
@@ -437,10 +439,23 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
+
+			// Only show right sidebar on select screens
+			const includeSidebar = [ 'following', 'search', 'custom_recs_posts_with_images' ];
+
+			if ( includeSidebar.includes( streamType ) ) {
+				body = (
+					<div className="stream__two-column">
+						{ bodyContent }
+						<div className="stream__right-column"></div>
+					</div>
+				);
+			} else {
+				body = bodyContent;
+			}
 			showingStream = true;
 			/* eslint-enable wpcalypso/jsx-classname-namespace */
 		}
-		const streamType = getStreamType( streamKey );
 		const shouldPoll = streamType !== 'search' && streamType !== 'custom_recs_posts_with_images';
 
 		const TopLevel = this.props.isMain ? ReaderMain : 'div';
