@@ -60,7 +60,7 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 					key={ fingerprint }
 					name={ name }
 					fingerprint={ fingerprint }
-					deleteText={ translate( 'Delete' ) }
+					deleteText={ translate( 'Detach' ) }
 					userId={ userId }
 					siteId={ siteId }
 				/>
