@@ -99,17 +99,17 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName={ 'newsletter-setup' }
+			stepName="newsletter-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'newsletter' }
+			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'newsletter-setup-header' }
+					id="newsletter-setup-header"
 					headerText={ createInterpolateElement( __( 'Personalize your<br />Newsletter' ), {
 						br: <br />,
 					} ) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={
