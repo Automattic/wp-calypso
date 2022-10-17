@@ -191,7 +191,6 @@
 	}
 
 	.wpnc__filter__segmented-control {
-		display: table-row; // fallback for browsers not supporting flexbox.
 		display: flex;
 		padding: 6px 8px;
 
@@ -210,7 +209,6 @@
 		user-select: none; // Makes text unselectable
 		box-sizing: border-box;
 		vertical-align: middle;
-		display: table-cell; // fallback for browsers not supporting flexbox.
 
 		// Flexbox
 		display: flex;
@@ -286,7 +284,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: white;
+			color: #fff;
 			height: 16px;
 			width: 16px;
 			border: {
@@ -483,7 +481,6 @@
 			top: 0;
 			z-index: 100;
 			text-align: left;
-			position: -webkit-sticky;
 			position: sticky;
 		}
 	}

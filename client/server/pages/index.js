@@ -142,6 +142,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -162,6 +163,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
 		reactQueryDevtoolsHelper,
+		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
 		featuresHelper,
@@ -550,7 +552,9 @@ const renderServerError =
 	( err, req, res, next ) => {
 		// If the response is not writable it means someone else already rendered a page, do nothing
 		// Hopefully they logged the error as well.
-		if ( res.writableEnded ) return;
+		if ( res.writableEnded ) {
+			return;
+		}
 
 		try {
 			req.logger.error( err );

@@ -82,7 +82,7 @@ class GSuiteCancellationFeatures extends Component {
 					{ translate( "Here’s what you'll be missing:" ) }
 				</CardHeading>
 
-				<GSuiteFeatures productSlug={ productSlug } domainName={ domainName } type={ 'list' } />
+				<GSuiteFeatures productSlug={ productSlug } domainName={ domainName } type="list" />
 
 				<GSuiteLearnMore onClick={ this.handleLearnMoreClick } productSlug={ productSlug } />
 			</div>

@@ -77,7 +77,7 @@ class StoreStatsOrdersChart extends Component {
 				unit={ unit }
 				renderTabs={ this.renderTabs }
 				slug={ slug }
-				basePath={ '/store/stats/orders' }
+				basePath="/store/stats/orders"
 				tabs={ tabs }
 			/>
 		);

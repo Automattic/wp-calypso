@@ -155,8 +155,8 @@ class EmailsStep extends Component {
 				goToNextStep={ this.handleSkip }
 				skipHeadingText={ translate( 'Not sure yet?' ) }
 				skipLabelText={ translate( 'Buy an email later' ) }
-				skipButtonAlign={ 'bottom' }
-				align={ 'left' }
+				skipButtonAlign="bottom"
+				align="left"
 				isWideLayout={ true }
 			/>
 		);

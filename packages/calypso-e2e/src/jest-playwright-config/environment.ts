@@ -47,6 +47,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	private testFilename: string;
 	private testFilePath: string;
 	private testArtifactsPath: string;
+	private testFailureArtifacts: string[];
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -65,6 +66,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
+		this.testFailureArtifacts = [];
 		this.allure = this.initializeAllureReporter( config );
 	}
 
@@ -147,8 +149,13 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 		// Create folders for test artifacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
+		const date = new Date()
+			.toISOString()
+			.split( 'Z' )[ 0 ]
+			.replace( /[.:+]/g, '-' )
+			.replace( 'T', '_' );
 		this.testArtifactsPath = await fs.mkdtemp(
-			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
+			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
 		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
@@ -271,6 +278,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
+				// Store the failing test's artifact path if it hasn't yet.
+				if ( ! this.testFailureArtifacts.includes( this.testArtifactsPath ) ) {
+					this.testFailureArtifacts.push( this.testArtifactsPath );
+				}
 				break;
 			}
 			case 'test_done': {
@@ -318,6 +329,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						}
 						contextIndex++;
 					}
+					// Print paths to captured artifacts for faster triaging.
+					console.log( `Artifacts for failed tests:` );
+					this.testFailureArtifacts.forEach( ( path ) => console.log( path ) );
 				}
 
 				// Regardless of pass/fail status, close the browser instance.

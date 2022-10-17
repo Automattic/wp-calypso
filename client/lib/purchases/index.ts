@@ -18,6 +18,7 @@ import {
 	TERM_BIENNIALLY,
 	TYPE_PRO,
 	isDIFMProduct,
+	isJetpackSearchFree,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -632,6 +633,10 @@ export function isRemovable( purchase: Purchase ): boolean {
 
 	if ( isConciergeSession( purchase ) ) {
 		return false;
+	}
+
+	if ( isJetpackSearchFree( purchase ) ) {
+		return true;
 	}
 
 	return (

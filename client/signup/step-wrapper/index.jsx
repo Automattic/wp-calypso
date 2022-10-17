@@ -210,7 +210,7 @@ class StepWrapper extends Component {
 					{ ! hideFormattedHeader && (
 						<div className="step-wrapper__header">
 							<FormattedHeader
-								id={ 'step-header' }
+								id="step-header"
 								headerText={ this.headerText() }
 								subHeaderText={ this.subHeaderText() }
 								align={ align }

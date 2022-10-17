@@ -1,6 +1,14 @@
 import config from '@automattic/calypso-config';
 
 export default function loadDevHelpers( reduxStore ) {
+	// account settings helper requires a Redux store.
+	if ( reduxStore && config.isEnabled( 'dev/account-settings-helper' ) ) {
+		const el = document.querySelector( '.environment.is-account-settings' );
+		if ( el ) {
+			asyncRequire( 'calypso/lib/account-settings-helper', ( helper ) => helper( el, reduxStore ) );
+		}
+	}
+
 	if ( config.isEnabled( 'dev/auth-helper' ) ) {
 		const el = document.querySelector( '.environment.is-auth' );
 		if ( el ) {

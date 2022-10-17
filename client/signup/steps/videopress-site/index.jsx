@@ -456,7 +456,7 @@ class VideoPressSite extends Component {
 			<>
 				<FormTextInput
 					id="site-address-input"
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="videopress-site__site-suggested-url"
 					disabled={ true }
 					name="suggested-site"
@@ -485,7 +485,7 @@ class VideoPressSite extends Component {
 				<FormTextInput
 					id="site-address-input"
 					ref={ this.customizeSiteInput }
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="videopress-site__site-url"
 					disabled={ submitting }
 					name="site"
@@ -540,7 +540,7 @@ class VideoPressSite extends Component {
 					<FormTextInput
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="videopress-site__site-title"
 						disabled={ submitting }
 						name="site-title"
@@ -555,7 +555,7 @@ class VideoPressSite extends Component {
 					</FormLabel>
 					<FormTextarea
 						id="site-description"
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="videopress-site__site-description"
 						disabled={ submitting }
 						name="site-description"

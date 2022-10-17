@@ -155,7 +155,7 @@ class SocialLoginForm extends Component {
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-							startingPoint={ 'login' }
+							startingPoint="login"
 						/>
 
 						<AppleLoginButton

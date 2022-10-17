@@ -15,6 +15,8 @@ import {
 	MENU_PAGE,
 	SERVICES_PAGE,
 	TESTIMONIALS_PAGE,
+	PRICING_PAGE,
+	TEAM_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -41,6 +43,8 @@ export function useTranslatedPageTitles() {
 			[ MENU_PAGE ]: translate( 'Menu' ),
 			[ SERVICES_PAGE ]: translate( 'Services' ),
 			[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
+			[ PRICING_PAGE ]: translate( 'Pricing' ),
+			[ TEAM_PAGE ]: translate( 'Team' ),
 		} ),
 		[ translate ]
 	);

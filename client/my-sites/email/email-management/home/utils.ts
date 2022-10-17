@@ -137,6 +137,10 @@ export function resolveEmailPlanStatus(
 	};
 
 	if ( hasGSuiteWithUs( domain ) ) {
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
+		}
+
 		// Check for pending TOS acceptance warnings at the account level
 		if (
 			isPendingGSuiteTOSAcceptance( domain ) ||
@@ -160,14 +164,14 @@ export function resolveEmailPlanStatus(
 			};
 		}
 
-		if ( ! canCurrentUserAddEmail( domain ) ) {
-			return cannotManageStatus;
-		}
-
 		return activeStatus;
 	}
 
 	if ( hasTitanMailWithUs( domain ) ) {
+		if ( ! canCurrentUserAddEmail( domain ) ) {
+			return cannotManageStatus;
+		}
+
 		// Check for expired subscription
 		const titanExpiryDateString = getTitanExpiryDate( domain );
 
@@ -193,10 +197,6 @@ export function resolveEmailPlanStatus(
 			getMaxTitanMailboxCount( domain ) > getConfiguredTitanMailboxCount( domain )
 		) {
 			return errorStatus;
-		}
-
-		if ( ! canCurrentUserAddEmail( domain ) ) {
-			return cannotManageStatus;
 		}
 
 		return activeStatus;

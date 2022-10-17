@@ -1,15 +1,21 @@
-import { SiteThumbnail } from '@automattic/components';
+import { SiteThumbnail, DEFAULT_THUMBNAIL_SIZE } from '@automattic/components';
 import { getSiteLaunchStatus } from '@automattic/sites';
+import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
+import classNames from 'classnames';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { SiteComingSoon } from './sites-site-coming-soon';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
 	fontSize: 'xx-large',
 	textTransform: 'uppercase',
+} );
+
+const disallowSelection = css( {
 	userSelect: 'none',
 } );
 
@@ -20,6 +26,7 @@ interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbn
 
 export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
+	const classes = classNames( props.className, disallowSelection );
 
 	const shouldUseScreenshot = getSiteLaunchStatus( site ) === 'public';
 
@@ -38,9 +45,27 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		} );
 	}
 
+	if ( site.is_coming_soon ) {
+		const style = {
+			width: props.width || DEFAULT_THUMBNAIL_SIZE.width,
+			height: props.height || DEFAULT_THUMBNAIL_SIZE.height,
+		};
+		return (
+			<SiteComingSoon
+				{ ...props }
+				className={ classes }
+				siteName={ site.name }
+				width={ style.width }
+				height={ style.height }
+				lang={ site.lang }
+			/>
+		);
+	}
+
 	return (
 		<SiteThumbnail
 			{ ...props }
+			className={ classes }
 			mShotsUrl={ shouldUseScreenshot ? siteUrl : undefined }
 			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
@@ -52,7 +77,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 					style={ { height: '50px', width: '50px' } }
 				/>
 			) : (
-				<NoIcon role={ 'img' } aria-label={ __( 'Site Icon' ) }>
+				<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
 					{ getFirstGrapheme( site.title ?? '' ) }
 				</NoIcon>
 			) }

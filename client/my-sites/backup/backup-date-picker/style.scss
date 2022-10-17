@@ -262,7 +262,7 @@
 
 	// Change the color of the backup dot on the active day.
 	.DayPicker-Day:not(.DayPicker-Day--disabled).DayPicker-Day--is-selected .date-picker__day::after {
-		background-color: white;
+		background-color: var(--studio-white);
 	}
 
 

@@ -1,9 +1,9 @@
-import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useDesktopBreakpoint, useMobileBreakpoint } from '@automattic/viewport-react';
 import { useSelector } from 'react-redux';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { LINK_IN_BIO_BANNER_PREFERENCE } from './link-in-bio-banner-parts';
-import { LinkInBioBanners, BannerType } from './link-in-bio-banners';
+import { BannerType, LinkInBioBanners } from './link-in-bio-banners';
 
 type Props = {
 	displayMode: 'row' | 'grid';
@@ -24,11 +24,12 @@ export const LinkInBioBanner = ( props: Props ) => {
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
 	const isMobile = useMobileBreakpoint();
+	const isDesktop = useDesktopBreakpoint();
 	const isBannerVisible = useSelector( ( state ) =>
 		getPreference( state, LINK_IN_BIO_BANNER_PREFERENCE )
 	);
 	const showBanner =
-		( doesNotAlreadyHaveALinkInBioSite && isBannerVisible == null ) || isBannerVisible;
+		doesNotAlreadyHaveALinkInBioSite && ( isBannerVisible == null || isBannerVisible );
 
 	let bannerType: BannerType = 'none';
 	if ( showBanner ) {
@@ -38,8 +39,12 @@ export const LinkInBioBanner = ( props: Props ) => {
 			bannerType = 'row';
 		} else if ( displayMode === 'grid' ) {
 			if ( siteCount === 1 ) {
-				bannerType = 'double-tile';
-			} else if ( siteCount === 2 ) {
+				if ( isDesktop ) {
+					bannerType = 'double-tile';
+				} else {
+					bannerType = 'tile';
+				}
+			} else if ( siteCount === 2 && isDesktop ) {
 				bannerType = 'tile';
 			}
 		}

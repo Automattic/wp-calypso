@@ -69,15 +69,13 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 			<div className="plugin-site-jetpack__container">
 				<div className="plugin-site-jetpack__domain">{ site.domain }</div>
 				<div className="plugin-site-jetpack__install-button">
-					{
-						<PluginInstallButton
-							isEmbed={ true }
-							selectedSite={ site }
-							plugin={ plugin }
-							isInstalling={ installInProgress }
-							{ ...props }
-						/>
-					}
+					<PluginInstallButton
+						isEmbed={ true }
+						selectedSite={ site }
+						plugin={ plugin }
+						isInstalling={ installInProgress }
+						{ ...props }
+					/>
 				</div>
 			</div>
 		);
@@ -124,7 +122,7 @@ const PluginSiteJetpack = ( { isAutoManaged = false, site, plugin, allowedAction
 						/>
 					) }
 					{ ( isMobileLayout || settingsLink || currentPurchase ) && (
-						<EllipsisMenu position={ 'bottom' }>
+						<EllipsisMenu position="bottom">
 							{ currentPurchase?.id && (
 								<PopoverMenuItem
 									icon="credit-card"

@@ -157,12 +157,6 @@
 		align-items: flex-start;
 		margin-bottom: 12px;
 
-		.reader-related-card__byline,
-		.reader-related-card__byline-author,
-		.reader-related-card__byline-site {
-			margin-top: 0;
-		}
-
 		.reader-related-card__byline-author {
 			margin-bottom: -3px;
 		}
@@ -172,6 +166,7 @@
 			margin-top: 0;
 			position: relative;
 			top: -2px;
+			left: 50px;
 
 			@include breakpoint-deprecated( "<480px" ) {
 				margin-right: 0;

@@ -11,7 +11,7 @@
 		background-attachment: fixed;
 		/*!rtl:ignore*/
 		background-position-x: 0%, 100%;
-		background-position-y: 100%, 100px;
+		background-position-y: 100%, 80px;
 		background-size: auto 30%, auto 50%;
 
 
@@ -84,6 +84,10 @@
 
 		.step-container__jetpack-powered {
 			margin: 20px 0 60px;
+
+			@include onboarding-break-mobile-landscape {
+				margin: 5px 0 60px;
+			}
 		}
 	}
 
@@ -106,6 +110,10 @@
 		@include break-large {
 			font-size: 2.75rem;
 			line-height: 52px;
+		}
+
+		@include onboarding-break-mobile-landscape {
+			font-size: $font-title-medium;
 		}
 
 		span {

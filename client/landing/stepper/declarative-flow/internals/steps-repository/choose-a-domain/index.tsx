@@ -8,7 +8,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'chooseADomain' }
+			stepName="chooseADomain"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

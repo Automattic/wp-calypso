@@ -87,7 +87,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const locale = useLocale();
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || __( 'Plugins' );
+	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {

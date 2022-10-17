@@ -277,7 +277,7 @@ class CurrentPlan extends Component {
 						isPlaceholder={ isLoading }
 					/>
 
-					<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
+					<TrackComponentView eventName="calypso_plans_my_plan_view" />
 				</div>
 			</Main>
 		);

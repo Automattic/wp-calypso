@@ -154,6 +154,8 @@ class Login extends Component {
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
 					isPartnerSignup: this.props.isPartnerSignup,
+					oauth2ClientId: this.props.oauth2Client?.id,
+					redirectTo: this.props.redirectTo,
 				} )
 			);
 		}
@@ -305,7 +307,7 @@ class Login extends Component {
 							) : (
 								<div className="login__woocommerce-wrapper">
 									<div className={ classNames( 'login__woocommerce-logo' ) }>
-										<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+										<svg width={ 200 } viewBox="0 0 1270 170">
 											<AsyncLoad
 												require="calypso/components/jetpack-header/woocommerce"
 												darkColorScheme={ false }

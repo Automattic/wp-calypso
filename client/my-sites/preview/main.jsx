@@ -164,7 +164,7 @@ class PreviewMain extends Component {
 					title={ translate( 'Unable to show your site here' ) }
 					line={ translate( 'To view your site, click the button below' ) }
 					action={ action }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 350 }
 				/>
 			);

@@ -74,7 +74,9 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 	};
 
 	useEffect( () => {
-		if ( ! siteId ) return;
+		if ( ! siteId ) {
+			return;
+		}
 
 		setPendingAction( async () => {
 			setProgress( 0 );
@@ -161,7 +163,9 @@ const WooTransfer: Step = function WooTransfer( { navigation } ) {
 
 				stopPollingSoftware = !! softwareStatus?.applied;
 
-				if ( ! stopPollingSoftware ) await wait( 3000 );
+				if ( ! stopPollingSoftware ) {
+					await wait( 3000 );
+				}
 			}
 			setProgress( 1 );
 		} );

@@ -6,7 +6,7 @@ import type { Pattern } from './types';
 
 type PatternLayoutProps = {
 	header: Pattern | null;
-	sections: Pattern[] | null;
+	sections: Pattern[];
 	footer: Pattern | null;
 	onAddHeader: () => void;
 	onReplaceHeader: () => void;
@@ -72,15 +72,15 @@ const PatternLayout = ( {
 							</Button>
 						</li>
 					) }
-					<AsyncLoad require="./animate-list" featureName={ 'domMax' }>
+					<AsyncLoad require="./animate-list" featureName="domMax" placeholder={ <div /> }>
 						{ ( m: any ) =>
-							sections?.map( ( section, index ) => {
+							sections.map( ( section, index ) => {
 								const { name, key } = section as Pattern;
 								return (
 									<m.li
-										layout={ 'position' }
+										key={ key }
+										layout="position"
 										exit={ { opacity: 0, x: -50, transition: { duration: 0.2 } } }
-										key={ `${ key }` }
 										className="pattern-layout__list-item pattern-layout__list-item--section"
 									>
 										<span className="pattern-layout__list-item-text" title={ name }>

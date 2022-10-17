@@ -24,12 +24,12 @@ function AdminHelpCenterContent() {
 		if ( show ) {
 			recordTracksEvent( 'calypso_inlinehelp_close', {
 				location: 'help-center',
-				sectionName: 'wp-admin',
+				section: 'wp-admin',
 			} );
 		} else {
 			recordTracksEvent( 'calypso_inlinehelp_show', {
 				location: 'help-center',
-				sectionName: 'wp-admin',
+				section: 'wp-admin',
 			} );
 		}
 		setShowHelpCenter( ! show );
@@ -40,11 +40,13 @@ function AdminHelpCenterContent() {
 	return <HelpCenter handleClose={ () => setShowHelpCenter( false ) } />;
 }
 
-ReactDOM.render(
-	<QueryClientProvider client={ whatsNewQueryClient }>
-		<CalypsoStateProvider>
-			<AdminHelpCenterContent />
-		</CalypsoStateProvider>
-	</QueryClientProvider>,
-	document.getElementById( 'help-center-masterbar' )
-);
+if ( window?.helpCenterAdminBar?.isLoaded ) {
+	ReactDOM.render(
+		<QueryClientProvider client={ whatsNewQueryClient }>
+			<CalypsoStateProvider>
+				<AdminHelpCenterContent />
+			</CalypsoStateProvider>
+		</QueryClientProvider>,
+		document.getElementById( 'help-center-masterbar' )
+	);
+}

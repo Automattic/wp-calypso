@@ -112,7 +112,7 @@ class SocialSignupForm extends Component {
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-							startingPoint={ 'signup' }
+							startingPoint="signup"
 							isReskinned={ this.props.isReskinned }
 						/>
 

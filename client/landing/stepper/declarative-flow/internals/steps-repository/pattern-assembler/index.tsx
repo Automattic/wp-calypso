@@ -148,9 +148,15 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const onSelect = ( pattern: Pattern | null ) => {
 		if ( pattern ) {
-			if ( 'header' === showPatternSelectorType ) setHeader( pattern );
-			if ( 'footer' === showPatternSelectorType ) setFooter( pattern );
-			if ( 'section' === showPatternSelectorType ) addSection( pattern );
+			if ( 'header' === showPatternSelectorType ) {
+				setHeader( pattern );
+			}
+			if ( 'footer' === showPatternSelectorType ) {
+				setFooter( pattern );
+			}
+			if ( 'section' === showPatternSelectorType ) {
+				addSection( pattern );
+			}
 
 			if ( showPatternSelectorType ) {
 				trackEventPatternSelect( {
@@ -263,7 +269,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName={ 'pattern-assembler' }
+			stepName="pattern-assembler"
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

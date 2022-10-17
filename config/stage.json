@@ -131,6 +131,7 @@
 		"site-indicator": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
+		"subscriber-importer": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": false,
 		"themes/premium": true,

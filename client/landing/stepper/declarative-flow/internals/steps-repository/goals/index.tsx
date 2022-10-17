@@ -139,10 +139,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
-				stepName={ 'goals-step' }
+				stepName="goals-step"
 				goNext={ navigation.goNext }
 				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign={ 'top' }
+				skipButtonAlign="top"
 				hideBack={ true }
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }

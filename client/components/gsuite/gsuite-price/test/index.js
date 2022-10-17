@@ -15,9 +15,7 @@ describe( 'GSuitePrice', () => {
 	};
 
 	test( 'renders correctly', () => {
-		const tree = renderer
-			.create( <GSuitePrice product={ product } currencyCode={ 'EUR' } /> )
-			.toJSON();
+		const tree = renderer.create( <GSuitePrice product={ product } currencyCode="EUR" /> ).toJSON();
 
 		expect( tree ).toMatchSnapshot();
 	} );
