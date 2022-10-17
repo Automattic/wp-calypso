@@ -73,14 +73,16 @@ const ListTileSubtitle = styled.div`
 `;
 
 const SitePlan = styled.div`
-	display: inline-flex;
-	align-items: center;
+	display: inline;
+	> * {
+		vertical-align: middle;
+		line-height: normal;
+	}
 `;
 
 const SitePlanIcon = styled.div`
 	display: inline-block;
 	margin-inline-end: 6px;
-	max-height: 16px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
@@ -134,6 +136,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
+
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
