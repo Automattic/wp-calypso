@@ -51,7 +51,7 @@ const prefetchProductList = ( queryClient, store ) => {
 		} );
 };
 
-const prefetchTimebox = ( prefetchPromises, context, key, timeout ) => {
+const prefetchTimebox = ( prefetchPromises, context, timeout ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
 
@@ -75,12 +75,7 @@ const prefetchTimebox = ( prefetchPromises, context, key, timeout ) => {
 
 		context.res.req.logger.error( {
 			feature: 'calypso_ssr',
-			message: err?.message || err || 'unknown error',
-			extra: {
-				key,
-				'user-agent': context.res?.req?.useragent?.source,
-				path: context.path,
-			},
+			message: err?.message,
 		} );
 	} );
 };
