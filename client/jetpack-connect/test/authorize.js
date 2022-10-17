@@ -463,7 +463,7 @@ describe( 'JetpackAuthorize', () => {
 			);
 		} );
 
-		test( 'should redirect to redirect to the /jetpack/connect/plans page by default', async () => {
+		test( 'should redirect to the /jetpack/connect/plans page by default', async () => {
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
