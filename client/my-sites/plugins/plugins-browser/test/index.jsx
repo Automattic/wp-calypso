@@ -48,6 +48,11 @@ jest.mock( '@automattic/languages', () => [
 	},
 ] );
 
+jest.mock( 'calypso/state/purchases/selectors', () => ( {
+	getUserPurchases: jest.fn(),
+	isFetchingSitePurchases: jest.fn( () => false ),
+} ) );
+
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -116,7 +121,9 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 	test.each( [ PLAN_FREE, PLAN_BLOGGER, PLAN_PERSONAL, PLAN_PREMIUM ] )(
 		`Business 1 year for (%s)`,
 		( product_slug ) => {
-			const initialState = { sites: { items: { 1: { jetpack: false, plan: { product_slug } } } } };
+			const initialState = {
+				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
+			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );
 			expect( nudge ).toBeVisible();
