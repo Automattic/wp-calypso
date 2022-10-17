@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import './jsdom-globals-setup';
+import '../jsdom-test-globals-fix';
 import { JSDOM } from 'jsdom';
 import fixtures from '../malformed-html-fixtures';
 import {
