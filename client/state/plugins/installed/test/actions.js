@@ -38,6 +38,7 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
@@ -49,6 +50,7 @@ import {
 	disableAutoupdatePlugin,
 	installPlugin,
 	removePlugin,
+	handleDispatchSuccessCallback,
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 
@@ -743,6 +745,32 @@ describe( 'actions', () => {
 				pluginId: 'fake/fake',
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
+		} );
+	} );
+
+	describe( '#handleDispatchSuccessCallback()', () => {
+		test( 'should dispatch status update and the action dispatch call when a plugin is activated successfully', () => {
+			jest.useFakeTimers();
+			jest.spyOn( global, 'setTimeout' );
+			const defaultAction = {
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+			};
+			handleDispatchSuccessCallback( defaultAction, {} )( spy );
+
+			expect( spy.mock.calls[ 0 ][ 0 ] ).toEqual( {
+				type: PLUGIN_ACTION_STATUS_UPDATE,
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+				data: {
+					statusRecentlyChanged: true,
+				},
+			} );
+
+			expect( setTimeout ).toHaveBeenCalledTimes( 1 );
+			expect( setTimeout ).toHaveBeenLastCalledWith( expect.any( Function ), 3000 );
 		} );
 	} );
 } );
