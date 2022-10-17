@@ -2,6 +2,9 @@ import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import getHasLoadedSiteFeatures from 'calypso/state/selectors/has-loaded-site-features';
+import getIsRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
+import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
@@ -24,11 +27,18 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	const { goNext } = navigation;
 	useEffect( () => {
 		reduxDispatch( requestActiveTheme( site?.ID || -1 ) );
+		reduxDispatch( fetchSiteFeatures( site?.ID || -1 ) );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ site?.ID ] );
 	const currentThemeId = useSelector( ( state ) => getActiveTheme( state, site?.ID || -1 ) );
 	const currentTheme = useSelector( ( state ) =>
 		getCanonicalTheme( state, site?.ID || -1, currentThemeId )
+	);
+	const isRequestingSiteFeatures: boolean = useSelector( ( state ) =>
+		getIsRequestingSiteFeatures( state, site?.ID || -1 )
+	);
+	const hasLoadedSiteFeatures: boolean = useSelector( ( state ) =>
+		getHasLoadedSiteFeatures( state, site?.ID || -1 )
 	);
 	const { setBundledPluginSlug } = useDispatch( SITE_STORE );
 	useEffect( () => {
@@ -46,10 +56,10 @@ const GetCurrentThemeSoftwareSets: Step = function GetCurrentBundledPluginsStep(
 	}, [ currentTheme?.id ] );
 
 	useEffect( () => {
-		if ( ! isPluginBundleEligible ) {
+		if ( hasLoadedSiteFeatures && ! isRequestingSiteFeatures && ! isPluginBundleEligible ) {
 			window.location.replace( `/home/${ siteSlug }` );
 		}
-	}, [ isPluginBundleEligible, siteSlug ] );
+	}, [ isPluginBundleEligible, siteSlug, isRequestingSiteFeatures, hasLoadedSiteFeatures ] );
 
 	return null;
 };
