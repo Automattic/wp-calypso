@@ -26,7 +26,7 @@ button.conversation-follow-button {
 		&:hover,
 		&:focus {
 			.conversation-follow-button__label {
-				color: white;
+				color: var(--color-text-inverted);
 			}
 
 			.gridicon,
@@ -34,7 +34,7 @@ button.conversation-follow-button {
 			.reader-following-conversation {
 				fill: var(--color-text-inverted);
 				g {
-					fill: white;
+					fill: var(--studio-white);
 					stroke: var(--color-success);
 				}
 			}
@@ -57,7 +57,7 @@ button.conversation-follow-button {
 			pointer-events: auto;
 			fill: var(--color-success);
 			g {
-				fill: white;
+				fill: var(--studio-white);
 				stroke: var(--color-success);
 			}
 		}
@@ -79,7 +79,7 @@ button.conversation-follow-button {
 			.reader-following-conversation {
 				fill: var(--color-success);
 				g {
-					fill: white;
+					fill: var(--studio-white);
 					stroke: var(--color-success);
 				}
 			}
@@ -88,7 +88,7 @@ button.conversation-follow-button {
 		&.popover__menu-item {
 			&:hover,
 			&:focus {
-				color: white;
+				color: var(--color-text-inverted);
 
 				.gridicon,
 				.reader-follow-conversation,

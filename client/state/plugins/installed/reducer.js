@@ -16,6 +16,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
@@ -100,18 +101,13 @@ export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action
 			return { ...state, [ action.siteId ]: action.data };
 		}
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			return updatePlugin( state, action );
 	}
 
@@ -128,6 +124,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
@@ -148,6 +145,7 @@ function plugin( state, action ) {
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			if ( state.id !== action.data.id ) {
 				return state;
 			}

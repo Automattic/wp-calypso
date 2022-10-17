@@ -13,8 +13,10 @@ import { defaultSiteDetails, buildSiteDetails } from './lib/fixtures';
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;
+const sidebarURL = `https://${ siteName }.${ secondAndTopLevelDomain }`;
 
 const props = {
+	sidebarURL,
 	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},

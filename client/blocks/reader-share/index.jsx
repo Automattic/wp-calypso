@@ -214,7 +214,7 @@ class ReaderShare extends Component {
 							action="copy_link"
 							text={ this.props.post.URL }
 							onCopy={ onCopyLinkClick }
-							icon={ 'link' }
+							icon="link"
 						>
 							{ translate( 'Copy link' ) }
 						</PopoverMenuItemClipboard>

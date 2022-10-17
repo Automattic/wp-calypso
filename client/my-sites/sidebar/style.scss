@@ -13,7 +13,7 @@
 	--color-sidebar-menu-hover-background-rgb: rgb(var(--color-sidebar-menu-hover-background));
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
-	--color-sidebar-menu-selected-text: white;
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
 	--color-sidebar-border: #333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-rgb: 238, 238, 238;
@@ -26,7 +26,7 @@
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-background: transparent;
-	--color-sidebar-submenu-selected-text: white;
+	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
 }
 
 // Local Vars
@@ -332,7 +332,7 @@ $font-size: rem(14px);
 	// client/blocks/upsell-nudge/style.scss
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
-			background-color: #fff;
+			background-color: var(--studio-white);
 			color: #000;
 		}
 
@@ -477,7 +477,7 @@ $font-size: rem(14px);
 				font-size: 20px;
 				line-height: 20px;
 				background-color: #a7aaad;
-				color: white;
+				color: var(--color-text-inverted);
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				margin: 3px 0 3px 1px;
@@ -519,7 +519,7 @@ $font-size: rem(14px);
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var(--color-sidebar-menu-selected-background);
-				color: white;
+				color: var(--color-text-inverted);
 
 				.sidebar__menu-icon {
 					color: #fff;

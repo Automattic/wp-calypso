@@ -82,7 +82,7 @@ describe( 'Checkout payment methods list', () => {
 						<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 							<CheckoutMain
 								siteId={ siteId }
-								siteSlug={ 'foo.com' }
+								siteSlug="foo.com"
 								getStoredCards={ async () => [] }
 								overrideCountryList={ countryList }
 								{ ...additionalProps }

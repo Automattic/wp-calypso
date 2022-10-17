@@ -4,7 +4,11 @@ import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 
-const useFetchTestConnection = ( isPartnerOAuthTokenLoaded: boolean, siteId: number ) => {
+const useFetchTestConnection = (
+	isPartnerOAuthTokenLoaded: boolean,
+	isConnectionHealthy: boolean,
+	siteId: number
+) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -17,7 +21,8 @@ const useFetchTestConnection = ( isPartnerOAuthTokenLoaded: boolean, siteId: num
 					apiNamespace: 'rest/v1.1',
 				},
 				{
-					is_stale_connection_healthy: 1,
+					// We call the current health state "stale", as it might be different than the actual state.
+					is_stale_connection_healthy: Boolean( isConnectionHealthy ),
 				}
 			),
 		{

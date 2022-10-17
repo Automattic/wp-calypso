@@ -2,103 +2,66 @@
  * @group legal
  */
 import {
-	ChangeUILanguageFlow,
 	DataHelper,
-	LoginPage,
 	NavbarComponent,
 	PlansPage,
 	CartCheckoutPage,
 	SidebarComponent,
 	BrowserManager,
+	TestAccount,
+	RestAPIClient,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import uploadScreenshotsToBlog from '../../lib/martech-tos-helper';
-import type { LanguageSlug } from '@automattic/languages';
 
 declare const browser: Browser;
 
 describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), function () {
-	const blogName = 'e2eflowtestingtos1.wordpress.com';
-	const cartItemForBusinessPlan = 'WordPress.com Business';
 	let page: Page;
-	let plansPage: PlansPage;
+	let restAPIClient: RestAPIClient;
 
-	beforeAll( async () => {
+	beforeAll( async function () {
 		page = await browser.newPage();
+
+		await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
+
+		const testAccount = new TestAccount( 'martechTosUser' );
+		await testAccount.authenticate( page );
+
+		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.martechTosUser );
+
+		await restAPIClient.setMySettings( { language: 'en' } );
+		await page.reload( { waitUntil: 'networkidle' } );
 	} );
 
-	describe( 'ToS screenshots of WP.com checkout in desktop, tablet, and mobile viewports', function () {
-		jest.setTimeout( 1800000 );
-		let cartCheckoutPage: CartCheckoutPage;
-		const magnificientNonEnLocales = [
-			'pt-br',
-			'fr',
-			'es',
-			'de',
-			'he',
-			'ja',
-			'it',
-			'nl',
-			'ru',
-			'tr',
-			'id',
-			'zh-cn',
-			'zh-tw',
-			'ko',
-			'ar',
-			'sv',
-		];
+	it( 'Navigate to Upgrades > Plans', async function () {
+		const navbarCompnent = new NavbarComponent( page );
+		await navbarCompnent.clickMySites();
+		const sidebarComponent = new SidebarComponent( page );
+		await sidebarComponent.navigate( 'Upgrades', 'Plans' );
+	} );
 
-		it( 'Login to marTech user account', async function () {
-			const loginPage = new LoginPage( page );
-			await loginPage.visit( { path: 'new' } );
-			const { username, password } = DataHelper.getAccountCredential( 'martechTosUser' );
-			await loginPage.logInWithCredentials( username, password );
-		} );
+	it( 'Add WordPress.com Business plan to cart', async function () {
+		const plansPage = new PlansPage( page );
+		await Promise.all( [ page.waitForURL( /.*checkout.*/ ), plansPage.selectPlan( 'Business' ) ] );
+	} );
 
-		it( 'Set store cookie', async function () {
-			await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
-		} );
+	describe.each( DataHelper.getMag16Locales() )(
+		'Validate Checkout page as %s',
+		function ( locale ) {
+			let cartCheckoutPage: CartCheckoutPage;
 
-		it( 'Set interface language to en', async function () {
-			await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
-			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-			await changeUILanguageFlow.changeUILanguage( 'en' as LanguageSlug );
-			await page.goto( DataHelper.getCalypsoURL( 'home' ) );
-			await page.reload( { waitUntil: 'networkidle' } );
-		} );
+			beforeAll( async function () {
+				cartCheckoutPage = new CartCheckoutPage( page );
 
-		it( 'Navigate to Upgrades > Plans', async function () {
-			const navbarCompnent = new NavbarComponent( page );
-			await navbarCompnent.clickMySites();
-			const sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Upgrades', 'Plans' );
-		} );
-
-		it( 'Click on the "Plans" navigation tab', async function () {
-			plansPage = new PlansPage( page );
-			await plansPage.clickTab( 'Plans' );
-		} );
-
-		it( 'Click on "Upgrade" button for WordPress.com Business plan', async function () {
-			await plansPage.selectPlan( 'Business' );
-		} );
-
-		it( 'WordPress.com Business is added to cart', async function () {
-			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( cartItemForBusinessPlan );
-		} );
-
-		it( 'Screenshot checkout page for all en and non-en locales', async function () {
-			const changeUILanguageFlow = new ChangeUILanguageFlow( page );
-			for ( const locale of [ ...magnificientNonEnLocales, 'en' ] ) {
-				page.setViewportSize( { width: 1280, height: 720 } );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ), { waitUntil: 'networkidle' } );
-				await changeUILanguageFlow.changeUILanguage( locale as LanguageSlug );
-				await page.waitForSelector( '.account__settings .language-picker__name-label' );
-				await page.goto( DataHelper.getCalypsoURL( 'home' ) );
+				await restAPIClient.setMySettings( { language: locale } );
 				await page.reload( { waitUntil: 'networkidle' } );
-				await cartCheckoutPage.visit( blogName );
+			} );
+
+			it( `Screenshot checkout page for ${ locale }`, async function () {
+				await page.setViewportSize( { width: 1280, height: 720 } );
+
 				await cartCheckoutPage.validatePaymentForm();
 				await page.screenshot( {
 					path: `tos_checkout_desktop_${ locale }.png`,
@@ -120,16 +83,25 @@ describe( DataHelper.createSuiteTitle( 'ToS acceptance tracking screenshots' ), 
 					type: 'jpeg',
 					quality: 20,
 				} );
-			}
-		} );
+			} );
+		}
+	);
 
-		it( 'Zip screenshots and upload', async function () {
-			const filetnameTitle = 'tos-screenshots-checkout';
-			const zipFilename = `${ filetnameTitle }.zip`;
-			const result = await uploadScreenshotsToBlog( zipFilename, 'tos_checkout_*' );
+	it( 'Zip screenshots and upload', async function () {
+		const filetnameTitle = 'tos-screenshots-checkout';
+		const zipFilename = `${ filetnameTitle }.zip`;
+		const result = await uploadScreenshotsToBlog( zipFilename, 'tos_checkout_*' );
 
-			expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
-			expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
-		} );
+		expect( result?.media?.[ 0 ]?.title ).toStrictEqual( filetnameTitle );
+		expect( result?.media?.[ 0 ]?.mime_type ).toStrictEqual( 'application/zip' );
+	} );
+
+	afterAll( async function () {
+		const blogID = SecretsManager.secrets.testAccounts.martechTosUser.testSites?.primary
+			.id as number;
+		const response = await restAPIClient.clearShoppingCart( blogID );
+		if ( response.success !== true ) {
+			console.error( `Failed to clear the shopping cart for blogID ${ blogID }` );
+		}
 	} );
 } );

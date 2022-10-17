@@ -132,7 +132,7 @@ export default function NewOrExistingSiteStep( props: Props ) {
 						intentsAlt={ [] }
 					/>
 				}
-				align={ 'left' }
+				align="left"
 				hideSkip
 				isHorizontalLayout={ true }
 				isWideLayout={ true }

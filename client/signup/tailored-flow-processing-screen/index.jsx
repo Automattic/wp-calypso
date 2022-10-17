@@ -77,7 +77,7 @@ export default function TailoredFlowProcessingScreen( { flowName } ) {
 
 	return (
 		<div className="reskinned-processing-screen__container">
-			<div className={ 'reskinned-processing-screen' }>
+			<div className="reskinned-processing-screen">
 				<h1 className="reskinned-processing-screen__progress-step">
 					{ steps.current[ currentStep ]?.title }
 				</h1>

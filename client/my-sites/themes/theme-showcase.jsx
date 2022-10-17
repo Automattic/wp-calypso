@@ -430,8 +430,8 @@ class ThemeShowcase extends Component {
 					) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
-					<ThanksModal source={ 'list' } />
-					<AutoLoadingHomepageModal source={ 'list' } />
+					<ThanksModal source="list" />
+					<AutoLoadingHomepageModal source="list" />
 					<ThemePreview />
 					{ isEligibleForOlarkChat && (
 						<OlarkChat identity={ olarkIdentity } systemsGroupId={ olarkSystemsGroupId } />

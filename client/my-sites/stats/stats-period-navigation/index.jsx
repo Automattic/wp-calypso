@@ -69,29 +69,25 @@ class StatsPeriodNavigation extends PureComponent {
 
 		return (
 			<div className="stats-period-navigation">
-				{
-					<a
-						className={ classNames( 'stats-period-navigation__previous', {
-							'is-disabled': hidePreviousArrow,
-						} ) }
-						href={ `${ url }${ previousDayQuery }` }
-						onClick={ this.handleClickPrevious }
-					>
-						<Gridicon icon={ 'arrow-left' } size={ 18 } />
-					</a>
-				}
+				<a
+					className={ classNames( 'stats-period-navigation__previous', {
+						'is-disabled': hidePreviousArrow,
+					} ) }
+					href={ `${ url }${ previousDayQuery }` }
+					onClick={ this.handleClickPrevious }
+				>
+					<Gridicon icon="arrow-left" size={ 18 } />
+				</a>
 				<div className="stats-period-navigation__children">{ children }</div>
-				{
-					<a
-						className={ classNames( 'stats-period-navigation__next', {
-							'is-disabled': hideNextArrow || isToday,
-						} ) }
-						href={ `${ url }${ nextDayQuery }` }
-						onClick={ this.handleClickNext }
-					>
-						<Gridicon icon={ 'arrow-right' } size={ 18 } />
-					</a>
-				}
+				<a
+					className={ classNames( 'stats-period-navigation__next', {
+						'is-disabled': hideNextArrow || isToday,
+					} ) }
+					href={ `${ url }${ nextDayQuery }` }
+					onClick={ this.handleClickNext }
+				>
+					<Gridicon icon="arrow-right" size={ 18 } />
+				</a>
 			</div>
 		);
 	}

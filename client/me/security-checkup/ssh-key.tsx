@@ -15,7 +15,7 @@ export const SecurityCheckupSSHKey = () => {
 
 	return (
 		<SecurityCheckupNavigationItem
-			path={ '/me/security/ssh-key' }
+			path="/me/security/ssh-key"
 			materialIcon={ hasSSHKey ? getOKIcon() : getWarningIcon() }
 			text={ __( 'SSH Key' ) }
 			description={

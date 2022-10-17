@@ -219,8 +219,8 @@ html.is-desktop .warning {
 }
 
 html.is-desktop .warning button {
-	color: white;
-	border-bottom: 1px solid white;
+	color: #fff;
+	border-bottom: 1px solid #fff;
 	cursor: pointer;
 }
 

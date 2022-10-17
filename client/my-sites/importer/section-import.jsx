@@ -272,7 +272,7 @@ class SectionImport extends Component {
 				<Main>
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);

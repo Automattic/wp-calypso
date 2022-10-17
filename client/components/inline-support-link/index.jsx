@@ -65,7 +65,9 @@ class InlineSupportLink extends Component {
 	onSupportLinkClick( event, supportPostId, url ) {
 		const { showSupportModal, openDialog } = this.props;
 
-		if ( ! showSupportModal ) return;
+		if ( ! showSupportModal ) {
+			return;
+		}
 
 		const openDialogReturn = openDialog( event, supportPostId, url );
 		this.props.routeModalData.openModal( supportPostId );

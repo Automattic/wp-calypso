@@ -32,7 +32,10 @@ export function getFinalImporterUrl(
 		} )
 	) {
 		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
-		if ( platform === 'wordpress' && ! fromSite ) {
+
+		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
+			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
+		} else if ( platform === 'wordpress' && ! fromSite ) {
 			importerUrl = addQueryArgs( importerUrl, {
 				option: WPImportOption.CONTENT_ONLY,
 			} );
@@ -52,8 +55,11 @@ export function generateStepPath(
 	stepName: string | StepPath,
 	stepSectionName?: string
 ): StepPath {
-	if ( stepName === 'intent' ) return 'goals';
-	else if ( stepName === 'capture' ) return BASE_ROUTE;
+	if ( stepName === 'intent' ) {
+		return 'goals';
+	} else if ( stepName === 'capture' ) {
+		return BASE_ROUTE;
+	}
 
 	const routes = [ BASE_ROUTE, stepName, stepSectionName ];
 	const path = routes.join( '_' );

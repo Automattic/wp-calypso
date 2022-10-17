@@ -74,17 +74,17 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'link-in-bio-setup' }
+			stepName="link-in-bio-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'linkInBio' }
+			flowName="linkInBio"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'link-in-bio-setup-header' }
+					id="link-in-bio-setup-header"
 					headerText={ createInterpolateElement( __( 'Personalize your<br />Link in Bio' ), {
 						br: <br />,
 					} ) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={

@@ -80,8 +80,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					<div>
 						<ConnectedThemesSelection
 							origin="wpcom"
-							defaultOption={ 'activate' }
-							secondaryOption={ 'tryandcustomize' }
+							defaultOption="activate"
+							secondaryOption="tryandcustomize"
 							search={ search }
 							tier={ tier }
 							filter={ filter }

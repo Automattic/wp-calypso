@@ -101,7 +101,7 @@ export default function IntentStep( props: Props ) {
 					preventWidows={ preventWidows }
 				/>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip
 			isHorizontalLayout={ true }
 			siteId={ siteId }

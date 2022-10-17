@@ -16,5 +16,7 @@ export const getPatternPreviewUrl = ( id: number, language: string ) => {
 export const handleKeyboard =
 	( callback: () => void ) =>
 	( { key }: { key: string } ) => {
-		if ( key === 'Enter' || key === ' ' ) callback();
+		if ( key === 'Enter' || key === ' ' ) {
+			callback();
+		}
 	};

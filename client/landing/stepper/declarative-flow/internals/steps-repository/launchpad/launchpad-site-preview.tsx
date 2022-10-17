@@ -31,7 +31,7 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	}
 
 	return (
-		<div className={ 'launchpad__site-preview-wrapper' }>
+		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
 				className="launchpad__-web-preview"
 				showDeviceSwitcher={ true }

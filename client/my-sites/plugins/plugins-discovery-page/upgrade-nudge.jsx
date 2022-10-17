@@ -89,9 +89,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
-				className={ 'plugins-discovery-page__upsell' }
+				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
-				icon={ 'notice-outline' }
+				icon="notice-outline"
 				showIcon={ true }
 				href={
 					pluginsPlansPageFlag
@@ -116,9 +116,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
-				className={ 'plugins-discovery-page__upsell' }
+				className="plugins-discovery-page__upsell"
 				callToAction={ translate( 'Upgrade now' ) }
-				icon={ 'notice-outline' }
+				icon="notice-outline"
 				showIcon={ true }
 				href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/pro` }
 				feature={ FEATURE_INSTALL_PLUGINS }
@@ -144,9 +144,9 @@ const UpgradeNudge = ( { siteSlug, paidPlugins } ) => {
 	return (
 		<UpsellNudge
 			event="calypso_plugins_browser_upgrade_nudge"
-			className={ 'plugins-discovery-page__upsell' }
+			className="plugins-discovery-page__upsell"
 			callToAction={ translate( 'Upgrade to Business' ) }
-			icon={ 'notice-outline' }
+			icon="notice-outline"
 			showIcon={ true }
 			href={ pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business` }
 			feature={ FEATURE_INSTALL_PLUGINS }

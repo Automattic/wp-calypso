@@ -18,12 +18,13 @@ interface Props {
 export default function SiteTableRow( { columns, item }: Props ) {
 	const site = item.site;
 	const blogId = site.value.blog_id;
+	const isConnectionHealthy = site.value?.is_connection_healthy;
 	const siteError = site.error || item.monitor.error;
 	const isFavorite = item.isFavorite;
 
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
-	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, blogId );
+	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const isSiteConnected = data ? data.connected : true;
 
@@ -60,7 +61,7 @@ export default function SiteTableRow( { columns, item }: Props ) {
 			{ site.error || ! isSiteConnected ? (
 				<tr className="site-table__connection-error">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						{ <SiteErrorContent siteUrl={ site.value.url } /> }
+						<SiteErrorContent siteUrl={ site.value.url } />
 					</td>
 				</tr>
 			) : null }
