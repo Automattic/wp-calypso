@@ -81,8 +81,8 @@ const SitePlanIcon = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const [ hasViewed, setHasViewed ] = useState( false );
-	const ref = useInView< HTMLTableDataCellElement >( () => setHasViewed( true ) );
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableDataCellElement >( () => setInViewOnce( true ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
@@ -141,7 +141,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
 			<Column ref={ ref } mobileHidden>
-				{ hasViewed && (
+				{ inViewOnce && (
 					<a href={ `/stats/day/${ site.slug }` }>
 						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
 					</a>
