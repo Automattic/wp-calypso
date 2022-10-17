@@ -41,7 +41,7 @@ const PlanFAQ = ( { titanMonthlyRenewalCost } ) => {
 
 	return (
 		<div className="plan-faq">
-			<FAQHeader className="wp-brand-font">{ 'Frequently Asked Questions' }</FAQHeader>
+			<FAQHeader className="wp-brand-font">Frequently Asked Questions</FAQHeader>
 			<FoldableFAQ
 				id="faq-1"
 				question={ translate( 'Is hosting included?' ) }

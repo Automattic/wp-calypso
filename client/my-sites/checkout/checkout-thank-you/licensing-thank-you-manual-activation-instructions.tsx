@@ -39,7 +39,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 		<>
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
-				path={ '/checkout/jetpack/thank-you/licensing-manual-activation-instructions/:product' }
+				path="/checkout/jetpack/thank-you/licensing-manual-activation-instructions/:product"
 				properties={ { product_slug: productSlug } }
 				title="Checkout > Jetpack Thank You Licensing Manual Activation Instructions"
 			/>
@@ -66,7 +66,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				</p>
 				<p>
 					<ExternalLink
-						href={ 'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/' }
+						href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
 						icon
 					>
 						{ translate( 'Learn more about how to install Jetpack' ) }

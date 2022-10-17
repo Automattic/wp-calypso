@@ -69,7 +69,7 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 						components: {
 							ExternalLink: (
 								<ExternalLink
-									href={ `https://jetpack.com/support/publicize/#re-sharing-your-content` }
+									href="https://jetpack.com/support/publicize/#re-sharing-your-content"
 									icon={ true }
 									onClick={ () =>
 										recordTracksEvent( 'calypso_publicize_post_share_learn_more_click' )

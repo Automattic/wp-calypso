@@ -337,7 +337,7 @@ class ThemesMagicSearchCard extends Component {
 							className="themes-magic-search-card__icon-close"
 							tabIndex="0"
 							onClick={ this.clearSearch }
-							aria-controls={ 'search-component-magic-search' }
+							aria-controls="search-component-magic-search"
 							aria-label={ translate( 'Clear Search' ) }
 						/>
 					</div>

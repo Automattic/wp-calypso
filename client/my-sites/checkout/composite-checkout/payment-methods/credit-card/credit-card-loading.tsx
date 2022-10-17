@@ -33,7 +33,7 @@ export default function CreditCardLoading() {
 				icon={ <LockIcon /> }
 				isIconVisible={ true }
 				autoComplete="cc-number"
-				value={ '' }
+				value=""
 				disabled={ true }
 			/>
 			<FieldRow gap="4%" columnWidths="48% 48%">
@@ -43,7 +43,7 @@ export default function CreditCardLoading() {
 						type="Number"
 						label={ __( 'Expiry date' ) }
 						autoComplete="cc-exp"
-						value={ '' }
+						value=""
 						disabled={ true }
 					/>
 				</LeftColumn>
@@ -56,7 +56,7 @@ export default function CreditCardLoading() {
 									id="card-cvc"
 									type="Number"
 									autoComplete="cc-csc"
-									value={ '' }
+									value=""
 									disabled={ true }
 								/>
 							</LeftColumn>
@@ -74,7 +74,7 @@ export default function CreditCardLoading() {
 				label={ __( 'Cardholder name' ) }
 				description={ __( "Enter your name as it's written on the card" ) }
 				autoComplete="cc-name"
-				value={ '' }
+				value=""
 				disabled={ true }
 			/>
 		</CreditCardFieldsWrapper>

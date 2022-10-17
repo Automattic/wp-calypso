@@ -167,7 +167,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 						'importer-wrapper',
 						{ [ `importer-wrapper__${ importer }` ]: !! importer }
 					) }
-					stepName={ 'importer-step' }
+					stepName="importer-step"
 					hideSkip={ true }
 					hideFormattedHeader={ true }
 					goBack={ onGoBack }

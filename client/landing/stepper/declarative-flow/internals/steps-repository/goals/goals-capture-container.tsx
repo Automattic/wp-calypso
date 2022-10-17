@@ -27,10 +27,10 @@ const GCOneColumnContainer: React.VFC< GoalsCaptureContainerProps > = ( {
 		{ ...otherProps }
 		isHorizontalLayout={ true }
 		headerImageUrl={ intentImageUrl }
-		className={ 'goals__container one-column' }
+		className="goals__container one-column"
 		formattedHeader={
 			<FormattedHeader
-				id={ 'goals-header' }
+				id="goals-header"
 				headerText={
 					<>
 						{ welcomeText } <br /> { whatAreYourGoalsText }
@@ -51,10 +51,10 @@ const GCTwoColumnContainer: React.VFC< GoalsCaptureContainerProps > = ( {
 	<StepContainer
 		{ ...otherProps }
 		isHorizontalLayout={ false }
-		className={ 'goals__container two-columns' }
+		className="goals__container two-columns"
 		formattedHeader={
 			<FormattedHeader
-				id={ 'goals-header' }
+				id="goals-header"
 				headerText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
 			/>

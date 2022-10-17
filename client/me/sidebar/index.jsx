@@ -78,7 +78,7 @@ class MeSidebar extends Component {
 					<SidebarMenu>
 						<SidebarItem
 							selected={ itemLinkMatches( '', path ) }
-							link={ '/me' }
+							link="/me"
 							label={ translate( 'My Profile' ) }
 							materialIcon="person"
 							onNavigate={ this.onNavigate }
@@ -86,7 +86,7 @@ class MeSidebar extends Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/account', path ) }
-							link={ '/me/account' }
+							link="/me/account"
 							label={ translate( 'Account Settings' ) }
 							materialIcon="settings"
 							onNavigate={ this.onNavigate }
@@ -104,7 +104,7 @@ class MeSidebar extends Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/security', path ) }
-							link={ '/me/security' }
+							link="/me/security"
 							label={ translate( 'Security' ) }
 							materialIcon="lock"
 							onNavigate={ this.onNavigate }
@@ -113,7 +113,7 @@ class MeSidebar extends Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/privacy', path ) }
-							link={ '/me/privacy' }
+							link="/me/privacy"
 							label={ translate( 'Privacy' ) }
 							materialIcon="visibility"
 							onNavigate={ this.onNavigate }
@@ -121,14 +121,14 @@ class MeSidebar extends Component {
 						/>
 
 						<SidebarItem
-							link={ 'https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs' }
+							link="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs"
 							label={ translate( 'Manage Blogs' ) }
 							materialIcon="apps"
 						/>
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/notifications', path ) }
-							link={ '/me/notifications' }
+							link="/me/notifications"
 							label={ translate( 'Notification Settings' ) }
 							materialIcon="notifications"
 							onNavigate={ this.onNavigate }
@@ -137,7 +137,7 @@ class MeSidebar extends Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/site-blocks', path ) }
-							link={ '/me/site-blocks' }
+							link="/me/site-blocks"
 							label={ translate( 'Blocked Sites' ) }
 							materialIcon="block"
 							onNavigate={ this.onNavigate }
@@ -146,7 +146,7 @@ class MeSidebar extends Component {
 
 						<SidebarItem
 							selected={ itemLinkMatches( '/get-apps', path ) }
-							link={ '/me/get-apps' }
+							link="/me/get-apps"
 							label={ translate( 'Get Apps' ) }
 							icon="my-sites"
 							onNavigate={ this.onNavigate }

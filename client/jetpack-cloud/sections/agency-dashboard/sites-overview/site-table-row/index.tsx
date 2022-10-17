@@ -61,7 +61,7 @@ export default function SiteTableRow( { columns, item }: Props ) {
 			{ site.error || ! isSiteConnected ? (
 				<tr className="site-table__connection-error">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						{ <SiteErrorContent siteUrl={ site.value.url } /> }
+						<SiteErrorContent siteUrl={ site.value.url } />
 					</td>
 				</tr>
 			) : null }

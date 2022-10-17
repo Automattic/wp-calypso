@@ -49,7 +49,7 @@ class SecurityCheckupTwoFactorBackupCodes extends Component {
 
 		return (
 			<SecurityCheckupNavigationItem
-				path={ '/me/security/two-step' }
+				path="/me/security/two-step"
 				materialIcon={ icon }
 				text={ translate( 'Two-Step Backup Codes' ) }
 				description={ description }

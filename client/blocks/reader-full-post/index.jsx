@@ -540,7 +540,7 @@ export class FullPostView extends Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
-									likeSource={ 'reader' }
+									likeSource="reader"
 								/>
 							) }
 

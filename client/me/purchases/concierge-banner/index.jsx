@@ -62,8 +62,8 @@ class ConciergeBanner extends Component {
 						components: {
 							supportLink: (
 								<a
-									target={ '_blank' }
-									rel={ 'noreferrer' }
+									target="_blank"
+									rel="noreferrer"
 									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
 								/>
 							),
@@ -81,8 +81,8 @@ class ConciergeBanner extends Component {
 						components: {
 							supportLink: (
 								<a
-									target={ '_blank' }
-									rel={ 'noreferrer' }
+									target="_blank"
+									rel="noreferrer"
 									href="https://wordpress.com/discover-wordpress/2019/03/21/getting-the-most-out-of-our-business-concierge-service/"
 								/>
 							),

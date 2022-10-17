@@ -77,7 +77,7 @@ const EmailProvidersStackedCard = ( {
 			titleComponentLocation={
 				isViewportSizeLowerThan660px ? TitleLocation.FIGURE : TitleLocation.BODY
 			}
-			icon={ '' }
+			icon=""
 		>
 			{ showFeaturesToggleButton && (
 				<div className="email-provider-stacked-card__provider-price-and-button">

@@ -30,10 +30,10 @@ export default function ScanHistoryPage( { filter }: Props ) {
 			{ isJetpackPlatform && <SidebarNavigation /> }
 			<PageViewTracker path="/scan/history/:site" title="Scan History" />
 			{ ! isJetpackPlatform && (
-				<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+				<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
 			) }
 
-			<ScanNavigation section={ 'history' } />
+			<ScanNavigation section="history" />
 			<section className="history__body">
 				<p className="history__description">
 					{ translate(

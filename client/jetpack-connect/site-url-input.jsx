@@ -148,7 +148,7 @@ class JetpackConnectSiteUrlInput extends Component {
 							autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 							onChange={ onChange }
 							disabled={ isFetching }
-							placeholder={ 'https://yourjetpack.blog' }
+							placeholder="https://yourjetpack.blog"
 							onKeyUp={ this.handleKeyPress }
 							value={ url }
 						/>
@@ -156,7 +156,7 @@ class JetpackConnectSiteUrlInput extends Component {
 					{ isSearch && (
 						<SuggestionSearch
 							id="siteSelection"
-							placeholder={ 'Type your site' }
+							placeholder="Type your site"
 							onChange={ onChange }
 							suggestions={ candidateSites }
 							value={ url }

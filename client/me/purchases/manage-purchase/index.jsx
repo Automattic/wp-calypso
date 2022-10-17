@@ -455,7 +455,7 @@ class ManagePurchase extends Component {
 				site={ site }
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl }
-				linkIcon={ 'chevron-right' }
+				linkIcon="chevron-right"
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }

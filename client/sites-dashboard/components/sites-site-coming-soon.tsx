@@ -69,7 +69,7 @@ export const SiteComingSoon = ( { siteName = '', className, lang, width, height 
 				viewBox="0 0 375 272"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
-				textAnchor={ 'start' }
+				textAnchor="start"
 				direction={ isRtl ? 'rtl' : 'ltr' }
 			>
 				<title>{ comingSoon }</title>

@@ -117,10 +117,8 @@ export default function PromotedPosts( { tab }: Props ) {
 						'By promoting your post you agree to {{tosLink}}WordPress.com Terms{{/tosLink}} and {{advertisingTerms}}Advertising Terms{{/advertisingTerms}}.',
 						{
 							components: {
-								tosLink: (
-									<a href="https://wordpress.com/tos/" target={ '_blank' } rel="noreferrer" />
-								),
-								advertisingTerms: <a href="https://automattic.com/privacy/" target={ 'blank' } />,
+								tosLink: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />,
+								advertisingTerms: <a href="https://automattic.com/privacy/" target="blank" />,
 							},
 						}
 					) }

@@ -67,7 +67,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 			<QueryProductsList type="jetpack" />
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
-				path={ '/checkout/jetpack/thank-you/licensing-manual-activation-license-key/:product' }
+				path="/checkout/jetpack/thank-you/licensing-manual-activation-license-key/:product"
 				properties={ { product_slug: productSlug } }
 				title="Checkout > Jetpack Thank You Licensing Manual Activation License Key"
 			/>
@@ -96,7 +96,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 					<label>
 						<strong>{ translate( 'Your license key' ) }</strong>
 					</label>
-					<div className={ 'licensing-thank-you-manual-activation-license-key__clipboard' }>
+					<div className="licensing-thank-you-manual-activation-license-key__clipboard">
 						<FormTextInput
 							className={ classnames( 'licensing-thank-you-manual-activation-license-key__input', {
 								'is-loading': isLoadingLicense,
