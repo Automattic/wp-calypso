@@ -95,5 +95,6 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false
-	}
+	},
+	"pre_cancelation_modal_enabled": true
 }

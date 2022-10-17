@@ -185,5 +185,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false
-	}
+	},
+	"pre_cancelation_modal_enabled": true
 }

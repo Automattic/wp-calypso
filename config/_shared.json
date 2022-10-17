@@ -209,5 +209,6 @@
 		"starter",
 		"domain"
 	],
-	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
+	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js",
+	"pre_cancelation_modal_enabled": true
 }
