@@ -13,10 +13,7 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	checkIfJetpackSiteGotDisconnected,
-	getPurchasedLicense,
-} from 'calypso/state/jetpack-agency-dashboard/selectors';
+import { checkIfJetpackSiteGotDisconnected } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
@@ -32,7 +29,6 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	const purchasedLicenseInfo = useSelector( getPurchasedLicense );
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -132,9 +128,7 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						{ purchasedLicenseInfo && data?.sites && (
-							<SiteAddLicenseNotification licenseInfo={ purchasedLicenseInfo } />
-						) }
+						{ data?.sites && <SiteAddLicenseNotification /> }
 						<div className="sites-overview__page-title-container">
 							<h2 className="sites-overview__page-title">{ pageTitle }</h2>
 							<div className="sites-overview__page-subtitle">

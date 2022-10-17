@@ -474,7 +474,6 @@ export function useIssueMultipleLicenses(
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}
-		// Show status in license page
 		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [
 		isLoading,

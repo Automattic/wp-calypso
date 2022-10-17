@@ -1,21 +1,17 @@
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
-import type { PurchasedProductsInfo } from '../types';
+import { getPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/selectors';
 
 import './style.scss';
 
-export default function SiteAddLicenseNotification( {
-	licenseInfo,
-}: {
-	licenseInfo: PurchasedProductsInfo;
-} ) {
+export default function SiteAddLicenseNotification() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const { selectedSite, selectedProducts } = licenseInfo;
+	const licenseInfo = useSelector( getPurchasedLicense );
 
 	const dismissBanner = useCallback( () => {
 		dispatch( setPurchasedLicense() );
@@ -27,10 +23,11 @@ export default function SiteAddLicenseNotification( {
 		};
 	}, [ dismissBanner ] );
 
-	if ( ! selectedSite ) {
+	if ( ! licenseInfo || ! licenseInfo.selectedSite ) {
 		return null;
 	}
 
+	const { selectedSite, selectedProducts } = licenseInfo;
 	const assignedLicenses = selectedProducts.filter( ( product ) => product.status === 'fulfilled' );
 	const rejectedLicenses = selectedProducts.filter( ( product ) => product.status === 'rejected' );
 
