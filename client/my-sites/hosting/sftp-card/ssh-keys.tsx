@@ -37,9 +37,9 @@ function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
 			return false;
 		}
 		let foundKey = false;
-		const siteFigerprints = keys.map( ( { fingerprint } ) => fingerprint );
+		const siteFingerprints = keys.map( ( { fingerprint } ) => fingerprint );
 		for ( const key of userKeys ) {
-			if ( siteFigerprints.includes( key.sha256 ) ) {
+			if ( siteFingerprints.includes( key.sha256 ) ) {
 				foundKey = true;
 			}
 		}
