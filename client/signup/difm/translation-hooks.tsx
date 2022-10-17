@@ -60,7 +60,7 @@ export function useTranslatedPageDescriptions() {
 			'Visitors want to get in touch with you. How can they reach you?'
 		),
 		[ BLOG_PAGE ]: translate(
-			'How would you introduce your journal entries/news articles/chapters? Describe what readers can expect from your regularly published content!'
+			'Blog posts can be news stories, journal entries, or even recipes! We will set up the blog page and explain how you can add posts to your new site.'
 		),
 		[ PHOTO_GALLERY_PAGE ]: translate(
 			'A visual space to share pictures with your website visitors. Add a text summary to describe the gallery to your visitors.'
@@ -75,7 +75,7 @@ export function useTranslatedPageDescriptions() {
 			"What's for sale? This can be food on the menu, hair styling costs, books, services, consulting, etc. You can list the prices of anything you're selling!"
 		),
 		[ PORTFOLIO_PAGE ]: translate(
-			'A space to showcase your work. What is the common theme with your work? What do you do best?'
+			'A space to showcase your work, including examples of completed projects, photography, artwork, or even books or articles you’ve written.'
 		),
 		[ FAQ_PAGE ]: translate(
 			'Do customers/readers tend to ask similar questions? List the most common questions with the answers to help people find information.'
