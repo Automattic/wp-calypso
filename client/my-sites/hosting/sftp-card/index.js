@@ -387,7 +387,7 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
-					{ siteHasSshFeature && isEnabled( 'hosting/ssh-keys' ) && (
+					{ siteHasSshFeature && isSshAccessEnabled && isEnabled( 'hosting/ssh-keys' ) && (
 						<SshKeys disabled={ disabled } siteId={ siteId } />
 					) }
 				</FormFieldset>
