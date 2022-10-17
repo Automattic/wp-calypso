@@ -378,7 +378,7 @@ describe( 'JetpackAuthorize', () => {
 						alreadyAuthorized: true,
 					} }
 					partnerSlug="pressable"
-					isAlreadyOnSitesList={ true }
+					isAlreadyOnSitesList
 					isFetchingSites={ true }
 				/>
 			);
