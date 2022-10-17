@@ -12,7 +12,7 @@ const customAnswerText = {
 
 describe( 'JetpackCancellationSurvey', () => {
 	test( 'should hide text field if no answer is selected', () => {
-		render( <JetpackCancellationSurvey onAnswerChange={ () => null } selectedAnswerId={ '' } /> );
+		render( <JetpackCancellationSurvey onAnswerChange={ () => null } selectedAnswerId="" /> );
 
 		expect( screen.queryByLabelText( customAnswerText.other ) ).not.toBeInTheDocument();
 		expect( screen.queryByLabelText( customAnswerText.rest ) ).not.toBeInTheDocument();
@@ -22,7 +22,7 @@ describe( 'JetpackCancellationSurvey', () => {
 		render(
 			<JetpackCancellationSurvey
 				onAnswerChange={ () => null }
-				selectedAnswerId={ 'want-to-downgrade' }
+				selectedAnswerId="want-to-downgrade"
 			/>
 		);
 
@@ -32,10 +32,7 @@ describe( 'JetpackCancellationSurvey', () => {
 
 	test( 'should show "Other" text field if "Other" is selected', () => {
 		render(
-			<JetpackCancellationSurvey
-				onAnswerChange={ () => null }
-				selectedAnswerId={ 'another-reason' }
-			/>
+			<JetpackCancellationSurvey onAnswerChange={ () => null } selectedAnswerId="another-reason" />
 		);
 
 		expect( screen.getByLabelText( customAnswerText.other ) ).toBeInTheDocument();
