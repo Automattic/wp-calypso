@@ -25,6 +25,7 @@ const PlanRenewContainer = styled.div`
 const PlanRenewLink = styled.a( {
 	whiteSpace: 'nowrap',
 	textDecoration: 'underline',
+	fontSize: '12px',
 } );
 
 const IconContainer = styled.div`
@@ -51,7 +52,7 @@ export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 		}
 	}, [ inViewOnce, isSiteOwner ] );
 
-	const renewText = __( 'Renew' );
+	const renewText = __( 'Renew plan' );
 	return (
 		<PlanRenewContainer ref={ ref }>
 			<IconContainer>
