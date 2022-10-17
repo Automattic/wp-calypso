@@ -80,6 +80,10 @@
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
 
+		&.two-three img {
+			width: 100%;
+		}
+
 		figcaption {
 			border-bottom-left-radius: 6px; /* stylelint-disable-line scales/radii */
 			border-bottom-right-radius: 6px; /* stylelint-disable-line scales/radii */
