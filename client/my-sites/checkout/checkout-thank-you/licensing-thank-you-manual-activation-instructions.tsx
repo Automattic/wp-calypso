@@ -22,7 +22,7 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 	const dispatch = useDispatch();
 
 	const title = useMemo( () => {
-		if ( isEnabled( 'jetpack/onboarding-standalone-installation-v1' ) ) {
+		if ( isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) ) {
 			const product = slugToSelectorProduct( productSlug );
 			return translate( `Ok, let's install Jetpack %(pluginName)s`, {
 				args: { pluginName: product?.shortName },
