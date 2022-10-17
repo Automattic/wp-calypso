@@ -7,7 +7,9 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { ComponentProps } from 'react';
 import Image from 'calypso/components/image';
+import { P2Thumbnail } from './p2-thumbnail';
 import { SiteComingSoon } from './sites-site-coming-soon';
+import type { SitesDisplayMode } from './sites-display-mode-switcher';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 const NoIcon = styled.div( {
@@ -20,11 +22,12 @@ const disallowSelection = css( {
 } );
 
 interface SiteItemThumbnailProps extends Omit< ComponentProps< typeof SiteThumbnail >, 'alt' > {
+	displayMode: SitesDisplayMode;
 	site: SiteExcerptData;
 	alt?: string;
 }
 
-export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) => {
+export const SiteItemThumbnail = ( { displayMode, site, ...props }: SiteItemThumbnailProps ) => {
 	const { __ } = useI18n();
 	const classes = classNames( props.className, disallowSelection );
 
@@ -62,6 +65,39 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 		);
 	}
 
+	function renderFallback() {
+		if (
+			site.p2_thumbnail_elements &&
+			site.options.is_wpforteams_site &&
+			getSiteLaunchStatus( site ) !== 'public'
+		) {
+			return (
+				<P2Thumbnail
+					site={ site }
+					displayMode={ displayMode }
+					alt={ site.title || __( 'Site thumbnail' ) }
+					sizesAttr={ props.sizesAttr }
+				/>
+			);
+		}
+
+		if ( site.icon ) {
+			return (
+				<Image
+					src={ site.icon.img }
+					alt={ __( 'Site Icon' ) }
+					style={ { height: '50px', width: '50px' } }
+				/>
+			);
+		}
+
+		return (
+			<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
+				{ getFirstGrapheme( site.title ?? '' ) }
+			</NoIcon>
+		);
+	}
+
 	return (
 		<SiteThumbnail
 			{ ...props }
@@ -70,17 +106,7 @@ export const SiteItemThumbnail = ( { site, ...props }: SiteItemThumbnailProps ) 
 			alt={ site.title || __( 'Site thumbnail' ) }
 			bgColorImgUrl={ site.icon?.img }
 		>
-			{ site.icon ? (
-				<Image
-					src={ site.icon.img }
-					alt={ __( 'Site Icon' ) }
-					style={ { height: '50px', width: '50px' } }
-				/>
-			) : (
-				<NoIcon role="img" aria-label={ __( 'Site Icon' ) }>
-					{ getFirstGrapheme( site.title ?? '' ) }
-				</NoIcon>
-			) }
+			{ renderFallback() }
 		</SiteThumbnail>
 	);
 };

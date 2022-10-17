@@ -16,9 +16,10 @@ import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
-	'(min-width: 1400px) 401px',
-	'(min-width: 960px) calc(33vw - 48px)',
-	'(min-width: 660px) calc(50vw - 48px)',
+	'(min-width: 1345px) calc((1280px - 64px) / 3)',
+	'(min-width: 960px) calc((100vw - 128px) / 3)',
+	'(min-width: 780px) calc((100vw - 96px) / 2)',
+	'(min-width: 660px) calc((100vw - 64px) / 2)',
 	'calc(100vw - 32px)',
 ].join( ', ' );
 
@@ -85,6 +86,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			leading={
 				<ThumbnailLink { ...siteDashboardUrlProps }>
 					<SiteItemThumbnail
+						displayMode="tile"
 						className={ siteThumbnail }
 						site={ site }
 						width={ THUMBNAIL_DIMENSION.width }

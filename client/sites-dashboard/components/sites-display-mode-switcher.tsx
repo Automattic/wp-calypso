@@ -11,7 +11,7 @@ const container = css( {
 	gap: '10px',
 } );
 
-type SitesDisplayMode = 'tile' | 'list';
+export type SitesDisplayMode = 'tile' | 'list';
 
 export const useSitesDisplayMode = () => {
 	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
