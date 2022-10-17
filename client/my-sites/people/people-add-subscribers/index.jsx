@@ -75,6 +75,8 @@ class PeopleInvites extends PureComponent {
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
 							flowName="people"
+							showTitle={ false }
+							showFormManualListLabel={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
