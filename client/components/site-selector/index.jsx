@@ -351,6 +351,13 @@ export class SiteSelector extends Component {
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( ALL_SITES ) }
 				title={ multiSiteContext && multiSiteContext.navigationLabel }
+				showCount={ ! multiSiteContext?.icon }
+				showIcon={ !! multiSiteContext?.icon }
+				icon={
+					multiSiteContext?.icon && (
+						<span className={ 'dashicons-before ' + multiSiteContext.icon } aria-hidden={ true } />
+					)
+				}
 			/>
 		);
 	}
@@ -561,7 +568,7 @@ const mapState = ( state ) => {
 
 	return {
 		hasLoadedSites: hasLoadedSites( state ),
-		sites: getSites( state, { shouldSort: false } ),
+		sites: getSites( state, false ),
 		siteCount: getUserSiteCountForPlatform( user ),
 		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),

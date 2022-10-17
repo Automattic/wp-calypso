@@ -11,6 +11,7 @@ import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -22,6 +23,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -50,13 +52,14 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const sitesWithPlugin = useSelector( ( state ) =>
-		currentSites
-			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
-			: []
-	);
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug || '' )
+	);
+	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const sitesWithPlugin = useSelector( ( state ) =>
+		currentSites
+			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
+			: []
 	);
 
 	const dateFromNow = useMemo(
@@ -270,11 +273,20 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 	const isPluginActive = useSelector( ( state ) =>
-		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
+		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
+	const isPluginActiveOnsiteWithSubscription =
+		active && ! isMarketplaceProduct
+			? true
+			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 
@@ -285,7 +297,9 @@ const InstalledInOrPricing = ( {
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
-			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = isPluginActiveOnsiteWithSubscription
+				? 'checkmark--active'
+				: 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -300,8 +314,10 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ active ? 'success' : 'info' }>
-							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ isPluginActiveOnsiteWithSubscription ? 'success' : 'info' }>
+							{ isPluginActiveOnsiteWithSubscription
+								? translate( 'Active' )
+								: translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }

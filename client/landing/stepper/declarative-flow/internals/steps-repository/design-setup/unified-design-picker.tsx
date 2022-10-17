@@ -542,6 +542,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		/>
 	);
 
+	const currentPlanFeatures = site?.plan?.features.active ?? [];
+
 	const stepContent = (
 		<UnifiedDesignPicker
 			generatedDesigns={ generatedDesigns }
@@ -555,6 +557,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
+			currentPlanFeatures={ currentPlanFeatures }
 		/>
 	);
 

@@ -436,7 +436,7 @@ class ActivityLog extends Component {
 		const disableRestore =
 			! enableRewind ||
 			[ 'queued', 'running' ].includes( get( this.props, [ 'restoreProgress', 'status' ] ) ) ||
-			areCredentialsInvalid ||
+			( ! isAtomic && areCredentialsInvalid ) ||
 			'active' !== rewindState.state;
 		const disableBackup = 0 <= get( this.props, [ 'backupProgress', 'progress' ], -Infinity );
 
@@ -476,7 +476,7 @@ class ActivityLog extends Component {
 				<QuerySiteSettings siteId={ siteId } />
 				<QuerySiteFeatures siteIds={ [ siteId ] } />
 				<QueryRewindBackups siteId={ siteId } />
-				<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 				{ isJetpackCloud() && <SidebarNavigation /> }
 
