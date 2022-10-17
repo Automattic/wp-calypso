@@ -10,7 +10,7 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_CUSTOMIZATION,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
@@ -175,7 +175,7 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	/* END - PLAN TAGLINE EXPERIMENT */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -286,17 +286,12 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
-		getTitle: () =>
-			i18n.translate( 'Advanced design customization', {
-				components: {
-					strong: <strong />,
-				},
-			} ),
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colours and more."
+				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
 			),
 	},
 
@@ -1612,8 +1607,8 @@ export const FEATURES_LIST = {
 		getTitle: () => 'Unlimited product listings',
 		getDescription: () => {},
 	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(

@@ -71,7 +71,7 @@ export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PERSONAL_FEATURES_JETPACK = 'all-personal-features-jetpack';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
-export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
@@ -103,7 +103,8 @@ export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
 export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
 export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
 export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
-export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS =
+	'advanced-design-customization-and-css';
 /* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
