@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Spinner } from '@automattic/components';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { connect } from 'react-redux';
@@ -20,8 +20,10 @@ interface SshKeysProps {
 }
 
 function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
-	const { data: keys } = useAtomicSshKeys( siteId, { enabled: ! disabled } );
-	const { data: userKeys } = useSSHKeyQuery();
+	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
+		enabled: ! disabled,
+	} );
+	const { data: userKeys, isLoading: isLoadingUserKeys } = useSSHKeyQuery();
 	const { mutate: attachSshKey, isLoading: attachingKey } = useAttachSshKeyMutation( siteId );
 
 	const [ selectedKey, setSelectedKey ] = useState( 'default' );
@@ -43,8 +45,9 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 		return foundKey;
 	}, [ keys, userKeys ] );
 
-	const showKeysSelect = ! userKeyIsAttached && userKeys && userKeys.length > 0;
-	const showLinkToAddUserKey = ! userKeyIsAttached && userKeys?.length === 0;
+	const isLoading = isLoadingKeys || isLoadingUserKeys;
+	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
+	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
 
 	return (
 		<div className="ssh-keys">
@@ -62,6 +65,9 @@ function SshKeys( { translate, siteId, userId, disabled }: SshKeysProps ) {
 					siteId={ siteId }
 				/>
 			) ) }
+
+			{ isLoading && <Spinner /> }
+
 			{ showKeysSelect && (
 				<FormFieldset className="ssh-keys__form">
 					<FormSelect
