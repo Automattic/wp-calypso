@@ -66,7 +66,8 @@
 		display: inherit;
 	}
 	.wp-block-gallery .wp-block-image,
-	.image-wrapper {
+	.image-wrapper.two-three,
+	.image-wrapper.three-two {
 		position: relative;
 		&::after {
 			content: "";
@@ -80,7 +81,7 @@
 			border-radius: 6px; /* stylelint-disable-line scales/radii */
 		}
 
-		&.two-three img {
+		img {
 			width: 100%;
 		}
 
