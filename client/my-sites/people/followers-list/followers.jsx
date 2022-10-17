@@ -135,7 +135,9 @@ class Followers extends Component {
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
 									flowName="people"
+									showSubtitle={ true }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									showFormManualListLabel={ true }
 									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
 										this.props?.refetch?.();
