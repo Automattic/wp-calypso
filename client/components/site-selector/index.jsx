@@ -566,7 +566,7 @@ const mapState = ( state ) => {
 
 	return {
 		hasLoadedSites: hasLoadedSites( state ),
-		sites: getSites( state, { shouldSort: false } ),
+		sites: getSites( state, false ),
 		siteCount: getUserSiteCountForPlatform( user ),
 		visibleSiteCount: getUserVisibleSiteCountForPlatform( user ),
 		selectedSite: getSelectedSite( state ),
