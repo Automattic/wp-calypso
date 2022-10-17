@@ -9,7 +9,6 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import DropdownItem from './item';
 import DropdownLabel from './label';
 import DropdownSeparator from './separator';
-
 import './style.scss';
 
 class SelectDropdown extends Component {
