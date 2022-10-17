@@ -54,7 +54,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
 		recordTracksEvent,
-		onSkipBtnClick,
 		onImportFinished,
 	} = props;
 
