@@ -86,7 +86,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	const { __ } = useI18n();
 	const { style_variations = [], is_premium: isPremium = false } = design;
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
-	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP );
+	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
 
 	const designIsBundledWithWoo =
 		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
