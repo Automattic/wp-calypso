@@ -277,6 +277,8 @@ class HelpContact extends Component {
 			locale: currentUserLocale,
 			client: config( 'client_slug' ),
 			hide_blog_info: userRequestsHidingUrl,
+			should_use_test_forums:
+				config( 'env_id' ) === 'wpcalypso' || config( 'env_id' ) === 'development',
 		};
 
 		if ( site ) {
