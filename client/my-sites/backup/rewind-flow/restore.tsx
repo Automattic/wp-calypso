@@ -14,6 +14,8 @@ import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { backupMainPath } from '../paths';
 import Error from './error';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
@@ -70,6 +72,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		requestRestore();
 	}, [ dispatch, setUserHasRequestedRestore, requestRestore ] );
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
 
@@ -110,14 +114,19 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					/>
 				) }
 			</>
-			<Button
-				className="rewind-flow__primary-button"
-				primary
-				onClick={ onConfirm }
-				disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
-			>
-				{ translate( 'Confirm restore' ) }
-			</Button>
+			<div className="rewind-flow__btn-group">
+				<Button className="rewind-flow__back-button" href={ backupMainPath( siteSlug ) }>
+					{ translate( 'Go back' ) }
+				</Button>
+				<Button
+					className="rewind-flow__primary-button"
+					primary
+					onClick={ onConfirm }
+					disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+				>
+					{ translate( 'Confirm restore' ) }
+				</Button>
+			</div>
 			<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 		</>
 	);
