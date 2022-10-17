@@ -36,6 +36,7 @@ import {
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+	UPSELL_CARD_DISPLAYED,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -573,6 +574,17 @@ export function themesUpdate( state = {}, action ) {
 	return state;
 }
 
+export function upsellCardDisplayed( state = false, action ) {
+	switch ( action.type ) {
+		case UPSELL_CARD_DISPLAYED: {
+			const { displayed } = action;
+			return displayed;
+		}
+	}
+
+	return state;
+}
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -594,6 +606,7 @@ const combinedReducer = combineReducers( {
 	trendingThemes,
 	themeHasAutoLoadingHomepageWarning,
 	themesUpdate,
+	upsellCardDisplayed,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 
