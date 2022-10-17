@@ -1,5 +1,4 @@
-import { last, isEqual } from 'lodash';
-import PropTypes from 'prop-types';
+import { last } from 'lodash';
 import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
 
@@ -8,7 +7,6 @@ export class GoogleDrive extends SharingService {
 		// This foreign propTypes access should be safe because we expect all of them to be removed
 		// eslint-disable-next-line react/forbid-foreign-prop-types
 		...SharingService.propTypes,
-		deleteStoredKeyringConnection: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -26,34 +24,22 @@ export class GoogleDrive extends SharingService {
 		this.props.deleteStoredKeyringConnection( last( this.props.keyringConnections ) );
 	};
 
-	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
-	UNSAFE_componentWillReceiveProps( { availableExternalAccounts } ) {
-		if ( ! isEqual( this.props.availableExternalAccounts, availableExternalAccounts ) ) {
-			this.setState( {
-				isConnecting: false,
-				isDisconnecting: false,
+	didKeyringConnectionSucceed( availableExternalAccounts ) {
+		if ( availableExternalAccounts.length === 0 ) {
+			this.props.failCreateConnection( {
+				message: [
+					this.props.translate( 'The Google Drive connection could not be made.', {
+						context: 'Sharing: Jetpack Social connection error',
+					} ),
+					' ',
+					' ',
+				],
 			} );
-		}
-
-		if ( ! this.state.isAwaitingConnections ) {
-			return;
-		}
-
-		this.setState( {
-			isAwaitingConnections: false,
-			isRefreshing: false,
-		} );
-
-		if ( this.didKeyringConnectionSucceed( availableExternalAccounts ) ) {
 			this.setState( { isConnecting: false } );
-			this.props.successNotice(
-				this.props.translate( 'The %(service)s account was successfully connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation',
-				} ),
-				{ id: 'publicize' }
-			);
+			return false;
 		}
+
+		return super.didKeyringConnectionSucceed( availableExternalAccounts );
 	}
 
 	/*
