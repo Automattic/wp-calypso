@@ -210,13 +210,7 @@ function QRCodeLogin( { locale, redirectToAfterLoginUrl } ) {
 				name: 'Jetpack',
 			},
 			components: {
-				link: (
-					<ExternalLink
-						target="_blank"
-						icon={ false }
-						href="https://apps.wordpress.com/get/?campaign=login-qr-code"
-					/>
-				),
+				link: <ExternalLink target="_blank" icon={ false } href="https://jetpack.com/app" />,
 			},
 		} ),
 		translate( 'Tap the My Site Tab.' ),
