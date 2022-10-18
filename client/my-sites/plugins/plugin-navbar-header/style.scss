@@ -38,8 +38,13 @@
 	width: 1px;
 }
 
-.masterbar {
-	height: 60px;
+.plugins-listing {
+	.masterbar {
+		height: 56px;
+	}
+	.fixed-navigation-header__header {
+		top: 56px;
+	}
 }
 
 %x-list {

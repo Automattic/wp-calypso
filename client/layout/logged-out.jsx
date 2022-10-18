@@ -109,6 +109,9 @@ const LayoutLoggedOut = ( {
 	}
 
 	const bodyClass = [ 'font-smoothing-antialiased' ];
+	if ( sectionName === 'plugins' ) {
+		bodyClass.push( 'plugins-listing' );
+	}
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
