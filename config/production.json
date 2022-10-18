@@ -134,6 +134,7 @@
 		"site-indicator": true,
 		"ssr/sample-log-cache-misses": true,
 		"stepper-woocommerce-poc": true,
+		"subscriber-importer": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
