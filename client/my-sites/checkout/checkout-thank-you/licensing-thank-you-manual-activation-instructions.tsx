@@ -9,7 +9,9 @@ import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
+import { SELECTOR_PLANS } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
+import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 interface Props {
@@ -17,20 +19,100 @@ interface Props {
 	receiptId: number;
 }
 
+interface JetpackStandaloneActivationInstructionsProps {
+	product: SelectorProduct;
+}
+
+const JetpackPluginActivationInstructions: FC = () => {
+	const translate = useTranslate();
+
+	return (
+		<>
+			<p>{ translate( "If you don't have Jetpack installed, follow these instructions:" ) }</p>
+			<p>
+				<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
+				{ translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
+					components: { strong: <strong /> },
+				} ) }
+			</p>
+			<p>
+				<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
+				{ translate( 'Search for {{strong}}Jetpack{{/strong}}, install and activate.', {
+					components: { strong: <strong /> },
+				} ) }
+			</p>
+			<p>
+				<ExternalLink
+					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
+					icon
+				>
+					{ translate( 'Learn more about how to install Jetpack' ) }
+				</ExternalLink>
+			</p>
+		</>
+	);
+};
+
+const JetpackStandaloneActivationInstructions: FC<
+	JetpackStandaloneActivationInstructionsProps
+> = ( { product } ) => {
+	const translate = useTranslate();
+	return (
+		<>
+			<p>
+				<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
+				{ translate( 'Login to an existing Wordpress site as an administrator.' ) }
+			</p>
+
+			<p>
+				<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
+				{ translate(
+					'Go to {{strong}}Plugins > add New{{/strong}} in the admin menu on the left hand side.',
+					{
+						components: { strong: <strong /> },
+					}
+				) }
+			</p>
+
+			<p>
+				<span className="licensing-thank-you-manual-activation-instructions__step-number">3</span>
+				{ translate(
+					'Search for {{strong}}Jetpack %(pluginName)s{{/strong}}, install and activate.',
+					{
+						components: { strong: <strong /> },
+						args: { pluginName: product.shortName },
+					}
+				) }
+			</p>
+
+			<p>
+				<ExternalLink
+					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
+					icon
+				>
+					{ translate( 'Learn more about how to install Jetpack %(pluginName)s', {
+						args: { pluginName: product.shortName },
+					} ) }
+				</ExternalLink>
+			</p>
+		</>
+	);
+};
+
 const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const title = useMemo( () => {
-		if ( isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) ) {
-			const product = slugToSelectorProduct( productSlug );
-			return translate( `Ok, let's install Jetpack %(pluginName)s`, {
-				args: { pluginName: product?.shortName },
-			} );
+	const productWithStandalonePlugin = useMemo( () => {
+		if (
+			isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) &&
+			! SELECTOR_PLANS.includes( productSlug ) // All bundles do not have a standalone plugin
+		) {
+			return slugToSelectorProduct( productSlug );
 		}
 
-		return translate( 'Be sure that you have the latest version of Jetpack' );
-	}, [ productSlug, translate ] );
+		return null;
+	}, [ productSlug ] );
 
 	const onContinue = useCallback( () => {
 		dispatch(
@@ -57,34 +139,25 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				title="Checkout > Jetpack Thank You Licensing Manual Activation Instructions"
 			/>
 			<LicensingActivation
-				title={ title }
+				title={
+					productWithStandalonePlugin
+						? translate( `Ok, let's install Jetpack %(pluginName)s`, {
+								args: { pluginName: productWithStandalonePlugin?.shortName },
+						  } )
+						: translate( 'Be sure that you have the latest version of Jetpack' )
+				}
 				footerImage={ licensingActivationPluginInstall }
 				showContactUs
 				showProgressIndicator
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
 			>
-				<p>{ translate( "If you don't have Jetpack installed, follow these instructions:" ) }</p>
-				<p>
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
-					{ translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
-						components: { strong: <strong /> },
-					} ) }
-				</p>
-				<p>
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
-					{ translate( 'Search for {{strong}}Jetpack{{/strong}}, install and activate.', {
-						components: { strong: <strong /> },
-					} ) }
-				</p>
-				<p>
-					<ExternalLink
-						href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
-						icon
-					>
-						{ translate( 'Learn more about how to install Jetpack' ) }
-					</ExternalLink>
-				</p>
+				{ productWithStandalonePlugin ? (
+					<JetpackStandaloneActivationInstructions product={ productWithStandalonePlugin } />
+				) : (
+					<JetpackPluginActivationInstructions />
+				) }
+
 				<Button
 					className="licensing-thank-you-manual-activation-instructions__button"
 					primary
