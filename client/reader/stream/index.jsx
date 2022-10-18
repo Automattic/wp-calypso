@@ -443,9 +443,9 @@ class ReaderStream extends Component {
 			);
 
 			// Only show right sidebar on select screens
-			const includeSidebar = [ 'following', 'search', 'custom_recs_posts_with_images' ];
+			const excludesSidebar = [ 'conversations', 'conversations-a8c', 'likes' ];
 
-			if ( includeSidebar.includes( streamType ) ) {
+			if ( ! excludesSidebar.includes( streamType ) ) {
 				body = (
 					<div className="stream__two-column">
 						{ bodyContent }
