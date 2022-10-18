@@ -3,20 +3,19 @@ import wp from 'calypso/lib/wp';
 import { USE_ATOMIC_SSH_KEYS_QUERY_KEY } from './use-atomic-ssh-keys';
 
 interface MutationVariables {
+	user_name: string;
 	name: string;
 }
 
 export const useDetachSshKeyMutation = (
-	{ siteId, userId }: { siteId: number; userId: number | null },
+	{ siteId }: { siteId: number },
 	options: UseMutationOptions< void, void, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	return useMutation(
-		( { name }: { name: MutationVariables[ 'name' ] } ) => {
-			const parts = name.split( '-' );
-			const keyName = parts.pop();
+		( { user_name, name }: MutationVariables ) => {
 			return wp.req.post( {
-				path: `/sites/${ siteId }/hosting/ssh-keys/${ userId }/${ keyName }`,
+				path: `/sites/${ siteId }/hosting/ssh-keys/${ user_name }/${ name }`,
 				apiNamespace: 'wpcom/v2',
 				method: 'DELETE',
 			} );

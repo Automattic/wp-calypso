@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
 import { useSSHKeyQuery } from 'calypso/me/security-ssh-key/use-ssh-key-query';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import SshKeyCard from './ssh-key-card';
 import { useAtomicSshKeys } from './use-atomic-ssh-keys';
 import { useAttachSshKeyMutation } from './use-attach-ssh-key';
@@ -15,11 +15,11 @@ import './ssh-keys.scss';
 
 interface SshKeysProps {
 	siteId: number;
-	userId: number | null;
+	username: string;
 	disabled: boolean;
 }
 
-function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
+function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 	const { __ } = useI18n();
 	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
 		enabled: ! disabled,
@@ -33,18 +33,11 @@ function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
 	}
 
 	const userKeyIsAttached = useMemo( () => {
-		if ( ! userKeys || ! keys ) {
+		if ( ! keys ) {
 			return false;
 		}
-		let foundKey = false;
-		const siteFingerprints = keys.map( ( { fingerprint } ) => fingerprint );
-		for ( const key of userKeys ) {
-			if ( siteFingerprints.includes( key.sha256 ) ) {
-				foundKey = true;
-			}
-		}
-		return foundKey;
-	}, [ keys, userKeys ] );
+		return !! keys.find( ( { user_name } ) => user_name === username );
+	}, [ keys, username ] );
 
 	const isLoading = isLoadingKeys || isLoadingUserKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
@@ -56,13 +49,11 @@ function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
 				{ __( 'SSH Keys' ) }
 			</label>
 
-			{ keys?.map( ( { name, fingerprint } ) => (
+			{ keys?.map( ( sshKey ) => (
 				<SshKeyCard
-					key={ fingerprint }
-					name={ name }
-					fingerprint={ fingerprint }
+					key={ sshKey.sha256 }
+					sshKey={ sshKey }
 					deleteText={ __( 'Detach' ) }
-					userId={ userId }
 					siteId={ siteId }
 				/>
 			) ) }
@@ -109,6 +100,6 @@ function SshKeys( { siteId, userId, disabled }: SshKeysProps ) {
 
 export default connect( ( state ) => {
 	return {
-		userId: getCurrentUserId( state ),
+		username: getCurrentUserName( state ),
 	};
 } )( SshKeys );

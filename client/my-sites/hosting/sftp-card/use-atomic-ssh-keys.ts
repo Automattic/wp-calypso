@@ -3,9 +3,9 @@ import wp from 'calypso/lib/wp';
 
 export const USE_ATOMIC_SSH_KEYS_QUERY_KEY = 'atomic-ssh-keys';
 
-interface AtomicKey {
-	id: number;
-	fingerprint: string;
+export interface AtomicKey {
+	sha256: string;
+	user_name: string;
 	name: string;
 }
 

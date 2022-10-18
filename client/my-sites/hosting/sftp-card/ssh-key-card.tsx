@@ -1,26 +1,26 @@
 import { Button, Card } from '@automattic/components';
+import { AtomicKey } from './use-atomic-ssh-keys';
 import { useDetachSshKeyMutation } from './use-detach-ssh-key';
 
 interface SshKeyCardProps {
-	name: string;
-	fingerprint: string;
 	deleteText: string;
 	siteId: number;
-	userId: number | null;
+	sshKey: AtomicKey;
 }
 
-function SshKeyCard( { name, fingerprint, deleteText, siteId, userId }: SshKeyCardProps ) {
-	const { mutate: detachSshKey, isLoading } = useDetachSshKeyMutation( { siteId, userId } );
+function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
+	const { mutate: detachSshKey, isLoading } = useDetachSshKeyMutation( { siteId } );
+	const { sha256, user_name, name } = sshKey;
 	return (
 		<Card className="ssh-keys-card">
 			<div className="ssh-keys-card__info">
-				<span className="ssh-keys-card__name">{ name }</span>
-				<code className="ssh-keys-card__fingerprint">{ fingerprint }</code>
+				<span className="ssh-keys-card__name">{ user_name }</span>
+				<code className="ssh-keys-card__fingerprint">{ sha256 }</code>
 			</div>
 			<div className="ssh-keys-card__actions">
 				<Button
 					scary
-					onClick={ () => detachSshKey( { name } ) }
+					onClick={ () => detachSshKey( { user_name, name } ) }
 					busy={ isLoading }
 					disabled={ isLoading }
 				>
