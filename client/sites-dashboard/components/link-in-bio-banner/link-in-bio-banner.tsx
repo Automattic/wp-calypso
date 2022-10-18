@@ -21,7 +21,7 @@ const hasLinkInBioSite = ( sites: SiteExcerptData[] ) => {
 
 export const LinkInBioBanner = ( props: Props ) => {
 	const { displayMode } = props;
-	const { data: sites = [], isLoading } = useSiteExcerptsQuery();s
+	const { data: sites = [], isLoading } = useSiteExcerptsQuery();
 	const siteCount = sites.length;
 	const doesNotAlreadyHaveALinkInBioSite = ! hasLinkInBioSite( sites );
 	const isMobile = useMobileBreakpoint();
