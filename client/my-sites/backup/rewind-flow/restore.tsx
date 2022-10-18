@@ -9,11 +9,13 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupMainPath } from '../paths';
 import Error from './error';
@@ -52,6 +54,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		getInProgressBackupForSite( state, siteId )
 	);
 
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
+	const areCredentialsInvalid = useSelector( ( state ) =>
+		areJetpackCredentialsInvalid( state, siteId, 'main' )
+	);
+
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
@@ -76,6 +84,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
+
+	const disableRestore =
+		( ! isAtomic && areCredentialsInvalid ) ||
+		Object.values( rewindConfig ).every( ( setting ) => ! setting );
 
 	const renderConfirm = () => (
 		<>
@@ -122,7 +134,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					className="rewind-flow__primary-button"
 					primary
 					onClick={ onConfirm }
-					disabled={ Object.values( rewindConfig ).every( ( setting ) => ! setting ) }
+					disabled={ disableRestore }
 				>
 					{ translate( 'Confirm restore' ) }
 				</Button>
