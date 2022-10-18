@@ -2,20 +2,6 @@ import { Page } from 'playwright';
 import { envVariables } from '../..';
 import { waitForWPWidgets } from '../../element-helper';
 
-const selectors = {
-	// Comment
-	commentForm: '#commentform',
-	commentIframe: '#jetpack_remote_comment',
-	commentField: '#comment',
-	submitButton: 'input:has-text("Post Comment")',
-
-	// Comment like
-	comments: '.comment-content',
-	likeButton: '.comment-like-link',
-	notLiked: '.comment-not-liked',
-	liked: '.comment-liked',
-};
-
 /**
  * Represents the comments section of a post.
  */
@@ -32,25 +18,26 @@ export class CommentsComponent {
 	}
 
 	/**
-	 * Fills and posts a comment in the post's comment section.
+	 * Posts a comment with given text.
 	 *
-	 * @param {string} comment Text to be entered as a comment.
+	 * @param {string} comment Comment text.
 	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
-		const commentForm = this.page.locator( selectors.commentForm );
+		const commentForm = this.page.locator( '#commentform' );
 		await commentForm.scrollIntoViewIfNeeded();
 
 		let commentField;
 		let submitButton;
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
-			const parentFrame = this.page.frameLocator( selectors.commentIframe );
-			commentField = parentFrame.locator( selectors.commentField );
-			submitButton = parentFrame.locator( selectors.submitButton );
+			const parentFrame = this.page.frameLocator( '#jetpack_remote_comment' );
+
+			commentField = parentFrame.locator( '#comment' );
+			submitButton = parentFrame.locator( 'input:has-text("Post Comment")' );
 		} else {
-			commentField = this.page.locator( selectors.commentField );
-			submitButton = this.page.locator( selectors.submitButton );
+			commentField = this.page.locator( '#comment' );
+			submitButton = this.page.locator( 'input:has-text("Post Comment")' );
 		}
 
 		await commentField.type( comment );
@@ -58,29 +45,33 @@ export class CommentsComponent {
 	}
 
 	/**
-	 * Given a selector, like the comment and verify its outcome.
+	 * Likes a comment with given text.
 	 *
-	 * This method accepts either a 1-indexed number denoting the nth comment on the post to like,
-	 * or a string that resolves to the body of a comment.
-	 *
-	 * @param {number|string} selector Either a 1-indexed number or a string.
+	 * @param {string} comment Text of the comment to like.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async like( selector: string ): Promise< void > {
+	async like( comment: string ): Promise< void > {
 		let likeButton;
 		let likedStatus;
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
+			// Atomic site loads the like button via a widgets.wp.com iframe.
+			// Playwright's actionability checks are no good here because the
+			// button becomes actionable after the widget script is fully
+			// initialized, which is not indicated anywhere in the DOM. We need
+			// to use the following custom waiter to ensure the button is ready
+			// to be interacted with. Otherwise, the like click will do nothing.
 			await waitForWPWidgets( this.page );
 
 			const likeButtonFrame = this.page.frameLocator(
-				`iframe[name^="like-comment-frame"]:below(:text("${ selector }"))`
+				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`
 			);
 
 			likeButton = likeButtonFrame.locator( 'a:text-is("Like"):visible' );
 			likedStatus = likeButtonFrame.locator( ':text("Liked by"):visible' );
 		} else {
-			const commentContent = this.page.locator( '.comment-content', { hasText: selector } );
+			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
+
 			likeButton = commentContent.locator( ':text-is("Like"):visible' );
 			likedStatus = commentContent.locator( ':text("Liked by"):visible' );
 		}
@@ -90,29 +81,28 @@ export class CommentsComponent {
 	}
 
 	/**
-	 * Given a selector, unlike the comment and verify its outcome.
+	 * Unlikes a comment with given text.
 	 *
-	 * This method accepts either a 1-indexed number denoting the nth comment on the post to like,
-	 * or a string that resolves to the body of a comment.
-	 *
-	 * @param {number|string} selector Either a 1-indexed number or a string.
+	 * @param {string} comment Text of the comment to unlike.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async unlike( selector: string ): Promise< void > {
+	async unlike( comment: string ): Promise< void > {
 		let unlikeButton;
 		let unlikedStatus;
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
+			// See the like() method for info on the following method call.
 			await waitForWPWidgets( this.page );
 
 			const likeButtonFrame = this.page.frameLocator(
-				`iframe[name^="like-comment-frame"]:below(:text("${ selector }"))`
+				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`
 			);
 
 			unlikeButton = likeButtonFrame.locator( 'a:text("Liked by")' );
 			unlikedStatus = likeButtonFrame.locator( 'a:text-is("Like")' );
 		} else {
-			const commentContent = this.page.locator( '.comment-content', { hasText: selector } );
+			const commentContent = this.page.locator( '.comment-content', { hasText: comment } );
+
 			unlikeButton = commentContent.locator( '.comment-liked:has-text("Liked by") > a' );
 			unlikedStatus = commentContent.locator( '.comment-not-liked > span:text-is("Like"):visible' );
 		}

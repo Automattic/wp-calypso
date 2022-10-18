@@ -154,10 +154,11 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 }
 
 /**
+ * Resolves once widgets.wp.com message posting becomes idle.
  *
- * @param page
+ * @param {Page} page The parent page object.
  */
-export async function waitForWPWidgets( page: Page ) {
+export async function waitForWPWidgets( page: Page ): Promise< void > {
 	await page.evaluate( async () => {
 		await new Promise( ( resolve ) => {
 			const wait = () => setTimeout( resolve, 1000 );
@@ -165,7 +166,6 @@ export async function waitForWPWidgets( page: Page ) {
 
 			window.addEventListener( 'message', ( event ) => {
 				if ( event.origin === 'https://widgets.wp.com' ) {
-					console.log( 'widgets loading' );
 					clearTimeout( timeout );
 					timeout = setTimeout( resolve, 1000 );
 				}
