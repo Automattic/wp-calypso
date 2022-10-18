@@ -50,7 +50,14 @@ describe( '<LinkInBioBanner>', () => {
 			jest.spyOn( viewport, 'useDesktopBreakpoint' ).mockReturnValue( isDesktop );
 
 			const store = createTestStore( visible, siteCount, siteIntent );
-			const queryClient = new QueryClient();
+			const queryClient = new QueryClient( {
+				defaultOptions: {
+					queries: {
+						// No need to fetch because default site data will come from Redux store.
+						enabled: false,
+					},
+				},
+			} );
 
 			render(
 				<QueryClientProvider client={ queryClient }>
