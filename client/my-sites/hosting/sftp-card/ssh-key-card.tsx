@@ -14,7 +14,7 @@ interface SshKeyCardProps {
 function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	const { __ } = useI18n();
 	const { mutate: detachSshKey, isLoading } = useDetachSshKeyMutation( { siteId } );
-	const { sha256, user_login, name, created_at } = sshKey;
+	const { sha256, user_login, name, attached_at } = sshKey;
 	return (
 		<Card className="ssh-keys-card">
 			<div className="ssh-keys-card__info">
@@ -22,13 +22,13 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 				<code className="ssh-keys-card__fingerprint">{ sha256 }</code>
 				<span className="ssh-keys-card__date">
 					{ sprintf(
-						// translators: addedOn is when the SSH key was added.
-						__( 'Added on %(addedOn)s' ),
+						// translators: attachedOn is when the SSH key was attached.
+						__( 'Attached on %(attachedOn)s' ),
 						{
-							addedOn: new Intl.DateTimeFormat( i18n.getLocaleSlug() ?? 'en', {
+							attachedOn: new Intl.DateTimeFormat( i18n.getLocaleSlug() ?? 'en', {
 								dateStyle: 'long',
 								timeStyle: 'medium',
-							} ).format( new Date( created_at ) ),
+							} ).format( new Date( attached_at ) ),
 						}
 					) }
 				</span>
