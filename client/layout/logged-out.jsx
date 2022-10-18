@@ -97,21 +97,17 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
+	} else if ( sectionName === 'plugins' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
-			<>
-				{ sectionName === 'plugins' ? (
-					<UniversalNavbarHeader />
-				) : (
-					<MasterbarLoggedOut
-						title={ sectionTitle }
-						sectionName={ sectionName }
-						isCheckout={ isCheckout }
-						isCheckoutPending={ isCheckoutPending }
-						redirectUri={ redirectUri }
-					/>
-				) }
-			</>
+			<MasterbarLoggedOut
+				title={ sectionTitle }
+				sectionName={ sectionName }
+				isCheckout={ isCheckout }
+				isCheckoutPending={ isCheckoutPending }
+				redirectUri={ redirectUri }
+			/>
 		);
 	}
 
