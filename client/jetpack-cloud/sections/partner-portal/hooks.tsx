@@ -285,7 +285,7 @@ export function useLicenseIssuing(
 }
 
 /**
- * Handle license issuing - multiple
+ * Handle multiple license issue and assign
  *
  */
 export function useIssueMultipleLicenses(
@@ -377,20 +377,20 @@ export function useIssueMultipleLicenses(
 			return;
 		}
 
-		const requests: any[] = [];
+		const issueLicenseRequests: any[] = [];
 
 		selectedProducts.forEach( ( product ) => {
-			requests.push( issueLicense.mutateAsync( { product } ) );
+			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
 		} );
-		const promises = await Promise.allSettled( requests );
+		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
 
 		const selectedSiteId = selectedSite?.ID;
 
-		const assignLicenseSuccessRequests: any = [];
+		const assignLicenseRequests: any = [];
 
 		const assignedProducts: Array< any > = [];
 
-		promises.forEach( ( promise: any ) => {
+		issueLicensePromises.forEach( ( promise: any ) => {
 			const { status, value: license } = promise;
 			if ( status === 'fulfilled' ) {
 				const licenseKey = license.license_key;
@@ -400,7 +400,7 @@ export function useIssueMultipleLicenses(
 					assignedProducts.push( getProductTitle( selectedProduct.name ) );
 				}
 				if ( selectedSiteId ) {
-					assignLicenseSuccessRequests.push(
+					assignLicenseRequests.push(
 						assignLicense.mutateAsync( { licenseKey, selectedSite: selectedSiteId } )
 					);
 				}
@@ -448,9 +448,10 @@ export function useIssueMultipleLicenses(
 			page.redirect( nextStep );
 		}
 
-		const assignLicensePromises = await Promise.allSettled( assignLicenseSuccessRequests );
+		const assignLicensePromises = await Promise.allSettled( assignLicenseRequests );
 
-		const allProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] = [];
+		const allSelectedProducts: { key: 'string'; name: string; status: 'rejected' | 'fulfilled' }[] =
+			[];
 
 		assignLicensePromises.forEach( ( promise: any ) => {
 			const { status, value: license } = promise;
@@ -463,12 +464,12 @@ export function useIssueMultipleLicenses(
 					name: getProductTitle( selectedProduct.name ),
 					status,
 				};
-				allProducts.push( item );
+				allSelectedProducts.push( item );
 			}
 		} );
 		const assignLicenseStatus = {
 			selectedSite: selectedSite?.domain || '',
-			selectedProducts: allProducts,
+			selectedProducts: allSelectedProducts,
 		};
 		dispatch( setPurchasedLicense( assignLicenseStatus ) );
 		if ( fromDashboard ) {
