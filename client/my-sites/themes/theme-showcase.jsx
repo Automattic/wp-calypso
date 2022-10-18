@@ -34,6 +34,7 @@ import {
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 	getOutdatedThemes,
+	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { addTracking, trackClick, localizeThemesPath } from './helpers';
@@ -235,7 +236,14 @@ class ThemeShowcase extends Component {
 	};
 
 	renderBanner = () => {
-		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner } = this.props;
+		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
+			this.props;
+
+		// Don't show the banner if there is already an upsell card displayed
+		if ( isUpsellCardDisplayed ) {
+			return null;
+		}
+
 		const tabKey = this.state.tabFilter.key;
 
 		if (
@@ -460,6 +468,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		filterToTermTable: getThemeFilterToTermTable( state ),
 		themesBookmark: getThemesBookmark( state ),
 		outdatedThemes: getOutdatedThemes( state, siteId ) || [],
+		isUpsellCardDisplayed: isUpsellCardDisplayedSelector( state ),
 	};
 };
 

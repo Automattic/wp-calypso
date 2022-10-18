@@ -38,6 +38,7 @@ const defaultProps = deepFreeze( {
 	fetchNextPage: noop,
 	getButtonOptions: noop,
 	onScreenshotClick: noop,
+	upsellCardDisplayed: noop,
 	translate: ( string ) => string,
 } );
 

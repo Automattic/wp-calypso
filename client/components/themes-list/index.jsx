@@ -4,13 +4,14 @@ import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -34,6 +35,7 @@ export const ThemesList = ( props ) => {
 				searchTerm={ props.searchTerm }
 				translate={ props.translate }
 				recordTracksEvent={ props.recordTracksEvent }
+				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		);
 	}
@@ -74,6 +76,7 @@ ThemesList.propTypes = {
 	] ),
 	siteId: PropTypes.number,
 	searchTerm: PropTypes.string,
+	upsellCardDisplayed: PropTypes.func,
 };
 
 ThemesList.defaultProps = {
@@ -119,7 +122,7 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Empty( { emptyContent, searchTerm, translate, recordTracksEvent } ) {
+function Empty( { emptyContent, searchTerm, upsellCardDisplayed, translate, recordTracksEvent } ) {
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -135,6 +138,17 @@ function Empty( { emptyContent, searchTerm, translate, recordTracksEvent } ) {
 			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
 		);
 	}, [ selectedSite, searchTerm ] );
+
+	useEffect( () => {
+		if ( shouldUpgradeToInstallThemes && ! emptyContent ) {
+			upsellCardDisplayed( true );
+		} else {
+			upsellCardDisplayed( false );
+		}
+		return () => {
+			upsellCardDisplayed( false );
+		};
+	}, [ emptyContent, shouldUpgradeToInstallThemes, upsellCardDisplayed ] );
 
 	if ( emptyContent ) {
 		return emptyContent;
@@ -201,4 +215,8 @@ const mapStateToProps = ( state ) => ( {
 	themesBookmark: getThemesBookmark( state ),
 } );
 
-export default connect( mapStateToProps )( localize( ThemesList ) );
+const mapDispatchToProps = {
+	upsellCardDisplayed: upsellCardDisplayedAction,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ThemesList ) );
