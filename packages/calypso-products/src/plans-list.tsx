@@ -296,6 +296,10 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
+const shouldShowCSSCustomizationFeature = i18n.hasTranslation(
+	"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
+);
+
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -496,7 +500,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
-			FEATURE_CSS_CUSTOMIZATION,
+			shouldShowCSSCustomizationFeature ? FEATURE_CSS_CUSTOMIZATION : null,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -518,7 +522,9 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_CSS_CUSTOMIZATION,
+		shouldShowCSSCustomizationFeature
+			? FEATURE_CSS_CUSTOMIZATION
+			: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	],
 	getSignupFeatures: () => [
 		FEATURE_ACCEPT_PAYMENTS,
@@ -611,7 +617,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
-			FEATURE_CSS_CUSTOMIZATION,
+			shouldShowCSSCustomizationFeature ? FEATURE_CSS_CUSTOMIZATION : null,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -622,7 +628,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPromotedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_CSS_CUSTOMIZATION,
+		shouldShowCSSCustomizationFeature
+			? FEATURE_CSS_CUSTOMIZATION
+			: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_13GB_STORAGE,
 	],
 	getSignupFeatures: () => [
@@ -762,7 +770,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_NO_ADS,
 			FEATURE_MEMBERSHIPS,
 			FEATURE_PREMIUM_CONTENT_BLOCK,
-			FEATURE_CSS_CUSTOMIZATION,
+			shouldShowCSSCustomizationFeature ? FEATURE_CSS_CUSTOMIZATION : null,
 			isLoggedInMonthlyPricing && FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			FEATURE_SIMPLE_PAYMENTS,
 			FEATURE_GOOGLE_ANALYTICS,
@@ -779,7 +787,9 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_200GB_STORAGE,
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_NO_ADS,
-		FEATURE_CSS_CUSTOMIZATION,
+		shouldShowCSSCustomizationFeature
+			? FEATURE_CSS_CUSTOMIZATION
+			: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_VIDEO_UPLOADS,
 	],
 	getSignupFeatures: () => [
@@ -871,7 +881,9 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_GOOGLE_ANALYTICS,
 	],
 	getIncludedFeatures: () => [
-		FEATURE_CSS_CUSTOMIZATION,
+		shouldShowCSSCustomizationFeature
+			? FEATURE_CSS_CUSTOMIZATION
+			: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 		FEATURE_AUDIO_UPLOADS,
 		FEATURE_CLOUDFLARE_ANALYTICS,
