@@ -368,6 +368,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	width: 16px;
 	background: currentColor;
 	pointer-events: none;
+	margin-right: 5px;
 }
 
 .lp-language-picker__icon {
@@ -393,7 +394,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	display: block;
 	font-family: inherit;
 	font-weight: 600;
-	padding: 11px 38px;
+	padding: 11px 45px;
 	position: relative;
 	text-overflow: ellipsis;
 	width: 100%;
@@ -453,10 +454,6 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 		order: 1;
 	}
 
-	.lp-logo-label-spacer {
-		display: none;
-	}
-
 	.lpc-footer-automattic-nav-wrapper {
 		grid-template-columns: 1fr 1fr;
 	}
@@ -492,6 +489,16 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	.lpc-footer-automattic-nav {
 		padding-top: 16px;
 		padding-bottom: 16px;
+	}
+}
+
+@include breakpoint("<660px") {
+	.lpc-footer-nav {
+		padding: 0 16px;
+	}
+
+	.lpc-footer-automattic-nav {
+		margin: auto !important;
 	}
 }
 

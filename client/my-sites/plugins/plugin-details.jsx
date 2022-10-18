@@ -16,6 +16,8 @@ import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
+import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
@@ -25,8 +27,6 @@ import PluginDetailsBody from 'calypso/my-sites/plugins/plugin-details-body';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
-import PluginNavbarFooter from 'calypso/my-sites/plugins/plugin-navbar-footer';
-import PluginNavbarFooterAutomattic from 'calypso/my-sites/plugins/plugin-navbar-footer-automattic';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
 import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
@@ -395,9 +395,9 @@ function PluginDetails( props ) {
 						</div>
 					</div>
 				</div>
-				<PluginNavbarFooter />
+				<UniversalNavbarFooter />
 			</MainComponent>
-			<PluginNavbarFooterAutomattic />
+			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }
@@ -524,9 +524,9 @@ function LegacyPluginDetails( props ) {
 						</>
 					) }
 				</div>
-				<PluginNavbarFooter />
+				<UniversalNavbarFooter />
 			</MainComponent>
-			<PluginNavbarFooterAutomattic />
+			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }
@@ -645,9 +645,9 @@ function PluginDoesNotExistView() {
 					action={ action }
 					illustration="/calypso/images/illustrations/illustration-404.svg"
 				/>
-				<PluginNavbarFooter />
+				<UniversalNavbarFooter />
 			</MainComponent>
-			<PluginNavbarFooterAutomattic />
+			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }

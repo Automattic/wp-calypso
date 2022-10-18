@@ -20,6 +20,15 @@ $lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto
 	font-size: 1rem;
 }
 
+.lp-icon__custom-automattic-footer {
+	display: inline-block;
+	height: 12px;
+	margin: 0 0.15em 0 0.1em;
+	position: relative;
+	top: 1px;
+	vertical-align: baseline;
+}
+
 .lpc-footer-nav-wrapper,
 .lpc-footer-automattic-nav-wrapper {
 	max-width: 1056px;

@@ -6,14 +6,14 @@ import QueryAllJetpackSitesPlugins from 'calypso/components/data/query-all-jetpa
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import MainComponent from 'calypso/components/main';
+import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
+import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
 import Categories from 'calypso/my-sites/plugins/categories';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import EducationFooter from 'calypso/my-sites/plugins/education-footer';
 import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
-import PluginNavbarFooter from 'calypso/my-sites/plugins/plugin-navbar-footer';
-import PluginNavbarFooterAutomattic from 'calypso/my-sites/plugins/plugin-navbar-footer-automattic';
 import PluginsAnnouncementModal from 'calypso/my-sites/plugins/plugins-announcement-modal';
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -157,9 +157,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				{ ! search && <Categories selected={ category } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && <EducationFooter /> }
-				<PluginNavbarFooter />
+				<UniversalNavbarFooter />
 			</MainComponent>
-			<PluginNavbarFooterAutomattic />
+			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 };
