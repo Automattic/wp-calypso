@@ -75,7 +75,7 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="reader-sidebar-list-tag_title">{ list.title }</div>
+					<div className="reader-sidebar-list-tag_name">{ list.title }</div>
 				</a>
 			</li>
 		);
