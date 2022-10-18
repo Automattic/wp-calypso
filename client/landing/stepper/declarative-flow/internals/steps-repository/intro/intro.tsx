@@ -38,7 +38,7 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 				__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Create your Video site' ),
+			buttonText: __( 'Get started' ),
 		},
 	};
 
