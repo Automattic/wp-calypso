@@ -7,6 +7,7 @@ export interface AtomicKey {
 	sha256: string;
 	user_name: string;
 	name: string;
+	created_at: string;
 }
 
 export const useAtomicSshKeys = ( siteId: number, options: UseQueryOptions ) => {
