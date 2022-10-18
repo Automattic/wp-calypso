@@ -44,6 +44,14 @@
 		}
 	}
 
+	.add-subscriber__form--container input {
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
+	}
+
 	.add-subscriber__form-submit-btn {
 		margin-top: 0.5rem;
 	}
