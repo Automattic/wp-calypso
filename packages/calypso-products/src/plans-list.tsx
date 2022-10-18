@@ -627,7 +627,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	],
 	getSignupFeatures: () => [
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-		FEATURE_CSS_CUSTOMIZATION,
+		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 		FEATURE_ALL_PERSONAL_FEATURES,
 	],
 	getNewsletterDescription: () =>
@@ -692,7 +692,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		].filter( isValueTruthy ),
 	getPortfolioSignupFeatures: () =>
 		[
-			FEATURE_CSS_CUSTOMIZATION,
+			FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_ALL_PERSONAL_FEATURES,
 		].filter( isValueTruthy ),
