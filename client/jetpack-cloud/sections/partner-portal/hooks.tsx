@@ -369,7 +369,7 @@ export function useIssueMultipleLicenses(
 		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
-					products: selectedProducts.join( ',' ),
+					product: selectedProducts.join( ',' ),
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
