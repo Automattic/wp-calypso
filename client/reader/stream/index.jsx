@@ -21,6 +21,7 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
@@ -40,6 +41,7 @@ import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
+import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
@@ -442,6 +444,15 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
+			let sidebarContent = <ReaderSidebarFollowedSites path={ window.location.pathname } />;
+			if ( 'a8c' === streamType || 'p2' === streamType ) {
+				sidebarContent = (
+					<ReaderSidebarOrganizations
+						organizations={ this.props.organizations }
+						path={ window.location.pathname }
+					/>
+				);
+			}
 
 			// Only show right sidebar on select screens
 			const excludesSidebar = [
@@ -456,9 +467,7 @@ class ReaderStream extends Component {
 				body = (
 					<div className="stream__two-column">
 						{ bodyContent }
-						<div className="stream__right-column">
-							<ReaderSidebarFollowedSites path={ window.location.pathname } />
-						</div>
+						<div className="stream__right-column">{ sidebarContent }</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
@@ -505,6 +514,7 @@ export default connect(
 			isRequesting: stream.isRequesting,
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
+			organizations: getReaderOrganizations( state ),
 		};
 	},
 	{
