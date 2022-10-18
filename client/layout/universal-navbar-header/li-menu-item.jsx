@@ -16,7 +16,7 @@ const UniversalNavbarLiMenuItem = ( {
 				tabIndex="-1"
 			>
 				{ elementContent }
-				<span className="x-menu-link-chevron" aria-hidden="true"></span>
+				{ /* <span className="x-menu-link-chevron" aria-hidden="true"></span> */ }
 			</a>
 		</li>
 	);

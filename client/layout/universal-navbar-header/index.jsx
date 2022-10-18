@@ -1,4 +1,4 @@
-import './style.scss';
+import './nav-style.scss';
 import { useTranslate } from 'i18n-calypso';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
@@ -14,15 +14,15 @@ const UniversalNavbarHeader = () => {
 					{ /*<!-- Nav bar starts here. -->*/ }
 					<div className="masterbar-menu">
 						<div className="masterbar">
-							<nav className="x-nav" ariaLabel="WordPress.com">
-								<ul className="x-nav-list x-nav-list--left">
+							<nav className="x-nav" aria-label="WordPress.com">
+								<ul className="x-nav-list x-nav-list__left">
 									<li className="x-nav-item">
-										<a role="menuitem" className="x-nav-link x-nav-link--logo x-link" href="/">
-											<WordPressWordmark className="x-icon x-icon--logo" />
+										<a role="menuitem" className="x-nav-link x-nav-link__logo x-link" href="/">
+											<WordPressWordmark className="x-icon x-icon__logo" />
 											<span className="x-hidden">WordPress.com</span>
 										</a>
 									</li>
-									<li className="x-nav-item x-nav-item--wide">
+									<li className="x-nav-item x-nav-item__wide">
 										<UniversalNavbarBtnMenuItem
 											className={ 'x-nav-link x-link' }
 											elementContent={ translate( 'Products' ) }
@@ -80,7 +80,7 @@ const UniversalNavbarHeader = () => {
 											</ul>
 										</div>
 									</li>
-									<li className="x-nav-item x-nav-item--wide">
+									<li className="x-nav-item x-nav-item__wide">
 										<UniversalNavbarBtnMenuItem
 											className={ 'x-nav-link x-link' }
 											elementContent={ translate( 'Features' ) }
@@ -125,7 +125,7 @@ const UniversalNavbarHeader = () => {
 											</ul>
 										</div>
 									</li>
-									<li className="x-nav-item x-nav-item--wide">
+									<li className="x-nav-item x-nav-item__wide">
 										<UniversalNavbarBtnMenuItem
 											className={ 'x-nav-link x-link' }
 											elementContent={ translate( 'Resources' ) }
@@ -184,38 +184,38 @@ const UniversalNavbarHeader = () => {
 										</div>
 									</li>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-nav-item x-nav-item--wide' }
+										className={ 'x-nav-item x-nav-item__wide' }
 										titleValue={ translate( 'Plans & Pricing' ) }
 										elementContent={ translate( 'Plans & Pricing' ) }
 										urlValue={ '//wordpress.com/pricing/' }
 										type={ 'nav' }
 									/>
 								</ul>
-								<ul className="x-nav-list x-nav-list--right">
+								<ul className="x-nav-list x-nav-list__right">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-nav-item x-nav-item--wide' }
+										className={ 'x-nav-item x-nav-item__wide' }
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
 										urlValue={ '/log-in' }
 										type={ 'nav' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-nav-item x-nav-item--wide' }
+										className={ 'x-nav-item x-nav-item__wide' }
 										titleValue={ translate( 'Get Started' ) }
 										elementContent={ translate( 'Get Started' ) }
 										urlValue={ '//wordpress.com/start' }
 										type={ 'nav' }
-										typeClassName={ 'x-nav-link x-nav-link--primary x-link' }
+										typeClassName={ 'x-nav-link x-nav-link__primary x-link' }
 									/>
-									<li className="x-nav-item x-nav-item--narrow">
+									<li className="x-nav-item x-nav-item__narrow">
 										<button
 											role="menuitem"
-											className="x-nav-link x-nav-link--menu x-link"
+											className="x-nav-link x-nav-link__menu x-link"
 											aria-haspopup="true"
 											aria-expanded="false"
 										>
 											<span className="x-hidden">{ translate( 'Menu' ) }</span>
-											<span className="x-icon x-icon--menu">
+											<span className="x-icon x-icon__menu">
 												<span></span>
 												<span></span>
 												<span></span>
@@ -239,7 +239,7 @@ const UniversalNavbarHeader = () => {
 						<div className="x-menu-content">
 							<button className="x-menu-button x-link" tabIndex="-1">
 								<span className="x-hidden">{ translate( 'Close the navigation menu' ) }</span>
-								<span className="x-icon x-icon--close">
+								<span className="x-icon x-icon__close">
 									<span></span>
 									<span></span>
 								</span>

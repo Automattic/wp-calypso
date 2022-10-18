@@ -1,30 +1,5 @@
 /*
  * Navigation bar
- *
- * 1. The Landpack way of injecting custom colors into the nav bar styles
- *    which can also be used on any WPCOM landing page.
- *
- *    All nav bar items default to white, but you can set the specific custom
- *    property to any RGB value like that to use a custom color:
- *
- *    :root {
- *      --lp-color-nav-item: 201, 53, 110;
- *    }
- *
- *    On top of the above, the call to action can optionally have its own color:
- *
- *    :root {
- *      --lp-color-nav-item-primary: 0, 135, 99;
- *    }
- *
- * 2. Increase the specificity due to side effects on older landing pages.
- * 3. Supporting multiple versions, as some of our older landing pages still
- *    contain outdated markup.
- * 4. Using `transform: scale()` to prevent the browser from enforcing any
- *    minimum text size settings.
- * 5. Target only the elements inside the version of the navigation bar that
- *    containers multiple menu items.
- * 6. Increase the specificity due to the double `:not()` selector used above.
  */
 
 .x-hidden {
@@ -58,8 +33,30 @@
 	}
 }
 
-.x-icon--logo {
+.x-icon__logo {
 	left: -1px;
+}
+
+.x-icon__close {
+	width: 36px;
+
+	span {
+		position: absolute;
+		top: 17px;
+		left: 11px;
+		height: 2px;
+		width: 14px;
+		transform: rotate(45deg);
+	}
+}
+
+.x-icon__close span + span {
+    transform: rotate(-45deg);
+}
+
+.x-icon__menu {
+    width: 26px;
+    padding-top: 10px;
 }
 
 .x-icon,
@@ -73,6 +70,13 @@
 	height: 36px;
 	overflow: hidden;
 	position: relative;
+}
+.x-icon span {
+    display: block;
+    height: 2px;
+    background: currentcolor;
+    color: inherit;
+	margin-bottom: 6px;
 }
 
 /**
@@ -156,8 +160,17 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	color: unquote("rgb( var( --lp-color-nav-item, var( --lp-color-primary, #{$x-nav-item-default-color} ) ) )"); /* 1 */
 }
 
-.x-nav-item--wide {
+.x-nav-item__wide {
 	display: none;
+	position: relative;
+
+	&:hover > .x-dropdown-content {
+		opacity: 1;
+	}
+}
+
+button.x-nav-link.x-link {
+	cursor: pointer;
 }
 
 .x-nav-link {
@@ -206,7 +219,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	}
 }
 
-.x-nav-link--logo {
+.x-nav-link__logo {
 	padding: $x-nav-padding-top $x-nav-padding-x-wide 0 $x-nav-padding-x-narrow;
 
 	&::before {
@@ -216,7 +229,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	}
 }
 
-.x-nav-link--primary {
+.x-nav-link__primary {
 	padding-right: $x-nav-item-padding-x-narrow + $x-nav-padding-x-narrow;
 	padding-left: $x-nav-item-padding-x-narrow * 2;
 	color: unquote("rgb( var( --lp-color-nav-item-primary, var(--lp-color-primary, #{$x-nav-item-default-color} ) ) )") !important; /* 1, 2 */
@@ -238,7 +251,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	}
 }
 
-.x-nav-link--menu {
+.x-nav-link__menu {
 	padding: $x-nav-padding-top $x-nav-padding-x-narrow 0 $x-nav-padding-x-wide;
 
 	&::before {
@@ -248,7 +261,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	}
 }
 
-.x-nav-link--chevron::after, /* 3 */
+.x-nav-link__chevron::after, /* 3 */
 .x-nav-link-chevron {
 	position: relative;
 	left: 1px;
@@ -257,7 +270,7 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 	opacity: 0.65;
 }
 
-.x-nav-link--chevron::after, /* 3 */
+.x-nav-link__chevron::after, /* 3 */
 .x-nav-link-chevron::before {
 	content: $lp-chevron-content-down;
 }
@@ -392,13 +405,19 @@ $x-dropdown-item-line-height: 19px;
  */
 
 .x-dropdown-content {
+	z-index: 100;
 	position: absolute; /* 1 */
-	top: 0; /* 1 */
-	right: $x-dropdown-shadow-blur;
-	left: $x-dropdown-shadow-blur;
+	top: 65px; /* 1 */
 	padding: (15px + $x-dropdown-background-offset-y) 0 18px;
 	opacity: 0;
 	pointer-events: none;
+	left: -60px;
+
+    background: #fff;
+    border-radius: 9px;
+    box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
+    position: absolute;
+    width: 210px;
 
 	&[aria-hidden="false"] { /* 2 */
 		z-index: 1;
@@ -407,6 +426,18 @@ $x-dropdown-item-line-height: 19px;
 
 	ul {
 		@extend %x-list;
+	}
+
+	&:before {
+		background: inherit;
+		border-radius: 3px;
+		content: "";
+		height: 36px;
+		left: 90px;
+		position: absolute;
+		top: -8px;
+		transform: rotate(45deg);
+		width: 36px;
 	}
 }
 
@@ -506,11 +537,11 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	pointer-events: none;
 }
 
-.x-menu--active {
+.x-menu__active {
 	display: block;
 }
 
-.x-menu--open {
+.x-menu__open {
 	pointer-events: auto;
 }
 
@@ -523,13 +554,14 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 	background: rgba($studio-gray-100, 0.65);
 	opacity: 0;
 
-	.x-menu--active & {
+	.x-menu__active & {
 		transition: opacity 0.25s ease-out;
 	}
 
-	.x-menu--open & {
+	.x-menu__open & {
 		opacity: 1;
 		transition-timing-function: ease-in-out;
+		z-index: 12;
 	}
 }
 
@@ -562,15 +594,23 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		}
 	}
 
-	.x-menu--active & {
+	.x-menu__active & {
 		transition: transform 0.25s ease-in-out;
 	}
 
-	.x-menu--open & {
+	.x-menu__open & {
 		transform: scale(1);
 		transition-duration: 0.35s;
 		transition-timing-function: cubic-bezier(0.1, 0.6, 0.2, 1);
 		pointer-events: auto;
+		z-index: 850;
+	}
+}
+
+@media (min-width: 480px) {
+	.x-menu-content {
+		left: auto;
+		width: 408px;
 	}
 }
 
@@ -678,7 +718,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 @media ( min-width: $x-nav-breakpoint-small ) {
-	.x-nav-link--logo {
+	.x-nav-link__logo {
 		padding-left: $x-nav-padding-x-wide;
 
 		&::before {
@@ -686,7 +726,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		}
 	}
 
-	.x-nav-link--menu {
+	.x-nav-link__menu {
 		padding-right: $x-nav-padding-x-wide;
 
 		&::before {
@@ -696,15 +736,15 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 @media ( min-width: $x-nav-breakpoint-medium-wide ) {
-	.x-nav-item--narrow {
+	.x-nav-item__narrow {
 		display: none;
 	}
 
-	.x-nav-item--wide {
+	.x-nav-item__wide {
 		display: block;
 	}
 
-	.x-nav-item:not(:only-child) .x-nav-link--logo { /* 5 */
+	.x-nav-item:not(:only-child) .x-nav-link__logo { /* 5 */
 		padding-right: $x-nav-item-padding-x-wide;
 
 		&::before {
@@ -714,12 +754,12 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 }
 
 @media ( min-width: $x-nav-breakpoint-wide ) {
-	.x-nav-link:not(.x-nav-link--logo):not(.x-nav-link--menu) {
+	.x-nav-link:not(.x-nav-link__logo):not(.x-nav-link__menu) {
 		padding-right: $x-nav-item-padding-x-wide;
 		padding-left: $x-nav-item-padding-x-wide;
 	}
 
-	.x-nav-link--logo {
+	.x-nav-link__logo {
 		padding-left: $x-nav-padding-x-wide;
 
 		&::before {
@@ -735,7 +775,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 		}
 	}
 
-	.x-nav-link.x-nav-link.x-nav-link--primary { /* 6 */
+	.x-nav-link.x-nav-link.x-nav-link__primary { /* 6 */
 		padding-right: $x-nav-item-padding-x-wide + $x-nav-padding-x-wide;
 		padding-left: $x-nav-item-padding-x-wide * 2;
 
