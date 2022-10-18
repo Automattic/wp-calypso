@@ -296,9 +296,11 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
-const shouldShowCSSCustomizationFeature = i18n.hasTranslation(
-	"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-);
+const shouldShowCSSCustomizationFeature =
+	[ 'en', 'en-gb' ].includes( getLocaleSlug() || '' ) ||
+	i18n.hasTranslation(
+		"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
+	);
 
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),

@@ -290,9 +290,10 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () => {
-			return i18n.hasTranslation(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-			)
+			return config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
+				)
 				? i18n.translate(
 						"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
 				  )
