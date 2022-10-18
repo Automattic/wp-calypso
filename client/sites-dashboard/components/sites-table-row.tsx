@@ -131,7 +131,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 			<Column mobileHidden>
 				<SitePlan>
-					{ isNotAtomicJetpack( site ) && (
+					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
 						<SitePlanIcon>
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
