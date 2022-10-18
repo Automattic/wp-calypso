@@ -289,10 +289,17 @@ export const FEATURES_LIST = {
 	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
-		getDescription: () =>
-			i18n.translate(
+		getDescription: () => {
+			return i18n.hasTranslation(
 				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-			),
+			)
+				? i18n.translate(
+						"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
+				  )
+				: i18n.translate(
+						'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+				  );
+		},
 	},
 
 	[ FEATURE_CSS_CUSTOMIZATION ]: {
