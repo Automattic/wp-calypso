@@ -415,8 +415,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	function showGlobalStylesPremiumBadge() {
 		if ( ! shouldLimitGlobalStyles ) {
-			return;
+			return null;
 		}
+
 		return (
 			<PremiumBadge
 				className="design-picker__premium-badge"
