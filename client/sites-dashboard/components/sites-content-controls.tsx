@@ -128,6 +128,8 @@ export const SitesContentControls = ( {
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
 				defaultValue={ initialSearch }
+				delaySearch
+				delayTimeout={ 1000 }
 			/>
 			<DisplayControls>
 				<ControlsSelectDropdown
