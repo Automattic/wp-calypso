@@ -32,7 +32,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	const comment = DataHelper.getRandomPhrase();
 	let page: Page;
-	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
 	let editorPage: EditorPage;
 
@@ -59,8 +58,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		publishedURL = await editorPage.publish( { visit: true } );
-		expect( publishedURL.href ).toStrictEqual( page.url() );
+		await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Post a comment', async function () {

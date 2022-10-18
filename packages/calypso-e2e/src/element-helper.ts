@@ -152,3 +152,24 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 
 	return blockId;
 }
+
+/**
+ *
+ * @param page
+ */
+export async function waitForWPWidgets( page: Page ) {
+	await page.evaluate( async () => {
+		await new Promise( ( resolve ) => {
+			const wait = () => setTimeout( resolve, 1000 );
+			let timeout = wait();
+
+			window.addEventListener( 'message', ( event ) => {
+				if ( event.origin === 'https://widgets.wp.com' ) {
+					console.log( 'widgets loading' );
+					clearTimeout( timeout );
+					timeout = setTimeout( resolve, 1000 );
+				}
+			} );
+		} );
+	} );
+}

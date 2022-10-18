@@ -1,8 +1,12 @@
-import { Page, ElementHandle } from 'playwright';
+import { Page } from 'playwright';
+import { envVariables } from '../..';
+import { waitForWPWidgets } from '../../element-helper';
 
 const selectors = {
 	// Comment
-	commentTextArea: '#comment',
+	commentForm: '#commentform',
+	commentIframe: '#jetpack_remote_comment',
+	commentField: '#comment',
 	submitButton: 'input:has-text("Post Comment")',
 
 	// Comment like
@@ -34,68 +38,23 @@ export class CommentsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
-		// Wait for all network connections to complete. Otherwise, the Post Comment button may not
-		// appear even if the text area is clicked on.
-		await this.page.waitForLoadState( 'networkidle' );
-		// Wait until the comment text area is fully stable on the page.
-		// This is to guard against long-loading pages (eg. notifications test) where all network
-		// requests may have completed but the page remains in a loading state.
-		const commentArea = await this.page.waitForSelector( selectors.commentTextArea );
-		await commentArea.waitForElementState( 'stable' );
-		// To simulate user action first click on the field. This also exposes the
-		// submit comment button.
-		await this.page.click( selectors.commentTextArea );
-		await this.page.fill( selectors.commentTextArea, comment );
-		await Promise.all( [
-			this.page.waitForNavigation(),
-			this.page.click( selectors.submitButton ),
-		] );
-	}
+		const commentForm = this.page.locator( selectors.commentForm );
+		await commentForm.scrollIntoViewIfNeeded();
 
-	/**
-	 * Selects the comment then clicks the `Like` star shaped button of the comment.
-	 *
-	 * This method takes two forms of selectors:
-	 *     - number to specify the nth comment.
-	 *     - string to specify the comment using string matching.
-	 *
-	 * This helper method does not check whether the button state has changed.
-	 * To ensure the state changed to the expected value, the caller should perform additional
-	 * checks.
-	 *
-	 * @param {number|string} selector Unique selector for the comment.
-	 * @returns {Promise<ElementHandle>} The target comment.
-	 * @throws {Error} If selector was not supplied or supplied selector did not resolve to a comment.
-	 */
-	async _click( selector: string | number ): Promise< ElementHandle > {
-		let commentToLike!: ElementHandle;
+		let commentField;
+		let submitButton;
 
-		await this.page.waitForLoadState( 'load' );
-
-		// Retrieve the nth comment on the page.
-		if ( typeof selector === 'number' ) {
-			commentToLike = await this.page.waitForSelector(
-				`:nth-match(${ selectors.comments }, ${ selector })`
-			);
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			const parentFrame = this.page.frameLocator( selectors.commentIframe );
+			commentField = parentFrame.locator( selectors.commentField );
+			submitButton = parentFrame.locator( selectors.submitButton );
+		} else {
+			commentField = this.page.locator( selectors.commentField );
+			submitButton = this.page.locator( selectors.submitButton );
 		}
 
-		// Retrieve the comment by the body.
-		if ( typeof selector === 'string' ) {
-			selector = selector.trim();
-			commentToLike = await this.page.waitForSelector(
-				`.comment-content:has-text("${ selector }")`,
-				{ state: 'visible' }
-			);
-		}
-
-		// Retrieve the like/unlike button for the comment to interact with, click on it and
-		// wait until the `load` event is fired confirming the end of the sequence.
-		const likeButton = await commentToLike.waitForSelector( selectors.likeButton );
-		await likeButton.click();
-		await this.page.waitForLoadState( 'load' );
-
-		// Return the comment to the caller for further processing.
-		return commentToLike;
+		await commentField.type( comment );
+		await Promise.all( [ this.page.waitForNavigation(), submitButton.click() ] );
 	}
 
 	/**
@@ -107,9 +66,27 @@ export class CommentsComponent {
 	 * @param {number|string} selector Either a 1-indexed number or a string.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async like( selector: number | string ): Promise< void > {
-		const comment = await this._click( selector );
-		await comment.waitForSelector( selectors.liked );
+	async like( selector: string ): Promise< void > {
+		let likeButton;
+		let likedStatus;
+
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await waitForWPWidgets( this.page );
+
+			const likeButtonFrame = this.page.frameLocator(
+				`iframe[name^="like-comment-frame"]:below(:text("${ selector }"))`
+			);
+
+			likeButton = likeButtonFrame.locator( 'a:text-is("Like"):visible' );
+			likedStatus = likeButtonFrame.locator( ':text("Liked by"):visible' );
+		} else {
+			const commentContent = this.page.locator( '.comment-content', { hasText: selector } );
+			likeButton = commentContent.locator( ':text-is("Like"):visible' );
+			likedStatus = commentContent.locator( ':text("Liked by"):visible' );
+		}
+
+		await likeButton.click();
+		await likedStatus.waitFor();
 	}
 
 	/**
@@ -121,8 +98,26 @@ export class CommentsComponent {
 	 * @param {number|string} selector Either a 1-indexed number or a string.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async unlike( selector: number | string ): Promise< void > {
-		const comment = await this._click( selector );
-		await comment.waitForSelector( selectors.notLiked );
+	async unlike( selector: string ): Promise< void > {
+		let unlikeButton;
+		let unlikedStatus;
+
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await waitForWPWidgets( this.page );
+
+			const likeButtonFrame = this.page.frameLocator(
+				`iframe[name^="like-comment-frame"]:below(:text("${ selector }"))`
+			);
+
+			unlikeButton = likeButtonFrame.locator( 'a:text("Liked by")' );
+			unlikedStatus = likeButtonFrame.locator( 'a:text-is("Like")' );
+		} else {
+			const commentContent = this.page.locator( '.comment-content', { hasText: selector } );
+			unlikeButton = commentContent.locator( '.comment-liked:has-text("Liked by") > a' );
+			unlikedStatus = commentContent.locator( '.comment-not-liked > span:text-is("Like"):visible' );
+		}
+
+		await unlikeButton.click();
+		await unlikedStatus.waitFor();
 	}
 }
