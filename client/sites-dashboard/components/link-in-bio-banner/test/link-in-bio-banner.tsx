@@ -4,9 +4,9 @@
 import * as viewport from '@automattic/viewport-react';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state/index';
-import getSites from 'calypso/state/selectors/get-sites';
 import { LinkInBioBanner } from '../link-in-bio-banner';
 import { LINK_IN_BIO_BANNER_PREFERENCE } from '../link-in-bio-banner-parts';
 
@@ -50,11 +50,21 @@ describe( '<LinkInBioBanner>', () => {
 			jest.spyOn( viewport, 'useDesktopBreakpoint' ).mockReturnValue( isDesktop );
 
 			const store = createTestStore( visible, siteCount, siteIntent );
-			const sites = getSites( store.getState() );
+			const queryClient = new QueryClient( {
+				defaultOptions: {
+					queries: {
+						// No need to fetch because default site data will come from Redux store.
+						enabled: false,
+					},
+				},
+			} );
+
 			render(
-				<Provider store={ store }>
-					<LinkInBioBanner sites={ sites } displayMode={ type } />
-				</Provider>
+				<QueryClientProvider client={ queryClient }>
+					<Provider store={ store }>
+						<LinkInBioBanner displayMode={ type } />
+					</Provider>
+				</QueryClientProvider>
 			);
 			if ( expectValue ) {
 				// eslint-disable-next-line jest/no-conditional-expect
