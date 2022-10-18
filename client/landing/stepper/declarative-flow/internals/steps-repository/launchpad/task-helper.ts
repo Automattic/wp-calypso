@@ -34,9 +34,8 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
-						keepActive: true,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.replace(
 								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
 							);
