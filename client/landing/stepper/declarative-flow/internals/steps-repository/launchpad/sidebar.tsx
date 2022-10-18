@@ -56,7 +56,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
-	const clipboardButtonEl = useRef( null );
+	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
