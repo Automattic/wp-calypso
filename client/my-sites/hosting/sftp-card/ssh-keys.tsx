@@ -36,7 +36,7 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 		if ( ! keys ) {
 			return false;
 		}
-		return !! keys.find( ( { user_name } ) => user_name === username );
+		return !! keys.find( ( { user_login } ) => user_login === username );
 	}, [ keys, username ] );
 
 	const isLoading = isLoadingKeys || isLoadingUserKeys;

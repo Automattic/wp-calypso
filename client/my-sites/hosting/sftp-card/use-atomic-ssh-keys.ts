@@ -5,7 +5,7 @@ export const USE_ATOMIC_SSH_KEYS_QUERY_KEY = 'atomic-ssh-keys';
 
 export interface AtomicKey {
 	sha256: string;
-	user_name: string;
+	user_login: string;
 	name: string;
 	created_at: string;
 }

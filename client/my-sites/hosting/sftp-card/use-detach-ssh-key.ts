@@ -3,7 +3,7 @@ import wp from 'calypso/lib/wp';
 import { USE_ATOMIC_SSH_KEYS_QUERY_KEY } from './use-atomic-ssh-keys';
 
 interface MutationVariables {
-	user_name: string;
+	user_login: string;
 	name: string;
 }
 
@@ -13,9 +13,9 @@ export const useDetachSshKeyMutation = (
 ) => {
 	const queryClient = useQueryClient();
 	return useMutation(
-		( { user_name, name }: MutationVariables ) => {
+		( { user_login, name }: MutationVariables ) => {
 			return wp.req.post( {
-				path: `/sites/${ siteId }/hosting/ssh-keys/${ user_name }/${ name }`,
+				path: `/sites/${ siteId }/hosting/ssh-keys/${ user_login }/${ name }`,
 				apiNamespace: 'wpcom/v2',
 				method: 'DELETE',
 			} );

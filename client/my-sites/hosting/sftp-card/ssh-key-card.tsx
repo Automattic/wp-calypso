@@ -14,11 +14,11 @@ interface SshKeyCardProps {
 function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	const { __ } = useI18n();
 	const { mutate: detachSshKey, isLoading } = useDetachSshKeyMutation( { siteId } );
-	const { sha256, user_name, name, created_at } = sshKey;
+	const { sha256, user_login, name, created_at } = sshKey;
 	return (
 		<Card className="ssh-keys-card">
 			<div className="ssh-keys-card__info">
-				<span className="ssh-keys-card__name">{ user_name }</span>
+				<span className="ssh-keys-card__name">{ user_login }</span>
 				<code className="ssh-keys-card__fingerprint">{ sha256 }</code>
 				<span className="ssh-keys-card__date">
 					{ sprintf(
@@ -36,7 +36,7 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 			<div className="ssh-keys-card__actions">
 				<Button
 					scary
-					onClick={ () => detachSshKey( { user_name, name } ) }
+					onClick={ () => detachSshKey( { user_login, name } ) }
 					busy={ isLoading }
 					disabled={ isLoading }
 				>
