@@ -297,7 +297,7 @@ export const FEATURES_LIST = {
 						"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
 				  )
 				: i18n.translate(
-						'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+						'Customize your selected theme with pre-set color schemes, background designs, and font styles.'
 				  );
 		},
 	},
