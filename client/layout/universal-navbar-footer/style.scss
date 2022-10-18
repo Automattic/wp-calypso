@@ -84,6 +84,8 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 .lpc-footer-nav {
 	@include text-16;
 	font-family: $lp-font-stack-default;
+	background: #2c3338;
+	padding: 25px 0 80px;
 
 	ul {
 		margin: 0;

@@ -395,9 +395,7 @@ function PluginDetails( props ) {
 						</div>
 					</div>
 				</div>
-				<UniversalNavbarFooter />
 			</MainComponent>
-			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }
@@ -524,9 +522,7 @@ function LegacyPluginDetails( props ) {
 						</>
 					) }
 				</div>
-				<UniversalNavbarFooter />
 			</MainComponent>
-			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }
@@ -645,9 +641,7 @@ function PluginDoesNotExistView() {
 					action={ action }
 					illustration="/calypso/images/illustrations/illustration-404.svg"
 				/>
-				<UniversalNavbarFooter />
 			</MainComponent>
-			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 }

@@ -128,6 +128,15 @@ const LayoutLoggedOut = ( {
 				</div>
 			</div>
 			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
+			{ sectionName === 'plugins' && (
+				<>
+					<AsyncLoad require="calypso/layout/universal-navbar-footer" placeholder={ null } />
+					<AsyncLoad
+						require="calypso/layout/universal-navbar-footer-automattic"
+						placeholder={ null }
+					/>
+				</>
+			) }
 		</div>
 	);
 };

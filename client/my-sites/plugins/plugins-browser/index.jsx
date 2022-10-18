@@ -157,9 +157,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				{ ! search && <Categories selected={ category } /> }
 				<div className="plugins-browser__main-container">{ renderList() }</div>
 				{ ! category && ! search && <EducationFooter /> }
-				<UniversalNavbarFooter />
 			</MainComponent>
-			<UniversalNavbarFooterAutomattic />
 		</>
 	);
 };
