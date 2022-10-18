@@ -29,18 +29,31 @@ const JetpackPluginActivationInstructions: FC = () => {
 	return (
 		<>
 			<p>{ translate( "If you don't have Jetpack installed, follow these instructions:" ) }</p>
-			<p>
-				<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
-				{ translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
-					components: { strong: <strong /> },
-				} ) }
-			</p>
-			<p>
-				<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
-				{ translate( 'Search for {{strong}}Jetpack{{/strong}}, install and activate.', {
-					components: { strong: <strong /> },
-				} ) }
-			</p>
+
+			<ul className="licensing-thank-you-manual-activation-instructions__list">
+				<li className="licensing-thank-you-manual-activation-instructions__list-item">
+					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
+					<span>
+						{ ' ' }
+						{ translate(
+							'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+					</span>
+				</li>
+
+				<li className="licensing-thank-you-manual-activation-instructions__list-item">
+					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
+					<span>
+						{ translate( 'Search for {{strong}}Jetpack{{/strong}}, install and activate.', {
+							components: { strong: <strong /> },
+						} ) }
+					</span>
+				</li>
+			</ul>
+
 			<p>
 				<ExternalLink
 					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
@@ -59,31 +72,37 @@ const JetpackStandaloneActivationInstructions: FC<
 	const translate = useTranslate();
 	return (
 		<>
-			<p>
-				<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
-				{ translate( 'Login to an existing Wordpress site as an administrator.' ) }
-			</p>
+			<ul className="licensing-thank-you-manual-activation-instructions__list">
+				<li className="licensing-thank-you-manual-activation-instructions__list-item">
+					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
+					<span>{ translate( 'Login to an existing Wordpress site as an administrator.' ) }</span>
+				</li>
 
-			<p>
-				<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
-				{ translate(
-					'Go to {{strong}}Plugins > add New{{/strong}} in the admin menu on the left hand side.',
-					{
-						components: { strong: <strong /> },
-					}
-				) }
-			</p>
+				<li className="licensing-thank-you-manual-activation-instructions__list-item">
+					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
+					<span>
+						{ translate(
+							'Go to {{strong}}Plugins > add New{{/strong}} in the admin menu on the left hand side.',
+							{
+								components: { strong: <strong /> },
+							}
+						) }
+					</span>
+				</li>
 
-			<p>
-				<span className="licensing-thank-you-manual-activation-instructions__step-number">3</span>
-				{ translate(
-					'Search for {{strong}}Jetpack %(pluginName)s{{/strong}}, install and activate.',
-					{
-						components: { strong: <strong /> },
-						args: { pluginName: product.shortName },
-					}
-				) }
-			</p>
+				<li className="licensing-thank-you-manual-activation-instructions__list-item">
+					<span className="licensing-thank-you-manual-activation-instructions__step-number">3</span>
+					<span>
+						{ translate(
+							'Search for {{strong}}Jetpack %(pluginName)s{{/strong}}, install and activate.',
+							{
+								components: { strong: <strong /> },
+								args: { pluginName: product.shortName },
+							}
+						) }
+					</span>
+				</li>
+			</ul>
 
 			<p>
 				<ExternalLink
