@@ -62,7 +62,6 @@ const UniversalNavbarHeader = () => {
 													type={ 'dropdown' }
 												/>
 												<UniversalNavbarLiMenuItem
-													className={ 'x-menu-grid-item' }
 													titleValue={ translate( 'Professional Email' ) }
 													elementContent={ translate( 'Professional Email' ) }
 													urlValue={ '//wordpress.com/professional-email/' }
@@ -111,14 +110,12 @@ const UniversalNavbarHeader = () => {
 													type={ 'dropdown' }
 												/>
 												<UniversalNavbarLiMenuItem
-													className={ 'x-menu-grid-item' }
 													titleValue={ translate( 'WordPress Plugins' ) }
 													elementContent={ translate( 'WordPress Plugins' ) }
 													urlValue={ '//wordpress.com/plugins' }
 													type={ 'dropdown' }
 												/>
 												<UniversalNavbarLiMenuItem
-													className={ 'x-menu-grid-item' }
 													titleValue={ translate( 'Google Apps' ) }
 													elementContent={ translate( 'Google Apps' ) }
 													urlValue={ '//wordpress.com/google/' }
@@ -255,14 +252,12 @@ const UniversalNavbarHeader = () => {
 								<div className="x-menu-list-title">{ translate( 'Get Started' ) }</div>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Sign Up' ) }
 										elementContent={ translate( 'Sign Up' ) }
 										urlValue={ '//wordpress.com/start' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
 										urlValue={ '/log-in' }
@@ -274,7 +269,6 @@ const UniversalNavbarHeader = () => {
 								<div className="x-hidden">{ translate( 'About' ) }</div>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Plans & Pricing' ) }
 										elementContent={ translate( 'Plans & Pricing' ) }
 										urlValue={ '//wordpress.com/pricing/' }
@@ -286,42 +280,36 @@ const UniversalNavbarHeader = () => {
 								<div className="x-menu-list-title">{ translate( 'Products' ) }</div>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'WordPress Hosting' ) }
 										elementContent={ translate( 'WordPress Hosting' ) }
 										urlValue={ '//wordpress.com/hosting/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Domain Names' ) }
 										elementContent={ translate( 'Domain Names' ) }
 										urlValue={ '//wordpress.com/domains/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Website Builder' ) }
 										elementContent={ translate( 'Website Builder' ) }
 										urlValue={ '//wordpress.com/website-builder/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Create a Blog' ) }
 										elementContent={ translate( 'Create a Blog' ) }
 										urlValue={ '//wordpress.com/create-blog/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Professional Email' ) }
 										elementContent={ translate( 'Professional Email' ) }
 										urlValue={ '//wordpress.com/professional-email/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Enterprise' ) }
 										elementContent={ translate( 'Enterprise' ) }
 										urlValue={
@@ -335,7 +323,6 @@ const UniversalNavbarHeader = () => {
 								<div className="x-menu-list-title">{ translate( 'Features' ) }</div>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Features' ) }
 										elementContent={ translate( 'Overview' ) }
 										urlValue={ '//wordpress.com/features/' }
@@ -344,21 +331,18 @@ const UniversalNavbarHeader = () => {
 								</ul>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'WordPress Themes' ) }
 										elementContent={ translate( 'WordPress Themes' ) }
 										urlValue={ '//wordpress.com/themes' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'WordPress Plugins' ) }
 										elementContent={ translate( 'WordPress Plugins' ) }
 										urlValue={ '//wordpress.com/plugins' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Google Apps' ) }
 										elementContent={ translate( 'Google Apps' ) }
 										urlValue={ '//wordpress.com/google/' }
@@ -370,49 +354,42 @@ const UniversalNavbarHeader = () => {
 								<div className="x-menu-list-title">{ translate( 'Resources' ) }</div>
 								<ul className="x-menu-grid">
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Support' ) }
 										elementContent={ translate( 'WordPress.com Support' ) }
 										urlValue={ '//en.support.wordpress.com/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'News' ) }
 										elementContent={ translate( 'News' ) }
 										urlValue={ '//wordpress.com/blog/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Website Building Tips' ) }
 										elementContent={ translate( 'Website Building Tips' ) }
 										urlValue={ '//wordpress.com/go/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Business Name Generator' ) }
 										elementContent={ translate( 'Business Name Generator' ) }
 										urlValue={ '//wordpress.com/business-name-generator/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Logo Maker' ) }
 										elementContent={ translate( 'Logo Maker' ) }
 										urlValue={ '//wordpress.com/logo-maker/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Daily Webinars' ) }
 										elementContent={ translate( 'Daily Webinars' ) }
 										urlValue={ '//wordpress.com/webinars/' }
 										type={ 'menu' }
 									/>
 									<UniversalNavbarLiMenuItem
-										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'WordPress Courses' ) }
 										elementContent={ translate( 'WordPress Courses' ) }
 										urlValue={ '//wordpress.com/courses/' }

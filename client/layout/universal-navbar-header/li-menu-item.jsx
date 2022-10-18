@@ -6,8 +6,15 @@ const UniversalNavbarLiMenuItem = ( {
 	type,
 	typeClassName,
 } ) => {
+	let liClassName = '';
+	if ( type === 'menu' ) {
+		liClassName = liClassName + ' x-menu-grid-item';
+	}
+	if ( className ) {
+		liClassName = liClassName + ' ' + className;
+	}
 	return (
-		<li className={ className }>
+		<li className={ liClassName }>
 			<a
 				role="menuitem"
 				className={ typeClassName ? typeClassName : `x-${ type }-link x-link` }
