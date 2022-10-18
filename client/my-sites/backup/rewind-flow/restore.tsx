@@ -3,6 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -91,6 +92,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 
 	const renderConfirm = () => (
 		<>
+			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 			<div className="rewind-flow__header">
 				<Gridicon icon="history" size={ 48 } />
 			</div>
