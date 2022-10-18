@@ -196,9 +196,7 @@ const UniversalNavbarHeader = () => {
 										className={ 'x-nav-item x-nav-item--wide' }
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue={
-											'//wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2F'
-										}
+										urlValue={ '/log-in' }
 										type={ 'nav' }
 									/>
 									<UniversalNavbarLiMenuItem
@@ -260,9 +258,7 @@ const UniversalNavbarHeader = () => {
 										className={ 'x-menu-grid-item' }
 										titleValue={ translate( 'Log In' ) }
 										elementContent={ translate( 'Log In' ) }
-										urlValue={
-											'//wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2F'
-										}
+										urlValue={ '/log-in' }
 										type={ 'menu' }
 									/>
 								</ul>
