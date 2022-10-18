@@ -70,7 +70,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const accentColorRef = useRef< HTMLInputElement >( null );
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
-	const handleColorSelect = ( { value }: { value: string } ) => {
+	const handlePredefinedColorSelect = ( { value }: { value: string } ) => {
 		if ( value === 'custom' ) {
 			/**
 			 * Color picker is opened with the current accentColor selected by default
@@ -79,7 +79,6 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 			 */
 			setCustomColor( accentColor );
 			setColorPickerOpen( true );
-			return;
 		}
 		// New pre-defined color was selected
 		// Therefore clear custom color if one was set
@@ -89,6 +88,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 			hex: value,
 			rgb: hexToRgb( value ),
 		} );
+	};
+
+	const handleCustomColorSelect = ( { hex, rgb }: ColorPicker.OnChangeCompleteValue ) => {
+		setCustomColor( { hex, rgb: rgb as unknown as RGB } );
+		setAccentColor( { hex, rgb: rgb as unknown as RGB } );
 	};
 
 	return (
@@ -111,9 +115,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					<ColorPicker
 						disableAlpha
 						color={ accentColor.hex }
-						onChangeComplete={ ( { hex, rgb } ) =>
-							setCustomColor( { hex, rgb: rgb as unknown as RGB } )
-						}
+						onChangeComplete={ handleCustomColorSelect }
 					/>
 				</form>
 			</Popover>
@@ -139,7 +141,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					id="accentColor"
 					onFocus={ () => setColorPickerOpen( true ) }
 					value={ accentColor.hex }
-					onSelect={ handleColorSelect }
+					onSelect={ handlePredefinedColorSelect }
 					selectedIcon={ customColor && <ColorSwatch color={ customColor.hex } /> }
 					options={ COLOR_OPTIONS }
 					showSelectedOption={ !! customColor } // hide a selected option with the exception of "Custom" option

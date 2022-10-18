@@ -16,20 +16,20 @@ describe( 'item', () => {
 		test( 'should contain a link', () => {
 			render( <SelectDropdownItem>Published</SelectDropdownItem> );
 			const item = screen.getByRole( 'listitem' );
-			const link = screen.getByRole( 'option', { name: /published/i } );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
 			expect( item.firstChild ).toHaveTextContent( 'Published' );
 			expect( item.firstChild ).toBe( link );
 		} );
 
 		test( 'should contain a default aria-label', () => {
 			render( <SelectDropdownItem>Published</SelectDropdownItem> );
-			const link = screen.getByRole( 'option', { name: /published/i } );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
 			expect( link ).toHaveAttribute( 'aria-label', 'Published' );
 		} );
 
 		test( 'should default aria-label include a count', () => {
 			render( <SelectDropdownItem count={ 123 }>Published</SelectDropdownItem> );
-			const link = screen.getByRole( 'option', { name: /published/i } );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
 			expect( link ).toHaveAttribute( 'aria-label', 'Published (123)' );
 		} );
 
@@ -39,7 +39,7 @@ describe( 'item', () => {
 					Published
 				</SelectDropdownItem>
 			);
-			const link = screen.getByRole( 'option', { name: /my custom label/i } );
+			const link = screen.getByRole( 'menuitem', { name: /my custom label/i } );
 			expect( link ).toHaveAttribute( 'aria-label', 'My Custom Label' );
 		} );
 	} );
@@ -53,7 +53,7 @@ describe( 'item', () => {
 				</SelectDropdownItem>
 			);
 
-			const link = screen.getByRole( 'option', { name: /published/i } );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
 			await userEvent.click( link );
 
 			expect( onClickSpy ).not.toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe( 'item', () => {
 			const onClickSpy = jest.fn();
 			render( <SelectDropdownItem onClick={ onClickSpy }>Published</SelectDropdownItem> );
 
-			const link = screen.getByRole( 'option', { name: /published/i } );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
 			await userEvent.click( link );
 
 			expect( onClickSpy ).toHaveBeenCalledTimes( 1 );
