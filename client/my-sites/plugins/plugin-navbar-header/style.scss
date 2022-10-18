@@ -58,6 +58,22 @@
 	}
 }
 
+.x-icon--logo {
+	left: -1px;
+}
+
+.x-icon, .x-icon span {
+	color: inherit;
+	display: block;
+}
+.x-icon {
+	fill: currentcolor;
+	box-sizing: border-box;
+	height: 36px;
+	overflow: hidden;
+	position: relative;
+}
+
 /**
  * Content area
  */
