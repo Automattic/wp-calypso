@@ -35,7 +35,8 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
 	const options = variants.map( ( variant ) => ( {
 		key: variant.variantLabel,
-		name: <ItemVariantPrice variant={ variant } compareTo={ compareTo } />,
+		name: variant.variantLabel,
+		__experimentalHint: <ItemVariantPrice variant={ variant } compareTo={ compareTo } />,
 	} ) );
 
 	if ( isDisabled ) {
@@ -48,12 +49,12 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 			label={ translate( 'Pick a product term' ) }
 			describedBy={
 				selectedVariantIndex !== null && selectedVariantIndex >= 0
-					? translate( 'Currently selected term: %s', {
+					? ( translate( 'Currently selected term: %s', {
 							args: variants[ selectedVariantIndex ]?.variantLabel,
 							comment:
 								'%s represents the product currently selected term, e.g. `One year`, or `One month`.',
-					  } )
-					: translate( 'No selected term' )
+					  } ) as string )
+					: ( translate( 'No selected term' ) as string )
 			}
 			hideLabelFromVision
 			options={ options }

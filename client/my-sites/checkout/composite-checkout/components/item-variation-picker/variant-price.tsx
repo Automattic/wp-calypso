@@ -1,5 +1,4 @@
 import formatCurrency from '@automattic/format-currency';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -7,12 +6,6 @@ import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
 
 	.item-variant-option--selected & {
 		color: #b8e6bf;
@@ -25,13 +18,7 @@ const Discount = styled.span`
 
 const DoNotPayThis = styled.del`
 	text-decoration: line-through;
-	margin-right: 8px;
 	color: #646970;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
 
 	.item-variant-option--selected & {
 		color: #fff;
@@ -46,26 +33,11 @@ const Price = styled.span`
 	}
 `;
 
-const Variant = styled.div`
-	align-items: center;
+const Variant = styled.span`
 	display: flex;
-	font-size: 14px;
-	font-weight: 400;
-	justify-content: space-between;
-	line-height: 20px;
-	width: 100%;
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
-`;
-
-const Label = styled.span`
-	display: flex;
-	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
-	@media ( max-width: 480px ) {
-		flex-direction: column;
-	}
+	justify-content: flex-end;
+	flex-wrap: wrap;
+	column-gap: 0.5rem;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
@@ -85,7 +57,6 @@ export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
-	const isMobile = useMobileBreakpoint();
 	// This is the price that the compareTo variant would be if it was using the
 	// billing term of the variant. For example, if the price of the compareTo
 	// variant was 120 per year, and the variant we are displaying here is 5 per
@@ -109,21 +80,11 @@ export const ItemVariantPrice: FunctionComponent< {
 
 	return (
 		<Variant>
-			<Label>
-				{ variant.variantLabel }
-				{ discountPercentage > 0 && isMobile && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-			</Label>
-			<span>
-				{ discountPercentage > 0 && ! isMobile && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				{ discountPercentage > 0 && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
-				<Price>{ formattedCurrentPrice }</Price>
-			</span>
+			{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
+			{ discountPercentage > 0 && (
+				<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
+			) }
+			<Price>{ formattedCurrentPrice }</Price>
 		</Variant>
 	);
 };

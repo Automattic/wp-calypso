@@ -4,16 +4,18 @@
 	width: 100%;
 	margin: 1.25rem 0 0;
 
-	button.components-custom-select-control__button {
+	.components-custom-select-control__button {
 		width: 100%;
 		height: auto;
 		min-height: 44px;
-		padding: 0.875em 2rem 0.875em 1em;
+		padding: 0.875rem 2rem 0.875rem 0.75rem;
 
 		background: var(--color-surface);
 		border: 1px solid var(--color-border-subtle);
 		border-radius: 4px;
 		color: var(--color-text);
+
+		font-size: 0.875rem;
 	}
 
 	.components-custom-select-control__menu {
@@ -27,16 +29,17 @@
 
 	.components-custom-select-control__item {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
 		align-items: center;
+		flex-wrap: wrap;
 
 		box-sizing: border-box;
 		min-height: 44px;
-		padding: 0.875em 0.25em 0.875em 1em;
+		padding: 0.875rem 0.25rem 0.875em 0.75rem;
 
 		color: var(--color-text-subtle);
 
-		font-size: 1rem;
+		font-size: 0.875rem;
 
 		&:hover {
 			background: var(--studio-blue-0);
@@ -46,9 +49,15 @@
 			background: var(--studio-blue-0);
 		}
 
-		> *:first-child {
-			// 24px is the width of the checkmark icon
-			width: calc(100% - 24px - 0.25em);
+		// Align hints to the right in browsers that support the :has selector
+		&:not(:has(.components-custom-select-control__item-icon)) {
+			.components-custom-select-control__item-hint {
+				margin-inline-end: 1.5rem; // Width of the checkmark icon
+			}
 		}
+	}
+
+	.components-custom-select-control__item-hint {
+		flex: 1;
 	}
 }
