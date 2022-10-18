@@ -10,7 +10,8 @@ import {
 	FEATURE_ACCEPT_PAYMENTS,
 	FEATURE_ACTIVITY_LOG,
 	FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_ADVANCED_CUSTOMIZATION,
+	FEATURE_ADVANCED_DESIGN,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
 	FEATURE_ADVANCED_SEO_TOOLS,
@@ -32,6 +33,7 @@ import {
 	FEATURE_BACKUP_DAILY_V2,
 	FEATURE_BACKUP_REALTIME_V2,
 	FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
+	FEATURE_BASIC_DESIGN,
 	FEATURE_BLANK,
 	FEATURE_BLOG_DOMAIN,
 	FEATURE_CLOUDFLARE_ANALYTICS,
@@ -43,7 +45,6 @@ import {
 	FEATURE_CRM_PROPOSALS_AND_INVOICES,
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_V2,
-	FEATURE_CSS_CUSTOMIZATION,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_EARN_AD,
 	FEATURE_EASY_SITE_MIGRATION,
@@ -175,7 +176,7 @@ import {
 	FEATURE_INSTALL_THEMES_PLUGINS,
 	FEATURE_DEVELOPER_TOOLS_V1,
 	FEATURE_PRODUCT_LISTINGS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 	/* END - PLAN TAGLINE EXPERIMENT */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
@@ -286,21 +287,12 @@ export const FEATURES_LIST = {
 		},
 	},
 
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced design customization' ),
+	[ FEATURE_ADVANCED_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced customization' ),
 		getDescription: () =>
 			i18n.translate(
-				"Access extended color schemes and customization tools. Change all of your site's fonts, colors and more."
-			),
-	},
-
-	[ FEATURE_CSS_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_CSS_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'CSS customization' ),
-		getDescription: () =>
-			i18n.translate(
-				'Add your own CSS code, giving you complete control over how your site looks.'
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
 			),
 	},
 
@@ -608,6 +600,32 @@ export const FEATURES_LIST = {
 				'The easiest way to upload audio files that use any major audio file format. '
 			),
 		getStoreSlug: () => 'videopress',
+	},
+
+	[ FEATURE_BASIC_DESIGN ]: {
+		getSlug: () => FEATURE_BASIC_DESIGN,
+		getTitle: () => i18n.translate( 'Basic design customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Customize your selected theme with pre-set color schemes, ' +
+					'background designs, and font styles.'
+			),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
+	},
+
+	[ FEATURE_ADVANCED_DESIGN ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN,
+		getTitle: () =>
+			i18n.translate( '{{strong}}Advanced{{/strong}} design customization', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate(
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+			),
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
 	},
 
 	[ FEATURE_NO_ADS ]: {
@@ -1607,8 +1625,8 @@ export const FEATURES_LIST = {
 		getTitle: () => 'Unlimited product listings',
 		getDescription: () => {},
 	},
-	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS ]: {
-		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced design customization' ),
 		getDescription: () =>
 			i18n.translate(
