@@ -52,51 +52,51 @@ const ListStep: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<>
-			<div className={ 'import-layout list__wrapper' }>
-				<div className={ 'import-layout__column' }>
+			<div className="import-layout list__wrapper">
+				<div className="import-layout__column">
 					<div className="import__heading">
 						<Title>{ __( 'Import your content from another platform' ) }</Title>
 
 						<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 					</div>
 				</div>
-				<div className={ 'import-layout__column' }>
-					<div className={ 'list__importers list__importers-primary' }>
-						<ImporterLogo icon={ 'wordpress' } />
+				<div className="import-layout__column">
+					<div className="list__importers list__importers-primary">
+						<ImporterLogo icon="wordpress" />
 						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'WordPress' }
-							mainText={ 'www.wordpress.org' }
-							buttonIcon={ 'chevron-right' }
+							classNames="list__importer-action"
+							headerText="WordPress"
+							mainText="www.wordpress.org"
+							buttonIcon="chevron-right"
 							buttonOnClick={ () => onButtonClick( 'wordpress' ) }
 						/>
-						<ImporterLogo icon={ 'blogger-alt' } />
+						<ImporterLogo icon="blogger-alt" />
 						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'Blogger' }
-							mainText={ 'www.blogger.com' }
-							buttonIcon={ 'chevron-right' }
+							classNames="list__importer-action"
+							headerText="Blogger"
+							mainText="www.blogger.com"
+							buttonIcon="chevron-right"
 							buttonOnClick={ () => onButtonClick( 'blogger' ) }
 						/>
-						<ImporterLogo icon={ 'medium' } />
+						<ImporterLogo icon="medium" />
 						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'Medium' }
-							mainText={ 'www.medium.com' }
-							buttonIcon={ 'chevron-right' }
+							classNames="list__importer-action"
+							headerText="Medium"
+							mainText="www.medium.com"
+							buttonIcon="chevron-right"
 							buttonOnClick={ () => onButtonClick( 'medium' ) }
 						/>
-						<ImporterLogo icon={ 'squarespace' } />
+						<ImporterLogo icon="squarespace" />
 						<ActionCard
-							classNames={ 'list__importer-action' }
-							headerText={ 'Squarespace' }
-							mainText={ 'www.squarespace.com' }
-							buttonIcon={ 'chevron-right' }
+							classNames="list__importer-action"
+							headerText="Squarespace"
+							mainText="www.squarespace.com"
+							buttonIcon="chevron-right"
 							buttonOnClick={ () => onButtonClick( 'squarespace' ) }
 						/>
 					</div>
 
-					<div className={ 'list__importers list__importers-secondary' }>
+					<div className="list__importers list__importers-secondary">
 						<h3>{ __( 'Other platforms' ) }</h3>
 						<ul>
 							<li>

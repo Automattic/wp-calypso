@@ -1,11 +1,12 @@
 # History
 
-## 6.0.0 / 2021-XX-XX
+## 6.0.0 / 2022-09-27
 
 - Remove dependency on `core-js`: the package user needs to provide the needed JS environment
 - Move the published `build/` folder to `dist/` to align with other Calypso packages
 - No longer provide default request handler. This avoids a mandatory dependency on `wpcom-xhr-request`.
 - Remove `wpcom.marketing()` methods.
+- Add `loadToken` and `isTokenLoaded` methods, start passing `token` param to request handlers
 
 ## 5.4.2 / 2018-07-23
 

@@ -1,3 +1,4 @@
+import { JETPACK_SOCIAL_PRODUCTS } from '@automattic/calypso-products';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getSitePlan } from 'calypso/state/sites/selectors';
@@ -21,7 +22,13 @@ const useProductSlugs = ( { siteId, duration }: ProductSlugsProps ): string[] =>
 					includedInPlanProducts,
 				} ),
 				...getPlansToDisplay( { duration, currentPlanSlug } ),
-			].map( ( { productSlug } ) => productSlug ),
+			]
+				.map( ( { productSlug } ) => productSlug )
+				// TO-DO: Once Jetpack Social pricing tiers and the introductory discount have been worked on, filtering should be removed.
+				.filter(
+					( productSlug ) =>
+						! ( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( productSlug )
+				),
 		[ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ]
 	);
 };

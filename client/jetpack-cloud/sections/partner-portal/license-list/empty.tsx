@@ -1,6 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -11,7 +10,7 @@ interface Props {
 	filter: LicenseFilter;
 }
 
-export default function LicenseListEmpty( { filter }: Props ): ReactElement {
+export default function LicenseListEmpty( { filter }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const counts = useSelector( getLicenseCounts );

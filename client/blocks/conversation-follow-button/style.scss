@@ -3,20 +3,41 @@ button.conversation-follow-button {
 	border: 0;
 	padding: 0;
 
-	.gridicons-reader-follow-conversation {
+	.reader-follow-conversation {
 		fill: var(--color-primary);
 		pointer-events: auto;
 	}
 
 	.conversation-follow-button__label {
 		color: var(--color-primary);
+		position: relative;
 	}
 
-	&:hover {
+	&:hover,
+	&:focus {
 		color: var(--color-primary);
 
-		.gridicons-reader-follow-conversation {
+		.reader-follow-conversation {
 			fill: var(--color-primary);
+		}
+	}
+
+	&.popover__menu-item {
+		&:hover,
+		&:focus {
+			.conversation-follow-button__label {
+				color: var(--color-text-inverted);
+			}
+
+			.gridicon,
+			.reader-follow-conversation,
+			.reader-following-conversation {
+				fill: var(--color-text-inverted);
+				g {
+					fill: var(--studio-white);
+					stroke: var(--color-success);
+				}
+			}
 		}
 	}
 
@@ -25,16 +46,20 @@ button.conversation-follow-button {
 	}
 
 	// Hides Following icon by default
-	.gridicons-reader-following-conversation {
+	.reader-following-conversation {
 		display: none;
 		pointer-events: none;
 	}
 
 	&.is-following {
-		.gridicons-reader-following-conversation {
+		.reader-following-conversation {
 			display: inline-block;
-			fill: var(--color-success);
 			pointer-events: auto;
+			fill: var(--color-success);
+			g {
+				fill: var(--studio-white);
+				stroke: var(--color-success);
+			}
 		}
 
 		.conversation-follow-button__label {
@@ -42,22 +67,51 @@ button.conversation-follow-button {
 		}
 
 		// Hides Follow icon if already following
-		.gridicons-reader-follow-conversation {
+		.reader-follow-conversation {
 			display: none;
 			pointer-events: none;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus {
 			color: var(--color-success);
 
-			.gridicons-reader-following-conversation {
+			.reader-following-conversation {
 				fill: var(--color-success);
+				g {
+					fill: var(--studio-white);
+					stroke: var(--color-success);
+				}
 			}
 		}
-	}
 
-	.gridicons-reader-following-conversation {
-		pointer-events: none;
+		&.popover__menu-item {
+			&:hover,
+			&:focus {
+				color: var(--color-text-inverted);
+
+				.gridicon,
+				.reader-follow-conversation,
+				.reader-following-conversation {
+					color: var(--color-text-inverted);
+				}
+
+				svg.reader-external path {
+					fill: var(--color-text-inverted);
+				}
+
+				svg.reader-follow-conversation path,
+				svg.reader-following-conversation path {
+					fill: none;
+					stroke: var(--color-text-inverted);
+
+					&.status {
+						fill: var(--color-primary);
+						stroke: none;
+					}
+				}
+			}
+		}
 	}
 
 	.gridicon {

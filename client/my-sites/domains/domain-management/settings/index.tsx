@@ -100,7 +100,9 @@ const Settings = ( {
 		if ( ! domain ) {
 			return null;
 		}
-		if ( ! isSecuredWithUs( domain ) ) return null;
+		if ( ! isSecuredWithUs( domain ) ) {
+			return null;
+		}
 
 		return (
 			<Accordion
@@ -190,7 +192,7 @@ const Settings = ( {
 			return (
 				<Accordion
 					title={ translate( 'Redirect settings', { textOnly: true } ) }
-					subtitle={ 'Update your site redirect' }
+					subtitle="Update your site redirect"
 					key="main"
 					expanded
 				>
@@ -311,7 +313,9 @@ const Settings = ( {
 			return <Accordion title={ label } subtitle={ label } isPlaceholder></Accordion>;
 		};
 
-		if ( ! domain || ! domains ) return getPlaceholderAccordion();
+		if ( ! domain || ! domains ) {
+			return getPlaceholderAccordion();
+		}
 
 		const getContactsPrivacyInfo = () => (
 			<ContactsPrivacyInfo
@@ -352,7 +356,9 @@ const Settings = ( {
 	};
 
 	const handleTransferDomainClick = () => {
-		if ( ! domain ) return;
+		if ( ! domain ) {
+			return;
+		}
 		recordTracksEvent( 'calypso_domain_management_mapped_transfer_click', {
 			section: domain.type,
 			domain: domain.name,
@@ -360,8 +366,9 @@ const Settings = ( {
 	};
 
 	const renderTranferInMappedDomainSection = () => {
-		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) )
+		if ( ! ( domain?.isEligibleForInboundTransfer && domain?.type === domainTypes.MAPPED ) ) {
 			return null;
+		}
 
 		return (
 			<Accordion

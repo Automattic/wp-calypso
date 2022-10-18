@@ -19,7 +19,6 @@ import {
 	isFetchingStoredCards,
 	hasMoreStoredCards,
 } from 'calypso/state/partner-portal/stored-cards/selectors';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -41,7 +40,7 @@ const preparePagingCursor = (
 	};
 };
 
-export default function PaymentMethodList(): ReactElement {
+export default function PaymentMethodList() {
 	const translate = useTranslate();
 	const storedCards = useSelector( getAllStoredCards );
 	const isFetching = useSelector( isFetchingStoredCards );

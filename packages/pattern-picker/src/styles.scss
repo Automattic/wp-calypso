@@ -21,7 +21,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	min-height: calc(65vh - 50px);
+	height: calc(65vh - 50px);
 	outline: none;
 
 	@media ( max-height: 375px ) {
@@ -30,42 +30,51 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	// needed for iOS Safari. iOS has
 	@supports ( min-height: 65svh ) {
-		min-height: calc(65svh - 50px);
+		height: calc(65svh - 50px);
 	}
 
 	opacity: 0.5;
 	filter: blur(3px);
 
-	&.is-active {
-		opacity: 1;
-		filter: blur(0);
+	.mshots-image__container {
+		display: block;
+		height: 100%;
+		width: 100%;
 	}
 
 	.mshots-image-visible {
 		max-width: 100%;
-
-		// compensate for the item border to avoid cropping the image's top.
-		margin-top: 10px;
-
-		@media ( max-height: 375px ) {
-			margin-top: 16px;
-		}
 	}
 }
 
 .pattern-picker__carousel {
-	display: flex;
-	gap: 20px;
-	box-sizing: border-box;
-	padding-left: 50%;
-	padding-right: 50%;
-	overflow: hidden;
+	/*!rtl:ignore*/
+	direction: ltr;
 
-	// transform transitions during dragging make it laggy
-	&.is-dragging {
-		.pattern-picker__item {
-			transition: opacity 0.3s ease-in-out;
-		}
+	.pattern-picker__slide {
+		width: auto;
+	}
+
+	.swiper-slide-active .pattern-picker__item {
+		opacity: 1;
+		filter: blur(0);
+	}
+}
+
+.pattern-picker__controls {
+	display: none;
+	position: absolute;
+	width: 100%;
+	top: calc(50% - 20px);
+	/*!rtl:ignore*/
+	direction: ltr;
+	padding: 20px;
+	box-sizing: border-box;
+	pointer-events: none;
+
+	@include break-small {
+		display: flex;
+		justify-content: space-between;
 	}
 }
 
@@ -75,32 +84,25 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	background: #fff;
 	border: 1px solid #eee;
 	align-items: center;
-	// stylelint-disable-next-line scales/radii
 	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	border-radius: 50%;
 	opacity: 0.5;
-	position: absolute;
-	top: 50%;
+	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);
 	transition: opacity 0.3s ease-in-out;
-	display: none;
+	pointer-events: all;
+	z-index: 2;
+
 	cursor: pointer;
-
-	&--back {
-		left: 20px;
-	}
-
-	&--next {
-		right: 20px;
-	}
 
 	&:hover {
 		opacity: 1;
 		fill: var(--studio-blue-50);
 	}
 
-	@include break-small {
-		display: flex;
+	&.swiper-button-disabled {
+		visibility: hidden;
+		pointer-events: none;
 	}
 }
 
@@ -144,4 +146,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 .pattern-picker__cta {
 	text-align: center;
 	margin: 10px 20px;
+
+	button {
+		display: inline-flex;
+	}
 }

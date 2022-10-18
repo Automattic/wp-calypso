@@ -1,5 +1,6 @@
 export interface User {
 	ID: number;
+	language: string;
 }
 
 export interface GeoLocation {
@@ -9,17 +10,22 @@ export interface GeoLocation {
 	city: string;
 }
 
+export interface Jwt {
+	jwt: string;
+}
+
 export interface HappychatSession {
 	session_id: number;
 	geo_location: GeoLocation;
+	url: string;
 }
 
 export interface HappychatUser {
 	signer_user_id: number;
-	locale: string | null;
 	groups?: string[];
 	skills?: {
 		product: string[];
+		language: string[];
 	};
 	geoLocation?: GeoLocation;
 }
@@ -30,6 +36,7 @@ export interface ConnectionProps {
 	receiveDisconnect?: ( reason: string ) => void;
 	receiveError?: ( error: string ) => void;
 	receiveInit?: ( init: HappychatUser ) => void;
+	receiveHappychatEnv?: ( env: 'staging' | 'production' ) => void;
 	receiveLocalizedSupport?: ( accept: boolean ) => void;
 	receiveMessage?: ( message: string ) => void;
 	receiveMessageOptimistic?: ( message: string ) => void;
@@ -45,6 +52,7 @@ export interface AvailabilityConnectionProps {
 	receiveAccept?: ( accept: boolean ) => void;
 	receiveUnauthorized?: ( message: string ) => void;
 	receiveStatus?: ( status: string ) => void;
+	receiveHappychatEnv?: ( env: 'staging' | 'production' ) => void;
 }
 
 export interface HappychatAuth {

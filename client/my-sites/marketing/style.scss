@@ -193,7 +193,6 @@
 		.new-account {
 			padding-bottom: 0.48em;
 			background: var(--color-surface);
-			// stylelint-disable-next-line selector-max-id
 			#content & {
 				font-size: 0.875rem;
 			}
@@ -418,7 +417,6 @@
 }
 
 .sharing-connection.disabled .sharing-connection__account-action {
-	cursor: default;
 	cursor: progress;
 }
 
@@ -451,11 +449,6 @@
 		position: relative;
 		top: 3px;
 	}
-}
-
-.sharing-connection.disabled .sharing-connection__account-action {
-	cursor: default;
-	cursor: progress;
 }
 
 // Sharing Buttons Section
@@ -674,6 +667,17 @@
 	background-color: var(--color-surface);
 	color: var(--color-primary);
 
+	&::before {
+		@include breakpoint-deprecated( "<480px" ) {
+			float: left;
+			margin: 6px 6px 0 0;
+		}
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		width: 50%;
+	}
+
 	@include breakpoint-deprecated( "<480px" ) {
 		padding-right: 0;
 	}
@@ -762,19 +766,6 @@
 .sharing-buttons-preview-action:last-child {
 	@include breakpoint-deprecated( "<480px" ) {
 		width: 46%;
-	}
-}
-
-.sharing-buttons-preview-action {
-	@include breakpoint-deprecated( "<480px" ) {
-		width: 50%;
-	}
-
-	&::before {
-		@include breakpoint-deprecated( "<480px" ) {
-			float: left;
-			margin: 6px 6px 0 0;
-		}
 	}
 }
 

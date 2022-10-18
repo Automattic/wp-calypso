@@ -29,6 +29,7 @@
 	margin-bottom: 1rem;
 	font-weight: 600;
 	font-size: $font-body-small;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1rem;
 }
 
@@ -106,6 +107,7 @@
 	display: inline-block;
 	background: #dcdcde;
 	color: #000;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 1rem;
 	padding: 0.2rem 0.5rem;
 }
@@ -117,6 +119,7 @@
 	display: inline-block;
 	background: #d63638;
 	color: #fff;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 1rem;
 	padding: 0.2rem 0.5rem;
 }

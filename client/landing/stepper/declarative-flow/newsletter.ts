@@ -2,7 +2,9 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -16,28 +18,44 @@ export const newsletter: Flow = {
 	useSteps() {
 		useEffect( () => {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordFullStoryEvent( 'calypso_signup_start_newsletter', { flow: this.name } );
 		}, [] );
 
 		return [ 'intro', 'newsletterSetup', 'subscribers', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
-		const name = this.name;
+		const flowName = this.name;
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: this.name } );
+		const flowProgress = useFlowProgress( {
+			stepName: _currentStep,
+			flowName,
+		} );
 		setStepProgress( flowProgress );
 		const locale = useLocale();
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`
-				: `/start/account/user?variationName=${ name }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ name }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Newsletter&redirect_to=/setup/newsletterSetup?flow=${ flowName }`;
 		};
 
+		// trigger guides on step movement, we don't care about failures or response
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: flowName,
+				step: _currentStep,
+			}
+		);
+
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 			const logInUrl = getStartUrl();
 
 			switch ( _currentStep ) {
@@ -49,7 +67,7 @@ export const newsletter: Flow = {
 
 				case 'newsletterSetup':
 					return window.location.assign(
-						`/start/${ name }/domains?new=${ encodeURIComponent(
+						`/start/${ flowName }/domains?new=${ encodeURIComponent(
 							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes` +
 							( typeof providedDependencies.siteAccentColor === 'string' &&

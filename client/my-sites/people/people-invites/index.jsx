@@ -22,6 +22,7 @@ import {
 	isDeletingAnyInvite,
 } from 'calypso/state/invites/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -60,7 +61,8 @@ class PeopleInvites extends PureComponent {
 	};
 
 	render() {
-		const { site, canViewPeople, isJetpack, isPrivate, translate } = this.props;
+		const { site, canViewPeople, isJetpack, isPrivate, translate, includeSubscriberImporter } =
+			this.props;
 		const siteId = site && site.ID;
 
 		if ( siteId && ! canViewPeople ) {
@@ -69,7 +71,7 @@ class PeopleInvites extends PureComponent {
 					<PageViewTracker path="/people/invites/:site" title="People > Invites" />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -100,6 +102,7 @@ class PeopleInvites extends PureComponent {
 					site={ site }
 					isJetpack={ isJetpack }
 					isPrivate={ isPrivate }
+					includeSubscriberImporter={ includeSubscriberImporter }
 				/>
 				{ this.renderInvitesList() }
 			</Main>
@@ -215,9 +218,15 @@ class PeopleInvites extends PureComponent {
 	}
 
 	renderInviteUsersAction( isPrimary = true ) {
-		const { site } = this.props;
+		const { site, includeSubscriberImporter } = this.props;
 
-		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
+		return (
+			<InviteButton
+				primary={ isPrimary }
+				siteSlug={ site.slug }
+				includeSubscriberImporter={ includeSubscriberImporter }
+			/>
+		);
 	}
 
 	renderPlaceholder() {
@@ -261,6 +270,7 @@ export default connect(
 			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
 			deleting: isDeletingAnyInvite( state, siteId ),
 			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+			includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 		};
 	},
 	{ deleteInvites }

@@ -1,23 +1,24 @@
 import './style.scss';
 import { safeImageUrl } from '@automattic/calypso-url';
-import { Dialog } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Dialog, Gridicon } from '@automattic/components';
+import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import FoldableCard from 'calypso/components/foldable-card';
-import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import useCancelCampaignMutation from 'calypso/data/promote-post/use-promote-post-cancel-campaign-mutation';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	canCancelCampaign,
+	formatCents,
 	getCampaignAudienceString,
 	getCampaignBudgetData,
 	getCampaignClickthroughRate,
 	getCampaignDurationFormatted,
-	getCampaignEstimatedReach,
+	getCampaignEstimatedImpressions,
 	getCampaignOverallSpending,
 	getCampaignStatus,
 	getCampaignStatusBadgeColor,
@@ -31,9 +32,11 @@ type Props = {
 
 export default function CampaignItem( { campaign }: Props ) {
 	const [ showDeleteDialog, setShowDeleteDialog ] = useState( false );
+	const [ showErrorDialog, setShowErrorDialog ] = useState( false );
 	const siteId = useSelector( getSelectedSiteId );
+	const translate = useTranslate();
 
-	const { cancelCampaign } = useCancelCampaignMutation();
+	const { cancelCampaign } = useCancelCampaignMutation( () => setShowErrorDialog( true ) );
 
 	const {
 		impressions_total,
@@ -48,20 +51,18 @@ export default function CampaignItem( { campaign }: Props ) {
 		end_date,
 		budget_cents,
 		audience_list,
-		impressions_estimated_total,
-		deliver_margin_multiplier,
+		display_delivery_estimate,
 		display_name,
-		avatar_url,
 	} = campaign;
 
 	const overallSpending = useMemo(
-		() => getCampaignOverallSpending( spent_budget_cents, start_date, end_date ),
+		() => getCampaignOverallSpending( spent_budget_cents, budget_cents, start_date, end_date ),
 		[ spent_budget_cents, start_date, end_date ]
 	);
 
 	const clickthroughRate = useMemo(
-		() => getCampaignClickthroughRate( clicks_total, impressions_total ),
-		[ clicks_total || 0, impressions_total ]
+		() => getCampaignClickthroughRate( clicks_total || 0, impressions_total || 0 ),
+		[ clicks_total, impressions_total ]
 	);
 
 	const durationFormatted = useMemo(
@@ -70,14 +71,14 @@ export default function CampaignItem( { campaign }: Props ) {
 	);
 
 	const { totalBudget, totalBudgetLeft } = useMemo(
-		() => getCampaignBudgetData( budget_cents, spent_budget_cents ),
+		() => getCampaignBudgetData( budget_cents, start_date, end_date, spent_budget_cents ),
 		[ budget_cents, spent_budget_cents ]
 	);
-	const totalBudgetLeftString = totalBudgetLeft ? `($${ totalBudgetLeft } ${ __( 'left' ) })` : '';
+	const totalBudgetLeftString = `($${ formatCents( totalBudgetLeft || 0 ) } ${ __( 'left' ) })`;
 
-	const estimatedReach = useMemo(
-		() => getCampaignEstimatedReach( impressions_estimated_total, deliver_margin_multiplier ),
-		[ impressions_estimated_total, deliver_margin_multiplier ]
+	const estimatedImpressions = useMemo(
+		() => getCampaignEstimatedImpressions( display_delivery_estimate ),
+		[ display_delivery_estimate ]
 	);
 
 	const audience = useMemo( () => getCampaignAudienceString( audience_list ), [ audience_list ] );
@@ -88,18 +89,12 @@ export default function CampaignItem( { campaign }: Props ) {
 	const header = (
 		<div className="campaign-item__header">
 			<div className="campaign-item__header-content">
-				<div className="campaign-item__post-type">{ getPostType( type ) }</div>
+				<div className="campaign-item__display-name">{ display_name }</div>
 				<div className="campaign-item__header-title">{ content_config.title }</div>
 				<div className="campaign-item__header-status">
 					<Badge type={ getCampaignStatusBadgeColor( campaignStatus ) }>
 						{ getCampaignStatus( campaignStatus ) }
 					</Badge>
-					<div className="campaign-item__display-name">{ display_name }</div>
-					{ avatar_url && (
-						<div className="campaign-item__user-avatar">
-							<img src={ avatar_url } alt="" />
-						</div>
-					) }
 				</div>
 			</div>
 			{ adCreativeUrl && (
@@ -110,19 +105,48 @@ export default function CampaignItem( { campaign }: Props ) {
 		</div>
 	);
 
+	const cancelCampaignButtonText =
+		campaignStatus === 'active' ? __( 'Stop campaign' ) : __( 'Cancel campaign' );
+	const cancelCampaignConfirmButtonText =
+		campaignStatus === 'active' ? __( 'Yes, stop' ) : __( 'Yes, cancel' );
+	const cancelCampaignTitle =
+		campaignStatus === 'active' ? __( 'Stop the campaign' ) : __( 'Cancel the campaign' );
+	const cancelCampaignMessage =
+		campaignStatus === 'active'
+			? __( 'If you continue, your campaign will immediately stop running.' )
+			: __(
+					"If you continue, an approval request for your ad will be canceled, and the campaign won't start."
+			  );
+
 	const buttons = [
 		{
 			action: 'cancel',
+			isPrimary: true,
 			label: __( 'No' ),
 		},
 		{
 			action: 'remove',
-			isPrimary: true,
-			label: __( 'Yes, cancel' ),
+			label: cancelCampaignConfirmButtonText,
 			onClick: async () => {
 				setShowDeleteDialog( false );
 				cancelCampaign( siteId, campaign.campaign_id );
 			},
+		},
+	];
+
+	const errorDialogButtons = [
+		{
+			action: 'remove',
+			label: __( 'Contact support' ),
+			onClick: async () => {
+				setShowErrorDialog( false );
+				window.open( 'https://wordpress.com/support/', '_blank' );
+			},
+		},
+		{
+			action: 'cancel',
+			isPrimary: true,
+			label: __( 'Ok' ),
 		},
 	];
 
@@ -133,18 +157,44 @@ export default function CampaignItem( { campaign }: Props ) {
 				buttons={ buttons }
 				onClose={ () => setShowDeleteDialog( false ) }
 			>
-				<h1>{ __( 'Cancel the campaign' ) }</h1>
-				<p>
-					{ __(
-						"If you continue an approval request for your ad will be canceled, and the campaign won't start"
-					) }
-				</p>
+				<h1>{ cancelCampaignTitle }</h1>
+				<p>{ cancelCampaignMessage }</p>
+			</Dialog>
+
+			<Dialog
+				isVisible={ showErrorDialog }
+				buttons={ errorDialogButtons }
+				onClose={ () => setShowErrorDialog( false ) }
+			>
+				<h1>{ __( "Something's gone wrong" ) }</h1>
+				<p>{ __( 'Please try again later or contact support if the problem persists.' ) }</p>
 			</Dialog>
 
 			<FoldableCard header={ header } hideSummary={ true } className="campaign-item__foldable-card">
 				{ campaignStatus === 'rejected' && moderation_reason && (
-					<Notice status="is-warning" showDismiss={ false }>
-						{ __( 'Your ad is rejected: ' ) } { moderation_reason }
+					<Notice isDismissible={ false } className="campaign-item__notice" status="warning">
+						<Gridicon className="campaign-item__notice-icon" icon="info-outline" />
+						{ translate(
+							'Your ad was not approved, please review our {{wpcomTos}}WordPress.com Terms{{/wpcomTos}} and {{advertisingTos}}Advertising Policy{{/advertisingTos}}.',
+							{
+								components: {
+									wpcomTos: (
+										<a
+											href="https://wordpress.com/tos/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									advertisingTos: (
+										<a
+											href="https://automattic.com/advertising-policy/"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
 					</Notice>
 				) }
 
@@ -155,7 +205,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__reach-value">
-								{ impressions_total || 0 }
+								{ impressions_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__column campaign-item__clicks">
@@ -163,7 +213,7 @@ export default function CampaignItem( { campaign }: Props ) {
 								{ __( 'Clicks' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__clicks-value">
-								{ clicks_total || 0 }
+								{ clicks_total.toLocaleString() || 0 }
 							</div>
 						</div>
 						<div className="campaign-item__placeholder"></div>
@@ -209,16 +259,16 @@ export default function CampaignItem( { campaign }: Props ) {
 					<div className="campaign-item__row campaign-item__goal-row2">
 						<div className="campaign-item__column campaign-item__estimated-reach">
 							<div className="campaign-item__block_label campaign-item__estimated-reach-label">
-								{ __( 'Estimated reach' ) }
+								{ __( 'Estimated impressions' ) }
 							</div>
 							<div className="campaign-item__block_value campaign-item__estimated-reach-value">
-								{ estimatedReach }
+								{ estimatedImpressions }
 							</div>
 						</div>
 
 						<div className="campaign-item__column campaign-item__target">
 							<div className="campaign-item__block_label campaign-item__target-label">
-								{ __( 'Ad destination' ) }
+								{ __( 'Ad destination' ) } ({ getPostType( type ) })
 							</div>
 							<div className="campaign-item__block_value campaign-item__target-value">
 								{ target_url ? (
@@ -246,7 +296,7 @@ export default function CampaignItem( { campaign }: Props ) {
 				<div className="campaign-item__payment-and-action">
 					{ canCancelCampaign( campaignStatus ) && (
 						<Button isLink isDestructive onClick={ () => setShowDeleteDialog( true ) }>
-							{ __( 'Cancel campaign' ) }
+							{ cancelCampaignButtonText }
 						</Button>
 					) }
 				</div>

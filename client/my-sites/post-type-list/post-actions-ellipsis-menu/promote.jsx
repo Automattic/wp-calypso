@@ -1,7 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import {
 	recordDSPEntryPoint,
@@ -10,15 +10,44 @@ import {
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status } ) {
+function PostActionsEllipsisMenuPromote( {
+	globalId,
+	postId,
+	bumpStatKey,
+	status,
+	password,
+	type,
+	siteId,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isSitePrivate =
+		useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
+
+	const isComingSoon =
+		useSelector( ( state ) => siteId && isSiteComingSoon( state, siteId ) ) || false;
 
 	const keyValue = globalId;
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	if ( isSitePrivate ) {
+		return null;
+	}
+
+	if ( isComingSoon ) {
+		return null;
+	}
+
+	if ( password !== '' ) {
+		return null;
+	}
+
 	if ( ! widgetEnabled ) {
 		return null;
 	}
@@ -37,8 +66,8 @@ function PostActionsEllipsisMenuPromote( { globalId, postId, bumpStatKey, status
 	};
 
 	return (
-		<PopoverMenuItem onClick={ showDSPWidget } icon={ 'speaker' }>
-			{ translate( 'Promote Post' ) }
+		<PopoverMenuItem onClick={ showDSPWidget } icon="speaker">
+			{ type === 'post' ? translate( 'Promote post' ) : translate( 'Promote page' ) }
 		</PopoverMenuItem>
 	);
 }
@@ -59,6 +88,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 		type: post.type,
 		postId: post.ID,
 		status: post.status,
+		password: post.password,
+		siteId: getSelectedSiteId( state ),
 	};
 };
 

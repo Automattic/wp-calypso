@@ -9,7 +9,6 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
-import { getLastThemeQuery, getThemesFoundForQuery } from 'calypso/state/themes/selectors';
 import { addTracking } from './helpers';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';
@@ -74,7 +73,6 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 				{ ...props }
 				upsellUrl={ upsellUrl }
 				siteId={ siteId }
-				emptyContent={ showWpcomThemesList ? <div /> : null }
 				isJetpackSite={ true }
 				upsellBanner={ displayUpsellBanner ? upsellBanner : null }
 			>
@@ -82,8 +80,8 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 					<div>
 						<ConnectedThemesSelection
 							origin="wpcom"
-							defaultOption={ 'activate' }
-							secondaryOption={ 'tryandcustomize' }
+							defaultOption="activate"
+							secondaryOption="tryandcustomize"
 							search={ search }
 							tier={ tier }
 							filter={ filter }
@@ -120,19 +118,11 @@ export default connect( ( state, { siteId, tier } ) => {
 	const currentPlan = getCurrentPlan( state, siteId );
 	const isMultisite = isJetpackSiteMultiSite( state, siteId );
 	const showWpcomThemesList = ! isMultisite;
-	let emptyContent = null;
-	if ( showWpcomThemesList ) {
-		const siteQuery = getLastThemeQuery( state, siteId );
-		const wpcomQuery = getLastThemeQuery( state, 'wpcom' );
-		const siteThemesCount = getThemesFoundForQuery( state, siteId, siteQuery );
-		const wpcomThemesCount = getThemesFoundForQuery( state, 'wpcom', wpcomQuery );
-		emptyContent = ! siteThemesCount && ! wpcomThemesCount ? null : <div />;
-	}
 	return {
 		currentPlan,
 		tier,
 		showWpcomThemesList,
-		emptyContent,
+		emptyContent: null,
 		isAtomic: isAtomicSite( state, siteId ),
 		isMultisite,
 		requestingSitePlans: isRequestingSitePlans( state, siteId ),

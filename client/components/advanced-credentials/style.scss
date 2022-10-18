@@ -65,7 +65,7 @@
 .connection-status__disconnected,
 .connection-status__loading {
 	display: flex;
-	*:not(first-child) {
+	*:not(:first-child) {
 		margin-left: 8px;
 	}
 	svg {

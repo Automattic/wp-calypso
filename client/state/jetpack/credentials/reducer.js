@@ -9,6 +9,9 @@ import {
 	JETPACK_CREDENTIALS_UPDATE_RESET,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
+	JETPACK_CREDENTIALS_TEST,
+	JETPACK_CREDENTIALS_TEST_VALID,
+	JETPACK_CREDENTIALS_TEST_INVALID,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -63,6 +66,43 @@ export const updateRequestStatus = keyedReducer( 'siteId', ( state, { type } ) =
 	return state;
 } );
 
+export const testRequestStatus = keyedReducer( 'siteId', ( state, { type, role } ) => {
+	switch ( type ) {
+		case JETPACK_CREDENTIALS_TEST:
+			return {
+				...state,
+				[ role ]: true,
+			};
+
+		case JETPACK_CREDENTIALS_TEST_VALID:
+		case JETPACK_CREDENTIALS_TEST_INVALID:
+			return {
+				...state,
+				[ role ]: false,
+			};
+	}
+
+	return state;
+} );
+
+export const testStatus = keyedReducer( 'siteId', ( state, { type, role } ) => {
+	switch ( type ) {
+		case JETPACK_CREDENTIALS_TEST_VALID:
+			return {
+				...state,
+				[ role ]: 'valid',
+			};
+
+		case JETPACK_CREDENTIALS_TEST_INVALID:
+			return {
+				...state,
+				[ role ]: 'invalid',
+			};
+	}
+
+	return state;
+} );
+
 export const errors = keyedReducer(
 	'siteId',
 	( state, { type, wpcomError, translatedError, transportError } ) => {
@@ -102,4 +142,6 @@ export const reducer = combineReducers( {
 	updateRequestStatus,
 	errors,
 	progressUpdates,
+	testRequestStatus,
+	testStatus,
 } );

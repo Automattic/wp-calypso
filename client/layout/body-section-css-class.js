@@ -41,9 +41,10 @@ function useBodyClass( prefix, value ) {
 /**
  * @param {{group?: string, section?: string, bodyClass?: string[]}} props
  */
-export default function BodySectionCssClass( { group, section, bodyClass } ) {
+export default function BodySectionCssClass( { group, section, layoutFocus, bodyClass } ) {
 	useBodyClass( 'is-group-', group );
 	useBodyClass( 'is-section-', section );
+	useBodyClass( 'is-focus-', layoutFocus );
 	useEffect( () => {
 		if ( ! Array.isArray( bodyClass ) || bodyClass.length === 0 ) {
 			return;

@@ -22,6 +22,7 @@
 	& &__domain-input-fieldset {
 		position: relative;
 		margin: 0 0 20px;
+		flex-grow: 1;
 
 		@include break-mobile {
 			margin: 0;
@@ -48,10 +49,6 @@
 
 		@include break-mobile {
 			flex-direction: row;
-		}
-
-		&-fieldset {
-			flex-grow: 1;
 		}
 
 		&-button {

@@ -72,6 +72,12 @@ export interface CreateSiteParams {
 	};
 }
 
+export interface P2ThumbnailElements {
+	color_link: string;
+	color_sidebar_background: string;
+	header_image: string | null;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -113,6 +119,7 @@ export interface SiteDetails {
 	logo: { id: string; sizes: string[]; url: string };
 	name: string | undefined;
 	options: SiteDetailsOptions;
+	p2_thumbnail_elements?: P2ThumbnailElements | null;
 	plan?: SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
 	single_user_site?: boolean;
@@ -120,6 +127,7 @@ export interface SiteDetails {
 	slug: string;
 	visible?: boolean;
 	wpcom_url?: string;
+	user_interactions?: string[];
 }
 
 export interface SiteDetailsCapabilities {
@@ -151,7 +159,7 @@ export interface SiteDetailsOptions {
 	admin_url?: string;
 	advanced_seo_front_page_description?: string;
 	advanced_seo_title_formats?: string[];
-	ak_vp_bundle_enabled?: boolean;
+	ak_vp_bundle_enabled?: boolean | null;
 	allowed_file_types?: string[];
 	anchor_podcast?: boolean;
 	background_color?: boolean;
@@ -163,8 +171,8 @@ export interface SiteDetailsOptions {
 	default_ping_status?: boolean;
 	default_post_format?: string;
 	default_sharing_status?: boolean;
-	design_type?: string;
-	difm_lite_site_options?: DifmLiteSiteOptions;
+	design_type?: string | null;
+	difm_lite_site_options?: DifmLiteSiteOptions | Record< string, never >;
 	editing_toolkit_is_active?: boolean;
 	featured_images_enabled?: boolean;
 	frame_nonce?: string;
@@ -180,7 +188,7 @@ export interface SiteDetailsOptions {
 	image_thumbnail_crop?: number;
 	image_thumbnail_height?: number;
 	image_thumbnail_width?: number;
-	import_engine?: string;
+	import_engine?: string | null;
 	is_automated_transfer?: boolean;
 	is_cloud_eligible?: boolean;
 	is_difm_lite_in_progress?: boolean;
@@ -195,25 +203,25 @@ export interface SiteDetailsOptions {
 	jetpack_frame_nonce?: string;
 	jetpack_version?: string | undefined;
 	login_url?: string;
-	p2_hub_blog_id?: number;
+	p2_hub_blog_id?: number | null;
 	page_for_posts?: number;
 	page_on_front?: number;
 	permalink_structure?: string;
-	podcasting_archive?: boolean;
+	podcasting_archive?: boolean | null;
 	post_formats?: string[];
 	publicize_permanently_disabled?: boolean;
 	selected_features?: FeatureId[];
 	show_on_front?: string;
 	site_intent?: string;
-	site_segment?: string;
-	site_vertical_id?: string;
+	site_segment?: string | null;
+	site_vertical_id?: string | null;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;
 	unmapped_url?: string;
 	updated_at?: string;
 	upgraded_filetypes_enabled?: boolean;
-	verification_services_codes?: string;
+	verification_services_codes?: string | null;
 	videopress_enabled?: boolean;
 	videopress_storage_used?: number;
 	was_created_with_blank_canvas_design?: boolean;
@@ -454,4 +462,5 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	page_template?: string;
 }

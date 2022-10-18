@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CardBody } from '@wordpress/components';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
 import { Route, useLocation } from 'react-router-dom';
@@ -22,6 +22,7 @@ import { SuccessScreen } from './ticket-success-screen';
 const HelpCenterContent: React.FC = () => {
 	const location = useLocation();
 	const className = classnames( 'help-center__container-content' );
+	const containerRef = useRef< HTMLDivElement >( null );
 	const section = useSelector( getSectionName );
 
 	useEffect( () => {
@@ -33,8 +34,15 @@ const HelpCenterContent: React.FC = () => {
 		} );
 	}, [ location, section ] );
 
+	// reset the scroll location on navigation
+	useEffect( () => {
+		if ( containerRef.current ) {
+			containerRef.current.scrollTo( 0, 0 );
+		}
+	}, [ location ] );
+
 	return (
-		<CardBody className={ className }>
+		<CardBody ref={ containerRef } className={ className }>
 			<Route exact path="/">
 				<HelpCenterSearch />
 			</Route>

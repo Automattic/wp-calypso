@@ -7,11 +7,11 @@ import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-re
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-export type PartialCart = Pick< ResponseCart, 'products' >;
+export type PartialCart = Partial< ResponseCart > & Pick< ResponseCart, 'products' >;
 interface Props {
 	responseCart: PartialCart;
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
-	isCartPendingUpdate: boolean;
+	isCartPendingUpdate?: boolean;
 }
 
 type DivProps = {

@@ -7,9 +7,9 @@ import { getTextColorFromBackground } from './utils';
 
 export type SizeCss = { width: number; height: number };
 
-const DEFAULT_SIZE = { width: 106, height: 76.55 };
+export const DEFAULT_THUMBNAIL_SIZE = { width: 106, height: 76.55 };
 
-const DEFAULT_CLASSNAME = css( DEFAULT_SIZE );
+const DEFAULT_CLASSNAME = css( DEFAULT_THUMBNAIL_SIZE );
 
 const VIEWPORT_BASE = 1200;
 
@@ -31,12 +31,12 @@ type Props = {
 export const SiteThumbnail = ( {
 	backgroundColor,
 	children,
-	className = DEFAULT_CLASSNAME,
+	className,
 	alt,
 	mShotsUrl = '',
 	bgColorImgUrl,
-	width = DEFAULT_SIZE.width,
-	height = DEFAULT_SIZE.height,
+	width = DEFAULT_THUMBNAIL_SIZE.width,
+	height = DEFAULT_THUMBNAIL_SIZE.height,
 	dimensionsSrcset = [],
 	sizesAttr = '',
 	viewport = VIEWPORT_BASE,
@@ -59,13 +59,14 @@ export const SiteThumbnail = ( {
 	const classes = classnames(
 		'site-thumbnail',
 		isLoading ? 'site-thumbnail-loading' : 'site-thumbnail-visible',
+		DEFAULT_CLASSNAME,
 		className
 	);
 
 	const showLoader = mShotsUrl && ! isError;
 	const mshotIsFullyLoaded = imgProps.src && ! isError && ! isLoading;
 
-	const blurSize = width > DEFAULT_SIZE.width ? 'medium' : 'small';
+	const blurSize = width > DEFAULT_THUMBNAIL_SIZE.width ? 'medium' : 'small';
 
 	return (
 		<div className={ classes } style={ { backgroundColor, color } }>
@@ -82,11 +83,9 @@ export const SiteThumbnail = ( {
 					{ children }
 				</div>
 			) }
-			{ imgProps.src && ! isError && (
+			{ imgProps.src && ! isLoading && (
 				<img
-					className={ classnames( 'site-thumbnail__image', {
-						'site-thumbnail__mshot_default_hidden': isLoading,
-					} ) }
+					className="site-thumbnail__image"
 					alt={ alt }
 					sizes={ sizesAttr || `${ width }px` }
 					{ ...imgProps }

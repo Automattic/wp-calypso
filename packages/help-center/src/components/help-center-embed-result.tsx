@@ -21,6 +21,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const params = new URLSearchParams( search );
 	const postId = params.get( 'postId' );
 	const blogId = params.get( 'blogId' );
+	const canNavigateBack = params.get( 'canNavigateBack' ) === 'true';
 	const link = params.get( 'link' );
 	const query = params.get( 'query' );
 
@@ -35,8 +36,10 @@ export const HelpCenterEmbedResult: React.FC = () => {
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
 	}, [ query, link, sectionName ] );
 
-	const redirectToSearchOrHome = () => {
-		if ( query ) {
+	const redirectBack = () => {
+		if ( canNavigateBack ) {
+			history.goBack();
+		} else if ( query ) {
 			history.push( `/?query=${ query }` );
 		} else {
 			history.push( '/' );
@@ -48,7 +51,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			<div className="help-center-embed-result">
 				<Flex justify="space-between">
 					<FlexItem>
-						<BackButton onClick={ redirectToSearchOrHome } />
+						<BackButton onClick={ redirectBack } />
 					</FlexItem>
 					<FlexItem>
 						<Button

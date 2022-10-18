@@ -21,6 +21,10 @@ jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 jest.mock( 'calypso/my-sites/themes/themes-magic-search-card', () =>
 	require( 'calypso/components/empty-component' )
 );
+jest.mock( 'react-redux', () => ( {
+	...jest.requireActual( 'react-redux' ),
+	useSelector: () => false,
+} ) );
 
 const themes = [
 	{

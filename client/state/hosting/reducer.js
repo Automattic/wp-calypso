@@ -5,8 +5,14 @@ import {
 	HOSTING_SFTP_USERS_SET,
 	HOSTING_SSH_ACCESS_SET,
 	HOSTING_STATIC_FILE_404_SET,
+	HOSTING_CLEAR_CACHE_REQUEST,
 } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withPersistence,
+	withSchemaValidation,
+} from 'calypso/state/utils';
 
 export const sftpUsers = ( state = {}, { type, users } ) => {
 	if ( type === HOSTING_SFTP_USERS_SET ) {
@@ -53,11 +59,24 @@ const staticFile404 = ( state = null, { type, setting } ) => {
 	return state;
 };
 
+export const lastCacheClearTimestamp = withSchemaValidation(
+	{ type: 'integer' },
+	withPersistence( ( state = null, { type } ) => {
+		switch ( type ) {
+			case HOSTING_CLEAR_CACHE_REQUEST:
+				return new Date().valueOf();
+		}
+
+		return state;
+	} )
+);
+
 const atomicHostingReducer = combineReducers( {
 	phpVersion,
 	sftpUsers,
 	sshAccess,
 	staticFile404,
+	lastCacheClearTimestamp,
 } );
 
 const reducer = keyedReducer( 'siteId', atomicHostingReducer );

@@ -9,6 +9,9 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN,
 } from 'calypso/lib/plugins/constants';
 import {
+	PLUGINS_ALL_REQUEST,
+	PLUGINS_ALL_REQUEST_SUCCESS,
+	PLUGINS_ALL_REQUEST_FAILURE,
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
@@ -35,9 +38,11 @@ import {
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
 	SITE_PLUGIN_UPDATED,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import {
 	fetchSitePlugins,
+	fetchAllPlugins,
 	activatePlugin,
 	deactivatePlugin,
 	updatePlugin,
@@ -45,6 +50,7 @@ import {
 	disableAutoupdatePlugin,
 	installPlugin,
 	removePlugin,
+	handleDispatchSuccessCallback,
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 
@@ -70,6 +76,89 @@ describe( 'actions', () => {
 
 	afterEach( () => {
 		spy.mockClear();
+	} );
+
+	describe( '#fetchAllSitePlugins()', () => {
+		describe( 'success', () => {
+			beforeAll( () => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/sites/plugins' )
+					.reply( 200, {
+						sites: {
+							2916284: [ akismet, helloDolly, jetpack ],
+						},
+					} )
+					.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
+					.reply( 200, jetpackUpdated );
+			} );
+
+			afterAll( () => {
+				nock.cleanAll();
+			} );
+
+			test( 'should dispatch fetch all action when triggered', () => {
+				fetchAllPlugins()( spy, getState );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: PLUGINS_ALL_REQUEST,
+				} );
+			} );
+
+			test( 'should dispatch plugins request success action when request completes', async () => {
+				await fetchAllPlugins()( spy, getState );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: PLUGINS_ALL_REQUEST_SUCCESS,
+				} );
+			} );
+
+			test( 'should dispatch plugins receive action when request completes', async () => {
+				await fetchAllPlugins()( spy, getState );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: PLUGINS_RECEIVE,
+					siteId: 2916284,
+					data: [ akismet, helloDolly, jetpack ],
+				} );
+			} );
+
+			test( 'should dispatch plugin update request if any site plugins need updating', async () => {
+				await fetchAllPlugins()( spy, getState );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: PLUGIN_UPDATE_REQUEST,
+					action: UPDATE_PLUGIN,
+					siteId: 2916284,
+					pluginId: 'jetpack/jetpack',
+				} );
+			} );
+		} );
+
+		describe( 'failure', () => {
+			const message =
+				'An active access token must be used to query information about the current user.';
+
+			beforeAll( () => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/sites/plugins' )
+					.reply( 403, {
+						error: 'authorization_required',
+						message,
+					} );
+			} );
+
+			afterAll( () => {
+				nock.cleanAll();
+			} );
+
+			test( 'should dispatch fail action when request fails', async () => {
+				await fetchAllPlugins()( spy, getState );
+				expect( spy ).toHaveBeenCalledWith( {
+					type: PLUGINS_ALL_REQUEST_FAILURE,
+					error: expect.objectContaining( {
+						message,
+					} ),
+				} );
+			} );
+		} );
 	} );
 
 	describe( '#fetchSitePlugins()', () => {
@@ -656,6 +745,32 @@ describe( 'actions', () => {
 				pluginId: 'fake/fake',
 				error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 			} );
+		} );
+	} );
+
+	describe( '#handleDispatchSuccessCallback()', () => {
+		test( 'should dispatch status update and the action dispatch call when a plugin is activated successfully', () => {
+			jest.useFakeTimers();
+			jest.spyOn( global, 'setTimeout' );
+			const defaultAction = {
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+			};
+			handleDispatchSuccessCallback( defaultAction, {} )( spy );
+
+			expect( spy.mock.calls[ 0 ][ 0 ] ).toEqual( {
+				type: PLUGIN_ACTION_STATUS_UPDATE,
+				action: ACTIVATE_PLUGIN,
+				siteId: 2916284,
+				pluginId: 'akismet/akismet',
+				data: {
+					statusRecentlyChanged: true,
+				},
+			} );
+
+			expect( setTimeout ).toHaveBeenCalledTimes( 1 );
+			expect( setTimeout ).toHaveBeenLastCalledWith( expect.any( Function ), 3000 );
 		} );
 	} );
 } );

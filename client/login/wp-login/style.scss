@@ -205,6 +205,7 @@ $image-height: 47px;
 
 	.wp-login__links a {
 		border-bottom: none;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 3.4em;
 		color: var(--color-neutral-60);
 		font-size: $font-body-small;
@@ -236,7 +237,6 @@ $image-height: 47px;
 		color: var(--color-neutral-60);
 	}
 
-	.login__form-terms,
 	.login__form-terms {
 		text-align: left;
 		color: var(--color-neutral-60);
@@ -323,7 +323,6 @@ $image-height: 47px;
 		background-color: #117ac9;
 		border-color: #0e64a5;
 		color: var(--color-text-inverted);
-		font-weight: 500;
 		box-shadow: none;
 		border: 0;
 		font-weight: 500;

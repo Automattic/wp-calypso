@@ -2,12 +2,32 @@ import type { Pattern } from './types';
 
 const headerPatterns: Pattern[] = [
 	{
-		id: 5605,
-		name: 'Header with Site Title and Vertical Navigation',
+		id: 5588,
+		name: 'Simple Header',
 	},
 	{
 		id: 5601,
 		name: 'Simple Header With Tagline',
+	},
+	{
+		id: 5582,
+		name: 'Simple Header With Large Font Size',
+	},
+	{
+		id: 5603,
+		name: 'Header with Site Title and Menu Button',
+	},
+	{
+		id: 5605,
+		name: 'Header with Site Title and Vertical Navigation',
+	},
+	{
+		id: 5608,
+		name: 'Centred Header with Logo and Navigation',
+	},
+	{
+		id: 5579,
+		name: 'Centered header',
 	},
 	{
 		id: 5590,
@@ -21,17 +41,17 @@ const headerPatterns: Pattern[] = [
 		id: 5593,
 		name: 'Simple Header With Dark background',
 	},
-	{
-		id: 5588,
-		name: 'Simple Header',
-	},
-	{
-		id: 5582,
-		name: 'Simple Header With Large Font Size',
-	},
 ];
 
 const footerPatterns: Pattern[] = [
+	{
+		id: 5877,
+		name: 'Centered footer with social links',
+	},
+	{
+		id: 1622,
+		name: 'Contact',
+	},
 	{
 		id: 5316,
 		name: 'Footer with Social Icons, Address, E-mail, and Telephone Number',
@@ -41,12 +61,12 @@ const footerPatterns: Pattern[] = [
 		name: 'Footer with Navigation, Contact Details, Social Links, and Subscription Form',
 	},
 	{
-		id: 5877,
-		name: 'Centered footer with social links',
-	},
-	{
 		id: 5880,
 		name: 'Footer with background color and three columns',
+	},
+	{
+		id: 5886,
+		name: 'Footer with large font size',
 	},
 	{
 		id: 5883,
@@ -56,76 +76,84 @@ const footerPatterns: Pattern[] = [
 		id: 5888,
 		name: 'Footer with navigation and credit line',
 	},
+	{
+		id: 5873,
+		name: 'Simple centered footer',
+	},
 ];
 
 const sectionPatterns: Pattern[] = [
 	{
-		id: 3296,
-		name: 'About me',
+		id: 1751,
+		name: 'Call to Action',
 	},
 	{
-		id: 2993,
-		name: 'Full-width Image with Text and Button Overlay',
+		id: 7138,
+		name: 'Centered headline and text',
 	},
 	{
-		id: 857,
-		name: 'Image and text side by side',
+		id: 7140,
+		name: 'Left-aligned headline',
 	},
 	{
-		id: 5306,
-		name: 'Heading, Three-up, and Paragraph',
+		id: 7146,
+		name: 'Four column list',
 	},
 	{
-		id: 5274,
-		name: 'Call to Action with Cover Block',
+		id: 7149,
+		name: 'Two column image grid',
 	},
 	{
-		id: 3880,
-		name: 'About me',
+		id: 7135,
+		name: 'Three columns with images and text',
 	},
 	{
-		id: 4691,
-		name: 'Payment Block Media and Text',
+		id: 737,
+		name: 'Logos',
 	},
 	{
-		id: 3759,
-		name: 'Coming Soon',
+		id: 1213,
+		name: 'Quotes',
 	},
 	{
-		id: 1400,
+		id: 5676,
+		name: 'Paragraph and properties',
+	},
+	{
+		id: 789,
+		name: 'Numbered List',
+	},
+	{
+		id: 7143,
+		name: 'Full-width image',
+	},
+	{
+		id: 7159,
+		name: 'Cover image with centered text and a button',
+	},
+	{
+		id: 7156,
+		name: 'Media and text with image on the right',
+	},
+	{
+		id: 7153,
+		name: 'Media and text with image on the left',
+	},
+	{
+		id: 7132,
+		name: 'Cover image with left-aligned call to action',
+	},
+	{
+		id: 7161,
+		name: 'Two testimonials side by side',
+	},
+	{
+		id: 194,
 		name: 'Contact',
 	},
 	{
-		id: 3856,
-		name: 'Organic Gallery With Intro Text',
-	},
-	{
-		id: 1930,
-		name: 'Intro Section With Text and Spot Images',
-	},
-	{
-		id: 3862,
-		name: 'Alternating Image and Text',
-	},
-	{
-		id: 1826,
-		name: 'Two Images, Text, and Buttons',
-	},
-	{
-		id: 5564,
-		name: 'Contact',
-	},
-	{
-		id: 1046,
-		name: 'Subscription',
-	},
-	{
-		id: 1593,
-		name: 'Header and Three Images',
-	},
-	{
-		id: 678,
-		name: 'Images with Titles',
+		id: 5634,
+		name: 'Contact Info with Map',
 	},
 ];
 

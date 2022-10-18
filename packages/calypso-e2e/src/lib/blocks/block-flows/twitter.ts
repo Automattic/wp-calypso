@@ -5,7 +5,7 @@ interface ConfigurationData {
 	expectedTweetText: string;
 }
 
-const blockParentSelector = '[aria-label="Block: Embed"]:has-text("Twitter URL")';
+const blockParentSelector = '[aria-label="Block: Twitter"]:has-text("Twitter URL")';
 const selectors = {
 	embedUrlInput: `${ blockParentSelector } input`,
 	embedButton: `${ blockParentSelector } button:has-text("Embed")`,

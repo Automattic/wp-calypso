@@ -1,129 +1,13 @@
-import {
-	FEATURE_INSTALL_PLUGINS,
-	findFirstSimilarPlanKey,
-	getPlan,
-	isBlogger,
-	isPersonal,
-	isPremium,
-	TYPE_BUSINESS,
-	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
-} from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import getPlansForFeature from 'calypso/state/selectors/get-plans-for-feature';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import SingleListView from '../plugins-browser/single-list-view';
+import CollectionListView from '../plugins-browser/collection-list-view';
+import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
+import './style.scss';
+import UpgradeNudge from './upgrade-nudge';
 
 /**
  * Module variables
  */
-const SHORT_LIST_LENGTH = 6;
-
-const UpgradeNudge = ( {
-	selectedSite,
-	sitePlan,
-	isVip,
-	jetpackNonAtomic,
-	siteSlug,
-	paidPlugins,
-} ) => {
-	const hasInstallPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-	);
-	const plansForInstallPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, selectedSite?.ID, FEATURE_INSTALL_PLUGINS )
-	);
-
-	const hasInstallPurchasedPlugins = useSelector( ( state ) =>
-		siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-	const plansForInstallPurchasedPlugins = useSelector( ( state ) =>
-		getPlansForFeature( state, selectedSite?.ID, WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS )
-	);
-
-	const eligibleForProPlan = useSelector( ( state ) =>
-		isEligibleForProPlan( state, selectedSite?.ID )
-	);
-
-	const translate = useTranslate();
-
-	if (
-		jetpackNonAtomic ||
-		! selectedSite?.ID ||
-		! sitePlan ||
-		isVip ||
-		hasInstallPlugins ||
-		( paidPlugins && hasInstallPurchasedPlugins )
-	) {
-		return null;
-	}
-
-	// Paid plugins can potentially be sold on a plan lower than Business or Pro.
-	// True if the "install purchased plugins" feature is available on a plan lower than the "install plugins" feature.
-	const paidPluginsOnLowerPlan =
-		plansForInstallPurchasedPlugins[ 0 ] !== plansForInstallPlugins[ 0 ];
-
-	// Prevent non `paidPlugins` banners from rendering if it would duplicate the `paidPlugins` upsell.
-	if ( ! paidPlugins && ! paidPluginsOnLowerPlan && ! hasInstallPurchasedPlugins ) {
-		return null;
-	}
-
-	// This banner upsells the ability to install paid plugins on a plan lower than free plugins.
-	if ( paidPlugins && ! hasInstallPurchasedPlugins && paidPluginsOnLowerPlan ) {
-		const requiredPlan = getPlan( plansForInstallPurchasedPlugins[ 0 ] );
-		const title = translate( 'Upgrade to the %(planName)s plan to install premium plugins.', {
-			textOnly: true,
-			args: { planName: requiredPlan.getTitle() },
-		} );
-
-		return (
-			<UpsellNudge
-				event="calypso_plugins_browser_upgrade_nudge"
-				showIcon={ true }
-				href={ `/checkout/${ siteSlug }/${ requiredPlan.getPathSlug() }` }
-				feature={ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS }
-				plan={ requiredPlan.getStoreSlug() }
-				title={ title }
-			/>
-		);
-	}
-
-	const plan = findFirstSimilarPlanKey( sitePlan.product_slug, {
-		type: TYPE_BUSINESS,
-	} );
-
-	// This banner upsells the ability to install free and paid plugins on a Pro plan.
-	const isLegacyPlan = isBlogger( sitePlan ) || isPersonal( sitePlan ) || isPremium( sitePlan );
-	const shouldUpsellProPlan = eligibleForProPlan && ! isLegacyPlan;
-	if ( shouldUpsellProPlan ) {
-		return (
-			<UpsellNudge
-				event="calypso_plugins_browser_upgrade_nudge"
-				showIcon={ true }
-				href={ `/checkout/${ siteSlug }/pro` }
-				feature={ FEATURE_INSTALL_PLUGINS }
-				plan={ plan }
-				title={ translate( 'Upgrade to the Pro plan to install plugins.' ) }
-			/>
-		);
-	}
-
-	// This banner upsells the ability to install free and paid plugins on a Business plan.
-	return (
-		<UpsellNudge
-			event="calypso_plugins_browser_upgrade_nudge"
-			showIcon={ true }
-			href={ `/checkout/${ siteSlug }/business` }
-			feature={ FEATURE_INSTALL_PLUGINS }
-			plan={ plan }
-			title={ translate( 'Upgrade to the Business plan to install plugins.' ) }
-		/>
-	);
-};
 
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugsMap = new Map(
@@ -201,13 +85,16 @@ const PluginsDiscoveryPage = ( props ) => {
 		<>
 			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
+			<CollectionListView category="monetization" { ...props } />
 			<UpgradeNudge { ...props } />
 			<FeaturedPluginsSection
 				{ ...props }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
+			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
+			<CollectionListView category="ecommerce" { ...props } />
 		</>
 	);
 };

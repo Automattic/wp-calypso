@@ -1,5 +1,4 @@
 import { Dialog } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -66,12 +65,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const cancelDialogButtons = [
 		{
 			action: 'cancel',
-			label: __( 'No' ),
+			isPrimary: true,
+			label: translate( 'No, let me finish' ),
 		},
 		{
 			action: 'close',
-			isPrimary: true,
-			label: __( 'Yes, cancel' ),
+			label: translate( 'Yes, quit' ),
 			onClick: async () => {
 				setShowCancelDialog( false );
 				onClose();
@@ -87,18 +86,18 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	return (
 		<>
 			{ isVisible && (
-				<BlankCanvas className={ 'blazepress-widget' }>
-					<div className={ 'blazepress-widget__header-bar' }>
+				<BlankCanvas className="blazepress-widget">
+					<div className="blazepress-widget__header-bar">
 						<WordPressLogo />
-						<h2>Advertising</h2>
+						<h2>{ translate( 'Advertising' ) }</h2>
 						<span
 							role="button"
-							className={ 'blazepress-widget__cancel' }
+							className="blazepress-widget__cancel"
 							onKeyDown={ () => setShowCancelDialog( true ) }
 							tabIndex={ 0 }
 							onClick={ () => setShowCancelDialog( true ) }
 						>
-							Cancel
+							{ translate( 'Cancel' ) }
 						</span>
 					</div>
 					<div
@@ -111,15 +110,11 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>
-							<h1>{ __( 'Cancel the campaign' ) }</h1>
-							<p>
-								{ __(
-									'If you cancel now, you will lose any progress you have made. Are you sure you want to cancel?'
-								) }
-							</p>
+							<h1>{ translate( 'Are you sure you want to quit?' ) }</h1>
+							<p>{ translate( 'All progress in this session will be lost.' ) }</p>
 						</Dialog>
 						{ isLoading && <LoadingEllipsis /> }
-						<div className={ 'blazepress-widget__widget-container' } ref={ widgetContainer }></div>
+						<div className="blazepress-widget__widget-container" ref={ widgetContainer }></div>
 					</div>
 				</BlankCanvas>
 			) }

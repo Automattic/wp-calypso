@@ -76,20 +76,24 @@
 
 .reader-landing__feature-heading {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 1.2em;
 
 	@include breakpoint-deprecated( ">660px" ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.6em;
 	}
 }
 
 .reader-landing__feature-description {
 	color: var(--color-neutral-50);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 1em;
 	margin-top: 4px;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		margin-top: 10px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.1em;
 	}
 }

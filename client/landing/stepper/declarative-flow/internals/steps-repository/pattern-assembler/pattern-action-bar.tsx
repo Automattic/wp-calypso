@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
-import { reusableBlock, chevronUp, chevronDown, closeSmall } from '@wordpress/icons';
+import { chevronUp, chevronDown, closeSmall, edit } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type PatternActionBarProps = {
 	onReplace: () => void;
@@ -10,6 +11,7 @@ type PatternActionBarProps = {
 	disableMoveUp?: boolean;
 	disableMoveDown?: boolean;
 	enableMoving?: boolean;
+	patternType: string;
 };
 
 const PatternActionBar = ( {
@@ -20,6 +22,7 @@ const PatternActionBar = ( {
 	disableMoveUp,
 	disableMoveDown,
 	enableMoving,
+	patternType,
 }: PatternActionBarProps ) => {
 	const translate = useTranslate();
 	return (
@@ -35,7 +38,10 @@ const PatternActionBar = ( {
 						disabled={ disableMoveUp }
 						role="menuitem"
 						label={ translate( 'Move up' ) }
-						onClick={ onMoveUp }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_signup_bcpa_pattern_moveup_click' );
+							onMoveUp?.();
+						} }
 						icon={ chevronUp }
 						iconSize={ 23 }
 					/>
@@ -44,7 +50,10 @@ const PatternActionBar = ( {
 						disabled={ disableMoveDown }
 						role="menuitem"
 						label={ translate( 'Move down' ) }
-						onClick={ onMoveDown }
+						onClick={ () => {
+							recordTracksEvent( 'calypso_signup_bcpa_pattern_movedown_click' );
+							onMoveDown?.();
+						} }
 						icon={ chevronDown }
 						iconSize={ 23 }
 					/>
@@ -53,16 +62,26 @@ const PatternActionBar = ( {
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Replace"
-				onClick={ onReplace }
-				icon={ reusableBlock }
-				iconSize={ 23 }
+				label={ translate( 'Replace' ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_signup_bcpa_pattern_replace_click', {
+						pattern_type: patternType,
+					} );
+					onReplace();
+				} }
+				icon={ edit }
+				iconSize={ 20 }
 			/>
 			<Button
 				className="pattern-action-bar__block pattern-action-bar__action"
 				role="menuitem"
-				label="Delete"
-				onClick={ onDelete }
+				label={ translate( 'Delete' ) }
+				onClick={ () => {
+					recordTracksEvent( 'calypso_signup_bcpa_pattern_delete_click', {
+						pattern_type: patternType,
+					} );
+					onDelete();
+				} }
 				icon={ closeSmall }
 				iconSize={ 23 }
 			/>

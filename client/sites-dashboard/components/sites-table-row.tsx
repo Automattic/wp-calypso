@@ -1,14 +1,18 @@
-import { ListTile, useSiteLaunchStatusLabel } from '@automattic/components';
+import { ListTile } from '@automattic/components';
+import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
+import { useInView } from 'react-intersection-observer';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
+import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
@@ -33,6 +37,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
@@ -41,7 +47,6 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 `;
 
 const SiteListTile = styled( ListTile )`
-	line-height: initial;
 	margin-inline-end: 0;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
@@ -67,20 +72,24 @@ const ListTileSubtitle = styled.div`
 `;
 
 const SitePlan = styled.div`
-	display: flex;
-	line-height: 16px;
+	display: inline;
+	> * {
+		vertical-align: middle;
+		line-height: normal;
+	}
 `;
 
 const SitePlanIcon = styled.div`
+	display: inline-block;
 	margin-inline-end: 6px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isAtomicSite = site?.is_wpcom_atomic;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -99,13 +108,13 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail site={ site } />
+							<SiteItemThumbnail displayMode="list" site={ site } />
 						</ListTileLeading>
 					}
 					title={
 						<ListTileTitle>
 							<SiteName href={ getDashboardUrl( site.slug ) } title={ __( 'Visit Dashboard' ) }>
-								{ site.name }
+								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
 						</ListTileTitle>
@@ -121,18 +130,29 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 			</Column>
 			<Column mobileHidden>
 				<SitePlan>
-					{ site.jetpack && ! isAtomicSite && (
+					{ isNotAtomicJetpack( site ) && (
 						<SitePlanIcon>
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
+
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>
 			<Column mobileHidden>
+				{ translatedStatus }
+				<SiteLaunchNag site={ site } />
+			</Column>
+			<Column mobileHidden>
 				{ site.options?.updated_at ? <TimeSince date={ site.options.updated_at } /> : '' }
 			</Column>
-			<Column mobileHidden>{ translatedStatus }</Column>
+			<Column ref={ ref } mobileHidden>
+				{ inViewOnce && (
+					<a href={ `/stats/day/${ site.slug }` }>
+						<StatsSparkline siteId={ site.ID } showLoader={ true }></StatsSparkline>
+					</a>
+				) }
+			</Column>
 			<Column style={ { width: '24px' } }>
 				<SitesEllipsisMenu site={ site } />
 			</Column>

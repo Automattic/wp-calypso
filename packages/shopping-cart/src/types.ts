@@ -558,6 +558,8 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	jetpackPurchaseToken?: string;
 	auth_code?: string;
 	privacy_available?: boolean;
+	selected_page_titles?: string[];
+	site_title?: string;
 	signup_flow?: string;
 }
 
@@ -566,6 +568,7 @@ export interface GSuiteProductUser {
 	lastname: string;
 	email: string;
 	password: string;
+	recoveryEmail?: string;
 }
 
 export interface TitanProductUser {
@@ -582,7 +585,6 @@ export type DomainContactDetails = {
 	lastName?: string;
 	organization?: string;
 	email?: string;
-	alternateEmail?: string;
 	phone?: string;
 	address1?: string;
 	address2?: string;

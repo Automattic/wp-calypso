@@ -215,7 +215,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<Card className="transfer-domain-to-other-site__card">
 					<p>{ this.getMessage() }</p>
 					<SiteSelector
-						className={ 'transfer-domain-to-other-site__site-selector' }
+						className="transfer-domain-to-other-site__site-selector"
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }
@@ -224,7 +224,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				{ this.state.targetSiteId && (
 					<TransferConfirmationDialog
 						disableDialogButtons={ this.state.disableDialogButtons }
-						domainName={ selectedDomainName }
+						domain={ domain }
 						isMapping={ this.props.isMapping }
 						isVisible={ this.state.showConfirmationDialog }
 						onConfirmTransfer={ this.handleConfirmTransfer }

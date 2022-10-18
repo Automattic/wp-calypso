@@ -12,7 +12,7 @@ function DeleteSiteWarningDialog( { isVisible, p2HubP2Count, onClose } ) {
 		const buttons = [ { action: 'dismiss', label: translate( 'Dismiss' ) } ];
 		if ( p2HubP2Count ) {
 			buttons.push(
-				<Button primary href={ '/settings/general' }>
+				<Button primary href="/settings/general">
 					{ translate( 'Go to your site listing' ) }
 				</Button>
 			);

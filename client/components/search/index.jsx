@@ -19,6 +19,9 @@ import './style.scss';
 const SEARCH_DEBOUNCE_MS = 300;
 const noop = () => {};
 
+export const SEARCH_MODE_WHEN_TYPING = 'when-typing';
+export const SEARCH_MODE_ON_ENTER = 'on-enter';
+
 function keyListener( methodToCall, event ) {
 	switch ( event.key ) {
 		case ' ':
@@ -61,6 +64,8 @@ class Search extends Component {
 		compact: PropTypes.bool,
 		hideOpenIcon: PropTypes.bool,
 		inputLabel: PropTypes.string,
+		searchMode: PropTypes.string,
+		applySearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -87,6 +92,8 @@ class Search extends Component {
 		hideFocus: false,
 		compact: false,
 		hideOpenIcon: false,
+		searchMode: SEARCH_MODE_WHEN_TYPING,
+		applySearch: false,
 	};
 
 	constructor( props ) {
@@ -147,19 +154,13 @@ class Search extends Component {
 		if ( this.state.keyword === prevState.keyword ) {
 			return;
 		}
-		// if there's a keyword change: trigger search
-		if ( this.state.keyword ) {
-			// this.onSearch is debounced when this.props.delaySearch === true
-			// this avoids unnecessary fetches while user types
-			this.onSearch( this.state.keyword );
-		} else {
-			// this.props.onSearch is _not_ debounced
-			// no need to debounce if ! this.state.keyword
-			if ( this.props.delaySearch ) {
-				// Cancel any pending debounce
-				this.onSearch.cancel();
-			}
-			this.props.onSearch( this.state.keyword );
+		// if there's a keyword change and mode is search-on-write: trigger search
+		// The empty string must be handled always becuase it can be triggered:
+		// - by the user clicking on the clear icon
+		// - by the user pressing the ESC key
+		// Additionally, the search can be triggered on demand by using the boolean prop `applySearch`
+		if ( this.isSearchOnWriteMode() || this.state.keyword === '' || this.props.applySearch ) {
+			this.updateSearch();
 		}
 		this.props.onSearchChange( this.state.keyword );
 	}
@@ -281,6 +282,9 @@ class Search extends Component {
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
 		}
+		if ( this.isSearchOnEnterMode() && event.key === 'Enter' ) {
+			this.updateSearch();
+		}
 		this.props.onKeyDown( event );
 	};
 
@@ -300,6 +304,29 @@ class Search extends Component {
 
 		this.setState( { hasFocus: true } );
 		this.props.onSearchOpen();
+	};
+
+	updateSearch = () => {
+		if ( this.state.keyword ) {
+			// this.onSearch is debounced when this.props.delaySearch === true
+			// this avoids unnecessary fetches while user types
+			this.onSearch( this.state.keyword );
+		} else {
+			// this.props.onSearch is _not_ debounced
+			// no need to debounce if ! this.state.keyword
+			if ( this.props.delaySearch ) {
+				// Cancel any pending debounce
+				this.onSearch.cancel();
+			}
+			this.props.onSearch( this.state.keyword );
+		}
+	};
+
+	isSearchOnEnterMode = () => {
+		return this.props.searchMode === SEARCH_MODE_ON_ENTER;
+	};
+	isSearchOnWriteMode = () => {
+		return ! this.isSearchOnEnterMode();
 	};
 
 	render() {

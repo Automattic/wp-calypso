@@ -4,6 +4,8 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import { isExternal } from 'calypso/lib/url';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 
 const ListStreamHeader = ( {
 	isPlaceholder,
@@ -43,7 +45,13 @@ const ListStreamHeader = ( {
 
 			{ showFollow && (
 				<div className="list-stream__header-follow">
-					<FollowButton iconSize={ 24 } following={ following } onFollowToggle={ onFollowToggle } />
+					<FollowButton
+						iconSize={ 24 }
+						following={ following }
+						onFollowToggle={ onFollowToggle }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 24 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 24 } ) }
+					/>
 				</div>
 			) }
 

@@ -20,6 +20,28 @@ describe( 'item', () => {
 			expect( item.firstChild ).toHaveTextContent( 'Published' );
 			expect( item.firstChild ).toBe( link );
 		} );
+
+		test( 'should contain a default aria-label', () => {
+			render( <SelectDropdownItem>Published</SelectDropdownItem> );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
+			expect( link ).toHaveAttribute( 'aria-label', 'Published' );
+		} );
+
+		test( 'should default aria-label include a count', () => {
+			render( <SelectDropdownItem count={ 123 }>Published</SelectDropdownItem> );
+			const link = screen.getByRole( 'menuitem', { name: /published/i } );
+			expect( link ).toHaveAttribute( 'aria-label', 'Published (123)' );
+		} );
+
+		test( 'should render custom aria-label if provided', () => {
+			render(
+				<SelectDropdownItem count={ 123 } ariaLabel="My Custom Label">
+					Published
+				</SelectDropdownItem>
+			);
+			const link = screen.getByRole( 'menuitem', { name: /my custom label/i } );
+			expect( link ).toHaveAttribute( 'aria-label', 'My Custom Label' );
+		} );
 	} );
 
 	describe( 'when the component is clicked', () => {

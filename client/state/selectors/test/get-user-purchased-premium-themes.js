@@ -10,6 +10,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			ID: 3,
 			product_name: 'premium theme',
 			product_slug: 'premium_theme',
+			product_type: 'theme',
 			blog_id: 1337,
 			user_id: targetUserId,
 		},
@@ -72,6 +73,7 @@ describe( 'getUserPurchasedPremiumThemes', () => {
 			id: 3,
 			productName: 'premium theme',
 			productSlug: 'premium_theme',
+			productType: 'theme',
 			userId: targetUserId,
 		} );
 	} );

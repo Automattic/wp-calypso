@@ -58,13 +58,9 @@ export default function WPContactFormSummary( {
 							<SummaryLine>{ contactInfo.organization?.value ?? '' } </SummaryLine>
 						) }
 
-					<EmailSummary
-						isRenewal={ isRenewal }
-						isLoggedOutCart={ isLoggedOutCart }
-						contactInfo={ contactInfo }
-						areThereDomainProductsInCart={ areThereDomainProductsInCart }
-						isGSuiteInCart={ isGSuiteInCart }
-					/>
+					{ ! isRenewal &&
+						( isGSuiteInCart || areThereDomainProductsInCart || isLoggedOutCart ) &&
+						contactInfo.email?.value && <SummaryLine>{ contactInfo.email.value }</SummaryLine> }
 
 					{ ! isRenewal &&
 						areThereDomainProductsInCart &&
@@ -86,44 +82,6 @@ export default function WPContactFormSummary( {
 
 function joinNonEmptyValues( joinString: string, ...values: ( string | undefined )[] ) {
 	return values.filter( ( value ) => ( value?.length ?? 0 ) > 0 ).join( joinString );
-}
-
-// The point of this component is to make sure we show at most one email address in the summary, and that the one we show is editable.
-function EmailSummary( {
-	isRenewal,
-	contactInfo,
-	areThereDomainProductsInCart,
-	isGSuiteInCart,
-	isLoggedOutCart,
-}: {
-	isRenewal: boolean;
-	contactInfo: ManagedContactDetails;
-	areThereDomainProductsInCart: boolean;
-	isGSuiteInCart: boolean;
-	isLoggedOutCart: boolean;
-} ) {
-	if ( isRenewal ) {
-		return null;
-	}
-	if ( ! areThereDomainProductsInCart && ! isGSuiteInCart && ! isLoggedOutCart ) {
-		return null;
-	}
-
-	if ( ! contactInfo.alternateEmail?.value && ! contactInfo.email?.value ) {
-		return null;
-	}
-
-	if ( isGSuiteInCart && ! areThereDomainProductsInCart ) {
-		return contactInfo.alternateEmail?.value ? (
-			<SummaryLine>{ contactInfo.alternateEmail?.value }</SummaryLine>
-		) : null;
-	}
-
-	if ( ! contactInfo.email?.value ) {
-		return null;
-	}
-
-	return <SummaryLine>{ contactInfo.email?.value }</SummaryLine>;
 }
 
 function AddressSummary( {

@@ -1,7 +1,6 @@
 import SiteFilters from '../site-filters';
 import SiteSearch from '../site-search';
 import type { AgencyDashboardFilter } from '../types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -17,7 +16,7 @@ export default function SiteSearchFilterContainer( {
 	currentPage,
 	filter,
 	isLoading,
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<div className="site-search-filter-container">
 			<div className="site-search-filter-container__search">

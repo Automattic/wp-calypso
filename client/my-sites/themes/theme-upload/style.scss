@@ -1,11 +1,5 @@
 // View: placeholder with gradient
 .theme-upload {
-	.eligibility-warnings__warning {
-		max-width: 680px;
-	}
-	.eligibility-warnings__confirm-buttons {
-		padding-left: 40px;
-	}
 	.feature-example {
 		margin-top: 16px;
 	}
@@ -31,7 +25,7 @@
 	border: 1px solid var(--color-neutral-0);
 	margin-left: 24px;
 
-	@include breakpoint-deprecated( "<960px" ) {
+	@include breakpoint-deprecated("<960px") {
 		float: none;
 		margin-left: 0;
 		margin-bottom: 24px;

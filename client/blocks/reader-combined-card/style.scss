@@ -19,13 +19,21 @@
 
 .reader-combined-card__site-link {
 	color: var(--color-accent);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.2em;
 	margin-bottom: 0;
 	top: 0;
 	overflow: hidden;
 	font-weight: 600;
 
-	&:hover {
+	&:focus,
+	&:link,
+	&:visited {
+		color: var(--color-primary);
+	}
+
+	&:hover,
+	&:active {
 		color: var(--color-primary-light);
 	}
 
@@ -38,6 +46,7 @@
 .reader-combined-card__header-post-count {
 	color: var(--color-text-subtle);
 	margin-bottom: 0;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1em;
 	margin-top: 4px;
 }
@@ -51,6 +60,7 @@
 
 .reader-combined-card__post-title {
 	display: block;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 17px;
 	font-weight: 700;
 	line-height: 1.4;
@@ -218,19 +228,6 @@
 
 	&:not(.is-placeholder)::after {
 		@include long-content-fade( $size: 10% );
-	}
-}
-
-.reader-combined-card__site-link {
-	&:focus,
-	&:link,
-	&:visited {
-		color: var(--color-primary);
-	}
-
-	&:hover,
-	&:active {
-		color: var(--color-primary-light);
 	}
 }
 

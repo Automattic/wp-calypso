@@ -50,7 +50,7 @@ import DIFMLiteInProgress from 'calypso/my-sites/marketing/do-it-for-me/difm-lit
 import NavigationComponent from 'calypso/my-sites/navigation';
 import SitesComponent from 'calypso/my-sites/sites';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { successNotice, warningNotice } from 'calypso/state/notices/actions';
+import { successNotice, warningNotice, errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import getP2HubBlogId from 'calypso/state/selectors/get-p2-hub-blog-id';
@@ -97,8 +97,7 @@ export function createNavigation( context ) {
 		basePath = sectionify( context.pathname );
 	}
 
-	let allSitesPath =
-		config.isEnabled( 'build/sites-dashboard' ) && basePath === '/home' ? '/sites' : basePath;
+	let allSitesPath = basePath === '/home' ? '/sites' : basePath;
 
 	// Update allSitesPath if it is plugins page in Jetpack Cloud
 	if ( isJetpackCloud() && basePath.startsWith( '/plugins' ) ) {
@@ -394,6 +393,18 @@ export function showMissingPrimaryError( currentUser, dispatch ) {
 		);
 		recordTracksEvent( 'calypso_mysites_single_site_jetpack_connection_error', tracksPayload );
 	} else {
+		dispatch(
+			errorNotice(
+				isJetpackCloud()
+					? i18n.translate( 'Your Primary site is not a Jetpack site.' )
+					: i18n.translate( 'Please set a Primary site.' ),
+				{
+					button: i18n.translate( 'Account Settings' ),
+					href: `https://wordpress.com/me/account`,
+				}
+			)
+		);
+
 		recordTracksEvent( 'calypso_mysites_single_site_error', tracksPayload );
 	}
 }
@@ -506,8 +517,7 @@ export function siteSelection( context, next ) {
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						const basePath = sectionify( context.path, siteFragment );
-						return page.redirect( `${ basePath }/${ siteSlug }` );
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) );
 					}
 				}
 
@@ -532,9 +542,10 @@ export function siteSelection( context, next ) {
 					navigate( getJetpackAuthorizeURL( context, site ) );
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
+					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
 					const allSitesPath = addQueryArgs(
 						{ site: siteFragment },
-						sectionify( context.path, siteFragment )
+						context.path.substring( 0, siteFragmentOffset )
 					);
 					page.redirect( allSitesPath );
 				}

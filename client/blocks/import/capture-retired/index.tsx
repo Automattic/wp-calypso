@@ -63,7 +63,9 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	};
 
 	const recordScanningEvent = () => {
-		if ( ! isAnalyzing ) return;
+		if ( ! isAnalyzing ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
@@ -72,7 +74,9 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 	};
 
 	const recordScanningErrorEvent = () => {
-		if ( ! analyzerError ) return;
+		if ( ! analyzerError ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
@@ -129,7 +133,7 @@ const CaptureStep: React.FunctionComponent< Props > = ( {
 								dir="ltr"
 							/>
 							{ showSubmitButton && (
-								<NextButton type={ 'submit' }>
+								<NextButton type="submit">
 									<Icon className="capture__next-button-icon" icon={ chevronRight } />
 								</NextButton>
 							) }

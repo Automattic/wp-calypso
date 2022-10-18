@@ -4,11 +4,11 @@ import { compose } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import { get } from 'lodash';
-import lottie from 'lottie-web/build/player/lottie_light';
 import PropTypes from 'prop-types';
-import { Component, useEffect } from 'react';
+import { Component } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import versionCompare from 'calypso/lib/version-compare';
 import {
@@ -26,6 +26,7 @@ import { dismissAppBanner } from 'calypso/state/ui/actions';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
 	GUTENBERG,
+	HOME,
 	NOTES,
 	READER,
 	STATS,
@@ -134,6 +135,8 @@ export class AppBanner extends Component {
 			switch ( currentSection ) {
 				case GUTENBERG:
 					return `intent://post/#Intent;scheme=${ scheme };package=${ packageName };end`;
+				case HOME:
+					return `intent://home/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case NOTES:
 					return `intent://notifications/#Intent;scheme=${ scheme };package=${ packageName };end`;
 				case READER:
@@ -167,7 +170,7 @@ export class AppBanner extends Component {
 						statGroup="calypso_mobile_app_banner"
 						statName="impression"
 					/>
-					<BannerIcon icon={ icon } />
+					<AnimatedIcon className="app-banner__icon" icon={ icon } />
 					<div className="app-banner__text-content jetpack">
 						<div className="app-banner__title jetpack">
 							<span> { title } </span>
@@ -196,6 +199,13 @@ export class AppBanner extends Component {
 
 	getWordpressAppBanner = ( { translate, currentSection } ) => {
 		const { title, copy } = getAppBannerData( translate, currentSection );
+
+		// This conditional will be unnecessary once the 'jetpack/app-branding'
+		// feature flag is removed and its features are made the default
+		// experience, as getAppBannerData will then not include conditionals.
+		if ( ! title || ! copy ) {
+			return null;
+		}
 
 		return (
 			<div className={ classNames( 'app-banner-overlay' ) } ref={ this.preventNotificationsClose }>
@@ -251,21 +261,6 @@ export class AppBanner extends Component {
 			? this.getJetpackAppBanner( this.props )
 			: this.getWordpressAppBanner( this.props );
 	}
-}
-
-function BannerIcon( { icon } ) {
-	useEffect( () => {
-		const animation = lottie.loadAnimation( {
-			container: document.querySelector( '.app-banner__icon' ),
-			renderer: 'svg',
-			loop: false,
-			autoplay: true,
-			path: icon,
-		} );
-		return () => animation.destroy();
-	}, [ icon ] );
-
-	return <div className="app-banner__icon"></div>;
 }
 
 export function getiOSDeepLink( currentRoute, currentSection ) {

@@ -1,6 +1,5 @@
 import { ProductIcon } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
@@ -22,7 +21,7 @@ import JetpackSearchFooter from './footer';
 
 import './style.scss';
 
-export default function SearchMain(): ReactElement {
+export default function SearchMain() {
 	const siteId = useSelector( getSelectedSiteId ) || -1;
 	const site = useSelector( getSelectedSite );
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -68,7 +67,7 @@ export default function SearchMain(): ReactElement {
 				buttonLink={ settingsUrl }
 				buttonText={ translate( 'Settings' ) }
 				onClick={ onSettingsClick }
-				iconComponent={ <ProductIcon slug={ 'jetpack_search' } /> }
+				iconComponent={ <ProductIcon slug="jetpack_search" /> }
 			/>
 
 			<JetpackSearchFooter />

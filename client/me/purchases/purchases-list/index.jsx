@@ -118,8 +118,8 @@ class PurchasesList extends Component {
 									'Find the plan that works for you.'
 							) }
 							action={ translate( 'Upgrade now' ) }
-							actionURL={ '/plans' }
-							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+							actionURL="/plans"
+							illustration="/calypso/images/illustrations/illustration-nosites.svg"
 						/>
 					</CompactCard>
 				</>

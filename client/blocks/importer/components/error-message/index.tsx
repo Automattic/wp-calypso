@@ -4,8 +4,6 @@ import { createElement, createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 
-import './style.scss';
-
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 interface Props {

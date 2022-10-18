@@ -1,7 +1,7 @@
 import { IntentScreen } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import intentImageUrl from 'calypso/assets/images/onboarding/intent.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -48,7 +48,7 @@ const EXTERNAL_FLOW: { [ key: string ]: string } = {
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
 	EXCLUDED_STEPS[ providedDependencies?.intent ];
 
-export default function IntentStep( props: Props ): React.ReactNode {
+export default function IntentStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName, queryObject } = props;
@@ -82,7 +82,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 	};
 
 	// Only do following things when mounted
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -101,7 +101,7 @@ export default function IntentStep( props: Props ): React.ReactNode {
 					preventWidows={ preventWidows }
 				/>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip
 			isHorizontalLayout={ true }
 			siteId={ siteId }

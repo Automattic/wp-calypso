@@ -1,4 +1,4 @@
-@import url( "https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap" );
+@import url( https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap );
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
@@ -50,6 +50,8 @@
 	height: 66px;
 	margin: 0 auto;
 	opacity: 0;
+	// Need to disable the lint rule because we have a data URL that needs quotes.
+	/* stylelint-disable-next-line function-url-quotes */
 	background-image: url('data:image/svg+xml,%3Csvg width="66" height="66" viewBox="0 0 66 66" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Ccircle cx="33" cy="33" r="32" stroke="%23354756" stroke-width="2"/%3E%3Cpath d="M1 33C1 15.3269 15.3269 1 33 1" stroke="white" stroke-width="2"/%3E%3C/svg%3E%0A');
 	animation: p2-spin 0.75s linear infinite, p2-fade 0.75s ease-in-out 1.8s forwards;
 }

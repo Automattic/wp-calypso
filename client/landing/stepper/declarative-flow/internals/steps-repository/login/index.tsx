@@ -323,7 +323,7 @@ const LoginStep: Step = function LoginStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'login-step' }
+			stepName="login-step"
 			hideBack
 			hideSkip
 			hideNext

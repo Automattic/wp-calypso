@@ -10,7 +10,6 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -43,18 +42,31 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await sidebarComponent.navigate( 'Appearance', 'Editor' );
 	} );
 
-	it( 'Editor content loads', async function () {
+	it( 'Editor endpoint loads', async function () {
+		await page.waitForURL( /.*site-editor.*/ );
+	} );
+
+	it( 'Editor canvas loads', async function () {
 		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
 		// spinning up a POM class that we will later needed to redo.
 		// This should ensure the editor hasn't done a WSoD.
-		const editorLoadedClosure = async () => {
-			const locator = page
-				.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
-				.frameLocator( 'iframe[name="editor-canvas"]' )
-				.locator( '[aria-label="Block: Post Title"]:has-text("Home"):visible' );
-			await locator.waitFor( { timeout: 90 * 1000 } );
-		};
+		await page.waitForLoadState( 'networkidle' );
 
-		await ElementHelper.reloadAndRetry( page, editorLoadedClosure );
+		// In some cases (about ~7% going by the failure rate), the editor that's loaded is
+		// the equivalent of the Atomic editor (without iframes).
+		// Thus to eliminate flakiness we must account for both iframed and non-iframed editors.
+		if ( page.url().includes( 'wp-admin' ) ) {
+			const editorLocator = page.locator( 'div[id="site-editor"]' );
+			await editorLocator.waitFor();
+
+			const editorTopBarLocator = page.locator( '[aria-label="Editor top bar"]' );
+			await editorTopBarLocator.waitFor();
+		} else {
+			const topFrameLocator = page.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' );
+			await topFrameLocator.locator( '[aria-label="Editor top bar"]' ).waitFor();
+
+			const editorFrameLocator = topFrameLocator.frameLocator( 'iframe[title="Editor canvas"]' );
+			await editorFrameLocator.locator( '.edit-site-block-editor__block-list' ).waitFor();
+		}
 	} );
 } );

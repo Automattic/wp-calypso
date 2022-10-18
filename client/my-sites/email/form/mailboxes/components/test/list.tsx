@@ -41,6 +41,7 @@ describe( '<NewMailBoxList /> suite', () => {
 		onSubmit: () => undefined,
 		provider: EmailProvider.Titan,
 		selectedDomainName: 'example.com',
+		hiddenFieldNames: [],
 	} as MailboxListProps;
 
 	const setup = ( propOverrides: Partial< MailboxListProps > = {} ) => {

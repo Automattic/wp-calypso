@@ -79,9 +79,8 @@ function SidebarScrollSynchronizer() {
 
 function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-	const isDesktop = useBreakpoint( '>760px' );
+	const isDesktop = useBreakpoint( '>782px' );
 
-	// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 	if ( ! loadHelpCenter ) {
 		return null;
 	}
@@ -93,6 +92,7 @@ function HelpCenterLoader( { sectionName, loadHelpCenter } ) {
 			handleClose={ () => {
 				setShowHelpCenter( false );
 			} }
+			// hide Calypso's version of the help-center on Desktop, because the Editor has its own help-center
 			hidden={ sectionName === 'gutenberg-editor' && isDesktop }
 		/>
 	);
@@ -150,6 +150,16 @@ class Layout extends Component {
 				document
 					.querySelector( 'body' )
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
+
+				const themeColor = getComputedStyle( document.body )
+					.getPropertyValue( '--color-masterbar-background' )
+					.trim();
+				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
+				if ( themeColorMeta && ! themeColorMeta.content ) {
+					themeColorMeta.content = themeColor;
+					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
+				}
 			}
 		}
 	}
@@ -165,6 +175,15 @@ class Layout extends Component {
 			const classList = document.querySelector( 'body' ).classList;
 			classList.remove( `is-${ prevProps.colorSchemePreference }` );
 			classList.add( `is-${ this.props.colorSchemePreference }` );
+
+			const themeColor = getComputedStyle( document.body )
+				.getPropertyValue( '--color-masterbar-background' )
+				.trim();
+			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
+			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
+				themeColorMeta.content = themeColor;
+			}
 		}
 
 		// intentionally don't remove these in unmount
@@ -243,7 +262,9 @@ class Layout extends Component {
 		};
 
 		const loadHelpCenter =
-			shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) &&
+			// we want to show only the Help center in my home and the help section (but not the FAB)
+			( [ 'home', 'help' ].includes( this.props.sectionName ) ||
+				shouldLoadInlineHelp( this.props.sectionName, this.props.currentRoute ) ) &&
 			this.props.userAllowedToHelpCenter;
 
 		const loadInlineHelp =
@@ -253,10 +274,14 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<HelpCenterLoader sectionName={ this.props.sectioName } loadHelpCenter={ loadHelpCenter } />
+				<HelpCenterLoader
+					sectionName={ this.props.sectionName }
+					loadHelpCenter={ loadHelpCenter }
+				/>
 				<SidebarScrollSynchronizer layoutFocus={ this.props.currentLayoutFocus } />
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
 				<BodySectionCssClass
+					layoutFocus={ this.props.currentLayoutFocus }
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
 					{ ...optionalBodyProps() }

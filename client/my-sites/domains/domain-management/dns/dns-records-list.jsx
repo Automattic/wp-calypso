@@ -211,7 +211,7 @@ class DnsRecordsList extends Component {
 
 		return (
 			<DnsRecordData
-				key={ 'domain-connect-record' }
+				key="domain-connect-record"
 				dnsRecord={ record }
 				selectedDomainName={ selectedDomainName }
 				selectedSite={ selectedSite }

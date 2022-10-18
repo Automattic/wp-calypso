@@ -7,6 +7,8 @@ import ReaderListItemPlaceholder from 'calypso/blocks/reader-list-item/placehold
 import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
 import ExternalLink from 'calypso/components/external-link';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import {
 	getSiteName,
@@ -89,11 +91,9 @@ function ReaderListItem( {
 			</div>
 			<div className="reader-list-item__byline">
 				<span className="reader-list-item__site-title">
-					{
-						<a href={ streamUrl } className="reader-list-item__link" onClick={ recordTitleClick }>
-							{ siteTitle }
-						</a>
-					}
+					<a href={ streamUrl } className="reader-list-item__link" onClick={ recordTitleClick }>
+						{ siteTitle }
+					</a>
 				</span>
 				<div className="reader-list-item__site-excerpt">{ siteExcerpt }</div>
 				{ ! isMultiAuthor && ! isEmpty( authorName ) && (
@@ -140,6 +140,8 @@ function ReaderListItem( {
 					feedId={ feedId }
 					siteId={ siteId }
 					railcar={ railcar }
+					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 				/>
 				{ isFollowing && showNotificationSettings && (
 					<ReaderSiteNotificationSettings siteId={ siteId } />

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import * as wpcom from 'calypso/lib/wp';
 import * as selectedSite from 'calypso/state/help/selectors';
 import { getHappychatAuth } from '../utils';
@@ -26,6 +25,7 @@ describe( 'auth promise', () => {
 			wpcom.default.request.mockImplementation( ( args, callback ) =>
 				callback( null, {
 					jwt: 'jwt',
+					url: 'https://happychat.io/customer',
 					geo_location: {
 						city: 'Lugo',
 					},
@@ -38,10 +38,9 @@ describe( 'auth promise', () => {
 
 		test( 'should return a fulfilled Promise', () => {
 			return expect( getHappychatAuth( state )() ).resolves.toMatchObject( {
-				url: config( 'happychat_url' ),
 				user: {
 					signer_user_id: state.currentUser.user.ID,
-					locale: state.currentUser.user.localeSlug,
+					skills: { language: [ state.currentUser.user.localeSlug ] },
 					groups: [ 'jpop' ],
 					jwt: 'jwt',
 					geoLocation: { city: 'Lugo' },

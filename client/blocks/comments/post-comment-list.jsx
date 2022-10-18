@@ -8,6 +8,8 @@ import { connect } from 'react-redux';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
 import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
 import SegmentedControl from 'calypso/components/segmented-control';
+import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
+import ReaderFollowingConversationIcon from 'calypso/reader/components/icons/following-conversation-icon';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import {
 	requestPostComments,
@@ -415,7 +417,23 @@ class PostCommentList extends Component {
 			>
 				{ ( this.props.showCommentCount || showViewMoreComments ) && (
 					<div className="comments__info-bar">
-						{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+						<div className="comments__info-bar-title-links">
+							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
+							<div className="comments__actions-wrapper">
+								{ showManageCommentsButton && this.renderCommentManageLink() }
+								{ showConversationFollowButton && (
+									<ConversationFollowButton
+										className="comments__conversation-follow-button"
+										siteId={ siteId }
+										postId={ postId }
+										post={ this.props.post }
+										followSource={ followSource }
+										followIcon={ ReaderFollowConversationIcon( { iconSize: 20 } ) }
+										followingIcon={ ReaderFollowingConversationIcon( { iconSize: 20 } ) }
+									/>
+								) }
+							</div>
+						</div>
 						{ showViewMoreComments && (
 							<button className="comments__view-more" onClick={ this.viewEarlierCommentsHandler }>
 								{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
@@ -428,18 +446,6 @@ class PostCommentList extends Component {
 						) }
 					</div>
 				) }
-				<div className="comments__actions-wrapper">
-					{ showManageCommentsButton && this.renderCommentManageLink() }
-					{ showConversationFollowButton && (
-						<ConversationFollowButton
-							className="comments__conversation-follow-button"
-							siteId={ siteId }
-							postId={ postId }
-							post={ this.props.post }
-							followSource={ followSource }
-						/>
-					) }
-				</div>
 				{ showFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item

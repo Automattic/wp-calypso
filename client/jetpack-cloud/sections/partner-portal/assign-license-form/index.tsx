@@ -2,7 +2,7 @@ import { Button, Card } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import FormRadio from 'calypso/components/forms/form-radio';
 import Pagination from 'calypso/components/pagination';
@@ -44,7 +44,7 @@ export default function AssignLicenseForm( {
 	sites: Array< any >;
 	currentPage: number;
 	search: string;
-} ): ReactElement {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const [ selectedSite, setSelectedSite ] = useState( false );

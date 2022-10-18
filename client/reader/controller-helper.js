@@ -28,10 +28,7 @@ export function trackScrollPage( path, title, category, readerView, pageNum ) {
 		section: readerView,
 	} );
 	recordPageView( path, title );
-	bumpStat( {
-		newdash_pageviews: 'scroll',
-		reader_views: readerView + '_scroll',
-	} );
+	bumpStat( 'reader_views', readerView + '_scroll' );
 }
 
 export function trackUpdatesLoaded( key ) {

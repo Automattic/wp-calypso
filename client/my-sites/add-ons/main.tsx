@@ -59,7 +59,7 @@ const ContainerMain = styled.div`
 	}
 `;
 
-const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactElement } ) => {
 	const translate = useTranslate();
 	const isWide = useDesktopBreakpoint();
 	const selectedSite = useSelector( getSelectedSite );
@@ -105,7 +105,7 @@ const NoAccess = () => {
 		<ContentWithHeader>
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
-				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</ContentWithHeader>
 	);

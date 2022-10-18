@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import ActivityCard from 'calypso/components/activity-card';
+import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
 import QueryRewindPolicies from 'calypso/components/data/query-rewind-policies';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -18,6 +19,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
@@ -228,11 +230,11 @@ class ActivityCardList extends Component {
 						compact={ isMobile }
 						className="activity-card-list__pagination-top"
 						key="activity-card-list__pagination-top"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
+						prevLabel="Newer"
 						total={ visibleLogs.length }
 					/>
 				) }
@@ -245,11 +247,11 @@ class ActivityCardList extends Component {
 						compact={ isMobile }
 						className="activity-card-list__pagination-bottom"
 						key="activity-card-list__pagination-bottom"
-						nextLabel={ 'Older' }
+						nextLabel="Older"
 						page={ actualPage }
 						pageClick={ this.changePage }
 						perPage={ pageSize }
-						prevLabel={ 'Newer' }
+						prevLabel="Newer"
 						total={ visibleLogs.length }
 					/>
 				) }
@@ -310,7 +312,8 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs } = this.props;
+		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs, isAtomic } =
+			this.props;
 
 		if ( rewindPoliciesRequestError ) {
 			return this.renderLoading();
@@ -321,6 +324,7 @@ class ActivityCardList extends Component {
 				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
 				{ logs && this.renderData() }
@@ -339,6 +343,8 @@ const mapStateToProps = ( state ) => {
 
 	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+
 	return {
 		filter,
 		requestingRewindPolicies: rewindPoliciesRequestStatus === 'pending',
@@ -347,6 +353,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteSlug,
 		userLocale,
+		isAtomic,
 	};
 };
 

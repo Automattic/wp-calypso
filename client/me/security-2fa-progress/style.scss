@@ -73,6 +73,7 @@
 			.gridicon {
 				background: var(--color-surface);
 				border: 1px var(--color-neutral-10) solid;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				color: var(--color-neutral-10);
 				display: block;

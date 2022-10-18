@@ -75,7 +75,6 @@
 .p2-join-workspace__workspace-description {
 	font-size: 0.75rem;
 	color: var(--p2-color-border-medium);
-	grid-area: 2 / 2;
 	grid-area: 2/1/span 1/span 2;
 
 	@include break-small {
@@ -115,7 +114,7 @@
 	background: var(--p2-color-background-light);
 	padding: 1.2rem;
 	display: grid;
-	border-radius: 2px; /* stylelint-disable-line scales/radii */
+	border-radius: 2px;
 
 	@include break-small {
 		grid-template-columns: auto auto;

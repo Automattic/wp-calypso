@@ -1,4 +1,4 @@
-import { Gridicon } from '@automattic/components';
+import { Icon, plugins } from '@wordpress/icons';
 import classNames from 'classnames';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import PluginCommonAction from '../plugin-common-actions';
@@ -25,7 +25,7 @@ export default function PluginCommonTable( {
 	primaryKey,
 	renderActions,
 	className,
-}: Props ): ReactElement {
+}: Props ) {
 	return (
 		<table className={ classNames( 'plugin-common-table__table', className ) }>
 			<thead>
@@ -45,9 +45,10 @@ export default function PluginCommonTable( {
 						{ columns.map( ( column ) => (
 							<td key={ column.key }>
 								{ column.key === 'plugin' && (
-									<Gridicon
-										className="plugin-common-table__plugin-icon is-loading"
-										icon="plugins"
+									<Icon
+										size={ 32 }
+										icon={ plugins }
+										className="plugin-common-table__plugin-icon plugin-default-icon is-loading"
 									/>
 								) }
 								<TextPlaceholder />

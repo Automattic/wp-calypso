@@ -1,3 +1,4 @@
+import React from 'react';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
 import type {
 	QueryArgs,
@@ -35,11 +36,6 @@ export type ProductSlugsProps = Pick< ProductStoreProps, 'duration' > & ProductS
 export type productIconProps = {
 	productSlug: string;
 };
-
-export interface ViewFilterProps {
-	currentView: ViewType;
-	setCurrentView: ( currentView: ViewType ) => void;
-}
 
 export type ProductsListProps = ProductStoreBaseProps & {
 	onClickMoreInfoFactory: ( item: SelectorProduct ) => VoidFunction;
@@ -95,6 +91,7 @@ export type FeaturedItemCardProps = {
 	description: React.ReactNode;
 	hero: React.ReactNode;
 	isCtaDisabled?: boolean;
+	isCtaExternal?: boolean;
 	onClickCta?: VoidFunction;
 	price: React.ReactNode;
 	title: React.ReactNode;
@@ -107,4 +104,5 @@ export type SimpleItemCardProps = Omit< FeaturedItemCardProps, 'hero' > & {
 export type MoreInfoLinkProps = {
 	item: SelectorProduct;
 	onClick?: VoidFunction;
+	isExternal?: boolean;
 };

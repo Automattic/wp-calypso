@@ -5,6 +5,12 @@
 	margin: 0 auto;
 	padding: 0;
 
+	// Nested comment at max depth
+	&.is-at-max-depth {
+		margin-bottom: 0;
+		box-shadow: 0 -1px rgba(var(--color-neutral-10-rgb), 0.5);
+	}
+
 	.accessible-focus &:focus {
 		box-shadow: 0 0 0 1px var(--color-accent), 0 0 0 3px var(--color-primary-light);
 		z-index: z-index("root", ".card.comment.accessible-focus:focus");
@@ -66,6 +72,7 @@
 
 	.gridicon {
 		background-color: var(--color-neutral-light);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		fill: var(--color-text-inverted);
 		padding: 4px;
@@ -656,6 +663,7 @@
 
 	.comment__author-gravatar-placeholder {
 		background-color: var(--color-neutral-0);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		display: block;
 		height: 32px;
@@ -691,14 +699,5 @@
 
 	.comment__actions {
 		display: none;
-	}
-}
-
-// Nested comment at max depth
-
-.card.comment {
-	&.is-at-max-depth {
-		margin-bottom: 0;
-		box-shadow: 0 -1px rgba(var(--color-neutral-10-rgb), 0.5);
 	}
 }

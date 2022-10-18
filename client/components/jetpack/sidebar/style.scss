@@ -1,4 +1,4 @@
-@import url( "//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" ); // Used for switch-sites icon.
+@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 ); // Used for switch-sites icon.
 
 // Menu links
 .sidebar__jetpack-cloud {
@@ -14,6 +14,11 @@
 
 	.current-site__switch-sites .button.is-borderless {
 		border-radius: 0;
+		padding-left: 55px;
+
+		.gridicon {
+			left: 19px;
+		}
 
 		&:hover {
 			background-color: var(--color-sidebar-menu-hover-background);
@@ -42,14 +47,6 @@
 			.sidebar__menu-icon path {
 				fill: var(--color-sidebar-menu-selected-gridicon-fill);
 			}
-		}
-	}
-
-	.current-site__switch-sites .button.is-borderless {
-		padding-left: 55px;
-
-		.gridicon {
-			left: 19px;
 		}
 	}
 
@@ -95,6 +92,7 @@
 	}
 
 	.sidebar__menu-link-text {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.2em;
 		color: var(--color-sidebar-text);
 

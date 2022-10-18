@@ -348,11 +348,11 @@ class ScanPage extends Component< Props > {
 				<PageViewTracker path="/scan/:site" title="Scanner" />
 				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (
-					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
+					<FormattedHeader headerText="Jetpack Scan" align="left" brandFont />
 				) }
 
 				<QueryJetpackScan siteId={ siteId } />
-				<ScanNavigation section={ 'scanner' } />
+				<ScanNavigation section="scanner" />
 				<div className="scan__content">{ this.renderScanState() }</div>
 				{ this.renderJetpackReviewPrompt() }
 			</Main>

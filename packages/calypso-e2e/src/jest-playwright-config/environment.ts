@@ -47,6 +47,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	private testFilename: string;
 	private testFilePath: string;
 	private testArtifactsPath: string;
+	private testFailureArtifacts: string[];
 	private failure?: {
 		type: 'hook' | 'test';
 		name: string;
@@ -65,6 +66,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testFilePath = context.testPath;
 		this.testFilename = path.parse( context.testPath ).name;
 		this.testArtifactsPath = '';
+		this.testFailureArtifacts = [];
 		this.allure = this.initializeAllureReporter( config );
 	}
 
@@ -147,8 +149,13 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 		// Create folders for test artifacts.
 		await fs.mkdir( env.ARTIFACTS_PATH, { recursive: true } );
+		const date = new Date()
+			.toISOString()
+			.split( 'Z' )[ 0 ]
+			.replace( /[.:+]/g, '-' )
+			.replace( 'T', '_' );
 		this.testArtifactsPath = await fs.mkdtemp(
-			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ Date.now() }-` )
+			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
 		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
 
@@ -253,7 +260,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				// Use `test_fn_start` event instead of `test_start` to filter
 				// out hooks.
 				// See https://github.com/facebook/jest/blob/main/packages/jest-types/src/Circus.ts#L132-L133
-				this.allure?.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.startTestStep( event.test, state, this.testFilename );
 				// If a test has failed, skip rest of the steps.
 				if ( this.failure?.type === 'test' ) {
 					event.test.mode = 'skip';
@@ -261,7 +268,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				break;
 			}
 			case 'test_skip':
-				this.allure?.startTestStep( event.test, state, this.testFilePath );
+				this.allure?.startTestStep( event.test, state, this.testFilename );
 				this.allure?.pendingTestStep( event.test );
 				break;
 			case 'test_fn_success': {
@@ -271,6 +278,10 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			case 'test_fn_failure': {
 				this.failure = { type: 'test', name: event.test.name };
 				this.allure?.failTestStep( event.error );
+				// Store the failing test's artifact path if it hasn't yet.
+				if ( ! this.testFailureArtifacts.includes( this.testArtifactsPath ) ) {
+					this.testFailureArtifacts.push( this.testArtifactsPath );
+				}
 				break;
 			}
 			case 'test_done': {
@@ -287,27 +298,27 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				const contexts = this.global.browser.contexts();
 
 				if ( this.failure ) {
-					const artefactFilename = `${ this.testFilename }__${ sanitizeString(
-						this.failure.name
-					) }`;
-
 					let contextIndex = 0;
 					let pageIndex = 0;
 
-					// Save trace, screenshot and video for every open context/page.
-					for await ( const context of contexts ) {
-						const traceFilePath = path.join(
-							this.testArtifactsPath,
-							`${ artefactFilename }__${ contextIndex }.zip`
-						);
+					const artifactFilename = `${ this.testFilename }__${ sanitizeString(
+						this.failure.name
+					) }`;
+					const traceFilePath = path.join(
+						this.testArtifactsPath,
+						`${ artifactFilename }__${ contextIndex }.zip`
+					);
 
+					for await ( const context of contexts ) {
+						// Traces are saved per context.
 						await context.tracing.stop( { path: traceFilePath } );
 
 						for await ( const page of context.pages() ) {
+							// Screenshots and video are saved per page, where numerous
+							// pages may exist within a context.
 							const mediaFilePath = path.join(
 								this.testArtifactsPath,
-								'screenshots', // TODO: Remove / I don't think this subfolder is necessary?
-								`${ artefactFilename }__${ contextIndex }-${ pageIndex }`
+								`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
 							);
 
 							await page.screenshot( { path: `${ mediaFilePath }.png` } );
@@ -318,18 +329,12 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						}
 						contextIndex++;
 					}
+					// Print paths to captured artifacts for faster triaging.
+					console.log( `Artifacts for failed tests:` );
+					this.testFailureArtifacts.forEach( ( path ) => console.log( path ) );
 				}
 
-				// Delete recorded videos from tmp folder and close all contexts.
-				for await ( const context of contexts ) {
-					for await ( const page of context.pages() ) {
-						await page.close();
-						await page.video()?.delete();
-					}
-					await context.close();
-				}
-
-				// Close the browser.
+				// Regardless of pass/fail status, close the browser instance.
 				await this.global.browser.close();
 				break;
 			}

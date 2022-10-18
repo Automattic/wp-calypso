@@ -29,6 +29,7 @@ body {
 	font-family: $default-font;
 	font-size: $font-body;
 
+	/* stylelint-disable-next-line unit-allowed-list */
 	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 		&.font-smoothing-antialiased {
 			text-rendering: optimizeLegibility;

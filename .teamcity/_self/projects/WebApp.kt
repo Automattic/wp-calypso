@@ -35,6 +35,7 @@ object WebApp : Project({
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(HelpCentreE2ETests)
+	buildType(KPIDashboardTests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -536,7 +537,7 @@ object CheckCodeStyleBranch : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run linters"
+			name = "Run eslint"
 			scriptContent = """
 				export NODE_ENV="test"
 
@@ -554,6 +555,14 @@ object CheckCodeStyleBranch : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
+			"""
+		}
+
+		bashNodeScript {
+			name = "Run stylelint"
+			scriptContent = """
+				# In the future, we may add the stylelint cache here.
+				yarn run lint:css
 			"""
 		}
 	}
@@ -819,11 +828,11 @@ object AuthenticationE2ETests : E2EBuildType(
 	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
-				hours = "*/3"
+				hours = "*/6"
 			}
 			branchFilter = "+:<default>"
 			triggerBuild = always()
-			withPendingChangesOnly = false
+			withPendingChangesOnly = true
 		}
 	}
 )
@@ -863,6 +872,19 @@ object HelpCentreE2ETests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
+)
+
+object KPIDashboardTests : E2EBuildType(
+	buildId = "Calypso_E2E_KPI_Dashboard",
+	buildUuid = "441efac5-721a-4557-9448-9234e89fb6b1",
+	buildName = "Test build for KPI Dashboard project",
+	buildDescription = "Test build configuration for KPI dashboard.",
+	testGroup = "kpi",
+	buildParams = {
+		param("env.VIEWPORT_NAME", "desktop")
+	},
+	buildFeatures = {
+	},
 )
 
 object QuarantinedE2ETests: E2EBuildType(

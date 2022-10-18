@@ -1,4 +1,6 @@
-.help-center-inline-chat__iframe {
+
+.help-center__persistent-iframe-container {
 	width: 100%;
-	height: calc(100% - 4px);
+	height: 100%;
+	padding: 0 !important;
 }

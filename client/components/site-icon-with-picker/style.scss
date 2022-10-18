@@ -10,7 +10,7 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 	min-width: 50vw;
 
 	use {
-		fill: white;
+		fill: #fff;
 	}
 }
 
@@ -57,7 +57,9 @@ button.components-button.site-icon-with-picker__upload-button {
 		left: 50%;
 		transform: translate(-50%, -50%);
 	}
-	span {
+
+	span.replace,
+	span.add {
 		position: absolute;
 		width: 200px;
 		display: block;

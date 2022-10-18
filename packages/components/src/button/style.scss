@@ -289,18 +289,18 @@
 
 .button.is-transparent {
 	background: transparent;
-	border-color: var( --transparent-button-text-color, currentcolor );
+	border-color: var(--transparent-button-text-color, currentcolor);
 	display: flex;
-    justify-content: center;
+	justify-content: center;
 
 	&,
 	&:visited {
-		color: var( --transparent-button-text-color, currentcolor );
+		color: var(--transparent-button-text-color, currentcolor);
 	}
 
 	&:hover {
-		border-color: var( --transparent-button-text-color-hover, var( --color-accent ) );
-		color: var( --transparent-button-text-color-hover, var( --color-accent ) );
+		border-color: var(--transparent-button-text-color-hover, var(--color-accent));
+		color: var(--transparent-button-text-color-hover, var(--color-accent));
 		background: transparent;
 	}
 }

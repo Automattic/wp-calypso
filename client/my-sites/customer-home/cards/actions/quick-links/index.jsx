@@ -232,7 +232,7 @@ export const QuickLinks = ( {
 
 	return (
 		<FoldableCard
-			className="quick-links"
+			className="quick-links customer-home__card"
 			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader

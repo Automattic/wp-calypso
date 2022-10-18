@@ -47,13 +47,13 @@
 	&::before {
 		box-sizing: border-box;
 		content: "";
-		background-color: #fdfdfd;
+		background-color: #fff;
 		position: absolute;
 		height: 100%;
 		width: 200vw;
 		left: -100vw;
 		z-index: -1;
-		border-top: 1px solid #eee;
+		border-top: 1px solid #f6f7f7;
 	}
 }
 
@@ -63,5 +63,16 @@
 
 	.banner.card {
 		margin: 48px 0 0;
+	}
+}
+
+// Jetpack injects a banner on the /plugins page for jetpack sites
+.is-section-plugins .layout__content > .banner {
+	// This moves it down out from under our sticky header
+	margin-top: 50px;
+
+	// And removes the extra padding on the main content
+	+ .layout__secondary + .layout__primary main {
+		padding-top: 0;
 	}
 }

@@ -37,15 +37,17 @@
 		"jetpack/activity-log-sharing": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/backup-messaging-i3": true,
+		"jetpack/partner-portal-issue-multiple-licenses": false,
 		"jetpack/partner-portal-payment": true,
 		"jetpack/plugin-management": true,
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pricing-page-rework-v1": false,
+		"jetpack/pricing-page-rework-v1": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,
 		"jetpack/simplify-pricing-structure": false,
+		"jetpack/standalone-plugin-onboarding-update-v1": false,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/query-selected-editor": false,
@@ -79,5 +81,6 @@
 	"theme": "jetpack-cloud",
 	"restricted_me_access": false,
 	"theme_color": "#2fb41f",
-	"google_analytics_key": "UA-52447-43"
+	"google_analytics_key": "UA-52447-43",
+	"hotjar_enabled": true
 }

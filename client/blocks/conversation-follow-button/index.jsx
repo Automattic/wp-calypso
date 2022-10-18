@@ -19,10 +19,14 @@ class ConversationFollowButtonContainer extends Component {
 		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.func ] ),
 		post: PropTypes.object, // for stats only
 		followSource: PropTypes.string,
+		followIcon: PropTypes.object,
+		followingIcon: PropTypes.object,
 	};
 
 	static defaultProps = {
 		onFollowToggle: noop,
+		followIcon: null,
+		followingIcon: null,
 	};
 
 	handleFollowToggle = ( isRequestingFollow ) => {
@@ -57,6 +61,8 @@ class ConversationFollowButtonContainer extends Component {
 				onFollowToggle={ this.handleFollowToggle }
 				className={ this.props.className }
 				tagName={ this.props.tagName }
+				followIcon={ this.props.followIcon }
+				followingIcon={ this.props.followingIcon }
 			/>
 		);
 	}

@@ -4,7 +4,7 @@ import {
 	isAdTrackingAllowed,
 	refreshCountryCodeCookieGdpr,
 } from 'calypso/lib/analytics/utils';
-import { jetpackCartToGaPurchase } from '../utils/jetpack-cart-to-ga-purchase';
+import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
 	debug,
@@ -35,7 +35,10 @@ import {
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
-import { fireJetpackEcommercePurchase as fireJetpackEcommercePurchaseGA4 } from './google-analytics-4';
+import {
+	fireEcommercePurchase as fireEcommercePurchaseGA4,
+	Ga4PropertyGtag,
+} from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
 // Ensure setup has run.
@@ -79,6 +82,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInCriteo( cart, orderId );
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -504,8 +508,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
  */
 function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( wpcomJetpackCartInfo.containsJetpackProducts ) {
-		fireJetpackEcommercePurchaseGA4(
-			jetpackCartToGaPurchase( orderId, cart, wpcomJetpackCartInfo )
+		fireEcommercePurchaseGA4(
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			Ga4PropertyGtag.JETPACK
 		);
 
 		const jetpackParams = [
@@ -531,6 +536,30 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
 		window.gtag( ...jetpackParams );
 	}
+}
+
+/**
+ * Records an order in the WordPress.com GA4 Property
+ *
+ * @param {object} cart - cart as `ResponseCart` object
+ * @param {number} orderId - the order id
+ * @param {object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @returns {void}
+ */
+function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
+	if (
+		! wpcomJetpackCartInfo.containsWpcomProducts &&
+		! wpcomJetpackCartInfo.containsJetpackProducts
+	) {
+		debug( 'recordOrderInWPcomGA4: [Skipping] No products' );
+		return;
+	}
+	// Firing both Jetpack and WPcom Purchases on WPcom (similar to enhanced ecommerce in UA).
+	fireEcommercePurchaseGA4(
+		cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+		Ga4PropertyGtag.WPCOM
+	);
+	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
 }
 
 /**

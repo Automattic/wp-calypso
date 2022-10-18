@@ -105,22 +105,48 @@
 	background: #f6f7f7;
 	border: 1px solid var(--studio-gray-0);
 	border-radius: 4px;
+	display: flex;
+	align-items: center;
 	height: 48px;
-	line-height: 48px;
 	margin: 32px 0;
-	padding: 0 20px;
+	padding: 0 12px;
+
+	// truncate long domain names
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.launchpad__url-box-domain-text {
+	flex-grow: 1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
 }
 
+.launchpad__domain-upgrade-badge {
+
+	&:hover {
+		background: var(--studio-blue-10);
+	}
+
+}
+
 .launchpad__sidebar-admin-link {
 	padding: 80px 20px 10px;
 	display: none;
 
-	button {
+	.button.navigation-link {
 		text-decoration: underline;
+
+		&:hover,
+		&:focus {
+			color: var(--studio-blue-50);
+		}
 	}
 
 	@include break-large {
@@ -132,6 +158,13 @@
 
 .launchpad__progress-bar-container {
 	margin-bottom: 32px;
+
+	.launchpad__progress-bar.progress-bar.is-compact {
+		.progress-bar__progress {
+			/* stylelint-disable-next-line scales/radii */
+			border-radius: 4.5px;
+		}
+	}
 }
 
 .launchpad__progress-value {
@@ -183,7 +216,8 @@
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 
-.launchpad__checklist-item .badge {
+.launchpad__checklist-item .badge,
+.launchpad__domain-upgrade-badge {
 	background-color: var(--studio-blue-5);
 	color: var(--studio-blue-80);
 }
@@ -214,10 +248,12 @@
 }
 
 // completed tasks
-.launchpad__task.is-completed {
+.launchpad__task.completed-and-inactive,
+.launchpad__task.completed-and-active {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
+		text-decoration: line-through;
 	}
 
 	.launchpad__checklist-item-chevron,
@@ -226,8 +262,11 @@
 	}
 }
 
-// completed tasks that are kept active
-.launchpad__task.keep-active:hover {
+// not-completed && completed-and-active tasks
+.launchpad__task.completed-and-active:hover,
+.launchpad__task.not-completed:hover,
+.launchpad__task.completed-and-active > a:focus,
+.launchpad__task.not-completed > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
@@ -235,6 +274,11 @@
 	.launchpad__checklist-item-chevron,
 	.launchpad__checklist-item-checkmark {
 		fill: var(--studio-blue-50);
+	}
+
+	// change badge color on hover (Choose a Plan step)
+	.badge {
+		background: var(--studio-blue-10);
 	}
 }
 
@@ -321,5 +365,66 @@
 
 	.spinner-line {
 		display: none;
+	}
+}
+
+// Launchpad - Processing Screens
+.processing {
+	.wordpress-logo {
+		position: absolute;
+		inset-inline-start: 20px;
+		inset-block-start: 20px;
+		fill: var(--color-text);
+		stroke: var(--color-text);
+		transform-origin: 0 0;
+	}
+
+	.processing-step__progress-bar {
+		background-color: #fff;
+	}
+
+	&.link-in-bio {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		background-color: #d0cce3;
+		background-image:
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 30%, auto 30%;
+		background-position-x: 0%, 100%;
+		background-position-y: 90%, 10%;
+
+		@include break-huge {
+			background-size: auto 50%, auto 50%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+		}
+	}
+
+	.step-container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
+	}
+
+	.step-container__content {
+		width: 100%;
+	}
+
+	.progress-bar {
+		display: none;
+	}
+
+	h1.processing-step__progress-step {
+		font-size: $font-title-medium;
+
+		@include break-medium {
+			font-size: $font-title-large;
+		}
 	}
 }

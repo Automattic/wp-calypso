@@ -6,7 +6,7 @@ import './style.scss';
 const ImporterWix: Step = function ( props ) {
 	const Importer = withImporterWrapper( WixImporter );
 
-	return <Importer importer={ 'wix' } { ...props } />;
+	return <Importer importer="wix" { ...props } />;
 };
 
 export default ImporterWix;

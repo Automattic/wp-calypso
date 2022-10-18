@@ -1,7 +1,6 @@
 import { CheckboxControl, SelectControl, TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
-import { ReactElement } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -18,7 +17,7 @@ import { getRevenueOptions } from './revenue-options';
 import type { WooCommerceInstallProps } from '..';
 import './style.scss';
 
-export default function StepBusinessInfo( props: WooCommerceInstallProps ): ReactElement | null {
+export default function StepBusinessInfo( props: WooCommerceInstallProps ) {
 	const { goToNextStep, isReskinned } = props;
 	const { __ } = useI18n();
 

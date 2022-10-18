@@ -18,18 +18,18 @@ import './pattern-assembler-preview.scss';
 
 interface Props {
 	header: Pattern | null;
-	sections?: Pattern[];
+	sections: Pattern[];
 	footer: Pattern | null;
+	scrollToSelector: string | null;
 }
 
-const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => {
+const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelector }: Props ) => {
 	const locale = useLocale();
 	const translate = useTranslate();
 	const site = useSite();
 	const [ webPreviewFrameContainer, setWebPreviewFrameContainer ] = useState< Element | null >(
 		null
 	);
-
 	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
@@ -65,7 +65,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 						) }
 					>
 						{ ! hasSelectedPatterns && (
-							<span>{ translate( 'Your page is blank. Start adding content on the left' ) }</span>
+							<span>{ translate( 'Your page is blank. Start adding content on the left.' ) }</span>
 						) }
 					</div>,
 					webPreviewFrameContainer
@@ -78,6 +78,7 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 					hasSelectedPatterns
 						? getDesignPreviewUrl( mergedDesign, {
 								language: locale,
+								disable_viewport_height: true,
 						  } )
 						: 'about:blank'
 				}
@@ -90,6 +91,10 @@ const PatternAssemblerPreview = ( { header, sections = [], footer }: Props ) => 
 				url={ site?.URL }
 				translate={ translate }
 				recordTracksEvent={ recordTracksEvent }
+				scrollToSelector={ scrollToSelector }
+				onDeviceUpdate={ ( device: string ) => {
+					recordTracksEvent( 'calypso_signup_bcpa_preview_device_click', { device } );
+				} }
 			/>
 		</div>
 	);

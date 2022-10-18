@@ -81,9 +81,32 @@ describe( DataHelper.createSuiteTitle( 'Gutenberg: Experimental Features' ), fun
 		const expectedBlockPatternCount = 50;
 		const frame = await editorPage.getEditorHandle();
 		const actualBlockPatternCount = await frame.evaluate(
-			`window.wp.data.select( 'core' ).getBlockPatterns().length`
-		);
+			() =>
+				/* eslint-disable @typescript-eslint/ban-ts-comment */
+				new Promise( ( resolve ) => {
+					let hasTimedOut = false;
 
+					// This needs to be done in a loop until patterns request
+					// returns anything as initially the data is not there yet,
+					// and it returns an empty array, making this case a false
+					// positive.
+					const wait = setInterval( () => {
+						// @ts-ignore
+						const patterns = window.wp.data.select( 'core' ).getBlockPatterns();
+						if ( patterns.length > 0 || hasTimedOut ) {
+							clearInterval( wait );
+							resolve( patterns.length );
+						}
+					}, 100 );
+
+					// Timeout after 10 seconds. No need to wait for the full
+					// jest (2 minutes) timeout.
+					setTimeout( () => {
+						hasTimedOut = true;
+					}, 10000 );
+				} )
+			/* eslint-enable @typescript-eslint/ban-ts-comment */
+		);
 		expect( actualBlockPatternCount ).toBeGreaterThanOrEqual( expectedBlockPatternCount );
 	} );
 } );

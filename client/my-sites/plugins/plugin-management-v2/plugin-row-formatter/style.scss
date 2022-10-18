@@ -101,6 +101,7 @@ a.button.plugin-row-formatter__plugin-name-card {
 	@include break-xlarge {
 		display: flex;
 		justify-content: end;
+		white-space: pre;
 
 		.plugin-install-button__install.embed {
 			margin: 0;
@@ -113,13 +114,13 @@ a.button.plugin-row-formatter__plugin-name-card {
 	align-items: center;
 }
 
+.theme-jetpack-cloud .plugin-row-formatter__checkbox[type="checkbox"]:checked::before {
+	content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+}
+
 // Checkbox for multiselect purposes
 .plugin-row-formatter__checkbox[type="checkbox"] {
 	margin-inline-end: 16px;
-
-	&:checked::before {
-		content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
-	}
 
 	&::after {
 		// Making tap area larger
@@ -133,11 +134,15 @@ a.button.plugin-row-formatter__plugin-name-card {
 }
 
 .plugin-row-formatter__last-updated {
+	font-size: 0.75rem;
+	color: var(--color-text-subtle);
+
 	@include break-xlarge {
 		// Align right when there's no enough space.
 		text-align: right;
 		width: 100%;
 		display: inline-block;
+		white-space: pre;
 	}
 
 	// Cut off the "Updated on" part when there's no enough space.

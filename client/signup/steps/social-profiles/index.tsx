@@ -15,7 +15,7 @@ interface Props {
 	signupDependencies: SocialProfilesState;
 }
 
-export default function SocialProfilesStep( props: Props ): React.ReactNode {
+export default function SocialProfilesStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { stepName, signupDependencies, goToNextStep } = props;
@@ -76,7 +76,7 @@ export default function SocialProfilesStep( props: Props ): React.ReactNode {
 					onSkip={ onSkip }
 				/>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip
 			isHorizontalLayout={ true }
 			isWideLayout={ true }

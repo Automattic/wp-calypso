@@ -1,6 +1,6 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import * as React from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
@@ -20,7 +20,7 @@ export default function TagItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement | null {
+} ) {
 	const { item, list, owner } = props;
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 	const dispatch = useDispatch();
@@ -30,7 +30,7 @@ export default function TagItem( props: {
 		getMatchingItem( state, { tagId: props.item.tag_ID, listId: list.ID } )
 	);
 
-	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = useState( false );
 	const addItem = () =>
 		dispatch( addReaderListTag( list.ID, owner, list.slug, item.meta?.data?.tag?.tag.slug ) );
 	const deleteItem = ( shouldDelete: boolean ) => {

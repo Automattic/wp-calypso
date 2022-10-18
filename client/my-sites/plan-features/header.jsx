@@ -362,7 +362,7 @@ export class PlanFeaturesHeader extends Component {
 		const perMonthDescription = this.getPerMonthDescription() || billingTimeFrame;
 		if ( isInSignup || plansWithScroll ) {
 			return (
-				<div className={ 'plan-features__header-billing-info' }>
+				<div className="plan-features__header-billing-info">
 					<span>{ perMonthDescription }</span>
 				</div>
 			);

@@ -127,6 +127,7 @@
 	margin: 0 auto;
 	overflow: hidden;
 	border: 1px solid #e1e8ed;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 0.42857em;
 }
 
@@ -136,6 +137,7 @@
 	margin: 0 auto;
 	overflow: hidden;
 	border: 1px solid #e1e8ed;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 0.42857em;
 }
 
@@ -163,8 +165,9 @@
 	text-decoration: none;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: $font-body-small;
-	color: black;
+	color: var(--studio-black);
 	text-align: left;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.3em;
 	overflow: hidden;
 }
@@ -186,6 +189,7 @@
 	max-height: 1.3em;
 	white-space: nowrap;
 	font-weight: bold;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 1em;
 	margin: 0 0 0.15em;
 	overflow: hidden;

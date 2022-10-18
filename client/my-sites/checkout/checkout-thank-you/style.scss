@@ -243,6 +243,7 @@
 
 	.checkout-thank-you__header-text,
 	.checkout-thank-you__success-message-item {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 2em;
 		margin-bottom: 8px;
 		margin-top: 15px;
@@ -297,15 +298,6 @@
 }
 
 // Jetpack thank you styles
-.checkout-thank-you__jetpack {
-	max-width: 500px;
-	margin: 0 auto;
-
-	&.is-errored .thank-you-card__description {
-		margin-bottom: 0;
-	}
-}
-
 .checkout-thank-you__jetpack-plugins {
 	margin: 0 auto;
 }
@@ -342,6 +334,12 @@
 }
 
 .checkout-thank-you__jetpack {
+	max-width: 500px;
+	margin: 0 auto;
+
+	&.is-errored .thank-you-card__description {
+		margin-bottom: 0;
+	}
 	.thank-you-card__action .button {
 		max-width: 45%;
 	}
@@ -754,7 +752,7 @@
 
 	font-weight: bold;
 	text-align: center;
-	color: white;
+	color: var(--color-text-inverted);
 
 	background-color: var(--studio-jetpack-green-40);
 

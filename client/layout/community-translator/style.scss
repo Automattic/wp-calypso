@@ -52,6 +52,7 @@
 	border-radius: 2px;
 	background: var(--color-neutral-5);
 	color: var(--color-neutral-20);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 0.6em;
 	text-transform: uppercase;
 	white-space: nowrap;
@@ -76,6 +77,7 @@ body {
 		.webui-popover-title {
 			background-color: var(--color-neutral-10);
 			border-color: var(--color-neutral-0);
+			/* stylelint-disable-next-line scales/radii */
 			border-radius: 1px 1px 0 0;
 		}
 

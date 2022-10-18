@@ -1,14 +1,17 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import {
 	useSibylQuery,
 	SiteDetails,
 	useSiteIntent,
 	getContextResults,
+	RESULT_TOUR,
+	RESULT_VIDEO,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
-import { Icon, page } from '@wordpress/icons';
+import { external, Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -20,22 +23,36 @@ import { Article } from '../types';
 export const SITE_STORE = 'automattic/site' as const;
 
 type Props = {
+	title?: string;
 	message?: string;
 	supportSite?: SiteDetails;
+	articleCanNavigateBack?: boolean;
 };
 
-const ConfigurableLink: React.FC< { external: boolean; fullUrl: string } & LinkProps > = ( {
-	external,
-	fullUrl,
-	...props
-} ) => {
+function recordSibylArticleClick(
+	article: ReturnType< typeof getContextResults >[ number ] | Article
+) {
+	return () =>
+		recordTracksEvent( 'calypso_helpcenter_page_open_sibyl_article', {
+			location: 'help-center',
+			article_link: article.link,
+			article_title: article.title,
+		} );
+}
+const ConfigurableLink: React.FC<
+	{
+		article: ReturnType< typeof getContextResults >[ number ] | Article;
+		external: boolean;
+		fullUrl: string;
+	} & LinkProps
+> = ( { article, external, fullUrl, ...props } ) => {
 	if ( external ) {
 		return <a href={ fullUrl } target="_blank" rel="noreferrer noopener" { ...props } />;
 	}
-	return <Link { ...props } />;
+	return <Link onClick={ recordSibylArticleClick( article ) } { ...props } />;
 };
 
-function getPostUrl( article: Article, query: string ) {
+function getPostUrl( article: Article, query: string, articleCanNavigateBack: boolean ) {
 	// if it's a wpcom support article, it has an ID
 	if ( article.post_id ) {
 		const params = new URLSearchParams( {
@@ -49,6 +66,10 @@ function getPostUrl( article: Article, query: string ) {
 			params.set( 'blogId', article.blog_id );
 		}
 
+		if ( articleCanNavigateBack ) {
+			params.set( 'canNavigateBack', String( articleCanNavigateBack ) );
+		}
+
 		const search = params.toString();
 
 		return {
@@ -56,10 +77,21 @@ function getPostUrl( article: Article, query: string ) {
 			search,
 		};
 	}
-	return article.link;
 }
 
-export function SibylArticles( { message = '', supportSite }: Props ) {
+const getFilteredContextResults = ( sectionName: string, siteIntent: string ) => {
+	return getContextResults( sectionName, siteIntent ).filter( ( article ) => {
+		const type = ( 'type' in article && article.type ) || '';
+		return ! [ RESULT_VIDEO, RESULT_TOUR ].includes( type );
+	} );
+};
+
+export function SibylArticles( {
+	message = '',
+	supportSite,
+	title,
+	articleCanNavigateBack = false,
+}: Props ) {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
@@ -78,33 +110,43 @@ export function SibylArticles( { message = '', supportSite }: Props ) {
 
 	const sectionName = useSelector( getSectionName );
 	const articles = useMemo( () => {
-		return sibylArticles?.length
-			? sibylArticles
-			: getContextResults( sectionName, intent?.site_intent ?? '' );
-	}, [ sibylArticles, sectionName, intent?.site_intent ] );
+		return (
+			sibylArticles?.length
+				? sibylArticles
+				: getFilteredContextResults( sectionName, intent?.site_intent ?? '' )
+		 ).map( ( article ) => {
+			const hasPostId = 'post_id' in article && article.post_id;
+			return {
+				...article,
+				url: hasPostId
+					? getPostUrl( article as Article, message, articleCanNavigateBack )
+					: article.link,
+				is_external: 'en' !== locale || ! hasPostId,
+			};
+		} );
+	}, [ sibylArticles, sectionName, intent?.site_intent, locale, message, articleCanNavigateBack ] );
 
 	return (
 		<div className="help-center-sibyl-articles__container">
 			<h3 id="help-center--contextual_help" className="help-center__section-title">
-				{ __( 'Recommended resources', __i18n_text_domain__ ) }
+				{ title || __( 'Recommended resources', __i18n_text_domain__ ) }
 			</h3>
 			<ul
 				className="help-center-sibyl-articles__list"
 				aria-labelledby="help-center--contextual_help"
 			>
-				{ articles.map( ( article ) => {
-					if ( 'type' in article && [ 'video', 'tour' ].includes( article.type ) ) {
-						return;
-					}
+				{ articles.map( ( article, index ) => {
 					return (
-						<li key={ article.link }>
+						<li key={ article.link + index }>
 							<ConfigurableLink
-								to={ getPostUrl( article as Article, message ) }
-								external={ 'en' !== locale }
+								to={ article.url }
+								external={ article.is_external }
 								fullUrl={ article.link }
+								article={ article }
 							>
 								<Icon icon={ page } />
-								{ article.title }
+								<span>{ article.title }</span>
+								{ ( article as Article ).is_external && <Icon icon={ external } size={ 20 } /> }
 							</ConfigurableLink>
 						</li>
 					);

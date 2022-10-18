@@ -170,7 +170,7 @@ export class PeopleInviteDetails extends PureComponent {
 					<PageViewTracker path="/people/invites/:site/:invite" title="People > Invite Details" />
 					<EmptyContent
 						title={ this.props.translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);

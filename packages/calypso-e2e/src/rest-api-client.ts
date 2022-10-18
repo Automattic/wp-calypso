@@ -2,7 +2,7 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile } from './types';
+import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -451,6 +451,34 @@ export class RestAPIClient {
 	}
 
 	/**
+	 * Updates the user's settings.
+	 *
+	 * @param {SettingsParams} details Key/value attributes to be set for the user.
+	 * @returns { { [key: string]: string | number } } Generic object.
+	 * @throws {Error} If an unknown attribute or invalid value for a known attribute was provided.
+	 */
+	async setMySettings( details: SettingsParams ): Promise< { [ key: string ]: string | number } > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', `/me/settings` ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
 	 * Closes the account.
 	 *
 	 * Prior to the account being closed, this method performs
@@ -618,6 +646,38 @@ export class RestAPIClient {
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/media/new` ),
 			params as RequestParams
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Shopping Cart */
+
+	/**
+	 * Clears the shopping cart.
+	 *
+	 * @param {number} siteID Site that has the shopping cart.
+	 * @throws {Error} If the user doesn't have access to the siteID.
+	 * @returns {{success:true}} If the request was successful.
+	 */
+	async clearShoppingCart( siteID: number ): Promise< { success: true } > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/shopping-cart/clear` ),
+			params
 		);
 
 		if ( response.hasOwnProperty( 'error' ) ) {

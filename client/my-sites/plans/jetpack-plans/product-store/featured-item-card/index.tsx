@@ -10,6 +10,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 	description,
 	hero,
 	isCtaDisabled,
+	isCtaExternal,
 	onClickCta,
 	price,
 	title,
@@ -30,6 +31,7 @@ export const FeaturedItemCard: React.FC< FeaturedItemCardProps > = ( {
 						primary={ ctaAsPrimary }
 						onClick={ onClickCta }
 						disabled={ isCtaDisabled }
+						target={ isCtaExternal ? '_blank' : undefined }
 						href={ isCtaDisabled ? '#' : ctaHref }
 					>
 						{ ctaLabel }

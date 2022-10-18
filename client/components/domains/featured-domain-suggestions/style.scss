@@ -173,7 +173,7 @@
 
 body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
-	border-radius: 0; /* stylelint-disable-line scales/radii */
+	border-radius: 0;
 	margin: 0;
 	align-items: center;
 	background: #fff;
@@ -247,7 +247,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	&.featured-domain-suggestion--is-placeholder {
 		margin-bottom: 1px;
 		margin-top: 0;
-		border-radius: 0; /* stylelint-disable-line scales/radii */
+		border-radius: 0;
 		border-bottom: none;
 
 		@include break-mobile {

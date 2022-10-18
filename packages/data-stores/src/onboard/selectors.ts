@@ -14,6 +14,8 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
+export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
+export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;
 export const getIntent = ( state: State ) => state.intent;
 export const getStartingPoint = ( state: State ) => state.startingPoint;
 export const getStoreType = ( state: State ) => state.storeType;

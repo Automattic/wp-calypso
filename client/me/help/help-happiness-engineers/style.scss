@@ -9,12 +9,14 @@
 
 .help-happiness-engineers .form-section-heading {
 	@include breakpoint-deprecated( "<660px" ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font: 400 16px/21px $sans;
 	}
 }
 
 .help-happiness-engineers__description {
 	margin: -16px 0 12px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font: 14px/21px $sans;
 	color: var(--color-neutral-40);
 	@include breakpoint-deprecated( ">660px" ) {

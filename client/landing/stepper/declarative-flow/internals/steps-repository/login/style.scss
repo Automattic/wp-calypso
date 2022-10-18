@@ -6,11 +6,6 @@ $design-button-primary-color: var(--color-primary);
 $design-button-primary-hover-color: var(--color-primary-60);
 
 .step-container.login-step {
-	.components-text-control__input {
-		font-size: $font-body-small;
-		line-height: 17px;
-		max-width: 400px;
-	}
 
 	.login__submit-button {
 		background: $design-button-primary-color;
@@ -197,9 +192,9 @@ $design-button-primary-hover-color: var(--color-primary-60);
 	// Flexbox Col used for 2 column layout
 	.login__anchor-col {
 		display: flex;
+		flex: 1;
 		flex-direction: column;
 		flex-basis: 100%;
-		flex: 1;
 		justify-content: center;
 	}
 

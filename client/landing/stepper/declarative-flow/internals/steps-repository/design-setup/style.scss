@@ -1,11 +1,18 @@
 @import "@wordpress/components/build-style/style";
 @import "@automattic/onboarding/styles/mixins";
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints.scss";
+@import "@wordpress/base-styles/mixins.scss";
 
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
+$break-design-preview: 1024px;
+
+@mixin break-design-preview() {
+	@media (min-width: #{ ($break-design-preview) }) {
+		@content;
+	}
+}
 
 .design-setup {
 	.step-container {
@@ -73,7 +80,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 				margin: 0;
 
 				@include break-xlarge {
-					font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+					font-size: 2.75rem;
 				}
 			}
 
@@ -135,6 +142,8 @@ $design-button-primary-color: rgb(17, 122, 201);
 		// Grid
 		.design-picker__grid {
 			.design-picker__design-option {
+				background: transparent;
+				border: none;
 				padding: 0;
 			}
 
@@ -170,11 +179,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 				}
 			}
 
-			.design-picker__design-option {
-				background: transparent;
-				border: none;
-			}
-
 			.design-button-cover__button:not(.is-primary) {
 				border: 1px solid #c3c4c7;
 				background: #fff;
@@ -203,7 +207,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 				color: #101517;
 				font-size: 2rem;
 				font-weight: 400;
-				letter-spacing: -0.4px;
 				letter-spacing: 0.2px;
 				margin: 0;
 
@@ -255,7 +258,6 @@ $design-button-primary-color: rgb(17, 122, 201);
 			}
 
 			.web-preview__inner .spinner-line {
-				width: 100%;
 				width: calc(100% - 1px);
 				top: unset;
 				left: unset;
@@ -538,7 +540,7 @@ $design-button-primary-color: rgb(17, 122, 201);
 	.generated-design-picker__view-more {
 		border-radius: 4px;
 		font-weight: 500;
-		line-height: 1.25rem;
+		line-height: 20px;
 		margin: 8px 0 -6px;
 		width: 100%;
 		flex-shrink: 0;
@@ -577,6 +579,58 @@ $design-button-primary-color: rgb(17, 122, 201);
 		padding-inline-start: 0;
 		padding-inline-end: 0;
 
+		.action-buttons__title {
+			font-size: 0.875rem;
+			font-weight: 500;
+			line-height: 20px;
+
+			@include break-design-preview {
+				display: none;
+			}
+
+			.design-picker-design-title__container {
+				.premium-badge,
+				.woocommerce-bundled-badge {
+					display: none;
+
+					@include break-small {
+						display: inline-flex;
+					}
+				}
+			}
+		}
+
+		.step-container__navigation {
+			&.action-buttons {
+				bottom: 0;
+				inset-inline-start: 0;
+				inset-inline-end: 0;
+				padding: 0 20px;
+				position: fixed;
+				top: auto;
+
+				.navigation-link {
+					margin-top: -2px;
+				}
+
+				@include break-design-preview {
+					inset-inline-start: 72px;
+					inset-inline-end: 24px;
+					padding: 1px 0 0;
+					position: absolute;
+					top: 8px;
+
+					.navigation-link {
+						margin-top: 0;
+					}
+
+					button.is-primary {
+						display: none;
+					}
+				}
+			}
+		}
+
 		.step-container__header {
 			display: none;
 		}
@@ -585,9 +639,11 @@ $design-button-primary-color: rgb(17, 122, 201);
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
 			height: calc(100vh - 156px);
 			margin-top: 36px;
+			position: relative;
+			z-index: 1;
 		}
 
-		@include break-small {
+		@include break-design-preview {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;
