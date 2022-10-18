@@ -412,7 +412,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						type="submit"
 						className="add-subscriber__form-submit-btn"
 						isBusy={ inProgress }
-						disabled={ inProgress || ! submitBtnReady }
+						disabled={ ! submitBtnReady }
 					>
 						{ submitBtnName }
 					</NextButton>
