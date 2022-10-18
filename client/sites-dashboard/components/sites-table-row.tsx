@@ -37,6 +37,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
@@ -70,11 +72,15 @@ const ListTileSubtitle = styled.div`
 `;
 
 const SitePlan = styled.div`
-	display: flex;
-	line-height: 16px;
+	display: inline;
+	> * {
+		vertical-align: middle;
+		line-height: normal;
+	}
 `;
 
 const SitePlanIcon = styled.div`
+	display: inline-block;
 	margin-inline-end: 6px;
 `;
 
@@ -102,7 +108,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail site={ site } />
+							<SiteItemThumbnail displayMode="list" site={ site } />
 						</ListTileLeading>
 					}
 					title={
@@ -129,6 +135,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
+
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>

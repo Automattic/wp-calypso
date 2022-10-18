@@ -30,6 +30,7 @@ describe( '<SiteItemThumbnail>', () => {
 			test( 'site title can be multi-codepoint emoji', () => {
 				render(
 					<SiteItemThumbnail
+						displayMode="tile"
 						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
@@ -54,6 +55,7 @@ describe( '<SiteItemThumbnail>', () => {
 				// Without the Segmenter API we fall back to returning the first codepoint
 				render(
 					<SiteItemThumbnail
+						displayMode="tile"
 						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
@@ -65,17 +67,17 @@ describe( '<SiteItemThumbnail>', () => {
 
 function defineCommonSiteInitialTests() {
 	test( 'an English site title', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: 'hello' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'hello' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^h$/ );
 	} );
 
 	test( 'diacritic mark on first letter', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: 'öwl' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'öwl' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^ö$/ );
 	} );
 
 	test( 'empty site title renders no initial', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: '' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: '' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 
@@ -84,7 +86,7 @@ function defineCommonSiteInitialTests() {
 		// @ts-expect-error Let's artificially remove the title so it tries to render an empty string
 		testSite.title = undefined;
 
-		render( <SiteItemThumbnail site={ testSite } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ testSite } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 

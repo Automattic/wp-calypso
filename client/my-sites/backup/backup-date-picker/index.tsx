@@ -23,8 +23,8 @@ const CALENDAR_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_cale
 
 const onSpace =
 	( fn: () => void ) =>
-	( { key }: { key?: string } ) => {
-		if ( key === ' ' ) {
+	( { code }: { code?: string } ) => {
+		if ( code === 'Space' ) {
 			fn();
 		}
 	};
@@ -161,7 +161,12 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 						onClick={ goToPreviousDate }
 						onKeyDown={ onSpace( goToPreviousDate ) }
 					>
-						<Button compact borderless className="backup-date-picker__button--previous">
+						<Button
+							compact
+							borderless
+							className="backup-date-picker__button--previous"
+							aria-label={ translate( 'Go to previous date' ) }
+						>
 							<Gridicon
 								icon="chevron-left"
 								className={ ! canGoToPreviousDate ? 'disabled' : undefined }
@@ -197,7 +202,12 @@ const BackupDatePicker: FC< Props > = ( { selectedDate, onDateChange } ) => {
 								{ nextDisplayDate }
 							</span>
 
-							<Button compact borderless className="backup-date-picker__button--next">
+							<Button
+								compact
+								borderless
+								className="backup-date-picker__button--next"
+								aria-label={ translate( 'Go to next date' ) }
+							>
 								<Gridicon
 									icon="chevron-right"
 									className={ ! canGoToNextDate ? 'disabled' : undefined }

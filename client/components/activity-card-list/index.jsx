@@ -19,6 +19,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getRewindPoliciesRequestStatus from 'calypso/state/rewind/selectors/get-rewind-policies-request-status';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import VisibleDaysLimitUpsell from './visible-days-limit-upsell';
 
@@ -311,7 +312,8 @@ class ActivityCardList extends Component {
 	}
 
 	render() {
-		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs } = this.props;
+		const { requestingRewindPolicies, rewindPoliciesRequestError, siteId, logs, isAtomic } =
+			this.props;
 
 		if ( rewindPoliciesRequestError ) {
 			return this.renderLoading();
@@ -322,7 +324,7 @@ class ActivityCardList extends Component {
 				<QueryRewindPolicies siteId={ siteId } />
 				<QueryRewindCapabilities siteId={ siteId } />
 				<QueryRewindState siteId={ siteId } />
-				<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+				{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 				{ ( ! logs || requestingRewindPolicies ) && this.renderLoading() }
 				{ logs && this.renderData() }
@@ -341,6 +343,8 @@ const mapStateToProps = ( state ) => {
 
 	const rewindPoliciesRequestStatus = getRewindPoliciesRequestStatus( state, siteId );
 
+	const isAtomic = isSiteAutomatedTransfer( state, siteId );
+
 	return {
 		filter,
 		requestingRewindPolicies: rewindPoliciesRequestStatus === 'pending',
@@ -349,6 +353,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteSlug,
 		userLocale,
+		isAtomic,
 	};
 };
 
