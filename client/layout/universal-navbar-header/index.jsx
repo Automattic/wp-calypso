@@ -1,11 +1,13 @@
 import './nav-style.scss';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import UniversalNavbarBtnMenuItem from 'calypso/layout/universal-navbar-header/btn-menu-item.jsx';
 import UniversalNavbarLiMenuItem from 'calypso/layout/universal-navbar-header/li-menu-item.jsx';
 
 const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
+	const [ isMobileMenuOpen, setMobileMenuOpen ] = useState( false );
 
 	return (
 		<div>
@@ -213,6 +215,7 @@ const UniversalNavbarHeader = () => {
 											className="x-nav-link x-nav-link__menu x-link"
 											aria-haspopup="true"
 											aria-expanded="false"
+											onClick={ () => setMobileMenuOpen( true ) }
 										>
 											<span className="x-hidden">{ translate( 'Menu' ) }</span>
 											<span className="x-icon x-icon__menu">
@@ -230,14 +233,18 @@ const UniversalNavbarHeader = () => {
 
 					{ /*<!-- Mobile menu starts here. -->*/ }
 					<div
-						className="x-menu"
+						className={ isMobileMenuOpen ? 'x-menu x-menu__active x-menu__open' : 'x-menu' }
 						role="menu"
 						aria-label={ translate( 'WordPress.com Navigation Menu' ) }
 						aria-hidden="true"
 					>
 						<div className="x-menu-overlay"></div>
 						<div className="x-menu-content">
-							<button className="x-menu-button x-link" tabIndex="-1">
+							<button
+								className="x-menu-button x-link"
+								onClick={ () => setMobileMenuOpen( false ) }
+								tabIndex="-1"
+							>
 								<span className="x-hidden">{ translate( 'Close the navigation menu' ) }</span>
 								<span className="x-icon x-icon__close">
 									<span></span>

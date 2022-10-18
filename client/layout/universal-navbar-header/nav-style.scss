@@ -1,7 +1,3 @@
-/*
- * Navigation bar
- */
-
 .x-hidden {
 	border: 0;
 	clip: rect(0 0 0 0);
@@ -39,6 +35,7 @@
 
 .x-icon__close {
 	width: 36px;
+	cursor: pointer;
 
 	span {
 		position: absolute;
@@ -51,12 +48,12 @@
 }
 
 .x-icon__close span + span {
-    transform: rotate(-45deg);
+	transform: rotate(-45deg);
 }
 
 .x-icon__menu {
-    width: 26px;
-    padding-top: 10px;
+	width: 26px;
+	padding-top: 10px;
 }
 
 .x-icon,
@@ -72,10 +69,10 @@
 	position: relative;
 }
 .x-icon span {
-    display: block;
-    height: 2px;
-    background: currentcolor;
-    color: inherit;
+	display: block;
+	height: 2px;
+	background: currentcolor;
+	color: inherit;
 	margin-bottom: 6px;
 }
 
@@ -412,12 +409,10 @@ $x-dropdown-item-line-height: 19px;
 	opacity: 0;
 	pointer-events: none;
 	left: -60px;
-
-    background: #fff;
-    border-radius: 9px;
-    box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
-    position: absolute;
-    width: 210px;
+	background: #fff;
+	border-radius: 9px;
+	box-shadow: 0 9px 48px rgb(16 21 23 / 25%);
+	width: 210px;
 
 	&[aria-hidden="false"] { /* 2 */
 		z-index: 1;
@@ -428,7 +423,7 @@ $x-dropdown-item-line-height: 19px;
 		@extend %x-list;
 	}
 
-	&:before {
+	&::before {
 		background: inherit;
 		border-radius: 3px;
 		content: "";
