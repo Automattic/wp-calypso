@@ -75,7 +75,7 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					{ isHomepage && (
 						<InfoPopover position="right">
 							{ translate(
-								'The homepage is showing your Home template and only “Edit”, “View page” and “Copy link” are allowed. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								'The homepage of your site displays the Home template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 								{
 									components: {
 										learnMoreLink: (
