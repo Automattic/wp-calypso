@@ -13,6 +13,7 @@ interface PreviewProps {
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
 	recordDeviceClick: ( device: string ) => void;
+	showPremiumBadge: () => React.ReactNode;
 }
 
 const INJECTED_CSS = `body{ transition: background-color 0.2s linear, color 0.2s linear; };`;
@@ -29,6 +30,7 @@ const Preview: React.FC< PreviewProps > = ( {
 	onSelectVariation,
 	actionButtons,
 	recordDeviceClick,
+	showPremiumBadge,
 } ) => {
 	const sitePreviewInlineCss = useMemo( () => {
 		if ( selectedVariation ) {
@@ -51,6 +53,7 @@ const Preview: React.FC< PreviewProps > = ( {
 				selectedVariation={ selectedVariation }
 				onSelectVariation={ onSelectVariation }
 				actionButtons={ actionButtons }
+				showPremiumBadge={ showPremiumBadge }
 			/>
 			<SitePreview
 				url={ previewUrl }

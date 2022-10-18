@@ -4,10 +4,6 @@ import Preview from '@wordpress/edit-site/build-module/components/global-styles/
 import { useMemo } from '@wordpress/element';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-// eslint-disable-next-line no-restricted-imports
-import PremiumBadge from 'calypso/components/premium-badge';
-// eslint-disable-next-line no-restricted-imports
-import { usePremiumGlobalStyles } from 'calypso/lib/premium-global-styles/use-premium-global-styles';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
@@ -20,6 +16,7 @@ interface StyleVariationPreviewProps {
 	isSelected: boolean;
 	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
+	showPremiumBadge: () => React.ReactNode;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
@@ -28,6 +25,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	isSelected,
 	isPremium,
 	onClick,
+	showPremiumBadge,
 } ) => {
 	const context = useMemo( () => {
 		return {
@@ -39,7 +37,6 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 			merged: mergeBaseAndUserConfigs( base, variation ),
 		};
 	}, [ variation, base ] );
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	return (
 		<div className="design-preview__style-variation-wrapper">
@@ -58,13 +55,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 			>
-				{ shouldLimitGlobalStyles && isPremium && (
-					<PremiumBadge
-						tooltipText={ translate(
-							'You can try this premium style out before upgrading your plan.'
-						) }
-					/>
-				) }
+				{ isPremium && showPremiumBadge }
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview label={ variation.title } />
 				</GlobalStylesContext.Provider>
@@ -77,12 +68,14 @@ interface StyleVariationPreviewsProps {
 	variations: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
+	showPremiumBadge: () => React.ReactNode;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	variations = [],
 	selectedVariation,
 	onClick,
+	showPremiumBadge,
 } ) => {
 	const selectedVariationSlug = selectedVariation?.slug ?? DEFAULT_VARIATION_SLUG;
 	const base = useMemo(
@@ -100,6 +93,7 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					isSelected={ variation.slug === selectedVariationSlug }
 					isPremium={ variation.slug !== DEFAULT_VARIATION_SLUG }
 					onClick={ onClick }
+					showPremiumBadge={ showPremiumBadge }
 				/>
 			) ) }
 		</>

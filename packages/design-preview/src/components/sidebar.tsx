@@ -9,6 +9,7 @@ interface SidebarProps {
 	selectedVariation?: StyleVariation;
 	onSelectVariation: ( variation: StyleVariation ) => void;
 	actionButtons: React.ReactNode;
+	showPremiumBadge: () => React.ReactNode;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -18,6 +19,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	selectedVariation,
 	onSelectVariation,
 	actionButtons,
+	showPremiumBadge,
 } ) => {
 	return (
 		<div className="design-preview__sidebar">
@@ -40,6 +42,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 							variations={ variations }
 							selectedVariation={ selectedVariation }
 							onClick={ onSelectVariation }
+							showPremiumBadge={ showPremiumBadge }
 						/>
 					</div>
 				</div>
