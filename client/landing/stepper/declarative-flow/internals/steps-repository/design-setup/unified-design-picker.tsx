@@ -413,7 +413,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
-	function showPremiumBadge() {
+	function showGlobalStylesPremiumBadge() {
 		if ( ! shouldLimitGlobalStyles ) {
 			return;
 		}
@@ -493,7 +493,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
-						showPremiumBadge={ showPremiumBadge }
+						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				) : (
 					<WebPreview
