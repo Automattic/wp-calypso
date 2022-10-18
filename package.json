@@ -186,7 +186,6 @@
 		"@wordpress/url": "^3.10.0",
 		"backstopjs": "5.1.0",
 		"browserslist": "^4.16.0",
-		"bufferutil": "^4.0.6",
 		"calypso": "workspace:^",
 		"calypso-codemods": "workspace:^",
 		"config": "^3.3.6",
@@ -204,7 +203,6 @@
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"request": "^2.88.2",
-		"utf-8-validate": "^5.0.9",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
@@ -295,11 +293,7 @@
 		"@automattic/newspack-blocks/swiper@4.5.1": "patch:swiper@4.5.1#.patches/swiper@4.5.1.diff",
 		"@automattic/newspack-blocks/prettier": "npm:wp-prettier@2.6.2-beta-1",
 		"@types/react": "^17.0.39",
-		"keytar@npm:7.7.0/node-addon-api": "3.1.0",
-		"lzma-native": "^8.0.5",
-		"decimal.js": "^10.4.2",
-		"node-gyp-build": "^4.5.0",
-		"psl": "^1.9.0"
+		"keytar@npm:7.7.0/node-addon-api": "3.1.0"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
