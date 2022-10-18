@@ -695,7 +695,7 @@ export default function CheckoutMain( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"

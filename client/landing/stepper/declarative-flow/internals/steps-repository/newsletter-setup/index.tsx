@@ -13,7 +13,7 @@ import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 import './style.scss';
 
-const defaultAccentColor = {
+export const defaultAccentColor = {
 	hex: '#1D39EB',
 	rgb: { r: 29, g: 57, b: 235 },
 	default: true,
@@ -94,13 +94,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 	return (
 		<StepContainer
-			stepName={ 'newsletter-setup' }
+			stepName="newsletter-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'newsletter' }
+			flowName="newsletter"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'newsletter-setup-header' }
+					id="newsletter-setup-header"
 					headerText={ createInterpolateElement(
 						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
 							? __( 'Set up your<br />Newsletter' )
@@ -109,7 +109,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							br: <br />,
 						}
 					) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={

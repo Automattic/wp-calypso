@@ -70,7 +70,9 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function handleRunFlagChange() {
-		if ( ! run ) return;
+		if ( ! run ) {
+			return;
+		}
 
 		switch ( job?.importerState ) {
 			case appStates.IMPORT_SUCCESS:

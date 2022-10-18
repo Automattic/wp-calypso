@@ -18,13 +18,12 @@
 }
 
 .site-picker__site-drawer {
-	width: 100%;
 	width: calc(100% - 34px);
 	box-shadow: 2px 2px 6px -4px rgba(66, 68, 90, 0.5);
 	max-height: 300px;
 	overflow-y: auto;
 	position: absolute;
-	background: white;
+	background: var(--studio-white);
 	transform-origin: 0 0;
 	margin: 0;
 	border: 1px solid #c3c4c7;

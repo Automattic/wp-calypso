@@ -105,7 +105,7 @@ class ThemePreview extends Component {
 
 		return (
 			<div>
-				{ <QueryCanonicalTheme siteId={ siteId } themeId={ themeId } /> }
+				<QueryCanonicalTheme siteId={ siteId } themeId={ themeId } />
 				{ children }
 				{ demoUrl && (
 					<WebPreview

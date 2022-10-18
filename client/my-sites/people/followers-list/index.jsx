@@ -52,6 +52,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 			isFetching={ isLoading }
 			isFetchingNextPage={ isFetchingNextPage }
 			totalFollowers={ data?.total }
+			refetch={ refetch }
 			fetchNextPage={ fetchNextPage }
 			hasNextPage={ hasNextPage }
 			removeFollower={ removeFollower }

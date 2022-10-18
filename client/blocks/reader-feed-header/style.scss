@@ -28,6 +28,7 @@
 	padding-bottom: 16px;
 	img,
 	.site-icon.is-blank {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 	}
 }
@@ -46,6 +47,7 @@
 	font-family: $serif;
 	font-size: $font-title-large;
 	font-weight: 600;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 2.5rem;
 	justify-content: center;
 	margin-bottom: 19px;
@@ -159,6 +161,7 @@
 
 	.reader-feed-header__details {
 		align-self: stretch;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.0625em;
 		overflow: hidden;
 		text-align: center;

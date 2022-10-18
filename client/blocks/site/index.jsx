@@ -11,10 +11,16 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteSlug,
+	isSitePreviewable,
+	getSiteOption,
+} from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -115,7 +121,7 @@ class Site extends Component {
 	};
 
 	render() {
-		const { isSiteUnlaunched, site, translate } = this.props;
+		const { isSiteUnlaunched, site, translate, isAtomicAndEditingToolkitDeactivated } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -137,7 +143,8 @@ class Site extends Component {
 
 		// We show public coming soon badge only when the site is not private.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
-		const shouldShowPublicComingSoonSiteBadge = ! site.is_private && this.props.site.is_coming_soon;
+		const shouldShowPublicComingSoonSiteBadge =
+			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
@@ -238,6 +245,9 @@ function mapStateToProps( state, ownProps ) {
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		isSiteP2: isSiteWPForTeams( state, siteId ),
 		isP2Hub: isSiteP2Hub( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated:
+			isAtomicSite( state, siteId ) &&
+			getSiteOption( state, siteId, 'editing_toolkit_is_active' ) === false,
 	};
 }
 

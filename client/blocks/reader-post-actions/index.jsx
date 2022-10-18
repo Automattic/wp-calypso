@@ -100,7 +100,7 @@ const ReaderPostActions = ( props ) => {
 						forceCounter={ true }
 						iconSize={ iconSize }
 						showZeroCount={ false }
-						likeSource={ 'reader' }
+						likeSource="reader"
 					/>
 				</li>
 			) }

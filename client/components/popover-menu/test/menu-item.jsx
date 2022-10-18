@@ -11,17 +11,17 @@ describe( 'PopoverMenuItem', () => {
 	} );
 
 	test( 'should be a div if the itemComponent prop is provided', () => {
-		const { container } = render( <PopoverMenuItem itemComponent={ 'div' } /> );
+		const { container } = render( <PopoverMenuItem itemComponent="div" /> );
 		expect( container.firstChild.tagName ).toEqual( 'DIV' );
 	} );
 
 	test( 'should be a link if the href prop is set', () => {
-		const { container } = render( <PopoverMenuItem href={ 'xyz' } /> );
+		const { container } = render( <PopoverMenuItem href="xyz" /> );
 		expect( container.firstChild.tagName ).toEqual( 'A' );
 	} );
 
 	test( 'should be an ExternalLink if the isExternalLink prop is true and the href prop is set', () => {
-		const { container } = render( <PopoverMenuItem isExternalLink={ true } href={ 'xyz' } /> );
+		const { container } = render( <PopoverMenuItem isExternalLink={ true } href="xyz" /> );
 		expect( container.firstChild.tagName ).toEqual( 'A' );
 		expect( container.firstChild.getAttribute( 'target' ) ).toEqual( '_blank' );
 	} );

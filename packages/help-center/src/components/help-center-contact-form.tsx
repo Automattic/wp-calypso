@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
@@ -15,7 +16,7 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
-import { TextControl, CheckboxControl } from '@wordpress/components';
+import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -118,6 +119,26 @@ function useFormTitles( mode: Mode ): {
 		},
 	}[ mode ];
 }
+
+const getSupportedLanguages = ( supportType: string, locale: string ) => {
+	const isLiveChatLanguageSupported = (
+		config( 'livechat_support_locales' ) as Array< string >
+	 ).includes( locale );
+
+	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+		locale
+	);
+
+	switch ( supportType ) {
+		case 'CHAT':
+			return ! isLiveChatLanguageSupported;
+		case 'EMAIL':
+			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
+
+		default:
+			return false;
+	}
+};
 
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
@@ -281,6 +302,7 @@ export const HelpCenterContactForm = () => {
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: overflow,
+						source: 'help-center',
 						blog_url: supportSite.URL,
 					} )
 						.then( () => {
@@ -361,6 +383,8 @@ export const HelpCenterContactForm = () => {
 			</>
 		);
 	};
+
+	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
 
 	const isCTADisabled = () => {
 		if ( isSubmitting || ! message || ownershipStatusLoading ) {
@@ -529,6 +553,9 @@ export const HelpCenterContactForm = () => {
 				>
 					{ getCTALabel() }
 				</Button>
+				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
+					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+				) }
 				{ hasSubmittingError && (
 					<FormInputValidation
 						isError

@@ -83,8 +83,8 @@ export default function SiteOptionsStep( props: Props ) {
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
-			subHeaderText={ '' }
-			fallbackSubHeaderText={ '' }
+			subHeaderText=""
+			fallbackSubHeaderText=""
 			headerImageUrl={ headerImage }
 			stepContent={
 				<SiteOptions
@@ -97,8 +97,8 @@ export default function SiteOptionsStep( props: Props ) {
 					onSubmit={ submitSiteOptions }
 				/>
 			}
-			align={ 'left' }
-			skipButtonAlign={ 'top' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout={ true }
 			defaultDependencies={ {

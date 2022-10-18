@@ -188,7 +188,7 @@ export class PlanFeatures extends Component {
 				{ activeDiscount.plansPageNoticeTextTitle && (
 					<strong>
 						{ activeDiscount.plansPageNoticeTextTitle }
-						{ <br /> }
+						<br />
 					</strong>
 				) }
 				{ activeDiscount.plansPageNoticeText }
@@ -696,7 +696,7 @@ export class PlanFeatures extends Component {
 			return (
 				<PlanFeaturesActionsWrapper
 					canPurchase={ canPurchase }
-					className={ 'is-top-buttons' }
+					className="is-top-buttons"
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					handleUpgradeClick={ this.handleUpgradeClick }
 					isInSignup={ isInSignup }
@@ -828,7 +828,7 @@ export class PlanFeatures extends Component {
 			return (
 				<PlanFeaturesActionsWrapper
 					canPurchase={ canPurchase }
-					className={ 'is-bottom-buttons' }
+					className="is-bottom-buttons"
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					handleUpgradeClick={ this.handleUpgradeClick }
 					isInSignup={ isInSignup }

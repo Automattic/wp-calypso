@@ -17,6 +17,7 @@ export const PRODUCT_JETPACK_SCAN_REALTIME_MONTHLY = 'jetpack_scan_realtime_mont
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_SEARCH = 'jetpack_search';
+export const PRODUCT_JETPACK_SEARCH_FREE = 'jetpack_search_free';
 export const PRODUCT_JETPACK_SEARCH_MONTHLY = 'jetpack_search_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
@@ -54,7 +55,10 @@ export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 ];
-
+export const JETPACK_BACKUP_T2_PRODUCTS = <const>[
+	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+];
 // Boost
 export const JETPACK_BOOST_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BOOST,
@@ -261,6 +265,10 @@ export const JETPACK_SECURITY_T1_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 ];
 
+export const JETPACK_SECURITY_T2_PLANS = <const>[
+	PLAN_JETPACK_SECURITY_T2_MONTHLY,
+	PLAN_JETPACK_SECURITY_T2_YEARLY,
+];
 // Complete
 export const JETPACK_COMPLETE_PLANS = <const>[
 	PLAN_JETPACK_COMPLETE,

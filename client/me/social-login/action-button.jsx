@@ -138,7 +138,7 @@ class SocialLoginActionButton extends Component {
 					clientId={ config( 'google_oauth_client_id' ) }
 					onClick={ this.handleButtonClick }
 					responseHandler={ this.handleSocialServiceResponse }
-					startingPoint={ 'account-social-connect' }
+					startingPoint="account-social-connect"
 				>
 					{ actionButton }
 				</GoogleSocialButton>

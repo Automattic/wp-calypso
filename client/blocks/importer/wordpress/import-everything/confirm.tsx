@@ -64,7 +64,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 							<div className={ classnames( 'import_site-mapper-name with-favicon' ) }>
 								{ sourceUrlAnalyzedData?.meta.favicon && (
 									<div className={ classnames( 'site-icon' ) }>
-										<img alt={ 'Icon' } src={ sourceUrlAnalyzedData?.meta.favicon } />
+										<img alt="Icon" src={ sourceUrlAnalyzedData?.meta.favicon } />
 									</div>
 								) }
 								{ ! sourceUrlAnalyzedData?.meta.favicon && <SiteIcon siteId={ sourceSite?.ID } /> }

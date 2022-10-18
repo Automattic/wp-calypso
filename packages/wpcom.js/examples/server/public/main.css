@@ -15,7 +15,7 @@ h2 {
 
 h2.err {
 	background-color: #fee;
-	color: red;
+	color: var(--color-error);
 	padding: 5px 20px;
 }
 

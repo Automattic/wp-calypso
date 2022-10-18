@@ -72,6 +72,7 @@ class WordAds extends Component {
 	// getDerivedStateFromProps will set the state both on init and tab switch
 	state = {
 		activeTab: null,
+		activeLegend: null,
 	};
 
 	static getDerivedStateFromProps( props, state ) {
@@ -82,9 +83,15 @@ class WordAds extends Component {
 		if ( activeTab !== state.activeTab ) {
 			return {
 				activeTab,
+				activeLegend: activeTab.legendOptions || [],
 			};
 		}
 		return null;
+	}
+
+	getAvailableLegend() {
+		const activeTab = getActiveTab( this.props.chartTab );
+		return activeTab.legendOptions || [];
 	}
 
 	barClick = ( bar ) => {
@@ -92,6 +99,8 @@ class WordAds extends Component {
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
+
+	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
 
 	switchChart = ( tab ) => {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
@@ -147,7 +156,7 @@ class WordAds extends Component {
 				{ canAccessAds && (
 					<Fragment>
 						<StatsNavigation
-							selectedItem={ 'wordads' }
+							selectedItem="wordads"
 							interval={ period }
 							siteId={ siteId }
 							slug={ slug }
@@ -155,6 +164,9 @@ class WordAds extends Component {
 						<div id="my-stats-content" className="wordads">
 							<WordAdsChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
 								barClick={ this.barClick }
 								switchTab={ this.switchChart }
 								charts={ CHARTS }

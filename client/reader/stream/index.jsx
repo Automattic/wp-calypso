@@ -75,7 +75,7 @@ class ReaderStream extends Component {
 		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: true,
+		showPrimaryFollowButtonOnCards: false,
 		isDiscoverStream: false,
 		isMain: true,
 		useCompactCards: false,

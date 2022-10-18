@@ -24,7 +24,7 @@ import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
-const wpAdminPath = 'wp-admin/themes.php';
+const wpAdminPath = 'wp-admin/site-editor.php';
 
 const selectors = {
 	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,

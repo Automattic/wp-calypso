@@ -1,11 +1,15 @@
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+/**
+ * @jest-environment jsdom
+ */
 
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 	getSitePlanRawPrice: jest.fn(),
+} ) );
+
+jest.mock( 'calypso/components/marketing-message', () => () => null );
+jest.mock( 'calypso/lib/discounts', () => ( {
+	getDiscountByName: jest.fn(),
 } ) );
 
 import {
@@ -25,15 +29,32 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { screen } from '@testing-library/react';
 import ReactDOM from 'react-dom';
+import { getDiscountByName } from 'calypso/lib/discounts';
+import activePromotions from 'calypso/state/active-promotions/reducer';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 } from 'calypso/state/sites/plans/selectors';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
 
 const identity = ( x ) => x;
+
+const render = ( el, options ) =>
+	renderWithProvider(
+		<>
+			<div className="plans-features-main__notice" data-testid="mock-notice-wrapper" />
+			{ el }
+		</>,
+		{
+			reducers: {
+				activePromotions,
+			},
+			...options,
+		}
+	);
 
 describe( 'isPrimaryUpgradeByPlanDelta', () => {
 	test( 'Should return true when called with blogger and personal plan', () => {
@@ -95,49 +116,46 @@ describe( 'isPrimaryUpgradeByPlanDelta', () => {
 
 describe( 'PlanFeatures.renderUpgradeDisabledNotice', () => {
 	const baseProps = {
+		planProperties: [],
+		recordTracksEvent: jest.fn(),
 		translate: identity,
 	};
 
 	const originalCreatePortal = ReactDOM.createPortal;
 	beforeAll( () => {
 		ReactDOM.createPortal = ( elem ) => elem;
+		// Necessary to trick `PlanFeatures.getBannerContainer()` into retrieving the notice container.
+		jest.spyOn( document, 'querySelector' ).mockImplementation( ( selector ) => {
+			switch ( selector ) {
+				case '.plans-features-main__notice': {
+					return <div />;
+				}
+			}
+		} );
 	} );
 
 	afterAll( () => {
 		ReactDOM.createPortal = originalCreatePortal;
+		document.querySelector.mockRestore();
 	} );
-
-	const createInstance = ( props ) => {
-		const instance = new PlanFeatures( props );
-		instance.getBannerContainer = () => <div />;
-
-		return instance;
-	};
 
 	test( 'Should display a notice when component is fully rendered and user is unable to buy a plan', () => {
-		const instance = createInstance( {
-			...baseProps,
-			hasPlaceholders: false,
-			canPurchase: false,
-		} );
-		const wrapper = shallow( instance.renderUpgradeDisabledNotice() );
-		expect( wrapper.find( '.plan-features__notice' ).length ).toBe( 1 );
+		render( <PlanFeatures { ...baseProps } hasPlaceholders={ false } canPurchase={ false } /> );
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent(
+			'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
+		);
 	} );
+
 	test( 'Should not display a notice when component is not fully rendered yet', () => {
-		const instance = createInstance( {
-			...baseProps,
-			hasPlaceholders: true,
-			canPurchase: false,
-		} );
-		expect( instance.renderUpgradeDisabledNotice() ).toBe( null );
+		render( <PlanFeatures { ...baseProps } hasPlaceholders canPurchase={ false } /> );
+
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 	test( 'Should not display a notice when user is able to buy a plan', () => {
-		const instance = createInstance( {
-			...baseProps,
-			hasPlaceholders: false,
-			canPurchase: true,
-		} );
-		expect( instance.renderUpgradeDisabledNotice() ).toBe( null );
+		render( <PlanFeatures { ...baseProps } hasPlaceholders={ false } canPurchase /> );
+
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -220,74 +238,87 @@ describe( 'calculatePlanCredits', () => {
 } );
 
 describe( 'PlanFeatures.renderCreditNotice', () => {
+	const noticeText = 'Foo bar';
 	const baseProps = {
 		translate: identity,
 		canPurchase: true,
 		hasPlaceholders: false,
 		planCredits: 5,
-		planProperties: [
-			{ currencyCode: 'USD', planName: 'test-bundle', availableForPurchase: true },
-		],
+		planProperties: [],
 		showPlanCreditsApplied: true,
 		isJetpack: false,
 		isSiteAT: false,
-	};
-
-	const createInstance = ( props ) => {
-		const instance = new PlanFeatures( props );
-		instance.getBannerContainer = () => <div />;
-
-		return instance;
+		recordTracksEvent: jest.fn(),
 	};
 
 	const originalCreatePortal = ReactDOM.createPortal;
-	beforeAll( () => {
+	beforeEach( () => {
 		ReactDOM.createPortal = ( elem ) => elem;
+		jest.spyOn( document, 'querySelector' ).mockImplementation( ( selector ) => {
+			switch ( selector ) {
+				case '.plans-features-main__notice': {
+					return <div />;
+				}
+			}
+		} );
+		getDiscountByName.mockImplementation( () => {
+			return null;
+		} );
 	} );
 
-	afterAll( () => {
+	afterEach( () => {
 		ReactDOM.createPortal = originalCreatePortal;
 	} );
 
 	test( 'Should display a credit notice when rendering a purchasable discounted plan', () => {
-		const instance = createInstance( baseProps );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).not.toBe( null );
+		getDiscountByName.mockImplementation( () => {
+			return {
+				plansPageNoticeTextTitle: noticeText,
+			};
+		} );
 
-		const wrapper = shallow( notice );
-		expect( wrapper.find( '.plan-features__notice-credits' ).length ).toBe( 1 );
+		render( <PlanFeatures { ...baseProps } /> );
+
+		const notice = screen.getByRole( 'status' );
+		expect( notice ).toHaveTextContent( noticeText );
+		expect( notice ).toHaveClass( 'plan-features__notice-credits' );
 	} );
 
 	test( 'Should not display a credit notice when rendering a non-purchasable plan', () => {
-		const instance = createInstance( { ...baseProps, canPurchase: false } );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).toBe( null );
+		render( <PlanFeatures { ...baseProps } canPurchase={ false } /> );
+
+		expect( screen.getByRole( 'status' ) ).not.toHaveClass( 'plan-features__notice-credits' );
 	} );
 
 	test( 'Should not display a credit notice when placeholders are still being displayed', () => {
-		const instance = createInstance( { ...baseProps, hasPlaceholders: true } );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).toBe( null );
+		render( <PlanFeatures { ...baseProps } hasPlaceholders /> );
+
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display a credit notice when showPlanCreditsApplied is false', () => {
-		const instance = createInstance( { ...baseProps, showPlanCreditsApplied: false } );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).toBe( null );
+		render( <PlanFeatures { ...baseProps } showPlanCreditsApplied={ false } /> );
+
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display a credit notice when planCredits.amount is 0', () => {
-		const instance = createInstance( { ...baseProps, planCredits: 0 } );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).toBe( null );
+		render( <PlanFeatures { ...baseProps } planCredits={ 0 } /> );
+
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should display a credit notice for an atomic site on a Business plan', () => {
-		const instance = createInstance( { ...baseProps, isJetpack: true, isSiteAT: true } );
-		const notice = instance.renderCreditNotice();
-		expect( notice ).not.toBe( null );
+		getDiscountByName.mockImplementation( () => {
+			return {
+				plansPageNoticeTextTitle: noticeText,
+			};
+		} );
 
-		const wrapper = shallow( notice );
-		expect( wrapper.find( '.plan-features__notice-credits' ).length ).toBe( 1 );
+		render( <PlanFeatures { ...baseProps } isJetpack isSiteAT /> );
+
+		const notice = screen.getByRole( 'status' );
+		expect( notice ).toHaveTextContent( noticeText );
+		expect( notice ).toHaveClass( 'plan-features__notice-credits' );
 	} );
 } );

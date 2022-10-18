@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -7,11 +8,23 @@ import { connect } from 'react-redux';
 import Count from 'calypso/components/count';
 import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import AllSitesIcon from './all-sites-icon';
 
 import './style.scss';
 
 const noop = () => {};
+
+const IconContainer = styled.div( {
+	alignItems: 'center',
+	alignSelf: 'center',
+	borderRadius: 0,
+	display: 'inline-flex',
+	marginInlineEnd: '8px',
+	padding: 0,
+	height: '32px',
+	width: '32px',
+	justifyContent: 'center',
+	color: 'var(--color-sidebar-text)',
+} );
 
 class AllSites extends Component {
 	static defaultProps = {
@@ -20,6 +33,7 @@ class AllSites extends Component {
 		isSelected: false,
 		isHighlighted: false,
 		showCount: true,
+		showIcon: false,
 		domain: '',
 	};
 
@@ -29,7 +43,9 @@ class AllSites extends Component {
 		isSelected: PropTypes.bool,
 		isHighlighted: PropTypes.bool,
 		showCount: PropTypes.bool,
+		showIcon: PropTypes.bool,
 		count: PropTypes.number,
+		icon: PropTypes.node,
 		title: PropTypes.string,
 		domain: PropTypes.string,
 		onMouseEnter: PropTypes.func,
@@ -40,12 +56,19 @@ class AllSites extends Component {
 		this.props.onSelect( event );
 	};
 
+	renderIcon() {
+		if ( ! this.props.icon ) {
+			return null;
+		}
+		return <IconContainer>{ this.props.icon }</IconContainer>;
+	}
+
 	renderSiteCount() {
 		return <Count count={ this.props.count } />;
 	}
 
 	render() {
-		const { title, href, domain, sites, translate, isHighlighted, isSelected, showCount } =
+		const { title, href, domain, translate, isHighlighted, isSelected, showCount, showIcon } =
 			this.props;
 
 		// Note: Update CSS selectors in SiteSelector.scrollToHighlightedSite() if the class names change.
@@ -65,12 +88,12 @@ class AllSites extends Component {
 					onClick={ this.onSelect }
 				>
 					{ showCount && this.renderSiteCount() }
+					{ showIcon && this.renderIcon() }
 					<div className="all-sites__info site__info">
 						<span className="all-sites__title site__title">
 							{ title || translate( 'All My Sites' ) }
 						</span>
 						{ domain && <span className="all-sites__domain site__domain">{ domain }</span> }
-						<AllSitesIcon sites={ sites } />
 					</div>
 				</a>
 			</div>
@@ -82,14 +105,10 @@ class AllSites extends Component {
 const isSiteVisible = ( { visible = true } ) => visible;
 
 export default connect( ( state, props ) => {
-	// If sites or count are not specified as props, fetch the default values from Redux
-	const { sites = getSites( state ), userSitesCount = getCurrentUserVisibleSiteCount( state ) } =
-		props;
-
-	const visibleSites = sites?.filter( isSiteVisible );
+	const visibleSites = getSites( state )?.filter( isSiteVisible );
+	const userSitesCount = props.count ?? getCurrentUserVisibleSiteCount( state );
 
 	return {
-		sites: config.isEnabled( 'realtime-site-count' ) ? visibleSites : sites,
 		count: config.isEnabled( 'realtime-site-count' ) ? visibleSites.length : userSitesCount,
 	};
 } )( localize( AllSites ) );

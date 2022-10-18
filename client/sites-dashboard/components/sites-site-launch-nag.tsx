@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -41,6 +41,12 @@ const SiteLaunchNagLink = styled.a( {
 	},
 } );
 
+const SiteLaunchNagText = styled.span( {
+	overflow: 'hidden',
+	whiteSpace: 'normal',
+	textOverflow: 'ellipsis',
+} );
+
 const SiteLaunchDonut = () => {
 	return (
 		<SiteLaunchDonutContainer>
@@ -76,15 +82,13 @@ const SiteLaunchDonut = () => {
 
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
-	const { ref, inView } = useInView();
-	const hasRecordedInView = useRef( false );
+	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
 
 	useEffect( () => {
-		if ( inView && ! hasRecordedInView.current ) {
+		if ( inViewOnce ) {
 			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
-			hasRecordedInView.current = true;
 		}
-	}, [ inView ] );
+	}, [ inViewOnce ] );
 
 	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
 	// That's because sites that have been previously launched before going back to
@@ -113,7 +117,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_click' );
 			} }
 		>
-			<SiteLaunchDonut /> <span>{ text }</span>
+			<SiteLaunchDonut /> <SiteLaunchNagText>{ text }</SiteLaunchNagText>
 		</SiteLaunchNagLink>
 	);
 };

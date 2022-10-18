@@ -185,7 +185,7 @@ function NetBankingFields() {
 			/>
 			<div className="netbanking__contact-fields">
 				<CountrySpecificPaymentFields
-					countryCode={ 'IN' } // If this payment method is available and the country is not India, we have other problems
+					countryCode="IN" // If this payment method is available and the country is not India, we have other problems
 					countriesList={ countriesList }
 					getErrorMessages={ getErrorMessagesForField }
 					getFieldValue={ getFieldValue }

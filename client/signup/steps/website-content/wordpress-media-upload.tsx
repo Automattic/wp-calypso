@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon, Spinner } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -6,6 +7,7 @@ import { MouseEvent, useState } from 'react';
 import placeholder from 'calypso/assets/images/difm/placeholder.svg';
 import FilePicker from 'calypso/components/file-picker';
 import { useAddMedia } from 'calypso/data/media/use-add-media';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { Label, SubLabel } from 'calypso/signup/accordion-form/form-components';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -133,6 +135,18 @@ export function WordpressMediaUpload( {
 			onMediaUploadFailed && onMediaUploadFailed( { mediaIndex } );
 			debug( 'Image upload failed' );
 			debug( e.message );
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'BBEX: Image upload failed',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				blog_id: site?.ID,
+				extra: {
+					filename: file.item( 0 )?.name,
+					filesize: file.item( 0 )?.size,
+					'files-picked': file.length,
+					'error-message': e.message + '; Stack: ' + e.stack,
+				},
+			} );
 		}
 	};
 

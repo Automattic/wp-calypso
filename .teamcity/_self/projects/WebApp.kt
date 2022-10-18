@@ -537,7 +537,7 @@ object CheckCodeStyleBranch : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run linters"
+			name = "Run eslint"
 			scriptContent = """
 				export NODE_ENV="test"
 
@@ -555,6 +555,14 @@ object CheckCodeStyleBranch : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
+			"""
+		}
+
+		bashNodeScript {
+			name = "Run stylelint"
+			scriptContent = """
+				# In the future, we may add the stylelint cache here.
+				yarn run lint:css
 			"""
 		}
 	}
@@ -824,7 +832,7 @@ object AuthenticationE2ETests : E2EBuildType(
 			}
 			branchFilter = "+:<default>"
 			triggerBuild = always()
-			withPendingChangesOnly = false
+			withPendingChangesOnly = true
 		}
 	}
 )

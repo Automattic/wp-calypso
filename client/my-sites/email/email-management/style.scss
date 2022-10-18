@@ -260,7 +260,7 @@
 		}
 
 		> svg {
-			fill: #fff;
+			fill: var(--studio-white);
 		}
 	}
 
@@ -442,10 +442,12 @@
 	margin: 5px 0;
 	width: 100%;
 
-	.email-plan-warnings__warning, .email-plan-warning-notice__warning {
+	.email-plan-warnings__warning,
+	.email-plan-warning-notice__warning {
 		padding-top: 24px;
 
-		.email-plan-warnings__cta, .email-plan-warning-notice__cta {
+		.email-plan-warnings__cta,
+		.email-plan-warning-notice__cta {
 			margin-top: 16px;
 
 			.button {

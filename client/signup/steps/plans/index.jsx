@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
@@ -12,6 +13,7 @@ import {
 	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -54,6 +56,20 @@ export class PlansStep extends Component {
 			this.setState( { isDesktop: matchesDesktop } )
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wp.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'plans',
+				}
+			);
+		}
 	}
 
 	componentWillUnmount() {
@@ -229,10 +245,10 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_faq_202209_v2"
+					name="calypso_signup_plans_step_tagline_202210_v1"
 					options={ {
 						isEligible:
-							[ 'en-gb', 'en' ].includes( locale ) &&
+							config( 'english_locales' ).includes( locale ) &&
 							'onboarding' === flowName &&
 							this.state.isDesktop,
 					} }
@@ -245,12 +261,12 @@ export class PlansStep extends Component {
 						return (
 							<PlansFeaturesMain
 								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								showFAQ={ this.state.isDesktop && ! this.isTailoredFlow() }
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
 								intervalType={ this.getIntervalType() }
 								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
 								domainName={ this.getDomainName() }
 								customerType={ this.getCustomerType() }
 								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -262,13 +278,7 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								isFAQCondensedExperiment={
-									experimentAssignment?.variationName === 'treatment_condensed'
-								}
-								isFAQExperiment={
-									experimentAssignment?.variationName === 'treatment_expanded' ||
-									experimentAssignment?.variationName === 'treatment_condensed'
-								}
+								isPlanTaglineExperiment={ experimentAssignment?.variationName === 'treatment' }
 							/>
 						);
 					} }
@@ -377,9 +387,11 @@ export class PlansStep extends Component {
 
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
+
 	isTailoredFlow() {
 		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
+
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
 			this.props;

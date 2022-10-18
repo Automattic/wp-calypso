@@ -1,4 +1,5 @@
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -27,6 +28,7 @@ import {
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -123,6 +125,22 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 		};
+	}
+
+	componentDidMount() {
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wpcom.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'domains',
+				}
+			);
+		}
 	}
 
 	getLocale() {
@@ -442,7 +460,7 @@ class DomainsStep extends Component {
 	getSideContent = () => {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type={ 'use-your-domain' } />
+				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
 
@@ -452,7 +470,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content domains__free-domain">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-explainer' }
+							type="free-domain-explainer"
 							flowName={ this.props.flowName }
 						/>
 					</div>
@@ -462,7 +480,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-only-explainer' }
+							type="free-domain-only-explainer"
 						/>
 					</div>
 				) }
@@ -725,7 +743,9 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+			return null;
+		}
 
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;

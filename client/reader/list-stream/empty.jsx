@@ -33,7 +33,7 @@ class ListEmptyContent extends Component {
 				title={ this.props.translate( 'No recent posts' ) }
 				line={ this.props.translate( 'The sites in this list have not posted anything recently.' ) }
 				action={ action }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 400 }
 			/>
 		);

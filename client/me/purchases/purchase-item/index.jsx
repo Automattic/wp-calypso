@@ -427,7 +427,7 @@ class PurchaseItem extends Component {
 			! isPartnerPurchase( purchase )
 		) {
 			return (
-				<div className={ 'purchase-item__no-payment-method' }>
+				<div className="purchase-item__no-payment-method">
 					<Icon icon={ warningIcon } />
 					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
 				</div>
@@ -440,7 +440,7 @@ class PurchaseItem extends Component {
 			purchase.isAutoRenewEnabled
 		) {
 			return (
-				<div className={ 'purchase-item__no-payment-method' }>
+				<div className="purchase-item__no-payment-method">
 					<Icon icon={ warningIcon } />
 					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
 				</div>

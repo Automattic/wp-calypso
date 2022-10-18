@@ -455,7 +455,7 @@ class ManagePurchase extends Component {
 				site={ site }
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl }
-				linkIcon={ 'chevron-right' }
+				linkIcon="chevron-right"
 			>
 				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
@@ -785,7 +785,9 @@ class ManagePurchase extends Component {
 	getActiveMarketplaceSubscriptions() {
 		const { purchase, purchases, productsList } = this.props;
 
-		if ( ! isPlan( purchase ) ) return [];
+		if ( ! isPlan( purchase ) ) {
+			return [];
+		}
 
 		return purchases.filter(
 			( _purchase ) =>

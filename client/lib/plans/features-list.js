@@ -169,23 +169,15 @@ import {
 	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
-	/* START - condensed_plan_features_v1 test */
-	FEATURE_HOSTING_TEST,
-	FEATURE_PRIORITY_SUPPORT_TEST,
-	FEATURE_PLUGINS_TEST,
-	FEATURE_SFTP_DATABASE_TEST,
-	FEATURE_FREE_NEWSLETTER_V1,
-	FEATURE_PAID_NEWSLETTER_V1,
-	FEATURE_REPUBLICIZE_V3,
-	FEATURE_MONETISE_V2,
-	FEATURE_EDGE_CACHING_V2,
-	FEATURE_UPLOAD_THEMES_V3,
-	FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2,
-	FEATURE_SITE_STATS_V2,
-	FEATURE_COLLECT_PAYMENTS_V3,
-	FEATURE_FREE_THEMES_V2,
-	FEATURE_VIDEO_UPLOADS_V2,
-	/* END - condensed_plan_features_v1 test */
+	/* START - PLAN TAGLINE EXPERIMENT */
+	FEATURE_STORAGE_BANDWIDTH,
+	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
+	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
+	FEATURE_INSTALL_THEMES_PLUGINS,
+	FEATURE_DEVELOPER_TOOLS_V1,
+	FEATURE_PRODUCT_LISTINGS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	/* END - PLAN TAGLINE EXPERIMENT */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -1585,105 +1577,6 @@ export const FEATURES_LIST = {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
 	},
-	/* START - condensed_plan_features_v1 test */
-	[ FEATURE_HOSTING_TEST ]: {
-		getSlug: () => FEATURE_HOSTING_TEST,
-		getTitle: () => i18n.translate( 'Fully managed web hosting & CDN' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_PRIORITY_SUPPORT_TEST ]: {
-		getSlug: () => FEATURE_PRIORITY_SUPPORT_TEST,
-		getTitle: () => '24/7 live chat support',
-		getDescription: () => {},
-	},
-	[ FEATURE_PLUGINS_TEST ]: {
-		getSlug: () => FEATURE_PLUGINS_TEST,
-		getTitle: () => 'Install WordPress plugins',
-		getDescription: () => {},
-	},
-	[ FEATURE_SFTP_DATABASE_TEST ]: {
-		getSlug: () => FEATURE_SFTP_DATABASE_TEST,
-		getTitle: () => 'SFTP and Database Access',
-		getDescription: () => {},
-	},
-	[ FEATURE_FREE_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_FREE_NEWSLETTER_V1,
-		getTitle: () => 'Free newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_PAID_NEWSLETTER_V1 ]: {
-		getSlug: () => FEATURE_PAID_NEWSLETTER_V1,
-		getTitle: () => 'Paid newsletter w/ unlimited subscribers.',
-		getDescription: () => {},
-	},
-	[ FEATURE_REPUBLICIZE_V3 ]: {
-		getSlug: () => FEATURE_REPUBLICIZE,
-		getTitle: () => 'Advanced social media tools',
-		getDescription: () => {},
-	},
-	[ FEATURE_MONETISE_V2 ]: {
-		getSlug: () => FEATURE_MONETISE,
-		getTitle: () => 'Earn money from ads',
-		getDescription: () => {},
-	},
-	[ FEATURE_UPLOAD_THEMES_V3 ]: {
-		getSlug: () => FEATURE_UPLOAD_THEMES_V3,
-		getTitle: () => 'Upload custom WordPress themes',
-		getDescription: () => {},
-	},
-	[ FEATURE_EDGE_CACHING_V2 ]: {
-		getSlug: () => FEATURE_EDGE_CACHING_V2,
-		getTitle: () => 'High-performance edge caching',
-		getDescription: () => {},
-	},
-	[ FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 ]: {
-		getSlug: () => FEATURE_ADVANCED_SEO_EXPANDED_ABBR,
-		getTitle: () => i18n.translate( 'Advanced SEO tools' ),
-		getDescription: () => {},
-	},
-	[ FEATURE_SITE_STATS_V2 ]: {
-		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Built-in site stats' ),
-		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
-	},
-	[ FEATURE_COLLECT_PAYMENTS_V3 ]: {
-		getSlug: () => FEATURE_COLLECT_PAYMENTS_V2,
-		getTitle: () => i18n.translate( 'Collect payments and donations' ),
-		getDescription: () =>
-			i18n.translate(
-				'Accept payments from credit or debit cards via Stripe. Sell products, collect donations, and set up recurring payments for subscriptions or memberships. {{link}}Learn more{{/link}}.',
-				{
-					components: {
-						link: (
-							<ExternalLink
-								icon
-								href="https://jetpack.com/support/jetpack-blocks/payments-block/"
-							/>
-						),
-					},
-				}
-			),
-	},
-	[ FEATURE_FREE_THEMES_V2 ]: {
-		getSlug: () => FEATURE_FREE_THEMES,
-		getTitle: () => i18n.translate( 'Dozens of free themes and design patterns' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to a wide range of professional themes ' +
-					"so you can find a design that's just right for your site."
-			),
-	},
-	[ FEATURE_VIDEO_UPLOADS_V2 ]: {
-		getSlug: () => FEATURE_VIDEO_UPLOADS,
-		getTitle: () => i18n.translate( 'High-quality video hosting with VideoPress' ),
-		getDescription: () =>
-			i18n.translate(
-				'The easiest way to upload videos to your website and display them ' +
-					'using a fast, unbranded, customizable player with rich stats.'
-			),
-		getStoreSlug: () => 'videopress',
-	},
-	/* END - condensed_plan_features_v1 test */
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
 		getTitle: () => i18n.translate( 'Unlimited traffic' ),
@@ -1700,6 +1593,47 @@ export const FEATURES_LIST = {
 				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
 			),
 	},
+	/* START - PLAN TAGLINE EXPERIMENT */
+	[ FEATURE_STORAGE_BANDWIDTH ]: {
+		getSlug: () => FEATURE_STORAGE_BANDWIDTH,
+		getTitle: () => 'Increased storage and unlimited bandwidth',
+		getDescription: () => {},
+	},
+	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
+		getTitle: () => 'Unlimited email support',
+		getDescription: () => {},
+	},
+	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: {
+		getSlug: () => FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
+		getTitle: () => 'Unlimited live chat support',
+		getDescription: () =>
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+	},
+	[ FEATURE_INSTALL_THEMES_PLUGINS ]: {
+		getSlug: () => FEATURE_INSTALL_THEMES_PLUGINS,
+		getTitle: () => 'Install plugins and custom themes',
+		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
+	},
+	[ FEATURE_DEVELOPER_TOOLS_V1 ]: {
+		getSlug: () => FEATURE_DEVELOPER_TOOLS_V1,
+		getTitle: () => 'SFTP, SSH, and WP-CLI access',
+		getDescription: () => {},
+	},
+	[ FEATURE_PRODUCT_LISTINGS ]: {
+		getSlug: () => FEATURE_PRODUCT_LISTINGS,
+		getTitle: () => 'Unlimited product listings',
+		getDescription: () => {},
+	},
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+			),
+	},
+	/* END - PLAN TAGLINE EXPERIMENT */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
