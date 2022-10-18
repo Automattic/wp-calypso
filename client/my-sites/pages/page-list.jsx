@@ -12,6 +12,7 @@ import ListEnd from 'calypso/components/list-end';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import NoResults from 'calypso/my-sites/no-results';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import {
@@ -43,6 +44,10 @@ class Pages extends Component {
 		query: PropTypes.object,
 		showPublishedStatus: PropTypes.bool,
 		homepageType: PropTypes.string,
+		blockEditorSettings: PropTypes.any,
+		areBlockEditorSettingsLoading: PropTypes.bool,
+		isFSEActive: PropTypes.bool,
+		isFSEActiveLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -177,16 +182,18 @@ class Pages extends Component {
 	}
 
 	showBlogPostsPage() {
-		const { site, homepageType } = this.props;
+		const { site, homepageType, isFSEActive } = this.props;
 		const { search, status } = this.props.query;
 
 		return (
-			! config.isEnabled( 'unified-pages/virtual-home-page' ) &&
+			( ! config.isEnabled( 'unified-pages/virtual-home-page' ) ||
+				/** Blog posts page is for themes that don't support FSE */
+				! isFSEActive ) &&
 			site &&
 			homepageType === 'posts' &&
-			/** under the "Published" tab */
+			/** Under the "Published" tab */
 			status === 'publish,private' &&
-			/** without any search term */
+			/** Without any search term */
 			! search
 		);
 	}
@@ -195,15 +202,17 @@ class Pages extends Component {
 	 * Show the virtual homepage
 	 */
 	showVirtualHomepage() {
-		const { site, homepageType, blockEditorSettings, translate } = this.props;
+		const { site, homepageType, blockEditorSettings, isFSEActive, translate } = this.props;
 		const { search, status } = this.props.query;
 
 		return (
 			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
+			/** Virtual homepage is for themes that support FSE */
+			isFSEActive &&
 			site &&
 			homepageType === 'posts' &&
 			blockEditorSettings?.home_template &&
-			/** under the "Published" tab without any search term or the search term is matched */
+			/** Under the "Published" tab without any search term or the search term is matched */
 			( ( status === 'publish,private' && ! search ) ||
 				( search && translate( 'Home' ).toLowerCase().includes( search.toLowerCase() ) ) )
 		);
@@ -359,33 +368,23 @@ class Pages extends Component {
 	}
 
 	renderNoContent() {
-		const virtualHomepage = this.renderVirtualHomePage();
-
 		return (
 			<div id="pages" className="pages__page-list">
 				{ this.renderBlogPostsPage() }
-				{ virtualHomepage ? (
-					<>
-						{ this.renderSectionHeader() }
-						{ virtualHomepage }
-					</>
-				) : (
-					<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
-				) }
+				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
 	}
 
 	render() {
-		const { hasSites, loading } = this.props;
+		const { hasSites, loading, areBlockEditorSettingsLoading, isFSEActiveLoading } = this.props;
 		const { pages } = this.state;
+		const isLoading = loading || areBlockEditorSettingsLoading || isFSEActiveLoading;
 
-		if ( pages.length && hasSites ) {
-			return this.renderPagesList( { pages } );
-		}
-
-		if ( ! loading && hasSites ) {
-			return this.renderNoContent();
+		if ( ! isLoading && hasSites ) {
+			return pages.length > 0 || this.showVirtualHomepage()
+				? this.renderPagesList( { pages } )
+				: this.renderNoContent();
 		}
 
 		return this.renderLoading();
@@ -406,6 +405,7 @@ const mapState = ( state, { query, siteId } ) => ( {
 const ConnectedPages = flowRight(
 	connect( mapState ),
 	withBlockEditorSettings,
+	withIsFSEActive,
 	localize,
 	withLocalizedMoment
 )( Pages );
