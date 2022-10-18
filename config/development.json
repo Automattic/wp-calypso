@@ -162,7 +162,7 @@
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
-		"signup/seller-upgrade-modal": false,
+		"signup/seller-upgrade-modal": true,
 		"signup/site-vertical-step": true,
 		"signup/social": true,
 		"signup/starting-point-courses": true,
