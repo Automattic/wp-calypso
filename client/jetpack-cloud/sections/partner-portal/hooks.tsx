@@ -353,7 +353,7 @@ export function useIssueMultipleLicenses(
 
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_issue_mutiple_licenses_submit', {
-				products: selectedProducts,
+				products: selectedProducts.join( ',' ),
 			} )
 		);
 
@@ -405,7 +405,7 @@ export function useIssueMultipleLicenses(
 
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_multiple_linceses_issued', {
-				products: assignedProducts,
+				products: assignedProducts.join( ',' ),
 			} )
 		);
 
@@ -428,6 +428,11 @@ export function useIssueMultipleLicenses(
 				allSelectedProducts.push( item );
 			}
 		} );
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}

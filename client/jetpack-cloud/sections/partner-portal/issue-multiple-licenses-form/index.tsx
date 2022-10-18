@@ -1,9 +1,9 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import { useIssueMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import {
@@ -12,13 +12,14 @@ import {
 } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
-import type { IssueMultipleLicensesFormProps } from './types';
+import { AssignLicenceProps } from '../types';
 
 import './style.scss';
 
 export default function IssueMultipleLicensesForm( {
 	selectedSite,
-}: IssueMultipleLicensesFormProps ) {
+	suggestedProduct,
+}: AssignLicenceProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { data: allProducts, isLoading: isLoadingProducts } = useProductsQuery( {
@@ -30,29 +31,39 @@ export default function IssueMultipleLicensesForm( {
 	const products =
 		allProducts?.filter( ( { family_slug } ) => family_slug !== 'jetpack-packs' ) || [];
 
-	const defaultProduct = ( getQueryArg( window.location.href, 'product' ) || '' ).toString();
-	const [ product, setProduct ] = useState( defaultProduct );
-	const [ issueLicense, isLoading ] = useLicenseIssuing( product, selectedSite );
+	const defaultProducts = getQueryArg( window.location.href, 'product' )?.toString().split( ',' );
+
+	const [ selectedProducts, setSelectedProducts ] = useState(
+		defaultProducts ? defaultProducts : []
+	);
+
+	const [ issueLicense, isLoading ] = useIssueMultipleLicenses( selectedProducts, selectedSite );
 
 	const onSelectProduct = useCallback(
 		( product ) => {
 			dispatch(
-				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
+				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select_multiple', {
 					product: product.slug,
 				} )
 			);
-			setProduct( product.slug );
+			const allProducts = [ ...selectedProducts ];
+			selectedProducts.indexOf( product.slug ) === -1
+				? allProducts.push( product.slug )
+				: allProducts.splice( selectedProducts.indexOf( product.slug ), 1 );
+			setSelectedProducts( allProducts );
 		},
-		[ dispatch, setProduct ]
+		[ dispatch, selectedProducts ]
 	);
 
 	useEffect( () => {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
-		if ( isJetpackBundle( product ) ) {
-			issueLicense();
-		}
-	}, [ issueLicense, product ] );
+		selectedProducts.forEach( ( product ) => {
+			if ( isJetpackBundle( product ) ) {
+				issueLicense();
+			}
+		} );
+	}, [ issueLicense, selectedProducts ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 
@@ -80,7 +91,7 @@ export default function IssueMultipleLicensesForm( {
 							<Button
 								primary
 								className="issue-multiple-licenses-form__select-license"
-								disabled={ ! product }
+								disabled={ ! selectedProducts.length }
 								busy={ isLoading }
 								onClick={ issueLicense }
 							>
@@ -92,11 +103,13 @@ export default function IssueMultipleLicensesForm( {
 						{ products &&
 							products.map( ( productOption, i ) => (
 								<LicenseProductCard
+									isMultiSelect
 									key={ productOption.slug }
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
-									isSelected={ productOption.slug === product }
+									isSelected={ selectedProducts.includes( productOption.slug ) }
 									tabIndex={ 100 + i }
+									suggestedProduct={ suggestedProduct }
 								/>
 							) ) }
 					</div>

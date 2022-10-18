@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -12,6 +13,8 @@ import { AssignLicenceProps } from '../../types';
 
 export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
+
+	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
 	useEffect( () => {
 		const layoutClass = 'layout__content--partner-portal-issue-license';
