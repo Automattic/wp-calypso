@@ -85,4 +85,13 @@
 	.is-borderless {
 		border: 0;
 	}
+
+	.domain-search-results__domain-not-available {
+		.domain-search-results__domain-available-notice {
+			box-shadow: none;
+			border: 0;
+			margin-bottom: 24px;
+			padding: 0;
+		}
+	}
 }
