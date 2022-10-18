@@ -104,15 +104,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
 		if ( cancellationOffer ) {
-			// Get the percentage difference in the price of the offer over the price of the purchase.
-			// toFixed will round to the 2nd decimal place here.
-			// This will catch floats like .199, and round them up.
-			const offerPercentageOfPurchaseAmount = Number(
-				1 - cancellationOffer.rawPrice / purchase.amount
-			).toFixed( 2 );
-			// Since toFixed returns a string, we use parseFloat here to get the decimal value.
-			// floor is used to get a whole percentage number value.
-			return Math.floor( Number.parseFloat( offerPercentageOfPurchaseAmount ) * 100 );
+			// Round the cancellation offer discount percentage to the nearest whole number
+			return Math.round( ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100 );
 		}
 		return 0;
 	}, [ cancellationOffer, purchase ] );
