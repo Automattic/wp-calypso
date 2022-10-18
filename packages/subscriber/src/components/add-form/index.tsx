@@ -83,6 +83,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
+	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, {
@@ -107,6 +108,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
+	useEffect( () => {
+		setIsSubmitBtnReady( isSubmitButtonReady() );
+	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit ] );
 
 	useRecordAddFormEvents( recordTracksEvent, flowName );
 
@@ -116,9 +120,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
 
-		const validEmails = isValidEmails
-			.map( ( x, i ) => x && emails[ i ] )
-			.filter( ( x ) => !! x ) as string[];
+		const validEmails = getValidEmails();
 
 		if ( manualListEmailInviting ) {
 			// add subscribers with invite email
@@ -156,6 +158,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const _isDirtyEmails = Array.from( isDirtyEmails );
 		_isDirtyEmails[ index ] = !! value;
 		setIsDirtyEmails( _isDirtyEmails );
+	}
+
+	function getValidEmails(): string[] {
+		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}
 
 	function isValidExtension( fileName: string ) {
@@ -198,6 +204,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 			setEmailFormControls( controls );
 		}
+	}
+
+	function isSubmitButtonReady(): boolean {
+		return !! allowEmptyFormSubmit || !! getValidEmails().length || !! selectedFile;
 	}
 
 	function importFinishedRecognition() {
@@ -402,7 +412,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						type="submit"
 						className="add-subscriber__form-submit-btn"
 						isBusy={ inProgress }
-						disabled={ inProgress }
+						disabled={ inProgress || ! submitBtnReady }
 					>
 						{ submitBtnName }
 					</NextButton>
