@@ -2,7 +2,7 @@ import page from 'page';
 import { AnyAction } from 'redux';
 import {
 	AgencyDashboardFilterOption,
-	PurchasedProduct,
+	PurchasedProductsInfo,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
@@ -34,8 +34,8 @@ export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => 
 	navigateToFilter( filterOptions );
 };
 
-export function setPurchasedLicense( product?: PurchasedProduct ): AnyAction {
-	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: product };
+export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: productsInfo };
 }
 
 export function selectLicense( siteId: number, license: string ): AnyAction {

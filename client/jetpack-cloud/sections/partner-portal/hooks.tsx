@@ -146,10 +146,13 @@ export function useLicenseIssuing(
 			dispatch(
 				setPurchasedLicense( {
 					selectedSite: selectedSite?.domain,
-					selectedProduct: {
-						name: getProductTitle( selectedProduct.name ),
-						key: licenseKey,
-					},
+					selectedProducts: [
+						{
+							name: getProductTitle( selectedProduct.name ),
+							key: licenseKey,
+							status: 'fulfilled',
+						},
+					],
 				} )
 			);
 		}
