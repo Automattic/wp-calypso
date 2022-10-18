@@ -4,7 +4,7 @@ export const tasks: Task[] = [
 	{
 		id: 'setup_newsletter',
 		completed: true,
-		disabled: true,
+		disabled: false,
 		taskType: 'blog',
 	},
 	{
