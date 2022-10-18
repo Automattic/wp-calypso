@@ -14,7 +14,7 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	return (
-		<SectionNav>
+		<SectionNav allowDropdown={ false } className="is-open">
 			<NavTabs>
 				{ tabs.map( ( { id, name } ) => {
 					return (
