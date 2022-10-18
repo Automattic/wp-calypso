@@ -39,6 +39,7 @@ import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
+import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
 import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
@@ -443,13 +444,21 @@ class ReaderStream extends Component {
 			);
 
 			// Only show right sidebar on select screens
-			const excludesSidebar = [ 'conversations', 'conversations-a8c', 'likes' ];
+			const excludesSidebar = [
+				'conversations',
+				'conversations-a8c',
+				'likes',
+				'search',
+				'custom_recs_posts_with_images',
+			];
 
 			if ( ! excludesSidebar.includes( streamType ) ) {
 				body = (
 					<div className="stream__two-column">
 						{ bodyContent }
-						<div className="stream__right-column"></div>
+						<div className="stream__right-column">
+							<ReaderSidebarFollowedSites path={ window.location.pathname } />
+						</div>
 					</div>
 				);
 				baseClassnames = classnames( 'reader-two-column', baseClassnames );
