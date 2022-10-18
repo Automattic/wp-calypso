@@ -386,7 +386,7 @@ class ManagePurchase extends Component {
 				: translate( 'Pick another product' );
 		} else {
 			iconName = 'upload';
-			buttonText = translate( 'Upgrade plan' );
+			buttonText = isUpgradeablePlan ? translate( 'Upgrade plan' ) : translate( 'Upgrade product' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
