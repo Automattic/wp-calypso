@@ -2,7 +2,9 @@ import 'calypso/state/products-list/init';
 import { getProductsList } from '../selectors/get-products-list';
 
 export const isSaasProduct = ( state, productSlug ) => {
-	if ( ! productSlug ) return false;
+	if ( ! productSlug ) {
+		return false;
+	}
 
 	// Note: Converting the slug and accessing the productsList by key
 	// is more than 10 times faster than traversing the list
