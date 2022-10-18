@@ -195,8 +195,12 @@
 
 		a,
 		button {
-			color: var(--studio-gray-100);
+			color: var(--color-text);
 			text-decoration: underline;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
 		}
 	}
 }
