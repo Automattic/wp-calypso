@@ -329,6 +329,13 @@
 	}
 }
 
+// pending disabled tasks
+.launchpad__task.pending.disabled {
+	.launchpad__checklist-item-text {
+		color: inherit;
+	}
+}
+
 .launchpad__checklist-item-chevron {
 	display: flex;
 	line-height: 20px;
