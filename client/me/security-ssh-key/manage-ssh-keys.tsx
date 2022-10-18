@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import accept from 'calypso/lib/accept';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
@@ -14,6 +16,13 @@ type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 const SSHKeyItemCard = styled( CompactCard )( {
 	display: 'flex',
 	alignItems: 'center',
+} );
+
+const SSHKeyName = styled.span( {
+	display: 'block',
+	fontWeight: 'bold',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
 } );
 
 const SSHPublicKey = styled.code( {
@@ -33,6 +42,7 @@ const SSHKeyAddedDate = styled.span( {
 
 const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	const { __ } = useI18n();
+	const currentUser = useSelector( getCurrentUser );
 	const handleDeleteClick = () => {
 		accept( __( 'Are you sure you want to remove this SSH key?' ), ( accepted: boolean ) => {
 			if ( accepted ) {
@@ -44,6 +54,9 @@ const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	return (
 		<SSHKeyItemCard>
 			<div style={ { marginRight: '1rem' } }>
+				<SSHKeyName>
+					{ currentUser.username }-{ sshKey.name }
+				</SSHKeyName>
 				<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
 				<SSHKeyAddedDate>
 					{ sprintf(

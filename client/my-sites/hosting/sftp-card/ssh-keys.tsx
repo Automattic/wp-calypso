@@ -70,7 +70,7 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 					>
 						{ userKeys?.map( ( key ) => (
 							<option value={ key.name } key={ key.sha256 }>
-								{ key.name }
+								{ username }-{ key.name }
 							</option>
 						) ) }
 					</FormSelect>
