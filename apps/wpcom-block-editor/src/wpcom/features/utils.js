@@ -12,7 +12,7 @@ export const getEditorType = () => {
 		return 'post';
 	}
 
-	if ( document.querySelector( '#edit-site-editor' ) ) {
+	if ( document.querySelector( '#site-editor' ) ) {
 		return 'site';
 	}
 
