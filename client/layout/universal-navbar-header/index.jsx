@@ -1,7 +1,9 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 
-const PluginNavbarHeader = () => {
+const UniversalNavbarHeader = () => {
 	const translate = useTranslate();
 
 	return (
@@ -300,7 +302,7 @@ const PluginNavbarHeader = () => {
 											role="menuitem"
 											className="x-nav-link x-link"
 											href="//wordpress.com/pricing/"
-											title={ translate( 'Plans' ) + ' & ' + translate( 'Pricing' ) }
+											title={ translate( 'Plans & Pricing' ) }
 										>
 											{ translate( 'Plans & Pricing' ) }
 										</a>
@@ -633,4 +635,4 @@ const PluginNavbarHeader = () => {
 	);
 };
 
-export default PluginNavbarHeader;
+export default UniversalNavbarHeader;
