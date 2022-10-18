@@ -77,23 +77,6 @@
 	&.videopress {
 		padding: 0;
 		color: #fff;
-		background-image:
-			url(calypso/assets/images/onboarding/videopress-intro-left.png),
-			url(calypso/assets/images/onboarding/videopress-intro-right.png);
-		background-position-y: 95%, -15%;
-		background-position-x: -10%, 100%;
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		background-size: auto 40%, auto 40%;
-
-		@include break-medium {
-			background-size: auto 50%, auto 50%;
-		}
-
-		@include break-large {
-			background-position-y: 50%, 50%;
-			background-position-x: 0, 100%;
-		}
 
 		.signup-header {
 			h1 {
@@ -196,6 +179,7 @@
 
 		@include onboarding-break-mobile-landscape {
 			font-size: $font-title-medium;
+			line-height: inherit;
 		}
 
 		span {
