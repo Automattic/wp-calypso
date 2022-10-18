@@ -179,7 +179,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					) ) }
 				</tbody>
 			</Table>
-			<LinkInBioBanner sites={ sites } displayMode="row" />
+			<LinkInBioBanner displayMode="row" />
 		</>
 	);
 }
