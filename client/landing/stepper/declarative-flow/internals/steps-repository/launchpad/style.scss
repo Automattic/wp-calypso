@@ -111,30 +111,27 @@
 	margin: 32px 0;
 	padding: 0 12px;
 
+	.launchpad__url-box-domain {
+		display: flex;
+		flex-grow: 1;
+		width: 0;
+	}
 
-	> div {
-		// truncate long domain names
+	.launchpad__url-box-domain-text {
+		text-overflow: ellipsis;
 		white-space: nowrap;
 		overflow: hidden;
-		text-overflow: ellipsis;
+	}
+
+	.launchpad__url-box-domain-domain:hover > .launchpad__clipboard-button {
+		visibility: visible;
 	}
 
 	.launchpad__clipboard-button {
 		padding-left: 10px;
 		padding-right: 10px;
-		visibility: visible;
+		// visibility: hidden;
 	}
-}
-
-.hidden {
-	visibility: hidden;
-}
-
-.launchpad__url-box-domain-text {
-	flex-grow: 1;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
 }
 
 .launchpad__url-box-top-level-domain {
@@ -142,7 +139,6 @@
 }
 
 .launchpad__domain-upgrade-badge {
-
 	&:hover {
 		background: var(--studio-blue-10);
 	}

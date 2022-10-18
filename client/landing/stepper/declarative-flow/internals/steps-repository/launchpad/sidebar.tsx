@@ -52,12 +52,12 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
+	let showClipboardButton = false;
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
 	const clipboardButtonEl = useRef( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
-	const [ showClipboardButton, setShowClipboardButton ] = useState( false );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
@@ -69,7 +69,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
 	if ( sidebarDomain ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
+		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
+
+		[ siteName, topLevelDomain ] = getUrlInfo( domain );
+		showClipboardButton = isWPCOMDomain ? true : sslStatus === 'active' && isPrimary;
 	}
 
 	return (
@@ -95,36 +98,36 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
 				</h1>
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
-				<div
-					className="launchpad__url-box"
-					onMouseEnter={ () => setShowClipboardButton( true ) }
-					onMouseLeave={ () => setShowClipboardButton( false ) }
-				>
+				<div className="launchpad__url-box">
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div className="launchpad__url-box-domain-text">
-						<span>{ siteName }</span>
-						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+					<div className="launchpad__url-box-domain">
+						<div className="launchpad__url-box-domain-text">
+							<span>{ siteName }</span>
+							<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+						</div>
+						{ showClipboardButton && (
+							<>
+								<ClipboardButton
+									text={ siteSlug }
+									className={ classNames( 'launchpad__clipboard-button' ) }
+									borderless
+									compact
+									onCopy={ () => setClipboardCopied( true ) }
+									onMouseLeave={ () => setClipboardCopied( false ) }
+									ref={ clipboardButtonEl }
+								>
+									<Gridicon icon="clipboard" />
+								</ClipboardButton>
+								<Tooltip
+									context={ clipboardButtonEl.current }
+									isVisible={ clipboardCopied }
+									position="top"
+								>
+									{ translate( 'Copied to clipboard!' ) }
+								</Tooltip>
+							</>
+						) }
 					</div>
-					<ClipboardButton
-						text={ siteSlug }
-						className={ classNames( 'launchpad__clipboard-button', {
-							hidden: ! showClipboardButton,
-						} ) }
-						borderless
-						compact
-						onCopy={ () => setClipboardCopied( true ) }
-						onMouseLeave={ () => setClipboardCopied( false ) }
-						ref={ clipboardButtonEl }
-					>
-						<Gridicon icon="clipboard" />
-					</ClipboardButton>
-					<Tooltip
-						context={ clipboardButtonEl.current }
-						isVisible={ clipboardCopied }
-						position="top"
-					>
-						{ translate( 'Copied to clipboard!' ) }
-					</Tooltip>
 					{ sidebarDomain?.isWPCOMDomain && (
 						<a href={ `/domains/add/${ siteSlug }` }>
 							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
