@@ -32,7 +32,6 @@ export const INCOMING_DOMAIN_TRANSFER_SUPPORTED_TLDS = `${ root }/incoming-domai
 export const EDIT_PAYMENT_DETAILS = `${ root }/payment/#edit-payment-details`;
 export const EMAIL_FORWARDING = `${ root }/email-forwarding/`;
 export const EMAIL_VALIDATION_AND_VERIFICATION = `${ root }/domains/register-domain/#email-validation-and-verification`;
-export const EMPTY_SITE = `${ root }/empty-site/`;
 export const FORMS = `${ root }/forms/`;
 export const GDPR_POLICIES = `${ root }/your-site-and-the-gdpr/`;
 export const GSUITE_LEARNING_CENTER = 'https://workspace.google.com/learning-center/';
