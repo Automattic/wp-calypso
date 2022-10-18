@@ -419,9 +419,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 		return (
 			<PremiumBadge
-				className="accent-color-control__premium-badge"
+				className="design-picker__premium-badge"
 				tooltipText={ translate(
-					'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
+					'You can try this premium style out before upgrading your plan.'
 				) }
 			/>
 		);
