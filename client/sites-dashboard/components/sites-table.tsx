@@ -52,6 +52,8 @@ const Row = styled.tr`
 		letter-spacing: -0.24px;
 		font-weight: normal;
 		color: var( --studio-gray-60 );
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 `;
 
@@ -177,7 +179,7 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 					) ) }
 				</tbody>
 			</Table>
-			<LinkInBioBanner sites={ sites } displayMode="row" />
+			<LinkInBioBanner displayMode="row" />
 		</>
 	);
 }

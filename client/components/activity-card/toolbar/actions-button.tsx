@@ -53,10 +53,10 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
-	const isRestoreDisabled =
-		doesRewindNeedCredentials || isRestoreInProgress || areCredentialsInvalid;
-
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
+	const isRestoreDisabled =
+		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 
 	return (
 		<>

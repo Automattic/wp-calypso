@@ -3,7 +3,7 @@
 	display: inline-block;
 	--white-separator-color: rgba(255, 255, 255, 0.3);
 }
-.split-button__main {
+.button.split-button__main {
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 	border-right: 0;
@@ -12,16 +12,16 @@
 		margin-right: 4px;
 	}
 }
-.split-button__toggle {
+.button.split-button__toggle {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
-}
-.button.split-button__toggle--white-separator,
-.split-button__toggle--white-separator {
-	&,
-	&:hover,
-	&:focus {
-		border-left-color: var(--white-separator-color);
+
+	&.split-button__toggle--white-separator {
+		&,
+		&:hover,
+		&:focus {
+			border-left-color: var(--white-separator-color);
+		}
 	}
 }
 .gridicon.split-button__toggle-icon {

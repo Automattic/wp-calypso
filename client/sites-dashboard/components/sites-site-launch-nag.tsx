@@ -41,6 +41,12 @@ const SiteLaunchNagLink = styled.a( {
 	},
 } );
 
+const SiteLaunchNagText = styled.span( {
+	overflow: 'hidden',
+	whiteSpace: 'normal',
+	textOverflow: 'ellipsis',
+} );
+
 const SiteLaunchDonut = () => {
 	return (
 		<SiteLaunchDonutContainer>
@@ -111,7 +117,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_click' );
 			} }
 		>
-			<SiteLaunchDonut /> <span>{ text }</span>
+			<SiteLaunchDonut /> <SiteLaunchNagText>{ text }</SiteLaunchNagText>
 		</SiteLaunchNagLink>
 	);
 };

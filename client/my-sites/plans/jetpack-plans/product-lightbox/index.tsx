@@ -32,7 +32,7 @@ const TagItems: React.FC< { tags: JetpackTag[] } > = ( { tags } ) => (
 	<>
 		{ tags.map( ( tag ) => (
 			<div className="product-lightbox__detail-tags-tag" key={ tag.tag }>
-				<span>{ Tags[ tag.tag ] }</span>
+				<span aria-hidden="true">{ Tags[ tag.tag ] }</span>
 				<p>{ tag.label }</p>
 			</div>
 		) ) }
@@ -109,7 +109,17 @@ const ProductLightbox: React.FC< Props > = ( {
 			htmlOpenClassName="ReactModal__Html--open lightbox-mode"
 		>
 			<div className="product-lightbox__content-wrapper">
-				<Button className="product-lightbox__close-button" plain onClick={ close }>
+				<Button
+					className="product-lightbox__close-button"
+					plain
+					onClick={ close }
+					aria-label={
+						translate( 'Close', {
+							comment:
+								'Text read by screen readers when the close button of the lightbox gets focus.',
+						} ) as string
+					}
+				>
 					{ Icons.close }
 				</Button>
 				<div className="product-lightbox__detail">

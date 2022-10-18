@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useHumanDate } from 'calypso/lib/human-date';
 
@@ -10,7 +9,7 @@ interface TimeSinceProps {
 
 function TimeSince( { className, date, dateFormat = 'll' }: TimeSinceProps ) {
 	const moment = useLocalizedMoment();
-	const fullDate = useMemo( () => moment( date ).format( 'llll' ), [ moment, date ] );
+	const fullDate = moment( date ).format( 'llll' );
 	const humanDate = useHumanDate( date, dateFormat );
 
 	return (
