@@ -34,11 +34,16 @@ const SSHKeyAddedDate = styled.span( {
 const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	const { __ } = useI18n();
 	const handleDeleteClick = () => {
-		accept( __( 'Are you sure you want to remove this SSH key?' ), ( accepted: boolean ) => {
-			if ( accepted ) {
-				onDelete( sshKey.name );
+		accept(
+			__(
+				'Are you sure you want to remove this SSH key? It will be removed from all attached sites.'
+			),
+			( accepted: boolean ) => {
+				if ( accepted ) {
+					onDelete( sshKey.name );
+				}
 			}
-		} );
+		);
 	};
 
 	return (
