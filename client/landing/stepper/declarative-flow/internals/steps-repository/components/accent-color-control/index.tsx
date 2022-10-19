@@ -11,8 +11,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
 import PremiumBadge from 'calypso/components/premium-badge';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { tip } from 'calypso/signup/icons';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 
 import './style.scss';
 

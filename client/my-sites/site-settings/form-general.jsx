@@ -21,7 +21,6 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
@@ -33,6 +32,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	getSiteOption,
