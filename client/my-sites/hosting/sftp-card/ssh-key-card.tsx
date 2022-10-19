@@ -18,7 +18,9 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 	return (
 		<Card className="ssh-keys-card">
 			<div className="ssh-keys-card__info">
-				<span className="ssh-keys-card__name">{ user_login }</span>
+				<span className="ssh-keys-card__name">
+					{ user_login }-{ name }
+				</span>
 				<code className="ssh-keys-card__fingerprint">{ sha256 }</code>
 				<span className="ssh-keys-card__date">
 					{ sprintf(

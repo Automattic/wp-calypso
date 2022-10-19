@@ -8,12 +8,19 @@ import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 	ManageSSHKeyProps,
-	'onDelete' | 'keyBeingDeleted'
+	'userLogin' | 'onDelete' | 'keyBeingDeleted'
 >;
 
 const SSHKeyItemCard = styled( CompactCard )( {
 	display: 'flex',
 	alignItems: 'center',
+} );
+
+const SSHKeyName = styled.span( {
+	display: 'block',
+	fontWeight: 'bold',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis',
 } );
 
 const SSHPublicKey = styled.code( {
@@ -31,7 +38,7 @@ const SSHKeyAddedDate = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
+const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	const { __ } = useI18n();
 	const handleDeleteClick = () => {
 		accept(
@@ -49,6 +56,9 @@ const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	return (
 		<SSHKeyItemCard>
 			<div style={ { marginRight: '1rem' } }>
+				<SSHKeyName>
+					{ userLogin }-{ sshKey.name }
+				</SSHKeyName>
 				<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
 				<SSHKeyAddedDate>
 					{ sprintf(
@@ -80,14 +90,21 @@ interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
 	keyBeingDeleted: string | null;
+	userLogin: string;
 }
 
-export const ManageSSHKeys = ( { sshKeys, onDelete, keyBeingDeleted }: ManageSSHKeyProps ) => {
+export const ManageSSHKeys = ( {
+	userLogin,
+	sshKeys,
+	onDelete,
+	keyBeingDeleted,
+}: ManageSSHKeyProps ) => {
 	return (
 		<>
 			{ sshKeys.map( ( sshKey ) => (
 				<SSHKey
 					key={ sshKey.key }
+					userLogin={ userLogin }
 					sshKey={ sshKey }
 					onDelete={ onDelete }
 					keyBeingDeleted={ keyBeingDeleted }
