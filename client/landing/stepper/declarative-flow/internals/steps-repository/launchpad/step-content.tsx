@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -5,6 +6,9 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
+import EmailValidationBanner from './email-validation-banner';
+import { useSelect } from '@wordpress/data';
+import { USER_STORE } from 'calypso/landing/stepper/stores';
 
 type StepContentProps = {
 	siteSlug: string | null;
@@ -38,16 +42,27 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	const iFrameURL = wpcomDomains.length ? wpcomDomains[ 0 ]?.domain : nonWpcomDomains[ 0 ]?.domain;
 
+	const currentUserEmail = useSelect( ( select ) => select( USER_STORE ).getCurrentUser()?.email );
+	const [ showEmailValidationBanner, setShowEmailValidationBanner ] = useState( true );
+
 	return (
-		<div className="launchpad__content">
-			<Sidebar
-				sidebarDomain={ sidebarDomain }
-				siteSlug={ siteSlug }
-				submit={ submit }
-				goNext={ goNext }
-				goToStep={ goToStep }
-			/>
-			<LaunchpadSitePreview siteSlug={ iFrameURL } />
+		<div className="launchpad__container">
+			{ showEmailValidationBanner && currentUserEmail && (
+				<EmailValidationBanner
+					email={ currentUserEmail }
+					closeBanner={ () => setShowEmailValidationBanner( false ) }
+				/>
+			) }
+			<div className="launchpad__content">
+				<Sidebar
+					sidebarDomain={ sidebarDomain }
+					siteSlug={ siteSlug }
+					submit={ submit }
+					goNext={ goNext }
+					goToStep={ goToStep }
+				/>
+				<LaunchpadSitePreview siteSlug={ iFrameURL } />
+			</div>
 		</div>
 	);
 };
