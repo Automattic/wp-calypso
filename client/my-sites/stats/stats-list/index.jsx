@@ -18,6 +18,7 @@ export default class extends Component {
 		return this.state.activeGroups.indexOf( groupName ) >= 0;
 	};
 
+	// This is never executed.
 	clickHandler = ( event, data ) => {
 		debug( 'clickHandler' );
 		if ( 'function' === typeof this.props.clickHandler ) {
@@ -37,7 +38,8 @@ export default class extends Component {
 				let childResults;
 				const groupTree = parentKey ? [ parentKey ] : [];
 
-				const clickHandler = this.props.clickHandler ? this.props.clickHandler : false;
+				// This component never receives clickHandler prop.
+				const clickHandler = this.props.clickHandler ? this.props.clickHandler : false; // this is passing down click handlers...
 
 				// Build a unique key for this group
 				groupTree.push( groupIndex );

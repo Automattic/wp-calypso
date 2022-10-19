@@ -20,6 +20,7 @@ import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
+import StatsListPosts from '../stats-list/stats-list-posts';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -152,6 +153,20 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
+		let statsModuleComponent;
+
+		switch ( path ) {
+			case 'posts':
+				statsModuleComponent = (
+					<StatsListPosts moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+				);
+				break;
+			default:
+				statsModuleComponent = (
+					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+				);
+		}
+
 		return (
 			<div>
 				{ siteId && statType && (
@@ -181,7 +196,7 @@ class StatsModule extends Component {
 					{ this.props.children }
 					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
 					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+					{ statsModuleComponent }
 					{ this.props.showSummaryLink && displaySummaryLink && (
 						<StatsModuleExpand href={ summaryLink } />
 					) }
