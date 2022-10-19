@@ -86,6 +86,7 @@ type ButtonProps = {
 	upsell: string;
 	label: string;
 	disabled: boolean;
+	isBusy: boolean;
 	siteSlug: string;
 	closeDialog: () => void;
 	freeMonthOfferClick?: () => void;
@@ -98,6 +99,7 @@ export function UpsellStepButton( { disabled, upsell, siteSlug, ...props }: Butt
 		disabled,
 		isPrimary: true,
 		isDefault: true,
+		isBusy: props.isBusy || false,
 	};
 
 	if ( upsell === 'business-atomic' ) {

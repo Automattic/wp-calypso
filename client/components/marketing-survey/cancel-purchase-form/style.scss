@@ -19,7 +19,7 @@
 .cancel-purchase-form__feedback,
 .cancel-purchase-form__atomic-revert {
 	max-width: 730px;
-	margin: 0 auto 3rem;
+	margin: 0 auto 2rem;
 }
 
 .cancel-purchase-form__upsell,
@@ -197,6 +197,10 @@
 		// Hide buttons rendered by old components, so we can still re-use them for rendering rest of content.
 		display: none;
 	}
+}
+
+.blank-canvas.cancel-purchase-form .blank-canvas__back {
+	z-index: 1;
 }
 
 .blank-canvas.cancel-purchase-form .blank-canvas__header-title {

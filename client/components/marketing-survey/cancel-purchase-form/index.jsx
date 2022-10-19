@@ -125,6 +125,7 @@ class CancelPurchaseForm extends Component {
 			questionTwoOrder,
 			questionThreeText: '',
 			isSubmitting: false,
+			solution: '',
 			upsell: '',
 			atomicRevertCheckOne: false,
 			atomicRevertCheckTwo: false,
@@ -291,6 +292,7 @@ class CancelPurchaseForm extends Component {
 
 		if ( ! isGSuiteOrGoogleWorkspace( purchase ) ) {
 			this.setState( {
+				solution: '',
 				isSubmitting: true,
 			} );
 
@@ -331,6 +333,7 @@ class CancelPurchaseForm extends Component {
 			this.props.downgradeClick( upsell );
 			this.recordEvent( 'calypso_purchases_downgrade_form_submit' );
 			this.setState( {
+				solution: 'downgrade',
 				isSubmitting: true,
 			} );
 		}
@@ -341,6 +344,7 @@ class CancelPurchaseForm extends Component {
 			this.props.freeMonthOfferClick();
 			this.recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
 			this.setState( {
+				solution: 'free-month-offer',
 				isSubmitting: true,
 			} );
 		}
@@ -529,10 +533,6 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
-			if ( ! this.state.questionTwoRadio ) {
-				return false;
-			}
-
 			if ( this.state.questionTwoRadio === 'anotherReasonTwo' && ! this.state.questionTwoText ) {
 				return false;
 			}
@@ -545,11 +545,11 @@ class CancelPurchaseForm extends Component {
 
 	getFinalActionText() {
 		const { flowType, translate, disableButtons, purchase } = this.props;
-		const { isSubmitting } = this.state;
+		const { isSubmitting, solution } = this.state;
 		const isRemoveFlow = flowType === CANCEL_FLOW_TYPE.REMOVE;
 		const isCancelling = disableButtons || isSubmitting;
 
-		if ( isCancelling ) {
+		if ( isCancelling && ! solution ) {
 			return isRemoveFlow ? translate( 'Removing…' ) : translate( 'Cancelling…' );
 		}
 
@@ -572,8 +572,8 @@ class CancelPurchaseForm extends Component {
 
 	renderStepButtons = () => {
 		const { translate, disableButtons } = this.props;
-		const { isSubmitting, surveyStep } = this.state;
-		const isCancelling = disableButtons || isSubmitting;
+		const { isSubmitting, surveyStep, solution } = this.state;
+		const isCancelling = ( disableButtons || isSubmitting ) && ! solution;
 
 		const allSteps = this.getAllSurveySteps();
 		const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
@@ -605,7 +605,8 @@ class CancelPurchaseForm extends Component {
 				</GutenbergButton>
 				{ surveyStep === UPSELL_STEP && (
 					<UpsellStep.Button
-						disabled={ isSubmitting }
+						disabled={ isCancelling }
+						isBusy={ isSubmitting && solution }
 						siteSlug={ this.props.site.slug }
 						upsell={ this.state.upsell }
 						closeDialog={ this.closeDialog }
