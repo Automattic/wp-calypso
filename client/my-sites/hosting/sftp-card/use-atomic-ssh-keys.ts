@@ -23,6 +23,9 @@ export const useAtomicSshKeys = ( siteId: number, options: UseQueryOptions ) => 
 			select: ( data ) => {
 				return data.ssh_keys;
 			},
+			meta: {
+				persist: false,
+			},
 		}
 	);
 };
