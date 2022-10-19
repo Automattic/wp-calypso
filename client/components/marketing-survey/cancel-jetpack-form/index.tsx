@@ -104,8 +104,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
 		if ( cancellationOffer ) {
+			const offerDiscountPercentage = ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100;
+
 			// Round the cancellation offer discount percentage to the nearest whole number
-			return Math.round( ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100 );
+			return Math.round( offerDiscountPercentage );
 		}
 		return 0;
 	}, [ cancellationOffer, purchase ] );
