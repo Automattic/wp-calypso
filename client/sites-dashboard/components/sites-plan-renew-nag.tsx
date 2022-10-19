@@ -15,12 +15,12 @@ interface PlanRenewProps {
 	checkoutUrl: string;
 }
 
-const PlanRenewContainer = styled.div`
-	display: flex;
-	justify-items: flex-start;
-	gap: 4px;
-	margin-top: -5px;
-`;
+const PlanRenewContainer = styled.div( {
+	display: 'flex',
+	justifyItems: 'flex-start',
+	gap: '4px',
+	marginTop: '-5px',
+} );
 
 const PlanRenewLink = styled.a( {
 	whiteSpace: 'nowrap',
@@ -28,28 +28,28 @@ const PlanRenewLink = styled.a( {
 	fontSize: '12px',
 } );
 
-const IconContainer = styled.div`
-	color: #ea303f;
-	margin-top: -2px;
-`;
+const IconContainer = styled.div( {
+	color: '#ea303f',
+	marginTop: '-2px',
+} );
 
-const PlanRenewNotice = styled.div`
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	color: #ea303f;
-	gap: 4px;
-`;
+const PlanRenewNotice = styled.div( {
+	minWidth: 0,
+	display: 'flex',
+	flexDirection: 'column',
+	color: '#ea303f',
+	gap: '4px',
+} );
 
-const PlanRenewNoticeTextContainer = styled.div`
-	display: flex;
-`;
+const PlanRenewNoticeTextContainer = styled.div( {
+	display: 'flex',
+} );
 
-const PlanRenewNoticeExpireText = styled.div`
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-`;
+const PlanRenewNoticeExpireText = styled.div( {
+	whiteSpace: 'nowrap',
+	textOverflow: 'ellipsis',
+	overflow: 'hidden',
+} );
 
 export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 	const { __ } = useI18n();
