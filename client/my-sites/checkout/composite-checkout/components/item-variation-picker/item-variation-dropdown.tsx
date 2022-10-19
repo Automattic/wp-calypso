@@ -1,6 +1,6 @@
 import { CustomSelectControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent } from 'react';
 import { ItemVariantPrice } from './variant-price';
 import type { ItemVariationPickerProps } from './types';
 
@@ -14,30 +14,18 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 } ) => {
 	const translate = useTranslate();
 
-	const selectedVariantIndexRaw = variants.findIndex(
-		( variant ) => variant.productId === selectedItem.product_id
-	);
-	// findIndex returns -1 if it fails and we want null.
-	const selectedVariantIndex = selectedVariantIndexRaw > -1 ? selectedVariantIndexRaw : null;
-
-	// wrapper around onChangeItemVariant to close up dropdown on change
-	const handleChange = useCallback(
-		( uuid: string, productSlug: string, productId: number ) => {
-			onChangeItemVariant( uuid, productSlug, productId );
-		},
-		[ onChangeItemVariant ]
-	);
-
 	if ( variants.length < 2 ) {
 		return null;
 	}
 
 	const compareTo = variants.find( ( variant ) => variant.productId === selectedItem.product_id );
-	const options = variants.map( ( variant ) => ( {
-		key: variant.variantLabel,
-		name: variant.variantLabel,
-		__experimentalHint: <ItemVariantPrice variant={ variant } compareTo={ compareTo } />,
-	} ) );
+	const options = variants
+		.sort( ( { productId } ) => ( productId === selectedItem.product_id ? -1 : 1 ) )
+		.map( ( variant ) => ( {
+			key: variant.variantLabel,
+			name: variant.variantLabel,
+			__experimentalHint: <ItemVariantPrice variant={ variant } compareTo={ compareTo } />,
+		} ) );
 
 	if ( isDisabled ) {
 		// TODO:
@@ -47,29 +35,15 @@ export const ItemVariationDropDown: FunctionComponent< ItemVariationPickerProps 
 		<CustomSelectControl
 			className="item-variation-dropdown__select"
 			label={ translate( 'Pick a product term' ) }
-			describedBy={
-				selectedVariantIndex !== null && selectedVariantIndex >= 0
-					? ( translate( 'Currently selected term: %s', {
-							args: variants[ selectedVariantIndex ]?.variantLabel,
-							comment:
-								'%s represents the product currently selected term, e.g. `One year`, or `One month`.',
-					  } ) as string )
-					: ( translate( 'No selected term' ) as string )
-			}
 			hideLabelFromVision
 			options={ options }
-			value={ options.find(
-				( option ) =>
-					selectedVariantIndex !== null &&
-					option.key === variants[ selectedVariantIndex ]?.variantLabel
-			) }
 			onChange={ ( evt ) => {
 				const variant = variants.find(
-					( variant ) => variant.variantLabel === evt.selectedItem?.key
+					( { variantLabel } ) => variantLabel === evt.selectedItem?.key
 				);
 
 				if ( variant ) {
-					handleChange( selectedItem.uuid, variant.productSlug, variant.productId );
+					onChangeItemVariant( selectedItem?.uuid, variant.productSlug, variant.productId );
 				}
 			} }
 		/>
