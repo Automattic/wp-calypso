@@ -193,6 +193,12 @@
 			border-color: var(--color-primary-60);
 			color: var(--color-text-inverted);
 		}
+
+		&[disabled] {
+			background-color: var(--color-primary-10);
+			border-color: var(--color-primary-10);
+			color: var(--color-text-inverted);
+		}
 	}
 }
 
