@@ -11,8 +11,10 @@ $row-line-height: 20px;
 $bar-left-spacing: 10px;
 $value-column-width: 50px;
 $border-radius: 4px;
+$item-transition: 0.1s ease-out;
+$item-indicator-width: 4px;
 
-.horizontalbarlist {
+.horizontal-bar-list {
 	list-style: none;
 	margin: 0;
 	padding: $padding-outside 0;
@@ -20,15 +22,16 @@ $border-radius: 4px;
 	font-weight: 500;
 	line-height: $row-line-height;
 
-	.horizontalbarlist-item {
+	.horizontal-bar-list-item {
 		display: flex;
 		justify-content: space-between;
 		min-height: $row-height;
 		align-items: stretch;
 		box-sizing: border-box;
 		padding: 0 $padding-outside;
+		transition: background-color $item-transition;
 
-		& + .horizontalbarlist-item {
+		& + .horizontal-bar-list-item {
 			margin-top: $space-between-rows;
 		}
 
@@ -36,11 +39,11 @@ $border-radius: 4px;
 		&:focus {
 			background-color: var(--studio-gray-0);
 
-			.horizontalbarlist-item-bar {
-				color: var(--studio-white);
+			.horizontal-bar-list-item-bar {
+				// color: var(--studio-white);
 
 				&::before {
-					background-color: var(--color-primary);
+					background-color: rgba(var(--color-primary-rgb), 40%);
 				}
 			}
 
@@ -50,7 +53,7 @@ $border-radius: 4px;
 		}
 	}
 
-	.horizontalbarlist-item-bar {
+	.horizontal-bar-list-item-bar {
 		padding-left: $bar-left-spacing;
 		position: relative;
 		display: flex;
@@ -59,7 +62,7 @@ $border-radius: 4px;
 		align-items: center;
 
 		&::before {
-			width: var(--horizontalbarlist-fill);
+			width: var(--horizontal-bar-list-fill);
 			height: 100%;
 			content: "";
 			border-radius: $border-radius;
@@ -67,6 +70,7 @@ $border-radius: 4px;
 			position: absolute;
 			left: 0;
 			z-index: 0;
+			transition: background-color $item-transition;
 		}
 	}
 
@@ -75,6 +79,7 @@ $border-radius: 4px;
 		overflow: hidden;
 		white-space: nowrap;
 		z-index: 1;
+		color: var(--color-text);
 	}
 
 	.value {
@@ -82,4 +87,12 @@ $border-radius: 4px;
 		text-align: right;
 		align-self: center;
 	}
+}
+
+.horizontal-bar-list-item--link {
+	cursor: pointer;
+}
+
+.horizontal-bar-list-item--indicated {
+	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
 }

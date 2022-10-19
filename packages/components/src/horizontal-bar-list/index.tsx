@@ -1,33 +1,20 @@
 import classnames from 'classnames';
 import React from 'react';
-import HorizontalBarListItem from './horizontal-bar-grid-item';
 
 import './style.scss';
 
-const BASE_CLASS_NAME = 'horizontalbarlist';
+const BASE_CLASS_NAME = 'horizontal-bar-list';
 
-const HorizontalBarList = ( {
-	className,
-	data,
-	referenceValue,
-	// leftActions,
-	// middleActions,
-	// hasIndicator,
-	// onClick,
-} ) => {
+const HorizontalBarList = ( { children, className, data } ) => {
 	if ( ! data || ! data.length ) {
-		return <div>No data</div>;
+		return <div>No data</div>; // This will come from a prop to handle different message.
 	}
 
 	const baseClass = classnames( className, BASE_CLASS_NAME );
-	const barReferenceValue = referenceValue ? referenceValue : data[ 0 ]?.value;
 
 	return (
-		<ul className={ baseClass }>
-			{ data.map( ( item ) => {
-				return <HorizontalBarListItem data={ item } referenceValue={ barReferenceValue } />;
-			} ) }
-		</ul>
+		// Header markup will go here.
+		<ul className={ baseClass }>{ children }</ul>
 	);
 };
 
