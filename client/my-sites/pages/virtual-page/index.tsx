@@ -13,8 +13,8 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { recordEvent } from '../helpers';
+import { PageCardInfoBadge } from '../page-card-info';
 import type { SiteDetails } from '@automattic/data-stores';
-import './style.scss';
 
 interface Props {
 	site: SiteDetails;
@@ -37,13 +37,13 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 
 	const handleMenuToggle = ( isVisible: boolean ) => {
 		if ( isVisible ) {
-			recordEvent( 'Clicked More Options Menu' );
+			dispatch( recordEvent( 'Clicked More Options Menu' ) );
 		}
 	};
 
-	const recordEditPage = () => recordEvent( 'Clicked Edit Page' );
+	const recordEditPage = () => dispatch( recordEvent( 'Clicked Edit Page' ) );
 
-	const recordViewPage = () => recordEvent( 'Clicked View Page' );
+	const recordViewPage = () => dispatch( recordEvent( 'Clicked View Page' ) );
 
 	const viewPage = () => {
 		recordViewPage();
@@ -57,14 +57,14 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 				duration: 3000,
 			} )
 		);
-		recordEvent( 'Clicked Copy Page Link' );
+		dispatch( recordEvent( 'Clicked Copy Page Link' ) );
 	};
 
 	return (
-		<CompactCard key={ id } className="virtual-page">
-			<div className="virtual-page__main">
+		<CompactCard key={ id } className="page">
+			<div className="page__main">
 				<a
-					className="virtual-page__title"
+					className="page__title"
 					href={ editorUrl }
 					title={ translate( 'Edit %(title)s', {
 						textOnly: true,
@@ -93,14 +93,9 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 						</InfoPopover>
 					) }
 				</a>
-				<div className="virtual-page__info">
+				<div className="page-card-info">
 					{ description && <span>{ description }</span> }
-					{ isHomepage && (
-						<span className="virtual-page__badge">
-							<Gridicon icon="house" size={ 12 } className="virtual-page__badge-icon" />
-							<span className="virtual-page__badge-text">{ translate( 'Homepage' ) }</span>
-						</span>
-					) }
+					{ isHomepage && <PageCardInfoBadge icon="house" text={ translate( 'Homepage' ) } /> }
 				</div>
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ handleMenuToggle }>

@@ -55,4 +55,4 @@ export const sortPagesHierarchically = ( pages, homepageId = 0 ) => {
 	return sortedPages;
 };
 
-export const recordEvent = ( event ) => recordGoogleEvent( 'Pages', event );
+export const recordEvent = ( action ) => recordGoogleEvent( 'Pages', action );
