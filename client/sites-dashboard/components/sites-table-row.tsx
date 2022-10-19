@@ -148,7 +148,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							/>
 						</PlanRenewNagContainer>
 					) : (
-						<>{ site.plan?.product_name_short }</>
+						site.plan?.product_name_short
 					) }
 				</SitePlan>
 			</Column>
