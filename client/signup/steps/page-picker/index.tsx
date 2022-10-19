@@ -87,7 +87,7 @@ const CellLabelContainer = styled.div`
 	font-size: 14px;
 	gap: 8px;
 
-	width: 100%;
+	width: 222px;
 	@media ( min-width: 960px ) {
 		justify-content: left;
 	}
@@ -102,12 +102,12 @@ const PageCellBadge = styled.div`
 	border-radius: 4px;
 	text-align: center;
 	font-size: 12px;
-	padding: 0;
+	padding: 0 6px;
 	line-height: 20px;
 	font-weight: 500;
 	color: var( --studio-green-80 );
 	height: 20px;
-	width: 61px;
+	width: auto;
 `;
 
 interface PageCellType {
@@ -141,7 +141,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 				<div>{ title }</div>
 				{ popular ? <PageCellBadge>{ translate( 'Popular' ) }</PageCellBadge> : null }
 				{ required ? <PageCellBadge>{ translate( 'Required' ) }</PageCellBadge> : null }
-				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top' }>
+				<InfoPopover showOnHover={ true } position={ isMobile() ? 'left' : 'top left' }>
 					{ description }
 				</InfoPopover>
 			</CellLabelContainer>
