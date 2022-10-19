@@ -309,7 +309,7 @@ export default class InfiniteList extends Component {
 	}
 
 	boundsForRef = ( ref ) => {
-		if ( ref in this.refs ) {
+		if ( ref in this.refs && ReactDom.findDOMNode( this.refs[ ref ] ) ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
 		return null;
