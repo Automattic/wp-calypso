@@ -421,6 +421,10 @@ class PurchaseItem extends Component {
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
 
+		if ( isIncludedWithPlan( purchase ) ) {
+			return translate( 'Included with Plan' );
+		}
+
 		if (
 			purchase.isAutoRenewEnabled &&
 			! hasPaymentMethod( purchase ) &&
