@@ -14,14 +14,18 @@ interface StyleVariationPreviewProps {
 	variation: StyleVariation;
 	base?: StyleVariation;
 	isSelected: boolean;
+	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
+	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
 	base = {},
 	isSelected,
+	isPremium,
 	onClick,
+	showGlobalStylesPremiumBadge,
 } ) => {
 	const context = useMemo( () => {
 		return {
@@ -51,6 +55,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 			>
+				{ isPremium && showGlobalStylesPremiumBadge() }
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview label={ variation.title } />
 				</GlobalStylesContext.Provider>
@@ -63,12 +68,14 @@ interface StyleVariationPreviewsProps {
 	variations: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
+	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	variations = [],
 	selectedVariation,
 	onClick,
+	showGlobalStylesPremiumBadge,
 } ) => {
 	const selectedVariationSlug = selectedVariation?.slug ?? DEFAULT_VARIATION_SLUG;
 	const base = useMemo(
@@ -84,7 +91,9 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					variation={ variation }
 					base={ base }
 					isSelected={ variation.slug === selectedVariationSlug }
+					isPremium={ variation.slug !== DEFAULT_VARIATION_SLUG }
 					onClick={ onClick }
+					showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 				/>
 			) ) }
 		</>

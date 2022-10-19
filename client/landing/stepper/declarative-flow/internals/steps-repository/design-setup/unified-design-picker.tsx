@@ -19,7 +19,9 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
+import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -254,6 +256,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
 
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
 	function upgradePlan() {
 		if ( selectedDesign ) {
 			recordTracksEvent(
@@ -409,6 +413,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
+	function showGlobalStylesPremiumBadge() {
+		if ( ! shouldLimitGlobalStyles ) {
+			return null;
+		}
+
+		return (
+			<PremiumBadge
+				className="design-picker__premium-badge"
+				tooltipText={ translate(
+					'You can try this premium style out before upgrading your plan.'
+				) }
+			/>
+		);
+	}
+
 	// ********** Main render logic
 
 	// Don't render until we've fetched the designs from the backend.
@@ -475,6 +494,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
+						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				) : (
 					<WebPreview

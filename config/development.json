@@ -149,7 +149,6 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": true,
 		"sign-in-with-apple/redirect": true,
-		"signup/add-ons": false,
 		"signup/anchor-fm": true,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-categories": true,
