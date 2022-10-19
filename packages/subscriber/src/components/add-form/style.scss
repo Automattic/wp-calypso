@@ -47,7 +47,7 @@
 	.add-subscriber__form--container input {
 		&:focus {
 			border-color: var(--color-primary);
-			box-shadow: 0 0 0 2px var(--color-primary-10);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 			outline: none;
 		}
 	}
