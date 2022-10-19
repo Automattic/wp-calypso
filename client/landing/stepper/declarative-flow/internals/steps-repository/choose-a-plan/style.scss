@@ -1,6 +1,10 @@
 $videopress-mobile-layout-width: 700px;
 
 .videopress {
+	.step-container__header {
+		margin-top: 128px;
+	}
+
 	.segmented-control {
 		background: transparent;
 		border: solid 1px rgba(255, 255, 255, 0.2);
