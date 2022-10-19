@@ -334,10 +334,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
 			}
 
-			if ( options?.pageTemplate ) {
-				themeSetupOptions.page_template = options?.pageTemplate;
-			}
-
 			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
@@ -347,6 +343,29 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 			return response;
 		}
+	}
+
+	function* createCustomTemplate(
+		siteSlug: string,
+		stylesheet: string,
+		slug: string,
+		title: string,
+		content: string
+	) {
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/templates`,
+			apiNamespace: 'wp/v2',
+			body: {
+				id: `${ stylesheet }//wp-custom-template-${ slug }`,
+				slug,
+				theme: stylesheet,
+				title,
+				content,
+				status: 'publish',
+				is_wp_suggestion: true,
+			},
+			method: 'POST',
+		} );
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {
@@ -545,6 +564,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		resetNewSiteFailed,
 		setThemeOnSite,
 		setDesignOnSite,
+		createCustomTemplate,
 		createSite,
 		receiveSite,
 		receiveSiteFailed,
