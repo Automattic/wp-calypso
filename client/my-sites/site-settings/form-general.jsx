@@ -21,6 +21,7 @@ import SiteLanguagePicker from 'calypso/components/language-picker/site-language
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Timezone from 'calypso/components/timezone';
+import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { preventWidows } from 'calypso/lib/formatting';
 import scrollTo from 'calypso/lib/scroll-to';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
@@ -260,6 +261,12 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	trackAdvancedCustomizationUpgradeClick = () => {
+		this.props.recordTracksEvent( 'calypso_global_styles_gating_settings_notice_upgrade_click', {
+			cta_name: 'settings_site_privacy',
+		} );
+	};
+
 	trackFiverrLogoMakerClick = () => {
 		this.props.recordTracksEvent( 'calypso_site_icon_fiverr_logo_maker_cta_click', {
 			cta_name: 'site_icon_fiverr_logo_maker',
@@ -342,6 +349,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			shouldLimitGlobalStyles,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -365,6 +373,7 @@ export class SiteSettingsFormGeneral extends Component {
 					! isWPForTeamsSite &&
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
+							{ shouldLimitGlobalStyles && this.advancedCustomizationNotice() }
 							<FormLabel className={ comingSoonFormLabelClasses }>
 								<FormRadio
 									name="blog_public"
@@ -698,6 +707,35 @@ export class SiteSettingsFormGeneral extends Component {
 			</div>
 		);
 	}
+
+	advancedCustomizationNotice() {
+		const { translate, siteSlug } = this.props;
+		const upgradeUrl = '/plans/' + siteSlug;
+		const siteUrl = `https://${ siteSlug }`;
+
+		return (
+			<>
+				<div className="site-settings__advanced-customization-notice">
+					<div className="site-settings__advanced-customization-notice-cta">
+						<Gridicon icon="info-outline" />
+						<span>
+							{ translate( 'Your style changes wont be public until you upgrade your plan.' ) }
+						</span>
+					</div>
+					<div className="site-settings__advanced-customization-notice-buttons">
+						<Button href={ siteUrl }>{ translate( 'View site' ) }</Button>
+						<Button
+							className="is-primary"
+							href={ upgradeUrl }
+							onClick={ this.trackAdvancedCustomizationUpgradeClick }
+						>
+							{ translate( 'Upgrade' ) }
+						</Button>
+					</div>
+				</div>
+			</>
+		);
+	}
 }
 
 const mapDispatchToProps = ( dispatch, ownProps ) => {
@@ -767,7 +805,15 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
+const SiteSettingsFormGeneralWithShouldLimitGlobalStyles = ( props ) => {
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	return (
+		<SiteSettingsFormGeneral { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />
+	);
+};
+
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormGeneral );
+)( SiteSettingsFormGeneralWithShouldLimitGlobalStyles );
