@@ -3,10 +3,19 @@
 }
 
 .environment.is-account-settings:hover .account-settings-helper__popover {
-	display: block;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 	position: absolute;
 	bottom: 100%;
-	padding: 4px;
+	padding: 8px;
+	max-height: 80vh;
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
+}
+
+.account-settings-helper__popover .color-scheme-picker {
+	display: flex;
+	flex: 1;
+	overflow: auto;
 }
