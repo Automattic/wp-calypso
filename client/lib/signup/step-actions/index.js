@@ -268,7 +268,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	const locale = getLocaleSlug();
-	// Pre Load Experiment relevent to the post site creation goal screen
+	// Pre Load Experiment relevant to the post site creation goal screen
 	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post(
