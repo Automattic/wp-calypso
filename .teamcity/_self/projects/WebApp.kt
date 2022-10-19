@@ -36,6 +36,7 @@ object WebApp : Project({
 	buildType(AuthenticationE2ETests)
 	buildType(HelpCentreE2ETests)
 	buildType(KPIDashboardTests)
+	buildType(CalypsoPreReleaseDashboard)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -961,15 +962,6 @@ object KPIDashboardTests : BuildType({
 	features {
 		perfmon {
 		}
-		commitStatusPublisher {
-			vcsRootExtId = "${Settings.WpCalypso.id}"
-			publisher = github {
-				githubUrl = "https://api.github.com"
-				authType = personalToken {
-					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
-				}
-			}
-		}
 	}
 
 	// By default, no triggers are defined for this template class.
@@ -989,6 +981,38 @@ object KPIDashboardTests : BuildType({
 			compareTo = build {
 				buildRule = lastSuccessful()
 			}
+		}
+	}
+})
+
+object CalypsoPreReleaseDashboard : BuildType({
+	id("Calypso_Dashboard_Pre_Release_Dashboard")
+	uuid = "e07c2ff3-2a9f-416e-9a03-637690334da8"
+	name = "Calypso Pre-Release Dashboard"
+	description = "Generate Dashboard for Pre-Release Tests"
+
+	dependencies {
+		artifacts (KPIDashboardTests) {
+		}
+	}
+
+	triggers {
+		finishBuildTrigger {
+	    	buildType = "Calypso_E2E_KPI_Dashboard"
+		}
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Install AWS CLI"
+			scriptContent = """
+				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+				unzip awscliv2.zip \
+				sudo ./aws/install
+
+				aws --version
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
 		}
 	}
 })

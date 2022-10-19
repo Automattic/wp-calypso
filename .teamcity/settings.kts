@@ -87,7 +87,7 @@ project {
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY", "credentialsJSON:782b4bde-b73d-4326-9970-5a79251bdf07", display = ParameterDisplay.HIDDEN)
-		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports")
+		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
 	}
 
