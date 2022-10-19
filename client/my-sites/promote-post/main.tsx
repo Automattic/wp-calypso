@@ -122,20 +122,6 @@ export default function PromotedPosts( { tab }: Props ) {
 				/>
 			) }
 			{ selectedTab === 'posts' && <PostsList /> }
-
-			<div className="promote-post__footer">
-				<p>
-					{ translate(
-						'By promoting your post you agree to {{tosLink}}WordPress.com Terms{{/tosLink}} and {{advertisingTerms}}Advertising Terms{{/advertisingTerms}}.',
-						{
-							components: {
-								tosLink: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />,
-								advertisingTerms: <a href="https://automattic.com/privacy/" target="blank" />,
-							},
-						}
-					) }
-				</p>
-			</div>
 		</Main>
 	);
 }
