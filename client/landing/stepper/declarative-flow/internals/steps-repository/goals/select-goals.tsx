@@ -79,7 +79,7 @@ export const SelectGoals = ( {
 		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
 		onSubmit( selectedGoalsWithDIFM );
 	};
-
+	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
 			{ displayAllGoals && (
@@ -87,7 +87,8 @@ export const SelectGoals = ( {
 			) }
 
 			<div className="select-goals__cards-container">
-				{ isBuiltByExpressExperimentLoading
+				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
+				{ hasBuiltByExpressGoal && isBuiltByExpressExperimentLoading
 					? goalOptions.map( ( { key } ) => (
 							<div
 								className="select-card__container"
