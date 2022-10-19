@@ -9,7 +9,7 @@ import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
-import { SELECTOR_PLANS } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import hasStandalonePlugin from 'calypso/my-sites/plans/jetpack-plans/has-standalone-plugin';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -122,16 +122,14 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const productWithStandalonePlugin = useMemo( () => {
-		if (
+	const productWithStandalonePlugin = useMemo(
+		() =>
 			isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) &&
-			! SELECTOR_PLANS.includes( productSlug ) // All bundles do not have a standalone plugin
-		) {
-			return slugToSelectorProduct( productSlug );
-		}
-
-		return null;
-	}, [ productSlug ] );
+			hasStandalonePlugin( productSlug )
+				? slugToSelectorProduct( productSlug )
+				: null,
+		[ productSlug ]
+	);
 
 	const onContinue = useCallback( () => {
 		dispatch(
