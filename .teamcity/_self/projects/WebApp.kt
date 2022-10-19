@@ -21,6 +21,7 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailu
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
 object WebApp : Project({
 	id("WebApp")
