@@ -1,6 +1,5 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
@@ -109,7 +108,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 							<>
 								<ClipboardButton
 									text={ siteSlug }
-									className={ classNames( 'launchpad__clipboard-button' ) }
+									className="launchpad__clipboard-button"
 									borderless
 									compact
 									onCopy={ () => setClipboardCopied( true ) }
