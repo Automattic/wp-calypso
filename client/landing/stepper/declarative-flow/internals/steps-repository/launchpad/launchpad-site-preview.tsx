@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
@@ -12,7 +12,12 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const flow = useFlowParam();
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
-	const defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+
+	if ( VIDEOPRESS_FLOW === flow ) {
+		const windowWidth = window.innerWidth;
+		defaultDevice = windowWidth >= 1430 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	}
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
