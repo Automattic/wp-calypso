@@ -26,6 +26,7 @@ export const getNewSiteParams = ( {
 	siteTitle,
 	siteAccentColor,
 	useThemeHeadstart = false,
+	comingSoon,
 } ) => {
 	const designType = ''; //getDesignType( state ).trim();
 	const siteType = ''; //getSiteType( state ).trim();
@@ -45,15 +46,13 @@ export const getNewSiteParams = ( {
 		'pub/lynx' || //get( signupDependencies, 'themeSlugWithRepo', false ) ||
 		siteTypeTheme;
 
-	const launchAsComingSoon = 1; //get( signupDependencies, 'comingSoon', 1 );
-
 	// We will use the default annotation instead of theme annotation as fallback,
 	// when segment and vertical values are not sent. Check pbAok1-p2#comment-834.
 	const shouldUseDefaultAnnotationAsFallback = true;
 
 	const newSiteParams = {
 		blog_title: siteTitle,
-		public: launchAsComingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
+		public: comingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
 		options: {
 			designType: designType || undefined,
 			theme,
@@ -65,7 +64,7 @@ export const getNewSiteParams = ( {
 			},
 			site_creation_flow: flowToCheck,
 			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: launchAsComingSoon,
+			wpcom_public_coming_soon: comingSoon,
 			...( siteAccentColor && { site_accent_color: siteAccentColor } ),
 		},
 		validate: false,
@@ -109,6 +108,7 @@ export const createSiteWithCart = async (
 		googleAppsCartItem,
 		isPurchasingItem: isPurchasingDomainItem,
 		themeSlugWithRepo,
+		comingSoon,
 		themeItem,
 		siteTitle,
 		siteAccentColor,
@@ -151,6 +151,7 @@ export const createSiteWithCart = async (
 		siteTitle,
 		siteAccentColor,
 		useThemeHeadstart,
+		comingSoon,
 	} );
 
 	// if ( isEmpty( bearerToken ) && 'onboarding-registrationless' === flowToCheck ) {
@@ -169,7 +170,7 @@ export const createSiteWithCart = async (
 	} );
 
 	if ( ! siteCreationResponse.success ) {
-		callback( siteCreationResponse.errors );
+		// TODO ebuccelli: Manage siteCreationResponse.errors
 		return;
 	}
 
@@ -237,7 +238,7 @@ export async function addPlanToCart(
 		return;
 	}
 
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' )
+	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
 	await processItemCart(
