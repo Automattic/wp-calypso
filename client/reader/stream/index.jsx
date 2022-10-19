@@ -1,8 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { findLast, times, defer } from 'lodash';
-import page from 'page';
+import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import ReactDom from 'react-dom';
@@ -15,7 +13,6 @@ import scrollTo from 'calypso/lib/scroll-to';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
-import { getTagStreamUrl } from 'calypso/reader/route';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -24,8 +21,6 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { viewStream } from 'calypso/state/reader-ui/actions';
 import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
-import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
@@ -46,9 +41,7 @@ import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
 import PostPlaceholder from './post-placeholder';
 import ReaderSidebarFollowedSites from './reader-sidebar-followed-sites';
-import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarOrganizations from './reader-sidebar-organizations';
-import ReaderSidebarTags from './reader-sidebar-tags';
 import './style.scss';
 
 const GUESSED_POST_HEIGHT = 600;
@@ -356,16 +349,6 @@ class ReaderStream extends Component {
 		}
 	};
 
-	highlightNewTag( tagSlug ) {
-		const tagStreamUrl = getTagStreamUrl( tagSlug );
-		if ( tagStreamUrl !== page.current ) {
-			defer( function () {
-				page( tagStreamUrl );
-				window.scrollTo( 0, 0 );
-			} );
-		}
-	}
-
 	renderLoadingPlaceholders = () => {
 		const { items } = this.props;
 		const count = items.length === 0 ? INITIAL_FETCH : PER_FETCH;
@@ -435,7 +418,6 @@ class ReaderStream extends Component {
 		}
 
 		const path = window.location.pathname;
-		const pathParts = path.split( '/' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -469,34 +451,6 @@ class ReaderStream extends Component {
 					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
 				);
 			}
-			if (
-				( 'list' === streamType && this.props.subscribedLists?.length > 0 ) ||
-				( 'list' === streamType && isEnabled( 'reader/list-management' ) )
-			) {
-				const listOwner = pathParts[ 3 ];
-				const listSlug = pathParts[ 4 ];
-				sidebarContent = (
-					<ReaderSidebarLists
-						lists={ this.props.subscribedLists }
-						path={ path }
-						isOpen={ this.props.isListsOpen }
-						currentListOwner={ listOwner }
-						currentListSlug={ listSlug }
-					/>
-				);
-			}
-			if ( 'tag' === streamType ) {
-				const tagSlug = pathParts[ 2 ];
-				sidebarContent = (
-					<ReaderSidebarTags
-						tags={ this.props.followedTags }
-						path={ path }
-						isOpen={ this.props.isTagsOpen }
-						onFollowTag={ this.highlightNewTag }
-						currentTag={ tagSlug }
-					/>
-				);
-			}
 
 			// Only show right sidebar on select screens
 			const excludesSidebar = [
@@ -505,6 +459,8 @@ class ReaderStream extends Component {
 				'likes',
 				'search',
 				'custom_recs_posts_with_images',
+				'list',
+				'tag',
 			];
 
 			if ( ! excludesSidebar.includes( streamType ) ) {
@@ -544,8 +500,6 @@ export default connect(
 		const selectedPost = getPostByKey( state, stream.selected );
 
 		return {
-			isListsOpen: isListsOpen( state ),
-			isTagsOpen: isTagsOpen( state ),
 			blockedSites: getBlockedSites( state ),
 			items: getTransformedStreamItems( state, {
 				streamKey,
@@ -553,7 +507,6 @@ export default connect(
 			} ),
 			notificationsOpen: isNotificationsOpen( state ),
 			stream,
-			subscribedLists: getSubscribedLists( state ),
 			recsStream: getStream( state, recsStreamKey ),
 			selectedPostKey: stream.selected,
 			selectedPost,
