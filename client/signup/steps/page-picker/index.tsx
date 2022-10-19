@@ -254,7 +254,7 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-const Placeholder = styled.div`
+const Placeholder = styled.span`
 	animation: pulse-light 2s ease-in-out infinite;
 	background-color: var( --color-neutral-10 );
 	color: transparent;
