@@ -11,7 +11,7 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Page, Response } from 'playwright';
 
 const quote =
 	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
@@ -63,7 +63,49 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	it( 'Post a comment', async function () {
 		commentsComponent = new CommentsComponent( page );
-		await commentsComponent.postComment( comment );
+
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			const waitForLikesResponse = () =>
+				page.waitForResponse( /rest\/v1\/sites\/\d+\/comments\/\d+\/likes/ );
+
+			const isLikesResponseOK = async ( response: Response ) => {
+				const payload = await response.json();
+
+				if ( payload.code === 404 || payload.body.error === 'unknown_comment' ) {
+					return false;
+				}
+
+				return true;
+			};
+			const [ response ] = await Promise.all( [
+				waitForLikesResponse(),
+				commentsComponent.postComment( comment ),
+			] );
+
+			if ( ! ( await isLikesResponseOK( response ) ) ) {
+				const reloadUntilLikesReady = async (): Promise< void > => {
+					const [ response ] = await Promise.all( [ waitForLikesResponse(), page.reload() ] );
+					if ( ! ( await isLikesResponseOK( response ) ) ) {
+						return reloadUntilLikesReady();
+					}
+				};
+
+				let timeout: NodeJS.Timeout;
+
+				await Promise.race( [
+					reloadUntilLikesReady(),
+					new Promise( ( resolve, reject ) => {
+						timeout = setTimeout( () => {
+							reject( new Error( 'Likes widget could not be loaded.' ) );
+						}, 1000 );
+					} ).finally( () => {
+						clearTimeout( timeout );
+					} ),
+				] );
+			}
+		} else {
+			await commentsComponent.postComment( comment );
+		}
 	} );
 
 	it( 'Like the comment', async function () {
