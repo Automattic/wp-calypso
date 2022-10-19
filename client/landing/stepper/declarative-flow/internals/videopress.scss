@@ -144,6 +144,7 @@ body.is-videopress-stepper {
 			background-color: rgba(255, 255, 255, 0.1);
 			border: none;
 			color: $videopress-theme-base-text-color;
+			gap: 10px;
 		}
 
 		.launchpad__checklist-item {
@@ -175,6 +176,34 @@ body.is-videopress-stepper {
 			&:hover {
 				color: $videopress-theme-yellow;
 			}
+		}
+
+		.launchpad__task.completed-and-active:hover,
+		.launchpad__task.not-completed:hover .launchpad__checklist-item-text,
+		.launchpad__task.completed-and-active > a:focus .launchpad__checklist-item-text,
+		.launchpad__task.not-completed > a:focus .launchpad__checklist-item-text,
+		.launchpad__task.completed-and-active:hover .launchpad__checklist-item-chevron,
+		.launchpad__task.completed-and-active:hover .launchpad__checklist-item-checkmark,
+		.launchpad__task.not-completed:hover .launchpad__checklist-item-chevron,
+		.launchpad__task.not-completed:hover .launchpad__checklist-item-checkmark,
+		.launchpad__task.completed-and-active > a:focus .launchpad__checklist-item-chevron,
+		.launchpad__task.completed-and-active > a:focus .launchpad__checklist-item-checkmark,
+		.launchpad__task.not-completed > a:focus .launchpad__checklist-item-chevron,
+		.launchpad__task.not-completed > a:focus .launchpad__checklist-item-checkmark,
+		.button.launchpad__checklist-item:hover:not([disabled]),
+		.button.launchpad__checklist-item:focus:not([disabled]),
+		.launchpad__task.completed-and-active:hover .launchpad__checklist-item-text {
+			color: $videopress-theme-yellow;
+			fill: $videopress-theme-yellow;
+		}
+
+
+		.launchpad__task.completed-and-active:hover .badge,
+		.launchpad__task.not-completed:hover .badge,
+		.launchpad__task.completed-and-active > a:focus .badge,
+		.launchpad__task.not-completed > a:focus .badge {
+			color: #000;
+			background-color: #ffe61c;
 		}
 	}
 }
