@@ -84,7 +84,7 @@ class AccountCloseConfirmDialog extends Component {
 				englishText: 'Change your username',
 				text: translate( 'Change your username' ),
 				href: '/me/account',
-				supportLink: 'https://wordpress.com/support/change-your-username',
+				supportLink: 'https://wordpress.com/support/change-your-username/',
 				supportPostId: 2116,
 			},
 			{

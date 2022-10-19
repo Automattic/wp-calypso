@@ -27,13 +27,6 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 }
 
-function getAddOnsStep( steps ) {
-	if ( isEnabled( 'signup/add-ons' ) ) {
-		return [ ...steps, 'add-ons' ];
-	}
-	return steps;
-}
-
 function getSiteDestination( dependencies ) {
 	let protocol = 'https';
 
@@ -112,6 +105,13 @@ function getDomainSignupFlowDestination( { domainItem, cartItem, siteId, designT
 	return getThankYouNoSiteDestination();
 }
 
+function getEmailSignupFlowDestination( { siteId, siteSlug } ) {
+	return addQueryArgs(
+		{ siteId },
+		`/checkout/thank-you/features/email-license/${ siteSlug }/:receiptId`
+	);
+}
+
 function getThankYouNoSiteDestination() {
 	return `/checkout/thank-you/no-site`;
 }
@@ -156,10 +156,6 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getStepperFlowDestination( dependencies, stepperFlow ) {
-	return `/setup?flow=${ stepperFlow }&siteSlug=${ dependencies.siteSlug }`;
-}
-
 const flows = generateFlows( {
 	getSiteDestination,
 	getRedirectDestination,
@@ -167,13 +163,12 @@ const flows = generateFlows( {
 	getLaunchDestination,
 	getThankYouNoSiteDestination,
 	getDomainSignupFlowDestination,
+	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getAddOnsStep,
-	getStepperFlowDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

@@ -75,7 +75,6 @@ describe( DataHelper.createSuiteTitle( 'Signup: WordPress.com Domain Only' ), fu
 
 		// Skipping this test because of inconsistency in cookie working in this flow
 		// See GH Issue #56961 (https://github.com/Automattic/wp-calypso/issues/56961)
-		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip( 'Prices are shown in Japanese Yen', async function () {
 			const cartAmount = ( await cartCheckoutPage.getCheckoutTotalAmount( {
 				rawString: true,

@@ -13,6 +13,7 @@ import {
 } from '@automattic/calypso-products';
 import { filter, map, pick, sortBy } from 'lodash';
 import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { PREINSTALLED_PREMIUM_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import { sanitizeSectionContent } from './sanitize-section-content';
@@ -103,6 +104,7 @@ export function getAllowedPluginData( plugin ) {
 		'name',
 		'network',
 		'num_ratings',
+		'org_slug',
 		'plugin_url',
 		'product_video',
 		'rating',
@@ -111,7 +113,9 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'setup_url',
 		'slug',
+		'software_slug',
 		'support_URL',
+		'software_slug',
 		'tags',
 		'tested',
 		'update',
@@ -183,15 +187,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( { ...plugin, ...pluginData } );
 
-	// Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
-	// but require a paid upgrade to function.
-	if ( !! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] && ! plugin.variations ) {
-		const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
-		plugin.variations = {
-			monthly: { product_slug: monthly },
-			yearly: { product_slug: yearly },
-		};
-	}
+	plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
 
 	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
@@ -331,7 +327,7 @@ export function getPluginAuthorKeyword( plugin ) {
 export const WPORG_PROFILE_URL = 'https://profiles.wordpress.org/';
 
 /**
- * Get the author keywrod from author_profile property
+ * Get the author keyword from author_profile property
  *
  * @param plugin
  * @returns {string|null} the author keyword
@@ -371,3 +367,95 @@ export function marketplacePlanToAdd( currentPlan, pluginBillingPeriod ) {
 				: PLAN_BUSINESS_MONTHLY;
 	}
 }
+
+/**
+ * Determines the URL to use for managing a connection.
+ *
+ * @param {string} siteSlug The site slug to use in the URL.
+ * @returns The URL to use for managing a connection.
+ */
+export const getManageConnectionHref = ( siteSlug ) => {
+	return isJetpackCloud()
+		? `https://wordpress.com/settings/manage-connection/${ siteSlug }`
+		: `/settings/manage-connection/${ siteSlug }`;
+};
+
+/**
+ * Some plugins can be preinstalled on WPCOM and available as standalone on WPORG,
+ * but require a paid upgrade to function.
+ *
+ * @typedef {object} PluginVariations
+ * @property {object} monthly The plugin's monthly variation
+ * @property {string} monthly.product_slug The plugin's monthly variation's product slug
+ * @property {object} yearly The plugin's yearly variation
+ * @property {string} yearly.product_slug The plugin's yearly variation's product slug
+ * @param {object} plugin
+ * @returns {PluginVariations}
+ */
+export function getPreinstalledPremiumPluginsVariations( plugin ) {
+	if ( ! PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ] || !! plugin.variations ) {
+		return plugin?.variations;
+	}
+	const { monthly, yearly } = PREINSTALLED_PREMIUM_PLUGINS[ plugin.slug ].products;
+	return {
+		monthly: { product_slug: monthly },
+		yearly: { product_slug: yearly },
+	};
+}
+
+/**
+ * Returns the product slug of periodVariation passed filtering the productsList passed only if required
+ *
+ * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param {Record<string, object>} productsList The list of products
+ * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
+ * it will find the product slug in the productsList filtering by the variation.product_id.
+ * It additionally returns:
+ *  - null|undefined if periodVariation is null|undefined
+ * - null|undefined if variation.product_id is null|undefined
+ * - undefined product is not found by productId in productsList
+ */
+export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
+	if ( ! periodVariation ) {
+		return periodVariation;
+	}
+
+	const productSlug = periodVariation.product_slug;
+	if ( productSlug ) {
+		return productSlug;
+	}
+
+	const productId = periodVariation.product_id;
+	if ( productId === undefined || productId === null ) {
+		return productId;
+	}
+
+	return Object.values( productsList ).find( ( product ) => product.product_id === productId )
+		?.product_slug;
+}
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {string} The software slug string
+ */
+export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
+	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {Array} purchases An array of site purchases
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {object} The purchase object, if found.
+ */
+export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
+	return (
+		isMarketplaceProduct &&
+		plugin?.variations &&
+		purchases.find( ( purchase ) =>
+			Object.values( plugin.variations ).some(
+				( variation ) => variation.product_id === purchase.productId
+			)
+		)
+	);
+};

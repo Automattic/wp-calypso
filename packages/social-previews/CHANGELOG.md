@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.1.5 (unreleased)
+## v1.1.5 (2022-08-24)
 
 - Declare an optional peer dependency on `@babel/runtime`, for CommonJS environments. This dependency already existed previously, it just wasn't declared.
 

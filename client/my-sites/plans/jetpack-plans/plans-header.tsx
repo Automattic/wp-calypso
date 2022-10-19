@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	JETPACK_LEGACY_PLANS_MAX_PLUGIN_VERSION,
 	PLAN_JETPACK_FREE,
@@ -29,7 +30,7 @@ type StandardHeaderProps = {
 const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: StandardHeaderProps ) => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 		{ shouldShowPlanRecommendation && siteId && (
 			<JetpackPluginUpdateWarning
 				siteId={ siteId }
@@ -39,7 +40,9 @@ const StandardPlansHeader = ( { shouldShowPlanRecommendation, siteId }: Standard
 		{ ! shouldShowPlanRecommendation && (
 			<h2 className="jetpack-plans__pricing-header">
 				{ preventWidows(
-					translate( 'Security, performance, and marketing tools made for WordPress' )
+					! isEnabled( 'jetpack/pricing-page-rework-v1' )
+						? translate( 'Security, performance, and marketing tools made for WordPress' )
+						: translate( 'Best-in-class products for your WordPress site' )
 				) }
 			</h2>
 		) }
@@ -56,7 +59,7 @@ const ConnectFlowPlansHeader = () => (
 				brandFont
 			/>
 		</div>
-		<PlansNavigation path={ '/plans' } />
+		<PlansNavigation path="/plans" />
 	</>
 );
 

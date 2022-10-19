@@ -26,6 +26,8 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	JETPACK_BACKUP_T1_PRODUCTS,
+	JETPACK_BACKUP_T2_PRODUCTS,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_CRM_FREE,
@@ -35,6 +37,10 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
+	JETPACK_VIDEOPRESS_PRODUCTS,
+	JETPACK_SECURITY_T1_PLANS,
+	JETPACK_SECURITY_T2_PLANS,
+	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
@@ -111,6 +117,9 @@ export const EXTERNAL_PRODUCT_CRM = (): SelectorProduct => ( {
 	displayCurrency: CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
+	),
+	shortDescription: translate(
+		'Build better relationships with your customers and grow your business.'
 	),
 	buttonLabel: translate( 'Get CRM' ),
 	features: {
@@ -233,6 +242,18 @@ export const TIER_2_SLUGS = [
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
+];
+
+export const MOST_POPULAR_PRODUCTS = [
+	...JETPACK_BACKUP_T1_PRODUCTS,
+	...JETPACK_BACKUP_T2_PRODUCTS,
+	...JETPACK_VIDEOPRESS_PRODUCTS,
+];
+
+export const MOST_POPULAR_BUNDLES = [
+	...JETPACK_SECURITY_T1_PLANS,
+	...JETPACK_SECURITY_T2_PLANS,
+	...JETPACK_COMPLETE_PLANS,
 ];
 
 export const isTier1 = ( slug: string ): boolean => TIER_1_SLUGS.includes( slug );

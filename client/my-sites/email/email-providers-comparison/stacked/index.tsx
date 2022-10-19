@@ -8,29 +8,31 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { stringify } from 'qs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import Main from 'calypso/components/main';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getSelectedDomain } from 'calypso/lib/domains';
+import { getSelectedDomain, canCurrentUserAddEmail } from 'calypso/lib/domains';
 import {
 	hasEmailForwards,
 	getDomainsWithEmailForwards,
 } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteSupportedDomain } from 'calypso/lib/gsuite';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
+import { domainAddNew } from 'calypso/my-sites/domains/paths';
 import EmailExistingForwardsNotice from 'calypso/my-sites/email/email-existing-forwards-notice';
 import EmailExistingPaidServiceNotice from 'calypso/my-sites/email/email-existing-paid-service-notice';
+import { EmailNonDomainOwnerMessage } from 'calypso/my-sites/email/email-non-domain-owner-message';
 import { BillingIntervalToggle } from 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle';
 import EmailForwardingLink from 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link';
 import { IntervalLength } from 'calypso/my-sites/email/email-providers-comparison/interval-length';
 import EmailUpsellNavigation from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation';
 import GoogleWorkspaceCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card';
 import ProfessionalEmailCard from 'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card';
-import { emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
+import { emailManagement, emailManagementInDepthComparison } from 'calypso/my-sites/email/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import canUserPurchaseGSuite from 'calypso/state/selectors/can-user-purchase-gsuite';
@@ -43,6 +45,7 @@ import './style.scss';
 export type EmailProvidersStackedComparisonProps = {
 	cartDomainName?: string;
 	comparisonContext: string;
+	hideNavigation?: boolean;
 	isDomainInCart?: boolean;
 	selectedDomainName: string;
 	selectedEmailProviderSlug?: string;
@@ -52,6 +55,7 @@ export type EmailProvidersStackedComparisonProps = {
 
 const EmailProvidersStackedComparison = ( {
 	comparisonContext,
+	hideNavigation = false,
 	isDomainInCart = false,
 	selectedDomainName,
 	selectedEmailProviderSlug,
@@ -83,15 +87,23 @@ const EmailProvidersStackedComparison = ( {
 		)
 	);
 
+	const currentUserCanAddEmail = canCurrentUserAddEmail( domain );
+	const showNonOwnerMessage = ! currentUserCanAddEmail && ! isDomainInCart;
+
 	const isGSuiteSupported =
 		domain && canPurchaseGSuite && ( isDomainInCart || hasGSuiteSupportedDomain( [ domain ] ) );
 
-	const shouldPromoteGoogleWorkspace = isGSuiteSupported && source === 'google-sale';
+	const shouldPromoteGoogleWorkspace = isGSuiteSupported && hasDiscount( gSuiteProduct );
 
-	const [ detailsExpanded, setDetailsExpanded ] = useState( () => {
-		const hasDiscountForGSuite = hasDiscount( gSuiteProduct );
+	const initialExpandedCards = () => {
+		if ( showNonOwnerMessage ) {
+			return {
+				google: false,
+				titan: false,
+			};
+		}
 
-		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug && hasDiscountForGSuite ) {
+		if ( shouldPromoteGoogleWorkspace && ! selectedEmailProviderSlug ) {
 			return {
 				google: true,
 				titan: false,
@@ -109,7 +121,13 @@ const EmailProvidersStackedComparison = ( {
 			titan: true,
 			google: false,
 		};
-	} );
+	};
+
+	const [ detailsExpanded, setDetailsExpanded ] = useState( initialExpandedCards() );
+
+	useEffect( () => {
+		setDetailsExpanded( initialExpandedCards() );
+	}, [ showNonOwnerMessage ] );
 
 	const changeExpandedState = ( providerKey: string, isCurrentlyExpanded: boolean ) => {
 		const expandedEntries = Object.entries( detailsExpanded ).map( ( entry ) => {
@@ -177,7 +195,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="ProfessionalEmailCard"
-			onExpandedChange={ changeExpandedState }
+			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -187,7 +205,7 @@ const EmailProvidersStackedComparison = ( {
 			intervalLength={ selectedIntervalLength }
 			isDomainInCart={ isDomainInCart }
 			key="GoogleWorkspaceCard"
-			onExpandedChange={ changeExpandedState }
+			onExpandedChange={ ! showNonOwnerMessage ? changeExpandedState : undefined }
 			selectedDomainName={ selectedDomainName }
 			source={ source }
 		/>,
@@ -218,7 +236,17 @@ const EmailProvidersStackedComparison = ( {
 			<QueryProductsList />
 
 			{ ! isDomainInCart && selectedSite && <QuerySiteDomains siteId={ selectedSite.ID } /> }
-			{ isDomainInCart && <EmailUpsellNavigation siteSlug={ selectedSite?.slug ?? '' } /> }
+
+			{ ! hideNavigation && (
+				<EmailUpsellNavigation
+					backUrl={
+						isDomainInCart
+							? domainAddNew( selectedSite?.slug )
+							: emailManagement( selectedSite?.slug, null )
+					}
+					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+				/>
+			) }
 
 			<h1 className="email-providers-stacked-comparison__header">
 				{ isDomainInCart
@@ -243,10 +271,12 @@ const EmailProvidersStackedComparison = ( {
 				</div>
 			) }
 
-			<BillingIntervalToggle
-				intervalLength={ selectedIntervalLength }
-				onIntervalChange={ changeIntervalLength }
-			/>
+			{ ! showNonOwnerMessage && (
+				<BillingIntervalToggle
+					intervalLength={ selectedIntervalLength }
+					onIntervalChange={ changeIntervalLength }
+				/>
+			) }
 
 			{ hasExistingEmailForwards && domainsWithForwards?.length && (
 				<EmailExistingForwardsNotice
@@ -258,6 +288,13 @@ const EmailProvidersStackedComparison = ( {
 			{ ! isDomainInCart && domain && <EmailExistingPaidServiceNotice domain={ domain } /> }
 
 			<>
+				{ showNonOwnerMessage && (
+					<EmailNonDomainOwnerMessage
+						domain={ domain }
+						selectedSite={ selectedSite }
+						source="email-comparison"
+					/>
+				) }
 				{ shouldPromoteGoogleWorkspace ? [ ...emailProviderCards ].reverse() : emailProviderCards }
 			</>
 

@@ -33,7 +33,6 @@ import {
 	isSpaceUpgrade,
 	isStarter,
 	isTitanMail,
-	isTrafficGuide,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
 	isVideoPress,
@@ -55,70 +54,72 @@ import type {
 	MinimalRequestCartProduct,
 } from '@automattic/shopping-cart';
 
-export function getAllCartItems( cart?: ResponseCart ): ResponseCartProduct[] {
+export type ObjectWithProducts = Pick< ResponseCart, 'products' >;
+
+export function getAllCartItems( cart?: ObjectWithProducts ): ResponseCartProduct[] {
 	return ( cart && cart.products ) || [];
 }
 
-export function getRenewalItems( cart: ResponseCart ): ResponseCartProduct[] {
+export function getRenewalItems( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( isRenewal );
 }
 
 /**
  * Determines whether there is a DIFM (Do it for me) product in the shopping cart.
  */
-export function hasDIFMProduct( cart: ResponseCart ): boolean {
+export function hasDIFMProduct( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isDIFMProduct );
 }
 
 /**
  * Determines whether there is any kind of plan (e.g. Premium or Business) in the shopping cart.
  */
-export function hasPlan( cart: ResponseCart ): boolean {
+export function hasPlan( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isPlan );
 }
 
 /**
  * Determines whether there is a Jetpack plan in the shopping cart.
  */
-export function hasJetpackPlan( cart: ResponseCart ): boolean {
+export function hasJetpackPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isJetpackPlan );
 }
 
 /**
  * Determines whether there is a P2+ plan in the shopping cart.
  */
-export function hasP2PlusPlan( cart: ResponseCart ): boolean {
+export function hasP2PlusPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isP2Plus );
 }
 
 /**
  * Determines whether there is an ecommerce plan in the shopping cart.
  */
-export function hasEcommercePlan( cart: ResponseCart ): boolean {
+export function hasEcommercePlan( cart: ObjectWithProducts ): boolean {
 	return cart && getAllCartItems( cart ).some( isEcommerce );
 }
 
-export function hasBloggerPlan( cart: ResponseCart ): boolean {
+export function hasBloggerPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBlogger );
 }
 
-export function hasPersonalPlan( cart: ResponseCart ): boolean {
+export function hasPersonalPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isPersonal );
 }
 
-export function hasPremiumPlan( cart: ResponseCart ): boolean {
+export function hasPremiumPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isPremium );
 }
 
-export function hasProPlan( cart: ResponseCart ): boolean {
+export function hasProPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isPro );
 }
 
-export function hasBusinessPlan( cart: ResponseCart ): boolean {
+export function hasBusinessPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBusiness );
 }
 
-export function hasStarterPlan( cart: ResponseCart ): boolean {
+export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
 }
 
@@ -126,61 +127,42 @@ export function hasDomainCredit( cart: ResponseCart ): boolean {
 	return cart.has_bundle_credit || hasPlan( cart );
 }
 
-export function hasMonthlyCartItem( cart: ResponseCart ): boolean {
+export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isMonthlyProduct );
 }
 
-export function hasBiennialCartItem( cart: ResponseCart ): boolean {
+export function hasBiennialCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBiennially );
 }
 
 /**
  * Determines whether there is at least one item of a given product in the specified shopping cart.
  */
-export function hasProduct( cart: ResponseCart, productSlug: string ): boolean {
+export function hasProduct( cart: ObjectWithProducts, productSlug: string ): boolean {
 	return getAllCartItems( cart ).some( function ( cartItem ) {
 		return cartItem.product_slug === productSlug;
 	} );
 }
 
-export function hasDomainRegistration( cart: ResponseCart ): boolean {
+export function hasDomainRegistration( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainRegistration );
 }
 
-export function hasNewDomainRegistration( cart: ResponseCart ): boolean {
-	return getAllCartItems( cart ).some( isNewDomainRegistration );
-}
-
-export function hasDomainRenewal( cart: ResponseCart ): boolean {
-	return getAllCartItems( cart ).some( isDomainRenewal );
-}
-
-/**
- * Determines whether the supplied cart item is a new domain registration (i.e. not a renewal).
- */
-function isNewDomainRegistration( cartItem: ResponseCartProduct ): boolean {
-	return isDomainRegistration( cartItem ) && ! isRenewal( cartItem );
-}
-
-function isDomainRenewal( cartItem: ResponseCartProduct ): boolean {
-	return isRenewal( cartItem ) && isDomainRegistration( cartItem );
-}
-
-export function hasDomainBeingUsedForPlan( cart: ResponseCart ): boolean {
+export function hasDomainBeingUsedForPlan( cart: ObjectWithProducts ): boolean {
 	return getDomainRegistrations( cart ).some( ( registration ) =>
 		isDomainBeingUsedForPlan( cart, registration.meta )
 	);
 }
 
-export function hasRenewalItem( cart: ResponseCart ): boolean {
+export function hasRenewalItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isRenewal );
 }
 
-export function hasTransferProduct( cart: ResponseCart ): boolean {
+export function hasTransferProduct( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isDomainTransfer );
 }
 
-export function getDomainTransfers( cart: ResponseCart ): ResponseCartProduct[] {
+export function getDomainTransfers( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter(
 		( product ) => product.product_slug === domainProductSlugs.TRANSFER_IN
 	);
@@ -191,16 +173,12 @@ export function getDomainTransfers( cart: ResponseCart ): ResponseCartProduct[] 
  *
  * Ignores partial credits, which aren't really a line item in this sense.
  */
-export function hasOnlyRenewalItems( cart: ResponseCart ): boolean {
+export function hasOnlyRenewalItems( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
 }
 
-export function hasConciergeSession( cart: ResponseCart ): boolean {
+export function hasConciergeSession( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isConciergeSession );
-}
-
-export function hasTrafficGuide( cart: ResponseCart ): boolean {
-	return getAllCartItems( cart ).some( isTrafficGuide );
 }
 
 /**
@@ -222,7 +200,7 @@ export function getCartItemBillPeriod( cartItem: ResponseCartProduct ): number {
  *
  * Will return false if the cart is empty.
  */
-export function hasRenewableSubscription( cart: ResponseCart ): boolean {
+export function hasRenewableSubscription( cart: ObjectWithProducts ): boolean {
 	return (
 		cart.products &&
 		getAllCartItems( cart ).some( ( cartItem ) => getCartItemBillPeriod( cartItem ) > 0 )
@@ -357,7 +335,7 @@ export function domainTransfer( properties: {
 /**
  * Retrieves all the items in the specified shopping cart for G Suite or Google Workspace.
  */
-export function getGoogleApps( cart: ResponseCart ): ResponseCartProduct[] {
+export function getGoogleApps( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
@@ -449,11 +427,11 @@ export function titanMailMonthly( properties: TitanProductProps ): MinimalReques
 	return titanMailProduct( properties, TITAN_MAIL_MONTHLY_SLUG );
 }
 
-export function hasGoogleApps( cart: ResponseCart ): boolean {
+export function hasGoogleApps( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isGSuiteOrExtraLicenseOrGoogleWorkspace );
 }
 
-export function hasTitanMail( cart: ResponseCart ): boolean {
+export function hasTitanMail( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isTitanMail );
 }
 
@@ -514,14 +492,14 @@ export function renewableProductItem( slug: string ): MinimalRequestCartProduct 
 /**
  * Retrieves all the domain registration items in the specified shopping cart.
  */
-export function getDomainRegistrations( cart: ResponseCart ): ResponseCartProduct[] {
+export function getDomainRegistrations( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.is_domain_registration === true );
 }
 
 /**
  * Retrieves all the domain mapping items in the specified shopping cart.
  */
-export function getDomainMappings( cart: ResponseCart ): ResponseCartProduct[] {
+export function getDomainMappings( cart: ObjectWithProducts ): ResponseCartProduct[] {
 	return getAllCartItems( cart ).filter( ( product ) => product.product_slug === 'domain_map' );
 }
 
@@ -633,7 +611,7 @@ export function getRenewalItemFromCartItem< T extends MinimalRequestCartProduct 
 	};
 }
 
-export function hasDomainInCart( cart: ResponseCart, domain: string ): boolean {
+export function hasDomainInCart( cart: ObjectWithProducts, domain: string ): boolean {
 	return getAllCartItems( cart ).some( ( product ) => {
 		return product.is_domain_registration === true && product.meta === domain;
 	} );
@@ -687,7 +665,7 @@ export function isDomainBundledWithPlan( cart?: ResponseCart, domain?: string ):
 /**
  * Returns true if cart contains a plan and also a domain that comes for free with that plan
  */
-export function isDomainBeingUsedForPlan( cart?: ResponseCart, domain?: string ): boolean {
+export function isDomainBeingUsedForPlan( cart?: ObjectWithProducts, domain?: string ): boolean {
 	if ( ! cart || ! domain ) {
 		return false;
 	}
@@ -752,7 +730,7 @@ export function shouldBundleDomainWithPlan(
  */
 export function hasToUpgradeToPayForADomain(
 	selectedSite: undefined | { plan: { product_slug?: string } },
-	cart: ResponseCart,
+	cart: ObjectWithProducts,
 	domain?: string
 ): boolean {
 	if ( ! domain || ! getTld( domain ) ) {
@@ -867,7 +845,7 @@ export function getDomainPriceRule(
 /**
  * Determines whether any items in the cart were added more than X time ago (10 minutes)
  */
-export function hasStaleItem( cart: ResponseCart ): boolean {
+export function hasStaleItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( function ( cartItem ) {
 		// time_added_to_cart is in seconds, Date.now() returns milliseconds
 		return (

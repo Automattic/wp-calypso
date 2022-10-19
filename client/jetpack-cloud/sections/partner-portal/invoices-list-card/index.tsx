@@ -8,19 +8,10 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import InvoicesListRow from 'calypso/jetpack-cloud/sections/partner-portal/invoices-list-row';
 import usePayInvoiceMutation from 'calypso/state/partner-portal/invoices/hooks/pay-invoice-mutation';
 import type { Invoice } from 'calypso/state/partner-portal/types';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
-function InvoicesListCard( {
-	id,
-	number,
-	dueDate,
-	status,
-	total,
-	currency,
-	pdfUrl,
-}: Invoice ): ReactElement {
+function InvoicesListCard( { id, number, dueDate, status, total, currency, pdfUrl }: Invoice ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const dueDateMoment = moment( dueDate );

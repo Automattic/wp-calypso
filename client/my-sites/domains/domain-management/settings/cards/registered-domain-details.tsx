@@ -72,11 +72,11 @@ const RegisteredDomainDetails = ( {
 				getRenewalPrice( purchase ) +
 				( domain.isRedeemable && redemptionProduct ? redemptionProduct.cost : 0 );
 			const currencyCode = purchase.currencyCode;
-			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } )!;
+			formattedPrice = formatCurrency( renewalPrice, currencyCode, { stripZeros: true } ) ?? '';
 		}
 
 		const autoRenewAdditionalText =
-			! isExpiring( purchase ) && ! domain.expired
+			purchase && ! isExpiring( purchase ) && ! domain.expired
 				? translate( 'We will attempt to renew on %(renewalDate)s for %(price)s', {
 						args: {
 							renewalDate: moment( domain.autoRenewalDate ).format( 'LL' ),
@@ -88,7 +88,7 @@ const RegisteredDomainDetails = ( {
 		return (
 			<>
 				<AutoRenewToggle
-					planName={ selectedSite.plan.product_name_short }
+					planName={ selectedSite.plan?.product_name_short }
 					siteDomain={ selectedSite.domain }
 					purchase={ purchase }
 					withTextStatus={ true }
@@ -122,7 +122,7 @@ const RegisteredDomainDetails = ( {
 			<RenewButton
 				purchase={ purchase }
 				selectedSite={ selectedSite }
-				subscriptionId={ parseInt( domain.subscriptionId!, 10 ) }
+				subscriptionId={ parseInt( domain.subscriptionId ?? '', 10 ) }
 				tracksProps={ { source: 'registered-domain-status', domain_status: 'active' } }
 				customLabel={
 					! domain.expired || domain.isRenewable

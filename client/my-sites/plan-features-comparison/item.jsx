@@ -10,6 +10,7 @@ export function PlanFeaturesItem( props ) {
 		'plan-features-comparison__item-checkmark': props.isFeatureAvailable,
 		'plan-features-comparison__item-cross': ! props.isFeatureAvailable,
 	} );
+
 	return (
 		<div className="plan-features-comparison__item plan-features-comparison__item-available">
 			{ props.annualOnlyContent && (

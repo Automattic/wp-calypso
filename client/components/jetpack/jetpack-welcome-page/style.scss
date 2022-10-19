@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
 
 .jetpack-welcome-page {
 	&.main.is-wide-layout {
@@ -13,9 +13,9 @@
 		max-width: none;
 		padding: 0;
 
-		border: 1px solid var( --color-border-subtle );
+		border: 1px solid var(--color-border-subtle);
 		border-radius: ( 2px * 4 );
-		box-shadow: 0 4px 24px rgba( 0, 0, 0, 0.05 );
+		box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
 
 		&--main,
 		&--footer {
@@ -36,7 +36,7 @@
 
 		a {
 			text-decoration: underline;
-			color: var( --color-studio-black );
+			color: var(--color-studio-black);
 
 			&:hover {
 				text-decoration: none;
@@ -45,7 +45,7 @@
 
 		h1 {
 			line-height: 1;
-			
+
 			@include break-mobile {
 				font-size: $font-headline-medium;
 			}
@@ -53,6 +53,7 @@
 			+ p {
 				font-size: $font-title-small;
 				font-weight: 500;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.5rem;
 				letter-spacing: -1px;
 
@@ -64,6 +65,7 @@
 		h2 {
 			font-size: $font-title-medium;
 			font-weight: 700;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 1.75rem;
 			padding-bottom: 16px;
 		}
@@ -78,14 +80,14 @@
 			}
 
 			&--number {
-				color: white;
-				background-color: var( --studio-jetpack-green-40 );
+				color: var(--color-text-inverted);
+				background-color: var(--studio-jetpack-green-40);
 				text-align: center;
-				border-radius: 50%; /* stylelint-disable-line */
+				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-size: $font-title-small;
 				font-weight: 600;
-				width: rem( 32px );
-				height: rem( 32px );
+				width: rem(32px);
+				height: rem(32px);
 			}
 			&--content {
 				flex: 1;
@@ -94,6 +96,7 @@
 				p {
 					@include break-mobile {
 						font-size: $font-body;
+						/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 						line-height: 1.5rem;
 					}
 					margin: 0;

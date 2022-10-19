@@ -1,7 +1,7 @@
 .async-load__placeholder {
-	background: var( --color-neutral-10 );
-	border-radius: 20px;
-	content: '';
+	background: var(--color-neutral-10);
+	border-radius: 20px; /* stylelint-disable-line scales/radii */
+	content: "";
 	display: block;
 	height: 8px;
 	width: 80px;

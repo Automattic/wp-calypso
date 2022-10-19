@@ -3,7 +3,12 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import config from '@automattic/calypso-config';
-import { filterLanguageRevisions, isTranslatedIncompletely } from '@automattic/i18n-utils';
+import {
+	filterLanguageRevisions,
+	isTranslatedIncompletely,
+	isDefaultLocale,
+	getLanguageSlugs,
+} from '@automattic/i18n-utils';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
@@ -13,7 +18,6 @@ import { stringify } from 'qs';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -22,7 +26,7 @@ import { login } from 'calypso/lib/paths';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
-import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
 import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
 import {
@@ -52,20 +56,24 @@ const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
 
+let branchName;
 function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! branchName ) {
+		try {
+			branchName = execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return branchName;
 }
 
+let commitChecksum;
 function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
+	if ( ! commitChecksum ) {
+		try {
+			commitChecksum = execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
+		} catch ( err ) {}
 	}
+	return commitChecksum;
 }
 
 /*
@@ -98,8 +106,21 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		response.cookie( 'country_code', geoIPCountryCode );
 	}
 
-	const cacheKey = `${ getNormalizedPath( request.path, request.query ) }:gdpr=${ showGdprBanner }`;
-	const cachedServerState = stateCache.get( cacheKey ) || {};
+	const cacheKey = getCacheKey( {
+		path: request.path,
+		query: request.query,
+		context: { showGdprBanner },
+	} );
+
+	/**
+	 * A cache object can be written for an SSR route like /themes when a request
+	 * is logged out. To avoid using that logged-out data for an authenticated
+	 * request, we should not utilize the state cache for logged-in requests.
+	 * Note that in dev mode (when the user is not bootstrapped), all requests
+	 * are considered logged out. This shouldn't cause issues because only one
+	 * user is using the cache in dev mode -- so cross-request pollution won't happen.
+	 */
+	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
 		if ( ! storedState ) {
@@ -121,6 +142,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
 	const authHelper = config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
 		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
@@ -141,6 +163,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
 		manifests: request.getAssets().manifests,
 		reactQueryDevtoolsHelper,
+		accountSettingsHelper,
 		authHelper,
 		preferencesHelper,
 		featuresHelper,
@@ -468,12 +491,45 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
+	if ( req.context.isRouteSetup === true ) {
+		req.logger.warn(
+			{
+				isLoggedIn: req.context.isLoggedIn,
+				path: req.context.path,
+			},
+			'Route already set up. Ambiguous route definition likely.'
+		);
+
+		return next();
+	}
+	// Prevents function from being called twice.
+	req.context.isRouteSetup = true;
+
 	setUpCSP( req, res, () =>
 		req.context.isLoggedIn
 			? setUpLoggedInRoute( req, res, next )
 			: setUpLoggedOutRoute( req, res, next )
 	);
 }
+
+const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
+	req.context.sectionName = section.name;
+
+	if ( ! entrypoint ) {
+		req.context.chunkFiles = req.getFilesForChunk( section.name );
+	} else {
+		req.context.chunkFiles = req.getEmptyAssets();
+	}
+
+	if ( section.group && req.context ) {
+		req.context.sectionGroup = section.group;
+	}
+
+	if ( Array.isArray( section.links ) ) {
+		section.links.forEach( ( link ) => req.context.store.dispatch( setDocumentHeadLink( link ) ) );
+	}
+	next();
+};
 
 const render404 =
 	( entrypoint = 'entry-main' ) =>
@@ -496,7 +552,9 @@ const renderServerError =
 	( err, req, res, next ) => {
 		// If the response is not writable it means someone else already rendered a page, do nothing
 		// Hopefully they logged the error as well.
-		if ( res.writableEnded ) return;
+		if ( res.writableEnded ) {
+			return;
+		}
 
 		try {
 			req.logger.error( err );
@@ -603,7 +661,7 @@ function wpcomPages( app ) {
 			} else {
 				const pricingPageUrl = ref
 					? `https://wordpress.com/pricing/?ref=${ ref }`
-					: 'https://wordpress.com/pricing';
+					: 'https://wordpress.com/pricing/';
 				res.redirect( pricingPageUrl );
 			}
 		} else {
@@ -732,34 +790,41 @@ export default function pages() {
 		wpcomPages( app );
 	}
 
+	/**
+	 * Given information about a section, register the given path as an express
+	 * route and define a basic middleware chain. The chain sets up any request
+	 * context and renders the basic DOM structure, ultimately resolving the request.
+	 *
+	 * For SSR requests -- e.g. the section is compatible with SSR and the request
+	 * is logged out -- it skips the rendering portion of the chain, because that
+	 * is explicitly handled by the serverRouter. In SSR contexts, this chain is
+	 * still responsible for setting up some basic info like the context and the
+	 * bootstrapped user, but not for resolving the request.
+	 *
+	 * This approach allows requests to an SSR section to skip any section-specific
+	 * SSR middleware if the request wasn't going to be resolved with SSR anyways.
+	 */
 	function handleSectionPath( section, sectionPath, entrypoint ) {
 		const pathRegex = pathToRegExp( sectionPath );
 
-		app.get( pathRegex, setupDefaultContext( entrypoint ), function ( req, res, next ) {
-			req.context.sectionName = section.name;
-
-			if ( ! entrypoint ) {
-				req.context.chunkFiles = req.getFilesForChunk( section.name );
-			} else {
-				req.context.chunkFiles = req.getEmptyAssets();
-			}
-
-			if ( section.group && req.context ) {
-				req.context.sectionGroup = section.group;
-			}
-
-			if ( Array.isArray( section.links ) ) {
-				section.links.forEach( ( link ) =>
-					req.context.store.dispatch( setDocumentHeadLink( link ) )
-				);
-			}
-
-			next();
-		} );
-
-		if ( ! section.isomorphic ) {
-			app.get( pathRegex, setUpRoute, serverRender );
-		}
+		app.get(
+			pathRegex,
+			setupDefaultContext( entrypoint ),
+			setUpSectionContext( section, entrypoint ),
+			// Skip the rest of the middleware chain if SSR compatible. Further
+			// SSR checks aren't accounted for here, but happen in the SSR pipeline
+			// itself (see serverRouter). But if we know at a basic level that SSR
+			// won't be used, we can boost performance by rendering the page here.
+			( req, res, next ) => {
+				if ( ! req.context.isLoggedIn && section.isomorphic ) {
+					return next( 'route' );
+				}
+				debug( `Using non-SSR pipeline for path ${ req.path } with handler ${ pathRegex }` );
+				next();
+			},
+			setUpRoute, // For SSR requests, this will happen in the serverRouter.
+			serverRender
+		);
 	}
 
 	sections
@@ -782,8 +847,24 @@ export default function pages() {
 	handleSectionPath( LOGIN_SECTION_DEFINITION, '/log-in', 'entry-login' );
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
-	handleSectionPath( GUTENBOARDING_SECTION_DEFINITION, '/new', 'entry-gutenboarding' );
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+
+	// Redirect legacy `/new` routes to the corresponding `/start`
+	app.get( [ '/new', '/new/*' ], ( req, res ) => {
+		const lastPathSegment = req.path.substr( req.path.lastIndexOf( '/' ) + 1 );
+		const languageSlugs = getLanguageSlugs();
+		let redirectUrl = '/start';
+
+		if ( languageSlugs.includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment ) ) {
+			redirectUrl += `/${ lastPathSegment }`;
+		}
+
+		if ( Object.keys( req.query ) > 0 ) {
+			redirectUrl += `?${ stringify( req.query ) }`;
+		}
+
+		res.redirect( 301, redirectUrl );
+	} );
 
 	// This is used to log to tracks Content Security Policy violation reports sent by browsers
 	app.post(

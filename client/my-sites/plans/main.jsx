@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { getPlan, getIntervalTypeForTerm, PLAN_FREE } from '@automattic/calypso-products';
-import styled from '@emotion/styled';
 import { addQueryArgs } from '@wordpress/url';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -18,7 +17,6 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
-import { useExperiment } from 'calypso/lib/explat';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
@@ -31,44 +29,6 @@ import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-f
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
-const ProfessionalEmailPromotionPlaceholder = styled.div`
-	animation: loading-fade 1.6s ease-in-out infinite;
-	background-color: var( --color-neutral-10 );
-	color: transparent;
-	min-height: 250px;
-`;
-
-const ProfessionalEmailPromotionWrapper = ( props ) => {
-	const [ isLoadingExperimentAssignment, experimentAssignment ] = useExperiment(
-		'calypso_promote_professional_email_as_a_plan_feature_2022_02'
-	);
-
-	if ( isLoadingExperimentAssignment ) {
-		return <ProfessionalEmailPromotionPlaceholder />;
-	}
-
-	const isProfessionalEmailPromotionAvailable = 'treatment' === experimentAssignment?.variationName;
-
-	return (
-		<PlansFeaturesMain
-			redirectToAddDomainFlow={ props.redirectToAddDomainFlow }
-			domainAndPlanPackage={ props.domainAndPlanPackage }
-			hideFreePlan={ props.hideFreePlan }
-			customerType={ props.customerType }
-			intervalType={ props.intervalType }
-			selectedFeature={ props.selectedFeature }
-			selectedPlan={ props.selectedPlan }
-			redirectTo={ props.redirectTo }
-			withDiscount={ props.withDiscount }
-			discountEndDate={ props.discountEndDate }
-			site={ props.site }
-			plansWithScroll={ props.plansWithScroll }
-			showTreatmentPlansReorderTest={ props.showTreatmentPlansReorderTest }
-			isProfessionalEmailPromotionAvailable={ isProfessionalEmailPromotionAvailable }
-		/>
-	);
-};
 
 function DomainAndPlanUpsellNotice() {
 	const translate = useTranslate();
@@ -179,7 +139,7 @@ class Plans extends Component {
 		}
 
 		return (
-			<ProfessionalEmailPromotionWrapper
+			<PlansFeaturesMain
 				redirectToAddDomainFlow={ this.props.redirectToAddDomainFlow }
 				domainAndPlanPackage={ this.props.domainAndPlanPackage }
 				hideFreePlan={ true }

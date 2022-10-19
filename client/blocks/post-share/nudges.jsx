@@ -64,12 +64,12 @@ export const UpgradeToPremiumNudgePure = ( props ) => {
 			}
 			{ ...( isJetpack && {
 				description: translate(
-					'Publicize makes it easy to share your new posts on your social media networks automatically. With a Jetpack Security or Complete plan, you can share content that has already been published and can also schedule posts to be shared at a specific time. {{ExternalLink}}Learn more{{/ExternalLink}}',
+					'Jetpack Social makes it easy to share your new posts on your social media networks automatically. With a Jetpack Security or Complete plan, you can share content that has already been published and can also schedule posts to be shared at a specific time. {{ExternalLink}}Learn more{{/ExternalLink}}',
 					{
 						components: {
 							ExternalLink: (
 								<ExternalLink
-									href={ `https://jetpack.com/support/publicize/#re-sharing-your-content` }
+									href="https://jetpack.com/support/jetpack-social/#re-sharing-your-content"
 									icon={ true }
 									onClick={ () =>
 										recordTracksEvent( 'calypso_publicize_post_share_learn_more_click' )

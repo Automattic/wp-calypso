@@ -1,8 +1,9 @@
-@import '@automattic/onboarding/styles/base-styles.scss';
+@import "@automattic/onboarding/styles/base-styles.scss";
 
 .content-chooser {
 	.formatted-header__title {
 		max-width: none;
+		word-break: break-word;
 
 		@include break-medium {
 			max-width: 390px;
@@ -30,17 +31,17 @@
 
 		&.is-disabled {
 			.action-card__heading {
-				color: var( --studio-gray-30 );
+				color: var(--studio-gray-30);
 			}
 
 			p {
-				color: var( --studio-gray-20 );
+				color: var(--studio-gray-20);
 			}
 		}
 	}
 
 	.select-items {
-		border: solid 1px var( --studio-gray-5 );
+		border: solid 1px var(--studio-gray-5);
 		border-radius: 4px;
 		margin: 12px 0 24px;
 		padding-left: 50px;
@@ -57,7 +58,7 @@
 
 	hr {
 		margin: 2.5rem 0;
-		background: var( --studio-gray-5 );
+		background: var(--studio-gray-5);
 		border: 0;
 		height: 1px;
 	}

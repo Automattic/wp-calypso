@@ -22,6 +22,7 @@ export const SITE_REQUEST_FIELDS = [
 	'is_core_site_editor_enabled',
 	'is_wpcom_atomic',
 	'description',
+	'user_interactions',
 ].join();
 
 export const SITE_REQUEST_OPTIONS = [
@@ -71,4 +72,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'is_difm_lite_in_progress',
 	'difm_lite_site_options',
 	'site_intent',
+	'launchpad_screen',
+	'launchpad_checklist_tasks_statuses',
 ].join();

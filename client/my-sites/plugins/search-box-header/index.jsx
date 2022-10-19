@@ -1,11 +1,18 @@
 import Search from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import page from 'page';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setQueryArgs } from 'calypso/lib/query-args';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching } ) => {
+function pageToSearch( s ) {
+	page.show( page.current ); // Ensures location.href is up to date before setQueryArgs uses it to construct the redirect.
+	setQueryArgs( '' !== s ? { s } : {} );
+}
+
+const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
@@ -18,7 +25,7 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching 
 				ref={ searchBoxRef }
 				pinned={ isMobile }
 				fitsContainer={ isMobile }
-				onSearch={ doSearch }
+				onSearch={ pageToSearch }
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
@@ -30,92 +37,39 @@ const SearchBox = ( { isMobile, doSearch, searchTerm, searchBoxRef, isSearching 
 	);
 };
 
-const PopularSearches = ( props ) => {
-	const { searchTerms, doSearch, searchedTerm, popularSearchesRef } = props;
-	const dispatch = useDispatch();
-	const translate = useTranslate();
-
-	const onClick = ( searchTerm ) => {
-		dispatch(
-			recordTracksEvent( 'calypso_plugins_popular_searches_click', {
-				search_term: searchTerm,
-			} )
-		);
-
-		doSearch( searchTerm );
-	};
-
-	return (
-		<div className="search-box-header__recommended-searches" ref={ popularSearchesRef }>
-			<div className="search-box-header__recommended-searches-title">
-				{ translate( 'Most popular searches' ) }
-			</div>
-
-			<div className="search-box-header__recommended-searches-list">
-				{ searchTerms.map( ( searchTerm, n ) => (
-					<Fragment key={ 'search-box-item' + n }>
-						{ searchTerm === searchedTerm ? (
-							<span
-								className="search-box-header__recommended-searches-list-item search-box-header__recommended-searches-list-item-selected"
-								key={ 'recommended-search-item-' + n }
-							>
-								{ searchTerm }
-							</span>
-						) : (
-							<span
-								onClick={ () => onClick( searchTerm ) }
-								onKeyPress={ () => onClick( searchTerm ) }
-								role="link"
-								tabIndex={ 0 }
-								className="search-box-header__recommended-searches-list-item"
-								key={ 'recommended-search-item-' + n }
-							>
-								{ searchTerm }
-							</span>
-						) }
-						{ n !== searchTerms.length - 1 && <>,&nbsp;</> }
-					</Fragment>
-				) ) }
-			</div>
-		</div>
-	);
-};
-
 const SearchBoxHeader = ( props ) => {
 	const {
-		doSearch,
 		searchTerm,
 		title,
-		searchTerms,
 		isSticky,
-		popularSearchesRef,
+		stickySearchBoxRef,
 		isSearching,
 		searchRef,
+		renderTitleInH1,
 	} = props;
 
-	// since the search input is an uncontrolled component we need to tap in into the component api and trigger an update
-	const updateSearchBox = ( keyword ) => {
-		searchRef.current.setKeyword( keyword );
-		doSearch( keyword );
-	};
+	// Clear the keyword in search box on PluginsBrowser load if required.
+	// Required when navigating to a new plugins browser location
+	// without using close search ("X") to clear. e.g. When clicking
+	// clear in the search results header.
+	useEffect( () => {
+		if ( ! searchTerm ) {
+			searchRef?.current?.setKeyword( '' );
+		}
+	}, [ searchRef, searchTerm ] );
 
 	return (
 		<div className={ isSticky ? 'search-box-header fixed-top' : 'search-box-header' }>
-			<div className="search-box-header__header">{ title }</div>
+			{ renderTitleInH1 && <h1 className="search-box-header__header">{ title }</h1> }
+			{ ! renderTitleInH1 && <div className="search-box-header__header">{ title }</div> }
 			<div className="search-box-header__search">
 				<SearchBox
-					doSearch={ doSearch }
 					searchTerm={ searchTerm }
 					searchBoxRef={ searchRef }
 					isSearching={ isSearching }
 				/>
 			</div>
-			<PopularSearches
-				doSearch={ updateSearchBox }
-				searchedTerm={ searchTerm }
-				searchTerms={ searchTerms }
-				popularSearchesRef={ popularSearchesRef }
-			/>
+			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>
 		</div>
 	);
 };

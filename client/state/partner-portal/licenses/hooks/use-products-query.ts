@@ -20,7 +20,6 @@ function queryProducts(): Promise< APIProductFamily[] > {
 				'jetpack-backup-daily',
 				'jetpack-backup-realtime',
 				'jetpack-backup-t0',
-				'jetpack-boost',
 				'jetpack-security-daily',
 				'jetpack-security-realtime',
 			];

@@ -168,7 +168,7 @@ class PublicizeActionsList extends PureComponent {
 					status="is-info"
 					showDismiss={ false }
 					text={ translate(
-						'Did you know you can decide exactly when Publicize shares your post? You can! ' +
+						'Did you know you can decide exactly when Jetpack Social shares your post? You can! ' +
 							'Click the calendar icon next to "Share post" to schedule your social shares.'
 					) }
 				/>

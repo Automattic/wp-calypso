@@ -47,7 +47,7 @@ export default function getSiteProducts(
 	}
 
 	return site.products.map( ( product ) => ( {
-		productId: parseInt( product.product_id, 10 ),
+		productId: parseInt( String( product.product_id ), 10 ),
 		productSlug: product.product_slug,
 		productName: product.product_name,
 		productNameShort: product.product_name_short || null,

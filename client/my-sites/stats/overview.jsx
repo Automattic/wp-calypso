@@ -89,7 +89,7 @@ class StatsOverview extends Component {
 					path={ `/stats/${ period }` }
 					title={ `Stats > ${ titlecase( period ) }` }
 				/>
-				<StatsNavigation selectedItem={ 'traffic' } interval={ period } />
+				<StatsNavigation selectedItem="traffic" interval={ period } />
 				{ sites.length !== 0 ? sitesList : this.placeholders() }
 				<JetpackColophon />
 			</Main>

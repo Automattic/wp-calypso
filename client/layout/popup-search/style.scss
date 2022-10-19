@@ -5,13 +5,13 @@
 	z-index: 200;
 	.popup-search__container {
 		width: 50%;
+		margin: 0 auto;
 		margin-top: 50px;
-		background-color: white;
+		background-color: var(--studio-white);
 		padding: 15px;
 		min-width: 270px;
 		box-shadow: 0 0.8px 8.2px #bcbcbc;
 		position: absolute;
-		margin: 0 auto;
 		left: 0;
 		right: 0;
 		top: 56px;
@@ -39,7 +39,7 @@
 				border-radius: 2px;
 				padding: 19px;
 				cursor: pointer;
-				color: black;
+				color: var(--studio-black);
 				&:hover {
 					border: 1px solid #32373c;
 					background-color: #32373c;
@@ -55,7 +55,7 @@
 				}
 			}
 		}
-		.search__input.form-text-input[type='search'] {
+		.search__input.form-text-input[type="search"] {
 			font-size: 1.5rem;
 			&::placeholder {
 				color: #c3c3c3;

@@ -19,10 +19,11 @@ export const HelpCenterEmbedResult: React.FC = () => {
 	const sectionName = useSelector( getSectionName );
 
 	const params = new URLSearchParams( search );
-	const postId = state?.post_id ?? params.get( 'postId' );
-	const blogId = state?.blog_id ?? params.get( 'blogId' );
-	const link = state?.link ?? params.get( 'link' );
-	const query = state?.query ?? params.get( 'query' );
+	const postId = params.get( 'postId' );
+	const blogId = params.get( 'blogId' );
+	const canNavigateBack = params.get( 'canNavigateBack' ) === 'true';
+	const link = params.get( 'link' );
+	const query = params.get( 'query' );
 
 	useEffect( () => {
 		const tracksData = {
@@ -35,9 +36,11 @@ export const HelpCenterEmbedResult: React.FC = () => {
 		recordTracksEvent( `calypso_inlinehelp_article_open`, tracksData );
 	}, [ query, link, sectionName ] );
 
-	const redirectToSearchOrHome = () => {
-		if ( state?.query ) {
-			history.push( `/?query=${ state.query }` );
+	const redirectBack = () => {
+		if ( canNavigateBack ) {
+			history.goBack();
+		} else if ( query ) {
+			history.push( `/?query=${ query }` );
 		} else {
 			history.push( '/' );
 		}
@@ -48,7 +51,7 @@ export const HelpCenterEmbedResult: React.FC = () => {
 			<div className="help-center-embed-result">
 				<Flex justify="space-between">
 					<FlexItem>
-						<BackButton onClick={ redirectToSearchOrHome } />
+						<BackButton onClick={ redirectBack } />
 					</FlexItem>
 					<FlexItem>
 						<Button

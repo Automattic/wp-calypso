@@ -3,7 +3,7 @@ import { Button } from '@automattic/components';
 import { ThemeProvider } from '@emotion/react';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -13,6 +13,7 @@ import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
@@ -126,6 +127,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	const hasAtomicFeature = useSelector( ( state ) =>
 		siteHasFeature( state, selectedSite?.ID ?? null, WPCOM_FEATURES_ATOMIC )
 	);
+	const supportsAtomicUpgrade = useRef< boolean >();
+	useEffect( () => {
+		supportsAtomicUpgrade.current = hasAtomicFeature;
+	}, [ hasAtomicFeature ] );
 
 	// retrieve plugin data if not available
 	useEffect( () => {
@@ -137,9 +142,9 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
 	useEffect( () => {
-		if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
+		if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
 			waitFor( 2 ).then( () => {
-				if ( ! hasAtomicFeature && ! isJetpackSelfHosted ) {
+				if ( ! supportsAtomicUpgrade.current && ! isJetpackSelfHosted ) {
 					setNonInstallablePlanError( true );
 				}
 			} );
@@ -205,7 +210,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		hasAtomicFeature,
 	] );
 
-	// Validate completition of atomic transfer flow
+	// Validate completion of atomic transfer flow
 	useEffect( () => {
 		if ( atomicFlow && currentStep === 1 && transferStates.COMPLETE === automatedTransferStatus ) {
 			setCurrentStep( 2 );
@@ -296,7 +301,8 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		}
 		if ( noDirectAccessError && ! directInstallationAllowed ) {
 			const variationPeriod = 'monthly';
-			const marketplaceProductSlug = wpComPluginData?.variations?.[ variationPeriod ]?.product_slug;
+			const variation = wpComPluginData?.variations?.[ variationPeriod ];
+			const marketplaceProductSlug = getProductSlugByPeriodVariation( variation, productsList );
 
 			return (
 				<>

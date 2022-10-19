@@ -16,6 +16,7 @@ import getSites from 'calypso/state/selectors/get-sites';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import UpdatePlugins from '../plugin-management-v2/update-plugins';
 
 import './style.scss';
 
@@ -38,21 +39,20 @@ export class PluginsListHeader extends PureComponent {
 		isBulkManagementActive: PropTypes.bool,
 		isWpComAtomic: PropTypes.bool,
 		toggleBulkManagement: PropTypes.func.isRequired,
-		updateAllPlugins: PropTypes.func.isRequired,
 		updateSelected: PropTypes.func.isRequired,
-		haveUpdatesSelected: PropTypes.bool,
-		pluginUpdateCount: PropTypes.number.isRequired,
-		activateSelected: PropTypes.func.isRequired,
 		deactiveAndDisconnectSelected: PropTypes.func.isRequired,
-		deactivateSelected: PropTypes.func.isRequired,
 		setAutoupdateSelected: PropTypes.func.isRequired,
 		setSelectionState: PropTypes.func.isRequired,
 		unsetAutoupdateSelected: PropTypes.func.isRequired,
 		removePluginNotice: PropTypes.func.isRequired,
-		haveActiveSelected: PropTypes.bool,
-		haveInactiveSelected: PropTypes.bool,
+		activatePluginNotice: PropTypes.func.isRequired,
+		deactivatePluginNotice: PropTypes.func.isRequired,
+		autoupdateEnablePluginNotice: PropTypes.func.isRequired,
+		autoupdateDisablePluginNotice: PropTypes.func.isRequired,
+		updatePluginNotice: PropTypes.func.isRequired,
 		plugins: PropTypes.array.isRequired,
 		selected: PropTypes.array.isRequired,
+		isJetpackCloud: PropTypes.bool,
 	};
 
 	componentDidMount() {
@@ -101,21 +101,20 @@ export class PluginsListHeader extends PureComponent {
 		return this.props.selected.some( ( plugin ) => 'jetpack' === plugin.slug );
 	}
 
-	canUpdatePlugins() {
-		const { selected, allSites } = this.props;
-		return selected.some( ( plugin ) =>
-			Object.values( allSites )
-				.filter( ( { ID } ) => plugin.sites.hasOwnProperty( ID ) )
-				.some( ( site ) => site.canUpdateFiles )
-		);
-	}
-
-	needsRemoveButton() {
-		return this.props.selected.length && this.canUpdatePlugins() && ! this.isJetpackSelected();
+	hasSelectedPlugins() {
+		return this.props.selected.length > 0;
 	}
 
 	renderCurrentActionButtons() {
-		const { hasManagePluginsFeature, isWpComAtomic, translate, siteId } = this.props;
+		const {
+			hasManagePluginsFeature,
+			isWpComAtomic,
+			translate,
+			siteId,
+			isJetpackCloud,
+			isBulkManagementActive,
+			plugins,
+		} = this.props;
 		const buttons = [];
 
 		if ( siteId && isWpComAtomic && ! hasManagePluginsFeature ) {
@@ -123,31 +122,26 @@ export class PluginsListHeader extends PureComponent {
 		}
 
 		const isJetpackSelected = this.isJetpackSelected();
-		const needsRemoveButton = this.needsRemoveButton();
 		const rightSideButtons = [];
 		const leftSideButtons = [];
 		const autoupdateButtons = [];
 		const activateButtons = [];
-
-		if ( ! this.props.isBulkManagementActive ) {
-			if ( 0 < this.props.pluginUpdateCount ) {
-				rightSideButtons.push(
-					<ButtonGroup key="plugin-list-header__buttons-update-all">
-						<Button compact primary onClick={ this.props.updateAllPlugins }>
-							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
-								context: 'button label',
-								count: this.props.pluginUpdateCount,
-								args: {
-									numUpdates: this.props.pluginUpdateCount,
-								},
-							} ) }
-						</Button>
-					</ButtonGroup>
+		if ( ! isBulkManagementActive ) {
+			if ( isJetpackCloud ) {
+				const updateButton = (
+					<UpdatePlugins key="plugin-list-header__buttons-update-all" plugins={ plugins } />
 				);
+				if ( updateButton ) {
+					rightSideButtons.push( updateButton );
+				}
 			}
 			rightSideButtons.push(
 				<ButtonGroup key="plugin-list-header__buttons-bulk-management">
-					<Button compact onClick={ this.toggleBulkManagement }>
+					<Button
+						className="plugin-list-header__buttons-action-button"
+						compact
+						onClick={ this.toggleBulkManagement }
+					>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
 				</ButtonGroup>
@@ -156,23 +150,21 @@ export class PluginsListHeader extends PureComponent {
 			const updateButton = (
 				<Button
 					key="plugin-list-header__buttons-update"
-					disabled={ ! this.props.haveUpdatesSelected }
+					className="plugin-list-header__buttons-action-button"
 					compact
-					primary
-					onClick={ this.props.updateSelected }
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.updatePluginNotice }
 				>
-					{ translate( 'Update' ) }
+					{ translate( 'Update Plugins' ) }
 				</Button>
-			);
-			leftSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-update-button">{ updateButton }</ButtonGroup>
 			);
 
 			activateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-activate"
-					disabled={ ! this.props.haveInactiveSelected }
-					onClick={ this.props.activateSelected }
+					className="plugin-list-header__buttons-action-button"
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.activatePluginNotice }
 					compact
 				>
 					{ translate( 'Activate' ) }
@@ -183,12 +175,9 @@ export class PluginsListHeader extends PureComponent {
 				<Button
 					compact
 					key="plugin-list-header__buttons-deactivate"
-					disabled={ ! this.props.haveActiveSelected }
-					onClick={
-						isJetpackSelected
-							? this.props.deactiveAndDisconnectSelected
-							: this.props.deactivateSelected
-					}
+					className="plugin-list-header__buttons-action-button"
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.deactivatePluginNotice }
 				>
 					{ translate( 'Deactivate' ) }
 				</Button>
@@ -205,9 +194,10 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-on"
-					disabled={ ! this.canUpdatePlugins() }
+					className="plugin-list-header__buttons-action-button"
+					disabled={ ! this.hasSelectedPlugins() }
 					compact
-					onClick={ this.props.setAutoupdateSelected }
+					onClick={ this.props.autoupdateEnablePluginNotice }
 				>
 					{ translate( 'Autoupdate' ) }
 				</Button>
@@ -215,11 +205,12 @@ export class PluginsListHeader extends PureComponent {
 			autoupdateButtons.push(
 				<Button
 					key="plugin-list-header__buttons-autoupdate-off"
-					disabled={ ! this.canUpdatePlugins() }
+					className="plugin-list-header__buttons-action-button"
+					disabled={ ! this.hasSelectedPlugins() }
 					compact
-					onClick={ this.props.unsetAutoupdateSelected }
+					onClick={ this.props.autoupdateDisablePluginNotice }
 				>
-					{ translate( 'Disable Autoupdates' ) }
+					{ translate( 'Disable' ) }
 				</Button>
 			);
 
@@ -228,12 +219,25 @@ export class PluginsListHeader extends PureComponent {
 					{ autoupdateButtons }
 				</ButtonGroup>
 			);
+
 			leftSideButtons.push(
-				<ButtonGroup key="plugin-list-header__buttons-remove-button">
+				<ButtonGroup
+					key="plugin-list-header__buttons-update-button"
+					className="plugin-management-v2__table-button-group"
+				>
+					{ updateButton }
+				</ButtonGroup>
+			);
+
+			leftSideButtons.push(
+				<ButtonGroup
+					key="plugin-list-header__buttons-remove-button"
+					className="plugin-management-v2__table-button-group"
+				>
 					<Button
 						compact
 						scary
-						disabled={ ! needsRemoveButton }
+						disabled={ ! this.hasSelectedPlugins() }
 						onClick={ this.props.removePluginNotice }
 					>
 						{ translate( 'Remove' ) }
@@ -281,7 +285,7 @@ export class PluginsListHeader extends PureComponent {
 		}
 
 		const isJetpackSelected = this.isJetpackSelected();
-		const needsRemoveButton = this.needsRemoveButton();
+
 		const isJetpackOnlySelected = ! ( isJetpackSelected && selected.length === 1 );
 		return (
 			<SelectDropdown
@@ -289,36 +293,28 @@ export class PluginsListHeader extends PureComponent {
 				className="plugin-list-header__actions-dropdown"
 				selectedText={ translate( 'Actions' ) }
 			>
-				<SelectDropdown.Item selected value="Actions">
-					{ translate( 'Actions' ) }
-				</SelectDropdown.Item>
-
 				<SelectDropdown.Separator />
 
 				<SelectDropdown.Item
-					disabled={ ! this.props.haveUpdatesSelected }
-					onClick={ this.props.updateSelected }
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.updatePluginNotice }
 				>
-					{ translate( 'Update' ) }
+					{ translate( 'Update Plugins' ) }
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Separator />
 				{ isJetpackOnlySelected && (
 					<SelectDropdown.Item
-						disabled={ ! this.props.haveInactiveSelected }
-						onClick={ this.props.activateSelected }
+						disabled={ ! this.hasSelectedPlugins() }
+						onClick={ this.props.activatePluginNotice }
 					>
 						{ translate( 'Activate' ) }
 					</SelectDropdown.Item>
 				) }
 				{ isJetpackOnlySelected && (
 					<SelectDropdown.Item
-						disabled={ ! this.props.haveActiveSelected }
-						onClick={
-							isJetpackSelected
-								? this.props.deactiveAndDisconnectSelected
-								: this.props.deactivateSelected
-						}
+						disabled={ ! this.hasSelectedPlugins() }
+						onClick={ this.props.deactivatePluginNotice }
 					>
 						{ translate( 'Deactivate' ) }
 					</SelectDropdown.Item>
@@ -327,24 +323,23 @@ export class PluginsListHeader extends PureComponent {
 				<SelectDropdown.Separator />
 
 				<SelectDropdown.Item
-					disabled={ ! this.canUpdatePlugins() }
-					onClick={ this.props.setAutoupdateSelected }
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.autoupdateEnablePluginNotice }
 				>
 					{ translate( 'Autoupdate' ) }
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Item
-					disabled={ ! this.canUpdatePlugins() }
-					onClick={ this.props.unsetAutoupdateSelected }
+					disabled={ ! this.hasSelectedPlugins() }
+					onClick={ this.props.autoupdateDisablePluginNotice }
 				>
-					{ translate( 'Disable Autoupdates' ) }
+					{ translate( 'Disable' ) }
 				</SelectDropdown.Item>
 
 				<SelectDropdown.Separator />
-
 				<SelectDropdown.Item
 					className="plugin-list-header__actions-remove-item"
-					disabled={ ! needsRemoveButton }
+					disabled={ ! this.hasSelectedPlugins() }
 					onClick={ this.props.removePluginNotice }
 				>
 					{ translate( 'Remove' ) }
@@ -354,21 +349,33 @@ export class PluginsListHeader extends PureComponent {
 	}
 
 	render() {
-		const { label, selected, plugins, isBulkManagementActive } = this.props;
-		const sectionClasses = classNames( {
-			'plugin-list-header': true,
+		const { label, selected, plugins, isBulkManagementActive, translate } = this.props;
+		const sectionClasses = classNames( 'plugin-list-header plugin-list-header-new', {
 			'is-bulk-editing': isBulkManagementActive,
 			'is-action-bar-visible': this.state.actionBarVisible,
 		} );
 		return (
 			<SectionHeader label={ label } className={ sectionClasses }>
 				{ isBulkManagementActive && (
-					<BulkSelect
-						key="plugin-list-header__bulk-select"
-						totalElements={ plugins.length }
-						selectedElements={ selected.length }
-						onToggle={ this.unselectOrSelectAll }
-					/>
+					<div className="plugin-list-header__bulk-select-wrapper">
+						<BulkSelect
+							key="plugin-list-header__bulk-select"
+							totalElements={ plugins.length }
+							selectedElements={ selected.length }
+							onToggle={ this.unselectOrSelectAll }
+						/>
+
+						<div className="plugin-list-header__bulk-select-label">
+							{ translate( '%(number)d {{span}}Selected{{/span}}', {
+								args: {
+									number: selected.length,
+								},
+								components: {
+									span: <span />,
+								},
+							} ) }
+						</div>
+					</div>
 				) }
 				{ this.renderCurrentActionDropdown() }
 				{ this.renderCurrentActionButtons() }

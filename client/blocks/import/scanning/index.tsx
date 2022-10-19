@@ -2,7 +2,6 @@ import { Title, SubTitle } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import type * as React from 'react';
-import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

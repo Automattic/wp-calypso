@@ -324,7 +324,7 @@ export class SiteSettingsFormGeneral extends Component {
 				<FormSettingExplanation>
 					{ translate( "The site's primary language." ) }
 					&nbsp;
-					<a href={ '/me/account' }>
+					<a href="/me/account">
 						{ translate( "You can also modify your interface's language in your profile." ) }
 					</a>
 				</FormSettingExplanation>
@@ -547,7 +547,9 @@ export class SiteSettingsFormGeneral extends Component {
 			querySiteDomainsComponent = '';
 		} else {
 			btnComponent = (
-				<Button href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings` }>
+				<Button
+					href={ `/start/launch-site?siteSlug=${ siteSlug }&source=general-settings&hide_initial_query=yes` }
+				>
 					{ btnText }
 				</Button>
 			);
@@ -622,6 +624,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			isAtomicAndEditingToolkitDeactivated,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -650,7 +653,9 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite ? this.renderLaunchSite() : this.privacySettings() }
+				{ this.props.isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated
+					? this.renderLaunchSite()
+					: this.privacySettings() }
 
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">

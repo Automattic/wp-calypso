@@ -1,4 +1,7 @@
 import { css } from '@emotion/css';
+import classnames from 'classnames';
+import { MEDIA_QUERIES } from '../utils';
+import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -11,28 +14,30 @@ const container = css( {
 
 	gridTemplateColumns: '1fr',
 
-	'@media screen and (min-width: 660px)': {
+	[ MEDIA_QUERIES.mediumOrLarger ]: {
 		gridTemplateColumns: 'repeat(2, 1fr)',
 	},
 
-	'@media screen and (min-width: 960px)': {
+	[ MEDIA_QUERIES.large ]: {
 		gridTemplateColumns: 'repeat(3, 1fr)',
 	},
 } );
 
 interface SitesGridProps {
-	sites: SiteExcerptData[];
+	className?: string;
 	isLoading: boolean;
+	sites: SiteExcerptData[];
 }
 
-export const SitesGrid = ( { sites, isLoading }: SitesGridProps ) => {
+export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
 	return (
-		<div className={ container }>
+		<div className={ classnames( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
 				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
+			<LinkInBioBanner displayMode="grid" />
 		</div>
 	);
 };

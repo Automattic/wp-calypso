@@ -1,3 +1,4 @@
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import cx from 'classnames';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -7,24 +8,22 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const Intro: Step = function Intro( { navigation, flow } ) {
-	const { goNext, goBack } = navigation;
+	const { submit, goBack } = navigation;
 
-	const handleGetStarted = () => {
-		// needs to be implemented
-		goNext();
+	const handleSubmit = () => {
+		submit?.();
 	};
 	return (
 		<StepContainer
-			stepName={ 'intro' }
-			className={ cx( { 'is-newsletters': flow === 'newsletters' } ) }
+			stepName="intro"
+			className={ cx( { 'is-newsletter': flow === NEWSLETTER_FLOW } ) }
 			goBack={ goBack }
-			goNext={ goNext }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
-			stepContent={ <IntroStep flowName={ flow } goNext={ handleGetStarted } /> }
+			stepContent={ <IntroStep flowName={ flow as string } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showJetpackPowered
+			showJetpackPowered={ flow === NEWSLETTER_FLOW }
 		/>
 	);
 };

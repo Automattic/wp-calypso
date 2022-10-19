@@ -281,7 +281,7 @@ class GoogleMyBusinessStatsChart extends Component {
 				<Card>
 					{ description && (
 						<div>
-							<CardHeading tagName={ 'h2' } size={ 16 }>
+							<CardHeading tagName="h2" size={ 16 }>
 								{ description }
 							</CardHeading>
 						</div>

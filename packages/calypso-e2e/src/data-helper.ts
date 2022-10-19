@@ -214,6 +214,9 @@ export function getTosUploadDestination(): string {
 /**
  * Returns a new test email address with the domain name `mailosaur.io` within a specific inbox.
  *
+ * Examples:
+ * 	e2eflowtestingpaid1600000@inboxID.mailosaur.net
+ *
  * @param param0 Keyed parameter object.
  * @param {string} param0.inboxId Existing inbox ID on mailosaur.
  * @param {string} param0.prefix Custom prefix to be prepended to the inboxId but after the global email prefix.
@@ -226,8 +229,8 @@ export function getTestEmailAddress( {
 	inboxId: string;
 	prefix: string;
 } ): string {
-	const domain = 'mailosaur.io';
-	return `${ prefix }.${ inboxId }@${ domain }`;
+	const domain = 'mailosaur.net';
+	return `${ prefix }@${ inboxId }.${ domain }`;
 }
 
 /**
@@ -267,22 +270,6 @@ export function getTestDomainRegistrarDetails( email: string ): RegistrarDetails
 		stateCode: 'QLD',
 		postalCode: '4000',
 	};
-}
-
-/**
- * Adjusts the user invite link to the correct environment.
- *
- * By default, all invite links reference the production `wordpress.com` hostname.
- * However, for end-to-end tests it is desirable to test invite functionality against
- * the development environment.
- *
- * @param {string} inviteURL Full invitation link.
- * @returns {string} Adjusted invitation link with the intended hostname.
- */
-export function adjustInviteLink( inviteURL: string ): string {
-	const originalURL = new URL( inviteURL );
-	const adjustedURL = new URL( originalURL.pathname, getCalypsoURL() );
-	return adjustedURL.href;
 }
 
 /**

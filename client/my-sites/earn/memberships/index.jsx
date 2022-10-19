@@ -162,11 +162,7 @@ class MembershipsSection extends Component {
 			this.props.requestSubscriptionStop(
 				this.props.siteId,
 				this.state.cancelledSubscriber,
-				this.props.translate( 'Subscription cancelled for %(email)s', {
-					args: {
-						email: this.state.cancelledSubscriber.user.user_email,
-					},
-				} )
+				this.getIntervalDependantWording( this.state.cancelledSubscriber ).success
 			);
 		}
 		this.setState( { cancelledSubscriber: null } );
@@ -222,6 +218,7 @@ class MembershipsSection extends Component {
 	}
 
 	renderSubscriberList() {
+		const wording = this.getIntervalDependantWording( this.state.cancelledSubscriber );
 		return (
 			<div>
 				<SectionHeader label={ this.props.translate( 'Customers and Subscribers' ) } />
@@ -267,7 +264,7 @@ class MembershipsSection extends Component {
 									action: 'back',
 								},
 								{
-									label: this.props.translate( 'Cancel Subscription' ),
+									label: wording.button,
 									isPrimary: true,
 									action: 'cancel',
 								},
@@ -275,20 +272,8 @@ class MembershipsSection extends Component {
 							onClose={ this.onCloseCancelSubscription }
 						>
 							<h1>{ this.props.translate( 'Confirmation' ) }</h1>
-							<p>{ this.props.translate( 'Do you want to cancel this subscription?' ) }</p>
-							<Notice
-								text={ this.props.translate(
-									'Canceling the subscription will mean the subscriber %(email)s will no longer be charged.',
-									{
-										args: {
-											email: this.state.cancelledSubscriber
-												? this.state.cancelledSubscriber.user.user_email
-												: '',
-										},
-									}
-								) }
-								showDismiss={ false }
-							/>
+							<p>{ wording.confirmation_subheading }</p>
+							<Notice text={ wording.confirmation_info } showDismiss={ false } />
 						</Dialog>
 						<div className="memberships__module-footer">
 							<Button onClick={ this.downloadSubscriberList }>
@@ -301,6 +286,36 @@ class MembershipsSection extends Component {
 		);
 	}
 
+	getIntervalDependantWording( subscriber ) {
+		const subscriber_email = subscriber?.user.user_email ?? '';
+		const plan_name = subscriber?.plan.title ?? '';
+
+		if ( subscriber?.plan?.renew_interval === 'one-time' ) {
+			return {
+				button: this.props.translate( 'Remove payment' ),
+				confirmation_subheading: this.props.translate( 'Do you want to remove this payment?' ),
+				confirmation_info: this.props.translate(
+					'Removing this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. The payment will not be refunded.',
+					{ args: { subscriber_email, plan_name } }
+				),
+				success: this.props.translate( 'Payment removed for %(subscriber_email)s.', {
+					args: { subscriber_email },
+				} ),
+			};
+		}
+		return {
+			button: this.props.translate( 'Cancel payment' ),
+			confirmation_subheading: this.props.translate( 'Do you want to cancel this payment?' ),
+			confirmation_info: this.props.translate(
+				'Cancelling this payment means that the user %(subscriber_email)s will no longer have access to any service granted by the %(plan_name)s plan. Payments already made will not be refunded but any scheduled future payments will not be made.',
+				{ args: { subscriber_email, plan_name } }
+			),
+			success: this.props.translate( 'Payment cancelled for %(subscriber_email)s.', {
+				args: { subscriber_email },
+			} ),
+		};
+	}
+
 	renderManagePlans() {
 		return (
 			<div>
@@ -309,7 +324,7 @@ class MembershipsSection extends Component {
 					<QueryMembershipProducts siteId={ this.props.siteId } />
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'credit-card' } />
+							<Gridicon size={ 24 } icon="credit-card" />
 						</div>
 						<div>
 							<div className="memberships__module-plans-title">
@@ -339,7 +354,7 @@ class MembershipsSection extends Component {
 				>
 					<div className="memberships__module-plans-content">
 						<div className="memberships__module-plans-icon">
-							<Gridicon size={ 24 } icon={ 'link-break' } />
+							<Gridicon size={ 24 } icon="link-break" />
 						</div>
 						<div>
 							<div className="memberships__module-settings-title">
@@ -447,12 +462,12 @@ class MembershipsSection extends Component {
 					rel="noopener norefferer"
 					href={ `https://dashboard.stripe.com/search?query=metadata%3A${ subscriber.user.ID }` }
 				>
-					<Gridicon size={ 18 } icon={ 'external' } />
+					<Gridicon size={ 18 } icon="external" />
 					{ this.props.translate( 'See transactions in Stripe Dashboard' ) }
 				</PopoverMenuItem>
 				<PopoverMenuItem onClick={ () => this.setState( { cancelledSubscriber: subscriber } ) }>
-					<Gridicon size={ 18 } icon={ 'cross' } />
-					{ this.props.translate( 'Cancel Subscription' ) }
+					<Gridicon size={ 18 } icon="cross" />
+					{ this.getIntervalDependantWording( subscriber ).button }
 				</PopoverMenuItem>
 			</EllipsisMenu>
 		);
@@ -482,7 +497,7 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_success === 'earn' && (
+				{ this.props?.query?.stripe_connect_success === 'earn' && (
 					<Notice
 						status="is-success"
 						showDismiss={ false }
@@ -585,7 +600,7 @@ class MembershipsSection extends Component {
 	renderConnectStripe() {
 		return (
 			<div>
-				{ this.props.query.stripe_connect_cancelled && (
+				{ this.props?.query?.stripe_connect_cancelled && (
 					<Notice
 						showDismiss={ false }
 						text={ this.props.translate(
@@ -602,7 +617,7 @@ class MembershipsSection extends Component {
 						}
 					>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
-						<Gridicon size={ 18 } icon={ 'external' } />
+						<Gridicon size={ 18 } icon="external" />
 					</Button>,
 					this.props.connectedAccountDescription
 						? this.props.translate(

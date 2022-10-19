@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { Component } from 'react';
 import EnvironmentBadge, {
 	Branch,
+	AccountSettingsHelper,
 	AuthHelper,
 	DevDocsLink,
 	PreferencesHelper,
@@ -23,6 +24,7 @@ class Document extends Component {
 	render() {
 		const {
 			app,
+			accountSettingsHelper,
 			authHelper,
 			chunkFiles,
 			commitSha,
@@ -30,6 +32,7 @@ class Document extends Component {
 			head,
 			i18nLocaleScript,
 			initialReduxState,
+			initialQueryState,
 			entrypoint,
 			manifests,
 			lang,
@@ -71,6 +74,9 @@ class Document extends Component {
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
 			( initialReduxState
 				? `var initialReduxState = ${ jsonStringifyForHtml( initialReduxState ) };\n`
+				: '' ) +
+			( initialQueryState
+				? `var initialQueryState = ${ jsonStringifyForHtml( initialQueryState ) };\n`
 				: '' ) +
 			( clientData ? `var configData = ${ jsonStringifyForHtml( clientData ) };\n` : '' ) +
 			( languageRevisions
@@ -150,6 +156,7 @@ class Document extends Component {
 					{ badge && (
 						<EnvironmentBadge badge={ badge } feedbackURL={ feedbackURL }>
 							{ reactQueryDevtoolsHelper && <ReactQueryDevtoolsHelper /> }
+							{ accountSettingsHelper && <AccountSettingsHelper /> }
 							{ preferencesHelper && <PreferencesHelper /> }
 							{ featuresHelper && <FeaturesHelper /> }
 							{ authHelper && <AuthHelper /> }
@@ -191,6 +198,7 @@ class Document extends Component {
 							src={ getBilmurUrl() }
 							data-provider="wordpress.com"
 							data-service="calypso"
+							data-customproperties={ `{"route_name": "${ sectionName }"}` }
 						/>
 					) }
 

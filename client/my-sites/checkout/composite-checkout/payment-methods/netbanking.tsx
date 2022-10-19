@@ -1,11 +1,11 @@
 import { Button, FormStatus, useTotal, useFormStatus } from '@automattic/composite-checkout';
+import { snakeToCamelCase } from '@automattic/js-utils';
 import { Field } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useSelect, useDispatch, registerStore } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { camelCase } from 'lodash';
 import { Fragment } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { maskField } from 'calypso/lib/checkout';
@@ -17,7 +17,7 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
 import { errorNotice } from 'calypso/state/notices/actions';
-import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
+import { CountrySpecificPaymentFields } from '../components/country-specific-payment-fields';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
 import type {
 	StoreSelectors,
@@ -185,9 +185,9 @@ function NetBankingFields() {
 			/>
 			<div className="netbanking__contact-fields">
 				<CountrySpecificPaymentFields
-					countryCode={ 'IN' } // If this payment method is available and the country is not India, we have other problems
+					countryCode="IN" // If this payment method is available and the country is not India, we have other problems
 					countriesList={ countriesList }
-					getErrorMessage={ getErrorMessagesForField }
+					getErrorMessages={ getErrorMessagesForField }
 					getFieldValue={ getFieldValue }
 					handleFieldChange={ setFieldValue }
 					disableFields={ isDisabled }
@@ -241,7 +241,10 @@ function NetBankingPayButton( {
 	const customerName = useSelect( ( select ) => select( 'netbanking' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'netbanking' ).getFields() );
 	const massagedFields: typeof fields = Object.entries( fields ).reduce(
-		( accum, [ key, managedValue ] ) => ( { ...accum, [ camelCase( key ) ]: managedValue.value } ),
+		( accum, [ key, managedValue ] ) => ( {
+			...accum,
+			[ snakeToCamelCase( key ) ]: managedValue.value,
+		} ),
 		{}
 	);
 	const contactCountryCode = 'IN'; // If this payment method is available and the country is not India, we have other problems

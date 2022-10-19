@@ -20,8 +20,8 @@ export const Connections = ( { siteId, translate } ) => {
 
 	const learnMoreLink = (
 		<a
-			href={ localizeUrl( 'https://jetpack.com/support/publicize/' ) }
-			className={ 'connections__support-link' }
+			href={ localizeUrl( 'https://jetpack.com/support/jetpack-social/' ) }
+			className="connections__support-link"
 			target="_blank"
 			rel="noopener noreferrer"
 		>
@@ -45,7 +45,7 @@ export const Connections = ( { siteId, translate } ) => {
 			/>
 			<SharingServicesGroup
 				type="publicize"
-				title={ translate( 'Publicize posts {{learnMoreLink/}}', {
+				title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
 					components: { learnMoreLink },
 				} ) }
 			/>

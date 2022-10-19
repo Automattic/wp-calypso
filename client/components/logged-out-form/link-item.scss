@@ -1,5 +1,5 @@
 .logged-out-form__link-item {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	display: block;
 	font-family: $sans;
 	font-size: $font-body-small;
@@ -15,16 +15,16 @@
 		margin-right: auto;
 	}
 
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings )
-		.layout:not( .dops ):not( .is-wccom-oauth-flow )
-		&,
-	body.is-section-signup:not( .is-section-jetpack-connect ):not( .is-section-settings )
-		.layout.gravatar
-		& {
-		color: var( --color-text-inverted );
+	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings)
+	.layout:not(.dops):not(.is-wccom-oauth-flow)
+	&,
+	body.is-section-signup:not(.is-section-jetpack-connect):not(.is-section-settings)
+	.layout.gravatar
+	& {
+		color: var(--color-text-inverted);
 
 		&:hover {
-			color: var( --color-neutral-10 );
+			color: var(--color-neutral-10);
 		}
 	}
 
@@ -33,11 +33,11 @@
 	}
 
 	&:visited {
-		color: var( --color-neutral-50 );
+		color: var(--color-neutral-50);
 	}
 
 	&:hover {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 
 	.gridicon {

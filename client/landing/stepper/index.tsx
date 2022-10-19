@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -28,9 +29,13 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { importFlow } from './declarative-flow/import-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
-import { newsletters } from './declarative-flow/newsletters';
+import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
+import { newsletter } from './declarative-flow/newsletter';
+import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
+import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import 'calypso/components/environment-badge/style.scss';
@@ -60,10 +65,16 @@ interface configurableFlows {
 }
 
 const availableFlows: Array< configurableFlows > = [
-	{ flowName: 'newsletters', pathToFlow: newsletters },
+	{ flowName: 'newsletter', pathToFlow: newsletter },
+	{ flowName: 'import-focused', pathToFlow: importFlow },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
-];
+	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
+	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
+	config.isEnabled( 'themes/plugin-bundling' )
+		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
+		: null,
+].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { anchorFmPodcastId } = useAnchorFmParams();
@@ -124,6 +135,8 @@ window.AppBoot = async () => {
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
+	setupErrorLogger( reduxStore );
+
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
 			<Provider store={ reduxStore }>
@@ -131,6 +144,14 @@ window.AppBoot = async () => {
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
 						<FlowSwitch user={ user as UserStore.CurrentUser } />
+						{ config.isEnabled( 'gdpr-banner' ) && (
+							<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+						) }
+						<AsyncLoad
+							require="calypso/components/global-notices"
+							placeholder={ null }
+							id="notices"
+						/>
 					</BrowserRouter>
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />

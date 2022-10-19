@@ -1,53 +1,53 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/colors';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/colors";
 
 .transfer-unavailable-notice {
-    &__domain-notice {
-        flex-basis: 100%;
-        background-color: var( --studio-gray-0 );
-        display: flex;
-        align-items: center;
-        padding: 5px;
-        margin: 12px 0 0;
-        gap: 8px;
-        border-radius: 2px;
+	&__domain-notice {
+		flex-basis: 100%;
+		background-color: var(--studio-gray-0);
+		display: flex;
+		align-items: center;
+		padding: 5px;
+		margin: 12px 0 0;
+		gap: 8px;
+		border-radius: 2px;
 
-        @include break-mobile {
-            margin: 8px 0 0;
-        }
-    }
+		@include break-mobile {
+			margin: 8px 0 0;
+		}
+	}
 
-    &__domain-notice-icon.gridicon {
-        align-self: flex-start;
-        min-width: 18px;
-        position: relative;
-        top: 2px;
-        fill: var( --studio-green-50 );
+	&__domain-notice-icon.gridicon {
+		align-self: flex-start;
+		min-width: 18px;
+		position: relative;
+		top: 2px;
+		fill: var(--studio-green-50);
 
-        &--error {
-            fill: var( --studio-orange-40 );
-        }
-    }
+		&--error {
+			fill: var(--studio-orange-40);
+		}
+	}
 
-    &__domain-notice-icon--rotated {
-        transform: rotate( 180deg );
-    }
+	&__domain-notice-icon--rotated {
+		transform: rotate(180deg);
+	}
 
-    &__domain-notice-message {
-        font-weight: 400;
-        font-size: $font-body-small;
-        color: var( --studio-gray-80 );
+	&__domain-notice-message {
+		font-weight: 400;
+		font-size: $font-body-small;
+		color: var(--studio-gray-80);
 
-        button.button-plain {
-            cursor: pointer;
-            color: var( --color-link );
+		button.button-plain {
+			cursor: pointer;
+			color: var(--color-link);
 
-            &:hover,
-            &:focus,
-            &:active {
-                color: var( --color-link-dark );
-            }
-        }
-    }
+			&:hover,
+			&:focus,
+			&:active {
+				color: var(--color-link-dark);
+			}
+		}
+	}
 }

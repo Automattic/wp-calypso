@@ -5,14 +5,14 @@
 }
 
 .quick-start th {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-weight: 400;
 }
 
 .quick-start__reschedule.is-borderless,
 .quick-start__reschedule.is-borderless:visited {
-	color: var( --color-link );
+	color: var(--color-link);
 	margin: 7px 14px 9px;
 	padding: 0;
 }

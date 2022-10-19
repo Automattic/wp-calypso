@@ -1,7 +1,7 @@
 .form-buttons-bar {
 	@include clear-fix;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		align-items: flex-end;
 		display: flex;
 		flex-direction: column-reverse;

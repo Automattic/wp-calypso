@@ -1,6 +1,6 @@
 $task-left-padding: 55px;
 $task-right-padding: 50px;
-$chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+$chevron-animation: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 .checklist__header {
 	padding: 16px 24px;
@@ -15,7 +15,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	order: 3;
 	margin: 40px 0 8px 16px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		margin-left: 0;
 	}
 }
@@ -27,7 +27,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 .checklist__task {
 	width: 100%;
 	order: 1;
-	z-index: z-index( 'root', '.checklist__task' );
+	z-index: z-index("root", ".checklist__task");
 
 	.hide-completed &.is-completed {
 		display: none;
@@ -38,14 +38,14 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	&::before {
-		content: '';
+		content: "";
 		display: block;
 		position: absolute;
 		top: 0;
 		bottom: 0;
 		left: 34px;
-		border-left: 1px solid var( --color-neutral-10 );
-		z-index: z-index( '.checklist__task', '.checklist__task::before' );
+		border-left: 1px solid var(--color-neutral-10);
+		z-index: z-index(".checklist__task", ".checklist__task::before");
 	}
 
 	.checklist__task-icon {
@@ -55,18 +55,18 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		left: 16px;
 		width: 16px;
 		height: 16px;
-		border: 2px solid var( --color-neutral-5 );
-		border-radius: 16px;
-		background: var( --color-surface );
-		z-index: z-index( '.checklist__task', '.checklist__task-icon' );
+		border: 2px solid var(--color-neutral-5);
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
+		background: var(--color-surface);
+		z-index: z-index(".checklist__task", ".checklist__task-icon");
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			left: 24px;
 		}
 
 		.gridicons-checkmark {
 			display: none;
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 			position: absolute;
 			top: -1px;
 			left: 1px;
@@ -76,8 +76,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		&.is-disabled:focus,
 		&.is-disabled:hover,
 		&.is-disabled:active {
-			border: 2px solid var( --color-neutral-10 );
-			background: var( --color-surface );
+			border: 2px solid var(--color-neutral-10);
+			background: var(--color-surface);
 			cursor: default;
 		}
 	}
@@ -96,8 +96,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		left: 0;
 		width: 18px;
 		height: 18px;
-		border-radius: 16px;
-		background: var( --color-surface );
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
+		background: var(--color-surface);
 		cursor: pointer;
 	}
 
@@ -111,7 +111,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		padding: 16px $task-right-padding 4px $task-left-padding;
 		width: 100%;
 		text-align: left;
-		color: var( --color-neutral-dark );
+		color: var(--color-neutral-dark);
 		font-weight: 600;
 		font-size: $font-body;
 		border-radius: 0;
@@ -121,16 +121,16 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			position: absolute;
 			right: 12px;
 			top: 16px;
-			fill: var( --color-neutral-light );
+			fill: var(--color-neutral-light);
 			transition: $chevron-animation;
 		}
 
 		&:hover {
 			cursor: pointer;
-			color: var( --color-primary );
+			color: var(--color-primary);
 
 			.checklist__toggle-icon {
-				fill: var( --color-primary );
+				fill: var(--color-primary);
 			}
 		}
 	}
@@ -152,7 +152,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	.checklist__task-duration {
 		font-size: $font-body-small;
-		color: var( --color-neutral-dark );
+		color: var(--color-neutral-dark);
 	}
 
 	.checklist__task-action-wrapper {
@@ -170,17 +170,17 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 	.checklist__task-skip {
 		margin-left: 16px;
-		color: var( --color-link );
+		color: var(--color-link);
 
 		&:hover {
-			color: var( --color-link-dark );
+			color: var(--color-link-dark);
 		}
 	}
 
 	&.warning {
 		.gridicons-notice-outline {
 			display: block;
-			fill: var( --color-warning );
+			fill: var(--color-warning);
 			position: absolute;
 			top: -4px;
 			left: -4px;
@@ -192,8 +192,8 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 
 		.checklist__task-icon {
 			top: 8px;
-			background: var( --color-success );
-			border-color: var( --color-success );
+			background: var(--color-success);
+			border-color: var(--color-success);
 
 			&:hover {
 				cursor: default;
@@ -227,11 +227,11 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 	}
 
 	&.is-in-progress {
-		background: var( --color-neutral-0 );
+		background: var(--color-neutral-0);
 
 		.checklist__task-title,
 		.checklist__task-title-button {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: $font-body-small;
 		}
 
@@ -251,7 +251,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		}
 
 		&.is-completed {
-			background: var( --color-neutral-0 );
+			background: var(--color-neutral-0);
 		}
 
 		&.is-completed .checklist__task-title-button,
@@ -260,7 +260,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 			padding-bottom: 16px;
 
 			&:hover {
-				background: var( --color-neutral-5 );
+				background: var(--color-neutral-5);
 			}
 		}
 
@@ -269,7 +269,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		}
 
 		.checklist__toggle-icon {
-			transform: rotate( 180deg );
+			transform: rotate(180deg);
 		}
 	}
 
@@ -281,7 +281,7 @@ $chevron-animation: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
 		.checklist__task-title,
 		.checklist__task-description,
 		.checklist__task-duration {
-			background-color: var( --color-neutral-5 );
+			background-color: var(--color-neutral-5);
 			color: transparent;
 			animation: pulse-light 3s ease-in-out infinite;
 		}

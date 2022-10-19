@@ -3,7 +3,7 @@ import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { ReactElement, useContext } from 'react';
+import { useContext } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
@@ -20,7 +20,7 @@ interface Props {
 	siteUrl: string;
 }
 
-export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ): ReactElement {
+export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import startingPointImageUrl from 'calypso/assets/images/onboarding/starting-point.svg';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -28,7 +28,7 @@ const EXCLUDED_STEPS: { [ key: string ]: string[] } = {
 const getExcludedSteps = ( providedDependencies?: Dependencies ) =>
 	EXCLUDED_STEPS[ providedDependencies?.startingPoint ];
 
-export default function StartingPointStep( props: Props ): React.ReactNode {
+export default function StartingPointStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { goToNextStep, stepName } = props;
@@ -47,7 +47,7 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 	};
 
 	// Only do following things when mounted
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -60,8 +60,8 @@ export default function StartingPointStep( props: Props ): React.ReactNode {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={ <StartingPoint onSelect={ submitStartingPoint } /> }
-			align={ 'left' }
-			skipButtonAlign={ 'top' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip to My Home' ) }
 			// We need to redirect user to My Home and apply the default theme if the user skips this step
 			goToNextStep={ () => submitStartingPoint( 'skip-to-my-home' ) }

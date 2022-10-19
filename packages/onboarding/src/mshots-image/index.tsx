@@ -19,6 +19,7 @@ export type MShotsOptions = {
 	w: number;
 	h?: number;
 	screen_height?: number;
+	format?: 'png' | 'jpeg';
 };
 
 const debug = debugFactory( 'design-picker:mshots-image' );
@@ -113,7 +114,10 @@ const useMshotsImg = ( src: string, options: MShotsOptions ): HTMLImageElement |
 			} else if ( count < MAXTRIES ) {
 				// Only refresh 10 times
 				// Triggers a target.src change with increasing timeouts
-				timeoutIdRef.current = setTimeout( () => setCount( ( count ) => count + 1 ), count * 500 );
+				timeoutIdRef.current = window.setTimeout(
+					() => setCount( ( count ) => count + 1 ),
+					count * 500
+				);
 			}
 		};
 		newImage.src = srcUrl;

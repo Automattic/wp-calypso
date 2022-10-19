@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { JetpackConnectNotices } from '../jetpack-connect-notices';
 
 const terminalErrorNoticeType = 'siteBlocked';
@@ -11,29 +10,27 @@ const requiredProps = { translate: ( string ) => string };
 
 describe( 'JetpackConnectNotices', () => {
 	test( 'Should render notice', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackConnectNotices { ...requiredProps } noticeType={ terminalErrorNoticeType } />
 		);
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( false );
+		expect( container ).toMatchSnapshot();
 	} );
 
 	test( 'Should not render terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackConnectNotices
 				{ ...requiredProps }
 				noticeType={ terminalErrorNoticeType }
 				onTerminalError={ onTerminalError }
 			/>
 		);
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( true );
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	test( 'Should call callback on terminal error', () => {
 		const onTerminalError = jest.fn();
-		shallow(
+		render(
 			<JetpackConnectNotices
 				{ ...requiredProps }
 				noticeType={ terminalErrorNoticeType }
@@ -45,7 +42,7 @@ describe( 'JetpackConnectNotices', () => {
 
 	test( 'Should render non-terminal notice if callback supplied', () => {
 		const onTerminalError = jest.fn();
-		const wrapper = shallow(
+		const { container } = render(
 			<JetpackConnectNotices
 				{ ...requiredProps }
 				noticeType={ nonTerminalErrorNoticeType }
@@ -53,7 +50,6 @@ describe( 'JetpackConnectNotices', () => {
 			/>
 		);
 		expect( onTerminalError ).not.toHaveBeenCalled();
-		expect( wrapper ).toMatchSnapshot();
-		expect( wrapper.isEmptyRender() ).toBe( false );
+		expect( container ).toMatchSnapshot();
 	} );
 } );

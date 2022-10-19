@@ -5,7 +5,13 @@ export interface Dependencies {
 export interface Flow {
 	name: string;
 	steps: string[];
-	destination: string | ( ( dependencies: Dependencies, localeSlug: string ) => string );
+	destination:
+		| string
+		| ( (
+				dependencies: Dependencies,
+				localeSlug: string,
+				goesThroughCheckout?: boolean
+		  ) => string );
 	description: string;
 	lastModified: string;
 	pageTitle?: string;

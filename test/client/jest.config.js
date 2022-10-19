@@ -13,6 +13,7 @@ module.exports = {
 		'node_modules[\\/\\\\](?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css)$)',
 	],
 	testURL: 'https://example.com',
+	setupFiles: [ 'jest-canvas-mock' ],
 	setupFilesAfterEnv: [ '<rootDir>/../test/client/setup-test-framework.js' ],
 	globals: {
 		google: {},

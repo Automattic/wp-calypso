@@ -23,6 +23,8 @@ export interface WpcomRequestParams {
 
 export function reloadProxy(): void;
 
+export function canAccessWpcomApis(): boolean;
+
 export function requestAllBlogsAccess(): ReturnType< typeof request >;
 
 export default function request(

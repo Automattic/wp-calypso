@@ -1,4 +1,5 @@
 import { SiteDetails } from '../site';
+import { Location } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
@@ -6,16 +7,36 @@ export const setShowHelpCenter = ( show: boolean ) =>
 		show,
 	} as const );
 
-export const setDirectlyData = ( data: { isLoaded: boolean; hasSession: boolean } ) =>
+export const setRouterState = ( history: Location[], index: number ) =>
 	( {
-		type: 'HELP_CENTER_SET_DIRECTLY_DATA',
-		data,
+		type: 'HELP_CENTER_SET_ROUTER_STATE',
+		history,
+		index,
+	} as const );
+
+export const resetRouterState = () =>
+	( {
+		type: 'HELP_CENTER_SET_ROUTER_STATE',
+		history: undefined,
+		index: undefined,
 	} as const );
 
 export const setSite = ( site: SiteDetails | undefined ) =>
 	( {
 		type: 'HELP_CENTER_SET_SITE',
 		site,
+	} as const );
+
+export const setUnreadCount = ( count: number ) =>
+	( {
+		type: 'HELP_CENTER_SET_UNREAD_COUNT',
+		count,
+	} as const );
+
+export const setIsMinimized = ( minimized: boolean ) =>
+	( {
+		type: 'HELP_CENTER_SET_MINIMIZED',
+		minimized,
 	} as const );
 
 export const setSubject = ( subject: string ) =>
@@ -30,15 +51,15 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
-export const setPopup = ( popup: Window ) =>
+export const setIframe = ( iframe: null | HTMLIFrameElement ) =>
 	( {
-		type: 'HELP_CENTER_SET_POPUP',
-		popup,
+		type: 'HELP_CENTER_SET_IFRAME',
+		iframe,
 	} as const );
 
-export const resetPopup = () =>
+export const resetIframe = () =>
 	( {
-		type: 'HELP_CENTER_RESET_POPUP',
+		type: 'HELP_CENTER_RESET_IFRAME',
 	} as const );
 
 export const setUserDeclaredSiteUrl = ( url: string ) =>
@@ -53,6 +74,13 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const startHelpCenterChat = function* ( site: SiteDetails, message: string ) {
+	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
+	yield setSite( site );
+	yield setMessage( message );
+	yield setShowHelpCenter( true );
+};
+
 export const resetStore = () =>
 	( {
 		type: 'HELP_CENTER_RESET_STORE',
@@ -60,13 +88,16 @@ export const resetStore = () =>
 
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
-	| typeof setDirectlyData
 	| typeof setSite
 	| typeof setSubject
+	| typeof setRouterState
+	| typeof resetRouterState
 	| typeof resetStore
 	| typeof setMessage
 	| typeof setUserDeclaredSite
 	| typeof setUserDeclaredSiteUrl
-	| typeof resetPopup
-	| typeof setPopup
+	| typeof resetIframe
+	| typeof setIframe
+	| typeof setUnreadCount
+	| typeof setIsMinimized
 >;

@@ -11,8 +11,8 @@ const container = css( {
 const primaryContainer = css( {
 	display: 'flex',
 	flex: 1,
-	marginTop: '16px',
-	marginBottom: '8px',
+	marginBlockStart: '16px',
+	marginBlockEnd: '8px',
 	alignItems: 'center',
 } );
 
@@ -26,8 +26,10 @@ export const SitesGridTile = ( { leading, primary, secondary }: SitesGridTilePro
 	return (
 		<div className={ container }>
 			{ leading }
-			<div className={ primaryContainer }>{ primary }</div>
-			{ secondary }
+			<div>
+				<div className={ primaryContainer }>{ primary }</div>
+				{ secondary }
+			</div>
 		</div>
 	);
 };

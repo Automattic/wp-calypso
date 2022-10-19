@@ -1,0 +1,82 @@
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.wpcom-global-styles-modal {
+	.components-modal__content {
+		padding: 0;
+		margin-top: 0;
+		display: flex;
+		flex-direction: column-reverse;
+		justify-content: flex-end;
+
+		@include break-small {
+			flex-direction: row;
+			justify-content: flex-start;
+		}
+	}
+
+	.components-modal__header {
+		height: auto;
+		position: absolute;
+
+		.components-button {
+			top: 16px;
+		}
+	}
+
+	.wpcom-global-styles-modal__text,
+	.wpcom-global-styles-modal__image {
+		width: 100%;
+
+		@include break-small {
+			width: auto;
+			max-width: 380px;
+		}
+	}
+
+	.wpcom-global-styles-modal__text {
+		padding: 64px 48px;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.wpcom-global-styles-modal__heading {
+		margin-top: 0;
+		font-family: $brand-serif;
+		font-weight: 400;
+		font-size: 2rem;
+		line-height: 40px;
+		margin-bottom: 16px;
+	}
+
+	.wpcom-global-styles-modal__description {
+		font-size: 1rem;
+		line-height: 24px;
+		margin-top: 0;
+		margin-bottom: 32px;
+	}
+
+	.wpcom-global-styles-modal__actions {
+		display: flex;
+		justify-content: center;
+		gap: 16px;
+		margin-top: auto;
+
+		.components-button {
+			flex-grow: 1;
+			justify-content: center;
+		}
+	}
+
+	.wpcom-global-styles-modal__image {
+		background-color: #d0cce3;
+		padding: 64px 0 64px 64px;
+		display: flex;
+		justify-content: flex-end;
+
+		img {
+			width: 100%;
+		}
+	}
+}

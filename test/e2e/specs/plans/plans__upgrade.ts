@@ -124,7 +124,7 @@ describe(
 
 			it( `Plans page states user is on WordPress.com ${ planName } plan`, async function () {
 				const plansPage = new PlansPage( page );
-				await plansPage.clickTab( 'My Plan' );
+				await plansPage.visit( 'My Plan', newSiteDetails.blog_details.site_slug );
 				await plansPage.validateActivePlan( 'Premium' );
 			} );
 		} );

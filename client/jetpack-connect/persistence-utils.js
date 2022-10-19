@@ -3,6 +3,7 @@ import { urlToSlug } from 'calypso/lib/url';
 import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/constants';
 
 export const SESSION_STORAGE_SELECTED_PLAN = 'jetpack_connect_selected_plan';
+export const SESSION_STORAGE_SOURCE = 'jetpack_connect_source';
 
 /**
  * Utilities for storing jetpack connect state that needs to persist across
@@ -57,4 +58,16 @@ export const persistMobileRedirect = ( url ) => {
 export const retrieveMobileRedirect = () => {
 	const cookies = cookie.parse( document.cookie );
 	return cookies.jetpack_connect_mobile_redirect;
+};
+
+export const storeSource = ( source ) => {
+	window.sessionStorage.setItem( SESSION_STORAGE_SOURCE, source );
+};
+
+export const clearSource = () => {
+	window.sessionStorage.removeItem( SESSION_STORAGE_SOURCE );
+};
+
+export const retrieveSource = () => {
+	return window.sessionStorage.getItem( SESSION_STORAGE_SOURCE );
 };

@@ -1,24 +1,54 @@
-import config from '@automattic/calypso-config';
 import { useDispatch } from '@wordpress/data';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
-import { loadDSPWidgetJS, recordDSPEntryPoint, showDSPWidgetModal } from 'calypso/lib/promote-post';
+import {
+	recordDSPEntryPoint,
+	usePromoteWidget,
+	PromoteWidgetStatus,
+} from 'calypso/lib/promote-post';
+import { useRouteModal } from 'calypso/lib/route-modal';
 import { getPost } from 'calypso/state/posts/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpStatKey, status } ) {
+function PostActionsEllipsisMenuPromote( {
+	globalId,
+	postId,
+	bumpStatKey,
+	status,
+	password,
+	type,
+	siteId,
+} ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+	const isSitePrivate =
+		useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 
-	useEffect( () => {
-		if ( isModuleActive ) {
-			loadDSPWidgetJS();
-		}
-	} );
+	const isComingSoon =
+		useSelector( ( state ) => siteId && isSiteComingSoon( state, siteId ) ) || false;
 
-	if ( ! isModuleActive ) {
+	const keyValue = globalId;
+	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
+
+	const widgetEnabled = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
+
+	if ( isSitePrivate ) {
+		return null;
+	}
+
+	if ( isComingSoon ) {
+		return null;
+	}
+
+	if ( password !== '' ) {
+		return null;
+	}
+
+	if ( ! widgetEnabled ) {
 		return null;
 	}
 
@@ -30,14 +60,14 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 		return null;
 	}
 
-	const showDSPWidget = async () => {
+	const showDSPWidget = () => {
 		dispatch( recordDSPEntryPoint( bumpStatKey ) );
-		await showDSPWidgetModal( siteId, postId );
+		openModal();
 	};
 
 	return (
-		<PopoverMenuItem onClick={ showDSPWidget } icon={ 'speaker' }>
-			{ translate( 'Promote Post' ) }
+		<PopoverMenuItem onClick={ showDSPWidget } icon="speaker">
+			{ type === 'post' ? translate( 'Promote post' ) : translate( 'Promote page' ) }
 		</PopoverMenuItem>
 	);
 }
@@ -45,9 +75,7 @@ function PostActionsEllipsisMenuPromote( { siteId, postId, isModuleActive, bumpS
 PostActionsEllipsisMenuPromote.propTypes = {
 	bumpStatKey: PropTypes.string,
 	globalId: PropTypes.string,
-	isModuleActive: PropTypes.bool,
 	postId: PropTypes.number,
-	siteId: PropTypes.number,
 };
 
 const mapStateToProps = ( state, { globalId } ) => {
@@ -58,10 +86,10 @@ const mapStateToProps = ( state, { globalId } ) => {
 
 	return {
 		type: post.type,
-		isModuleActive: config.isEnabled( 'promote-post' ),
 		postId: post.ID,
-		siteId: post.site_ID,
 		status: post.status,
+		password: post.password,
+		siteId: getSelectedSiteId( state ),
 	};
 };
 

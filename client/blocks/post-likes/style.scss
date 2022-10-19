@@ -1,4 +1,4 @@
-@import './variables.scss';
+@import "./variables.scss";
 
 .post-likes {
 	font-size: $font-body-small;
@@ -22,7 +22,7 @@
 			display: block;
 			position: relative;
 			padding: 4px 8px;
-			border-bottom: 1px solid var( --color-neutral-0 );
+			border-bottom: 1px solid var(--color-neutral-0);
 
 			&:last-child {
 				border-bottom-width: 0;
@@ -42,7 +42,7 @@
 			text-overflow: ellipsis;
 		}
 
-		.post-likes__count:not( .is-loading ) {
+		.post-likes__count:not(.is-loading) {
 			margin: 12px 16px 12px 32px;
 		}
 	}
@@ -51,10 +51,10 @@
 		vertical-align: top;
 		margin: 6px 8px 4px 4px;
 		line-height: 14px;
-		border-radius: 12px;
+		border-radius: 12px; /* stylelint-disable-line scales/radii */
 		display: inline-block;
-		border: solid 1px var( --color-neutral-light );
-		color: var( --color-text-subtle );
+		border: solid 1px var(--color-neutral-light);
+		color: var(--color-text-subtle);
 		padding: 1px 6px;
 		font-weight: 600;
 		font-size: $font-body-extra-small;

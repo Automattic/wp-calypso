@@ -6,12 +6,12 @@
 		padding: 24px 0;
 		box-shadow: none;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			padding: 16px;
 		}
 
 		& ~ & {
-			border-top: 1px solid var( --studio-gray-5 );
+			border-top: 1px solid var(--studio-gray-5);
 		}
 
 		.action-card__main {
@@ -28,12 +28,12 @@
 			p {
 				margin: 0 0 16px;
 				font-size: $font-body-small;
-				color: var( --studio-gray-50 );
+				color: var(--studio-gray-50);
 				display: flex;
 				align-items: center;
 
 				svg {
-					fill: var( --studio-gray-50 );
+					fill: var(--studio-gray-50);
 					margin: 0 8px 0 3px;
 				}
 			}
@@ -48,7 +48,7 @@
 				box-shadow: none;
 
 				&:hover {
-					color: var( --color-text-subtle );
+					color: var(--color-text-subtle);
 				}
 			}
 		}

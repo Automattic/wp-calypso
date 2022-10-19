@@ -13,7 +13,7 @@ module.exports = {
 
 		// FSE components render in a Gutenberg environment and should
 		// conform to those naming conventions instead of Calypso's.
-		'wpcalypso/jsx-classname-namespace': 0,
+		'wpcalypso/jsx-classname-namespace': 'off',
 	},
 	ignorePatterns: [ '**/dist/*', '**/synced-newspack-blocks/*' ],
 	overrides: [

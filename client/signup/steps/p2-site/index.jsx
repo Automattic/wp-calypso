@@ -39,7 +39,6 @@ const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
 	'blog_name_reserved',
 	'blog_name_reserved_but_may_be_available',
-	'dotblog_subdomain_not_available',
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
@@ -460,7 +459,7 @@ class P2Site extends Component {
 			<>
 				<FormTextInput
 					id="site-address-input"
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="p2-site__site-suggested-url"
 					disabled={ true }
 					name="suggested-site"
@@ -489,7 +488,7 @@ class P2Site extends Component {
 				<FormTextInput
 					id="site-address-input"
 					ref={ this.customizeSiteInput }
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="p2-site__site-url"
 					disabled={ submitting }
 					name="site"
@@ -547,7 +546,7 @@ class P2Site extends Component {
 					<FormTextInput
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="p2-site__site-title"
 						disabled={ submitting }
 						name="site-title"
@@ -626,7 +625,7 @@ class P2Site extends Component {
 					</form>
 
 					<div className="p2-site__learn-more">
-						<a href="https://wordpress.com/p2" className="p2-site__learn-more-link">
+						<a href="https://wordpress.com/p2/" className="p2-site__learn-more-link">
 							{ this.props.translate( 'Learn more about P2' ) }
 						</a>
 					</div>

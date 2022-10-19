@@ -1,12 +1,11 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
-export default function AddStoredCreditCard(): ReactElement {
+export default function AddStoredCreditCard() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

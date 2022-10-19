@@ -1,8 +1,8 @@
 import { Page } from 'playwright';
+import { reloadAndRetry } from '../../element-helper';
 
 const selectors = {
 	searchInput: `.search-component__input`,
-	resultPlaceholder: `.is-placeholder`,
 	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
 };
 
@@ -32,10 +32,18 @@ export class DomainSearchComponent {
 	 * @param {string} keyword Keyword to use in domain search.
 	 */
 	async search( keyword: string ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForSelector( selectors.resultPlaceholder, { state: 'detached' } ),
-			this.page.fill( selectors.searchInput, keyword ),
-		] );
+		/**
+		 * Closure to pass into the retry method.
+		 */
+		const searchDomainClosure = async (): Promise< void > => {
+			await Promise.all( [
+				this.page.waitForResponse( /suggestions\?/ ),
+				this.page.waitForResponse( /tlds\?/ ),
+				this.page.fill( selectors.searchInput, keyword ),
+			] );
+		};
+
+		reloadAndRetry( this.page, searchDomainClosure );
 	}
 
 	/**

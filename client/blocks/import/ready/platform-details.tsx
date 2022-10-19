@@ -42,7 +42,7 @@ const platformFeatureList: { [ key: string ]: { [ key: string ]: FeatureName[] }
 const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) => {
 	const { __ } = useI18n();
 	const { platform, onClose, fromSite } = data;
-	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import' );
+	const learnMoreHref = localizeUrl( 'https://wordpress.com/support/import/' );
 
 	const translatedFeatureList: FeatureList = {
 		tags: __( 'Tags' ),
@@ -130,13 +130,13 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				</a>
 
 				{ platform !== 'wordpress' && (
-					<div className={ 'import__details-features' }>
+					<div className="import__details-features">
 						<p>
 							{ createInterpolateElement( __( 'Things we <strong>can</strong> import:' ), {
 								strong: createElement( 'strong' ),
 							} ) }
 						</p>
-						<ul className={ 'import__details-list' }>
+						<ul className="import__details-list">
 							{ platformFeatureList[ platform ].supported.map( ( key ) => (
 								<li key={ key }>
 									<Icon size={ 20 } icon={ check } />{ ' ' }
@@ -150,7 +150,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 								strong: createElement( 'strong' ),
 							} ) }
 						</p>
-						<ul className={ 'import__details-list' }>
+						<ul className="import__details-list">
 							{ platformFeatureList[ platform ].unsupported.map( ( key ) => (
 								<li key={ key }>
 									<Icon size={ 20 } icon={ close } />{ ' ' }
@@ -162,13 +162,13 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 				) }
 
 				{ platform === 'wordpress' && (
-					<div className={ 'import__details-features' }>
+					<div className="import__details-features">
 						<p>
 							{ createInterpolateElement( __( 'Import <strong>Content only</strong>:' ), {
 								strong: createElement( 'strong' ),
 							} ) }
 						</p>
-						<ul className={ 'import__details-list' }>
+						<ul className="import__details-list">
 							{ platformFeatureList[ platform ].supported.map( ( key ) => (
 								<li key={ key }>
 									<Icon size={ 20 } icon={ check } />{ ' ' }
@@ -183,7 +183,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 										strong: createElement( 'strong' ),
 									} ) }
 								</p>
-								<ul className={ 'import__details-list' }>
+								<ul className="import__details-list">
 									{ platformFeatureList[ platform ].supported
 										.concat( platformFeatureList[ platform ].unsupported )
 										.map( ( key ) => (
@@ -193,7 +193,7 @@ const ImportPlatformDetails: React.FunctionComponent< DetailsProps > = ( data ) 
 											</li>
 										) ) }
 								</ul>
-								<div className={ 'import__details-footer' }>
+								<div className="import__details-footer">
 									<i>*{ __( 'Requires a Business plan.' ) }</i>
 								</div>
 							</>

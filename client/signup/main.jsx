@@ -5,6 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -27,7 +28,6 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
-import OlarkChat from 'calypso/components/olark-chat';
 import {
 	recordSignupStart,
 	recordSignupComplete,
@@ -37,12 +37,14 @@ import {
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
 import * as oauthToken from 'calypso/lib/oauth-token';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
+import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -52,6 +54,7 @@ import {
 	getCurrentUserSiteCount,
 	isCurrentUserEmailVerified,
 } from 'calypso/state/current-user/selectors';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
@@ -138,7 +141,6 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		hideBackButton: PropTypes.bool,
 		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
@@ -346,6 +348,11 @@ class Signup extends Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
+		if ( isWooOAuth2Client( this.props.oauth2Client ) ) {
+			// We don't want to show the loading screen for the Woo signup flow.
+			return;
+		}
+
 		const hasInvalidSteps = !! getFirstInvalidStep(
 			this.props.flowName,
 			progress,
@@ -463,10 +470,9 @@ class Signup extends Component {
 	};
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
-		const userIsLoggedIn = this.props.isLoggedIn;
+		const { isLoggedIn: userIsLoggedIn, progress } = this.props;
 
 		debug( `Logging you in to "${ destination }"` );
-
 		if ( resetSignupFlowController ) {
 			this.signupFlowController.reset();
 
@@ -488,7 +494,13 @@ class Signup extends Component {
 			} );
 		}
 
-		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || dependencies.oauth2_client_id ) ) {
+		const isRegularOauth2ClientSignup =
+			dependencies.oauth2_client_id && ! progress?.[ 'oauth2-user' ]?.service; // service is set for social signup (e.g. Google, Apple)
+		// If the user is not logged in, we need to log them in first.
+		// And if it's regular oauth client signup, we perform the oauth login because the WPCC user creation code automatically logs the user in.
+		// There’s no need to turn the bearer token into a cookie. If we log user in again, it will cause an activation error.
+		// However, we need to skip this to perform a regular login for social sign in.
+		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || isRegularOauth2ClientSignup ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
 			window.location.href = destination;
@@ -614,6 +626,10 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
+		}
+
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
@@ -723,6 +739,11 @@ class Signup extends Component {
 		}
 	}
 
+	getPageTitle() {
+		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			return this.props.pageTitle;
+		}
+	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -740,12 +761,6 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
-		const olarkIdentity = config( 'olark_chat_identity' );
-		const olarkSystemsGroupId = '2dfd76a39ce77758f128b93942ae44b5';
-		const isEligibleForOlarkChat =
-			'onboarding' === this.props.flowName &&
-			[ 'en', 'en-gb' ].includes( this.props.localeSlug ) &&
-			this.props.existingSiteCount < 1;
 
 		return (
 			<>
@@ -753,9 +768,13 @@ class Signup extends Component {
 					<DocumentHead title={ this.props.pageTitle } />
 					{ ! isP2Flow( this.props.flowName ) && (
 						<SignupHeader
+							progressBar={ {
+								flowName: this.props.flowName,
+								stepName: this.props.stepName,
+							} }
+							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
-							pageTitle={ this.props.hideBackButton && this.props.pageTitle }
 							rightComponent={
 								showProgressIndicator( this.props.flowName ) && (
 									<FlowProgressIndicator
@@ -776,13 +795,6 @@ class Signup extends Component {
 						/>
 					) }
 				</div>
-				{ isEligibleForOlarkChat && (
-					<OlarkChat
-						systemsGroupId={ olarkSystemsGroupId }
-						identity={ olarkIdentity }
-						shouldDisablePreChatSurvey
-					/>
-				) }
 			</>
 		);
 	}
@@ -818,6 +830,7 @@ export default connect(
 			siteId,
 			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
+			oauth2Client: getCurrentOAuth2Client( state ),
 		};
 	},
 	{

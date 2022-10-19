@@ -26,7 +26,8 @@
 						"timezone": { "type": "string" }
 					}
 				},
-				"schedule_id": { "type": "number" }
+				"schedule_id": { "type": "number" },
+				"site_id": { "type": "number" }
 			}
 		},
 		"schedule_id": {
@@ -34,6 +35,12 @@
 		},
 		"is_blocked": {
 			"type": "boolean"
+		},
+		"available_sessions": {
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
 		}
 	}
 }

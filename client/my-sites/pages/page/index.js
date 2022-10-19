@@ -41,6 +41,7 @@ import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { statsLinkForPage } from '../helpers';
 import PageCardInfo from '../page-card-info';
+import PageEllipsisMenuWrapper from './page-ellipsis-menu-wrapper';
 
 const recordEvent = ( event ) => recordGoogleEvent( 'Pages', event );
 const noop = () => {};
@@ -137,7 +138,7 @@ class Page extends Component {
 			<PostActionsEllipsisMenuPromote
 				globalId={ this.props.page.global_ID }
 				key="promote"
-				bumpStatKey={ 'pages-meatball-menu' }
+				bumpStatKey="pages-meatball-menu"
 			/>
 		);
 	}
@@ -355,7 +356,7 @@ class Page extends Component {
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon="link">
 				{ translate( 'Copy link' ) }
 			</PopoverMenuItemClipboard>
 		);
@@ -446,19 +447,7 @@ class Page extends Component {
 
 	undoPostStatus = () => this.updatePostStatus( this.props.shadowStatus.undo );
 
-	render() {
-		const {
-			editorUrl,
-			page,
-			shadowStatus,
-			showPublishedStatus,
-			siteId,
-			translate,
-			isPostsPage: latestPostsPage,
-		} = this.props;
-		const title = page.title || translate( 'Untitled' );
-		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
-		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
+	createEllipsisMenu = () => {
 		const viewItem = this.getViewItem();
 		const promoteItem = this.getPromoteItem();
 		const publishItem = this.getPublishItem();
@@ -484,27 +473,48 @@ class Page extends Component {
 			moreInfoItem ||
 			exportItem;
 
-		const ellipsisMenu = hasMenuItems && (
-			<EllipsisMenu
-				className="page__actions-toggle"
-				position="bottom left"
-				onToggle={ this.handleMenuToggle }
-			>
-				{ editItem }
-				{ publishItem }
-				{ viewItem }
-				{ promoteItem }
-				{ statsItem }
-				{ copyPageItem }
-				{ copyLinkItem }
-				{ restoreItem }
-				{ frontPageItem }
-				{ postsPageItem }
-				{ exportItem }
-				{ sendToTrashItem }
-				{ moreInfoItem }
-			</EllipsisMenu>
+		return (
+			hasMenuItems && (
+				<PageEllipsisMenuWrapper globalId={ this.props.page.global_ID }>
+					<EllipsisMenu
+						className="page__actions-toggle"
+						position="bottom left"
+						onToggle={ this.handleMenuToggle }
+					>
+						{ editItem }
+						{ publishItem }
+						{ viewItem }
+						{ promoteItem }
+						{ statsItem }
+						{ copyPageItem }
+						{ copyLinkItem }
+						{ restoreItem }
+						{ frontPageItem }
+						{ postsPageItem }
+						{ exportItem }
+						{ sendToTrashItem }
+						{ moreInfoItem }
+					</EllipsisMenu>
+				</PageEllipsisMenuWrapper>
+			)
 		);
+	};
+
+	render() {
+		const {
+			editorUrl,
+			page,
+			shadowStatus,
+			showPublishedStatus,
+			siteId,
+			translate,
+			isPostsPage: latestPostsPage,
+		} = this.props;
+		const title = page.title || translate( 'Untitled' );
+		const canEdit = userCan( 'edit_post', page ) && ! latestPostsPage;
+		const depthIndicator = ! this.props.hierarchical && page.parent && '— ';
+
+		const ellipsisMenu = this.createEllipsisMenu();
 
 		const isTrashed = page.status === 'trash';
 

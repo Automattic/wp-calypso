@@ -1,3 +1,5 @@
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
 import page from 'page';
@@ -18,10 +20,15 @@ import {
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
+import {
+	getDomainProductSlug,
+	getDomainSuggestionSearch,
+	getFixedDomainSearch,
+} from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
+import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { domainManagementRoot } from 'calypso/my-sites/domains/paths';
 import { isEligibleForProPlan } from 'calypso/my-sites/plans-comparison';
@@ -32,7 +39,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import {
 	recordAddDomainButtonClick,
 	recordAddDomainButtonClickInMapDomain,
@@ -118,6 +125,22 @@ class DomainsStep extends Component {
 		this.state = {
 			currentStep: null,
 		};
+	}
+
+	componentDidMount() {
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wpcom.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'domains',
+				}
+			);
+		}
 	}
 
 	getLocale() {
@@ -260,6 +283,9 @@ class DomainsStep extends Component {
 			submitSignupStep: this.props.submitSignupStep,
 		} );
 
+		const siteAccentColor =
+			this.props.flowName === 'newsletter' && this.props.queryObject?.siteAccentColor;
+
 		this.props.submitSignupStep(
 			Object.assign(
 				{
@@ -269,6 +295,7 @@ class DomainsStep extends Component {
 					isPurchasingItem,
 					siteUrl,
 					stepSectionName: this.props.stepSectionName,
+					...( siteAccentColor && { siteAccentColor } ),
 				},
 				this.getThemeArgs()
 			),
@@ -376,6 +403,11 @@ class DomainsStep extends Component {
 			return true;
 		}
 
+		// newsletter users should get free .blog domain
+		if ( flowName === 'newsletter' ) {
+			return true;
+		}
+
 		// 'blog' flow, starting with blog themes
 		if ( flowName === 'blog' ) {
 			return true;
@@ -428,7 +460,7 @@ class DomainsStep extends Component {
 	getSideContent = () => {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
-				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type={ 'use-your-domain' } />
+				<ReskinSideExplainer onClick={ this.handleUseYourDomainClick } type="use-your-domain" />
 			</div>
 		) : null;
 
@@ -438,7 +470,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content domains__free-domain">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-explainer' }
+							type="free-domain-explainer"
 							flowName={ this.props.flowName }
 						/>
 					</div>
@@ -448,7 +480,7 @@ class DomainsStep extends Component {
 					<div className="domains__domain-side-content">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
-							type={ 'free-domain-only-explainer' }
+							type="free-domain-only-explainer"
 						/>
 					</div>
 				) }
@@ -469,6 +501,7 @@ class DomainsStep extends Component {
 
 		// Search using the initial query but do not show the query on the search input field.
 		const hideInitialQuery = get( this.props, 'queryObject.hide_initial_query', false ) === 'yes';
+		initialState.hideInitialQuery = hideInitialQuery;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -479,8 +512,10 @@ class DomainsStep extends Component {
 			if ( initialState ) {
 				initialState.searchResults = null;
 				initialState.subdomainSearchResults = null;
-				initialState.loadingResults = true;
-				initialState.hideInitialQuery = hideInitialQuery;
+				// If length is less than 2 it will not fetch any data.
+				// filter before counting length
+				initialState.loadingResults =
+					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
 			}
 		}
 
@@ -489,14 +524,7 @@ class DomainsStep extends Component {
 			showExampleSuggestions = true;
 		}
 
-		let includeWordPressDotCom = this.props.includeWordPressDotCom;
-		if ( 'undefined' === typeof includeWordPressDotCom ) {
-			includeWordPressDotCom = ! this.props.isDomainOnly;
-		}
-
-		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
-			? TRUENAME_TLDS
-			: null;
+		const includeWordPressDotCom = this.props.includeWordPressDotCom ?? ! this.props.isDomainOnly;
 
 		return (
 			<CalypsoShoppingCartProvider>
@@ -507,7 +535,7 @@ class DomainsStep extends Component {
 					onAddDomain={ this.handleAddDomain }
 					products={ this.props.productsList }
 					basePath={ this.props.path }
-					promoTlds={ trueNamePromoTlds }
+					promoTlds={ this.props?.queryObject?.tld?.split( ',' ) }
 					mapDomainUrl={ this.getUseYourDomainUrl() }
 					transferDomainUrl={ this.getUseYourDomainUrl() }
 					useYourDomainUrl={ this.getUseYourDomainUrl() }
@@ -517,10 +545,8 @@ class DomainsStep extends Component {
 					isDomainOnly={ this.props.isDomainOnly }
 					analyticsSection={ this.getAnalyticsSection() }
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-					includeDotBlogSubdomain={
-						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
-					}
+					includeWordPressDotCom={ includeWordPressDotCom }
+					includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
 					isSignupStep
 					isPlanSelectionAvailableInFlow={ this.props.isPlanSelectionAvailableLaterInFlow }
 					showExampleSuggestions={ showExampleSuggestions }
@@ -529,6 +555,7 @@ class DomainsStep extends Component {
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: this.props.isDomainOnly,
+						flowName: this.props.flowName,
 					} ) }
 					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
 					selectedSite={ this.props.selectedSite }
@@ -540,6 +567,7 @@ class DomainsStep extends Component {
 					}
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
+					isInLaunchFlow={ 'launch-site' === this.props.flowName }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -602,6 +630,28 @@ class DomainsStep extends Component {
 			return translate( 'Find the domain that defines you' );
 		}
 
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+			const components = {
+				span: (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/interactive-supports-focus
+					<span
+						role="button"
+						className="tailored-flow-subtitle__cta-text"
+						onClick={ () => this.handleSkip() }
+					/>
+				),
+			};
+			return flowName === 'newsletter'
+				? translate(
+						'Help your Newsletter stand out with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  )
+				: translate(
+						'Set your Link in Bio apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+						{ components }
+				  );
+		}
+
 		if ( isReskinned ) {
 			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
@@ -625,6 +675,14 @@ class DomainsStep extends Component {
 		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
 			this.props;
 
+		if ( stepSectionName === 'use-your-domain' ) {
+			return '';
+		}
+
+		if ( headerText ) {
+			return headerText;
+		}
+
 		if ( isAllDomains ) {
 			return translate( 'Your next big idea starts here' );
 		}
@@ -635,11 +693,15 @@ class DomainsStep extends Component {
 
 		const headerPropertyName = 'signUpFlowDomainsStepHeader';
 
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName ) || headerText;
+		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
 	}
 
 	getAnalyticsSection() {
 		return this.props.isDomainOnly ? 'domain-first' : 'signup';
+	}
+
+	isTailoredFlow() {
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	renderContent() {
@@ -654,7 +716,7 @@ class DomainsStep extends Component {
 			content = this.domainForm();
 		}
 
-		if ( ! this.props.stepSectionName && this.props.isReskinned ) {
+		if ( ! this.props.stepSectionName && this.props.isReskinned && ! this.isTailoredFlow() ) {
 			sideContent = this.getSideContent();
 		}
 
@@ -681,7 +743,9 @@ class DomainsStep extends Component {
 	}
 
 	getPreviousStepUrl() {
-		if ( 'use-your-domain' !== this.props.stepSectionName ) return null;
+		if ( 'use-your-domain' !== this.props.stepSectionName ) {
+			return null;
+		}
 
 		const { step, ...queryValues } = parse( window.location.search.replace( '?', '' ) );
 		const currentStep = step ?? this.state?.currentStep;
@@ -722,7 +786,7 @@ class DomainsStep extends Component {
 			return null;
 		}
 
-		const { isAllDomains, translate, isReskinned, hideBackButton } = this.props;
+		const { isAllDomains, translate, isReskinned, userSiteCount } = this.props;
 		const siteUrl = this.props.selectedSite?.URL;
 		const siteSlug = this.props.queryObject?.siteSlug;
 		const source = this.props.queryObject?.source;
@@ -731,6 +795,10 @@ class DomainsStep extends Component {
 		let isExternalBackUrl = false;
 
 		const previousStepBackUrl = this.getPreviousStepUrl();
+		const [ sitesBackLabelText, defaultBackUrl ] =
+			userSiteCount && userSiteCount === 1
+				? [ translate( 'Back to My Home' ), '/home' ]
+				: [ translate( 'Back to Sites' ), '/sites' ];
 
 		if ( previousStepBackUrl ) {
 			backUrl = previousStepBackUrl;
@@ -751,11 +819,11 @@ class DomainsStep extends Component {
 				backUrl = `/settings/general/${ siteSlug }`;
 				backLabelText = translate( 'Back to General Settings' );
 			} else if ( 'sites-dashboard' === source ) {
-				backUrl = '/sites-dashboard';
-				backLabelText = translate( 'Back to My Sites' );
+				backUrl = '/sites';
+				backLabelText = translate( 'Back to Sites' );
 			} else if ( backUrl === this.removeQueryParam( this.props.path ) ) {
-				backUrl = '/sites/';
-				backLabelText = translate( 'Back to My Sites' );
+				backUrl = defaultBackUrl;
+				backLabelText = sitesBackLabelText;
 			}
 
 			const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
@@ -781,7 +849,7 @@ class DomainsStep extends Component {
 				isExternalBackUrl={ isExternalBackUrl }
 				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ fallbackSubHeaderText }
-				hideBack={ hideBackButton }
+				shouldHideNavButtons={ this.isTailoredFlow() }
 				stepContent={
 					<div>
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
@@ -846,6 +914,7 @@ export default connect(
 			siteType: getSiteType( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
+			userSiteCount: getCurrentUserSiteCount( state ),
 			isPlanSelectionAvailableLaterInFlow:
 				( ! isPlanStepSkipped && isPlanSelectionAvailableLaterInFlow( steps ) ) ||
 				[ 'pro', 'starter' ].includes( flowName ),

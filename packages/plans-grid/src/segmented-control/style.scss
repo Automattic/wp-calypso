@@ -1,4 +1,4 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 /**
  * Segmented Control
@@ -9,7 +9,7 @@
 	display: flex;
 	margin: 0;
 	border-radius: 2px;
-	background-color: var( --color-surface );
+	background-color: var(--color-surface);
 	list-style: none;
 }
 
@@ -23,42 +23,42 @@
 	}
 
 	&:last-of-type .segmented-control__link {
-		border-right: solid 1px var( --color-neutral-10 );
+		border-right: solid 1px var(--color-neutral-10);
 		border-top-right-radius: 2px;
 		border-bottom-right-radius: 2px;
 	}
 
 	&.is-selected + .segmented-control__item .segmented-control__link {
-		border-left-color: var( --color-neutral-70 );
+		border-left-color: var(--color-neutral-70);
 	}
 }
 
 .segmented-control__link {
 	display: block;
 	padding: 8px 12px;
-	border: solid 1px var( --color-neutral-10 );
+	border: solid 1px var(--color-neutral-10);
 	border-right: none;
 	font-size: $font-body-small;
 	line-height: 18px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-align: center;
 	transition: color 0.1s linear, background-color 0.1s linear;
 
 	&:focus {
-		color: var( --color-neutral-70 );
+		color: var(--color-neutral-70);
 		outline: none;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
 .segmented-control__item.is-selected .segmented-control__link {
-	border-color: var( --color-neutral-70 );
-	color: var( --color-neutral-70 );
+	border-color: var(--color-neutral-70);
+	color: var(--color-neutral-70);
 }
 
 .notouch .segmented-control__link:hover {
-	color: var( --color-neutral-70 );
-	background-color: var( --color-neutral-0 );
+	color: var(--color-neutral-70);
+	background-color: var(--color-neutral-0);
 }
 
 .segmented-control__text {
@@ -82,32 +82,32 @@
 	.segmented-control__item {
 		&.is-selected {
 			.segmented-control__link {
-				border-color: var( --color-primary );
-				background-color: var( --color-primary );
-				color: var( --color-text-inverted );
+				border-color: var(--color-primary);
+				background-color: var(--color-primary);
+				color: var(--color-text-inverted);
 
 				&:focus {
-					background-color: var( --color-primary-dark );
-					border-color: var( --color-primary-dark );
+					background-color: var(--color-primary-dark);
+					border-color: var(--color-primary-dark);
 				}
 			}
 
 			+ .segmented-control__item .segmented-control__link {
-				border-left-color: var( --color-primary );
+				border-left-color: var(--color-primary);
 			}
 		}
 	}
 
 	.segmented-control__link:focus {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
 .notouch .segmented-control.is-primary {
 	.segmented-control__link:hover {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 	.segmented-control__item.is-selected .segmented-control__link:hover {
-		background-color: var( --color-primary-light );
+		background-color: var(--color-primary-light);
 	}
 }

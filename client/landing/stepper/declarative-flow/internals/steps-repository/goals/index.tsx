@@ -32,6 +32,7 @@ const { serializeGoals, goalsToIntent } = Onboard.utils;
 const displayAllGoals = isEnabled( 'signup/goals-step-2' );
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
+	'smp-import': [ SiteGoal.Import ],
 };
 
 /**
@@ -138,10 +139,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 				welcomeText={ welcomeText }
 				whatAreYourGoalsText={ whatAreYourGoalsText }
 				subHeaderText={ subHeaderText }
-				stepName={ 'goals-step' }
+				stepName="goals-step"
 				goNext={ navigation.goNext }
 				skipLabelText={ translate( 'Skip to dashboard' ) }
-				skipButtonAlign={ 'top' }
+				skipButtonAlign="top"
 				hideBack={ true }
 				stepContent={ stepContent }
 				recordTracksEvent={ recordTracksEvent }

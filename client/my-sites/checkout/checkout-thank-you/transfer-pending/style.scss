@@ -1,5 +1,5 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '../../../../landing/gutenboarding/onboarding-block/colors.scss';
+@import "@automattic/onboarding/styles/mixins";
+@import "../../../../landing/gutenboarding/onboarding-block/colors.scss";
 
 $progress-duration: 20000ms;
 
@@ -14,14 +14,14 @@ $progress-duration: 20000ms;
 		overflow: hidden;
 		height: 6px;
 		margin-top: 1em;
-		background: var( --studio-gray-10 );
+		background: var(--studio-gray-10);
 		--progress: 0;
 
 		&::before {
-			background: var( --studio-blue-40 );
-			transform: translateX( calc( -100% * min( 1 - var( --progress, 0 ), 1 ) ) );
+			background: var(--studio-blue-40);
+			transform: translateX(calc(-100% * min(1 - var(--progress, 0), 1)));
 			position: absolute;
-			content: '';
+			content: "";
 			top: 0;
 			left: 0;
 			right: 0;
@@ -42,6 +42,6 @@ $progress-duration: 20000ms;
 		margin-top: 0.7em;
 		padding: 1em;
 		text-align: center;
-		color: var( --studio-gray-40 );
+		color: var(--studio-gray-40);
 	}
 }

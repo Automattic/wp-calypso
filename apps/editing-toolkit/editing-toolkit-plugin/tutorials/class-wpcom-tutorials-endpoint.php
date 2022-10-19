@@ -11,13 +11,25 @@
 class WPCom_Tutorials_Endpoint extends WP_REST_Controller {
 
 	/**
-	 * Constructor
+	 * Namespace.
+	 *
+	 * @var string
 	 */
-	public function __construct() {
-		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'tutorials';
-		$this->wpcom_is_site_specific_endpoint = false;
-	}
+	public $namespace = 'wpcom/v2';
+
+	/**
+	 * Rest base.
+	 *
+	 * @var string
+	 */
+	public $rest_base = 'tutorials';
+
+	/**
+	 * Whether this is a site-specific endpoint.
+	 *
+	 * @var bool
+	 */
+	public $wpcom_is_site_specific_endpoint = false;
 
 	/**
 	 * Callback for registering our REST routes

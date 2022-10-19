@@ -174,7 +174,7 @@ export class MediaLibraryContent extends Component {
 						i18nOptions
 					);
 					actionText = translate( 'See supported file types' );
-					actionLink = localizeUrl( 'https://support.wordpress.com/accepted-filetypes' );
+					actionLink = localizeUrl( 'https://wordpress.com/support/accepted-filetypes/' );
 					externalAction = true;
 					break;
 				case MediaValidationErrors.UPLOAD_VIA_URL_404:

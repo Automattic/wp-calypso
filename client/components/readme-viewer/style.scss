@@ -2,62 +2,77 @@
 .readme-viewer__wrapper {
 	break-inside: avoid;
 
-	p, li {
-		font-size: rem( 15px );
+	p,
+	li {
+		font-size: rem(15px);
 	}
 
 	p {
-		margin-bottom: rem( 5px );
+		margin-bottom: rem(5px);
 	}
 
 	table {
 		border-collapse: collapse;
 		border-spacing: 0;
 
-		th, td {
-			border-bottom: 1px solid rgba( var( --color-neutral-10-rgb ), 0.5 );
+		th,
+		td {
+			border-bottom: 1px solid rgba(var(--color-neutral-10-rgb), 0.5);
 			text-align: left;
 		}
 
 		th {
-			color: var( --color-primary-dark );
+			color: var(--color-primary-dark);
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 0.75em;
 			padding: 0.25em 3em 0.25em 0;
 		}
 
 		td {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 0.83em;
 			padding: 1.17em 3em 1.17em 0;
 		}
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
 		display: block;
 		margin-bottom: 0.5em;
 		margin-left: 0;
 	}
 
 	h1 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.33em;
 	}
 
 	h2 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1.17em;
 	}
 
 	h3 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1em;
 	}
 
 	h4 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 0.83em;
 	}
 
 	h5 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 0.67em;
 	}
 
 	h6 {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 0.5em;
 	}
 }
@@ -65,5 +80,5 @@
 .readme-viewer__not-available {
 	font-family: $sans;
 	text-align: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

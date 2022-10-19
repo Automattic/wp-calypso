@@ -4,12 +4,22 @@ import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
 // somewhat hacky, but resolves the circular dependency issue
-import type { Design, FontPair } from '@automattic/design-picker/src/types';
+import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_DOMAIN' ) {
 		return action.domain;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
+		return action.patternContent;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -112,6 +122,19 @@ const selectedDesign: Reducer< Design | undefined, OnboardAction > = ( state, ac
 	return state;
 };
 
+const selectedStyleVariation: Reducer< StyleVariation | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_SELECTED_STYLE_VARIATION' ) {
+		return action.selectedStyleVariation;
+	}
+	if ( [ 'RESET_SELECTED_STYLE_VARIATION', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
+		return undefined;
+	}
+	return state;
+};
+
 const selectedFeatures: Reducer< FeatureId[], OnboardAction > = (
 	state: FeatureId[] = [],
 	action
@@ -165,6 +188,36 @@ const showSignupDialog: Reducer< boolean, OnboardAction > = ( state = false, act
 const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_TITLE' ) {
 		return action.siteTitle;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const siteDescription: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_DESCRIPTION' ) {
+		return action.siteDescription;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
+const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_SITE_LOGO' ) {
+		return action.siteLogo;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return null;
+	}
+	return state;
+};
+
+const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
+		return action.siteAccentColor;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
@@ -329,6 +382,7 @@ const reducer = combineReducers( {
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
+	patternContent,
 	domainSearch,
 	domainCategory,
 	isRedirecting,
@@ -338,6 +392,7 @@ const reducer = combineReducers( {
 	storeType,
 	selectedFonts,
 	selectedDesign,
+	selectedStyleVariation,
 	selectedSite,
 	siteTitle,
 	showSignupDialog,
@@ -353,6 +408,9 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
+	siteDescription,
+	siteLogo,
+	siteAccentColor,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -13,15 +13,15 @@
 
 	&.is-warning {
 		.plugin-action__label {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 	}
 
 	.plugin-action__label {
 		display: flex;
 		align-items: center;
-		@include breakpoint-deprecated( '<480px' ) {
-			color: var( --color-neutral-70 );
+		@include breakpoint-deprecated( "<480px" ) {
+			color: var(--color-neutral-70);
 		}
 	}
 
@@ -52,11 +52,15 @@
 	cursor: pointer;
 
 	&.hide {
-		display: none;
+		visibility: hidden;
+
+		.plugin-action__label-text {
+			display: none;
+		}
 	}
 
 	.is-disabled & {
-		color: var( --color-neutral-20 );
+		color: var(--color-neutral-20);
 		cursor: default;
 	}
 
@@ -66,7 +70,12 @@
 	}
 }
 
+.plugin-action__label-disabled-info {
+	display: flex;
+}
+
 .plugin-action__disabled-info.info-popover {
+	visibility: visible;
 	flex: none;
 	margin: 0 4px -1px;
 
@@ -79,6 +88,11 @@
 		// revert the translate(1px,1px) done by needs-offset
 		transform: none;
 	}
+
+}
+
+.plugin-action__disabled-info.info-popover__tooltip {
+	z-index: z-index("root", ".popover.info-popover__tooltip.plugin-action__disabled-info");
 }
 
 .plugin-action__disabled-info-list {

@@ -1,11 +1,19 @@
 import config from '@automattic/calypso-config';
+import { loadScript } from '@automattic/load-script';
+import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+
+// Import translatable strings so that translations get associated with the module and loaded properly.
+import './string';
 
 declare global {
 	interface Window {
 		BlazePress?: {
 			render: ( params: {
+				siteSlug: string | null;
+				domNode?: HTMLElement | null;
 				domNodeId?: string;
 				stripeKey: string;
 				apiHost: string;
@@ -13,33 +21,63 @@ declare global {
 				authToken: string;
 				template: string;
 				urn: string;
+				onLoaded?: () => void;
+				onClose?: () => void;
+				translateFn?: ( value: string, options?: any ) => string;
+				showDialog?: boolean;
 			} ) => void;
 		};
 	}
 }
 
-export async function loadDSPWidgetJS( onLoad?: () => void ) {
+export async function loadDSPWidgetJS(): Promise< void > {
 	// check if already loaded
 	if ( window.BlazePress ) {
-		if ( onLoad ) {
-			await onLoad();
-		}
 		return;
 	}
-	const script = document.createElement( 'script' );
-	script.src = config( 'dsp_widget_js_src' );
-	script.async = true;
-	if ( onLoad ) {
-		script.onload = onLoad;
-	}
-	document.body.appendChild( script );
+	const src =
+		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
+	await loadScript( src );
 }
 
-export async function showDSPWidgetModal( siteId: number, postId?: number ) {
-	if ( ! window.BlazePress ) {
-		await loadDSPWidgetJS( async () => await showDSPWidgetModal( siteId, postId ) );
-	} else {
+export async function showDSP(
+	siteSlug: string | null,
+	siteId: number | string,
+	postId: number | string,
+	onClose: () => void,
+	translateFn: ( value: string, options?: any ) => string,
+	domNodeOrId?: HTMLElement | string | null
+) {
+	await loadDSPWidgetJS();
+	return new Promise( ( resolve, reject ) => {
+		if ( window.BlazePress ) {
+			window.BlazePress.render( {
+				siteSlug: siteSlug,
+				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
+				domNodeId: typeof domNodeOrId === 'string' ? domNodeOrId : undefined,
+				stripeKey: config( 'dsp_stripe_pub_key' ),
+				apiHost: 'https://public-api.wordpress.com',
+				apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
+				// todo fetch rlt somehow
+				authToken: 'wpcom-proxy-request',
+				template: 'article',
+				onLoaded: () => resolve( true ),
+				onClose: onClose,
+				translateFn: translateFn,
+				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+			} );
+		} else {
+			reject( false );
+		}
+	} );
+}
+
+export async function showDSPWidgetModal( siteSlug: string, siteId: number, postId?: number ) {
+	await loadDSPWidgetJS();
+
+	if ( window.BlazePress ) {
 		await window.BlazePress.render( {
+			siteSlug: siteSlug,
 			stripeKey: config( 'dsp_stripe_pub_key' ),
 			apiHost: 'https://public-api.wordpress.com',
 			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
@@ -47,6 +85,7 @@ export async function showDSPWidgetModal( siteId: number, postId?: number ) {
 			authToken: 'wpcom-proxy-request',
 			template: 'article',
 			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+			showDialog: true, // for now
 		} );
 	}
 }
@@ -82,4 +121,31 @@ export const requestDSP = async < T >(
 		body,
 		apiNamespace: 'wpcom/v2',
 	} );
+};
+
+export enum PromoteWidgetStatus {
+	FETCHING = 'fetching',
+	ENABLED = 'enabled',
+	DISABLED = 'disabled',
+}
+
+/**
+ * Hook to verify if we should enable the promote widget.
+ *
+ * @returns bool
+ */
+export const usePromoteWidget = (): PromoteWidgetStatus => {
+	const value = useSelector( ( state ) => {
+		const userData = getCurrentUser( state );
+		if ( userData ) {
+			const originalSetting = userData[ 'has_promote_widget' ];
+			if ( originalSetting !== undefined ) {
+				return originalSetting === true
+					? PromoteWidgetStatus.ENABLED
+					: PromoteWidgetStatus.DISABLED;
+			}
+		}
+		return PromoteWidgetStatus.FETCHING;
+	} );
+	return value;
 };

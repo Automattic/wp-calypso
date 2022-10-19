@@ -49,6 +49,7 @@ export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_SFTP = 'sftp';
+export const FEATURE_SSH = 'ssh';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -95,7 +96,16 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
-export const FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL = 'free-professional-email-trial';
+
+/* START - PLAN TAGLINE EXPERIMENT */
+export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
+export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
+export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
+export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
+export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
+export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
+/* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -133,6 +143,7 @@ export const FEATURE_SCAN_V2 = 'scan-v2';
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
 export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_WAF = 'waf';
 export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';
 export const FEATURE_SEARCH_V2 = 'search-v2';
 export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';
@@ -178,6 +189,7 @@ export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbrande
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
 export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
+export const SOCIAL_SHARES_1000 = 'social-shares-1000';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
@@ -246,3 +258,20 @@ export const WPCOM_FEATURES_VIDEOPRESS_UNLIMITED_STORAGE = 'videopress-unlimited
 export const WPCOM_FEATURES_VIDEO_HOSTING = 'video-hosting';
 export const WPCOM_FEATURES_WORDADS = 'wordads';
 export const WPCOM_FEATURES_CUSTOM_DESIGN = 'custom-design';
+export const WPCOM_FEATURES_GLOBAL_STYLES = 'global-styles';
+
+// Signup flow related features
+export const FEATURE_UNLIMITED_EMAILS = 'unlimited-emails';
+export const FEATURE_UNLIMITED_SUBSCRIBERS = 'unlimited-subscribers';
+export const FEATURE_IMPORT_SUBSCRIBERS = 'import-subscribers';
+export const FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER = 'add-multiple-pages-newsletter';
+export const FEATURE_AD_FREE_EXPERIENCE = 'ad-free-experience';
+export const FEATURE_COLLECT_PAYMENTS_NEWSLETTER = 'collect-payments-newsletter';
+export const FEATURE_POST_BY_EMAIL = 'post-by-email';
+export const FEATURE_REAL_TIME_ANALYTICS = 'real-time-analytics';
+export const FEATURE_GOOGLE_ANALYTICS_V2 = 'google-analytics-v2';
+export const FEATURE_ADD_UNLIMITED_LINKS = 'add-unlimited-links';
+export const FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS = 'customize-themes-buttons-colors';
+export const FEATURE_TRACK_VIEWS_CLICKS = 'track-views-clicks';
+export const FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO = 'collect-payments-link-in-bio';
+export const FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION = 'link-in-bio-themes-customization';

@@ -6,7 +6,11 @@ import { connect } from 'react-redux';
 import AppleLoginButton from 'calypso/components/social-buttons/apple';
 import GoogleSocialButton from 'calypso/components/social-buttons/google';
 import { preventWidows } from 'calypso/lib/formatting';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { login } from 'calypso/lib/paths';
+import { isWpccFlow } from 'calypso/signup/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import SocialSignupToS from './social-signup-tos';
 
@@ -18,6 +22,7 @@ class SocialSignupForm extends Component {
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
+		flowName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -52,6 +57,7 @@ class SocialSignupForm extends Component {
 	trackSocialSignup = ( service ) => {
 		this.props.recordTracksEvent( 'calypso_signup_social_button_click', {
 			social_account_type: service,
+			client_id: this.props.oauth2Client?.id,
 		} );
 	};
 
@@ -71,10 +77,17 @@ class SocialSignupForm extends Component {
 		return isPopup;
 	}
 
+	getRedirectUri = ( socialService ) => {
+		const origin = typeof window !== 'undefined' && window.location.origin;
+
+		// If the user is in the WPCC flow, we want to redirect user to login callback so that we can automatically log them in.
+		return isWpccFlow( this.props.flowName )
+			? `${ origin + login( { socialService } ) }`
+			: `${ origin }/start/user`;
+	};
+
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
-		const host = typeof window !== 'undefined' && window.location.host;
-		const redirectUri = `https://${ host }/start/user`;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
 		return (
@@ -94,12 +107,12 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'google_oauth_client_id' ) }
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
-							redirectUri={ redirectUri }
+							redirectUri={ this.getRedirectUri( 'google' ) }
 							onClick={ () => this.trackSocialSignup( 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-							startingPoint={ 'signup' }
+							startingPoint="signup"
 							isReskinned={ this.props.isReskinned }
 						/>
 
@@ -107,15 +120,24 @@ class SocialSignupForm extends Component {
 							clientId={ config( 'apple_oauth_client_id' ) }
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
-							redirectUri={ redirectUri }
+							redirectUri={ this.getRedirectUri( 'apple' ) }
 							onClick={ () => this.trackSocialSignup( 'apple' ) }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
+							originalUrlPath={
+								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
+								isWpccFlow( this.props.flowName ) ? window.location.pathname : null
+							}
+							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
+							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
+							queryString={
+								isWpccFlow( this.props.flowName ) ? window.location.search.slice( 1 ) : null
+							}
 						/>
-
-						{ ! this.props.disableTosText && <SocialSignupToS /> }
+						{ ! this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
 					</div>
+					{ this.props.isWoo && ! this.props.disableTosText && <SocialSignupToS /> }
 				</div>
 			)
 		);
@@ -125,6 +147,8 @@ class SocialSignupForm extends Component {
 export default connect(
 	( state ) => ( {
 		currentRoute: getCurrentRoute( state ),
+		oauth2Client: getCurrentOAuth2Client( state ),
+		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 	} ),
 	{ recordTracksEvent }
 )( localize( SocialSignupForm ) );

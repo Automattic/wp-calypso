@@ -21,7 +21,7 @@ type DIFMLiteInProgressProps = {
 	siteId: number;
 };
 
-function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactElement {
+function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 	const slug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 	const isLoadingSite = useSelector(
 		( state: AppState ) => isRequestingSite( state, siteId ) || isRequestingSites( state )
@@ -66,7 +66,14 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ): React.ReactE
 		<EmptyContent
 			title={ translate( 'Our experts are building your site' ) }
 			line={ translate(
-				"Our team is building your site. We'll be in touch when your site is ready."
+				'Your content submission was successful!{{br}}{{/br}}' +
+					'Your website is now being built. We will send you an email within %d business days with details about your new site.',
+				{
+					components: {
+						br: <br />,
+					},
+					args: [ 4 ],
+				}
 			) }
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( slug ) }

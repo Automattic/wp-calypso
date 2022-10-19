@@ -4,6 +4,11 @@ import {
 	getPlan,
 	PLAN_WPCOM_PRO,
 	PLAN_PREMIUM,
+	isBusiness,
+	isPremium,
+	isEcommerce,
+	isPro,
+	getDIFMTieredPriceDetails,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -21,7 +26,8 @@ import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { incrementCounter } from 'calypso/state/persistent-counter/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
-import { getProductCost } from 'calypso/state/products-list/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSitePlan } from 'calypso/state/sites/selectors';
 import type { TranslateResult } from 'i18n-calypso';
 
 const Placeholder = styled.span`
@@ -142,15 +148,6 @@ const CTASectionWrapper = styled.div`
 	margin: 2rem 0;
 `;
 
-const SkipButton = styled( Button )`
-	&& {
-		color: var( --studio-gray-100 );
-		text-decoration: underline;
-		font-size: 0.875rem;
-		font-weight: 500;
-	}
-`;
-
 const LinkButton = styled( Button )`
 	font-size: 1rem;
 `;
@@ -230,24 +227,36 @@ const Step = ( {
 
 export default function DIFMLanding( {
 	onSubmit,
-	onSkip,
-	isInOnboarding = true,
+	siteId,
 }: {
 	onSubmit: () => void;
 	onSkip?: () => void;
 	isInOnboarding: boolean;
+	siteId?: number | null;
 } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const productCost = useSelector( ( state ) => getProductCost( state, WPCOM_DIFM_LITE ) );
+	const product = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
+	const productCost = product?.cost;
+
+	const difmTieredPriceDetails = getDIFMTieredPriceDetails( product );
+	const extraPageCost = difmTieredPriceDetails?.perExtraPagePrice;
+
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
-	const hasPriceDataLoaded = productCost && currencyCode;
+	const hasPriceDataLoaded = productCost && extraPageCost && currencyCode;
 
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	const displayCost = hasPriceDataLoaded
 		? formatCurrency( productCost, currencyCode, { stripZeros: true } )
+		: '';
+
+	const extraPageDisplayCost = hasPriceDataLoaded
+		? formatCurrency( extraPageCost, currencyCode, {
+				stripZeros: true,
+				isSmallestUnit: true,
+		  } )
 		: '';
 
 	const faqHeader = useRef( null );
@@ -290,26 +299,45 @@ export default function DIFMLanding( {
 		}
 	);
 
+	const currentPlan = useSelector( ( state ) => ( siteId ? getSitePlan( state, siteId ) : null ) );
+	const hasPremiumOrHigherPlan = currentPlan?.product_slug
+		? [ isPremium, isBusiness, isEcommerce, isPro ].some( ( planMatcher ) =>
+				planMatcher( {
+					productSlug: currentPlan.product_slug,
+				} )
+		  )
+		: false;
+
+	const subHeaderText = hasPremiumOrHigherPlan
+		? translate(
+				'{{sup}}*{{/sup}}One time fee. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				{
+					args: {
+						freePages: 5,
+					},
+					components: {
+						sup: <sup />,
+					},
+				}
+		  )
+		: translate(
+				'{{sup}}*{{/sup}}One time fee, plus an additional purchase of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
+				{
+					args: {
+						plan: planTitle,
+						freePages: 5,
+					},
+					components: {
+						sup: <sup />,
+					},
+				}
+		  );
+
 	return (
 		<>
 			<Wrapper>
 				<ContentSection>
-					<Header
-						align={ 'left' }
-						headerText={ headerText }
-						subHeaderText={ translate(
-							'{{sup}}*{{/sup}}One time fee, plus a one year subscription of the %(plan)s plan. A WordPress.com professional will create layouts for up to %(freePages)d pages of your site. It only takes 4 simple steps:',
-							{
-								args: {
-									plan: planTitle,
-									freePages: 5,
-								},
-								components: {
-									sup: <sup />,
-								},
-							}
-						) }
-					/>
+					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
@@ -352,13 +380,8 @@ export default function DIFMLanding( {
 					</p>
 					<CTASectionWrapper>
 						<NextButton onClick={ onSubmit } isPrimary={ true }>
-							{ translate( 'Hire a Professional' ) }
+							{ translate( 'Hire a professional' ) }
 						</NextButton>
-						{ isInOnboarding && (
-							<SkipButton isLink={ true } onClick={ onSkip }>
-								{ translate( 'Skip for now' ) }
-							</SkipButton>
-						) }
 					</CTASectionWrapper>
 				</ContentSection>
 				<ImageSection>
@@ -396,7 +419,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-2" question={ translate( 'How do I get started?' ) }>
 							<ul>
 								<li>
-									{ translate( 'Click {{a}}Hire a Professional{{/a}} to begin.', {
+									{ translate( 'Click {{a}}Hire a professional{{/a}} to begin.', {
 										components: {
 											a: <LinkButton isLink={ true } onClick={ onSubmit } />,
 										},
@@ -455,7 +478,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ id="faq-4" question={ translate( 'How much does the service cost?' ) }>
 							<p>
 								{ translate(
-									'The service costs %(displayCost)s, plus one year of the %(planTitle)s hosting plan. If you choose to use an existing site that already has the plan, you will only be charged for the website design service.',
+									'The service costs %(displayCost)s, plus an additional purchase of the %(planTitle)s hosting plan.',
 									{
 										args: {
 											displayCost,
@@ -494,6 +517,23 @@ export default function DIFMLanding( {
 						</FoldableFAQ>
 						<FoldableFAQ
 							id="faq-6"
+							question={ translate(
+								'I need more than the included 5 pages. Can I purchase additional pages?'
+							) }
+						>
+							<p>
+								{ translate(
+									'Yes! Additional pages can be purchased for %(extraPageDisplayCost)s each.',
+									{
+										args: {
+											extraPageDisplayCost,
+										},
+									}
+								) }
+							</p>
+						</FoldableFAQ>
+						<FoldableFAQ
+							id="faq-7"
 							question={ translate( 'What will my finished site look like?' ) }
 						>
 							<p>
@@ -503,7 +543,7 @@ export default function DIFMLanding( {
 							</p>
 						</FoldableFAQ>
 						<FoldableFAQ
-							id="faq-7"
+							id="faq-8"
 							question={ translate( 'What if I want changes to the finished site?' ) }
 						>
 							<p>

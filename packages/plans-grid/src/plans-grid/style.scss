@@ -1,8 +1,8 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
-@import '../variables.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
+@import "../variables.scss";
 
 .plans-grid {
 	// Space to accomadate sticky footer
@@ -47,8 +47,9 @@
 
 .plans-grid__details-heading {
 	.plans-ui-title {
-		color: var( --studio-black );
+		color: var(--studio-black);
 		margin-bottom: 40px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 32px;
 		line-height: 40px;
 		letter-spacing: 0.2px;

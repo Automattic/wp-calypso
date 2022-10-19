@@ -84,9 +84,10 @@ class VerifyEmailDialog extends Component {
 
 		return (
 			<Dialog
-				isVisible={ true }
-				buttons={ this.getDialogButtons() }
 				additionalClassNames="email-verification-dialog__confirmation-dialog is-narrow"
+				buttons={ this.getDialogButtons() }
+				isVisible={ true }
+				label="Email Verification Dialog"
 			>
 				<h1 className="email-verification-dialog__confirmation-dialog-heading is-variable-height">
 					{ strings.confirmHeading }

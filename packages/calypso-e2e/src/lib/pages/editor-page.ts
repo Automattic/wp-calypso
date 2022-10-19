@@ -179,6 +179,16 @@ export class EditorPage {
 		] );
 	}
 
+	/**
+	 * Returns a locator to the provided selector.
+	 *
+	 * @param {string} selector Element selector.
+	 * @returns {Locator} Locator corresponding to the selector.
+	 */
+	getLocator( selector: string ): Locator {
+		return this.editor.locator( selector );
+	}
+
 	//#endregion
 
 	//#region Basic Entry
@@ -577,6 +587,10 @@ export class EditorPage {
 			this.editorPublishPanelComponent.getPublishedURL(),
 			this.getPublishedURLFromToast(),
 		] );
+
+		if ( ! publishedURL ) {
+			throw new Error( 'Could not retrieve published post URL' );
+		}
 
 		if ( visit ) {
 			await this.visitPublishedPost( publishedURL.href );

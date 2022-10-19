@@ -7,7 +7,6 @@ import './style.scss';
 interface LinkCardContainerProps {
 	background?: string;
 }
-
 interface LinkCardProps {
 	label?: ReactChild;
 	title: ReactChild;
@@ -15,22 +14,23 @@ interface LinkCardProps {
 	background?: string;
 	url: string;
 	external?: boolean;
+	onClick?: () => void;
 }
 
 const LinkCardContainer = styled.div< LinkCardContainerProps >`
 	:hover {
-		filter: brightness( 120% );
+		filter: brightness( 102% );
 	}
 
 	border-radius: 5px;
 	padding: 24px;
-	background: var( --${ ( props ) => props.background || 'studio-white' } );
+	background: ${ ( props ) => props.background || 'var(--studio-white)' };
 `;
 
 const LinkCardLabel = styled.div`
 	margin-bottom: 8px;
 	font-size: var( --scss-font-body-extra-small );
-	color: rgba( var( --studio-white-rgb ), 0.75 );
+	color: rgba( var( --studio-blue-50 ), 0.75 );
 	line-height: 1.25rem;
 `;
 
@@ -40,7 +40,7 @@ const LinkCardTitle = styled.div`
 		line-clamp: 4;
 	}
 
-	color: var( --color-text-inverted );
+	color: var( --studio-blue-50 );
 	margin-bottom: 32px;
 	font-size: var( --scss-font-title-small );
 	text-overflow: ellipsis;
@@ -55,17 +55,17 @@ const LinkCardTitle = styled.div`
 
 const LinkCardCta = styled.div`
 	font-size: var( --scss-font-body-small );
-	color: rgba( var( --studio-white-rgb ), 0.75 );
+	color: rgba( var( --studio-blue-50 ), 0.75 );
 	line-height: 1.25rem;
 `;
 
 const LinkCard = ( props: LinkCardProps ) => {
-	const { label, title, cta, background, url, external } = props;
+	const { label, title, cta, background, url, external, onClick } = props;
 
 	const Link = external ? ExternalLink : 'a';
 
 	return (
-		<Link href={ url }>
+		<Link href={ url } onClick={ onClick } className="card-block">
 			<LinkCardContainer background={ background }>
 				<LinkCardLabel>{ label }</LinkCardLabel>
 				<LinkCardTitle>{ title }</LinkCardTitle>

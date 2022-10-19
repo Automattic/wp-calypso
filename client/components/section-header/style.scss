@@ -8,11 +8,11 @@
 	position: relative;
 
 	&::after {
-		content: '';
+		content: "";
 	}
 
 	&.is-empty .section-header__label::after {
-		content: '\00a0';
+		content: "\00a0";
 	}
 }
 
@@ -24,8 +24,10 @@
 	flex-shrink: 1;
 	position: relative;
 	overflow: hidden;
+	color: var(--color-neutral-70);
+	font-size: $font-body-small;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		line-height: 1.4;
 		margin: 4px 0;
 	}
@@ -48,14 +50,7 @@
 	position: relative;
 
 	@include clear-fix;
-}
 
-.section-header__label {
-	color: var( --color-neutral-70 );
-	font-size: $font-body-small;
-}
-
-.section-header__actions {
 	.button {
 		float: left;
 		margin-right: 8px;

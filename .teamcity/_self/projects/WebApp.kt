@@ -34,6 +34,8 @@ object WebApp : Project({
 	buildType(playwrightPrBuildType("mobile", "90fbd6b7-fddb-4668-9ed0-b32598143616"))
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
+	buildType(HelpCentreE2ETests)
+	buildType(KPIDashboardTests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -535,7 +537,7 @@ object CheckCodeStyleBranch : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Run linters"
+			name = "Run eslint"
 			scriptContent = """
 				export NODE_ENV="test"
 
@@ -553,6 +555,14 @@ object CheckCodeStyleBranch : BuildType({
 				if [ ! -z "${'$'}FILES_TO_LINT" ]; then
 					yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
 				fi
+			"""
+		}
+
+		bashNodeScript {
+			name = "Run stylelint"
+			scriptContent = """
+				# In the future, we may add the stylelint cache here.
+				yarn run lint:css
 			"""
 		}
 	}
@@ -818,6 +828,43 @@ object AuthenticationE2ETests : E2EBuildType(
 	buildTriggers = {
 		schedule {
 			schedulingPolicy = cron {
+				hours = "*/6"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			withPendingChangesOnly = true
+		}
+	}
+)
+
+object HelpCentreE2ETests : E2EBuildType(
+	buildId = "Calypso_E2E_Help_Centre",
+	buildUuid = "a0e62582-8598-483e-8b82-9de540288f6d",
+	buildName = "Help Centre E2E Tests",
+	buildDescription = "Runs a suite of Help Centre E2E tests.",
+	testGroup = "help-centre",
+	buildParams = {
+		param("env.VIEWPORT_NAME", "desktop")
+	},
+	buildFeatures = {
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#e2eflowtesting-notif"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	},
+	buildTriggers = {
+		schedule {
+			schedulingPolicy = cron {
 				hours = "*/3"
 			}
 			branchFilter = "+:<default>"
@@ -825,6 +872,19 @@ object AuthenticationE2ETests : E2EBuildType(
 			withPendingChangesOnly = false
 		}
 	}
+)
+
+object KPIDashboardTests : E2EBuildType(
+	buildId = "Calypso_E2E_KPI_Dashboard",
+	buildUuid = "441efac5-721a-4557-9448-9234e89fb6b1",
+	buildName = "Test build for KPI Dashboard project",
+	buildDescription = "Test build configuration for KPI dashboard.",
+	testGroup = "kpi",
+	buildParams = {
+		param("env.VIEWPORT_NAME", "desktop")
+	},
+	buildFeatures = {
+	},
 )
 
 object QuarantinedE2ETests: E2EBuildType(

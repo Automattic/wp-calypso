@@ -53,7 +53,7 @@ describe( 'cancellation-effect', () => {
 			} );
 
 			test( 'should return translation of theme message when product is a theme', () => {
-				productsValues.isTheme = () => true;
+				productsValues.isThemePurchase = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
 				expect( headline.text ).toEqual(
 					"Your site's appearance will revert to its previously selected theme and you will be refunded %(cost)s."
@@ -61,7 +61,7 @@ describe( 'cancellation-effect', () => {
 			} );
 
 			test( 'should return translation of g suite message when product is g suite', () => {
-				productsValues.isTheme = () => false;
+				productsValues.isThemePurchase = () => false;
 				productsValues.isGSuiteOrGoogleWorkspace = () => true;
 				productsValues.isGSuiteProductSlug = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
@@ -71,7 +71,7 @@ describe( 'cancellation-effect', () => {
 			} );
 
 			test( 'should return translation of jetpack plan message when product is a jetpack plan', () => {
-				productsValues.isTheme = () => false;
+				productsValues.isThemePurchase = () => false;
 				productsValues.isGSuiteOrGoogleWorkspace = () => false;
 				productsValues.isJetpackPlan = () => true;
 				const headline = cancellationEffectDetail( purchase, translate );
@@ -82,7 +82,7 @@ describe( 'cancellation-effect', () => {
 			} );
 
 			test( 'should return translation of plan message when product is not a theme, g suite or a jetpack plan', () => {
-				productsValues.isTheme = () => false;
+				productsValues.isThemePurchase = () => false;
 				productsValues.isGSuiteOrGoogleWorkspace = () => false;
 				productsValues.isJetpackPlan = () => false;
 				productsValues.isDotComPlan = () => true;
@@ -93,7 +93,7 @@ describe( 'cancellation-effect', () => {
 			} );
 
 			test( 'should return the default when all the product specific conditions are false', () => {
-				productsValues.isTheme = () => false;
+				productsValues.isThemePurchase = () => false;
 				productsValues.isGSuiteOrGoogleWorkspace = () => false;
 				productsValues.isJetpackPlan = () => false;
 				productsValues.isDotComPlan = () => false;

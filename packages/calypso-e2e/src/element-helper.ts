@@ -88,18 +88,7 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	try {
-		await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
-	} catch {
-		// In case the initial click fails, try again but this time with the force parameter set.
-		// This is acceptable as typically we are not testing whether the navtab is responsive to clicks.
-		// Failure to click on navtabs will trigger the entire build to fail and is often detrimental to
-		// the overall confidence in test suites.
-		await Promise.all( [
-			page.waitForNavigation( { timeout: 10 * 1000 } ),
-			page.dispatchEvent( selectors.navTabItem( { name: name } ), 'click' ),
-		] );
-	}
+	await Promise.all( [ page.waitForNavigation( { timeout: 10 * 1000 } ), navTabItem.click() ] );
 
 	// Final verification.
 	const newSelectedTabLocator = page.locator(

@@ -28,7 +28,7 @@ function MultipleChoiceQuestionExamples() {
 					} }
 					primary
 				>
-					{ 'The Stork Button' }
+					The Stork Button
 				</Button>
 			),
 		},
@@ -44,7 +44,7 @@ function MultipleChoiceQuestionExamples() {
 						dispatch( successNotice( 'The Extra Button was clicked', { duration: 5000 } ) );
 					} }
 				>
-					{ 'The Extra Button' }
+					The Extra Button
 				</Button>
 			),
 		},
@@ -55,7 +55,7 @@ function MultipleChoiceQuestionExamples() {
 			<Card>
 				<MultipleChoiceQuestion
 					answers={ answers }
-					question={ 'Please choose one of the following:' }
+					question="Please choose one of the following:"
 					onAnswerChange={ ( answer, text ) => {
 						setSelectedAnswer( answer );
 						setAnswerText( text || '' );
@@ -63,7 +63,7 @@ function MultipleChoiceQuestionExamples() {
 				/>
 			</Card>
 			<Card>
-				<CardHeading>{ 'Selected Answer' }</CardHeading>
+				<CardHeading>Selected Answer</CardHeading>
 				<p>
 					<b>Selected Answer is: </b>
 					{ selectedAnswer ? selectedAnswer : 'No Answer Currently Selected' }

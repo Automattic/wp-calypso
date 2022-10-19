@@ -1,5 +1,9 @@
-jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+/** @jest-environment jsdom */
+jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
 jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
+jest.mock( 'calypso/components/data/query-plans', () => 'query-plans' );
+jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
+jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
 import {
 	PLAN_FREE,
@@ -21,7 +25,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { PlansStep, isDotBlogDomainRegistration } from '../index';
 
 const noop = () => {};
@@ -38,8 +42,10 @@ const props = {
 
 describe( 'Plans basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <PlansStep { ...props } /> );
-		expect( comp.find( '.plans-step' ).length ).toBe( 1 );
+		render( <PlansStep { ...props } /> );
+		const stepWrapper = screen.getByTestId( 'step-wrapper' );
+		expect( stepWrapper ).toBeVisible();
+		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
 	} );
 } );
 
@@ -124,14 +130,15 @@ describe( 'Plans.onSelectPlan', () => {
 		} );
 	} );
 
-	[
+	test.each( [
 		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( ( plan ) => {
-		test( `Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (${ plan })`, () => {
+	] )(
+		`Should add is_store_signup to cartItem.extra when processing wp.com business and eCommerce plans (%s)`,
+		( plan ) => {
 			const myProps = {
 				...tplProps,
 				goToNextStep: jest.fn(),
@@ -143,17 +150,18 @@ describe( 'Plans.onSelectPlan', () => {
 			expect( cartItem.extra ).toEqual( {
 				is_store_signup: true,
 			} );
-		} );
-	} );
+		}
+	);
 
-	[
+	test.each( [
 		PLAN_BUSINESS_MONTHLY,
 		PLAN_BUSINESS,
 		PLAN_BUSINESS_2_YEARS,
 		PLAN_ECOMMERCE,
 		PLAN_ECOMMERCE_2_YEARS,
-	].forEach( ( plan ) => {
-		test( `Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (${ plan })`, () => {
+	] )(
+		`Should not add is_store_signup to cartItem.extra when flowName is different than 'ecommerce' (%s)`,
+		( plan ) => {
 			const myProps = {
 				...tplProps,
 				flowName: 'signup',
@@ -164,8 +172,8 @@ describe( 'Plans.onSelectPlan', () => {
 			comp.onSelectPlan( cartItem );
 			expect( myProps.goToNextStep ).toHaveBeenCalled();
 			expect( cartItem.extra ).toEqual( undefined );
-		} );
-	} );
+		}
+	);
 
 	test( 'Should not add is_store_signup to cartItem.extra when processing wp.com business plans and designType is not "store"', () => {
 		const myProps = {
@@ -181,7 +189,7 @@ describe( 'Plans.onSelectPlan', () => {
 		expect( cartItem.extra ).toEqual( undefined );
 	} );
 
-	[
+	test.each( [
 		PLAN_PREMIUM,
 		PLAN_PREMIUM_2_YEARS,
 		PLAN_PERSONAL,
@@ -194,14 +202,15 @@ describe( 'Plans.onSelectPlan', () => {
 		PLAN_JETPACK_PREMIUM_MONTHLY,
 		PLAN_JETPACK_BUSINESS,
 		PLAN_JETPACK_BUSINESS_MONTHLY,
-	].forEach( ( plan ) => {
-		test( `Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (${ plan })`, () => {
+	] )(
+		`Should not add is_store_signup to cartItem.extra when processing non-wp.com non-business plan (%s)`,
+		( plan ) => {
 			const cartItem = { product_slug: plan };
 			const comp = new PlansStep( tplProps );
 			comp.onSelectPlan( cartItem );
 			expect( cartItem.extra ).toEqual( undefined );
-		} );
-	} );
+		}
+	);
 } );
 
 describe( 'Plans.getCustomerType', () => {

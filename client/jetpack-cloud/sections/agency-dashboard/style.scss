@@ -4,7 +4,7 @@
  *
  */
 
- .current-site.card {
+.current-site.card {
 	margin: 0;
 	padding: 0;
 	box-shadow: none;
@@ -16,7 +16,7 @@
 		}
 
 		.site__title {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 			line-height: 35px;
 		}
 
@@ -46,15 +46,15 @@
 .current-site {
 	.site,
 	.all-sites {
-		background: var( --color-sidebar-background );
-		border-bottom: 1px solid var( --color-sidebar-border );
+		background: var(--color-sidebar-background);
+		border-bottom: 1px solid var(--color-sidebar-border);
 	}
 }
 
 .current-site__switch-sites {
 	display: block;
-	background: var( --color-sidebar-background );
-	border-bottom: 1px solid var( --color-sidebar-border );
+	background: var(--color-sidebar-background);
+	border-bottom: 1px solid var(--color-sidebar-border);
 
 	.button.is-borderless {
 		display: block;
@@ -63,12 +63,12 @@
 		padding: 12px 8px 12px 44px;
 		position: relative;
 		font-weight: normal;
-		color: var( --color-sidebar-text );
+		color: var(--color-sidebar-text);
 
 		.gridicon {
 			height: 24px;
 			width: 24px;
-			fill: var( --color-sidebar-gridicon-fill );
+			fill: var(--color-sidebar-gridicon-fill);
 			position: absolute;
 			top: 12px;
 			left: 14px;
@@ -76,15 +76,15 @@
 	}
 
 	&:hover {
-		background-color: var( --color-sidebar-menu-hover-background );
+		background-color: var(--color-sidebar-menu-hover-background);
 
 		.button.is-borderless:hover,
 		.button.is-borderless:focus {
-			background-color: var( --color-sidebar-menu-hover-background );
-			color: var( --color-sidebar-menu-hover-text );
+			background-color: var(--color-sidebar-menu-hover-background);
+			color: var(--color-sidebar-menu-hover-text);
 
 			.gridicon {
-				fill: var( --color-sidebar-menu-hover-text );
+				fill: var(--color-sidebar-menu-hover-text);
 			}
 		}
 	}

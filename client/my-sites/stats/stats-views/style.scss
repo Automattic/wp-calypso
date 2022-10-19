@@ -20,7 +20,7 @@
 
 	th {
 		font-size: $font-body-extra-small;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 }
 
@@ -32,34 +32,34 @@
 		background: none;
 		text-align: left;
 		font-size: $font-body-extra-small;
-		color: var( --color-neutral-40 );
+		color: var(--color-neutral-40);
 	}
 
 	&.level-0 {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 
 	&.level-1 {
-		background-color: var( --color-primary-5 );
+		background-color: var(--color-primary-5);
 	}
 
 	&.level-2 {
-		background-color: var( --color-primary-10 );
+		background-color: var(--color-primary-10);
 	}
 
 	&.level-3 {
-		background-color: var( --color-primary-light );
-		color: var( --color-text-inverted );
+		background-color: var(--color-primary-light);
+		color: var(--color-text-inverted);
 	}
 
 	&.level-4 {
-		background-color: var( --color-primary );
-		color: var( --color-text-inverted );
+		background-color: var(--color-primary);
+		color: var(--color-text-inverted);
 	}
 
 	&.level-5 {
-		background-color: var( --color-primary-dark );
-		color: var( --color-text-inverted );
+		background-color: var(--color-primary-dark);
+		color: var(--color-text-inverted);
 	}
 }
 
@@ -73,7 +73,7 @@
 	padding-top: 10px;
 	float: right;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		float: none;
 		margin: 0 auto;
 		margin-bottom: 25px;
@@ -88,7 +88,7 @@
 
 .stats-views__key-label {
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral );
+	color: var(--color-neutral);
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
 }

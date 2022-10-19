@@ -1,30 +1,45 @@
+import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import ListEnd from 'calypso/components/list-end';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import useCampaignsQuery, {
-	Campaign,
-	CampaignStatus,
-} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import Notice from 'calypso/components/notice';
+import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import CampaignItem from 'calypso/my-sites/promote-post/components/campaign-item';
 import './style.scss';
 import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EmptyPromotionList from '../empty-promotion-list';
 
-// todo: use actual value
-export const SmartStatuses: { [ status in CampaignStatus ]: string } = {
-	'-1': 'All',
-	0: 'pending',
-	1: 'active',
-	2: 'todo',
-};
+const noCampaignListMessage = translate(
+	'There was a problem obtaining the campaign list. Please try again or {{contactSupportLink}}contact support{{/contactSupportLink}}.',
+	{
+		components: {
+			contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+		},
+		comment: 'Validation error when filling out domain checkout contact details form',
+	}
+);
 
-export default function CampaignsList() {
-	const selectedSiteId = useSelector( getSelectedSiteId );
-	const { isLoading, data } = useCampaignsQuery( selectedSiteId ?? 0 );
-	const campaigns = useMemo< Campaign[] >( () => data || [], [ data ] );
+export default function CampaignsList( {
+	isLoading,
+	isError,
+	campaigns,
+}: {
+	isLoading: boolean;
+	isError: boolean;
+	campaigns: Campaign[];
+} ) {
+	const memoCampaigns = useMemo< Campaign[] >( () => campaigns || [], [ campaigns ] );
 
-	const isEmpty = ! campaigns.length;
+	const isEmpty = ! memoCampaigns.length;
+
+	if ( isError ) {
+		return (
+			<Notice status="is-error" icon="mention">
+				{ noCampaignListMessage }
+			</Notice>
+		);
+	}
 
 	if ( isLoading ) {
 		return (
@@ -34,12 +49,16 @@ export default function CampaignsList() {
 		);
 	}
 
+	if ( ! memoCampaigns.length ) {
+		return <EmptyPromotionList type="campaigns" />;
+	}
+
 	return (
 		<>
-			{ isEmpty && <CampaignsEmpty /> }
-			{ ! isEmpty && (
+			{ isEmpty && ! isError && <CampaignsEmpty /> }
+			{ ! isEmpty && ! isError && (
 				<>
-					{ campaigns.map( function ( campaign ) {
+					{ memoCampaigns.map( function ( campaign ) {
 						return <CampaignItem key={ campaign.campaign_id } campaign={ campaign } />;
 					} ) }
 					<ListEnd />

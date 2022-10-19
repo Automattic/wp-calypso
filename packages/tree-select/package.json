@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/tree-select",
-	"version": "1.0.3",
+	"version": "2.0.0",
 	"description": "A selector library for Redux.",
 	"keywords": [
 		"redux",
@@ -38,6 +38,6 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"typescript": "^4.5.5"
+		"typescript": "^4.7.4"
 	}
 }

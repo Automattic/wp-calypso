@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
 
 .dialog__backdrop {
 	&.locale-switcher__overlay {
 		display: block;
 
-		background-color: rgba( 29, 35, 39, 0.92 );
-		color: var( --color-text-inverted );
+		background-color: rgba(29, 35, 39, 0.92);
+		color: var(--color-text-inverted);
 
 		-webkit-font-smoothing: initial;
 	}
@@ -27,7 +27,7 @@
 	height: 100%;
 	padding: 5vh 5vw;
 
-	color: var( --color-text-inverted );
+	color: var(--color-text-inverted);
 
 	.locale-switcher__header {
 		display: flex;
@@ -60,7 +60,7 @@
 
 		&:hover,
 		&:focus {
-			background: var( --studio-black );
+			background: var(--studio-black);
 			border-color: currentColor;
 			outline: none;
 		}
@@ -108,7 +108,7 @@
 		}
 
 		&.is-active {
-			background: var( --studio-black );
+			background: var(--studio-black);
 		}
 	}
 }

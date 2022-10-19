@@ -24,7 +24,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 
 	const getStartWritingUrl = () => {
 		if ( ! course?.cta?.url || ! selectedSite?.domain ) {
-			return 'https://wordpress.com/post/';
+			return 'https://wordpress.com/post';
 		}
 		return `${ course.cta.url }/${ selectedSite.domain }`;
 	};
@@ -45,7 +45,7 @@ const ModalFooterBar = ( { onBackClick = () => {}, course = {}, isCourseComplete
 					'videos-ui__course-completed': isCourseComplete,
 				} ) }
 			>
-				<a href="/" className={ 'videos-ui__back-button' } onClick={ onBackLinkClick }>
+				<a href="/" className="videos-ui__back-button" onClick={ onBackLinkClick }>
 					<Gridicon icon="chevron-left" size={ 24 } />
 					<span>{ translate( 'Back' ) }</span>
 				</a>

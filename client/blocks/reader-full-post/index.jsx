@@ -13,7 +13,7 @@ import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
-import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -33,16 +33,13 @@ import {
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import scrollTo from 'calypso/lib/scroll-to';
+import ReaderCommentIcon from 'calypso/reader/components/icons/comment-icon';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
 import { READER_FULL_POST } from 'calypso/reader/follow-sources';
-import {
-	canBeMarkedAsSeen,
-	getSiteName,
-	isEligibleForUnseen,
-	getFeaturedImageAlt,
-} from 'calypso/reader/get-helpers';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -58,7 +55,10 @@ import { showSelectedPost } from 'calypso/reader/utils';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
-import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
+import {
+	getReaderFollowForFeed,
+	hasReaderFollowOrganization,
+} from 'calypso/state/reader/follows/selectors';
 import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import {
@@ -469,7 +469,9 @@ export class FullPostView extends Component {
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
-		const featuredImageAlt = getFeaturedImageAlt( post );
+		const contentWidth = readerContentWidth();
+
+		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 
 		/*eslint-disable react/no-danger */
 		/*eslint-disable react/jsx-no-target-blank */
@@ -507,7 +509,7 @@ export class FullPostView extends Component {
 							<AuthorCompactProfile
 								author={ post.author }
 								siteIcon={ get( site, 'icon.img' ) }
-								feedIcon={ get( feed, 'image' ) }
+								feedIcon={ feedIcon }
 								siteName={ siteName }
 								siteUrl={ post.site_URL }
 								feedUrl={ get( feed, 'feed_URL' ) }
@@ -524,6 +526,7 @@ export class FullPostView extends Component {
 									commentCount={ commentCount }
 									onClick={ this.handleCommentClick }
 									tagName="div"
+									icon={ ReaderCommentIcon( { iconSize: 20 } ) }
 								/>
 							) }
 
@@ -533,7 +536,7 @@ export class FullPostView extends Component {
 									postId={ +post.ID }
 									fullPost={ true }
 									tagName="div"
-									likeSource={ 'reader' }
+									likeSource="reader"
 								/>
 							) }
 
@@ -546,7 +549,13 @@ export class FullPostView extends Component {
 						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 						{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-							<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
+							<ReaderFeaturedImage
+								canonicalMedia={ null }
+								imageUrl={ post.featured_image }
+								href={ getStreamUrlFromPost( post ) }
+								imageWidth={ contentWidth }
+								children={ <div style={ { width: contentWidth } } /> }
+							/>
 						) }
 						{ isLoading && <ReaderFullPostContentPlaceholder /> }
 						{ post.use_excerpt ? (
@@ -664,6 +673,12 @@ export default connect(
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
+
+			// Add site icon to feed object so have icon for external feeds
+			if ( props.feed ) {
+				const follow = getReaderFollowForFeed( state, parseInt( feedId ) );
+				props.feed.site_icon = follow?.site_icon;
+			}
 		}
 		if ( ownProps.referral ) {
 			props.referralPost = getPostByKey( state, ownProps.referral );

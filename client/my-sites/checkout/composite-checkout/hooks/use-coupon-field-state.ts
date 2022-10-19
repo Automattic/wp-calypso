@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import type { ApplyCouponToCart } from '@automattic/shopping-cart';
 
 export type CouponFieldStateProps = {
 	couponFieldValue: string;
@@ -12,7 +13,7 @@ export type CouponFieldStateProps = {
 };
 
 export default function useCouponFieldState(
-	applyCoupon: ( couponId: string ) => void
+	applyCoupon: ApplyCouponToCart
 ): CouponFieldStateProps {
 	const reduxDispatch = useDispatch();
 	const [ couponFieldValue, setCouponFieldValue ] = useState< string >( '' );
@@ -41,7 +42,9 @@ export default function useCouponFieldState(
 				} )
 			);
 
-			applyCoupon( trimmedValue );
+			applyCoupon( trimmedValue ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 
 			return;
 		}

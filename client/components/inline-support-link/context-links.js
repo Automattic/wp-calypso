@@ -3,6 +3,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/account-settings/',
 		post_id: 80368,
 	},
+	advertising: {
+		link: 'https://wordpress.com/support/promote-a-post/',
+		post_id: 213203,
+	},
 	autorenewal: {
 		link: 'https://wordpress.com/support/manage-purchases/#automatic-renewal',
 		post_id: 111349,
@@ -160,8 +164,8 @@ const contextLinks = {
 		post_id: 1507,
 	},
 	publicize: {
-		link: 'https://wordpress.com/support/publicize/',
-		post_id: 4789,
+		link: 'https://wordpress.com/support/post-automatically-to-social-media/',
+		post_id: 216472,
 	},
 	purchases: {
 		link: 'https://wordpress.com/support/manage-purchases/',

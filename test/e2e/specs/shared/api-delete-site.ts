@@ -27,8 +27,6 @@ export async function apiDeleteSite(
 			console.log( `Successfully deleted siteID ${ siteDetails.id }.` );
 		}
 	} else {
-		console.log(
-			`Failed to delete site ID ${ siteDetails.id }; API call returned a null response.`
-		);
+		console.log( `Failed to delete site ID ${ siteDetails.id }; no action performed.` );
 	}
 }

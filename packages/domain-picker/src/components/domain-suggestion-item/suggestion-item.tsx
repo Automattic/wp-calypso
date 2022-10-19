@@ -184,7 +184,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href={ localizeUrl( 'https://wordpress.com/support/https-ssl' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/domains/https-ssl/' ) }
 										/>
 									),
 								}

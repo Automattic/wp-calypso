@@ -5,7 +5,7 @@
 		height: auto;
 		width: 100%;
 
-		&:not( :first-child ) {
+		&:not(:first-child) {
 			margin-top: 20px;
 		}
 	}

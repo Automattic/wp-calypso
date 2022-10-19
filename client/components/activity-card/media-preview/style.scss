@@ -16,7 +16,7 @@
 			margin: 0 -100%;
 		}
 
-		&:not( :first-child ) {
+		&:not(:first-child) {
 			margin-left: 16px;
 		}
 	}

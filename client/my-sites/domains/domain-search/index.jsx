@@ -89,12 +89,14 @@ class DomainSearch extends Component {
 		this.isMounted && page( domainMappingUrl );
 	};
 
-	handleAddTransfer = ( domain ) => {
-		this.props.shoppingCartManager
-			.addProductsToCart( [ domainTransfer( { domain } ) ] )
-			.then( () => {
-				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
-			} );
+	handleAddTransfer = async ( domain ) => {
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ domainTransfer( { domain } ) ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 	};
 
 	componentDidMount() {
@@ -119,7 +121,7 @@ class DomainSearch extends Component {
 		}
 	}
 
-	addDomain( suggestion ) {
+	async addDomain( suggestion ) {
 		const {
 			domain_name: domain,
 			product_slug: productSlug,
@@ -140,17 +142,25 @@ class DomainSearch extends Component {
 		}
 
 		if ( this.props.domainAndPlanUpsellFlow ) {
-			// If we are in the domain + annual plan upsell flow, we need to redirect
-			// to the plans page next and let it know that we are still in that flow.
-			this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
-				page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
-			} );
+			try {
+				// If we are in the domain + annual plan upsell flow, we need to redirect
+				// to the plans page next and let it know that we are still in that flow.
+				await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+			} catch {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+				return;
+			}
+			page( `/plans/${ this.props.selectedSiteSlug }?domainAndPlanPackage=true` );
 			return;
 		}
 
-		this.props.shoppingCartManager
-			.addProductsToCart( [ registration ] )
-			.then( () => page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) ) );
+		try {
+			await this.props.shoppingCartManager.addProductsToCart( [ registration ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( domainAddEmailUpsell( this.props.selectedSiteSlug, domain ) );
 	}
 
 	removeDomain( suggestion ) {
@@ -162,7 +172,9 @@ class DomainSearch extends Component {
 		);
 		if ( productToRemove ) {
 			const uuidToRemove = productToRemove.uuid;
-			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		}
 	}
 
@@ -220,7 +232,7 @@ class DomainSearch extends Component {
 				<span>
 					<div className="domain-search__content">
 						<BackButton
-							className={ 'domain-search__go-back' }
+							className="domain-search__go-back"
 							href={ domainManagementList( selectedSiteSlug ) }
 						>
 							<Gridicon icon="arrow-left" size={ 18 } />

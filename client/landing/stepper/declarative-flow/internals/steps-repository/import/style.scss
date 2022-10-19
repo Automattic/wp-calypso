@@ -1,6 +1,7 @@
-@import '~calypso/blocks/import/style/base';
+@import "~calypso/blocks/import/style/base";
 
-.site-setup.import {
+.site-setup.import,
+.import-focused.import {
 	.import__onboarding-page {
 		@include onboarding-block-margin;
 	}

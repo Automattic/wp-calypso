@@ -502,8 +502,51 @@ function reject( xhr, err, headers ) {
 	xhr.dispatchEvent( e );
 }
 
+// list of valid origins for wpcom requests.
+// taken from wpcom-proxy-request (rest-proxy/provider-v2.0.js)
+const wpcomAllowedOrigins = [
+	'https://wordpress.com',
+	'https://cloud.jetpack.com',
+	'http://wpcalypso.wordpress.com', // for running docker on dev instances
+	'http://widgets.wp.com',
+	'https://widgets.wp.com',
+	'https://dev-mc.a8c.com',
+	'https://mc.a8c.com',
+	'https://dserve.a8c.com',
+	'http://calypso.localhost:3000',
+	'https://calypso.localhost:3000',
+	'http://jetpack.cloud.localhost:3000',
+	'https://jetpack.cloud.localhost:3000',
+	'http://calypso.localhost:3001',
+	'https://calypso.localhost:3001',
+	'https://calypso.live',
+	'http://127.0.0.1:41050',
+	'http://send.linguine.localhost:3000',
+];
+
+/**
+ * Shelved from rest-proxy/provider-v2.0.js.
+ * This returns true for all WPCOM origins except Atomic sites.
+ *
+ * @param urlOrigin
+ * @returns
+ */
+function isAllowedOrigin( urlOrigin ) {
+	// sites in the allow-list and some subdomains of "calypso.live" and "wordpress.com"
+	// are allowed without further check
+	return (
+		wpcomAllowedOrigins.includes( urlOrigin ) ||
+		/^https:\/\/[a-z0-9-]+\.calypso\.live$/.test( urlOrigin ) ||
+		/^https:\/\/([a-z0-9-]+\.)+wordpress\.com$/.test( urlOrigin )
+	);
+}
+
+function canAccessWpcomApis() {
+	return isAllowedOrigin( window.location.origin );
+}
+
 /**
  * Export `request` function.
  */
 export default request;
-export { reloadProxy };
+export { reloadProxy, canAccessWpcomApis };

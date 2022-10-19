@@ -255,7 +255,7 @@ class DomainRegistrationSuggestion extends Component {
 			<InfoPopover
 				className="domain-registration-suggestion__hsts-tooltip"
 				iconSize={ infoPopoverSize }
-				position={ 'right' }
+				position="right"
 			>
 				{ translate(
 					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +

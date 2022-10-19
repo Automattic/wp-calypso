@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/breakpoints';
+@import "@wordpress/base-styles/breakpoints";
 
 .domain-categories {
 	@media ( max-width: $break-mobile ) {
@@ -26,7 +26,7 @@
 	text-align: center;
 	margin-bottom: 8px;
 	height: 40px;
-	border: 1px solid var( --studio-gray-5 );
+	border: 1px solid var(--studio-gray-5);
 	display: none;
 
 	> * {
@@ -41,7 +41,7 @@
 .domain-categories__item-group {
 	@media ( max-width: $break-mobile ) {
 		text-align: center;
-		border: 1px solid var( --studio-gray-5 );
+		border: 1px solid var(--studio-gray-5);
 		// Overlap with border-bottom from dropdown button
 		// to seal away the rounded cornder of the dropdown button
 		// while letting the dropdown button maintain
@@ -52,13 +52,13 @@
 
 .domain-categories__item {
 	.components-button {
-		color: var( --studio-gray-100 );
+		color: var(--studio-gray-100);
 		width: 100%;
 		text-align: left;
 
 		&:hover,
 		&:focus {
-			color: var( --studio-gray-100 );
+			color: var(--studio-gray-100);
 			box-shadow: none;
 			font-weight: 600;
 			text-decoration: underline;
@@ -80,6 +80,6 @@
 	}
 }
 
-html:not( .accessible-focus ) .domain-categories__item .components-button:focus {
+html:not(.accessible-focus) .domain-categories__item .components-button:focus {
 	box-shadow: none;
 }

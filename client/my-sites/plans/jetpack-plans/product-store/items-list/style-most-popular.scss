@@ -1,0 +1,73 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.jetpack-product-store__most-popular {
+	margin-top: 3em;
+}
+
+.jetpack-product-store__most-popular--heading {
+	margin-bottom: rem(24px);
+	font-size: $font-title-small;
+	font-weight: 700;
+	line-height: rem(29px);
+
+	@include break-medium {
+		margin-bottom: rem(32px);
+		font-size: $font-title-medium;
+		font-weight: 600;
+	}
+}
+
+.jetpack-product-store__most-popular--items {
+	list-style-type: none;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-gap: 24px;
+
+	@media only screen and (min-width: 821px) {
+		grid-template-columns: 1fr 1fr;
+		margin: 32px auto 0;
+		gap: 24px;
+	}
+}
+
+.jetpack-product-store__most-popular--item {
+	display: flex;
+	flex-direction: column;
+
+
+	.featured-item-card .display-price {
+		@media screen and (min-width: 320px) {
+			display: flex;
+			min-height: 24px;
+		}
+	}
+
+	.featured-item-card .item-price .display-price .display-price__billing-time-frame {
+		@media screen and (min-width: 320px) {
+			margin-top: 0;
+		}
+	}
+}
+
+.jetpack-product-store__most-popular--item .foldable-card {
+	box-shadow: none;
+	width: 100%;
+	margin: 0;
+	border-bottom: 1px solid var(--studio-gray-5);
+}
+
+.jetpack-product-store__most-popular--item .foldable-card.is-expanded {
+	margin: 0;
+	border-bottom: 0;
+}
+
+.jetpack-product-store__most-popular--item .foldable-card.is-expanded .foldable-card__content {
+	padding: 0;
+}
+
+.jetpack-product-store__most-popular--item .foldable-card__main {
+	font-size: $font-body;
+	line-height: 24px;
+	font-weight: 600;
+}

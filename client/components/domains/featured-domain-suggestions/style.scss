@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .featured-domain-suggestions {
 	display: flex;
@@ -13,13 +13,13 @@
 	}
 
 	.is-section-signup & {
-		@include breakpoint-deprecated( '>480px' ) {
+		@include breakpoint-deprecated( ">480px" ) {
 			flex-direction: row;
 		}
 	}
 
 	.is-section-domains & {
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			flex-direction: row;
 		}
 	}
@@ -51,7 +51,7 @@
 
 		.is-placeholder & {
 			animation: loading-fade 1.6s ease-in-out infinite;
-			background-color: var( --color-neutral-0 );
+			background-color: var(--color-neutral-0);
 			border: none;
 			border-radius: 0;
 			color: transparent;
@@ -97,7 +97,7 @@
 			}
 
 			.domain-registration-suggestion__domain-title-name {
-				color: var( --studio-gray-90 );
+				color: var(--studio-gray-90);
 			}
 
 			.domain-registration-suggestion__domain-title-tld {
@@ -140,14 +140,14 @@
 	}
 
 	.domain-registration-suggestion__match-reason {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		padding: 0.125em 0;
 		display: flex;
 		align-items: center;
 
 		.gridicon {
-			color: var( --color-success );
+			color: var(--color-success);
 			margin-right: 0.25em;
 		}
 	}
@@ -173,19 +173,19 @@
 
 body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion.card {
 	border: none;
-	border-radius: 0; /* stylelint-disable-line */
+	border-radius: 0;
 	margin: 0;
 	align-items: center;
-	background: #ffffff;
-	border-bottom: 1px solid rgba( 220, 220, 222, 0.64 );
+	background: #fff;
+	border-bottom: 1px solid rgba(220, 220, 222, 0.64);
 	padding: 16px 20px;
 
 	@include break-mobile {
-		border-radius: 4px; /* stylelint-disable-line */
+		border-radius: 4px;
 		margin-bottom: 12px;
 		box-sizing: border-box;
 		border: 1px solid #e2e4e7;
-		background: var( --color-surface );
+		background: var(--color-surface);
 		padding: 16px 24px;
 	}
 
@@ -198,10 +198,10 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	}
 
 	.button.domain-suggestion__action {
-		font-weight: 500; /* stylelint-disable-line */
+		font-weight: 500;
 		padding: 0.57em 1.17em;
-		border-radius: 4px; /* stylelint-disable-line */
-		box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
+		border-radius: 4px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 		font-size: 0.875rem;
 		height: auto;
 
@@ -212,11 +212,11 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	}
 
 	.domain-registration-suggestion__domain-title {
-		font-size: 1.375rem; /* stylelint-disable-line */
+		font-size: 1.375rem; /* stylelint-disable-line scales/font-sizes */
 		line-height: 30px;
 
 		@include break-mobile {
-			font-size: 1.625rem; /* stylelint-disable-line */
+			font-size: 1.625rem; /* stylelint-disable-line scales/font-sizes */
 		}
 	}
 
@@ -247,12 +247,12 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 	&.featured-domain-suggestion--is-placeholder {
 		margin-bottom: 1px;
 		margin-top: 0;
-		border-radius: 0; /* stylelint-disable-line */
+		border-radius: 0;
 		border-bottom: none;
 
 		@include break-mobile {
 			margin-bottom: 12px;
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 			border: none;
 		}
 	}
@@ -260,7 +260,7 @@ body.is-section-signup.is-white-signup .step-wrapper .featured-domain-suggestion
 
 body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	margin: 0;
-	border-top: 1px solid rgba( 220, 220, 222, 0.64 );
+	border-top: 1px solid rgba(220, 220, 222, 0.64);
 
 	@include break-mobile {
 		margin: 0 20px;
@@ -272,22 +272,22 @@ body.is-section-signup.is-white-signup .featured-domain-suggestions {
 	}
 }
 
-@include breakpoint-deprecated( '>660px' ) {
+@include breakpoint-deprecated( ">660px" ) {
 	.domain-registration-suggestion__title {
 		.featured-domain-suggestions--title-in-18em & {
-			font-size: 1.8em; /* stylelint-disable-line */
+			font-size: 1.8em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-16em & {
-			font-size: 1.6em; /* stylelint-disable-line */
+			font-size: 1.6em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-14em & {
 			font-size: $font-title-small;
 		}
 		.featured-domain-suggestions--title-in-12em & {
-			font-size: 1.2em; /* stylelint-disable-line */
+			font-size: 1.2em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 		.featured-domain-suggestions--title-in-10em & {
-			font-size: 1em; /* stylelint-disable-line */
+			font-size: 1em; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		}
 	}
 

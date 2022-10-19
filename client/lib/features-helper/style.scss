@@ -18,17 +18,17 @@
 }
 
 .features-helper__feature-item-enabled {
-	color: var( --studio-green-70 );
+	color: var(--studio-green-70);
 }
 
 .features-helper__feature-item-disabled {
-	color: var( --studio-red-70 );
+	color: var(--studio-red-70);
 }
 
 .environment.is-features:hover .features-helper__current-features {
 	display: block;
-	background: var( --color-surface );
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
 	padding: 16px;
 	max-height: 80vh;
 	overflow-y: scroll;

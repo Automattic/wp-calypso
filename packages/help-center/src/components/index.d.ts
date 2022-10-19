@@ -50,6 +50,14 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	export default useSupportArticleAlternatesQuery;
 }
 
+declare module 'calypso/data/help/use-active-support-tickets-query' {
+	import { SupportTicket } from '../types';
+	export const useActiveSupportTicketsQuery: (
+		email: string,
+		queryOptions?: unknown
+	) => { isLoading: boolean; data?: SupportTicket[] };
+}
+
 declare module 'calypso/state/reader/posts/selectors' {
 	export const getPostByKey;
 }
@@ -85,6 +93,13 @@ declare module 'calypso/state/sites/hooks' {
 declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
 	const hasCancelableUserPurchases: ( state: unknown ) => boolean;
 	export default hasCancelableUserPurchases;
+}
+
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUserEmail: ( state: unknown ) => string;
+}
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUserId: ( state: unknown ) => string;
 }
 
 declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {

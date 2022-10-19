@@ -1,4 +1,5 @@
 .reader-post-actions {
+	align-items: center;
 	box-sizing: border-box;
 	display: flex;
 	font-family: $sans;
@@ -10,7 +11,8 @@
 }
 
 .reader-post-actions .reader-post-actions__item {
-	margin-right: 13px;
+	height: 20px;
+	margin-right: 24px;
 
 	&.reader-post-actions__visit {
 		flex: 1;
@@ -18,9 +20,8 @@
 		.reader-visit-link {
 			align-items: center;
 			box-sizing: border-box;
-			display: inline-flex;
-			padding: 4px 4px 4px 0;
-			position: relative;
+			display: flex;
+			gap: 4px;
 		}
 	}
 
@@ -29,7 +30,8 @@
 	}
 
 	& > button {
-		line-height: inherit;
+		margin: 0;
+		padding: 0;
 
 		&:focus {
 			outline: thin dotted;
@@ -37,8 +39,12 @@
 
 		.accessible-focus &:focus {
 			border-radius: 2px;
-			border-color: var( --color-primary );
-			box-shadow: 0 0 0 2px var( --color-primary-light );
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
 		}
+	}
+
+	.follow-button__label {
+		display: none;
 	}
 }

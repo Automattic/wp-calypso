@@ -5,7 +5,7 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		width: 20%;
 		min-width: 29em;
 	}
@@ -16,14 +16,14 @@
 
 	&.is-selected .user-mentions__highlight,
 	&:hover .user-mentions__highlight {
-		color: white;
+		color: var(--color-text-inverted);
 	}
 
 	.rtl & {
 		direction: ltr; // Required to get the '@' on the correct side.
 	}
 
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		line-height: 24px;
 	}
 }

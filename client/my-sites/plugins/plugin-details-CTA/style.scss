@@ -1,32 +1,24 @@
-@use '../variables';
+@use "../variables";
 
-.plugin-details-CTA__container {
+.plugin-details-cta__container {
 	@extend %plugin-header;
 }
 
-.legacy .plugin-details-CTA__container {
-	padding-bottom: 0;
+.plugin-details-cta__modal-overlay.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-100-rgb), 0.7);
 }
 
-.plugin-details-CTA__modal-overlay.dialog__backdrop {
-	background-color: rgba( var( --color-neutral-100-rgb ), 0.7 );
-}
-
-.plugin-details-CTA__dialog-content {
-	.eligibility-warnings {
-		margin: 0;
-
-		.card {
-			box-shadow: none;
-		}
+.plugin-details-cta__dialog-content {
+	.dialog__content {
+		padding: 0;
 	}
 }
 
-.plugin-details-CTA__price {
+.plugin-details-cta__price {
 	font-family: $brand-serif;
 	font-size: $font-title-large;
-	color: var( --studio-gray-100 );
-	margin: 32px 0 16px;
+	color: var(--studio-gray-100);
+	margin-bottom: 16px;
 	min-height: 48px;
 	display: flex;
 	align-items: baseline;
@@ -37,125 +29,115 @@
 	}
 }
 
-.plugin-details-CTA__price-placeholder {
+.plugin-details-cta__price-placeholder {
 	width: 100%;
 
 	@extend %placeholder;
 }
 
-.plugin-details-CTA__period {
+.plugin-details-cta__period {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	padding-left: 3px;
 }
 
-.plugin-details-CTA__uprade-required {
+.plugin-details-cta__uprade-required {
 	width: 100%;
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 }
 
-.plugin-details-CTA__preinstalled {
+.plugin-details-cta__preinstalled {
 	width: 100%;
 	margin-bottom: 20px;
 }
 
-.plugin-details-CTA__install {
+.plugin-details-cta__install {
 	margin-bottom: 20px;
 
-	.plugin-details-CTA__install-button {
+	.plugin-details-cta__install-button {
 		width: 100%;
 		padding: 12px 16px;
 	}
 }
 
-.plugin-details-CTA__t-and-c {
+.plugin-details-cta__t-and-c {
 	font-size: $font-body-extra-small;
-	color: var( --studio-gray-50 );
+	color: var(--studio-gray-50);
 	margin-bottom: 16px;
 }
 
-.plugin-details-CTA__not-available {
-	.plugin-details-CTA__not-available-text {
-		color: var( --studio-gray-60 );
+.plugin-details-cta__not-available {
+	.plugin-details-cta__not-available-text {
+		color: var(--studio-gray-60);
 		margin: 16px 0;
 		font-size: $font-body-small;
 	}
 
-	.plugin-details-CTA__follow-toggle label {
-		color: var( --studio-gray-80 );
+	.plugin-details-cta__follow-toggle label {
+		color: var(--studio-gray-80);
 	}
 }
 
-.plugin-details-CTA__upgrade-required {
+.plugin-details-cta__upgrade-required {
 	display: flex;
 
-	.plugin-details-CTA__upgrade-required-icon {
-		color: var( --studio-orange-40 );
+	.plugin-details-cta__upgrade-required-icon {
+		color: var(--studio-orange-40);
 		padding-top: 3px;
 	}
 
-	.plugin-details-CTA__upgrade-required-text {
-		color: var( --studio-gray-80 );
+	.plugin-details-cta__upgrade-required-text {
+		color: var(--studio-gray-80);
 		font-size: $font-body-small;
 		margin-left: 16px;
 	}
 }
 
-.plugin-details-CTA__container-header {
+.plugin-details-cta__container-header {
 	display: flex;
 	justify-content: space-between;
 }
 
-.plugin-details-CTA__manage-plugin-menu {
+.plugin-details-cta__manage-plugin-menu {
 	margin-top: -12px;
 }
 
-.plugin-details-CTA__installed-text {
-	color: var( --studio-gray-100 );
+.plugin-details-cta__installed-text {
+	color: var(--studio-gray-100);
 	font-size: $font-body;
 	height: 40px;
 
-	.plugin-details-CTA__installed-text-quantity {
-		color: var( --studio-green-50 );
+	.plugin-details-cta__installed-text-quantity {
+		color: var(--studio-green-50);
 	}
 
-	.plugin-details-CTA__installed-text-active {
-		color: var( --studio-green-60 );
+	.plugin-details-cta__installed-text-active {
+		color: var(--studio-green-60);
 	}
 
-	.plugin-details-CTA__installed-text-inactive {
-		color: var( --studio-red-60 );
+	.plugin-details-cta__installed-text-inactive {
+		color: var(--studio-red-60);
 	}
 }
 
-.plugin-details-CTA__autoupdate-text {
+.plugin-details-cta__autoupdate-text {
 	font-size: $font-body-extra-small;
 
-	.plugin-details-CTA__autoupdate-text-main {
-		color: var( --studio-gray-100 );
+	.plugin-details-cta__autoupdate-text-main {
+		color: var(--studio-gray-100);
 	}
 
-	.plugin-details-CTA__autoupdate-text-version {
-		color: var( --studio-gray-60 );
-	}
-}
-
-.legacy {
-	.plugin-details-CTA__t-and-c {
-		margin-bottom: 0;
-	}
-
-	.plugin-details-CTA__period {
-		padding-left: 0;
+	.plugin-details-cta__autoupdate-text-version {
+		color: var(--studio-gray-60);
 	}
 }
 
 .is-placeholder {
-	.plugin-details-CTA__price,
-	.plugin-details-CTA__install,
-	.plugin-details-CTA__t-and-c {
+	.plugin-details-cta__price,
+	.plugin-details-cta__install,
+	.plugin-details-cta__t-and-c {
 		@extend %placeholder;
 	}
 }

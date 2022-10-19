@@ -6,20 +6,30 @@ import EmptyContent from 'calypso/components/empty-content';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordEmailUpsellTracksEvent } from 'calypso/my-sites/email/email-management/home/utils';
 import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
-import { SiteData } from 'calypso/state/ui/selectors/site-data';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { AppState } from 'calypso/types';
 
-const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; source: string } ) => {
+const EmailNoDomain = ( {
+	selectedSite,
+	source,
+}: {
+	selectedSite: SiteDetails;
+	source: string;
+} ) => {
 	const translate = useTranslate();
 
 	const hasAvailableDomainCredit = useSelector( ( state: AppState ) =>
 		hasDomainCredit( state, selectedSite.ID )
 	);
 
-	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? null );
+	const isFreePlanProduct = isFreePlan( selectedSite?.plan?.product_slug ?? '' );
 
-	const trackEvent = () => {
-		recordEmailUpsellTracksEvent( source, isFreePlanProduct ? 'plan' : 'domain' );
+	const trackEventForPlan = () => {
+		recordEmailUpsellTracksEvent( source, 'plan' );
+	};
+
+	const trackEventForDomain = () => {
+		recordEmailUpsellTracksEvent( source, 'domain' );
 	};
 
 	const trackImpression = ( noDomainContext: string ) => {
@@ -47,8 +57,11 @@ const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; sour
 		return (
 			<EmptyContent
 				action={ translate( 'Upgrade to a plan' ) }
-				actionCallback={ trackEvent }
+				actionCallback={ trackEventForPlan }
 				actionURL={ `/plans/${ selectedSite.slug }` }
+				secondaryAction={ translate( 'Just search for a domain' ) }
+				secondaryActionCallback={ trackEventForDomain }
+				secondaryActionURL={ `/domains/add/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(
 					'Upgrade to a plan now, set up your domain and pick from one of our flexible options to connect your domain with email and start getting emails today.'
@@ -64,7 +77,7 @@ const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; sour
 		return (
 			<EmptyContent
 				action={ translate( 'Add a Domain' ) }
-				actionCallback={ trackEvent }
+				actionCallback={ trackEventForDomain }
 				actionURL={ `/domains/add/${ selectedSite.slug }` }
 				illustration={ Illustration }
 				line={ translate(
@@ -81,7 +94,7 @@ const EmailNoDomain = ( { selectedSite, source }: { selectedSite: SiteData; sour
 		<EmptyContent
 			action={ translate( 'Add a Domain' ) }
 			actionURL={ `/domains/add/${ selectedSite.slug }` }
-			actionCallback={ trackEvent }
+			actionCallback={ trackEventForDomain }
 			illustration={ Illustration }
 			line={ translate(
 				'Set up or buy your domain, pick from one of our flexible email options, and start getting emails today.'

@@ -1,10 +1,10 @@
-@import '@wordpress/base-styles/mixins';
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/z-index';
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/z-index";
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
 
 $commentary-column-width-medium: 280px;
 $commentary-column-width-large: 320px;
@@ -27,11 +27,11 @@ $commentary-column-gap-wide: 100px;
 	display: flex;
 	align-items: flex-start;
 	font-size: $font-body-small;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 
 	svg {
 		vertical-align: bottom;
-		fill: var( --studio-gray-20 );
+		fill: var(--studio-gray-20);
 		margin-right: 3px;
 
 		// compensate for the gap in the svg top
@@ -47,7 +47,7 @@ $commentary-column-gap-wide: 100px;
 	margin-bottom: 8px;
 	display: block;
 	font-size: 1.25rem;
-	color: var( --studio-gray-90 );
+	color: var(--studio-gray-90);
 	line-height: 24px;
 
 	@include break-medium {
@@ -95,7 +95,7 @@ $commentary-column-gap-wide: 100px;
 		// add a vertical gap before plan commentary to align
 		// with the input (not the step title).
 		&::before {
-			content: '';
+			content: "";
 			display: block;
 			height: 18px;
 		}
@@ -148,7 +148,7 @@ $commentary-column-gap-wide: 100px;
 .focused-launch-summary__details-link {
 	display: block;
 	margin-top: 14px;
-	color: var( --studio-gray-60 );
+	color: var(--studio-gray-60);
 }
 
 .focused-launch-summary__actions-wrapper {
@@ -163,19 +163,19 @@ $commentary-column-gap-wide: 100px;
 	@include break-medium {
 		flex-direction: column-reverse;
 		align-items: flex-start;
-		width: calc( 100% - #{$commentary-column-width-medium + $commentary-column-gap-small} );
+		width: calc(100% - #{$commentary-column-width-medium + $commentary-column-gap-small});
 		flex-wrap: nowrap;
 	}
 
 	@include break-large {
 		flex-direction: row;
 		align-items: center;
-		width: calc( 100% - #{$commentary-column-width-large + $commentary-column-gap-large} );
+		width: calc(100% - #{$commentary-column-width-large + $commentary-column-gap-large});
 		flex-wrap: wrap-reverse;
 	}
 
 	@include break-wide {
-		width: calc( 100% - #{$commentary-column-width-large + $commentary-column-gap-wide} );
+		width: calc(100% - #{$commentary-column-width-large + $commentary-column-gap-wide});
 	}
 }
 
@@ -195,7 +195,7 @@ $commentary-column-gap-wide: 100px;
 
 .focused-launch-summary__launch-action-bar {
 	// Overrides original component styles
-	&.action-buttons:not( .is-sticky ) {
+	&.action-buttons:not(.is-sticky) {
 		margin-left: 0;
 	}
 
@@ -204,14 +204,14 @@ $commentary-column-gap-wide: 100px;
 		background-color: $onboarding-accent-blue;
 
 		&:disabled,
-		&:hover:not( :disabled ),
-		&:active:not( :disabled ),
-		&:focus:not( :disabled ) {
+		&:hover:not(:disabled),
+		&:active:not(:disabled),
+		&:focus:not(:disabled) {
 			background: $onboarding-accent-blue;
 		}
 
-		&:focus:not( :disabled ) {
-			box-shadow: inset 0 0 0 1px #fff, 0 0 0 var( --wp-admin-border-width-focus ) $onboarding-accent-blue;
+		&:focus:not(:disabled) {
+			box-shadow: inset 0 0 0 1px #fff, 0 0 0 var(--wp-admin-border-width-focus) $onboarding-accent-blue;
 		}
 
 		&--is-loading {

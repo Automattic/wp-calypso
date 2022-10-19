@@ -2,12 +2,6 @@
 	margin: 0 auto;
 	max-height: 105px;
 
-	&.is-compact {
-		max-height: 34px;
-	}
-}
-
-.reader-avatar {
 	&.has-site-and-author-icon {
 		.site-icon {
 			height: 96px;
@@ -20,17 +14,18 @@
 		}
 
 		.gravatar {
-			border: 2px solid var( --color-border-inverted );
+			border: 2px solid var(--color-border-inverted);
 			height: 80px;
 			position: relative;
-				left: 30px;
-				top: -75px;
+			left: 30px;
+			top: -75px;
 			width: 80px;
-			background-color: var( --color-surface );
+			background-color: var(--color-surface);
 		}
 	}
 
 	&.is-compact {
+		max-height: 34px;
 		&.has-gravatar {
 			min-width: 32px;
 			min-height: 32px;

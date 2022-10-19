@@ -3,6 +3,9 @@ import {
 	getJetpackProductTagline,
 	getJetpackProductCallToAction,
 	getJetpackProductDescription,
+	getJetpackProductShortDescription,
+	getJetpackProductFeaturedDescription,
+	getJetpackProductLightboxDescription,
 	getJetpackProductDisclaimer,
 	getJetpackProductShortName,
 	getMonthlyPlanByYearly,
@@ -22,6 +25,9 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
+	getJetpackProductWhatIsIncluded,
+	getJetpackProductBenefits,
+	getJetpackProductRecommendedFor,
 } from '@automattic/calypso-products';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
@@ -92,6 +98,21 @@ function getDisclaimerLink() {
 		: `https://cloud.jetpack.com/pricing#${ backupStorageFaqId }`;
 }
 
+function getFeaturedProductDescription( item: Product ) {
+	return getJetpackProductFeaturedDescription( item ) ?? '';
+}
+
+function getFeaturedPlanDescription( item: Plan ) {
+	return getForCurrentCROIteration( item.getFeaturedDescription ) ?? '';
+}
+
+function getLightboxProductDescription( item: Product ) {
+	return getJetpackProductLightboxDescription( item ) ?? '';
+}
+
+function getLightboxPlanDescription( item: Plan ) {
+	return getForCurrentCROIteration( item.getLightboxDescription ) ?? '';
+}
 /**
  * Converts data from a product, plan, or selector product to selector product.
  *
@@ -137,7 +158,13 @@ function itemToSelectorProduct(
 			shortName: getJetpackProductShortName( item ) || '',
 			tagline: getJetpackProductTagline( item ) ?? '',
 			description: getJetpackProductDescription( item ),
+			shortDescription: getJetpackProductShortDescription( item ),
+			featuredDescription: getFeaturedProductDescription( item ),
+			lightboxDescription: getLightboxProductDescription( item ),
 			buttonLabel: getJetpackProductCallToAction( item ),
+			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
+			benefits: getJetpackProductBenefits( item ),
+			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
 			categories: item.categories,
@@ -172,6 +199,15 @@ function itemToSelectorProduct(
 			shortName: getForCurrentCROIteration( item.getTitle ) ?? '',
 			tagline: getForCurrentCROIteration( item.getTagline ) || '',
 			description: getForCurrentCROIteration( item.getDescription ),
+			featuredDescription: getFeaturedPlanDescription( item ),
+			lightboxDescription: getLightboxPlanDescription( item ),
+			whatIsIncluded: item.getWhatIsIncluded
+				? getForCurrentCROIteration( item.getWhatIsIncluded )
+				: [],
+			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			recommendedFor: item.getRecommendedFor
+				? getForCurrentCROIteration( item.getRecommendedFor )
+				: [],
 			monthlyProductSlug,
 			term: item.term === TERM_BIENNIALLY ? TERM_ANNUALLY : item.term,
 			features: {

@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -8,15 +9,29 @@ const NoSitesLayout = styled( EmptyContent )`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+
+	${ ( { illustration } ) =>
+		! illustration && {
+			marginBlockStart: '10%',
+		} }
+
+	.empty-content__illustration {
+		margin-block-end: 30px;
+	}
 `;
 
 const SecondaryText = styled.p`
-	max-width: 650px;
+	max-width: 550px;
+	font-size: 14px;
+	margin-block-end: 0px;
 `;
 
 const Title = styled.div`
-	margin-top: 50%;
+	font-family: 'Recoleta', 'Noto Serif', Georgia, 'Times New Roman', Times, serif;
+	font-size: 32px;
+	margin-block-end: 20px;
 `;
+
 type SitesContainerProps = {
 	status: string;
 
@@ -46,7 +61,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/' }
+										href={ localizeUrl( 'https://wordpress.com/support/' ) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -55,7 +70,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 						) }
 					</SecondaryText>
 				}
-				illustration={ '' }
+				illustration=""
 			/>
 		);
 	}
@@ -73,7 +88,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -82,7 +99,7 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 						) }
 					</SecondaryText>
 				}
-				illustration={ '' }
+				illustration=""
 			/>
 		);
 	}
@@ -100,7 +117,9 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 							{
 								a: (
 									<a
-										href={ 'https://wordpress.com/support/settings/privacy-settings/' }
+										href={ localizeUrl(
+											'https://wordpress.com/support/settings/privacy-settings/'
+										) }
 										target="_blank"
 										rel="noopener noreferrer"
 									/>
@@ -109,20 +128,53 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 						) }
 					</SecondaryText>
 				}
-				illustration={ '' }
+				illustration=""
+			/>
+		);
+	}
+
+	if ( status === 'redirect' ) {
+		return (
+			<NoSitesLayout
+				title={ <Title> { __( 'You have no redirected sites' ) } </Title> }
+				line={
+					<SecondaryText>
+						{ createInterpolateElement(
+							__(
+								'Redirected sites send a visitor directly to the mapped domain. Read more about them <a>here</a>.'
+							),
+							{
+								a: (
+									<a
+										href={ localizeUrl( 'https://wordpress.com/support/site-redirect/' ) }
+										target="_blank"
+										rel="noopener noreferrer"
+									/>
+								),
+							}
+						) }
+					</SecondaryText>
+				}
+				illustration=""
 			/>
 		);
 	}
 
 	return (
 		<NoSitesLayout
-			title={ __( 'Create your first site' ) }
-			line={ __(
-				"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
-			) }
+			title={ <Title> { __( 'Create your first site' ) } </Title> }
+			line={
+				<SecondaryText>
+					{ __(
+						"It's time to get your ideas online. We'll guide you through the process of creating a site that best suits your needs."
+					) }
+				</SecondaryText>
+			}
 			action={ __( 'Create your first site' ) }
-			actionURL={ '/start?source=sites-dashboard&ref=calypso-nosites' }
-			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+			actionURL="/start?source=sites-dashboard&ref=calypso-nosites"
+			illustration="/calypso/images/illustrations/illustration-empty-sites.svg"
+			illustrationWidth={ 124 }
+			illustrationHeight={ 101 }
 		/>
 	);
 };

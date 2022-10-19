@@ -33,7 +33,7 @@ main.quickstart-sessions-retirement.main {
 		margin-top: 0.5em;
 		text-align: center;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			font-size: $font-title-small;
 		}
 	}

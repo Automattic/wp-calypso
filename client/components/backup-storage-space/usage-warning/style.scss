@@ -13,15 +13,15 @@
 	column-gap: 8px;
 
 	padding: 16px 24px;
-	border: 2px solid var( --studio-jetpack-green );
-	border-radius: calc( 2 * 2px );
+	border: 2px solid var(--studio-jetpack-green);
+	border-radius: calc(2 * 2px);
 
-	color: var( --color-text );
+	color: var(--color-text);
 	font-size: $font-body;
 	text-align: initial;
 
 	&:visited {
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 
 	&:focus,
@@ -40,7 +40,7 @@
 		}
 
 		.action-button__arrow {
-			transform: translateX( 8px );
+			transform: translateX(8px);
 		}
 	}
 
@@ -55,7 +55,7 @@
 	.action-button__arrow {
 		transition: transform 0.15s ease-out;
 
-		color: var( --studio-jetpack-green );
+		color: var(--studio-jetpack-green);
 		font-size: $font-title-medium;
 		font-weight: 600;
 	}

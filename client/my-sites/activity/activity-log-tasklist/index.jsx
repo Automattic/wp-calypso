@@ -322,7 +322,7 @@ class ActivityLogTasklist extends Component {
 		const showExpandedView = this.state.expandedView || numberOfUpdates <= MAX_UPDATED_TO_SHOW;
 		return (
 			<Card className="activity-log-tasklist" highlight="warning">
-				<TrackComponentView eventName={ 'calypso_activitylog_tasklist_update_impression' } />
+				<TrackComponentView eventName="calypso_activitylog_tasklist_update_impression" />
 				<div className="activity-log-tasklist__heading">
 					{
 						// Not using count method since we want a "one" string.

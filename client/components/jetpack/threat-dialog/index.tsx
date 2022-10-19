@@ -58,7 +58,7 @@ const ThreatDialog: React.FC< Props > = ( {
 			skipServerCredentials={ action === 'ignore' }
 			buttons={ buttons }
 			{ ...titleProps }
-			baseDialogClassName={ 'threat-dialog' }
+			baseDialogClassName="threat-dialog"
 		>
 			<>
 				<p>
@@ -67,7 +67,7 @@ const ThreatDialog: React.FC< Props > = ( {
 					{ action === 'ignore' && translate( 'Jetpack will ignore the threat:' ) }
 				</p>
 				<h3 className="threat-dialog__threat-title">
-					{ <ThreatFixHeader threat={ threat } action={ action } /> }
+					<ThreatFixHeader threat={ threat } action={ action } />
 				</h3>
 				{ action === 'ignore' &&
 					translate(

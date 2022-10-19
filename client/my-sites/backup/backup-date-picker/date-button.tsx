@@ -93,7 +93,7 @@ const DateButton: React.FC< Props > = ( {
 	return (
 		<div className="backup-date-picker__date-button-container">
 			<Button className="backup-date-picker__date-button-button" onClick={ handlePickerToggle }>
-				<Gridicon icon={ 'calendar' } />
+				<Gridicon icon="calendar" />
 				{ translate( 'Select Date' ) }
 			</Button>
 			{ renderPicker() }

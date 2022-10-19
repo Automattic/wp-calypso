@@ -8,6 +8,8 @@ import type { ReactNode } from 'react';
 
 type OwnProps = {
 	discountedPrice?: number;
+	discountedPriceDuration?: number;
+	discountedPriceFirst?: boolean;
 	originalPrice?: number;
 	pricesAreFetching?: boolean | null;
 	billingTerm: Duration;
@@ -19,6 +21,8 @@ type OwnProps = {
 
 const Paid: React.FC< OwnProps > = ( {
 	discountedPrice,
+	discountedPriceDuration,
+	discountedPriceFirst,
 	originalPrice,
 	pricesAreFetching,
 	billingTerm,
@@ -37,16 +41,19 @@ const Paid: React.FC< OwnProps > = ( {
 					original
 					className="display-price__original-price"
 					rawPrice={ 0.01 }
-					currencyCode={ '$' }
+					currencyCode="$"
 				/>
 				{ /* Remove this secondary <PlanPrice/> placeholder if we're not showing discounted prices */ }
-				<PlanPrice discounted rawPrice={ 0.01 } currencyCode={ '$' } />
+				<PlanPrice discounted rawPrice={ 0.01 } currencyCode="$" />
 				<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
 			</>
 		);
 	}
 
 	const renderDiscountedPrice = () => {
+		const theDiscountedPrice = (
+			<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+		);
 		/*
 		 * Price should be displayed from left-to-right, even in right-to-left
 		 * languages. `PlanPrice` seems to keep the ltr direction no matter
@@ -55,13 +62,14 @@ const Paid: React.FC< OwnProps > = ( {
 		 */
 		return (
 			<>
+				{ discountedPriceFirst && theDiscountedPrice }
 				<PlanPrice
 					original
 					className="display-price__original-price"
 					rawPrice={ originalPrice as number }
 					currencyCode={ currencyCode }
 				/>
-				<PlanPrice discounted rawPrice={ finalPrice as number } currencyCode={ currencyCode } />
+				{ ! discountedPriceFirst && theDiscountedPrice }
 			</>
 		);
 	};
@@ -82,7 +90,11 @@ const Paid: React.FC< OwnProps > = ( {
 					{ tooltipText }
 				</InfoPopover>
 			) }
-			<TimeFrame expiryDate={ expiryDate } billingTerm={ billingTerm } />
+			<TimeFrame
+				expiryDate={ expiryDate }
+				billingTerm={ billingTerm }
+				discountedPriceDuration={ discountedPriceDuration }
+			/>
 		</>
 	);
 };

@@ -399,10 +399,7 @@ class PostShare extends Component {
 						}
 					>
 						{ connection.service === 'facebook' && (
-							<NoticeAction
-								href={ 'https://wordpress.com/support/publicize/#facebook-pages' }
-								external
-							>
+							<NoticeAction href="https://wordpress.com/support/publicize/#facebook-pages" external>
 								{ translate( 'Learn More' ) }
 							</NoticeAction>
 						) }
@@ -575,7 +572,8 @@ class PostShare extends Component {
 						<div className="post-share__title">
 							<span>
 								{ translate(
-									'Share on your connected social media accounts using ' + '{{a}}Publicize{{/a}}.',
+									'Share on your connected social media accounts using ' +
+										'{{a}}Jetpack Social{{/a}}.',
 									{
 										components: {
 											a: <a href={ `/marketing/connections/${ siteSlug }` } />,

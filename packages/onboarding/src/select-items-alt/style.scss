@@ -1,6 +1,6 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
-@import '@automattic/typography/styles/fonts';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@automattic/typography/styles/fonts";
 
 .select-items-alt {
 	display: flex;
@@ -54,19 +54,19 @@
 		background: none;
 		color: #101517;
 		text-decoration: underline;
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-weight: 500;
 		text-align: end;
 
 		@include break-mobile {
 			margin-top: 0;
 		}
 
-		&:not( [disabled] ):hover {
-			color: var( --color-neutral-70 );
+		&:not([disabled]):hover {
+			color: var(--color-neutral-70);
 		}
 	}
 
 	&-disabled-info svg {
-		fill: var( --color-neutral-20 );
+		fill: var(--color-neutral-20);
 	}
 }

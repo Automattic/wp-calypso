@@ -8,7 +8,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
@@ -25,6 +25,7 @@ import {
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemePremium,
+	doesThemeBundleSoftwareSet,
 	shouldShowTryAndCustomize,
 } from 'calypso/state/themes/selectors';
 
@@ -46,9 +47,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isUserLoggedIn( state ) || // Not logged in
 			! isThemePremium( state, themeId ) || // Not a premium theme
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased
 			isThemeActive( state, themeId, siteId ), // Already active
 	};
 
+	// Jetpack-specific plan upgrade
 	const upgradePlan = {
 		label: translate( 'Upgrade to activate', {
 			comment: 'label prompting user to upgrade the Jetpack plan to activate a certain theme',
@@ -67,6 +70,38 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
 			! isThemePremium( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	// WPCOM-specific plan upgrade for premium themes with bundled software sets
+	const upgradePlanForBundledThemes = {
+		label: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to activate', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: ( state, themeId, siteId ) => {
+			const { origin = 'https://wordpress.com' } =
+				typeof window !== 'undefined' ? window.location : {};
+			const slug = getSiteSlug( state, siteId );
+			const redirectTo = encodeURIComponent(
+				`${ origin }/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+			);
+
+			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			! doesThemeBundleSoftwareSet( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId ),
 	};
@@ -168,6 +203,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		preview,
 		purchase,
 		upgradePlan,
+		upgradePlanForBundledThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,

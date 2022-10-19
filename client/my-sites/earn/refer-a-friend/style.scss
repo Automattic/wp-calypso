@@ -1,10 +1,10 @@
 .refer-a-friend__earn-page {
 	.promo-section__promos {
 		.promo-card {
-			width: calc( 100% - 1em );
+			width: calc(100% - 1em);
 
-			@include breakpoint-deprecated( '>1280px' ) {
-				width: calc( 100% - 1em );
+			@include breakpoint-deprecated( ">1280px" ) {
+				width: calc(100% - 1em);
 			}
 		}
 	}

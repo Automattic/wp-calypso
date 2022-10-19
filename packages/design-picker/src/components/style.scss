@@ -1,7 +1,7 @@
-@use 'sass:math';
+@use "sass:math";
 
-@import '@automattic/onboarding/styles/mixins';
-@import '@automattic/onboarding/styles/variables';
+@import "@automattic/onboarding/styles/mixins";
+@import "@automattic/onboarding/styles/variables";
 
 .design-picker {
 	@include break-small {
@@ -36,17 +36,16 @@
 	}
 
 	.design-button-container {
-		width: calc( 100% - 24px );
+		width: calc(100% - 24px);
 		margin: 0 12px 24px; // only applies in IE
 
 		@include break-medium {
-			width: calc( 50% - 24px );
+			width: calc(50% - 24px);
 			margin-bottom: 40px;
 		}
 	}
 
 	.design-picker__design-option {
-		cursor: pointer;
 		font-family: inherit;
 	}
 
@@ -62,8 +61,8 @@
 		position: relative;
 		max-width: 100%;
 		height: 22px;
-		border: 1px solid rgba( 0, 0, 0, 0.12 );
-		border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
+		border: 1px solid rgba(0, 0, 0, 0.12);
+		border-radius: 4px 4px 0 0;
 		margin: 0 auto;
 		box-sizing: border-box;
 		transition: border-color 0.15s ease-in-out;
@@ -72,8 +71,8 @@
 			position: absolute;
 			left: 12px;
 			top: 50%;
-			transform: translateY( -50% );
-			fill: rgba( 0, 0, 0, 0.12 );
+			transform: translateY(-50%);
+			fill: rgba(0, 0, 0, 0.12);
 		}
 	}
 
@@ -81,20 +80,20 @@
 		.design-picker__grid {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 24px;
+			row-gap: 32px;
 			margin: 0 0 30px;
 
 			@include break-medium {
 				grid-template-columns: 1fr 1fr;
 				column-gap: 24px;
-				row-gap: 20px;
+				row-gap: 28px;
 			}
 		}
 
 		.design-picker__grid-minimal {
 			display: grid;
 			grid-template-columns: 1fr;
-			row-gap: 28px;
+			row-gap: 36px;
 			margin: 0 0 30px;
 
 			@include break-medium {
@@ -126,12 +125,12 @@
 		position: relative;
 		overflow: hidden;
 
-		&:not( .design-picker__image-frame-no-header ) {
-			border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+		&:not(.design-picker__image-frame-no-header) {
+			border-radius: 0 0 4px 4px;
 		}
 
 		&.design-picker__image-frame-no-header {
-			border-radius: 0; /* stylelint-disable-line scales/radii */
+			border-radius: 0;
 		}
 
 		img {
@@ -145,7 +144,7 @@
 		}
 
 		&::after {
-			content: '';
+			content: "";
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -157,13 +156,13 @@
 			transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
 		}
 
-		&:not( .design-picker__image-frame-no-header )::after {
+		&:not(.design-picker__image-frame-no-header)::after {
 			border-top-width: 0;
-			border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+			border-radius: 0 0 4px 4px;
 		}
 
 		&.design-picker__image-frame-no-header::after {
-			border-radius: 0; /* stylelint-disable-line scales/radii */
+			border-radius: 0;
 		}
 
 	}
@@ -180,11 +179,11 @@
 	}
 
 	.design-picker__image-frame-portrait {
-		padding-top: math.div( 360px, 480px ) * 200%; // Aspect ratio for the picker
+		padding-top: math.div(360px, 480px) * 200%; // Aspect ratio for the picker
 	}
 
 	.design-picker__image-frame-blank {
-		background: var( --studio-white );
+		background: var(--studio-white);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -193,8 +192,8 @@
 	}
 
 	.design-picker__image-frame-blank-canvas__title {
-		color: var( --studio-gray-80 );
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		color: var(--studio-gray-80);
+		font-weight: 500;
 		font-size: $font-title-small;
 	}
 
@@ -212,7 +211,7 @@
 		display: inline-flex;
 		flex-wrap: wrap; // If theme name and premium badge don't fit on one line
 		margin-top: 8px;
-		width: 100%;
+		flex: 1;
 
 		> * {
 			// This is to create space between Tooltip component and other elements
@@ -220,19 +219,41 @@
 		}
 	}
 
+	.design-picker__option-overlay {
+		display: flex;
+		align-items: center;
+	}
+
 	.design-picker__option-name {
 		align-items: center;
 		display: inline-flex;
 		font-size: $font-body;
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-weight: 500;
 		margin-top: -0.1em;
 	}
 
-	.design-picker__pricing-description {
-		text-align: left;
-		color: #50575e;
+	.design-picker__options-style-variations {
+		align-items: center;
+		display: inline-flex;
+		justify-content: flex-end;
+		flex-grow: 1;
+		flex-wrap: wrap;
+		gap: 4px;
 	}
 
+	.design-picker__pricing-description {
+		align-items: flex-start;
+		color: #50575e;
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+		line-height: 20px;
+		justify-content: flex-start;
+
+		.premium-badge {
+			margin: 0;
+		}
+	}
 
 	.design-picker__button-link.components-button.is-link {
 		text-decoration: none;
@@ -242,23 +263,23 @@
 // dark theme styles
 .design-picker.design-picker--theme-dark {
 	.design-picker__option-name {
-		color: var( --studio-white );
+		color: var(--studio-white);
 	}
 	.design-picker__design-option {
 		.design-picker__design-option-header svg {
-			fill: var( --studio-gray-40 );
+			fill: var(--studio-gray-40);
 		}
 
 		.design-picker__design-option-header,
 		.design-picker__image-frame::after {
-			border-color: var( --studio-gray-40 );
+			border-color: var(--studio-gray-40);
 		}
 
 		&:hover,
 		&:focus {
 			.design-picker__design-option-header,
 			.design-picker__image-frame::after {
-				border-color: var( --studio-white );
+				border-color: var(--studio-white);
 			}
 		}
 	}
@@ -267,11 +288,11 @@
 	.design-button-container:focus-within {
 		.design-picker__design-option-header,
 		.design-picker__image-frame::after {
-			border-color: var( --studio-white );
+			border-color: var(--studio-white);
 		}
 
 		.design-picker__design-option .design-picker__image-frame::after {
-			background-color: rgba( 255, 255, 255, 0.42 );
+			background-color: rgba(255, 255, 255, 0.42);
 		}
 	}
 }
@@ -279,23 +300,23 @@
 // light theme styles
 .design-picker.design-picker--theme-light {
 	.design-picker__option-name {
-		color: var( --studio-gray-80 );
+		color: var(--studio-gray-80);
 	}
 	.design-picker__design-option {
 		.design-picker__image-frame {
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.03 );
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 		}
 
 		.design-picker__design-option-header,
 		.design-picker__image-frame::after {
-			border-color: rgba( 0, 0, 0, 0.12 );
+			border-color: rgba(0, 0, 0, 0.12);
 		}
 
 		&:hover,
 		&:focus {
 			.design-picker__design-option-header,
 			.design-picker__image-frame::after {
-				border-color: var( --studio-blue-20 );
+				border-color: var(--studio-blue-20);
 			}
 		}
 	}
@@ -308,7 +329,7 @@
 		}
 
 		.design-picker__design-option .design-picker__image-frame::after {
-			background-color: rgba( 255, 255, 255, 0.72 );
+			background-color: rgba(255, 255, 255, 0.72);
 		}
 	}
 }
@@ -352,21 +373,21 @@
 		display: flex;
 		flex-direction: column;
 
-		.design-button-cover__button:not( :first-child ) {
+		.design-button-cover__button:not(:first-child) {
 			margin-top: 8px;
 		}
 	}
 
 	.design-button-cover__button {
 		justify-content: center;
-		border-radius: 4px; /* stylelint-disable-line scales/radii */
+		border-radius: 4px;
 		font-size: inherit;
-		font-weight: 500; /* stylelint-disable-line scales/font-weights */
+		font-weight: 500;
 		line-height: 20px;
 
-		&:not( .is-primary ) {
+		&:not(.is-primary) {
 			border: 1px solid #c3c4c7;
-			background: #ffffff;
+			background: #fff;
 		}
 	}
 
@@ -392,7 +413,7 @@
 			}
 		}
 	}
-	
+
 	h3 {
 		font-size: $font-title-small;
 		font-weight: 600;
@@ -427,11 +448,27 @@
 	}
 
 	.components-button:focus-visible::before {
-		box-shadow: inset 0 0 0 var( --wp-admin-border-width-focus ) var( --wp-admin-theme-color );
+		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
 	}
 
 	.components-button.is-pressed:active:hover {
-		color: var( --theme-base-color );
+		color: var(--theme-base-color);
+	}
+
+	// Customize styles for generated designs
+	.unified-design-picker__generated-designs {
+		.design-picker__grid {
+			padding-bottom: 32px;
+		}
+	}
+
+	// Customize styles for standard designs
+	.unified-design-picker__standard-designs {
+		min-height: 100vh;
+
+		.unified-design-picker__subtitle {
+			margin-bottom: 14px;
+		}
 	}
 }
 
@@ -450,7 +487,7 @@
 					}
 				}
 			}
-		
+
 			>div:last-of-type {
 				button {
 					padding-right: 8px;
@@ -479,11 +516,11 @@
 	@supports not ( display: grid ) {
 		.design-button-container {
 			@include break-medium {
-				width: calc( 100% - 24px );
+				width: calc(100% - 24px);
 			}
 
 			@include break-large {
-				width: calc( 50% - 24px );
+				width: calc(50% - 24px);
 			}
 		}
 	}
@@ -499,7 +536,7 @@
 	&:focus-within {
 		.design-picker__image-frame::after {
 			// `!important` is used because there is a default `background-color` with high specificity.
-			background-color: transparent !important; // to override 
+			background-color: transparent !important; // to override
 		}
 	}
 }
@@ -507,7 +544,7 @@
 
 .generated-design-thumbnail {
 	align-items: stretch;
-	border: 1px solid #dddddd;
+	border: 1px solid #ddd;
 	border-radius: 4px;
 	box-sizing: border-box;
 	cursor: pointer;
@@ -525,12 +562,12 @@
 	}
 
 	&:focus-visible {
-		border-color: #dddddd;
-		outline: 2px solid var( --studio-blue-30 );
+		border-color: #ddd;
+		outline: 2px solid var(--studio-blue-30);
 	}
 
 	.generated-design-thumbnail__header {
-		border-bottom: 1px solid #dddddd;
+		border-bottom: 1px solid #ddd;
 		box-sizing: border-box;
 		display: block;
 		height: 23px;
@@ -540,9 +577,9 @@
 		text-align: left;
 
 		svg {
-			fill: var( --studio-gray-5 );
+			fill: var(--studio-gray-5);
 		}
-    }
+	}
 
 	.generated-design-thumbnail__image {
 		position: relative;
@@ -599,8 +636,8 @@
 .generated-design-preview {
 	.generated-design-preview__header {
 		align-items: center;
-		border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
-		border: 1px solid var( --studio-gray-5 );
+		border-radius: 4px 4px 0 0;
+		border: 1px solid var(--studio-gray-5);
 		box-sizing: border-box;
 		display: flex;
 		height: 23px;
@@ -610,15 +647,15 @@
 		position: relative;
 
 		svg {
-			fill: var( --studio-gray-5 );
+			fill: var(--studio-gray-5);
 			left: 8px;
 			position: absolute;
 		}
 	}
 
 	.generated-design-preview__frame {
-		border: 1px solid var( --studio-gray-5 );
-		border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+		border: 1px solid var(--studio-gray-5);
+		border-radius: 0 0 4px 4px;
 		border-top: 0;
 		box-sizing: border-box;
 		display: block;
@@ -642,7 +679,7 @@
 
 			svg {
 				left: 12px;
-				transform: scale( 1 );
+				transform: scale(1);
 			}
 		}
 

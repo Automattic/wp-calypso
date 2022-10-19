@@ -6,7 +6,7 @@
 .env
 .DS_Store
 .idea
-.vscode
+.vscode/settings.json
 .nova
 *.code-workspace
 *.iml
@@ -112,3 +112,6 @@ desktop/.yarn/*
 !.yarn/versions
 .pnp.*
 yarn-json-output.json
+
+# Profile results:
+/profiles/

@@ -17,19 +17,25 @@ const _filters = {
 		return true;
 	},
 	active: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	inactive: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return ! site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	updates: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.update && ! site.update.recentlyUpdated;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.update && ! site.update.recentlyUpdated;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
@@ -52,6 +58,14 @@ export function isRequestingForSites( state, sites ) {
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
 }
 
+export function isRequestingForAllSites( state ) {
+	return state.plugins.installed.isRequestingAll;
+}
+
+export function requestPluginsError( state ) {
+	return state.plugins.installed.requestError;
+}
+
 export function getPlugins( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
@@ -60,9 +74,15 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 				return memo;
 			}
 
+			// We currently support fetching plugins per site and also fetching all plugins
+			// in bulk, aiming to optimize the UX in some flows.
+			if ( isRequestingForAllSites( state ) ) {
+				return memo;
+			}
+
 			const list = state.plugins.installed.plugins[ siteId ] || [];
 			list.forEach( ( item ) => {
-				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+				const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
 
 				memo[ item.slug ] = {
 					...memo[ item.slug ],

@@ -318,8 +318,10 @@ class FormFields extends PureComponent {
 					<FormFieldset>
 						<FormLabel>Form Media Phone Input</FormLabel>
 						<PhoneInput
-							countryCode={ this.state.phoneInput.countryCode }
-							value={ this.state.phoneInput.value }
+							value={ {
+								phoneNumber: this.state.phoneInput.value,
+								countryCode: this.state.phoneInput.countryCode,
+							} }
 							countriesList={ this.props.countriesList }
 							onChange={ this.handlePhoneInputChange }
 						/>

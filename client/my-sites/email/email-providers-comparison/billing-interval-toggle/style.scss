@@ -1,12 +1,46 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .billing-interval-toggle {
 	align-content: space-between;
 
-	> .segmented-control.is-compact {
-		margin: 25px auto;
+	.segmented-control.is-compact {
+		margin: 25px auto 75px;
 		max-width: 480px;
 
+		@include break-wide {
+			margin-bottom: 25px;
+		}
+
 		.segmented-control__link {
-			padding: 8px 12px;
+			padding: 0;
+
+			.segmented-control__text span {
+				display: block;
+				padding: 8px 12px;
+			}
+		}
+	}
+}
+
+.emails-save-paying-annually__popover {
+	z-index: z-index("root", ".masterbar") - 1;
+
+	.popover__inner {
+		padding: 10px;
+	}
+
+	&.is-right {
+		display: none;
+
+		@include break-wide {
+			display: block;
+		}
+	}
+
+	&.is-bottom {
+		@include break-wide {
+			display: none;
 		}
 	}
 }

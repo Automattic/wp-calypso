@@ -2,7 +2,7 @@ import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query'
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { APIError, APILicense } from 'calypso/state/partner-portal/types';
 
-interface MutationIssueLicenseVariables {
+export interface MutationIssueLicenseVariables {
 	product: string;
 }
 

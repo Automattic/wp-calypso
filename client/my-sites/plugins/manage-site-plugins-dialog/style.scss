@@ -1,0 +1,65 @@
+
+.manage-site-plugins-dialog__container {
+	width: 900px;
+
+	@media screen and ( max-width: 1040px ) {
+		width: auto;
+
+		.plugin-site-jetpack__domain {
+			padding: 0;
+		}
+	}
+
+	.plugin-site-list__content {
+		border-bottom: 1px solid var(--studio-gray-0);
+
+		@media screen and ( max-width: 1040px ) {
+			border-bottom: 0;
+		}
+	}
+
+	.plugin-site-list__header {
+		border: 0;
+		color: var(--studio-gray-60);
+		padding: 10px 0;
+	}
+
+	.plugin-site-jetpack__container {
+		height: 40px;
+		border: 0;
+		border-top: 1px solid var(--studio-gray-0);
+		color: var(--studio-gray-100);
+		padding: 5px 0;
+
+		@media screen and ( max-width: 1040px ) {
+			border-top: 0;
+
+			& + .plugin-site-jetpack__container {
+				margin-top: 40px;
+			}
+		}
+	}
+
+	.plugin-action .components-toggle-control .components-base-control__field {
+		margin-bottom: 0;
+	}
+
+	.manage-site-plugins-dialog__finish-button {
+		float: right;
+
+		@media screen and ( max-width: 1040px ) {
+			margin-top: 16px;
+		}
+	}
+
+	.plugin-details-v2__title {
+		color: var(--studio-gray-100);
+		font-size: $font-title-small;
+		padding: 16px 0;
+	}
+}
+
+.popover,
+.global-notices {
+	z-index: z-index("root", ".popover.ellipsis-menu__menu") !important;
+}

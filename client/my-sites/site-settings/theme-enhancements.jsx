@@ -32,9 +32,9 @@ function ThemeEnhancements( {
 
 	function RadioOptions() {
 		const options = [
-			{ value: 'default', label: 'Load more posts using the default theme behavior' },
-			{ value: 'button', label: 'Load more posts in page with a button' },
-			{ value: 'scroll', label: 'Load more posts as the reader scrolls down' },
+			{ value: 'default', label: translate( 'Load more posts using the default theme behavior' ) },
+			{ value: 'button', label: translate( 'Load more posts in page with a button' ) },
+			{ value: 'scroll', label: translate( 'Load more posts as the reader scrolls down' ) },
 		];
 		return (
 			<>

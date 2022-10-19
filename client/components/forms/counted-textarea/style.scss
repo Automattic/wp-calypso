@@ -1,14 +1,14 @@
 .counted-textarea {
-	border: 1px solid var( --color-neutral-10 );
+	border: 1px solid var(--color-neutral-10);
 	border-radius: 2px;
-	background-color: var( --color-neutral-0 );
+	background-color: var(--color-neutral-0);
 
 	&.is-exceeding-acceptable-length {
-		background: var( --color-error );
+		background: var(--color-error);
 
 		.counted-textarea__count-panel,
 		.gridicons-info-outline {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -23,5 +23,5 @@
 .counted-textarea__count-panel {
 	padding: 8px;
 	font-size: $font-body-extra-small;
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 }

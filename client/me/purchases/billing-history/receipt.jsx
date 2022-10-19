@@ -244,15 +244,15 @@ function VatDetails( { transaction } ) {
 			<li>
 				<strong>{ translate( 'Vendor VAT Details' ) }</strong>
 				<span>
-					{ 'Aut O’Mattic Ltd.' }
+					Aut O’Mattic Ltd.
 					<br />
-					{ 'c/o Noone Casey' }
+					c/o Noone Casey
 					<br />
-					{ 'Grand Canal Dock, 25 Herbert Pl' }
+					Grand Canal Dock, 25 Herbert Pl
 					<br />
-					{ 'Dublin, D02 AY86' }
+					Dublin, D02 AY86
 					<br />
-					{ 'Ireland' }
+					Ireland
 					<br />
 				</span>
 				<span className="receipt__vat-vendor-details-number">

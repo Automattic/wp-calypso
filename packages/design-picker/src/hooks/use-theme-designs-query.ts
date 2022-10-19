@@ -1,6 +1,6 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import { Design } from '../types';
+import type { Design } from '../types';
 
 // Ideally this data should come from the themes API, maybe by a tag that's applied to
 // themes? e.g. `link-in-bio` or `no-fold`

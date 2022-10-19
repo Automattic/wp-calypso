@@ -159,7 +159,7 @@ describe( 'Installed plugin selectors', () => {
 			const siteTwoId = 'site.two';
 			const plugins = selectors.getPlugins( state, [ siteOneId, siteTwoId ] );
 			const siteWithPlugin = {
-				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ),
+				[ siteTwoId ]: pick( jetpack, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
 			expect( plugins ).toEqual(
 				expect.arrayContaining( [ { ...jetpack, sites: siteWithPlugin } ] )
@@ -207,7 +207,7 @@ describe( 'Installed plugin selectors', () => {
 			const siteOneId = 'site.one';
 			const plugin = selectors.getPluginOnSite( state, siteOneId, 'akismet' );
 			const siteWithPlugin = {
-				[ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ),
+				[ siteOneId ]: pick( akismet, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
 			expect( plugin ).toEqual( { ...akismet, sites: siteWithPlugin } );
 		} );
@@ -227,8 +227,8 @@ describe( 'Installed plugin selectors', () => {
 			const siteIds = [ 'site.one', 'site.two' ];
 			const plugin = selectors.getPluginOnSites( state, siteIds, 'hello-dolly' );
 			const sitesWithPlugins = {
-				[ 'site.one' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
-				[ 'site.two' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
+				[ 'site.one' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update', 'version' ] ),
+				[ 'site.two' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update', 'version' ] ),
 			};
 			expect( plugin ).toEqual( { ...helloDolly, sites: sitesWithPlugins } );
 		} );

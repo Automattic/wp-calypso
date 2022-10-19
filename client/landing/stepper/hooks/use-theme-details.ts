@@ -13,8 +13,8 @@ type Theme = {
 
 export function useThemeDetails( slug: string ): UseQueryResult< Theme > {
 	return useQuery< Theme >(
-		'theme-details',
-		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.1' } ),
+		`theme-details-${ slug }`,
+		() => wpcom.req.get( `/themes/${ slug }`, { apiVersion: '1.2' } ),
 		{
 			staleTime: Infinity,
 			refetchOnWindowFocus: false,

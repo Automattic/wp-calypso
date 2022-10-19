@@ -57,19 +57,21 @@ export class TransferDomain extends Component {
 		page( '/domains/add/' + selectedSiteSlug );
 	};
 
-	addDomainToCart = ( suggestion ) => {
+	addDomainToCart = async ( suggestion ) => {
 		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
-		shoppingCartManager
-			.addProductsToCart( [
+		try {
+			await shoppingCartManager.addProductsToCart( [
 				domainRegistration( {
 					productSlug: suggestion.product_slug,
 					domain: suggestion.domain_name,
 				} ),
-			] )
-			.then( () => {
-				page( '/checkout/' + selectedSiteSlug );
-			} );
+			] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	handleRegisterDomain = ( suggestion ) => {
@@ -85,7 +87,7 @@ export class TransferDomain extends Component {
 		this.addDomainToCart( suggestion );
 	};
 
-	handleTransferDomain = ( domain, authCode, supportsPrivacy ) => {
+	handleTransferDomain = async ( domain, authCode, supportsPrivacy ) => {
 		const { selectedSiteSlug, shoppingCartManager } = this.props;
 
 		this.setState( { errorMessage: null } );
@@ -102,9 +104,13 @@ export class TransferDomain extends Component {
 			transfer = updatePrivacyForDomain( transfer, true );
 		}
 
-		shoppingCartManager.addProductsToCart( [ transfer ] ).then( () => {
-			page( '/checkout/' + selectedSiteSlug );
-		} );
+		try {
+			await shoppingCartManager.addProductsToCart( [ transfer ] );
+		} catch {
+			// Nothing needs to be done here. CartMessages will display the error to the user.
+			return;
+		}
+		page( '/checkout/' + selectedSiteSlug );
 	};
 
 	componentDidMount() {

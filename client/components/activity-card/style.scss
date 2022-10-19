@@ -3,7 +3,7 @@
 
 	.card {
 		padding: 16px;
-		border-radius: var( --jetpack-corners-sharp );
+		border-radius: var(--jetpack-corners-sharp);
 	}
 
 	.activity-card__actor {
@@ -20,7 +20,7 @@
 			&:first-child {
 				margin-left: 0;
 			}
-			> *:not( :last-child ) {
+			> *:not(:last-child) {
 				margin-right: 8px;
 			}
 		}
@@ -30,7 +30,7 @@
 	.activity-card__actor-role,
 	.activity-card__activity-title {
 		font-size: 0.75rem;
-		color: rgb( 100, 105, 112 );
+		color: rgb(100, 105, 112);
 	}
 
 	.activity-card__activity-title {
@@ -40,29 +40,29 @@
 
 	&.with-error {
 		.activity-card__time-icon {
-			fill: var( --color-error );
+			fill: var(--color-error);
 		}
 
 		.activity-card__time-text {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 
 		.card {
-			border: solid 1px var( --color-error );
+			border: solid 1px var(--color-error);
 		}
 	}
 
 	&.with-warning {
 		.activity-card__time-icon {
-			fill: var( --color-warning );
+			fill: var(--color-warning);
 		}
 
 		.activity-card__time-text {
-			color: var( --color-warning );
+			color: var(--color-warning);
 		}
 
 		.card {
-			border: solid 1px var( --color-warning );
+			border: solid 1px var(--color-warning);
 		}
 	}
 }
@@ -82,13 +82,13 @@
 }
 
 .activity-card__time-icon {
-	fill: var( --color-neutral-40 );
+	fill: var(--color-neutral-40);
 	height: 17px;
 	width: 17px;
 }
 
 .activity-card__time-text {
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-extra-small;
 	line-height: 17px;
 	margin-left: 4px;
@@ -100,7 +100,7 @@
 
 .activity-card__share-button.button.is-borderless.is-primary {
 	margin: 0;
-	color: var( --color-neutral-40 );
+	color: var(--color-neutral-40);
 	font-size: $font-body-extra-small;
 	line-height: $font-body;
 }
@@ -130,7 +130,7 @@
 	display: flex;
 }
 
-input[type='text'].form-text-input.activity-card__share-email {
+input[type="text"].form-text-input.activity-card__share-email {
 	margin-right: 0.5rem;
 }
 
@@ -143,7 +143,7 @@ input[type='text'].form-text-input.activity-card__share-email {
 }
 
 .activity-card__share-error {
-	color: var( --color-error );
+	color: var(--color-error);
 	text-align: left;
 	margin-top: 0.25rem;
 }
@@ -153,7 +153,7 @@ input[type='text'].form-text-input.activity-card__share-email {
 	font-size: $font-body;
 	word-wrap: break-word;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		font-size: $font-title-small;
 	}
 }

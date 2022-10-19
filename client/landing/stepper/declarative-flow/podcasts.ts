@@ -1,6 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSiteSlug } from '../hooks/use-site-slug';
 import type { StepPath } from './internals/steps-repository';
 import type { Flow, ProvidedDependencies } from './internals/types';
 
@@ -11,14 +11,12 @@ export const podcasts: Flow = {
 			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
 		}, [] );
 
-		return [
-			'letsGetStarted',
-			'chooseADomain',
-			...( isEnabled( 'signup/launchpad' ) ? [ 'launchpad' ] : [] ),
-		] as StepPath[];
+		return [ 'letsGetStarted', 'chooseADomain' ] as StepPath[];
 	},
 
-	useStepNavigation( currentStep, navigate ) {
+	useStepNavigation( _currentStep, navigate ) {
+		const siteSlug = useSiteSlug();
+
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			return providedDependencies;
 		}
@@ -28,8 +26,13 @@ export const podcasts: Flow = {
 		};
 
 		const goNext = () => {
-			navigate( 'chooseADomain' );
-			return;
+			switch ( _currentStep ) {
+				case 'letsGetStarted':
+					return navigate( 'chooseADomain' );
+
+				case 'launchpad':
+					return window.location.replace( `/view/${ siteSlug }` );
+			}
 		};
 
 		const goToStep = ( step: StepPath | `${ StepPath }?${ string }` ) => {

@@ -1,25 +1,25 @@
 :root {
-  --brightest: #fff;
+	--brightest: #fff;
 }
 
 body {
-  background: var(--brightest);
-  direction: lrt;
+	background: var(--brightest);
+	direction: lrt;
 }
 
 .foo {
-  padding-left: 10px;
+	padding-left: 10px;
 }
 
 .bar {
-  position: absolute;
-  right: 100px;
+	position: absolute;
+	right: 100px;
 }
 
 .prev {
-  width: 10px;
+	width: 10px;
 }
 
 .foo .bar {
-  height: 10px;
+	height: 10px;
 }

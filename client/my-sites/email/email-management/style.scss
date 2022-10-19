@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-management {
 	.empty-content__illustration {
@@ -15,19 +15,21 @@
 
 .email-list-active {
 	> .card {
-		color: var( --color-text );
+		color: var(--color-text);
 		display: flex;
 	}
 
 	> .card.is-card-link:hover {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
 .email-list-active__item-icon {
 	align-self: center;
 
-	> img, svg {
+	> img,
+	svg {
+		display: block;
 		height: 36px;
 		margin-right: 16px;
 		min-height: 36px;
@@ -40,7 +42,7 @@
 	}
 
 	> .gridicon.gridicons-my-sites {
-		fill: var( --color-wordpress-com );
+		fill: var(--color-wordpress-com);
 	}
 }
 
@@ -51,7 +53,7 @@
 
 	span {
 		font-size: $font-body-small;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 	}
 }
 
@@ -99,39 +101,61 @@
 
 	&.error {
 		> span {
-			color: var( --color-error );
+			color: var(--color-error);
 		}
 
 		> svg {
-			fill: var( --color-error );
+			fill: var(--color-error);
 		}
 	}
 
 	&.warning {
 		> span {
-			color: var( --color-warning );
+			color: var(--color-warning);
 		}
 
 		> svg {
-			fill: var( --color-warning );
+			fill: var(--color-warning);
 		}
 	}
 }
 
 .email-list-inactive {
 	margin-top: 15px;
+}
 
-	> .card {
-		align-items: center;
-		display: flex;
-		margin-bottom: 0;
-		padding-bottom: 20px;
-		padding-top: 20px;
+.email-list-inactive__mailbox {
+	align-items: center;
+	display: flex;
 
-		> span {
-			flex: 1 1 auto;
-			line-height: 40px;
+	> span {
+		flex: 1;
+	}
+
+	.button {
+		flex-shrink: 0;
+	}
+}
+
+.mailpoet-upsell {
+	margin-top: -16px;
+	margin-bottom: 37px;
+
+	.banner__icons .banner__icon {
+		display: none;
+	}
+
+	.banner__icons .banner__icon-no-circle {
+		padding-right: 3px;
+
+		img {
+			height: 28px;
+			width: 28px;
 		}
+	}
+
+	.banner__content {
+		flex: 1;
 	}
 }
 
@@ -145,12 +169,6 @@
 			fill: $color;
 		}
 	}
-}
-
-.email-plan__actions .vertical-nav-item.card,
-.email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
-	padding-bottom: 28px;
-	padding-top: 28px;
 }
 
 .email-plan-header__status {
@@ -186,14 +204,15 @@
 }
 
 .email-plan-header__icon {
-	> img, svg {
+	> img,
+	svg {
 		height: 36px;
 		width: 36px;
 		margin-right: 20px;
 	}
 
 	> .gridicon.gridicons-my-sites {
-		fill: var( --color-wordpress-com );
+		fill: var(--color-wordpress-com);
 	}
 }
 
@@ -237,11 +256,11 @@
 	&:hover,
 	&:focus {
 		> img {
-			filter: grayscale( 100% ) brightness( 0.2 ) invert( 1 );
+			filter: grayscale(100%) brightness(0.2) invert(1);
 		}
 
 		> svg {
-			fill: white;
+			fill: var(--studio-white);
 		}
 	}
 
@@ -253,6 +272,8 @@
 .email-plan-mailboxes-list__mailbox-list-item.card.is-compact {
 	flex-direction: column;
 	display: flex;
+	padding-bottom: 28px;
+	padding-top: 28px;
 
 	@include break-xlarge {
 		flex-direction: row;
@@ -272,7 +293,7 @@
 	}
 
 	&.is-error {
-		border-left-color: var( --color-error-50 );
+		border-left-color: var(--color-error-50);
 	}
 
 	.email-plan-mailboxes-list__mailbox-list-item-main {
@@ -289,7 +310,7 @@
 			padding-right: 0;
 		}
 
-		> div:not( :first-child ) {
+		> div:not(:first-child) {
 			margin-top: 0.5em;
 		}
 	}
@@ -301,13 +322,13 @@
 	}
 
 	&.no-emails > span {
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-style: italic;
 	}
 
 	> svg,
 	.email-plan-mailboxes-list__mailbox-list-item-main svg {
-		fill: var( --studio-gray-40 );
+		fill: var(--studio-gray-40);
 		margin-right: 10px;
 		vertical-align: middle;
 	}
@@ -329,8 +350,8 @@
 	}
 
 	.email-mailbox-warnings__warning {
-		border-top: 1px solid var( --color-neutral-5 );
-		color: var( --color-error );
+		border-top: 1px solid var(--color-neutral-5);
+		color: var(--color-error);
 		font-size: $font-body-small;
 		line-height: 24px;
 		margin-top: 18px;
@@ -413,7 +434,7 @@
 }
 
 .email-plan-subscription__expired {
-	color: var( --color-error-50 );
+	color: var(--color-error-50);
 }
 
 .email-plan-warnings__container {
@@ -421,10 +442,12 @@
 	margin: 5px 0;
 	width: 100%;
 
-	.email-plan-warnings__warning {
+	.email-plan-warnings__warning,
+	.email-plan-warning-notice__warning {
 		padding-top: 24px;
 
-		.email-plan-warnings__cta {
+		.email-plan-warnings__cta,
+		.email-plan-warning-notice__cta {
 			margin-top: 16px;
 
 			.button {

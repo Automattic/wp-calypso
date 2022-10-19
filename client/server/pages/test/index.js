@@ -56,6 +56,7 @@ jest.mock( 'calypso/login', () => {
 jest.mock( 'calypso/server/isomorphic-routing', () => ( {
 	serverRouter: jest.fn(),
 	getNormalizedPath: jest.fn(),
+	getCacheKey: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/server/render', () => ( {
@@ -106,16 +107,6 @@ jest.mock( 'calypso/lib/i18n-utils', () => ( {
 
 jest.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/landing/gutenboarding/section', () => ( {
-	GUTENBOARDING_SECTION_DEFINITION: {
-		name: 'gutenboarding',
-		paths: [ '/new' ],
-		module: 'gutenboarding',
-		group: 'gutenboarding',
-		enableLoggedOut: true,
-	},
 } ) );
 
 /**
@@ -274,8 +265,11 @@ const buildApp = ( environment ) => {
 			tearDown.push( () => {
 				// If there was an old value, restore it. Otherwise delete
 				// the mocked value. This is required for process.env
-				if ( valueExists ) object[ name ] = oldValue;
-				else delete object[ name ];
+				if ( valueExists ) {
+					object[ name ] = oldValue;
+				} else {
+					delete object[ name ];
+				}
 			} );
 		},
 		withRenderJSX( value ) {
@@ -1047,7 +1041,7 @@ describe( 'main app', () => {
 				'jetpack-cloud/connect': false,
 			} );
 			const { response } = await app.run( { request: { url: '/plans' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing' );
+			expect( response.redirect ).toHaveBeenCalledWith( 'https://wordpress.com/pricing/' );
 		} );
 	} );
 
@@ -1144,11 +1138,19 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( `Route /home`, () => {
+		assertSection( {
+			url: '/home',
+			sectionName: 'home',
+			sectionGroup: 'sites',
+		} );
+	} );
+
 	describe( `Route /sites`, () => {
 		assertSection( {
 			url: '/sites',
-			sectionName: 'sites',
-			sectionGroup: 'sites',
+			sectionName: 'sites-dashboard',
+			sectionGroup: 'sites-dashboard',
 		} );
 	} );
 
@@ -1252,12 +1254,15 @@ describe( 'main app', () => {
 		} );
 	} );
 
-	describe( `Route /new`, () => {
-		assertSection( {
-			url: '/new',
-			sectionName: 'gutenboarding',
-			sectionGroup: 'gutenboarding',
-			entry: 'entry-gutenboarding',
+	describe( `Route deprecated /new`, () => {
+		it( 'redirects to start flow', async () => {
+			const { response } = await app.run( { request: { url: '/new' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start' );
+		} );
+
+		it( 'redirects to start flow with locale', async () => {
+			const { response } = await app.run( { request: { url: '/new/fr' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 301, '/start/fr' );
 		} );
 	} );
 

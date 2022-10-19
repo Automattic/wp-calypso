@@ -26,11 +26,20 @@ import {
 	OUTDATED_JETPACK,
 	SITE_BLOCKED,
 	WORDPRESS_DOT_COM,
+	NOT_CONNECTED_USER,
 } from './connection-notice-types';
 import { IS_DOT_COM_GET_SEARCH, MINIMUM_JETPACK_VERSION } from './constants';
 import HelpButton from './help-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import { clearPlan, retrieveMobileRedirect, retrievePlan, storePlan } from './persistence-utils';
+import {
+	clearPlan,
+	retrieveMobileRedirect,
+	retrievePlan,
+	storePlan,
+	storeSource,
+	retrieveSource,
+	clearSource,
+} from './persistence-utils';
 import { redirect } from './utils';
 
 const debug = debugModule( 'calypso:jetpack-connect:main' );
@@ -49,6 +58,9 @@ const jetpackConnection = ( WrappedComponent ) => {
 			// If a plan was passed as a query parameter, store it in local storage
 			if ( queryArgs && queryArgs.plan ) {
 				storePlan( queryArgs.plan );
+			}
+			if ( queryArgs && queryArgs.source ) {
+				storeSource( queryArgs.source );
 			}
 		}
 
@@ -69,14 +81,15 @@ const jetpackConnection = ( WrappedComponent ) => {
 		goBack = () => page.back();
 
 		processJpSite = ( url ) => {
-			const { forceRemoteInstall, isMobileAppFlow, queryArgs, skipRemoteInstall } = this.props;
+			const { forceRemoteInstall, isMobileAppFlow, queryArgs, skipRemoteInstall, fromSource } =
+				this.props;
 
 			const status = this.getStatus( url );
 
 			this.setState( { url, status } );
 
 			if (
-				status === NOT_CONNECTED_JETPACK &&
+				( status === NOT_CONNECTED_JETPACK || status === NOT_CONNECTED_USER ) &&
 				this.isCurrentUrlFetched() &&
 				! forceRemoteInstall &&
 				! this.state.redirecting
@@ -95,6 +108,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 					}
 					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
 					this.redirect( 'checkout', url, currentPlan, queryArgs );
+				} else if ( fromSource === 'import' ) {
+					clearSource();
+					debug( `Closing the window because the user has connected` );
+					window.close();
 				} else {
 					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );
@@ -256,6 +273,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return NOT_CONNECTED_JETPACK;
 			}
 
+			if ( this.props.fromSource === 'import' && ! this.checkProperty( 'userOwnsSite' ) ) {
+				return NOT_CONNECTED_USER;
+			}
+
 			return ALREADY_CONNECTED;
 		};
 
@@ -286,6 +307,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 			const jetpackConnectSite = getConnectingSite( state );
 			const siteData = jetpackConnectSite.data || {};
 			const skipRemoteInstall = siteData.skipRemoteInstall;
+			const fromSource = retrieveSource();
 
 			return {
 				// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
@@ -296,6 +318,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				mobileAppRedirect,
 				skipRemoteInstall,
 				siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
+				fromSource,
 			};
 		},
 		{

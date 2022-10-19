@@ -2,20 +2,16 @@
 
 import { isGoogleWorkspace, isTitanMail } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { hasDiscount } from 'calypso/components/gsuite/gsuite-price';
 import InfoPopover from 'calypso/components/info-popover';
-import {
-	getGoogleMailServiceFamily,
-	isDomainEligibleForGoogleWorkspaceFreeTrial,
-} from 'calypso/lib/gsuite';
-import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
-import { isDomainEligibleForTitanFreeTrial, isTitanMonthlyProduct } from 'calypso/lib/titan';
+import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
+import { isTitanMonthlyProduct } from 'calypso/lib/titan';
+import useGetDomainIntroductoryOfferEligibilities from 'calypso/my-sites/email/email-providers-comparison/price/use-get-domain-introductory-offer-eligibilities';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -33,23 +29,20 @@ const getFirstRenewalPrice = ( product: ProductListItem, currencyCode: string ):
 	return null;
 };
 
-const DiscountPriceInformation = ( { product }: { product: ProductListItem } ): ReactElement => {
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+const DiscountPriceInformation = ( {
+	isEligibleForIntroductoryOffer,
+	product,
+}: {
+	isEligibleForIntroductoryOffer: boolean;
+	product: ProductListItem;
+} ) => {
+	const translate = useTranslate();
 
 	return (
 		<div className="price-information__discount">
-			{ translate( 'Pay only %(discountedPrice)s today - renews at %(standardPrice)s', {
-				args: {
-					discount: product.sale_coupon?.discount,
-					discountedPrice: formatPrice( product.sale_cost ?? 0, currencyCode ?? '' ),
-					standardPrice: formatPrice( product.cost ?? 0, currencyCode ?? '' ),
-				},
-				comment:
-					"%(discount)d is a numeric percentage discount (e.g. '50'), " +
-					"%(discountedPrice)s and %(standardPrice)s are formatted prices with the currency (e.g. '$5')",
-			} ) }
+			{ translate( 'Enjoy first year subscription at the discounted price' ) }
 
-			{ isGoogleWorkspace( product ) && (
+			{ isGoogleWorkspace( product ) && ! isEligibleForIntroductoryOffer && (
 				<InfoPopover position="right" showOnHover>
 					{ translate(
 						'This discount is only available the first time you purchase a %(googleMailService)s account, any additional mailboxes purchased after that will be at the regular price.',
@@ -66,12 +59,15 @@ const DiscountPriceInformation = ( { product }: { product: ProductListItem } ): 
 	);
 };
 
-const FreeTrialPriceInformation = ( {
+export const FreeTrialPriceInformation = ( {
+	className = 'price-information__free-trial',
 	product,
 }: {
+	className?: string;
 	product: ProductListItem;
-} ): ReactElement | null => {
+} ) => {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const translate = useTranslate();
 
 	const translateArguments = {
 		args: {
@@ -84,7 +80,7 @@ const FreeTrialPriceInformation = ( {
 
 	if ( isGoogleWorkspace( product ) || ! isTitanMonthlyProduct( product ) ) {
 		return (
-			<div className="price-information__free-trial">
+			<div className={ className }>
 				{ translate(
 					'Try free today - first renewal at %(firstRenewalPrice)s after trial, regular price %(standardPrice)s per year',
 					translateArguments
@@ -95,7 +91,7 @@ const FreeTrialPriceInformation = ( {
 
 	if ( isTitanMonthlyProduct( product ) ) {
 		return (
-			<div className="price-information__free-trial">
+			<div className={ className }>
 				{ translate(
 					'Try free today - renews at %(standardPrice)s after trial',
 					translateArguments
@@ -109,24 +105,39 @@ const FreeTrialPriceInformation = ( {
 
 const PriceInformation = ( {
 	domain,
+	isDomainInCart = false,
 	product,
 }: {
 	domain?: ResponseDomain;
+	isDomainInCart?: boolean;
 	product: ProductListItem | null;
-} ): ReactElement | null => {
+} ) => {
+	const { isEligibleForIntroductoryOffer, isEligibleForIntroductoryOfferFreeTrial } =
+		useGetDomainIntroductoryOfferEligibilities( {
+			domain,
+			isDomainInCart,
+			product,
+		} );
+
 	if ( ! product ) {
 		return null;
 	}
 
-	if ( isGoogleWorkspace( product ) && hasDiscount( product ) ) {
-		return <DiscountPriceInformation product={ product } />;
+	if ( ! isGoogleWorkspace( product ) && ! isTitanMail( product ) ) {
+		return null;
 	}
 
-	if (
-		( isGoogleWorkspace( product ) && isDomainEligibleForGoogleWorkspaceFreeTrial( domain ) ) ||
-		( isTitanMail( product ) && isDomainEligibleForTitanFreeTrial( domain ) )
-	) {
+	if ( isEligibleForIntroductoryOfferFreeTrial ) {
 		return <FreeTrialPriceInformation product={ product } />;
+	}
+
+	if ( hasDiscount( product ) || isEligibleForIntroductoryOffer ) {
+		return (
+			<DiscountPriceInformation
+				product={ product }
+				isEligibleForIntroductoryOffer={ isEligibleForIntroductoryOffer }
+			/>
+		);
 	}
 
 	return null;

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { get, includes, reduce } from 'lodash';
 
 export const APP_BANNER_DISMISS_TIMES_PREFERENCE = 'appBannerDismissTimes';
@@ -5,7 +6,8 @@ export const GUTENBERG = 'gutenberg-editor';
 export const NOTES = 'notifications';
 export const READER = 'reader';
 export const STATS = 'stats';
-export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS ];
+export const HOME = 'home';
+export const ALLOWED_SECTIONS = [ GUTENBERG, NOTES, READER, STATS, HOME ];
 export const ONE_WEEK_IN_MILLISECONDS = 604800000;
 export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 
@@ -13,7 +15,15 @@ export const ONE_MONTH_IN_MILLISECONDS = 2419200000; // 28 days
 export const TWO_WEEKS_IN_MILLISECONDS = 1209600000;
 export const ONE_DAY_IN_MILLISECONDS = 86400000;
 
-export function getAppBannerData( translate, sectionName ) {
+const emptyBanner = {
+	title: '',
+	copy: '',
+	icon: '',
+};
+
+export function getAppBannerData( translate, sectionName, isRTL ) {
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+
 	switch ( sectionName ) {
 		case GUTENBERG:
 			return {
@@ -21,6 +31,7 @@ export function getAppBannerData( translate, sectionName ) {
 				copy: translate(
 					'A streamlined editor with faster, simpler image uploading? Check and mate.'
 				),
+				icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case NOTES:
 			return {
@@ -28,22 +39,34 @@ export function getAppBannerData( translate, sectionName ) {
 				copy: translate(
 					'Is your new post a hit? With push notifications, see reactions as they roll in.'
 				),
+				icon: `/calypso/animations/app-promo/jp-notifications${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case READER:
 			return {
 				title: translate( 'Read posts, even offline.' ),
 				copy: translate( 'Catch up with new posts on the go or save them to read offline.' ),
+				icon: `/calypso/animations/app-promo/jp-reader${ isRTL ? '-rtl' : '' }.json`,
 			};
 		case STATS:
 			return {
 				title: translate( 'Stats at your fingertips.' ),
 				copy: translate( 'See your real-time stats anytime, anywhere.' ),
+				icon: `/calypso/animations/app-promo/jp-stats${ isRTL ? '-rtl' : '' }.json`,
 			};
+		case HOME:
+			if ( displayJetpackAppBranding ) {
+				return {
+					title: translate( 'The Jetpack app makes WordPress better.' ),
+					copy: translate(
+						'Everything you need to write, publish, and manage a world-class site.'
+					),
+					icon: `/calypso/animations/app-promo/wp-to-jp${ isRTL ? '-rtl' : '' }.json`,
+				};
+			}
+
+			return emptyBanner;
 		default:
-			return {
-				title: '',
-				copy: '',
-			};
+			return emptyBanner;
 	}
 }
 

@@ -10,8 +10,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 import wpcom from 'calypso/lib/wp';
 import { jetpack } from 'calypso/signup/icons';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { SitesItem } from 'calypso/state/selectors/get-sites-items';
 import { requestSite } from 'calypso/state/sites/actions';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -72,12 +72,14 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Methods
 	 */
 	function checkOriginSiteJetpackConnection() {
-		if ( ! fromSite ) return;
+		if ( ! fromSite ) {
+			return;
+		}
 
 		wpcom
 			.site( fromSite )
 			.get( { apiVersion: '1.2' } )
-			.then( ( site: SitesItem ) =>
+			.then( ( site: SiteDetails ) =>
 				setHasOriginSiteJetpackConnected( !! ( site && site.capabilities ) )
 			)
 			.catch( () => setHasOriginSiteJetpackConnected( false ) )
@@ -86,17 +88,17 @@ export const ContentChooser: React.FunctionComponent< Props > = ( props ) => {
 
 	return (
 		<div className={ classnames( 'import-layout', 'content-chooser' ) }>
-			<div className={ 'import-layout__column' }>
+			<div className="import-layout__column">
 				<FormattedHeader
-					align={ 'left' }
+					align="left"
 					headerText={ __( 'What would you like to import?' ) }
 					subHeaderText={ __( 'Choose what you would like to import to your new site.' ) }
 				/>
-				<div className={ 'step-wrapper__header-image' }>
+				<div className="step-wrapper__header-image">
 					<img alt="Import" src={ illustrationImg } aria-hidden="true" />
 				</div>
 			</div>
-			<div className={ 'import-layout__column' }>
+			<div className="import-layout__column">
 				<div>
 					<ActionCard
 						classNames={ classnames( 'list__importer-option', {

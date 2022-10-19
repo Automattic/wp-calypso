@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-nux-modal {
 	.components-modal__header {
@@ -19,7 +19,7 @@
 			left: unset;
 
 			svg path {
-				transform: scale( 1.4 );
+				transform: scale(1.4);
 				transform-origin: center;
 			}
 		}
@@ -46,7 +46,7 @@
 	.wpcom-block-editor-nux-modal__title {
 		margin: 34px 0 0;
 		font-size: $font-headline-small;
-		font-weight: 500; // stylelint-disable-line scales/font-weights
+		font-weight: 500;
 		line-height: 1.2;
 
 		@include break-mobile {
@@ -75,7 +75,7 @@
 			min-width: 130px;
 			height: 40px;
 			justify-content: center;
-			border-radius: 3px; // stylelint-disable-line scales/radii
+			border-radius: 3px; /* stylelint-disable-line scales/radii */
 			font-size: $font-body-small;
 		}
 

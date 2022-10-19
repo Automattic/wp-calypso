@@ -5,21 +5,21 @@
 import nock from 'nock';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import {
-	FIELD_ALTERNATIVE_EMAIL,
 	FIELD_FIRSTNAME,
 	FIELD_LASTNAME,
 	FIELD_MAILBOX,
 	FIELD_NAME,
 	FIELD_PASSWORD,
+	FIELD_PASSWORD_RESET_EMAIL,
 } from 'calypso/my-sites/email/form/mailboxes/constants';
 import { EmailProvider } from 'calypso/my-sites/email/form/mailboxes/types';
 import {
-	AlternateEmailValidator,
 	ExistingMailboxNamesValidator,
 	MailboxNameValidator,
 	MailboxNameAvailabilityValidator,
 	MaximumStringLengthValidator,
 	PasswordValidator,
+	PasswordResetEmailValidator,
 	RequiredValidator,
 } from 'calypso/my-sites/email/form/mailboxes/validators';
 import type {
@@ -89,6 +89,7 @@ const createTestDataForGoogle = ( overrides: GoogleTestDataType = {} ): GoogleTe
 			[ FIELD_LASTNAME ]: 'Last',
 			[ FIELD_MAILBOX ]: 'info',
 			[ FIELD_PASSWORD ]: 'some@password',
+			[ FIELD_PASSWORD_RESET_EMAIL ]: 'recovery@email-test.com',
 		},
 		...overrides,
 	};
@@ -97,10 +98,10 @@ const createTestDataForGoogle = ( overrides: GoogleTestDataType = {} ): GoogleTe
 const createTestDataForTitan = ( overrides: TitanTestDataType = {} ): TitanTestDataType => {
 	return {
 		...{
-			[ FIELD_ALTERNATIVE_EMAIL ]: 'email.000@gmail.com',
 			[ FIELD_NAME ]: 'Name',
 			[ FIELD_MAILBOX ]: 'info',
 			[ FIELD_PASSWORD ]: '--password',
+			[ FIELD_PASSWORD_RESET_EMAIL ]: 'email.000@gmail.com',
 		},
 		...overrides,
 	};
@@ -113,6 +114,19 @@ const finalTestDataForAllCases = [
 		'Empty value for the password field should fail validation',
 		createTestDataForGoogle( { [ FIELD_PASSWORD ]: null } ),
 		{ [ FIELD_PASSWORD ]: RequiredValidator.getRequiredFieldError() }
+	),
+	provideGoogleTestData(
+		'Empty value for the recovery email field should fail validation',
+		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: null } ),
+		{ [ FIELD_PASSWORD_RESET_EMAIL ]: RequiredValidator.getRequiredFieldError() }
+	),
+	provideGoogleTestData(
+		'Alternative email on the same domain should fail validation',
+		createTestDataForGoogle( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
+		{
+			[ FIELD_PASSWORD_RESET_EMAIL ]:
+				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
+		}
 	),
 	provideTitanTestData(
 		'Empty value for the mailbox field should fail validation',
@@ -177,16 +191,17 @@ const finalTestDataForAllCases = [
 	),
 	provideTitanTestData(
 		'Invalid Alternative email should fail validation',
-		createTestDataForTitan( { [ FIELD_ALTERNATIVE_EMAIL ]: 'email@me-again@example.com' } ),
+		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@me-again@example.com' } ),
 		{
-			[ FIELD_ALTERNATIVE_EMAIL ]: AlternateEmailValidator.getInvalidEmailError(),
+			[ FIELD_PASSWORD_RESET_EMAIL ]: PasswordResetEmailValidator.getInvalidEmailError(),
 		}
 	),
 	provideTitanTestData(
 		'Alternative email on the same domain should fail validation',
-		createTestDataForTitan( { [ FIELD_ALTERNATIVE_EMAIL ]: 'email@example.com' } ),
+		createTestDataForTitan( { [ FIELD_PASSWORD_RESET_EMAIL ]: 'email@example.com' } ),
 		{
-			[ FIELD_ALTERNATIVE_EMAIL ]: AlternateEmailValidator.getSameDomainError( 'example.com' ),
+			[ FIELD_PASSWORD_RESET_EMAIL ]:
+				PasswordResetEmailValidator.getSameDomainError( 'example.com' ),
 		}
 	),
 	provideGoogleTestData(

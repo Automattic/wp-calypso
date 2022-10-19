@@ -30,7 +30,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit();
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ PluginsPage.paidSection, PluginsPage.featuredSection, PluginsPage.freeSection ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );
@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 		it( 'Can browse all free plugins', async function () {
 			await pluginsPage.clickBrowseAllFreePlugins();
-			await pluginsPage.validateHasSubtitle( 'Top free plugins' );
+			await pluginsPage.validateHasHeaderTitle( PluginsPage.freeSection );
 		} );
 
 		it( 'Can return via breadcrumb', async function () {
@@ -48,20 +48,20 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
+			await pluginsPage.validateHasSection( PluginsPage.paidSection );
 		} );
-		it( 'Can browse all paid plugins', async function () {
+		it( 'Can browse all premium plugins', async function () {
 			await pluginsPage.clickBrowseAllPaidPlugins();
-			await pluginsPage.validateHasSubtitle( 'Top paid plugins' );
+			await pluginsPage.validateHasHeaderTitle( PluginsPage.paidSection );
 		} );
 
-		it( 'Can return via breadcrumb from paid plugins', async function () {
+		it( 'Can return via breadcrumb from premium plugins', async function () {
 			if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 				await pluginsPage.clickPluginsBreadcrumb();
 			} else {
 				await pluginsPage.clickBackBreadcrumb();
 			}
-			await pluginsPage.validateHasSection( 'Top paid plugins' );
+			await pluginsPage.validateHasSection( PluginsPage.paidSection );
 		} );
 
 		it.each( [
@@ -69,11 +69,23 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			'Yoast SEO',
 			'MailPoet – emails and newsletters in WordPress',
 			'Jetpack CRM – Clients, Invoices, Leads, & Billing for WordPress',
-			'Contact Form 7',
-			'Site Kit by Google – Analytics, Search Console, AdSense, Speed',
 		] )( 'Featured Plugins section should show the %s plugin', async function ( plugin: string ) {
-			await pluginsPage.validateHasPluginOnSection( 'featured', plugin );
+			await pluginsPage.validateHasPluginOnSection( PluginsPage.featuredSection, plugin );
 		} );
+
+		it( 'Can browse SEO category', async function () {
+			await pluginsPage.validateCategoryButton(
+				'Search Engine Optimization',
+				envVariables.VIEWPORT_NAME !== 'mobile' ? true : false
+			);
+		} );
+
+		it.each( [ 'Yoast SEO' ] )(
+			'SEO category should show the %s plugin',
+			async function ( plugin: string ) {
+				await pluginsPage.validateHasPluginInCategory( 'Search Engine Optimization', plugin );
+			}
+		);
 	} );
 
 	describe( 'Plugins page /plugins/:wpcom-site', function () {
@@ -82,7 +94,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 			await pluginsPage.visit( credentials.testSites?.primary.url as string );
 		} );
 
-		it.each( [ 'Top paid plugins', 'Editor’s pick', 'Top free plugins' ] )(
+		it.each( [ PluginsPage.paidSection, PluginsPage.featuredSection, PluginsPage.freeSection ] )(
 			'Plugins page loads %s section',
 			async function ( section: string ) {
 				await pluginsPage.validateHasSection( section );

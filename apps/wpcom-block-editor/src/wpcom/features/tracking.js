@@ -3,7 +3,7 @@ import { applyFilters } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import debugFactory from 'debug';
-import { find, isEqual } from 'lodash';
+import { find, isEqual, cloneDeep } from 'lodash';
 import delegateEventTracking, {
 	registerSubscriber as registerDelegateEventSubscriber,
 } from './tracking/delegate-event-tracking';
@@ -248,13 +248,14 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
  * inserted pattern replaced blocks.
  *
  * @param {Array} actionData Data supplied to block insertion or replacement tracking functions.
+ * @param {object} additionalData Additional information.
  * @returns {string} Pattern name being inserted if available.
  */
-const maybeTrackPatternInsertion = ( actionData ) => {
+const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 	const meta = find( actionData, ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
 
-	const rootClientId = actionData[ 1 ];
+	const { rootClientId, blocks_replaced } = additionalData;
 	const context = getBlockEventContextProperties( rootClientId );
 
 	// Quick block inserter doesn't use an object to store the patternName
@@ -278,7 +279,7 @@ const maybeTrackPatternInsertion = ( actionData ) => {
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
 			pattern_category: patternCategory,
-			blocks_replaced: actionData?.blocks_replaced,
+			blocks_replaced,
 			...context,
 		} );
 	}
@@ -294,9 +295,8 @@ const maybeTrackPatternInsertion = ( actionData ) => {
  * @returns {void}
  */
 const trackBlockInsertion = ( blocks, ...args ) => {
-	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: false } );
-
 	const [ , rootClientId ] = args;
+	const patternName = maybeTrackPatternInsertion( args, { rootClientId, blocks_replaced: false } );
 	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed();
@@ -341,11 +341,10 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 		return;
 	}
 
-	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
-
 	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
 		Array.isArray( originalBlockIds ) ? originalBlockIds[ 0 ] : originalBlockIds
 	);
+	const patternName = maybeTrackPatternInsertion( args, { rootClientId, blocks_replaced: true } );
 	const context = getBlockEventContextProperties( rootClientId );
 
 	const insert_method = getBlockInserterUsed( originalBlockIds );
@@ -610,8 +609,14 @@ const trackEditEntityRecord = ( kind, type, id, updates ) => {
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
 		const editedEntity = select( 'core' ).getEditedEntityRecord( kind, type, id );
-		const entityContent = { settings: editedEntity.settings, styles: editedEntity.styles };
-		const updatedContent = { settings: updates.settings, styles: updates.styles };
+		const entityContent = {
+			settings: cloneDeep( editedEntity.settings ),
+			styles: cloneDeep( editedEntity.styles ),
+		};
+		const updatedContent = {
+			settings: cloneDeep( updates.settings ),
+			styles: cloneDeep( updates.styles ),
+		};
 
 		// Sometimes a second update is triggered corresponding to no changes since the last update.
 		// Therefore we must check if there is a change to avoid debouncing a valid update to a changeless update.
@@ -654,8 +659,14 @@ const trackSaveEditedEntityRecord = ( kind, type, id ) => {
 	} );
 
 	if ( kind === 'root' && type === 'globalStyles' ) {
-		const entityContent = { settings: savedEntity.settings, styles: savedEntity.styles };
-		const updatedContent = { settings: editedEntity.settings, styles: editedEntity.styles };
+		const entityContent = {
+			settings: cloneDeep( savedEntity.settings ),
+			styles: cloneDeep( savedEntity.styles ),
+		};
+		const updatedContent = {
+			settings: cloneDeep( editedEntity.settings ),
+			styles: cloneDeep( editedEntity.styles ),
+		};
 
 		buildGlobalStylesContentEvents(
 			updatedContent,

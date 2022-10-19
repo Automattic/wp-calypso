@@ -29,10 +29,8 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	getPlan,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
-import PlanPill from 'calypso/components/plans/plan-pill';
-import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
-import PlanPrice from 'calypso/my-sites/plan-price/';
+import { screen } from '@testing-library/react';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { PlanFeaturesHeader } from '../header';
 
 const translate = ( string ) => string;
@@ -55,10 +53,16 @@ function getPropsForPlan( planType ) {
 	};
 }
 
+const render = ( el, options ) =>
+	renderWithProvider( el, {
+		...options,
+	} );
+
 describe( 'PlanFeaturesHeader basic tests', () => {
 	test( 'should not blow up', () => {
-		const comp = shallow( <PlanFeaturesHeader { ...props } /> );
-		expect( comp.find( '.plan-features__header' ).length ).toBe( 1 );
+		const { container } = render( <PlanFeaturesHeader { ...props } /> );
+
+		expect( container ).toMatchSnapshot();
 	} );
 } );
 
@@ -123,11 +127,12 @@ describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
 				popular: false,
 				newPlan: false,
 				bestValue: false,
+				plansWithScroll: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeaderNoTabs() );
 
-			expect( pfh.contains( <PlanPill>Your Plan</PlanPill> ) ).toBe( false );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.queryByText( 'Your plan' ) ).not.toBeInTheDocument();
 		} );
 
 		test( `Should render "Popular" plan pill (${ productSlug })`, () => {
@@ -139,11 +144,12 @@ describe( 'PlanFeaturesHeader.renderPlansHeaderNoTabs()', () => {
 				popular: true,
 				newPlan: false,
 				bestValue: false,
+				plansWithScroll: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeaderNoTabs() );
 
-			expect( pfh.contains( <PlanPill>Popular</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Popular' ) ).toBeVisible();
 		} );
 	} );
 } );
@@ -157,17 +163,16 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				isInSignup: false,
 				currentSitePlan: { productSlug },
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
 
-			expect( pfh.contains( <PlanPill isInSignup={ false }>Your Plan</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Your Plan' ) ).toBeVisible();
 
 			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
-				expect( pfh.contains( <PlanPill isInSignup={ false }>${ planPillLabel }</PlanPill> ) ).toBe(
-					false
-				);
+				expect( screen.queryByText( planPillLabel ) ).not.toBeInTheDocument();
 			} );
 		} );
+
 		test( `Should render "Your Plan" plan pill only, even if plan is Popular (${ productSlug })`, () => {
 			const myProps = {
 				...getPropsForPlan( PLAN_PREMIUM ),
@@ -176,15 +181,13 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				currentSitePlan: { productSlug },
 				popular: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
 
-			expect( pfh.contains( <PlanPill isInSignup={ false }>Your Plan</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Your Plan' ) ).toBeVisible();
 
 			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
-				expect( pfh.contains( <PlanPill isInSignup={ false }>${ planPillLabel }</PlanPill> ) ).toBe(
-					false
-				);
+				expect( screen.queryByText( planPillLabel ) ).not.toBeInTheDocument();
 			} );
 		} );
 
@@ -195,10 +198,9 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				isInSignup: true,
 				currentSitePlan: { productSlug },
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
+			render( <PlanFeaturesHeader { ...myProps } /> );
 
-			expect( pfh.contains( <PlanPill isInSignup={ true }>Your Plan</PlanPill> ) ).toBe( false );
+			expect( screen.queryByText( 'Your Plan' ) ).not.toBeInTheDocument();
 		} );
 
 		test( `Should render "Popular" plan pill in Signup flow (${ productSlug })`, () => {
@@ -208,15 +210,13 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				isInSignup: true,
 				popular: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
 
-			expect( pfh.contains( <PlanPill isInSignup={ true }>Popular</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Popular' ) ).toBeVisible();
 
 			[ 'New', 'Your Plan', 'Best Value' ].forEach( ( planPillLabel ) => {
-				expect( pfh.contains( <PlanPill isInSignup={ true }>${ planPillLabel }</PlanPill> ) ).toBe(
-					false
-				);
+				expect( screen.queryByText( planPillLabel ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -232,15 +232,13 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				newPlan: false,
 				bestValue: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
 
-			expect( pfh.contains( <PlanPill isInSignup={ false }>Your Plan</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Your Plan' ) ).toBeVisible();
 
 			[ 'New', 'Popular', 'Best Value' ].forEach( ( planPillLabel ) => {
-				expect( pfh.contains( <PlanPill isInSignup={ false }>${ planPillLabel }</PlanPill> ) ).toBe(
-					false
-				);
+				expect( screen.queryByText( planPillLabel ) ).not.toBeInTheDocument();
 			} );
 		} );
 
@@ -253,15 +251,13 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 				newPlan: false,
 				bestValue: true,
 			};
-			const comp = new PlanFeaturesHeader( { ...myProps } );
-			const pfh = shallow( comp.renderPlansHeader() );
 
-			expect( pfh.contains( <PlanPill isInSignup={ true }>Best Value</PlanPill> ) ).toBe( true );
+			render( <PlanFeaturesHeader { ...myProps } /> );
+
+			expect( screen.getByText( 'Best Value' ) ).toBeVisible();
 
 			[ 'New', 'Popular', 'Your Plan' ].forEach( ( planPillLabel ) => {
-				expect( pfh.contains( <PlanPill isInSignup={ true }>${ planPillLabel }</PlanPill> ) ).toBe(
-					false
-				);
+				expect( screen.queryByText( planPillLabel ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -274,10 +270,10 @@ describe( 'PlanFeaturesHeader.renderPlansHeader()', () => {
 					isInSignup: false,
 					planType: productSlug,
 				};
-				const comp = new PlanFeaturesHeader( { ...myProps } );
-				const pfh = shallow( comp.renderPlansHeader() );
 
-				expect( pfh.contains( <PlanPill isInSignup={ false }>Your Plan</PlanPill> ) ).toBe( false );
+				render( <PlanFeaturesHeader { ...myProps } /> );
+
+				expect( screen.queryByText( 'Your Plan' ) ).not.toBeInTheDocument();
 			} );
 		}
 	);
@@ -293,47 +289,63 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 
 	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for free plans (${ productSlug })`, () => {
-			const comp = new PlanFeaturesHeader( {
+			const updatedProps = {
 				...myProps,
 				isJetpack: true,
 				planType: productSlug,
-			} );
-			const tf = shallow( comp.getBillingTimeframe() );
-			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+			};
+
+			render( <PlanFeaturesHeader { ...updatedProps } /> );
+
+			expect(
+				screen.getByRole( 'button', { name: 'More information', expanded: false } )
+			).toBeVisible();
 		} );
 	} );
 
 	[ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS ].forEach( ( productSlug ) => {
 		test( `Should render InfoPopover for non-jetpack sites (${ productSlug })`, () => {
-			const comp = new PlanFeaturesHeader( {
+			const updatedProps = {
 				...myProps,
 				isJetpack: false,
 				planType: productSlug,
-			} );
-			const tf = shallow( comp.getBillingTimeframe() );
-			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+			};
+
+			render( <PlanFeaturesHeader { ...updatedProps } /> );
+
+			expect(
+				screen.getByRole( 'button', { name: 'More information', expanded: false } )
+			).toBeVisible();
 		} );
 
 		test( `Should render InfoPopover for AT sites (${ productSlug })`, () => {
-			const comp = new PlanFeaturesHeader( {
+			const updatedProps = {
 				...myProps,
 				isJetpack: true,
 				isSiteAT: true,
 				planType: productSlug,
-			} );
-			const tf = shallow( comp.getBillingTimeframe() );
-			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+			};
+
+			render( <PlanFeaturesHeader { ...updatedProps } /> );
+
+			expect(
+				screen.getByRole( 'button', { name: 'More information', expanded: false } )
+			).toBeVisible();
 		} );
 
 		test( `Should render InfoPopover when hideMonthly is true (${ productSlug })`, () => {
-			const comp = new PlanFeaturesHeader( {
+			const updatedProps = {
 				...myProps,
 				isJetpack: true,
 				hideMonthly: true,
 				planType: productSlug,
-			} );
-			const tf = shallow( comp.getBillingTimeframe() );
-			expect( tf.find( 'InfoPopover' ).length ).toBe( 1 );
+			};
+
+			render( <PlanFeaturesHeader { ...updatedProps } /> );
+
+			expect(
+				screen.getByRole( 'button', { name: 'More information', expanded: false } )
+			).toBeVisible();
 		} );
 	} );
 
@@ -352,13 +364,17 @@ describe( 'PlanFeaturesHeader.getBillingTimeframe()', () => {
 		PLAN_BUSINESS_2_YEARS,
 	].forEach( ( productSlug ) => {
 		test( `Should not render InfoPopover for paid plans (${ productSlug })`, () => {
-			const comp = new PlanFeaturesHeader( {
+			const updatedProps = {
 				...myProps,
 				isJetpack: true,
 				planType: productSlug,
-			} );
-			const tf = shallow( comp.getBillingTimeframe() );
-			expect( tf.find( 'InfoPopover' ).length ).toBe( 0 );
+			};
+
+			render( <PlanFeaturesHeader { ...updatedProps } /> );
+
+			expect(
+				screen.queryByRole( 'button', { name: 'More information', expanded: false } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
@@ -372,27 +388,42 @@ describe( 'PlanIntervalDiscount', () => {
 		billingTimeFrame: '',
 		title: '',
 		planType: PLAN_JETPACK_FREE,
+		basePlansPath: '/plans',
 	};
 	test( 'should show interval discount for Jetpack during signup', () => {
-		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
-		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 1 );
+		render( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack /> );
+
+		expect( screen.getByText( 'Save', { exact: false } ) ).toBeVisible();
+		expect( screen.getByText( '$2.00', { exact: false } ) ).toBeVisible();
+		expect( screen.getByText( 'over', { exact: false } ) ).toBeVisible();
+		expect( screen.getByText( 'monthly', { exact: false } ) ).toBeVisible();
 	} );
 
 	test( 'should not show interval discount for Jetpack outside signup', () => {
-		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isJetpack /> );
-		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+		render( <PlanFeaturesHeader { ...baseProps } isJetpack /> );
+
+		expect( screen.queryByText( 'Save', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '$2.00', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'over', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'monthly', { exact: false } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should not show interval discount for simple during signup', () => {
-		const wrapper = shallow( <PlanFeaturesHeader { ...baseProps } isInSignup /> );
-		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+		render( <PlanFeaturesHeader { ...baseProps } isInSignup /> );
+
+		expect( screen.queryByText( 'Save', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '$2.00', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'over', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'monthly', { exact: false } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should not show interval discount for atomic during signup', () => {
-		const wrapper = shallow(
-			<PlanFeaturesHeader { ...baseProps } isInSignup isJetpack isSiteAT />
-		);
-		expect( wrapper.find( PlanIntervalDiscount ) ).toHaveLength( 0 );
+		render( <PlanFeaturesHeader { ...baseProps } isInSignup isJetpack isSiteAT /> );
+
+		expect( screen.queryByText( 'Save', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( '$2.00', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'over', { exact: false } ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'monthly', { exact: false } ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -401,42 +432,22 @@ describe( 'PlanFeaturesHeader.renderPriceGroup()', () => {
 		currencyCode: 'USD',
 		isInSignup: false,
 		translate,
-		currentSitePlan: PLAN_FREE,
+		currentSitePlan: { productSlug: PLAN_FREE },
+		planType: PLAN_FREE,
 		billingTimeFrame: 'for life',
+		title: 'Free',
 	};
 	test( 'Should return a single, not discounted price when a single price is passed', () => {
-		const comp = new PlanFeaturesHeader( baseProps );
-		const wrapper = shallow( <span>{ comp.renderPriceGroup( 15 ) }</span> );
-		expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
+		const { container } = render( <PlanFeaturesHeader { ...baseProps } rawPrice={ 15 } /> );
 
-		// We need the dive() here to pick up defaultProps
-		const myProps = wrapper.find( PlanPrice ).first().dive().props();
-		expect( myProps.rawPrice ).toBe( 15 );
-		expect( myProps.discounted ).toBe( false );
-		expect( myProps.original ).toBe( false );
-		expect( myProps.currencyCode ).toBe( 'USD' );
-		expect( myProps.displayPerMonthNotation ).toBe( false );
+		expect( container ).toMatchSnapshot();
 	} );
 	test( 'Should return two prices when two numbers are passed: one original and one discounted', () => {
-		const comp = new PlanFeaturesHeader( baseProps );
-		const wrapper = shallow( <span>{ comp.renderPriceGroup( 15, 13 ) }</span> );
-		expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
+		const { container } = render(
+			<PlanFeaturesHeader { ...baseProps } rawPrice={ 15 } discountPrice={ 12 } />
+		);
 
-		// We need the dive() here to pick up defaultProps
-		const props1 = wrapper.find( PlanPrice ).at( 0 ).dive().props();
-		expect( props1.rawPrice ).toBe( 15 );
-		expect( props1.discounted ).toBe( false );
-		expect( props1.original ).toBe( true );
-		expect( props1.currencyCode ).toBe( 'USD' );
-		expect( props1.displayPerMonthNotation ).toBe( true );
-
-		// We need the dive() here to pick up defaultProps
-		const props2 = wrapper.find( PlanPrice ).at( 1 ).dive().props();
-		expect( props2.rawPrice ).toBe( 13 );
-		expect( props2.discounted ).toBe( true );
-		expect( props2.original ).toBe( false );
-		expect( props2.currencyCode ).toBe( 'USD' );
-		expect( props2.displayPerMonthNotation ).toBe( true );
+		expect( container ).toMatchSnapshot();
 	} );
 } );
 
@@ -446,39 +457,54 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currencyCode: 'USD',
 			isInSignup: false,
 			translate,
-			currentSitePlan: PLAN_FREE,
+			currentSitePlan: { productSlug: PLAN_FREE },
+			billingTimeFrame: 'for life',
+			planType: PLAN_FREE,
+			title: 'Free',
 		};
+
 		test( 'Should return a placeholder when isPlaceholder=true and isInSignup=false', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				isPlaceholder: true,
-				isInSignup: false,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( '.is-placeholder' ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 0 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } isPlaceholder isInSignup={ false } />
+			);
+
+			const price = container.querySelector( '.plan-features__price' );
+			expect( price ).toBeVisible();
+			expect( price ).toHaveClass( 'is-placeholder' );
+			expect( price ).toBeEmptyDOMElement();
 		} );
+
 		test( 'Placeholder should have a class .plan-features__price for non-jetpack sites', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				isPlaceholder: true,
-				isInSignup: false,
-				isJetpack: false,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( '.is-placeholder.plan-features__price' ).length ).toBe( 1 );
-			expect( wrapper.find( '.is-placeholder.plan-features__price-jetpack' ).length ).toBe( 0 );
+			const { container } = render(
+				<PlanFeaturesHeader
+					{ ...baseProps }
+					isPlaceholder
+					isInSignup={ false }
+					isJetpack={ false }
+				/>
+			);
+
+			const price = container.querySelector( '.plan-features__price' );
+			expect( price ).toBeVisible();
+			expect( price ).toHaveClass( 'is-placeholder' );
+			expect( price ).toBeEmptyDOMElement();
+
+			const jetpackPrice = container.querySelector( '.plan-features__price-jetpack' );
+			expect( jetpackPrice ).not.toBeInTheDocument();
 		} );
+
 		test( 'Placeholder should have a class .plan-features__price-jetpack for non-jetpack sites', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				isPlaceholder: true,
-				isInSignup: false,
-				isJetpack: true,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( '.is-placeholder.plan-features__price' ).length ).toBe( 0 );
-			expect( wrapper.find( '.is-placeholder.plan-features__price-jetpack' ).length ).toBe( 1 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } isPlaceholder isInSignup={ false } isJetpack />
+			);
+
+			const price = container.querySelector( '.plan-features__price' );
+			expect( price ).not.toBeInTheDocument();
+
+			const jetpackPrice = container.querySelector( '.plan-features__price-jetpack' );
+			expect( jetpackPrice ).toBeVisible();
+			expect( jetpackPrice ).toHaveClass( 'is-placeholder' );
+			expect( jetpackPrice ).toBeEmptyDOMElement();
 		} );
 	} );
 
@@ -488,43 +514,33 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currencyCode: 'USD',
 			isInSignup: false,
 			translate,
-			currentSitePlan: PLAN_FREE,
+			currentSitePlan: { productSlug: PLAN_FREE },
 			relatedMonthlyPlan: { raw_price: 5 },
 			rawPrice: 50,
 			isJetpack: true,
+			billingTimeFrame: 'yearly',
+			planType: PLAN_FREE,
+			title: 'Free',
 		};
 
-		test( 'Should return two price groups', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-		} );
-
 		test( 'Full price should be monthly price * 12 and discounted price should be rawPrice when no discountPrice is passed', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 50 );
+			const { container } = render( <PlanFeaturesHeader { ...baseProps } /> );
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( "Full price should be monthly price * 12 and discounted price should be discountPrice when it's passed", () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps, discountPrice: 30 } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 30 );
+			const { container } = render( <PlanFeaturesHeader { ...baseProps } discountPrice={ 30 } /> );
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( 'Should return a single price (rawPrice) when availableForPurchase is false', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				discountPrice: 30,
-				availableForPurchase: false,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } discountPrice={ 30 } availableForPurchase={ false } />
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 	} );
 
@@ -534,46 +550,34 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currencyCode: 'USD',
 			isInSignup: false,
 			translate,
-			currentSitePlan: PLAN_FREE,
+			currentSitePlan: { productSlug: PLAN_FREE },
 			discountPrice: 40,
 			rawPrice: 50,
+			planType: PLAN_FREE,
+			billingTimeFrame: 'yearly',
+			title: 'Free',
 		};
 
-		test( 'Should return two price groups', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-		} );
-
 		test( 'Full price should be rawPrice and discounted price should be discountPrice', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 40 );
+			const { container } = render( <PlanFeaturesHeader { ...baseProps } /> );
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( 'Should return a single price (rawPrice) when availableForPurchase is false', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				discountPrice: 30,
-				availableForPurchase: false,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } discountPrice={ 30 } availableForPurchase={ false } />
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( 'Should return crossed price when First Year Promotional discount is applied', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				discountPrice: 30,
-				isFirstYearPromotionalDiscount: true,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 30 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } discountPrice={ 30 } isFirstYearPromotionalDiscount />
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 	} );
 
@@ -583,28 +587,25 @@ describe( 'PlanFeaturesHeader.getPlanFeaturesPrices()', () => {
 			currencyCode: 'USD',
 			isInSignup: false,
 			translate,
-			currentSitePlan: PLAN_FREE,
+			currentSitePlan: { productSlug: PLAN_FREE },
 			rawPrice: 50,
+			planType: PLAN_FREE,
+			billingTimeFrame: 'yearly',
+			title: 'Free',
 		};
 
-		test( 'Should return a single price group', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-		} );
-
 		test( 'Full price should be rawPrice', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			const { container } = render( <PlanFeaturesHeader { ...baseProps } /> );
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( 'Should behave in the same way when availableForPurchase is false', () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps, availableForPurchase: false } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 50 );
+			const { container } = render(
+				<PlanFeaturesHeader { ...baseProps } availableForPurchase={ false } />
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 	} );
 } );
@@ -616,55 +617,63 @@ describe( 'PlanFeaturesHeader.render()', () => {
 			currencyCode: 'USD',
 			isInSignup: false,
 			translate,
-			currentSitePlan: PLAN_FREE,
+			currentSitePlan: { productSlug: PLAN_FREE },
 			rawPrice: 9,
 			isJetpack: true,
+			billingTimeFrame: 'monthly',
+			title: 'Premium',
 		};
 
 		test( "Rendering monthly plan should yield no discount if there's no discountPrice", () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				planType: PLAN_JETPACK_PREMIUM_MONTHLY,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 9 );
+			const { container } = render(
+				<PlanFeaturesHeader
+					{ ...baseProps }
+					planType={ PLAN_JETPACK_PREMIUM_MONTHLY }
+					billingTimeFrame="monthly"
+				/>
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( "Rendering annual plan should show monthly price * 12 discounted to regular price if there's no discountPrice", () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				relatedMonthlyPlan: { raw_price: 9 },
-				planType: PLAN_JETPACK_PREMIUM,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 108 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.original ).toBe( true );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 9 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.discounted ).toBe( true );
+			const { container } = render(
+				<PlanFeaturesHeader
+					{ ...baseProps }
+					planType={ PLAN_JETPACK_PREMIUM }
+					relatedMonthlyPlan={ { raw_price: 9 } }
+					billingTimeFrame="yearly"
+				/>
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( 'Rendering annual plan should show monthly price * 12 discounted to discountPrice if one is passed', () => {
-			const comp = new PlanFeaturesHeader( {
-				...baseProps,
-				discountPrice: 60,
-				relatedMonthlyPlan: { raw_price: 9 },
-				planType: PLAN_JETPACK_PREMIUM,
-			} );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 2 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 108 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.original ).toBe( true );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.rawPrice ).toBe( 60 );
-			expect( wrapper.find( PlanPrice ).get( 1 ).props.discounted ).toBe( true );
+			const { container } = render(
+				<PlanFeaturesHeader
+					{ ...baseProps }
+					planType={ PLAN_JETPACK_PREMIUM }
+					relatedMonthlyPlan={ { raw_price: 9 } }
+					billingTimeFrame="yearly"
+					discountPrice={ 60 }
+				/>
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 
 		test( "Rendering annual plan should show rawPrice with no discounts if there's no discountPrice and relatedMonthlyPlan", () => {
-			const comp = new PlanFeaturesHeader( { ...baseProps, rawPrice: 60, planType: PLAN_PREMIUM } );
-			const wrapper = shallow( <span>{ comp.getPlanFeaturesPrices() }</span> );
-			expect( wrapper.find( PlanPrice ).length ).toBe( 1 );
-			expect( wrapper.find( PlanPrice ).get( 0 ).props.rawPrice ).toBe( 60 );
+			const { container } = render(
+				<PlanFeaturesHeader
+					{ ...baseProps }
+					planType={ PLAN_JETPACK_PREMIUM }
+					billingTimeFrame="yearly"
+					rawPrice={ 60 }
+				/>
+			);
+
+			expect( container ).toMatchSnapshot();
 		} );
 	} );
 } );
@@ -675,6 +684,8 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 		availableForPurchase: true,
 		planType: PLAN_PREMIUM,
 		currentSitePlan: { productSlug: PLAN_PERSONAL },
+		billingTimeFrame: 'yearly',
+		title: 'Personal',
 		rawPrice: 100,
 		discountPrice: 80,
 		translate,
@@ -683,59 +694,65 @@ describe( 'PlanFeaturesHeader.renderCreditLabel()', () => {
 	};
 
 	test( 'Should display credit label for discounted higher-tier plans that are available for purchase', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps } );
-		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
-		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+		render( <PlanFeaturesHeader { ...baseProps } /> );
+
+		expect( screen.getByText( 'Credit applied' ) ).toBeVisible();
 	} );
 
 	test( 'Should not display credit label when plan is not available for purchase', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, availableForPurchase: false } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } availableForPurchase={ false } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display credit label when showPlanCreditsApplied is false', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, showPlanCreditsApplied: false } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } showPlanCreditsApplied={ false } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display credit label when rendered plan is the same as current plan', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, planType: PLAN_PERSONAL } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } planType={ PLAN_PERSONAL } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display credit label when there is no discount price', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 0 } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } discountPrice={ 0 } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display credit label when discount price is equal to rawPrice', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 100 } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } discountPrice={ 100 } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should not display credit label when discount price is higher than rawPrice', () => {
-		const instance = new PlanFeaturesHeader( { ...baseProps, discountPrice: 101 } );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render( <PlanFeaturesHeader { ...baseProps } discountPrice={ 101 } /> );
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'Should display credit label for atomic site on Business plan', () => {
-		const instance = new PlanFeaturesHeader( {
-			...baseProps,
-			planType: PLAN_BUSINESS,
-			isJetpack: true,
-			isSiteAT: true,
-		} );
-		const wrapper = shallow( <span>{ instance.renderCreditLabel() }</span> );
-		expect( wrapper.find( '.plan-features__header-credit-label' ).length ).toBe( 1 );
+		render(
+			<PlanFeaturesHeader { ...baseProps } planType={ PLAN_JETPACK_PREMIUM } isJetpack isSiteAT />
+		);
+
+		expect( screen.getByText( 'Credit applied' ) ).toBeVisible();
 	} );
 
 	test( 'Should not display credit label for Jetpack site', () => {
-		const instance = new PlanFeaturesHeader( {
-			...baseProps,
-			planType: PLAN_JETPACK_PREMIUM,
-			isJetpack: true,
-			isSiteAT: false,
-		} );
-		expect( instance.renderCreditLabel() ).toBe( null );
+		render(
+			<PlanFeaturesHeader
+				{ ...baseProps }
+				planType={ PLAN_JETPACK_PREMIUM }
+				isJetpack
+				isSiteAT={ false }
+			/>
+		);
+
+		expect( screen.queryByText( 'Credit applied' ) ).not.toBeInTheDocument();
 	} );
 } );

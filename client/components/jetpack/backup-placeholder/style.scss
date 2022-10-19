@@ -13,7 +13,7 @@
 		height: 208px;
 		padding: 32px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			height: 244px;
 			padding-bottom: 58px;
 		}
@@ -23,8 +23,8 @@
 /* Jetpack.com-only changes */
 .is_jetpackcom .backup-placeholder {
 
-	@include breakpoint-deprecated( '<660px' ) {
-		background: var( --studio-white );
+	@include breakpoint-deprecated( "<660px" ) {
+		background: var(--studio-white);
 		padding-top: 16px;
 	}
 
@@ -39,7 +39,7 @@
 		padding: 24px;
 		margin-top: 32px;
 
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			height: 244px;
 			padding-top: 0;
 			padding-bottom: 26px;

@@ -5,11 +5,10 @@ import { useSelector } from 'react-redux';
 import PaymentMethodActions from 'calypso/jetpack-cloud/sections/partner-portal/payment-method-actions';
 import { isDeletingStoredCard } from 'calypso/state/partner-portal/stored-cards/selectors';
 import type { PaymentMethod } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
-export default function StoredCreditCard( props: { card: PaymentMethod } ): ReactElement {
+export default function StoredCreditCard( props: { card: PaymentMethod } ) {
 	const translate = useTranslate();
 	const creditCard = props.card;
 

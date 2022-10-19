@@ -7,7 +7,7 @@
 
 	list-style-type: none;
 
-	font-size: 1.125rem;
+	font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 	font-weight: 700;
 
 	> li {
@@ -17,7 +17,7 @@
 
 .category-filter__link {
 	&:any-link {
-		color: var( --color-text );
+		color: var(--color-text);
 
 		text-decoration: none;
 

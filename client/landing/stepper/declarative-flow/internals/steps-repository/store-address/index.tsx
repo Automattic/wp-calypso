@@ -5,7 +5,7 @@ import { ComboboxControl } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import emailValidator from 'email-validator';
-import { FormEvent, ReactElement, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -297,20 +297,20 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'store-address' }
+			stepName="store-address"
 			className={ `is-step-${ intent }` }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'site-options-header' }
+					id="site-options-header"
 					headerText={ headerText }
 					subHeaderText={ __(
 						'This will be used as your default business address. You can change it later if you need to.'
 					) }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			intent={ intent }
@@ -322,7 +322,7 @@ const StoreAddress: Step = function StoreAddress( { navigation } ) {
 	);
 };
 
-function ControlError( { error }: { error: string } ): ReactElement | null {
+function ControlError( { error }: { error: string } ) {
 	if ( error ) {
 		return <FormInputValidation isError={ true } isValid={ false } text={ error } />;
 	}

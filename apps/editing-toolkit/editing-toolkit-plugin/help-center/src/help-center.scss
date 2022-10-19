@@ -1,9 +1,11 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .help-center.entry-point-button {
 	&.is-active {
 		background: #1e1e1e;
 
 		svg {
-			fill: white;
+			fill: var(--studio-white);
 		}
 	}
 }
@@ -17,6 +19,87 @@
 	&.is-mobile {
 		&.is-minimized {
 			margin-top: 0;
+		}
+	}
+
+	svg {
+		box-sizing: content-box;
+	}
+}
+
+/**
+ * WP-ADMIN Masterbar Styling
+ */
+#wpadminbar #wp-toolbar {
+	#wp-admin-bar-help-center {
+		position: relative;
+		padding: 0;
+		width: 36px;
+		right: 5px;
+		display: none;
+		@include breakpoint-deprecated( ">960px" ) {
+			display: block;
+		}
+
+		svg {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 4px 6px;
+
+			#notification-bubble {
+				display: none;
+			}
+		}
+
+		&.unseen-notification {
+			svg {
+				> path {
+					display: none;
+				}
+
+				#notification-bubble {
+					display: block;
+				}
+			}
+		}
+
+		.ab-item.ab-empty-item {
+			transition: 250ms ease;
+		}
+
+		.ab-item:hover {
+			cursor: pointer;
+		}
+
+		&.active,
+		&.active:hover {
+			.ab-item.ab-empty-item {
+				background: #fff !important;
+
+				svg {
+					fill: var(--wp-admin-theme-color-darker-20);
+				}
+			}
+		}
+	}
+
+
+	.help-center {
+		button.components-button {
+			background: transparent;
+			border: none;
+			color: currentcolor;
+
+			&.inline-help__new-releases {
+				text-align: left;
+			}
+
+			svg {
+				fill: currentColor;
+			}
 		}
 	}
 }

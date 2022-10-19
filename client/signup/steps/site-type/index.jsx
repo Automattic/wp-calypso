@@ -84,7 +84,7 @@ class SiteType extends Component {
 				stepContent={ this.renderStepContent() }
 				allowBackFirstStep={ !! hasInitializedSitesBackUrl }
 				backUrl={ hasInitializedSitesBackUrl }
-				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to My Sites' ) : null }
+				backLabelText={ hasInitializedSitesBackUrl ? translate( 'Back to Sites' ) : null }
 			/>
 		);
 	}

@@ -1,28 +1,47 @@
 import { Button } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
+import type { WPElement } from '@wordpress/element';
 
 interface Props {
-	goNext: () => void;
-	flowName: string | null;
+	onSubmit: () => void;
+	flowName: string;
 }
 
-const Intro: React.FC< Props > = ( { goNext, flowName } ) => {
+interface IntroContent {
+	[ key: string ]: {
+		title: WPElement;
+		buttonText: string;
+	};
+}
+
+const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 	const { __ } = useI18n();
 
-	const introTitle =
-		flowName === 'link-in-bio'
-			? createInterpolateElement( __( 'Let’s set up your<br />Link in Bio' ), { br: <br /> } )
-			: createInterpolateElement( __( 'Let’s set up your<br />Newsletter' ), { br: <br /> } );
+	const introContent: IntroContent = {
+		newsletter: {
+			title: createInterpolateElement(
+				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
+				{ br: <br /> }
+			),
+			buttonText: __( 'Get started' ),
+		},
+		'link-in-bio': {
+			title: createInterpolateElement(
+				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
+				{ br: <br /> }
+			),
+			buttonText: __( 'Get started' ),
+		},
+	};
 
 	return (
 		<div className="intro__content">
 			<h1 className="intro__title">
-				{ __( 'Hello!' ) }
-				<span>{ introTitle }</span>
+				<span>{ introContent[ flowName ].title }</span>
 			</h1>
-			<Button className="intro__button" primary onClick={ goNext }>
-				{ __( 'Get started' ) }
+			<Button className="intro__button" primary onClick={ onSubmit }>
+				{ introContent[ flowName ].buttonText }
 			</Button>
 		</div>
 	);

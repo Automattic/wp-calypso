@@ -8,6 +8,7 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import EditTeamMember from './edit-team-member-form';
 import InvitePeople from './invite-people';
 import PeopleList from './main';
+import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
 
@@ -42,6 +43,10 @@ export default {
 
 	peopleInviteDetails( context, next ) {
 		renderPeopleInviteDetails( context, next );
+	},
+
+	peopleAddSubscribers( context, next ) {
+		renderPeopleAddSubscribers( context, next );
 	},
 };
 
@@ -100,6 +105,22 @@ function renderPeopleInvites( context, next ) {
 		<>
 			<PeopleInvitesTitle />
 			<PeopleInvites />
+		</>
+	);
+	next();
+}
+
+function renderPeopleAddSubscribers( context, next ) {
+	const PeopleAddSubscribersTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Add Subscribers', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleAddSubscribersTitle />
+			<PeopleAddSubscribers />
 		</>
 	);
 	next();

@@ -1,4 +1,5 @@
-jest.mock( 'calypso/signup/step-wrapper', () => 'step-wrapper' );
+/** @jest-environment jsdom */
+jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="step-wrapper" /> );
 jest.mock( 'calypso/my-sites/plan-features', () => 'plan-features' );
 
 jest.mock( 'i18n-calypso', () => ( {
@@ -26,7 +27,7 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { PlansAtomicStoreStep } from '../index';
 
 const noop = () => {};
@@ -42,8 +43,8 @@ const props = {
 
 describe( 'PlansAtomicStoreStep basic tests', () => {
 	test( 'should not blow up and have proper CSS class', () => {
-		const comp = shallow( <PlansAtomicStoreStep { ...props } /> );
-		expect( comp.find( '.plans-step' ).length ).toBe( 1 );
+		render( <PlansAtomicStoreStep { ...props } /> );
+		expect( screen.queryByTestId( 'step-wrapper' ) ).toBeVisible();
 	} );
 } );
 

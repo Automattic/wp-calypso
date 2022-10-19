@@ -4,7 +4,7 @@ import { CheckboxControl, SelectControl, TextControl } from '@wordpress/componen
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { without } from 'lodash';
-import { FormEvent, ReactElement, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -32,7 +32,7 @@ const StyledNextButton = styled( NextButton )`
 	}
 `;
 
-const BusinessInfo: Step = function ( props ): ReactElement | null {
+const BusinessInfo: Step = function ( props ) {
 	const { goNext, goBack, submit } = props.navigation;
 
 	const { __ } = useI18n();
@@ -267,18 +267,18 @@ const BusinessInfo: Step = function ( props ): ReactElement | null {
 		<div className="business-info__signup is-woocommerce-install">
 			<div className="business-info__is-store-address">
 				<StepContainer
-					stepName={ 'business-info' }
+					stepName="business-info"
 					className={ `is-step-${ intent }` }
-					skipButtonAlign={ 'top' }
+					skipButtonAlign="top"
 					goBack={ goBack }
 					goNext={ goNext }
 					isHorizontalLayout={ true }
 					formattedHeader={
 						<FormattedHeader
-							id={ 'business-info-header' }
+							id="business-info-header"
 							headerText={ __( 'Tell us a bit about your business' ) }
 							subHeaderText={ __( 'We will guide you to get started based on your responses.' ) }
-							align={ 'left' }
+							align="left"
 						/>
 					}
 					stepContent={ getContent() }

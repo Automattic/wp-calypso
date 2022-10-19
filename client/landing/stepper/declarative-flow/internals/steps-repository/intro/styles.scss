@@ -1,19 +1,50 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@automattic/onboarding/styles/mixins';
-
-$white: var( --color-surface );
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
 
 .intro {
-	background: url( 'calypso/assets/images/onboarding/link-in-bio-intro-background.svg' ),
-		url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
+	&.newsletter {
+		background-color: rgb(162 218 254);
+		background-image:
+			url(calypso/assets/images/onboarding/newsletter-intro-left.png),
+			url(calypso/assets/images/onboarding/newsletter-intro-right.png);
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		/*!rtl:ignore*/
+		background-position-x: 0%, 100%;
+		background-position-y: 100%, 80px;
+		background-size: auto 30%, auto 50%;
 
-	&.is-newsletters {
-		background: url( 'calypso/assets/images/onboarding/paper-texture.jpg' ),
-			linear-gradient( 123deg, rgba( 7, 116, 195, 1 ) 0%, rgba( 255, 255, 255, 0 ) 100% ),
-			url( 'calypso/assets/images/onboarding/link-in-bio-intro-background-noise.svg' );
-		background-size: cover;
+
+		@include break-huge {
+			background-size: auto 55%, auto 80%;
+			background-position-y: 100%, 136px;
+			background-image:
+				url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
+		}
 	}
-	background-blend-mode: color-burn;
+
+	&.link-in-bio {
+		background-color: #d0cce3;
+		background-image:
+			url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
+			url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
+		background-position-y: 85%, 15%;
+		/*!rtl:ignore*/
+		background-position-x: 0, 100%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 15%, auto 15%;
+
+		@include break-huge {
+			background-size: auto 25%, auto 25%;
+			background-position-y: 85%, 10%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
+		}
+	}
+
 	min-height: 100%;
 	min-width: 100%;
 	width: 100%;
@@ -21,25 +52,11 @@ $white: var( --color-surface );
 	position: fixed;
 	top: 0;
 	left: 0;
-	background-size: cover;
 	box-sizing: border-box;
 	padding: 60px 0 0;
-	color: $white;
-	fill: $white;
 
 	.signup-header {
 		z-index: 1;
-
-		.wordpress-logo {
-			inset-block-start: 20px;
-			inset-inline-start: 20px;
-			position: absolute;
-			transform-origin: 0 0;
-		}
-
-		h1 {
-			color: var( --color-surface );
-		}
 	}
 
 	.progress-bar {
@@ -55,11 +72,23 @@ $white: var( --color-surface );
 			}
 
 			.step-container__content {
-				min-height: 80vh;
+				min-height: 81vh;
 			}
 		}
 
 		min-height: inherit;
+
+		.step-container__header {
+			margin-bottom: 0;
+		}
+
+		.step-container__jetpack-powered {
+			margin: 20px 0 60px;
+
+			@include onboarding-break-mobile-landscape {
+				margin: 5px 0 60px;
+			}
+		}
 	}
 
 	.intro__content {
@@ -67,14 +96,25 @@ $white: var( --color-surface );
 		text-align: center;
 		position: absolute;
 		top: 50%;
-		transform: translateY( -50% );
+		transform: translateY(-50%);
 	}
 
 	.intro__title {
 		@include onboarding-font-recoleta;
-		font-weight: 500;
-		line-height: 40px;
-		padding-bottom: 40px;
+
+		font-size: 1.75rem;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		line-height: 130%;
+		padding-bottom: 32px;
+
+		@include break-large {
+			font-size: 2.75rem;
+			line-height: 52px;
+		}
+
+		@include onboarding-break-mobile-landscape {
+			font-size: $font-title-medium;
+		}
 
 		span {
 			display: block;
@@ -82,11 +122,12 @@ $white: var( --color-surface );
 	}
 
 	.intro__button {
-		font-family: 'SF Pro Text', $sans;
-		color: var( --studio-blue-50 );
-		background-color: $white;
+		font-family: "SF Pro Text", $sans;
+		color: var(--color-surface);
+		background-color: var(--studio-gray-100);
 		border: none;
 		font-weight: 500;
 		letter-spacing: 0.32px;
+		padding: 10px 24px;
 	}
 }

@@ -5,6 +5,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import steps from 'calypso/signup/config/steps-pure';
+import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './config/constants';
 
 const { defaultFlowName } = flows;
 
@@ -91,11 +92,6 @@ export function getFlowPageTitle( flowName, isUserLoggedIn ) {
 	return flow.pageTitle || translate( 'Create a site' );
 }
 
-export function getFlowHideBack( flowName, isUserLoggedIn ) {
-	const flow = flows.getFlow( flowName, isUserLoggedIn );
-	return flow.hideBackButton || false;
-}
-
 export function getValueFromProgressStore( { signupProgress, stepName, fieldName } ) {
 	const siteStepProgress = find( signupProgress, ( step ) => step.stepName === stepName );
 	return siteStepProgress ? siteStepProgress[ fieldName ] : null;
@@ -118,6 +114,14 @@ export function getThemeForDesignType( designType ) {
 		default:
 			return 'pub/twentyseventeen';
 	}
+}
+
+export function getVideoPressOnboardingTotalSteps() {
+	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.length;
+}
+
+export function getVideoPressOnboardingStepNumber( stepName ) {
+	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.indexOf( stepName ) + 1;
 }
 
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
@@ -179,6 +183,14 @@ export const isReskinnedFlow = ( flowName ) => {
 
 export const isP2Flow = ( flowName ) => {
 	return flowName === 'p2' || flowName === 'p2v1';
+};
+
+export const isVideoPressFlow = ( flowName ) => {
+	return flowName === 'videopress';
+};
+
+export const isWpccFlow = ( flowName ) => {
+	return flowName === 'wpcc';
 };
 
 /**

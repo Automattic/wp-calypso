@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button, Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { JPC_PATH_PLANS } from 'calypso/jetpack-connect/constants';
 import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
@@ -45,9 +47,15 @@ function LicensingPromptDialog( { siteId }: Props ) {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_view' ) );
 	}, [ dispatch ] );
 
-	const title = useMemo( () => {
+	let titleToRender =
+		isEnabled( 'jetpack/pricing-page-rework-v1' ) &&
+		window.location.pathname.startsWith( JPC_PATH_PLANS )
+			? translate( 'Jetpack is successfully installed' )
+			: '';
+
+	if ( ! titleToRender ) {
 		if ( hasOneDetachedLicense ) {
-			return detachedUserLicense?.product
+			titleToRender = detachedUserLicense?.product
 				? preventWidows(
 						translate( 'Activate %(productName)s', {
 							args: {
@@ -56,9 +64,58 @@ function LicensingPromptDialog( { siteId }: Props ) {
 						} )
 				  )
 				: preventWidows( translate( 'Your product is pending activation' ) );
+		} else {
+			titleToRender = preventWidows( translate( 'Activate your new Jetpack features' ) );
 		}
-		return preventWidows( translate( 'Activate your new Jetpack features' ) );
-	}, [ detachedUserLicense, hasOneDetachedLicense, translate ] );
+	}
+
+	let instructions: React.ReactNode = preventWidows(
+		translate(
+			'Find the license key in your purchase confirmation email to activate your new Jetpack features.'
+		)
+	);
+
+	if ( isEnabled( 'jetpack/pricing-page-rework-v1' ) ) {
+		instructions = (
+			<>
+				<b>
+					{ hasOneDetachedLicense
+						? translate(
+								'You have a %(productName)s license available. You can activate it now if you want.',
+								{
+									args: {
+										productName: detachedUserLicense?.product,
+									},
+								}
+						  )
+						: translate(
+								'You have licenses available for some Jetpack features. You can activate them now if you want.'
+						  ) }
+				</b>
+				<ul>
+					<li>
+						{ translate( 'You can find the license keys in your purchase confirmation email.' ) }
+					</li>
+					<li>
+						{ translate( 'Or in {{purchases/}}', {
+							components: {
+								purchases: (
+									<Button
+										className="user-purchases-link"
+										href="/me/purchases"
+										target="_blank"
+										plain
+									>
+										https://wordpress.com/me/purchases
+									</Button>
+								),
+							},
+						} ) }
+					</li>
+				</ul>
+			</>
+		);
+	}
 
 	const activateProductClick = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_user_license_modal_activate_click' ) );
@@ -77,29 +134,21 @@ function LicensingPromptDialog( { siteId }: Props ) {
 	return (
 		<Dialog
 			additionalClassNames="licensing-prompt-dialog"
+			additionalOverlayClassNames={
+				isEnabled( 'jetpack/pricing-page-rework-v1' ) ? 'licensing-prompt-dialog__backdrop' : ''
+			}
 			isVisible={ showLicensesDialog }
 			onClose={ closeDialog }
 			shouldCloseOnEsc
 		>
-			<h1 className="licensing-prompt-dialog__title">{ title }</h1>
+			<h1 className="licensing-prompt-dialog__title">{ titleToRender }</h1>
 			<Gridicon
 				className="licensing-prompt-dialog__close"
 				icon="cross-small"
 				size={ 24 }
 				onClick={ selectAnotherProductClick }
 			/>
-			<p className="licensing-prompt-dialog__instructions">
-				{ preventWidows(
-					translate(
-						'Find the license key in your purchase confirmation email to activate your new Jetpack features.',
-						{
-							components: {
-								strong: <strong />,
-							},
-						}
-					)
-				) }
-			</p>
+			<div className="licensing-prompt-dialog__instructions">{ instructions }</div>
 			<div className="licensing-prompt-dialog__actions">
 				<Button
 					className="licensing-prompt-dialog__btn"
@@ -107,7 +156,7 @@ function LicensingPromptDialog( { siteId }: Props ) {
 					href={ jetpackDashboardUrl }
 					onClick={ activateProductClick }
 				>
-					{ translate( 'Activate it now' ) }
+					{ translate( 'Activate now' ) }
 				</Button>
 				<Button className="licensing-prompt-dialog__btn" onClick={ selectAnotherProductClick }>
 					{ translate( 'Select another product' ) }

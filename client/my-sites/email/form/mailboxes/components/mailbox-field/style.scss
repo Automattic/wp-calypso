@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .mailbox-field__form-label.form-label {
 	margin-bottom: 0;
@@ -10,7 +10,7 @@
 	font-weight: normal;
 }
 
-.mailbox-field__form-label.form-label > input[type=text],
+.mailbox-field__form-label.form-label > input[type="text"],
 .mailbox-field__form-label.form-label > .form-text-input-with-affixes,
 .mailbox-field__form-label.form-label > .form-password-input {
 	margin-top: 5px;

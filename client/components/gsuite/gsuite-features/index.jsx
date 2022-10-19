@@ -50,7 +50,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						: translate( 'Professional ad-free email that works with most email clients.' )
 				}
 				imagePath={ gmailIcon }
-				imageAlt={ 'Gmail Logo' }
+				imageAlt="Gmail Logo"
 				compact={ compact }
 			/>
 
@@ -62,7 +62,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						: translate( 'Collaborate in real-time with documents, spreadsheets and slides.' )
 				}
 				imagePath={ googleDocsIcon }
-				imageAlt={ 'Google Docs Logo' }
+				imageAlt="Google Docs Logo"
 				compact={ compact }
 			/>
 
@@ -70,7 +70,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 				title={ getStorageTitle() }
 				description={ getStorageText() }
 				imagePath={ googleDriveIcon }
-				imageAlt={ 'Google Drive Logo' }
+				imageAlt="Google Drive Logo"
 				compact={ compact }
 			/>
 
@@ -82,7 +82,7 @@ const GSuiteFeatures = ( { compact, domainName, productSlug, type } ) => {
 						: translate( 'Use text chats or video calls, with built in screen sharing.' )
 				}
 				imagePath={ googleMeetIcon }
-				imageAlt={ 'Google Meet Logo' }
+				imageAlt="Google Meet Logo"
 				compact={ compact }
 			/>
 		</div>

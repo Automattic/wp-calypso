@@ -1,15 +1,14 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import {
 	hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector,
 	showAgencyDashboard,
@@ -25,12 +24,11 @@ interface Props {
 	className: string;
 }
 
-export default function PortalNav( { className = '' }: Props ): ReactElement | null {
+export default function PortalNav( { className = '' }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 	const isPrimarySiteJetpackSite = useSelector( getPrimarySiteIsJetpack );
-	const dashboardLink = useSelector( jetpackDashboardRedirectLink );
 	const currentUser = useSelector( getCurrentUser );
 	const currentRoute = useSelector( getCurrentRoute );
 	const showDashboard = useSelector( showAgencyDashboard );
@@ -44,6 +42,8 @@ export default function PortalNav( { className = '' }: Props ): ReactElement | n
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
 		return null;
 	}
+
+	const dashboardLink = dashboardPath();
 
 	const onNavItemClick = ( menuItem: string ) => {
 		dispatch(

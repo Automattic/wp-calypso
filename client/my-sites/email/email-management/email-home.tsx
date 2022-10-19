@@ -10,7 +10,7 @@ import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { useIsLoading as useAddEmailForwardMutationIsLoading } from 'calypso/data/emails/use-add-email-forward-mutation';
 import { hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
 import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
-import { hasTitanMailWithUs } from 'calypso/lib/titan';
+import { getConfiguredTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import EmailHeader from 'calypso/my-sites/email/email-header';
 import EmailListActive from 'calypso/my-sites/email/email-management/home/email-list-active';
 import EmailListInactive from 'calypso/my-sites/email/email-management/home/email-list-inactive';
@@ -20,17 +20,16 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { TranslateResult } from 'i18n-calypso';
-import type { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
-const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement => {
+const ContentWithHeader = ( props: { children: ReactNode } ) => {
 	const translate = useTranslate();
 	return (
 		<Main wideLayout>
@@ -43,31 +42,29 @@ const ContentWithHeader = ( props: { children: ReactElement } ): ReactElement =>
 	);
 };
 
-const NoAccess = (): ReactElement => {
+const NoAccess = () => {
 	const translate = useTranslate();
 	return (
 		<ContentWithHeader>
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
-				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</ContentWithHeader>
 	);
 };
 
-const LoadingPlaceholder = (): ReactElement => {
+const LoadingPlaceholder = () => {
 	return (
 		<ContentWithHeader>
-			<>
-				<SectionHeader className="email-home__section-placeholder is-placeholder" />
-				<Card className="email-home__content-placeholder is-placeholder" />
-			</>
+			<SectionHeader className="email-home__section-placeholder is-placeholder" />
+			<Card className="email-home__content-placeholder is-placeholder" />
 		</ContentWithHeader>
 	);
 };
 
 interface EmailManagementHomeProps {
-	emailListInactiveHeader?: ReactElement;
+	emailListInactiveHeader?: ReactNode;
 	sectionHeaderLabel?: TranslateResult;
 	selectedDomainName: string;
 	selectedEmailProviderSlug: string;
@@ -98,7 +95,6 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
-	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
@@ -172,6 +168,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		return (
 			<EmailProvidersStackedComparisonPage
 				comparisonContext="email-home-single-domain"
+				hideNavigation
 				selectedDomainName={ domainsWithNoEmail[ 0 ].name }
 				selectedEmailProviderSlug={ selectedEmailProviderSlug }
 				selectedIntervalLength={ selectedIntervalLength }
@@ -183,7 +180,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	if ( isSingleDomainThatHasEmail ) {
 		if (
 			( domainsWithEmail[ 0 ].titanMailSubscription?.maximumMailboxCount ?? 0 ) > 0 &&
-			domainsWithEmail[ 0 ].titanMailSubscription?.numberOfMailboxes === 0
+			getConfiguredTitanMailboxCount( domainsWithEmail[ 0 ] ) === 0
 		) {
 			page.redirect(
 				emailManagementTitanSetUpMailbox( selectedSite.slug, domainsWithEmail[ 0 ].domain )
@@ -197,26 +194,14 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	return (
 		<ContentWithHeader>
-			<>
-				{ showActiveDomainList && (
-					<EmailListActive
-						currentRoute={ currentRoute }
-						domains={ domainsWithEmail }
-						selectedSiteId={ selectedSite?.ID }
-						selectedSiteSlug={ selectedSite?.slug }
-						source={ source }
-					/>
-				) }
+			{ showActiveDomainList && <EmailListActive domains={ domainsWithEmail } source={ source } /> }
 
-				<EmailListInactive
-					currentRoute={ currentRoute }
-					domains={ domainsWithNoEmail }
-					headerComponent={ emailListInactiveHeader }
-					sectionHeaderLabel={ sectionHeaderLabel }
-					selectedSiteSlug={ selectedSite?.slug }
-					source={ source }
-				/>
-			</>
+			<EmailListInactive
+				domains={ domainsWithNoEmail }
+				headerComponent={ emailListInactiveHeader }
+				sectionHeaderLabel={ sectionHeaderLabel }
+				source={ source }
+			/>
 		</ContentWithHeader>
 	);
 };

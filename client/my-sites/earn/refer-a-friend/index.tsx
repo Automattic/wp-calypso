@@ -35,14 +35,18 @@ const ReferAFriendSection: FunctionComponent< ConnectedProps > = ( {
 	const [ peerReferralLink, setPeerReferralLink ] = useState( '' );
 
 	useEffect( () => {
-		if ( peerReferralLink ) return;
+		if ( peerReferralLink ) {
+			return;
+		}
 		wp.req.get( '/me/peer-referral-link', ( error: string, data: string ) => {
 			setPeerReferralLink( ! error && data ? data : '' );
 		} );
 	}, [ peerReferralLink ] );
 
 	const onPeerReferralCtaClick = () => {
-		if ( peerReferralLink ) return;
+		if ( peerReferralLink ) {
+			return;
+		}
 		wp.req.post(
 			'/me/peer-referral-link-enable',
 			{ enable: true },

@@ -14,12 +14,28 @@ describe( 'PaymentInfoBlock', () => {
 		[ 'disabled', 'manualRenew' ],
 	] )( 'when auto-renew is %s', ( autoRenewStatus, expiryStatus ) => {
 		describe( 'when the purchase has credits as the payment method', () => {
-			const purchase = { expiryStatus, payment: { type: 'credits' }, isRechargeable: false };
+			const purchase = {
+				expiryStatus,
+				payment: { type: 'credits' },
+				isRechargeable: false,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+			};
 
-			it( 'renders "Credits"', () => {
-				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'Credits' );
-			} );
+			it(
+				autoRenewStatus === 'enabled'
+					? 'renders "You don’t have a payment method to renew this subscription"'
+					: 'renders "None"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+					if ( autoRenewStatus === 'enabled' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'You don’t have a payment method to renew this subscription'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+					}
+				}
+			);
 
 			it( 'does not render "will not be billed"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
@@ -30,7 +46,10 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		describe( 'when the purchase has included-with-plan as the payment method', () => {
-			const purchase = { expiryStatus: 'included' };
+			const purchase = {
+				expiryStatus: 'included',
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+			};
 
 			it( 'renders "Included with plan"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
@@ -48,12 +67,28 @@ describe( 'PaymentInfoBlock', () => {
 		} );
 
 		describe( 'when the purchase has no payment method', () => {
-			const purchase = { expiryStatus, isRechargeable: false, payment: {} };
+			const purchase = {
+				expiryStatus,
+				isRechargeable: false,
+				payment: {},
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+			};
 
-			it( 'renders "None"', () => {
-				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
-			} );
+			it(
+				autoRenewStatus === 'enabled'
+					? 'renders "You don’t have a payment method to renew this subscription"'
+					: 'renders "None"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+					if ( autoRenewStatus === 'enabled' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'You don’t have a payment method to renew this subscription'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+					}
+				}
+			);
 
 			it( 'does not render "will not be billed"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
@@ -63,13 +98,29 @@ describe( 'PaymentInfoBlock', () => {
 			} );
 		} );
 
-		describe( 'when the purchase a non-rechargable payment method', () => {
-			const purchase = { expiryStatus, payment: { type: 'ideal' }, isRechargeable: false };
+		describe( 'when the purchase has a non-rechargable payment method', () => {
+			const purchase = {
+				expiryStatus,
+				payment: { type: 'ideal' },
+				isRechargeable: false,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
+			};
 
-			it( 'renders "None"', () => {
-				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
-				expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
-			} );
+			it(
+				autoRenewStatus === 'enabled'
+					? 'renders "You don’t have a payment method to renew this subscription"'
+					: 'renders "None"',
+				() => {
+					render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
+					if ( autoRenewStatus === 'enabled' ) {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent(
+							'You don’t have a payment method to renew this subscription'
+						);
+					} else {
+						expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( 'None' );
+					}
+				}
+			);
 
 			it( 'does not render "will not be billed"', () => {
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
@@ -89,6 +140,7 @@ describe( 'PaymentInfoBlock', () => {
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
 				isRechargeable: true,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the credit card last4', () => {
@@ -134,6 +186,7 @@ describe( 'PaymentInfoBlock', () => {
 						creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 					},
 					isRechargeable: true,
+					isAutoRenewEnabled: autoRenewStatus === 'enabled',
 				};
 				render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 				if ( expiryStatus === 'manualRenew' ) {
@@ -151,6 +204,7 @@ describe( 'PaymentInfoBlock', () => {
 					type: 'paypal',
 				},
 				isRechargeable: true,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders PayPal logo', () => {
@@ -187,6 +241,7 @@ describe( 'PaymentInfoBlock', () => {
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
 				isRechargeable: true,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -202,6 +257,7 @@ describe( 'PaymentInfoBlock', () => {
 					creditCard: { number: '1234', expiryDate, type: 'mastercard' },
 				},
 				isRechargeable: true,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
 			};
 			render( <PaymentInfoBlock purchase={ purchase } cards={ [] } /> );
 			expect( screen.getByLabelText( 'Payment method' ) ).toHaveTextContent( '1234' );
@@ -217,6 +273,7 @@ describe( 'PaymentInfoBlock', () => {
 					expiryDate,
 				},
 				isRechargeable: true,
+				isAutoRenewEnabled: autoRenewStatus === 'enabled',
 			};
 
 			it( 'renders the expiration date', () => {

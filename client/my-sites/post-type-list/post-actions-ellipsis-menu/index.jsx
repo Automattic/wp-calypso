@@ -1,7 +1,11 @@
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
+import { useSelector } from 'react-redux';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
+import { useRouteModal } from 'calypso/lib/route-modal';
+import { getPost } from 'calypso/state/posts/selectors';
 import PostActionsEllipsisMenuComments from './comments';
 import PostActionsEllipsisMenuCopyLink from './copy-link';
 import PostActionsEllipsisMenuDuplicate from './duplicate';
@@ -18,11 +22,15 @@ import './style.scss';
 export default function PostActionsEllipsisMenu( { globalId, includeDefaultActions, children } ) {
 	let actions = [];
 
+	const keyValue = globalId;
+	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const post = useSelector( ( state ) => getPost( state, globalId ) );
+
 	if ( includeDefaultActions ) {
 		actions.push(
 			<PostActionsEllipsisMenuEdit key="edit" />,
 			<PostActionsEllipsisMenuView key="view" />,
-			<PostActionsEllipsisMenuPromote key="promote" bumpStatKey={ 'posts-meatball-menu' } />,
+			<PostActionsEllipsisMenuPromote key="promote" bumpStatKey="posts-meatball-menu" />,
 			<PostActionsEllipsisMenuStats key="stats" />,
 			<PostActionsEllipsisMenuComments key="comments" />,
 			<PostActionsEllipsisMenuPublish key="publish" />,
@@ -45,6 +53,14 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 
 	return (
 		<div className="post-actions-ellipsis-menu">
+			{ post && (
+				<BlazePressWidget
+					isVisible={ isModalOpen && value === keyValue }
+					siteId={ post.site_ID }
+					postId={ post.ID }
+					onClose={ () => closeModal() }
+				/>
+			) }
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>
 				{ actions.map( ( action ) => cloneElement( action, { globalId } ) ) }
 			</EllipsisMenu>

@@ -1,5 +1,5 @@
-@import '@automattic/typography/styles/variables';
-@import '@automattic/onboarding/styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@automattic/onboarding/styles/mixins";
 
 // TODO: This is former dark-gray-500 from @wordpress/base-styles.
 // Replace with a color from the standard palette.
@@ -39,19 +39,19 @@ ul.nux-launch__feature-item-group {
 
 	// the tick
 	svg path {
-		fill: var( --studio-green-40 );
-		stroke: var( --studio-green-40 );
+		fill: var(--studio-green-40);
+		stroke: var(--studio-green-40);
 	}
 }
 .nux-launch__submit-button.components-button.is-primary {
-	background: var( --color-accent );
-	border: 1px solid var( --color-accent-dark );
+	background: var(--color-accent);
+	border: 1px solid var(--color-accent-dark);
 	width: 100%;
 	justify-content: center;
 
 	&:hover,
 	&:active {
-		background: var( --color-accent-dark );
+		background: var(--color-accent-dark);
 	}
 
 	&:disabled {
@@ -59,7 +59,7 @@ ul.nux-launch__feature-item-group {
 		opacity: 0.5;
 
 		&:hover {
-			background: var( --color-accent );
+			background: var(--color-accent);
 		}
 	}
 }
@@ -77,7 +77,7 @@ ul.nux-launch__feature-item-group {
 		}
 	}
 	&__plan-name {
-		color: var( --color-text );
+		color: var(--color-text);
 	}
 	&__domain-name {
 		font-weight: 600;

@@ -14,7 +14,7 @@
 	}
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 		font-style: italic;
 		margin-bottom: 0;
@@ -30,7 +30,7 @@
 	margin: 5px 0 1.5rem;
 	font-size: $font-body-small;
 	font-style: italic;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }
 
 .name-servers__custom-nameservers-row {
@@ -44,7 +44,7 @@
 	.form-text-input {
 		padding-right: 38px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			padding-right: 35px;
 		}
 	}
@@ -54,7 +54,7 @@
 		right: 7px;
 		top: 8px;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			right: 4px;
 		}
 	}

@@ -14,11 +14,11 @@
 
 @keyframes appearWithScaling {
 	0% {
-		transform: scale( 0.9, 0.9 );
+		transform: scale(0.9, 0.9);
 		opacity: 0;
 	}
 	100% {
-		transform: scale( 1, 1 );
+		transform: scale(1, 1);
 		opacity: 1;
 	}
 }
@@ -26,29 +26,29 @@
 // Useful for the checked state of radio button fields
 @keyframes grow {
 	0% {
-		transform: scale( 0.3 );
+		transform: scale(0.3);
 	}
 
 	60% {
-		transform: scale( 1.15 );
+		transform: scale(1.15);
 	}
 
 	100% {
-		transform: scale( 1 );
+		transform: scale(1);
 	}
 }
 
 // Pulsing background color for loading placeholders
 @keyframes pulse-light {
 	50% {
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 	}
 }
 
 // Pulsing background color for loading placeholders
 @keyframes highlight {
 	50% {
-		background-color: var( --color-warning-10 );
+		background-color: var(--color-warning-10);
 	}
 }
 

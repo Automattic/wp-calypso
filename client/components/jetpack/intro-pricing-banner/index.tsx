@@ -53,31 +53,23 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 	const discountPercentage =
 		fullJetpackSaleDiscount > 0 ? fullJetpackSaleDiscount : highestDiscount;
 
-	let className;
+	let classModifier = '';
 
 	if ( isLoading ) {
-		className = 'intro-pricing-banner__loading';
+		classModifier = 'is-loading';
 	} else if ( hasCrossed ) {
-		className = 'intro-pricing-banner__sticky';
-	} else {
-		className = 'intro-pricing-banner';
+		classModifier = 'is-sticky';
 	}
 
 	return (
 		<>
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
-			<div className={ className }>
+			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				{ ( discountPercentage > 0 || isLoading ) && (
-					<>
-						<div className="intro-pricing-banner__discount">
-							<img
-								src={ rocket }
-								alt={ translate( 'Rocket representing %(percent)d%% sale', {
-									args: { percent: discountPercentage },
-									textOnly: true,
-								} ) }
-							/>
-							<span>
+					<div className="intro-pricing-banner__content">
+						<div className="intro-pricing-banner__item">
+							<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
+							<span className="intro-pricing-banner__item-label">
 								{ preventWidows(
 									translate( 'Get up to %(percent)d%% off your first year.', {
 										args: {
@@ -87,9 +79,9 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								) }
 							</span>
 						</div>
-						<div className="intro-pricing-banner__guarantee">
-							<img src={ guaranteeBadge } alt="" />
-							<span>
+						<div className="intro-pricing-banner__item">
+							<img className="intro-pricing-banner__item-icon" src={ guaranteeBadge } alt="" />
+							<span className="intro-pricing-banner__item-label">
 								{ preventWidows(
 									translate( '%(days)d day money back guarantee.', {
 										args: { days: GUARANTEE_DAYS },
@@ -97,9 +89,10 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								) }
 							</span>
 						</div>
-						<div className="intro-pricing-banner__agencies">
-							<img src={ people } alt="" />
+						<div className="intro-pricing-banner__item is-agencies">
+							<img className="intro-pricing-banner__item-icon" src={ people } alt="" />
 							<a
+								className="intro-pricing-banner__item-label is-link"
 								onClick={ () =>
 									recordTracksEvent( 'calypso_jpcom_agencies_page_intro_banner_link_click' )
 								}
@@ -110,7 +103,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 								{ preventWidows( translate( 'Explore Jetpack for Agencies' ) ) }
 							</a>
 						</div>
-					</>
+					</div>
 				) }
 			</div>
 		</>

@@ -5,7 +5,7 @@
 	margin-left: 116px;
 	margin-right: 32px;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		padding: 16px;
 		margin: 0;
 	}
@@ -25,10 +25,10 @@
 	&__section-text {
 		margin-bottom: 16px;
 
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		font-size: $font-body-small;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			margin-bottom: 24px;
 		}
 	}

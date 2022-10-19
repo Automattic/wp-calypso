@@ -56,7 +56,9 @@ export default function SitePreview( props ) {
 	const siteId = useSelector( getPreviewSiteId );
 	const isPreviewable = useSelector( ( state ) => isSitePreviewable( state, siteId ) );
 
-	if ( ! isPreviewable ) return null;
+	if ( ! isPreviewable ) {
+		return null;
+	}
 
 	return <SitePreviewInner key={ siteId } siteId={ siteId } { ...props } />;
 }

@@ -1,4 +1,4 @@
-# Plugins List
+# Search Box Header
 
 This component is used to render the heading of the plugin marketplace, a search bar and a list of recommended searches.
 
@@ -8,7 +8,6 @@ This component is used to render the heading of the plugin marketplace, a search
 import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 
 <SearchBoxHeader
-	doSearch={ doSearch }
 	searchTerm={ search }
 	siteSlug={ siteSlug }
 	title={ translate( 'Plugins you need to get your projects done' ) }
@@ -18,7 +17,6 @@ import SearchBoxHeader from 'calypso/my-sites/plugins/search-box-header';
 
 ## Props
 
-- `doSearch`: A function used to execute the search.
 - `searchTerm`: The string used as a term to search the plugins.
 - `siteSlug`: A string representing the url of the current selected site, it can be optional.
 - `title`: A string that is rendered in the heading.

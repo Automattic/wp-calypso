@@ -11,12 +11,12 @@
 
 .phpmyadmin-card__restore-password {
 	margin-top: 16px;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 
 	button.is-compact.is-borderless {
 		text-decoration: underline;
-		color: var( --color-primary );
+		color: var(--color-primary);
 		font-style: inherit;
 		font-weight: 400;
 		line-height: inherit;
@@ -30,5 +30,5 @@
 }
 
 .phpmyadmin-card__db-warning {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

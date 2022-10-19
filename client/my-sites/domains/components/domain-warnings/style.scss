@@ -1,4 +1,5 @@
 .domain-warnings__password {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 110%;
 	padding: 5px;
 }
@@ -6,14 +7,14 @@
 .domain-warnings__action {
 	background: none;
 	border: none;
-	color: white;
+	color: var(--color-text-inverted);
 	cursor: pointer;
 	padding: 0;
 	text-decoration: underline;
 }
 
 .domain-warnings__action:hover {
-	color: white;
+	color: var(--color-text-inverted);
 	text-decoration: none;
 }
 
@@ -21,7 +22,7 @@
 	min-width: 400px;
 	max-width: 600px;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		min-width: none;
 		max-width: none;
 	}

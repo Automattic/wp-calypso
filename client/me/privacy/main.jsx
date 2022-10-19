@@ -56,10 +56,10 @@ class Privacy extends Component {
 		const isSubmitButtonDisabled = ! hasUnsavedUserSettings || isUpdatingUserSettings;
 
 		const cookiePolicyLink = (
-			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
+			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies/' ) } target="_blank" />
 		);
 		const privacyPolicyLink = (
-			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy' ) } target="_blank" />
+			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy/' ) } target="_blank" />
 		);
 
 		return (

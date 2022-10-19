@@ -22,12 +22,7 @@ interface Props< T > {
 	preventWidows: ( text: TranslateResult, wordsToKeep?: number ) => string;
 }
 
-function SelectItems< T >( {
-	className,
-	items,
-	onSelect,
-	preventWidows,
-}: Props< T > ): React.ReactElement {
+function SelectItems< T >( { className, items, onSelect, preventWidows }: Props< T > ) {
 	return (
 		<div className={ classnames( 'select-items', className ) }>
 			{ items.map( ( { key, title, description, icon, actionText, value, isPrimary } ) => (

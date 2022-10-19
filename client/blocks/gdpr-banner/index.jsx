@@ -84,7 +84,7 @@ function GdprBannerInner( { show } ) {
 			'{{a}}Learn more{{/a}}, including how to control cookies.',
 		{
 			components: {
-				a: <a href={ localizeUrl( 'https://automattic.com/cookies' ) } />,
+				a: <a href={ localizeUrl( 'https://automattic.com/cookies/' ) } />,
 			},
 		}
 	);

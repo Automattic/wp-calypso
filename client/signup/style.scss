@@ -1,41 +1,106 @@
-@import '@automattic/onboarding/styles/mixins';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/onboarding/styles/mixins";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 body.is-section-signup {
 	// Use WordPress.com’s brand color for the signup background
-	background: var( --color-wordpress-com );
+	background: var(--color-wordpress-com);
 
 	&.is-white-signup {
 		background: #fdfdfd;
 
-		.layout:not( .dops ) .wpcom-site__logo {
-			fill: var( --color-neutral-10 );
-			color: var( --color-neutral-10 );
+		.layout:not(.dops) .wpcom-site__logo {
+			fill: var(--color-neutral-10);
+			color: var(--color-neutral-10);
 			opacity: 1;
 
 			path {
-				fill: var( --color-neutral-10 );
+				fill: var(--color-neutral-10);
 				opacity: 1;
+			}
+		}
+		/**
+		* Removed the navigation back button step from mobile viewports.
+		* This is done because the there is usally already a back button displayed to the user (Browser back button)
+		* and the current back button is redundent.
+		*/
+		.signup__step.is-plans-link-in-bio .step-wrapper__navigation,
+		.signup__step.is-plans-newsletter .step-wrapper__navigation,
+		.signup__step.is-mailbox-plan .step-wrapper__navigation,
+		.signup__step.is-plans .step-wrapper__navigation,
+		.signup__step.is-domains .step-wrapper__navigation,
+		.signup__step.is-mailbox-domain .step-wrapper__navigation {
+			@include breakpoint-deprecated( "<660px" ) {
+				display: none;
+			}
+		}
+	}
+	&.is-videopress-signup {
+		background: var(--videopress-color-background-dark);
+		color: var(--videopress-color-text);
+
+		&.has-loading-screen-signup {
+			background: var(--videopress-color-background-dark);
+			color: var(--videopress-color-text);
+			&::before {
+				content: "";
+				position: absolute;
+				display: block;
+				width: 100%;
+				height: 100%;
+				background: linear-gradient(126.81deg, #001424 7.92%, #02223a 89.27%);
+				animation: p2-fade 5s ease-in-out infinite alternate;
+			}
+		}
+
+		.layout {
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			background: var(--videopress-color-background-dark);
+			// color: var( --videopress-color-text );
+		}
+
+		.layout__content,
+		.layout__primary,
+		.signup,
+		.signup__steps,
+		.signup__step,
+		.signup__step.is-user {
+			padding: 0;
+			height: 100%;
+		}
+
+		.layout:not(.dops) .step-wrapper {
+			margin: 0 0 24px;
+			max-width: none;
+		}
+
+		@include breakpoint-deprecated( "<480px" ) {
+			.locale-suggestions {
+				margin-top: 0;
+				.notice {
+					border-radius: 0;
+				}
 			}
 		}
 	}
 
 	&.is-p2-signup {
-		background: var( --p2-color-white );
-		color: var( --p2-color-text );
+		background: var(--p2-color-white);
+		color: var(--p2-color-text);
 		letter-spacing: -0.01em;
 
 		&.has-loading-screen-signup {
-			background: var( --p2-color-text );
-			color: var( --p2-color-white );
+			background: var(--p2-color-text);
+			color: var(--p2-color-white);
 			&::before {
-				content: '';
+				content: "";
 				position: absolute;
 				display: block;
 				width: 100%;
 				height: 100%;
-				background: linear-gradient( 126.81deg, #001424 7.92%, #02223a 89.27% );
+				background: linear-gradient(126.81deg, #001424 7.92%, #02223a 89.27%);
 				animation: p2-fade 5s ease-in-out infinite alternate;
 			}
 		}
@@ -56,12 +121,12 @@ body.is-section-signup {
 			height: 100%;
 		}
 
-		.layout:not( .dops ) .step-wrapper {
+		.layout:not(.dops) .step-wrapper {
 			margin: 0 0 24px;
 			max-width: none;
 		}
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			.locale-suggestions {
 				margin-top: 0;
 				.notice {
@@ -78,7 +143,7 @@ body.is-section-signup {
 	}
 
 	// Hide the masterbar for realz
-	.masterbar {
+	&.has-no-masterbar .masterbar {
 		display: none;
 	}
 
@@ -94,20 +159,20 @@ body.is-section-signup {
 	}
 
 	.layout__secondary {
-		background: var( --color-primary );
+		background: var(--color-primary);
 		border: 0;
 	}
 }
 
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
-body.is-section-signup .layout:not( .dops ),
+body.is-section-signup .layout:not(.dops),
 body.is-section-signup .layout.gravatar {
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
-		fill: var( --color-primary-dark );
-		color: var( --color-primary-dark );
+		fill: var(--color-primary-dark);
+		color: var(--color-primary-dark);
 		opacity: 0.3;
 	}
 
@@ -115,15 +180,15 @@ body.is-section-signup .layout.gravatar {
 	// on the primary colored background.
 	.empty-content {
 		.empty-content__illustration {
-			background: var( --color-surface );
+			background: var(--color-surface);
 			padding-bottom: 16px;
 			margin-bottom: 24px;
-			border-radius: 6px; /* stylelint-disable-line */
+			border-radius: 6px; /* stylelint-disable-line scales/radii */
 			@include elevation( 3dp );
 		}
 
 		.empty-content__title {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 
@@ -151,8 +216,8 @@ body.is-section-signup .layout.gravatar {
 		@include elevation( 2dp );
 	}
 
-	@include breakpoint-deprecated( '<660px' ) {
-		.layout:not( .is-horizontal-layout ) button:not( .is-compact ):not( .is-primary ) {
+	@include breakpoint-deprecated( "<660px" ) {
+		.layout:not(.is-horizontal-layout) button:not(.is-compact):not(.is-primary) {
 			font-size: $font-body;
 			padding-top: 12px;
 			padding-bottom: 14px;
@@ -161,28 +226,28 @@ body.is-section-signup .layout.gravatar {
 }
 
 // Signup headings
-body.is-section-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) .formatted-header,
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header,
 body.is-section-signup .layout.gravatar .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
 		margin: 0;
 		font-weight: 400;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	.formatted-header__subtitle {
 		margin: 8px 0 0;
 		font-size: $font-body;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 
 	a {
-		color: var( --color-neutral-0 );
+		color: var(--color-neutral-0);
 		text-decoration: underline;
 
 		&:hover {
-			color: var( --color-text-inverted );
+			color: var(--color-text-inverted);
 		}
 	}
 }
@@ -193,24 +258,24 @@ body.is-section-signup .layout.gravatar .formatted-header {
 }
 
 .layout.is-wccom-oauth-flow {
-	@import 'jetpack-connect/colors.scss';
+	@import "jetpack-connect/colors.scss";
 	@include woocommerce-colors();
-	background-color: var( --color-woocommerce-onboarding-background );
+	background-color: var(--color-woocommerce-onboarding-background);
 	height: 100%;
 
 	.woocommerce-muriel-text-control,
 	.muriel-input-text {
-		border-color: var( --color-neutral-20 );
+		border-color: var(--color-neutral-20);
 
 		.text-control__label,
 		.components-base-control__label {
-			color: var( --color-neutral-50 );
+			color: var(--color-neutral-50);
 			font-size: $font-body-extra-small;
 			font-weight: normal;
 		}
 
 		&.active {
-			box-shadow: 0 0 0 2px var( --studio-woocommerce-purple-60 );
+			box-shadow: 0 0 0 2px var(--studio-woocommerce-purple-60);
 			border-color: transparent;
 		}
 	}
@@ -225,7 +290,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 
 	.signup-form__woocommerce-wrapper {
 		text-align: center;
-		border-bottom: 1px solid var( --color-neutral-50 );
+		border-bottom: 1px solid var(--color-neutral-50);
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -233,7 +298,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		height: 56px;
 
 		svg > g {
-			transform: translateX( 50% );
+			transform: translateX(50%);
 		}
 	}
 
@@ -245,8 +310,8 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		padding-left: 0;
 		display: block;
 		height: 56px;
-		border-bottom: 1px solid var( --color-woocommerce-header-border );
-		background: var( --color-text-inverted );
+		border-bottom: 1px solid var(--color-woocommerce-header-border);
+		background: var(--color-text-inverted);
 
 		svg {
 			margin-top: 15px;
@@ -263,7 +328,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		margin-left: auto;
 
 		.formatted-header__subtitle {
-			color: var( --color-primary-10 );
+			color: var(--color-primary-10);
 			margin-top: 1em;
 			font-size: $font-body;
 			line-height: 24px;
@@ -278,18 +343,17 @@ body.is-section-signup .layout.gravatar .formatted-header {
 	.logged-out-form__link-item {
 		text-align: center;
 		text-decoration: underline;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 		font-size: $font-body-small;
 	}
 
 	.signup-form__terms-of-service-link {
 		text-align: left;
-		color: var( --studio-gray-60 );
+		color: var(--studio-gray-60);
 	}
 
 	.signup-form__terms-of-service-link a,
 	.signup-form__social-buttons-tos a {
-		color: var( --studio-gray-50 );
 		text-decoration: underline;
 	}
 
@@ -298,12 +362,12 @@ body.is-section-signup .layout.gravatar .formatted-header {
 		margin-top: 16px;
 		p {
 			font-size: $font-body-extra-small;
-			color: var( --studio-gray-60 );
+			color: var(--studio-gray-60);
 		}
 
 		.social-buttons__button {
-			border: 1px solid var( --studio-pink-50 );
-			color: var( --studio-pink-50 );
+			border: 1px solid var(--studio-pink-50);
+			color: var(--studio-pink-50);
 			box-shadow: none;
 			max-width: 250px;
 			height: 48px;
@@ -326,7 +390,7 @@ body.is-section-signup .layout.gravatar .formatted-header {
 /**
  * Common styles for reskinSignupFlow a/b test
  */
-body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth-flow ) {
+body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow) {
 	$gray-100: #101517;
 	$gray-60: #50575e;
 	$gray-50: #646970;
@@ -340,7 +404,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			position: absolute;
 			inset-inline-start: 20px;
 			inset-block-start: 20px;
-			fill: var( --color-text );
+			fill: var(--color-text);
 			transform-origin: 0 0;
 		}
 		.signup-header__right {
@@ -348,9 +412,9 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			inset-inline-end: 20px;
 
 			.flow-progress-indicator {
-				font-weight: 500; /* stylelint-disable-line */
+				font-weight: 500;
 				font-size: 0.875rem;
-				color: var( --studio-gray-30 );
+				color: var(--studio-gray-30);
 			}
 		}
 
@@ -366,10 +430,10 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.navigation-link.button.is-borderless {
-		color: var( --color-accent );
+		color: var(--color-accent);
 
 		svg {
-			fill: var( --color-accent );
+			fill: var(--color-accent);
 		}
 	}
 
@@ -392,7 +456,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
-	.step-wrapper:not( .is-horizontal-layout ) {
+	.step-wrapper:not(.is-horizontal-layout) {
 		.step-wrapper__header {
 			margin: 24px 20px;
 
@@ -403,7 +467,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.step-wrapper__header-button {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			margin-top: 16px;
 			margin-bottom: -16px;
 		}
@@ -416,10 +480,10 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			@include onboarding-font-recoleta;
 			color: $gray-100;
 			letter-spacing: 0.2px;
-			font-size: 2.15rem; /* stylelint-disable-line */
+			font-size: 2.15rem; /* stylelint-disable-line scales/font-sizes */
 
 			@include break-xlarge {
-				font-size: 2.75rem; /* stylelint-disable-line */
+				font-size: 2.75rem;
 			}
 		}
 
@@ -427,7 +491,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			color: $gray-60;
 			font-size: 1rem;
 
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin-top: 16px;
 			}
 		}
@@ -466,7 +530,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 3.25rem; /* stylelint-disable-line */
+					font-size: 3.25rem; /* stylelint-disable-line scales/font-sizes */
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3.5rem;
 				}
 			}
@@ -476,14 +541,15 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				color: #646970;
 
 				a {
-					color: var( --studio-gray-90 );
+					color: var(--studio-gray-90);
 					text-decoration: underline;
 					cursor: pointer;
 				}
 
 				@include break-small {
 					max-width: inherit;
-					font-size: 1.125rem; /* stylelint-disable-line */
+					font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 1.625rem;
 					letter-spacing: 0.24px;
 				}
@@ -493,16 +559,16 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		button.signup-form__submit[disabled],
 		button.signup-form__submit:disabled,
 		button.signup-form__submit.disabled {
-			background-color: var( --studio-gray-20 );
-			color: var( --color-surface );
+			background-color: var(--studio-gray-20);
+			color: var(--color-surface);
 		}
 
 		button.signup-form__submit {
-			border-radius: 4px; /* stylelint-disable-line */
+			border-radius: 4px;
 			max-width: 408px;
 			height: 44px;
-			box-shadow: 0 1px 2px rgba( 0, 0, 0, 0.05 );
-			font-weight: 500; /* stylelint-disable-line */
+			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+			font-weight: 500;
 			letter-spacing: 0.32px;
 			line-height: 17px;
 		}
@@ -532,7 +598,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			}
 
 			> svg {
-				border: 1px solid var( --studio-gray-10 );
+				border: 1px solid var(--studio-gray-10);
 				padding: 12px;
 				border-radius: 24px; /* stylelint-disable-line scales/radii */
 			}
@@ -605,7 +671,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 					&::before,
 					&::after {
-						content: '';
+						content: "";
 						display: block;
 						margin: 40px auto 24px;
 						border: 0;
@@ -647,8 +713,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				margin-bottom: 16px;
 				height: 44px;
 				max-width: 408px;
-				border-radius: 4px; /* stylelint-disable-line */
-				border: 1px solid var( --studio-gray-10 );
+				border-radius: 4px;
+				border: 1px solid var(--studio-gray-10);
 			}
 
 			.form-password-input {
@@ -668,7 +734,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				width: calc( 100% - 32px );
+				width: calc(100% - 32px);
 				margin: 20px auto;
 
 				@include break-medium {
@@ -678,7 +744,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 
 				&::before {
 					position: absolute;
-					content: '';
+					content: "";
 					border-inline-start: 0;
 					border-block-start: $separator-style;
 					inset-block-start: 50%;
@@ -703,7 +769,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 				padding: 24px 0;
 				font-size: 0.75rem;
 				z-index: 1;
-				color: var( --studio-gray-50 );
+				color: var(--studio-gray-50);
 
 				@media screen and ( max-width: $breakpoint-mobile ) {
 					padding: 0 24px;
@@ -732,15 +798,22 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.signup__step.is-domains,
+	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
+	.signup__step.is-mailbox,
+	.signup__step.is-plans-newsletter,
+	.signup__step.is-plans-link-in-bio,
+	.signup__step.is-mailbox-plan,
 	.signup__step.is-plans {
 		.formatted-header {
 			.formatted-header__title {
-				font-size: 2.25rem; /* stylelint-disable-line */
+				font-size: 2.25rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 2.5rem;
 
 				@include break-mobile {
-					font-size: 2.75rem; /* stylelint-disable-line */
+					font-size: 2.75rem;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 					line-height: 3rem;
 				}
 			}
@@ -748,7 +821,9 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.signup__step.is-domains,
+	.signup__step.is-mailbox-domain,
 	.signup__step.is-emails,
+	.signup__step.is-mailbox,
 	.is-domain-only {
 		@include break-large {
 			margin: 0 0 0 20px;
@@ -770,21 +845,24 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 		}
 	}
 
+	.signup__step.is-plans-link-in-bio,
+	.signup__step.is-plans-newsletter,
+	.signup__step.is-mailbox-plan,
 	.signup__step.is-plans {
 		.formatted-header__title {
-			font-weight: 500; /* stylelint-disable-line */
+			font-weight: 500;
 		}
 
 		.formatted-header__subtitle button.is-borderless {
-			font-weight: 500; /* stylelint-disable-line */
-			color: var( --studio-gray-90 );
+			font-weight: 500;
+			color: var(--studio-gray-90);
 		}
 	}
 
 	.signup__step.is-design-setup-site,
 	.signup__step.is-difm-design-setup-site {
 		.step-wrapper__header {
-			@include breakpoint-deprecated( '<660px' ) {
+			@include breakpoint-deprecated( "<660px" ) {
 				margin-left: 0;
 				margin-right: 0;
 			}
@@ -794,7 +872,7 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 			margin-top: 40px;
 
 			.formatted-header__title {
-				font-size: 2rem; /* stylelint-disable-line */
+				font-size: 2rem;
 			}
 
 			@include break-mobile {
@@ -809,21 +887,8 @@ body.is-section-signup.is-white-signup .layout:not( .dops ):not( .is-wccom-oauth
 	}
 
 	.inline-help {
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			bottom: 74px;
-		}
-	}
-}
-/**
- * Removed the navigation back button step from mobile viewports.
- * This is done because the there is usally already a back button displayed to the user (Browser back button)
- * and the current back button is redundent.
-*/
-body.is-section-signup.is-white-signup {
-	.signup__step.is-plans .step-wrapper__navigation,
-	.signup__step.is-domains .step-wrapper__navigation {
-		@include breakpoint-deprecated( '<660px' ) {
-			display: none;
 		}
 	}
 }

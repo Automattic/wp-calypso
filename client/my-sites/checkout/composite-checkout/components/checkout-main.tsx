@@ -31,7 +31,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite, isJetpackProductSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
@@ -62,6 +62,7 @@ import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
 	ManagedContactDetails,
 	CountryListItem,
@@ -125,14 +126,9 @@ export default function CheckoutMain( {
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
-		useSelector(
-			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
-		) ||
-		isJetpackCheckout ||
-		false;
-	const hasJetpackStandalonePlugins =
-		useSelector( ( state ) => siteId && isJetpackProductSite( state, siteId ) ) || false;
-	const usesJetpackProducts = isJetpackNotAtomic || hasJetpackStandalonePlugins;
+		useSelector( ( state ) => {
+			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+		} ) || isJetpackCheckout;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const isLoadingIntroOffers = useSelector( ( state ) =>
 		getIsIntroOfferRequesting( state, siteId )
@@ -175,7 +171,7 @@ export default function CheckoutMain( {
 		productAliasFromUrl,
 		purchaseId,
 		isInModal,
-		usesJetpackProducts,
+		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
 		isLoggedOutCart,
@@ -403,12 +399,14 @@ export default function CheckoutMain( {
 			replaceProductInCart( uuidToReplace, {
 				product_slug: newProductSlug,
 				product_id: newProductId,
+			} ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
 			} );
 		},
 		[ replaceProductInCart, reduxDispatch ]
 	);
 
-	const addItemAndLog = useCallback(
+	const addItemAndLog: ( item: MinimalRequestCartProduct ) => void = useCallback(
 		( cartItem ) => {
 			try {
 				recordAddEvent( cartItem );
@@ -417,7 +415,9 @@ export default function CheckoutMain( {
 					error: String( error ),
 				} );
 			}
-			addProductsToCart( [ cartItem ] );
+			addProductsToCart( [ cartItem ] ).catch( () => {
+				// Nothing needs to be done here. CartMessages will display the error to the user.
+			} );
 		},
 		[ addProductsToCart ]
 	);
@@ -695,7 +695,7 @@ export default function CheckoutMain( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"

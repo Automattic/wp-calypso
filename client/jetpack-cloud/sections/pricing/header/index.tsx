@@ -5,7 +5,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 import './style.scss';
 
-const Header: React.FC< Props > = () => {
+const Header: React.FC< Props > = ( { title } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -14,7 +14,7 @@ const Header: React.FC< Props > = () => {
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows(
-						translate( 'Security, performance, and marketing tools made for WordPress' )
+						title ?? translate( 'Security, performance, and marketing tools made for WordPress' )
 					) }
 					align="center"
 				/>
@@ -25,6 +25,7 @@ const Header: React.FC< Props > = () => {
 
 type Props = {
 	urlQueryArgs: { [ key: string ]: string };
+	title?: string;
 };
 
 export default Header;

@@ -41,6 +41,7 @@ import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
 import { activateModule } from 'calypso/state/jetpack/modules/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -73,13 +74,19 @@ class InvitePeople extends Component {
 	};
 
 	getInitialState = () => {
-		const { isAtomic, isWPForTeamsSite } = this.props;
+		let defaultRole;
+		const { isAtomic, isWPForTeamsSite, includeSubscriberImporter } = this.props;
 
-		let defaultRole = 'follower';
-		if ( isWPForTeamsSite ) {
+		if ( includeSubscriberImporter ) {
 			defaultRole = 'editor';
-		} else if ( isAtomic ) {
-			defaultRole = 'subscriber';
+		} else {
+			defaultRole = 'follower';
+
+			if ( isWPForTeamsSite ) {
+				defaultRole = 'editor';
+			} else if ( isAtomic ) {
+				defaultRole = 'subscriber';
+			}
 		}
 
 		return {
@@ -380,7 +387,7 @@ class InvitePeople extends Component {
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
-				href="http://wordpress.com/support/user-roles/"
+				href="https://wordpress.com/support/user-roles/"
 				onClick={ this.onClickRoleExplanation }
 			>
 				{ translate( 'Learn more about roles' ) }
@@ -396,11 +403,22 @@ class InvitePeople extends Component {
 	};
 
 	renderInviteForm = () => {
-		const { site, translate, needsVerification, isJetpack, showSSONotice } = this.props;
+		const {
+			site,
+			translate,
+			needsVerification,
+			isJetpack,
+			showSSONotice,
+			includeSubscriberImporter,
+		} = this.props;
+		let includeFollower;
+		const includeSubscriber = ! includeSubscriberImporter;
 
-		// Atomic private sites don't support Viewers/Followers.
-		// @see https://github.com/Automattic/wp-calypso/issues/43919
-		const includeFollower = ! this.props.isAtomic;
+		if ( ! includeSubscriberImporter ) {
+			// Atomic private sites don't support Viewers/Followers.
+			// @see https://github.com/Automattic/wp-calypso/issues/43919
+			includeFollower = ! this.props.isAtomic;
+		}
 
 		const inviteForm = (
 			<Card>
@@ -434,12 +452,13 @@ class InvitePeople extends Component {
 						<RoleSelect
 							id="role"
 							name="role"
-							includeFollower={ includeFollower }
 							siteId={ this.props.siteId }
 							onChange={ this.onRoleChange }
 							onFocus={ this.onFocusRoleSelect }
 							value={ this.state.role }
 							disabled={ this.state.sendingInvites }
+							includeFollower={ includeFollower }
+							includeSubscriber={ includeSubscriber }
 							explanation={ this.renderRoleExplanation() }
 						/>
 
@@ -715,7 +734,7 @@ class InvitePeople extends Component {
 					<PageViewTracker path="/people/new/:site" title="People > Invite People" />
 					<EmptyContent
 						title={ translate( 'Oops, only administrators can invite other people' ) }
-						illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+						illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 					/>
 				</Main>
 			);
@@ -761,6 +780,7 @@ const mapStateToProps = ( state ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		inviteLinks: getInviteLinksForSite( state, siteId ),
 		isPrivateSite: isPrivateSite( state, siteId ),
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 	};
 };
 

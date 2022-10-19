@@ -1,59 +1,117 @@
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import PluginsTable from './plugins-table';
+import { ReactElement, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import ButtonGroup from 'calypso/components/button-group';
+import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
+import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
+import PluginsList from './plugins-list';
+import UpdatePlugins from './update-plugins';
 import type { Plugin } from './types';
-import type { SiteData } from 'calypso/state/ui/selectors/site-data';
-import type { ReactElement } from 'react';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
-	selectedSite: SiteData;
+	requestError: boolean;
+	selectedSite: SiteDetails;
 	searchTerm: string;
+	isBulkManagementActive: boolean;
+	toggleBulkManagement: () => void;
+	removePluginNotice: ( plugin: Plugin ) => void;
+	updatePlugin: ( plugin: Plugin ) => void;
+	isJetpackCloud: boolean;
 }
 export default function PluginManagementV2( {
 	plugins,
 	isLoading,
 	selectedSite,
 	searchTerm,
-}: Props ): ReactElement {
+	isBulkManagementActive,
+	toggleBulkManagement,
+	removePluginNotice,
+	updatePlugin,
+	isJetpackCloud,
+	requestError,
+}: Props ): ReactElement | null {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	useEffect( () => {
+		return () => {
+			dispatch( resetPluginStatuses() );
+		};
+	}, [ dispatch ] );
+
+	const renderBulkActionsHeader = () => {
+		if ( isLoading ) {
+			return <TextPlaceholder />;
+		}
+
+		return (
+			<div className="plugin-common-table__bulk-actions">
+				{ isJetpackCloud && <UpdatePlugins plugins={ plugins } /> }
+				<ButtonGroup className="plugin-management-v2__table-button-group">
+					<Button compact onClick={ toggleBulkManagement }>
+						{ translate( 'Edit All', { context: 'button label' } ) }
+					</Button>
+				</ButtonGroup>
+			</div>
+		);
+	};
+
 	const columns = [
 		{
 			key: 'plugin',
-			title: translate( 'Installed Plugins' ),
+			header: translate( 'Installed Plugins' ),
 		},
 		...( selectedSite
 			? [
 					{
 						key: 'activate',
-						title: translate( 'Active' ),
+						header: translate( 'Active' ),
 						smallColumn: true,
 					},
 					{
 						key: 'autoupdate',
-						title: translate( 'Autoupdate' ),
+						header: translate( 'Autoupdate' ),
 						smallColumn: true,
 					},
 					{
+						key: 'update',
+						header: translate( 'Update available' ),
+					},
+					{
 						key: 'last-updated',
-						title: translate( 'Last updated' ),
-						smallColumn: true,
-						colSpan: 2,
+						header: null,
 					},
 			  ]
 			: [
 					{
 						key: 'sites',
-						title: translate( 'Sites' ),
+						header: translate( 'Sites' ),
 						smallColumn: true,
-						colSpan: 2,
+					},
+					{
+						key: 'update',
+						header: translate( 'Update available' ),
+						smallColumn: true,
 					},
 			  ] ),
+		{
+			key: 'bulk-actions',
+			header: renderBulkActionsHeader(),
+			colSpan: 3,
+		},
 	];
 
 	if ( ! plugins.length && ! isLoading ) {
+		if ( requestError ) {
+			return null;
+		}
 		let emptyStateMessage = translate( 'No plugins found' );
 		if ( searchTerm ) {
 			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
@@ -62,12 +120,21 @@ export default function PluginManagementV2( {
 	}
 
 	return (
-		<div className="plugin-management-v2__main-content-container">
-			<PluginsTable
+		<div
+			className={ classNames( 'plugin-management-v2__main-content-container', {
+				'is-bulk-management-active': isBulkManagementActive,
+			} ) }
+		>
+			<PluginsList
 				items={ plugins }
 				columns={ columns }
 				isLoading={ isLoading }
+				className={ classNames( {
+					'has-bulk-management-active': isBulkManagementActive,
+				} ) }
 				selectedSite={ selectedSite }
+				removePluginNotice={ removePluginNotice }
+				updatePlugin={ updatePlugin }
 			/>
 		</div>
 	);

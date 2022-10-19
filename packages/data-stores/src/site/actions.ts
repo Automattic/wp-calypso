@@ -1,4 +1,4 @@
-import { Design } from '@automattic/design-picker/src/types';
+import { Design, DesignOptions } from '@automattic/design-picker/src/types';
 import { SiteGoal } from '../onboard';
 import { wpcomRequest } from '../wpcom-request-controls';
 import {
@@ -26,6 +26,7 @@ import type {
 	AtomicSoftwareInstallError as AtomicSoftwareInstallErrorType,
 	AtomicSoftwareStatus,
 	SiteSettings,
+	ThemeSetupOptions,
 } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
@@ -212,6 +213,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		settings: {
 			blogname?: string;
 			blogdescription?: string;
+			launchpad_screen?: string;
 			site_vertical_id?: string;
 			woocommerce_store_address?: string;
 			woocommerce_store_address_2?: string;
@@ -253,6 +255,17 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
+	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
+				apiVersion: '1.1',
+				body: { is_page_on_front: true, page_on_front_id: pageId },
+				method: 'POST',
+			} );
+		} catch ( e ) {}
+	}
+
 	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
 		try {
 			yield wpcomRequest( {
@@ -272,22 +285,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string ) {
+	function* setThemeOnSite( siteSlug: string, theme: string, styleVariationSlug?: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: theme, dont_change_homepage: true },
+			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: true },
 			method: 'POST',
 		} );
 	}
 
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, siteVerticalId: string ) {
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
 		const { theme, recipe } = selectedDesign;
 
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme, dont_change_homepage: true },
+			body: {
+				theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme,
+				style_variation_slug: options?.styleVariation?.slug,
+				dont_change_homepage: true,
+			},
 			method: 'POST',
 		} );
 
@@ -297,18 +314,37 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
 		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
+			const themeSetupOptions: ThemeSetupOptions = {
+				trim_content: true,
+			};
+
+			if ( selectedDesign.verticalizable ) {
+				themeSetupOptions.vertical_id = options?.verticalId;
+			}
+
+			if ( recipe?.pattern_ids ) {
+				themeSetupOptions.pattern_ids = recipe?.pattern_ids;
+			}
+
+			if ( recipe?.header_pattern_ids ) {
+				themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
+			}
+
+			if ( recipe?.footer_pattern_ids ) {
+				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
+			}
+
+			if ( options?.pageTemplate ) {
+				themeSetupOptions.page_template = options?.pageTemplate;
+			}
+
 			const response: { blog: string } = yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
 				apiNamespace: 'wpcom/v2',
-				body: {
-					trim_content: true,
-					vertical_id: siteVerticalId || undefined,
-					pattern_ids: recipe?.pattern_ids,
-					header_pattern_ids: recipe?.header_pattern_ids || [],
-					footer_pattern_ids: recipe?.footer_pattern_ids || [],
-				},
+				body: themeSetupOptions,
 				method: 'POST',
 			} );
+
 			return response;
 		}
 	}
@@ -487,12 +523,19 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		}
 	}
 
+	const setBundledPluginSlug = ( siteSlug: string, pluginSlug: string ) => ( {
+		type: 'SET_BUNDLED_PLUGIN_SLUG' as const,
+		siteSlug,
+		pluginSlug,
+	} );
+
 	return {
 		receiveSiteDomains,
 		receiveSiteSettings,
 		saveSiteTitle,
 		saveSiteSettings,
 		setIntentOnSite,
+		setStaticHomepageOnSite,
 		setGoalsOnSite,
 		receiveSiteTitle,
 		fetchNewSite,
@@ -536,6 +579,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		atomicSoftwareInstallStart,
 		atomicSoftwareInstallSuccess,
 		atomicSoftwareInstallFailure,
+		setBundledPluginSlug,
 	};
 }
 
@@ -573,6 +617,7 @@ export type Action =
 			| ActionCreators[ 'atomicSoftwareInstallStart' ]
 			| ActionCreators[ 'atomicSoftwareInstallSuccess' ]
 			| ActionCreators[ 'atomicSoftwareInstallFailure' ]
+			| ActionCreators[ 'setBundledPluginSlug' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

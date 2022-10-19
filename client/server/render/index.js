@@ -14,13 +14,14 @@ import {
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
+import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
 } from 'calypso/state/document-head/selectors';
+import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
@@ -219,9 +220,9 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
-		cacheKey = `${ getNormalizedPath( context.pathname, context.query ) }:gdpr=${
-			context.showGdprBanner
-		}`;
+		cacheKey = getCacheKey( req );
+		debug( `SSR render with cache key ${ cacheKey }.` );
+
 		context.renderedLayout = render(
 			context.layout,
 			req.error ? req.error.message : cacheKey,
@@ -229,21 +230,31 @@ export function serverRender( req, res ) {
 		);
 	}
 
+	context.initialQueryState = dehydrateQueryClient( context.queryClient );
+
 	if ( context.store ) {
 		attachHead( context );
 
-		const cacheableReduxSubtrees = [ 'documentHead' ];
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
-
-		const reduxSubtrees = [ ...cacheableReduxSubtrees, ...isomorphicSubtrees ];
+		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
-		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+		context.initialReduxState = pick( context.store.getState(), initialClientStateTrees );
 
-		// And cache on the server, too.
+		/**
+		 * Cache redux state to speedup future renders. For example, some network
+		 * requests are skipped if the data is already in the store. Note that
+		 * cacheKey is only defined when SSR is enabled, which means the cache
+		 * is only set in logged-out contexts.
+		 *
+		 * Also note that we should only cache data which maps 1:1 to a route.
+		 * For example, the themes data on the logged-out "/themes" route is always
+		 * the same. And since the locale is encoded into the logged-out route
+		 * (like /es/themes), that applies to every user.
+		 */
 		if ( cacheKey ) {
-			const cacheableServerState = pick( context.store.getState(), cacheableReduxSubtrees );
-			const serverState = serialize( context.store.getCurrentReducer(), cacheableServerState );
+			const { documentHead, themes } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}

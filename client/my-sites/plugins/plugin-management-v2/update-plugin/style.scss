@@ -1,22 +1,77 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
-.update-plugin__badge {
-	font-size: 0.75rem !important;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	@include break-xlarge() {
-		max-width: 70px;
-	}
-	@include break-huge() {
-		max-width: 80px;
+.update-plugin__plugin-update-wrapper {
+	display: flex;
+	align-items: center;
+	color: var(--studio-gray-60);
+	font-size: 0.75rem;
+	position: relative;
+	margin-block-start: 16px;
+
+	@include break-xlarge {
+		margin-block-start: 0;
 	}
 }
-a.button.update-plugin__plugin-update-button {
-	color: var( --color-primary-80 );
-	margin-left: 10px;
+
+.update-plugin__arrow-icon {
+	display: flex;
+	position: relative;
+	inset-inline-start: 10px;
+	fill: var(--studio-gray-40);
+}
+
+button.update-plugin__new-version {
 	text-decoration: underline;
-	display: inline-flex;
+	font-weight: 600;
+	position: relative;
+	inset-inline-start: 20px;
+
+	a {
+		display: inline !important;
+	}
+}
+
+.theme-jetpack-cloud {
+	button.update-plugin__new-version {
+		color: var(--studio-jetpack-green-50) !important;
+	}
+}
+
+button.update-plugin__retry-button {
+	text-decoration: underline;
+	margin-inline-start: 5px;
+	margin-block-start: 15px;
+
+	@include break-xlarge {
+		margin-block-start: 0;
+	}
+}
+
+.update-plugin__plugin-action-status {
+	position: relative;
+
+	.plugin-action-status {
+		margin-block-start: 20px;
+	}
+
+	.plugin-action-status-container {
+		margin-block-start: 12px;
+		transform: translateY(-50%);
+		display: flex;
+
+		@include break-xlarge {
+			margin-block-start: 0;
+			inset-block-start: 50%;
+			position: absolute;
+			display: inherit;
+		}
+	}
+}
+
+.has-bulk-management-active {
+	.update-plugin__plugin-update-wrapper {
+		opacity: 0.3;
+		pointer-events: none;
+	}
 }

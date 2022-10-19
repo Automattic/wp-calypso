@@ -1,0 +1,29 @@
+@import "../style";
+
+.link-in-bio.patterns {
+	height: 100vh;
+	padding: 25px 0 0;
+
+	@include break-medium {
+		padding: 40px 0 0;
+	}
+
+	.step-container {
+		.step-container__header {
+			margin-bottom: 20px;
+
+			@include break-medium {
+				margin-bottom: 32px;
+			}
+
+			// very narrow wide screens (mobile land scape)
+			@media screen and ( max-height: 512px ) {
+				margin: 0;
+			}
+		}
+
+		.step-container__jetpack-powered {
+			margin-top: 20px;
+		}
+	}
+}

@@ -11,3 +11,25 @@
 		flex: 1;
 	}
 }
+
+.promote-post__footer {
+	text-align: center;
+	margin: 24px 0;
+
+	a {
+		color: var(--studio-gray-60);
+		text-decoration: underline;
+	}
+}
+
+.promote-post__empty-content {
+	.empty-content__title {
+		font-size: $font-body-large;
+		font-weight: bold;
+	}
+
+	.empty-content__line {
+		font-weight: normal;
+		font-size: $font-body;
+	}
+}

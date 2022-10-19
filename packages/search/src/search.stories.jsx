@@ -66,7 +66,9 @@ export const WithOverlayStyling = () => {
 	return <BoxedSearch overlayStyling={ overlayStyling } />;
 };
 
-export const WithDefaultValue = () => <BoxedSearch defaultValue="a default search value" />;
+export const WithDefaultValue = () => (
+	<BoxedSearch defaultValue="a default search value overflowing the input box" />
+);
 
 export const WithCustomSearchIcon = () => {
 	const customIcon = (
@@ -102,3 +104,5 @@ export const WithDifferentColor = () => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	<BoxedSearch className="stories__search--with-different-color" />
 );
+
+export const RTLMode = () => <BoxedSearch dir="rtl" />;

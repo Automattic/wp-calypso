@@ -1,6 +1,6 @@
-import { shallow } from 'enzyme';
-import HappychatButton from 'calypso/components/happychat/button';
-import HappychatConnection from 'calypso/components/happychat/connection-connected';
+/** @jest-environment jsdom */
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
 	CALYPSO_CONTACT,
 	JETPACK_CONTACT_SUPPORT,
@@ -9,70 +9,79 @@ import {
 } from 'calypso/lib/url/support';
 import { HappinessSupport } from '..';
 
+jest.mock( 'calypso/components/happychat/connection-connected', () => () => (
+	<div data-testid="happychat-connection" />
+) );
+jest.mock( 'calypso/components/happychat/button', () => ( { onClick, children } ) => (
+	<button data-testid="happychat-button" onClick={ onClick }>
+		{ children }
+	</button>
+) );
+
 const noop = () => {};
 
 describe( 'HappinessSupport', () => {
-	let wrapper;
 	const translate = ( content ) => `Translated: ${ content }`;
 
-	beforeEach( () => {
-		wrapper = shallow( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
-	} );
-
 	test( 'should render translated heading content', () => {
-		const heading = wrapper.find( 'h3' );
-		expect( heading ).toHaveLength( 1 );
-		expect( heading.props().children ).toEqual( 'Translated: Priority support' );
+		render( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
+		const heading = screen.getByRole( 'heading', { level: 3 } );
+		expect( heading ).toBeVisible();
+		expect( heading ).toHaveTextContent( 'Translated: Priority support' );
 	} );
 
 	test( 'should render translated help content', () => {
-		const content = wrapper.find( 'p.happiness-support__description' );
-		expect( content ).toHaveLength( 1 );
-		expect( content.props().children ).toEqual(
-			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your\xA0account.'
-		);
+		render( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
+		const desc =
+			'Translated: {{strong}}Need help?{{/strong}} A Happiness Engineer can answer questions about your site and your account.';
+		const content = screen.getByText( desc );
+		expect( content ).toBeVisible();
 	} );
 
 	test( 'should render a translated support button', () => {
+		render( <HappinessSupport translate={ translate } recordTracksEvent={ noop } /> );
 		expect(
-			wrapper.find( 'ForwardRef(Button).happiness-support__support-button>span' ).props().children
-		).toEqual( 'Translated: Support documentation' );
+			screen.getByRole( 'link', { name: 'Translated: Support documentation' } )
+		).toBeVisible();
 	} );
 
-	test( 'should render a support button with link to SUPPORT_ROOT if it is not for JetPack', () => {
-		wrapper = shallow(
+	test( 'should render a support button with link to SUPPORT_ROOT if it is not for Jetpack', () => {
+		render(
 			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ false } />
 		);
 		expect(
-			wrapper.find( 'ForwardRef(Button).happiness-support__support-button' ).props().href
-		).toEqual( SUPPORT_ROOT );
+			screen.getByRole( 'link', { name: 'Translated: Support documentation' } )
+		).toHaveAttribute( 'href', SUPPORT_ROOT );
 	} );
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
-		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
-		);
-		expect( wrapper.find( 'ForwardRef(Button)' ).last().prop( 'href' ) ).toEqual( JETPACK_SUPPORT );
+		render( <HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack /> );
+		expect(
+			screen.getByRole( 'link', { name: 'Translated: Support documentation' } )
+		).toHaveAttribute( 'href', JETPACK_SUPPORT );
 	} );
 
 	test( 'should have is-placeholder className only if it is a placeholder', () => {
-		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).toBe( false );
-
-		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder={ true } />
-		);
-		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).toBe( true );
-	} );
-
-	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
-		wrapper = shallow(
+		const { rerender, container } = render(
 			<HappinessSupport
 				translate={ translate }
 				recordTracksEvent={ noop }
-				showLiveChatButton={ true }
+				isPlaceholder={ false }
 			/>
 		);
-		expect( wrapper.find( HappychatConnection ) ).toHaveLength( 1 );
+		expect( container.firstChild ).not.toHaveClass( 'is-placeholder' );
+
+		rerender(
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder />
+		);
+		expect( container.firstChild ).toHaveClass( 'is-placeholder' );
+	} );
+
+	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
+		render(
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } showLiveChatButton />
+		);
+		expect( screen.getByTestId( 'happychat-connection' ) ).toBeVisible();
 	} );
 
 	describe( 'LiveChat button', () => {
@@ -81,137 +90,127 @@ describe( 'HappinessSupport', () => {
 			recordTracksEvent: noop,
 		};
 
-		beforeEach( () => {
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
-			);
-		} );
-
 		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
+			const { rerender } = render(
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
+			);
 			// should be rendered here
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 1 );
+			expect( screen.getByTestId( 'happychat-button' ) ).toBeVisible();
 
 			// false cases
-			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			const queryHappychatButton = () => screen.queryByTestId( 'happychat-button' );
+			rerender( <HappinessSupport { ...props } /> );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton /> );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
-			);
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } /> );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
-			);
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable /> );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 
-			wrapper = shallow(
+			rerender(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( HappychatButton ) ).toHaveLength( 0 );
+			expect( queryHappychatButton() ).not.toBeInTheDocument();
 		} );
 
 		test( 'should render translated content', () => {
-			expect( wrapper.find( HappychatButton ).props().children ).toEqual(
+			render( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
+			expect( screen.getByTestId( 'happychat-button' ) ).toHaveTextContent(
 				'Translated: Ask a question'
 			);
 		} );
 
-		test( 'should fire tracks event with given event name when clicked', () => {
+		test( 'should fire tracks event with given event name when clicked', async () => {
+			const user = userEvent.setup();
 			const recordTracksEvent = jest.fn();
 
-			wrapper = shallow(
+			render(
 				<HappinessSupport
 					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton={ true }
-					liveChatAvailable={ true }
+					showLiveChatButton
+					liveChatAvailable
 					liveChatButtonEventName="test:eventName"
 				/>
 			);
 
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
-			wrapper.find( HappychatButton ).simulate( 'click' );
+			await user.click( screen.getByTestId( 'happychat-button' ) );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'test:eventName' );
 		} );
 
-		test( 'should not fire tracks event when no event name is passed even if clicked', () => {
+		test( 'should not fire tracks event when no event name is passed even if clicked', async () => {
+			const user = userEvent.setup();
 			const recordTracksEvent = jest.fn();
 
-			wrapper = shallow(
+			render(
 				<HappinessSupport
 					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton={ true }
-					liveChatAvailable={ true }
+					showLiveChatButton
+					liveChatAvailable
 				/>
 			);
 
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
-			wrapper.find( HappychatButton ).simulate( 'click' );
+			await user.click( screen.getByTestId( 'happychat-button' ) );
 			expect( recordTracksEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'Contact button', () => {
-		const selector = 'ForwardRef(Button).happiness-support__contact-button';
 		const props = {
 			translate,
 			recordTracksEvent: noop,
 		};
+		const linkName = 'Translated: Ask a question';
+		const getContactLink = () => screen.getByRole( 'link', { name: linkName } );
 
 		test( 'should be rendered unless LiveChat button shows up', () => {
 			// should not be displayed here
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
+			const { rerender } = render(
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable />
 			);
-			expect( wrapper.find( selector ) ).toHaveLength( 0 );
+			expect( screen.queryByRole( 'link', { name: linkName } ) ).not.toBeInTheDocument();
 
 			// should be rendered in the following cases
-			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
+			rerender( <HappinessSupport { ...props } /> );
+			expect( getContactLink() ).toBeVisible();
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton /> );
+			expect( getContactLink() ).toBeVisible();
 
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
-			);
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
+			expect( getContactLink() ).toBeVisible();
 
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
-			);
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
+			rerender( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } /> );
+			expect( getContactLink() ).toBeVisible();
 
-			wrapper = shallow(
+			rerender( <HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable /> );
+			expect( getContactLink() ).toBeVisible();
+
+			rerender(
 				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ false } />
 			);
-			expect( wrapper.find( selector ) ).toHaveLength( 1 );
+			expect( getContactLink() ).toBeVisible();
 		} );
 
-		test( 'should be rendered with link to CALYPSO_CONTACT if it is not for JetPack', () => {
-			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ).prop( 'href' ) ).toEqual( CALYPSO_CONTACT );
+		test( 'should be rendered with link to CALYPSO_CONTACT if it is not for Jetpack', () => {
+			render( <HappinessSupport { ...props } /> );
+			expect( getContactLink() ).toHaveAttribute( 'href', CALYPSO_CONTACT );
 		} );
 
-		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for JetPack', () => {
-			wrapper = shallow( <HappinessSupport { ...props } isJetpack={ true } /> );
-			expect( wrapper.find( selector ).prop( 'href' ) ).toEqual( JETPACK_CONTACT_SUPPORT );
-		} );
-
-		test( 'should render translated content', () => {
-			wrapper = shallow( <HappinessSupport { ...props } /> );
-			expect( wrapper.find( selector ).props().children ).toEqual( 'Translated: Ask a question' );
+		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for Jetpack', () => {
+			render( <HappinessSupport { ...props } isJetpack /> );
+			expect( getContactLink() ).toHaveAttribute( 'href', JETPACK_CONTACT_SUPPORT );
 		} );
 	} );
 } );

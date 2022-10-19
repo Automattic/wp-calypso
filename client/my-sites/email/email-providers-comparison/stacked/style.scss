@@ -1,6 +1,6 @@
-@import '@automattic/typography/styles/variables';
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .email-providers-stacked-comparison__header,
 .email-providers-stacked-comparison__sub-header {
@@ -47,8 +47,8 @@
 		margin: 15px auto;
 		padding: 10px 0;
 		box-sizing: border-box;
-		background: var( --color-surface );
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
+		background: var(--color-surface);
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 	}
 
 	.billing-interval-toggle > .segmented-control.is-compact {

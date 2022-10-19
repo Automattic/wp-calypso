@@ -62,12 +62,10 @@ const TransferPage = ( props: TransferPageProps ) => {
 	const {
 		currentRoute,
 		domains,
-		isAtomic,
 		isDomainInfoLoading,
 		isDomainLocked,
 		isDomainOnly,
 		isMapping,
-		isPrimaryDomain,
 		isSupportSession,
 		selectedDomainName,
 		selectedSite,
@@ -142,30 +140,28 @@ const TransferPage = ( props: TransferPageProps ) => {
 			);
 		}
 
-		if ( ! ( isPrimaryDomain && isAtomic ) ) {
-			if ( options.length > 0 ) {
-				options.push( <div key="separator" className="transfer-page__item-separator"></div> );
-			}
-			const mainText = isMapping
-				? __( 'Transfer this domain connection to any site you are an administrator on' )
-				: __( 'Transfer this domain to any site you are an administrator on' );
-
-			options.push(
-				<ActionCard
-					key="transfer-to-another-site"
-					buttonHref={ domainManagementTransferToOtherSite(
-						selectedSite.slug,
-						selectedDomainName,
-						currentRoute
-					) }
-					// translators: Continue is a verb
-					buttonText={ __( 'Continue' ) }
-					// translators: Transfer a domain to another WordPress.com site
-					headerText={ __( 'To another WordPress.com site' ) }
-					mainText={ mainText }
-				/>
-			);
+		if ( options.length > 0 ) {
+			options.push( <div key="separator" className="transfer-page__item-separator"></div> );
 		}
+		const mainText = isMapping
+			? __( 'Transfer this domain connection to any site you are an administrator on' )
+			: __( 'Transfer this domain to any site you are an administrator on' );
+
+		options.push(
+			<ActionCard
+				key="transfer-to-another-site"
+				buttonHref={ domainManagementTransferToOtherSite(
+					selectedSite.slug,
+					selectedDomainName,
+					currentRoute
+				) }
+				// translators: Continue is a verb
+				buttonText={ __( 'Continue' ) }
+				// translators: Transfer a domain to another WordPress.com site
+				headerText={ __( 'To another WordPress.com site' ) }
+				mainText={ mainText }
+			/>
+		);
 
 		return options.length > 0 ? <Card>{ options }</Card> : null;
 	};

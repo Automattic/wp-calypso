@@ -19,7 +19,7 @@ import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { getUserOwnsPurchase } from 'calypso/state/purchases/selectors/get-user-owns-purchase';
+import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -80,6 +80,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
+	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 
 	const jetpackUpgradesLocked = purchases.some( ( purchase ) => purchase.isLocked );
 	const existingPurchaseIsIapPurchase = purchases.some( ( purchase ) => purchase.isInAppPurchase );
@@ -128,9 +129,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 			? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 			: getPurchaseByProductSlug( purchases, item.productSlug );
 
-	const isNotPlanOwner = useSelector(
-		( state ) => ! ( purchase !== undefined ? getUserOwnsPurchase( state, purchase.id ) : false )
-	);
+	const isNotPlanOwner = ! isCurrentUserPurchaseOwner( purchase );
 
 	// Handles expiry.
 	const isExpiring = purchase && isCloseToExpiration( purchase );
@@ -203,7 +202,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 		<>
 			{ buttonLabel }
 			&nbsp;
-			<OwnerInfo purchaseId={ purchase?.id } />
+			<OwnerInfo purchase={ purchase } />
 		</>
 	) : (
 		buttonLabel

@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SPAM_10K_PER_MONTH,
 	FEATURE_13GB_STORAGE,
@@ -24,6 +24,7 @@ import {
 	FEATURE_ALL_PREMIUM_FEATURES,
 	FEATURE_ALL_PREMIUM_FEATURES_JETPACK,
 	FEATURE_ANTISPAM_V2,
+	FEATURE_WAF,
 	FEATURE_AUDIO_UPLOADS,
 	FEATURE_AUTOMATED_RESTORES,
 	FEATURE_AUTOMATIC_SECURITY_FIXES,
@@ -56,7 +57,6 @@ import {
 	FEATURE_FILTERING_V2,
 	FEATURE_FREE_BLOG_DOMAIN,
 	FEATURE_FREE_DOMAIN,
-	FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
 	FEATURE_FREE_THEMES,
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
@@ -153,6 +153,31 @@ import {
 	FEATURE_UNLIMITED_ADMINS,
 	FEATURE_ADDITIONAL_SITES,
 	FEATURE_WOOCOMMERCE,
+	FEATURE_UNLIMITED_EMAILS,
+	FEATURE_UNLIMITED_SUBSCRIBERS,
+	FEATURE_IMPORT_SUBSCRIBERS,
+	FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
+	FEATURE_AD_FREE_EXPERIENCE,
+	FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
+	FEATURE_POST_BY_EMAIL,
+	FEATURE_REAL_TIME_ANALYTICS,
+	FEATURE_GOOGLE_ANALYTICS_V2,
+	FEATURE_ADD_UNLIMITED_LINKS,
+	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
+	FEATURE_TRACK_VIEWS_CLICKS,
+	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
+	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+	FEATURE_UNLIMITED_TRAFFIC,
+	FEATURE_MANAGED_HOSTING,
+	/* START - PLAN TAGLINE EXPERIMENT */
+	FEATURE_STORAGE_BANDWIDTH,
+	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
+	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
+	FEATURE_INSTALL_THEMES_PLUGINS,
+	FEATURE_DEVELOPER_TOOLS_V1,
+	FEATURE_PRODUCT_LISTINGS,
+	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	/* END - PLAN TAGLINE EXPERIMENT */
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -303,15 +328,6 @@ export const FEATURES_LIST = {
 			),
 	},
 
-	[ FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL ]: {
-		getSlug: () => FEATURE_FREE_PROFESSIONAL_EMAIL_TRIAL,
-		getTitle: () => i18n.translate( 'Free Professional Email for 3 months' ),
-		getDescription: () =>
-			i18n.translate(
-				'Custom email address with mailbox, calendar, templates and more. Register free for 3 months with your custom domain. After 3 months, you have the option to renew or cancel your email subscription.'
-			),
-	},
-
 	[ FEATURE_HOSTING ]: {
 		getSlug: () => FEATURE_HOSTING,
 		getTitle: () => i18n.translate( 'Best-in-class hosting' ),
@@ -323,11 +339,30 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_PREMIUM_THEMES ]: {
 		getSlug: () => FEATURE_PREMIUM_THEMES,
-		getTitle: () => i18n.translate( 'Premium themes' ),
-		getDescription: () =>
-			i18n.translate(
-				'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
-			),
+		getTitle: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation( 'Unlimited premium themes' );
+
+			return shouldShowNewString
+				? i18n.translate( 'Unlimited premium themes' )
+				: i18n.translate( 'Premium themes' );
+		},
+		getDescription: () => {
+			const shouldShowNewString =
+				config( 'english_locales' ).includes( i18n.getLocaleSlug() ) ||
+				i18n.hasTranslation(
+					'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				);
+
+			return shouldShowNewString
+				? i18n.translate(
+						'Unlimited access to all of our advanced premium themes, including designs specifically tailored for businesses.'
+				  )
+				: i18n.translate(
+						'Access to all of our advanced premium theme templates, including templates specifically tailored for businesses.'
+				  );
+		},
 	},
 
 	[ FEATURE_MONETISE ]: {
@@ -1109,6 +1144,14 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Comment and form spam protection' ),
 	},
 
+	[ FEATURE_WAF ]: {
+		getSlug: () => FEATURE_WAF,
+		getTitle: () =>
+			i18n.translate( 'Website firewall (WAF beta)', {
+				comment: 'WAF stands for Web Application Firewall',
+			} ),
+	},
+
 	[ FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
 		getSlug: () => FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		getIcon: () => 'clipboard',
@@ -1363,7 +1406,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SFTP_DATABASE ]: {
 		getSlug: () => FEATURE_SFTP_DATABASE,
-		getTitle: () => i18n.translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
+		getTitle: () => i18n.translate( 'SFTP, SSH, WP-CLI, and Database access' ),
 		getDescription: () => {},
 	},
 
@@ -1474,6 +1517,123 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'WooCommerce' ),
 	},
 	/* END - New features Flexible and Pro plans introduced. */
+
+	[ FEATURE_UNLIMITED_EMAILS ]: {
+		getSlug: () => FEATURE_UNLIMITED_EMAILS,
+		getTitle: () => i18n.translate( 'Send unlimited emails' ),
+	},
+	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Unlimited subscribers' ),
+	},
+	[ FEATURE_IMPORT_SUBSCRIBERS ]: {
+		getSlug: () => FEATURE_IMPORT_SUBSCRIBERS,
+		getTitle: () => i18n.translate( 'Import subscribers' ),
+	},
+	[ FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER ]: {
+		getSlug: () => FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
+		getTitle: () => i18n.translate( `Add multiple pages to your Newsletter's website` ),
+	},
+	[ FEATURE_AD_FREE_EXPERIENCE ]: {
+		getSlug: () => FEATURE_AD_FREE_EXPERIENCE,
+		getTitle: () => i18n.translate( 'Ad-free experience' ),
+	},
+	[ FEATURE_COLLECT_PAYMENTS_NEWSLETTER ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
+		getTitle: () =>
+			i18n.translate( 'Monetize your Newsletter with payments, subscriptions, and donations' ),
+	},
+	[ FEATURE_POST_BY_EMAIL ]: {
+		getSlug: () => FEATURE_POST_BY_EMAIL,
+		getTitle: () => i18n.translate( 'Post by email' ),
+	},
+	[ FEATURE_REAL_TIME_ANALYTICS ]: {
+		getSlug: () => FEATURE_REAL_TIME_ANALYTICS,
+		getTitle: () => i18n.translate( 'Real-time analytics in your dashboard' ),
+	},
+	[ FEATURE_GOOGLE_ANALYTICS_V2 ]: {
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS_V2,
+		getTitle: () =>
+			i18n.translate( 'Go deeper into site stats and insights with Google Analytics' ),
+	},
+	[ FEATURE_ADD_UNLIMITED_LINKS ]: {
+		getSlug: () => FEATURE_ADD_UNLIMITED_LINKS,
+		getTitle: () => i18n.translate( 'Add unlimited links to your page' ),
+	},
+	[ FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS ]: {
+		getSlug: () => FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
+		getTitle: () => i18n.translate( 'Customizable themes, buttons, colors' ),
+	},
+	[ FEATURE_TRACK_VIEWS_CLICKS ]: {
+		getSlug: () => FEATURE_TRACK_VIEWS_CLICKS,
+		getTitle: () => i18n.translate( 'Track your view and click stats' ),
+	},
+	[ FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO ]: {
+		getSlug: () => FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
+		getTitle: () =>
+			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
+	},
+	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
+	},
+	[ FEATURE_UNLIMITED_TRAFFIC ]: {
+		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
+		getTitle: () => i18n.translate( 'Unlimited traffic' ),
+		getDescription: () =>
+			i18n.translate(
+				'All WordPress.com plans include unlimited traffic so you never have to worry about surprise charges.'
+			),
+	},
+	[ FEATURE_MANAGED_HOSTING ]: {
+		getSlug: () => FEATURE_MANAGED_HOSTING,
+		getTitle: () => i18n.translate( 'Managed hosting' ),
+		getDescription: () =>
+			i18n.translate(
+				'All plans include world-class managed hosting, including automatic updates, security, backups, and more.'
+			),
+	},
+	/* START - PLAN TAGLINE EXPERIMENT */
+	[ FEATURE_STORAGE_BANDWIDTH ]: {
+		getSlug: () => FEATURE_STORAGE_BANDWIDTH,
+		getTitle: () => 'Increased storage and unlimited bandwidth',
+		getDescription: () => {},
+	},
+	[ FEATURE_EMAIL_SUPPORT_SIGNUP_V2 ]: {
+		getSlug: () => FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
+		getTitle: () => 'Unlimited email support',
+		getDescription: () => {},
+	},
+	[ FEATURE_UNLTD_LIVE_CHAT_SUPPORT ]: {
+		getSlug: () => FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
+		getTitle: () => 'Unlimited live chat support',
+		getDescription: () =>
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+	},
+	[ FEATURE_INSTALL_THEMES_PLUGINS ]: {
+		getSlug: () => FEATURE_INSTALL_THEMES_PLUGINS,
+		getTitle: () => 'Install plugins and custom themes',
+		getDescription: () => i18n.translate( 'Upload custom themes and plugins on your site.' ),
+	},
+	[ FEATURE_DEVELOPER_TOOLS_V1 ]: {
+		getSlug: () => FEATURE_DEVELOPER_TOOLS_V1,
+		getTitle: () => 'SFTP, SSH, and WP-CLI access',
+		getDescription: () => {},
+	},
+	[ FEATURE_PRODUCT_LISTINGS ]: {
+		getSlug: () => FEATURE_PRODUCT_LISTINGS,
+		getTitle: () => 'Unlimited product listings',
+		getDescription: () => {},
+	},
+	[ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+		getTitle: () => i18n.translate( 'Advanced design customization' ),
+		getDescription: () =>
+			i18n.translate(
+				'Access extended color schemes, backgrounds, and CSS, giving you complete control over how your site looks.'
+			),
+	},
+	/* END - PLAN TAGLINE EXPERIMENT */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

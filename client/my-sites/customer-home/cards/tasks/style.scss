@@ -1,15 +1,14 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .task {
 	display: flex;
 	position: relative;
 	margin-bottom: 30px;
-	/* stylelint-disable-next-line scales/radii */
-	border-radius: 3px;
+	border-radius: 3px; /* stylelint-disable-line scales/radii */
 
-	@include breakpoint-deprecated( '>660px' ) {
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	@include breakpoint-deprecated( ">660px" ) {
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
 		margin-bottom: 16px;
 	}
 
@@ -18,11 +17,11 @@
 		box-sizing: border-box;
 		padding: 24px 24px 0;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			padding: 24px 16px;
 		}
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include breakpoint-deprecated( ">1040px" ) {
 			padding: 32px 24px;
 		}
 	}
@@ -49,13 +48,13 @@
 		.gridicon {
 			margin-right: 8px;
 			vertical-align: text-bottom;
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 		}
 	}
 
 	.task__badge {
-		background-color: var( --studio-gray-80 );
-		color: var( --color-text-inverted );
+		background-color: var(--studio-gray-80);
+		color: var(--color-text-inverted);
 		margin-bottom: 8px;
 	}
 
@@ -65,7 +64,7 @@
 		line-height: 36px;
 		margin-bottom: 4px;
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 40px;
 		}
 	}
@@ -74,9 +73,9 @@
 		margin-bottom: 24px;
 		font-size: $font-body;
 		line-height: 24px;
-		color: var( --color-text );
+		color: var(--color-text);
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include breakpoint-deprecated( ">800px" ) {
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
@@ -90,9 +89,9 @@
 
 		.is-link {
 			padding: 0 8px;
-	
+
 			&:focus-visible {
-				box-shadow: 0 0 0 2px var( --color-primary );
+				box-shadow: 0 0 0 2px var(--color-primary);
 			}
 		}
 	}
@@ -109,22 +108,22 @@
 		margin-top: -10px;
 	}
 
-	&.is-loading > *:not( .spinner ) {
+	&.is-loading > *:not(.spinner) {
 		visibility: hidden;
 	}
 
 	&.is-urgent {
-		background: var( --color-neutral-80 );
-		color: var( --color-neutral-0 );
+		background: var(--color-neutral-80);
+		color: var(--color-neutral-0);
 
 		.task__badge {
-			background: var( --color-neutral-0 );
-			color: var( --color-text );
+			background: var(--color-neutral-0);
+			color: var(--color-text);
 		}
 
 		.task__description,
 		.task__skip {
-			color: var( --color-neutral-0 );
+			color: var(--color-neutral-0);
 		}
 	}
 }

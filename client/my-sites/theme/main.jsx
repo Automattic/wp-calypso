@@ -42,7 +42,6 @@ import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
@@ -50,9 +49,11 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import {
+	doesThemeBundleSoftwareSet,
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isSiteEligibleForBundledSoftware,
 	isWpcomTheme as isThemeWpcom,
 	isWporgTheme,
 	getCanonicalTheme,
@@ -431,7 +432,7 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ '/help/contact/' }
+					href="/help/contact/"
 					onClick={ this.trackContactUsClick }
 				>
 					{ this.props.translate( 'Contact us' ) }
@@ -535,7 +536,15 @@ class ThemeSheet extends Component {
 	};
 
 	getDefaultOptionLabel = () => {
-		const { defaultOption, isActive, isLoggedIn, isPremium, isPurchased, translate } = this.props;
+		const {
+			defaultOption,
+			isActive,
+			isLoggedIn,
+			isPremium,
+			isPurchased,
+			translate,
+			isBundledSoftwareSet,
+		} = this.props;
 		if ( isActive ) {
 			// Customize site
 			return (
@@ -545,10 +554,17 @@ class ThemeSheet extends Component {
 				</span>
 			);
 		} else if ( isLoggedIn ) {
-			if ( isPremium && ! isPurchased ) {
+			if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 				// purchase
 				return translate( 'Pick this design' );
-			} // else: activate
+			} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+				// upgrade plan
+				return translate( 'Upgrade to activate', {
+					comment:
+						'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+				} );
+			}
+			// else: activate
 			return translate( 'Activate this design' );
 		}
 		return defaultOption.label;
@@ -585,7 +601,7 @@ class ThemeSheet extends Component {
 
 	renderPrice = () => {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.isActive ) {
+		if ( ! this.isLoaded() || this.props.isActive || this.props.isBundledSoftwareSet ) {
 			price = '';
 		} else if ( ! this.props.isPremium ) {
 			price = this.props.translate( 'Free' );
@@ -624,12 +640,8 @@ class ThemeSheet extends Component {
 	};
 
 	goBack = () => {
-		const { previousRoute, backPath, locale, isLoggedIn } = this.props;
-		if ( previousRoute ) {
-			page.back( previousRoute );
-		} else {
-			page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
-		}
+		const { backPath, locale, isLoggedIn } = this.props;
+		page( localizeThemesPath( backPath, locale, ! isLoggedIn ) );
 	};
 
 	renderSheet = () => {
@@ -642,13 +654,15 @@ class ThemeSheet extends Component {
 			hasUnlimitedPremiumThemes,
 			isAtomic,
 			isPremium,
+			isBundledSoftwareSet,
+			isSiteBundleEligible,
 			isJetpack,
 			isWpcomTheme,
 			isVip,
 			translate,
 			canUserUploadThemes,
-			previousRoute,
 			isWPForTeamsSite,
+			isLoggedIn,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -695,7 +709,8 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
-			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
+			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
+			isBundledSoftwareSet;
 		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
 			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
@@ -707,21 +722,29 @@ class ThemeSheet extends Component {
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
 		if ( hasWpComThemeUpsellBanner ) {
+			const upsellTitle = isBundledSoftwareSet
+				? translate( 'Access this WooCommerce theme with a Business plan!' )
+				: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+			const upsellDescription = isBundledSoftwareSet
+				? translate(
+						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+				  )
+				: translate(
+						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+				  );
+
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
-					description={ preventWidows(
-						translate(
-							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-						)
-					) }
+					title={ upsellTitle }
+					description={ preventWidows( upsellDescription ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
+					forceDisplay={ isBundledSoftwareSet && ! isSiteBundleEligible }
 				/>
 			);
 		}
@@ -765,15 +788,19 @@ class ThemeSheet extends Component {
 				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } />
-				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
+				<PageViewTracker
+					path={ analyticsPath }
+					title={ analyticsPageTitle }
+					properties={ { is_logged_in: isLoggedIn } }
+				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source={ 'details' } />
-				<AutoLoadingHomepageModal source={ 'details' } />
+				<ThanksModal source="details" />
+				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
-					backText={ previousRoute ? translate( 'Back' ) : translate( 'All Themes' ) }
+					backText={ translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
 					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
@@ -811,6 +838,7 @@ const ThemeSheetWithOptions = ( props ) => {
 		isStandaloneJetpack,
 		demoUrl,
 		showTryAndCustomize,
+		isBundledSoftwareSet,
 	} = props;
 
 	let defaultOption;
@@ -828,8 +856,10 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
-	} else if ( isPremium && ! isPurchased ) {
+	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
+	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+		defaultOption = 'upgradePlanForBundledThemes';
 	} else {
 		defaultOption = 'activate';
 	}
@@ -881,6 +911,8 @@ export default connect(
 			isVip: isVipSite( state, siteId ),
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
+			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
+			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
@@ -888,7 +920,6 @@ export default connect(
 			// Remove the trailing slash because the page URL doesn't have one either.
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
-			previousRoute: getPreviousRoute( state ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 		};
 	},

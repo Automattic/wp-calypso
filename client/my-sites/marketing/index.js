@@ -12,12 +12,17 @@ import {
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
-	ultimateTrafficGuide,
 } from './controller';
 
 export default function () {
 	page( '/marketing/do-it-for-me*', function redirectToDIFMLandingPage() {
-		window.location.replace( 'https://wordpress.com/do-it-for-me' );
+		window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+	} );
+
+	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {
+		window.location.replace(
+			'https://wpcourses.com/course/intro-to-search-engine-optimization-seo/'
+		);
 	} );
 
 	const paths = [
@@ -26,7 +31,6 @@ export default function () {
 		'/marketing/sharing-buttons',
 		'/marketing/tools',
 		'/marketing/traffic',
-		'/marketing/ultimate-traffic-guide',
 		'/sharing',
 		'/sharing/buttons',
 		'/marketing/business-tools',
@@ -86,17 +90,6 @@ export default function () {
 		siteSelection,
 		navigation,
 		marketingBusinessTools,
-		layout,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		'/marketing/ultimate-traffic-guide/:domain',
-		siteSelection,
-		sites,
-		navigation,
-		ultimateTrafficGuide,
 		layout,
 		makeLayout,
 		clientRender

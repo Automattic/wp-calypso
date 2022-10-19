@@ -20,6 +20,10 @@ import QueryActivePromotions from 'calypso/components/data/query-active-promotio
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import {
+	getHighlightedFeatures,
+	getPlanFeatureAccessor,
+} from 'calypso/my-sites/plan-features-comparison/util';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -31,6 +35,7 @@ import {
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
@@ -38,7 +43,6 @@ import {
 import PlanFeaturesComparisonActions from './actions';
 import PlanFeaturesComparisonHeader from './header';
 import { PlanFeaturesItem } from './item';
-
 import './style.scss';
 
 const noop = () => {};
@@ -261,7 +265,6 @@ export class PlanFeaturesComparison extends Component {
 			const featureKeys = Object.keys( features );
 			const key = featureKeys[ rowIndex ];
 			const currentFeature = features[ key ];
-
 			const classes = classNames(
 				'plan-features-comparison__table-item',
 				getPlanClass( planName ),
@@ -269,7 +272,7 @@ export class PlanFeaturesComparison extends Component {
 					'is-last-feature': rowIndex + 1 === featureKeys.length,
 					'is-highlighted':
 						selectedFeature && currentFeature && selectedFeature === currentFeature.getSlug(),
-					'is-bold': rowIndex === 0,
+					'is-bold': rowIndex === 0 || currentFeature?.isHighlightedFeature,
 				}
 			);
 
@@ -331,6 +334,7 @@ export default connect(
 			ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
+		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
@@ -348,16 +352,17 @@ export default connect(
 
 				// Show price divided by 12? Only for non JP plans, or if plan is only available yearly.
 				const showMonthlyPrice = true;
+
 				const features = planConstantObj.getPlanCompareFeatures();
+
 				let planFeatures = getPlanFeaturesObject( features );
 				if ( placeholder || ! planObject ) {
 					isPlaceholder = true;
 				}
 
-				if ( planConstantObj.getSignupCompareAvailableFeatures ) {
-					planFeatures = getPlanFeaturesObject(
-						planConstantObj.getSignupCompareAvailableFeatures()
-					);
+				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
+				if ( featureAccessor ) {
+					planFeatures = getPlanFeaturesObject( featureAccessor() );
 				}
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
@@ -398,6 +403,16 @@ export default connect(
 							...feature,
 							availableOnlyForAnnualPlans,
 							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+						};
+					} );
+				}
+
+				const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
+				if ( highlightedFeatures.length ) {
+					planFeatures = planFeatures.map( ( feature ) => {
+						return {
+							...feature,
+							isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
 						};
 					} );
 				}
@@ -456,5 +471,4 @@ export default connect(
 		recordTracksEvent,
 	}
 )( localize( PlanFeaturesComparison ) );
-
 /* eslint-enable wpcalypso/redux-no-bound-selectors */

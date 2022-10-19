@@ -1700,7 +1700,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
+						link: 'https://wordpress.com/support/stats/#search-engine-terms',
 						value: 221,
 					},
 				] );
@@ -1746,7 +1746,7 @@ describe( 'utils', () => {
 					{
 						label: 'Unknown Search Terms',
 						labelIcon: 'external',
-						link: 'http://wordpress.com/support/stats/#search-engine-terms',
+						link: 'https://wordpress.com/support/stats/#search-engine-terms',
 						value: 400,
 					},
 				] );

@@ -1,79 +1,50 @@
 {
-	"plugins": ["@signal-noise/stylelint-scales"],
+	"extends": [ "@wordpress/stylelint-config/scss" ],
+	"plugins": [ "@signal-noise/stylelint-scales" ],
+	"reportInvalidScopeDisables": true,
+	"reportNeedlessDisables": true,
 	"rules": {
-		"declaration-property-unit-allowed-list": {
-			"/^font-size$|^font$/": ["rem"],
-			"/radius$/": ["px"]
-		},
-		"scales/font-weights": [400, 500, 600, 700],
+		"at-rule-empty-line-before": null,
+		"at-rule-no-unknown": null,
+		"comment-empty-line-before": null,
+		"font-weight-notation": null,
+		"max-line-length": null,
+		"no-descending-specificity": null,
+		"rule-empty-line-before": null,
+		"selector-class-pattern": null,
+		"value-keyword-case": null,
+		"scss/operator-no-unspaced": null,
+		"scss/selector-no-redundant-nesting-selector": null,
+		"scss/at-import-partial-extension": null,
+		"scss/no-global-function-names": null,
+		"scss/comment-no-empty": null,
+		"scss/at-extend-no-missing-placeholder": null,
+		"scss/operator-no-newline-after": null,
+		"scss/at-if-closing-brace-newline-after": null,
+		"scss/at-else-empty-line-before": null,
+		"scss/at-if-closing-brace-space-after": null,
+		"no-invalid-position-at-import-rule": null,
+		"declaration-property-unit-allowed-list": [
+			{
+				"/^font-size$|^font$/": [ "rem" ],
+				"line-height": [ "px" ],
+				"/radius$/": [ "px" ]
+			},
+			{ "ignore": [ "inside-function" ] }
+		],
+		"scales/font-weights": [ 400, 500, 600, 700 ],
 		"scales/font-sizes": [
 			{
-				"scale": [0.75, 0.875, 1, 1.25, 1.5, 2, 2.25, 3, 3.375],
-				"units": ["rem"]
+				"scale": [ 0.75, 0.875, 1, 1.25, 1.5, 1.75, 2, 2.25, 2.75, 3, 3.375 ],
+				"units": [ "rem" ]
 			}
 		],
 		"scales/radii": [
 			{
-				"scale": [2, 4],
-				"units": ["px"]
+				"scale": [ 2, 4 ],
+				"units": [ "px" ]
 			}
 		],
-		"color-hex-case": "lower",
-		"color-no-invalid-hex": true,
-
-		"function-calc-no-unspaced-operator": true,
-		"function-comma-space-after": "always-single-line",
-		"function-comma-space-before": "never",
-		"function-name-case": "lower",
-		"function-url-quotes": "always",
-		"function-whitespace-after": "always",
-		"function-parentheses-space-inside": "always-single-line",
-
-		"media-feature-parentheses-space-inside": "always",
-
-		"number-leading-zero": "always",
-		"number-no-trailing-zeros": true,
-		"length-zero-no-unit": true,
-
-		"string-no-newline": true,
-		"string-quotes": "single",
-
-		"unit-case": "lower",
-		"unit-no-unknown": true,
-		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw" ],
-
-		"value-list-comma-space-after": "always-single-line",
-		"value-list-comma-space-before": "never",
-
-		"shorthand-property-no-redundant-values": true,
-
-		"property-case": "lower",
-
-		"declaration-block-no-duplicate-properties": [ true, { "ignore": [ "consecutive-duplicates" ] } ],
-		"declaration-block-trailing-semicolon": "always",
-		"declaration-block-single-line-max-declarations": 0,
-		"declaration-block-semicolon-space-before": "never",
-		"declaration-block-semicolon-space-after": "always-single-line",
-		"declaration-block-semicolon-newline-before": "never-multi-line",
-		"declaration-block-semicolon-newline-after": "always-multi-line",
-
-		"block-closing-brace-newline-after": [ "always", { "ignoreAtRules": [ "if", "else" ] } ],
-		"block-closing-brace-newline-before": "always-multi-line",
-		"block-no-empty": true,
-		"block-opening-brace-newline-after": "always-multi-line",
-		"block-opening-brace-space-before": "always",
-
-		"selector-attribute-brackets-space-inside": "never",
-		"selector-attribute-operator-space-after": "never",
-		"selector-attribute-operator-space-before": "never",
-		"selector-combinator-space-after": "always",
-		"selector-combinator-space-before": "always",
-		"selector-pseudo-class-case": "lower",
-		"selector-pseudo-class-parentheses-space-inside": "always",
-		"selector-pseudo-element-case": "lower",
-		"selector-pseudo-element-colon-notation": "double",
-		"selector-pseudo-element-no-unknown": true,
-		"selector-type-case": "lower",
-		"selector-max-id": [ 0 ]
+		"unit-allowed-list": [ "%", "deg", "em", "fr", "ms", "px", "rem", "s", "vh", "vw", "svh" ]
 	}
 }

@@ -46,12 +46,12 @@ export default class GalleryShortcode extends Component< Props > {
 			...rendered,
 			scripts: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.js',
 				},
 			},
 			styles: {
 				'tiled-gallery': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/tiled-gallery/tiled-gallery.css',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/tiled-gallery/tiled-gallery/tiled-gallery.css',
 				},
 				'gallery-styles': {
 					src: 'https://widgets.wp.com/gallery-preview/style.css',
@@ -62,17 +62,17 @@ export default class GalleryShortcode extends Component< Props > {
 		if ( 'slideshow' === this.getAttributes().type ) {
 			filtered.scripts = {
 				'jquery-cycle': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/jquery.cycle.min.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/jquery.cycle.min.js',
 				},
 				'jetpack-slideshow': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/js/slideshow-shortcode.js',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/js/slideshow-shortcode.js',
 					extra:
-						'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/shortcodes/img/slideshow-loader.gif" };',
+						'var jetpackSlideshowSettings = { "spinner": "https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/img/slideshow-loader.gif" };',
 				},
 			};
 			filtered.styles = {
 				'jetpack-slideshow': {
-					src: 'https://s0.wp.com/wp-content/mu-plugins/shortcodes/css/slideshow-shortcode.css',
+					src: 'https://s0.wp.com/wp-content/mu-plugins/jetpack-plugin/production/modules/shortcodes/css/slideshow-shortcode.css',
 				},
 			};
 		}

@@ -1,5 +1,6 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -7,10 +8,17 @@ import BillingDetails from 'calypso/jetpack-cloud/sections/partner-portal/billin
 import BillingSummary from 'calypso/jetpack-cloud/sections/partner-portal/billing-summary';
 import SelectPartnerKeyDropdown from 'calypso/jetpack-cloud/sections/partner-portal/select-partner-key-dropdown';
 import SidebarNavigation from 'calypso/jetpack-cloud/sections/partner-portal/sidebar-navigation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
 import './style.scss';
 
-export default function BillingDashboard(): ReactElement {
+export default function BillingDashboard() {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const onIssueNewLicenseClick = () => {
+		dispatch( recordTracksEvent( 'calypso_partner_portal_issue_license_click_billing_page' ) );
+	};
 
 	return (
 		<Main wideLayout className="billing-dashboard">
@@ -21,6 +29,10 @@ export default function BillingDashboard(): ReactElement {
 				<CardHeading size={ 36 }>{ translate( 'Billing' ) }</CardHeading>
 
 				<SelectPartnerKeyDropdown />
+
+				<Button primary href="/partner-portal/issue-license" onClick={ onIssueNewLicenseClick }>
+					{ translate( 'Issue New License' ) }
+				</Button>
 			</div>
 
 			<BillingSummary />

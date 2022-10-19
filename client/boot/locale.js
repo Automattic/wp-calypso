@@ -20,6 +20,11 @@ function getLocaleFromPathname() {
 	return pathLocaleSlug;
 }
 
+function getLocaleFromQueryParam() {
+	const query = new URLSearchParams( window.location.search );
+	return query.get( 'locale' );
+}
+
 export const setupLocale = ( currentUser, reduxStore ) => {
 	if ( config.isEnabled( 'i18n/empathy-mode' ) && currentUser.i18n_empathy_mode ) {
 		initLanguageEmpathyMode();
@@ -59,6 +64,10 @@ export const setupLocale = ( currentUser, reduxStore ) => {
 	} else if ( bootstrappedLocaleSlug ) {
 		// Use locale slug from bootstrapped language manifest object
 		reduxStore.dispatch( setLocale( bootstrappedLocaleSlug ) );
+	} else if ( getLocaleFromQueryParam() ) {
+		// For logged out Calypso pages, set the locale from query param
+		const pathLocaleSlug = getLocaleFromQueryParam();
+		pathLocaleSlug && reduxStore.dispatch( setLocale( pathLocaleSlug, '' ) );
 	} else {
 		// For logged out Calypso pages, set the locale from slug
 		const pathLocaleSlug = getLocaleFromPathname();

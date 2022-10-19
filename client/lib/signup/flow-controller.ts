@@ -27,7 +27,10 @@ import {
 	updateDependencies,
 	removeSiteSlugDependency,
 } from 'calypso/state/signup/actions';
-import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import {
+	getSignupDependencyStore,
+	getSignupDependencyProgress,
+} from 'calypso/state/signup/dependency-store/selectors';
 import { resetExcludedSteps } from 'calypso/state/signup/flow/actions';
 import {
 	getCurrentFlowName,
@@ -437,10 +440,16 @@ export default class SignupFlowController {
 		return pick( dependencyStore, keysToSelect ?? [] );
 	}
 
+	_getNeedsToGoThroughCheckout() {
+		const progress = getSignupDependencyProgress( this._reduxStore.getState() );
+		return !! progress?.plans?.cartItem;
+	}
+
 	_destination( dependencies: Dependencies ): string {
 		if ( typeof this._flow.destination === 'function' ) {
+			const goesThroughCheckout = this._getNeedsToGoThroughCheckout();
 			const localeSlug = getCurrentLocaleSlug( this._reduxStore.getState() );
-			return this._flow.destination( dependencies, localeSlug );
+			return this._flow.destination( dependencies, localeSlug, goesThroughCheckout );
 		}
 
 		return this._flow.destination;

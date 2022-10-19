@@ -2,13 +2,13 @@ version: 2.1
 
 orbs:
   slack: circleci/slack@3.4.2
-  win: circleci/windows@2.2.0
+  win: circleci/windows@5.0.0
 
 references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/node:16.17.0
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -142,7 +142,7 @@ commands:
 jobs:
   wp-desktop-assets:
     docker:
-      - image: circleci/node:12.16.2-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     environment:
       VERSION: << pipeline.git.tag >>
@@ -243,7 +243,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:16.10.0-browsers
+      - image: cimg/node:16.17.0-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     environment:
@@ -324,14 +324,24 @@ jobs:
       - attach_workspace:
           at: C:\Users\circleci\wp-calypso
       - run:
-          name: Install Node Version
+          name: Install NVM
+          command: choco install -y nvm
+      - run:
+          name: Install Node environment
           command: |
             $NODE_VERSION = Get-Content .nvmrc
             nvm install $NODE_VERSION
             nvm use $NODE_VERSION
       - run:
           name: Install Yarn
-          command: npm install -g yarn@1.22.10
+          command: npm install -g yarn
+      - run:
+          name: Verify versions
+          shell: bash.exe
+          command: |
+            node --version
+            nvm --version
+            yarn --version
       - run:
           name: Install Make
           command: cinst make
@@ -465,6 +475,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
 #     - wp-desktop-mac:
@@ -483,6 +494,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
       - wp-desktop-windows:
@@ -492,6 +504,7 @@ workflows:
             branches:
               only:
                 - trunk
+                - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
   wp-desktop-release:

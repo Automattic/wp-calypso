@@ -11,11 +11,9 @@ import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
-import { getIsSimpleSite } from 'calypso/state/sites/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
-import './help-center.scss';
 
 function HelpCenterContent() {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
@@ -24,9 +22,8 @@ function HelpCenterContent() {
 	const [ showHelpIcon, setShowHelpIcon ] = useState( false );
 	const { setShowHelpCenter } = useDispatch( 'automattic/help-center' );
 	const [ showHelpIconDot, setShowHelpIconDot ] = useState( false );
-	const isSimpleSite = useSelector( getIsSimpleSite ) || false;
 
-	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId, isSimpleSite );
+	const { data, isLoading } = useHasSeenWhatsNewModalQuery( window._currentSiteId );
 
 	useEffect( () => {
 		if ( ! isLoading && data ) {
@@ -68,7 +65,7 @@ function HelpCenterContent() {
 					<PinnedItems scope="core/edit-widgets">{ content }</PinnedItems>
 				</>
 			) }
-			{ show && <HelpCenter handleClose={ () => setShowHelpCenter( false ) } /> }
+			<HelpCenter handleClose={ () => setShowHelpCenter( false ) } />
 		</>
 	);
 }

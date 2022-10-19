@@ -1,9 +1,9 @@
-@import '../../variables.scss';
-@import '../../mixins';
+@import "../../variables.scss";
+@import "../../mixins";
 
 .gutenboarding-page.domains {
-	background-color: var( --contrastColor );
-	color: var( --mainColor );
+	background-color: var(--contrastColor);
+	color: var(--mainColor);
 	padding-bottom: $onboarding-footer-height + 28px;
 
 	.domains__header {

@@ -1,8 +1,4 @@
-@import '../style';
-
-$font-family: 'SF Pro Text', $sans;
-$input-height: 44px;
-$border-radius: 4px;
+@import "../style";
 
 .newsletter-setup {
 	.step-container {
@@ -12,107 +8,9 @@ $border-radius: 4px;
 	.step-container__content {
 		display: flex;
 		justify-content: center;
-		margin-bottom: 30px;
 	}
 
 	.newsletter-setup .step-container__header {
 		margin-bottom: 32px;
-
-		h1.formatted-header__title {
-			font-size: $font-title-medium;
-
-			@include break-medium {
-				font-size: $font-headline-medium;
-			}
-		}
-	}
-
-	.newsletter-setup__form {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		position: relative;
-		padding: 0 20px;
-		width: 335px;
-
-		@include break-medium {
-			padding: 0 20px;
-			width: 368px;
-		}
-
-		.form-fieldset,
-		.newsletter-setup__submit-button {
-			width: 100%;
-		}
-
-		label,
-		input {
-			font-family: $font-family;
-			font-weight: 400;
-		}
-
-		label {
-			color: var( --studio-gray-60 );
-			font-size: $font-body;
-		}
-
-		input {
-			color: var( --studio-gray-100 );
-			font-size: $font-body-small;
-			padding: 12px 16px;
-			height: $input-height;
-			border-radius: $border-radius;
-
-			&.newsletter-setup__accent-color {
-				background-size: 25px;
-				background-position: 13px center;
-				background-repeat: no-repeat;
-				padding-left: 50px;
-				color: var( --studio-gray-30 );
-			}
-		}
-
-		.newsletter-setup__url {
-			background: var( --color-neutral-0 );
-			border-radius: $border-radius;
-			height: $input-height;
-			border: none;
-
-			input {
-				background: var( --color-neutral-0 );
-				border-color: var( --color-neutral-0 );
-				color: var( --color-neutral-20 );
-				opacity: 1;
-				-webkit-text-fill-color: var( --color-neutral-20 );
-				border: 0;
-				height: auto;
-
-				&:focus {
-					box-shadow: none;
-				}
-			}
-
-			button {
-				margin: 12px 16px;
-				padding: 0 10px;
-				height: 20px;
-				border-radius: $border-radius;
-
-				background: var( --studio-blue-5 );
-				border-color: var( --studio-blue-5 );
-
-				color: var( --studio-blue-80 );
-			}
-		}
-
-		.newsletter-setup__submit-button {
-			border-radius: $border-radius;
-		}
-	}
-}
-
-.components-color-picker {
-	.components-h-stack {
-		width: unset !important;
 	}
 }

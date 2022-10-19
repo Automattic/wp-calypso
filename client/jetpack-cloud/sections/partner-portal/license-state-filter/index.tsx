@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useContext } from 'react';
+import { useContext } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Count from 'calypso/components/count';
 import Search from 'calypso/components/search';
@@ -19,7 +19,7 @@ interface Props {
 	getSearchOpen: () => boolean;
 }
 
-function LicenseStateFilter( { doSearch }: Props ): ReactElement {
+function LicenseStateFilter( { doSearch }: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { filter, search } = useContext( LicenseListContext );

@@ -1,9 +1,6 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
-import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
-import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
+import { useSelector } from 'react-redux';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -22,8 +19,6 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	isPluginInstalledOnsite,
 	plugin,
 } ) {
-	const legacyVersion = ! config.isEnabled( 'plugins/plugin-details-layout' );
-	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const selectedSite = useSelector( getSelectedSite );
@@ -42,20 +37,20 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		usePreinstalledPremiumPlugin( plugin.slug );
 
 	const managedPluginMessage = (
-		<span className="plugin-details-CTA__preinstalled">
+		<span className="plugin-details-cta__preinstalled">
 			{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 		</span>
 	);
 	const pluginPrice = (
 		<>
-			<div className="plugin-details-CTA__price">
+			<div className="plugin-details-cta__price">
 				<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 					{ ( { isFetching, price, period } ) =>
 						isFetching ? (
-							<div className="plugin-details-CTA__price-placeholder">...</div>
+							<div className="plugin-details-cta__price-placeholder">...</div>
 						) : (
 							<PreinstalledPremiumPluginPriceDisplay
-								className="plugin-details-CTA__period"
+								className="plugin-details-cta__period"
 								period={ period }
 								pluginSlug={ plugin.slug }
 								price={ price }
@@ -64,20 +59,13 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 					}
 				</PluginPrice>
 			</div>
-			{ ! legacyVersion && (
-				<BillingIntervalSwitcher
-					billingPeriod={ billingPeriod }
-					onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
-					plugin={ plugin }
-				/>
-			) }
 		</>
 	);
 
 	const upgradeButton = (
-		<div className="plugin-details-CTA__install">
+		<div className="plugin-details-cta__install">
 			<Button
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				href={ `/checkout/${ selectedSiteSlug }/${ preinstalledPremiumPluginProduct }` }
 				primary
 			>
@@ -86,7 +74,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</div>
 	);
 	const activateButton = (
-		<div className="plugin-details-CTA__install">
+		<div className="plugin-details-cta__install">
 			<CTAButton
 				billingPeriod={ billingPeriod }
 				isJetpackSelfHosted={ isJetpackSelfHosted }
@@ -110,7 +98,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		);
 	}
 
-	if ( ! isSimple && ! isPluginInstalledOnsite ) {
+	if ( ! isSimple && ! isPluginInstalledOnsite && ! isPreinstalledPremiumPluginUpgraded ) {
 		return (
 			<>
 				{ pluginPrice }

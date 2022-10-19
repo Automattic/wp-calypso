@@ -133,8 +133,8 @@ export default function MarketplaceTest() {
 			<Card key="wpcom-plugins">
 				<PluginsBrowserList
 					plugins={ data }
-					listName={ 'paid' }
-					title={ 'Paid Plugins' }
+					listName="paid"
+					title="Premium Plugins"
 					site={ selectedSiteSlug }
 					showPlaceholders={ isFetching }
 					currentSites={ null }

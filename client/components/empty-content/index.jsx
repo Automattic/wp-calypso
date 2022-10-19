@@ -1,6 +1,7 @@
 import { Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 
@@ -11,6 +12,7 @@ class EmptyContent extends Component {
 		title: PropTypes.node,
 		illustration: PropTypes.string,
 		illustrationWidth: PropTypes.number,
+		illustrationHeight: PropTypes.number,
 		line: PropTypes.node,
 		action: PropTypes.node,
 		actionURL: PropTypes.string,
@@ -31,7 +33,6 @@ class EmptyContent extends Component {
 	};
 
 	static defaultProps = {
-		title: "You haven't created any content yet.",
 		illustration: '/calypso/images/illustrations/illustration-empty-results.svg',
 		isCompact: false,
 	};
@@ -82,11 +83,16 @@ class EmptyContent extends Component {
 	render() {
 		const action = this.props.action && this.primaryAction();
 		const secondaryAction = this.props.secondaryAction && this.secondaryAction();
+		const title =
+			this.props.title !== undefined
+				? this.props.title
+				: this.props.translate( "You haven't created any content yet." );
 		const illustration = this.props.illustration && (
 			<img
 				src={ this.props.illustration }
 				alt=""
 				width={ this.props.illustrationWidth }
+				height={ this.props.illustrationHeight }
 				className="empty-content__illustration"
 			/>
 		);
@@ -95,11 +101,11 @@ class EmptyContent extends Component {
 			<div
 				className={ classNames( 'empty-content', this.props.className, {
 					'is-compact': this.props.isCompact,
-					'has-title-only': this.props.title && ! this.props.line,
+					'has-title-only': title && ! this.props.line,
 				} ) }
 			>
 				{ illustration }
-				{ this.props.title ? <h2 className="empty-content__title">{ this.props.title }</h2> : null }
+				{ title ? <h2 className="empty-content__title">{ title }</h2> : null }
 				{ this.props.line ? <h3 className="empty-content__line">{ this.props.line }</h3> : null }
 				{ action }
 				{ secondaryAction }
@@ -109,4 +115,4 @@ class EmptyContent extends Component {
 	}
 }
 
-export default EmptyContent;
+export default localize( EmptyContent );

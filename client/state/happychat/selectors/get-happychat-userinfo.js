@@ -2,10 +2,8 @@ import moment from 'moment';
 import getGeoLocation from 'calypso/state/happychat/selectors/get-geolocation';
 
 export default ( state ) =>
-	( { site, howCanWeHelp, howYouFeel } ) => {
+	( { site } ) => {
 		const info = {
-			howCanWeHelp,
-			howYouFeel,
 			siteId: site.ID,
 			siteUrl: site.URL,
 			localDateTime: moment().format( 'h:mm a, MMMM Do YYYY' ),

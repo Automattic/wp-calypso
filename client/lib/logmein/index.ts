@@ -9,7 +9,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Store } from 'redux';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 
 // Used as default domain to detect when we're looking at a relative or invalid url
 const INVALID_URL = 'https://__domain__.invalid';
@@ -71,7 +71,7 @@ export function logmeinUrl( url: string, redirectTo = '' ): string {
  *
  * @param site Site object from redux state
  */
-function isValidLogmeinSite( site: SitesItem ): boolean {
+function isValidLogmeinSite( site: SiteDetails ): boolean {
 	return Boolean(
 		! site.is_vip &&
 			! site.jetpack &&

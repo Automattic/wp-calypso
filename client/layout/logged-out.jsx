@@ -11,6 +11,7 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
@@ -113,6 +114,9 @@ const LayoutLoggedOut = ( {
 		<div className={ classNames( 'layout', classes ) }>
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
+			{ isJetpackCloud() && (
+				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
+			) }
 			<div id="content" className="layout__content">
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
 				{ isCheckout && <AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } /> }
@@ -155,7 +159,10 @@ export default withCurrentRoute(
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const noMasterbarForSection =
+			! isWooOAuth2Client( oauth2Client ) &&
+			[ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const isJetpackWooCommerceFlow = 'woocommerce-onboarding' === currentQuery?.from;
 		const wccomFrom = currentQuery?.[ 'wccom-from' ];
 		const masterbarIsHidden =
@@ -173,7 +180,7 @@ export default withCurrentRoute(
 			sectionGroup,
 			sectionName,
 			sectionTitle,
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
 			useOAuth2Layout: showOAuth2Layout( state ),
 			isPartnerSignup,
 			isPartnerSignupStart,

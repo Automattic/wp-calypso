@@ -1,12 +1,12 @@
 import { CardHeader, Button, Flex } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { Route, Switch, useLocation } from 'react-router-dom';
-import { useHCWindowCommunicator } from '../happychat-window-communicator';
-import type { Header, WindowState } from '../types';
-import type { ReactElement } from 'react';
+import { HELP_CENTER_STORE } from '../stores';
+import type { Header } from '../types';
 
 export function ArticleTitle() {
 	const location = useLocation();
@@ -20,7 +20,7 @@ export function ArticleTitle() {
 	);
 }
 
-const SupportModeTitle = (): ReactElement => {
+const SupportModeTitle = () => {
 	const { __ } = useI18n();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
@@ -45,35 +45,32 @@ const SupportModeTitle = (): ReactElement => {
 		}
 	}
 };
-const HelpCenterHeader: React.FC< Header > = ( {
-	isMinimized,
-	onMinimize,
-	onMaximize,
-	onDismiss,
-} ) => {
+
+const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
+	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
-	const [ chatWindowStatus, setChatWindowStatus ] = useState< WindowState >( 'closed' );
-	const [ unreadCount, setUnreadCount ] = useState< number >( 0 );
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
 
-	function requestMaximize() {
-		onMaximize?.();
-	}
-
-	// kill the help center when the user closes the popup chat window
-	useEffect( () => {
-		if ( chatWindowStatus === 'ended' ) {
-			onDismiss?.();
-		}
-	}, [ chatWindowStatus, onDismiss ] );
-
-	useHCWindowCommunicator( setChatWindowStatus, setUnreadCount );
+	const handleClick = useCallback(
+		( event ) => {
+			if ( isMinimized && event.target === event.currentTarget ) {
+				onMaximize?.();
+			}
+		},
+		[ isMinimized, onMaximize ]
+	);
 
 	return (
 		<CardHeader className={ classNames }>
-			<Flex>
-				<p id="header-text" className="help-center-header__text">
+			<Flex onClick={ handleClick }>
+				<p
+					id="header-text"
+					className="help-center-header__text"
+					onClick={ handleClick }
+					onKeyUp={ handleClick }
+					role="presentation"
+				>
 					{ isMinimized ? (
 						<Switch>
 							<Route path="/" exact>
@@ -82,15 +79,16 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							<Route path="/contact-options">
 								{ __( 'Contact Options', __i18n_text_domain__ ) }
 							</Route>
+							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
 							<Route path="/contact-form" component={ SupportModeTitle }></Route>
 							<Route path="/post" component={ ArticleTitle }></Route>
 						</Switch>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }
-					{ isMinimized && unreadCount ? (
+					{ isMinimized && unreadCount > 0 && (
 						<span className="help-center-header__unread-count">{ formattedUnreadCount }</span>
-					) : null }
+					) }
 				</p>
 				<div>
 					{ isMinimized ? (
@@ -99,7 +97,7 @@ const HelpCenterHeader: React.FC< Header > = ( {
 							label={ __( 'Maximize Help Center', __i18n_text_domain__ ) }
 							icon={ chevronUp }
 							tooltipPosition="top left"
-							onClick={ requestMaximize }
+							onClick={ onMaximize }
 						/>
 					) : (
 						<Button

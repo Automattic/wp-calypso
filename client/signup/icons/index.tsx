@@ -1,7 +1,6 @@
 import { Path, SVG, Rect } from '@wordpress/components';
-import type { ReactElement } from 'react';
 
-export const build: ReactElement = (
+export const build = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<mask id="path-1-inside-1" fill="white">
 			<Rect x="1" y="3.5" width="22" height="18" rx="1" />
@@ -34,7 +33,7 @@ export const build: ReactElement = (
 	</SVG>
 );
 
-export const write: ReactElement = (
+export const write = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path
 			d="M20.24 12.24C21.3658 11.1142 21.9983 9.58722 21.9983 7.99504C21.9983 6.40285 21.3658 4.87588 20.24 3.75004C19.1142 2.62419 17.5872 1.9917 15.995 1.9917C14.4028 1.9917 12.8758 2.62419 11.75 3.75004L5 10.5V19H13.5L20.24 12.24Z"
@@ -54,13 +53,13 @@ export const write: ReactElement = (
 	</SVG>
 );
 
-export const play: ReactElement = (
+export const play = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path d="M5 3L19 12L5 21V3Z" stroke="#8C8F94" strokeWidth="1.6" strokeLinecap="round" />
 	</SVG>
 );
 
-export const design: ReactElement = (
+export const design = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path
 			d="M3 9H21"
@@ -80,36 +79,44 @@ export const design: ReactElement = (
 	</SVG>
 );
 
-export const computer: ReactElement = (
+export const computer = (
 	<SVG width="36" height="36" viewBox="0 0 36 36">
 		<Rect x="6" y="9" width="24" height="18" rx="1.25" stroke="currentColor" strokeWidth="1.5" />
 		<Rect x="3" y="26.5" width="30" height="1.5" fill="currentColor" />
 	</SVG>
 );
 
-export const tablet: ReactElement = (
+export const tablet = (
 	<SVG width="24" height="24" viewBox="0 0 24 24">
 		<Rect x="3" y="2" width="18" height="20" rx="1.25" stroke="currentColor" strokeWidth="1.5" />
 		<Rect x="10" y="17" width="4" height="1.5" fill="currentColor" />
 	</SVG>
 );
 
-export const phone: ReactElement = (
+export const phone = (
 	<SVG width="24" height="24" viewBox="0 0 24 24">
 		<Rect x="6" y="3" width="12" height="18" rx="1.25" stroke="currentColor" strokeWidth="1.5" />
 		<Rect x="11" y="17" width="2" height="1.5" fill="currentColor" />
 	</SVG>
 );
 
-export const tip: ReactElement = (
-	<SVG width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<ellipse cx="10" cy="7" rx="5" ry="5" stroke="#A7AAAD" strokeWidth="1.3" />
-		<line x1="6.99994" y1="14.9816" x2="12.9999" y2="14.9816" stroke="#A7AAAD" strokeWidth="1.3" />
-		<line x1="8" y1="17.35" x2="12" y2="17.35" stroke="#A7AAAD" strokeWidth="1.3" />
+export const tip = (
+	<SVG
+		width="20"
+		height="20"
+		viewBox="0 0 20 20"
+		fill="none"
+		stroke="#A7AAAD"
+		strokeWidth="1.3"
+		xmlns="http://www.w3.org/2000/svg"
+	>
+		<ellipse cx="10" cy="7" rx="5" ry="5" />
+		<line x1="6.99994" y1="14.9816" x2="12.9999" y2="14.9816" />
+		<line x1="8" y1="17.35" x2="12" y2="17.35" />
 	</SVG>
 );
 
-export const bulb: ReactElement = (
+export const bulb = (
 	<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M3.2 14.4H8V16H3.2V14.4ZM9.5248 9.3696C10.3488 8.4048 11.2 7.4072 11.2 5.6C11.2 2.5128 8.6872 0 5.6 0C2.5128 0 0 2.5128 0 5.6C0 7.428 0.8536 8.4224 1.6808 9.384C1.9672 9.7184 2.264 10.0648 2.548 10.4632C2.6632 10.628 2.852 11.26 3.0208 12H2.4V13.6H8.8V12H8.1808C8.3512 11.2584 8.5408 10.6248 8.6552 10.46C8.9368 10.0576 9.236 9.708 9.5248 9.3696ZM7.3456 9.54C6.9984 10.0336 6.7088 11.2 6.5408 12H4.66C4.4928 11.1984 4.2024 10.0296 3.8512 9.536C3.551 9.12347 3.23172 8.72517 2.8944 8.3424C2.1152 7.4352 1.6 6.8352 1.6 5.6C1.6 3.3944 3.3944 1.6 5.6 1.6C7.8056 1.6 9.6 3.3944 9.6 5.6C9.6 6.8168 9.0856 7.4192 8.308 8.3304C8.0096 8.6808 7.6712 9.0768 7.3456 9.54V9.54Z"
@@ -118,7 +125,7 @@ export const bulb: ReactElement = (
 	</svg>
 );
 
-export const check: ReactElement = (
+export const check = (
 	<svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M82.4087 41.9905C82.4087 52.4607 78.2507 62.5023 70.8489 69.9077C63.4471 77.313 53.4074 81.4758 42.9372 81.4809C35.0449 70.4373 30.6458 57.2807 30.3081 43.7111C29.9705 30.1415 33.7099 16.7825 41.0432 5.3601L42.9372 2.50011C53.4074 2.50513 63.4471 6.66792 70.8489 14.0733C78.2507 21.4786 82.4087 31.5202 82.4087 41.9905Z"
@@ -141,7 +148,7 @@ export const check: ReactElement = (
 	</svg>
 );
 
-export const jetpack: ReactElement = (
+export const jetpack = (
 	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z"
@@ -152,7 +159,7 @@ export const jetpack: ReactElement = (
 	</svg>
 );
 
-export const upload: ReactElement = (
+export const upload = (
 	<SVG width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Path d="M12 13V21" stroke="#8C8F94" strokeWidth="1.5" strokeLinecap="square" />
 		<Path
@@ -165,7 +172,7 @@ export const upload: ReactElement = (
 	</SVG>
 );
 
-export const truck: ReactElement = (
+export const truck = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M16 3H1V16H16V3Z"
@@ -198,7 +205,7 @@ export const truck: ReactElement = (
 	</svg>
 );
 
-export const shoppingBag: ReactElement = (
+export const shoppingBag = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 22 20.0391 21.7893 20.4142 21.4142C20.7893 21.0391 21 20.5304 21 20V6L18 2H6Z"
@@ -224,7 +231,7 @@ export const shoppingBag: ReactElement = (
 	</svg>
 );
 
-export const shoppingCart: ReactElement = (
+export const shoppingCart = (
 	<svg fill="none" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="m9 22c.55228 0 1-.4477 1-1s-.44772-1-1-1-1 .4477-1 1 .44772 1 1 1z"
@@ -250,7 +257,7 @@ export const shoppingCart: ReactElement = (
 	</svg>
 );
 
-export const award: ReactElement = (
+export const award = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M12 15C15.866 15 19 11.866 19 8C19 4.13401 15.866 1 12 1C8.13401 1 5 4.13401 5 8C5 11.866 8.13401 15 12 15Z"
@@ -269,7 +276,7 @@ export const award: ReactElement = (
 	</svg>
 );
 
-export const frame: ReactElement = (
+export const frame = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<mask id="mask0_2727_2533" maskUnits="userSpaceOnUse" x="3" y="4" width="18" height="16">
 			<path
@@ -285,7 +292,7 @@ export const frame: ReactElement = (
 	</svg>
 );
 
-export const headset: ReactElement = (
+export const headset = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M7 17C8.105 17 9 16.105 9 15V11C9 9.895 8.105 9 7 9C5.895 9 5 9.895 5 11V15C5 16.105 5.895 17 7 17Z"
@@ -322,7 +329,7 @@ export const headset: ReactElement = (
 	</svg>
 );
 
-export const mouse: ReactElement = (
+export const mouse = (
 	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M5 9H19"

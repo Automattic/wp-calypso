@@ -4,8 +4,8 @@
 
 	&.disabled {
 		.title-format-editor__editor-wrapper {
-			border: 1px solid var( --color-neutral-10 );
-			background-color: var( --color-neutral-0 );
+			border: 1px solid var(--color-neutral-10);
+			background-color: var(--color-neutral-0);
 		}
 
 		.title-format-editor__token,
@@ -14,7 +14,7 @@
 		}
 
 		.title-format-editor__token {
-			background-color: var( --color-neutral-light );
+			background-color: var(--color-neutral-light);
 		}
 	}
 }
@@ -36,9 +36,9 @@
 
 .title-format-editor__button {
 	border-radius: 2px;
-	background-color: var( --color-surface );
-	color: var( --color-neutral-60 );
-	border: 1px solid var( --color-neutral-10 );
+	background-color: var(--color-surface);
+	color: var(--color-neutral-60);
+	border: 1px solid var(--color-neutral-10);
 	padding: 3px 8px;
 	margin-left: 10px;
 	margin-top: 3px;
@@ -47,43 +47,43 @@
 	cursor: pointer;
 
 	&::before {
-		content: '+';
+		content: "+";
 		margin-right: 4px;
 		font-weight: 600;
 	}
 
 	&:hover {
-		color: var( --color-accent );
+		color: var(--color-accent);
 	}
 }
 
 .title-format-editor__editor-wrapper {
-	border: 1px solid var( --color-neutral-20 );
+	border: 1px solid var(--color-neutral-20);
 	padding: 7px 14px;
 	line-height: 24px;
 }
 
 .title-format-editor__token {
 	display: inline-block;
-	background-color: var( --color-neutral-50 );
-	color: var( --color-text-inverted );
+	background-color: var(--color-neutral-50);
+	color: var(--color-text-inverted);
 	border-radius: 2px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 
 	&:hover {
-		background-color: var( --color-error );
+		background-color: var(--color-error);
 	}
 }
 
 .title-format-editor__token-close {
 	margin-left: 10px;
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	font-size: $font-body-extra-small;
 }
 
 .title-format-editor__preview {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	font-style: italic;
 	margin-top: 5px;
 	font-size: $font-body-small;

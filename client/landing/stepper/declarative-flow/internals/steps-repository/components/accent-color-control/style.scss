@@ -1,0 +1,58 @@
+@import "../../style";
+
+.accent-color-control__accent-color-input {
+	background-size: 25px, auto;
+	background-position: left 13px center, 95% !important;
+	background-repeat: no-repeat, no-repeat !important;
+	padding-left: 50px !important;
+
+	/* Overwrites the transition value set by FormInput component.
+    It was the cause of the https://github.com/Automattic/wp-calypso/issues/67326 */
+	transition: none;
+	cursor: pointer;
+}
+
+.accent-color-control__popover {
+	.popover__arrow {
+		display: none;
+	}
+	&:focus,
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+.accent-color-control__contrast-warning {
+	display: flex;
+	font-size: $font-body-small;
+	height: 0;
+	transition: height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+	opacity: 0;
+	margin-top: 16px;
+	margin-bottom: -16px;
+	overflow: hidden;
+
+	&.is-visible {
+		height: 80px;
+		opacity: 1;
+	}
+
+	.accent-color-control__contrast-warning-icon-container {
+		margin-top: 4px;
+		margin-right: 4px;
+
+		svg {
+			stroke: var(--studio-yellow-40);
+		}
+	}
+}
+
+.components-color-picker {
+	.components-h-stack {
+		width: unset !important;
+	}
+}
+
+.accent-color-control__premium-badge {
+	margin-left: 4px;
+}

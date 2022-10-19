@@ -8,18 +8,18 @@
 		position: absolute;
 		top: 10px;
 		left: 10px;
-		fill: var( --color-text-subtle );
+		fill: var(--color-text-subtle);
 
 		// On smaller screens the input gets bigger,
 		// so this icon needs to move down a bit.
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			top: 16px;
 		}
 	}
 
 	.spinner {
 		top: 12px;
-		@include breakpoint-deprecated( '<660px' ) {
+		@include breakpoint-deprecated( "<660px" ) {
 			top: 17px;
 		}
 	}

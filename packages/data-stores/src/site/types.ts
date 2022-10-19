@@ -72,6 +72,12 @@ export interface CreateSiteParams {
 	};
 }
 
+export interface P2ThumbnailElements {
+	color_link: string;
+	color_sidebar_background: string;
+	header_image: string | null;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -96,108 +102,133 @@ export interface DifmLiteSiteOptions {
 // is_fse_active && is_fse_eligible properties have been deprecated and removed from SiteDetails interface
 export interface SiteDetails {
 	ID: number;
-	name: string | undefined;
-	description: string;
 	URL: string;
-	launch_status: string;
-	jetpack: boolean;
-	logo: { id: string; sizes: string[]; url: string };
+	capabilities: SiteDetailsCapabilities;
+	description: string;
+	domain: string;
 	icon?: { ico: string; img: string; media_id: number };
-	options: {
-		admin_url?: string;
-		advanced_seo_front_page_description?: string;
-		advanced_seo_title_formats?: string[];
-		ak_vp_bundle_enabled?: boolean;
-		allowed_file_types?: string[];
-		anchor_podcast?: boolean;
-		background_color?: boolean;
-		blog_public?: number;
-		created_at?: Date;
-		default_category?: number;
-		default_comment_status?: boolean;
-		default_likes_enabled?: boolean;
-		default_ping_status?: boolean;
-		default_post_format?: string;
-		default_sharing_status?: boolean;
-		design_type?: string;
-		difm_lite_site_options?: DifmLiteSiteOptions;
-		editing_toolkit_is_active?: boolean;
-		featured_images_enabled?: boolean;
-		frame_nonce?: string;
-		gmt_offset?: number;
-		header_image?: boolean;
-		headstart_is_fresh?: boolean;
-		headstart?: boolean;
-		image_default_link_type?: string;
-		image_large_height?: number;
-		image_large_width?: number;
-		image_medium_height?: number;
-		image_medium_width?: number;
-		image_thumbnail_crop?: number;
-		image_thumbnail_height?: number;
-		image_thumbnail_width?: number;
-		import_engine?: string;
-		is_automated_transfer?: boolean;
-		is_cloud_eligible?: boolean;
-		is_difm_lite_in_progress?: boolean;
-		is_domain_only?: boolean;
-		is_mapped_domain?: boolean;
-		is_pending_plan?: boolean;
-		is_redirect?: boolean;
-		is_wpcom_atomic?: boolean;
-		is_wpcom_store?: boolean;
-		is_wpforteams_site?: boolean;
-		jetpack_frame_nonce?: string;
-		login_url?: string;
-		p2_hub_blog_id?: number;
-		page_for_posts?: number;
-		page_on_front?: number;
-		permalink_structure?: string;
-		podcasting_archive?: boolean;
-		post_formats?: string[];
-		publicize_permanently_disabled?: boolean;
-		show_on_front?: string;
-		site_intent?: string;
-		site_segment?: string;
-		site_vertical_id?: string;
-		software_version?: string;
-		selected_features?: FeatureId[];
-		theme_slug?: string;
-		timezone?: string;
-		unmapped_url?: string;
-		upgraded_filetypes_enabled?: boolean;
-		verification_services_codes?: string;
-		videopress_enabled?: boolean;
-		videopress_storage_used?: number;
-		was_created_with_blank_canvas_design?: boolean;
-		woocommerce_is_active?: boolean;
-		wordads?: boolean;
-	};
+	is_coming_soon?: boolean;
+	is_multisite?: boolean;
+	is_private?: boolean;
+	is_vip?: boolean;
+	is_wpcom_atomic?: boolean;
+	jetpack: boolean;
+	lang?: string;
+	launch_status: string;
+	locale: string;
+	logo: { id: string; sizes: string[]; url: string };
+	name: string | undefined;
+	options: SiteDetailsOptions;
+	p2_thumbnail_elements?: P2ThumbnailElements | null;
 	plan?: SiteDetailsPlan;
-	capabilities: {
-		edit_pages: boolean;
-		edit_posts: boolean;
-		edit_others_posts: boolean;
-		edit_others_pages: boolean;
-		delete_posts: boolean;
-		delete_others_posts: boolean;
-		edit_theme_options: boolean;
-		edit_users: boolean;
-		list_users: boolean;
-		manage_categories: boolean;
-		manage_options: boolean;
-		moderate_comments: boolean;
-		activate_wordads: boolean;
-		promote_users: boolean;
-		publish_posts: boolean;
-		upload_files: boolean;
-		delete_users: boolean;
-		remove_users: boolean;
-		own_site: boolean;
-		view_hosting: boolean;
-		view_stats: boolean;
-		activate_plugins: boolean;
-	};
+	products?: SiteDetailsPlan[];
+	single_user_site?: boolean;
+	site_owner?: number;
+	slug: string;
+	visible?: boolean;
+	wpcom_url?: string;
+	user_interactions?: string[];
+}
+
+export interface SiteDetailsCapabilities {
+	activate_plugins: boolean;
+	activate_wordads: boolean;
+	delete_others_posts: boolean;
+	delete_posts: boolean;
+	delete_users: boolean;
+	edit_others_pages: boolean;
+	edit_others_posts: boolean;
+	edit_pages: boolean;
+	edit_posts: boolean;
+	edit_theme_options: boolean;
+	edit_users: boolean;
+	list_users: boolean;
+	manage_categories: boolean;
+	manage_options: boolean;
+	moderate_comments: boolean;
+	own_site: boolean;
+	promote_users: boolean;
+	publish_posts: boolean;
+	remove_users: boolean;
+	upload_files: boolean;
+	view_hosting: boolean;
+	view_stats: boolean;
+}
+
+export interface SiteDetailsOptions {
+	admin_url?: string;
+	advanced_seo_front_page_description?: string;
+	advanced_seo_title_formats?: string[];
+	ak_vp_bundle_enabled?: boolean | null;
+	allowed_file_types?: string[];
+	anchor_podcast?: boolean;
+	background_color?: boolean;
+	blog_public?: number;
+	created_at?: string;
+	default_category?: number;
+	default_comment_status?: boolean;
+	default_likes_enabled?: boolean;
+	default_ping_status?: boolean;
+	default_post_format?: string;
+	default_sharing_status?: boolean;
+	design_type?: string | null;
+	difm_lite_site_options?: DifmLiteSiteOptions | Record< string, never >;
+	editing_toolkit_is_active?: boolean;
+	featured_images_enabled?: boolean;
+	frame_nonce?: string;
+	gmt_offset?: number;
+	header_image?: boolean;
+	headstart?: boolean;
+	headstart_is_fresh?: boolean;
+	image_default_link_type?: string;
+	image_large_height?: number;
+	image_large_width?: number;
+	image_medium_height?: number;
+	image_medium_width?: number;
+	image_thumbnail_crop?: number;
+	image_thumbnail_height?: number;
+	image_thumbnail_width?: number;
+	import_engine?: string | null;
+	is_automated_transfer?: boolean;
+	is_cloud_eligible?: boolean;
+	is_difm_lite_in_progress?: boolean;
+	is_domain_only?: boolean;
+	is_mapped_domain?: boolean;
+	is_pending_plan?: boolean;
+	is_redirect?: boolean;
+	is_wpcom_atomic?: boolean;
+	is_wpcom_store?: boolean;
+	is_wpforteams_site?: boolean;
+	jetpack_connection_active_plugins?: string[];
+	jetpack_frame_nonce?: string;
+	jetpack_version?: string | undefined;
+	login_url?: string;
+	p2_hub_blog_id?: number | null;
+	page_for_posts?: number;
+	page_on_front?: number;
+	permalink_structure?: string;
+	podcasting_archive?: boolean | null;
+	post_formats?: string[];
+	publicize_permanently_disabled?: boolean;
+	selected_features?: FeatureId[];
+	show_on_front?: string;
+	site_intent?: string;
+	site_segment?: string | null;
+	site_vertical_id?: string | null;
+	software_version?: string;
+	theme_slug?: string;
+	timezone?: string;
+	unmapped_url?: string;
+	updated_at?: string;
+	upgraded_filetypes_enabled?: boolean;
+	verification_services_codes?: string | null;
+	videopress_enabled?: boolean;
+	videopress_storage_used?: number;
+	was_created_with_blank_canvas_design?: boolean;
+	woocommerce_is_active?: boolean;
+	wordads?: boolean;
+	launchpad_screen?: false | 'off' | 'full' | 'minimized';
+	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -417,4 +448,19 @@ export interface GlobalStyles {
 			};
 		};
 	};
+}
+
+export interface LaunchPadCheckListTasksStatuses {
+	first_post_published?: boolean;
+	links_edited?: boolean;
+	site_launched?: boolean;
+}
+
+export interface ThemeSetupOptions {
+	trim_content?: boolean;
+	vertical_id?: string;
+	pattern_ids?: number[] | string[];
+	header_pattern_ids?: number[] | string[];
+	footer_pattern_ids?: number[] | string[];
+	page_template?: string;
 }

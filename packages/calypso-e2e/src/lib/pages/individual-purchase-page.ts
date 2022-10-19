@@ -12,6 +12,8 @@ const selectors = {
 
 	// Purchased item actions: plans
 	renewNowCardButton: 'button.card:has-text("Renew Now")',
+	renewAnnuallyCardButton: 'button.card:has-text("Renew Annually")',
+
 	cancelAndRefundButton: 'a:text("Cancel Subscription and Refund")',
 	cancelSubscriptionButton: 'button:text("Cancel Subscription")',
 	upgradeButton: 'a.card:text("Upgrade")',
@@ -63,13 +65,16 @@ export class IndividualPurchasePage {
 	}
 
 	/**
-	 * Renew purchase by clicking on the "Renew Now" card button (as opposed to the inline "Renew now" button).
+	 * Renew purchase by clicking on the "Renew Now" or "Renew Annually" card button (as opposed to the inline "Renew now" button).
 	 */
 	async clickRenewNowCardButton(): Promise< void > {
 		// This triggers a real navigation to the `/checkout/<site_name>` endpoint.
 		await Promise.all( [
 			this.page.waitForNavigation( { url: /.*\/checkout.*/ } ),
-			this.page.click( selectors.renewNowCardButton ),
+			await Promise.race( [
+				this.page.click( selectors.renewNowCardButton ),
+				this.page.click( selectors.renewAnnuallyCardButton ),
+			] ),
 		] );
 	}
 

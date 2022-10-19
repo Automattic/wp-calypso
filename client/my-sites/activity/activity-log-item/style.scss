@@ -1,11 +1,11 @@
-@import '@wordpress/base-styles/_breakpoints.scss';
-@import '@wordpress/base-styles/_mixins.scss';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .activity-log-item {
 	display: flex;
 	position: relative;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-left: 8px;
 
 		.is-expanded & {
@@ -22,6 +22,10 @@
 			margin-bottom: 8px;
 		}
 	}
+	a.button,
+	button {
+		margin-right: 8px;
+	}
 }
 
 .activity-log-item .foldable-card.card {
@@ -33,13 +37,13 @@
 		margin-bottom: 24px;
 
 		.foldable-card__expand .gridicon {
-			transform: rotate( 180deg );
+			transform: rotate(180deg);
 		}
 	}
 }
 
 .activity-log-item .foldable-card__header {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding: 12px;
 		display: block;
 	}
@@ -69,12 +73,12 @@
 	width: 52px;
 	margin: 1px 22px 0 10px;
 	padding: 8px 0 6px;
-	background: var( --color-surface-backdrop );
+	background: var(--color-surface-backdrop);
 	line-height: 1;
 	text-align: center;
 	z-index: 1;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		width: 40px;
 		margin: 0 8px 0 0;
 	}
@@ -86,17 +90,17 @@
 	.activity-log-item__card.is-expanded & {
 		margin-left: 0;
 		margin-right: 16px;
-		background: var( --color-surface );
+		background: var(--color-surface);
 	}
 }
 
 .activity-log-item__time {
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	text-transform: uppercase;
 	white-space: nowrap;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		letter-spacing: -1px;
 	}
 }
@@ -108,11 +112,12 @@
 	height: 24px;
 	margin-top: 4px;
 	padding: 12px;
-	background: var( --color-neutral-20 );
-	color: var( --color-text-inverted );
+	background: var(--color-neutral-20);
+	color: var(--color-text-inverted);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		box-sizing: border-box;
 		display: inline-block;
 		width: 32px;
@@ -127,17 +132,17 @@
 
 	// Success
 	&.is-success {
-		background: var( --color-success );
+		background: var(--color-success);
 	}
 
 	// Warning
 	&.is-warning {
-		background: var( --color-warning );
+		background: var(--color-warning);
 	}
 
 	// Error! OHNO!
 	&.is-error {
-		background: var( --color-error );
+		background: var(--color-error);
 	}
 
 	.is-loading & {
@@ -145,9 +150,9 @@
 		height: 48px;
 		margin-top: 0;
 		padding: 0;
-		background-color: var( --color-neutral-10 );
+		background-color: var(--color-neutral-10);
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 32px;
 			height: 32px;
 			margin: 2px 0 0 2px;
@@ -161,7 +166,7 @@
 	.foldable-card__main {
 		min-width: 0;
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			max-width: none;
 			margin: 0;
 		}
@@ -187,13 +192,13 @@
 		padding-left: 56px;
 	}
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column;
 		align-items: flex-start;
 		padding-left: 0;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-right: 0;
 	}
 }
@@ -215,14 +220,14 @@
 		width: 40px;
 		height: 40px;
 		margin-right: 16px;
-		fill: var( --color-neutral-40 );
+		fill: var(--color-neutral-40);
 
-		@include breakpoint-deprecated( '<960px' ) {
+		@include breakpoint-deprecated( "<960px" ) {
 			width: 32px;
 			height: 32px;
 			margin-right: 8px;
 		}
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			width: 24px;
 			height: 24px;
 			margin-right: 8px;
@@ -230,28 +235,30 @@
 	}
 
 	.social-logo {
-		fill: var( --color-text-inverted );
-		background: var( --color-wordpress-org );
+		fill: var(--color-text-inverted);
+		background: var(--color-wordpress-org);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
 
 	.jetpack-logo__icon-circle {
-		fill: var( --color-neutral-40 );
+		fill: var(--color-neutral-40);
 	}
 
 	.gridicon {
 		width: 24px;
 		height: 24px;
-		background: var( --color-neutral-20 );
-		color: var( --color-text-inverted );
+		background: var(--color-neutral-20);
+		color: var(--color-text-inverted);
 		display: flex;
 		padding: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
-		fill: var( --color-text-inverted );
+		fill: var(--color-text-inverted);
 
-		@include breakpoint-deprecated( '<480px' ) {
+		@include breakpoint-deprecated( "<480px" ) {
 			padding: 7px;
 			box-sizing: border-box;
 			width: 32px;
@@ -275,12 +282,12 @@
 	overflow-wrap: break-word;
 	word-wrap: break-word;
 
-	@include breakpoint-deprecated( '<960px' ) {
+	@include breakpoint-deprecated( "<960px" ) {
 		margin-top: 2px;
 		line-height: 1;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline-block;
 	}
 }
@@ -288,7 +295,7 @@
 .activity-log-item__actor-role {
 	text-transform: capitalize;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: inline-block;
 		margin-left: 8px;
 	}
@@ -297,24 +304,10 @@
 .activity-log-item__actor-role,
 .activity-log-item__description-summary {
 	font-size: $font-body-extra-small;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body-small;
-	}
-}
-
-.activity-log-item__description {
-	flex: 1 1 50%;
-	font-size: $font-body-small;
-	word-break: break-word;
-
-	@include breakpoint-deprecated( '<960px' ) {
-		margin-top: 8px;
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
-		margin-top: 12px;
 	}
 }
 
@@ -325,7 +318,7 @@
 		margin-bottom: 0;
 	}
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body;
 	}
 }
@@ -334,7 +327,7 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		margin-top: 12px;
 		text-align: left;
 	}
@@ -364,15 +357,15 @@
 }
 
 .activity-log-item__help-action {
-	color: var( --color-neutral-20 );
+	color: var(--color-neutral-20);
 	font-weight: 400;
 	font-size: $font-body-small;
 	white-space: nowrap;
 	padding: 2px 7px 3px;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: block;
-		margin-top: rem( 15px );
+		margin-top: rem(15px);
 	}
 }
 
@@ -384,14 +377,14 @@
 	font-size: $font-body-small;
 	white-space: nowrap;
 
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		display: table;
-		margin-top: rem( 15px );
+		margin-top: rem(15px);
 	}
 }
 
 .activity-log-item__quick-action-success {
-	color: var( --color-success );
+	color: var(--color-success);
 	animation-name: fade-out-success;
 	animation-fill-mode: forwards;
 	animation-delay: 2s;
@@ -399,16 +392,11 @@
 }
 
 .activity-log-item__quick-action-error {
-	color: var( --color-error );
-}
-
-.activity-log-item__activity-media {
-	margin-right: 16px;
-	color: var( --color-text-inverted );
+	color: var(--color-error);
 }
 
 .activity-log-item__activity-media .gridicon {
-	background-color: var( --color-neutral-10 );
+	background-color: var(--color-neutral-10);
 }
 .activity-log-item__activity-media .is-thumbnail {
 	display: inline-block;
@@ -426,6 +414,8 @@
 }
 
 .activity-log-item__activity-media {
+	margin-right: 16px;
+	color: var(--color-text-inverted);
 	&.is-mobile {
 		float: right;
 		margin-right: -50px;
@@ -439,7 +429,7 @@
 		display: none;
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		&.is-mobile {
 			display: none;
 		}
@@ -455,7 +445,7 @@
 	justify-content: space-between;
 	padding: 16px 0 0;
 	margin: 0;
-	border-top: 1px solid var( --color-surface-backdrop );
+	border-top: 1px solid var(--color-surface-backdrop);
 
 	p {
 		margin-bottom: 0;
@@ -463,7 +453,7 @@
 }
 
 .activity-log-item.is-aggregated > .foldable-card > .foldable-card__header {
-	@include breakpoint-deprecated( '<480px' ) {
+	@include breakpoint-deprecated( "<480px" ) {
 		padding-right: 44px;
 	}
 }
@@ -483,18 +473,14 @@
 	position: static;
 }
 
-.activity-log-item {
-	a.button,
-	button {
-		margin-right: 8px;
-	}
-}
-
 .activity-log-item__description {
 	display: flex;
 
 	// Mobile-Medium: Action buttons under description
 	flex-direction: column;
+	flex: 1 1 50%;
+	font-size: $font-body-small;
+	word-break: break-word;
 	.activity-log-item__action {
 		justify-content: normal;
 	}
@@ -503,6 +489,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 8px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin-top: 12px;
 	}
 
 	@include break-wide {

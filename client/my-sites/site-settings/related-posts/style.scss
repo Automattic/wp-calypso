@@ -12,7 +12,7 @@
 	margin-top: 8px;
 	padding: 16px 8px;
 	width: 100%;
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	box-sizing: border-box;
 
 	@include clear-fix;
@@ -25,7 +25,7 @@
 }
 
 .related-posts__preview-items {
-	@include breakpoint-deprecated( '>480px' ) {
+	@include breakpoint-deprecated( ">480px" ) {
 		display: flex;
 		flex-wrap: wrap;
 		.related-posts__preview-post {
@@ -33,7 +33,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated( '>960px' ) {
+	@include breakpoint-deprecated( ">960px" ) {
 		flex-wrap: nowrap;
 	}
 }

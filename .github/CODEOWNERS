@@ -37,19 +37,19 @@
 /client/components/payment-logo/ @Automattic/shilling
 /client/lib/cart-values/ @Automattic/shilling
 /client/lib/checkout/ @Automattic/shilling
-/client/lib/siftscience/ @Automattic/payments
-/client/lib/store-transactions/ @Automattic/payments
-/client/me/memberships/ @Automattic/payments
+/client/lib/siftscience/ @Automattic/shilling
+/client/lib/store-transactions/ @Automattic/shilling
+/client/me/memberships/ @Automattic/shilling
 /client/me/purchases/ @Automattic/shilling
 /client/my-sites/checkout/ @Automattic/shilling
 /client/my-sites/purchases/ @Automattic/shilling
-/client/state/billing-transactions/ @Automattic/payments
-/client/state/memberships/ @Automattic/payments
-/client/state/order-transactions/ @Automattic/payments
-/client/state/plans/ @Automattic/payments
-/client/state/receipts/ @Automattic/payments
-/client/state/sites/plans/ @Automattic/payments
-/client/state/stored-cards/ @Automattic/payments
+/client/state/billing-transactions/ @Automattic/shilling
+/client/state/memberships/ @Automattic/shilling
+/client/state/order-transactions/ @Automattic/shilling
+/client/state/plans/ @Automattic/shilling
+/client/state/receipts/ @Automattic/shilling
+/client/state/sites/plans/ @Automattic/shilling
+/client/state/stored-cards/ @Automattic/shilling
 /packages/calypso-stripe/ @Automattic/shilling
 /packages/composite-checkout/ @Automattic/shilling
 /packages/shopping-cart/ @Automattic/shilling
@@ -149,3 +149,13 @@
 /packages/wpcom.js/src/lib/domain.email.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domain.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
+
+#Plans
+/client/signup/steps/plans @Automattic/martech-autobots
+/client/lib/plans @Automattic/martech-autobots
+/client/my-sites/plan-features-comparison @Automattic/martech-autobots
+/client/my-sites/plan-features @Automattic/martech-autobots
+/client/my-sites/plans-comparison @Automattic/martech-autobots
+/client/my-sites/plans-features-main @Automattic/martech-autobots
+/client/my-sites/plan-price @Automattic/martech-autobots
+/packages/calypso-products/src/plans-list.tsx @Automattic/martech-autobots

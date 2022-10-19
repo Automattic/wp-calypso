@@ -2,47 +2,42 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch, useSelector } from 'react-redux';
-import { savePreference } from 'calypso/state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { useSelector } from 'react-redux';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
 
 const container = css( {
-	marginLeft: 'auto',
 	display: 'flex',
 	gap: '10px',
 } );
 
-type SitesDisplayMode = 'tile' | 'list' | 'none';
-
-const PREFERENCE_NAME = 'sites-management-dashboard-display-mode';
+export type SitesDisplayMode = 'tile' | 'list';
 
 export const useSitesDisplayMode = () => {
-	const displayMode: SitesDisplayMode = useSelector( ( state ) => {
-		if ( ! hasReceivedRemotePreferences( state ) ) {
-			return 'none';
-		}
-
-		return getPreference( state, PREFERENCE_NAME ) ?? 'tile';
+	const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+	return useAsyncPreference< SitesDisplayMode >( {
+		defaultValue: siteCount && siteCount > 6 ? 'list' : 'tile',
+		preferenceName: 'sites-management-dashboard-display-mode',
 	} );
-
-	return displayMode;
 };
 
-export const SitesDisplayModeSwitcher = () => {
+interface SitesDisplayModeSwitcherProps {
+	onDisplayModeChange( newValue: SitesDisplayMode ): void;
+	displayMode: ReturnType< typeof useSitesDisplayMode >[ 0 ];
+}
+
+export const SitesDisplayModeSwitcher = ( {
+	displayMode,
+	onDisplayModeChange,
+}: SitesDisplayModeSwitcherProps ) => {
 	const { __ } = useI18n();
-	const dispatch = useDispatch();
-
-	const onDisplayModeChange = ( value: SitesDisplayMode ) => {
-		dispatch( savePreference( PREFERENCE_NAME, value ) );
-	};
-
-	const displayMode = useSitesDisplayMode();
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
 			<Button
 				role="radio"
 				aria-label={ __( 'Tile view' ) }
+				title={ __( 'Switch to tile view' ) }
 				onClick={ () => onDisplayModeChange( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
 				isPressed={ displayMode === 'tile' }
@@ -50,6 +45,7 @@ export const SitesDisplayModeSwitcher = () => {
 			<Button
 				role="radio"
 				aria-label={ __( 'List view' ) }
+				title={ __( 'Switch to list view' ) }
 				onClick={ () => onDisplayModeChange( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
 				isPressed={ displayMode === 'list' }

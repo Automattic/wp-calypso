@@ -1,7 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
-import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -16,6 +14,7 @@ import {
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 } from 'calypso/state/login/selectors';
+import SocialLoginToS from './social-login-tos';
 
 import './social.scss';
 
@@ -24,16 +23,17 @@ class SocialLoginForm extends Component {
 		recordTracksEvent: PropTypes.func.isRequired,
 		redirectTo: PropTypes.string,
 		onSuccess: PropTypes.func.isRequired,
-		translate: PropTypes.func.isRequired,
 		loginSocialUser: PropTypes.func.isRequired,
 		uxMode: PropTypes.string.isRequired,
 		linkingSocialService: PropTypes.string,
 		socialService: PropTypes.string,
 		socialServiceResponse: PropTypes.object,
+		shouldRenderToS: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		linkingSocialService: '',
+		shouldRenderToS: false,
 	};
 
 	reportSocialLoginFailure = ( { service, socialInfo, error } ) => {
@@ -138,72 +138,6 @@ class SocialLoginForm extends Component {
 		return `https://${ host + login( { socialService: service } ) }`;
 	};
 
-	renderSocialTos = () => {
-		const { redirectTo, translate } = this.props;
-
-		const isJetpackMagicLinkSignUpFlow =
-			redirectTo &&
-			redirectTo.includes( 'jetpack/connect' ) &&
-			config.isEnabled( 'jetpack/magic-link-signup' );
-
-		const tosLink = (
-			<a
-				href={ localizeUrl( 'https://wordpress.com/tos/' ) }
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		);
-		const privacyLink = (
-			<a
-				href={ localizeUrl( 'https://automattic.com/privacy/' ) }
-				target="_blank"
-				rel="noopener noreferrer"
-			/>
-		);
-
-		if ( isJetpackMagicLinkSignUpFlow ) {
-			return (
-				<>
-					<p className="login__social-tos">
-						{ translate(
-							'By continuing, you agree to our {{tosLink}}Terms of' +
-								' Service{{/tosLink}} and acknowledge that you have read our' +
-								' {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-							{
-								components: {
-									tosLink,
-									privacyLink,
-								},
-							}
-						) }
-					</p>
-					<p className="login__social-tos">
-						{ translate(
-							'If you continue with Google, Apple, or an email that isn’t registered yet,' +
-								' you are creating a new WordPress.com account.'
-						) }
-					</p>
-				</>
-			);
-		}
-		return (
-			<p className="login__social-tos">
-				{ translate(
-					"If you continue with Google or Apple and don't already have a WordPress.com account, you" +
-						' are creating an account, you agree to our' +
-						' {{tosLink}}Terms of Service{{/tosLink}}, and acknowledge that you have' +
-						' read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
-					{
-						components: {
-							tosLink,
-							privacyLink,
-						},
-					}
-				) }
-			</p>
-		);
-	};
-
 	render() {
 		const { redirectTo, uxMode } = this.props;
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
@@ -221,7 +155,7 @@ class SocialLoginForm extends Component {
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
-							startingPoint={ 'login' }
+							startingPoint="login"
 						/>
 
 						<AppleLoginButton
@@ -235,8 +169,7 @@ class SocialLoginForm extends Component {
 							}
 						/>
 					</div>
-
-					{ this.renderSocialTos() }
+					{ this.props.shouldRenderToS && <SocialLoginToS /> }
 				</div>
 
 				{ this.props.bearerToken && (
@@ -262,4 +195,4 @@ export default connect(
 		createSocialUserFailed,
 		recordTracksEvent,
 	}
-)( localize( SocialLoginForm ) );
+)( SocialLoginForm );

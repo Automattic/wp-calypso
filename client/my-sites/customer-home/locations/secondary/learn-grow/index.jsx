@@ -31,7 +31,7 @@ const cardComponents = {
 	[ EDUCATION_EARN ]: EducationEarn,
 	[ EDUCATION_STORE ]: EducationStore,
 	[ EDUCATION_WPCOURSES ]: WpCourses,
-	[ EDUCATION_PROMOTE_POST ]: config.isEnabled( 'promote-post' ) && PromotePost,
+	[ EDUCATION_PROMOTE_POST ]: PromotePost,
 	[ EDUCATION_FIND_SUCCESS ]: FindSuccess,
 	[ EDUCATION_RESPOND_TO_CUSTOMER_FEEDBACK ]: RespondToCustomerFeedback,
 	[ EDUCATION_BLOGGING_QUICK_START ]: BloggingQuickStart,

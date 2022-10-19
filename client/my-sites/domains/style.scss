@@ -1,12 +1,12 @@
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .domains__header {
 	display: flex;
 	justify-content: space-between;
 	align-items: flex-start;
 
-	@include breakpoint-deprecated( '<660px' ) {
+	@include breakpoint-deprecated( "<660px" ) {
 		align-items: center;
 	}
 }

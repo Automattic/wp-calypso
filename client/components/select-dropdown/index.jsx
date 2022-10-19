@@ -41,6 +41,7 @@ class SelectDropdown extends Component {
 			} )
 		),
 		isLoading: PropTypes.bool,
+		ariaLabel: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -207,7 +208,7 @@ class SelectDropdown extends Component {
 					onClick={ this.toggleDropdown }
 				>
 					<div id={ 'select-dropdown-' + this.instanceId } className="select-dropdown__header">
-						<span className="select-dropdown__header-text">
+						<span className="select-dropdown__header-text" aria-label={ this.props.ariaLabel }>
 							{ selectedIcon && [ Gridicon, MaterialIcon ].includes( selectedIcon.type )
 								? selectedIcon
 								: null }

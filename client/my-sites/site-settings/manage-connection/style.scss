@@ -19,7 +19,7 @@
 .manage-connection__user-dropdown .author-selector__author-toggle {
 	display: inline-block;
 	border-style: solid;
-	border-color: var( --color-neutral-10 );
+	border-color: var(--color-neutral-10);
 	border-width: 1px;
 	border-radius: 2px;
 
@@ -34,7 +34,7 @@
 }
 
 .manage-connection__ownership-info-icon {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	flex: 0 0 24px;
 	margin-right: 20px;
 }

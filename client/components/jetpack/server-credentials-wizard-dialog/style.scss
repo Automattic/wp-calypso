@@ -2,7 +2,7 @@
 .dialog.card.server-credentials-wizard-dialog {
 	width: 100%;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include breakpoint-deprecated( ">660px" ) {
 		max-width: 676px;
 	}
 
@@ -12,7 +12,7 @@
 			border-bottom: 1px solid #dcdcde;
 			margin: -8px -24px 16px;
 			padding: 0 24px 16px;
-			color: var( --color-primary-40 );
+			color: var(--color-primary-40);
 		}
 
 		&__subheader {
@@ -32,11 +32,11 @@
 		}
 
 		&__icon--warning {
-			fill: var( --color-error-50 );
+			fill: var(--color-error-50);
 		}
 
 		&__warning-message {
-			color: var( --color-text-subtle );
+			color: var(--color-text-subtle);
 			font-size: $font-body-small;
 		}
 
@@ -54,6 +54,6 @@
 	}
 
 	.dialog__action-buttons {
-		background: var( --studio-gray-0 );
+		background: var(--studio-gray-0);
 	}
 }

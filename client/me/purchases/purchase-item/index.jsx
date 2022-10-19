@@ -6,6 +6,7 @@ import {
 	PLAN_BIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
 import i18n, { localize, useTranslate } from 'i18n-calypso';
@@ -22,6 +23,7 @@ import {
 	getDisplayName,
 	isExpired,
 	isExpiring,
+	isRechargeable,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPartnerPurchase,
@@ -76,7 +78,18 @@ class PurchaseItem extends Component {
 		if ( isDisconnectedSite ) {
 			if ( isJetpackTemporarySite ) {
 				return (
-					<span className="purchase-item__is-error">{ translate( 'Pending activation' ) }</span>
+					<>
+						<span className="purchase-item__is-error">
+							{ translate( 'Activate your product license key' ) }
+						</span>
+						<br />
+						<ExternalLink
+							className="purchase-item__link"
+							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
+						>
+							Learn more
+						</ExternalLink>
+					</>
 				);
 			}
 
@@ -408,9 +421,26 @@ class PurchaseItem extends Component {
 	getPaymentMethod() {
 		const { purchase, translate } = this.props;
 
-		if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
+		if (
+			purchase.isAutoRenewEnabled &&
+			! hasPaymentMethod( purchase ) &&
+			! isPartnerPurchase( purchase )
+		) {
 			return (
-				<div className={ 'purchase-item__no-payment-method' }>
+				<div className="purchase-item__no-payment-method">
+					<Icon icon={ warningIcon } />
+					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
+				</div>
+			);
+		}
+
+		if (
+			! isRechargeable( purchase ) &&
+			hasPaymentMethod( purchase ) &&
+			purchase.isAutoRenewEnabled
+		) {
+			return (
+				<div className="purchase-item__no-payment-method">
 					<Icon icon={ warningIcon } />
 					<span>{ translate( 'You don’t have a payment method to renew this subscription' ) }</span>
 				</div>
@@ -472,7 +502,7 @@ class PurchaseItem extends Component {
 					<div className="purchase-item__title">
 						{ getDisplayName( purchase ) }
 						&nbsp;
-						<OwnerInfo purchaseId={ purchase?.id } />
+						<OwnerInfo purchase={ purchase } />
 					</div>
 
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>

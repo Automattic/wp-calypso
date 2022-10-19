@@ -1,7 +1,7 @@
 // Display "no results" message on body content.
 // Used for searches.
 .no-results {
-	color: var( --color-neutral-50 );
+	color: var(--color-neutral-50);
 	font-size: $font-body;
 	line-height: 56px;
 }

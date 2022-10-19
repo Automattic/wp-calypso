@@ -423,7 +423,7 @@ const InnerSearch = (
 			<Button
 				className="search-component__icon-navigation"
 				ref={ openIcon }
-				onClick={ enableOpenIcon ? openSearch : focus }
+				onClick={ enableOpenIcon ? openSearch : () => searchInput.current?.focus() }
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? openListener : undefined }
 				aria-controls={ 'search-component-' + instanceId }

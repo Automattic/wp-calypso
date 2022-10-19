@@ -12,8 +12,14 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
+import {
+	deleteCredentials,
+	updateCredentials,
+	testCredentials,
+	markCredentialsAsInvalid,
+} from 'calypso/state/jetpack/credentials/actions';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import getJetpackCredentialsTestStatus from 'calypso/state/selectors/get-jetpack-credentials-test-status';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
@@ -76,30 +82,62 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const isRequestingCredentials = useSelector( ( state ) =>
-		isRequestingSiteCredentials( state, siteId as number )
-	);
-
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, siteId, role )
 	) as FormState & { abspath: string };
+
+	const [ testCredentialsLoading, setTestCredentialsLoading ] = useState( true );
+	const [ testCredentialsResult, setTestCredentialsResult ] = useState( false );
 
 	const hasCredentials = credentials && Object.keys( credentials ).length > 0;
 
 	const { protocol } = credentials;
 	const isAtomic = hasCredentials && 'dynamic-ssh' === protocol;
 
+	const credentialsTestStatus = useSelector( ( state ) =>
+		getJetpackCredentialsTestStatus( state, siteId, role )
+	);
+
+	const isRequestingCredentials = useSelector(
+		( state ) => isRequestingSiteCredentials( state, siteId as number ) || testCredentialsLoading
+	);
+
+	useEffect( () => {
+		if ( hasCredentials ) {
+			dispatch( testCredentials( siteId, role ) );
+		} else {
+			dispatch( markCredentialsAsInvalid( siteId, role ) );
+		}
+	}, [ hasCredentials ] );
+
+	useEffect(
+		function () {
+			if ( 'pending' !== credentialsTestStatus ) {
+				setTestCredentialsLoading( false );
+			}
+
+			if ( 'valid' === credentialsTestStatus ) {
+				setTestCredentialsResult( true );
+			}
+
+			if ( 'invalid' === credentialsTestStatus ) {
+				setTestCredentialsResult( false );
+			}
+		},
+		[ credentialsTestStatus ]
+	);
+
 	const statusState = useMemo( (): StatusState => {
 		if ( isRequestingCredentials ) {
 			return StatusState.Loading;
 		}
 
-		if ( hasCredentials ) {
+		if ( hasCredentials && testCredentialsResult ) {
 			return StatusState.Connected;
 		}
 
 		return StatusState.Disconnected;
-	}, [ hasCredentials, isRequestingCredentials ] );
+	}, [ hasCredentials, testCredentialsResult, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( 'unsubmitted' !== formSubmissionStatus ) {

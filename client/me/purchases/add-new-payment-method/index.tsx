@@ -70,7 +70,7 @@ function AddNewPaymentMethod() {
 					<PaymentMethodSelector
 						paymentMethods={ paymentMethodList }
 						successCallback={ goToPaymentMethods }
-						eventContext={ '/me/purchases/add-payment-method' }
+						eventContext="/me/purchases/add-payment-method"
 					/>
 				</Column>
 				<Column type="sidebar">

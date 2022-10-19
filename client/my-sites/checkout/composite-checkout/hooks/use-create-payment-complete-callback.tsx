@@ -1,5 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
+import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -9,6 +10,7 @@ import { hasPlan, hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
@@ -33,14 +35,13 @@ import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
-import type { PostCheckoutUrlArguments } from './use-get-thank-you-url/get-thank-you-page-url';
 import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
@@ -229,6 +230,17 @@ export default function useCreatePaymentCompleteCallback( {
 				// We use window.location instead of page() so that the cookies are
 				// detected on fresh page load. Using page(url) will take us to the
 				// log-in page which we don't want.
+				absoluteRedirectThroughPending( url, {
+					siteSlug,
+					orderId: transactionResult.order_id,
+					receiptId: transactionResult.receipt_id,
+				} );
+				return;
+			}
+
+			// We need to do a hard redirect if we're redirecting to the stepper.
+			// Since stepper is self-contained, it doesn't load properly if we do a normal history state change
+			if ( isURL( url ) || url.includes( '/setup/' ) ) {
 				absoluteRedirectThroughPending( url, {
 					siteSlug,
 					orderId: transactionResult.order_id,

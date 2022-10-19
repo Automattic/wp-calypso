@@ -1,13 +1,11 @@
 import { isJetpackLegacyItem } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
-import { TRUENAME_COUPONS } from 'calypso/lib/domains';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
@@ -252,7 +250,7 @@ export function checkoutThankYou( context, next ) {
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const displayMode = get( context, 'query.d' );
+	const displayMode = context.query?.d;
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
@@ -267,7 +265,7 @@ export function checkoutThankYou( context, next ) {
 
 			<CheckoutThankYouComponent
 				displayMode={ displayMode }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				domainOnlySiteFlow={ ! context.params.site }
 				email={ context.query.email }
 				gsuiteReceiptId={ gsuiteReceiptId }
 				receiptId={ receiptId }
@@ -310,6 +308,8 @@ export function upsellNudge( context, next ) {
 	} else if ( context.path.includes( 'offer-professional-email' ) ) {
 		upsellType = PROFESSIONAL_EMAIL_UPSELL;
 		upgradeItem = context.params.domain;
+	} else {
+		upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
@@ -493,7 +493,6 @@ function getRememberedCoupon() {
 		'SAFE',
 		'SBDC',
 		'TXAM',
-		...TRUENAME_COUPONS,
 	];
 	const THIRTY_DAYS_MILLISECONDS = 30 * 24 * 60 * 60 * 1000;
 	const now = Date.now();

@@ -794,15 +794,15 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		},
 		{
 			get link() {
-				return localizeUrl( 'https://wordpress.com/support/plugins/#managing-plugins' );
+				return localizeUrl( 'https://wordpress.com/support/plugins/use-your-plugins/' );
 			},
-			post_id: 134818,
+			post_id: 206930,
 			get title() {
 				return __( 'Managing plugins', __i18n_text_domain__ );
 			},
 			get description() {
 				return __(
-					'After you install a plugin, it will appear in a list at My Sites → Plugins.',
+					'After you install a plugin, it will appear in a list at My Sites → Plugins → Installed Plugins.',
 					__i18n_text_domain__
 				);
 			},
@@ -1257,7 +1257,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/child-themes',
+					'https://wordpress.com/support/themes/child-themes/',
 					__i18n_text_domain__
 				);
 			},
@@ -1294,7 +1294,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 		{
 			get link() {
 				return localizeUrl(
-					'https://wordpress.com/support/themes/child-themes',
+					'https://wordpress.com/support/themes/child-themes/',
 					__i18n_text_domain__
 				);
 			},
@@ -1896,7 +1896,7 @@ export const videosForSection = {
 			type: RESULT_VIDEO,
 			link: 'https://www.youtube.com/watch?v=NcCe0ozmqFM',
 			get title() {
-				return __( 'Connect Your Blog to Facebook Using Publicize', __i18n_text_domain__ );
+				return __( 'Connect Your Blog to Facebook Using Jetpack Social', __i18n_text_domain__ );
 			},
 			get description() {
 				return __(

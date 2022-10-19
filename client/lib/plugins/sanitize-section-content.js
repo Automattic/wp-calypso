@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
@@ -79,6 +80,12 @@ const isAllowedAttr = ( tagName, attrName ) => {
 					return false;
 			}
 
+		case 'div':
+			switch ( attrName ) {
+				case 'class':
+					return true;
+			}
+
 		default:
 			return false;
 	}
@@ -126,6 +133,10 @@ const replacementFor = ( node ) => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = ( content ) => {
+	// @TODO: replace with server-side sanitizer
+	if ( isEnabled( 'plugins/ssr-landing' ) && 'undefined' === typeof DOMParser ) {
+		return content;
+	}
 	const parser = new DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 

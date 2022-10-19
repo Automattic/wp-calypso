@@ -87,6 +87,7 @@ module.exports = {
 					'brace-style': 'off',
 					'comma-dangle': 'off',
 					'comma-spacing': 'off',
+					curly: 'error', // The base curly rule does not seem to apply to TS files.
 					'default-param-last': 'off',
 					'dot-notation': 'off',
 					'func-call-spacing': 'off',
@@ -195,6 +196,12 @@ module.exports = {
 					},
 				},
 				{
+					files: [ './config/*.json' ],
+					rules: {
+						'sort-keys': 'warn',
+					},
+				},
+				{
 					// These files don't have the `@automattic` prefix in the name
 					files: [
 						'./package.json',
@@ -287,6 +294,9 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		// Curly is not added by existing presets and is needed for WordPress style compatibility.
+		curly: 'error',
 
 		'no-constant-condition': [ 'error', { checkLoops: false } ],
 
@@ -385,14 +395,9 @@ module.exports = {
 		'no-unused-expressions': 'off',
 
 		'react/forbid-foreign-prop-types': 'error',
-
+		'react/jsx-curly-brace-presence': [ 'error', { props: 'never', children: 'never' } ],
 		// enforce our classname namespacing rules
-		'wpcalypso/jsx-classname-namespace': [
-			2,
-			{
-				rootFiles: [ 'index.js', 'index.jsx', 'main.js', 'main.jsx' ],
-			},
-		],
+		'wpcalypso/jsx-classname-namespace': 'error',
 
 		// Disallow importing of native node modules, with some exceptions
 		// - url because we use it all over the place to parse and build urls

@@ -6,22 +6,23 @@
 
 	.placeholder-text {
 		color: transparent;
-		background-color: var( --color-neutral-0 );
+		background-color: var(--color-neutral-0);
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
 }
 
 .pages__page-list-header {
-	background: var( --color-neutral-0 );
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
-	color: var( --color-neutral-light );
+	background: var(--color-neutral-0);
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
+	color: var(--color-neutral-light);
 	font-size: $font-body-extra-small;
 	padding: 6px 11px;
 	text-transform: uppercase;
 
 	.gridicons-time {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		margin-right: 4px;
 		vertical-align: text-top;
 	}
@@ -35,7 +36,7 @@
 	.site-icon {
 		display: none;
 
-		@include breakpoint-deprecated( '>660px' ) {
+		@include breakpoint-deprecated( ">660px" ) {
 			display: block;
 			margin-right: 10px;
 			min-width: 34px;
@@ -76,13 +77,14 @@
 }
 
 .page__hierarchy-indent {
-	background: var( --color-neutral-0 );
+	background: var(--color-neutral-0);
 	position: absolute;
 	top: 0;
 	left: 0;
 	height: 100%;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
-		0 1px 2px var( --color-neutral-0 );
+	box-shadow:
+		0 0 0 1px rgba(var(--color-neutral-10-rgb), 0.5),
+		0 1px 2px var(--color-neutral-0);
 
 	&.is-indented {
 		width: 112px;
@@ -123,7 +125,7 @@
 
 .page__title,
 .page__title:visited {
-	color: var( --color-neutral-70 );
+	color: var(--color-neutral-70);
 	font-weight: 600;
 	font-size: $font-title-small;
 	line-height: 1.2;
@@ -134,12 +136,12 @@
 	word-break: break-word;
 
 	.gridicon {
-		color: var( --color-neutral-light );
+		color: var(--color-neutral-light);
 		margin: 2px 8px -2px 0;
 	}
 }
 .page.is-untitled .page__title {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	font-style: italic;
 }
 
@@ -152,7 +154,7 @@
 }
 
 .page__popover-more-info {
-	color: var( --color-neutral-light );
+	color: var(--color-neutral-light);
 	padding: 4px 16px 8px;
 	font-size: $font-body-extra-small;
 	max-width: 150px;
@@ -162,10 +164,10 @@
 .page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
-		background-color: var( --color-error );
+		background-color: var(--color-error);
 		border: 0;
 		box-shadow: none;
-		color: var( --color-text-inverted );
+		color: var(--color-text-inverted);
 	}
 }
 
@@ -175,8 +177,8 @@
 	right: 0;
 	top: 0;
 	bottom: 0;
-	z-index: z-index( 'root', '.page__shadow-notice-cover' );
-	background-color: rgba( var( --color-neutral-0-rgb ), 0.8 );
+	z-index: z-index("root", ".page__shadow-notice-cover");
+	background-color: rgba(var(--color-neutral-0-rgb), 0.8);
 	display: flex;
 	align-items: center;
 	overflow: hidden;
@@ -184,16 +186,16 @@
 
 @keyframes shadow-notice-appear {
 	0% {
-		transform: translateX( 50px );
+		transform: translateX(50px);
 	}
 
 	100% {
-		transform: translateX( 0 );
+		transform: translateX(0);
 	}
 }
 
 .notice.is-compact.page__shadow-notice {
 	margin-left: auto;
 	margin-right: 24px;
-	animation: shadow-notice-appear 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ); // http://easings.net/#easeOutBack
+	animation: shadow-notice-appear 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275); // http://easings.net/#easeOutBack
 }

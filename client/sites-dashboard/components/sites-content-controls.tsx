@@ -1,28 +1,39 @@
-import { useSitesTableFiltering } from '@automattic/components';
+import { GroupableSiteLaunchStatuses, useSitesListGrouping } from '@automattic/sites';
 import styled from '@emotion/styled';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import page from 'page';
+import { ComponentPropsWithoutRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
+import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
+import { SitesSortingDropdown } from './sites-sorting-dropdown';
 
 export interface SitesDashboardQueryParams {
-	status?: string;
+	page?: number;
+	perPage?: number;
 	search?: string;
+	showHidden?: boolean;
+	status?: GroupableSiteLaunchStatuses;
 }
 
 const FilterBar = styled.div( {
 	display: 'flex',
 	alignItems: 'center',
 	gap: '16px',
-	padding: '32px 0',
+	paddingBlock: '32px',
+	paddingInline: 0,
 
 	flexDirection: 'column',
 
-	'@media screen and (min-width: 660px)': {
+	[ MEDIA_QUERIES.mediumOrLarger ]: {
 		flexDirection: 'row',
+	},
+
+	[ MEDIA_QUERIES.mediumOrSmaller ]: {
+		paddingBlock: '16px',
 	},
 } );
 
@@ -32,32 +43,79 @@ const DisplayControls = styled.div( {
 	alignItems: 'center',
 	alignSelf: 'stretch',
 	flex: 1,
+
+	[ MEDIA_QUERIES.small ]: {
+		flexDirection: 'column',
+	},
+} );
+
+const VisibilityControls = styled.div( {
+	display: 'flex',
+	gap: '10px',
+	flexShrink: 0,
+	alignItems: 'center',
+
+	[ MEDIA_QUERIES.small ]: {
+		width: '100%',
+		justifyContent: 'space-between',
+	},
+
+	[ MEDIA_QUERIES.mediumOrLarger ]: {
+		marginInlineStart: 'auto',
+	},
 } );
 
 const ControlsSelectDropdown = styled( SelectDropdown )( {
 	width: '100%',
 
 	'.select-dropdown__container': {
-		width: '100%',
+		minWidth: '100%',
 
-		'@media screen and (min-width: 660px)': {
-			width: 'auto',
+		[ MEDIA_QUERIES.mediumOrLarger ]: {
+			minWidth: 'fit-content',
 		},
 	},
 } );
 
-type Statuses = ReturnType< typeof useSitesTableFiltering >[ 'statuses' ];
+type Statuses = ReturnType< typeof useSitesListGrouping >[ 'statuses' ];
 
-interface SitesContentControlsProps {
+type SitesContentControlsProps = {
 	initialSearch?: string;
 	statuses: Statuses;
 	selectedStatus: Statuses[ number ];
+} & ComponentPropsWithoutRef< typeof SitesDisplayModeSwitcher > &
+	ComponentPropsWithoutRef< typeof SitesSortingDropdown >;
+
+/**
+ * Updates one or more query param used by the sites dashboard, causing a page navigation.
+ * Param will be removed if it is empty or matches its default value.
+ *
+ * @param queryParams Query parameters to assign to the URL.
+ */
+export function handleQueryParamChange( queryParams: SitesDashboardQueryParams ) {
+	const url = new URL( window.location.href );
+	Object.keys( queryParams ).forEach( ( key ) => {
+		const value = queryParams[ key as keyof SitesDashboardQueryParams ];
+		if ( value ) {
+			url.searchParams.set( key, value.toString() );
+		} else {
+			url.searchParams.delete( key );
+		}
+	} );
+
+	// Use relative URL to avoid full page refresh.
+	page.replace( url.pathname + url.search );
 }
 
 export const SitesContentControls = ( {
 	initialSearch,
 	statuses,
 	selectedStatus,
+	displayMode,
+	onDisplayModeChange,
+	sitesSorting,
+	onSitesSortingChange,
+	hasSitesSortingPreferenceLoaded,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
 
@@ -65,48 +123,63 @@ export const SitesContentControls = ( {
 		<FilterBar>
 			<SitesSearch
 				searchIcon={ <SitesSearchIcon /> }
-				onSearch={ ( term ) => handleQueryParamChange( 'search', term?.trim() ) }
+				onSearch={ ( term ) => handleQueryParamChange( { search: term?.trim(), page: undefined } ) }
 				isReskinned
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
 				defaultValue={ initialSearch }
 			/>
 			<DisplayControls>
-				<ControlsSelectDropdown selectedText={ selectedStatus.title }>
+				<ControlsSelectDropdown
+					// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+					selectedText={ sprintf( __( 'Status: %(siteStatus)s' ), {
+						siteStatus: selectedStatus.title,
+					} ) }
+					ariaLabel={
+						'all' === selectedStatus.name
+							? __( 'Displaying all sites.' )
+							: sprintf(
+									// Translators: `siteStatus` is one of the site statuses specified in the Sites page.
+									__( 'Filtering to sites with status "%(siteStatus)s".' ),
+									{
+										siteStatus: selectedStatus.title,
+									}
+							  )
+					}
+				>
 					{ statuses.map( ( { name, title, count } ) => (
 						<SelectDropdown.Item
 							key={ name }
 							selected={ name === selectedStatus.name }
 							count={ count }
-							onClick={ () => handleQueryParamChange( 'status', 'all' !== name ? name : '' ) }
+							// Translators: `siteStatus` is one of the site statuses specified in the Sites page. `count` is a number of sites of given status.
+							ariaLabel={ sprintf( __( '%(siteStatus)s (%(count)d sites)' ), {
+								siteStatus: title,
+								count,
+							} ) }
+							onClick={ () =>
+								handleQueryParamChange( {
+									status: 'all' !== name ? name : undefined,
+									page: undefined,
+								} )
+							}
 						>
 							{ title }
 						</SelectDropdown.Item>
 					) ) }
 				</ControlsSelectDropdown>
-				<SitesDisplayModeSwitcher />
+				<VisibilityControls>
+					<SitesSortingDropdown
+						hasSitesSortingPreferenceLoaded={ hasSitesSortingPreferenceLoaded }
+						sitesSorting={ sitesSorting }
+						onSitesSortingChange={ onSitesSortingChange }
+					/>
+					<SitesDisplayModeSwitcher
+						displayMode={ displayMode }
+						onDisplayModeChange={ onDisplayModeChange }
+					/>
+				</VisibilityControls>
 			</DisplayControls>
 		</FilterBar>
 	);
 };
-
-/**
- * Updates a query param used by the sites dashboard, causing a page navigation.
- * Param will be removed if it is empty or matches its default value.
- *
- * @param paramName name of the param being updated
- * @param paramValue new value for the param
- */
-function handleQueryParamChange(
-	paramName: keyof SitesDashboardQueryParams,
-	paramValue: string | null
-) {
-	// Ensure we keep existing query params by appending `.search`
-	const pathWithQuery = window.location.pathname + window.location.search;
-
-	if ( paramValue ) {
-		page.replace( addQueryArgs( pathWithQuery, { [ paramName ]: paramValue } ) );
-	} else {
-		page.replace( removeQueryArgs( pathWithQuery, paramName ) );
-	}
-}

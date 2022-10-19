@@ -13,7 +13,7 @@ import { ImportJob } from '../../types';
 import './style.scss';
 import ImportingPane from '../importing-pane/importing-pane';
 import UploadingPane from '../uploading-pane/uploading-pane';
-import type { SitesItem } from 'calypso/state/selectors/get-sites-items';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Module variables
@@ -36,7 +36,7 @@ const uploadingStates = [
 interface Props {
 	importerStatus: ImportJob;
 	importerData: ImporterConfig;
-	site: SitesItem;
+	site: SiteDetails | null | undefined;
 	urlData: UrlData;
 	startImport: ( siteId: number, type: string ) => void;
 }
@@ -53,7 +53,14 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 				title={ importerData?.title }
 				description={ importerData?.description }
 			/>
-			{ errorData && <ErrorPane type={ errorData.type } description={ errorData.description } /> }
+			{ errorData && (
+				<ErrorPane
+					type={ errorData.type }
+					description={ errorData.description }
+					siteSlug={ site?.slug }
+					code={ errorData.code }
+				/>
+			) }
 			{ includes( importingStates, importerState ) && (
 				<ImportingPane
 					importerStatus={ importerStatus }

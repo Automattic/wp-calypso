@@ -35,8 +35,19 @@ export default function PaymentInfoBlock( {
 		return <PaymentInfoBlockWrapper>{ translate( 'Included with plan' ) }</PaymentInfoBlockWrapper>;
 	}
 
+	if ( ! purchase.isAutoRenewEnabled && isPaidWithCredits( purchase ) ) {
+		return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
+	}
+
 	if ( hasPaymentMethod( purchase ) && isPaidWithCredits( purchase ) ) {
-		return <PaymentInfoBlockWrapper>{ translate( 'Credits' ) }</PaymentInfoBlockWrapper>;
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className="manage-purchase__no-payment-method">
+					<Icon icon={ warning } />
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
 	}
 
 	if (
@@ -100,7 +111,7 @@ export default function PaymentInfoBlock( {
 	if ( purchase.isAutoRenewEnabled && ! hasPaymentMethod( purchase ) ) {
 		return (
 			<PaymentInfoBlockWrapper>
-				<div className={ 'manage-purchase__no-payment-method' }>
+				<div className="manage-purchase__no-payment-method">
 					<Icon icon={ warning } />
 					{ translate( 'You don’t have a payment method to renew this subscription' ) }
 				</div>
@@ -108,6 +119,20 @@ export default function PaymentInfoBlock( {
 		);
 	}
 
+	if (
+		! isRechargeable( purchase ) &&
+		hasPaymentMethod( purchase ) &&
+		purchase.isAutoRenewEnabled
+	) {
+		return (
+			<PaymentInfoBlockWrapper>
+				<div className="manage-purchase__no-payment-method">
+					<Icon icon={ warning } />
+					{ translate( 'You don’t have a payment method to renew this subscription' ) }
+				</div>
+			</PaymentInfoBlockWrapper>
+		);
+	}
 	return <PaymentInfoBlockWrapper>{ translate( 'None' ) }</PaymentInfoBlockWrapper>;
 }
 

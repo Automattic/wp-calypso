@@ -1,12 +1,8 @@
-.reader-author-link {
-	color: var( --color-primary );
-}
-
 .reader-author-link:hover,
 .reader-author-link:active {
-	color: var( --color-accent );
+	color: var(--color-text-subtle);
 }
 
 .reader-author-link:focus {
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 }

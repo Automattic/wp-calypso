@@ -14,8 +14,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
-import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import SitesDropdown from 'calypso/components/sites-dropdown';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -76,8 +74,6 @@ export class HelpContactForm extends PureComponent {
 		buttonLabel: PropTypes.string.isRequired,
 		onSubmit: PropTypes.func.isRequired,
 		showAlternativeSiteOptionsField: PropTypes.bool,
-		showHowCanWeHelpField: PropTypes.bool,
-		showHowYouFeelField: PropTypes.bool,
 		showSubjectField: PropTypes.bool,
 		showSiteField: PropTypes.bool,
 		showHelpLanguagePrompt: PropTypes.bool,
@@ -97,8 +93,6 @@ export class HelpContactForm extends PureComponent {
 	static defaultProps = {
 		formDescription: '',
 		showAlternativeSiteOptionsField: false,
-		showHowCanWeHelpField: false,
-		showHowYouFeelField: false,
 		showSubjectField: false,
 		showSiteField: false,
 		showHelpLanguagePrompt: false,
@@ -116,8 +110,6 @@ export class HelpContactForm extends PureComponent {
 	 * @returns {object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
-		howCanWeHelp: 'gettingStarted',
-		howYouFeel: 'unspecified',
 		message: '',
 		subject: '',
 		sibylClicked: false,
@@ -148,17 +140,6 @@ export class HelpContactForm extends PureComponent {
 		}
 		this.props.valueLink.requestChange( this.state );
 	}
-
-	trackClickStats = ( selectionName, selectedOption ) => {
-		const tracksEvent = {
-			howCanWeHelp: 'calypso_help_how_can_we_help_click',
-			howYouFeel: 'calypso_help_how_you_feel_click',
-		}[ selectionName ];
-
-		if ( tracksEvent ) {
-			recordTracksEvent( tracksEvent, { selected_option: selectedOption } );
-		}
-	};
 
 	trackSubmit = () => {
 		const { compact, currentUserLocale, variationSlug } = this.props;
@@ -247,59 +228,6 @@ export class HelpContactForm extends PureComponent {
 	};
 
 	/**
-	 * Render both a SegmentedControl and SelectDropdown component.
-	 *
-	 * The SegmentedControl is used for desktop and the SelectDropdown is used for mobile.
-	 * CSS will control which one is displayed to the user.
-	 *
-	 * @param  {string} selectionName    The name that will be used to store the value of a selected option appearing in selectionOptions.
-	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
-	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
-	 *                                   is used for the second line of text displayed in the SegmentedControl
-	 * @returns {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
-	 */
-	renderFormSelection = ( selectionName, selectionOptions ) => {
-		const { translate } = this.props;
-		const options = selectionOptions.map( ( option ) => ( {
-			label: option.label,
-			subtext: option.subtext ? (
-				<span className="help-contact-form__selection-subtext">{ option.subtext }</span>
-			) : null,
-			props: {
-				key: option.value,
-				selected: option.value === this.state[ selectionName ],
-				value: option.value,
-				title: option.label,
-				onClick: () => {
-					this.setState( { [ selectionName ]: option.value } );
-					this.trackClickStats( selectionName, option.value );
-				},
-			},
-		} ) );
-		const selectedItem = options.find( ( option ) => option.props.selected );
-
-		return (
-			<div className="help-contact-form__selection">
-				<SegmentedControl primary>
-					{ options.map( ( option ) => (
-						<SegmentedControl.Item { ...option.props }>
-							{ option.label }
-							{ option.subtext }
-						</SegmentedControl.Item>
-					) ) }
-				</SegmentedControl>
-				<SelectDropdown
-					selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }
-				>
-					{ options.map( ( option ) => (
-						<SelectDropdown.Item { ...option.props }>{ option.label }</SelectDropdown.Item>
-					) ) }
-				</SelectDropdown>
-			</div>
-		);
-	};
-
-	/**
 	 * For the forums: check if we're dealing with a WP.com site.
 	 */
 	analyseSiteData = () => {
@@ -369,8 +297,6 @@ export class HelpContactForm extends PureComponent {
 	 */
 	submitForm = () => {
 		const {
-			howCanWeHelp,
-			howYouFeel,
 			message,
 			siteCount,
 			userDeclaresUnableToSeeSite,
@@ -407,8 +333,6 @@ export class HelpContactForm extends PureComponent {
 		this.trackSubmit();
 
 		this.props.onSubmit( {
-			howCanWeHelp,
-			howYouFeel,
 			message,
 			subject,
 			site: this.props.helpSite,
@@ -434,7 +358,7 @@ export class HelpContactForm extends PureComponent {
 	 * Submit additional support option
 	 */
 	submitAdditionalForm = () => {
-		const { howCanWeHelp, howYouFeel, message } = this.state;
+		const { message } = this.state;
 		const { currentUserLocale } = this.props;
 		const subject = generateSubjectFromMessage( message );
 
@@ -445,8 +369,6 @@ export class HelpContactForm extends PureComponent {
 		this.trackSubmit();
 
 		this.props.additionalSupportOption.onSubmit( {
-			howCanWeHelp,
-			howYouFeel,
 			message,
 			subject,
 			site: this.props.helpSite,
@@ -465,42 +387,15 @@ export class HelpContactForm extends PureComponent {
 			buttonLabel,
 			siteCount,
 			showAlternativeSiteOptionsField,
-			showHowCanWeHelpField,
-			showHowYouFeelField,
 			showSubjectField,
 			showSiteField,
 			showQASuggestions,
 			showHelpLanguagePrompt,
 			showHidingUrlOption,
+			showChatStagingNotice,
 			translate,
 		} = this.props;
 		const hasQASuggestions = this.state.qanda.length > 0;
-
-		const howCanWeHelpOptions = [
-			{
-				value: 'gettingStarted',
-				label: translate( 'Get started' ),
-				subtext: translate( 'Can you show me how to…' ),
-			},
-			{
-				value: 'somethingBroken',
-				label: translate( "Report something isn't working" ),
-				subtext: translate( 'Can you check this out…' ),
-			},
-			{
-				value: 'suggestion',
-				label: translate( 'Make a suggestion' ),
-				subtext: translate( 'I think it would be cool if…' ),
-			},
-		];
-		const howYouFeelOptions = [
-			{ value: 'unspecified', label: translate( "I'd rather not" ) },
-			{ value: 'happy', label: translate( 'Happy' ) },
-			{ value: 'confused', label: translate( 'Confused' ) },
-			{ value: 'discouraged', label: translate( 'Discouraged' ) },
-			{ value: 'upset', label: translate( 'Upset' ) },
-			{ value: 'panicked', label: translate( 'Panicked' ) },
-		];
 
 		const analyseSiteData = this.analyseSiteData();
 		const siteData = this.state.userDeclaredUrl && this.state.siteData;
@@ -587,20 +482,6 @@ export class HelpContactForm extends PureComponent {
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
 
-				{ showHowCanWeHelpField && (
-					<div>
-						<FormLabel>{ translate( "You're reaching out to…" ) }</FormLabel>
-						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
-					</div>
-				) }
-
-				{ showHowYouFeelField && (
-					<div>
-						<FormLabel>{ translate( 'Mind sharing how you feel?' ) }</FormLabel>
-						{ this.renderFormSelection( 'howYouFeel', howYouFeelOptions ) }
-					</div>
-				) }
-
 				{ showSiteField && (
 					<div className="help-contact-form__site-selection">
 						{ ! hasNoSites && (
@@ -675,6 +556,18 @@ export class HelpContactForm extends PureComponent {
 								{ actionMessage }
 							</NoticeAction>
 						) }
+					</Notice>
+				) }
+				{ showChatStagingNotice && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text="Targeting HappyChat staging"
+					>
+						<NoticeAction href="https://hud-staging.happychat.io/" external>
+							HUD
+						</NoticeAction>
 					</Notice>
 				) }
 
