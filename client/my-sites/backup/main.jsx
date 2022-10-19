@@ -148,7 +148,7 @@ function AdminContent( { selectedDate } ) {
 				siteId={ siteId } /* The policies inform the max visible limit for backups */
 			/>
 			<QueryRewindState siteId={ siteId } />
-			<QueryJetpackCredentialsStatus siteId={ siteId } role="main" />
+			{ ! isAtomic && <QueryJetpackCredentialsStatus siteId={ siteId } role="main" /> }
 
 			{ isFiltering && <SearchResults /> }
 
@@ -193,7 +193,7 @@ function BackupStatus( {
 		<div className="backup__main-wrap">
 			<div className="backup__last-backup-status">
 				{ ! isAtomic && ( needCredentials || areCredentialsInvalid ) && <EnableRestoresBanner /> }
-				{ ! needCredentials && ! areCredentialsInvalid && hasRealtimeBackups && (
+				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
 

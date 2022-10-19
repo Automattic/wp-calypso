@@ -100,7 +100,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				}
 		  )
 		: translate(
-				'Increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 				{
 					components: {
 						learnMoreLink: learnMoreLink,
@@ -124,7 +124,19 @@ export default function PromotedPosts( { tab }: Props ) {
 			<EmptyContent
 				className="campaigns-empty"
 				title={ translate( 'Site is private' ) }
-				line={ translate( 'Start promoting posts by making public your site' ) }
+				line={ translate(
+					'To start advertising, you must make your website public. You can do that from {{sitePrivacySettingsLink}}here{{/sitePrivacySettingsLink}}.',
+					{
+						components: {
+							sitePrivacySettingsLink: (
+								<a
+									href={ `https://wordpress.com/settings/general/${ selectedSite.domain }#site-privacy-settings` }
+									rel="noreferrer"
+								/>
+							),
+						},
+					}
+				) }
 				illustration={ null }
 			/>
 		);
@@ -146,6 +158,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				subHeaderText={ campaignsData?.length ? subtitle : '' }
 				align="left"
 			/>
+			<SitePreview />
 
 			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
 
@@ -162,24 +175,6 @@ export default function PromotedPosts( { tab }: Props ) {
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
-
-			{ content.length ? (
-				<div className="promote-post__footer">
-					<p>
-						{ translate(
-							'By promoting your post you agree to {{tosLink}}WordPress.com Terms{{/tosLink}} and {{advertisingTerms}}Advertising Terms{{/advertisingTerms}}.',
-							{
-								components: {
-									tosLink: <a href="https://wordpress.com/tos/" target="_blank" rel="noreferrer" />,
-									advertisingTerms: <a href="https://automattic.com/privacy/" target="blank" />,
-								},
-							}
-						) }
-					</p>
-				</div>
-			) : (
-				[]
-			) }
 		</Main>
 	);
 }

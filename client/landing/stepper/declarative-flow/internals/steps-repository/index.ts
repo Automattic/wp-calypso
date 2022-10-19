@@ -31,6 +31,7 @@ export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
 export { default as newsletterSetup } from './newsletter-setup';
+export { default as newsletterPostSetup } from './newsletter-post-setup';
 export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
@@ -82,6 +83,7 @@ export type StepPath =
 	| 'linkInBioSetup'
 	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
+	| 'newsletterPostSetup'
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'

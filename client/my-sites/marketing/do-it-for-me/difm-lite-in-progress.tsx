@@ -66,7 +66,14 @@ function DIFMLiteInProgress( { siteId }: DIFMLiteInProgressProps ) {
 		<EmptyContent
 			title={ translate( 'Our experts are building your site' ) }
 			line={ translate(
-				"Our team is building your site. We'll be in touch when your site is ready."
+				'Your content submission was successful!{{br}}{{/br}}' +
+					'Your website is now being built. We will send you an email within %d business days with details about your new site.',
+				{
+					components: {
+						br: <br />,
+					},
+					args: [ 4 ],
+				}
 			) }
 			action={ translate( 'Manage domain' ) }
 			actionURL={ domainManagementList( slug ) }

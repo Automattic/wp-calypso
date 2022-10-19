@@ -57,7 +57,7 @@ const ReaderFeaturedImage = ( {
 };
 
 ReaderFeaturedImage.propTypes = {
-	canonicalMedia: PropTypes.object.isRequired,
+	canonicalMedia: PropTypes.object,
 	href: PropTypes.string,
 	onClick: PropTypes.func,
 };

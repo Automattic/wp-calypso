@@ -13,7 +13,7 @@ import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { shouldShowComments } from 'calypso/blocks/comments/helper';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
-import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
+import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import WPiFrameResize from 'calypso/blocks/reader-full-post/wp-iframe-resize';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import AutoDirection from 'calypso/components/auto-direction';
@@ -38,12 +38,8 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
 import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
 import { READER_FULL_POST } from 'calypso/reader/follow-sources';
-import {
-	canBeMarkedAsSeen,
-	getSiteName,
-	isEligibleForUnseen,
-	getFeaturedImageAlt,
-} from 'calypso/reader/get-helpers';
+import { canBeMarkedAsSeen, getSiteName, isEligibleForUnseen } from 'calypso/reader/get-helpers';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 import LikeButton from 'calypso/reader/like-button';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import PostExcerptLink from 'calypso/reader/post-excerpt-link';
@@ -473,7 +469,7 @@ export class FullPostView extends Component {
 		const startingCommentId = this.getCommentIdFromUrl();
 		const commentCount = get( post, 'discussion.comment_count' );
 		const postKey = { blogId, feedId, postId };
-		const featuredImageAlt = getFeaturedImageAlt( post );
+		const contentWidth = readerContentWidth();
 
 		const feedIcon = feed ? feed.site_icon ?? get( feed, 'image' ) : null;
 
@@ -553,7 +549,13 @@ export class FullPostView extends Component {
 						<ReaderFullPostHeader post={ post } referralPost={ referralPost } />
 
 						{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-							<FeaturedImage src={ post.featured_image } alt={ featuredImageAlt } />
+							<ReaderFeaturedImage
+								canonicalMedia={ null }
+								imageUrl={ post.featured_image }
+								href={ getStreamUrlFromPost( post ) }
+								imageWidth={ contentWidth }
+								children={ <div style={ { width: contentWidth } } /> }
+							/>
 						) }
 						{ isLoading && <ReaderFullPostContentPlaceholder /> }
 						{ post.use_excerpt ? (

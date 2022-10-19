@@ -41,12 +41,6 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		// FIXME - Need to not redirect when getCurrentThemeSoftwareSets is still running
-		//
-		// if ( ! pluginSlug || ! pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-		// 	window.location.replace( `/home/${ siteSlugParam }` );
-		// }
-
 		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
 		let bundlePluginSteps: StepPath[] = [];
 
