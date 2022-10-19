@@ -85,6 +85,10 @@ const SitePlanIcon = styled.div`
 	margin-inline-end: 6px;
 `;
 
+const PlanRenewNagContainer = styled.div`
+	line-height: 20px;
+`;
+
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
@@ -137,10 +141,12 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						</SitePlanIcon>
 					) }
 					{ site.plan?.expired ? (
-						<PlanRenewNag
-							plan={ site.plan }
-							checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
-						/>
+						<PlanRenewNagContainer>
+							<PlanRenewNag
+								plan={ site.plan }
+								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
+							/>
+						</PlanRenewNagContainer>
 					) : (
 						<>{ site.plan?.product_name_short }</>
 					) }

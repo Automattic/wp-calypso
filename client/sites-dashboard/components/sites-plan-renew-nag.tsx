@@ -19,18 +19,18 @@ const PlanRenewContainer = styled.div( {
 	display: 'flex',
 	justifyItems: 'flex-start',
 	gap: '4px',
-	marginTop: '-5px',
+	marginTop: '-2px',
 } );
 
 const PlanRenewLink = styled.a( {
 	whiteSpace: 'nowrap',
 	textDecoration: 'underline',
 	fontSize: '12px',
+	paddingTop: '2px',
 } );
 
 const IconContainer = styled.div( {
 	color: '#ea303f',
-	marginTop: '-2px',
 } );
 
 const PlanRenewNotice = styled.div( {
@@ -38,7 +38,6 @@ const PlanRenewNotice = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
 	color: '#ea303f',
-	gap: '4px',
 } );
 
 const PlanRenewNoticeTextContainer = styled.div( {
