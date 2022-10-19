@@ -25,7 +25,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
 					<span>
 						{ translate(
-							'Go to {{strong}}Plugins > add New{{/strong}} in the admin menu on the left hand side.',
+							'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.',
 							{
 								components: { strong: <strong /> },
 							}
