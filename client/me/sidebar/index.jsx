@@ -32,7 +32,7 @@ class MeSidebar extends Component {
 		const { currentUser } = this.props;
 
 		// If user is using en locale, redirect to app promo page on sign out
-		const isEnLocale = currentUser && currentUser.localeSlug === 'en';
+		const isEnLocale = config( 'english_locales' ).includes( currentUser?.localeSlug );
 
 		let redirectTo = null;
 
