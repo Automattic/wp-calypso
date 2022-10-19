@@ -1,8 +1,8 @@
+import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { FC } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 
-const JetpackActivationInstructions: FC = () => {
+const JetpackActivationInstructions: React.FC = () => {
 	const translate = useTranslate();
 
 	return (
@@ -26,9 +26,22 @@ const JetpackActivationInstructions: FC = () => {
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
 					<span>
-						{ translate( 'Search for {{strong}}Jetpack{{/strong}}, install and activate.', {
-							components: { strong: <strong /> },
-						} ) }
+						{ translate(
+							'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
+							{
+								components: {
+									strong: <strong />,
+									link: (
+										<Button
+											plain
+											href="https://wordpress.org/plugins/jetpack/"
+											target="_blank"
+											rel="noreferrer noopener"
+										/>
+									),
+								},
+							}
+						) }
 					</span>
 				</li>
 			</ul>
