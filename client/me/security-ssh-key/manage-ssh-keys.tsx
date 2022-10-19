@@ -3,14 +3,12 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import accept from 'calypso/lib/accept';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 	ManageSSHKeyProps,
-	'onDelete' | 'keyBeingDeleted'
+	'userLogin' | 'onDelete' | 'keyBeingDeleted'
 >;
 
 const SSHKeyItemCard = styled( CompactCard )( {
@@ -40,9 +38,8 @@ const SSHKeyAddedDate = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
+const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 	const { __ } = useI18n();
-	const currentUser = useSelector( getCurrentUser );
 	const handleDeleteClick = () => {
 		accept( __( 'Are you sure you want to remove this SSH key?' ), ( accepted: boolean ) => {
 			if ( accepted ) {
@@ -55,7 +52,7 @@ const SSHKey = ( { sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
 		<SSHKeyItemCard>
 			<div style={ { marginRight: '1rem' } }>
 				<SSHKeyName>
-					{ currentUser.username }-{ sshKey.name }
+					{ userLogin }-{ sshKey.name }
 				</SSHKeyName>
 				<SSHPublicKey>{ sshKey.sha256 }</SSHPublicKey>
 				<SSHKeyAddedDate>
@@ -88,14 +85,21 @@ interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
 	keyBeingDeleted: string | null;
+	userLogin: string;
 }
 
-export const ManageSSHKeys = ( { sshKeys, onDelete, keyBeingDeleted }: ManageSSHKeyProps ) => {
+export const ManageSSHKeys = ( {
+	userLogin,
+	sshKeys,
+	onDelete,
+	keyBeingDeleted,
+}: ManageSSHKeyProps ) => {
 	return (
 		<>
 			{ sshKeys.map( ( sshKey ) => (
 				<SSHKey
 					key={ sshKey.key }
+					userLogin={ userLogin }
 					sshKey={ sshKey }
 					onDelete={ onDelete }
 					keyBeingDeleted={ keyBeingDeleted }
