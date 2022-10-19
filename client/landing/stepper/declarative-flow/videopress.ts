@@ -103,7 +103,7 @@ export const videopress: Flow = {
 						return navigate( 'options' );
 					}
 					return window.location.replace(
-						`/start/account/user?variationName=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/options?flow=${ name }`
+						`/start/videopress-account/user?variationName=${ name }&flow=${ name }&pageTitle=Video%20Portfolio&redirect_to=/setup/options?flow=${ name }`
 					);
 
 				case 'options': {
