@@ -9,7 +9,7 @@ import ExternalLink from 'calypso/components/external-link';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
-import hasStandalonePlugin from 'calypso/my-sites/plans/jetpack-plans/has-standalone-plugin';
+import { isJetpackStandaloneProduct } from 'calypso/my-sites/plans/jetpack-plans/is-jetpack-standalone-product';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -122,10 +122,10 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const productWithStandalonePlugin = useMemo(
+	const jetpackStandaloneProduct = useMemo(
 		() =>
 			isEnabled( 'jetpack/standalone-plugin-onboarding-update-v1' ) &&
-			hasStandalonePlugin( productSlug )
+			isJetpackStandaloneProduct( productSlug )
 				? slugToSelectorProduct( productSlug )
 				: null,
 		[ productSlug ]
@@ -157,9 +157,9 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 			/>
 			<LicensingActivation
 				title={
-					productWithStandalonePlugin
+					jetpackStandaloneProduct
 						? translate( `Ok, let's install Jetpack %(pluginName)s`, {
-								args: { pluginName: productWithStandalonePlugin?.shortName },
+								args: { pluginName: jetpackStandaloneProduct?.shortName },
 						  } )
 						: translate( 'Be sure that you have the latest version of Jetpack' )
 				}
@@ -169,8 +169,8 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
 			>
-				{ productWithStandalonePlugin ? (
-					<JetpackStandaloneActivationInstructions product={ productWithStandalonePlugin } />
+				{ jetpackStandaloneProduct ? (
+					<JetpackStandaloneActivationInstructions product={ jetpackStandaloneProduct } />
 				) : (
 					<JetpackPluginActivationInstructions />
 				) }

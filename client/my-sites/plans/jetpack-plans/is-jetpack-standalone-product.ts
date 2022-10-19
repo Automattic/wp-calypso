@@ -6,7 +6,7 @@ import {
 	JETPACK_SOCIAL_PRODUCTS,
 } from '@automattic/calypso-products';
 
-const ALL_PRODUCTS_WITH_STANDALONE_PLUGIN = [
+const ALL_JETPACK_STANDALONE_PRODUCTS = [
 	...JETPACK_BACKUP_PRODUCTS,
 	...JETPACK_BOOST_PRODUCTS,
 	...JETPACK_SOCIAL_PRODUCTS,
@@ -15,7 +15,7 @@ const ALL_PRODUCTS_WITH_STANDALONE_PLUGIN = [
 ] as ReadonlyArray< string >;
 
 /**
- * Determines if a product slug has a standalone plugin.
+ * Determines if a Jetpack product is a standalone product.
  *
  * @example
  * jetpack_backup_daily	      > true
@@ -23,6 +23,6 @@ const ALL_PRODUCTS_WITH_STANDALONE_PLUGIN = [
  * @param {string} productSlug Product slug
  * @returns {boolean} Parameters
  */
-export default ( productSlug: string ): boolean => {
-	return ALL_PRODUCTS_WITH_STANDALONE_PLUGIN.includes( productSlug );
+export const isJetpackStandaloneProduct = ( productSlug: string ): boolean => {
+	return ALL_JETPACK_STANDALONE_PRODUCTS.includes( productSlug );
 };
