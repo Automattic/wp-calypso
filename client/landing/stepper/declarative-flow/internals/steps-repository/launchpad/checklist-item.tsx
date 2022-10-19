@@ -5,7 +5,7 @@ import Badge from 'calypso/components/badge';
 import { isTaskDisabled, hasIncompleteDependencies } from './task-helper';
 import { Task } from './types';
 
-const ChecklistItem = ( { task }: { task: Task } ) => {
+const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction?: boolean } ) => {
 	const isRtl = useRtl();
 	const { id, isCompleted, keepActive, title, actionDispatch } = task;
 	const taskDisabled = isTaskDisabled( task );
@@ -22,7 +22,7 @@ const ChecklistItem = ( { task }: { task: Task } ) => {
 				'not-completed': ! isCompleted && ! keepActive, // a task that hasn't been completed yet
 			} ) }
 		>
-			{ id === 'first_post_published' || id === 'link_in_bio_launched' ? (
+			{ isPrimaryAction ? (
 				<Button
 					className="launchpad__checklist-primary-button"
 					disabled={ taskDisabled }
