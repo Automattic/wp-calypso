@@ -2,6 +2,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { SiteDetailsPlan } from '@automattic/launch/src/stores';
 import styled from '@emotion/styled';
+import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -16,7 +17,6 @@ interface PlanRenewProps {
 
 const PlanRenewContainer = styled.div`
 	display: flex;
-	white-space: break-spaces;
 	justify-items: flex-start;
 	gap: 4px;
 	margin-top: -5px;
@@ -34,10 +34,21 @@ const IconContainer = styled.div`
 `;
 
 const PlanRenewNotice = styled.div`
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	color: #ea303f;
 	gap: 4px;
+`;
+
+const PlanRenewNoticeTextContainer = styled.div`
+	display: flex;
+`;
+
+const PlanRenewNoticeExpireText = styled.div`
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 `;
 
 export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
@@ -60,11 +71,18 @@ export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 				<Gridicon icon="notice" size={ 20 } />
 			</IconContainer>
 			<PlanRenewNotice>
-				{ sprintf(
-					/* translators: %s - the plan's product name */
-					__( '%s - Expired' ),
-					plan.product_name_short
-				) }
+				<PlanRenewNoticeTextContainer>
+					{ createInterpolateElement(
+						sprintf(
+							/* translators: %s - the plan's product name */
+							__( '%s <span>- Expired</span>' ),
+							plan.product_name_short
+						),
+						{
+							span: <PlanRenewNoticeExpireText />,
+						}
+					) }
+				</PlanRenewNoticeTextContainer>
 				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
