@@ -124,7 +124,16 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 					{ createInterpolateElement(
 						__( '<a>Add an SSH key to your account</a> in order to use it with this site.' ),
 						{
-							a: <a href="/me/security/ssh-key" />,
+							a: (
+								<a
+									href="/me/security/ssh-key"
+									onClick={ () => {
+										dispatch(
+											recordTracksEvent( 'calypso_hosting_configuration_add_ssh_key_link_click' )
+										);
+									} }
+								/>
+							),
 						}
 					) }
 				</div>
