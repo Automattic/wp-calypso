@@ -992,14 +992,25 @@ object CalypsoPreReleaseDashboard : BuildType({
 	name = "Calypso Pre-Release Dashboard"
 	description = "Generate Dashboard for Pre-Release Tests"
 
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = false
+	}
+
 	dependencies {
 		artifacts (KPIDashboardTests) {
+			artifactRules = """
+				allure-results.tgz!*.json => allure-results
+			"""
+		}
+		snapshot ( KPIDashboardTests) {
 		}
 	}
 
 	triggers {
 		finishBuildTrigger {
-	    	buildType = "Calypso_E2E_KPI_Dashboard"
+	    	buildType = "KPIDashboardTests"
+			branchFilter = "+:trunk"
 		}
 	}
 
@@ -1007,11 +1018,12 @@ object CalypsoPreReleaseDashboard : BuildType({
 		bashNodeScript {
 			name = "Install AWS CLI"
 			scriptContent = """
-				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-				unzip awscliv2.zip \
-				sudo ./aws/install
+				// curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+				// unzip awscliv2.zip \
+				// sudo ./aws/install
 
-				aws --version
+				// aws --version
+				ls -la %teamcity.build.checkoutDir%/bin/
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
