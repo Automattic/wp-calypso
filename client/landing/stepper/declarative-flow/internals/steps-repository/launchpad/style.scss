@@ -29,6 +29,32 @@
 	}
 }
 
+.launchpad__container {
+	display: flex;
+	flex-direction: column;
+}
+
+.launchpad__email-validation-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px;
+	background: var(--studio-gray-0);
+
+	&-content {
+		gap: 16px;
+		display: flex;
+		align-items: center;
+	}
+
+	&-close-button {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+	}
+}
+
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
