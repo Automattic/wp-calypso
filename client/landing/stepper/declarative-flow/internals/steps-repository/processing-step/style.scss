@@ -60,14 +60,14 @@ $progress-duration: 800ms;
 .is-videopress-stepper.is-processing-step {
 	padding: 0;
 	color: #fff;
-	background-image:
-		url(calypso/assets/images/onboarding/videopress-processing-left.png),
-		url(calypso/assets/images/onboarding/videopress-processing-right.png);
-	background-position-y: 15%, 100%;
-	background-position-x: -10%, 100%;
-	background-repeat: no-repeat, no-repeat;
-	background-attachment: fixed;
-	background-size: auto 40%, auto 40%;
+
+	.processing-step__progress-bar {
+		background-color: #fff3;
+		border-radius: 4px;
+		&::before {
+			background-color: #ffe61c;
+		}
+	}
 
 	@include break-medium {
 		background-size: auto 50%, auto 50%;
