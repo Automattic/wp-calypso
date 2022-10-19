@@ -287,7 +287,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 					selectedSlug={ categorization.selection }
 				/>
 			) }
-			<div className={ 'design-picker__grid' }>
+			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design ) => (
 					<DesignButtonContainer
 						key={ design.slug }
