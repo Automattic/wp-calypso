@@ -1,71 +1,17 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/mixins";
-
 .wc-home-placeholder {
-	// Push back the padding set by the layout content
-	// See https://github.com/Automattic/wp-calypso/blob/25c8f1c098072d086b0f5c365390686069c7d480/client/layout/style.scss#L36
-	margin: -47px -32px -33px -33px;
-	background-color: var(--studio-gray-0);
-	height: calc(100vh - 33px);
+	background-color: var(--color-surface-backdrop);
+	position: fixed;
+	// Just below the environment badge at 999.
+	z-index: 998;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 
-	@include breakpoint-deprecated( "<960px" ) {
-		margin: -39px -24px -25px -25px;
-		height: calc(100vh - 31px);
-	}
-
-	@media ( max-width: 782px ) {
-		margin-top: -25px;
-	}
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 0;
-		height: calc(100vh - 46px);
-	}
-
-	.wc-home-placeholder__header {
-		background-color: var(--studio-white);
-		height: 60px;
-		display: flex;
-		align-items: center;
-	}
-
-	.wc-home-placeholder__actions {
-		display: flex;
-		gap: 24px;
-		margin-left: auto;
-		margin-right: 24px;
-	}
-
-	.wc-home-placeholder__content {
-		max-width: 682px;
-		margin-left: auto;
-		margin-right: auto;
-		padding: 60px;
-	}
-
-	.placeholder {
-		@include placeholder();
-		height: 16px;
-		border-radius: 8px; /* stylelint-disable-line scales/radii */
-	}
-
-	.placeholder-title {
-		width: 100px;
-		margin-left: 40px;
-		height: 24px;
-	}
-
-	.placeholder-action {
-		width: 40px;
-		height: 40px;
-	}
-
-	.placeholder-welcome {
-		width: 300px;
-		margin-bottom: 48px;
-	}
-
-	.placeholder-generic {
-		margin-bottom: 32px;
+	.wpcom-site__logo {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
 	}
 }
