@@ -12,6 +12,13 @@ body.is-videopress-stepper {
 	color: $videopress-theme-base-text-color;
 
 	.videopress {
+		input[type="text"]:focus,
+		textarea:focus {
+			box-shadow: none;
+			border: none;
+			outline: solid 2px $videopress-theme-yellow;
+		}
+
 		.flow-progress {
 			display: block;
 			border-radius: 0;
@@ -97,6 +104,10 @@ body.is-videopress-stepper {
 				line-height: 24px;
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 12px;
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				padding-bottom: 24px;
 				svg {
 					margin-inline-end: 8px;
 				}

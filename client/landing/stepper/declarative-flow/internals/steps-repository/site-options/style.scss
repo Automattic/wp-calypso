@@ -115,6 +115,10 @@
 	.videopress & {
 		max-width: 425px;
 
+		.step-container__header {
+			margin-top: 128px;
+		}
+
 		.site-options__form {
 			padding-left: 24px;
 			padding-right: 24px;
@@ -133,11 +137,15 @@
 			border-radius: 4px;
 		}
 
-		.site-options__submit-button {
+		.button.site-options__submit-button.is-primary {
 			margin-top: 24px;
 			width: 100%;
-			background-color: #0675c4;
 			border: 0 none;
+
+			&:disabled {
+				background-color: #292929;
+				color: #828282;
+			}
 		}
 	}
 }
