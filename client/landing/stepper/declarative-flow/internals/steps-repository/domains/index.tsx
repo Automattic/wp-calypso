@@ -1,10 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { useLocale } from '@automattic/i18n-utils';
-import {
-	StepContainer,
-	createSiteWithCart,
-} from '@automattic/onboarding';
+import { StepContainer, createSiteWithCart } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -16,6 +13,7 @@ import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/co
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
@@ -212,15 +210,16 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				isManageSiteFlow,
 				{
 					domainItem,
-					flowName: undefined,
+					flowName: flow,
 					lastKnownFlow: flow,
 					googleAppsCartItem,
 					isPurchasingItem,
 					siteUrl,
-					themeSlugWithRepo: undefined,
 					themeItem: undefined,
 					siteTitle: domain,
 					siteAccentColor,
+					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
+					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
 				},
 				userLoggedIn,
 				false
@@ -368,7 +367,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					lastKnownFlow: flow,
 					isPurchasingItem,
 					domain,
-					themeSlugWithRepo: undefined,
+					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
+					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
 					themeItem: undefined,
 					siteTitle: domain,
 				},
@@ -409,10 +409,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					lastKnownFlow: flow,
 					isPurchasingItem,
 					domain,
-					themeSlugWithRepo: undefined,
 					themeItem: undefined,
 					siteTitle: domain,
 					useThemeHeadstart: useThemeAnnotation,
+					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
+					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
 				},
 				userLoggedIn,
 				false
