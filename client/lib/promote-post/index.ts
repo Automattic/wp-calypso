@@ -6,6 +6,8 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 // Import translatable strings so that translations get associated with the module and loaded properly.
+// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
+// in order to ensure that translate calls are not removed from the production build.
 import './string';
 
 declare global {
@@ -26,6 +28,7 @@ declare global {
 				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
 			} ) => void;
+			strings: any;
 		};
 	}
 }
