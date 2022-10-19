@@ -4,7 +4,7 @@ import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
-import { Component, Fragment } from 'react';
+import { Component, Fragment, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -349,7 +349,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
-			shouldLimitGlobalStyles,
+			shouldShowPremiumStylesNotice,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -367,13 +367,16 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
+
+		console.log( shouldShowPremiumStylesNotice );
+
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
 					! isWPForTeamsSite &&
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
-							{ shouldLimitGlobalStyles && this.advancedCustomizationNotice() }
+							{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
 							<FormLabel className={ comingSoonFormLabelClasses }>
 								<FormRadio
 									name="blog_public"
@@ -805,15 +808,23 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
-const SiteSettingsFormGeneralWithShouldLimitGlobalStyles = ( props ) => {
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
+	const [ shouldShowPremiumStylesNotice, setShouldShowPremiumStylesNotice ] = useState( false );
+
+	usePremiumGlobalStyles( ( globalStyleInfo ) => {
+		const { globalStylesInUse, shouldLimitGlobalStyles } = globalStyleInfo;
+		setShouldShowPremiumStylesNotice( globalStylesInUse && shouldLimitGlobalStyles );
+	} );
 
 	return (
-		<SiteSettingsFormGeneral { ...props } shouldLimitGlobalStyles={ shouldLimitGlobalStyles } />
+		<SiteSettingsFormGeneral
+			{ ...props }
+			shouldShowPremiumStylesNotice={ shouldShowPremiumStylesNotice }
+		/>
 	);
 };
 
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormGeneralWithShouldLimitGlobalStyles );
+)( SiteSettingsFormGeneralWithGlobalStylesNotice );

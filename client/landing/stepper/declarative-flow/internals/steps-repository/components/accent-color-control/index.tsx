@@ -49,7 +49,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const locale = useLocale();
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const [ shouldLimitGlobalStyles, setShouldLimitGlobalStyles ] = useState( false );
+	usePremiumGlobalStyles( ( globalStyleInfo ) => {
+		const { shouldLimitGlobalStyles } = globalStyleInfo;
+		setShouldLimitGlobalStyles( shouldLimitGlobalStyles );
+	} );
 
 	return (
 		<>
