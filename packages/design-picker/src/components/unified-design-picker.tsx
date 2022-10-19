@@ -151,7 +151,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		}
 
 		return (
-			<div className="design-picker__pricing-description">
+			<div className="design-picker__pricing-description design-picker__override-premium-badge">
 				{ badge }
 				<span>{ text }</span>
 			</div>
