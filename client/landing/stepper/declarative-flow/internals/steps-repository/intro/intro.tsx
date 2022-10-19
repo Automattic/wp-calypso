@@ -33,6 +33,13 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 			),
 			buttonText: __( 'Get started' ),
 		},
+		'domain-first-link-in-bio': {
+			title: createInterpolateElement(
+				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
+				{ br: <br /> }
+			),
+			buttonText: __( 'Get started' ),
+		},
 	};
 
 	return (

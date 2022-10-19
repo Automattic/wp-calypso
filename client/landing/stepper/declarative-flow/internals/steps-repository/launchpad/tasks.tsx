@@ -60,4 +60,11 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'links_added',
 		'link_in_bio_launched',
 	],
+	'domain-first-link-in-bio': [
+		'design_selected',
+		'setup_link_in_bio',
+		'plan_selected',
+		'links_added',
+		'link_in_bio_launched',
+	],
 };

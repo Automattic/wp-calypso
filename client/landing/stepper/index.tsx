@@ -29,6 +29,7 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
 import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { anchorFmFlow } from './declarative-flow/anchor-fm-flow';
+import { domainFirstLinkInBio } from './declarative-flow/domain-first-link-in-bio';
 import { importFlow } from './declarative-flow/import-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
@@ -68,6 +69,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
+	{ flowName: 'domain-first-link-in-bio', pathToFlow: domainFirstLinkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
 	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
