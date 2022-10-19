@@ -51,7 +51,6 @@ project {
 	subProject(_self.projects.WPComPlugins)
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
-	subProject(_self.projects.CalypsoDashboard)
 	subProject(_self.projects.MarTech)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
