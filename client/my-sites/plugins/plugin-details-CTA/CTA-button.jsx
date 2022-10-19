@@ -3,7 +3,7 @@ import {
 	FEATURE_INSTALL_PLUGINS,
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
-import { Button, Dialog, Gridicon } from '@automattic/components';
+import { Button, Dialog } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -20,7 +20,6 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
-	isSaasProduct as isSaasProductSelector,
 	getProductsList,
 } from 'calypso/state/products-list/selectors';
 import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
@@ -45,7 +44,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
 	);
-	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, plugin.slug ) );
 
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );
@@ -153,7 +151,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			</Dialog>
 			<Button
 				className="plugin-details-cta__install-button"
-				primary={ ! isSaasProduct }
+				primary
 				onClick={ () => {
 					if ( pluginRequiresCustomPrimaryDomain ) {
 						return setShowAddCustomDomain( true );
@@ -180,13 +178,14 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				<CTAButtonContent
-					translate={ translate }
-					isMarketplaceProduct={ isMarketplaceProduct }
-					isPreinstalledPremiumPlugin={ isPreinstalledPremiumPlugin }
-					isSaasProduct={ isSaasProduct }
-					shouldUpgrade={ shouldUpgrade }
-				/>
+				{
+					// eslint-disable-next-line no-nested-ternary
+					isMarketplaceProduct || isPreinstalledPremiumPlugin
+						? translate( 'Purchase and activate' )
+						: shouldUpgrade
+						? translate( 'Upgrade and activate' )
+						: translate( 'Install and activate' )
+				}
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">
@@ -208,33 +207,6 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 			) }
 		</>
 	);
-}
-
-function CTAButtonContent( {
-	translate,
-	isMarketplaceProduct,
-	isPreinstalledPremiumPlugin,
-	isSaasProduct,
-	shouldUpgrade,
-} ) {
-	if ( isSaasProduct ) {
-		return (
-			<>
-				{ translate( 'Get started' ) }
-				<Gridicon icon="external" />
-			</>
-		);
-	}
-
-	if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
-		return translate( 'Purchase and activate' );
-	}
-
-	if ( shouldUpgrade ) {
-		return translate( 'Upgrade and activate' );
-	}
-
-	return translate( 'Install and activate' );
 }
 
 function onClickInstallPlugin( {
