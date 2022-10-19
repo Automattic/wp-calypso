@@ -68,6 +68,11 @@ body.is-videopress-stepper {
 			animation-iteration-count: 1;
 			animation-fill-mode: forwards;
 
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+
+
 			@keyframes step-fade-in {
 				0% {
 					opacity: 0;
@@ -76,6 +81,11 @@ body.is-videopress-stepper {
 					opacity: 1;
 				}
 			}
+
+			.step-container__content {
+				flex-grow: 2;
+			}
+
 
 			.step-container__header {
 				header {
@@ -105,6 +115,7 @@ body.is-videopress-stepper {
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				font-size: 12px;
 				padding-bottom: 24px;
+				margin: 0;
 				svg {
 					margin-inline-end: 8px;
 				}
