@@ -22,7 +22,7 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isAutoRenewing, isRefundable, isRemovable } from 'calypso/lib/purchases';
+import { getName, isRefundable, isRemovable } from 'calypso/lib/purchases';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -256,7 +256,7 @@ class RemovePurchase extends Component {
 				site={ site }
 				hasDomain={ hasCustomDomain }
 				isRefundable={ isRefundable( purchase ) }
-				isAutoRenewing={ isAutoRenewing( purchase ) }
+				isAutoRenewing={ purchase.isAutoRenewEnabled }
 				primaryDomain={ primaryDomainName }
 				wpcomURL={ wordpressComURL }
 			/>
