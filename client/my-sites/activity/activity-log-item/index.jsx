@@ -339,6 +339,7 @@ class ActivityLogItem extends Component {
 			moment,
 			timezone,
 			translate,
+			disableRestore,
 		} = this.props;
 		const { activityIcon, activityStatus, activityTs } = activity;
 
@@ -362,7 +363,7 @@ class ActivityLogItem extends Component {
 						onSettingsChange={ this.restoreSettingsChange }
 						supportLink="https://jetpack.com/support/how-to-rewind"
 						title={ translate( 'Restore Site' ) }
-						disableButton={ this.state.disableRestoreButton }
+						disableButton={ this.state.disableRestoreButton || disableRestore }
 					>
 						{ translate( '{{time/}} is the selected point for your site restore.', {
 							components: {
