@@ -98,8 +98,7 @@ export async function fetchPlugins( context, next ) {
 			prefetchPopularPlugins( queryClient, options ),
 			prefetchFeaturedPlugins( queryClient, options ),
 		],
-		context,
-		'fetchPlugins'
+		context
 	);
 
 	next();
