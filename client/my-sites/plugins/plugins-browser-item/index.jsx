@@ -101,6 +101,7 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			list_type: props.listType,
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );

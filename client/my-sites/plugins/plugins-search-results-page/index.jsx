@@ -117,6 +117,7 @@ const PluginsSearchResultPage = ( {
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
+					listType="search"
 					title={ translate( 'Search Results' ) }
 					subtitle={
 						<>
