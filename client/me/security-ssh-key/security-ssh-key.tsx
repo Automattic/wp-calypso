@@ -150,7 +150,7 @@ export const SecuritySSHKey = () => {
 					/>
 				) : null }
 			</CompactCard>
-			{ hasKeys && currentUser && (
+			{ hasKeys && currentUser?.username && (
 				<ManageSSHKeys
 					userLogin={ currentUser.username }
 					sshKeys={ data }
