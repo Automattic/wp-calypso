@@ -58,9 +58,12 @@ export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 
 	useEffect( () => {
 		if ( inViewOnce ) {
-			recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, { is_site_owner: isSiteOwner } );
+			recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
+				is_site_owner: isSiteOwner,
+				product_slug: plan.product_slug,
+			} );
 		}
-	}, [ inViewOnce, isSiteOwner ] );
+	}, [ inViewOnce, isSiteOwner, plan.product_slug ] );
 
 	const renewText = __( 'Renew plan' );
 	return (
@@ -85,7 +88,7 @@ export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
 				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
-							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK );
+							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, { product_slug: plan.product_slug } );
 						} }
 						href={ checkoutUrl }
 						title={ renewText }
