@@ -875,7 +875,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	// Pre Load Experiment relevent to the post site creation goal screen
+	// Pre Load Experiment relevant to the post site creation goal screen
 	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
