@@ -20,6 +20,7 @@ const initialTestState = {
 	imageUploadStates: {},
 	websiteContent: {
 		siteLogoSection: { siteLogoUrl: '' },
+		feedbackSection: { genericFeedback: '' },
 		pages: [
 			{
 				id: 'Home',

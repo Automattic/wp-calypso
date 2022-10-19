@@ -11,6 +11,7 @@ describe( 'selectors', () => {
 		expect( getWebsiteContent( { signup: undefined } ) ).toEqual( {
 			pages: [],
 			siteLogoSection: { siteLogoUrl: '' },
+			feedbackSection: { genericFeedback: '' },
 		} );
 	} );
 
