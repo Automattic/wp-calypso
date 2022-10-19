@@ -4,7 +4,7 @@ import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
-import { Component, Fragment, useState, useEffect } from 'react';
+import { Component, Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -367,9 +367,6 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-
-		console.log( shouldShowPremiumStylesNotice );
-
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
