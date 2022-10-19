@@ -210,8 +210,20 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return !! allowEmptyFormSubmit || !! getValidEmails().length || !! selectedFile;
 	}
 
+	function resetFormState(): void {
+		setEmails( [] );
+		setSelectedFile( undefined );
+		importCsvSubscribersUpdate( undefined );
+		setIsSelectedFileValid( true );
+		setIsValidEmails( [] );
+		setIsDirtyEmails( [] );
+	}
+
 	function importFinishedRecognition() {
-		! importSelector?.error && prevInProgress.current && ! inProgress && onImportFinished?.();
+		if ( ! importSelector?.error && prevInProgress.current && ! inProgress ) {
+			resetFormState();
+			onImportFinished?.();
+		}
 	}
 
 	function includesHandledError() {
