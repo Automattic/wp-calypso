@@ -59,6 +59,10 @@
 		display: flex;
 		align-items: center;
 		cursor: pointer;
+
+		&-close-icon {
+			fill: var(--studio-gray-20);
+		}
 	}
 }
 
