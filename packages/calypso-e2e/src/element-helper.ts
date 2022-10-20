@@ -154,7 +154,11 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 }
 
 /**
- * Resolves once widgets.wp.com message posting becomes idle.
+ * Resolves once widgets.wp.com "message" events become idle. This can be
+ * synonymous to the moment all the widgets become ready to use / stable. This
+ * helper can be used, e.g., on Atomic pages where the widgets are loaded via
+ * iframes causing layout shifting, and in consequence Playwright's stability
+ * checks to fail.
  *
  * @param {Page} page The parent page object.
  */
