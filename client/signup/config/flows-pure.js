@@ -136,6 +136,20 @@ export function generateFlows( {
 			},
 		},
 		{
+			name: 'domain-first-link-in-bio',
+			steps: [ 'user', 'domains', 'plans-link-in-bio' ],
+			destination: ( dependencies ) =>
+				`/setup/patterns?flow=domain-first-link-in-bio&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
+			description: 'The variation of Link in Bio flow presenting the domain step ahead',
+			lastModified: '2022-10-20',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+		},
+		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]

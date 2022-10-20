@@ -9,6 +9,7 @@ import {
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
+	DOMAIN_FIRST_LINK_IN_BIO_FLOW,
 	LINK_IN_BIO_FLOW,
 	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
@@ -134,7 +135,7 @@ export class PlansStep extends Component {
 				comingSoon: 0,
 			} );
 			this.props.goToNextStep();
-		} else if ( flowName === LINK_IN_BIO_FLOW ) {
+		} else if ( flowName === LINK_IN_BIO_FLOW || flowName === DOMAIN_FIRST_LINK_IN_BIO_FLOW ) {
 			// link-in-bio flow always uses pub/lynx
 			this.props.submitSignupStep( step, {
 				cartItem,
