@@ -15,8 +15,9 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const flow = useFlowParam();
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
 	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
 
-	if ( VIDEOPRESS_FLOW === flow ) {
+	if ( isVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1430 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 	}
@@ -33,7 +34,7 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: true,
+			do_preview_no_interactions: ! isVideoPressFlow,
 			...( color && { preview_accent_color: color } ),
 		} );
 	}
