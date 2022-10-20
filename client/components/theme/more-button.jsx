@@ -107,6 +107,8 @@ class ThemeMoreButton extends Component {
 }
 
 ThemeMoreButton.propTypes = {
+	themeName: PropTypes.string,
+	// Name of theme to give image context.
 	themeId: PropTypes.string,
 	// Index of theme in results list
 	index: PropTypes.number,
