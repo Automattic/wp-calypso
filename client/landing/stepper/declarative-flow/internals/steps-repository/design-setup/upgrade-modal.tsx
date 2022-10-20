@@ -52,6 +52,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	//Wait until we have theme and product data to show content
 	const isLoading = ! themePrice || ! theme.data;
 
+	// TODO: This is placeholder logic for determining whether the theme is a third party premium theme
+	// change to "true" to test
+	const isThirdParty = true;
+
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
 		return {
 			header: (
@@ -132,8 +136,64 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		};
 	};
 
+	const getThirdPartyPurchaseModalData = (): UpgradeModalContent => {
+		return {
+			header: (
+				<>
+					<h1 className="upgrade-modal__heading bundle">{ translate( 'Upgrade to Buy' ) }</h1>
+				</>
+			),
+			text: (
+				<>
+					<p>
+						{ translate(
+							'This premium theme is only available to buy on the Business or eCommerce plans.'
+						) }
+					</p>
+					<p>
+						<strong>To activate this theme, you need:</strong>
+					</p>
+				</>
+			),
+			price: (
+				<>
+					<table className="upgrade-modal__product-list">
+						<tr className="upgrade-modal__product-list-item">
+							<td className="upgrade-modal__product-list-product">{ theme?.data?.name }</td>
+							<td className="upgrade-modal__product-list-price">
+								<strong>{ translate( '%s per year', { args: themePrice } ) }</strong>
+							</td>
+						</tr>
+						<tr className="upgrade-modal__product-list-item">
+							<td className="upgrade-modal__product-list-product">
+								{ translate( 'Business plan' ) }
+							</td>
+							{ /* TODO: Figure out how to fetch this info  */ }
+							<td className="upgrade-modal__product-list-price">
+								<strong>{ translate( '%s per year', { args: 'TBD' } ) }</strong>
+							</td>
+						</tr>
+					</table>
+				</>
+			),
+			action: (
+				<div className="upgrade-modal__actions bundle">
+					<Button className="upgrade-modal__cancel" onClick={ () => closeModal() }>
+						{ translate( 'Cancel' ) }
+					</Button>
+					<Button className="upgrade-modal__upgrade-plan" primary onClick={ () => checkout() }>
+						{ translate( 'Continue' ) }
+					</Button>
+				</div>
+			),
+		};
+	};
+
 	let modalData = null;
-	if ( showBundleVersion ) {
+
+	if ( isThirdParty ) {
+		modalData = getThirdPartyPurchaseModalData();
+	} else if ( showBundleVersion ) {
 		modalData = getBundledFirstPartyPurchaseModalData();
 	} else {
 		modalData = getStandardPurchaseModalData();
