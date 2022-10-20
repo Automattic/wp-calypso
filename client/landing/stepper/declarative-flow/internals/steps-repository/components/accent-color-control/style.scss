@@ -45,6 +45,10 @@
 
 		.select-dropdown__options {
 			border-radius: 0 0 4px 4px;
+
+			.custom_color_icon {
+				margin-bottom: 4px;
+			}
 		}
 
 		.select-dropdown__header .select-dropdown__header-text > svg,

@@ -58,7 +58,7 @@ const COLOR_OPTIONS = [
 	{
 		label: 'Custom',
 		value: 'custom',
-		icon: <Icon icon={ color } width={ 22 } height={ 22 } />,
+		icon: <Icon className="custom_color_icon" icon={ color } width={ 22 } height={ 22 } />,
 	},
 ];
 
