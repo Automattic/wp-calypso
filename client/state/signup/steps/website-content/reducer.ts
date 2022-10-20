@@ -11,7 +11,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
-	BBE_UPDATE_GENERIC_FEEDBACK,
+	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
@@ -85,7 +85,7 @@ export default withSchemaValidation(
 				};
 			}
 
-			case BBE_UPDATE_GENERIC_FEEDBACK: {
+			case SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE: {
 				const {
 					payload: { feedback },
 				} = action;

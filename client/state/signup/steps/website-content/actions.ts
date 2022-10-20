@@ -11,7 +11,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
-	BBE_UPDATE_GENERIC_FEEDBACK,
+	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
@@ -71,7 +71,7 @@ export function logoRemoved() {
 
 export function updateFeedback( feedback: string ) {
 	return {
-		type: BBE_UPDATE_GENERIC_FEEDBACK,
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 		payload: { feedback },
 	};
 }
