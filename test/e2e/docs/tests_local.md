@@ -56,7 +56,7 @@ Use the `--group` arg to provide a suite to test `Jest`. For example, to run all
 yarn jest --group=calypso-pr
 ```
 
-See the [list of groups](docs/overview.md#what-is-tested).
+See the [list of groups](tests_ci.md#featuretest-groups).
 
 ## Advanced techniques
 

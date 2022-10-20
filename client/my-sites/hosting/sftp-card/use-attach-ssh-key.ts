@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { USE_ATOMIC_SSH_KEYS_QUERY_KEY } from './use-atomic-ssh-keys';
@@ -6,13 +7,22 @@ interface MutationVariables {
 	name: string;
 }
 
+interface MutationResponse {
+	message: string;
+}
+
+interface MutationError {
+	code: string;
+	message: string;
+}
+
 export const useAttachSshKeyMutation = (
 	siteId: number,
-	options: UseMutationOptions< void, void, MutationVariables > = {}
+	options: UseMutationOptions< MutationResponse, MutationError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
-	return useMutation(
-		( { name }: MutationVariables ) =>
+	const mutation = useMutation(
+		async ( { name }: MutationVariables ) =>
 			wp.req.post( {
 				path: `/sites/${ siteId }/hosting/ssh-keys`,
 				apiNamespace: 'wpcom/v2',
@@ -26,4 +36,10 @@ export const useAttachSshKeyMutation = (
 			},
 		}
 	);
+
+	const { mutate, isLoading } = mutation;
+
+	const attachSshKey = useCallback( ( args: MutationVariables ) => mutate( args ), [ mutate ] );
+
+	return { attachSshKey, isLoading };
 };
