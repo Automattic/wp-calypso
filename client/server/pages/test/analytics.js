@@ -1,11 +1,10 @@
 import events from 'events';
 import config from '@automattic/calypso-config';
 import superagent from 'superagent';
-import analytics from 'calypso/server/lib/analytics';
+import * as statsdUtils from 'calypso/lib/analytics/statsd-utils';
 import { logSectionResponse } from 'calypso/server/pages/analytics';
 
 const TWO_SECONDS = 2000;
-const THREE_SECONDS = 3000;
 
 const noop = () => {};
 
@@ -59,63 +58,43 @@ describe( 'index', () => {
 			test( 'logs response analytics', () => {
 				logSectionResponse( request, response, next );
 
-				// Move time forward and mock the "close" event
+				// Move time forward and mock the "finish" event
 				jest.advanceTimersByTime( TWO_SECONDS );
-				response.emit( 'close' );
+				response.emit( 'finish' );
 
 				// Check the information sent to boom.gif.
 				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) );
 			} );
 
-			test( 'logs granular analytics', () => {
-				// Make the request authenticated
-				request.context.user = { foo: 'bar' };
-				logSectionResponse( request, response, next );
-
-				// Move time forward and mock the "close" event
-				jest.advanceTimersByTime( THREE_SECONDS );
-				response.emit( 'close' );
-
-				// Check the information sent to boom.gif.
-				expect(
-					includesBeacon( `reader.loggedin_true.ssr_false.response_time:${ THREE_SECONDS }` )
-				).toBe( true );
-
-				// Double check the loggedin/ssr flags are set correctly.
-				expect(
-					includesBeacon( `reader.loggedin_false.ssr_true.response_time:${ THREE_SECONDS }` )
-				).toBe( false );
-			} );
-
 			test( 'throttles calls to log analytics', () => {
 				// We only want to mock this for one test, as it will prevent our
 				// superagent spy above from working.
-				const analyticsMock = jest.spyOn( analytics.statsd, 'recordEvents' );
+				const analyticsMock = jest.spyOn( statsdUtils, 'logServerEvent' );
 
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
 
-				response.emit( 'close' );
-				response2.emit( 'close' );
+				response.emit( 'finish' );
+				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordEvents ).toBeCalledTimes( 1 );
+				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 1 );
 
 				jest.advanceTimersByTime( TWO_SECONDS );
-				response.emit( 'close' );
-				response2.emit( 'close' );
+				response.emit( 'finish' );
+				response2.emit( 'finish' );
 
-				expect( analytics.statsd.recordEvents ).toBeCalledTimes( 2 );
+				expect( statsdUtils.logServerEvent ).toBeCalledTimes( 2 );
 				analyticsMock.mockRestore();
 			} );
 		} );
 
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
-				jest.spyOn( analytics.statsd, 'recordEvents' );
+				jest.spyOn( statsdUtils, 'logServerEvent' );
 			} );
 
 			afterEach( () => {
-				analytics.statsd.recordEvents.mockReset();
+				statsdUtils.logServerEvent.mockReset();
 			} );
 
 			test( 'does not log response time analytics', () => {
@@ -124,7 +103,7 @@ describe( 'index', () => {
 				// Mock the "finish" event
 				response.emit( 'close' );
 
-				expect( analytics.statsd.recordEvents ).not.toBeCalled();
+				expect( statsdUtils.logServerEvent ).not.toBeCalled();
 			} );
 		} );
 	} );

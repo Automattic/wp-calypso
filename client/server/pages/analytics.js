@@ -5,22 +5,14 @@ import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 // Compute the number of milliseconds between each call to recordTiming
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
-const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, usedSSRHandler } ) => {
-	const events = [
-		// Basic per-section response time metric for backwards compatibility.
+const logAnalyticsThrottled = throttle( function ( sectionName, duration ) {
+	logServerEvent( sectionName, [
 		{
-			name: 'response_time',
-			value: duration,
+			name: 'response-time',
 			type: 'timing',
-		},
-		// More granular response-time metric including SSR and auth status.
-		{
-			name: `loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time`,
 			value: duration,
-			type: 'timing',
 		},
-	];
-	logServerEvent( sectionName, events );
+	] );
 }, THROTTLE_MILLIS );
 
 /*
@@ -28,20 +20,14 @@ const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, use
  * Only logs if the request context contains a `sectionName` attribute.
  */
 export function logSectionResponse( req, res, next ) {
-	const startRenderTime = Date.now();
+	const startRenderTime = new Date();
 
-	res.on( 'close', function () {
-		if ( ! req.context?.sectionName ) {
-			return;
+	res.on( 'finish', function () {
+		const context = req.context || {};
+		if ( context.sectionName ) {
+			const duration = new Date() - startRenderTime;
+			logAnalyticsThrottled( context.sectionName, duration );
 		}
-		const { user, sectionName, usedSSRHandler } = req.context;
-
-		logAnalyticsThrottled( {
-			loggedIn: !! user,
-			usedSSRHandler: !! usedSSRHandler, // Convert undefined to false
-			duration: Date.now() - startRenderTime,
-			sectionName,
-		} );
 	} );
 
 	next();
