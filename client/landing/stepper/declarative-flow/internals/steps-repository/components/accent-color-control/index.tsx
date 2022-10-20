@@ -30,8 +30,8 @@ export type AccentColor = {
 enum COLORS {
 	Lettre = '#1D39EB',
 	Black = '#000000',
-	LuminousVividOrange = '#F4732B',
-	VividPurple = '#925CD9',
+	VividRed = '#CF2E2E',
+	VividPurple = '#9B51E0',
 }
 
 const COLOR_OPTIONS = [
@@ -46,9 +46,9 @@ const COLOR_OPTIONS = [
 		icon: <ColorSwatch color={ COLORS.Black } />,
 	},
 	{
-		label: 'Luminous vivid orange',
-		value: COLORS.LuminousVividOrange,
-		icon: <ColorSwatch color={ COLORS.LuminousVividOrange } />,
+		label: 'Vivid red',
+		value: COLORS.VividRed,
+		icon: <ColorSwatch color={ COLORS.VividRed } />,
 	},
 	{
 		label: 'Vivid purple',
