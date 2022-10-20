@@ -81,7 +81,6 @@ class PeopleInvites extends PureComponent {
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
-								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
 								defer( () => {
 									this.props.successNotice(
 										this.props.translate(
