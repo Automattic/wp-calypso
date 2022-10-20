@@ -217,7 +217,7 @@ describe(
 					templatePartBlock = new TemplatePartBlock( page, block );
 				} );
 
-				it( '"wpcom_block_inserted" event fires', async function () {
+				it( '"wpcom_block_inserted" event fires with "entity_context" === "template"', async function () {
 					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_inserted',
 						{
