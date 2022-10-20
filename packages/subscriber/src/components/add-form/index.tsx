@@ -292,8 +292,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderImportCsvDisclaimerMsg() {
 		return (
-			isSelectedFileValid &&
-			selectedFile && (
+			( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) && (
 				<p className="add-subscriber__form--disclaimer">
 					{ createInterpolateElement(
 						sprintf(
