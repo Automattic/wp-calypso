@@ -42,21 +42,15 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'business-bundle' )
 	);
 
-	let themePrice;
-	if ( showBundleVersion ) {
-		themePrice = businessPlanProduct?.combined_cost_display;
-	} else {
-		themePrice = premiumPlanProduct?.combined_cost_display;
-	}
-
 	//Wait until we have theme and product data to show content
-	const isLoading = ! themePrice || ! theme.data;
+	const isLoading = ! premiumPlanProduct || ! businessPlanProduct || ! theme.data;
 
 	// TODO: This is placeholder logic for determining whether the theme is a third party premium theme
-	// change to "true" to test
-	const isThirdParty = true;
+	// Change `false` to `true` in order to test this UI with any premium theme's upgrade modal.
+	const isThirdParty = isEnabled( 'themes/subscription-purchases' ) || false;
 
 	const getStandardPurchaseModalData = (): UpgradeModalContent => {
+		const premiumPlanPrice = premiumPlanProduct?.combined_cost_display;
 		return {
 			header: (
 				<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
@@ -70,12 +64,12 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 			),
 			price: (
 				<div className="upgrade-modal__theme-price">
-					{ translate( '{{span}}%(themePrice)s{{/span}} per year', {
+					{ translate( '{{span}}%(premiumPlanPrice)s{{/span}} per year', {
 						components: {
 							span: <span />,
 						},
 						args: {
-							themePrice,
+							premiumPlanPrice,
 						},
 					} ) }
 				</div>
@@ -100,6 +94,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	};
 
 	const getBundledFirstPartyPurchaseModalData = (): UpgradeModalContent => {
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
 		return {
 			header: (
 				<>
@@ -117,7 +112,7 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 							components: {
 								link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,
 							},
-							args: themePrice,
+							args: businessPlanPrice,
 						}
 					) }
 				</p>
@@ -137,6 +132,8 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	};
 
 	const getThirdPartyPurchaseModalData = (): UpgradeModalContent => {
+		const themePrice = premiumPlanProduct?.combined_cost_display;
+		const businessPlanPrice = businessPlanProduct?.combined_cost_display;
 		return {
 			header: (
 				<>
@@ -168,9 +165,8 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 							<td className="upgrade-modal__product-list-product">
 								{ translate( 'Business plan' ) }
 							</td>
-							{ /* TODO: Figure out how to fetch this info  */ }
 							<td className="upgrade-modal__product-list-price">
-								<strong>{ translate( '%s per year', { args: 'TBD' } ) }</strong>
+								<strong>{ translate( '%s per year', { args: businessPlanPrice } ) }</strong>
 							</td>
 						</tr>
 					</table>
