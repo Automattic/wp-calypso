@@ -387,10 +387,15 @@ UseMyDomain.propTypes = {
 	goBack: PropTypes.func,
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
+	showHeader: PropTypes.bool,
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
+	onNextStep: PropTypes.func,
 	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,
+	analyticsSection: PropTypes.string,
+	basePath: PropTypes.string,
+	initialMode: PropTypes.string,
 };
 
 export default connect( ( state ) => ( { selectedSite: getSelectedSite( state ) } ) )(

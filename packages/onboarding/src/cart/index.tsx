@@ -1,18 +1,15 @@
-import { get, startsWith, isEmpty } from 'lodash';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import wpcom from 'calypso/lib/wp';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import debugFactory from 'debug';
+import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
-import { errorNotice } from 'calypso/state/notices/actions';
-import e from 'express';
+import debugFactory from 'debug';
+import { getLocaleSlug } from 'i18n-calypso';
+import { startsWith, isEmpty } from 'lodash';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import wpcom from 'calypso/lib/wp';
+import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -183,9 +180,10 @@ export const createSiteWithCart = async (
 		domainItem,
 		themeItem,
 	};
-	// if ( isTailoredSignupFlow( flowToCheck ) ) {
-	// 	await setupSiteAfterCreation( { siteId, flowName: flowToCheck } );
-	// }
+
+	if ( isTailoredSignupFlow( flowToCheck ) ) {
+		await setupSiteAfterCreation( { siteId, flowName: flowToCheck } );
+	}
 
 	await processItemCart(
 		newCartItems,

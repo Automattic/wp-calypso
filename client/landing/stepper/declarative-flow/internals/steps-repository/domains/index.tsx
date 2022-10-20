@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import { useLocale } from '@automattic/i18n-utils';
-import { StepContainer, createSiteWithCart } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -13,17 +12,13 @@ import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/co
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
-import Notice from 'calypso/components/notice';
 import {
 	domainRegistration,
-	themeItem,
 	domainMapping,
 	domainTransfer,
 } from 'calypso/lib/cart-values/cart-items';
 import { getDomainSuggestionSearch, getFixedDomainSearch } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	retrieveSignupDestination,
@@ -46,10 +41,25 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
-import domainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
+
+type DomainSuggestion = {
+	is_free: boolean;
+	domain_name: string;
+	isRecommended: boolean;
+	isBestAlternative: boolean;
+	is_premium?: boolean;
+	product_slug: string;
+};
+
+type SearchState = {
+	subdomainSearchResults?: DomainSuggestion[] | null;
+	loadingResults?: boolean;
+	hideInitialQuery?: boolean;
+	searchResults?: DomainSuggestion[] | null;
+};
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
-	const { productsList, userLoggedIn, selectedSite } = useSelector( ( state ) => {
+	const { productsList, selectedSite } = useSelector( ( state ) => {
 		return {
 			productsList: getAvailableProductsList( state ),
 			userLoggedIn: isUserLoggedIn( state ),
@@ -57,15 +67,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		};
 	} );
 
-	const { siteAccentColor, domainForm, signupValues } = useSelect( ( select ) => {
+	const { domainForm, signupValues } = useSelect( ( select ) => {
 		return {
-			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 			domainForm: select( ONBOARD_STORE ).getDomainForm(),
 			signupValues: select( ONBOARD_STORE ).getSignupValues(),
 		};
 	} );
 
-	const { setDomainForm, setSignupValues, setMultiplePendingAction } = useDispatch( ONBOARD_STORE );
+	const { setDomainForm, setSignupValues, setDomainItem } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
 	const search = data?.search ?? false;
@@ -78,7 +87,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	const dispatch = useReduxDispatch();
 
 	const { submit } = navigation;
-	const hideInitialQuery = data?.hideInitialQuery ?? false;
+	const hideInitialQuery = Boolean( data?.hideInitialQuery );
 	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
@@ -104,53 +113,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		showSkipButton = true;
 	}
 
-	const isDomainOnly = signupValues?.isDomainOnly ?? false;
-
-	const forceHideFreeDomainExplainerAndStrikeoutUi = undefined;
-	const premium = undefined;
 	const domainsWithPlansOnly = true;
-	const theme = undefined;
 	const isPlanSelectionAvailableLaterInFlow = true;
-	const promoTlds = data?.tld?.split( ',' );
 
-	const locale = useLocale();
-
-	const isDependencyShouldHideFreePlanProvided = () => {
-		/**
-		 * This prop is used to supress providing the dependency - shouldHideFreePlan - when the plans step is in the current flow
-		 */
-		return ! forceHideFreeDomainExplainerAndStrikeoutUi && isPlanSelectionAvailableLaterInFlow;
-	};
-
-	const getThemeSlug = () => {
-		return theme;
-	};
-
-	const isPurchasingTheme = () => {
-		return premium;
-	};
-
-	const getThemeSlugWithRepo = ( themeSlug ) => {
-		if ( ! themeSlug ) {
-			return undefined;
-		}
-		const repo = isPurchasingTheme() ? 'premium' : 'pub';
-		return `${ repo }/${ themeSlug }`;
-	};
-
-	const getThemeArgs = () => {
-		const themeSlug = getThemeSlug();
-		const themeSlugWithRepo = getThemeSlugWithRepo( themeSlug );
-		const theme = isPurchasingTheme() ? themeItem( themeSlug, 'signup-with-theme' ) : undefined;
-
-		return { themeSlug, themeSlugWithRepo, themeItem: theme };
-	};
-
-	const shouldUseThemeAnnotation = () => {
-		return getThemeSlug() ? true : false;
-	};
-
-	const submitDomainStepSelection = ( suggestion, section ) => {
+	const submitDomainStepSelection = ( suggestion: DomainSuggestion, section: string ) => {
 		let domainType = 'domain_reg';
 		if ( suggestion.is_free ) {
 			domainType = 'wpcom_subdomain';
@@ -159,7 +125,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			}
 		}
 
-		const tracksObjects = {
+		const tracksObjects: {
+			label?: string;
+			domain_name: string;
+			type: string;
+			section: string;
+		} = {
 			domain_name: suggestion.domain_name,
 			section,
 			type: domainType,
@@ -182,70 +153,39 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		);
 	};
 
-	const submitWithDomain = ( suggestion, googleAppsCartItem?: any, shouldHideFreePlan = false ) => {
-		const isPurchasingItem = suggestion && Boolean( suggestion.product_slug );
-
-		const siteUrl =
-			suggestion &&
-			( isPurchasingItem
-				? suggestion.domain_name
-				: suggestion.domain_name.replace( '.wordpress.com', '' ) );
-		const domainItem = isPurchasingItem
-			? domainRegistration( {
-					domain: suggestion.domain_name,
-					productSlug: suggestion.product_slug,
-			  } )
-			: undefined;
-
-		setSignupValues( { domainItem, shouldHideFreePlan } );
-
+	const submitWithDomain = (
+		suggestion: DomainSuggestion | undefined,
+		shouldHideFreePlan = false
+	) => {
 		if ( suggestion ) {
+			const domainItem = domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug,
+			} );
+
+			setSignupValues( { domainItem, shouldHideFreePlan } );
+
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
+
+			setDomainItem( domainItem );
 		}
-
-		setMultiplePendingAction( async () => {
-			const createSiteResult = await createSiteWithCart(
-				flow,
-				siteUrl,
-				isManageSiteFlow,
-				{
-					domainItem,
-					flowName: flow,
-					lastKnownFlow: flow,
-					googleAppsCartItem,
-					isPurchasingItem,
-					siteUrl,
-					themeItem: undefined,
-					siteTitle: domain,
-					siteAccentColor,
-					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
-					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
-				},
-				userLoggedIn,
-				false
-			);
-
-			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
-
-			return createSiteResult;
-		}, 'domains' );
 
 		submit?.();
 	};
 
-	const handleSkip = ( googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
+	const handleSkip = ( _googleAppsCartItem = undefined, shouldHideFreePlan = false ) => {
 		const tracksProperties = Object.assign(
 			{
 				section: getAnalyticsSection(),
 				flow,
 				step: 'domains',
 			},
-			isDependencyShouldHideFreePlanProvided() ? { should_hide_free_plan: shouldHideFreePlan } : {}
+			{}
 		);
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
-		submitWithDomain( undefined, googleAppsCartItem, shouldHideFreePlan );
+		submitWithDomain( undefined, shouldHideFreePlan );
 	};
 
 	const getSubHeaderText = () => {
@@ -283,7 +223,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	};
 
 	function getAnalyticsSection() {
-		return isDomainOnly ? 'domain-first' : 'signup';
+		return 'signup';
 	}
 
 	function shouldIncludeDotBlogSubdomain() {
@@ -302,11 +242,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			return true;
 		}
 
-		// No .blog subdomains for domain only sites
-		if ( isDomainOnly ) {
-			return false;
-		}
-
 		// If we detect a 'blog' site type from Signup data
 		if (
 			// Users choose `Blog` as their site type
@@ -318,21 +253,13 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
-	function getLocale() {
-		return ! userLoggedIn ? locale : '';
-	}
-
 	const getUseYourDomainUrl = () => {
 		//This will return as /start/link-in-bio/domains/use-your-domain. Commented out because
 		//it always throws window.AppBoot is not a function
 		return '/setup/domains?flow=link-in-bio&section=use-your-domain';
 	};
 
-	const handleSave = ( state ) => {
-		setDomainForm( state );
-	};
-
-	const handleAddTransfer = ( { domain, authCode } ) => {
+	const handleAddTransfer = ( { domain, authCode }: { domain: string; authCode: string } ) => {
 		const domainItem = domainTransfer( {
 			domain,
 			extra: {
@@ -340,98 +267,29 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				signup: true,
 			},
 		} );
-		const isPurchasingItem = true;
-		const useThemeAnnotation = shouldUseThemeAnnotation();
-		const useThemeHeadstartItem = useThemeAnnotation
-			? { useThemeHeadstart: useThemeAnnotation }
-			: {};
 
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection() ) );
 
-		setSignupValues(
-			Object.assign(
-				{ domainItem, siteUrl: domain, transfer: {} },
-				getThemeArgs(),
-				useThemeHeadstartItem
-			)
-		);
+		setSignupValues( Object.assign( { domainItem, siteUrl: domain, transfer: {} } ) );
 
-		setMultiplePendingAction( async () => {
-			const createSiteResult = await createSiteWithCart(
-				flow,
-				domain,
-				isManageSiteFlow,
-				{
-					domainItem,
-					flowName: undefined,
-					lastKnownFlow: flow,
-					isPurchasingItem,
-					domain,
-					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
-					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
-					themeItem: undefined,
-					siteTitle: domain,
-				},
-				userLoggedIn,
-				false
-			);
-
-			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
-
-			return createSiteResult;
-		}, 'domains' );
+		setDomainItem( domainItem );
 
 		submit?.();
 	};
 
-	const handleAddMapping = ( domain, state ) => {
+	const handleAddMapping = ( domain: string ) => {
 		const domainItem = domainMapping( { domain } );
-		const isPurchasingItem = true;
-		const useThemeAnnotation = shouldUseThemeAnnotation();
-		const useThemeHeadstartItem = useThemeAnnotation
-			? { useThemeHeadstart: useThemeAnnotation }
-			: {};
 
 		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection() ) );
 
-		setSignupValues(
-			Object.assign( { domainItem, siteUrl: domain }, getThemeArgs(), useThemeHeadstartItem )
-		);
+		setSignupValues( Object.assign( { domainItem, siteUrl: domain } ) );
 
-		setMultiplePendingAction( async () => {
-			const createSiteResult = await createSiteWithCart(
-				flow,
-				domain,
-				isManageSiteFlow,
-				{
-					domainItem,
-					flowName: undefined,
-					lastKnownFlow: flow,
-					isPurchasingItem,
-					domain,
-					themeItem: undefined,
-					siteTitle: domain,
-					useThemeHeadstart: useThemeAnnotation,
-					themeSlugWithRepo: flow === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx',
-					comingSoon: flow === NEWSLETTER_FLOW ? 0 : 1,
-				},
-				userLoggedIn,
-				false
-			);
-
-			setSignupValues( { createdSiteSlug: createSiteResult?.siteSlug } );
-
-			return createSiteResult;
-		}, 'domains' );
+		setDomainItem( domainItem );
 
 		submit?.();
 	};
 
-	const onUseMyDomainConnect = ( { domain } ) => {
-		handleAddMapping( domain, null );
-	};
-
-	const handleAddDomain = ( suggestion ) => {
+	const handleAddDomain = ( suggestion: DomainSuggestion ) => {
 		dispatch(
 			recordAddDomainButtonClick(
 				suggestion.domain_name,
@@ -456,7 +314,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 						isSignupStep
 						showHeader={ false }
 						onTransfer={ handleAddTransfer }
-						onConnect={ onUseMyDomainConnect }
+						onConnect={ ( { domain } ) => handleAddMapping( domain ) }
 					/>
 				</CalypsoShoppingCartProvider>
 			</div>
@@ -464,7 +322,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 	};
 
 	const renderDomainForm = () => {
-		let initialState = {};
+		let initialState: SearchState = {};
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
@@ -491,8 +349,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 			showExampleSuggestions = true;
 		}
 
-		const shouldIncludeWordPressDotCom = includeWordPressDotCom ?? ! isDomainOnly;
-
 		return (
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
@@ -501,24 +357,21 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					deemphasiseTlds={ flow === 'ecommerce' ? [ 'blog' ] : [] }
 					designType={ undefined }
 					domainsWithPlansOnly={ domainsWithPlansOnly }
-					forceHideFreeDomainExplainerAndStrikeoutUi={ forceHideFreeDomainExplainerAndStrikeoutUi }
 					includeDotBlogSubdomain={ shouldIncludeDotBlogSubdomain() }
-					includeWordPressDotCom={ shouldIncludeWordPressDotCom }
+					includeWordPressDotCom={ includeWordPressDotCom ?? true }
 					initialState={ initialState }
-					isDomainOnly={ isDomainOnly }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
 					isReskinned={ true }
 					isSignupStep
 					key="domainForm"
 					mapDomainUrl={ getUseYourDomainUrl() }
-					offerUnavailableOption={ ! isDomainOnly }
+					offerUnavailableOption
 					onAddDomain={ handleAddDomain }
 					onAddMapping={ handleAddMapping }
-					onSave={ handleSave }
+					onSave={ setDomainForm }
 					onSkip={ handleSkip }
 					path={ path }
 					products={ productsList }
-					promoTlds={ promoTlds }
 					selectedSite={ selectedSite }
 					showExampleSuggestions={ showExampleSuggestions }
 					showSkipButton={ showSkipButton }
@@ -527,8 +380,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 					handleClickUseYourDomain={ () => setShowUseYourDomain( true ) }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
-						isDomainOnly: isDomainOnly,
-						flowName: flow,
+						isDomainOnly: false,
+						flowName: flow || undefined,
 					} ) }
 				/>
 			</CalypsoShoppingCartProvider>
@@ -540,7 +393,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 
 		if ( showUseYourDomain ) {
 			content = renderYourDomainForm();
-		} else if ( ! showUseYourDomain || isDomainOnly ) {
+		} else {
 			content = renderDomainForm();
 		}
 

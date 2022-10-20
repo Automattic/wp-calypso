@@ -55,4 +55,5 @@ export const hasSelectedDesignWithoutFonts = ( state: State ) =>
 export const getEditEmail = ( state: State ) => state.editEmail;
 
 export const getDomainForm = ( state: State ) => state.domainForm;
+export const getDomainItem = ( state: State ) => state.domainItem;
 export const getSignupValues = ( state: State ) => state.signupValues;

@@ -8,6 +8,7 @@ import { getDomainSuggestionsVendor } from '@automattic/domain-picker';
  * @param {boolean} [options.isSignup=false] Flag to indicate that we're in a signup context
  * @param {boolean} [options.isDomainOnly=false] Flag to indicate that we're in a domain-only context
  * @param {boolean} [options.isPremium=false] Flag to show premium domains.
+ * @param {string} [options.flowName] The flow name (used to determine the vender).
  * @returns {string} Vendor string to pass as part of the domain suggestions query.
  */
 export const getSuggestionsVendor = ( options = {} ) => {
