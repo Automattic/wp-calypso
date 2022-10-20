@@ -16,6 +16,7 @@ const ExpandableSidebarHeading = ( {
 	customIcon,
 	materialIcon,
 	materialIconStyle,
+	customSvg,
 	expanded,
 	menuId,
 	hideExpandableIcon,
@@ -38,6 +39,9 @@ const ExpandableSidebarHeading = ( {
 				/>
 			) }
 			{ undefined !== customIcon && customIcon }
+			{ customSvg && (
+				<img src={ customSvg } alt="" width={ 20 } height={ 20 } className="svg-icon" />
+			) }
 			<span className="sidebar__expandable-title">
 				{ decodeEntities( title ) }
 				{ undefined !== count && <Count count={ count } /> }
@@ -58,6 +62,7 @@ ExpandableSidebarHeading.propTypes = {
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
+	customSvg: PropTypes.string,
 	hideExpandableIcon: PropTypes.bool,
 };
 

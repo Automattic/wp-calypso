@@ -3,6 +3,7 @@ import { startsWith } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import IconSidebarTags from 'calypso/assets/images/reader/sidebar/tags.svg';
 import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
@@ -52,7 +53,7 @@ export class ReaderSidebarTags extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Tags' ) }
 					onClick={ onClick }
-					materialIcon="local_offer"
+					customSvg={ IconSidebarTags }
 					disableFlyout={ true }
 					className={ path.startsWith( '/tag' ) && 'sidebar__menu--selected' }
 				>

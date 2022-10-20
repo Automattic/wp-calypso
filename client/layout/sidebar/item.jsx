@@ -20,7 +20,7 @@ export default function SidebarItem( props ) {
 		'has-unseen': props.hasUnseen,
 	} );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const { materialIcon, materialIconStyle, icon, customIcon, count, badge } = props;
+	const { materialIcon, materialIconStyle, icon, customIcon, customSvg, count, badge } = props;
 
 	let _preloaded = false;
 
@@ -64,6 +64,10 @@ export default function SidebarItem( props ) {
 
 				{ customIcon && customIcon }
 
+				{ customSvg && (
+					<img src={ customSvg } alt="" width={ 20 } height={ 20 } className="svg-icon" />
+				) }
+
 				{ /* eslint-disable wpcalypso/jsx-classname-namespace */ }
 				<span className="sidebar__menu-link-text menu-link-text" data-e2e-sidebar={ props.label }>
 					{
@@ -93,6 +97,7 @@ SidebarItem.propTypes = {
 	onNavigate: PropTypes.func,
 	icon: PropTypes.string,
 	customIcon: PropTypes.object,
+	customSvg: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
 	selected: PropTypes.bool,
