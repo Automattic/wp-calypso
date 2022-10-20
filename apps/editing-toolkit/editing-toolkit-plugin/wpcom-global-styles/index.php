@@ -220,3 +220,8 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 	return $custom_controls;
 }
 add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );
+
+/**
+ * Include the Rest API that returns the global style information for a give WordPress site.
+ */
+require_once __DIR__ . '/api/class-global-styles-info-rest-api.php';
