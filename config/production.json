@@ -137,6 +137,7 @@
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
+		"themes/subscription-purchases": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
