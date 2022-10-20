@@ -79,10 +79,15 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 			 */
 			setCustomColor( accentColor );
 			setColorPickerOpen( true );
+			return;
 		}
 		// New pre-defined color was selected
 		// Therefore clear custom color if one was set
 		customColor && setCustomColor( null );
+
+		// When color picker is open and user opens the select dropdown, the color picker remains open
+		// Hence ensure the color picker is closed after predefined color selection
+		setColorPickerOpen( false );
 
 		setAccentColor( {
 			hex: value,
@@ -140,11 +145,11 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					className="accent-color-control__accent-color-input"
 					id="accentColor"
 					onFocus={ () => setColorPickerOpen( true ) }
-					value={ accentColor.hex }
+					value={ customColor ? 'custom' : accentColor.hex }
 					onSelect={ handlePredefinedColorSelect }
 					selectedIcon={ customColor && <ColorSwatch color={ customColor.hex } /> }
 					options={ COLOR_OPTIONS }
-					showSelectedOption={ !! customColor } // hide a selected option with the exception of "Custom" option
+					showSelectedOption={ !! customColor } // hide selected option with the exception of "Custom" option
 				/>
 			</FormFieldset>
 			<div
