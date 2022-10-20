@@ -406,14 +406,18 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
-	const { pages, siteLogoUrl: site_logo_url } = websiteContent;
+	const {
+		pages,
+		siteLogoSection: { siteLogoUrl: site_logo_url },
+		feedbackSection: { genericFeedback: generic_feedback },
+	} = websiteContent;
 	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: pagesDTO, site_logo_url },
+			body: { pages: pagesDTO, site_logo_url, generic_feedback },
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
