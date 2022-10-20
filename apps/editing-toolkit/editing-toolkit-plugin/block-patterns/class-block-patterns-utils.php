@@ -115,4 +115,23 @@ class Block_Patterns_Utils {
 
 		return $block_types;
 	}
+
+	/**
+	 * Check for post type values in a pattern array
+	 *
+	 * @param array $pattern A pattern array such as is passed to `register_block_pattern`.
+	 *
+	 * @return array $postTypes An array of post type names.
+	 */
+	public function get_pattern_post_types_from_pattern( $pattern ) {
+		$post_types        = array();
+		$block_types       = $pattern['blockTypes'];
+		$block_types_count = count( $block_types );
+		// If all of a patterns blockTypes are template-parts then limit the
+		// postTypes to just the template related types.
+		if ( $block_types_count && count( array_filter( $block_types, fn( $block_type) => preg_match( '#core/template-part/#', $block_type ) ) ) === $block_types_count ) {
+			$post_types = array( 'wp_template', 'wp_template_part' );
+		}
+		return $post_types;
+	}
 }
