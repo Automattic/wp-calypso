@@ -1,4 +1,5 @@
 import { CompactCard, Gridicon } from '@automattic/components';
+import { useTemplate } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -14,6 +15,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { recordEvent } from '../helpers';
 import { PageCardInfoBadge } from '../page-card-info';
+import Placeholder from '../placeholder';
 import type { SiteDetails } from '@automattic/data-stores';
 
 interface Props {
@@ -29,11 +31,12 @@ interface Props {
 const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepage }: Props ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const decodedTitle = decodeEntities( title );
-	const editorUrl = addQueryArgs(
-		{ templateId: id, templateType: type },
-		`/site-editor/${ site.slug }`
-	);
+	const defaultEditorUrl = `/site-editor/${ site.slug }`;
+	const editorUrl = ! isHomepage
+		? addQueryArgs( { templateId: id, templateType: type }, defaultEditorUrl )
+		: defaultEditorUrl;
+
+	const { data: template } = useTemplate( site.ID, id );
 
 	const handleMenuToggle = ( isVisible: boolean ) => {
 		if ( isVisible ) {
@@ -60,6 +63,10 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 		dispatch( recordEvent( 'Clicked Copy Page Link' ) );
 	};
 
+	if ( ! template ) {
+		return <Placeholder.Page key={ id } multisite={ ! site } />;
+	}
+
 	return (
 		<CompactCard key={ id } className="page">
 			<div className="page__main">
@@ -68,15 +75,16 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					href={ editorUrl }
 					title={ translate( 'Edit %(title)s', {
 						textOnly: true,
-						args: { title: decodedTitle },
+						args: { title },
 					} ) }
 				>
-					<span>{ decodedTitle }</span>
+					<span>{ title }</span>
 					{ isHomepage && (
 						<InfoPopover position="right">
 							{ translate(
-								'The homepage of your site displays the Home template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+								'The homepage of your site displays the %(title)s template. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
 								{
+									args: { title: decodeEntities( template.title.rendered || template.slug ) },
 									components: {
 										learnMoreLink: (
 											<ExternalLink

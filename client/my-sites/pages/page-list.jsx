@@ -279,6 +279,7 @@ class Pages extends Component {
 				site={ site }
 				id={ blockEditorSettings?.home_template?.postId }
 				type={ blockEditorSettings?.home_template?.postType }
+				/** We'd prefer to call it Home no matter which template is in use */
 				title={ translate( 'Home' ) }
 				previewUrl={ site.URL }
 				isHomepage
