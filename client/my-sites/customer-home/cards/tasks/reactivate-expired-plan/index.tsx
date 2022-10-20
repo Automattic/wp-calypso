@@ -1,8 +1,9 @@
+import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import expiredIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import { TASK_REACTIVATE_EXPIRED_PLAN } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors/index';
-import { getTask } from './get-task';
 
 export const ReactivateExpiredPlan = () => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
@@ -11,17 +12,28 @@ export const ReactivateExpiredPlan = () => {
 		return null;
 	}
 
-	const taskDetails = getTask( { planName: 'Example Plan', siteSlug } );
 	return (
 		<Task
 			isUrgent
-			title={ taskDetails.heading }
-			description={ taskDetails.body }
+			title={ translate( 'Repurchase your plan' ) }
+			description={ translate(
+				'Your plan expired and your site has reverted back to features available on the Free plan. If you would like to continue using your previous features you must first repurchase an eligible plan.{{lineBreak/}}If you wish to continue with Free plan features no further action is needed.',
+				{
+					components: {
+						lineBreak: (
+							<>
+								<br />
+								<br />
+							</>
+						),
+					},
+				}
+			) }
 			timing={ 1 }
 			taskId={ TASK_REACTIVATE_EXPIRED_PLAN }
-			actionText={ taskDetails.buttonText }
-			illustration={ taskDetails.illustration }
-			actionUrl={ taskDetails.buttonLink }
+			actionText={ translate( 'Repurchase plan' ) }
+			illustration={ expiredIllustration }
+			actionUrl={ `/plans/${ siteSlug }` }
 		/>
 	);
 };
