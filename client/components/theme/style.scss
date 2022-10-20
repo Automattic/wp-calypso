@@ -403,3 +403,16 @@ $theme-info-height: 54px;
 .theme__tooltip {
 	max-width: 300px;
 }
+
+.theme__info-soft-launched-banner {
+	position: absolute;
+	top: 28px;
+	left: -8px;
+	z-index: 100000;
+	background-color: var(--color-warning-20);
+	color: var(--color-warning-80);
+	font-size: rem(7px);
+	font-weight: bold;
+	text-transform: uppercase;
+	transform: rotate(315deg);
+}
