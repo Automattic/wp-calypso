@@ -19,8 +19,8 @@ function createBeacon( calypsoSection: string, { name, value, type }: BeaconData
 	const event = name.replace( '-', '_' );
 
 	// A counting event defaults to incrementing by one.
-	if ( type === 'counting' && value == null ) {
-		value = 1;
+	if ( type === 'counting' ) {
+		value ??= 1;
 	}
 
 	return `calypso.${ config( 'boom_analytics_key' ) }.${ calypsoSection }.${ event }:${ value }|${
