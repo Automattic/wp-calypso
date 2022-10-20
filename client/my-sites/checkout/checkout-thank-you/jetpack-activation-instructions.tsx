@@ -9,7 +9,7 @@ const JetpackActivationInstructions: React.FC = () => {
 		<>
 			<p>{ translate( "If you don't have Jetpack installed, follow these instructions:" ) }</p>
 
-			<ul className="licensing-thank-you-manual-activation-instructions__list">
+			<ol className="licensing-thank-you-manual-activation-instructions__list">
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
 					<span>
@@ -44,7 +44,7 @@ const JetpackActivationInstructions: React.FC = () => {
 						) }
 					</span>
 				</li>
-			</ul>
+			</ol>
 
 			<p>
 				<ExternalLink

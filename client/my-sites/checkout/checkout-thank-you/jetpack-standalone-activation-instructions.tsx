@@ -15,7 +15,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 
 	return (
 		<>
-			<ul className="licensing-thank-you-manual-activation-instructions__list">
+			<ol className="licensing-thank-you-manual-activation-instructions__list">
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
 					<span>{ translate( 'Login to an existing Wordpress site as an administrator.' ) }</span>
@@ -24,12 +24,9 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
 					<span>
-						{ translate(
-							'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.',
-							{
-								components: { strong: <strong /> },
-							}
-						) }
+						{ translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
+							components: { strong: <strong /> },
+						} ) }
 					</span>
 				</li>
 
@@ -55,7 +52,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 						) }
 					</span>
 				</li>
-			</ul>
+			</ol>
 
 			<p>
 				<ExternalLink
