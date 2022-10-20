@@ -12,6 +12,7 @@ const PLAN_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_plan_renew_nag_click';
 
 interface PlanRenewProps {
 	plan: SiteDetailsPlan;
+	isSiteOwner: boolean;
 	checkoutUrl: string;
 }
 
@@ -50,11 +51,9 @@ const PlanRenewNoticeExpireText = styled.div( {
 	overflow: 'hidden',
 } );
 
-export const PlanRenewNag = ( { plan, checkoutUrl }: PlanRenewProps ) => {
+export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
-
-	const isSiteOwner = plan.user_is_owner;
 
 	useEffect( () => {
 		if ( inViewOnce ) {

@@ -5,9 +5,11 @@ import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -93,6 +95,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
+	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
@@ -144,6 +147,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 						<PlanRenewNagContainer>
 							<PlanRenewNag
 								plan={ site.plan }
+								isSiteOwner={ site?.site_owner === userId }
 								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
 							/>
 						</PlanRenewNagContainer>
