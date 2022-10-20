@@ -1,36 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
-
+import { useDispatch } from 'react-redux';
+import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 interface EmailValidationBannerProps {
 	email: string;
 	closeBanner: () => void;
 }
-
-const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerProps ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="launchpad__email-validation-banner">
-			<div className="launchpad__email-validation-banner-content">
-				<CheckmarkIcon />
-				<p>
-					{ translate(
-						'Make sure to validate the email we sent to %(email) in order to publish and share your posts. {{resetEmailLink}}Resend email{{/resetEmailLink}} or {{changeEmailLink}}change email address{{/changeEmailLink}}',
-						{
-							args: { email: email },
-							components: {
-								resetEmailLink: <a href="#" />,
-								changeEmailLink: <a href="#" />,
-							},
-						}
-					) }
-				</p>
-			</div>
-			<button className="launchpad__email-validation-banner-close-button" onClick={ closeBanner }>
-				<CloseIcon />
-			</button>
-		</div>
-	);
-};
 
 const CheckmarkIcon = () => (
 	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -67,5 +42,60 @@ const CloseIcon = () => (
 		/>
 	</svg>
 );
+
+const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerProps ) => {
+	const resendEmailNotice = 'resend-verification-email';
+	const dispatch = useDispatch();
+	const resendEmail = useSendEmailVerification();
+	const translate = useTranslate();
+
+	const handleResend = async () => {
+		try {
+			const result = await resendEmail();
+			if ( result.success ) {
+				dispatch(
+					successNotice( translate( 'Verification email resent. Please check your inbox.' ), {
+						id: resendEmailNotice,
+						duration: 4000,
+					} )
+				);
+				return;
+			}
+		} catch ( Error ) {}
+		dispatch(
+			errorNotice( translate( "Couldn't resend verification email. Please try again." ), {
+				id: resendEmailNotice,
+			} )
+		);
+	};
+
+	return (
+		<div className="launchpad__email-validation-banner">
+			<div className="launchpad__email-validation-banner-content">
+				<CheckmarkIcon />
+				<p>
+					{ translate(
+						'Make sure to validate the email we sent to %(email) in order to publish and share your posts. {{resendEmailLink}}Resend email{{/resendEmailLink}} or {{changeEmailLink}}change email address{{/changeEmailLink}}',
+						{
+							args: { email: email },
+							components: {
+								resendEmailLink: (
+									<button
+										className="launchpad__email-validation-banner-content-resend-button"
+										onClick={ handleResend }
+									/>
+								),
+								changeEmailLink: <a href="/me/account" />,
+							},
+						}
+					) }
+				</p>
+			</div>
+			<button className="launchpad__email-validation-banner-close-button" onClick={ closeBanner }>
+				<CloseIcon />
+			</button>
+		</div>
+	);
+};
 
 export default EmailValidationBanner;

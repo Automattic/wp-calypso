@@ -45,6 +45,13 @@
 		gap: 16px;
 		display: flex;
 		align-items: center;
+
+		&-resend-button {
+			color: var(--color-link);
+			padding: 0;
+			font-size: 1rem;
+			cursor: pointer;
+		}
 	}
 
 	&-close-button {
