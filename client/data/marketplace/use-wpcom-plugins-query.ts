@@ -41,9 +41,12 @@ export const getWPCOMPluginsQueryParams = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string
-): [ QueryKey, QueryFunction< { results: Array< { [ plugin: string ]: Plugin } > } > ] => {
+): [ QueryKey, QueryFunction< any[] > ] => {
 	const cacheKey = getCacheKey( type + searchTerm + tag );
-	const fetchFn = () => fetchWPCOMPlugins( type, searchTerm, tag );
+	const fetchFn = () =>
+		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
+			normalizePluginsList( data.results )
+		);
 	return [ cacheKey, fetchFn ];
 };
 
@@ -63,7 +66,6 @@ export const useWPCOMPlugins = (
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
-		select: ( data ) => normalizePluginsList( data.results ),
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,
@@ -96,13 +98,15 @@ export const useWPCOMPlugin = (
 	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< Plugin[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
 	const cacheKey = 'plugins-featured-list';
 	const fetchFn = () =>
-		wpcom.req.get( {
-			path: featuredPluginsApiBase,
-			apiNamespace: pluginsApiNamespace,
-		} );
+		wpcom.req
+			.get( {
+				path: featuredPluginsApiBase,
+				apiNamespace: pluginsApiNamespace,
+			} )
+			.then( normalizePluginsList );
 	return [ cacheKey, fetchFn ];
 };
 
@@ -118,7 +122,6 @@ export const useWPCOMFeaturedPlugins = ( {
 	refetchOnMount = true,
 }: UseQueryOptions = {} ): UseQueryResult => {
 	return useQuery( ...getWPCOMFeaturedPluginsQueryParams(), {
-		select: ( data ) => normalizePluginsList( data ),
 		enabled,
 		staleTime,
 		refetchOnMount,
