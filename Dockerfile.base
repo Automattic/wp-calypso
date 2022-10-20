@@ -48,8 +48,8 @@ RUN apt-get update \
 	&& chmod 0440 /etc/sudoers.d/$user \
 	&& chown $UID /calypso \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& apt autoremove --purge \
-	&& apt autoclean
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean
 
 # Set bash as the default shell
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
@@ -67,8 +67,8 @@ ENV PUPPETEER_SKIP_DOWNLOAD=false
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=false
 ENV DISPLAY=:99
 
-RUN apt update \
-	&& apt install -y --no-install-recommends \
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends \
 		fonts-liberation \
 		# Install non-Latin fonts
 		fonts-noto-cjk \
@@ -91,8 +91,8 @@ RUN apt update \
 		openssl \
 		xauth \
 		xvfb \
-	&& apt autoremove --purge \
-	&& apt autoclean \
+	&& apt-get autoremove --purge \
+	&& apt-get autoclean \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/bin/bash" ]
@@ -104,20 +104,34 @@ FROM base as ci-wpcom
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY --from=cache --chown=$UID /calypso/composer.* /calypso/
 
-RUN apt update && \
-	apt install -y apt-transport-https wget
+RUN apt-get update && \
+	apt-get install -y apt-transport-https wget
 
 # libffi6 is no longer available from apt as of bullseye.
 RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_amd64.deb && \
 	dpkg -i libffi6_3.2.1-8_amd64.deb && \
 	wget https://packages.sury.org/php/apt.gpg -O /etc/apt/trusted.gpg.d/php-sury.gpg && \
 	echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php-sury.list && \
-	apt update && \
- 	apt upgrade -y && \
-	apt install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
+	apt-get update && \
+ 	apt-get upgrade -y && \
+	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
 	composer install
 
 # Install sentry-cli.
 RUN wget -O - https://sentry.io/get-cli/ | bash
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-allure image
+#### This image is used to process Allure reports in Calypso.
+
+FROM base as ci-allure
+# RUN curl -L "https://github.com/allure-framework/allure2/releases/download/2.19.0/allure_2.19.0-1_all.deb" -o "allure.deb"
+
+# RUN ls -la .
+RUN apt-get update && \
+	# apt-get install -y --no-install-recommends software-properties-common awscli
+	apt-get install -y --no-install-recommends awscli openjdk-17-jre && \
+	npm install -g allure-commandline
 
 ENTRYPOINT [ "/bin/bash" ]
