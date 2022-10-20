@@ -42,7 +42,7 @@ export const getWPCOMPluginsQueryParams = (
 	searchTerm?: string,
 	tag?: string
 ): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = getCacheKey( type + searchTerm + tag );
+	const cacheKey = getCacheKey( type + searchTerm + tag + '-normalized' );
 	const fetchFn = () =>
 		fetchWPCOMPlugins( type, searchTerm, tag ).then( ( data: { results: any[] } ) =>
 			normalizePluginsList( data.results )
@@ -99,7 +99,7 @@ export const useWPCOMPlugin = (
 };
 
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = 'plugins-featured-list';
+	const cacheKey = 'plugins-featured-list-normalized';
 	const fetchFn = () =>
 		wpcom.req
 			.get( {
