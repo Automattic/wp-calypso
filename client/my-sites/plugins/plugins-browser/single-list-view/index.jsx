@@ -65,6 +65,7 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
+			listType="discovery"
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
