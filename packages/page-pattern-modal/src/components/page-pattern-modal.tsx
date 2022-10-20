@@ -26,6 +26,7 @@ interface PagePatternModalProps {
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
+	stylesheet?: string;
 	theme?: string;
 	title?: string;
 	description?: string;
@@ -301,6 +302,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 				legendLabel={ groupTitle }
 				patterns={ filteredPatternsList }
 				onPatternSelect={ this.setPattern }
+				stylesheet={ this.props.stylesheet }
 				theme={ this.props.theme }
 				locale={ this.props.locale }
 				siteInformation={ this.props.siteInformation }
