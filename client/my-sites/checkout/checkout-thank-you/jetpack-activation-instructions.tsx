@@ -13,7 +13,6 @@ const JetpackActivationInstructions: React.FC = () => {
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
 					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
 					<span>
-						{ ' ' }
 						{ translate(
 							'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.',
 							{
