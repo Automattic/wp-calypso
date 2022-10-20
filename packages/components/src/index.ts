@@ -24,3 +24,5 @@ export { default as WordPressLogo } from './wordpress-logo';
 export { default as JetpackLogo } from './jetpack-logo';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
+export { default as HorizontalBarList } from './horizontal-bar-list';
+export { default as HorizontalBarListItem } from './horizontal-bar-list/horizontal-bar-grid-item';
