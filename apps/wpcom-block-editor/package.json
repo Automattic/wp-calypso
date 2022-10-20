@@ -31,7 +31,7 @@
 		"@wordpress/data": "^6.9.0",
 		"@wordpress/dom-ready": "^3.9.0",
 		"@wordpress/edit-post": "^6.6.0",
-		"@wordpress/edit-site": "^4.6.0",
+		"@wordpress/edit-site": "^4.17.0",
 		"@wordpress/editor": "^12.8.0",
 		"@wordpress/element": "^4.7.0",
 		"@wordpress/hooks": "^3.9.0",
