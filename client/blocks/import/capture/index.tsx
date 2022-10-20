@@ -27,23 +27,23 @@ const Capture: FunctionComponent< Props > = ( props ) => {
 	const { translate, onInputEnter, onInputChange, onDontHaveSiteAddressClick, hasError } = props;
 
 	return (
-		<div className={ 'import-layout__center' }>
-			<div className={ 'import-layout' }>
-				<div className={ 'import-layout__column' }>
+		<div className="import-layout__center">
+			<div className="import-layout">
+				<div className="import-layout__column">
 					<div className="import__heading">
 						<FormattedHeader
-							align={ 'left' }
+							align="left"
 							headerText={ translate( 'Where will you import from?' ) }
 							subHeaderText={ translate(
 								'After a brief scan, we’ll prompt with what we can import from your website.'
 							) }
 						/>
-						<div className={ 'step-wrapper__header-image' }>
+						<div className="step-wrapper__header-image">
 							<img alt="Light import" src={ illustrationImg } aria-hidden="true" />
 						</div>
 					</div>
 				</div>
-				<div className={ 'import-layout__column' }>
+				<div className="import-layout__column">
 					<CaptureInput
 						onInputEnter={ onInputEnter }
 						onInputChange={ onInputChange }
@@ -95,7 +95,9 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	};
 
 	const recordScanningEvent = () => {
-		if ( ! isAnalyzing ) return;
+		if ( ! isAnalyzing ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,
@@ -104,7 +106,9 @@ const CaptureStep: React.FunctionComponent< StepProps > = ( {
 	};
 
 	const recordScanningErrorEvent = () => {
-		if ( ! analyzerError ) return;
+		if ( ! analyzerError ) {
+			return;
+		}
 
 		recordTracksEvent( trackEventName, {
 			...trackEventParams,

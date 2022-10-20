@@ -39,3 +39,4 @@ export { tryAndCustomize } from 'calypso/state/themes/actions/try-and-customize'
 export { tryAndCustomizeTheme } from 'calypso/state/themes/actions/try-and-customize-theme';
 export { uploadTheme } from 'calypso/state/themes/actions/upload-theme';
 export { updateThemes } from 'calypso/state/themes/actions/theme-update';
+export { upsellCardDisplayed } from 'calypso/state/themes/actions/upsell-card-displayed';

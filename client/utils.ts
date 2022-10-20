@@ -45,7 +45,9 @@ export function redirectToLaunchpad(
  * @returns {boolean}
  */
 export function isEligibleForProductSampling( userId: number, percentage: number ) {
-	if ( percentage >= 100 ) return true;
+	if ( percentage >= 100 ) {
+		return true;
+	}
 	const userSegment = userId % 100;
 
 	return userSegment < percentage;

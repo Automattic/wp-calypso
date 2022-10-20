@@ -5,10 +5,12 @@ import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
 import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 
 const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 	const translate = useTranslate();
+	const color = useQuery().get( 'color' );
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const flow = useFlowParam();
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
@@ -27,11 +29,12 @@ const LaunchpadSitePreview = ( { siteSlug }: { siteSlug: string | null } ) => {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: true,
+			...( color && { preview_accent_color: color } ),
 		} );
 	}
 
 	return (
-		<div className={ 'launchpad__site-preview-wrapper' }>
+		<div className="launchpad__site-preview-wrapper">
 			<WebPreview
 				className="launchpad__-web-preview"
 				showDeviceSwitcher={ true }

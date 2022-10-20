@@ -10,6 +10,8 @@ import { Dispatch, SetStateAction, useState, useRef } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormInput from 'calypso/components/forms/form-text-input';
+import PremiumBadge from 'calypso/components/premium-badge';
+import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { tip } from 'calypso/signup/icons';
 
 import './style.scss';
@@ -47,6 +49,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 	const locale = useLocale();
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	return (
 		<>
@@ -79,6 +82,14 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					{ hasTranslation( 'Favorite color' ) || locale === 'en'
 						? __( 'Favorite color' )
 						: __( 'Accent color' ) }
+					{ shouldLimitGlobalStyles && (
+						<PremiumBadge
+							className="accent-color-control__premium-badge"
+							tooltipText={ __(
+								'Upgrade to a paid plan for color changes to take effect and to unlock the advanced design customization'
+							) }
+						/>
+					) }
 				</FormLabel>
 				<FormInput
 					inputRef={ accentColorRef }

@@ -3,11 +3,11 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { memo, useState } from 'react';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
+import { useInView } from 'calypso/lib/use-in-view/index';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
@@ -37,6 +37,8 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	letter-spacing: -0.24px;
 	color: var( --studio-gray-60 );
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
@@ -45,7 +47,6 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 `;
 
 const SiteListTile = styled( ListTile )`
-	line-height: initial;
 	margin-inline-end: 0;
 
 	${ MEDIA_QUERIES.mediumOrSmaller } {
@@ -71,18 +72,23 @@ const ListTileSubtitle = styled.div`
 `;
 
 const SitePlan = styled.div`
-	display: flex;
-	line-height: 16px;
+	display: inline;
+	> * {
+		vertical-align: middle;
+		line-height: normal;
+	}
 `;
 
 const SitePlanIcon = styled.div`
+	display: inline-block;
 	margin-inline-end: 6px;
 `;
 
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableDataCellElement >( () => setInViewOnce( true ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
 
@@ -103,7 +109,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail site={ site } />
+							<SiteItemThumbnail displayMode="list" site={ site } />
 						</ListTileLeading>
 					}
 					title={
@@ -130,6 +136,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
+
 					{ site.plan?.product_name_short }
 				</SitePlan>
 			</Column>

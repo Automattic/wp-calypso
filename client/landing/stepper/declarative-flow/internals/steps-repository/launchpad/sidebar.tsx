@@ -1,11 +1,13 @@
 import { ProgressBar } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
+import Badge from 'calypso/components/badge';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { ResponseDomain } from 'calypso/lib/domains/types';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
 import { tasks } from './tasks';
@@ -13,6 +15,7 @@ import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
 type SidebarProps = {
+	sidebarDomain: ResponseDomain;
 	siteSlug: string | null;
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
@@ -42,7 +45,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
 }
 
-const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
+const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
 	const flow = useFlowParam();
@@ -57,8 +60,8 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
 
-	if ( siteSlug ) {
-		[ siteName, topLevelDomain ] = getUrlInfo( siteSlug );
+	if ( sidebarDomain ) {
+		[ siteName, topLevelDomain ] = getUrlInfo( sidebarDomain?.domain );
 	}
 
 	return (
@@ -86,10 +89,17 @@ const Sidebar = ( { siteSlug, submit, goNext, goToStep }: SidebarProps ) => {
 				<p className="launchpad__sidebar-description">{ subtitle }</p>
 				<div className="launchpad__url-box">
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
-					<div>
+					<div className="launchpad__url-box-domain-text">
 						<span>{ siteName }</span>
 						<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
 					</div>
+					{ sidebarDomain?.isWPCOMDomain && (
+						<a href={ `/domains/add/${ siteSlug }` }>
+							<Badge className="launchpad__domain-upgrade-badge" type="info-blue">
+								{ translate( 'Customize' ) }
+							</Badge>
+						</a>
+					) }
 				</div>
 				<Checklist tasks={ enhancedTasks } />
 			</div>

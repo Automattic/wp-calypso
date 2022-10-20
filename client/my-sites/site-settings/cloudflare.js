@@ -61,7 +61,7 @@ const Cloudflare = () => {
 						<UpsellNudge
 							title={ translate( 'Available on Business plan or higher' ) }
 							feature={ WPCOM_FEATURES_CDN }
-							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
+							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
 							showIcon={ true }
 							forceDisplay
 						/>
@@ -100,7 +100,7 @@ const Cloudflare = () => {
 								'A CDN (Content Delivery Network) optimizes your content to provide users with the fastest experience.'
 							) }
 							feature={ WPCOM_FEATURES_CLOUDFLARE_CDN }
-							event={ 'calypso_settings_cloudflare_cdn_upsell_nudge_click' }
+							event="calypso_settings_cloudflare_cdn_upsell_nudge_click"
 							showIcon={ true }
 							forceDisplay
 						/>

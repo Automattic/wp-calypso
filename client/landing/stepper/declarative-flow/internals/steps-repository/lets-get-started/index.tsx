@@ -8,7 +8,7 @@ const LetsGetStarted: Step = function LetsGetStarted( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'letsGetStarted' }
+			stepName="letsGetStarted"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

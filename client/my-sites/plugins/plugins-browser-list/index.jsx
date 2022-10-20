@@ -21,6 +21,7 @@ const PluginsBrowserList = ( {
 	site,
 	currentSites,
 	listName,
+	listType,
 	browseAllLink,
 	size,
 	search,
@@ -39,6 +40,7 @@ const PluginsBrowserList = ( {
 					plugin={ plugin }
 					currentSites={ currentSites }
 					listName={ listName }
+					listType={ listType }
 					variant={
 						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}
@@ -90,6 +92,7 @@ const PluginsBrowserList = ( {
 					subtitle={ subtitle }
 					resultCount={ resultCount }
 					browseAllLink={ browseAllLink }
+					listName={ listName }
 				/>
 			) }
 			{ listName === 'paid' && (

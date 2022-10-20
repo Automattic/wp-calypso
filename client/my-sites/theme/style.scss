@@ -4,7 +4,7 @@
 
 .theme__sheet-bar {
 	background-color: var(--color-masterbar-item-hover-background);
-	color: white;
+	color: var(--studio-white);
 	height: 180px;
 	padding: 0;
 	margin: 0;
@@ -20,7 +20,7 @@
 	line-height: 1;
 
 	.theme__sheet-badge-beta {
-		background-color: white;
+		background-color: var(--studio-white);
 		font-weight: bold;
 		margin-left: 10px;
 	}
@@ -127,7 +127,7 @@
 	box-shadow:
 		0 0 0 1px rgba(var(--color-neutral-dark-rgb), 0),
 		0 2px 8px 0 rgba(var(--color-neutral-dark-rgb), 0.5);
-	background-color: transparentize(white, 0.5);
+	background-color: transparentize(rgb(255, 255, 255), 0.5);
 	transition: all 200ms ease-in-out;
 
 	// with width: 98%, gives 4:3 ratio before the image loads

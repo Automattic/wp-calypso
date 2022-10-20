@@ -173,7 +173,7 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "#055d9c",
+	"theme_color": "",
 	"reskinned_flows": [
 		"launch-site",
 		"onboarding",

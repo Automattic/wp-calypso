@@ -19,7 +19,9 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import FormattedHeader from 'calypso/components/formatted-header';
+import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
+import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -254,6 +256,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
 
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
 	function upgradePlan() {
 		if ( selectedDesign ) {
 			recordTracksEvent(
@@ -290,11 +294,32 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			} );
 		}
 
-		const plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
+			( set ) => set.slug === 'woo-on-plans'
+		);
+
+		let plan;
+		if ( isEnabled( 'themes/plugin-bundling' ) && themeHasWooCommerce ) {
+			plan = 'business-bundle';
+		} else {
+			plan = isEligibleForProPlan && isEnabled( 'plans/pro-plan' ) ? 'pro' : 'premium';
+		}
 
 		if ( siteSlugOrId ) {
 			const params = new URLSearchParams();
-			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
+
+			// When the user is done with checkout, send them back to the current url
+			const destUrl = new URL( window.location.href );
+			const destSearchP = destUrl.searchParams;
+
+			// If we have a theme selected, add &theme=slug to the query params
+			if ( selectedDesign?.slug ) {
+				destSearchP.set( 'theme', selectedDesign?.slug );
+				destUrl.search = destSearchP.toString();
+			}
+
+			const destString = destUrl.toString().replace( window.location.origin, '' );
+			params.append( 'redirect_to', destString );
 
 			// The theme upsell link does not work with siteId and requires a siteSlug.
 			// See https://github.com/Automattic/wp-calypso/pull/64899
@@ -388,6 +413,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		recordTracksEvent( eventName, tracksProps );
 	}
 
+	function showGlobalStylesPremiumBadge() {
+		if ( ! shouldLimitGlobalStyles ) {
+			return null;
+		}
+
+		return (
+			<PremiumBadge
+				className="design-picker__premium-badge"
+				tooltipText={ translate(
+					'You can try this premium style out before upgrading your plan.'
+				) }
+			/>
+		);
+	}
+
 	// ********** Main render logic
 
 	// Don't render until we've fetched the designs from the backend.
@@ -454,6 +494,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 						onSelectVariation={ previewDesignVariation }
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
+						showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 					/>
 				) : (
 					<WebPreview
@@ -494,13 +535,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
-				className={ 'design-setup__preview' }
+				className="design-setup__preview"
 				nextLabelText={ pickDesignText }
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
 				formattedHeader={
 					<FormattedHeader
-						id={ 'design-setup-header' }
+						id="design-setup-header"
 						headerText={ headerDesignTitle }
 						align={ isMobile ? 'left' : 'center' }
 					/>
@@ -513,13 +554,15 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	const heading = (
 		<FormattedHeader
-			id={ 'step-header' }
+			id="step-header"
 			headerText={ translate( 'Pick a design' ) }
 			subHeaderText={ translate(
 				'One of these homepage options could be great to start with. You can always change later.'
 			) }
 		/>
 	);
+
+	const currentPlanFeatures = site?.plan?.features.active ?? [];
 
 	const stepContent = (
 		<UnifiedDesignPicker
@@ -534,6 +577,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
 			purchasedThemes={ purchasedThemes }
+			currentPlanFeatures={ currentPlanFeatures }
 		/>
 	);
 
@@ -541,7 +585,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		<StepContainer
 			stepName={ STEP_NAME }
 			className="unified-design-picker__has-categories"
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			hideFormattedHeader
 			backLabelText={ translate( 'Back' ) }
 			skipLabelText={

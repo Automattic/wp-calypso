@@ -96,6 +96,17 @@ export const FEATURE_SITE_BACKUPS_AND_RESTORE = 'site-backups-and-restore';
 export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
+
+/* START - PLAN TAGLINE EXPERIMENT */
+export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
+export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
+export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
+export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
+export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
+export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
+/* END - PLAN TAGLINE EXPERIMENT */
+
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';

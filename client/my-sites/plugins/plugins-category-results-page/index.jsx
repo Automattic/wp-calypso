@@ -13,7 +13,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 	} );
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || category;
+	const categoryName = categories[ category ]?.title || category;
 	const categoryDescription = categories[ category ]?.description;
 	const translate = useTranslate();
 
@@ -37,6 +37,7 @@ const PluginsCategoryResultsPage = ( { category, siteSlug, sites } ) => {
 				resultCount={ resultCount }
 				plugins={ plugins }
 				listName={ category }
+				listType="browse"
 				site={ siteSlug }
 				showPlaceholders={ isFetching }
 				currentSites={ sites }

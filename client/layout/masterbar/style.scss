@@ -89,7 +89,7 @@ $masterbar-color-secondary: #101517;
 			.masterbar__item-content {
 				display: flex;
 				align-items: center;
-				color: white;
+				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 				font-weight: 400;
 

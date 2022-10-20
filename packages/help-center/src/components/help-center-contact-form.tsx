@@ -302,6 +302,7 @@ export const HelpCenterContactForm = () => {
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: overflow,
+						source: 'help-center',
 						blog_url: supportSite.URL,
 					} )
 						.then( () => {

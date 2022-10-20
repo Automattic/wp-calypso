@@ -126,7 +126,7 @@ export const EmailNonDomainOwnerMessage = ( props: EmailNonDomainOwnerMessagePro
 					<p>{ reasonText }</p>
 				</PromoCard>
 			) : (
-				<p className={ 'email-non-domain-owner-message__non-owner-message' }>{ reasonText }</p>
+				<p className="email-non-domain-owner-message__non-owner-message">{ reasonText }</p>
 			) }
 			<TrackComponentView
 				eventName="calypso_email_providers_nonowner_impression"

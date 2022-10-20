@@ -215,7 +215,7 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 				<Card className="transfer-domain-to-other-site__card">
 					<p>{ this.getMessage() }</p>
 					<SiteSelector
-						className={ 'transfer-domain-to-other-site__site-selector' }
+						className="transfer-domain-to-other-site__site-selector"
 						filter={ this.isSiteEligible }
 						sites={ this.props.sites }
 						onSiteSelect={ this.handleSiteSelect }

@@ -26,6 +26,10 @@ export interface NewPostParams {
 	content?: string;
 }
 
+export interface SettingsParams {
+	[ key: string ]: string | number;
+}
+
 /* Response Interfaces */
 
 export interface BearerTokenResponse {

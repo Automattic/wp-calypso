@@ -43,7 +43,7 @@ export const EmailPlanWarningNotice = ( props: EmailPlanWarningNoticeProps ) => 
 			return (
 				<EmailNonDomainOwnerMessage
 					domain={ domain }
-					source={ 'email-management' }
+					source="email-management"
 					usePromoCard={ false }
 					selectedSite={ selectedSite }
 				/>

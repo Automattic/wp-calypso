@@ -76,7 +76,7 @@ export default function SocialProfilesStep( props: Props ) {
 					onSkip={ onSkip }
 				/>
 			}
-			align={ 'left' }
+			align="left"
 			hideSkip
 			isHorizontalLayout={ true }
 			isWideLayout={ true }

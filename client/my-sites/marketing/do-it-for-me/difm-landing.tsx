@@ -337,7 +337,7 @@ export default function DIFMLanding( {
 		<>
 			<Wrapper>
 				<ContentSection>
-					<Header align={ 'left' } headerText={ headerText } subHeaderText={ subHeaderText } />
+					<Header align="left" headerText={ headerText } subHeaderText={ subHeaderText } />
 					<VerticalStepProgress>
 						<Step
 							index={ translate( '1' ) }
