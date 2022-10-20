@@ -62,7 +62,7 @@ const PluginsSearchResultPage = ( {
 			);
 		}
 
-		if ( searchTerm && pluginsPagination ) {
+		if ( searchTerm && pluginsPagination.page ) {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_results_page', {
 					search_term: searchTerm,
@@ -72,7 +72,7 @@ const PluginsSearchResultPage = ( {
 				} )
 			);
 		}
-	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
+	}, [ searchTerm, pluginsPagination.page, pluginsPagination.results, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 		let title = translate( 'Search results for "%(searchTerm)s"', {
