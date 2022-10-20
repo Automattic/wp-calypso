@@ -84,7 +84,7 @@ class StatsListItem extends Component {
 			return;
 		}
 
-		debug( 'props', this.props ); // What is this for?
+		debug( 'props', this.props );
 		if ( ! this.state.disabled ) {
 			if ( this.props.children ) {
 				const moduleState = this.state.active ? 'Collapsed ' : 'Expanded ';
@@ -96,12 +96,10 @@ class StatsListItem extends Component {
 			}
 
 			if ( 'function' === typeof this.props.itemClickHandler ) {
-				// Looks like this condition is never met.
 				event.stopPropagation();
 				this.props.itemClickHandler( event, this.props.data );
 			} else if ( this.props.data.page && ! this.props.children ) {
 				gaEvent = [ 'Clicked', moduleName, 'Summary Link' ].join( ' ' );
-				// this happens on post click
 				page( this.props.data.page );
 			} else if ( this.props.data.link && ! this.props.children && ! this.getSiteIdForFollow() ) {
 				gaEvent = [ 'Clicked', moduleName, 'External Link' ].join( ' ' );
