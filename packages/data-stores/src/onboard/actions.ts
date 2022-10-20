@@ -6,6 +6,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
+import { DomainItem } from './types';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
@@ -382,14 +383,19 @@ export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => (
 	ecommerceFlowRecurType,
 } );
 
-export const setDomainForm = ( step ) => {
+export const setDomainForm = ( step: Record< string, string > ) => {
 	const lastUpdated = Date.now();
 
 	return {
-		type: 'SET_DOMAIN_FORM',
+		type: 'SET_DOMAIN_FORM' as const,
 		step: { ...step, lastUpdated },
 	};
 };
+
+export const setDomainItem = ( domainItem: DomainItem | undefined ) => ( {
+	type: 'SET_DOMAIN_ITEM' as const,
+	domainItem,
+} );
 
 export const setSignupValues = ( signupValues: object ) => ( {
 	type: 'SET_SIGNUP_VALUES' as const,
@@ -427,7 +433,6 @@ export type OnboardAction = ReturnType<
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction
-	| typeof setMultiplePendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
 	| typeof setStepProgress
@@ -439,6 +444,7 @@ export type OnboardAction = ReturnType<
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
 	| typeof setDomainForm
+	| typeof setDomainItem
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
