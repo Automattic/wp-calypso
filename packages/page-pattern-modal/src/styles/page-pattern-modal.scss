@@ -238,6 +238,7 @@ $sidebar-width-desktop: 324px;
 	margin: 0;
 	margin-top: 35px;
 	overflow: auto;
+	padding: 2px 0 2px 14px;
 
 	@media screen and ( min-width: $breakpoint-mobile ) {
 		display: block;
