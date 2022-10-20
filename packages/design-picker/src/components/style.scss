@@ -254,6 +254,10 @@
 			margin: 0;
 		}
 	}
+	.design-picker__override-premium-badge .premium-badge {
+		background: var(--studio-black);
+		padding: 0 10px 0 9px;
+	}
 
 	.design-picker__button-link.components-button.is-link {
 		text-decoration: none;

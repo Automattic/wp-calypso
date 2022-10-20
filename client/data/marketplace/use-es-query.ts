@@ -132,7 +132,11 @@ export const useESPluginsInfinite = (
 				return {
 					...data,
 					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
-					pagination: { results: data.pages[ 0 ]?.data?.total },
+					pagination: {
+						results: data.pages[ 0 ]?.data?.total,
+						pages: data?.pages || [],
+						page: data?.pageParams?.length || 0,
+					},
 				};
 			},
 			getNextPageParam: ( lastPage ) => {

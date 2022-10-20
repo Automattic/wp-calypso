@@ -29,11 +29,11 @@ const PromotePost = () => {
 		<>
 			{ showPromotePost && (
 				<Task
-					title={ translate( 'Promote your posts' ) }
+					title={ translate( 'Promote your posts and pages' ) }
 					description={ translate(
-						'Reach more people promoting a post to the larger WordPress.com community of blogs and sites with our ad delivery system.'
+						'Increase your reach by promoting your work to the larger WordPress.com community of blogs and sites.'
 					) }
-					actionText={ translate( 'Promote a post' ) }
+					actionText={ translate( 'Start promoting' ) }
 					actionUrl={ `/advertising/${ selectedSiteSlug }` }
 					actionOnClick={ trackDspAction }
 					completeOnStart={ false }

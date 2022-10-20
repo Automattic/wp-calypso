@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -47,10 +48,12 @@ const RestoreButton = ( { disabled, rewindId, primary } ) => {
 		areJetpackCredentialsInvalid( state, siteId, 'main' )
 	);
 
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
 	const isRestoreDisabled =
-		disabled || needsCredentials || isRestoreInProgress || areCredentialsInvalid;
+		disabled || needsCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 	const href = ! isRestoreDisabled ? backupRestorePath( siteSlug, rewindId ) : undefined;
 	const onRestore = () =>
 		dispatch( recordTracksEvent( 'calypso_jetpack_backup_restore', { rewind_id: rewindId } ) );

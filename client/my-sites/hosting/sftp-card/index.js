@@ -33,6 +33,7 @@ import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-ho
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SshKeys from './ssh-keys';
 
 import './style.scss';
 
@@ -385,6 +386,9 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
+					{ siteHasSshFeature && isSshAccessEnabled && (
+						<SshKeys disabled={ disabled } siteId={ siteId } />
+					) }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }

@@ -10,6 +10,7 @@ export const SITE_EXCERPT_REQUEST_FIELDS = [
 	'icon',
 	'name',
 	'options',
+	'p2_thumbnail_elements',
 	'plan',
 	'jetpack',
 	'is_wpcom_atomic',

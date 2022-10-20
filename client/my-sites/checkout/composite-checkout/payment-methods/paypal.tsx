@@ -206,6 +206,7 @@ function PayPalSubmitButton( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 } ) {
+	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const { transactionStatus } = useTransactionStatus();
 	const postalCode = useSelect( ( select ) => select( storeKey )?.getPostalCode() );
@@ -229,6 +230,7 @@ function PayPalSubmitButton( {
 			buttonType="paypal"
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
+			aria-label={ __( 'Pay with PayPal' ) }
 		>
 			<PayPalButtonContents formStatus={ formStatus } transactionStatus={ transactionStatus } />
 		</Button>

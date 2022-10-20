@@ -22,7 +22,7 @@ const SharingConnections = ( { translate, isP2Hub, siteId } ) => {
 			{ ! isP2Hub && (
 				<SharingServicesGroup
 					type="publicize"
-					title={ translate( 'Publicize posts {{learnMoreLink/}}', {
+					title={ translate( 'Share posts with Jetpack Social {{learnMoreLink/}}', {
 						components: {
 							learnMoreLink: <InlineSupportLink supportContext="publicize" showText={ false } />,
 						},

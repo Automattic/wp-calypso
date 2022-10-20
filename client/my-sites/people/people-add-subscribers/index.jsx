@@ -2,7 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { get, defer } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -20,6 +20,7 @@ import {
 	getNumberOfInvitesFoundForSite,
 	isDeletingAnyInvite,
 } from 'calypso/state/invites/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -75,10 +76,18 @@ class PeopleInvites extends PureComponent {
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
 							flowName="people"
+							showTitle={ false }
+							showFormManualListLabel={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
-								page.redirect( `/people/email-followers/${ this.props.site.slug }` );
+								defer( () => {
+									this.props.successNotice(
+										this.props.translate(
+											'Your subscriber list is being processed. Please check your email for status.'
+										)
+									);
+								} );
 							} }
 						/>
 					</EmailVerificationGate>
@@ -88,19 +97,24 @@ class PeopleInvites extends PureComponent {
 	}
 }
 
-export default connect( ( state ) => {
-	const site = getSelectedSite( state );
-	const siteId = site && site.ID;
+export default connect(
+	( state ) => {
+		const site = getSelectedSite( state );
+		const siteId = site && site.ID;
 
-	return {
-		site,
-		isJetpack: isJetpackSite( state, siteId ),
-		isPrivate: isPrivateSite( state, siteId ),
-		requesting: isRequestingInvitesForSite( state, siteId ),
-		pendingInvites: getPendingInvitesForSite( state, siteId ),
-		acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
-		totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
-		deleting: isDeletingAnyInvite( state, siteId ),
-		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
-	};
-} )( localize( PeopleInvites ) );
+		return {
+			site,
+			isJetpack: isJetpackSite( state, siteId ),
+			isPrivate: isPrivateSite( state, siteId ),
+			requesting: isRequestingInvitesForSite( state, siteId ),
+			pendingInvites: getPendingInvitesForSite( state, siteId ),
+			acceptedInvites: getAcceptedInvitesForSite( state, siteId ),
+			totalInvitesFound: getNumberOfInvitesFoundForSite( state, siteId ),
+			deleting: isDeletingAnyInvite( state, siteId ),
+			canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		};
+	},
+	{
+		successNotice: successNotice,
+	}
+)( localize( PeopleInvites ) );

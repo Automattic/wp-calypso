@@ -3,12 +3,12 @@ import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { memo } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { memo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
+import { useInView } from 'calypso/lib/use-in-view/index';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
@@ -94,7 +94,8 @@ const PlanRenewNagContainer = styled.div`
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
+	const [ inViewOnce, setInViewOnce ] = useState( false );
+	const ref = useInView< HTMLTableDataCellElement >( () => setInViewOnce( true ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -116,7 +117,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
-							<SiteItemThumbnail site={ site } />
+							<SiteItemThumbnail displayMode="list" site={ site } />
 						</ListTileLeading>
 					}
 					title={

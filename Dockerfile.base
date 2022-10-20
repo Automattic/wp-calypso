@@ -70,7 +70,9 @@ ENV DISPLAY=:99
 RUN apt update \
 	&& apt install -y --no-install-recommends \
 		fonts-liberation \
-		fonts-noto \
+		# Install non-Latin fonts
+		fonts-noto-cjk \
+		fonts-noto-core \
 		git-restore-mtime \
 		gtk2-engines-pixbuf \
 		libappindicator3-1 \
@@ -88,12 +90,6 @@ RUN apt update \
 		libxtst6 \
 		openssl \
 		xauth \
-		xdg-utils \
-		xfonts-100dpi \
-		xfonts-75dpi \
-		xfonts-base \
-		xfonts-cyrillic \
-		xfonts-scalable \
 		xvfb \
 	&& apt autoremove --purge \
 	&& apt autoclean \
