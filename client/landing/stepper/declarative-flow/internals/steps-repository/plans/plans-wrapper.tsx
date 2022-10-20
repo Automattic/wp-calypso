@@ -3,14 +3,13 @@ import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { addPlanToCart } from '@automattic/onboarding';
 import { useMediaQuery } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
-import { useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { NEWSLETTER_FLOW, Notice } from 'calypso/../packages/onboarding/src';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
@@ -20,7 +19,6 @@ import { ProvideExperimentData } from 'calypso/lib/explat';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
@@ -38,19 +36,13 @@ interface Props {
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { userLoggedIn } = useSelector( ( state ) => {
-		return {
-			userLoggedIn: isUserLoggedIn( state ),
-		};
-	} );
-
 	const { signupValues } = useSelect( ( select ) => {
 		return {
 			signupValues: select( ONBOARD_STORE ).getSignupValues(),
 		};
 	} );
 
-	const { setMultiplePendingAction, setSignupValues } = useDispatch( ONBOARD_STORE );
+	const { setPlanSlug } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const locale = useLocale();
@@ -60,7 +52,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const disableBloggerPlanWithNonBlogDomain = undefined;
 	const hideFreePlan = signupValues?.shouldHideFreePlan;
 	const isLaunchPage = undefined;
-	const showTreatmentPlansReorderTest = false;
 	const isReskinned = true;
 	const customerType = 'personal';
 	const positionInFlow = undefined;
@@ -70,38 +61,27 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const translate = useTranslate();
 
-	const onSelectPlan = async ( cartItem: any ) => {
-		const { stepSectionName, stepName, flowName } = props;
-
-		if ( cartItem ) {
+	const onSelectPlan = async ( selectedPlan: any ) => {
+		if ( selectedPlan ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
-				product_slug: cartItem.product_slug,
-				free_trial: cartItem.free_trial,
-				from_section: stepSectionName ? stepSectionName : 'default',
+				product_slug: selectedPlan?.product_slug,
+				free_trial: selectedPlan?.free_trial,
+				from_section: 'default',
 			} );
 		} else {
 			recordTracksEvent( 'calypso_signup_free_plan_select', {
-				from_section: stepSectionName ? stepSectionName : 'default',
+				from_section: 'default',
 			} );
 		}
 
-		const themeSlugWithRepo = flowName === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx';
-		const comingSoon = flowName === NEWSLETTER_FLOW ? 0 : 1;
-
-		//Do we need to add cartItem here?
-		setSignupValues( { comingSoon, themeSlugWithRepo } );
-
-		setMultiplePendingAction( async ( dependencies ) => {
-			const { siteSlug } = dependencies;
-			await addPlanToCart( siteSlug, cartItem, flowName, userLoggedIn, themeSlugWithRepo );
-
-			return {
-				siteSlug,
-				cartItem,
-			};
-		}, 'plans' );
-
+		setPlanSlug( selectedPlan?.product_slug );
 		props.onSubmit?.();
+
+		// const themeSlugWithRepo = flowName === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx';
+		// const comingSoon = flowName === NEWSLETTER_FLOW ? 0 : 1;
+
+		//Do we need to add selectedPlan here?
+		// setSignupValues( { comingSoon, themeSlugWithRepo } );
 	};
 
 	const getDomainName = () => {
@@ -181,7 +161,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 								plansWithScroll={ isDesktop }
 								planTypes={ planTypes }
 								flowName={ flowName }
-								showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
+								showTreatmentPlansReorderTest={ false }
 								isAllPaidPlansShown={ true }
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions

@@ -220,6 +220,11 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	planProductId,
 } );
 
+export const setPlanSlug = ( planSlug: string | null ) => ( {
+	type: 'SET_PLAN_SLUG' as const,
+	planSlug,
+} );
+
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
 	type: 'SET_RANDOMIZED_DESIGNS' as const,
 	randomizedDesigns,
@@ -452,4 +457,5 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setSignupValues
+	| typeof setPlanSlug
 >;

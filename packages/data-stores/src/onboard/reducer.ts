@@ -216,6 +216,16 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
+const planSlug: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_PLAN_SLUG' ) {
+		return action.planSlug;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const siteAccentColor: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_SITE_ACCENT_COLOR' ) {
 		return action.siteAccentColor;
@@ -492,6 +502,7 @@ const reducer = combineReducers( {
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	planSlug,
 } );
 
 export type State = ReturnType< typeof reducer >;

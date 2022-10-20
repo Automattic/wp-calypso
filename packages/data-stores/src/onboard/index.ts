@@ -55,6 +55,7 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
+			'planSlug',
 		],
 	} );
 	isRegistered = true;
