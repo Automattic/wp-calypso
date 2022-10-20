@@ -1,3 +1,4 @@
+import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
@@ -30,16 +31,6 @@ const CheckmarkIcon = () => (
 				<rect width="20" height="20" fill="white" />
 			</clipPath>
 		</defs>
-	</svg>
-);
-
-const CloseIcon = () => (
-	<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path
-			d="M3.60296 3.33398L12.6666 12.6673M3.33325 12.6673L12.3969 3.33398"
-			stroke="#A7AAAD"
-			strokeWidth="1.5"
-		/>
 	</svg>
 );
 
@@ -92,7 +83,11 @@ const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerPro
 				</p>
 			</div>
 			<button className="launchpad__email-validation-banner-close-button" onClick={ closeBanner }>
-				<CloseIcon />
+				<Gridicon
+					className="launchpad__email-validation-banner-close-button-close-icon"
+					icon="cross"
+					size={ 16 }
+				/>
 			</button>
 		</div>
 	);
