@@ -52,6 +52,7 @@ export function register(): typeof STORE_KEY {
 			'siteLogo',
 			'siteAccentColor',
 			'storeType',
+			'planSlug',
 		],
 	} );
 	isRegistered = true;
