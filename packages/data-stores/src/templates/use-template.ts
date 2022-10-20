@@ -6,7 +6,7 @@ interface Options extends QueryOptions< Template, unknown > {
 	enabled?: boolean;
 }
 
-const useTemplates = (
+const useTemplate = (
 	siteId: string | number,
 	templateId: string,
 	queryOptions: Options = {}
@@ -26,4 +26,4 @@ const useTemplates = (
 	);
 };
 
-export default useTemplates;
+export default useTemplate;
