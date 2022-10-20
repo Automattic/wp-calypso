@@ -1018,12 +1018,13 @@ object CalypsoPreReleaseDashboard : BuildType({
 		bashNodeScript {
 			name = "Install AWS CLI"
 			scriptContent = """
-				// curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
-				// unzip awscliv2.zip \
-				// sudo ./aws/install
-
-				// aws --version
 				ls -la %teamcity.build.checkoutDir%/bin/
+				curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+				unzip awscliv2.zip \
+				sudo ./aws/install
+
+				aws --version
+
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
