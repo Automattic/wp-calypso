@@ -14,9 +14,9 @@ import { infoNotice } from 'calypso/state/notices/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { recordEvent } from '../helpers';
-import { PageCardInfoBadge } from '../page-card-info';
 import Placeholder from '../placeholder';
 import type { SiteDetails } from '@automattic/data-stores';
+import './style.scss';
 
 interface Props {
 	site: SiteDetails;
@@ -68,7 +68,8 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 	}
 
 	return (
-		<CompactCard key={ id } className="page">
+		<CompactCard key={ id } className="page is-virtual">
+			{ isHomepage && <Gridicon icon="house" size={ 16 } className="page__icon" /> }
 			<div className="page__main">
 				<a
 					className="page__title"
@@ -102,8 +103,7 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 					) }
 				</a>
 				<div className="page-card-info">
-					{ description && <span>{ description }</span> }
-					{ isHomepage && <PageCardInfoBadge icon="house" text={ translate( 'Homepage' ) } /> }
+					{ description && <span className="page-card-info__description">{ description }</span> }
 				</div>
 			</div>
 			<EllipsisMenu position="bottom left" onToggle={ handleMenuToggle }>

@@ -214,7 +214,7 @@ class Pages extends Component {
 			blockEditorSettings?.home_template &&
 			/** Under the "Published" tab without any search term or the search term is matched */
 			( ( status === 'publish,private' && ! search ) ||
-				( search && translate( 'Home' ).toLowerCase().includes( search.toLowerCase() ) ) )
+				( search && translate( 'Homepage' ).toLowerCase().includes( search.toLowerCase() ) ) )
 		);
 	}
 
@@ -279,8 +279,9 @@ class Pages extends Component {
 				site={ site }
 				id={ blockEditorSettings?.home_template?.postId }
 				type={ blockEditorSettings?.home_template?.postType }
-				/** We'd prefer to call it Home no matter which template is in use */
-				title={ translate( 'Home' ) }
+				/** We'd prefer to call it Homepage no matter which template is in use */
+				title={ translate( 'Homepage' ) }
+				description={ translate( 'The front page of your site' ) }
 				previewUrl={ site.URL }
 				isHomepage
 			/>
@@ -325,8 +326,8 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				{ this.renderBlogPostsPage() }
-				{ site && this.renderSectionHeader() }
 				{ this.renderVirtualHomePage() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -359,8 +360,8 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				{ this.renderBlogPostsPage() }
-				{ site && this.renderSectionHeader() }
 				{ this.renderVirtualHomePage() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }
