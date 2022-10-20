@@ -26,6 +26,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	isSiteOnFreePlan?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
@@ -47,6 +48,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		isSiteOnFreePlan,
 		flowName,
 		showTitle = true,
 		showSubtitle,
@@ -318,18 +320,24 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
+		const ariaLabelMsg = isSiteOnFreePlan
+			? __(
+					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+			  )
+			: __( 'Or bring your mailing list from other newsletter services by uploading a CSV file.' );
+
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<label
-					aria-label={ __(
-						'Or bring your mailing list from other newsletter services by uploading a CSV file.'
-					) }
-				>
+				<label aria-label={ ariaLabelMsg }>
 					{ createInterpolateElement(
-						__(
-							'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-						),
+						isSiteOnFreePlan
+							? __(
+									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  )
+							: __(
+									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  ),
 						{ uploadBtn: formFileUploadElement }
 					) }
 				</label>
