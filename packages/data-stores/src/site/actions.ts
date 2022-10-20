@@ -356,7 +356,6 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			path: `/sites/${ encodeURIComponent( siteSlug ) }/templates`,
 			apiNamespace: 'wp/v2',
 			body: {
-				id: `${ stylesheet }//wp-custom-template-${ slug }`,
 				slug,
 				theme: stylesheet,
 				title,
