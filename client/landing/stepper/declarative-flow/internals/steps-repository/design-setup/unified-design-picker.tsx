@@ -256,11 +256,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		( select ) => site && select( SITE_STORE ).isEligibleForProPlan( site.ID )
 	);
 
-	const [ shouldLimitGlobalStyles, setShouldLimitGlobalStyles ] = useState( false );
-	usePremiumGlobalStyles( ( globalStyleInfo ) => {
-		const { shouldLimitGlobalStyles } = globalStyleInfo;
-		setShouldLimitGlobalStyles( shouldLimitGlobalStyles );
-	} );
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	function upgradePlan() {
 		if ( selectedDesign ) {

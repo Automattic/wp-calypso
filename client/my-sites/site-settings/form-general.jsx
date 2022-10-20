@@ -4,7 +4,7 @@ import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
-import { Component, Fragment, useState } from 'react';
+import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -806,17 +806,12 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const [ shouldShowPremiumStylesNotice, setShouldShowPremiumStylesNotice ] = useState( false );
-
-	usePremiumGlobalStyles( ( globalStyleInfo ) => {
-		const { globalStylesInUse, shouldLimitGlobalStyles } = globalStyleInfo;
-		setShouldShowPremiumStylesNotice( globalStylesInUse && shouldLimitGlobalStyles );
-	} );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 
 	return (
 		<SiteSettingsFormGeneral
 			{ ...props }
-			shouldShowPremiumStylesNotice={ shouldShowPremiumStylesNotice }
+			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
 		/>
 	);
 };
