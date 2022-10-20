@@ -270,7 +270,7 @@ object BuildDockerImage : BuildType({
 })
 
 object RunAllUnitTests : BuildType({
-	id = id("calypso_WebApp_Run_All_Unit_Tests")
+	id("calypso_WebApp_Run_All_Unit_Tests")
 	uuid = "beb75760-2786-472b-8909-ec33457bdece"
 	name = "Unit tests"
 	description = "Run unit tests (client + server + packages)"
@@ -505,7 +505,7 @@ object RunAllUnitTests : BuildType({
 })
 
 object CheckCodeStyleBranch : BuildType({
-	id = id("calypso_WebApp_Check_Code_Style_Branch")
+	id("calypso_WebApp_Check_Code_Style_Branch")
 	uuid = "dfee7987-6bbc-4250-bb10-ef9dd7322bd2"
 	name = "Code style"
 	description = "Check code style"
@@ -616,7 +616,7 @@ object CheckCodeStyleBranch : BuildType({
 })
 
 object Translate : BuildType({
-	id = id("calypso_WebApp_Translate")
+	id("calypso_WebApp_Translate")
 	name = "Translate"
 	description = "Extract translatable strings from the source code and build POT file"
 
