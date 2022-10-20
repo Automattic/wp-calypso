@@ -136,6 +136,21 @@ export function generateFlows( {
 			},
 		},
 		{
+			name: 'link-in-bio-tld',
+			steps: [ 'user', 'domains', 'plans-link-in-bio' ],
+			destination: ( dependencies ) =>
+				`/setup/patterns?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+					dependencies.siteSlug
+				) }`,
+			description:
+				'Beginning of the flow to create a link in bio, the variation when a tld is given.',
+			lastModified: '2022-10-20',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+		},
+		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]

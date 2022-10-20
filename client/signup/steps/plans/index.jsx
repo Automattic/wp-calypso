@@ -8,11 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import {
-	LINK_IN_BIO_FLOW,
-	NEWSLETTER_FLOW,
-	isNewsletterOrLinkInBioFlow,
-} from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
@@ -77,7 +73,8 @@ export class PlansStep extends Component {
 	}
 
 	onSelectPlan = ( cartItem ) => {
-		const { additionalStepData, stepSectionName, stepName, flowName } = this.props;
+		const { additionalStepData, enforceThemeSlug, stepSectionName, stepName, flowName } =
+			this.props;
 
 		if ( cartItem ) {
 			this.props.recordTracksEvent( 'calypso_signup_plan_select', {
@@ -134,19 +131,17 @@ export class PlansStep extends Component {
 				comingSoon: 0,
 			} );
 			this.props.goToNextStep();
-		} else if ( flowName === LINK_IN_BIO_FLOW ) {
-			// link-in-bio flow always uses pub/lynx
-			this.props.submitSignupStep( step, {
-				cartItem,
-				themeSlugWithRepo: 'pub/lynx',
-			} );
-			this.props.goToNextStep();
 		} else {
 			const signupVals = { cartItem };
 
 			// Buying an eCommerce plan defaults to the pub/twentytwentytwo theme (All remaining flows)
 			if ( cartItem && isEcommerce( cartItem ) ) {
 				signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+			}
+
+			// TODO: if this is approved, use this to decide a theme instead of using a flow name
+			if ( enforceThemeSlug ) {
+				signupVals.themeSlugWithRepo = enforceThemeSlug;
 			}
 
 			this.props.submitSignupStep( step, signupVals );
@@ -319,6 +314,7 @@ export class PlansStep extends Component {
 		const {
 			eligibleForProPlan,
 			flowName,
+			stepName,
 			hideFreePlan,
 			locale,
 			subHeaderText,
@@ -336,7 +332,7 @@ export class PlansStep extends Component {
 						{ components: { link: freePlanButton } }
 				  );
 		}
-		if ( flowName === LINK_IN_BIO_FLOW ) {
+		if ( stepName === 'plans-link-in-bio' ) {
 			return hideFreePlan
 				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
 				: translate(
@@ -389,7 +385,7 @@ export class PlansStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+		return isNewsletterOrLinkInBioFlow( this.props.flowName ) || this.props.isTailoredFlow;
 	}
 
 	plansFeaturesSelection() {
