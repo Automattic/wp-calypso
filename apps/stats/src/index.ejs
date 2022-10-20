@@ -23,6 +23,8 @@
 		<div id="wpcom"></div>
 		<script>
 			window.configData = {
+				site_name: 'whatever',
+				env_id: "shared",
 				i18n_default_locale_slug: 'en',
 				google_analytics_key: 'UA-10673494-15',
 				client_slug: 'browser',
@@ -38,10 +40,18 @@
 				features: {
 					stats: true,
 				},
+				meta: [
+					{
+						property: 'og:site_name',
+						content: 'WordPress.com',
+					},
+				],
 			};
 		</script>
 		<% htmlWebpackPlugin.files.js.forEach( function( script ) { %>
 		<script charset="UTF-8" src="<%= script %>"></script>
 		<% } ) %>
+
+		<a href="/stats/day">stats</a>
 	</body>
 </html>

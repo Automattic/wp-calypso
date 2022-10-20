@@ -27,6 +27,7 @@
 	"dependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",
 		"calypso": "workspace:^",
+		"page": "^1.11.6",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"react-query": "^3.32.1",

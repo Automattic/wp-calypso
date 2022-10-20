@@ -4,27 +4,30 @@
 import '@automattic/calypso-polyfills';
 
 import ReactDom from 'react-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { initializeAnalytics } from 'calypso/lib/analytics/init';
-import getSuperProps from 'calypso/lib/analytics/super-props';
+// import StatsSummary from 'calypso/my-sites/stats/index';
 import { rawCurrentUserFetch, filterUserObject } from 'calypso/lib/user/shared-utils';
-import StatsSummary from 'calypso/my-sites/stats/summary';
+import StatsOverview from 'calypso/my-sites/stats/overview.jsx';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import currentUser from 'calypso/state/current-user/reducer';
+// import ui from 'calypso/state/ui/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
-import stats from 'calypso/state/stats/reducer';
+import sites from 'calypso/state/sites/reducer';
+// import stats from 'calypso/state/stats/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+import registerStatsPages from './routes';
 import 'calypso/assets/stylesheets/style.scss';
 
 async function AppBoot() {
 	const rootReducer = combineReducers( {
 		currentUser,
-		stats,
+		sites,
 	} );
 
 	const store = createStore(
@@ -41,16 +44,16 @@ async function AppBoot() {
 	if ( user ) {
 		store.dispatch( setCurrentUser( user ) );
 	}
-	initializeAnalytics( user || undefined, getSuperProps( store ) );
 
-	// store.dispatch( requestHappychatEligibility() );
+	const queryClient = new QueryClient();
 
 	ReactDom.render(
-		<Provider store={ store }>
-			<StatsSummary />
-		</Provider>,
+		<QueryClientProvider client={ queryClient }>
+			<Provider store={ store }>
+				<StatsOverview period="day" path="/stats/overview" />
+			</Provider>
+		</QueryClientProvider>,
 		document.getElementById( 'wpcom' )
 	);
 }
-
 AppBoot();
