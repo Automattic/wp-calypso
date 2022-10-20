@@ -25,6 +25,7 @@ export const linkInBio: Flow = {
 			'linkInBioSetup',
 			'domains',
 			'patterns',
+			'siteCreationStep',
 			'processing',
 			'launchpad',
 			'plans',
@@ -76,16 +77,14 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return navigate( 'domains', {
-						search: true,
-						hideInitialQuery: true,
-						new: encodeURIComponent( providedDependencies?.siteTitle as string ),
-					} );
+					return navigate( 'domains' );
 
 				case 'domains':
 					return navigate( 'plans' );
 
 				case 'plans':
+					return navigate( 'siteCreationStep' );
+				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':

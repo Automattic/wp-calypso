@@ -5,6 +5,7 @@ export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
 export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
+export const getPlanCartItem = ( state: State ) => state.planCartItem;
 export const getLastLocation = ( state: State ) => state.lastLocation;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;

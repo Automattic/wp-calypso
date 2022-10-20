@@ -6,7 +6,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { DomainItem } from './types';
+import { DomainItem, PlanCartItem } from './types';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
@@ -168,9 +168,9 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	planProductId,
 } );
 
-export const setPlanSlug = ( planSlug: string | null ) => ( {
-	type: 'SET_PLAN_SLUG' as const,
-	planSlug,
+export const setPlanCartItem = ( planCartItem: PlanCartItem | null ) => ( {
+	type: 'SET_PLAN_CART_ITEM' as const,
+	planCartItem,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -386,5 +386,5 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
 	| typeof setSignupValues
-	| typeof setPlanSlug
+	| typeof setPlanCartItem
 >;

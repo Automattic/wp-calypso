@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import { DomainItem, SignupDomainValues } from './types';
+import { DomainItem, PlanCartItem, SignupDomainValues } from './types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -216,12 +216,12 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const planSlug: Reducer< string | null, OnboardAction > = ( state = null, action ) => {
-	if ( action.type === 'SET_PLAN_SLUG' ) {
-		return action.planSlug;
+const planCartItem: Reducer< PlanCartItem | null, OnboardAction > = ( state = null, action ) => {
+	if ( action.type === 'SET_PLAN_CART_ITEM' ) {
+		return action.planCartItem;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
+		return null;
 	}
 	return state;
 };
@@ -469,7 +469,7 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
-	planSlug,
+	planCartItem,
 } );
 
 export type State = ReturnType< typeof reducer >;

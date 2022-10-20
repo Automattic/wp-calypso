@@ -6,3 +6,7 @@ export type SignupDomainValues = {
 	suggestedDomain?: string;
 	siteType?: string;
 };
+
+export type PlanCartItem = {
+	product_slug: string;
+};
