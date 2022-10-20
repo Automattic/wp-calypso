@@ -21,7 +21,6 @@ export class CommentsComponent {
 	 * Posts a comment with given text.
 	 *
 	 * @param {string} comment Comment text.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async postComment( comment: string ): Promise< void > {
 		const commentForm = this.page.locator( '#commentform' );
@@ -31,6 +30,16 @@ export class CommentsComponent {
 		let submitButton;
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
+			// Although the comment iframe does not come from widgets.wp.com,
+			// there are other widgets on the same page that do, and until
+			// they're not fully loaded, the layout will keep shifting causing
+			// misclicks from time to time. The general reason for the layout
+			// shifting is that all the widgets are loaded via an iframe, and
+			// their sizes are not immediately set. For example, the Likes
+			// button height is re-calculated within a 500ms interval which can
+			// bypass Playwright's stability check.
+			await waitForWPWidgets( this.page );
+
 			const parentFrame = this.page.frameLocator( '#jetpack_remote_comment' );
 
 			commentField = parentFrame.locator( '#comment' );
@@ -48,7 +57,6 @@ export class CommentsComponent {
 	 * Likes a comment with given text.
 	 *
 	 * @param {string} comment Text of the comment to like.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async like( comment: string ): Promise< void > {
 		let likeButton;
@@ -60,7 +68,8 @@ export class CommentsComponent {
 			// button becomes actionable after the widget script is fully
 			// initialized, which is not indicated anywhere in the DOM. We need
 			// to use the following custom waiter to ensure the button is ready
-			// to be interacted with. Otherwise, the like click will do nothing.
+			// to be interacted with. Otherwise, the like click will most likely
+			// do nothing.
 			await waitForWPWidgets( this.page );
 
 			const likeButtonFrame = this.page.frameLocator(
@@ -84,7 +93,6 @@ export class CommentsComponent {
 	 * Unlikes a comment with given text.
 	 *
 	 * @param {string} comment Text of the comment to unlike.
-	 * @returns {Promise<void>} No return value.
 	 */
 	async unlike( comment: string ): Promise< void > {
 		let unlikeButton;
