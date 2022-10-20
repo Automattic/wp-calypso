@@ -49,7 +49,7 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 						<div className="go-mobile__app-badges">
 							<AppsBadge
 								storeName={ showIosBadge ? 'ios' : 'android' }
-								utm_source={ 'calypso-customer-home' }
+								utm_source="calypso-customer-home"
 							></AppsBadge>
 						</div>
 					) : (
