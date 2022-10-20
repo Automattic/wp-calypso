@@ -36,20 +36,19 @@ $item-indicator-width: 4px;
 		}
 
 		&:hover,
-		&:focus {
+		&:focus,
+		&:focus-within {
 			background-color: var(--studio-gray-0);
 
 			.horizontal-bar-list-item-bar {
-				// color: var(--studio-white);
-
 				&::before {
 					background-color: rgba(var(--color-primary-rgb), 40%);
 				}
 			}
 
-			// .label {
-			// 	mix-blend-mode: difference;
-			// }
+			.horizontal-bar-list--hover-action {
+				visibility: visible;
+			}
 		}
 	}
 
@@ -74,12 +73,17 @@ $item-indicator-width: 4px;
 		}
 	}
 
+	.horizontal-bar-list--hover-action {
+		visibility: hidden;
+	}
+
 	.label {
 		text-overflow: ellipsis;
 		overflow: hidden;
 		white-space: nowrap;
 		z-index: 1;
 		color: var(--color-text);
+		flex: 1;
 	}
 
 	.value {

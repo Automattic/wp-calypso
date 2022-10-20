@@ -1,7 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import HorizontalBarList from '../.';
+import Gridicon from '../../gridicon';
 import HorizontalBarListItem from '../horizontal-bar-grid-item';
-// import { postsData } from './sampleData';
 import './stories.scss';
 
 export default { title: 'Horizontal bar list' };
@@ -36,6 +36,7 @@ const data = [
 ];
 
 const HorizontalBarListVariations = ( props ) => {
+	const { leftSideItem, rightSideItem } = props;
 	const testData = props.data || data;
 
 	const barMaxValue = testData[ 0 ]?.value;
@@ -47,6 +48,8 @@ const HorizontalBarListVariations = ( props ) => {
 					const variationProps = {
 						hasIndicator: props.hasIndicator && idx % 3, // omit every 3rd item from being indicated
 						onClick: props.onClick || null,
+						leftSideItem,
+						rightSideItem,
 					};
 
 					return (
@@ -63,9 +66,27 @@ const HorizontalBarListVariations = ( props ) => {
 	);
 };
 
+const ImageSample = () => {
+	return <img src="https://placekitten.com/20/20" alt="sample" />;
+};
+
+//TODO: convert to a component for mixing and matching actions.
+const RedirectSample = () => {
+	return (
+		<>
+			<Gridicon icon="external" size={ 18 } />
+			<span>View</span>
+		</>
+	);
+};
+
 export const Default = () => <HorizontalBarListVariations />;
 export const Indicated = () => <HorizontalBarListVariations hasIndicator />;
 export const WithClick = () => (
 	// eslint-disable-next-line no-console
 	<HorizontalBarListVariations onClick={ () => console.log( 'I was clicked!' ) } />
+);
+export const WithLeftItem = () => <HorizontalBarListVariations leftSideItem={ <ImageSample /> } />;
+export const WithRightItem = () => (
+	<HorizontalBarListVariations rightSideItem={ <RedirectSample /> } />
 );
