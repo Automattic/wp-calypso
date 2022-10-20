@@ -55,7 +55,8 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
-			'planSlug',
+			'domainItem',
+			'planCartItem',
 		],
 	} );
 	isRegistered = true;
@@ -66,3 +67,6 @@ declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
+
+export type { DomainItem } from './types';
+export type { PlanCartItem } from './types';

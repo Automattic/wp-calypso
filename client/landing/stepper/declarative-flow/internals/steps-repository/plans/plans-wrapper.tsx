@@ -42,7 +42,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		};
 	} );
 
-	const { setPlanSlug } = useDispatch( ONBOARD_STORE );
+	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
 	const site = useSite();
 	const locale = useLocale();
@@ -74,7 +74,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
-		setPlanSlug( selectedPlan?.product_slug );
+		setPlanCartItem( selectedPlan?.product_slug );
 		props.onSubmit?.();
 
 		// const themeSlugWithRepo = flowName === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx';

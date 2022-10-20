@@ -54,11 +54,10 @@ type DomainSuggestion = {
 type SearchState = {
 	subdomainSearchResults?: DomainSuggestion[] | null;
 	loadingResults?: boolean;
-	hideInitialQuery?: boolean;
 	searchResults?: DomainSuggestion[] | null;
 };
 
-const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
+const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { productsList, selectedSite } = useSelector( ( state ) => {
 		return {
 			productsList: getAvailableProductsList( state ),
@@ -67,27 +66,25 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		};
 	} );
 
-	const { domainForm, signupValues } = useSelect( ( select ) => {
+	const { domainForm, siteTitle, signupValues } = useSelect( ( select ) => {
 		return {
 			domainForm: select( ONBOARD_STORE ).getDomainForm(),
 			signupValues: select( ONBOARD_STORE ).getSignupValues(),
+			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 		};
 	} );
 
 	const { setDomainForm, setSignupValues, setDomainItem } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
-	const search = data?.search ?? false;
 	const suggestedDomain = signupValues?.suggestedDomain;
-	const domain = data?.new;
 
-	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( search || suggestedDomain );
+	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( true );
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
 
 	const { submit } = navigation;
-	const hideInitialQuery = Boolean( data?.hideInitialQuery );
 	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
@@ -326,7 +323,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
-		const initialQuery = domain || suggestedDomain;
+		const initialQuery = siteTitle || suggestedDomain;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.
@@ -341,7 +338,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow, data } ) {
 				// filter before counting length
 				initialState.loadingResults =
 					getDomainSuggestionSearch( getFixedDomainSearch( initialQuery ) ).length >= 2;
-				initialState.hideInitialQuery = hideInitialQuery;
+				initialState.hideInitialQuery = true;
 			}
 		}
 
