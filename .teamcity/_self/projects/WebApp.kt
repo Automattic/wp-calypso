@@ -270,7 +270,6 @@ object BuildDockerImage : BuildType({
 })
 
 object RunAllUnitTests : BuildType({
-	id("calypso_WebApp_Run_All_Unit_Tests")
 	uuid = "beb75760-2786-472b-8909-ec33457bdece"
 	name = "Unit tests"
 	description = "Run unit tests (client + server + packages)"
@@ -505,7 +504,6 @@ object RunAllUnitTests : BuildType({
 })
 
 object CheckCodeStyleBranch : BuildType({
-	id("calypso_WebApp_Check_Code_Style_Branch")
 	uuid = "dfee7987-6bbc-4250-bb10-ef9dd7322bd2"
 	name = "Code style"
 	description = "Check code style"
@@ -616,7 +614,6 @@ object CheckCodeStyleBranch : BuildType({
 })
 
 object Translate : BuildType({
-	id("calypso_WebApp_Translate")
 	name = "Translate"
 	description = "Extract translatable strings from the source code and build POT file"
 
@@ -728,7 +725,7 @@ object Translate : BuildType({
 
 fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
 	return E2EBuildType(
-		buildId = "calypso_WebApp_Calypso_E2E_Playwright_$targetDevice",
+		buildId = "Calypso_E2E_Playwright_$targetDevice",
 		buildUuid = buildUuid,
 		buildName = "E2E Tests ($targetDevice)",
 		buildDescription = "Runs Calypso e2e tests on $targetDevice size",
@@ -776,7 +773,7 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 }
 
 object PreReleaseE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Pre_Release",
+	buildId = "Calypso_E2E_Pre_Release",
 	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
 	buildName = "Pre-Release E2E Tests",
 	buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production.",
@@ -805,7 +802,7 @@ object PreReleaseE2ETests : E2EBuildType(
 )
 
 object AuthenticationE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
+	buildId = "Calypso_E2E_Authentication",
 	buildUuid = "f5036e29-f400-49ea-b5c5-4aba9307c5e8",
 	buildName = "Authentication E2E Tests",
 	buildDescription = "Runs a suite of Authentication E2E tests.",
@@ -843,7 +840,7 @@ object AuthenticationE2ETests : E2EBuildType(
 )
 
 object HelpCentreE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Help_Centre",
+	buildId = "Calypso_E2E_Help_Centre",
 	buildUuid = "a0e62582-8598-483e-8b82-9de540288f6d",
 	buildName = "Help Centre E2E Tests",
 	buildDescription = "Runs a suite of Help Centre E2E tests.",
@@ -880,7 +877,7 @@ object HelpCentreE2ETests : E2EBuildType(
 )
 
 object KPIDashboardTests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_KPI_Dashboard")
+	id("Calypso_E2E_KPI_Dashboard")
 	uuid = "441efac5-721a-4557-9448-9234e89fb6b1"
 	name = "Test build for KPI Dashboard project"
 	description = "Test build configuration for KPI dashboard."
@@ -990,7 +987,7 @@ object KPIDashboardTests : BuildType({
 })
 
 object CalypsoPreReleaseDashboard : BuildType({
-	id("calypso_WebApp_Calypso_Dashboard_Pre_Release_Dashboard")
+	id("Calypso_Dashboard_Pre_Release_Dashboard")
 	uuid = "e07c2ff3-2a9f-416e-9a03-637690334da8"
 	name = "Calypso Pre-Release Dashboard"
 	description = "Generate Dashboard for Pre-Release Tests"
@@ -1035,7 +1032,7 @@ object CalypsoPreReleaseDashboard : BuildType({
 })
 
 object QuarantinedE2ETests: E2EBuildType(
-	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
+	buildId = "Quarantined_E2E_Tests",
 	buildUuid = "14083675-b6de-419f-b2f6-ec89c06d3a8c",
 	buildName = "Quarantined E2E Tests",
 	buildDescription = "E2E tests quarantined due to intermittent failures.",
