@@ -66,7 +66,7 @@ const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerPro
 				<CheckmarkIcon />
 				<p>
 					{ translate(
-						'Make sure to validate the email we sent to %(email) in order to publish and share your posts. {{resendEmailLink}}Resend email{{/resendEmailLink}} or {{changeEmailLink}}change email address{{/changeEmailLink}}',
+						'Make sure to validate the email we sent to %(email)s in order to publish and share your posts. {{resendEmailLink}}Resend email{{/resendEmailLink}} or {{changeEmailLink}}change email address{{/changeEmailLink}}',
 						{
 							args: { email: email },
 							components: {
