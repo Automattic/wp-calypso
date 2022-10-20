@@ -1,7 +1,5 @@
-import config from '@automattic/calypso-config';
 import UserAgent from 'express-useragent';
 import superagent from 'superagent';
-import { createStatsdURL } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
 jest.mock( '@automattic/calypso-config', () => jest.fn() );
 jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
@@ -52,38 +50,6 @@ describe( 'Server-Side Analytics', () => {
 			expect( superagent.get ).toHaveBeenCalled();
 			const url = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
 			expect( url.searchParams.get( 'a' ) ).toBeNull();
-		} );
-	} );
-
-	describe( 'statsd.recordEvents', () => {
-		beforeEach( () => {
-			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
-		} );
-
-		afterEach( () => {
-			createStatsdURL.mockClear();
-			superagent.get.mockClear();
-		} );
-
-		test( 'sends an HTTP request to the statsd URL', () => {
-			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
-			createStatsdURL.mockReturnValue( 'http://example.com/boom.gif' );
-
-			const testArr = [ 'foo' ];
-			analytics.statsd.recordEvents( 'reader', testArr );
-
-			expect( createStatsdURL ).toHaveBeenCalledWith( 'reader', testArr );
-			expect( superagent.get ).toHaveBeenCalledWith( 'http://example.com/boom.gif' );
-		} );
-
-		test( 'does nothing if statsd analytics is not allowed', () => {
-			config.mockReturnValue( false ); // server_side_boom_analytics_enabled
-
-			const testArr = [ 'foo' ];
-			analytics.statsd.recordEvents( 'reader', testArr );
-
-			expect( createStatsdURL ).not.toHaveBeenCalled();
-			expect( superagent.get ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
