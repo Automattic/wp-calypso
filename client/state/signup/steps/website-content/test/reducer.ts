@@ -19,8 +19,7 @@ const initialTestState = {
 	currentIndex: 0,
 	imageUploadStates: {},
 	websiteContent: {
-		siteLogoSection: { siteLogoUrl: '' },
-		feedbackSection: { genericFeedback: '' },
+		siteLogoUrl: '',
 		pages: [
 			{
 				id: 'Home',
@@ -409,7 +408,7 @@ describe( 'reducer', () => {
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoSection: { siteLogoUrl: 'wp.me/some-random-image.png' },
+				siteLogoUrl: 'wp.me/some-random-image.png',
 			},
 		} );
 	} );
@@ -453,7 +452,7 @@ describe( 'reducer', () => {
 			},
 			websiteContent: {
 				...initialTestState.websiteContent,
-				siteLogoSection: { siteLogoUrl: '' },
+				siteLogoUrl: '',
 			},
 		} );
 	} );

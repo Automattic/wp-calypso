@@ -5,7 +5,7 @@ const initialTestState = {
 	currentIndex: 0,
 
 	websiteContent: {
-		siteLogoSection: { siteLogoUrl: '' },
+		siteLogoUrl: '',
 		pages: [
 			{
 				id: 'Home',
