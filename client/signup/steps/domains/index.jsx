@@ -83,6 +83,7 @@ class DomainsStep extends Component {
 	constructor( props ) {
 		super( props );
 
+		const tld = get( props, 'queryObject.tld', false );
 		const domain = get( props, 'queryObject.new', false );
 		const search = get( props, 'queryObject.search', false ) === 'yes';
 		const suggestedDomain = get( props, 'signupDependencies.suggestedDomain' );
@@ -701,7 +702,8 @@ class DomainsStep extends Component {
 	}
 
 	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+		return true;
+		// return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	renderContent() {

@@ -139,7 +139,7 @@ export function generateFlows( {
 			name: 'link-in-bio-tld',
 			steps: [ 'user', 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
-				`/setup/patterns?flow=link-in-bio&siteSlug=${ encodeURIComponent(
+				`/setup/patterns?flow=link-in-bio&tld=${ dependencies.tld }&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
 				) }`,
 			description:
@@ -149,6 +149,7 @@ export function generateFlows( {
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
+			providesDependenciesInQuery: [ 'tld' ],
 		},
 		{
 			name: 'with-add-ons',
