@@ -1,8 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
-import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { useResendEmailVerification } from 'calypso/landing/stepper/hooks/use-resend-email-verification';
+
 interface EmailValidationBannerProps {
 	email: string;
 	closeBanner: () => void;
@@ -35,30 +34,8 @@ const CheckmarkIcon = () => (
 );
 
 const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerProps ) => {
-	const resendEmailNotice = 'resend-verification-email';
-	const dispatch = useDispatch();
-	const resendEmail = useSendEmailVerification();
+	const resendEmailVerification = useResendEmailVerification();
 	const translate = useTranslate();
-
-	const handleResend = async () => {
-		try {
-			const result = await resendEmail();
-			if ( result.success ) {
-				dispatch(
-					successNotice( translate( 'Verification email resent. Please check your inbox.' ), {
-						id: resendEmailNotice,
-						duration: 4000,
-					} )
-				);
-				return;
-			}
-		} catch ( Error ) {}
-		dispatch(
-			errorNotice( translate( "Couldn't resend verification email. Please try again." ), {
-				id: resendEmailNotice,
-			} )
-		);
-	};
 
 	return (
 		<div className="launchpad__email-validation-banner">
@@ -73,7 +50,7 @@ const EmailValidationBanner = ( { email, closeBanner }: EmailValidationBannerPro
 								resendEmailLink: (
 									<button
 										className="launchpad__email-validation-banner-content-resend-button"
-										onClick={ handleResend }
+										onClick={ resendEmailVerification }
 									/>
 								),
 								changeEmailLink: <a href="/me/account" />,
