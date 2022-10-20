@@ -35,16 +35,12 @@ export const linkInBio: Flow = {
 
 		// for the standard Link in Bio flow
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			const updatedDependencies = {
-				...providedDependencies,
-				themeSlugWithRepo: 'pub/lynx',
-			};
 			const logInUrl =
 				locale && locale !== 'en'
 					? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`
 					: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`;
 
-			recordSubmitStep( updatedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
 			switch ( _currentStep ) {
 				case 'intro':
@@ -59,7 +55,7 @@ export const linkInBio: Flow = {
 				case 'linkInBioSetup':
 					return window.location.assign(
 						`/start/${ flowName }/domains?new=${ encodeURIComponent(
-							updatedDependencies.siteTitle as string
+							providedDependencies.siteTitle as string
 						) }&search=yes&hide_initial_query=yes`
 					);
 
@@ -67,16 +63,11 @@ export const linkInBio: Flow = {
 					return navigate( 'processing' );
 				}
 			}
-			return updatedDependencies;
+			return providedDependencies;
 		}
 
 		// when there is a designated tld, the domain step will come first, hence altering the flow accordingly
 		function submitDomainFirst( providedDependencies: ProvidedDependencies = {} ) {
-			const updatedDependencies = {
-				...providedDependencies,
-				themeSlugWithRepo: 'pub/lynx',
-			};
-
 			const logInUrl =
 				locale && locale !== 'en'
 					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&domain=${ domain }`
@@ -89,7 +80,7 @@ export const linkInBio: Flow = {
 					if ( userIsLoggedIn ) {
 						return window.location.assign(
 							`/start/link-in-bio-tld/domains?new=${ encodeURIComponent(
-								updatedDependencies.siteTitle as string
+								providedDependencies.siteTitle as string
 							) }&search=yes&hide_initial_query=yes`
 						);
 						return navigate( 'patterns' );
@@ -106,7 +97,7 @@ export const linkInBio: Flow = {
 					return navigate( 'processing' );
 				}
 			}
-			return updatedDependencies;
+			return providedDependencies;
 		}
 
 		if ( tld ) {
