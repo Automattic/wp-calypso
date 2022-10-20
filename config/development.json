@@ -173,6 +173,7 @@
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
+		"themes/subscription-purchases": true,
 		"titan/iframe-control-panel": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
