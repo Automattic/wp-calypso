@@ -1,70 +1,28 @@
 import { CONTACT_PAGE } from 'calypso/signup/difm/constants';
-import {
-	ContactPageDetails,
-	FeedbackSection,
-	LogoUploadSection,
-} from 'calypso/signup/steps/website-content/section-types';
 import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
 import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
-import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
+import { ContactPageDetails } from './contact-page-details';
+import { LogoUploadSection } from './logo-upload-section';
+import { CONTENT_SUFFIX, PageDetails } from './page-details';
 import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 } from 'calypso/signup/accordion-form/types';
 import type { TranslateResult } from 'i18n-calypso';
 
-interface SectionProcessedResult {
-	sectionsDetails: Array< {
-		title: TranslateResult;
-		component: React.ReactElement;
-		showSkip: boolean;
-		validate?: () => { result: boolean; errors: Record< string, TranslateResult | null > };
-	} >;
-	elapsedSections: number;
-}
-
-const generateLogoSection = (
-	params: SectionGeneratorReturnType< WebsiteContent >,
-	elapsedSections = 0
-): SectionProcessedResult => {
-	const { translate, formValues } = params;
-
-	const fieldNumber = elapsedSections + 1;
-	return {
-		sectionsDetails: [
-			{
-				title: translate( '%(fieldNumber)d. Site Logo', {
-					args: {
-						fieldNumber,
-					},
-					comment: 'This is the serial number: 1',
-				} ),
-				component: (
-					<LogoUploadSection
-						sectionID={ LOGO_SECTION_ID }
-						logoUrl={ formValues.siteLogoSection.siteLogoUrl }
-					/>
-				),
-				showSkip: true,
-			},
-		],
-		elapsedSections: elapsedSections + 1,
-	};
-};
-
-const resolveDisplayedComponent = ( pageId: string ) => {
+const getPageDetailsComponentFromPageId = ( pageId: string ) => {
 	switch ( pageId ) {
 		case CONTACT_PAGE:
 			return ContactPageDetails;
 		default:
-			return DefaultPageDetails;
+			return PageDetails;
 	}
 };
 
 const generateWebsiteContentSections = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
-): SectionProcessedResult => {
+) => {
 	const { translate, formValues, formErrors, onChangeField } = params;
 
 	const OPTIONAL_PAGES: Record< string, boolean > = { [ CONTACT_PAGE ]: true };
@@ -78,15 +36,7 @@ const generateWebsiteContentSections = (
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
 		const { title: pageTitle } = page;
-		const DisplayedPageComponent = resolveDisplayedComponent( page.id );
-
-		switch ( page.id ) {
-			case CONTACT_PAGE:
-				break;
-
-			default:
-				break;
-		}
+		const PageComponent = getPageDetailsComponentFromPageId( page.id );
 		return {
 			title: translate( '%(fieldNumber)d. %(pageTitle)s', {
 				args: {
@@ -97,7 +47,7 @@ const generateWebsiteContentSections = (
 			} ),
 			summary: page.content,
 			component: (
-				<DisplayedPageComponent
+				<PageComponent
 					page={ page }
 					formErrors={ formErrors }
 					label={ PAGE_LABELS[ page.id ] }
@@ -122,51 +72,38 @@ const generateWebsiteContentSections = (
 			},
 		};
 	} );
-	return {
-		elapsedSections: elapsedSections + formValues.pages.length,
-		sectionsDetails: websiteContentSections,
-	};
+	return { elapsedSections: elapsedSections + formValues.pages.length, websiteContentSections };
 };
-
-const generateFeedbackSection = (
+const generateLogoSection = (
 	params: SectionGeneratorReturnType< WebsiteContent >,
 	elapsedSections = 0
-): SectionProcessedResult => {
+) => {
 	const { translate, formValues } = params;
 
 	const fieldNumber = elapsedSections + 1;
 	return {
-		sectionsDetails: [
-			{
-				title: translate( '%(fieldNumber)d. Submit Content', {
-					args: {
-						fieldNumber,
-					},
-					comment: 'This is the serial number: 1',
-				} ),
-				component: <FeedbackSection data={ formValues.feedbackSection } />,
-				showSkip: true,
+		title: translate( '%(fieldNumber)d. Site Logo', {
+			args: {
+				fieldNumber,
 			},
-		],
+			comment: 'This is the serial number: 1',
+		} ),
+		component: (
+			<LogoUploadSection sectionID={ LOGO_SECTION_ID } logoUrl={ formValues.siteLogoUrl } />
+		),
+		showSkip: true,
 		elapsedSections: elapsedSections + 1,
 	};
 };
 
-export const sectionGenerator = (
-	params: SectionGeneratorReturnType< WebsiteContent >
-): AccordionSectionProps< any >[] => {
-	const { elapsedSections: elapsedSectionsAfterLogo, sectionsDetails: logoSection } =
-		generateLogoSection( params );
+export const sectionGenerator = ( params: SectionGeneratorReturnType< WebsiteContent > ) => {
+	const { elapsedSections, ...logoSection } = generateLogoSection( params );
 
 	const {
-		sectionsDetails: websiteContentSections,
-		elapsedSections: elapsedSectionAfterWebsiteContent,
-	} = generateWebsiteContentSections( params, elapsedSectionsAfterLogo );
+		websiteContentSections,
+	}: {
+		websiteContentSections: AccordionSectionProps< WebsiteContent >[];
+	} = generateWebsiteContentSections( params, elapsedSections );
 
-	const { sectionsDetails: feedbackSection } = generateFeedbackSection(
-		params,
-		elapsedSectionAfterWebsiteContent
-	);
-
-	return [ ...logoSection, ...websiteContentSections, ...feedbackSection ];
+	return [ logoSection, ...websiteContentSections ];
 };

@@ -11,7 +11,6 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_FAILED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
-	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
 import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
@@ -73,7 +72,7 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoSection: { siteLogoUrl: url },
+						siteLogoUrl: url,
 					},
 					imageUploadStates: {
 						...state.imageUploadStates,
@@ -85,25 +84,12 @@ export default withSchemaValidation(
 				};
 			}
 
-			case SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE: {
-				const {
-					payload: { feedback },
-				} = action;
-				return {
-					...state,
-					websiteContent: {
-						...state.websiteContent,
-						feedbackSection: { genericFeedback: feedback },
-					},
-				};
-			}
-
 			case SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL: {
 				return {
 					...state,
 					websiteContent: {
 						...state.websiteContent,
-						siteLogoSection: { siteLogoUrl: '' },
+						siteLogoUrl: '',
 					},
 					imageUploadStates: {
 						...state.imageUploadStates,
