@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Site } from '@automattic/data-stores';
+import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
@@ -10,6 +10,7 @@ import { startsWith, isEmpty } from 'lodash';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import type { DomainItem, PlanCartItem } from '@automattic/data-stores';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -71,7 +72,7 @@ export const getNewSiteParams = ( {
 		newSiteParams.blog_name = siteTitle; //|| getCurrentUserName( state ) || get( signupDependencies, 'username' ) || siteType;
 		newSiteParams.find_available_url = true;
 	} else {
-		newSiteParams.blog_name = siteUrl;
+		newSiteParams.blog_name = siteUrl.replace( '.wordpress.com', '' );
 		newSiteParams.find_available_url = !! isPurchasingDomainItem;
 	}
 
@@ -92,45 +93,37 @@ export const getNewSiteParams = ( {
 };
 
 export const createSiteWithCart = async (
-	flowName,
-	siteUrl,
-	isManageSiteFlow,
-	domainData,
-	userIsLoggedIn,
-	shouldHideFreePlan
+	flowName: string,
+	isManageSiteFlow: boolean,
+	userIsLoggedIn: boolean,
+	shouldHideFreePlan: boolean,
+	domainItem: DomainItem,
+	isPurchasingDomainItem: boolean,
+	themeSlugWithRepo: string,
+	comingSoon: 1 | 0,
+	siteTitle: string,
+	siteAccentColor: string,
+	useThemeHeadstart: boolean,
+	themeItem = null
 ) => {
-	const {
-		domainItem,
-		lastKnownFlow,
-		googleAppsCartItem,
-		isPurchasingItem: isPurchasingDomainItem,
-		themeSlugWithRepo,
-		comingSoon,
-		themeItem,
-		siteTitle,
-		siteAccentColor,
-		useThemeHeadstart,
-	} = domainData;
-
 	const dependencies = {
 		isManageSiteFlow,
 		shouldHideFreePlan,
 	};
+	const siteUrl = domainItem.meta;
 
-	// flowName isn't always passed in
-	const flowToCheck = flowName || lastKnownFlow;
-	const newCartItems = [ domainItem, googleAppsCartItem, themeItem ].filter( ( item ) => item );
-	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' ) && ! themeItem;
+	const newCartItems = [ domainItem ].filter( ( item ) => item );
+	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
 	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
 	if ( isManageSiteFlow ) {
 		//TODO: STILL TO FIX
 		const siteSlugManaged = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
 		const siteId = 210841991; //getSiteId( state, siteSlug );
-		const providedDependencies = { domainItem, siteId, siteUrl, themeItem };
+		const providedDependencies = { domainItem, siteId, siteUrl };
 		addDomainToCart(
 			dependencies,
-			domainData,
+			domainItem,
 			siteSlugManaged,
 			providedDependencies,
 			userIsLoggedIn
@@ -140,9 +133,8 @@ export const createSiteWithCart = async (
 
 	const newSiteParams = getNewSiteParams( {
 		dependencies,
-		flowToCheck,
+		flowToCheck: flowName,
 		isPurchasingDomainItem,
-		lastKnownFlow,
 		themeSlugWithRepo,
 		siteUrl,
 		siteTitle,
@@ -158,10 +150,10 @@ export const createSiteWithCart = async (
 
 	const locale = getLocaleSlug();
 
-	const siteCreationResponse = await wpcom.req.post( '/sites/new', {
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post( '/sites/new', {
 		...newSiteParams,
 		locale,
-		lang_id: getLanguage( locale ).value,
+		lang_id: getLanguage( locale as string )?.value,
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	} );
@@ -181,8 +173,8 @@ export const createSiteWithCart = async (
 		themeItem,
 	};
 
-	if ( isTailoredSignupFlow( flowToCheck ) ) {
-		await setupSiteAfterCreation( { siteId, flowName: flowToCheck } );
+	if ( isTailoredSignupFlow( flowName ) ) {
+		await setupSiteAfterCreation( { siteId, flowName: flowName } );
 	}
 
 	await processItemCart(
@@ -190,7 +182,7 @@ export const createSiteWithCart = async (
 		siteSlug,
 		isFreeThemePreselected,
 		themeSlugWithRepo,
-		flowToCheck,
+		flowName,
 		userIsLoggedIn
 	);
 
@@ -199,16 +191,15 @@ export const createSiteWithCart = async (
 
 export function addDomainToCart(
 	dependencies,
-	domainData,
+	domainItem,
 	siteSlug,
 	stepProvidedDependencies,
 	userIsLoggedIn
 ) {
 	const slug = siteSlug || dependencies.siteSlug;
-	const { domainItem, googleAppsCartItem } = domainData;
 	const providedDependencies = stepProvidedDependencies || { domainItem };
 
-	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
+	const newCartItems = [ domainItem ].filter( ( item ) => item );
 
 	processItemCart( newCartItems, slug, null, null, null, userIsLoggedIn );
 }
@@ -225,11 +216,11 @@ function prepareItemForAddingToCart( item, lastKnownFlow = null ) {
 }
 
 export async function addPlanToCart(
-	siteSlug,
-	cartItem,
-	flowName,
-	userIsLoggedIn,
-	themeSlugWithRepo
+	siteSlug: string,
+	cartItem: PlanCartItem,
+	flowName: string,
+	userIsLoggedIn: boolean,
+	themeSlugWithRepo: string
 ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
@@ -274,7 +265,7 @@ const addToCartAndProceed = async ( newCartItems, siteSlug, flowName ) => {
 	}
 };
 
-export async function setThemeOnSite( siteSlug, themeSlugWithRepo ) {
+export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: string ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		return;
 	}

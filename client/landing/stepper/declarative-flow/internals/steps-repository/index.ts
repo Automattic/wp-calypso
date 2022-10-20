@@ -36,6 +36,7 @@ export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
 export { default as linkInBioSetup } from './link-in-bio-setup';
+export { default as siteCreationStep } from './site-creation-step';
 export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
 export { default as chooseADomain } from './choose-a-domain';
 export { default as launchpad } from './launchpad';
@@ -83,6 +84,7 @@ export type StepPath =
 	| 'letsGetStarted'
 	| 'chooseADomain'
 	| 'linkInBioSetup'
+	| 'siteCreationStep'
 	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
 	| 'newsletterPostSetup'
