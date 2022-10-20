@@ -76,7 +76,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: %s - the plan's product name */
-							__( '%s <span>- Expired</span>' ),
+							__( '<span>%s - Expired</span>' ),
 							plan.product_name_short
 						),
 						{
