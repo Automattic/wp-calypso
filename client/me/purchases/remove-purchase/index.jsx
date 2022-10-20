@@ -1,4 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import config from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainRegistration,
@@ -232,7 +233,10 @@ class RemovePurchase extends Component {
 	shouldShowPreCancelationDialog() {
 		const { purchase } = this.props;
 		return (
-			isPlan( purchase ) && ! isJetpackPlan( purchase ) && ! isGSuiteOrGoogleWorkspace( purchase )
+			config( 'pre_cancelation_modal_enabled' ) &&
+			isPlan( purchase ) &&
+			! isJetpackPlan( purchase ) &&
+			! isGSuiteOrGoogleWorkspace( purchase )
 		);
 	}
 
