@@ -154,24 +154,31 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 }
 
 /**
+ * Waits until DOM mutations for given target element become idle. Can be used
+ * in situations where Playwright auto-waiting is not working for some reason.
  *
- * @param page
- * @param parentSelector
+ * @example
+ * await Promise.all( [
+ *   waitForMutations( page, '.foobars' ),
+ *   page.click( '.load-foobars' ),
+ * ] );
+ * @param {Page} page Page object
+ * @param {string} targetSelector Observer target selector
  */
-export async function waitForMutations( page: Page, parentSelector: string ): Promise< void > {
-	const parentHandle = await page.waitForSelector( parentSelector );
+export async function waitForMutations( page: Page, targetSelector: string ): Promise< void > {
+	const parentHandle = await page.waitForSelector( targetSelector );
 
-	await page.evaluate( async ( parentElement ) => {
+	await page.evaluate( async ( targetElement ) => {
 		await new Promise( ( resolve ) => {
 			let timeout: NodeJS.Timeout;
-			const callback = () => {
+			const wait = () => {
 				clearTimeout( timeout );
 				timeout = setTimeout( resolve, 1000 );
 			};
-			const observer = new MutationObserver( callback );
+			const observer = new MutationObserver( wait );
 			const options = { attributes: true, subtree: true, childList: true };
 
-			observer.observe( parentElement, options );
+			observer.observe( targetElement, options );
 		} );
 	}, parentHandle );
 }

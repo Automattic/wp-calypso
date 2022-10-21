@@ -83,8 +83,7 @@ export class EditorGutenbergComponent {
 	 * @param {string} text Text to be entered.
 	 */
 	async enterText( text: string ): Promise< void > {
-		const splitText = text.split( '\n' );
-
+		const lines = text.split( '\n' );
 		// Depending on what is focused in the editor, either one of the
 		// following elements can be clicked to initiate text entry.
 		const emptyBlockLocator = this.editor.locator( selectors.emptyBlock );
@@ -95,13 +94,14 @@ export class EditorGutenbergComponent {
 		if ( await emptyParagraphLocator.count() ) {
 			await emptyParagraphLocator.click();
 		} else {
-			emptyBlockLocator.click();
+			await emptyBlockLocator.click();
 		}
 
-		for await ( const line of splitText ) {
+		for ( const line of lines ) {
 			// Select the last Paragraph block which is empty.
 			const locator = this.editor.locator( selectors.paragraphBlock( { empty: true } ) ).last();
-			await locator.fill( line );
+
+			await locator.type( line );
 			await this.page.keyboard.press( 'Enter' );
 		}
 	}

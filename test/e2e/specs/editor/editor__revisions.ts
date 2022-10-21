@@ -10,7 +10,6 @@ import {
 	EditorPage,
 	RevisionsComponent,
 	RevisionsPage,
-	ParagraphBlock,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
@@ -41,18 +40,16 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 		await editorPage.visit( 'post' );
 	} );
 
-	it.each( [ { revision: 1 }, { revision: 2 }, { revision: 3 } ] )(
-		'Create revision $revision',
-		async function ( { revision } ) {
-			const blockHandle = await editorPage.addBlockFromSidebar(
-				ParagraphBlock.blockName,
-				ParagraphBlock.blockEditorSelector
-			);
-			const paragraphBlock = new ParagraphBlock( blockHandle );
-			await paragraphBlock.enterParagraph( `Revision ${ revision }` );
-			await editorPage.saveDraft();
-		}
-	);
+	it( 'Create revisions', async function () {
+		await editorPage.enterText( 'Revision 1' );
+		await editorPage.saveDraft();
+
+		await editorPage.enterText( 'Revision 2' );
+		await editorPage.saveDraft();
+
+		await editorPage.enterText( 'Revision 3' );
+		await editorPage.saveDraft();
+	} );
 
 	it( 'View revisions', async function () {
 		await editorPage.openSettings();

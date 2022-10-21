@@ -12,10 +12,8 @@ const selectors = {
 	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
 
 	// Draft
-	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
-		const buttonState = state === 'disabled' ? 'true' : 'false';
-		return `${ panel } button[aria-label="Save draft"][aria-disabled="${ buttonState }"]`;
-	},
+	saveDraftButton: `${ panel } button:text-is("Save draft")`,
+	savedButton: `${ panel } button:text-is("Saved")`,
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
@@ -132,7 +130,7 @@ export class EditorToolbarComponent {
 	 * If the button cannot be clicked, the method short-circuits.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton( 'enabled' ) );
+		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton );
 
 		try {
 			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
@@ -140,11 +138,10 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		await Promise.all( [ this.page.waitForResponse( /posts/ ), saveButtonLocator.click() ] );
+		const savedButtonLocator = this.editor.locator( selectors.savedButton );
 
-		// // Ensure the Save Draft button is disabled after successful save.
-		// const savedButtonLocator = this.editor.locator( selectors.saveDraftButton( 'disabled' ) );
-		// await savedButtonLocator.waitFor();
+		await saveButtonLocator.click();
+		await savedButtonLocator.waitFor();
 	}
 
 	/* Preview */
