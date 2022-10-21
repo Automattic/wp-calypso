@@ -39,6 +39,7 @@ const CONTENT = css( {
 } );
 
 const CTA = css( {
+	'--color-link': '#111619',
 	marginLeft: 'auto',
 	textDecoration: 'underline',
 	textUnderlineOffset: 4,

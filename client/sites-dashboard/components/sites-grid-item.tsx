@@ -42,6 +42,7 @@ export const siteThumbnail = css( {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
+	boxSizing: 'border-box',
 } );
 
 const SitesGridItemSecondary = styled.div( {
