@@ -9,6 +9,7 @@ import {
 	envVariables,
 	EditorPage,
 	RevisionsComponent,
+	RevisionsPage,
 	ParagraphBlock,
 	getTestAccountByFeature,
 	envToFeatureKey,
@@ -25,6 +26,7 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 
 	let editorPage: EditorPage;
 	let revisionsComponent: RevisionsComponent;
+	let revisionsPage: RevisionsPage;
 	let page: Page;
 
 	beforeAll( async function () {
@@ -54,20 +56,52 @@ describe( DataHelper.createSuiteTitle( `Editor: Revisions` ), function () {
 
 	it( 'View revisions', async function () {
 		await editorPage.openSettings();
-		await editorPage.viewRevisions();
+
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			// Revisions are opened on a dedicated page on Atomic sites, e.g.
+			// https://yourblog.wpcomstaging.com/wp-admin/revision.php?revision=123
+			await Promise.all( [ page.waitForNavigation(), editorPage.viewRevisions() ] );
+		} else {
+			await editorPage.viewRevisions();
+		}
 	} );
 
-	it( 'Revision 1 displays expected diff', async function () {
-		revisionsComponent = new RevisionsComponent( page );
-		await revisionsComponent.selectRevision( 1 );
-		await revisionsComponent.validateTextInRevision( 'Revision 1' );
+	it( 'Select first revision', async function () {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			revisionsPage = new RevisionsPage( page );
+			await revisionsPage.selectRevision( 1 );
+		} else {
+			revisionsComponent = new RevisionsComponent( page );
+			await revisionsComponent.selectRevision( 1 );
+		}
 	} );
 
-	it( 'Restore revision 1', async function () {
-		revisionsComponent = new RevisionsComponent( page );
-		await revisionsComponent.clickButton( 'Load' );
+	it( 'Validate selected revision diff', async function () {
+		let revisionContent: string;
 
-		const text = await editorPage.getText();
-		expect( text ).toEqual( 'Revision 1' );
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			revisionContent = await page.innerText( '.revisions-diff' );
+		} else {
+			revisionContent = await page.innerText( '.editor-diff-viewer__content' );
+		}
+
+		expect( revisionContent ).toContain( 'Revision 1' );
+		expect( revisionContent ).not.toContain( 'Revision 2' );
+		expect( revisionContent ).not.toContain( 'Revision 3' );
+	} );
+
+	it( 'Load selected revision', async function () {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await revisionsPage.loadSelectedRevision();
+			await editorPage.waitUntilLoaded();
+		} else {
+			await revisionsComponent.loadSelectedRevision();
+		}
+	} );
+
+	it( 'Validate loaded revision content', async function () {
+		const postContent = await editorPage.getText();
+
+		expect( postContent ).toBe( 'Revision 1' );
 	} );
 } );

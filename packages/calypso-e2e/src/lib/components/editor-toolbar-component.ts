@@ -140,11 +140,11 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		await saveButtonLocator.click();
+		await Promise.all( [ this.page.waitForResponse( /posts/ ), saveButtonLocator.click() ] );
 
-		// Ensure the Save Draft button is disabled after successful save.
-		const savedButtonLocator = this.editor.locator( selectors.saveDraftButton( 'disabled' ) );
-		await savedButtonLocator.waitFor();
+		// // Ensure the Save Draft button is disabled after successful save.
+		// const savedButtonLocator = this.editor.locator( selectors.saveDraftButton( 'disabled' ) );
+		// await savedButtonLocator.waitFor();
 	}
 
 	/* Preview */
