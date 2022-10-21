@@ -6,6 +6,7 @@ const container = css( {
 	width: '100%',
 	flexDirection: 'column',
 	minWidth: 0,
+	position: 'relative',
 } );
 
 const primaryContainer = css( {
@@ -18,14 +19,21 @@ const primaryContainer = css( {
 
 interface SitesGridTileProps {
 	leading: ReactNode;
+	leadingAction: ReactNode;
 	primary: ReactNode;
 	secondary: ReactNode;
 }
 
-export const SitesGridTile = ( { leading, primary, secondary }: SitesGridTileProps ) => {
+export const SitesGridTile = ( {
+	leading,
+	leadingAction = null,
+	primary,
+	secondary,
+}: SitesGridTileProps ) => {
 	return (
 		<div className={ container }>
 			{ leading }
+			{ leadingAction }
 			<div>
 				<div className={ primaryContainer }>{ primary }</div>
 				{ secondary }

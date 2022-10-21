@@ -6,6 +6,7 @@ import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
+import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
@@ -95,6 +96,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 					/>
 				</ThumbnailLink>
 			}
+			leadingAction={ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
 			primary={
 				<>
 					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
