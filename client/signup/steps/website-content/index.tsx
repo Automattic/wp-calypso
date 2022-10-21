@@ -35,6 +35,8 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
 
+const MAXTRIES = 10;
+
 const DialogContent = styled.div`
 	padding: 16px;
 	p {
@@ -198,22 +200,25 @@ function WebsiteContentStep( {
  *
  *
  * If the above conditions are met, the hook returns { isPollingInProgress: false, hasValidPurchase: true }.
- * If the above conditions are not met, it retries the request MAXTRIES times,
+ * If the above conditions are not met, it retries the request maxTries times,
  * with a linear backoff. If the conditions are still not met, the hook returns
  * { isPollingInProgress: false, hasValidPurchase: false }.
  * The default return value is { isPollingInProgress: true, hasValidPurchase: false }
  *
  * @param {(SiteId | null)} siteId The current site ID.
+ * @param {(number)} maxTries The max number of retries
  * @returns {{
  * 	isPollingInProgress: boolean;
  * 	hasValidPurchase: boolean;
  * }}
  */
-function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
+function usePollSiteForDIFMDetails(
+	siteId: SiteId | null,
+	maxTries = 10
+): {
 	isPollingInProgress: boolean;
 	hasValidPurchase: boolean;
 } {
-	const MAXTRIES = 10;
 	const [ retryCount, setRetryCount ] = useState( 0 );
 	const [ isPollingInProgress, setIsPollingInProgress ] = useState( true );
 	const [ hasValidPurchase, setHasValidPurchase ] = useState( false );
@@ -253,7 +258,7 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 			}
 		}
 
-		if ( isPollingInProgress && retryCount < MAXTRIES ) {
+		if ( isPollingInProgress && retryCount < maxTries ) {
 			// Only refresh 10 times
 			timeout.current = window.setTimeout( () => {
 				setRetryCount( ( retryCount ) => retryCount + 1 );
@@ -261,7 +266,7 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 			}, retryCount * 600 );
 		}
 
-		if ( retryCount === MAXTRIES ) {
+		if ( retryCount === maxTries ) {
 			setIsPollingInProgress( false );
 			logToLogstash( {
 				feature: 'calypso_client',
@@ -288,6 +293,7 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 		pageTitles,
 		isInProgress,
 		isWebsiteContentSubmitted,
+		maxTries,
 	] );
 
 	return {
@@ -325,7 +331,7 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId );
+	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId, MAXTRIES );
 
 	useEffect( () => {
 		if ( isPollingInProgress ) {
