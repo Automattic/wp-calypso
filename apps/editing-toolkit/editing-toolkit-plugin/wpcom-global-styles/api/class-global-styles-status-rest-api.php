@@ -8,14 +8,14 @@
 /**
  * This class contains the necessary endpoints to interact with global styles outside the editor context.
  */
-class Global_Styles_Info_Rest_API extends WP_REST_Controller {
+class Global_Styles_Status_Rest_API extends WP_REST_Controller {
 
 	/**
 	 * Class constructor
 	 */
 	public function __construct() {
 		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'global-styles-info';
+		$this->rest_base                       = 'global-styles/status';
 		$this->wpcom_is_site_specific_endpoint = true;
 		$this->wpcom_is_wpcom_only_endpoint    = true;
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
@@ -72,5 +72,5 @@ class Global_Styles_Info_Rest_API extends WP_REST_Controller {
 }
 
 if ( function_exists( 'wpcom_rest_api_v2_load_plugin' ) ) {
-	wpcom_rest_api_v2_load_plugin( 'Global_Styles_Info_Rest_API' );
+	wpcom_rest_api_v2_load_plugin( 'Global_Styles_Status_Rest_API' );
 }

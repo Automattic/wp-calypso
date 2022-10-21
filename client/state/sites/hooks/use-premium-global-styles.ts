@@ -30,7 +30,7 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesInfo = {
 };
 
 const getGSInfoEndpointForSite = ( siteId: number ) => ( {
-	path: `sites/${ siteId }/global-styles-info`,
+	path: `sites/${ siteId }/global-styles/status`,
 	apiNamespace: 'wpcom/v2/',
 } );
 
