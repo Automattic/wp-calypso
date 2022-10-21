@@ -2,7 +2,8 @@ import { Page } from 'playwright';
 import { ElementHelper } from '../..';
 
 /**
- * Represents the Revision page.
+ * Represents the Revisions page used on Atomic sites.
+ * For Simple sites see the RevisionsComponent.
  */
 export class RevisionsPage {
 	private page: Page;
@@ -48,7 +49,7 @@ export class RevisionsPage {
 	async loadSelectedRevision() {
 		const restoreButton = this.page.locator( 'input[value="Restore This Revision"]' );
 		if ( await restoreButton.isDisabled() ) {
-			throw new Error( 'Revision already loaded' );
+			throw new Error( 'Revision already loaded.' );
 		}
 
 		await Promise.all( [
