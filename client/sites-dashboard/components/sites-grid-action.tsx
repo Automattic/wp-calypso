@@ -19,12 +19,13 @@ const SITES_GRID_ACTION = css( {
 	display: 'flex',
 	alignItems: 'center',
 	position: 'absolute',
-	top: 0,
-	width: '100%',
-	backgroundColor: 'var(--studio-gray-0)',
-	padding: '16px 22px',
+	backgroundColor: 'var(--studio-white)',
+	padding: '16px 20px',
 	boxSizing: 'border-box',
-	borderRadius: 10,
+	borderRadius: 4,
+	left: 6,
+	top: 6,
+	width: 'calc( 100% - 12px )',
 } );
 
 const CONTENT = css( {
