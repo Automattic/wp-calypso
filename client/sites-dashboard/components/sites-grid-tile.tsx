@@ -19,7 +19,7 @@ const primaryContainer = css( {
 
 interface SitesGridTileProps {
 	leading: ReactNode;
-	leadingAction: ReactNode;
+	leadingAction?: ReactNode;
 	primary: ReactNode;
 	secondary: ReactNode;
 }
