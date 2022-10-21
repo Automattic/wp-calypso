@@ -15,7 +15,7 @@ export const ReactivateExpiredPlan = () => {
 	return (
 		<Task
 			isUrgent
-			title={ translate( 'Repurchase your plan' ) }
+			title={ translate( 'Restore your plan' ) }
 			description={ translate(
 				'Your plan expired and your site has reverted back to features available on the Free plan. If you would like to continue using your previous features you must first purchase an eligible plan.{{lineBreak/}}If you wish to continue with Free plan features no further action is needed.',
 				{
