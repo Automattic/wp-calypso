@@ -147,7 +147,9 @@ export default function FeedbackStep( { purchase, isImport, ...props }: Feedback
 						onDetailsChange={ props.onChangeCancellationReasonDetails }
 					/>
 				) }
-				{ isPlanPurchase && isImport && <ImportQuestion /> }
+				{ isPlanPurchase && isImport && (
+					<ImportQuestion onChange={ props.onChangeImportFeedback } />
+				) }
 			</div>
 		</div>
 	);
