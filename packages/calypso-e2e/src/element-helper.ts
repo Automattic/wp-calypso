@@ -152,3 +152,26 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 
 	return blockId;
 }
+
+/**
+ *
+ * @param page
+ * @param parentSelector
+ */
+export async function waitForMutations( page: Page, parentSelector: string ): Promise< void > {
+	const parentHandle = await page.waitForSelector( parentSelector );
+
+	await page.evaluate( async ( parentElement ) => {
+		await new Promise( ( resolve ) => {
+			let timeout: NodeJS.Timeout;
+			const callback = () => {
+				clearTimeout( timeout );
+				timeout = setTimeout( resolve, 1000 );
+			};
+			const observer = new MutationObserver( callback );
+			const options = { attributes: true, subtree: true, childList: true };
+
+			observer.observe( parentElement, options );
+		} );
+	}, parentHandle );
+}
