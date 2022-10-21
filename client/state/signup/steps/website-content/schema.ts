@@ -2,7 +2,8 @@ export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
 	title: 'Website content schema',
 	type: 'object',
-	required: [ 'currentIndex', 'websiteContent' ],
+	additionalProperties: false,
+	required: [ 'currentIndex', 'websiteContent', 'imageUploadStates' ],
 	properties: {
 		currentIndex: {
 			type: 'number',
@@ -11,6 +12,8 @@ export const schema = {
 		websiteContent: {
 			type: 'object',
 			description: 'The content for the website',
+			additionalProperties: false,
+			required: [ 'pages', 'siteLogoSection', 'feedbackSection' ],
 			properties: {
 				pages: {
 					type: 'array',
@@ -47,17 +50,17 @@ export const schema = {
 					properties: {
 						siteLogoUrl: {
 							type: 'string',
-							description: 'Uploaded Logot url',
+							description: 'Uploaded Logo url',
 						},
 					},
 				},
 				feedbackSection: {
 					type: 'object',
-					description: 'Props related to Uploading logo url',
+					description: 'Props related to generating feedback',
 					properties: {
 						genericFeedback: {
 							type: 'string',
-							description: 'Uploaded Logot url',
+							description: 'General feedback provided about the site',
 						},
 					},
 				},
