@@ -47,6 +47,8 @@ export const schema = {
 				siteLogoSection: {
 					type: 'object',
 					description: 'Props related to Uploading logo url',
+					additionalProperties: false,
+					required: [ 'siteLogoUrl' ],
 					properties: {
 						siteLogoUrl: {
 							type: 'string',
@@ -57,6 +59,8 @@ export const schema = {
 				feedbackSection: {
 					type: 'object',
 					description: 'Props related to generating feedback',
+					additionalProperties: false,
+					required: [ 'genericFeedback' ],
 					properties: {
 						genericFeedback: {
 							type: 'string',
