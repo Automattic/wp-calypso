@@ -439,6 +439,11 @@ export function siteSelection( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
+	if ( context.path.includes( '/renewsub/' ) ) {
+		dispatch( setSelectedSiteId( null ) );
+		return next();
+	}
+
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );

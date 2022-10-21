@@ -44,6 +44,7 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
+	isRenewSubPurchase,
 }: {
 	productAliasFromUrl?: string;
 	productSourceFromUrl?: string;
@@ -60,6 +61,7 @@ export default function CheckoutMainWrapper( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
+	isRenewSubPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
@@ -116,6 +118,7 @@ export default function CheckoutMainWrapper( {
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
 							isUserComingFromLoginForm={ isUserComingFromLoginForm }
+							isRenewSubPurchase={ isRenewSubPurchase }
 						/>
 					</StripeHookProvider>
 				</CalypsoShoppingCartProvider>

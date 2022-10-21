@@ -97,6 +97,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	isRenewSubPurchase,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -123,6 +124,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	isRenewSubPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -180,6 +182,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
+		isRenewSubPurchase,
 	} );
 
 	const cartKey = useCartKey();

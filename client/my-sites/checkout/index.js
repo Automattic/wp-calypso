@@ -251,6 +251,15 @@ export default function () {
 	);
 
 	page(
+		'/checkout/:domainOrProduct/renewsub/:purchaseId',
+		redirectLoggedOut,
+		siteSelection,
+		checkout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
 		redirectLoggedOut,
 		siteSelection,

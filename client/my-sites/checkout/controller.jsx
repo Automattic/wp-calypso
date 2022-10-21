@@ -103,13 +103,19 @@ export function checkout( context, next ) {
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
+	const isRenewSubPurchase = context.path.includes( '/renewsub/' );
+
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
 		page( context.path.replace( '/checkout/jetpack', '/checkout' ) );
 		return;
 	}
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
+	if (
+		! selectedSite &&
+		! isDisallowedForSitePicker &&
+		! ( isJetpackCheckout || isRenewSubPurchase )
+	) {
 		sites( context, next );
 		return;
 	}
@@ -172,6 +178,7 @@ export function checkout( context, next ) {
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+				isRenewSubPurchase={ isRenewSubPurchase }
 			/>
 		</>
 	);
