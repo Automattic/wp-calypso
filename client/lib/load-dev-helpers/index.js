@@ -4,7 +4,7 @@ import { debounce } from 'lodash';
 export default function loadDevHelpers( reduxStore ) {
 	const badge = document.querySelector( '.environment-badge' );
 	if ( badge ) {
-		// We
+		// Show/hide Dev Tools menu as mouse enters/leaves
 		const remove = debounce( () => {
 			badge.classList.remove( 'hovered' );
 		}, 500 );
