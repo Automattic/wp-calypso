@@ -1,6 +1,21 @@
 import config from '@automattic/calypso-config';
+import { debounce } from 'lodash';
 
 export default function loadDevHelpers( reduxStore ) {
+	const badge = document.querySelector( '.environment-badge' );
+	if ( badge ) {
+		// We
+		const remove = debounce( () => {
+			badge.classList.remove( 'hovered' );
+		}, 500 );
+		badge.onmouseleave = remove;
+
+		badge.onmouseenter = () => {
+			remove.cancel();
+			badge.classList.add( 'hovered' );
+		};
+	}
+
 	// account settings helper requires a Redux store.
 	if ( reduxStore && config.isEnabled( 'dev/account-settings-helper' ) ) {
 		const el = document.querySelector( '.environment.is-account-settings' );
