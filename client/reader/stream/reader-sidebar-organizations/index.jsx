@@ -28,11 +28,16 @@ export class ReaderSidebarOrganizations extends Component {
 		const { path } = this.props;
 		const organization = this.fetchOrganization();
 		return (
-			<ReaderSidebarOrganizationsList
-				key={ organization.id }
-				path={ path }
-				organization={ organization }
-			/>
+			<>
+				<h2>
+					Following ({ organization.slug }) <a href="/following/mark-all">Mark all as seen</a>
+				</h2>
+				<ReaderSidebarOrganizationsList
+					key={ organization.id }
+					path={ path }
+					organization={ organization }
+				/>
+			</>
 		);
 	}
 
