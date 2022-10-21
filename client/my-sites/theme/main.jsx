@@ -103,6 +103,7 @@ class ThemeSheet extends Component {
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
+		softLaunched: PropTypes.bool,
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,
@@ -193,7 +194,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
-		const { author, name, translate } = this.props;
+		const { author, name, translate, softLaunched } = this.props;
 
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -201,7 +202,10 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ softLaunched && <span className="theme__sheet-bar-soft-launched">Soft Launched</span> }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -921,6 +925,7 @@ export default connect(
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			softLaunched: theme?.soft_launched,
 		};
 	},
 	{
