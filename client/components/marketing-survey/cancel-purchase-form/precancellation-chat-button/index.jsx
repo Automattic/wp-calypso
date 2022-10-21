@@ -42,7 +42,7 @@ class PrecancellationChatButton extends Component {
 		const { isAvailable, icon, translate, atBottom } = this.props;
 
 		if ( ! isAvailable ) {
-			// 	return null;
+			return null;
 		}
 
 		return (
