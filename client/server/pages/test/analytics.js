@@ -101,7 +101,7 @@ describe( 'index', () => {
 				logSectionResponse( request, response, next );
 
 				// Mock the "finish" event
-				response.emit( 'close' );
+				response.emit( 'finish' );
 
 				expect( statsdUtils.logServerEvent ).not.toBeCalled();
 			} );
