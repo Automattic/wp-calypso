@@ -1,0 +1,28 @@
+{
+	"name": "upgrade-block",
+	"version": "0.1.0",
+	"description": "A Gutenberg block to show your pride! This block enables you to type text and style it with the color font Gilbert from Type with Pride.",
+	"author": "The WordPress Contributors",
+	"license": "GPL-2.0-or-later",
+	"main": "build/index.js",
+	"scripts": {
+		"build:block": "wp-scripts build",
+		"build": "NODE_ENV=production yarn dev",
+		"clean": "rm -rf build",
+		"dev": "yarn run calypso-apps-builder --sync --localPath build --remotePath /home/wpcom/public_html/wp-content/plugins/support-forums/blocks/upgrade-block",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start"
+	},
+	"dependencies": {
+		"@wordpress/block-editor": "^10.3.0",
+		"@wordpress/blocks": "^11.19.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@wordpress/scripts": "^24.4.0"
+	}
+}
