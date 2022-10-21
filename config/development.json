@@ -167,6 +167,7 @@
 		"signup/stepper-flow": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
+		"ssr/prefetch-timebox": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
