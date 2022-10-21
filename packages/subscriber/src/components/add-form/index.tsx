@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { FormInputValidation } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { Title, NextButton, SkipButton } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton } from '@automattic/onboarding';
 import { TextControl, FormFileUpload, Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createElement, createInterpolateElement } from '@wordpress/element';
@@ -26,10 +26,12 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	isSiteOnFreePlan?: boolean;
 	flowName?: string;
-	showTitleEmoji?: boolean;
-	showSkipBtn?: boolean;
+	showTitle?: boolean;
+	showSubtitle?: boolean;
 	showCsvUpload?: boolean;
+	showFormManualListLabel?: boolean;
 	submitBtnName?: string;
 	allowEmptyFormSubmit?: boolean;
 	manualListEmailInviting?: boolean;
@@ -46,15 +48,16 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		isSiteOnFreePlan,
 		flowName,
-		showTitleEmoji,
-		showSkipBtn,
+		showTitle = true,
+		showSubtitle,
 		showCsvUpload,
+		showFormManualListLabel,
 		submitBtnName = __( 'Add subscribers' ),
 		allowEmptyFormSubmit,
 		manualListEmailInviting,
 		recordTracksEvent,
-		onSkipBtnClick,
 		onImportFinished,
 	} = props;
 
@@ -82,6 +85,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	const [ isValidEmails, setIsValidEmails ] = useState< boolean[] >( [] );
 	const [ isDirtyEmails, setIsDirtyEmails ] = useState< boolean[] >( [] );
 	const [ emailFormControls, setEmailFormControls ] = useState( emailControlPlaceholder );
+	const [ submitBtnReady, setIsSubmitBtnReady ] = useState( isSubmitButtonReady() );
 	const importSelector = useSelect( ( s ) => s( SUBSCRIBER_STORE ).getImportSubscribersSelector() );
 	const [ formFileUploadElement ] = useState(
 		createElement( FormFileUpload, {
@@ -106,6 +110,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
+	useEffect( () => {
+		setIsSubmitBtnReady( isSubmitButtonReady() );
+	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit ] );
 
 	useRecordAddFormEvents( recordTracksEvent, flowName );
 
@@ -115,9 +122,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function onFormSubmit( e: FormEvent ) {
 		e.preventDefault();
 
-		const validEmails = isValidEmails
-			.map( ( x, i ) => x && emails[ i ] )
-			.filter( ( x ) => !! x ) as string[];
+		const validEmails = getValidEmails();
 
 		if ( manualListEmailInviting ) {
 			// add subscribers with invite email
@@ -157,6 +162,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		setIsDirtyEmails( _isDirtyEmails );
 	}
 
+	function getValidEmails(): string[] {
+		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
+	}
+
 	function isValidExtension( fileName: string ) {
 		const extensionRgx = new RegExp( /[^\\]*\.(?<extension>\w+)$/ );
 		const validExtensions = [ 'csv' ];
@@ -167,7 +176,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function onFileInputChange( e: ChangeEvent< HTMLInputElement > ) {
 		const f = e.target.files;
-		if ( ! f || ! f.length ) return;
+		if ( ! f || ! f.length ) {
+			return;
+		}
 
 		const file = f[ 0 ];
 		const isValid = isValidExtension( file.name );
@@ -197,8 +208,24 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		}
 	}
 
+	function isSubmitButtonReady(): boolean {
+		return !! allowEmptyFormSubmit || !! getValidEmails().length || !! selectedFile;
+	}
+
+	function resetFormState(): void {
+		setEmails( [] );
+		setSelectedFile( undefined );
+		importCsvSubscribersUpdate( undefined );
+		setIsSelectedFileValid( true );
+		setIsValidEmails( [] );
+		setIsDirtyEmails( [] );
+	}
+
 	function importFinishedRecognition() {
-		! importSelector?.error && prevInProgress.current && ! inProgress && onImportFinished?.();
+		if ( ! importSelector?.error && prevInProgress.current && ! inProgress ) {
+			resetFormState();
+			onImportFinished?.();
+		}
 	}
 
 	function includesHandledError() {
@@ -213,7 +240,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 		return (
 			error && (
-				<FormInputValidation icon={ 'tip' } isError={ false } isWarning={ true } text={ '' }>
+				<FormInputValidation icon="tip" isError={ false } isWarning={ true } text="">
 					<Icon icon={ tip } />
 					{ ( () => {
 						switch ( error.code ) {
@@ -242,7 +269,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderFileValidationMsg() {
 		return (
 			! isSelectedFileValid && (
-				<FormInputValidation isError={ true } text={ '' }>
+				<FormInputValidation isError={ true } text="">
 					{ createInterpolateElement(
 						__(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
@@ -257,7 +284,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderEmailListInfoMsg() {
 		return (
 			emailControlMaxNum === isValidEmails.filter( ( x ) => x ).length && (
-				<FormInputValidation icon={ 'tip' } isError={ false } text={ '' }>
+				<FormInputValidation icon="tip" isError={ false } text="">
 					<Icon icon={ tip } />
 					{ __( 'Great start! You’ll be able to add more subscribers after setup.' ) }
 				</FormInputValidation>
@@ -267,14 +294,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderImportCsvDisclaimerMsg() {
 		return (
-			isSelectedFileValid &&
-			selectedFile && (
-				<p className={ 'add-subscriber__form--disclaimer' }>
+			( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) && (
+				<p className="add-subscriber__form--disclaimer">
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							__(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
+								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>'
 							),
 							submitBtnName
 						),
@@ -294,18 +320,24 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
+		const ariaLabelMsg = isSiteOnFreePlan
+			? __(
+					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+			  )
+			: __( 'Or bring your mailing list from other newsletter services by uploading a CSV file.' );
+
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<label
-					aria-label={ __(
-						'Or bring your mailing list from other newsletter services by uploading a CSV file.'
-					) }
-				>
+				<label aria-label={ ariaLabelMsg }>
 					{ createInterpolateElement(
-						__(
-							'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-						),
+						isSiteOnFreePlan
+							? __(
+									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  )
+							: __(
+									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  ),
 						{ uploadBtn: formFileUploadElement }
 					) }
 				</label>
@@ -317,7 +349,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return (
 			isSelectedFileValid &&
 			selectedFile && (
-				<label className={ 'add-subscriber__form-label-links' }>
+				<label className="add-subscriber__form-label-links">
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: the first string variable shows a selected file name, Replace and Remove are links */
@@ -341,19 +373,32 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	return (
-		<div className={ 'add-subscriber' }>
-			<div className={ 'add-subscriber__title-container' }>
-				{ showTitleEmoji && <h2 className={ 'add-subscriber__title-emoji' }>🤝</h2> }
-				<Title>{ __( 'Let’s add your first subscribers' ) }</Title>
-			</div>
+		<div className="add-subscriber">
+			{ ( showTitle || showSubtitle ) && (
+				<div className="add-subscriber__title-container">
+					{ showTitle && <Title>{ __( 'Let’s add your first subscribers' ) }</Title> }
+					{ showSubtitle && (
+						<SubTitle>
+							{ __(
+								'Your subscribers will receive an email notification whenever you publish a new post.'
+							) }
+						</SubTitle>
+					) }
+				</div>
+			) }
 
-			<div className={ 'add-subscriber__form--container' }>
-				<form onSubmit={ onFormSubmit } autoComplete={ 'off' }>
+			<div className="add-subscriber__form--container">
+				<form onSubmit={ onFormSubmit } autoComplete="off">
 					{ emailFormControls.map( ( placeholder, i ) => {
 						const showError = isDirtyEmails[ i ] && ! isValidEmails[ i ] && emails[ i ];
 
 						return (
 							<div key={ i }>
+								{ showFormManualListLabel && i === 0 && (
+									<label className="add-subscriber__form-label-emails">
+										<strong>{ __( 'Emails' ) }</strong>
+									</label>
+								) }
 								<TextControl
 									className={ showError ? 'is-error' : '' }
 									disabled={ inProgress }
@@ -383,21 +428,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvDisclaimerMsg() }
 
 					<NextButton
-						type={ 'submit' }
-						className={ 'add-subscriber__form-submit-btn' }
+						type="submit"
+						className="add-subscriber__form-submit-btn"
 						isBusy={ inProgress }
-						disabled={ inProgress }
+						disabled={ ! submitBtnReady }
 					>
 						{ submitBtnName }
 					</NextButton>
-					{ showSkipBtn && (
-						<SkipButton
-							className={ 'add-subscriber__form-skip-btn' }
-							onClick={ () => onSkipBtnClick?.() }
-						>
-							{ __( 'Not yet' ) }
-						</SkipButton>
-					) }
 				</form>
 			</div>
 		</div>

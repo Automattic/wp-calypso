@@ -25,6 +25,7 @@ declare global {
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
+				setShowCancelButton?: ( show: boolean ) => void;
 			} ) => void;
 		};
 	}
@@ -46,7 +47,8 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	translateFn: ( value: string, options?: any ) => string,
-	domNodeOrId?: HTMLElement | string | null
+	domNodeOrId?: HTMLElement | string | null,
+	setShowCancelButton?: ( show: boolean ) => void
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -65,6 +67,7 @@ export async function showDSP(
 				onClose: onClose,
 				translateFn: translateFn,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				setShowCancelButton: setShowCancelButton,
 			} );
 		} else {
 			reject( false );

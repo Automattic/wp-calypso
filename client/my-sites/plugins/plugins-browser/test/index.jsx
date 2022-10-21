@@ -54,6 +54,7 @@ jest.mock( 'calypso/state/purchases/selectors', () => ( {
 } ) );
 
 import {
+	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -122,7 +123,10 @@ describe( 'Upsell Nudge should get appropriate plan constant', () => {
 		`Business 1 year for (%s)`,
 		( product_slug ) => {
 			const initialState = {
-				sites: { items: { 1: { jetpack: false, plan: { product_slug } } } },
+				sites: {
+					items: { 1: { jetpack: false, plan: { product_slug } } },
+					features: { 1: { data: [ FEATURE_INSTALL_PLUGINS ] } },
+				},
 			};
 			render( <PluginsBrowser />, { initialState } );
 			const nudge = screen.getByTestId( 'upsell-nudge' );

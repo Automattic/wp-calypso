@@ -72,7 +72,11 @@ export interface ContactPageData extends PageData {
 	displayAddress?: string;
 }
 
-export type WebsiteContent = { pages: Array< PageData >; siteLogoUrl: string };
+export type WebsiteContent = {
+	pages: Array< PageData >;
+	siteLogoSection: { siteLogoUrl: string };
+	feedbackSection: { genericFeedback: string };
+};
 export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
@@ -81,6 +85,10 @@ export interface WebsiteContentCollection {
 
 export const initialState: WebsiteContentCollection = {
 	currentIndex: 0,
-	websiteContent: { pages: [], siteLogoUrl: '' },
+	websiteContent: {
+		pages: [],
+		siteLogoSection: { siteLogoUrl: '' },
+		feedbackSection: { genericFeedback: '' },
+	},
 	imageUploadStates: {},
 };

@@ -74,6 +74,11 @@ export default function PostItem( { post }: Props ) {
 						) }
 					</span>
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
+					<span className="post-item__post-type">
+						<a href={ post.URL } className="post-item__title-view">
+							{ __( 'View' ) }
+						</a>
+					</span>
 				</div>
 			</div>
 

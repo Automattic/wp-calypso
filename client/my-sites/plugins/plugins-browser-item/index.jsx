@@ -101,6 +101,7 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			list_type: props.listType,
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );
@@ -329,34 +330,47 @@ const InstalledInOrPricing = ( {
 	return (
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-				{ ( { isFetching, price, period } ) =>
-					isFetching ? (
-						<div className="plugins-browser-item__pricing-placeholder">...</div>
-					) : (
+				{ ( { isFetching, price, period, isSaasProduct } ) => {
+					if ( isSaasProduct ) {
+						// SaaS products do not display a price
+						return (
+							<>
+								{ ! canInstallPlugins && isLoggedIn && (
+									<span className="plugins-browser-item__requires-plan-upgrade">
+										{ translate( 'Requires a plan upgrade' ) }
+									</span>
+								) }
+							</>
+						);
+					}
+					if ( isFetching ) {
+						return <div className="plugins-browser-item__pricing-placeholder">...</div>;
+					}
+					if ( price ) {
+						return (
+							<>
+								{ price + ' ' }
+								<span className="plugins-browser-item__period">{ period }</span>
+								{ shouldUpgrade && (
+									<div className="plugins-browser-item__period">
+										{ translate( 'Requires a plan upgrade' ) }
+									</div>
+								) }
+							</>
+						);
+					}
+
+					return (
 						<>
-							{ price ? (
-								<>
-									{ price + ' ' }
-									<span className="plugins-browser-item__period">{ period }</span>
-									{ shouldUpgrade && (
-										<div className="plugins-browser-item__period">
-											{ translate( 'Requires a plan upgrade' ) }
-										</div>
-									) }
-								</>
-							) : (
-								<>
-									{ translate( 'Free' ) }
-									{ ! canInstallPlugins && isLoggedIn && (
-										<span className="plugins-browser-item__requires-plan-upgrade">
-											{ translate( 'Requires a plan upgrade' ) }
-										</span>
-									) }
-								</>
+							{ translate( 'Free' ) }
+							{ ! canInstallPlugins && isLoggedIn && (
+								<span className="plugins-browser-item__requires-plan-upgrade">
+									{ translate( 'Requires a plan upgrade' ) }
+								</span>
 							) }
 						</>
-					)
-				}
+					);
+				} }
 			</PluginPrice>
 		</div>
 	);

@@ -1,5 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useTranslate } from 'i18n-calypso';
 import { useState, useRef } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -11,13 +12,14 @@ import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
-import { encodePatternId } from './utils';
+import { encodePatternId, createCustomHomeTemplateContent } from './utils';
 import type { Step } from '../../types';
 import type { Pattern } from './types';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
 import './style.scss';
 
 const PatternAssembler: Step = ( { navigation } ) => {
+	const translate = useTranslate();
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
 	const [ header, setHeader ] = useState< Pattern | null >( null );
 	const [ footer, setFooter ] = useState< Pattern | null >( null );
@@ -26,7 +28,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
 	const { goBack, goNext, submit } = navigation;
-	const { setDesignOnSite } = useDispatch( SITE_STORE );
+	const { setDesignOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -82,16 +84,6 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
-
-	const getPageTemplate = () => {
-		let pageTemplate = 'footer-only';
-
-		if ( header ) {
-			pageTemplate = 'header-footer-only';
-		}
-
-		return pageTemplate;
-	};
 
 	const setScrollToSelectorByPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
@@ -242,12 +234,18 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onContinueClick={ () => {
 							if ( siteSlugOrId ) {
 								const design = getDesign();
-								const pageTemplate = getPageTemplate();
+								const stylesheet = design.recipe!.stylesheet!;
 
 								setPendingAction( () =>
-									setDesignOnSite( siteSlugOrId, design, { pageTemplate } ).then( () =>
-										reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+									createCustomTemplate(
+										siteSlugOrId,
+										stylesheet,
+										'home',
+										translate( 'Home' ),
+										createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
 									)
+										.then( () => setDesignOnSite( siteSlugOrId, design ) )
+										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 								);
 
 								trackEventContinue();
