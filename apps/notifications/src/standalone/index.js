@@ -63,6 +63,12 @@ const customMiddleware = {
 			window.open( href, '_blank' );
 		},
 	],
+	NEW_POST: [
+		( st, { siteId, href } ) => {
+			sendMessage( { action: 'newPost', siteId } );
+			window.open( href, '_blank' );
+		},
+	],
 };
 
 const render = ( wpcom ) => {

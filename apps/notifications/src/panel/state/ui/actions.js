@@ -10,6 +10,7 @@ import {
 	SET_FILTER,
 	ENABLE_KEYBOARD_SHORTCUTS,
 	DISABLE_KEYBOARD_SHORTCUTS,
+	NEW_POST,
 } from '../action-types';
 
 export const closePanel = () => ( {
@@ -55,6 +56,12 @@ export const editComment = ( siteId, postId, commentId, href ) => ( {
 	siteId,
 	postId,
 	commentId,
+	href,
+} );
+
+export const newPost = ( siteId, href ) => ( {
+	type: NEW_POST,
+	siteId,
 	href,
 } );
 

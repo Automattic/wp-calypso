@@ -42,3 +42,13 @@ export function getReferenceId( note, type ) {
 export function getEditCommentLink( note ) {
 	return getActionBlock( note.body ).edit_comment_link;
 }
+
+/**
+ * Returns the edit post link for the note post.
+ *
+ * @param note
+ * @returns {string}
+ */
+export function getEditPostLink( note ) {
+	return getActionBlock( note.body ).edit_post_link;
+}
