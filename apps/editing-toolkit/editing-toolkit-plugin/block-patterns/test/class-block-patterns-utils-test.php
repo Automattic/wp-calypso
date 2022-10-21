@@ -63,7 +63,7 @@ class Block_Patterns_Utils_Test extends TestCase {
 	 * Tests that template-based post types are generated from block types
 	 */
 	public function test_should_return_post_types_from_pattern() {
-		$pattern = array( 'blockTypes' => 'core/template-part/header' );
+		$pattern = array( 'blockTypes' => array( 'core/template-part/header' ) );
 
 		$post_types = $this->utils->get_pattern_post_types_from_pattern( $pattern );
 

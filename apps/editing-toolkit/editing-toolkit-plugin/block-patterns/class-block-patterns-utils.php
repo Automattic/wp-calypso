@@ -125,7 +125,7 @@ class Block_Patterns_Utils {
 	 */
 	public function get_pattern_post_types_from_pattern( $pattern ) {
 		$post_types        = array();
-		$block_types       = $pattern['blockTypes'];
+		$block_types       = array_key_exists( 'blockTypes', $pattern ) ? $pattern['blockTypes'] : array();
 		$block_types_count = count( $block_types );
 		// If all of a patterns blockTypes are template-parts then limit the
 		// postTypes to just the template related types.
