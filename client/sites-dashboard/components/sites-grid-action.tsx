@@ -15,6 +15,7 @@ interface SitesGridActionProps {
 }
 
 const SITES_GRID_ACTION = css( {
+	'--color-site-grid-action-icon': '#ea303f',
 	display: 'flex',
 	alignItems: 'center',
 	position: 'absolute',
@@ -27,7 +28,6 @@ const SITES_GRID_ACTION = css( {
 } );
 
 const CONTENT = css( {
-	'--color-site-grid-action-icon': 'var(--color-error-50)',
 	display: 'flex',
 	alignItems: 'center',
 	marginRight: 16,
@@ -48,15 +48,6 @@ const CTA = css( {
 } );
 
 export function SitesGridAction( { children, icon, ctaProps, ...props }: SitesGridActionProps ) {
-	// const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
-	// useEffect( () => {
-	// 	if ( inViewOnce ) {
-	// 		recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
-	// 			is_site_owner: isSiteOwner,
-	// 			product_slug: plan.product_slug,
-	// 		} );
-	// 	}
-	// }, [ inViewOnce, isSiteOwner, plan.product_slug ] );
 	return (
 		<div className={ SITES_GRID_ACTION } { ...props }>
 			<div className={ CONTENT }>
