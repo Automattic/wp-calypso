@@ -91,7 +91,7 @@ const GlobalStylesNotice = () => {
 						<Button
 							variant="link"
 							href={ wpcomGlobalStyles.upgradeUrl }
-							target="_top"
+							target="_blank"
 							onClick={ () =>
 								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
 									context: 'site-editor',
