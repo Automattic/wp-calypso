@@ -1,4 +1,4 @@
-import config, { isEnabled } from '@automattic/calypso-config';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	findPlansKeys,
@@ -463,20 +463,13 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	mayRenderFAQ() {
-		const { isInSignup, titanMonthlyRenewalCost, showFAQ, locale } = this.props;
+		const { isInSignup, titanMonthlyRenewalCost, showFAQ } = this.props;
 
 		if ( ! showFAQ ) {
 			return;
 		}
 
 		if ( isInSignup ) {
-			const isEnglish = config( 'english_locales' ).includes( locale );
-
-			// Remove this check after translations are completed for the PlanFAQ component.
-			if ( ! isEnglish ) {
-				return null;
-			}
-
 			return <PlanFAQ titanMonthlyRenewalCost={ titanMonthlyRenewalCost } />;
 		}
 
