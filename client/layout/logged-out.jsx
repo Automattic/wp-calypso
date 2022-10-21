@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import QueryAnalyticsBanners from 'calypso/blocks/query-a8c-analytics-banners';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
@@ -126,7 +125,9 @@ const LayoutLoggedOut = ( {
 					{ secondary }
 				</div>
 			</div>
-			{ config.isEnabled( 'gdpr-banner' ) && <QueryAnalyticsBanners /> }
+			{ config.isEnabled( 'gdpr-banner' ) && (
+				<AsyncLoad require="calypso/blocks/query-a8c-analytics-banners" placeholder={ null } />
+			) }
 		</div>
 	);
 };

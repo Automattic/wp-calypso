@@ -352,7 +352,7 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/blocks/app-banner" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'gdpr-banner' ) && (
-					<AsyncLoad require="calypso/blocks/gdpr-banner" placeholder={ null } />
+					<AsyncLoad require="calypso/blocks/query-a8c-analytics-banners" placeholder={ null } />
 				) }
 				{ config.isEnabled( 'legal-updates-banner' ) && (
 					<AsyncLoad require="calypso/blocks/legal-updates-banner" placeholder={ null } />
