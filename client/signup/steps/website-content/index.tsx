@@ -191,28 +191,31 @@ function WebsiteContentStep( {
 /**
  * Hook that polls the /rest/v1.2/sites/<site fragment> API.
  * It checks the site details for a valid DIFM purchase.
- * A valid DIFM purchase has `.options.is_difm_lite_in_progress` set to `false`/`null`
+ * A valid DIFM purchase has `.options.is_difm_lite_in_progress` set to `true`
  * and `.options.difm_lite_site_options.pages` should be an array of strings.
+ * Also, `.options.difm_lite_site_options.is_website_content_submitted` should be
+ * `false/null` to indicate that the users has not submitted content yet.
  *
- * If the above conditions are met, the hook returns { isLoading: false, hasValidPurchase: true }.
+ *
+ * If the above conditions are met, the hook returns { isPollingInProgress: false, hasValidPurchase: true }.
  * If the above conditions are not met, it retries the request MAXTRIES times,
  * with a linear backoff. If the conditions are still not met, the hook returns
- * { isLoading: false, hasValidPurchase: false }.
- * The default return value is { isLoading: true, hasValidPurchase: false }
+ * { isPollingInProgress: false, hasValidPurchase: false }.
+ * The default return value is { isPollingInProgress: true, hasValidPurchase: false }
  *
  * @param {(SiteId | null)} siteId The current site ID.
  * @returns {{
- * 	isLoading: boolean;
+ * 	isPollingInProgress: boolean;
  * 	hasValidPurchase: boolean;
  * }}
  */
 function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
-	isLoading: boolean;
+	isPollingInProgress: boolean;
 	hasValidPurchase: boolean;
 } {
 	const MAXTRIES = 10;
 	const [ retryCount, setRetryCount ] = useState( 0 );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const [ isPollingInProgress, setIsPollingInProgress ] = useState( true );
 	const [ hasValidPurchase, setHasValidPurchase ] = useState( false );
 	const dispatch = useDispatch();
 
@@ -246,11 +249,11 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 			}
 
 			if ( pageTitles && pageTitles.length ) {
-				setIsLoading( false );
+				setIsPollingInProgress( false );
 			}
 		}
 
-		if ( isLoading && retryCount < MAXTRIES ) {
+		if ( isPollingInProgress && retryCount < MAXTRIES ) {
 			// Only refresh 10 times
 			timeout.current = window.setTimeout( () => {
 				setRetryCount( ( retryCount ) => retryCount + 1 );
@@ -259,6 +262,7 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 		}
 
 		if ( retryCount === MAXTRIES ) {
+			setIsPollingInProgress( false );
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'BBEX Content Form: Max retries exceeded.',
@@ -276,7 +280,7 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 			clearTimeout( timeout.current );
 		};
 	}, [
-		isLoading,
+		isPollingInProgress,
 		siteId,
 		retryCount,
 		dispatch,
@@ -287,8 +291,8 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 	] );
 
 	return {
-		isLoading,
-		hasValidPurchase: isLoading ? false : hasValidPurchase,
+		isPollingInProgress,
+		hasValidPurchase: isPollingInProgress ? false : hasValidPurchase,
 	};
 }
 
@@ -321,19 +325,19 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const { hasValidPurchase, isLoading } = usePollSiteForDIFMDetails( siteId );
+	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId );
 
 	useEffect( () => {
-		if ( isLoading ) {
+		if ( isPollingInProgress ) {
 			return;
 		}
 		if ( ! hasValidPurchase ) {
 			debug( 'Website content content already submitted, redirecting to home' );
 			page( `/home/${ queryObject.siteSlug }` );
 		}
-	}, [ hasValidPurchase, isLoading, queryObject.siteSlug ] );
+	}, [ hasValidPurchase, isPollingInProgress, queryObject.siteSlug ] );
 
-	return isLoading ? (
+	return isPollingInProgress ? (
 		<Loader />
 	) : (
 		<StepWrapper
