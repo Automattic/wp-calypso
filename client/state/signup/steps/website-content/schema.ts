@@ -41,9 +41,25 @@ export const schema = {
 						},
 					},
 				},
-				siteLogoUrl: {
-					type: 'string',
-					description: 'Uploaded Logot url',
+				siteLogoSection: {
+					type: 'object',
+					description: 'Props related to Uploading logo url',
+					properties: {
+						siteLogoUrl: {
+							type: 'string',
+							description: 'Uploaded Logot url',
+						},
+					},
+				},
+				feedbackSection: {
+					type: 'object',
+					description: 'Props related to Uploading logo url',
+					properties: {
+						genericFeedback: {
+							type: 'string',
+							description: 'Uploaded Logot url',
+						},
+					},
 				},
 			},
 		},
