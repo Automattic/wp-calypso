@@ -14,6 +14,7 @@ import PostPublishedModal from './post-published-modal';
 import PurchaseNotice from './purchase-notice';
 import SellerCelebrationModal from './seller-celebration-modal';
 import { DEFAULT_VARIANT, BLANK_CANVAS_VARIANT } from './store';
+import VideoPressUploadRedirect from './videopress-upload-redirect';
 import WpcomNux from './welcome-modal/wpcom-nux';
 import LaunchWpcomWelcomeTour from './welcome-tour/tour-launch';
 
@@ -83,6 +84,7 @@ registerPlugin( 'wpcom-block-editor-nux', {
 			<PostPublishedModal />
 			<SellerCelebrationModal />
 			<PurchaseNotice />
+			<VideoPressUploadRedirect />
 		</>
 	),
 } );
