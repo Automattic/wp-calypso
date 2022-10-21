@@ -45,7 +45,7 @@ const getGlobalStylesInfoForSite = ( site: Site ) => {
 	}
 
 	const globalStylesInfoEndpoint = getGSInfoEndpointForSite( site.id );
-	return wpcom.req.get( globalStylesInfoEndpoint );
+	return wpcom.req.get( globalStylesInfoEndpoint ).catch( () => DEFAULT_GLOBAL_STYLES_INFO );
 };
 
 export function usePremiumGlobalStyles(): GlobalStylesInfo {
