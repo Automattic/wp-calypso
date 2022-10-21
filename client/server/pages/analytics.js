@@ -6,13 +6,11 @@ import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 const THROTTLE_MILLIS = 1000 / config( 'statsd_analytics_response_time_max_logs_per_second' );
 
 const logAnalyticsThrottled = throttle( function ( sectionName, duration ) {
-	logServerEvent( sectionName, [
-		{
-			name: 'response-time',
-			type: 'timing',
-			value: duration,
-		},
-	] );
+	logServerEvent( sectionName, {
+		name: 'response-time',
+		type: 'timing',
+		value: duration,
+	} );
 }, THROTTLE_MILLIS );
 
 /*

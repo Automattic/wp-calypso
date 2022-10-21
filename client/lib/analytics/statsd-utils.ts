@@ -28,7 +28,11 @@ function createBeacon( calypsoSection: string, { name, value, type }: BeaconData
 	}`;
 }
 
-export function createStatsdURL( calypsoSection: string, events: BeaconData[] ) {
+export function createStatsdURL( calypsoSection: string, events: BeaconData[] | BeaconData ) {
+	if ( ! Array.isArray( events ) ) {
+		events = [ events ]; // Only a single event was passed to process.
+	}
+
 	const section = calypsoSection.replace( /[.:-]/g, '_' );
 	const json = JSON.stringify( {
 		beacons: events.map( ( event ) => createBeacon( section, event ) ),
@@ -50,7 +54,7 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] ) 
  * @param calypsoSection The Calypso section the event occurred under.
  * @param events List of events to send to the server.
  */
-export function logServerEvent( calypsoSection: string, events: BeaconData[] ) {
+export function logServerEvent( calypsoSection: string, events: BeaconData[] | BeaconData ) {
 	if ( config( 'server_side_boom_analytics_enabled' ) ) {
 		superagent.get( createStatsdURL( calypsoSection, events ) ).end();
 	}
