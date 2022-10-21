@@ -620,11 +620,27 @@
 	}
 
 	.stream__right-column {
+		margin-top: 11px;
+
+		h2 {
+			align-items: flex-end;
+			color: var(--color-neutral-100);
+			display: flex;
+			font-weight: 500;
+			font-size: $font-title-small;
+			gap: 16px;
+			line-height: 24px;
+			margin-bottom: 32px;
+
+			a {
+				font-weight: 500;
+				font-size: $font-body-small;
+				line-height: 20px;
+			}
+		}
 		ul {
 			margin-left: 0;
 			width: 100%;
 		}
 	}
-
-
 }

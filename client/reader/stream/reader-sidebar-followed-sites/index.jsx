@@ -64,7 +64,14 @@ export class ReaderSidebarFollowedSites extends Component {
 			return null;
 		}
 
-		return <ul>{ this.renderSites( sitesToShow ) }</ul>;
+		return (
+			<>
+				<h2>
+					Following <a href="/following/manage">Manage</a>
+				</h2>
+				<ul>{ this.renderSites( sitesToShow ) }</ul>
+			</>
+		);
 	}
 }
 
