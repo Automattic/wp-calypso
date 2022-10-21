@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button, Dialog } from '@automattic/components';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
@@ -6,6 +7,7 @@ import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import { logToLogstash } from 'calypso/lib/logstash';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
@@ -257,7 +259,17 @@ function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
 		}
 
 		if ( retryCount === MAXTRIES ) {
-			setIsLoading( false );
+			logToLogstash( {
+				feature: 'calypso_client',
+				message: 'BBEX Content Form: Max retries exceeded.',
+				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				blog_id: siteId,
+				extra: {
+					isInProgress,
+					isWebsiteContentSubmitted,
+					pageTitles,
+				},
+			} );
 		}
 
 		return () => {
