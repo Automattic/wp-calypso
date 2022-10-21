@@ -4,13 +4,16 @@ import { ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Label, HorizontalGrid } from 'calypso/signup/accordion-form/form-components';
 import {
+	MediaUploadData,
+	WordpressMediaUpload,
+} from 'calypso/signup/steps/website-content/wordpress-media-upload';
+import {
 	logoUploadCompleted,
 	logoUploadFailed,
 	logoUploadStarted,
 	logoRemoved,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
 
 export const LogoUploadSectionContainer = styled.div`
 	@media ( min-width: 700px ) {
