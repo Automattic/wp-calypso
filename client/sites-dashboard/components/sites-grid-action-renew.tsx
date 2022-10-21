@@ -5,8 +5,8 @@ import { useSelector } from 'react-redux';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useInView } from 'calypso/lib/use-in-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { PLAN_RENEW_EVENT_NAMES } from '../utils';
 import { SitesGridAction } from './sites-grid-action';
-import { PLAN_RENEW_NAG_IN_VIEW, PLAN_RENEW_NAG_ON_CLICK } from './sites-plan-renew-nag';
 
 interface SitesGridActionRenewProps {
 	site: SiteExcerptData;
@@ -17,7 +17,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 	const isSiteOwner = site.site_owner === userId;
 
 	useInView( () => {
-		recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
+		recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
 			is_site_owner: isSiteOwner,
 			product_slug: site.plan?.product_slug,
 			display_mode: 'grid',
@@ -32,7 +32,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 					title: __( 'Renew' ),
 					href: `/checkout/${ site.slug }/${ site.plan?.product_slug }`,
 					onClick: () => {
-						recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, {
+						recordTracksEvent( PLAN_RENEW_EVENT_NAMES.ON_CLICK, {
 							product_slug: site.plan?.product_slug,
 							display_mode: 'grid',
 						} );
