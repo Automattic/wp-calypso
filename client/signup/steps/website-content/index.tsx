@@ -3,8 +3,9 @@ import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useEffect, useState, ChangeEvent, useCallback } from 'react';
+import { useEffect, useState, ChangeEvent, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
@@ -26,6 +27,8 @@ import {
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId, isRequestingSite } from 'calypso/state/sites/selectors';
 import { sectionGenerator } from './section-generator';
+import type { SiteId } from 'calypso/types';
+
 import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
@@ -46,6 +49,18 @@ const DialogButton = styled( Button )`
 	--color-accent-60: #0e64a5;
 	.gridicon {
 		margin-left: 10px;
+	}
+`;
+
+const LoadingContainer = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	width: 100%;
+	height: 90vh;
+	h1 {
+		font-size: 24px;
 	}
 `;
 
@@ -171,6 +186,110 @@ function WebsiteContentStep( {
 	);
 }
 
+/**
+ * Hook that polls the /rest/v1.2/sites/<site fragment> API.
+ * It checks the site details for a valid DIFM purchase.
+ * A valid DIFM purchase has `.options.is_difm_lite_in_progress` set to `false`/`null`
+ * and `.options.difm_lite_site_options.pages` should be an array of strings.
+ *
+ * If the above conditions are met, the hook returns { isLoading: false, hasValidPurchase: true }.
+ * If the above conditions are not met, it retries the request MAXTRIES times,
+ * with a linear backoff. If the conditions are still not met, the hook returns
+ * { isLoading: false, hasValidPurchase: false }.
+ * The default return value is { isLoading: true, hasValidPurchase: false }
+ *
+ * @param {(SiteId | null)} siteId The current site ID.
+ * @returns {{
+ * 	isLoading: boolean;
+ * 	hasValidPurchase: boolean;
+ * }}
+ */
+function usePollSiteForDIFMDetails( siteId: SiteId | null ): {
+	isLoading: boolean;
+	hasValidPurchase: boolean;
+} {
+	const MAXTRIES = 10;
+	const [ retryCount, setRetryCount ] = useState( 0 );
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ hasValidPurchase, setHasValidPurchase ] = useState( false );
+	const dispatch = useDispatch();
+
+	const isLoadingSiteInformation = useSelector( ( state ) =>
+		isRequestingSite( state, siteId as number )
+	);
+
+	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
+	const isInProgress = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
+	const isWebsiteContentSubmitted = useSelector( ( state ) =>
+		isDIFMLiteWebsiteContentSubmitted( state, siteId )
+	);
+
+	const timeout = useRef< number >();
+
+	useEffect( () => {
+		async function checkSite() {
+			if ( ! siteId ) {
+				return;
+			}
+
+			if ( isLoadingSiteInformation ) {
+				// A request is already in progress
+				return;
+			}
+
+			await dispatch( requestSite( siteId ) );
+
+			if ( isInProgress && isWebsiteContentSubmitted !== true ) {
+				setHasValidPurchase( true );
+			}
+
+			if ( pageTitles && pageTitles.length ) {
+				setIsLoading( false );
+			}
+		}
+
+		if ( isLoading && retryCount < MAXTRIES ) {
+			// Only refresh 10 times
+			timeout.current = window.setTimeout( () => {
+				setRetryCount( ( retryCount ) => retryCount + 1 );
+				checkSite();
+			}, retryCount * 600 );
+		}
+
+		if ( retryCount === MAXTRIES ) {
+			setIsLoading( false );
+		}
+
+		return () => {
+			clearTimeout( timeout.current );
+		};
+	}, [
+		isLoading,
+		siteId,
+		retryCount,
+		dispatch,
+		isLoadingSiteInformation,
+		pageTitles,
+		isInProgress,
+		isWebsiteContentSubmitted,
+	] );
+
+	return {
+		isLoading,
+		hasValidPurchase: isLoading ? false : hasValidPurchase,
+	};
+}
+
+function Loader() {
+	const translate = useTranslate();
+	return (
+		<LoadingContainer>
+			<h1 className="wp-brand-font">{ translate( 'Loading your site information' ) }</h1>
+			<LoadingEllipsis />
+		</LoadingContainer>
+	);
+}
+
 export default function WrapperWebsiteContent(
 	props: {
 		flowName: string;
@@ -184,48 +303,27 @@ export default function WrapperWebsiteContent(
 ) {
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
 		'Add your logo, page text and media to be used on your website.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const isWebsiteContentSubmitted = useSelector( ( state ) =>
-		isDIFMLiteWebsiteContentSubmitted( state, siteId )
-	);
-	const isLoadingSiteInformation = useSelector( ( state ) =>
-		isRequestingSite( state, siteId as number )
-	);
-
-	// We assume that difm lite is purchased when the is_difm_lite_in_progress sticker is active in a given blog
-	const isDifmLitePurchased = useSelector( ( state ) => isDIFMLiteInProgress( state, siteId ) );
-
-	//Make sure the most up to date site information is loaded so that we can validate access to this page
-	useEffect( () => {
-		siteId && dispatch( requestSite( siteId ) );
-	}, [ dispatch, siteId ] );
+	const { hasValidPurchase, isLoading } = usePollSiteForDIFMDetails( siteId );
 
 	useEffect( () => {
-		if ( ! isLoadingSiteInformation ) {
-			if ( ! isDifmLitePurchased ) {
-				debug( 'DIFM not purchased yet, redirecting to DIFM purchase flow' );
-				// Due to a bug related to a  race condition this redirection is currently disabled
-				// Read pdh1Xd-xv-p2#comment-869 for more context (Submission loop with existing site)
-				// page( `/start/do-it-for-me` );
-			} else if ( isWebsiteContentSubmitted ) {
-				debug( 'Website content content already submitted, redirecting to home' );
-				page( `/home/${ queryObject.siteSlug }` );
-			}
+		if ( isLoading ) {
+			return;
 		}
-	}, [
-		isLoadingSiteInformation,
-		isDifmLitePurchased,
-		isWebsiteContentSubmitted,
-		queryObject.siteSlug,
-	] );
+		if ( ! hasValidPurchase ) {
+			debug( 'Website content content already submitted, redirecting to home' );
+			page( `/home/${ queryObject.siteSlug }` );
+		}
+	}, [ hasValidPurchase, isLoading, queryObject.siteSlug ] );
 
-	return isWebsiteContentSubmitted || isLoadingSiteInformation ? null : (
+	return isLoading ? (
+		<Loader />
+	) : (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
