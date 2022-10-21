@@ -29,6 +29,14 @@ const patterns = [
 	},
 ];
 
+beforeAll( () => {
+	window._currentSiteId = 123;
+} );
+
+afterAll( () => {
+	delete window._currentSiteId;
+} );
+
 let originalReact;
 beforeEach( () => {
 	// The component uses `@wordpress/element` but the test assumes the React
