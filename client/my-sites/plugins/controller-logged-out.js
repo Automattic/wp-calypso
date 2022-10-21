@@ -51,17 +51,17 @@ const prefetchProductList = ( queryClient, store ) => {
 		} );
 };
 
-const prefetchTimebox = ( prefetchPromises, context, timeout ) => {
+const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
 
-	if ( ! timeout ) {
-		timeout = isBot ? PREFETCH_TIMEOUT_BOTS : PREFETCH_TIMEOUT;
-	}
-
 	if ( config.isEnabled( 'ssr/prefetch-timebox' ) ) {
 		const timeboxPromise = new Promise( ( _, reject ) =>
-			setTimeout( reject, timeout, new Error( PREFETCH_TIMEOUT_ERROR ) )
+			setTimeout(
+				reject,
+				isBot ? PREFETCH_TIMEOUT_BOTS : PREFETCH_TIMEOUT,
+				new Error( PREFETCH_TIMEOUT_ERROR )
+			)
 		);
 
 		racingPromises.push( timeboxPromise );
