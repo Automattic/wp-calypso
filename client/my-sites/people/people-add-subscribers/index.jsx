@@ -42,6 +42,7 @@ class PeopleInvites extends PureComponent {
 	render() {
 		const { site, canViewPeople, translate } = this.props;
 		const siteId = site && site.ID;
+		const isSiteOnFreePlan = site && site.plan.is_free;
 
 		if ( siteId && ! canViewPeople ) {
 			return (
@@ -75,6 +76,7 @@ class PeopleInvites extends PureComponent {
 					>
 						<AddSubscriberForm
 							siteId={ this.props.site.ID }
+							isSiteOnFreePlan={ isSiteOnFreePlan }
 							flowName="people"
 							showTitle={ false }
 							showFormManualListLabel={ true }

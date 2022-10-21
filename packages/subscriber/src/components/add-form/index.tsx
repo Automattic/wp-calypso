@@ -26,6 +26,7 @@ import './style.scss';
 
 interface Props {
 	siteId: number;
+	isSiteOnFreePlan?: boolean;
 	flowName?: string;
 	showTitle?: boolean;
 	showSubtitle?: boolean;
@@ -47,6 +48,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	};
 	const {
 		siteId,
+		isSiteOnFreePlan,
 		flowName,
 		showTitle = true,
 		showSubtitle,
@@ -292,14 +294,13 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderImportCsvDisclaimerMsg() {
 		return (
-			isSelectedFileValid &&
-			selectedFile && (
+			( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) && (
 				<p className="add-subscriber__form--disclaimer">
 					{ createInterpolateElement(
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							__(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person on your list. <Button>Learn more</Button>'
+								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>'
 							),
 							submitBtnName
 						),
@@ -319,18 +320,24 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function renderImportCsvLabel() {
+		const ariaLabelMsg = isSiteOnFreePlan
+			? __(
+					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+			  )
+			: __( 'Or bring your mailing list from other newsletter services by uploading a CSV file.' );
+
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<label
-					aria-label={ __(
-						'Or bring your mailing list from other newsletter services by uploading a CSV file.'
-					) }
-				>
+				<label aria-label={ ariaLabelMsg }>
 					{ createInterpolateElement(
-						__(
-							'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-						),
+						isSiteOnFreePlan
+							? __(
+									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  )
+							: __(
+									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
+							  ),
 						{ uploadBtn: formFileUploadElement }
 					) }
 				</label>
