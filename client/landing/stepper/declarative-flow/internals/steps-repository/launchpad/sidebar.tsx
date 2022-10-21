@@ -52,6 +52,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
+	let isDomainSSLProcessing = false;
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
@@ -71,7 +72,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
 
 		[ siteName, topLevelDomain ] = getUrlInfo( domain );
-		showClipboardButton = isWPCOMDomain ? true : sslStatus === 'active' && isPrimary;
+
+		isDomainSSLProcessing = sslStatus !== 'active';
+		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
 	return (
@@ -135,6 +138,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						</a>
 					) }
 				</div>
+				{ isDomainSSLProcessing && (
+					<p>
+						{ translate(
+							'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+						) }
+					</p>
+				) }
 				<Checklist tasks={ enhancedTasks } />
 			</div>
 			<div className="launchpad__sidebar-admin-link">
