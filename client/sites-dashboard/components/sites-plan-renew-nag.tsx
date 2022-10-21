@@ -7,8 +7,9 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-const PLAN_RENEW_NAG_IN_VIEW = 'calypso_sites_dashboard_plan_renew_nag_inview';
-const PLAN_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_plan_renew_nag_click';
+
+export const PLAN_RENEW_NAG_IN_VIEW = 'calypso_sites_dashboard_plan_renew_nag_inview';
+export const PLAN_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_plan_renew_nag_click';
 
 interface PlanRenewProps {
 	plan: SiteDetailsPlan;
@@ -60,6 +61,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 			recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
 				is_site_owner: isSiteOwner,
 				product_slug: plan.product_slug,
+				display_mode: 'list',
 			} );
 		}
 	}, [ inViewOnce, isSiteOwner, plan.product_slug ] );
@@ -87,7 +89,10 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
-							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, { product_slug: plan.product_slug } );
+							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, {
+								product_slug: plan.product_slug,
+								display_mode: 'list',
+							} );
 						} }
 						href={ checkoutUrl }
 						title={ renewText }
