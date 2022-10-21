@@ -39,10 +39,10 @@ const queryPage = {
 	type: 'page',
 };
 
-function sortItemsByModifiedDate( items: Post[] ) {
+function sortItemsByPublishedDate( items: Post[] ) {
 	return items.slice( 0 ).sort( function ( a, b ) {
-		if ( a.modified && b.modified ) {
-			const dateCompare = Date.parse( b.modified ) - Date.parse( a.modified );
+		if ( a.date && b.date ) {
+			const dateCompare = Date.parse( b.date ) - Date.parse( a.date );
 			if ( 0 !== dateCompare ) {
 				return dateCompare;
 			}
@@ -142,7 +142,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = sortItemsByModifiedDate( [ ...( posts || [] ), ...( pages || [] ) ] );
+	const content = sortItemsByPublishedDate( [ ...( posts || [] ), ...( pages || [] ) ] );
 
 	const isLoading = isLoadingPage && isLoadingPost;
 
