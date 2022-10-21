@@ -719,11 +719,11 @@ export class SiteSettingsFormGeneral extends Component {
 					<div className="site-settings__advanced-customization-notice-cta">
 						<Gridicon icon="info-outline" />
 						<span>
-							{ translate( 'Your style changes wont be public until you upgrade your plan.' ) }
+							{ translate( "Your style changes won't be public until you upgrade your plan." ) }
 						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
-						<Button href={ siteUrl }>{ translate( 'View site' ) }</Button>
+						<Button href={ siteUrl } target="_blank">{ translate( 'View site' ) }</Button>
 						<Button
 							className="is-primary"
 							href={ upgradeUrl }
