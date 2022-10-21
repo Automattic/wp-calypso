@@ -71,6 +71,7 @@ export function usePremiumGlobalStyles(): GlobalStylesInfo {
 		() => getGlobalStylesInfoForSite( site ),
 		{
 			placeholderData: DEFAULT_GLOBAL_STYLES_INFO,
+			refetchOnWindowFocus: false,
 		}
 	);
 
