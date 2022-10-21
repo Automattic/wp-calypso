@@ -102,7 +102,7 @@ function addTooltipData( chartTab, item, period ) {
 				label: translate( 'Visitors' ),
 				value: numberFormat( item.data.visitors ),
 				className: 'is-visitors',
-				icon: 'user',
+				icon: 'multiple-users',
 			} );
 			tooltipData.push( {
 				label: translate( 'Views Per Visitor' ),

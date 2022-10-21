@@ -89,4 +89,14 @@ describe( 'ChecklistItem', () => {
 			} );
 		} );
 	} );
+
+	describe( 'when a task is a primary action', () => {
+		it( 'displays a primary button', () => {
+			render(
+				<ChecklistItem task={ buildTask( { isCompleted: false } ) } isPrimaryAction={ true } />
+			);
+			const taskButton = screen.queryByRole( 'button' );
+			expect( taskButton?.className ).toContain( 'launchpad__checklist-primary-button' );
+		} );
+	} );
 } );
