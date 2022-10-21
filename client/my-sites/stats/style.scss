@@ -288,15 +288,18 @@
 			}
 
 			&.is-published-item {
+				height: auto;
 				font-size: $font-body-extra-small;
-				margin-bottom: 4px;
+				margin-bottom: 0;
 				padding-left: 30px;
 				text-decoration: underline;
 
 				.label {
+					height: auto;
+					line-height: 20px;
 					color: inherit;
 					letter-spacing: inherit;
-					line-height: 20px;
+					word-break: break-word;
 				}
 			}
 		}
