@@ -119,7 +119,7 @@ const VirtualPage = ( { site, id, type, title, description, previewUrl, isHomepa
 				) }
 				{ previewUrl && (
 					// @ts-expect-error The `className` property is not required
-					<PopoverMenuItemClipboard text={ previewUrl } onCopy={ copyPageLink } icon={ 'link' }>
+					<PopoverMenuItemClipboard text={ previewUrl } onCopy={ copyPageLink } icon="link">
 						{ translate( 'Copy link' ) }
 					</PopoverMenuItemClipboard>
 				) }
