@@ -30,7 +30,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 			ctaProps={
 				isSiteOwner && {
 					title: __( 'Renew' ),
-					href: `/checkout/${ site.slug }`,
+					href: `/checkout/${ site.slug }/${ site.plan?.product_slug }`,
 					onClick: () => {
 						recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, {
 							product_slug: site.plan?.product_slug,
