@@ -20,7 +20,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 		recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
 			is_site_owner: isSiteOwner,
 			product_slug: site.plan?.product_slug,
-			display_mode: 'tile',
+			display_mode: 'grid',
 		} );
 	} );
 
@@ -34,7 +34,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 					onClick: () => {
 						recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, {
 							product_slug: site.plan?.product_slug,
-							display_mode: 'tile',
+							display_mode: 'grid',
 						} );
 					},
 				}
