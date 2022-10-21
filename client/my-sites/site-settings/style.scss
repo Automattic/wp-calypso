@@ -628,8 +628,9 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 
 .site-settings__advanced-customization-notice {
 	display: flex;
+	flex-direction: column;
 	padding: 20px;
-	background-color: #f4f4f4;
+	background-color: var(--color-neutral-0);
 	align-items: center;
 	justify-content: space-between;
 
@@ -639,24 +640,25 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	}
 
 	svg.gridicon.gridicons-info-outline {
-		color: #d38d16;
+		color: var(--color-warning-30);
 		padding-right: 10px;
 	}
 
 	.site-settings__advanced-customization-notice-buttons {
 		display: flex;
+		padding-top: 10px;
+		min-width: 185px;
 
 		.button.is-primary {
-			margin-left: 10px;
-
+			margin-left: 5px;
 		}
 	}
 
-	@media (max-width: 1100px) {
-		flex-direction: column;
+	@include break-xlarge {
+		flex-direction: row;
 
 		.site-settings__advanced-customization-notice-buttons {
-			padding-top: 10px;
+			padding-top: 0;
 		}
 	}
 }
