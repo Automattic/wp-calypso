@@ -8,10 +8,10 @@ const TWO_SECONDS = 2000;
 
 const noop = () => {};
 
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
+jest.mock( '@automattic/calypso-config' );
 
 describe( 'index', () => {
-	beforeAll( function () {
+	beforeAll( () => {
 		// Enable analytics tracking on the server.
 		config.mockReturnValue( true );
 	} );

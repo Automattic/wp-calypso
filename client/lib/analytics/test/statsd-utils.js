@@ -1,7 +1,15 @@
-import { createStatsdURL } from '../statsd-utils';
+import config from '@automattic/calypso-config';
+import superagent from 'superagent';
+import { createStatsdURL, logServerEvent } from '../statsd-utils';
+
+jest.mock( '@automattic/calypso-config' );
 
 describe( 'StatsD Analytics Utils', () => {
 	describe( 'createStatsdURL', () => {
+		beforeAll( () => {
+			config.mockReturnValue( 'development' ); // boom_analytics_key
+		} );
+
 		test( 'returns a URL for sending events to statsd', () => {
 			const events = [
 				{
@@ -43,6 +51,34 @@ describe( 'StatsD Analytics Utils', () => {
 					beacons: [ 'calypso.development.my_section_name.response_time:100|ms' ],
 				} )
 			);
+		} );
+	} );
+
+	describe( 'logServerEvent', () => {
+		beforeAll( () => {
+			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+		} );
+
+		afterAll( () => {
+			config.mockRestore();
+		} );
+
+		afterEach( () => {
+			superagent.get.mockClear();
+		} );
+
+		test( 'sends an HTTP request to the statsd URL', () => {
+			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
+			logServerEvent( 'test-section', { name: 'foo', type: 'counting' } );
+
+			expect( superagent.get ).toHaveBeenCalledWith( expect.stringContaining( 'u=test_section' ) );
+		} );
+
+		test( 'does not record event if statsd analytics is not allowed', () => {
+			config.mockReturnValue( false ); // server_side_boom_analytics_enabled
+			logServerEvent( { name: 'foo', type: 'counting' } );
+
+			expect( superagent.get ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

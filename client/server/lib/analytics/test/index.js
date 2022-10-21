@@ -1,10 +1,6 @@
 import UserAgent from 'express-useragent';
 import superagent from 'superagent';
 import analytics from '../index';
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
-jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
-	createStatsdURL: jest.fn(),
-} ) );
 
 describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {
