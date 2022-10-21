@@ -312,10 +312,12 @@ export class Theme extends Component {
 	}
 
 	softLaunchedBanner = () => {
+		const { translate } = this.props;
+
 		return (
 			<>
 				{ this.props.softLaunched && (
-					<div className="theme__info-soft-launched-banner">Soft Launched</div>
+					<div className="theme__info-soft-launched-banner">{ translate( 'Soft Launched' ) }</div>
 				) }
 			</>
 		);

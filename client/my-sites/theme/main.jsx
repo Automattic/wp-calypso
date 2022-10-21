@@ -204,7 +204,9 @@ class ThemeSheet extends Component {
 			<div className="theme__sheet-bar">
 				<span className="theme__sheet-bar-title">
 					{ title }
-					{ softLaunched && <span className="theme__sheet-bar-soft-launched">Soft Launched</span> }
+					{ softLaunched && (
+						<span className="theme__sheet-bar-soft-launched">{ translate( 'Soft Launched' ) }</span>
+					) }
 				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
