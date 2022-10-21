@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { createInterpolateElement } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -40,13 +40,10 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 				}
 			}
 		>
-			{ createInterpolateElement(
-				/* translators: PlanName is the plan's product name, such as Pro or Business */
-				__( 'Your <PlanName /> plan has expired' ),
-				{
-					PlanName: <>{ site.plan?.product_name_short }</>,
-				}
-			) }
+			{
+				/* translators: %s - the plan's product name */
+				sprintf( __( '%s - Expired' ), site.plan?.product_name_short )
+			}
 		</SitesGridAction>
 	);
 }

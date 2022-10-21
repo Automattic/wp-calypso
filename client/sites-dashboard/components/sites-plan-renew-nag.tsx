@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { SiteDetailsPlan } from '@automattic/launch/src/stores';
 import styled from '@emotion/styled';
-import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -75,16 +74,13 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 			</IconContainer>
 			<PlanRenewNotice>
 				<PlanRenewNoticeTextContainer>
-					{ createInterpolateElement(
-						sprintf(
+					<PlanRenewNoticeExpireText>
+						{ sprintf(
 							/* translators: %s - the plan's product name */
-							__( '<span>%s - Expired</span>' ),
+							__( '%s - Expired' ),
 							plan.product_name_short
-						),
-						{
-							span: <PlanRenewNoticeExpireText />,
-						}
-					) }
+						) }
+					</PlanRenewNoticeExpireText>
 				</PlanRenewNoticeTextContainer>
 				{ isSiteOwner && (
 					<PlanRenewLink
