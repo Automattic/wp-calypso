@@ -709,9 +709,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	advancedCustomizationNotice() {
-		const { translate, siteSlug } = this.props;
-		const upgradeUrl = '/plans/' + siteSlug;
-		const siteUrl = `https://${ siteSlug }`;
+		const { translate, selectedSite, siteSlug } = this.props;
+		const upgradeUrl = `/plans/${ siteSlug }`;
 
 		return (
 			<>
@@ -723,7 +722,9 @@ export class SiteSettingsFormGeneral extends Component {
 						</span>
 					</div>
 					<div className="site-settings__advanced-customization-notice-buttons">
-						<Button href={ siteUrl } target="_blank">{ translate( 'View site' ) }</Button>
+						<Button href={ selectedSite.URL } target="_blank">
+							{ translate( 'View site' ) }
+						</Button>
 						<Button
 							className="is-primary"
 							href={ upgradeUrl }
