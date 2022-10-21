@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import rocketImage from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import pluginsThemesImage from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 import downgradeImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import FormattedHeader from 'calypso/components/formatted-header';
 import BusinessATStep from './business-at-step';
 import DowngradeStep from './downgrade-step';
 import FreeMonthOfferStep from './free-month-offer-step';
@@ -18,10 +19,15 @@ type UpsellProps = {
 };
 
 function Upsell( { children, image }: UpsellProps ) {
+	const translate = useTranslate();
+
 	return (
-		<div className="cancel-purchase-form__upsell">
-			<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
-			<div className="cancel-purchase-form__upsell-description">{ children }</div>
+		<div className="cancel-purchase-form__upsell-container">
+			<FormattedHeader brandFont headerText={ translate( 'Here is an idea' ) } />
+			<div className="cancel-purchase-form__upsell">
+				<img className="cancel-purchase-form__upsell-image" src={ image } alt="" />
+				<div className="cancel-purchase-form__upsell-description">{ children }</div>
+			</div>
 		</div>
 	);
 }
