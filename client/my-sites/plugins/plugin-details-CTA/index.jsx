@@ -116,8 +116,17 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
 	}, [ selectedSite?.slug ] );
 
-	const getRedirectToThirdPartyVendorHRef = useCallback( () => {
-		return `${ plugin.saas_landing_page }?uuid=${ currentUserId }+${ selectedSite?.ID }`;
+	const getSaasRedirectHRef = useCallback( () => {
+		if ( ! plugin.saas_landing_page ) {
+			return null;
+		}
+		try {
+			const saasRedirectUrl = new URL( plugin.saas_landing_page );
+			saasRedirectUrl.searchParams.append( 'uuid', `${ currentUserId }+${ selectedSite?.ID }` );
+			return saasRedirectUrl.toString();
+		} catch ( error ) {
+			return null;
+		}
 	}, [ currentUserId, plugin.saas_landing_page, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
@@ -302,7 +311,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
-						thirdPartyVendorHRef={ getRedirectToThirdPartyVendorHRef() }
+						saasRedirectHRef={ getSaasRedirectHRef() }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
@@ -360,7 +369,7 @@ function PrimaryButton( {
 	userCantManageTheSite,
 	translate,
 	plugin,
-	thirdPartyVendorHRef,
+	saasRedirectHRef,
 } ) {
 	if ( ! isLoggedIn ) {
 		return (
@@ -380,7 +389,7 @@ function PrimaryButton( {
 			<Button
 				className="plugin-details-cta__install-button"
 				primary={ ! shouldUpgrade }
-				href={ thirdPartyVendorHRef }
+				href={ saasRedirectHRef }
 			>
 				{ translate( 'Get started' ) }
 				<Gridicon icon="external" />
