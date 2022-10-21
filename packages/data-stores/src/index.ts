@@ -28,6 +28,7 @@ export { useSubmitForumsMutation } from './support-queries/use-submit-forums-top
 export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
+export * from './templates';
 
 export {
 	Analyzer,

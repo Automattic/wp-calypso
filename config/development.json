@@ -175,6 +175,7 @@
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
 		"titan/iframe-control-panel": false,
+		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,

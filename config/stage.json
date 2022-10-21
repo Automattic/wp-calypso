@@ -135,6 +135,7 @@
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
+		"unified-pages/virtual-home-page": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
