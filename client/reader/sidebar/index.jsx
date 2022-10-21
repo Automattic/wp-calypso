@@ -5,12 +5,6 @@ import { defer, startsWith } from 'lodash';
 import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import IconSidebarA8cConversations from 'calypso/assets/images/reader/sidebar/a8c-conversations.svg';
-import IconSidebarConversations from 'calypso/assets/images/reader/sidebar/conversations.svg';
-import IconSidebarDiscover from 'calypso/assets/images/reader/sidebar/discover.svg';
-import IconSidebarFollowing from 'calypso/assets/images/reader/sidebar/following.svg';
-import IconSidebarLikes from 'calypso/assets/images/reader/sidebar/likes.svg';
-import IconSidebarSearch from 'calypso/assets/images/reader/sidebar/search.svg';
 import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import QueryReaderOrganizations from 'calypso/components/data/query-reader-organizations';
 import QueryReaderTeams from 'calypso/components/data/query-reader-teams';
@@ -20,6 +14,12 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
+import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
+import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
+import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
+import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
+import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
@@ -142,7 +142,7 @@ export class ReaderSidebar extends Component {
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
-					customSvg={ IconSidebarSearch }
+					customIcon={ <ReaderSearchIcon /> }
 					link="/read/search"
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 						'sidebar-streams__search': true,
@@ -158,7 +158,7 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleReaderSidebarDiscoverClicked }
-						customSvg={ IconSidebarDiscover }
+						customIcon={ <ReaderDiscoverIcon /> }
 						link="/discover"
 					/>
 				) }
@@ -169,14 +169,14 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Following' ) }
 					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
-					customSvg={ IconSidebarFollowing }
+					customIcon={ <ReaderFollowingIcon /> }
 					link="/read"
 				/>
 
 				<SidebarItem
 					label={ translate( 'Likes' ) }
 					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					customSvg={ IconSidebarLikes }
+					customIcon={ <ReaderLikesIcon /> }
 					link="/activities/likes"
 					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
 						'sidebar-activity__likes': true,
@@ -189,7 +189,7 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					customSvg={ IconSidebarConversations }
+					customIcon={ <ReaderConversationsIcon /> }
 					link="/read/conversations"
 				/>
 
@@ -225,7 +225,7 @@ export class ReaderSidebar extends Component {
 						label="A8C Conversations"
 						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
 						link="/read/conversations/a8c"
-						customSvg={ IconSidebarA8cConversations }
+						customIcon={ <ReaderA8cConversationsIcon /> }
 					/>
 				) }
 			</SidebarMenu>

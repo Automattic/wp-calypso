@@ -45,7 +45,6 @@ export const ExpandableSidebarMenu = ( {
 	icon,
 	materialIcon,
 	materialIconStyle,
-	customSvg,
 	customIcon,
 	children,
 	disableFlyout,
@@ -119,7 +118,6 @@ export const ExpandableSidebarMenu = ( {
 					icon={ icon }
 					materialIcon={ materialIcon }
 					materialIconStyle={ materialIconStyle }
-					customSvg={ customSvg }
 					expanded={ expanded }
 					menuId={ menuId }
 					{ ...props }
@@ -146,7 +144,6 @@ ExpandableSidebarMenu.propTypes = {
 	icon: PropTypes.string,
 	materialIcon: PropTypes.string,
 	materialIconStyle: PropTypes.string,
-	customSvg: PropTypes.string,
 	expanded: PropTypes.bool,
 	disableFlyout: PropTypes.bool,
 };

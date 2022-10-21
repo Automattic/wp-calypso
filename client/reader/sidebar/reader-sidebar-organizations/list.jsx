@@ -2,9 +2,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import IconSidebarA8c from 'calypso/assets/images/reader/sidebar/a8c.svg';
-import IconSidebarP2s from 'calypso/assets/images/reader/sidebar/p2s.svg';
 import SidebarItem from 'calypso/layout/sidebar/item';
+import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
+import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
 import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
 import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
@@ -22,9 +22,9 @@ export class ReaderSidebarOrganizationsList extends Component {
 	renderIcon() {
 		const { organization } = this.props;
 		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			return IconSidebarA8c;
+			return <ReaderA8cIcon />;
 		}
-		return IconSidebarP2s;
+		return <ReaderP2Icon />;
 	}
 
 	render() {
@@ -40,7 +40,7 @@ export class ReaderSidebarOrganizationsList extends Component {
 				} ) }
 				label={ organization.title }
 				link={ '/read/' + organization.slug }
-				customSvg={ this.renderIcon() }
+				customIcon={ this.renderIcon() }
 			/>
 		);
 	}

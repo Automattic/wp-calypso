@@ -1,8 +1,8 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import IconSidebarLists from 'calypso/assets/images/reader/sidebar/lists.svg';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ReaderListIcon from 'calypso/reader/components/icons/list-icon';
 import ReaderSidebarListsList from './list';
 
 import './style.scss';
@@ -26,7 +26,7 @@ export class ReaderSidebarLists extends Component {
 					expanded={ isOpen }
 					title={ translate( 'Lists' ) }
 					onClick={ onClick }
-					customSvg={ IconSidebarLists }
+					customIcon={ <ReaderListIcon /> }
 					disableFlyout={ true }
 					className={ path.startsWith( '/read/list' ) && 'sidebar__menu--selected' }
 				>
