@@ -18,7 +18,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -51,6 +51,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const billingPeriod = useSelector( getBillingInterval );
+
+	const currentUserId = useSelector( getCurrentUserId );
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
@@ -113,6 +115,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		const pluginsPlansPage = `/plugins/plans/yearly/${ siteSlug }`;
 		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
 	}, [ selectedSite?.slug ] );
+
+	const getRedirectToThirdPartyVendorHRef = useCallback( () => {
+		return `${ plugin.saas_landing_page }?uuid=${ currentUserId }+${ selectedSite?.ID }`;
+	}, [ currentUserId, plugin.saas_landing_page, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
 	 *
@@ -296,6 +302,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
+						thirdPartyVendorHRef={ getRedirectToThirdPartyVendorHRef() }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
@@ -353,6 +360,7 @@ function PrimaryButton( {
 	userCantManageTheSite,
 	translate,
 	plugin,
+	thirdPartyVendorHRef,
 } ) {
 	if ( ! isLoggedIn ) {
 		return (
@@ -372,7 +380,7 @@ function PrimaryButton( {
 			<Button
 				className="plugin-details-cta__install-button"
 				primary={ ! shouldUpgrade }
-				href={ plugin.saas_landing_page }
+				href={ thirdPartyVendorHRef }
 			>
 				{ translate( 'Get started' ) }
 				<Gridicon icon="external" />
