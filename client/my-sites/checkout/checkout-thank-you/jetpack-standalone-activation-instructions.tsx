@@ -17,40 +17,33 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 		<>
 			<ol className="licensing-thank-you-manual-activation-instructions__list">
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
-					<span>{ translate( 'Login to an existing Wordpress site as an administrator.' ) }</span>
+					{ translate( 'Login to an existing Wordpress site as an administrator.' ) }
 				</li>
 
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
-					<span>
-						{ translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
-							components: { strong: <strong /> },
-						} ) }
-					</span>
+					{ translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
+						components: { strong: <strong /> },
+					} ) }
 				</li>
 
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">3</span>
-					<span>
-						{ translate(
-							'Search for {{link}}{{strong}}Jetpack %(pluginName)s{{/strong}}{{/link}}, install and activate.',
-							{
-								components: {
-									strong: <strong />,
-									link: (
-										<Button
-											plain
-											href={ wporgPluginLink }
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-								},
-								args: { pluginName: product.shortName },
-							}
-						) }
-					</span>
+					{ translate(
+						'Search for {{link}}{{strong}}Jetpack %(pluginName)s{{/strong}}{{/link}}, install and activate.',
+						{
+							components: {
+								strong: <strong />,
+								link: (
+									<Button
+										plain
+										href={ wporgPluginLink }
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							},
+							args: { pluginName: product.shortName },
+						}
+					) }
 				</li>
 			</ol>
 

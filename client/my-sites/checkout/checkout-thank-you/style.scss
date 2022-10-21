@@ -744,33 +744,33 @@
 }
 
 .licensing-thank-you-manual-activation-instructions__list {
-	list-style: none;
 	margin: 0;
+
+	list-style: none;
+	counter-reset: item;
 }
 
 .licensing-thank-you-manual-activation-instructions__list-item {
-	display: flex;
-	align-items: center;
-	margin-bottom: 24px;
-}
+	margin-bottom: 1.5rem;
 
-.licensing-thank-you-manual-activation-instructions__step-number {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
+	&::before {
+		content: counter(item);
+		counter-increment: item;
 
-	margin-right: 12px;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
 
-	font-weight: bold;
-	text-align: center;
-	color: var(--color-text-inverted);
+		min-width: 1.75em;
+		height: 1.75em;
+		margin-inline-end: 0.75em;
 
-	background-color: var(--studio-jetpack-green-40);
+		background-color: var(--studio-jetpack-green-40);
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		color: var(--color-text-inverted);
 
-	border-radius: 24px; /* stylelint-disable-line scales/radii */
-
-	min-width: 28px;
-	height: 28px;
+		font-weight: 700;
+	}
 }
 
 .licensing-activation .licensing-thank-you-manual-activation-instructions__button.button {

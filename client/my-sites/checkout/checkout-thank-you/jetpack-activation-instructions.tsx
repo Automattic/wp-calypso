@@ -11,37 +11,28 @@ const JetpackActivationInstructions: React.FC = () => {
 
 			<ol className="licensing-thank-you-manual-activation-instructions__list">
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">1</span>
-					<span>
-						{ translate(
-							'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.',
-							{
-								components: { strong: <strong /> },
-							}
-						) }
-					</span>
+					{ translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
+						components: { strong: <strong /> },
+					} ) }
 				</li>
 
 				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					<span className="licensing-thank-you-manual-activation-instructions__step-number">2</span>
-					<span>
-						{ translate(
-							'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
-							{
-								components: {
-									strong: <strong />,
-									link: (
-										<Button
-											plain
-											href="https://wordpress.org/plugins/jetpack/"
-											target="_blank"
-											rel="noreferrer noopener"
-										/>
-									),
-								},
-							}
-						) }
-					</span>
+					{ translate(
+						'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
+						{
+							components: {
+								strong: <strong />,
+								link: (
+									<Button
+										plain
+										href="https://wordpress.org/plugins/jetpack/"
+										target="_blank"
+										rel="noreferrer noopener"
+									/>
+								),
+							},
+						}
+					) }
 				</li>
 			</ol>
 
