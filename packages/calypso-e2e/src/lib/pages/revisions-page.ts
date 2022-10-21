@@ -20,7 +20,7 @@ export class RevisionsPage {
 	/**
 	 * Uses the revision slider to select a revision with given index.
 	 *
-	 * @param index Revision number (1-based)
+	 * @param {number} index Revision number (1-based)
 	 */
 	async selectRevision( index: number ): Promise< void > {
 		const sliderTickmarks = this.page.locator( '.revisions-tickmarks > div' );
