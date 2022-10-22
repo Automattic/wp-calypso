@@ -24,9 +24,13 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	getPreference: jest.fn( () => false ),
 } ) );
 
+// Simulate the time Feb 27, 2017 05:25 UTC
+const NOW = 1488173100125;
+
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
 		jest.spyOn( global, 'Date' ).mockImplementation( () => ( { getTimezoneOffset: () => 240 } ) );
+		Date.now = jest.fn().mockReturnValue( NOW );
 	} );
 
 	afterAll( () => {
