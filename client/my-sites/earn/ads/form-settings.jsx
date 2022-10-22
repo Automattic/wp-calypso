@@ -350,24 +350,13 @@ class AdsFormSettings extends Component {
 						checked={ !! this.state.ccpa_enabled }
 						disabled={ isDisabled }
 						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
-						label={ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
+						label={ translate( 'Enable targeted advertising to site visitors in all US states.' ) }
 					/>
 
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
 							{ translate(
-								'For more information about the California Consumer Privacy Act (CCPA) and how it pertains to your site, please consult our {{a}}CCPA guide for site owners{{/a}}.',
-								{
-									components: {
-										a: (
-											<a
-												href="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
+								'Some US States have laws that require offering site visitors an opt-out from having their data used to personalize ads. Targeted advertising is off in certain states unless you enable it.'
 							) }
 						</FormSettingExplanation>
 					</div>
@@ -379,7 +368,7 @@ class AdsFormSettings extends Component {
 							<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
 							<span>
 								{ translate(
-									'CCPA requires that you place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link (CCPA) Widget{{/a}}, or the {{code}}[ccpa-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
 									{
 										components: {
 											a: (
@@ -395,7 +384,9 @@ class AdsFormSettings extends Component {
 								) }
 							</span>
 							<FormSettingExplanation>
-								{ translate( 'Failure to add this link will result in non-compliance with CCPA.' ) }
+								{ translate(
+									'Failure to add this link will result in non-compliance with privacy laws in some US states.'
+								) }
 							</FormSettingExplanation>
 						</FormFieldset>
 
@@ -413,7 +404,7 @@ class AdsFormSettings extends Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Adds a link to your privacy policy to the bottom of the CCPA notice popup (optional).'
+									'Adds a link to your privacy policy to the bottom of the sale opt-out notice popup (optional).'
 								) }
 							</FormSettingExplanation>
 						</FormFieldset>
