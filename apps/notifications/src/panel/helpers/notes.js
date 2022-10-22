@@ -44,11 +44,11 @@ export function getEditCommentLink( note ) {
 }
 
 /**
- * Returns the edit post link for the note post.
+ * Returns the new post link for the note post.
  *
  * @param note
  * @returns {string}
  */
-export function getEditPostLink( note ) {
-	return getActionBlock( note.body ).edit_post_link;
+export function getNewPostLink( note ) {
+	return getActionBlock( note.body ).new_post_link;
 }

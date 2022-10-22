@@ -63,9 +63,9 @@ const customMiddleware = {
 			window.open( href, '_blank' );
 		},
 	],
-	NEW_POST: [
+	ANSWER_PROMPT: [
 		( st, { siteId, href } ) => {
-			sendMessage( { action: 'newPost', siteId } );
+			sendMessage( { action: 'answerPrompt', siteId, href } );
 			window.open( href, '_blank' );
 		},
 	],
