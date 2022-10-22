@@ -65,13 +65,13 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] | 
 /**
  * Logs server events to statsd. Uses superagent for server-side network requests
  * and can disable statsd events with the server_side_boom_analytics_enabled
- * config flag.
+ * config flag. Does nothing if called on the client.
  *
  * @param calypsoSection The Calypso section the event occurred under.
  * @param events List of events to send to the server.
  */
 export function logServerEvent( calypsoSection: string, events: BeaconData[] | BeaconData ) {
-	if ( config( 'server_side_boom_analytics_enabled' ) ) {
+	if ( typeof window === 'undefined' && config( 'server_side_boom_analytics_enabled' ) ) {
 		superagent.get( createStatsdURL( calypsoSection, events ) ).end();
 	}
 }
