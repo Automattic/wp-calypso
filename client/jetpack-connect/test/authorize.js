@@ -396,8 +396,8 @@ describe( 'JetpackAuthorize', () => {
 						...DEFAULT_PROPS.authQuery,
 						alreadyAuthorized: true,
 					} }
-					isAlreadyOnSitesList={ true }
-					isFetchingSites={ true }
+					isAlreadyOnSitesList
+					isFetchingSites
 					selectedPlanSlug={ OFFER_RESET_FLOW_TYPES[ 0 ] }
 				/>
 			);
@@ -423,9 +423,9 @@ describe( 'JetpackAuthorize', () => {
 						...DEFAULT_PROPS.authQuery,
 						alreadyAuthorized: true,
 					} }
-					isAlreadyOnSitesList={ true }
-					isFetchingSites={ true }
-					siteHasJetpackPaidProduct={ true }
+					isAlreadyOnSitesList
+					isFetchingSites
+					siteHasJetpackPaidProduct
 				/>
 			);
 
@@ -444,9 +444,9 @@ describe( 'JetpackAuthorize', () => {
 						...DEFAULT_PROPS.authQuery,
 						alreadyAuthorized: true,
 					} }
-					isAlreadyOnSitesList={ true }
-					isFetchingSites={ true }
-					userHasUnattachedLicenses={ true }
+					isAlreadyOnSitesList
+					isFetchingSites
+					userHasUnattachedLicenses
 				/>
 			);
 
@@ -469,8 +469,8 @@ describe( 'JetpackAuthorize', () => {
 						...DEFAULT_PROPS.authQuery,
 						alreadyAuthorized: true,
 					} }
-					isAlreadyOnSitesList={ true }
-					isFetchingSites={ true }
+					isAlreadyOnSitesList
+					isFetchingSites
 				/>
 			);
 
