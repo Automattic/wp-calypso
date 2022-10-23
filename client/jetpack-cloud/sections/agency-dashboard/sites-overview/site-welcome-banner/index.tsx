@@ -1,14 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import tipIcon from 'calypso/assets/images/jetpack/tip-icon.svg';
 import Banner from 'calypso/components/banner';
+import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE,
 	JETPACK_DASHBOARD_WELCOME_BANNER_PREFERENCE_HOME_PAGE as homePagePreferenceName,
 	getJetpackDashboardWelcomeBannerPreference as getPreference,
-	jetpackDashboardRedirectLink,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import type { PreferenceType } from '../types';
@@ -19,7 +19,7 @@ export default function SiteWelcomeBanner( {
 }: {
 	isDashboardView?: boolean;
 	bannerKey?: string;
-} ): ReactElement | null {
+} ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -73,7 +73,7 @@ export default function SiteWelcomeBanner( {
 		);
 	}, [ handleTrackEvents, isDashboardView, savePreferenceType ] );
 
-	const dashboardHref = useSelector( jetpackDashboardRedirectLink );
+	const dashboardHref = dashboardPath();
 
 	// Hide the banner if the banner is already viewed
 	// on the dashboard page or the banner is dismissed

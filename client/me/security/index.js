@@ -9,6 +9,7 @@ import {
 	securityAccountEmail,
 	securityCheckup,
 	socialLogin,
+	sshKey,
 	twoStep,
 } from './controller';
 
@@ -33,4 +34,6 @@ export default function () {
 	);
 
 	page( '/me/security/account-recovery', sidebar, accountRecovery, makeLayout, clientRender );
+
+	page( '/me/security/ssh-key', sidebar, sshKey, makeLayout, clientRender );
 }

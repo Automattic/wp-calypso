@@ -1,5 +1,4 @@
 import { Gridicon } from '@automattic/components';
-import { useTranslate } from 'i18n-calypso';
 import { omitBy } from 'lodash';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
@@ -11,8 +10,7 @@ import './style.scss';
 const noop = () => {};
 
 function CommentButton( props ) {
-	const { commentCount, href, onClick, showLabel, tagName, target } = props;
-	const translate = useTranslate();
+	const { commentCount, href, onClick, tagName, target, icon } = props;
 
 	return createElement(
 		tagName,
@@ -25,17 +23,9 @@ function CommentButton( props ) {
 			},
 			( prop ) => prop === null
 		),
-		<Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
+		icon || <Gridicon icon="comment" size={ props.size } className="comment-button__icon" />,
 		<span className="comment-button__label">
 			{ commentCount > 0 && <span className="comment-button__label-count">{ commentCount }</span> }
-			{ showLabel && commentCount > 0 && (
-				<span className="comment-button__label-status">
-					{ translate( 'Comment', 'Comments', {
-						context: 'noun',
-						count: commentCount,
-					} ) }
-				</span>
-			) }
 		</span>
 	);
 }
@@ -47,6 +37,7 @@ CommentButton.propTypes = {
 	showLabel: PropTypes.bool,
 	tagName: PropTypes.string,
 	target: PropTypes.string,
+	icon: PropTypes.object,
 };
 
 CommentButton.defaultProps = {
@@ -57,6 +48,7 @@ CommentButton.defaultProps = {
 	size: 24,
 	tagName: 'li',
 	target: null,
+	icon: null,
 };
 
 const mapStateToProps = ( state, ownProps ) => {

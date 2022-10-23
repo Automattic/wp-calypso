@@ -1,7 +1,6 @@
 import { withStorageKey } from '@automattic/state-utils';
 import { HELP_CONTACT_FORM_SITE_SELECT } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import directly from './directly/reducer';
 import ticket from './ticket/reducer';
 
 /**
@@ -21,7 +20,6 @@ export const selectedSiteId = ( state = null, action ) => {
 };
 
 const combinedReducer = combineReducers( {
-	directly,
 	ticket,
 	selectedSiteId,
 } );

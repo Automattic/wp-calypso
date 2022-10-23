@@ -71,7 +71,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
+					liveChatButtonEventName="calypso_livechat_my_plan_ecommerce"
 				/>
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
@@ -124,7 +124,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
+					liveChatButtonEventName="calypso_livechat_my_plan_business"
 				/>
 				{ ! isMonthlyPlan && (
 					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
@@ -224,7 +224,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				<HappinessSupportCard
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_pro' }
+					liveChatButtonEventName="calypso_livechat_my_plan_pro"
 				/>
 				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
 				{ canActivateWordadsInstant && <MonetizeSite selectedSite={ selectedSite } /> }
@@ -331,7 +331,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_professsional' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_professsional"
 				/>
 			</Fragment>
 		);
@@ -351,7 +351,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_security' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_security"
 				/>
 			</Fragment>
 		);
@@ -371,7 +371,7 @@ export class ProductPurchaseFeaturesList extends Component {
 					isJetpack={ !! selectedSite.jetpack && ! isAutomatedTransfer }
 					isPlaceholder={ isPlaceholder }
 					showLiveChatButton
-					liveChatButtonEventName={ 'calypso_livechat_my_plan_jetpack_complete' }
+					liveChatButtonEventName="calypso_livechat_my_plan_jetpack_complete"
 				/>
 			</Fragment>
 		);

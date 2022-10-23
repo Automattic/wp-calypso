@@ -23,15 +23,12 @@ $placeholder-color: #ccd0d4; // former light-gray-700
 		outline: none;
 	}
 
-	&::-ms-clear {
-		display: none;
-	}
-
 	@include break-small {
 		@include onboarding-heading-text;
 	}
 
 	@include break-medium {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 64px;
 	}
 

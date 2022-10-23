@@ -1,7 +1,7 @@
 import { Card, Spinner } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import classnames from 'classnames';
-import { translate } from 'i18n-calypso';
+import { translate, useRtl } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
@@ -23,7 +23,6 @@ import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/site
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CurrentTaskItem from './current-task-item';
 import { getTask } from './get-task';
-import MobileAppDownload from './mobile-app-download';
 import NavItem from './nav-item';
 
 /**
@@ -132,6 +131,7 @@ const SiteSetupList = ( {
 
 	const siteIntent = useSiteOption( 'site_intent' );
 	const isBlogger = siteIntent === 'write';
+	const isRtl = useRtl();
 
 	// Move to first incomplete task on first load.
 	useEffect( () => {
@@ -189,6 +189,7 @@ const SiteSetupList = ( {
 				userEmail,
 				isBlogger,
 				isFSEActive,
+				isRtl,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -208,6 +209,7 @@ const SiteSetupList = ( {
 		userEmail,
 		isBlogger,
 		isFSEActive,
+		isRtl,
 	] );
 
 	useEffect( () => {
@@ -226,10 +228,6 @@ const SiteSetupList = ( {
 			setCurrentTaskId( firstIncompleteTask.id );
 		}
 	};
-
-	const isMobileAppTaskCompleted = tasks.some(
-		( task ) => task.id === CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED && task.isCompleted
-	);
 
 	return (
 		<Card className={ classnames( 'site-setup-list', { 'is-loading': isLoading } ) }>
@@ -266,9 +264,7 @@ const SiteSetupList = ( {
 					{ isBlogger ? translate( 'Blog setup' ) : translate( 'Site setup' ) }
 				</CardHeading>
 				<ul
-					className={ classnames( 'site-setup-list__list', {
-						'is-mobile-app-completed': isMobileAppTaskCompleted,
-					} ) }
+					className="site-setup-list__list"
 					role="tablist"
 					aria-label="Site setup"
 					aria-orientation="vertical"
@@ -333,7 +329,6 @@ const SiteSetupList = ( {
 						);
 					} ) }
 				</ul>
-				{ ! isMobileAppTaskCompleted && <MobileAppDownload /> }
 			</div>
 		</Card>
 	);

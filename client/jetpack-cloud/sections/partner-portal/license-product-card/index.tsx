@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { getProductTitle } from '../utils';
 import './style.scss';
@@ -15,7 +15,7 @@ interface Props {
 	suggestedProduct?: string | null;
 }
 
-export default function LicenseProductCard( props: Props ): ReactElement {
+export default function LicenseProductCard( props: Props ) {
 	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct } = props;
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
@@ -65,8 +65,8 @@ export default function LicenseProductCard( props: Props ): ReactElement {
 							{ formatCurrency( product.amount, product.currency ) }
 						</div>
 						<div className="license-product-card__price-interval">
-							{ product.price_interval === 'day' && translate( '/per license per day' ) }
-							{ product.price_interval === 'month' && translate( '/per license per month' ) }
+							{ product.price_interval === 'day' && translate( '/USD per license per day' ) }
+							{ product.price_interval === 'month' && translate( '/USD per license per month' ) }
 						</div>
 					</div>
 				</div>

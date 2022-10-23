@@ -17,3 +17,40 @@
 	margin: 0 10px;
 	flex-grow: 1;
 }
+
+.themes-list__empty-container {
+	.themes-list__not-found-text {
+		color: var(--studio-gray-60);
+		margin-top: 48px;
+		margin-bottom: 32px;
+	}
+
+	.themes-list__upgrade-section-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-top: 64px;
+		background: #fff;
+		box-shadow: 0 0 0 1px var(--color-border-subtle);
+	}
+
+	.themes-list__upgrade-section-title {
+		font-size: $font-title-small;
+		color: var(--studio-gray-100);
+	}
+
+	.themes-list__upgrade-section-subtitle {
+		max-width: 680px;
+		padding: 0 2rem;
+		margin-top: 8px;
+		text-align: center;
+		font-size: $font-body;
+		color: var(--studio-gray-60);
+	}
+
+	.themes-list__upgrade-section-cta,
+	.themes-list__themes-images {
+		margin-top: 32px;
+		display: flex;
+	}
+}

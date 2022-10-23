@@ -9,9 +9,5 @@ import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
  * @returns {?string}       Full URL to WooCommerce Wizard plugin in wp-admin
  */
 export default function getSiteWooCommerceWizardUrl( state, siteId ) {
-	return getSiteAdminUrl(
-		state,
-		siteId,
-		'admin.php?page=wc-admin&from-calypso&path=%2Fsetup-wizard'
-	);
+	return getSiteAdminUrl( state, siteId, 'admin.php?page=wc-admin&from-calypso' );
 }

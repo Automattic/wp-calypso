@@ -17,19 +17,25 @@ const _filters = {
 		return true;
 	},
 	active: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	inactive: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return ! site.active;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return ! site.active;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	updates: function ( plugin ) {
-		return some( plugin.sites, function ( site ) {
-			return site.update && ! site.update.recentlyUpdated;
-		} );
+		return (
+			some( plugin.sites, function ( site ) {
+				return site.update && ! site.update.recentlyUpdated;
+			} ) || plugin.statusRecentlyChanged
+		);
 	},
 	isEqual: function ( pluginSlug, plugin ) {
 		return plugin.slug === pluginSlug;
@@ -54,6 +60,10 @@ export function isRequestingForSites( state, sites ) {
 
 export function isRequestingForAllSites( state ) {
 	return state.plugins.installed.isRequestingAll;
+}
+
+export function requestPluginsError( state ) {
+	return state.plugins.installed.requestError;
 }
 
 export function getPlugins( state, siteIds, pluginFilter ) {

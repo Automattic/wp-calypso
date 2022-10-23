@@ -3,7 +3,7 @@ import {
 	isGSuiteOrGoogleWorkspace,
 	isPlan,
 	isSiteRedirect,
-	isTheme,
+	isThemePurchase,
 	isTitanMail,
 } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
@@ -36,7 +36,7 @@ const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
 		text = i18n.translate( 'Email Settings' );
 	}
 
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		url = productUrl;
 		text = i18n.translate( 'Theme Details' );
 	}
@@ -58,7 +58,7 @@ ProductLink.propTypes = {
 };
 
 export default connect( ( state, { purchase } ) => {
-	if ( isTheme( purchase ) ) {
+	if ( isThemePurchase( purchase ) ) {
 		return {
 			// No <QueryTheme /> component needed, since getThemeDetailsUrl() only needs the themeId which we pass here.
 			productUrl: getThemeDetailsUrl( state, purchase.meta, purchase.siteId ),

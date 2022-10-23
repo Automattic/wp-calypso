@@ -1,4 +1,6 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
@@ -55,9 +57,37 @@ export const getTask = (
 		userEmail,
 		isBlogger,
 		isFSEActive,
+		isRtl,
 	} = {}
 ) => {
 	let taskData = {};
+
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+
+	const wpAppBanner = {
+		title: translate( 'Try the WordPress app' ),
+		description: isBlogger
+			? translate( 'Write posts, check stats, and reply to comments on the go!' )
+			: translate(
+					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
+			  ),
+	};
+
+	const jetpackAppBanner = {
+		title: translate( 'Try the Jetpack app' ),
+		subtitle: translate( 'Put your site in your pocket' ),
+		icon: (
+			<AnimatedIcon
+				icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+				className="site-setup-list__task-icon"
+			/>
+		),
+		description: translate(
+			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
+		),
+		jetpackBranding: true,
+	};
+
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
@@ -117,13 +147,8 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
+				...( displayJetpackAppBranding ? jetpackAppBanner : wpAppBanner ),
 				timing: 3,
-				title: translate( 'Try the WordPress app' ),
-				description: isBlogger
-					? translate( 'Write posts, check stats, and reply to comments on the go!' )
-					: translate(
-							'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-					  ),
 				actionText: isBlogger
 					? translate( 'Download the app' )
 					: translate( 'Download mobile app' ),
@@ -270,7 +295,7 @@ export const getTask = (
 				timing: 10,
 				title: translate( 'Publish your first post' ),
 				description: translate(
-					"See how your site looks to site visitors. Remember, your blog is a work in progress — you can always choose a new theme or tweak your site's design."
+					"Get your thoughts together because it is time to start writing. After publishing, don't forget to share your first post with your networks on social media."
 				),
 				actionText: translate( 'Draft a post' ),
 				actionUrl: `/post/${ siteSlug }`,

@@ -12,6 +12,8 @@
 
 .jetpack-footer {
 	line-height: 1.4;
+	padding: 4rem 7.5% 4.5rem;
+	background-color: #f0f2eb;
 
 	-webkit-font-smoothing: initial;
 
@@ -21,8 +23,13 @@
 }
 
 .social-properties {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 	> li > a {
 		padding: 12px !important;
+		display: block;
+		transition: opacity 0.1s;
 	}
 
 	svg {
@@ -75,10 +82,6 @@
 	}
 }
 
-.jetpack-footer {
-	padding: 4rem 7.5% 4.5rem;
-	background-color: #f0f2eb;
-}
 @media ( max-width: 600px ) {
 	.jetpack-footer {
 		padding-block-start: 3rem;
@@ -254,11 +257,11 @@
 	}
 }
 .a8c-footer__link-list :any-link {
-	color: white;
+	color: var(--color-text-inverted);
 	text-decoration: underline;
 }
 .a8c-footer__link-list :any-link:hover {
-	color: white;
+	color: var(--color-text-inverted);
 	text-decoration: none;
 }
 .a8c-footer__link-list .a8c-footer__home-link {
@@ -301,22 +304,13 @@
 	}
 }
 
-.social-properties {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-}
 .social-properties > li {
 	margin: 0 2px 0 0;
 }
 .social-properties > li:first-child {
 	margin-inline-start: -14px;
 }
-.social-properties > li > a {
-	display: block;
-	padding: 14px;
-	transition: opacity 0.1s;
-}
+
 .social-properties > li > a:hover {
 	opacity: 0.75;
 }
@@ -343,11 +337,11 @@
 .language-toggle:focus,
 .language-toggle:hover {
 	outline: 0;
-	color: white;
-	background-color: black;
+	color: var(--color-text-inverted);
+	background-color: var(--studio-black);
 }
 .language-toggle:active {
-	color: white;
+	color: var(--color-text-inverted);
 	background-color: #2c3338;
 }
 .language-toggle .gridicon {

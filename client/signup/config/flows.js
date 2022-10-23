@@ -27,13 +27,6 @@ function dependenciesContainCartItem( dependencies ) {
 	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
 }
 
-function getAddOnsStep( steps ) {
-	if ( isEnabled( 'signup/add-ons' ) ) {
-		return [ ...steps, 'add-ons' ];
-	}
-	return steps;
-}
-
 function getSiteDestination( dependencies ) {
 	let protocol = 'https';
 
@@ -176,7 +169,6 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getAddOnsStep,
 } );
 
 function removeUserStepFromFlow( flow ) {

@@ -4,5 +4,11 @@
 	justify-content: center;
 	.premium-badge {
 		font-family: $sans;
+		background: var(--studio-black);
+		padding: 0 10px 0 9px;
+		margin-left: 10px;
+	}
+	.woocommerce-bundled-badge {
+		margin-left: 10px;
 	}
 }

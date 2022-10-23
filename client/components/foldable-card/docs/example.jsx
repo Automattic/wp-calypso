@@ -16,6 +16,20 @@ export default class FoldableCardExample extends PureComponent {
 
 				<div>
 					<FoldableCard
+						header="This is a foldable card with smooth animation"
+						screenReaderText="More"
+						smooth
+						contentExpandedStyle={ { 'max-height': '112px' } }
+					>
+						<div style={ { padding: '16px 16px 0' } }>
+							<p>These are its contents</p>
+							<p>And some more</p>
+						</div>
+					</FoldableCard>
+				</div>
+
+				<div>
+					<FoldableCard
 						header="This is a foldable card with a really long header content area that might wrap depending on the page width of the browser being used to view this page when the summary area is not hidden."
 						screenReaderText="More"
 					>

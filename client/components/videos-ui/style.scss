@@ -143,12 +143,12 @@
 				border-bottom: 1px solid #343c3f;
 
 				&:first-child {
-					border-radius: 4px 4px 0 0; /* stylelint-disable-line scales/radii */
+					border-radius: 4px 4px 0 0;
 				}
 
 				&:last-child {
 					border-bottom: none;
-					border-radius: 0 0 4px 4px; /* stylelint-disable-line scales/radii */
+					border-radius: 0 0 4px 4px;
 				}
 
 				.videos-ui__duration {
@@ -385,9 +385,6 @@
 			}
 
 			&.is-loading {
-				.videos-ui__video-placeholder {
-					width: 100%;
-				}
 
 				.videos-ui__body-title {
 					margin-right: 0;
@@ -403,6 +400,7 @@
 				.videos-ui__video-placeholder {
 					margin-right: 20px;
 					flex-grow: 1;
+					width: 100%;
 				}
 
 			}

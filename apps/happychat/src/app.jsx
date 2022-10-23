@@ -13,6 +13,7 @@ import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
 import { filterUserObject } from 'calypso/lib/user/shared-utils';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';
+import audioMiddleware from 'calypso/state/audio/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import currentUser from 'calypso/state/current-user/reducer';
@@ -42,7 +43,8 @@ async function AppBoot() {
 				thunkMiddleware,
 				wpcomApiMiddleware,
 				analyticsMiddleware,
-				happychatMiddleware
+				happychatMiddleware,
+				audioMiddleware
 			)
 		)
 	);

@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import siteOptionsImage from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
@@ -18,7 +18,7 @@ interface Props {
 	initialContext: any;
 }
 
-export default function SiteOptionsStep( props: Props ): React.ReactNode {
+export default function SiteOptionsStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const { stepName, signupDependencies, goToNextStep } = props;
@@ -75,7 +75,7 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 	};
 
 	// Only do following things when mounted
-	React.useEffect( () => {
+	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
 	}, [] );
 
@@ -83,8 +83,8 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 		<StepWrapper
 			headerText={ headerText }
 			fallbackHeaderText={ headerText }
-			subHeaderText={ '' }
-			fallbackSubHeaderText={ '' }
+			subHeaderText=""
+			fallbackSubHeaderText=""
 			headerImageUrl={ headerImage }
 			stepContent={
 				<SiteOptions
@@ -97,8 +97,8 @@ export default function SiteOptionsStep( props: Props ): React.ReactNode {
 					onSubmit={ submitSiteOptions }
 				/>
 			}
-			align={ 'left' }
-			skipButtonAlign={ 'top' }
+			align="left"
+			skipButtonAlign="top"
 			skipLabelText={ translate( 'Skip this step' ) }
 			isHorizontalLayout={ true }
 			defaultDependencies={ {

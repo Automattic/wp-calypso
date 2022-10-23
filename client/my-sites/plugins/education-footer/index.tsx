@@ -10,23 +10,71 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const ThreeColumnContainer = styled.div`
-	@media ( max-width: 960px ) {
-		grid-template-columns: repeat( 1, 1fr );
-	}
-
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	column-gap: 29px;
-	row-gap: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 96px;
+	margin-top: 32px;
+
+	> div:first-child {
+		padding: 0;
+		margin-bottom: 60px;
+
+		.wp-brand-font {
+			font-size: var( --scss-font-title-medium );
+		}
+
+		> div:first-child {
+			margin-bottom: 24px;
+		}
+	}
+
+	.card-block {
+		display: flex;
+		width: calc( 33% - 10px );
+
+		@media ( max-width: 660px ) {
+			display: block;
+			width: 100%;
+			margin-top: 10px;
+		}
+	}
 `;
+
+export const MarketplaceFooter = () => {
+	const { __ } = useI18n();
+
+	return (
+		<Section
+			header={ preventWidows( __( 'You pick the plugin. We’ll take care of the rest.' ) ) }
+			dark
+		>
+			<ThreeColumnContainer>
+				<FeatureItem header={ __( 'Fully Managed' ) }>
+					{ __(
+						'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
+					) }
+				</FeatureItem>
+				<FeatureItem header={ __( 'Thousands of plugins' ) }>
+					{ __(
+						'From WordPress.com premium plugins to thousands more community-authored plugins, we’ve got you covered.'
+					) }
+				</FeatureItem>
+				<FeatureItem header={ __( 'Flexible pricing' ) }>
+					{ __(
+						'Pay yearly and save. Or keep it flexible with monthly premium plugin pricing. It’s entirely up to you.'
+					) }
+				</FeatureItem>
+			</ThreeColumnContainer>
+		</Section>
+	);
+};
 
 const EducationFooter = () => {
 	const { __ } = useI18n();
@@ -44,7 +92,10 @@ const EducationFooter = () => {
 
 	return (
 		<EducationFooterContainer>
-			<Section header={ __( 'Learn more' ) }>
+			<Section
+				header={ __( 'Get started with plugins' ) }
+				subheader={ __( 'Our favorite how-to guides to get you started with plugins' ) }
+			>
 				<ThreeColumnContainer>
 					<LinkCard
 						external
@@ -54,7 +105,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
-						background="studio-celadon-60"
+						background="#e5f3f0"
 						onClick={ () => onClickLinkCard( 'website_building' ) }
 					/>
 					<LinkCard
@@ -65,7 +116,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
-						background="studio-purple-80"
+						background="#f9f0f6"
 						onClick={ () => onClickLinkCard( 'customization' ) }
 					/>
 					<LinkCard
@@ -76,35 +127,12 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
 						) }
-						background="studio-wordpress-blue-80"
+						background="#e5f4ff"
 						onClick={ () => onClickLinkCard( 'seo' ) }
 					/>
 				</ThreeColumnContainer>
 			</Section>
-			<Section
-				header={ preventWidows(
-					__( 'Add additional features to your WordPress site. Risk free.' )
-				) }
-				dark
-			>
-				<ThreeColumnContainer>
-					<FeatureItem header={ __( 'Fully Managed' ) }>
-						{ __(
-							'Premium plugins are fully managed by the team at WordPress.com. No security patches. No update nags. It just works.'
-						) }
-					</FeatureItem>
-					<FeatureItem header={ __( 'Thousands of plugins' ) }>
-						{ __(
-							'Along with our hand curated collection of premium plugins, you also have thousands of community developed plugins at your disposal.'
-						) }
-					</FeatureItem>
-					<FeatureItem header={ __( 'Flexible pricing' ) }>
-						{ __(
-							'WordPress.com offers monthly and annual premium plugin pricing for extra flexibility.'
-						) }
-					</FeatureItem>
-				</ThreeColumnContainer>
-			</Section>
+			<MarketplaceFooter />
 		</EducationFooterContainer>
 	);
 };

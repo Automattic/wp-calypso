@@ -61,6 +61,10 @@ export interface DesignRecipe {
 	footer_pattern_ids?: number[] | string[];
 }
 
+export interface SoftwareSet {
+	slug: string;
+}
+
 export type DesignFeatures = 'anchorfm'; // For additional features, = 'anchorfm' | 'feature2' | 'feature3'
 
 /**
@@ -78,6 +82,7 @@ export interface Design {
 	title: string;
 	description?: string;
 	recipe?: DesignRecipe;
+	verticalizable?: boolean;
 	is_premium: boolean;
 	categories: Category[];
 	features: DesignFeatures[];
@@ -87,7 +92,8 @@ export interface Design {
 	design_type?: DesignType;
 	style_variations?: StyleVariation[];
 	price?: string;
-	verticalizable?: boolean;
+	software_sets?: SoftwareSet[];
+	is_bundled_with_woo_commerce?: boolean;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -108,6 +114,7 @@ export interface Design {
 export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	verticalId?: string;
+	pageTemplate?: string;
 }
 
 export interface DesignPreviewOptions {
@@ -118,6 +125,7 @@ export interface DesignPreviewOptions {
 	viewport_width?: number;
 	viewport_height?: number;
 	use_screenshot_overrides?: boolean;
+	disable_viewport_height?: boolean;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

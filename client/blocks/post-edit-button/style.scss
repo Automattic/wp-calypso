@@ -5,7 +5,6 @@
 	color: var(--color-text-subtle);
 	cursor: pointer;
 	list-style-type: none;
-	padding: 4px;
 	position: relative;
 
 	&:hover,
@@ -23,7 +22,6 @@
 
 	.gridicon {
 		fill: var(--color-neutral-light);
-		top: -1px;
 	}
 
 	.post-edit-button__label {
@@ -36,7 +34,8 @@
 }
 
 .post-edit-button__label {
-	font-size: $font-body-small;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 13px;
 	margin-left: 4px;
 
 	@include breakpoint-deprecated( "<480px" ) {

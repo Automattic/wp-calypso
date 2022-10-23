@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -25,6 +26,7 @@ import {
 	PLUGIN_UPDATE_REQUEST,
 	PLUGIN_UPDATE_REQUEST_SUCCESS,
 	PLUGIN_UPDATE_REQUEST_FAILURE,
+	PLUGIN_ALREADY_UP_TO_DATE,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE,
@@ -37,8 +39,10 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
@@ -91,6 +95,32 @@ const recordEvent = ( eventType, plugin, siteId, error ) => {
 	};
 };
 
+/**
+ * Function to dispatch actions to set the statusRecentlyChanged value based on the type.
+ * First, dispatch the action to set statusRecentlyChanged to true.
+ * Next, dispatch the action to set the statusRecentlyChanged to false with delay(setTimeout).
+ * Used to show the plugin status before the plugin is filtered based on the status.
+ * The idea here is to filter the plugins also when statusRecentlyChanged is true.
+ *
+ * @param {object} defaultAction The default action params
+ * @param {object} data   The API response
+ * @returns {Function}    The dispatch actions
+ */
+export const handleDispatchSuccessCallback = ( defaultAction, data ) => ( dispatch ) => {
+	dispatch( {
+		...defaultAction,
+		type: PLUGIN_ACTION_STATUS_UPDATE,
+		data: { ...data, statusRecentlyChanged: true },
+	} );
+	setTimeout( () => {
+		dispatch( {
+			...defaultAction,
+			type: PLUGIN_ACTION_STATUS_UPDATE,
+			data: { ...data, statusRecentlyChanged: false },
+		} );
+	}, 3000 );
+};
+
 export function activatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
@@ -137,7 +167,7 @@ export function activatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
-
+			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
 			afterActivationCallback( undefined, data );
 		};
 
@@ -204,6 +234,7 @@ export function deactivatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
+			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
 			afterDeactivationCallback( undefined );
 		};
 
@@ -246,8 +277,8 @@ export function updatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.update ) {
-			return dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data: plugin } );
+		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
+			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
 		}
 
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
@@ -258,6 +289,7 @@ export function updatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
+			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
 			afterUpdateCallback( undefined );
 			dispatch( sitePluginUpdated( siteId ) );
 		};
@@ -425,6 +457,7 @@ function installPluginHelper(
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
+			dispatch( handleDispatchSuccessCallback( defaultAction, data ) );
 			recordInstallPluginEvent( 'RECEIVE_INSTALLED_PLUGIN' );
 			refreshNetworkSites( siteId );
 		};
@@ -575,6 +608,9 @@ export function fetchAllPlugins() {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
+				// Cast the enumerable string-keyed property to a number.
+				siteId = Number( siteId );
+
 				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {
@@ -587,6 +623,7 @@ export function fetchAllPlugins() {
 
 		const receivePluginsDispatchFail = ( error ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_FAILURE, error } );
+			dispatch( errorNotice( translate( 'Failed to retrieve plugins. Please try again later.' ) ) );
 		};
 
 		return wpcom.req

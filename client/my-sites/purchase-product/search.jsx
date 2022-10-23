@@ -175,7 +175,7 @@ export class SearchPurchase extends Component {
 		return (
 			<MainWrapper>
 				<div className="purchase-product__site-url-entry-container">
-					<MainHeader type={ 'jetpack_search' } />
+					<MainHeader type="jetpack_search" />
 
 					{ this.renderSiteInput( status ) }
 					{ renderFooter() }

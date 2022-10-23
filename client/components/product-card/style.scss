@@ -4,6 +4,17 @@
 	@include breakpoint-deprecated( ">480px" ) {
 		min-width: 460px;
 	}
+	.plan-price {
+		margin-right: 0.333em;
+
+		&,
+		& * {
+			@include breakpoint-deprecated( ">660px" ) {
+				font-size: $font-body-small;
+				vertical-align: baseline;
+			}
+		}
+	}
 }
 // Header
 .product-card__header {
@@ -19,6 +30,23 @@
 		display: flex;
 		flex-flow: row wrap;
 		align-items: baseline;
+	}
+
+	.plan-price,
+	.plan-price * {
+		@include breakpoint-deprecated( ">660px" ) {
+			font-weight: 600;
+		}
+	}
+
+	.product-card__billing-timeframe {
+		width: 100%;
+
+		@include breakpoint-deprecated( ">660px" ) {
+			width: auto;
+			font-size: $font-body-extra-small;
+			font-weight: 600;
+		}
 	}
 }
 
@@ -90,20 +118,6 @@
 	align-items: baseline;
 }
 
-.product-card {
-	.plan-price {
-		margin-right: 0.333em;
-
-		&,
-		& * {
-			@include breakpoint-deprecated( ">660px" ) {
-				font-size: $font-body-small;
-				vertical-align: baseline;
-			}
-		}
-	}
-}
-
 .product-card__billing-timeframe {
 	font-size: $font-body-small;
 	font-weight: 400;
@@ -116,26 +130,6 @@
 
 	@include breakpoint-deprecated( ">960px" ) {
 		font-size: $font-body-extra-small;
-	}
-}
-
-// Adjust price group styles when part of product card header
-.product-card__header {
-	.plan-price,
-	.plan-price * {
-		@include breakpoint-deprecated( ">660px" ) {
-			font-weight: 600;
-		}
-	}
-
-	.product-card__billing-timeframe {
-		width: 100%;
-
-		@include breakpoint-deprecated( ">660px" ) {
-			width: auto;
-			font-size: $font-body-extra-small;
-			font-weight: 600;
-		}
 	}
 }
 
@@ -177,7 +171,6 @@
 .product-card__options {
 	display: flex;
 	flex-flow: column nowrap;
-	justify-content: space-around; // IE11 fallback.
 	justify-content: space-evenly;
 
 	@include breakpoint-deprecated( ">480px" ) {
@@ -306,7 +299,7 @@
 	padding: 12px 16px 16px;
 	transform: rotate(-10deg);
 	color: var(--studio-white);
-	background: url("/calypso/images/illustrations/promo-star.svg") no-repeat center;
+	background: url(/calypso/images/illustrations/promo-star.svg) no-repeat center;
 	background-size: contain;
 	font-size: $font-body-small;
 	font-weight: 600;

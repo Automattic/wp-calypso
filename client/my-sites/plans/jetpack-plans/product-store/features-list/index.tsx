@@ -3,13 +3,13 @@ import { useTranslate } from 'i18n-calypso';
 import GreenCheckmark from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
 import RedCross from 'calypso/assets/images/jetpack/jetpack-red-cross.svg';
 import FoldableCard from 'calypso/components/foldable-card';
-import { BUNDLE_FEATURES_LIST } from './features';
+import { useBundleFeaturesList } from './features';
 import type { FeaturesListProps } from '../types';
 
 import './style.scss';
 
 export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
-	const featuresList = BUNDLE_FEATURES_LIST[ item.productSlug ];
+	const featuresList = useBundleFeaturesList( item.productSlug );
 
 	const isMobile = useMobileBreakpoint();
 	const translate = useTranslate();
@@ -23,7 +23,7 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 			{ featuresList.map( ( { features, icon, included, slug, title } ) => (
 				<div key={ slug } className="features-list__group">
 					<div className="features-list__group--title">
-						<img className="features-list__group--icon" alt={ title } src={ icon } />
+						<img className="features-list__group--icon" alt="" src={ icon } />
 						{ title }
 					</div>
 					<ul className="features-list__group--features">
@@ -44,7 +44,11 @@ export const FeaturesList: React.FC< FeaturesListProps > = ( { item } ) => {
 
 	if ( isMobile ) {
 		return (
-			<FoldableCard header={ translate( 'View all features' ) } hideSummary expanded={ ! isMobile }>
+			<FoldableCard
+				header={ translate( 'View all features' ) }
+				clickableHeader={ true }
+				hideSummary
+			>
 				{ output }
 			</FoldableCard>
 		);

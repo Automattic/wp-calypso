@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { capitalize, get } from 'lodash';
@@ -13,6 +12,7 @@ import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import Notice from 'calypso/components/notice';
 import WooCommerceConnectCartHeader from 'calypso/components/woocommerce-connect-cart-header';
 import { getIsAnchorFmSignup } from 'calypso/landing/gutenboarding/utils';
+import { getSignupUrl, isReactLostPasswordScreenEnabled } from 'calypso/lib/login';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
@@ -38,6 +38,7 @@ import {
 import { isPasswordlessAccount, isPartnerSignupQuery } from 'calypso/state/login/utils';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import ContinueAsUser from './continue-as-user';
 import ErrorNotice from './error-notice';
@@ -71,6 +72,8 @@ class Login extends Component {
 		signupUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		loginEmailAddress: PropTypes.string,
+		action: PropTypes.string,
 	};
 
 	state = {
@@ -118,17 +121,22 @@ class Login extends Component {
 			fromSite,
 			currentUser,
 			twoFactorEnabled,
+			loginEmailAddress,
+			isWoo,
+			isPartnerSignup,
 		} = this.props;
 
 		return (
 			! twoStepNonce &&
 			! socialConnect &&
 			! privateSite &&
-			! oauth2Client &&
+			// Show the continue as user flow WooCommerce but not other OAuth2 clients
+			! ( oauth2Client && ! ( isWoo && ! isPartnerSignup ) ) &&
 			! isJetpackWooCommerceFlow &&
 			! isJetpack &&
 			! fromSite &&
 			! twoFactorEnabled &&
+			! loginEmailAddress &&
 			currentUser &&
 			! this.state.continueAsAnotherUser
 		);
@@ -197,6 +205,37 @@ class Login extends Component {
 		} );
 	};
 
+	getSignupUrl = () => {
+		const {
+			currentRoute,
+			oauth2Client,
+			currentQuery,
+			pathname,
+			locale,
+			isGutenboarding,
+			signupUrl,
+			isWoo,
+		} = this.props;
+
+		if ( signupUrl ) {
+			return signupUrl;
+		}
+
+		if ( isWoo && ! currentQuery ) {
+			// In 2fa screens, we don't have currentQuery
+			return 'https://woocommerce.com/start/';
+		}
+
+		return getSignupUrl(
+			currentQuery,
+			currentRoute,
+			oauth2Client,
+			locale,
+			pathname,
+			isGutenboarding
+		);
+	};
+
 	renderHeader() {
 		const {
 			isJetpack,
@@ -214,6 +253,9 @@ class Login extends Component {
 			fromSite,
 			isAnchorFmSignup,
 			isPartnerSignup,
+			isWoo,
+			action,
+			currentQuery,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -232,6 +274,15 @@ class Login extends Component {
 					service: capitalize( linkingSocialService ),
 				},
 			} );
+		} else if ( action === 'lostpassword' ) {
+			headerText = <h3>{ translate( 'Forgot your password?' ) }</h3>;
+			postHeader = (
+				<p className="login__header-subtitle">
+					{ translate(
+						'It happens to the best of us. Enter the email address associated with your WordPress.com account and we’ll send you a link to reset your password.'
+					) }
+				</p>
+			);
 		} else if ( privateSite ) {
 			headerText = translate( 'This is a private WordPress.com site' );
 		} else if ( oauth2Client ) {
@@ -243,7 +294,7 @@ class Login extends Component {
 					"'clientTitle' is the name of the app that uses WordPress.com authentication (e.g. 'Akismet' or 'VaultPress')",
 			} );
 
-			if ( isWooOAuth2Client( oauth2Client ) ) {
+			if ( isWoo ) {
 				if ( isPartnerSignup ) {
 					headerText = translate( 'Log in to your account' );
 				} else if ( wccomFrom ) {
@@ -254,7 +305,7 @@ class Login extends Component {
 							) : (
 								<div className="login__woocommerce-wrapper">
 									<div className={ classNames( 'login__woocommerce-logo' ) }>
-										<svg width={ 200 } viewBox={ '0 0 1270 170' }>
+										<svg width={ 200 } viewBox="0 0 1270 170">
 											<AsyncLoad
 												require="calypso/components/jetpack-header/woocommerce"
 												darkColorScheme={ false }
@@ -274,25 +325,31 @@ class Login extends Component {
 							) }
 						</p>
 					);
-				} else {
-					preHeader = <Gridicon icon="my-sites" size={ 72 } />;
+				} else if ( this.props.twoFactorEnabled ) {
+					headerText = <h3>{ translate( 'Authenticate your login' ) }</h3>;
+				} else if ( currentQuery.lostpassword_flow ) {
+					headerText = null;
 					postHeader = (
-						<p>
+						<p className="login__header-subtitle">
 							{ translate(
-								'WooCommerce.com now uses WordPress.com Accounts.{{br/}}{{a}}Learn more about the benefits{{/a}}',
-								{
-									components: {
-										a: (
-											<a
-												href="https://woocommerce.com/2017/01/woocommerce-requires-wordpress-account/"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-										br: <br />,
-									},
-								}
+								"Your password reset confirmation is on its way to your email address – please check your junk folder if it's not in your inbox! Once you've reset your password, head back to this page to log in to your account."
 							) }
+						</p>
+					);
+				} else {
+					headerText = <h3>{ translate( 'Get started in minutes' ) }</h3>;
+					postHeader = (
+						<p className="login__header-subtitle">
+							{ this.showContinueAsUser()
+								? translate( "First, select the account you'd like to use." )
+								: translate(
+										'First, log in with your WordPress.com account. Don’t have an account? {{signupLink}}Sign up{{/signupLink}}',
+										{
+											components: {
+												signupLink: <a href={ this.getSignupUrl() } />,
+											},
+										}
+								  ) }
 						</p>
 					);
 				}
@@ -307,10 +364,7 @@ class Login extends Component {
 				);
 
 				// If users arrived here from the lost password flow, show them a specific message about it
-				const currentUrl = new URL( window.location.href );
-				const displayLostPasswordConfirmation =
-					currentUrl.searchParams.get( 'lostpassword_flow' ) === 'true';
-				postHeader = displayLostPasswordConfirmation && (
+				postHeader = currentQuery.lostpassword_flow && (
 					<p className="login__form-post-header">
 						{ translate(
 							'Check your e-mail address linked to the account for the confirmation link, including the spam or junk folder.'
@@ -441,6 +495,10 @@ class Login extends Component {
 			userEmail,
 			handleUsernameChange,
 			signupUrl,
+			isWoo,
+			translate,
+			isPartnerSignup,
+			action,
 		} = this.props;
 
 		if ( socialConnect ) {
@@ -452,23 +510,102 @@ class Login extends Component {
 			);
 		}
 
+		if ( action === 'lostpassword' && isReactLostPasswordScreenEnabled() ) {
+			return (
+				<Fragment>
+					<AsyncLoad
+						require="calypso/blocks/login/lost-password-form"
+						redirectToAfterLoginUrl={ this.props.redirectTo }
+						oauth2ClientId={ this.props.oauth2Client && this.props.oauth2Client.id }
+						locale={ locale }
+					/>
+					<div className="login__lost-password-footer">
+						<p className="login__lost-password-no-account">
+							{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+								components: {
+									signupLink: <a href={ this.getSignupUrl() } />,
+								},
+							} ) }
+						</p>
+					</div>
+				</Fragment>
+			);
+		}
+
 		if ( twoFactorEnabled ) {
 			return (
-				<AsyncLoad
-					require="calypso/blocks/login/two-factor-authentication/two-factor-content"
-					isBrowserSupported={ this.state.isBrowserSupported }
-					isJetpack={ isJetpack }
-					isGutenboarding={ isGutenboarding }
-					twoFactorAuthType={ twoFactorAuthType }
-					twoFactorNotificationSent={ twoFactorNotificationSent }
-					handleValid2FACode={ this.handleValid2FACode }
-					rebootAfterLogin={ this.rebootAfterLogin }
-					switchTwoFactorAuthType={ this.handleTwoFactorRequested }
-				/>
+				<Fragment>
+					<AsyncLoad
+						require="calypso/blocks/login/two-factor-authentication/two-factor-content"
+						isBrowserSupported={ this.state.isBrowserSupported }
+						isJetpack={ isJetpack }
+						isGutenboarding={ isGutenboarding }
+						isWoo={ isWoo }
+						isPartnerSignup={ isPartnerSignup }
+						twoFactorAuthType={ twoFactorAuthType }
+						twoFactorNotificationSent={ twoFactorNotificationSent }
+						handleValid2FACode={ this.handleValid2FACode }
+						rebootAfterLogin={ this.rebootAfterLogin }
+						switchTwoFactorAuthType={ this.handleTwoFactorRequested }
+					/>
+					{ isWoo && ! isPartnerSignup && (
+						<div className="login__two-factor-footer">
+							<p className="login__two-factor-no-account">
+								{ translate( 'Don’t have an account? {{signupLink}}Sign up{{/signupLink}}', {
+									components: {
+										signupLink: <a href={ this.getSignupUrl() } />,
+									},
+								} ) }
+							</p>
+							<p className="login__two-factor-cannot-access-phone">
+								{ translate(
+									'Can’t access your phone? {{contactUsLink}}Contact us{{/contactUsLink}}',
+									{
+										components: {
+											contactUsLink: (
+												<a
+													href="https://wordpress.com/help/contact"
+													target="_blank"
+													rel="noreferrer"
+												/>
+											),
+										},
+									}
+								) }
+							</p>
+						</div>
+					) }
+				</Fragment>
 			);
 		}
 
 		if ( this.showContinueAsUser() ) {
+			if ( isWoo ) {
+				return (
+					<Fragment>
+						<ContinueAsUser
+							onChangeAccount={ this.handleContinueAsAnotherUser }
+							isWooOAuth2Client={ isWoo }
+						/>
+						<LoginForm
+							disableAutoFocus={ disableAutoFocus }
+							onSuccess={ this.handleValidLogin }
+							privateSite={ privateSite }
+							socialService={ socialService }
+							socialServiceResponse={ socialServiceResponse }
+							domain={ domain }
+							isGutenboarding={ isGutenboarding }
+							isP2Login={ isP2Login }
+							locale={ locale }
+							userEmail={ userEmail }
+							handleUsernameChange={ handleUsernameChange }
+							signupUrl={ signupUrl }
+							showSocialLoginFormOnly={ true }
+						/>
+					</Fragment>
+				);
+			}
+
 			// someone is already logged in, offer to proceed to the app without a new login
 			return <ContinueAsUser onChangeAccount={ this.handleContinueAsAnotherUser } />;
 		}
@@ -539,7 +676,11 @@ export default connect(
 		isAnchorFmSignup: getIsAnchorFmSignup(
 			get( getCurrentQueryArguments( state ), 'redirect_to' )
 		),
+		currentQuery: getCurrentQueryArguments( state ),
+		currentRoute: getCurrentRoute( state ),
 		isPartnerSignup: isPartnerSignupQuery( getCurrentQueryArguments( state ) ),
+		loginEmailAddress: getCurrentQueryArguments( state )?.email_address,
+		isWoo: isWooOAuth2Client( getCurrentOAuth2Client( state ) ),
 	} ),
 	{
 		rebootAfterLogin,

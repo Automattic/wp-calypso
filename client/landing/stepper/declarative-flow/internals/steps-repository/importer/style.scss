@@ -1,7 +1,8 @@
 /**
  * Common importer integration styles
  */
-.site-setup {
+.site-setup,
+.import-focused {
 	.importer-wrapper:not(.importer-wrapper__wordpress) {
 		max-width: 700px;
 		margin: auto;
@@ -41,7 +42,7 @@
 		margin: 0;
 
 		@include break-xlarge {
-			font-size: 2.75rem; /* stylelint-disable-line scales/font-sizes */
+			font-size: 2.75rem;
 		}
 	}
 

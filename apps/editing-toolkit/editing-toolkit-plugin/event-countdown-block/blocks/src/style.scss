@@ -5,6 +5,7 @@
 
 	.event-countdown__counter {
 		text-transform: uppercase;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
 		font-weight: 600;
 	}
@@ -17,11 +18,15 @@
 
 	.event-countdown__counter span strong {
 		margin-right: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 24px;
 	}
 
 	.event-countdown__day {
 		line-height: 1;
 		font-weight: 900; /* stylelint-disable-line scales/font-weights */
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		font-size: 56px;
 		display: block;
 	}
 
@@ -42,6 +47,7 @@
 	.event-countdown__counter.event-countdown__counter-stopped p,
 	.event-countdown__counter.event-countdown__counter-stopped span,
 	.event-countdown__counter.event-countdown__counter-stopped strong {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 100%;
 		display: inline;
 	}
@@ -52,19 +58,9 @@
 		right: 1em;
 		top: 25%;
 	}
-}
-
-// Base font sizes.
-.wp-block-jetpack-event-countdown {
-	.event-countdown__counter span strong {
-		font-size: 24px;
-	}
-
-	.event-countdown__day {
-		font-size: 56px;
-	}
 
 	.event-countdown__event-title {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 36px;
 	}
 }
@@ -73,14 +69,17 @@
 @media only screen and ( min-width: 600px ) {
 	.wp-block-jetpack-event-countdown {
 		.event-countdown__counter span strong {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 36px;
 		}
 
 		.event-countdown__day {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 96px;
 		}
 
 		.event-countdown__event-title {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 48px;
 		}
 	}
@@ -118,6 +117,7 @@ $ecf_color6: #b82806;
 		top: 0;
 		width: 4px;
 		height: 4px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		animation: 1s event_countdown_bang ease-out infinite backwards, 1s event_countdown_gravity ease-in infinite backwards, 5s event_countdown_position linear infinite backwards;
 		mix-blend-mode: overlay;
@@ -181,10 +181,9 @@ $ecf_color6: #b82806;
 	}
 }
 
-
 @keyframes event_countdown_bang {
 	from {
-		box-shadow: 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white, 0 0 white;
+		box-shadow: 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white), 0 0 var(--studio-white);
 	}
 }
 

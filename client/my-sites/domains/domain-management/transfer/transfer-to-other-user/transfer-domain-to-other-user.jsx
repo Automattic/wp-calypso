@@ -1,4 +1,4 @@
-import { Dialog } from '@automattic/components';
+import { Dialog, Gridicon } from '@automattic/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { localize } from 'i18n-calypso';
 import page from 'page';
@@ -13,10 +13,12 @@ import Main from 'calypso/components/main';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
+import { hasGSuiteWithUs } from 'calypso/lib/gsuite';
+import { hasTitanMailWithUs } from 'calypso/lib/titan';
 import wpcom from 'calypso/lib/wp';
 import DesignatedAgentNotice from 'calypso/my-sites/domains/domain-management/components/designated-agent-notice';
 import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
-import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
+import AftermarketAuctionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
@@ -262,7 +264,7 @@ class TransferDomainToOtherUser extends Component {
 		}
 
 		if ( aftermarketAuction ) {
-			return <AftermarketAutcionNotice domainName={ selectedDomainName } />;
+			return <AftermarketAuctionNotice domainName={ selectedDomainName } />;
 		}
 
 		if ( isRedeemable ) {
@@ -284,6 +286,9 @@ class TransferDomainToOtherUser extends Component {
 		const saveButtonLabel = isMapping
 			? translate( 'Transfer domain connection' )
 			: translate( 'Transfer domain' );
+
+		const hasEmailWithUs =
+			hasTitanMailWithUs( selectedDomain ) || hasGSuiteWithUs( selectedDomain );
 
 		return (
 			<>
@@ -313,6 +318,17 @@ class TransferDomainToOtherUser extends Component {
 						) }
 					</FormSelect>
 				</FormFieldset>
+				{ hasEmailWithUs && (
+					<div className="transfer-to-other-user__notice">
+						<Gridicon icon="info-outline" size={ 18 } />
+						<p className="transfer-to-other-user__notice-copy">
+							{ translate(
+								'The email subscription for %(domainName)s will be transferred along with the domain.',
+								{ args: { domainName: selectedDomainName } }
+							) }
+						</p>
+					</div>
+				) }
 				{ ! isMapping && (
 					<DesignatedAgentNotice
 						domainRegistrationAgreementUrl={ domainRegistrationAgreementUrl }

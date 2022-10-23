@@ -98,6 +98,9 @@ declare module 'calypso/state/selectors/has-cancelable-user-purchases' {
 declare module 'calypso/state/current-user/selectors' {
 	export const getCurrentUserEmail: ( state: unknown ) => string;
 }
+declare module 'calypso/state/current-user/selectors' {
+	export const getCurrentUserId: ( state: unknown ) => string;
+}
 
 declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
 	const getAdminHelpResults: (

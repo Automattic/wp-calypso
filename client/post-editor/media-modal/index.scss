@@ -21,6 +21,7 @@
 	height: 34px;
 	float: left;
 	margin: 4px 12px 12px 0;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 	background-color: var(--color-neutral-0);
 	color: var(--color-neutral-70);
@@ -103,7 +104,6 @@
 	}
 
 	&:disabled {
-		cursor: default;
 		cursor: not-allowed;
 		color: var(--color-error-10);
 	}

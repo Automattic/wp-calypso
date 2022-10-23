@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { PropsWithChildren, ReactElement, useCallback, useContext } from 'react';
+import { PropsWithChildren, useCallback, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -76,7 +76,7 @@ function SortButton( {
 	);
 }
 
-export default function LicenseListHeader(): ReactElement {
+export default function LicenseListHeader() {
 	const translate = useTranslate();
 	const { filter, sortField, sortDirection } = useContext( LicenseListContext );
 

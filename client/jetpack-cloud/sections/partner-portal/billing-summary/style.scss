@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .billing-summary {
 	display: flex;
@@ -26,9 +26,6 @@
 	}
 
 	@include break-xlarge() {
-		&__stat {
-			flex-direction: column;
-		}
 
 		&__stat:nth-child(odd) {
 			flex-basis: calc(50% - 18px);
@@ -42,6 +39,7 @@
 		}
 
 		&__stat {
+			flex-direction: column;
 			&.billing-summary__stat {
 				flex: 1 1 0;
 				margin-bottom: 0;

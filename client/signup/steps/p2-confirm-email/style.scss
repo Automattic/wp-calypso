@@ -19,7 +19,8 @@
 		width: 36px;
 		height: 36px;
 		border: 1px solid var(--p2-color-link);
-		border-radius: 50%; /* stylelint-disable-line scales/radii */
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
 		padding: 8px;
 	}
 

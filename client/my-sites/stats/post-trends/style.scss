@@ -62,13 +62,13 @@
 		width: 30px;
 		height: 100px;
 		display: block;
-		background: url("/calypso/images/stats/left-arrow.svg") no-repeat 4px 48px;
+		background: url(/calypso/images/stats/left-arrow.svg) no-repeat 4px 48px;
 		background-size: 18px 18px;
 		opacity: 0.15;
 	}
 
 	.right-arrow {
-		background: url("/calypso/images/stats/right-arrow.svg") no-repeat 4px 48px;
+		background: url(/calypso/images/stats/right-arrow.svg) no-repeat 4px 48px;
 		background-size: 18px 18px;
 	}
 
@@ -87,6 +87,7 @@
 .post-trends__scroll-right {
 	background: linear-gradient(to left, var(--color-surface), rgba(var(--color-surface-rgb), 0.92), rgba(var(--color-surface-rgb), 0));
 	text-align: right;
+	right: 0;
 }
 
 /*rtl:begin:ignore*/
@@ -94,9 +95,6 @@
 	left: 0;
 }
 
-.post-trends__scroll-right {
-	right: 0;
-}
 /*rtl:end:ignore*/
 
 .post-trends__month {

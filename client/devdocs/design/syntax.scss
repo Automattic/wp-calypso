@@ -3,6 +3,7 @@ code[class*="lang-"] {
 	direction: ltr;
 	text-align: left;
 	white-space: pre;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.2em;
 
 	-moz-tab-size: 4;
@@ -72,7 +73,7 @@ code[class*="lang-"] ::-moz-selection {
 	font-weight: 600;
 }
 .token.selector {
-	color: green;
+	color: var(--studio-green);
 }
 .language-autohotkey .token.keyword {
 	color: #c397d8;

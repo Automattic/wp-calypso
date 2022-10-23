@@ -180,8 +180,8 @@ class MobileDownloadCard extends Component {
 						</p>
 					</div>
 					<div className="get-apps__badges">
-						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-get-apps' } />
-						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-get-apps-button' } />
+						<AppsBadge storeName="android" utm_source="calypso-get-apps" />
+						<AppsBadge storeName="ios" utm_source="calypso-get-apps-button" />
 					</div>
 				</div>
 

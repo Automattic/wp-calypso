@@ -33,13 +33,13 @@ import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-ho
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SshKeys from './ssh-keys';
 
 import './style.scss';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 const SFTP_URL = 'sftp.wp.com';
 const SFTP_PORT = 22;
-const noop = () => {};
 
 export const SftpCard = ( {
 	translate,
@@ -140,7 +140,12 @@ export const SftpCard = ( {
 			return (
 				<>
 					<div className="sftp-card__copy-field sftp-card__password-field">
-						<FormTextInput className="sftp-card__copy-input" value={ password } onChange={ noop } />
+						<FormTextInput
+							id="password"
+							className="sftp-card__copy-input"
+							value={ password }
+							readOnly
+						/>
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ password }
@@ -205,11 +210,7 @@ export const SftpCard = ( {
 				/>
 				{ isSshAccessEnabled && (
 					<div className="sftp-card__copy-field">
-						<FormTextInput
-							className="sftp-card__copy-input"
-							value={ sshConnectString }
-							onChange={ noop }
-						/>
+						<FormTextInput className="sftp-card__copy-input" value={ sshConnectString } readOnly />
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ sshConnectString }
@@ -328,9 +329,9 @@ export const SftpCard = ( {
 			) }
 			{ username && (
 				<FormFieldset className="sftp-card__info-field">
-					<FormLabel>{ translate( 'URL' ) }</FormLabel>
+					<FormLabel htmlFor="url">{ translate( 'URL' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
-						<FormTextInput className="sftp-card__copy-input" value={ SFTP_URL } onChange={ noop } />
+						<FormTextInput id="url" className="sftp-card__copy-input" value={ SFTP_URL } readOnly />
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ SFTP_URL }
@@ -341,12 +342,13 @@ export const SftpCard = ( {
 							{ isCopied.url ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
-					<FormLabel>{ translate( 'Port' ) }</FormLabel>
+					<FormLabel htmlFor="port">{ translate( 'Port' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
 						<FormTextInput
+							id="port"
 							className="sftp-card__copy-input"
 							value={ SFTP_PORT }
-							onChange={ noop }
+							readOnly
 						/>
 						<ClipboardButton
 							className="sftp-card__copy-button"
@@ -358,9 +360,14 @@ export const SftpCard = ( {
 							{ isCopied.port ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
-					<FormLabel>{ translate( 'Username' ) }</FormLabel>
+					<FormLabel htmlFor="username">{ translate( 'Username' ) }</FormLabel>
 					<div className="sftp-card__copy-field">
-						<FormTextInput className="sftp-card__copy-input" value={ username } onChange={ noop } />
+						<FormTextInput
+							id="username"
+							className="sftp-card__copy-input"
+							value={ username }
+							readOnly
+						/>
 						<ClipboardButton
 							className="sftp-card__copy-button"
 							text={ username }
@@ -373,12 +380,15 @@ export const SftpCard = ( {
 								: translate( 'Copy', { context: 'verb' } ) }
 						</ClipboardButton>
 					</div>
-					<FormLabel>{ translate( 'Password' ) }</FormLabel>
+					<FormLabel htmlFor="password">{ translate( 'Password' ) }</FormLabel>
 					{ renderPasswordField() }
 					{ siteHasSshFeature && (
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
+					{ siteHasSshFeature && isSshAccessEnabled && (
+						<SshKeys disabled={ disabled } siteId={ siteId } />
+					) }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }

@@ -23,7 +23,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 			<QueryProductsList />
 			<QuerySitePurchases siteId={ siteId } />
 			<JetpackDevModeNotice />
-			<JetpackBackupCredsBanner event={ 'settings-backup-credentials' } />
+			<JetpackBackupCredsBanner event="settings-backup-credentials" />
 			<FormattedHeader
 				brandFont
 				className="site-settings__page-heading"
@@ -34,7 +34,7 @@ const SiteSettingsComponent = ( { siteId, translate } ) => {
 				align="left"
 				hasScreenOptions
 			/>
-			<SiteSettingsNavigation section={ 'general' } />
+			<SiteSettingsNavigation section="general" />
 			<GeneralSettings />
 		</Main>
 	);

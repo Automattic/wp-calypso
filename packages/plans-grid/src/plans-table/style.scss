@@ -4,9 +4,6 @@
 @import "@automattic/typography/styles/variables";
 @import "../variables.scss";
 
-/* stylelint-disable scales/font-size */
-// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
-
 .plans-table {
 	width: 100%;
 	display: flex;
@@ -63,6 +60,7 @@
 	align-items: center;
 
 	@media ( max-width: $break-mobile ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1em;
 	}
 }
@@ -74,11 +72,13 @@
 
 .plan-item__name {
 	font-weight: 700;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 18px;
 	line-height: 24px;
 	display: inline-block;
 
 	@media ( max-width: $break-mobile ) {
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 14px;
 	}
 }
@@ -118,10 +118,10 @@
 	position: relative;
 	margin: 0;
 	display: block;
-	background: black;
+	background: var(--studio-black);
 	text-align: center;
 	text-transform: uppercase;
-	color: white;
+	color: var(--color-text-inverted);
 	padding: 0 5px;
 	font-size: $font-body-extra-small;
 	margin-top: -24px;
@@ -131,6 +131,7 @@
 
 .plan-item__price-amount {
 	font-weight: 600;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 32px;
 	line-height: 24px;
 
@@ -143,6 +144,7 @@
 .plan-item:not(.is-open) .plan-item__price-amount {
 	@media ( max-width: $break-mobile ) {
 		font-weight: normal;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 1em;
 	}
 }
@@ -170,6 +172,7 @@
 }
 
 .plan-item__price-note {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
 	line-height: 19px;
 	letter-spacing: -0.4px;
@@ -218,7 +221,6 @@
 	font-size: $font-body-small;
 	color: var(--studio-gray-90);
 
-	// stylelint-disable-next-line scales/radii
 	border-radius: 4px;
 	border: 1px solid var(--studio-gray-10);
 

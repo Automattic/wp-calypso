@@ -1,5 +1,5 @@
 import ProductLightbox from '../../product-lightbox';
-import { useItemLightbox } from '../hooks/use-item-lightbox';
+import { useProductLightbox } from '../hooks/use-product-lightbox';
 import { BundlesList } from './bundles-list';
 import { ProductsList } from './products-list';
 import type { ItemsListProps, ProductsListProps, ViewType } from '../types';
@@ -12,7 +12,7 @@ const components: Record< ViewType, React.ComponentType< ProductsListProps > > =
 };
 
 export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, siteId } ) => {
-	const { currentItem, clearCurrentItem, onClickMoreInfoFactory } = useItemLightbox();
+	const { currentProduct, setCurrentProduct, onClickMoreInfoFactory } = useProductLightbox();
 	const Component = components[ currentView ];
 
 	if ( ! Component ) {
@@ -21,13 +21,14 @@ export const ItemsList: React.FC< ItemsListProps > = ( { currentView, duration, 
 
 	return (
 		<div className="jetpack-product-store__items-list">
-			{ currentItem && (
+			{ currentProduct && (
 				<ProductLightbox
 					siteId={ siteId }
 					duration={ duration }
-					product={ currentItem }
-					isVisible={ !! currentItem }
-					onClose={ clearCurrentItem }
+					product={ currentProduct }
+					isVisible={ !! currentProduct }
+					onClose={ () => setCurrentProduct( null ) }
+					onChangeProduct={ setCurrentProduct }
 				/>
 			) }
 

@@ -13,8 +13,6 @@ import { ONBOARD_STORE } from '../../../../stores';
 import { useIntents, useIntentsAlt } from './intents';
 import type { Step } from '../../types';
 
-import './style.scss';
-
 /**
  * The intent capture step
  */
@@ -48,20 +46,20 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'intent-step' }
+			stepName="intent-step"
 			headerImageUrl={ intentImageUrl }
 			goBack={ goBack }
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			hideBack={ ! ( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'intent-header' }
+					id="intent-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			stepContent={

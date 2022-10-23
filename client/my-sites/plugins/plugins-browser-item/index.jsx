@@ -11,6 +11,7 @@ import Badge from 'calypso/components/badge';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { formatNumberMetric } from 'calypso/lib/format-number-compact';
+import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
 import version_compare from 'calypso/lib/version-compare';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
@@ -22,6 +23,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import shouldUpgradeCheck from 'calypso/state/marketplace/selectors';
 import { getSitesWithPlugin, getPluginOnSites } from 'calypso/state/plugins/installed/selectors';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -38,7 +40,6 @@ const PluginsBrowserListElement = ( props ) => {
 		isPlaceholder,
 		site,
 		plugin = {},
-		iconSize = 40,
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
 		search,
@@ -51,13 +52,14 @@ const PluginsBrowserListElement = ( props ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
-	const sitesWithPlugin = useSelector( ( state ) =>
-		currentSites
-			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), plugin.slug )
-			: []
-	);
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug || '' )
+	);
+	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const sitesWithPlugin = useSelector( ( state ) =>
+		currentSites
+			? getSitesWithPlugin( state, siteObjectsToSiteIds( currentSites ), softwareSlug )
+			: []
 	);
 
 	const dateFromNow = useMemo(
@@ -99,6 +101,7 @@ const PluginsBrowserListElement = ( props ) => {
 			site: site,
 			plugin: plugin.slug,
 			list_name: props.listName,
+			list_type: props.listType,
 			grid_position: props.gridPosition,
 			blog_id: selectedSite?.ID,
 		} );
@@ -152,7 +155,7 @@ const PluginsBrowserListElement = ( props ) => {
 
 	if ( isPlaceholder ) {
 		// eslint-disable-next-line no-use-before-define
-		return <Placeholder iconSize={ iconSize } />;
+		return <Placeholder />;
 	}
 
 	const classNames = classnames( 'plugins-browser-item', variant, {
@@ -173,7 +176,7 @@ const PluginsBrowserListElement = ( props ) => {
 				onClick={ trackPluginLinkClick }
 			>
 				<div className="plugins-browser-item__info">
-					<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
+					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					<div className="plugins-browser-item__title">
 						<TextHighlight text={ plugin.name } highlight={ search } />
 					</div>
@@ -271,11 +274,20 @@ const InstalledInOrPricing = ( {
 } ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+	const softwareSlug = isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
 	const isPluginActive = useSelector( ( state ) =>
-		getPluginOnSites( state, [ selectedSiteId ], plugin.slug )
+		getPluginOnSites( state, [ selectedSiteId ], softwareSlug )
 	)?.active;
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
 	const { isPreinstalledPremiumPlugin } = usePreinstalledPremiumPlugin( plugin.slug );
 	const active = isWpcomPreinstalled || isPluginActive;
+	const isPluginActiveOnsiteWithSubscription =
+		active && ! isMarketplaceProduct
+			? true
+			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	let checkmarkColorClass = 'checkmark--active';
 
@@ -286,7 +298,9 @@ const InstalledInOrPricing = ( {
 	if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || isWpcomPreinstalled ) {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		if ( selectedSiteId ) {
-			checkmarkColorClass = active ? 'checkmark--active' : 'checkmark--inactive';
+			checkmarkColorClass = isPluginActiveOnsiteWithSubscription
+				? 'checkmark--active'
+				: 'checkmark--inactive';
 		}
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
@@ -301,8 +315,10 @@ const InstalledInOrPricing = ( {
 				</div>
 				{ selectedSiteId && (
 					<div className="plugins-browser-item__active">
-						<Badge type={ active ? 'success' : 'info' }>
-							{ active ? translate( 'Active' ) : translate( 'Inactive' ) }
+						<Badge type={ isPluginActiveOnsiteWithSubscription ? 'success' : 'info' }>
+							{ isPluginActiveOnsiteWithSubscription
+								? translate( 'Active' )
+								: translate( 'Inactive' ) }
 						</Badge>
 					</div>
 				) }
@@ -314,45 +330,58 @@ const InstalledInOrPricing = ( {
 	return (
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-				{ ( { isFetching, price, period } ) =>
-					isFetching ? (
-						<div className="plugins-browser-item__pricing-placeholder">...</div>
-					) : (
+				{ ( { isFetching, price, period, isSaasProduct } ) => {
+					if ( isSaasProduct ) {
+						// SaaS products do not display a price
+						return (
+							<>
+								{ ! canInstallPlugins && isLoggedIn && (
+									<span className="plugins-browser-item__requires-plan-upgrade">
+										{ translate( 'Requires a plan upgrade' ) }
+									</span>
+								) }
+							</>
+						);
+					}
+					if ( isFetching ) {
+						return <div className="plugins-browser-item__pricing-placeholder">...</div>;
+					}
+					if ( price ) {
+						return (
+							<>
+								{ price + ' ' }
+								<span className="plugins-browser-item__period">{ period }</span>
+								{ shouldUpgrade && (
+									<div className="plugins-browser-item__period">
+										{ translate( 'Requires a plan upgrade' ) }
+									</div>
+								) }
+							</>
+						);
+					}
+
+					return (
 						<>
-							{ price ? (
-								<>
-									{ price + ' ' }
-									<span className="plugins-browser-item__period">{ period }</span>
-									{ shouldUpgrade && (
-										<div className="plugins-browser-item__period">
-											{ translate( 'Requires a plan upgrade' ) }
-										</div>
-									) }
-								</>
-							) : (
-								<>
-									{ translate( 'Free' ) }
-									{ ! canInstallPlugins && isLoggedIn && (
-										<span className="plugins-browser-item__requires-plan-upgrade">
-											{ translate( 'Requires a plan upgrade' ) }
-										</span>
-									) }
-								</>
+							{ translate( 'Free' ) }
+							{ ! canInstallPlugins && isLoggedIn && (
+								<span className="plugins-browser-item__requires-plan-upgrade">
+									{ translate( 'Requires a plan upgrade' ) }
+								</span>
 							) }
 						</>
-					)
-				}
+					);
+				} }
 			</PluginPrice>
 		</div>
 	);
 };
 
-const Placeholder = ( { iconSize } ) => {
+const Placeholder = () => {
 	return (
 		<li className="plugins-browser-item is-placeholder">
 			<span className="plugins-browser-item__link">
 				<div className="plugins-browser-item__info">
-					<PluginIcon size={ iconSize } isPlaceholder={ true } />
+					<PluginIcon isPlaceholder={ true } />
 					<div className="plugins-browser-item__title">…</div>
 					<div className="plugins-browser-item__author">…</div>
 					<div className="plugins-browser-item__description">…</div>

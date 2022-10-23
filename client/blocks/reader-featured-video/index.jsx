@@ -88,6 +88,7 @@ class ReaderFeaturedVideo extends Component {
 
 	render() {
 		const {
+			videoEmbed,
 			thumbnailUrl,
 			autoplayIframe,
 			iframe,
@@ -98,13 +99,17 @@ class ReaderFeaturedVideo extends Component {
 			isExpanded,
 		} = this.props;
 
+		const classNames = classnames( className, 'reader-featured-video' );
+
 		if ( ! isExpanded && thumbnailUrl ) {
 			return (
 				<ReaderFeaturedImage
+					canonicalMedia={ videoEmbed }
 					imageUrl={ thumbnailUrl }
 					onClick={ this.handleThumbnailClick }
-					className={ className }
+					className={ classNames }
 					href={ href }
+					fetched={ true }
 				>
 					{ allowPlaying && (
 						<img
@@ -121,7 +126,6 @@ class ReaderFeaturedVideo extends Component {
 		// if we can't retrieve a thumbnail that means there was an issue
 		// with the embed and we shouldn't display it
 		const showEmbed = !! thumbnailUrl;
-		const classNames = classnames( className, 'reader-featured-video' );
 
 		/* eslint-disable react/no-danger */
 		return (

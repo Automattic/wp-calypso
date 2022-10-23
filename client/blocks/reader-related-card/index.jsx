@@ -9,6 +9,8 @@ import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import Gravatar from 'calypso/components/gravatar';
 import { areEqualIgnoringWhitespaceAndCase } from 'calypso/lib/string';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostUrl, getStreamUrl } from 'calypso/reader/route';
 import { getPostById } from 'calypso/state/reader/posts/selectors';
@@ -16,7 +18,6 @@ import { getSite } from 'calypso/state/reader/sites/selectors';
 
 import './style.scss';
 
-const RELATED_IMAGE_WIDTH = 385; // usual width of featured images in related post card
 const noop = () => {};
 
 function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
@@ -31,6 +32,11 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 				<Gravatar user={ post.author } />
 			</a>
 			<div className="reader-related-card__byline">
+				<span className="reader-related-card__byline-site">
+					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
+						{ siteName }
+					</a>
+				</span>
 				{ authorName && authorAndSiteAreDifferent && (
 					<span className="reader-related-card__byline-author">
 						<ReaderAuthorLink
@@ -44,16 +50,13 @@ function AuthorAndSiteFollow( { post, site, onSiteClick, followSource } ) {
 						</ReaderAuthorLink>
 					</span>
 				) }
-				<span className="reader-related-card__byline-site">
-					<a href={ siteUrl } onClick={ onSiteClick } className="reader-related-card__link">
-						{ siteName }
-					</a>
-				</span>
 			</div>
 			<FollowButton
 				siteUrl={ post.site_URL }
 				followSource={ followSource }
 				railcar={ post.railcar }
+				followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+				followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 			/>
 		</div>
 	);
@@ -117,7 +120,7 @@ export function RelatedPostCard( {
 			<ReaderFeaturedVideo
 				{ ...canonicalMedia }
 				videoEmbed={ canonicalMedia }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
 				href={ postLink }
 				onThumbnailClick={ postClickTracker }
 				allowPlaying={ false }
@@ -126,11 +129,12 @@ export function RelatedPostCard( {
 	} else {
 		featuredAsset = (
 			<ReaderFeaturedImage
+				canonicalMedia={ canonicalMedia }
 				imageUrl={ canonicalMedia.src }
-				imageWidth={ RELATED_IMAGE_WIDTH }
 				onClick={ postClickTracker }
 				href={ postLink }
-				className={ 'reader-related-card__featured-image' }
+				className="reader-related-card__featured-image"
+				children={ <div style={ { width: 'auto' } } /> }
 			/>
 		);
 	}

@@ -8,11 +8,11 @@ import tracksRecordEvent from './tracking/track-record-event';
  * @returns {(string|undefined)} editor's type
  */
 export const getEditorType = () => {
-	if ( document.querySelector( '.edit-post-layout' ) ) {
+	if ( document.querySelector( '#editor .edit-post-layout' ) ) {
 		return 'post';
 	}
 
-	if ( document.querySelector( '#edit-site-editor' ) ) {
+	if ( document.querySelector( '#site-editor' ) ) {
 		return 'site';
 	}
 

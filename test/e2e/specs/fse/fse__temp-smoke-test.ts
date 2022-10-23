@@ -10,7 +10,7 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	ElementHelper,
+	FullSiteEditorPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -25,10 +25,10 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	const accountName = getTestAccountByFeature( {
-		...envToFeatureKey( envVariables ),
-		variant: 'siteEditor',
-	} );
+	let fullSiteEditorPage: FullSiteEditorPage;
+
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -43,18 +43,17 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		await sidebarComponent.navigate( 'Appearance', 'Editor' );
 	} );
 
-	it( 'Editor content loads', async function () {
+	it( 'Editor endpoint loads', async function () {
+		await page.waitForURL( /.*site-editor.*/ );
+	} );
+
+	it( 'Editor canvas loads', async function () {
 		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
 		// spinning up a POM class that we will later needed to redo.
 		// This should ensure the editor hasn't done a WSoD.
-		const editorLoadedClosure = async () => {
-			const locator = page
-				.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' )
-				.frameLocator( 'iframe[name="editor-canvas"]' )
-				.locator( '[aria-label="Block: Post Title"]:has-text("Home"):visible' );
-			await locator.waitFor( { timeout: 90 * 1000 } );
-		};
+		await page.waitForLoadState( 'networkidle' );
 
-		await ElementHelper.reloadAndRetry( page, editorLoadedClosure );
+		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );

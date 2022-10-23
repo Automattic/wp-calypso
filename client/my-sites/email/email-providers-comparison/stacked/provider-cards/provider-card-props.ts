@@ -25,7 +25,7 @@ export type EmailProvidersStackedCardProps = {
 	comparisonContext: string;
 	detailsExpanded: boolean;
 	intervalLength: IntervalLength;
-	onExpandedChange: ( providerKey: string, expand: boolean ) => void;
+	onExpandedChange?: ( providerKey: string, expand: boolean ) => void;
 	selectedDomainName: string;
 	source: string;
 };

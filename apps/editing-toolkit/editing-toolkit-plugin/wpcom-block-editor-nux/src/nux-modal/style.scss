@@ -46,7 +46,7 @@
 	.wpcom-block-editor-nux-modal__title {
 		margin: 34px 0 0;
 		font-size: $font-headline-small;
-		font-weight: 500; // stylelint-disable-line scales/font-weights
+		font-weight: 500;
 		line-height: 1.2;
 
 		@include break-mobile {

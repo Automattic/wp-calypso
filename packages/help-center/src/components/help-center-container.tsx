@@ -1,10 +1,11 @@
 /**
  * External Dependencies
  */
+import { useSupportAvailability } from '@automattic/data-stores';
 import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
@@ -18,6 +19,7 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
+import { HistoryRecorder } from './history-recorder';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
@@ -31,15 +33,23 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const [ isMinimized, setIsMinimized ] = useState( false );
+	const { show, isMinimized } = useSelect( ( select ) => ( {
+		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
+		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
+	} ) );
+
+	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
+
 	const [ isVisible, setIsVisible ] = useState( true );
 	const isMobile = useMobileBreakpoint();
 	const classNames = classnames( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
 	} );
-	const show = useSelect( ( select ) => select( HELP_CENTER_STORE ).isHelpCenterShown() );
-
-	const { data } = useHappychatAvailable();
+	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
+	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
+	const { history, index } = useSelect( ( select ) =>
+		select( HELP_CENTER_STORE ).getRouterState()
+	);
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -68,11 +78,12 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	}
 
 	return (
-		<MemoryRouter>
-			{ data?.status === 'assigned' && <Redirect to="/inline-chat" /> }
+		<MemoryRouter initialEntries={ history } initialIndex={ index }>
+			{ data?.status === 'assigned' && <Redirect to="/inline-chat?session=continued" /> }
+			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable
-					draggable={ ! isMobile }
+					draggable={ ! isMobile && ! isMinimized }
 					nodeRef={ nodeRef }
 					handle=".help-center__container-header"
 					bounds="body"

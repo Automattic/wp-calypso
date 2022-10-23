@@ -351,13 +351,12 @@ export class ManagedContactDetailsFormFields extends Component {
 	}
 
 	renderAlternateEmailFieldForGSuite() {
-		const customErrorMessage = this.props.contactDetailsErrors?.alternateEmail;
 		return (
 			<div className="contact-details-form-fields__row">
 				<Input
 					label={ this.props.translate( 'Alternate email address' ) }
-					{ ...this.getFieldProps( 'alternate-email', {
-						customErrorMessage,
+					{ ...this.getFieldProps( 'email', {
+						customErrorMessage: this.props.contactDetailsErrors?.email,
 					} ) }
 				/>
 			</div>

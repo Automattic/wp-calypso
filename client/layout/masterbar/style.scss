@@ -6,7 +6,7 @@ $masterbar-color-secondary: #101517;
 
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "client/assets/stylesheets/shared/_animation.scss";
+@import "client/assets/stylesheets/shared/animation";
 
 // Hide the masterbar on WP Mobile App views.
 .is-mobile-app-view {
@@ -31,9 +31,10 @@ $masterbar-color-secondary: #101517;
 	max-width: 100vw;
 	z-index: z-index("root", ".masterbar");
 	-webkit-font-smoothing: subpixel-antialiased;
-	transition: transform 0.2s ease-out;
 	box-sizing: border-box;
 	justify-content: space-between;
+	opacity: 1;
+	transition: all 0.3s ease-in-out;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -88,7 +89,7 @@ $masterbar-color-secondary: #101517;
 			.masterbar__item-content {
 				display: flex;
 				align-items: center;
-				color: white;
+				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 				font-weight: 400;
 
@@ -143,15 +144,19 @@ $masterbar-color-secondary: #101517;
 .masterbar__section {
 	display: flex;
 
-	&--right {
-		flex: 1;
-		justify-content: flex-end;
-	}
-
 	@include breakpoint-deprecated( ">480px" ) {
 		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
+		}
+	}
+
+	&--right {
+		flex: 1;
+		justify-content: flex-end;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			flex-grow: 0;
 		}
 	}
 }
@@ -162,12 +167,6 @@ $masterbar-color-secondary: #101517;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		flex: 0 0 auto;
-	}
-}
-
-.masterbar__section--right {
-	@include breakpoint-deprecated( ">480px" ) {
-		flex-grow: 0;
 	}
 }
 
@@ -607,15 +606,9 @@ $masterbar-color-secondary: #101517;
 	border-radius: 0 2px 2px 0;
 	position: relative;
 	transition: all 0.2s ease-out;
-	// stylelint-disable-next-line scales/font-weights
 	font-weight: 500;
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
-
-	&:hover,
-	&[aria-expanded="true"] {
-		background: var(--studio-white);
-	}
 
 	@media only screen and ( max-width: 782px ) {
 		height: 34px;
@@ -656,6 +649,7 @@ $masterbar-color-secondary: #101517;
 
 	&:hover,
 	&[aria-expanded="true"] {
+		background: var(--studio-white);
 		.gridicon {
 			color: $masterbar-color-primary;
 
@@ -795,12 +789,6 @@ a.masterbar__quick-language-switcher {
 	cursor: pointer;
 }
 
-// Editor Transition
-.masterbar {
-	opacity: 1;
-	transition: all 0.3s ease-in-out;
-}
-
 .is-section-gutenberg-editor .masterbar {
 	@include break-medium {
 		opacity: 0;
@@ -842,12 +830,13 @@ a.masterbar__quick-language-switcher {
 	.masterbar__secure-checkout-text {
 		color: var(--color-primary-5);
 		transform: translateY(1px);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 1.2em;
 		font-size: 0.75rem;
 		margin-left: 5px;
 
 		@include breakpoint-deprecated( ">480px" ) {
-			// stylelint-disable-next-line declaration-property-unit-allowed-list
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 100%;
 			margin-left: 0;
 		}
@@ -864,10 +853,6 @@ a.masterbar__quick-language-switcher {
 
 	svg {
 		fill: var(--color-masterbar-text);
-	}
-
-	&.is-active {
-		background: #1e1e1e;
 	}
 }
 

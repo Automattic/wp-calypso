@@ -63,6 +63,7 @@ These practices mean that a component will work anywhere it is included by defau
 
 Apart from the above structure, please adhere to these guidelines:
 
+- We use [Stylelint](https://stylelint.io/) to enforce a consistent code style. You can check for style lints by running `yarn lint:css`. Please see [IDE setup](#ide-setup-auto-formatting) section for more details.
 - Follow the [WordPress CSS Coding Standards](https://make.wordpress.org/core/handbook/coding-standards/css/), unless it contradicts something stated in this document.
 - Avoid `#` selectors for style purposes. Their specificity becomes troublesome to manage fairly quickly.
 - Don't use the `!important` declaration. If you think you need to do it, consider fixing the root cause.
@@ -70,6 +71,37 @@ Apart from the above structure, please adhere to these guidelines:
 - Use hyphens, not underscores or camelCase, when naming things like IDs, classes, variable names, mixins, placeholders. Good: `.site-title`, Bad: `.siteTitle` or `.site_title`.
 - The only exception is the `__` syntax to signal the relationship within a component.
 - Avoid using over-qualified selectors like `div.my-class`.
+
+## IDE setup (auto-formatting)
+
+In order to enable auto formatting of style files, please set up your IDE.
+
+### VS Code
+
+To get things set up in VS Code, do the following:
+
+- Run `yarn install`
+- Install the official Stylelint extension - [`stylelint.vscode-stylelint`](https://marketplace.visualstudio.com/items?itemName=stylelint.vscode-stylelint)
+- Adjust the following settings in `settings.json` - (`Cmd + Shift + P` > `Preferences: Open Settings (JSON))`:
+
+```jsonc
+{
+	"stylelint.validate": [ "css", "scss", "sass" ],
+	"[css][scss][sass]": {
+		"editor.formatOnSave": false,
+		"editor.defaultFormatter": "stylelint.vscode-stylelint"
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll.stylelint": true
+		// other actions go here
+	}
+}
+```
+
+- Reload VS Code: `Cmd + Shift + P` > `Developer: Reload Window`
+- Open a Sass file e.g. `client/me/security-2fa-initial-setup/style.scss`
+- Mess up the formatting (e.g. use spaces for indentation.)
+- Save the file and verify the problems are fixed.
 
 ## Classes
 
@@ -101,8 +133,8 @@ Under the hood, we are using webpack and its `sass-loader`, for compiling the st
 To avoid code bloat and have a more consistent experience we use the same breakpoints in all SCSS files whenever possible. DO NOT define your own media queries. We should use the `break-*` mixins from [Gutenberg](https://github.com/WordPress/gutenberg/blob/0f1f5e75408705f0ec014f5d2ea3d9fcc8a97817/packages/base-styles/_mixins.scss). For example:
 
 ```scss
-@import '@wordpress/base-styles/breakpoints';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .class-name {
 	margin-bottom: 8px;
@@ -210,7 +242,7 @@ Note for either of the above that because of the SCSS build process, if you're n
 ```scss
 .rtl {
 	.onlyinrtl {
-		margin-right: 5px #{'/*rtl:ignore*/'};
+		margin-right: 5px #{"/*rtl:ignore*/"};
 	}
 }
 ```
@@ -219,7 +251,7 @@ You can also define specific values for RTL like so:
 
 ```scss
 .class {
-	margin-right: 5px #{'/*rtl:2px*/'};
+	margin-right: 5px #{"/*rtl:2px*/"};
 }
 ```
 
@@ -239,13 +271,12 @@ selector {
 
 ## Spacing
 
-- DO use spaces around parenthesis
-- DO use a single space before an opening brace
+- DO NOT use spaces around parenthesis
 
 ```scss
-@include breakpoint-deprecated( '>480px' ) {
-	color: rgb( 0, 0, 0 );
-	transform: translate( -50%, -50% ) scale( 1 );
+@include breakpoint-deprecated(">480px") {
+	color: rgb(0, 0, 0);
+	transform: translate(-50%, -50%) scale(1);
 }
 ```
 
@@ -339,21 +370,21 @@ values sorted from lowest to highest within a stacking context:
 
 ```scss
 $z-layers: (
-	'root': (
-		'.modal': 1,
-		'.masterbar': 2,
+	"root": (
+		".modal": 1,
+		".masterbar": 2,
 	),
-	'.modal': (
-		'.modal__icon': 100,
-		'.modal__header': 200,
-		'.modal__content': 300,
+	".modal": (
+		".modal__icon": 100,
+		".modal__header": 200,
+		".modal__content": 300,
 	),
 );
 ```
 
 ```scss
 .modal__icon {
-	z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+	z-index: z-index(".modal", ".modal__icon"); // returns 100
 }
 ```
 

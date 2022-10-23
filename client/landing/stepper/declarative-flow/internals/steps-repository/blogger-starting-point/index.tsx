@@ -7,7 +7,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useStartingPoints from './starting-points';
 import type { Step } from '../../types';
-import './style.scss';
 
 /**
  * The starting point step
@@ -29,19 +28,19 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'blogger-starting-point' }
+			stepName="blogger-starting-point"
 			headerImageUrl={ startingPointImageUrl }
 			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			goNext={ () => submitIntent( 'skip-to-my-home' ) }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'intent-header' }
+					id="intent-header"
 					headerText={ headerText }
 					subHeaderText={ subHeaderText }
-					align={ 'left' }
+					align="left"
 				/>
 			}
 			stepContent={

@@ -20,6 +20,19 @@
 	}
 }
 
+.transfer-to-other-user__notice {
+	color: var(--color-neutral-40);
+	margin: 16px 0;
+
+	.gridicon {
+		float: left;
+	}
+}
+.transfer-to-other-user__notice-copy {
+	font-size: $font-body-small;
+	margin-left: 24px;
+}
+
 body.transfer-to-other-user.theme-default.color-scheme {
 	--color-surface-backdrop: var(--studio-white);
 }

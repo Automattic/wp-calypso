@@ -127,7 +127,8 @@
 .plans-details__feature-annual-nudge {
 	display: block;
 	text-transform: uppercase;
-	font-size: 10px; /* stylelint-disable-line scales/font-size */
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	line-height: 1;

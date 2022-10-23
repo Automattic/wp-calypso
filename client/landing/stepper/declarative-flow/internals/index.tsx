@@ -1,9 +1,11 @@
 import { ProgressBar } from '@automattic/components';
+import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import DocumentHead from 'calypso/components/data/document-head';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
@@ -62,8 +64,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	}, [ location ] );
 
 	useEffect( () => {
-		recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
-	}, [ flow.name, currentRoute, intent ] );
+		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
+		if ( currentRoute ) {
+			recordStepStart( flow.name, kebabCase( currentRoute ), { intent } );
+		}
+
+		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
+		// This causes the intent to become empty, and thus this event being fired again.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ flow.name, currentRoute ] );
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
@@ -84,27 +93,36 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
 
+	const getDocumentHeadTitle = () => {
+		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
+			return flow.title;
+		}
+	};
+
 	return (
-		<Switch>
-			{ stepPaths.map( ( path ) => {
-				return (
-					<Route key={ path } path={ `/${ path }` }>
-						<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
-							<ProgressBar
-								// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-								className="flow-progress"
-								value={ progressValue * 100 }
-								total={ 100 }
-							/>
-							<SignupHeader pageTitle={ flow.title } />
-							{ renderStep( path ) }
-						</div>
-					</Route>
-				);
-			} ) }
-			<Route>
-				<Redirect to={ stepPaths[ 0 ] + search } />
-			</Route>
-		</Switch>
+		<>
+			<DocumentHead title={ getDocumentHeadTitle() } />
+			<Switch>
+				{ stepPaths.map( ( path ) => {
+					return (
+						<Route key={ path } path={ `/${ path }` }>
+							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+								<ProgressBar
+									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+									className="flow-progress"
+									value={ progressValue * 100 }
+									total={ 100 }
+								/>
+								<SignupHeader pageTitle={ flow.title } />
+								{ renderStep( path ) }
+							</div>
+						</Route>
+					);
+				} ) }
+				<Route>
+					<Redirect to={ stepPaths[ 0 ] + search } />
+				</Route>
+			</Switch>
+		</>
 	);
 };

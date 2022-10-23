@@ -44,7 +44,6 @@ export const cachedContactDetails: PossiblyCompleteDomainContactDetails = {
 	lastName: null,
 	organization: null,
 	email: null,
-	alternateEmail: null,
 	phone: null,
 	address1: null,
 	address2: null,
@@ -931,7 +930,6 @@ export const contactDetailsForDomain = {
 export const basicExpectedDomainDetails = {
 	address_1: getStringFromManagedValue( address1 ),
 	address_2: undefined,
-	alternate_email: undefined,
 	city: getStringFromManagedValue( city ),
 	country_code: getStringFromManagedValue( countryCode ),
 	email: undefined,

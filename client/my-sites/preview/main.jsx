@@ -127,7 +127,12 @@ class PreviewMain extends Component {
 	}
 
 	updateSiteLocation = ( pathname ) => {
-		const externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		let externalUrl;
+		try {
+			externalUrl = new URL( this.props.site.URL ).origin + ( pathname === '/' ? '' : pathname );
+		} catch ( e ) {
+			externalUrl = this.props.site.URL + ( pathname === '/' ? '' : pathname );
+		}
 		this.setState( { externalUrl } );
 		this.props.recordTracksEvent( 'calypso_view_site_page_view', {
 			full_url: externalUrl,
@@ -159,7 +164,7 @@ class PreviewMain extends Component {
 					title={ translate( 'Unable to show your site here' ) }
 					line={ translate( 'To view your site, click the button below' ) }
 					action={ action }
-					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+					illustration="/calypso/images/illustrations/illustration-404.svg"
 					illustrationWidth={ 350 }
 				/>
 			);

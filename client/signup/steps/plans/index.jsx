@@ -1,13 +1,19 @@
+import config from '@automattic/calypso-config';
 import {
 	planHasFeature,
 	FEATURE_UPLOAD_THEMES_PLUGINS,
 	getPlan,
 	PLAN_FREE,
+	isEcommerce,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { englishLocales } from '@automattic/i18n-utils';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	NEWSLETTER_FLOW,
+	isNewsletterOrLinkInBioFlow,
+} from '@automattic/onboarding';
+import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -50,6 +56,20 @@ export class PlansStep extends Component {
 			this.setState( { isDesktop: matchesDesktop } )
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		if ( isTailoredSignupFlow( this.props.flowName ) ) {
+			// trigger guides on this step, we don't care about failures or response
+			wp.req.post(
+				'guides/trigger',
+				{
+					apiNamespace: 'wpcom/v2/',
+				},
+				{
+					flow: this.props.flowName,
+					step: 'plans',
+				}
+			);
+		}
 	}
 
 	componentWillUnmount() {
@@ -122,9 +142,14 @@ export class PlansStep extends Component {
 			} );
 			this.props.goToNextStep();
 		} else {
-			this.props.submitSignupStep( step, {
-				cartItem,
-			} );
+			const signupVals = { cartItem };
+
+			// Buying an eCommerce plan defaults to the pub/twentytwentytwo theme (All remaining flows)
+			if ( cartItem && isEcommerce( cartItem ) ) {
+				signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+			}
+
+			this.props.submitSignupStep( step, signupVals );
 			this.props.goToNextStep();
 		}
 	};
@@ -220,10 +245,10 @@ export class PlansStep extends Component {
 			<div>
 				{ errorDisplay }
 				<ProvideExperimentData
-					name="calypso_signup_plans_step_optimize_202208_v1"
+					name="calypso_signup_plans_step_tagline_202210_v1"
 					options={ {
 						isEligible:
-							[ 'en-gb', 'en' ].includes( locale ) &&
+							config( 'english_locales' ).includes( locale ) &&
 							'onboarding' === flowName &&
 							this.state.isDesktop,
 					} }
@@ -236,12 +261,12 @@ export class PlansStep extends Component {
 						return (
 							<PlansFeaturesMain
 								site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+								showFAQ={ this.state.isDesktop && ! this.isTailoredFlow() }
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
 								isLaunchPage={ isLaunchPage }
 								intervalType={ this.getIntervalType() }
 								onUpgradeClick={ this.onSelectPlan }
-								showFAQ={ false }
 								domainName={ this.getDomainName() }
 								customerType={ this.getCustomerType() }
 								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
@@ -253,9 +278,7 @@ export class PlansStep extends Component {
 								isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 								shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 								isReskinned={ isReskinned }
-								isCondensedFeaturesExperiment={
-									experimentAssignment?.variationName === 'treatment'
-								}
+								isPlanTaglineExperiment={ experimentAssignment?.variationName === 'treatment' }
 							/>
 						);
 					} }
@@ -339,18 +362,10 @@ export class PlansStep extends Component {
 		}
 
 		if ( useEmailOnboardingSubheader ) {
-			return 'en' === locale ||
-				i18n.hasTranslation(
-					'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.'
-				)
-				? translate(
-						'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
-						{ components: { link: freePlanButton } }
-				  )
-				: translate(
-						"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-						{ components: { link: freePlanButton } }
-				  );
+			return translate(
+				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
+				{ components: { link: freePlanButton } }
+			);
 		}
 
 		if ( ! hideFreePlan ) {
@@ -373,6 +388,10 @@ export class PlansStep extends Component {
 		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
 
+	isTailoredFlow() {
+		return isNewsletterOrLinkInBioFlow( this.props.flowName );
+	}
+
 	plansFeaturesSelection() {
 		const { flowName, stepName, positionInFlow, translate, hasInitializedSitesBackUrl, steps } =
 			this.props;
@@ -387,10 +406,7 @@ export class PlansStep extends Component {
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
-			backLabelText =
-				englishLocales.includes( this.props.locale ) || i18n.hasTranslation( 'Back to Sites' )
-					? translate( 'Back to Sites' )
-					: translate( 'Back to My Sites' );
+			backLabelText = translate( 'Back to Sites' );
 		}
 
 		let queryParams;
@@ -416,6 +432,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
+					shouldHideNavButtons={ this.isTailoredFlow() }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }

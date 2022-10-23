@@ -8,8 +8,7 @@ const selectors = {
 	// Inputs
 	emailInput: 'input[id="account_name_text_field"]',
 	passwordInput: 'input[id="password_text_field"]',
-	otpInput:
-		'input[aria-label="Enter verification code. After entering the verification code, the page gets updated automatically. Digit 1"]',
+	otpInput: 'input[maxlength="1"]', // Matches on the first OTP input field.
 
 	// Button
 	continueButton: 'button[aria-label="Continue"][aria-disabled="false"]',
@@ -90,7 +89,7 @@ export class AppleLoginPage {
 	 * @param {string} code 2FA code for the user.
 	 */
 	async enter2FACode( code: string ): Promise< void > {
-		const locator = this.page.locator( selectors.otpInput );
+		const locator = this.page.locator( selectors.otpInput ).first();
 		await locator.type( code, { delay: 150 } );
 	}
 }

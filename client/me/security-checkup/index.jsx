@@ -17,6 +17,7 @@ import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
 import SecurityCheckupConnectedApplications from './connected-applications';
 import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
+import { SecurityCheckupSSHKey } from './ssh-key';
 import SecurityCheckupTwoFactorAuthentication from './two-factor-authentication';
 import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
 
@@ -52,6 +53,7 @@ class SecurityCheckupComponent extends Component {
 					<SecurityCheckupTwoFactorBackupCodes />
 					<SecurityCheckupAccountRecoveryEmail />
 					<SecurityCheckupAccountRecoveryPhone />
+					<SecurityCheckupSSHKey />
 				</VerticalNav>
 
 				<SectionHeader label={ translate( 'Connections' ) } className="security-checkup__info" />

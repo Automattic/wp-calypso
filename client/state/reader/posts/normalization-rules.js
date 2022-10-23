@@ -1,5 +1,6 @@
 import { filter, flow } from 'lodash';
 import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
+import addImageWrapperElement from 'calypso/lib/post-normalizer/rule-add-image-wrapper-element';
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
 import detectSurveys from 'calypso/lib/post-normalizer/rule-content-detect-surveys';
@@ -47,6 +48,26 @@ function getCharacterCount( post ) {
 
 export function imageIsBigEnoughForGallery( image ) {
 	return image.width >= GALLERY_MIN_IMAGE_WIDTH && image.height >= MIN_IMAGE_HEIGHT;
+}
+
+export function imageWithCorrectRatio( image ) {
+	const imageRatio = image.height / image.width;
+	const minRatio = 1 / 3;
+	const maxRatio = 3;
+	return imageRatio >= minRatio && imageRatio <= maxRatio;
+}
+
+export function getImagesFromPostToDisplay( post, numberOfImagesToDisplay ) {
+	const images = ( post.images && [ ...post.images ] ) || [];
+
+	// Remove duplicates, small images and images that are outside ideal aspect ratio
+	return images
+		.filter(
+			( element, index ) => index === images.findIndex( ( elem ) => elem.src === element.src )
+		)
+		.filter( imageIsBigEnoughForGallery )
+		.filter( imageWithCorrectRatio )
+		.slice( 0, numberOfImagesToDisplay );
 }
 
 const hasShortContent = ( post ) => getCharacterCount( post ) <= PHOTO_ONLY_MAX_CHARACTER_COUNT;
@@ -105,6 +126,7 @@ const fastPostNormalizationRules = flow( [
 		detectPolls,
 		detectSurveys,
 		linkJetpackCarousels,
+		addImageWrapperElement,
 	] ),
 	createBetterExcerpt,
 	pickCanonicalImage,

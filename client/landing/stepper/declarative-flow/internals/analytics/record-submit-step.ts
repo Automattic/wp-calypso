@@ -6,6 +6,7 @@ import { ProvidedDependencies } from '../types';
 export function recordSubmitStep(
 	providedDependencies: ProvidedDependencies = {},
 	intent: string,
+	flow: string,
 	step: string
 ) {
 	const device = resolveDeviceTypeByViewPort();
@@ -34,6 +35,7 @@ export function recordSubmitStep(
 
 	recordTracksEvent( 'calypso_signup_actions_submit_step', {
 		device,
+		flow,
 		step,
 		intent,
 		...inputs,

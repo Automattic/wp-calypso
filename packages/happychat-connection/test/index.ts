@@ -50,18 +50,19 @@ const getConnection = ( { autoClose = false } = {} ) => {
 const buildUserData = () => {
 	const signer_user_id = 12;
 	const jwt = 'jwt';
-	const locale = 'locale';
+	const skills = { language: [ '' ], product: [ '' ] };
 	const groups = [ 'groups' ];
 	const geoLocation = { country_short: '', country_long: '', region: '', city: '' };
 	const fullUser = {
 		ID: signer_user_id,
+		language: '',
 	};
 
 	return {
 		user: {
 			signer_user_id,
 			jwt,
-			locale,
+			skills,
 			groups,
 			geoLocation,
 		},
@@ -112,20 +113,20 @@ describe( 'connection', () => {
 
 			test( 'token event', () => {
 				const callback = jest.fn();
-				const { signer_user_id, jwt, locale, groups } = userData.user;
+				const { signer_user_id, jwt, skills, groups } = userData.user;
 				socket.emit( 'token', callback );
 				expect( dispatch ).toHaveBeenCalledTimes( 1 );
 				expect( dispatch ).toHaveBeenCalledWith( receiveToken() );
 				expect( callback ).toHaveBeenCalledTimes( 1 );
-				expect( callback ).toHaveBeenCalledWith( { signer_user_id, jwt, locale, groups } );
+				expect( callback ).toHaveBeenCalledWith( { signer_user_id, jwt, skills, groups } );
 			} );
 
 			test( 'init event', () => {
-				const { signer_user_id, locale, groups, geoLocation } = userData.user;
+				const { signer_user_id, skills, groups, geoLocation } = userData.user;
 				socket.emit( 'init' );
 				expect( dispatch ).toHaveBeenCalledTimes( 2 );
 				expect( dispatch.mock.calls[ 0 ][ 0 ] ).toEqual(
-					receiveInit( { signer_user_id, locale, groups, geoLocation } )
+					receiveInit( { signer_user_id, skills, groups, geoLocation } )
 				);
 				expect( dispatch.mock.calls[ 1 ][ 0 ] ).toEqual( requestTranscript() );
 				return expect( openSocket ).resolves.toBe( socket );

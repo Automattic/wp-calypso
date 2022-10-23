@@ -3,6 +3,7 @@ import { Card, Button } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import wpToJpImage from 'calypso/assets/images/jetpack/wp-to-jp.svg';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
 import CardHeading from 'calypso/components/card-heading';
 import userAgent from 'calypso/lib/user-agent';
@@ -14,16 +15,59 @@ import './style.scss';
 
 export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 	const translate = useTranslate();
-	const { isiPad, isiPod, isiPhone, isAndroid } = userAgent;
+	const { isDesktop, isiPad, isiPod, isiPhone, isAndroid } = userAgent;
 	const isIos = isiPad || isiPod || isiPhone;
-	const showIosBadge = ! isAndroid;
-	const showAndroidBadge = ! isIos;
-	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 	const isDesktopApp = config.isEnabled( 'desktop' );
+	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 	const emailLogin = () => {
 		sendMobileLoginEmail( email );
 	};
+
+	if ( displayJetpackAppBranding ) {
+		const showIosBadge = ! isAndroid && ! isDesktop;
+		const showAndroidBadge = ! isIos && ! isDesktop;
+		const showBadge = showIosBadge || showAndroidBadge;
+
+		return (
+			<Card className="go-mobile go-mobile--jetpack customer-home__card">
+				<div className="go-mobile__row">
+					<img
+						className="go-mobile__icon"
+						src={ wpToJpImage }
+						width="49"
+						height="29"
+						alt="WordPress and Jetpack app"
+					/>
+					<div className="go-mobile__title">
+						<CardHeading tagName="h2">{ translate( 'Get our mobile app' ) }</CardHeading>
+						<h3 className="go-mobile__subheader">
+							{ translate( 'Everything you need to build and grow your site from any device.' ) }
+						</h3>
+					</div>
+					{ showBadge ? (
+						<div className="go-mobile__app-badges">
+							<AppsBadge
+								storeName={ showIosBadge ? 'ios' : 'android' }
+								utm_source="calypso-customer-home"
+							></AppsBadge>
+						</div>
+					) : (
+						<Button
+							className="go-mobile__email-link-button is-link"
+							href="https://apps.wordpress.com/get?campaign=calypso-customer-home"
+						>
+							{ translate( 'Get the Jetpack app' ) }
+						</Button>
+					) }
+				</div>
+			</Card>
+		);
+	}
+
+	const showIosBadge = ! isAndroid;
+	const showAndroidBadge = ! isIos;
+	const showOnlyOneBadge = showIosBadge !== showAndroidBadge;
 
 	return (
 		<Card className="go-mobile customer-home__card">
@@ -36,10 +80,10 @@ export const GoMobile = ( { email, sendMobileLoginEmail } ) => {
 				</div>
 				<div className="go-mobile__app-badges">
 					{ showIosBadge && (
-						<AppsBadge storeName={ 'ios' } utm_source={ 'calypso-customer-home' }></AppsBadge>
+						<AppsBadge storeName="ios" utm_source="calypso-customer-home"></AppsBadge>
 					) }
 					{ showAndroidBadge && (
-						<AppsBadge storeName={ 'android' } utm_source={ 'calypso-customer-home' }></AppsBadge>
+						<AppsBadge storeName="android" utm_source="calypso-customer-home"></AppsBadge>
 					) }
 				</div>
 			</div>

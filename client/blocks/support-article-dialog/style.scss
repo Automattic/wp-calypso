@@ -1,5 +1,5 @@
-@import "calypso/assets/stylesheets/shared/mixins/_breakpoints";
-@import "calypso/assets/stylesheets/shared/mixins/_placeholder";
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+@import "calypso/assets/stylesheets/shared/mixins/placeholder";
 @import "@automattic/typography/styles/fonts";
 
 .support-article-dialog__base.dialog__backdrop {

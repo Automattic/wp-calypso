@@ -50,6 +50,7 @@ const BackupInProgress: React.FC< Props > = ( { percent, inProgressDate, lastBac
 				) }
 			</p>
 
+			<p className="backup__progress-bar-percent">{ percent }%</p>
 			<ProgressBar value={ percent } total={ 100 } />
 
 			{ siteLastBackupDate && (

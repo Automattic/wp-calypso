@@ -232,7 +232,7 @@ class DomainSearch extends Component {
 				<span>
 					<div className="domain-search__content">
 						<BackButton
-							className={ 'domain-search__go-back' }
+							className="domain-search__go-back"
 							href={ domainManagementList( selectedSiteSlug ) }
 						>
 							<Gridicon icon="arrow-left" size={ 18 } />

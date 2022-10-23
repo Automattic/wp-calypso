@@ -12,7 +12,7 @@ import {
 	isDomainTransfer,
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
-	isTheme,
+	isThemePurchase,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -45,6 +45,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
@@ -286,6 +287,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<CompactCard tagName="button" displayAsLink onClick={ onClick }>
+				<MaterialIcon icon="autorenew" className="card__icon" />
 				{ content }
 			</CompactCard>
 		);
@@ -293,7 +295,7 @@ class ManagePurchase extends Component {
 
 	renderRenewNowNavItem() {
 		const { translate } = this.props;
-		return this.renderRenewalNavItem( translate( 'Renew Now' ), this.handleRenew );
+		return this.renderRenewalNavItem( translate( 'Renew now' ), this.handleRenew );
 	}
 
 	renderRenewAnnuallyNavItem() {
@@ -332,16 +334,16 @@ class ManagePurchase extends Component {
 	};
 
 	getUpgradeUrl() {
-		const { purchase, siteId } = this.props;
+		const { purchase, siteSlug } = this.props;
 
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
-			return `/plans/storage/${ siteId }`;
+			return `/plans/storage/${ siteSlug }`;
 		}
 
-		return `/plans/${ siteId }`;
+		return `/plans/${ siteSlug }`;
 	}
 
 	renderUpgradeNavItem() {
@@ -362,13 +364,17 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
+		let iconName;
 		let buttonText;
+
 		if ( isExpired( purchase ) ) {
+			iconName = 'view_carousel';
 			buttonText = isUpgradeablePlan
-				? translate( 'Pick Another Plan' )
-				: translate( 'Pick Another Product' );
+				? translate( 'Pick another plan' )
+				: translate( 'Pick another product' );
 		} else {
-			buttonText = translate( 'Upgrade' );
+			iconName = 'upload';
+			buttonText = translate( 'Upgrade plan' );
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
@@ -380,6 +386,7 @@ class ManagePurchase extends Component {
 				href={ upgradeUrl }
 				onClick={ this.handleUpgradeClick }
 			>
+				<MaterialIcon icon={ iconName } className="card__icon" />
 				{ buttonText }
 			</CompactCard>
 		);
@@ -402,7 +409,7 @@ class ManagePurchase extends Component {
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
-		if ( ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) || ! this.props.site ) {
 			return null;
 		}
 
@@ -411,6 +418,7 @@ class ManagePurchase extends Component {
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
+					<MaterialIcon icon="credit_card" className="card__icon" />
 					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
@@ -427,7 +435,15 @@ class ManagePurchase extends Component {
 			site,
 			purchase,
 			purchaseListUrl,
+			translate,
 		} = this.props;
+
+		let text = translate( 'Remove subscription' );
+		if ( isPlan( purchase ) ) {
+			text = translate( 'Remove plan' );
+		} else if ( isDomainRegistration( purchase ) ) {
+			text = translate( 'Remove domain' );
+		}
 
 		return (
 			<RemovePurchase
@@ -439,7 +455,11 @@ class ManagePurchase extends Component {
 				site={ site }
 				purchase={ purchase }
 				purchaseListUrl={ purchaseListUrl }
-			/>
+				linkIcon="chevron-right"
+			>
+				<MaterialIcon icon="delete" className="card__icon" />
+				{ text }
+			</RemovePurchase>
 		);
 	}
 
@@ -488,33 +508,22 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		let text;
 		const link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		const canRefund = hasAmountAvailableToRefund( purchase );
+		let text;
 
-		if ( hasAmountAvailableToRefund( purchase ) ) {
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain and Refund' );
-			}
+		if ( ! canRefund && isDomainTransfer( purchase ) ) {
+			return null;
+		}
 
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription and Refund' );
-			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				text = translate( 'Cancel and Refund' );
-			}
-		} else {
-			if ( isDomainTransfer( purchase ) ) {
-				return null;
-			}
-
-			if ( isDomainRegistration( purchase ) ) {
-				text = translate( 'Cancel Domain' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				text = translate( 'Cancel Subscription' );
-			}
+		if ( isDomainRegistration( purchase ) ) {
+			text = translate( 'Cancel domain' );
+		} else if ( isPlan( purchase ) ) {
+			text = translate( 'Cancel plan' );
+		} else if ( isSubscription( purchase ) ) {
+			text = translate( 'Cancel subscription' );
+		} else if ( isOneTimePurchase( purchase ) ) {
+			text = translate( 'Cancel' );
 		}
 
 		const onClick = ( event ) => {
@@ -532,6 +541,7 @@ class ManagePurchase extends Component {
 
 		return (
 			<CompactCard href={ link } className="remove-purchase__card" onClick={ onClick }>
+				<MaterialIcon icon="delete" className="card__icon" />
 				{ text }
 			</CompactCard>
 		);
@@ -564,7 +574,7 @@ class ManagePurchase extends Component {
 			);
 		}
 
-		if ( isTheme( purchase ) ) {
+		if ( isThemePurchase( purchase ) ) {
 			return (
 				<div className="manage-purchase__plan-icon">
 					<Gridicon icon="themes" size={ 54 } />
@@ -589,7 +599,7 @@ class ManagePurchase extends Component {
 			return plan.getDescription();
 		}
 
-		if ( isTheme( purchase ) && theme ) {
+		if ( isThemePurchase( purchase ) && theme ) {
 			return theme.description;
 		}
 
@@ -656,14 +666,18 @@ class ManagePurchase extends Component {
 				const { extraPageCount, numberOfIncludedPages } = difmTieredPurchaseDetails;
 				return (
 					<>
-						{ translate(
-							'A professionally built %(numberOfIncludedPages)d page website in 4 business days or less',
-							{
-								args: {
-									numberOfIncludedPages: numberOfIncludedPages,
-								},
-							}
-						) }{ ' ' }
+						{ numberOfIncludedPages === 1
+							? translate(
+									'A professionally built single page website in 4 business days or less.'
+							  )
+							: translate(
+									'A professionally built %(numberOfIncludedPages)s-page website in 4 business days or less.',
+									{
+										args: {
+											numberOfIncludedPages,
+										},
+									}
+							  ) }{ ' ' }
 						{ translate(
 							'This purchase includes %(numberOfPages)d extra page.',
 							'This purchase includes %(numberOfPages)d extra pages.',
@@ -771,7 +785,9 @@ class ManagePurchase extends Component {
 	getActiveMarketplaceSubscriptions() {
 		const { purchase, purchases, productsList } = this.props;
 
-		if ( ! isPlan( purchase ) ) return [];
+		if ( ! isPlan( purchase ) ) {
+			return [];
+		}
 
 		return purchases.filter(
 			( _purchase ) =>
@@ -856,11 +872,12 @@ class ManagePurchase extends Component {
 						</div>
 					) }
 				</Card>
-				<PurchasePlanDetails
-					purchaseId={ this.props.purchaseId }
-					isProductOwner={ isProductOwner }
-				/>
-
+				{ ! isPartnerPurchase( purchase ) && (
+					<PurchasePlanDetails
+						purchaseId={ this.props.purchaseId }
+						isProductOwner={ isProductOwner }
+					/>
+				) }
 				{ isProductOwner && ! purchase.isLocked && (
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
@@ -963,9 +980,9 @@ function addPaymentMethodLinkText( { purchase, translate } ) {
 	let linkText = null;
 	// TODO: we need a "hasRechargeablePaymentMethod" function here
 	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
-		linkText = translate( 'Change Payment Method' );
+		linkText = translate( 'Change payment method' );
 	} else {
-		linkText = translate( 'Add Payment Method' );
+		linkText = translate( 'Add payment method' );
 	}
 	return linkText;
 }
@@ -1028,7 +1045,7 @@ export default connect(
 		const isProductOwner = purchase && purchase.userId === userId;
 		const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
 		const isPurchasePlan = purchase && isPlan( purchase );
-		const isPurchaseTheme = purchase && isTheme( purchase );
+		const isPurchaseTheme = purchase && isThemePurchase( purchase );
 		const productsList = getProductsList( state );
 		const site = getSite( state, siteId );
 		const hasLoadedSites = ! isRequestingSites( state );

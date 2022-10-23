@@ -23,7 +23,7 @@ const JetpackDevModeNotice = ( { isJetpackSiteInDevMode, siteId, siteIsJetpack, 
 					) }
 					showDismiss={ false }
 				>
-					<NoticeAction href={ 'https://jetpack.com/support/development-mode/' } external>
+					<NoticeAction href="https://jetpack.com/support/development-mode/" external>
 						{ translate( 'Learn more' ) }
 					</NoticeAction>
 				</Notice>

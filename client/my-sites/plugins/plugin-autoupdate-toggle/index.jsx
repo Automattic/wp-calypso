@@ -29,7 +29,7 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		this.props.togglePluginAutoUpdate( site.ID, plugin );
-		this.props.removePluginStatuses( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error', 'up-to-date' );
 
 		if ( plugin.autoupdate ) {
 			recordGAEvent(
@@ -38,9 +38,10 @@ export class PluginAutoUpdateToggle extends Component {
 				'Plugin Name',
 				plugin.slug
 			);
-			recordEvent( 'calypso_plugin_autoupdate_disable_click', {
+			recordEvent( 'calypso_plugin_autoupdate_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'inactive',
 			} );
 		} else {
 			recordGAEvent(
@@ -49,9 +50,10 @@ export class PluginAutoUpdateToggle extends Component {
 				'Plugin Name',
 				plugin.slug
 			);
-			recordEvent( 'calypso_plugin_autoupdate_enable_click', {
+			recordEvent( 'calypso_plugin_autoupdate_toggle_click', {
 				site: site.ID,
 				plugin: plugin.slug,
+				state: 'active',
 			} );
 		}
 	};

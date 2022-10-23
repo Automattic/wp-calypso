@@ -7,6 +7,7 @@ import ButtonGroup from 'calypso/components/button-group';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
+import UpdatePlugins from './update-plugins';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
@@ -15,14 +16,14 @@ import './style.scss';
 interface Props {
 	plugins: Array< Plugin >;
 	isLoading: boolean;
+	requestError: boolean;
 	selectedSite: SiteDetails;
 	searchTerm: string;
 	isBulkManagementActive: boolean;
-	pluginUpdateCount: number;
 	toggleBulkManagement: () => void;
-	updateAllPlugins: () => void;
 	removePluginNotice: ( plugin: Plugin ) => void;
 	updatePlugin: ( plugin: Plugin ) => void;
+	isJetpackCloud: boolean;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -30,12 +31,12 @@ export default function PluginManagementV2( {
 	selectedSite,
 	searchTerm,
 	isBulkManagementActive,
-	pluginUpdateCount,
 	toggleBulkManagement,
-	updateAllPlugins,
 	removePluginNotice,
 	updatePlugin,
-}: Props ): ReactElement {
+	isJetpackCloud,
+	requestError,
+}: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -52,20 +53,8 @@ export default function PluginManagementV2( {
 
 		return (
 			<div className="plugin-common-table__bulk-actions">
-				{ !! pluginUpdateCount && (
-					<ButtonGroup>
-						<Button compact primary onClick={ updateAllPlugins }>
-							{ translate( 'Update %(numUpdates)d Plugin', 'Update %(numUpdates)d Plugins', {
-								context: 'button label',
-								count: pluginUpdateCount,
-								args: {
-									numUpdates: pluginUpdateCount,
-								},
-							} ) }
-						</Button>
-					</ButtonGroup>
-				) }
-				<ButtonGroup>
+				{ isJetpackCloud && <UpdatePlugins plugins={ plugins } /> }
+				<ButtonGroup className="plugin-management-v2__table-button-group">
 					<Button compact onClick={ toggleBulkManagement }>
 						{ translate( 'Edit All', { context: 'button label' } ) }
 					</Button>
@@ -120,6 +109,9 @@ export default function PluginManagementV2( {
 	];
 
 	if ( ! plugins.length && ! isLoading ) {
+		if ( requestError ) {
+			return null;
+		}
 		let emptyStateMessage = translate( 'No plugins found' );
 		if ( searchTerm ) {
 			emptyStateMessage = translate( 'No results found. Please try refining your search.' );

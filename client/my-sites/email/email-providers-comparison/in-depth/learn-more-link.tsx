@@ -1,9 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import type { LearnMoreLinkProps } from 'calypso/my-sites/email/email-providers-comparison/in-depth/types';
-import type { ReactElement } from 'react';
 
-const LearnMoreLink = ( { url }: LearnMoreLinkProps ): ReactElement => {
+const LearnMoreLink = ( { url }: LearnMoreLinkProps ) => {
 	const translate = useTranslate();
 
 	return (

@@ -201,8 +201,8 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
-			providesDependencies: [ 'cartItem' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
@@ -235,7 +235,7 @@ export function generateSteps( {
 			stepName: 'plans-ecommerce',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				hideFreePlan: true,
@@ -314,9 +314,10 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 
@@ -345,12 +346,6 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug', 'emailItem' ],
 			providesDependencies: [ 'cartItem' ],
 			props: {
-				get headerText() {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Empower your online presence' )
-						? i18n.translate( 'Empower your online presence' )
-						: '';
-				},
 				useEmailOnboardingSubheader: true,
 			},
 		},
@@ -445,10 +440,7 @@ export function generateSteps( {
 			props: {
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 				get headerText() {
-					return i18n.getLocaleSlug() === 'en' ||
-						i18n.hasTranslation( 'Choose a domain for your Professional Email' )
-						? i18n.translate( 'Choose a domain for your Professional Email' )
-						: '';
+					return i18n.translate( 'Choose a domain for your Professional Email' );
 				},
 				includeWordPressDotCom: false,
 				isDomainOnly: false,
@@ -693,9 +685,10 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
 			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_MONTHLY,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 

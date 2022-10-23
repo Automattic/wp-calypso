@@ -7,7 +7,7 @@ $head-foot-height: 50px;
 
 .help-center {
 	.components-card.help-center__container {
-		position: absolute;
+		position: fixed;
 		background-color: #fff;
 		color: #000;
 		z-index: 9999;
@@ -94,20 +94,24 @@ $head-foot-height: 50px;
 			.help-center__container-content {
 				flex-grow: 1;
 				height: calc(80vh - #{$head-foot-height} * 2);
-				position: relative;
 			}
 
 			&.is-minimized {
 				min-height: $head-foot-height;
+				top: unset;
+				bottom: calc(#{$header-height} + 16px);
+
+				.help-center__container-header {
+					cursor: pointer;
+				}
 			}
 		}
 
 		&.is-mobile {
-			top: 45px;
 			bottom: 0;
 			left: 0;
 			right: 0;
-			max-height: 100%;
+			max-height: calc(100% - 45px);
 
 			.help-center__container-content {
 				flex: auto;
@@ -138,11 +142,12 @@ $head-foot-height: 50px;
 		.help-center-header__unread-count {
 			display: inline-block;
 			margin-left: 8px;
-			padding: 2px 6px;
+			padding: 2px 8px;
 			background: var(--studio-pink-50);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			border-radius: 50%;
 			font-size: $font-body-extra-small;
-			color: #000;
+			color: #fff;
 		}
 
 		.help-center-header__a8c-only-badge {
@@ -213,10 +218,7 @@ $head-foot-height: 50px;
 
 		> *:not(iframe) {
 			padding: 16px;
-		}
-
-		.help-center-contact-form {
-			margin-bottom: 87px;
+			box-sizing: border-box;
 		}
 	}
 
@@ -239,6 +241,12 @@ $head-foot-height: 50px;
 
 				&:hover {
 					background: var(--color-neutral-0);
+				}
+
+				> svg:last-child {
+					margin-left: auto;
+					margin-right: 0;
+					background: unset;
 				}
 			}
 		}
@@ -264,6 +272,7 @@ $head-foot-height: 50px;
 
 	.help-center-sibyl-articles__container {
 		padding-top: 0;
+		flex: 1;
 	}
 
 	.help-center-container__loading,
@@ -279,6 +288,20 @@ $head-foot-height: 50px;
 		.spinner__inner {
 			border-top-color: var(--wp-admin-theme-color);
 			border-right-color: var(--wp-admin-theme-color);
+		}
+	}
+
+	.help-center-contact-page__staging-notice {
+		margin: 2px 0;
+		.components-notice__content {
+			display: flex;
+			justify-content: space-between;
+			margin: 0;
+
+			.components-notice__action {
+				margin: 0;
+				font-weight: bold;
+			}
 		}
 	}
 
@@ -313,7 +336,6 @@ $head-foot-height: 50px;
 			}
 
 			.help-center__container.is-desktop {
-				position: fixed;
 				top: calc(var(--masterbar-height) + 16px);
 			}
 

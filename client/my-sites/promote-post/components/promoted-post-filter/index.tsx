@@ -1,8 +1,8 @@
+import { isMobile } from '@automattic/viewport';
 import { useSelector } from 'react-redux';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import './style.scss';
 import { TabType } from 'calypso/my-sites/promote-post/main';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -14,8 +14,10 @@ type Props = {
 export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
+	const sectionNavProps = isMobile() ? { allowDropdown: false, className: 'is-open' } : {};
+
 	return (
-		<SectionNav>
+		<SectionNav { ...sectionNavProps }>
 			<NavTabs>
 				{ tabs.map( ( { id, name } ) => {
 					return (

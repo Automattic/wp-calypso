@@ -38,6 +38,7 @@
 }
 
 .map-domain-step__domain-heading {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 1em;
 	font-weight: 600;
 
@@ -59,6 +60,7 @@
 }
 
 .map-domain-step__domain-text {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 0.9em;
 	margin-top: 20px;
 }
@@ -70,11 +72,6 @@
 input[type="text"].form-text-input.map-domain-step__external-domain {
 	flex-grow: 1;
 	width: auto;
-}
-
-.map-domain-step__domain-text {
-	font-size: 0.9em;
-	margin-top: 20px;
 }
 
 .map-domain-step__go {

@@ -1,10 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { isEnabled } from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { AddSubscriberForm } from '@automattic/subscriber';
 import { localize } from 'i18n-calypso';
-import page from 'page';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
@@ -12,12 +10,15 @@ import EmptyContent from 'calypso/components/empty-content';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import accept from 'calypso/lib/accept';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
 import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import InviteButton from '../invite-button';
 
 class Followers extends Component {
@@ -96,9 +97,15 @@ class Followers extends Component {
 	}
 
 	renderInviteFollowersAction( isPrimary = true ) {
-		const { site } = this.props;
+		const { site, includeSubscriberImporter } = this.props;
 
-		return <InviteButton primary={ isPrimary } siteSlug={ site.slug } />;
+		return (
+			<InviteButton
+				primary={ isPrimary }
+				siteSlug={ site.slug }
+				includeSubscriberImporter={ includeSubscriberImporter }
+			/>
+		);
 	}
 
 	render() {
@@ -115,9 +122,12 @@ class Followers extends Component {
 		}
 
 		let emptyTitle;
+		const site = this.props.site;
+		const isSiteOnFreePlan = site && site.plan.is_free;
+
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
-				if ( isEnabled( 'subscriber-importer' ) ) {
+				if ( this.props.includeSubscriberImporter ) {
 					return (
 						<Card>
 							<EmailVerificationGate
@@ -128,9 +138,19 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
+									isSiteOnFreePlan={ isSiteOnFreePlan }
+									flowName="people"
+									showSubtitle={ true }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									showFormManualListLabel={ true }
+									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
-										page.redirect( `/people/invites/${ this.props.site.slug }` );
+										this.props?.refetch?.();
+										this.props?.successNotice(
+											this.props.translate(
+												'Your subscriber list is being processed. Please check your email for status.'
+											)
+										);
 									} }
 								/>
 							</EmailVerificationGate>
@@ -141,7 +161,7 @@ class Followers extends Component {
 					this.props.translate( 'No one is following you by email yet.' )
 				);
 			} else {
-				emptyTitle = isEnabled( 'subscriber-importer' )
+				emptyTitle = this.props.includeSubscriberImporter
 					? preventWidows( this.props.translate( 'No WordPress.com subscribers yet.' ) )
 					: preventWidows( this.props.translate( 'No WordPress.com followers yet.' ) );
 			}
@@ -166,7 +186,7 @@ class Followers extends Component {
 					count: this.props.totalFollowers,
 				};
 
-				headerText = isEnabled( 'subscriber-importer' )
+				headerText = this.props.includeSubscriberImporter
 					? this.props.translate(
 							'You have %(number)d subscriber receiving updates by email',
 							'You have %(number)d subscribers receiving updates by email',
@@ -247,4 +267,13 @@ class Followers extends Component {
 	}
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( Followers ) );
+const mapStateToProps = ( state ) => {
+	return {
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
+	};
+};
+
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	successNotice,
+} )( localize( Followers ) );

@@ -1,5 +1,5 @@
-@import "../../assets/stylesheets/shared/mixins/_breakpoints";
-@import "../../assets/stylesheets/shared/mixins/_clear-fix";
+@import "../../assets/stylesheets/shared/mixins/breakpoints";
+@import "../../assets/stylesheets/shared/mixins/clear-fix";
 @import "@automattic/typography/styles/variables";
 
 // Multisite
@@ -133,6 +133,21 @@ button.foldable-card__action {
 
 .foldable-card__content {
 	display: none;
+}
+
+.foldable-card.is-smooth .foldable-card__content {
+	display: block;
+	overflow: hidden;
+
+	transition: max-height 0.25s ease;
+	max-height: 0;
+}
+
+.foldable-card.is-expanded.is-smooth .foldable-card__content {
+	height: auto;
+	max-height: 250px; // fallback if not set inline with js
+	transition: max-height 0.25s ease;
+	padding: 0;
 }
 
 .foldable-card.is-expanded .foldable-card__content {

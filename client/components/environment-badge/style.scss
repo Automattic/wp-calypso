@@ -5,7 +5,8 @@
 	right: 86px;
 	z-index: z-index("root", ".environment-badge");
 
-	&:hover .environment {
+	// The hovered class is toggled in load-dev-helpers/index.js
+	&.hovered .environment {
 		display: inline-block;
 
 		// hide everything inside each tab
@@ -26,6 +27,7 @@
 		height: 26px;
 		background-color: var(--color-surface);
 		border: solid 1px var(--color-neutral-70);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		color: var(--color-neutral-70);
 		margin-left: -4px;
@@ -42,6 +44,7 @@
 	.environment {
 		position: relative;
 		display: none;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 9px;
 		font-weight: 600;
 		line-height: 1;

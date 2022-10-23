@@ -73,6 +73,7 @@
 
 		&__currency-symbol {
 			margin-top: 0.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 3.375rem;
 
 			color: inherit;
@@ -81,6 +82,7 @@
 		}
 
 		&__fraction {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			line-height: 3.375rem;
 		}
 	}
@@ -197,6 +199,10 @@
 		line-height: 1.2;
 	}
 
+	&__billing-time-frame .compact {
+		display: none;
+	}
+
 	&__expiration-date {
 		color: var(--studio-pink-50);
 	}
@@ -240,6 +246,7 @@
 		position: relative;
 		top: -0.5em;
 
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 0.75em;
 	}
 }

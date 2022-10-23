@@ -8,7 +8,6 @@ import type { Pattern, PatternMeta } from './types';
 type Props = {
 	className?: string;
 	style?: React.CSSProperties;
-	onClick: () => void;
 	pattern: Pattern;
 };
 
@@ -63,23 +62,15 @@ const getPatternPreviewUrl = ( pattern: Pattern ): string => {
 	return `https://public-api.wordpress.com/wpcom/v2/block-previews/pattern?${ params }`;
 };
 
-export function Item( { style, onClick, pattern, className }: Props ) {
+export function Item( { style, pattern, className }: Props ) {
 	return (
-		<div>
-			<button
-				onClick={ onClick }
-				style={ style }
-				className={ cx( 'pattern-picker__item', className ) }
-			>
-				<div className="pattern-picker__item-iframe-wrapper">
-					<MShotsImage
-						url={ getPatternPreviewUrl( pattern ) }
-						options={ { w: 400, vpw: 400, vph: 872 } }
-						alt={ pattern.title }
-						aria-labelledby=""
-					/>
-				</div>
-			</button>
+		<div style={ style } className={ cx( 'pattern-picker__item', className ) }>
+			<MShotsImage
+				url={ getPatternPreviewUrl( pattern ) }
+				options={ { w: 400, vpw: 400, vph: 872, format: 'png' } }
+				alt={ pattern.title }
+				aria-labelledby=""
+			/>
 		</div>
 	);
 }

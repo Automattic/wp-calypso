@@ -108,7 +108,7 @@ export const QuickLinks = ( {
 					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator
 					onClick={ trackPromotePostAction }
-					label={ translate( 'Promote post' ) }
+					label={ translate( 'Promote post or page' ) }
 					gridicon="speaker"
 				/>
 			) }
@@ -232,7 +232,7 @@ export const QuickLinks = ( {
 
 	return (
 		<FoldableCard
-			className="quick-links"
+			className="quick-links customer-home__card"
 			headerTagName="h2"
 			header={ translate( 'Quick links' ) }
 			clickableHeader

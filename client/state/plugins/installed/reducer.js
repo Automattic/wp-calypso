@@ -16,6 +16,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
+	PLUGIN_ACTION_STATUS_UPDATE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { pluginsSchema } from './schema';
@@ -37,6 +38,27 @@ export function isRequestingAll( state = false, action ) {
 		case PLUGINS_ALL_REQUEST_FAILURE:
 		case PLUGINS_ALL_REQUEST_SUCCESS:
 			return false;
+		default:
+			return state;
+	}
+}
+
+/**
+ * Returns the updated requesting error state after an action has been dispatched.
+ * requestingError state tracks whether a network request is failed for all
+ * plugins on all sites.
+ *
+ * @param  {object} state  Current state
+ * @param  {object} action Action object
+ * @returns {object}        Updated state
+ */
+export function requestError( state = false, action ) {
+	switch ( action.type ) {
+		case PLUGINS_ALL_REQUEST:
+		case PLUGINS_ALL_REQUEST_SUCCESS:
+			return false;
+		case PLUGINS_ALL_REQUEST_FAILURE:
+			return true;
 		default:
 			return state;
 	}
@@ -79,18 +101,13 @@ export const plugins = withSchemaValidation( pluginsSchema, ( state = {}, action
 			return { ...state, [ action.siteId ]: action.data };
 		}
 		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
-			return updatePlugin( state, action );
 		case PLUGIN_REMOVE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			return updatePlugin( state, action );
 	}
 
@@ -107,6 +124,7 @@ function pluginsForSite( state = [], action ) {
 		case PLUGIN_UPDATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			return state.map( ( p ) => plugin( p, action ) );
 		case PLUGIN_INSTALL_REQUEST_SUCCESS:
 			return [ ...state, action.data ];
@@ -127,6 +145,7 @@ function plugin( state, action ) {
 		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
+		case PLUGIN_ACTION_STATUS_UPDATE:
 			if ( state.id !== action.data.id ) {
 				return state;
 			}
@@ -144,6 +163,7 @@ function plugin( state, action ) {
 export default combineReducers( {
 	isRequesting,
 	isRequestingAll,
+	requestError,
 	plugins,
 	status,
 } );

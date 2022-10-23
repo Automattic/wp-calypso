@@ -1,5 +1,5 @@
 // The following changes should be merged in their respective files before nav unification goes to production
-@import url( "//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" );
+@import url( //s1.wp.com/wp-includes/css/dashicons.css?v=20150727 );
 
 // Override Global Vars
 .theme-default {
@@ -13,7 +13,7 @@
 	--color-sidebar-menu-hover-background-rgb: rgb(var(--color-sidebar-menu-hover-background));
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
-	--color-sidebar-menu-selected-text: white;
+	--color-sidebar-menu-selected-text: var(--color-text-inverted);
 	--color-sidebar-border: #333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-rgb: 238, 238, 238;
@@ -26,7 +26,7 @@
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: #00b9eb;
 	--color-sidebar-submenu-selected-background: transparent;
-	--color-sidebar-submenu-selected-text: white;
+	--color-sidebar-submenu-selected-text: var(--color-text-inverted);
 }
 
 // Local Vars
@@ -42,20 +42,21 @@ $font-size: rem(14px);
 }
 
 .sidebar__actions {
-	--transparent-button-text-color: var( --color-sidebar-text );
-	--transparent-button-text-color-hover: var( --color-sidebar-menu-hover-text );
+	--transparent-button-text-color: var(--color-sidebar-text);
+	--transparent-button-text-color-hover: var(--color-sidebar-menu-hover-text);
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
 	justify-content: flex-end;
 	margin-top: auto;
-	padding: 8px 8px 0 8px ;
+	padding: 8px 8px 0 8px;
 }
 
 .sidebar__action--collapsed {
 	display: none;
 }
 
+/* stylelint-disable-next-line no-duplicate-selectors */
 .theme-default {
 	// client/layout/style.scss
 	.layout__content {
@@ -140,7 +141,6 @@ $font-size: rem(14px);
 
 			.sidebar__menu-link {
 				padding: 5px 12px;
-				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: rem(13px);
 				line-height: 1.4;
 				font-weight: 400;
@@ -235,17 +235,14 @@ $font-size: rem(14px);
 			}
 		}
 
-		// Is togglable but selected
-		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
-			&::after {
-				display: block;
-			}
-		}
-
 		// Is toggled open
 		.sidebar__menu.sidebar__menu--selected {
 			.sidebar__heading {
 				background: var(--color-sidebar-menu-hover-background);
+
+				&::after {
+					display: block;
+				}
 
 				&:hover {
 					.sidebar__menu-icon {
@@ -335,7 +332,7 @@ $font-size: rem(14px);
 	// client/blocks/upsell-nudge/style.scss
 	&:not(.is-classic-bright):not(.is-contrast) {
 		.upsell-nudge.banner.card.is-compact {
-			background-color: #fff;
+			background-color: var(--studio-white);
 			color: #000;
 		}
 
@@ -474,12 +471,13 @@ $font-size: rem(14px);
 		.current-site__notices > .banner {
 			&::before {
 				content: "\f534";
+				/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
 				font-family: dashicons;
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				font-size: 20px;
 				line-height: 20px;
 				background-color: #a7aaad;
-				color: white;
+				color: var(--color-text-inverted);
 				/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 				border-radius: 50%;
 				margin: 3px 0 3px 1px;
@@ -521,7 +519,7 @@ $font-size: rem(14px);
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var(--color-sidebar-menu-selected-background);
-				color: white;
+				color: var(--color-text-inverted);
 
 				.sidebar__menu-icon {
 					color: #fff;
@@ -542,7 +540,6 @@ $font-size: rem(14px);
 		.sidebar__menu-link {
 			cursor: pointer;
 			color: var(--color-sidebar-text-alternative);
-			/* stylelint-disable-next-line  declaration-property-unit-allowed-list */
 			font-size: rem(13px);
 
 			&:hover,
@@ -628,9 +625,6 @@ $font-size: rem(14px);
 					overflow: initial;
 				}
 			}
-		}
-
-		&.is-sidebar-overflow {
 			.is-section-theme {
 				.layout__secondary {
 					transform: translateX(-100%);

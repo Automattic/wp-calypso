@@ -19,7 +19,6 @@ import PopoverMenuItemClipboard from 'calypso/components/popover-menu/item-clipb
 import PopoverMenuSeparator from 'calypso/components/popover-menu/separator';
 import PostActionsEllipsisMenuPromote from 'calypso/my-sites/post-type-list/post-actions-ellipsis-menu/promote';
 import { preloadEditor } from 'calypso/sections-preloaders';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getEditorDuplicatePostPath } from 'calypso/state/editor/selectors';
 import { infoNotice } from 'calypso/state/notices/actions';
 import { isFrontPage, isPostsPage } from 'calypso/state/pages/selectors';
@@ -39,11 +38,10 @@ import {
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { statsLinkForPage } from '../helpers';
+import { statsLinkForPage, recordEvent } from '../helpers';
 import PageCardInfo from '../page-card-info';
 import PageEllipsisMenuWrapper from './page-ellipsis-menu-wrapper';
 
-const recordEvent = ( event ) => recordGoogleEvent( 'Pages', event );
 const noop = () => {};
 
 function sleep( ms ) {
@@ -138,7 +136,7 @@ class Page extends Component {
 			<PostActionsEllipsisMenuPromote
 				globalId={ this.props.page.global_ID }
 				key="promote"
-				bumpStatKey={ 'pages-meatball-menu' }
+				bumpStatKey="pages-meatball-menu"
 			/>
 		);
 	}
@@ -356,7 +354,7 @@ class Page extends Component {
 	getCopyLinkItem() {
 		const { page, translate } = this.props;
 		return (
-			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon={ 'link' }>
+			<PopoverMenuItemClipboard text={ page.URL } onCopy={ this.copyPageLink } icon="link">
 				{ translate( 'Copy link' ) }
 			</PopoverMenuItemClipboard>
 		);

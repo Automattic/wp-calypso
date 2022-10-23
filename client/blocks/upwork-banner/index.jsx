@@ -12,28 +12,35 @@ class UpworkBanner extends PureComponent {
 	static propTypes = {
 		currentPlan: PropTypes.object,
 		location: PropTypes.string.isRequired,
+		utmCampaign: PropTypes.string.isRequired,
 		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { translate, location, currentPlan } = this.props;
+		const { translate, location, utmCampaign, currentPlan } = this.props;
 		const plan = currentPlan?.productSlug;
+		const builtByWpUrl = new URL( 'https://builtbywp.com/' );
+		builtByWpUrl.search = new URLSearchParams( {
+			utm_campaign: utmCampaign,
+			utm_medium: 'automattic_referred',
+			utm_source: 'WordPresscom',
+		} );
 
 		return (
 			<UpsellNudge
-				event={ 'calypso_upwork_banner_start_now_button_click' }
+				event="calypso_upwork_banner_start_now_button_click"
 				forceDisplay //Upwork banner has its own logic for showing/hiding
 				className="upwork-banner__troubleshooting"
 				showIcon
-				onClick={ () => window.open( 'https://wordpress.com/built-by-wordpress-com/', '_blank' ) }
+				onClick={ () => window.open( builtByWpUrl, '_blank' ) }
 				callToAction={ translate( 'Find your expert' ) }
-				dismissPreferenceName={ 'upwork-dismissible-banner' }
-				tracksClickName={ 'calypso_upwork_banner_start_now_button_click' }
+				dismissPreferenceName="upwork-dismissible-banner"
+				tracksClickName="calypso_upwork_banner_start_now_button_click"
 				tracksClickProperties={ { location, plan } }
-				tracksImpressionName={ 'calypso_upwork_banner_view' }
-				tracksDismissName={ 'calypso_upwork_banner_dismiss_icon_click' }
-				tracksDismissProperties={ { location: location, plan } }
+				tracksImpressionName="calypso_upwork_banner_view"
+				tracksDismissName="calypso_upwork_banner_dismiss_icon_click"
+				tracksDismissProperties={ { location, plan } }
 				href="#"
 				title={ translate( 'Let our WordPress.com experts build your site!' ) }
 				description={ translate(

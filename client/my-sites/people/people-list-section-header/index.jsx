@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -8,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import SectionHeader from 'calypso/components/section-header';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -21,6 +21,7 @@ class PeopleListSectionHeader extends Component {
 		site: PropTypes.object,
 		isSiteAutomatedTransfer: PropTypes.bool,
 		isPlaceholder: PropTypes.bool,
+		includeSubscriberImporter: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -66,16 +67,15 @@ class PeopleListSectionHeader extends Component {
 	}
 
 	render() {
-		const { label, count, children, translate } = this.props;
+		const { label, count, children, translate, includeSubscriberImporter } = this.props;
 		const siteLink = this.getAddLink();
 		const addSubscriberLink = this.getAddSubscriberLink();
 		const classes = classNames( this.props.className, 'people-list-section-header' );
 
 		const showInviteUserBtn =
-			( siteLink && ! this.isSubscribersTab() ) ||
-			( siteLink && ! isEnabled( 'subscriber-importer' ) );
+			( siteLink && ! this.isSubscribersTab() ) || ( siteLink && ! includeSubscriberImporter );
 		const showAddSubscriberBtn =
-			addSubscriberLink && this.isSubscribersTab() && isEnabled( 'subscriber-importer' );
+			addSubscriberLink && this.isSubscribersTab() && includeSubscriberImporter;
 
 		return (
 			<SectionHeader
@@ -90,7 +90,7 @@ class PeopleListSectionHeader extends Component {
 					<Button compact href={ siteLink } className="people-list-section-header__add-button">
 						<Gridicon icon="user-add" />
 						<span>
-							{ isEnabled( 'subscriber-importer' )
+							{ includeSubscriberImporter
 								? translate( 'Add User', { context: 'Verb. Button to invite more users.' } )
 								: translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }
 						</span>
@@ -108,7 +108,9 @@ class PeopleListSectionHeader extends Component {
 
 const mapStateToProps = ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+
 	return {
+		includeSubscriberImporter: isEligibleForSubscriberImporter( state ),
 		isSiteAutomatedTransfer: !! isSiteAutomatedTransfer( state, selectedSiteId ),
 		currentRoute: getCurrentRoute( state ),
 	};

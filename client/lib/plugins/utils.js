@@ -104,6 +104,7 @@ export function getAllowedPluginData( plugin ) {
 		'name',
 		'network',
 		'num_ratings',
+		'org_slug',
 		'plugin_url',
 		'product_video',
 		'rating',
@@ -112,14 +113,17 @@ export function getAllowedPluginData( plugin ) {
 		'sections',
 		'setup_url',
 		'slug',
+		'software_slug',
 		'support_URL',
+		'software_slug',
 		'tags',
 		'tested',
 		'update',
 		'updating',
 		'variations',
 		'version',
-		'wp_admin_settings_page_url'
+		'wp_admin_settings_page_url',
+		'saas_landing_page'
 	);
 }
 
@@ -399,3 +403,60 @@ export function getPreinstalledPremiumPluginsVariations( plugin ) {
 		yearly: { product_slug: yearly },
 	};
 }
+
+/**
+ * Returns the product slug of periodVariation passed filtering the productsList passed only if required
+ *
+ * @param {string} periodVariation The variation object with the shape { product_slug: string; product_id: number; }
+ * @param {Record<string, object>} productsList The list of products
+ * @returns The product slug if it exists in the periodVariation, if it does not exist in periodVariation
+ * it will find the product slug in the productsList filtering by the variation.product_id.
+ * It additionally returns:
+ *  - null|undefined if periodVariation is null|undefined
+ * - null|undefined if variation.product_id is null|undefined
+ * - undefined product is not found by productId in productsList
+ */
+export function getProductSlugByPeriodVariation( periodVariation, productsList ) {
+	if ( ! periodVariation ) {
+		return periodVariation;
+	}
+
+	const productSlug = periodVariation.product_slug;
+	if ( productSlug ) {
+		return productSlug;
+	}
+
+	const productId = periodVariation.product_id;
+	if ( productId === undefined || productId === null ) {
+		return productId;
+	}
+
+	return Object.values( productsList ).find( ( product ) => product.product_id === productId )
+		?.product_slug;
+}
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {string} The software slug string
+ */
+export const getSoftwareSlug = ( plugin, isMarketplaceProduct ) =>
+	isMarketplaceProduct ? plugin.software_slug || plugin.org_slug : plugin.slug;
+
+/**
+ * @param  {object} plugin The plugin object
+ * @param  {Array} purchases An array of site purchases
+ * @param  {boolean} isMarketplaceProduct Is this part of WP.com Marketplace or WP.org
+ * @returns {object} The purchase object, if found.
+ */
+export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) => {
+	return (
+		isMarketplaceProduct &&
+		plugin?.variations &&
+		purchases.find( ( purchase ) =>
+			Object.values( plugin.variations ).some(
+				( variation ) => variation.product_id === purchase.productId
+			)
+		)
+	);
+};

@@ -13,7 +13,6 @@ import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
 import type { Plugin } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { ReactElement } from 'react';
 
 import './style.scss';
 
@@ -24,12 +23,7 @@ interface Props {
 	updatePlugin?: ( plugin: Plugin ) => void;
 }
 
-export default function UpdatePlugin( {
-	plugin,
-	selectedSite,
-	className,
-	updatePlugin,
-}: Props ): ReactElement | null {
+export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
 	const translate = useTranslate();
 	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
@@ -141,6 +135,7 @@ export default function UpdatePlugin( {
 					<Icon size={ 24 } icon={ arrowRight } />
 				</span>
 				<Button
+					primary
 					onClick={ () => updatePlugin && updatePlugin( plugin ) }
 					className="update-plugin__new-version"
 					borderless

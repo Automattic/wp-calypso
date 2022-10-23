@@ -2,7 +2,7 @@
 
 // Overrides default 720px width
 .is-reader-page .following.main {
-	max-width: 800px;
+	max-width: 600px;
 }
 
 .is-reader-page .reader__card.card.is-placeholder {
@@ -239,7 +239,7 @@
 
 		@include breakpoint-deprecated( ">660px" ) {
 			margin: 0;
-			padding: 20px 42px;
+			padding: 20px 52px;
 		}
 
 		.reader__post-title-link,
@@ -390,6 +390,7 @@
 		fill: var(--color-text-inverted);
 		background: var(--color-neutral-light);
 		padding: 4px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 100%;
 		position: absolute;
 		top: 0;
@@ -428,7 +429,6 @@
 	color: var(--color-neutral-20);
 	font-size: $font-body-small;
 	font-weight: 600;
-	letter-spacing: 0.01em;
 	margin: 13px 0 17px;
 	position: relative;
 	text-transform: uppercase;
@@ -551,10 +551,6 @@
 
 		@include breakpoint-deprecated( "<660px" ) {
 			max-height: 207px;
-		}
-
-		.reader-related-card__excerpt {
-			-webkit-line-clamp: initial;
 		}
 	}
 

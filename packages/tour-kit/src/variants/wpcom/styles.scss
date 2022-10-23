@@ -42,6 +42,7 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 
 .wpcom-tour-kit-step-card__description {
 	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.5rem;
 	margin: 0;
 
@@ -63,7 +64,6 @@ $wpcom-tour-kit-step-card-overlay-controls-button-bg-color: #32373c; // former $
 	max-width: 92vw;
 
 	&.wpcom-tour-kit-step-card.is-elevated {
-		box-shadow: none;
 		box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px, rgba(0, 0, 0, 0.1) 0 2px 4px 0;
 	}
 

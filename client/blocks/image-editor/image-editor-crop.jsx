@@ -360,7 +360,7 @@ class ImageEditorCrop extends Component {
 		const { topBound, leftBound, rightBound, bottomBound } = this.props.bounds;
 
 		return (
-			<div>
+			<div className="image-editor__crop-background-container">
 				<div
 					className="image-editor__crop-background"
 					style={ {

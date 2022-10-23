@@ -1,8 +1,9 @@
+import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
-import { ReactChild, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { DEVICE_TYPE } from '../../constants';
 import Toolbar from './toolbar';
@@ -16,31 +17,36 @@ interface Viewport {
 
 interface ThemePreviewProps {
 	url: string;
-	loadingMessage?: string | ReactChild;
 	inlineCss?: string;
 	viewportWidth?: number;
 	isFitHeight?: boolean;
 	isShowFrameBorder?: boolean;
 	isShowDeviceSwitcher?: boolean;
+	recordDeviceClick?: ( device: string ) => void;
 }
 
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
-	loadingMessage,
 	inlineCss,
 	viewportWidth,
 	isFitHeight,
 	isShowFrameBorder,
 	isShowDeviceSwitcher,
+	recordDeviceClick,
 } ) => {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
 	const [ isLoaded, setIsLoaded ] = useState( false );
-	const [ device, setDevice ] = useState< Device >( DEVICE_TYPE.COMPUTER );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
+
+	const [ device, setDevice ] = useState< Device >( DEVICE_TYPE.COMPUTER );
+	function handleDeviceClick( device: string ) {
+		recordDeviceClick?.( device );
+		setDevice( device );
+	}
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -77,15 +83,17 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	}, [ setIsLoaded, setViewport ] );
 
 	useEffect( () => {
-		iframeRef.current?.contentWindow?.postMessage(
-			{
-				channel: `preview-${ calypso_token }`,
-				type: 'inline-css',
-				inline_css: inlineCss,
-			},
-			'*'
-		);
-	}, [ inlineCss ] );
+		if ( isLoaded ) {
+			iframeRef.current?.contentWindow?.postMessage(
+				{
+					channel: `preview-${ calypso_token }`,
+					type: 'inline-css',
+					inline_css: inlineCss,
+				},
+				'*'
+			);
+		}
+	}, [ inlineCss, isLoaded ] );
 
 	return (
 		<div
@@ -98,10 +106,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			} ) }
 		>
 			{ containerResizeListener }
-			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ setDevice } /> }
+			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ handleDeviceClick } /> }
 			<div className="theme-preview__frame-wrapper">
-				{ ! isLoaded && loadingMessage && (
-					<div className="theme-preview__frame-message">{ loadingMessage }</div>
+				{ ! isLoaded && (
+					<div className="theme-preview__frame-message">
+						<Spinner />
+					</div>
 				) }
 				<iframe
 					ref={ iframeRef }

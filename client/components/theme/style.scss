@@ -116,6 +116,7 @@ $theme-info-height: 54px;
 }
 
 .theme__upsell-popover {
+	text-align: center;
 	svg {
 		transform: scale(0.8);
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -152,10 +153,6 @@ $theme-info-height: 54px;
 		font-weight: 500;
 		line-height: 20px;
 	}
-}
-
-.theme__upsell-popover {
-	text-align: center;
 }
 
 .card.is-clickable {
@@ -301,7 +298,6 @@ $theme-info-height: 54px;
 	&.button.is-borderless {
 		padding: 0;
 	}
-	&.components-button.is-link:not(:disabled),
 	&.components-button.is-link:not(:disabled) {
 		color: var(--studio-gray-40);
 	}
@@ -362,7 +358,6 @@ $theme-info-height: 54px;
 		padding: 15px 19px;
 		font-size: $font-title-small;
 		font-weight: 600;
-		font-weight: 600;
 
 		.is-active & {
 			color: rgba(var(--color-surface-rgb), 0.2);
@@ -402,7 +397,7 @@ $theme-info-height: 54px;
 }
 
 .theme__ribbon {
-	text-transfrom: capitalize;
+	text-transform: capitalize;
 }
 
 .theme__tooltip {

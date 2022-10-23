@@ -3,7 +3,10 @@ import { loadScript } from '@automattic/load-script';
 import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
-import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+
+// Import translatable strings so that translations get associated with the module and loaded properly.
+import './string';
 
 declare global {
 	interface Window {
@@ -22,6 +25,7 @@ declare global {
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
+				setShowCancelButton?: ( show: boolean ) => void;
 			} ) => void;
 		};
 	}
@@ -43,7 +47,8 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	translateFn: ( value: string, options?: any ) => string,
-	domNodeOrId?: HTMLElement | string | null
+	domNodeOrId?: HTMLElement | string | null,
+	setShowCancelButton?: ( show: boolean ) => void
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -62,6 +67,7 @@ export async function showDSP(
 				onClose: onClose,
 				translateFn: translateFn,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				setShowCancelButton: setShowCancelButton,
 			} );
 		} else {
 			reject( false );
@@ -133,9 +139,9 @@ export enum PromoteWidgetStatus {
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
 	const value = useSelector( ( state ) => {
-		const settings = getUserSettings( state );
-		if ( settings ) {
-			const originalSetting = settings[ 'has_promote_widget' ];
+		const userData = getCurrentUser( state );
+		if ( userData ) {
+			const originalSetting = userData[ 'has_promote_widget' ];
 			if ( originalSetting !== undefined ) {
 				return originalSetting === true
 					? PromoteWidgetStatus.ENABLED

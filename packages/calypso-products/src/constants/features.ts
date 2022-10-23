@@ -97,22 +97,15 @@ export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 
-//condensed_plan_features_v1 test
-export const FEATURE_HOSTING_TEST = 'hosting-test';
-export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
-export const FEATURE_PLUGINS_TEST = 'plugins-test';
-export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';
-export const FEATURE_FREE_NEWSLETTER_V1 = 'free-newsletter';
-export const FEATURE_PAID_NEWSLETTER_V1 = 'paid-newsletter';
-export const FEATURE_MONETISE_V2 = 'monetize-v2';
-export const FEATURE_REPUBLICIZE_V3 = 'republicize-v3';
-export const FEATURE_UPLOAD_THEMES_V3 = 'upload-themes-v3';
-export const FEATURE_EDGE_CACHING_V2 = 'edge-caching-v2';
-export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
-export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
-export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
-export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
-export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
+/* START - PLAN TAGLINE EXPERIMENT */
+export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
+export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
+export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
+export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
+export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
+export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
+/* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';
@@ -150,6 +143,7 @@ export const FEATURE_SCAN_V2 = 'scan-v2';
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = 'product-scan-daily-v2';
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = 'product-scan-realtime-v2';
 export const FEATURE_ANTISPAM_V2 = 'antispam-v2';
+export const FEATURE_WAF = 'waf';
 export const FEATURE_ACTIVITY_LOG_1_YEAR_V2 = 'activity-log-1-year-v2';
 export const FEATURE_SEARCH_V2 = 'search-v2';
 export const FEATURE_PRODUCT_SEARCH_V2 = 'product-search-v2';

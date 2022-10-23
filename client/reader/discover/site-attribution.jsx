@@ -6,6 +6,8 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
+import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import { getSiteUrl, getSourceFollowUrl, getSourceData } from 'calypso/reader/discover/helper';
 import FollowButton from 'calypso/reader/follow-button';
 import { getSite } from 'calypso/state/reader/sites/selectors';
@@ -66,6 +68,8 @@ class DiscoverSiteAttribution extends Component {
 						siteUrl={ followUrl }
 						iconSize={ 20 }
 						onFollowToggle={ this.onFollowToggle }
+						followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 					/>
 				) }
 			</div>

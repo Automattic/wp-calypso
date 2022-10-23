@@ -18,10 +18,9 @@ import {
 } from 'calypso/state/partner-portal/partner/selectors';
 import { translateInvalidPartnerParameterError } from 'calypso/state/partner-portal/partner/utils';
 import type { APIError } from 'calypso/state/partner-portal/types';
-import type { ReactElement } from 'react';
 import './style.scss';
 
-export default function AgencySignupForm(): ReactElement {
+export default function AgencySignupForm() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const partner = useSelector( getCurrentPartner );

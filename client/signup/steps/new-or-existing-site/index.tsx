@@ -37,7 +37,7 @@ type NewOrExistingSiteIntent = SelectItem< ChoiceType >;
 
 const Placeholder = () => <span className="new-or-existing-site__placeholder">&nbsp;</span>;
 
-export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
+export default function NewOrExistingSiteStep( props: Props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
@@ -132,7 +132,7 @@ export default function NewOrExistingSiteStep( props: Props ): React.ReactNode {
 						intentsAlt={ [] }
 					/>
 				}
-				align={ 'left' }
+				align="left"
 				hideSkip
 				isHorizontalLayout={ true }
 				isWideLayout={ true }

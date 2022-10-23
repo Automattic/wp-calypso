@@ -1,7 +1,6 @@
 import { isJetpackLegacyItem } from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
-import { get, isEmpty } from 'lodash';
 import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
@@ -251,7 +250,7 @@ export function checkoutThankYou( context, next ) {
 
 	const state = context.store.getState();
 	const selectedSite = getSelectedSite( state );
-	const displayMode = get( context, 'query.d' );
+	const displayMode = context.query?.d;
 
 	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
@@ -266,7 +265,7 @@ export function checkoutThankYou( context, next ) {
 
 			<CheckoutThankYouComponent
 				displayMode={ displayMode }
-				domainOnlySiteFlow={ isEmpty( context.params.site ) }
+				domainOnlySiteFlow={ ! context.params.site }
 				email={ context.query.email }
 				gsuiteReceiptId={ gsuiteReceiptId }
 				receiptId={ receiptId }

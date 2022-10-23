@@ -5,6 +5,8 @@ import {
 	UseQueryOptions,
 	InfiniteData,
 	UseInfiniteQueryResult,
+	QueryKey,
+	QueryFunction,
 } from 'react-query';
 import { useSelector } from 'react-redux';
 import {
@@ -14,39 +16,45 @@ import {
 } from 'calypso/lib/plugins/utils';
 import { fetchPluginsList } from 'calypso/lib/wporg';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { BASE_STALE_TIME, WPORG_CACHE_KEY } from './constants';
+import { BASE_STALE_TIME } from 'calypso/state/initial-state';
+import { WPORG_CACHE_KEY } from './constants';
 import { Plugin, PluginQueryOptions } from './types';
 import { getPluginsListKey } from './utils';
+
+export const getWPORGPluginsQueryParams = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< { plugins: any[]; pagination: { page: number } }, QueryKey > ] => {
+	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY + '-normalized', options );
+	const fetchFn = () => {
+		const [ search, author ] = extractSearchInformation( options.searchTerm );
+		return fetchPluginsList( {
+			pageSize: options.pageSize,
+			page: options.page,
+			category: options.category,
+			locale: options.locale || locale,
+			search,
+			author,
+			tag: options.tag && ! search ? options.tag : null,
+		} ).then( ( { plugins = [], info = {} } ) => ( {
+			plugins: normalizePluginsList( plugins ),
+			pagination: info,
+		} ) );
+	};
+	return [ cacheKey, fetchFn ];
+};
 
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 
-	return useQuery(
-		getPluginsListKey( WPORG_CACHE_KEY, options ),
-		() =>
-			fetchPluginsList( {
-				pageSize: options.pageSize,
-				page: options.page,
-				category: options.category,
-				locale: options.locale || locale,
-				search,
-				author,
-				tag: options.tag && ! search ? options.tag : null,
-			} ),
-		{
-			select: ( { plugins = [], info = {} } ) => ( {
-				plugins: normalizePluginsList( plugins ),
-				pagination: info,
-			} ),
-			enabled: enabled,
-			staleTime: staleTime,
-			refetchOnMount: refetchOnMount,
-		}
-	);
+	return useQuery( ...getWPORGPluginsQueryParams( options, locale ), {
+		enabled: enabled,
+		staleTime: staleTime,
+		refetchOnMount: refetchOnMount,
+	} );
 };
 
 const extractPages = ( pages: Array< { plugins: Plugin[]; info: object } > = [] ) =>
@@ -84,7 +92,7 @@ export const useWPORGInfinitePlugins = (
 					pagination: extractPagination( data.pages ),
 				};
 			},
-			getNextPageParam: ( lastPage ) => {
+			getNextPageParam: ( lastPage: { info: { page: number; pages: number } } ) => {
 				// When on last page, the next page is undefined, according to docs.
 				// @see: https://tanstack.com/query/v4/docs/reference/useInfiniteQuery
 				if ( lastPage.info.pages <= lastPage.info.page ) {

@@ -168,3 +168,7 @@ Prevents the item from being selected. Default is `false`.
 `count` - _optional_ (number)
 
 Add an extra `item-count` element into nav item.
+
+`applyUpdatedStyles` - _optional_ (boolean)
+
+Applies new and updated styles for tabs. This replaces the tabs' original design by removing the border and displaying the count as a filled-in pill.

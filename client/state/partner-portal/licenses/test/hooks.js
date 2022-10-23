@@ -133,17 +133,6 @@ describe( 'useProductsQuery', () => {
 					},
 				],
 			},
-			{
-				name: 'Jetpack Boost',
-				slug: 'jetpack-boost',
-				products: [
-					{
-						name: 'Jetpack Boost',
-						product_id: 2401,
-						slug: 'jetpack-boost',
-					},
-				],
-			},
 		];
 		const expected = [
 			{

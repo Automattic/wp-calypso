@@ -68,6 +68,7 @@
 	margin-right: 12px;
 	background: var(--studio-gray-5);
 	color: var(--studio-gray-60);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }
 
@@ -90,7 +91,7 @@
 }
 
 .woocommerce-connect-cart-header__stepper-step .woocommerce-connect-cart-header__stepper-step-label {
-	color: var(--studio-gray-90);
+	color: var(--studio-gray-80);
 	line-height: 24px;
 	font-size: $font-body;
 
@@ -100,9 +101,6 @@
 	}
 }
 
-.woocommerce-connect-cart-header__stepper-step .woocommerce-connect-cart-header__stepper-step-label {
-	color: var(--studio-gray-80);
-}
 .woocommerce-connect-cart-header__stepper-step.is-complete .woocommerce-connect-cart-header__stepper-step-label {
 	color: var(--studio-gray-90);
 }

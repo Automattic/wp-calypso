@@ -1,34 +1,89 @@
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
+import TimeFrame from 'calypso/components/jetpack/card/jetpack-product-card/display-price/time-frame';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { useItemPriceCompact } from '../product-store/hooks/use-item-price-compact';
+import ItemPriceMessage from '../product-store/item-price/item-price-message';
+import { SelectorProduct } from '../types';
+import useItemPrice from '../use-item-price';
 type PaymentPlanProps = {
 	isMultiSiteIncompatible?: boolean;
+	siteId: number | null;
+	product: SelectorProduct;
 };
-const PaymentPlan: React.FC< PaymentPlanProps > = ( { isMultiSiteIncompatible } ) => {
+const PaymentPlan: React.FC< PaymentPlanProps > = ( {
+	isMultiSiteIncompatible,
+	siteId,
+	product,
+} ) => {
 	const translate = useTranslate();
+	const { containerRef, isCompact } = useItemPriceCompact();
+
+	const { originalPrice, discountedPrice, discountedPriceDuration, isFetching } = useItemPrice(
+		siteId,
+		product,
+		product?.monthlyProductSlug || ''
+	);
+
+	const currentPrice = discountedPrice ? discountedPrice : originalPrice;
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+
+	const labelClass = classNames(
+		'product-lightbox__variants-grey-label',
+		isFetching && 'is-placeholder'
+	);
+
+	const billingTerm = product.displayTerm || product.term;
+
+	const getDiscountedLabel = useCallback( () => {
+		if ( ! discountedPrice ) {
+			return;
+		}
+		const translateArgs = {
+			args: {
+				percentOff: Math.floor( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 ),
+			},
+			comment: '"%%" is the literal percent symbol escaped using the other one.',
+		};
+		return 1 === discountedPriceDuration
+			? translate( '%(percentOff)d%% off the first month', translateArgs )
+			: translate( '%(percentOff)d%% off the first year', translateArgs );
+	}, [ discountedPriceDuration, originalPrice, discountedPrice, translate ] );
 
 	return (
 		<div className="product-lightbox__variants-plan">
 			{ isMultiSiteIncompatible ? (
-				<div className="product-lightbox__variants-plan-alt-info">
-					<span className="product-lightbox__variants-plan-alt-info--dot"></span>
-					<span className="product-lightbox__variants-plan-alt-info--text">
-						{ translate( 'Not available for multisite WordPress installs' ) }
-					</span>
-				</div>
+				<ItemPriceMessage
+					message={ translate( 'Not available for multisite WordPress installs' ) }
+				/>
 			) : (
 				<>
-					<p>Payment plan:</p>
+					<p>{ translate( 'Payment plan:' ) }</p>
 
 					<div className="product-lightbox__variants-plan-card">
-						<div className="product-lightbox__variants-grey-label">
-							<span className="product-lightbox__variants-plan-card-price">{ '$4.95' }</span>
-							<span className="product-lightbox__variants-plan-card-month-short">/mo</span>
-							<span className="product-lightbox__variants-plan-card-month-long">/month</span>,
-							billed yearly
+						<div className={ labelClass } ref={ containerRef }>
+							<span className="product-lightbox__variants-plan-card-price">
+								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
+							</span>
+							<div
+								className={ classNames( 'product-lightbox__variants-timeframe', {
+									'is-compact': isCompact,
+								} ) }
+							>
+								<TimeFrame billingTerm={ billingTerm } />
+							</div>
 						</div>
-						<div className="product-lightbox__variants-grey-label">
-							<span className="product-lightbox__variants-plan-card-old-price">{ '$9.95' }</span>
-							59% off the first year
-						</div>
+						{ discountedPrice && (
+							<div className={ labelClass }>
+								<span className="product-lightbox__variants-plan-card-old-price">
+									<PlanPrice original rawPrice={ originalPrice } currencyCode={ currencyCode } />
+								</span>
+								{ getDiscountedLabel() }
+							</div>
+						) }
 					</div>
 				</>
 			) }

@@ -14,12 +14,16 @@ import {
 	FEATURE_JETPACK_SCAN_DAILY_MONTHLY,
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
+	FEATURE_JETPACK_VIDEOPRESS,
+	FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
 	isJetpackAntiSpamSlug,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
 	isJetpackScanSlug,
 	isJetpackSearchSlug,
 	planHasAtLeastOneFeature,
+	PRODUCT_JETPACK_VIDEOPRESS,
+	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 } from '@automattic/calypso-products';
 
 export const productHasBackups = ( productSlug: string ): boolean => {
@@ -88,4 +92,20 @@ export const productHasActivityLog = ( productSlug: string ): boolean => {
 	// Any site with Jetpack free will have the activity log
 	// Highlighting the log here just for backup products or paid plans, since there are more benefits in these cases (more history, finding previous backups)
 	return isJetpackPlanSlug( productSlug ) || isJetpackBackupSlug( productSlug );
+};
+
+/**
+ * Checks if the product IS Jetpack VideoPress, or if it contains Jetpack VideoPress as a feature.
+ *
+ * @param productSlug The product slug
+ * @returns whether or not the product has VideoPress.
+ */
+export const productHasVideoPress = ( productSlug: string ): boolean => {
+	return (
+		planHasAtLeastOneFeature( productSlug, [
+			FEATURE_JETPACK_VIDEOPRESS,
+			FEATURE_JETPACK_VIDEOPRESS_MONTHLY,
+		] ) ||
+		[ PRODUCT_JETPACK_VIDEOPRESS, PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ].includes( productSlug )
+	);
 };

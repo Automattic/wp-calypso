@@ -14,6 +14,10 @@ import {
 	sendUserInfo,
 	setChatCustomFields,
 } from 'calypso/state/happychat/connection/actions';
+import {
+	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
+	HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION,
+} from 'calypso/state/happychat/constants';
 import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
 import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
 import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
@@ -140,7 +144,7 @@ export default function Happychat( { auth } ) {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const chatStatus = useSelector( getHappychatChatStatus );
-	const connectionStatus = useSelector( getHappychatConnectionStatus );
+	let connectionStatus = useSelector( getHappychatConnectionStatus );
 	const timeline = useSelector( getHappychatTimeline );
 	const message = useSelector( getCurrentMessage );
 	const isServerReachable = useSelector( isHappychatServerReachable );
@@ -148,9 +152,15 @@ export default function Happychat( { auth } ) {
 	const isMessageFromCurrentUser = ( { user_id, source } ) => {
 		return user_id.toString() === currentUser.ID.toString() && source === 'customer';
 	};
+	const isContinuedSession =
+		new URLSearchParams( window.location.search ).get( 'session' ) === 'continued';
+
+	if ( isContinuedSession && connectionStatus === HAPPYCHAT_CONNECTION_STATUS_CONNECTING ) {
+		connectionStatus = HAPPYCHAT_CONNECTION_STATUS_CONTINUING_SESSION;
+	}
 	return (
 		<div className="happychat__container">
-			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } />
+			<HappychatConnection getAuth={ () => Promise.resolve( auth ) } isHappychatEnabled />
 			<ParentConnection
 				connectionStatus={ connectionStatus }
 				timeline={ timeline }

@@ -1,5 +1,5 @@
-@import "@wordpress/base-styles/_breakpoints.scss";
-@import "@wordpress/base-styles/_mixins.scss";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .activity-log-item {
 	display: flex;
@@ -21,6 +21,10 @@
 		.is-expanded & {
 			margin-bottom: 8px;
 		}
+	}
+	a.button,
+	button {
+		margin-right: 8px;
 	}
 }
 
@@ -110,6 +114,7 @@
 	padding: 12px;
 	background: var(--color-neutral-20);
 	color: var(--color-text-inverted);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 
 	@include breakpoint-deprecated( "<480px" ) {
@@ -232,6 +237,7 @@
 	.social-logo {
 		fill: var(--color-text-inverted);
 		background: var(--color-wordpress-org);
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 	}
 
@@ -246,6 +252,7 @@
 		color: var(--color-text-inverted);
 		display: flex;
 		padding: 8px;
+		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		margin-right: 14px;
 		margin-top: 2px;
@@ -301,20 +308,6 @@
 
 	@include breakpoint-deprecated( "<480px" ) {
 		font-size: $font-body-small;
-	}
-}
-
-.activity-log-item__description {
-	flex: 1 1 50%;
-	font-size: $font-body-small;
-	word-break: break-word;
-
-	@include breakpoint-deprecated( "<960px" ) {
-		margin-top: 8px;
-	}
-
-	@include breakpoint-deprecated( "<480px" ) {
-		margin-top: 12px;
 	}
 }
 
@@ -402,11 +395,6 @@
 	color: var(--color-error);
 }
 
-.activity-log-item__activity-media {
-	margin-right: 16px;
-	color: var(--color-text-inverted);
-}
-
 .activity-log-item__activity-media .gridicon {
 	background-color: var(--color-neutral-10);
 }
@@ -426,6 +414,8 @@
 }
 
 .activity-log-item__activity-media {
+	margin-right: 16px;
+	color: var(--color-text-inverted);
 	&.is-mobile {
 		float: right;
 		margin-right: -50px;
@@ -483,18 +473,14 @@
 	position: static;
 }
 
-.activity-log-item {
-	a.button,
-	button {
-		margin-right: 8px;
-	}
-}
-
 .activity-log-item__description {
 	display: flex;
 
 	// Mobile-Medium: Action buttons under description
 	flex-direction: column;
+	flex: 1 1 50%;
+	font-size: $font-body-small;
+	word-break: break-word;
 	.activity-log-item__action {
 		justify-content: normal;
 	}
@@ -503,6 +489,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
+	}
+
+	@include breakpoint-deprecated( "<960px" ) {
+		margin-top: 8px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		margin-top: 12px;
 	}
 
 	@include break-wide {

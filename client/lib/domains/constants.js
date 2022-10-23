@@ -47,12 +47,14 @@ export const domainAvailability = {
 	NOT_AVAILABLE: 'not_available',
 	NOT_REGISTRABLE: 'available_but_not_registrable',
 	PURCHASES_DISABLED: 'domain_registration_unavailable',
+	RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE: 'recent_registration_lock_not_transferrable',
 	RECENTLY_UNMAPPED: 'recently_mapped',
 	RECENTLY_EXPIRED: 'recently_expired',
 	REGISTERED: 'registered_domain',
 	REGISTERED_OTHER_SITE_SAME_USER: 'registered_on_other_site_same_user',
 	REGISTERED_SAME_SITE: 'registered_on_same_site',
 	RESTRICTED: 'restricted_domain',
+	SERVER_TRANSFER_PROHIBITED_NOT_TRANSFERRABLE: 'server_transfer_prohibited_not_transferrable',
 	TLD_NOT_SUPPORTED: 'tld_not_supported',
 	TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE: 'tld_not_supported_and_domain_not_available',
 	TLD_NOT_SUPPORTED_TEMPORARILY: 'tld_not_supported_temporarily',
@@ -119,4 +121,9 @@ export const domainInfoContext = {
 	DOMAIN_ITEM: 'DOMAIN_ITEM',
 	DOMAIN_ROW: 'DOMAIN_ROW',
 	PAGE_TITLE: 'PAGE_TITLE',
+};
+
+export const freeSiteAddressType = {
+	MANAGED: 'managed',
+	BLOG: 'blog',
 };

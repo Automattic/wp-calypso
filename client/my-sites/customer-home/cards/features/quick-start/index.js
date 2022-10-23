@@ -52,7 +52,7 @@ const QuickStart = ( { nextSession, reschedule, siteId, siteSlug, viewDetails } 
 						{ translate( 'View details' ) }
 					</Button>
 					<Button
-						className={ 'quick-start__reschedule' }
+						className="quick-start__reschedule"
 						onClick={ () => reschedule( siteId, siteSlug, nextSession.id ) }
 						borderless
 						disabled={ ! nextSession }

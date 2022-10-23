@@ -9,13 +9,18 @@
 			url(calypso/assets/images/onboarding/newsletter-intro-right.png);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
+		/*!rtl:ignore*/
 		background-position-x: 0%, 100%;
-		background-position-y: 100%, 100px;
+		background-position-y: 100%, 80px;
 		background-size: auto 30%, auto 50%;
 
-		@include break-large {
+
+		@include break-huge {
 			background-size: auto 55%, auto 80%;
 			background-position-y: 100%, 136px;
+			background-image:
+				url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
 		}
 	}
 
@@ -25,14 +30,18 @@
 			url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
 			url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
 		background-position-y: 85%, 15%;
+		/*!rtl:ignore*/
 		background-position-x: 0, 100%;
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 15%, auto 15%;
 
-		@include break-large {
+		@include break-huge {
 			background-size: auto 25%, auto 25%;
 			background-position-y: 85%, 10%;
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
 		}
 	}
 
@@ -75,6 +84,10 @@
 
 		.step-container__jetpack-powered {
 			margin: 20px 0 60px;
+
+			@include onboarding-break-mobile-landscape {
+				margin: 5px 0 60px;
+			}
 		}
 	}
 
@@ -97,6 +110,10 @@
 		@include break-large {
 			font-size: 2.75rem;
 			line-height: 52px;
+		}
+
+		@include onboarding-break-mobile-landscape {
+			font-size: $font-title-medium;
 		}
 
 		span {

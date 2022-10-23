@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
@@ -42,7 +42,7 @@ export default function PluginDetailsV2( {
 	showPlaceholder,
 	isMarketplaceProduct,
 	isWpcom,
-}: Props ): ReactElement {
+}: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 

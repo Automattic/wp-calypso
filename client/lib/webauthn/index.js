@@ -29,7 +29,9 @@ function wpcomApiRequest( path, _data, method ) {
 
 function isBrowser() {
 	try {
-		if ( ! window ) return false;
+		if ( ! window ) {
+			return false;
+		}
 	} catch ( err ) {
 		return false;
 	}

@@ -27,8 +27,8 @@ export type Plugin = {
 	icon?: string;
 	railcar: Railcar;
 	variations?: {
-		monthly: { product_slug: string };
-		yearly: { product_slug: string };
+		monthly: { product_slug?: string; product_id?: number };
+		yearly: { product_slug?: string; product_id?: number };
 	};
 };
 
@@ -52,7 +52,6 @@ export type ESIndexResult = {
 	'plugin.tested'?: string;
 	'plugin.support_threads'?: number;
 	'plugin.support_threads_resolved'?: number;
-	'plugin.active_installs'?: number;
 	plugin: {
 		author: string;
 		title: string;
@@ -60,6 +59,7 @@ export type ESIndexResult = {
 		icons: string;
 		rating: number;
 		num_ratings: number;
+		active_installs: number;
 	};
 };
 
@@ -83,6 +83,7 @@ export type ESDateRangeFilter = { range: Record< string, { gte: string; lt: stri
 export type SearchParams = {
 	query: string | undefined;
 	author: string | undefined;
+	category: string | undefined;
 	groupId: string;
 	pageHandle: string | undefined;
 	pageSize: number;
