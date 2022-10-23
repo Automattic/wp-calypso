@@ -14,14 +14,35 @@ interface StyleVariationPreviewProps {
 	variation: StyleVariation;
 	base?: StyleVariation;
 	isSelected: boolean;
+	isPremium: boolean;
 	onClick: ( variation: StyleVariation ) => void;
+	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
+
+// This is a temporary workaround until we can
+// upgrade @wordpress/edit-site to fix CSS issues.
+//
+// See: https://github.com/WordPress/gutenberg/pull/43601
+const OVERRIDE_CONFIG = {
+	styles: {
+		spacing: {
+			padding: {
+				bottom: 0,
+				left: 0,
+				right: 0,
+				top: 0,
+			},
+		},
+	},
+};
 
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
 	base = {},
 	isSelected,
+	isPremium,
 	onClick,
+	showGlobalStylesPremiumBadge,
 } ) => {
 	const context = useMemo( () => {
 		return {
@@ -30,7 +51,10 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				styles: variation.styles ?? {},
 			},
 			base,
-			merged: mergeBaseAndUserConfigs( base, variation ),
+			merged: mergeBaseAndUserConfigs(
+				mergeBaseAndUserConfigs( base, variation ),
+				OVERRIDE_CONFIG
+			),
 		};
 	}, [ variation, base ] );
 
@@ -51,6 +75,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
 			>
+				{ isPremium && showGlobalStylesPremiumBadge() }
 				<GlobalStylesContext.Provider value={ context }>
 					<Preview label={ variation.title } />
 				</GlobalStylesContext.Provider>
@@ -63,12 +88,14 @@ interface StyleVariationPreviewsProps {
 	variations: StyleVariation[];
 	selectedVariation?: StyleVariation;
 	onClick: ( variation: StyleVariation ) => void;
+	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
 const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 	variations = [],
 	selectedVariation,
 	onClick,
+	showGlobalStylesPremiumBadge,
 } ) => {
 	const selectedVariationSlug = selectedVariation?.slug ?? DEFAULT_VARIATION_SLUG;
 	const base = useMemo(
@@ -84,7 +111,9 @@ const StyleVariationPreviews: React.FC< StyleVariationPreviewsProps > = ( {
 					variation={ variation }
 					base={ base }
 					isSelected={ variation.slug === selectedVariationSlug }
+					isPremium={ variation.slug !== DEFAULT_VARIATION_SLUG }
 					onClick={ onClick }
+					showGlobalStylesPremiumBadge={ showGlobalStylesPremiumBadge }
 				/>
 			) ) }
 		</>

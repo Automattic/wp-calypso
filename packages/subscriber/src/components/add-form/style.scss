@@ -1,5 +1,60 @@
+// On-boarding flow
 .step-container.subscribers {
 	padding: 0 1.5rem;
+
+	.add-subscriber__title-container,
+	.add-subscriber__form--container {
+		margin: auto;
+	}
+
+	.add-subscriber .add-subscriber__title-container {
+		max-width: 376px;
+		text-align: center;
+
+		.onboarding-subtitle {
+			margin-bottom: 1.5rem;
+			font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
+		}
+	}
+
+	.add-subscriber .add-subscriber__form--container {
+		max-width: 368px;
+	}
+
+	.add-subscriber__form-submit-btn {
+		display: block;
+		width: 100%;
+		margin: 2rem 0;
+	}
+}
+
+// People section
+.is-section-people {
+	.add-subscriber .add-subscriber__title-container {
+		.onboarding-title {
+			font-size: 2rem;
+			line-height: 2.25rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	.add-subscriber .add-subscriber__form--container form > div:first-child {
+		.components-base-control__field {
+			margin-top: 0;
+		}
+	}
+
+	.add-subscriber__form--container input {
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+			outline: none;
+		}
+	}
+
+	.add-subscriber__form-submit-btn {
+		margin-top: 0.5rem;
+	}
 }
 
 .add-subscriber {
@@ -12,49 +67,12 @@
 	}
 }
 
-.add-subscriber__title-container,
-.add-subscriber__form--container,
-.add-subscriber__progress--container {
-	margin: auto;
-}
-
-.add-subscriber__progress--container {
-	max-width: 520px;
-	text-align: center;
-
-	.onboarding-title {
-		font-size: 2rem;
-		margin-bottom: 1rem;
-	}
-
-	.onboarding-subtitle {
-		font-size: 0.875rem;
-	}
-
-	.onboarding-progress .progress-bar {
-		margin-bottom: 1rem;
-	}
-}
-
 .add-subscriber .add-subscriber__title-container {
-	text-align: center;
 	margin-bottom: 1rem;
-	max-width: 376px;
 
-	.add-subscriber__title-emoji {
-		font-size: 2.5rem; /* stylelint-disable-line scales/font-sizes */
-		margin-bottom: 0.75em;
-	}
-
-	.onboarding-title {
-		margin-bottom: 1.5rem;
-		font-size: 2.75rem;
-		line-height: 3.5rem; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	}
-
+	.onboarding-title,
 	.onboarding-subtitle {
 		margin-bottom: 1.5rem;
-		font-size: 1.125rem; /* stylelint-disable-line scales/font-sizes */
 	}
 }
 
@@ -79,8 +97,6 @@
 }
 
 .add-subscriber .add-subscriber__form--container {
-	max-width: 368px;
-
 	label {
 		display: block;
 		width: 100%;
@@ -92,6 +108,10 @@
 			.components-button {
 				margin: 0 0.2rem;
 			}
+		}
+
+		&.add-subscriber__form-label-emails {
+			margin-bottom: 0.5rem;
 		}
 	}
 
@@ -123,29 +143,13 @@
 		display: inline-block;
 	}
 
-	.add-subscriber__form-submit-btn,
-	.add-subscriber__form-skip-btn {
-		display: block;
-		width: 100%;
-		margin: 2rem 0;
-	}
-
-	.add-subscriber__form-skip-btn {
-		box-shadow: none !important;
-		text-decoration: underline;
-
-		&:hover {
-			text-decoration: none;
-		}
-	}
-
 	.components-base-control {
 		position: relative;
 	}
 
 	.components-base-control__help {
 		position: absolute;
-		top: 5px;
+		top: 3px;
 		right: 10px;
 
 		svg {
@@ -191,8 +195,12 @@
 
 		a,
 		button {
-			color: var(--studio-gray-100);
+			color: var(--color-text);
 			text-decoration: underline;
+
+			&:hover {
+				color: var(--color-text-subtle);
+			}
 		}
 	}
 }

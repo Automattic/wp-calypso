@@ -21,6 +21,7 @@ const PluginsBrowserList = ( {
 	site,
 	currentSites,
 	listName,
+	listType,
 	browseAllLink,
 	size,
 	search,
@@ -39,6 +40,7 @@ const PluginsBrowserList = ( {
 					plugin={ plugin }
 					currentSites={ currentSites }
 					listName={ listName }
+					listType={ listType }
 					variant={
 						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
 					}

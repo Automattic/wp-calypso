@@ -11,6 +11,8 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import ListEnd from 'calypso/components/list-end';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
+import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
+import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import NoResults from 'calypso/my-sites/no-results';
 import { preloadEditor } from 'calypso/sections-preloaders';
 import {
@@ -20,58 +22,12 @@ import {
 } from 'calypso/state/posts/selectors';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import { getSite, getSiteFrontPage } from 'calypso/state/sites/selectors';
+import { getSite, getSiteFrontPage, getSiteFrontPageType } from 'calypso/state/sites/selectors';
 import BlogPostsPage from './blog-posts-page';
 import { sortPagesHierarchically } from './helpers';
 import Page from './page';
 import Placeholder from './placeholder';
-
-export default class PageList extends Component {
-	static propTypes = {
-		search: PropTypes.string,
-		siteId: PropTypes.number,
-		status: PropTypes.string,
-		query: PropTypes.shape( {
-			author: PropTypes.number, // User ID
-			status: PropTypes.string,
-			type: PropTypes.string.isRequired,
-		} ),
-	};
-
-	state = {
-		page: 1,
-	};
-
-	incrementPage = () => {
-		this.setState( { page: this.state.page + 1 } );
-	};
-
-	render() {
-		const { search, siteId, query } = this.props;
-		const { page } = this.state;
-
-		if ( config.isEnabled( 'page/export' ) ) {
-			// we need the raw content of the pages to be able to export them
-			query.context = 'edit';
-		}
-
-		// Since searches are across all statuses, the status needs to be shown
-		// next to each post.
-		const showPublishedStatus = Boolean( search );
-
-		return (
-			<div>
-				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
-				<ConnectedPages
-					incrementPage={ this.incrementPage }
-					query={ { ...query, page } }
-					siteId={ siteId }
-					showPublishedStatus={ showPublishedStatus }
-				/>
-			</div>
-		);
-	}
-}
+import VirtualPage from './virtual-page';
 
 class Pages extends Component {
 	static propTypes = {
@@ -87,6 +43,11 @@ class Pages extends Component {
 		trackScrollPage: PropTypes.func.isRequired,
 		query: PropTypes.object,
 		showPublishedStatus: PropTypes.bool,
+		homepageType: PropTypes.string,
+		blockEditorSettings: PropTypes.any,
+		areBlockEditorSettingsLoading: PropTypes.bool,
+		isFSEActive: PropTypes.bool,
+		isFSEActiveLoading: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -220,6 +181,43 @@ class Pages extends Component {
 		);
 	}
 
+	showBlogPostsPage() {
+		const { site, homepageType, isFSEActive } = this.props;
+		const { search, status } = this.props.query;
+
+		return (
+			( ! config.isEnabled( 'unified-pages/virtual-home-page' ) ||
+				/** Blog posts page is for themes that don't support FSE */
+				! isFSEActive ) &&
+			site &&
+			homepageType === 'posts' &&
+			/** Under the "Published" tab */
+			status === 'publish,private' &&
+			/** Without any search term */
+			! search
+		);
+	}
+
+	/**
+	 * Show the virtual homepage
+	 */
+	showVirtualHomepage() {
+		const { site, homepageType, blockEditorSettings, isFSEActive, translate } = this.props;
+		const { search, status } = this.props.query;
+
+		return (
+			config.isEnabled( 'unified-pages/virtual-home-page' ) &&
+			/** Virtual homepage is for themes that support FSE */
+			isFSEActive &&
+			site &&
+			homepageType === 'posts' &&
+			blockEditorSettings?.home_template &&
+			/** Under the "Published" tab without any search term or the search term is matched */
+			( ( status === 'publish,private' && ! search ) ||
+				( search && translate( 'Homepage' ).toLowerCase().includes( search.toLowerCase() ) ) )
+		);
+	}
+
 	addLoadingRows( rows, count ) {
 		for ( let i = 0; i < count; i++ ) {
 			if ( i % 4 === 0 ) {
@@ -255,6 +253,38 @@ class Pages extends Component {
 					{ translate( 'Add new page' ) }
 				</Button>
 			</SectionHeader>
+		);
+	}
+
+	renderBlogPostsPage() {
+		const { site } = this.props;
+
+		if ( ! this.showBlogPostsPage() ) {
+			return null;
+		}
+
+		return <BlogPostsPage key="blog-posts-page" site={ site } />;
+	}
+
+	renderVirtualHomePage() {
+		const { site, blockEditorSettings, translate } = this.props;
+
+		if ( ! this.showVirtualHomepage() ) {
+			return null;
+		}
+
+		return (
+			<VirtualPage
+				key="virtual-home-page"
+				site={ site }
+				id={ blockEditorSettings?.home_template?.postId }
+				type={ blockEditorSettings?.home_template?.postType }
+				/** We'd prefer to call it Homepage no matter which template is in use */
+				title={ translate( 'Homepage' ) }
+				description={ translate( 'The front page of your site' ) }
+				previewUrl={ site.URL }
+				isHomepage
+			/>
 		);
 	}
 
@@ -295,7 +325,8 @@ class Pages extends Component {
 
 		return (
 			<div id="pages" className="pages__page-list">
-				<BlogPostsPage key="blog-posts-page" site={ site } />
+				{ this.renderBlogPostsPage() }
+				{ this.renderVirtualHomePage() }
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
@@ -304,8 +335,6 @@ class Pages extends Component {
 	}
 
 	renderChronological( { pages, site, showPublishedStatus } ) {
-		const { search, status } = this.props.query;
-
 		const rows = pages.map( ( page ) => {
 			if ( ! ( 'site_ID' in page ) ) {
 				return page;
@@ -328,11 +357,10 @@ class Pages extends Component {
 			this.addLoadingRows( rows, 1 );
 		}
 
-		const showBlogPostsPage = site && status === 'publish,private' && ! search;
-
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
+				{ this.renderBlogPostsPage() }
+				{ this.renderVirtualHomePage() }
 				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
@@ -342,29 +370,23 @@ class Pages extends Component {
 	}
 
 	renderNoContent() {
-		const { site } = this.props;
-		const { search, status } = this.props.query;
-
-		const showBlogPostsPage = site && status === 'publish,private' && ! search;
-
 		return (
 			<div id="pages" className="pages__page-list">
-				{ showBlogPostsPage && <BlogPostsPage key="blog-posts-page" site={ site } /> }
+				{ this.renderBlogPostsPage() }
 				<div key="page-list-no-results">{ this.getNoContentMessage() }</div>
 			</div>
 		);
 	}
 
 	render() {
-		const { hasSites, loading } = this.props;
+		const { hasSites, loading, areBlockEditorSettingsLoading, isFSEActiveLoading } = this.props;
 		const { pages } = this.state;
+		const isLoading = loading || areBlockEditorSettingsLoading || isFSEActiveLoading;
 
-		if ( pages.length && hasSites ) {
-			return this.renderPagesList( { pages } );
-		}
-
-		if ( ! loading && hasSites ) {
-			return this.renderNoContent();
+		if ( ! isLoading && hasSites ) {
+			return pages.length > 0 || this.showVirtualHomepage()
+				? this.renderPagesList( { pages } )
+				: this.renderNoContent();
 		}
 
 		return this.renderLoading();
@@ -379,6 +401,60 @@ const mapState = ( state, { query, siteId } ) => ( {
 	pages: getPostsForQueryIgnoringPage( state, siteId, query ) || [],
 	site: getSite( state, siteId ),
 	newPageLink: getEditorUrl( state, siteId, null, 'page' ),
+	homepageType: getSiteFrontPageType( state, siteId ),
 } );
 
-const ConnectedPages = flowRight( connect( mapState ), localize, withLocalizedMoment )( Pages );
+const ConnectedPages = flowRight(
+	connect( mapState ),
+	withBlockEditorSettings,
+	withIsFSEActive,
+	localize,
+	withLocalizedMoment
+)( Pages );
+
+export default class PageList extends Component {
+	static propTypes = {
+		search: PropTypes.string,
+		siteId: PropTypes.number,
+		status: PropTypes.string,
+		query: PropTypes.shape( {
+			author: PropTypes.number, // User ID
+			status: PropTypes.string,
+			type: PropTypes.string.isRequired,
+		} ),
+	};
+
+	state = {
+		page: 1,
+	};
+
+	incrementPage = () => {
+		this.setState( { page: this.state.page + 1 } );
+	};
+
+	render() {
+		const { search, siteId, query } = this.props;
+		const { page } = this.state;
+
+		if ( config.isEnabled( 'page/export' ) ) {
+			// we need the raw content of the pages to be able to export them
+			query.context = 'edit';
+		}
+
+		// Since searches are across all statuses, the status needs to be shown
+		// next to each post.
+		const showPublishedStatus = Boolean( search );
+
+		return (
+			<div>
+				<QueryPosts siteId={ siteId } query={ { ...query, page } } />
+				<ConnectedPages
+					incrementPage={ this.incrementPage }
+					query={ { ...query, page } }
+					siteId={ siteId }
+					showPublishedStatus={ showPublishedStatus }
+				/>
+			</div>
+		);
+	}
+}

@@ -3,9 +3,9 @@ import Debug from 'debug';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import getPrimarySiteIsJetpack from 'calypso/state/selectors/get-primary-site-is-jetpack';
 import Landing from './sections/landing';
@@ -36,7 +36,7 @@ const redirectToPrimarySiteLanding = ( context, next ) => {
 	const isPrimarySiteJetpackSite = getPrimarySiteIsJetpack( state );
 	const isAgency = isAgencyUser( state );
 	const isAgencyEnabled = config.isEnabled( 'jetpack/agency-dashboard' );
-	const dashboardRedirectLink = jetpackDashboardRedirectLink( state );
+	const dashboardRedirectLink = dashboardPath();
 
 	if ( isAgency && isAgencyEnabled ) {
 		page.redirect( dashboardRedirectLink );

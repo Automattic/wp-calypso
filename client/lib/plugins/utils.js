@@ -122,7 +122,8 @@ export function getAllowedPluginData( plugin ) {
 		'updating',
 		'variations',
 		'version',
-		'wp_admin_settings_page_url'
+		'wp_admin_settings_page_url',
+		'saas_landing_page'
 	);
 }
 

@@ -76,7 +76,12 @@ describe( 'Logger middleware', () => {
 	} );
 
 	it( 'Adds a `logger` property to the request with the request id', () => {
-		const req = fakeRequest();
+		const req = fakeRequest( {
+			headers: {
+				'user-agent': 'A random browser',
+			},
+			url: '/example.html',
+		} );
 
 		simulateRequest( {
 			req,
@@ -86,6 +91,11 @@ describe( 'Logger middleware', () => {
 		expect( req.logger ).toBe( requestLogger );
 		expect( mockRootLogger.child ).toHaveBeenCalledWith( {
 			reqId: '00000000-0000-0000-0000-000000000000',
+			appVersion: 'abcd1234',
+			env: 'production',
+			path: undefined,
+			url: '/example.html',
+			userAgent: 'A random browser',
 		} );
 	} );
 
@@ -117,10 +127,7 @@ describe( 'Logger middleware', () => {
 				duration: 100,
 				status: '200',
 				method: 'GET',
-				env: 'production',
-				url: '/example.html',
 				httpVersion: '2.0',
-				userAgent: 'Chrome 85',
 				rawUserAgent:
 					'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
 				remoteAddr: '127.0.0.1',
@@ -152,7 +159,7 @@ describe( 'Logger middleware', () => {
 
 		expect( requestLogger.info ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				userAgent: 'A random browser',
+				rawUserAgent: 'A random browser',
 			} ),
 			expect.anything()
 		);
@@ -164,11 +171,10 @@ describe( 'Logger middleware', () => {
 			res: fakeResponse(),
 		} );
 
-		expect( requestLogger.info ).toHaveBeenCalledWith(
+		expect( mockRootLogger.child ).toHaveBeenCalledWith(
 			expect.objectContaining( {
 				appVersion: 'abcd1234',
-			} ),
-			expect.anything()
+			} )
 		);
 	} );
 } );

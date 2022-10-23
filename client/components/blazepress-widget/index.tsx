@@ -23,6 +23,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const { isVisible = false, onClose = () => {} } = props;
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
+	const [ showCancelButton, setShowCancelButton ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
@@ -33,6 +34,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 			window.scrollTo( 0, 0 );
 		}
 	}, [ isVisible ] );
+
+	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
 
 	useEffect( () => {
 		isVisible &&
@@ -56,7 +59,8 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						// eslint-disable-next-line wpcalypso/i18n-no-variables
 						return translate( original );
 					},
-					widgetContainer.current
+					widgetContainer.current,
+					handleShowCancel
 				);
 				setIsLoading( false );
 			} )();
@@ -90,15 +94,17 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 					<div className="blazepress-widget__header-bar">
 						<WordPressLogo />
 						<h2>{ translate( 'Advertising' ) }</h2>
-						<span
-							role="button"
-							className="blazepress-widget__cancel"
-							onKeyDown={ () => setShowCancelDialog( true ) }
-							tabIndex={ 0 }
-							onClick={ () => setShowCancelDialog( true ) }
-						>
-							{ translate( 'Cancel' ) }
-						</span>
+						{ showCancelButton && (
+							<span
+								role="button"
+								className="blazepress-widget__cancel"
+								onKeyDown={ () => setShowCancelDialog( true ) }
+								tabIndex={ 0 }
+								onClick={ () => setShowCancelDialog( true ) }
+							>
+								{ translate( 'Cancel' ) }
+							</span>
+						) }
 					</div>
 					<div
 						className={
@@ -106,7 +112,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						}
 					>
 						<Dialog
-							isVisible={ showCancelDialog }
+							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
 						>

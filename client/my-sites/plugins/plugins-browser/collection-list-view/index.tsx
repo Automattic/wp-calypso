@@ -39,6 +39,7 @@ export default function CollectionListView( {
 	return (
 		<PluginsBrowserList
 			listName={ 'collection-' + category }
+			listType="collection"
 			plugins={ plugins.current || [] }
 			size={ plugins.current?.length }
 			title={ categories[ category ].title }

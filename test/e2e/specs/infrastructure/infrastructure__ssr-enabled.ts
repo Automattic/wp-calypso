@@ -1,5 +1,6 @@
 /**
  * @group calypso-pr
+ * @group kpi
  */
 
 import { DataHelper } from '@automattic/calypso-e2e';

@@ -1,8 +1,10 @@
 import languages from '@automattic/languages';
 import ReactDom from 'react-dom';
 import { Provider, useDispatch, useSelector } from 'react-redux';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import LanguagePicker from 'calypso/components/language-picker';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { setUserSetting } from 'calypso/state/user-settings/actions';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
@@ -14,6 +16,8 @@ export function AccountSettingsHelper() {
 	const dispatch = useDispatch();
 	const userSettings = useSelector( getUserSettings ) ?? {};
 	const isFetching = useSelector( isFetchingUserSettings );
+	const colorSchemePreference = useSelector( ( state ) => getPreference( state, 'colorScheme' ) );
+
 	const updateLanguage = ( event ) => {
 		const { value, empathyMode, useFallbackForIncompleteLanguages } = event.target;
 		if ( typeof empathyMode !== 'undefined' ) {
@@ -40,6 +44,7 @@ export function AccountSettingsHelper() {
 			<QueryUserSettings />
 			<div>Account Settings</div>
 			<div className="account-settings-helper__popover">
+				<div>Language Picker</div>
 				<LanguagePicker
 					isLoading={ isFetching }
 					languages={ languages }
@@ -49,6 +54,8 @@ export function AccountSettingsHelper() {
 					useFallbackForIncompleteLanguages={ userSettings?.use_fallback_for_incomplete_languages }
 					onChange={ updateLanguage }
 				/>
+				<div>Dashboard color scheme</div>
+				<ColorSchemePicker defaultSelection={ colorSchemePreference } />
 			</div>
 		</>
 	);
