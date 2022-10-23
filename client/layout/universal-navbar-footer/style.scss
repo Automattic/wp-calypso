@@ -85,7 +85,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	@include text-16;
 	font-family: $lp-font-stack-default;
 	background: #2c3338;
-	padding: 25px 0 80px;
+	padding: 25px 20px 80px;
 
 	ul {
 		margin: 0;
@@ -94,7 +94,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 }
 
 .lpc-footer-automattic-nav {
-	padding: 3rem 7%;
+	padding: 1rem 7%;
 	@include text-16;
 	font-family: $lp-font-stack-default;
 	background: #fff;
@@ -396,7 +396,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	display: block;
 	font-family: inherit;
 	font-weight: 600;
-	padding: 11px 45px;
+	padding: 16px 45px;
 	position: relative;
 	text-overflow: ellipsis;
 	width: 100%;
@@ -435,6 +435,15 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 .lp-hidden {
 	display: none;
+}
+
+@include breakpoint( "<1140px" ) {
+	.lpc-footer-automattic-nav {
+		padding-left: 20px;
+		padding-right: 20px;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
 }
 
 @include breakpoint( "<960px" ) {

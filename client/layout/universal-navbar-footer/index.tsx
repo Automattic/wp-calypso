@@ -157,66 +157,66 @@ const UniversalNavbarFooter = () => {
 									onChange={ ( e ) => navigate( e.target.value ) }
 									defaultValue={
 										translate.localeSlug === 'en'
-											? `https://wordpress.com/plugins`
-											: `https://wordpress.com/${ translate.localeSlug }/plugins`
+											? `/plugins`
+											: `/${ translate.localeSlug }/plugins`
 									}
 								>
 									<option>{ translate( 'Change Language' ) }</option>
-									<option lang="es" value="https://wordpress.com/es/plugins">
+									<option lang="es" value="/es/plugins">
 										Español
 									</option>
-									<option lang="pt-br" value="https://wordpress.com/pt-br/plugins">
+									<option lang="pt-br" value="/pt-br/plugins">
 										Português do Brasil
 									</option>
-									<option lang="de" value="https://wordpress.com/de/plugins">
+									<option lang="de" value="/de/plugins">
 										Deutsch
 									</option>
-									<option lang="fr" value="https://wordpress.com/fr/plugins">
+									<option lang="fr" value="/fr/plugins">
 										Français
 									</option>
-									<option lang="he" value="https://wordpress.com/he/plugins">
+									<option lang="he" value="/he/plugins">
 										עִבְרִית
 									</option>
-									<option lang="ja" value="https://wordpress.com/ja/plugins">
+									<option lang="ja" value="/ja/plugins">
 										日本語
 									</option>
-									<option lang="it" value="https://wordpress.com/it/plugins">
+									<option lang="it" value="/it/plugins">
 										Italiano
 									</option>
-									<option lang="nl" value="https://wordpress.com/nl/plugins">
+									<option lang="nl" value="/nl/plugins">
 										Nederlands
 									</option>
-									<option lang="ru" value="https://wordpress.com/ru/plugins">
+									<option lang="ru" value="/ru/plugins">
 										Русский
 									</option>
-									<option lang="tr" value="https://wordpress.com/tr/plugins">
+									<option lang="tr" value="/tr/plugins">
 										Türkçe
 									</option>
-									<option lang="id" value="https://wordpress.com/id/plugins">
+									<option lang="id" value="/id/plugins">
 										Bahasa Indonesia
 									</option>
-									<option lang="zh-cn" value="https://wordpress.com/zh-cn/plugins">
+									<option lang="zh-cn" value="/zh-cn/plugins">
 										简体中文
 									</option>
-									<option lang="zh-tw" value="https://wordpress.com/zh-tw/plugins">
+									<option lang="zh-tw" value="/zh-tw/plugins">
 										繁體中文
 									</option>
-									<option lang="ko" value="https://wordpress.com/ko/plugins">
+									<option lang="ko" value="/ko/plugins">
 										한국어
 									</option>
-									<option lang="ar" value="https://wordpress.com/ar/plugins">
+									<option lang="ar" value="/ar/plugins">
 										العربية
 									</option>
-									<option lang="sv" value="https://wordpress.com/sv/plugins">
+									<option lang="sv" value="/sv/plugins">
 										Svenska
 									</option>
-									<option lang="el" value="https://wordpress.com/el/plugins">
+									<option lang="el" value="/el/plugins">
 										Ελληνικά
 									</option>
-									<option lang="en" value="https://wordpress.com/plugins">
+									<option lang="en" value="/plugins">
 										English
 									</option>
-									<option lang="ro" value="https://wordpress.com/ro/plugins">
+									<option lang="ro" value="/ro/plugins">
 										Română
 									</option>
 								</select>
@@ -320,7 +320,7 @@ const UniversalNavbarFooter = () => {
 								<li>
 									<a href="https://twitter.com/wordpressdotcom" title="WordPress.com on Twitter">
 										<span className="lp-hidden">{ translate( 'WordPress.com on Twitter' ) }</span>
-										<SocialLogo size={ 24 } icon="twitter" className="lp-icon" />
+										<SocialLogo size={ 24 } icon="twitter-alt" className="lp-icon" />
 									</a>
 								</li>
 								<li>

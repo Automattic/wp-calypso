@@ -12,7 +12,6 @@ $lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto
 }
 
 .lpc-footer-automattic-nav {
-	padding: 1.25rem;
 	@include text-16;
 	font-family: $lp-font-stack-default;
 	background: #fff;
@@ -22,11 +21,10 @@ $lp-font-stack-default: -apple-system, "BlinkMacSystemFont", "Segoe UI", "Roboto
 
 .lp-icon__custom-automattic-footer {
 	display: inline-block;
-	height: 12px;
 	margin: 0 0.15em 0 0.1em;
 	position: relative;
 	top: 1px;
-	vertical-align: baseline;
+	vertical-align: text-bottom;
 }
 
 .lpc-footer-nav-wrapper,
