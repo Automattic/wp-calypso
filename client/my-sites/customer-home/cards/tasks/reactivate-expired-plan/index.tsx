@@ -31,7 +31,7 @@ export const ReactivateExpiredPlan = () => {
 			) }
 			timing={ 1 }
 			taskId={ TASK_REACTIVATE_EXPIRED_PLAN }
-			actionText={ translate( 'Restore plan' ) }
+			actionText={ translate( 'Purchase plan' ) }
 			illustration={ expiredIllustration }
 			actionUrl={ `/plans/${ siteSlug }` }
 		/>
