@@ -54,6 +54,9 @@ function WelcomeTour() {
 		return new URLSearchParams( document.location.search ).has( 'welcome-tour-next' );
 	};
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore Until `@types/wordpress__editor` (which has `@types/wordpress__core-data` as a dependency) can be upgraded to a version that includes `getCurrentTheme`
+	// the function has existed for many years, and works as expected on wpcom and atomic
 	const currentTheme = useSelect( ( select ) => select( 'core' ).getCurrentTheme() );
 	const themeName = currentTheme?.name?.raw?.toLowerCase() ?? null;
 
