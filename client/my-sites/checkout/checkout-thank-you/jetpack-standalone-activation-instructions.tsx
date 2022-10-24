@@ -4,13 +4,15 @@ import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import JetpackInstructionList from './jetpack-instruction-list';
+import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';
 import { getWPORGPluginLink } from './utils';
 
 interface Props {
 	product: SelectorProduct;
+	receiptId: number;
 }
 
-const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product } ) => {
+const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, receiptId } ) => {
 	const translate = useTranslate();
 
 	const wporgPluginLink = getWPORGPluginLink( product.productSlug );
@@ -37,8 +39,11 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 	);
 
 	return (
-		<>
+		<div className="jetpack-standalone-activation-instructions">
 			<JetpackInstructionList items={ items } />
+
+			<JetpackLicenseKeyClipboard productSlug={ product.productSlug } receiptId={ receiptId } />
+
 			<p>
 				<ExternalLink
 					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
@@ -49,7 +54,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 					} ) }
 				</ExternalLink>
 			</p>
-		</>
+		</div>
 	);
 };
 
