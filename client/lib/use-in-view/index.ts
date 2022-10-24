@@ -28,8 +28,8 @@ export function useInView< T extends Element >( oneTimeCallback: () => void ): R
 			}
 
 			oneTimeCallback();
-
 			viewedRef.current = true;
+			observerRef.current?.disconnect?.();
 		};
 
 		observerRef.current = new IntersectionObserver( handler, {
@@ -39,7 +39,12 @@ export function useInView< T extends Element >( oneTimeCallback: () => void ): R
 		observerRef.current.observe( elementRef.current );
 
 		// When the effect is dismounted, stop observing
-		return () => observerRef.current?.disconnect?.();
+		return () => {
+			observerRef.current?.disconnect?.();
+			if ( ! viewedRef.current ) {
+				observerRef.current = undefined;
+			}
+		};
 	}, [ oneTimeCallback ] );
 
 	return elementRef;
