@@ -26,7 +26,7 @@ export const useHelpSearchQuery = (
 				  } )
 				: apiFetch( {
 						global: true,
-						path: `/wpcom/v2/help-center/search?query=${ search }&locale=${ locale }`,
+						path: `/help-center/search?query=${ search }&locale=${ locale }`,
 				  } as APIFetchOptions ),
 		{
 			onSuccess: async ( data ) => {
@@ -41,7 +41,7 @@ export const useHelpSearchQuery = (
 								  } )
 								: await apiFetch( {
 										global: true,
-										path: `/wpcom/v2/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
+										path: `/help-center/fetch-post?blog_id=${ result.blog_id }&post_id=${ result.post_id }`,
 								  } as APIFetchOptions );
 							return { ...result, content: article.content };
 						} )

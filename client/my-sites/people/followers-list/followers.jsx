@@ -122,6 +122,9 @@ class Followers extends Component {
 		}
 
 		let emptyTitle;
+		const site = this.props.site;
+		const isSiteOnFreePlan = site && site.plan.is_free;
+
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
 				if ( this.props.includeSubscriberImporter ) {
@@ -135,6 +138,7 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
+									isSiteOnFreePlan={ isSiteOnFreePlan }
 									flowName="people"
 									showSubtitle={ true }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
