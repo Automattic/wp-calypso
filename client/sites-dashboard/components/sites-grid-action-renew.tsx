@@ -45,8 +45,8 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 		>
 			<span ref={ ref }>
 				{
-					/* translators: %s - the plan's product name */
-					sprintf( __( '%s - Expired' ), site.plan?.product_name_short )
+					/* translators: %s - the plan's product name, such as Business or Pro. */
+					sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
 				}
 			</span>
 		</SitesGridAction>
