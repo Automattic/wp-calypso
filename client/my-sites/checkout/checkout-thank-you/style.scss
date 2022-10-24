@@ -836,6 +836,8 @@
 }
 
 .jetpack-instruction-list__item {
+	display: flex;
+	flex-direction: row;
 	margin-bottom: 1.5rem;
 
 	&::before {
@@ -856,4 +858,8 @@
 
 		font-weight: 700;
 	}
+}
+
+.jetpack-instruction-list__item .gridicon {
+	margin-bottom: -3px;
 }
