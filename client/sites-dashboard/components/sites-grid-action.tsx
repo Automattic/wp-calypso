@@ -35,7 +35,7 @@ const CONTENT = css( {
 	marginRight: 16,
 	'.gridicon': {
 		color: 'var(--color-site-grid-action-icon)',
-		marginRight: 16,
+		marginRight: 4,
 		flexShrink: 0,
 	},
 } );
