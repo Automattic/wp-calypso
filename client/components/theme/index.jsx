@@ -317,7 +317,12 @@ export class Theme extends Component {
 		return (
 			<>
 				{ this.props.softLaunched && (
-					<div className="theme__info-soft-launched-banner">{ translate( 'Soft Launched' ) }</div>
+					<div className="theme__info-soft-launched">
+						<div className="theme__info-soft-launched-banner">{ translate( 'Soft Launched' ) }</div>
+						<div className="theme__info-soft-launched-tooltip">
+							{ translate( 'This theme is only visible to Automattic employees.' ) }
+						</div>
+					</div>
 				) }
 			</>
 		);
