@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -23,7 +24,11 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	return (
 		<Button
 			primary
-			href={ `${ onboardingUrl() }?ref=calypso-selector&source=my-home&siteSlug=${ siteSlug }` }
+			href={ addQueryArgs( onboardingUrl(), {
+				ref: 'calypso-selector',
+				source: 'my-home',
+				siteSlug,
+			} ) }
 			onClick={ recordAddNewSite }
 		>
 			{ translate( 'Add new site' ) }
