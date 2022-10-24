@@ -9,6 +9,7 @@ import titlecase from 'to-title-case';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
@@ -125,8 +126,15 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		// Set up for FixedNavigationHeader.
+		const domain = this.props.context?.path.split( '/' ).pop();
+		const backLabel = translate( 'Traffic' );
+		const backLink = '/stats/day/' + ( domain || '' );
+		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const showHeaderCake = false;
+
 		return (
-			<Main wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -134,14 +142,17 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<HeaderCake
-					onClick={ this.goBack }
-					actionIcon={ showViewLink ? 'visible' : null }
-					actionText={ showViewLink ? actionLabel : null }
-					actionOnClick={ showViewLink ? this.openPreview : null }
-				>
-					{ title }
-				</HeaderCake>
+				<FixedNavigationHeader navigationItems={ navigationItems } />
+				{ showHeaderCake && (
+					<HeaderCake
+						onClick={ this.goBack }
+						actionIcon={ showViewLink ? 'visible' : null }
+						actionText={ showViewLink ? actionLabel : null }
+						actionOnClick={ showViewLink ? this.openPreview : null }
+					>
+						{ title }
+					</HeaderCake>
+				) }
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
