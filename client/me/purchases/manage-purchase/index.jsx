@@ -82,7 +82,7 @@ import { disableAutoRenew, cancelAndRefundPurchase } from 'calypso/lib/purchases
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
-import { PreCancelationDialog } from 'calypso/me/purchases/pre-cancelation-dialog';
+import { PreCancellationDialog } from 'calypso/me/purchases/pre-cancellation-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
@@ -565,7 +565,7 @@ class ManagePurchase extends Component {
 			}
 
 			return (
-				<PreCancelationDialog
+				<PreCancellationDialog
 					isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
 					closeDialog={ this.closeDialog }
 					removePlan={ actionFunction }
@@ -778,7 +778,7 @@ class ManagePurchase extends Component {
 
 			if ( isSubscription( purchase ) ) {
 				if (
-					config( 'pre_cancelation_modal_enabled' ) &&
+					config.isEnabled( 'pre-cancellation-modal' ) &&
 					isPlan( purchase ) &&
 					! isJetpackPlan( purchase ) &&
 					! isJetpackProduct( purchase ) &&

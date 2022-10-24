@@ -79,6 +79,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"post-editor/checkout-overlay": true,
+		"pre-cancellation-modal": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,

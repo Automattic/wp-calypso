@@ -39,7 +39,7 @@ import { receiveDeletedSite } from 'calypso/state/sites/actions';
 import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
-import { PreCancelationDialog } from '../pre-cancelation-dialog';
+import { PreCancellationDialog } from '../pre-cancellation-dialog';
 import { isDataLoading } from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
 
@@ -74,7 +74,7 @@ class RemovePurchase extends Component {
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
-		isShowingPreCancelationDialog: false,
+		isShowingPreCancellationDialog: false,
 	};
 
 	closeDialog = () => {
@@ -82,7 +82,7 @@ class RemovePurchase extends Component {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
-			isShowingPreCancelationDialog: false,
+			isShowingPreCancellationDialog: false,
 		} );
 	};
 
@@ -90,7 +90,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
-			isShowingPreCancelationDialog: false,
+			isShowingPreCancellationDialog: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -101,11 +101,11 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if ( this.shouldShowPreCancelationDialog() && ! this.state.isShowingPreCancelationDialog ) {
+		if ( this.shouldShowPreCancellationDialog() && ! this.state.isShowingPreCancellationDialog ) {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancelationDialog: true,
+				isShowingPreCancellationDialog: true,
 				isDialogVisible: false,
 			} );
 		} else if (
@@ -115,7 +115,7 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: true,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancelationDialog: false,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: false,
 			} );
 		} else if (
@@ -125,14 +125,14 @@ class RemovePurchase extends Component {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: true,
-				isShowingPreCancelationDialog: false,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: false,
 			} );
 		} else {
 			this.setState( {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
-				isShowingPreCancelationDialog: false,
+				isShowingPreCancellationDialog: false,
 				isDialogVisible: true,
 			} );
 		}
@@ -230,17 +230,17 @@ class RemovePurchase extends Component {
 		);
 	}
 
-	shouldShowPreCancelationDialog() {
+	shouldShowPreCancellationDialog() {
 		const { purchase } = this.props;
 		return (
-			config( 'pre_cancelation_modal_enabled' ) &&
+			config.isEnabled( 'pre-cancellation-modal' ) &&
 			isPlan( purchase ) &&
 			! isJetpackPlan( purchase ) &&
 			! isGSuiteOrGoogleWorkspace( purchase )
 		);
 	}
 
-	renderPreCancelationDialog() {
+	renderPreCancellationDialog() {
 		const { site, purchase, primaryDomain } = this.props;
 		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
 
@@ -253,8 +253,8 @@ class RemovePurchase extends Component {
 		}
 
 		return (
-			<PreCancelationDialog
-				isDialogVisible={ this.state.isShowingPreCancelationDialog }
+			<PreCancellationDialog
+				isDialogVisible={ this.state.isShowingPreCancellationDialog }
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
@@ -409,8 +409,8 @@ class RemovePurchase extends Component {
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
 		const getWarningDialog = () => {
-			if ( this.shouldShowPreCancelationDialog() ) {
-				return this.renderPreCancelationDialog();
+			if ( this.shouldShowPreCancellationDialog() ) {
+				return this.renderPreCancellationDialog();
 			}
 
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {

@@ -5,7 +5,7 @@ import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import getPlanFeatures from './get-plan-features';
 import './style.scss';
 
-interface PreCancelationDialogProps {
+interface PreCancellationDialogProps {
 	closeDialog: () => void;
 	removePlan: () => void;
 	isDialogVisible: boolean;
@@ -18,7 +18,7 @@ interface PreCancelationDialogProps {
 	wpcomURL: string;
 }
 
-export const PreCancelationDialog = ( {
+export const PreCancellationDialog = ( {
 	closeDialog,
 	removePlan,
 	isDialogVisible,
@@ -28,7 +28,7 @@ export const PreCancelationDialog = ( {
 	isAutoRenewing,
 	primaryDomain,
 	wpcomURL,
-}: PreCancelationDialogProps ) => {
+}: PreCancellationDialogProps ) => {
 	const translate = useTranslate();
 
 	/**
