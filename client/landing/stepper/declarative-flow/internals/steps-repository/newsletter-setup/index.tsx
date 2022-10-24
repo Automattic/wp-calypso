@@ -13,7 +13,7 @@ import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 import './style.scss';
 
-const defaultAccentColor = {
+export const defaultAccentColor = {
 	hex: '#1D39EB',
 	rgb: { r: 29, g: 57, b: 235 },
 	default: true,

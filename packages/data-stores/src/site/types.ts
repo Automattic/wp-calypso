@@ -72,6 +72,12 @@ export interface CreateSiteParams {
 	};
 }
 
+export interface P2ThumbnailElements {
+	color_link: string;
+	color_sidebar_background: string;
+	header_image: string | null;
+}
+
 export interface SiteDetailsPlan {
 	product_id: number;
 	product_slug: string;
@@ -113,6 +119,7 @@ export interface SiteDetails {
 	logo: { id: string; sizes: string[]; url: string };
 	name: string | undefined;
 	options: SiteDetailsOptions;
+	p2_thumbnail_elements?: P2ThumbnailElements | null;
 	plan?: SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
 	single_user_site?: boolean;
@@ -458,5 +465,4 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
-	page_template?: string;
 }

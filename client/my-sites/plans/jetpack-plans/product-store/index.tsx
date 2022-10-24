@@ -38,7 +38,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	const [ currentView, setCurrentView ] = useState< ViewType >( () => {
 		return urlQueryArgs?.[ TAB_QUERY_PARAM ] && TABS.includes( urlQueryArgs[ TAB_QUERY_PARAM ] )
 			? urlQueryArgs[ TAB_QUERY_PARAM ]
-			: TABS[ 0 ];
+			: TABS[ 1 ];
 	} );
 
 	const storeItemInfo = useStoreItemInfo( {

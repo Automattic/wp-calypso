@@ -17,6 +17,7 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import isEligibleForSubscriberImporter from 'calypso/state/selectors/is-eligible-for-subscriber-importer';
 import InviteButton from '../invite-button';
 
@@ -121,6 +122,9 @@ class Followers extends Component {
 		}
 
 		let emptyTitle;
+		const site = this.props.site;
+		const isSiteOnFreePlan = site && site.plan.is_free;
+
 		if ( this.siteHasNoFollowers() ) {
 			if ( 'email' === this.props.type ) {
 				if ( this.props.includeSubscriberImporter ) {
@@ -134,11 +138,19 @@ class Followers extends Component {
 							>
 								<AddSubscriberForm
 									siteId={ this.props.site.ID }
+									isSiteOnFreePlan={ isSiteOnFreePlan }
 									flowName="people"
+									showSubtitle={ true }
 									showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+									showFormManualListLabel={ true }
 									recordTracksEvent={ recordTracksEvent }
 									onImportFinished={ () => {
 										this.props?.refetch?.();
+										this.props?.successNotice(
+											this.props.translate(
+												'Your subscriber list is being processed. Please check your email for status.'
+											)
+										);
 									} }
 								/>
 							</EmailVerificationGate>
@@ -261,4 +273,7 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps, { recordGoogleEvent } )( localize( Followers ) );
+export default connect( mapStateToProps, {
+	recordGoogleEvent,
+	successNotice,
+} )( localize( Followers ) );

@@ -102,6 +102,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	grid-template-areas:
 		"header header actions"
 		"content content actions";
+	grid-auto-rows: auto 1fr;
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		grid-template-areas:
@@ -109,7 +110,7 @@ body.is-section-plugins.theme-default.color-scheme {
 			"actions actions actions"
 			"content content content";
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		padding-top: 0;
+		padding-top: 20px;
 	}
 
 	.plugin-details__header {

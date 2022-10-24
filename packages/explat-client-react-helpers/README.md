@@ -46,7 +46,7 @@ if ( isLoadingExperimentAssignment ) {
 
 - Can use it on it's own, as much and wherever you would like (but it won't work in SSR)
 - Won't obey TTL - will retain the same experience for the life of the component.
-- Tip: Can use `loadExperiment('experiment_name')` to prefetch an experiment.
+- Tip: Can use `loadExperimentAssignment('experiment_name')` to prefetch an experiment.
 
 ### ExperimentOptions
 

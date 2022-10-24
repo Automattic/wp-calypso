@@ -5,9 +5,6 @@ import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-// Import translatable strings so that translations get associated with the module and loaded properly.
-import './string';
-
 declare global {
 	interface Window {
 		BlazePress?: {
@@ -25,7 +22,9 @@ declare global {
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
 				showDialog?: boolean;
+				setShowCancelButton?: ( show: boolean ) => void;
 			} ) => void;
+			strings: any;
 		};
 	}
 }
@@ -38,6 +37,10 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	const src =
 		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
 	await loadScript( src );
+	// Load the strings so that translations get associated with the module and loaded properly.
+	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
+	// in order to ensure that translate calls are not removed from the production build.
+	await import( './string' );
 }
 
 export async function showDSP(
@@ -46,7 +49,8 @@ export async function showDSP(
 	postId: number | string,
 	onClose: () => void,
 	translateFn: ( value: string, options?: any ) => string,
-	domNodeOrId?: HTMLElement | string | null
+	domNodeOrId?: HTMLElement | string | null,
+	setShowCancelButton?: ( show: boolean ) => void
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -65,6 +69,7 @@ export async function showDSP(
 				onClose: onClose,
 				translateFn: translateFn,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
+				setShowCancelButton: setShowCancelButton,
 			} );
 		} else {
 			reject( false );

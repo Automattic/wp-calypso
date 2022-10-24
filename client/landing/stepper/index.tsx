@@ -34,6 +34,7 @@ import { FlowRenderer } from './declarative-flow/internals';
 import { linkInBio } from './declarative-flow/link-in-bio';
 import { linkInBioPostSetup } from './declarative-flow/link-in-bio-post-setup';
 import { newsletter } from './declarative-flow/newsletter';
+import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
@@ -72,6 +73,7 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
+	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
 		: null,

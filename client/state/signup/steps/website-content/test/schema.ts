@@ -3,9 +3,7 @@ import { initialState, schema } from '../schema';
 
 const initialTestState = {
 	currentIndex: 0,
-
 	websiteContent: {
-		siteLogoUrl: '',
 		pages: [
 			{
 				id: 'Home',
@@ -38,7 +36,11 @@ const initialTestState = {
 				],
 			},
 		],
+
+		siteLogoSection: { siteLogoUrl: '' },
+		feedbackSection: { genericFeedback: '' },
 	},
+	imageUploadStates: {},
 };
 
 describe( 'schema', () => {
@@ -48,7 +50,7 @@ describe( 'schema', () => {
 		} ).not.toThrow();
 	} );
 
-	test( 'Empty schema should be invalid', () => {
+	test( 'Empty object should be invalid', () => {
 		const isValidSchema = validator( schema )( {} );
 		expect( isValidSchema ).toBe( false );
 	} );

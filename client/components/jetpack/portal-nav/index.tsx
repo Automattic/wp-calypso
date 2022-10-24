@@ -5,10 +5,10 @@ import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetp
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import { dashboardPath } from 'calypso/lib/jetpack/paths';
 import { isSectionNameEnabled } from 'calypso/sections-filter';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { jetpackDashboardRedirectLink } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import {
 	hasJetpackPartnerAccess as hasJetpackPartnerAccessSelector,
 	showAgencyDashboard,
@@ -29,7 +29,6 @@ export default function PortalNav( { className = '' }: Props ) {
 	const translate = useTranslate();
 	const hasJetpackPartnerAccess = useSelector( hasJetpackPartnerAccessSelector );
 	const isPrimarySiteJetpackSite = useSelector( getPrimarySiteIsJetpack );
-	const dashboardLink = useSelector( jetpackDashboardRedirectLink );
 	const currentUser = useSelector( getCurrentUser );
 	const currentRoute = useSelector( getCurrentRoute );
 	const showDashboard = useSelector( showAgencyDashboard );
@@ -43,6 +42,8 @@ export default function PortalNav( { className = '' }: Props ) {
 	if ( ! isSectionNameEnabled( 'jetpack-cloud-partner-portal' ) ) {
 		return null;
 	}
+
+	const dashboardLink = dashboardPath();
 
 	const onNavItemClick = ( menuItem: string ) => {
 		dispatch(

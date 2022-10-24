@@ -59,6 +59,10 @@
 	.plugin-details-cta__install-button {
 		width: 100%;
 		padding: 12px 16px;
+
+		.gridicon {
+			margin: 0 0 0 5px;
+		}
 	}
 }
 
@@ -80,8 +84,20 @@
 	}
 }
 
+.plugin-details-cta__upgrade-required-card {
+	padding: 2em;
+	background-color: var(--color-surface);
+	display: flex;
+	flex-direction: column;
+
+	.button {
+		margin-top: 1rem;
+		padding: 12px 0;
+	}
+}
 .plugin-details-cta__upgrade-required {
 	display: flex;
+	align-items: center;
 
 	.plugin-details-cta__upgrade-required-icon {
 		color: var(--studio-orange-40);
@@ -141,3 +157,4 @@
 		@extend %placeholder;
 	}
 }
+
