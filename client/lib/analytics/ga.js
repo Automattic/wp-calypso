@@ -2,10 +2,10 @@ import debug from 'debug';
 import {
 	getGoogleAnalyticsDefaultConfig,
 	setupGoogleAnalyticsGtag,
-	isGoogleAnalyticsAllowed,
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
 } from 'calypso/lib/analytics/ad-tracking';
+import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 
@@ -84,13 +84,13 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recor
  * This method will display debug output if Google Analytics is suppresed, otherwise it will
  * initialize and call the Google Analytics function it is passed.
  *
- * @see isGoogleAnalyticsAllowed
+ * @see mayWeTrackByTracker
  * @param  {Function} func Google Analytics tracking function
  * @returns {Function} Wrapped function
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function ( ...args ) {
-		if ( ! isGoogleAnalyticsAllowed() ) {
+		if ( ! mayWeTrackByTracker( AdTracker.GA ) ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;
 		}

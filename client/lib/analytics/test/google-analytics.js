@@ -25,8 +25,11 @@ jest.mock( '@automattic/calypso-config', () => {
 } );
 
 jest.mock( 'calypso/lib/analytics/utils', () => ( {
-	isGoogleAnalyticsAllowed: () => true,
 	isPiiUrl: () => false,
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
+	mayWeTrackByTracker: () => false,
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {

@@ -1,6 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
 import { TRACKING_IDS } from './constants';
 import * as GA4 from './google-analytics-4';
 
@@ -15,26 +14,6 @@ export function setupGoogleAnalyticsGtag( params ) {
 	if ( isJetpackCloud() ) {
 		window.gtag( 'config', TRACKING_IDS.jetpackGoogleAnalyticsGtag, params );
 	}
-}
-
-// TODO: Rewrite the js docs
-/**
- * Returns whether Google Analytics is allowed.
- *
- * This function returns false if:
- *
- * 1. `isGoogleAnalyticsEnabled` is `true` TODO: Change
- * 2. `ad-tracking` feature is disabled
- * 3. `Do Not Track` is enabled
- * 4. the current user could be in the GDPR zone and hasn't consented to tracking
- * 5. `document.location.href` may contain personally identifiable information
- *
- * Note that getDoNotTrack() and isPiiUrl() can change at any time which is why we do not cache them.
- *
- * @returns {boolean} true if GA is allowed.
- */
-export function isGoogleAnalyticsAllowed() {
-	return mayWeTrackByTracker( AdTracker.GA );
 }
 
 /**
