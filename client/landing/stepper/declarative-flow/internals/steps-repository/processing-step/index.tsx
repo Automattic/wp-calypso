@@ -43,27 +43,29 @@ const ProcessingStep: Step = function ( props ) {
 	const captureFlowException = useCaptureFlowException( 'ProcessingStep' );
 
 	useEffect( () => {
-		( async () => {
-			if ( typeof action === 'function' ) {
-				try {
-					const destination = await action();
-					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
-					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
-					// that is frozen from before we called action().
-					// We can now get the most up to date values from hooks inside the flow creating submit(),
-					// including the values that were updated during the action() running.
-					setDestinationState( destination );
-					setHasActionSuccessfullyRun( true );
-				} catch ( e ) {
-					// eslint-disable-next-line no-console
-					console.error( 'ProcessingStep failed:', e );
-					captureFlowException( e );
-					submit?.( {}, ProcessingResult.FAILURE );
+		if ( action ) {
+			( async () => {
+				if ( typeof action === 'function' ) {
+					try {
+						const destination = await action();
+						// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+						// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+						// that is frozen from before we called action().
+						// We can now get the most up to date values from hooks inside the flow creating submit(),
+						// including the values that were updated during the action() running.
+						setDestinationState( destination );
+						setHasActionSuccessfullyRun( true );
+					} catch ( e ) {
+						// eslint-disable-next-line no-console
+						console.error( 'ProcessingStep failed:', e );
+						captureFlowException( e );
+						submit?.( {}, ProcessingResult.FAILURE );
+					}
+				} else {
+					submit?.( {}, ProcessingResult.NO_ACTION );
 				}
-			} else {
-				submit?.( {}, ProcessingResult.NO_ACTION );
-			}
-		} )();
+			} )();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
