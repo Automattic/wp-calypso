@@ -405,7 +405,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2140,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY ]: {
@@ -415,7 +415,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2144,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY ]: {
@@ -425,7 +425,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2148,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY ]: {
@@ -435,7 +435,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2141,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY ]: {
@@ -445,7 +445,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2145,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY ]: {
@@ -455,7 +455,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2121,
+		getProductId: () => 2149,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY,
 	},
 };
