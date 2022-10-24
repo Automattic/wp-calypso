@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
@@ -17,21 +17,20 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 
 	const items = useMemo(
 		() => [
-			translate( 'Login to an existing Wordpress site as an administrator.' ),
-			translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
+			translate( '{{link}}Download Jetpack %(pluginName)s {{icon/}} {{/link}}', {
+				components: {
+					strong: <strong />,
+					link: <Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />,
+					icon: <Gridicon icon="external" size={ 16 } />,
+				},
+				args: { pluginName: product.shortName },
+			} ),
+			translate( 'Install and activate the plugin' ),
+			translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}', {
 				components: { strong: <strong /> },
 			} ),
 			translate(
-				'Search for {{link}}{{strong}}Jetpack %(pluginName)s{{/strong}}{{/link}}, install and activate.',
-				{
-					components: {
-						strong: <strong />,
-						link: (
-							<Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />
-						),
-					},
-					args: { pluginName: product.shortName },
-				}
+				'Click the “activate license key” (at the bottom of the page) and enter the key below.'
 			),
 		],
 		[ translate, product, wporgPluginLink ]
