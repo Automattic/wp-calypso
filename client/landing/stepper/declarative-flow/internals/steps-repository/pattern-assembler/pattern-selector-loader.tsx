@@ -17,19 +17,19 @@ const PatternSelectorLoader = ( {
 	return (
 		<>
 			<PatternSelector
-				show={ showPatternSelectorType === 'header' }
+				show={ true || showPatternSelectorType === 'header' }
 				patterns={ headerPatterns }
 				onSelect={ onSelect }
 				title={ translate( 'Choose a header' ) }
 			/>
 			<PatternSelector
-				show={ showPatternSelectorType === 'footer' }
+				show={ true || showPatternSelectorType === 'footer' }
 				patterns={ footerPatterns }
 				onSelect={ onSelect }
 				title={ translate( 'Choose a footer' ) }
 			/>
 			<PatternSelector
-				show={ showPatternSelectorType === 'section' }
+				show={ true || showPatternSelectorType === 'section' }
 				patterns={ sectionPatterns }
 				onSelect={ onSelect }
 				title={ translate( 'Choose a section' ) }
