@@ -5,6 +5,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import HeaderCake from 'calypso/components/header-cake';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -48,6 +49,16 @@ class StatsSummary extends Component {
 		let summaryView;
 		let chartTitle;
 		let barChart;
+
+		// Navigation settings. One of the following, depending on the summary view.
+		// Traffic => /stats/day/
+		// Insights => /stats/insights/
+		const localizedTabNames = {
+			traffic: translate( 'Traffic' ),
+			insights: translate( 'Insights' ),
+		};
+		let backLabel = localizedTabNames.traffic;
+		let backLink = `/stats/day/`;
 
 		const { period, endOf } = this.props.period;
 		const query = {
@@ -222,22 +233,34 @@ class StatsSummary extends Component {
 				break;
 			case 'annualstats':
 				title = translate( 'Annual site stats' );
+				backLabel = localizedTabNames.insights;
+				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 		}
+
+		// Append the site domain and period as needed.
+		const domain = this.props.context?.path.split( '/' ).pop();
+		if ( domain.length > 0 ) {
+			backLink += domain;
+		}
+		// Set up for FixedNavigationHeader.
+		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const showHeaderCake = false;
 
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
 		return (
-			<Main wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
+				<FixedNavigationHeader navigationItems={ navigationItems } />
 				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
+					{ showHeaderCake && <HeaderCake onClick={ this.goBack }>{ title }</HeaderCake> }
 					{ summaryViews }
 				</div>
 				<JetpackColophon />
