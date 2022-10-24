@@ -1,25 +1,53 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import useUserLicenseByReceiptQuery from 'calypso/data/jetpack-licensing/use-user-license-by-receipt-query';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-export interface JetpackLicenseKeyClipboardProps {
-	copied: boolean;
-	disabled: boolean;
-	licenseKey: string;
-	loading: boolean;
-	onCopy?: () => void;
+export interface JetpackLicenseKeyProps {
+	productSlug: string | 'no_product';
+	receiptId: number;
 }
 
-const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyClipboardProps > = ( {
-	copied,
-	disabled,
-	licenseKey,
-	loading,
-	onCopy,
+const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyProps > = ( {
+	productSlug,
+	receiptId,
 } ) => {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
+
+	const [ copied, setCopied ] = useState( false );
+
+	const {
+		data: dataLicense,
+		isError: isErrorFetchingLicense,
+		isLoading: isLoadingLicense,
+	} = useUserLicenseByReceiptQuery( receiptId );
+
+	const licenseKey =
+		! isErrorFetchingLicense && ! isLoadingLicense && dataLicense
+			? dataLicense[ 0 ].licenseKey
+			: '';
+
+	const onCopy = useCallback( () => {
+		setCopied( true );
+		dispatch(
+			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_license_key_copy', {
+				product_slug: productSlug,
+				license_key: licenseKey,
+			} )
+		);
+	}, [ dispatch, licenseKey, productSlug ] );
+
+	useEffect( () => {
+		if ( copied ) {
+			const confirmationTimeout = setTimeout( () => setCopied( false ), 4000 );
+			return () => clearTimeout( confirmationTimeout );
+		}
+	}, [ copied ] );
 
 	return (
 		<>
@@ -30,7 +58,7 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyClipboardProps > = 
 				<div className="jetpack-license-key-clipboard__container">
 					<FormTextInput
 						className={ classnames( 'jetpack-license-key-clipboard__input', {
-							'is-loading': loading,
+							'is-loading': isLoadingLicense,
 						} ) }
 						value={ licenseKey }
 						readOnly
@@ -41,7 +69,7 @@ const JetpackLicenseKeyClipboard: React.FC< JetpackLicenseKeyClipboardProps > = 
 						onCopy={ onCopy }
 						compact
 						primary
-						disabled={ disabled || loading }
+						disabled={ isErrorFetchingLicense || isLoadingLicense }
 					>
 						{ copied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
 					</ClipboardButton>
