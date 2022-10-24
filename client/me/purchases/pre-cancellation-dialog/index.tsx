@@ -32,7 +32,7 @@ export const PreCancellationDialog = ( {
 	const translate = useTranslate();
 
 	/**
-	 * Istantiate site's plan variables.
+	 * Instantiate site's plan variables.
 	 */
 	const productSlug = site.plan?.product_slug;
 	const planLabel = site.plan?.product_name_short;
