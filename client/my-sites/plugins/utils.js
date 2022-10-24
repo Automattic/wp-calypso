@@ -149,3 +149,9 @@ export function handleUpdatePlugins( plugins, updateAction, pluginsOnSites ) {
 		sites: [ ...updatedSites ].join( ',' ),
 	} );
 }
+
+export function useServerEffect( fn ) {
+	if ( 'undefined' === typeof window ) {
+		fn();
+	}
+}

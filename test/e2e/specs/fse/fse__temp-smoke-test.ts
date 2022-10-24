@@ -10,6 +10,7 @@ import {
 	TestAccount,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	FullSiteEditorPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -24,10 +25,10 @@ declare const browser: Browser;
  */
 describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
 	let page: Page;
-	const accountName = getTestAccountByFeature( {
-		...envToFeatureKey( envVariables ),
-		variant: 'siteEditor',
-	} );
+	let fullSiteEditorPage: FullSiteEditorPage;
+
+	const features = envToFeatureKey( envVariables );
+	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
 	beforeAll( async () => {
 		page = await browser.newPage();
@@ -52,21 +53,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 		// This should ensure the editor hasn't done a WSoD.
 		await page.waitForLoadState( 'networkidle' );
 
-		// In some cases (about ~7% going by the failure rate), the editor that's loaded is
-		// the equivalent of the Atomic editor (without iframes).
-		// Thus to eliminate flakiness we must account for both iframed and non-iframed editors.
-		if ( page.url().includes( 'wp-admin' ) ) {
-			const editorLocator = page.locator( 'div[id="site-editor"]' );
-			await editorLocator.waitFor();
-
-			const editorTopBarLocator = page.locator( '[aria-label="Editor top bar"]' );
-			await editorTopBarLocator.waitFor();
-		} else {
-			const topFrameLocator = page.frameLocator( '.calypsoify.is-iframe iframe.is-loaded' );
-			await topFrameLocator.locator( '[aria-label="Editor top bar"]' ).waitFor();
-
-			const editorFrameLocator = topFrameLocator.frameLocator( 'iframe[title="Editor canvas"]' );
-			await editorFrameLocator.locator( '.edit-site-block-editor__block-list' ).waitFor();
-		}
+		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );
