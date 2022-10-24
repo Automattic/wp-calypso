@@ -36,13 +36,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			true
 		);
 
-		await addPlanToCart(
-			site?.siteSlug as string,
-			{ product_slug: planCartItem },
-			flow as string,
-			true,
-			theme
-		);
+		await addPlanToCart( site?.siteSlug as string, planCartItem, flow as string, true, theme );
 
 		return {
 			siteSlug: site?.siteSlug,
