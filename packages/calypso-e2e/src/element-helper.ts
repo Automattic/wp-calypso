@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
 const navTabParent = 'div.section-nav';
@@ -159,26 +159,40 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
  *
  * @example
  * await Promise.all( [
- *   waitForMutations( page, '.foobars' ),
- *   page.click( '.load-foobars' ),
+ *   waitForMutations( page, '.foobars-wrapper' ),
+ *   page.click( 'button.load-foobars' ),
  * ] );
+ * const foobarsText = await page.innerText( '.foobars' );
  * @param {Page} page Page object
- * @param {string} targetSelector Observer target selector
+ * @param {string} selector Observer target selector
+ * @param {object} options Observer options
  */
-export async function waitForMutations( page: Page, targetSelector: string ): Promise< void > {
-	const parentHandle = await page.waitForSelector( targetSelector );
+export async function waitForMutations(
+	page: Page | Frame,
+	selector: string,
+	options = {
+		attributes: true,
+		subtree: true,
+		childList: true,
+	}
+): Promise< void > {
+	const target = await page.waitForSelector( selector );
 
-	await page.evaluate( async ( targetElement ) => {
-		await new Promise( ( resolve ) => {
-			let timeout: NodeJS.Timeout;
-			const wait = () => {
-				clearTimeout( timeout );
-				timeout = setTimeout( resolve, 1000 );
-			};
-			const observer = new MutationObserver( wait );
-			const options = { attributes: true, subtree: true, childList: true };
+	await page.evaluate(
+		async ( args ) => {
+			await new Promise( ( resolve ) => {
+				const debounceResolve = () => {
+					let timer: NodeJS.Timeout;
+					return () => {
+						clearTimeout( timer );
+						timer = setTimeout( resolve, 1000 );
+					};
+				};
 
-			observer.observe( targetElement, options );
-		} );
-	}, parentHandle );
+				const observer = new MutationObserver( debounceResolve() );
+				observer.observe( args.target, args.options );
+			} );
+		},
+		{ target, options }
+	);
 }
