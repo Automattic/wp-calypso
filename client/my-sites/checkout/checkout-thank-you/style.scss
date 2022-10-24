@@ -747,29 +747,28 @@
 	margin-top: 0;
 }
 
-.licensing-thank-you-manual-activation-license-key__key {
+.jetpack-license-key-clipboard {
 	margin-top: 40px;
 }
 
-.licensing-thank-you-manual-activation-license-key__clipboard {
+.jetpack-license-key-clipboard__container {
 	display: flex;
-
 	margin-top: 8px;
+}
 
-	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
-		margin-right: 8px;
+.jetpack-license-key-clipboard__container .jetpack-license-key-clipboard__input.form-text-input {
+	margin-right: 8px;
 
-		background-color: var(--studio-gray-0);
+	background-color: var(--studio-gray-0);
 
-		border: none;
-	}
+	border: none;
 
-	.licensing-thank-you-manual-activation-license-key__input.form-text-input.is-loading {
+	&.is-loading {
 		@include placeholder( --color-neutral-20 );
 	}
 }
 
-.licensing-activation .licensing-thank-you-manual-activation-license-key__button.button {
+.licensing-activation .jetpack-license-key-clipboard__button.button {
 	margin-top: 0;
 	min-width: 100px;
 }

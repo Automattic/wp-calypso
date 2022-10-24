@@ -1,11 +1,8 @@
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import licensingActivationPluginBanner from 'calypso/assets/images/jetpack/licensing-activation-plugin-banner.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ClipboardButton from 'calypso/components/forms/clipboard-button';
-import FormTextInput from 'calypso/components/forms/form-text-input';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import useUserLicenseByReceiptQuery from 'calypso/data/jetpack-licensing/use-user-license-by-receipt-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -14,6 +11,7 @@ import {
 	isProductsListFetching as getIsProductListFetching,
 	getProductName,
 } from 'calypso/state/products-list/selectors';
+import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';
 
 interface Props {
 	productSlug: string | 'no_product';
@@ -92,30 +90,14 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 						}
 					) }
 				</p>
-				<div className="licensing-thank-you-manual-activation-license-key__key">
-					<label>
-						<strong>{ translate( 'Your license key' ) }</strong>
-					</label>
-					<div className="licensing-thank-you-manual-activation-license-key__clipboard">
-						<FormTextInput
-							className={ classnames( 'licensing-thank-you-manual-activation-license-key__input', {
-								'is-loading': isLoadingLicense,
-							} ) }
-							value={ licenseKey }
-							readOnly
-						/>
-						<ClipboardButton
-							className="licensing-thank-you-manual-activation-license-key__button"
-							text={ licenseKey }
-							onCopy={ onCopy }
-							compact
-							primary
-							disabled={ isErrorFetchingLicense || isLoadingLicense }
-						>
-							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy', { context: 'verb' } ) }
-						</ClipboardButton>
-					</div>
-				</div>
+
+				<JetpackLicenseKeyClipboard
+					copied={ isCopied }
+					disabled={ isErrorFetchingLicense || isLoadingLicense }
+					licenseKey={ licenseKey }
+					loading={ isLoadingLicense }
+					onCopy={ onCopy }
+				/>
 			</LicensingActivation>
 		</>
 	);
