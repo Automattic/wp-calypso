@@ -175,7 +175,7 @@ const PluginsBrowserListElement = ( props ) => {
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">text={ plugin.name }</div>
+					<div className="plugins-browser-item__title">{ plugin.name }</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
