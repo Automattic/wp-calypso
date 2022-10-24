@@ -57,7 +57,7 @@ const PatternPreviewAutoHeight = ( {
 			aria-hidden
 			tabIndex={ -1 }
 			style={ {
-				height,
+				height: height + 2,
 				top: verticalPadding / 2,
 			} }
 			src={ addQueryArgs( url, { calypso_token } ) }
