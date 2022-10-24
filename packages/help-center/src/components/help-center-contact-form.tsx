@@ -20,7 +20,6 @@ import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -159,7 +158,6 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
 	const email = useSelector( getCurrentUserEmail );
-	const { hasTranslation } = useI18n();
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -406,19 +404,11 @@ export const HelpCenterContactForm = () => {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if (
-			mode === 'CHAT' &&
-			showingSibylResults &&
-			( hasTranslation( 'Still chat with us' ) || locale === 'en' )
-		) {
+		if ( mode === 'CHAT' && showingSibylResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if (
-			mode === 'EMAIL' &&
-			showingSibylResults &&
-			( hasTranslation( 'Still email us' ) || locale === 'en' )
-		) {
+		if ( mode === 'EMAIL' && showingSibylResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -433,11 +423,7 @@ export const HelpCenterContactForm = () => {
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
 			<SibylArticles
-				title={
-					hasTranslation( 'These are some helpful articles' ) || locale === 'en'
-						? __( 'These are some helpful articles', __i18n_text_domain__ )
-						: ''
-				}
+				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
 				supportSite={ supportSite }
 				message={ message }
 				articleCanNavigateBack
