@@ -1,6 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { clone, cloneDeep } from 'lodash';
-import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -16,7 +15,7 @@ import './setup';
  * @returns {void}
  */
 export async function recordInCriteo( eventName, eventProps ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		debug( 'recordInCriteo: [Skipping] ad tracking is not allowed' );
 		return;
 	}
@@ -47,7 +46,7 @@ export async function recordInCriteo( eventName, eventProps ) {
  * Records in Criteo that the visitor viewed the plans page
  */
 export function recordPlansViewInCriteo() {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		return;
 	}
 
@@ -68,7 +67,7 @@ export function recordPlansViewInCriteo() {
  * @returns {void}
  */
 export function recordViewCheckoutInCriteo( cart ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		return;
 	}
 

@@ -1,10 +1,9 @@
-import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
-import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
-import { mayWeTrackCurrentUser, isPiiUrl } from './utils';
+import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
 
 const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 
@@ -39,10 +38,7 @@ function maybeAddFullStoryScript() {
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
-		getDoNotTrack() ||
-		isE2ETest() ||
-		isPiiUrl() ||
-		! mayWeTrackCurrentUser()
+		! mayWeTrackByTracker( AdTracker.FULLSTORY )
 	) {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );

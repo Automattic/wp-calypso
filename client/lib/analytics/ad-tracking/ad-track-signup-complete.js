@@ -1,11 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
-import {
-	costToUSD,
-	isAdTrackingAllowed,
-	refreshCountryCodeCookieGdpr,
-} from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker, AdTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import { debug, TRACKING_IDS, ICON_MEDIA_SIGNUP_PIXEL_URL } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -22,7 +18,7 @@ import './setup';
 export async function adTrackSignupComplete( { isNewUserSite } ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
 		debug( 'adTrackSignupComplete: [Skipping] ad tracking is disallowed' );
 		return;
 	}

@@ -1,10 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
-import {
-	costToUSD,
-	isAdTrackingAllowed,
-	refreshCountryCodeCookieGdpr,
-} from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker, AdTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
 import { splitWpcomJetpackCartInfo } from '../utils/split-wpcom-jetpack-cart-info';
 import {
@@ -38,7 +34,7 @@ import './setup';
 export async function recordOrder( cart, orderId ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
 		debug( 'recordOrder: [Skipping] ad tracking is not allowed' );
 		return;
 	}
@@ -163,7 +159,7 @@ export async function recordOrder( cart, orderId ) {
  * @returns {void}
  */
 function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.QUANTCAST ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.QUANTCAST ) ) {
 		return;
 	}
 
@@ -221,7 +217,7 @@ function recordOrderInQuantcast( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
 		return;
 	}
 
@@ -280,7 +276,7 @@ function recordOrderInFloodlight( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
 		return;
 	}
 
@@ -342,8 +338,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
 	// NOTE: `orderId` is not used at this time, but it could be useful in the near future.
 
-	// TODO: Is isAdTrackingAllowed necessary? how can we replace it?
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.BING ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.BING ) ) {
 		return;
 	}
 
@@ -387,7 +382,7 @@ function recordOrderInBing( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() && ! mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
 		debug( 'recordOrderInGoogleAds: skipping as ad tracking is disallowed' );
 		return;
 	}
@@ -429,7 +424,7 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 }
 
 function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! isAdTrackingAllowed() && ! mayWeTrackByTracker( AdTracker.GA_ENHANCED_ECOMMERCE ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.GA_ENHANCED_ECOMMERCE ) ) {
 		debug( 'recordOrderInGAEnhancedEcommerce: [Skipping] ad tracking is disallowed' );
 		return;
 	}
@@ -569,7 +564,7 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  * @returns {void}
  */
 function recordOrderInCriteo( cart, orderId ) {
-	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( ! mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		return;
 	}
 

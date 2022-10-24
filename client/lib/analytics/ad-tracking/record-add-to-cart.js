@@ -1,5 +1,5 @@
-import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker, AdTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -17,7 +17,7 @@ import './setup';
 export async function recordAddToCart( cartItem ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
 		debug( 'recordAddToCart: [Skipping] ad tracking is not allowed' );
 		return;
 	}

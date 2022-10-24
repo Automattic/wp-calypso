@@ -1,9 +1,7 @@
-import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import debug from 'debug';
-import { isE2ETest } from 'calypso/lib/e2e';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { mayWeTrackCurrentUser, isPiiUrl } from './utils';
+import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
@@ -13,10 +11,7 @@ export function addHotJarScript() {
 	if (
 		hotJarScriptLoaded ||
 		! config( 'hotjar_enabled' ) ||
-		isE2ETest() ||
-		getDoNotTrack() ||
-		isPiiUrl() ||
-		! mayWeTrackCurrentUser()
+		! mayWeTrackByTracker( AdTracker.HOTJAR )
 	) {
 		hotjarDebug( 'Not loading HotJar script' );
 		return;

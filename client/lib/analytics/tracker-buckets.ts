@@ -1,7 +1,8 @@
 import { getDoNotTrack } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { isPiiUrl, mayWeTrackCurrentUser } from 'calypso/lib/analytics/utils';
+import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
+import getTrackingPrefs from './utils/get-tracking-prefs';
 
 export enum AdTracker {
 	BING = 'bing',
@@ -26,23 +27,27 @@ export enum AdTracker {
 	ADROLL = 'adroll',
 }
 
-type BucketOption = 'essential' | 'analytics' | 'advertising' | null;
+export enum Bucket {
+	ESSENTIAL = 'essential',
+	ADVERTISING = 'advertising',
+	ANALYTICS = 'analytics',
+}
 
-export const AdTrackersBuckets: { [ key in AdTracker ]: BucketOption } = {
+export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Analytics trackers:
-	[ AdTracker.GA ]: 'analytics',
+	[ AdTracker.GA ]: Bucket.ANALYTICS,
 
 	// Advertising trackers:
-	[ AdTracker.GA_ENHANCED_ECOMMERCE ]: 'advertising',
-	[ AdTracker.FULLSTORY ]: 'advertising',
-	[ AdTracker.HOTJAR ]: 'advertising',
-	[ AdTracker.BING ]: 'advertising',
-	[ AdTracker.FLOODLIGHT ]: 'advertising',
-	[ AdTracker.GOOGLE_ADS ]: 'advertising',
-	[ AdTracker.OUTBRAIN ]: 'advertising',
-	[ AdTracker.PINTEREST ]: 'advertising',
-	[ AdTracker.TWITTER ]: 'advertising',
-	[ AdTracker.FACEBOOK ]: 'advertising',
+	[ AdTracker.GA_ENHANCED_ECOMMERCE ]: Bucket.ADVERTISING,
+	[ AdTracker.FULLSTORY ]: Bucket.ADVERTISING,
+	[ AdTracker.HOTJAR ]: Bucket.ADVERTISING,
+	[ AdTracker.BING ]: Bucket.ADVERTISING,
+	[ AdTracker.FLOODLIGHT ]: Bucket.ADVERTISING,
+	[ AdTracker.GOOGLE_ADS ]: Bucket.ADVERTISING,
+	[ AdTracker.OUTBRAIN ]: Bucket.ADVERTISING,
+	[ AdTracker.PINTEREST ]: Bucket.ADVERTISING,
+	[ AdTracker.TWITTER ]: Bucket.ADVERTISING,
+	[ AdTracker.FACEBOOK ]: Bucket.ADVERTISING,
 
 	// Disabled trackers:
 	[ AdTracker.QUANTCAST ]: null,
@@ -59,13 +64,24 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: BucketOption } = {
 export const mayWeTrackGeneral = () =>
 	! isE2ETest() && ! getDoNotTrack() && ! isPiiUrl() && config.isEnabled( 'ad-tracking' );
 
-export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	if ( ! mayWeTrackGeneral() ) {
 		return false;
 	}
 
-	const trackerBucket = AdTrackersBuckets[ tracker ];
-	return null !== trackerBucket && mayWeTrackCurrentUser( trackerBucket );
+	// Disable advertising trackers on specific urls
+	if ( 'advertising' === bucket && isUrlExcludedForPerformance() ) {
+		return false;
+	}
+
+	const prefs = getTrackingPrefs();
+	return prefs.ok && prefs.buckets[ bucket ];
+};
+
+export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
+	const bucket = AdTrackersBuckets[ tracker ];
+
+	return null !== bucket && mayWeTrackByBucket( bucket );
 };
 
 // TODO: isWpcomGoogleAdsGtagEnabled - decide how to split ( there is also Jetpack GAds )
