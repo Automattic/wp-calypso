@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useInView } from 'calypso/lib/use-in-view';
@@ -16,13 +17,15 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isSiteOwner = site.site_owner === userId;
 
-	useInView( () => {
+	const trackCallback = useCallback( () => {
 		recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
 			is_site_owner: isSiteOwner,
 			product_slug: site.plan?.product_slug,
 			display_mode: 'grid',
 		} );
-	} );
+	}, [ isSiteOwner, site.plan?.product_slug ] );
+
+	const ref = useInView< HTMLSpanElement >( trackCallback );
 
 	return (
 		<SitesGridAction
@@ -40,10 +43,12 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 				}
 			}
 		>
-			{
-				/* translators: %s - the plan's product name */
-				sprintf( __( '%s - Expired' ), site.plan?.product_name_short )
-			}
+			<span ref={ ref }>
+				{
+					/* translators: %s - the plan's product name */
+					sprintf( __( '%s - Expired' ), site.plan?.product_name_short )
+				}
+			</span>
 		</SitesGridAction>
 	);
 }

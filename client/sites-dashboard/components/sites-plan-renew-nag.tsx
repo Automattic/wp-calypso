@@ -4,6 +4,7 @@ import { SiteDetailsPlan } from '@automattic/launch/src/stores';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useCallback } from 'react';
 import { useInView } from 'calypso/lib/use-in-view';
 import { PLAN_RENEW_EVENT_NAMES } from '../utils';
 
@@ -50,18 +51,20 @@ const PlanRenewNoticeExpireText = styled.div( {
 
 export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
 	const { __ } = useI18n();
-
-	useInView( () =>
-		recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
-			is_site_owner: isSiteOwner,
-			product_slug: plan.product_slug,
-			display_mode: 'list',
-		} )
+	const trackCallback = useCallback(
+		() =>
+			recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
+				is_site_owner: isSiteOwner,
+				product_slug: plan.product_slug,
+				display_mode: 'list',
+			} ),
+		[ isSiteOwner, plan.product_slug ]
 	);
+	const ref = useInView< HTMLDivElement >( trackCallback );
 
 	const renewText = __( 'Renew plan' );
 	return (
-		<PlanRenewContainer>
+		<PlanRenewContainer ref={ ref }>
 			<IconContainer>
 				{ /* eslint-disable-next-line wpcalypso/jsx-gridicon-size*/ }
 				<Gridicon icon="notice" size={ 20 } />
