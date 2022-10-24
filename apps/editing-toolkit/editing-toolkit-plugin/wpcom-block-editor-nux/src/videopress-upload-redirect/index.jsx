@@ -4,6 +4,7 @@ import request from 'wpcom-proxy-request';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useHasRedirectedAfterVideoUpload from '../../../dotcom-fse/lib/video-upload-redirect/use-has-redirected-after-video-upload';
 
+// Redirects a user back to the VideoPress onboarding launchpad after uploading a video and saving their site.
 const VideoPressUploadRedirectInner = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
