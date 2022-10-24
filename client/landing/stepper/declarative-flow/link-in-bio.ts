@@ -89,8 +89,7 @@ export const linkInBio: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
-					//We need to check if we need to redirect to checkout
-					if ( providedDependencies?.siteSlug ) {
+					if ( providedDependencies?.goToCheckout ) {
 						const returnUrl = encodeURIComponent(
 							`${ window.location.origin }/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
 						);
