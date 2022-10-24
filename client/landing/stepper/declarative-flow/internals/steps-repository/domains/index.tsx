@@ -66,18 +66,16 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		};
 	} );
 
-	const { domainForm, siteTitle, signupValues } = useSelect( ( select ) => {
+	const { domainForm, siteTitle } = useSelect( ( select ) => {
 		return {
 			domainForm: select( ONBOARD_STORE ).getDomainForm(),
-			signupValues: select( ONBOARD_STORE ).getSignupValues(),
 			siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
 		};
 	} );
 
-	const { setDomainForm, setSignupValues, setDomainItem } = useDispatch( ONBOARD_STORE );
+	const { setDomainForm, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 
 	const { __ } = useI18n();
-	const suggestedDomain = signupValues?.suggestedDomain;
 
 	const [ searchOnInitialRender, setSearchOnInitialRender ] = useState( true );
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -85,7 +83,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const dispatch = useReduxDispatch();
 
 	const { submit } = navigation;
-	const siteType = signupValues?.siteType ?? '';
 	const path = '/start/link-in-bio/domains?new=test';
 	const lastQuery = domainForm?.lastQuery;
 	let showExampleSuggestions: boolean | undefined = undefined;
@@ -155,16 +152,14 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		shouldHideFreePlan = false
 	) => {
 		if ( suggestion ) {
-			const domainItem = domainRegistration( {
+			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug,
 			} );
-
-			setSignupValues( { domainItem, shouldHideFreePlan } );
-
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			setDomainItem( domainItem );
+			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
+			setDomainCartItem( domainCartItem );
 		}
 
 		submit?.();
@@ -239,14 +234,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return true;
 		}
 
-		// If we detect a 'blog' site type from Signup data
-		if (
-			// Users choose `Blog` as their site type
-			'blog' === siteType
-		) {
-			return true;
-		}
-
 		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
 	}
 
@@ -257,7 +244,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const handleAddTransfer = ( { domain, authCode }: { domain: string; authCode: string } ) => {
-		const domainItem = domainTransfer( {
+		const domainCartItem = domainTransfer( {
 			domain,
 			extra: {
 				auth_code: authCode,
@@ -267,21 +254,17 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordAddDomainButtonClickInTransferDomain( domain, getAnalyticsSection() ) );
 
-		setSignupValues( Object.assign( { domainItem, siteUrl: domain, transfer: {} } ) );
-
-		setDomainItem( domainItem );
+		setDomainCartItem( domainCartItem );
 
 		submit?.();
 	};
 
 	const handleAddMapping = ( domain: string ) => {
-		const domainItem = domainMapping( { domain } );
+		const domainCartItem = domainMapping( { domain } );
 
 		dispatch( recordAddDomainButtonClickInMapDomain( domain, getAnalyticsSection() ) );
 
-		setSignupValues( Object.assign( { domainItem, siteUrl: domain } ) );
-
-		setDomainItem( domainItem );
+		setDomainCartItem( domainCartItem );
 
 		submit?.();
 	};
@@ -323,7 +306,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		if ( domainForm ) {
 			initialState = domainForm;
 		}
-		const initialQuery = siteTitle || suggestedDomain;
+		const initialQuery = siteTitle;
 
 		if (
 			// If we landed here from /domains Search or with a suggested domain.

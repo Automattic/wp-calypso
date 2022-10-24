@@ -402,28 +402,22 @@ const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
 	return state;
 };
 
-const signupValues: Reducer< SignupDomainValues, OnboardAction > = ( state = {}, action ) => {
-	if ( action.type === 'SET_SIGNUP_VALUES' ) {
-		if ( ! action.signupValues ) {
-			return state;
-		}
-		return {
-			...state,
-			...action.signupValues,
-		};
+const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_HIDE_FREE_PLAN' ) {
+		return action.hideFreePlan;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return {};
+		return false;
 	}
 	return state;
 };
 
-const domainItem: Reducer< DomainItem | undefined, OnboardAction > = (
+const domainCartItem: Reducer< DomainItem | undefined, OnboardAction > = (
 	state = undefined,
 	action
 ) => {
-	if ( action.type === 'SET_DOMAIN_ITEM' ) {
-		return action.domainItem;
+	if ( action.type === 'SET_DOMAIN_CART_ITEM' ) {
+		return action.domainCartItem;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return undefined;
@@ -437,7 +431,7 @@ const reducer = combineReducers( {
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
-	domainItem,
+	domainCartItem,
 	patternContent,
 	domainSearch,
 	domainCategory,
@@ -465,7 +459,7 @@ const reducer = combineReducers( {
 	stepProgress,
 	goals,
 	editEmail,
-	signupValues,
+	hideFreePlan,
 	siteDescription,
 	siteLogo,
 	siteAccentColor,

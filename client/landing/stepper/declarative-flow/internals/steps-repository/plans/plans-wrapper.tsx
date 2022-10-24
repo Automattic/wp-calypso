@@ -36,9 +36,10 @@ interface Props {
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { signupValues } = useSelect( ( select ) => {
+	const { hideFreePlan, domainCartItem } = useSelect( ( select ) => {
 		return {
-			signupValues: select( ONBOARD_STORE ).getSignupValues(),
+			hideFreePlan: select( ONBOARD_STORE ).getHideFreePlan(),
+			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 		};
 	} );
 
@@ -50,7 +51,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 
 	const disableBloggerPlanWithNonBlogDomain = undefined;
-	const hideFreePlan = signupValues?.shouldHideFreePlan;
 	const isLaunchPage = undefined;
 	const isReskinned = true;
 	const customerType = 'personal';
@@ -74,18 +74,12 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			} );
 		}
 
-		setPlanCartItem( selectedPlan?.product_slug );
+		setPlanCartItem( selectedPlan );
 		props.onSubmit?.();
-
-		// const themeSlugWithRepo = flowName === NEWSLETTER_FLOW ? 'pub/lettre' : 'pub/lynx';
-		// const comingSoon = flowName === NEWSLETTER_FLOW ? 0 : 1;
-
-		//Do we need to add selectedPlan here?
-		// setSignupValues( { comingSoon, themeSlugWithRepo } );
 	};
 
 	const getDomainName = () => {
-		return signupValues?.domainItem && signupValues.domainItem.meta;
+		return domainCartItem?.meta;
 	};
 
 	const handleFreePlanButtonClick = () => {
