@@ -248,13 +248,14 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
  * @return void
  */
 function wpcom_display_global_styles_banner_extra_tooltip() {
-	$location = get_home_url();
+	global $wp;
+	$location = home_url( $wp->request );
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$text = __( 'Hide premium styles', 'full-site-editing' );
 	} else {
-		$text      = __( 'Preview styles before upgrading', 'full-site-editing' );
-		$location .= '?preview-global-styles';
+		$text     = __( 'Preview styles before upgrading', 'full-site-editing' );
+		$location = add_query_arg( 'preview-global-styles', '', $location );
 	}
 
 	?>
