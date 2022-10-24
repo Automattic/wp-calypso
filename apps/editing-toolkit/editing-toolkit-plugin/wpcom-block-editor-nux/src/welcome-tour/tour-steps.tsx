@@ -63,7 +63,7 @@ function getTourSteps(
 	isSiteEditor = false,
 	themeName: string | null = null
 ): WpcomStep[] {
-	const isVideoMaker = [ 'videomaker', 'videomaker white' ].indexOf( themeName ) >= 0;
+	const isVideoMaker = [ 'videomaker', 'videomaker white' ].includes( themeName ?? '' );
 	return [
 		{
 			slug: 'welcome',
