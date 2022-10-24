@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
@@ -14,6 +14,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { AddSSHKeyForm } from './add-ssh-key-form';
 import { ManageSSHKeys } from './manage-ssh-keys';
@@ -46,6 +47,7 @@ const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
 export const SecuritySSHKey = () => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
+	const currentUser = useSelector( getCurrentUser );
 	const { __ } = useI18n();
 
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
@@ -118,10 +120,15 @@ export const SecuritySSHKey = () => {
 							'Add a SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
 						) }
 					</p>
+					<p>
+						{ __(
+							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
+						) }
+					</p>
 					<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
 						{ createInterpolateElement(
 							__(
-								'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site. <a>Read more.</a>'
+								'If the SSH key is removed from your WordPress.com account, it will also be removed from all attached sites. <a>Read more.</a>'
 							),
 							{
 								br: <br />,
@@ -148,8 +155,9 @@ export const SecuritySSHKey = () => {
 					/>
 				) : null }
 			</CompactCard>
-			{ hasKeys && (
+			{ hasKeys && currentUser?.username && (
 				<ManageSSHKeys
+					userLogin={ currentUser.username }
 					sshKeys={ data }
 					onDelete={ ( sshKeyName ) => deleteSSHKey( { sshKeyName } ) }
 					keyBeingDeleted={ keyBeingDeleted }

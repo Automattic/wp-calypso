@@ -150,6 +150,16 @@ class Layout extends Component {
 				document
 					.querySelector( 'body' )
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
+
+				const themeColor = getComputedStyle( document.body )
+					.getPropertyValue( '--color-masterbar-background' )
+					.trim();
+				const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+				// We only want to set `themeColor` if it's not set by a config value (i.e. for JetpackCloud)
+				if ( themeColorMeta && ! themeColorMeta.content ) {
+					themeColorMeta.content = themeColor;
+					themeColorMeta.setAttribute( 'data-colorscheme', 'true' );
+				}
 			}
 		}
 	}
@@ -165,6 +175,15 @@ class Layout extends Component {
 			const classList = document.querySelector( 'body' ).classList;
 			classList.remove( `is-${ prevProps.colorSchemePreference }` );
 			classList.add( `is-${ this.props.colorSchemePreference }` );
+
+			const themeColor = getComputedStyle( document.body )
+				.getPropertyValue( '--color-masterbar-background' )
+				.trim();
+			const themeColorMeta = document.querySelector( 'meta[name="theme-color"]' );
+			// We only adjust the `theme-color` meta content value in case we set it in `componentDidMount`
+			if ( themeColorMeta && themeColorMeta.getAttribute( 'data-colorscheme' ) === 'true' ) {
+				themeColorMeta.content = themeColor;
+			}
 		}
 
 		// intentionally don't remove these in unmount

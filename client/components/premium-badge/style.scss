@@ -1,4 +1,4 @@
-.global-styles-premium-badge {
+.premium-badge {
 	padding: 0;
 	margin: 0;
 	background: none;
@@ -9,7 +9,6 @@
 		background-color: var(--color-neutral-80);
 		color: var(--color-neutral-0);
 		font-size: 0.75rem;
-		margin-left: 8px;
 		padding-left: 6px;
 	}
 
@@ -19,8 +18,7 @@
 	}
 }
 
-.global-styles-premium-badge__popover {
-	margin-left: 4px;
+.premium-badge__popover {
 	outline: none;
 
 	.popover__inner {
@@ -33,12 +31,29 @@
 		box-shadow: none;
 	}
 
-	&.is-top .popover__arrow {
-		border-top-color: var(--color-neutral-80);
-		bottom: 4px;
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
+			border-top-color: var(--color-neutral-80);
+			bottom: 4px;
 
-		&::before {
-			display: none;
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
+			border-bottom-color: var(--color-neutral-80);
+			top: 4px;
+
+			&::before {
+				display: none;
+			}
 		}
 	}
 }

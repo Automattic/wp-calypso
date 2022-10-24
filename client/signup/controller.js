@@ -1,11 +1,9 @@
 import config from '@automattic/calypso-config';
-import debugModule from 'debug';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -40,8 +38,6 @@ import {
 	shouldForceLogin,
 	isReskinnedFlow,
 } from './utils';
-
-const debug = debugModule( 'calypso:signup' );
 
 /**
  * Constants
@@ -294,25 +290,12 @@ export default {
 			context.store.dispatch( updateDependencies( { refParameter } ) );
 		}
 
-		let actualFlowName = flowName;
-		if ( 'onboarding' === flowName ) {
-			const experimentAssignment = await loadExperimentAssignment( 'wpcom_calypso_signup_addons' );
-
-			debug(
-				`wpcom_calypso_signup_addons experiment variation: ${ experimentAssignment?.variationName }`
-			);
-
-			if ( 'treatment' === experimentAssignment?.variationName ) {
-				actualFlowName = 'with-add-ons';
-			}
-		}
-
 		context.primary = createElement( SignupComponent, {
 			store: context.store,
 			path: context.path,
 			initialContext,
 			locale: context.params.lang,
-			flowName: actualFlowName,
+			flowName,
 			queryObject: query,
 			refParameter,
 			stepName,

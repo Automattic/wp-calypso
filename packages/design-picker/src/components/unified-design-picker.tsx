@@ -151,7 +151,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		}
 
 		return (
-			<div className="design-picker__pricing-description">
+			<div className="design-picker__pricing-description design-picker__override-premium-badge">
 				{ badge }
 				<span>{ text }</span>
 			</div>
@@ -287,7 +287,7 @@ const StaticDesignPicker: React.FC< StaticDesignPickerProps > = ( {
 					selectedSlug={ categorization.selection }
 				/>
 			) }
-			<div className={ 'design-picker__grid' }>
+			<div className="design-picker__grid">
 				{ filteredDesigns.map( ( design ) => (
 					<DesignButtonContainer
 						key={ design.slug }

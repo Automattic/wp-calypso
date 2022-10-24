@@ -75,5 +75,6 @@
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
-	"hotjar_enabled": true
+	"hotjar_enabled": true,
+	"theme_color": "#2fb41f"
 }

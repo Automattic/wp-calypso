@@ -3,8 +3,9 @@ import { ToggleControl } from '@wordpress/components';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 
 const FeaturedImageTemplateToggle = ( props ) => {
-	const { isRequestingSettings, isSavingSettings } = props;
+	const { isRequestingSettings, isSavingSettings, fields, handleAutosavingToggle } = props;
 	const isDisabled = isRequestingSettings || isSavingSettings;
+	const settingName = 'featured_image_email_enabled';
 
 	return (
 		<div className="featured-image-template-toggle-settings">
@@ -14,9 +15,9 @@ const FeaturedImageTemplateToggle = ( props ) => {
 			/>
 			<Card className="featured-image-template-toggle-card">
 				<ToggleControl /* TODO: Update props as needed. Currently the toggle does nothing */
-					checked={ false }
+					checked={ !! fields[ settingName ] }
 					disabled={ isDisabled }
-					onChange={ null }
+					onChange={ handleAutosavingToggle( settingName ) }
 					label="Enable Featured image in the New Post email template" /* TODO: this will need to be translated */
 				/>
 			</Card>

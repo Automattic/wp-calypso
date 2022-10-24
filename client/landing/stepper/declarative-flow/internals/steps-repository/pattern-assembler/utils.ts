@@ -20,3 +20,31 @@ export const handleKeyboard =
 			callback();
 		}
 	};
+
+export function createCustomHomeTemplateContent(
+	stylesheet: string,
+	hasHeader: boolean,
+	hasFooter: boolean
+) {
+	const content: string[] = [];
+
+	if ( hasHeader ) {
+		content.push(
+			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
+		);
+	}
+
+	content.push( `
+<!-- wp:group {"tagName":"main"} -->
+	<main class="wp-block-group">
+	</main>
+<!-- /wp:group -->` );
+
+	if ( hasFooter ) {
+		content.push(
+			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
+		);
+	}
+
+	return content.join( '\n' );
+}

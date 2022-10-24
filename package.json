@@ -193,6 +193,7 @@
 		"enhanced-resolve": "5.9.3",
 		"i18n-calypso": "workspace:^",
 		"i18n-calypso-cli": "workspace:^",
+		"jsdom": "^20.0.1",
 		"lodash": "^4.17.21",
 		"lottie-web": "^5.9.6",
 		"photon": "workspace:^",
