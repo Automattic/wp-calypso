@@ -5,30 +5,34 @@ import {
 	Label,
 	TextAreaField,
 	HorizontalGrid,
+	ContactInformation,
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
-	imageRemoved,
+	MediaUploadData,
+	WordpressMediaUpload,
+} from 'calypso/signup/steps/website-content/wordpress-media-upload';
+import {
+	websiteContentFieldChanged,
 	imageUploaded,
+	imageRemoved,
 	imageUploadFailed,
 	imageUploadInitiated,
-	websiteContentFieldChanged,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { MediaUploadData, WordpressMediaUpload } from './wordpress-media-upload';
-import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
+import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
 import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
 
-export function PageDetails( {
+export function ContactPageDetails( {
 	page,
 	formErrors,
 	label,
 	onChangeField,
 }: {
-	page: PageData;
+	page: ContactPageData;
 	formErrors: ValidationErrors;
 	label: TranslateResult | undefined;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
@@ -80,14 +84,14 @@ export function PageDetails( {
 		);
 	};
 
-	const onContentChange = ( e: ChangeEvent< HTMLInputElement > ) => {
+	const onFieldChanged = ( e: ChangeEvent< HTMLInputElement > ) => {
 		const {
-			target: { value },
+			target: { name, value },
 		} = e;
 		dispatch(
 			websiteContentFieldChanged( {
 				pageId: page.id,
-				fieldName: 'content',
+				fieldName: name,
 				fieldValue: value,
 			} )
 		);
@@ -97,8 +101,8 @@ export function PageDetails( {
 	return (
 		<>
 			<TextAreaField
-				name={ fieldName }
-				onChange={ onContentChange }
+				name="content"
+				onChange={ onFieldChanged }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
 				label={
@@ -107,6 +111,21 @@ export function PageDetails( {
 						args: { pageTitle },
 					} )
 				}
+			/>
+			<ContactInformation
+				displayEmailProps={ {
+					value: page.displayEmail || '',
+					name: 'displayEmail',
+				} }
+				displayPhoneProps={ {
+					value: page.displayPhone || '',
+					name: 'displayPhone',
+				} }
+				displayAddressProps={ {
+					value: page.displayAddress || '',
+					name: 'displayAddress',
+				} }
+				onChange={ onFieldChanged }
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {

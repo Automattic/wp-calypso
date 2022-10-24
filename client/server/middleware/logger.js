@@ -15,7 +15,7 @@ const parseUA = ( rawUA ) => {
 };
 
 const logRequest = ( req, res, options ) => {
-	const { requestStart, env, version } = options;
+	const { requestStart } = options;
 
 	const message = res.finished ? 'request finished' : 'request closed';
 
@@ -23,14 +23,10 @@ const logRequest = ( req, res, options ) => {
 		method: req.method,
 		status: res.statusCode,
 		length: res.get( 'content-length' ),
-		url: req.originalUrl,
 		duration: Number(
 			( Number( process.hrtime.bigint() - requestStart ) * NS_TO_MS ).toFixed( 3 )
 		),
 		httpVersion: req.httpVersion,
-		appVersion: version,
-		env,
-		userAgent: parseUA( req.get( 'user-agent' ) ),
 		rawUserAgent: req.get( 'user-agent' ),
 		remoteAddr: req.ip,
 		referrer: req.get( 'referer' ),
@@ -42,14 +38,18 @@ const logRequest = ( req, res, options ) => {
 export default () => {
 	const logger = getLogger();
 	const env = config( 'env_id' );
-	const version = process.env.COMMIT_SHA;
 
 	return ( req, res, next ) => {
 		req.logger = logger.child( {
 			reqId: uuidv4(),
+			url: req.originalUrl,
+			appVersion: process.env.COMMIT_SHA,
+			env,
+			userAgent: parseUA( req.get( 'user-agent' ) ),
+			path: req.path,
 		} );
 		const requestStart = process.hrtime.bigint();
-		res.on( 'close', () => logRequest( req, res, { requestStart, env, version } ) );
+		res.on( 'close', () => logRequest( req, res, { requestStart } ) );
 		next();
 	};
 };

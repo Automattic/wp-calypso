@@ -85,6 +85,7 @@
 		"@wordpress/element": "^4.7.0",
 		"@wordpress/format-library": "^3.7.0",
 		"@wordpress/hooks": "^3.9.0",
+		"@wordpress/html-entities": "^3.9.0",
 		"@wordpress/i18n": "^4.9.0",
 		"@wordpress/icons": "^9.0.0",
 		"@wordpress/is-shallow-equal": "^4.9.0",
