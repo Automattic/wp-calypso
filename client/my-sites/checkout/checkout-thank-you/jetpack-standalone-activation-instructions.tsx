@@ -19,7 +19,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 
 	const items = useMemo(
 		() => [
-			translate( '{{link}}Download Jetpack %(pluginName)s {{icon/}} {{/link}}', {
+			translate( '{{link}}Download Jetpack %(pluginName)s.{{icon/}}{{/link}}', {
 				components: {
 					strong: <strong />,
 					link: <Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />,
@@ -27,12 +27,12 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 				},
 				args: { pluginName: product.shortName },
 			} ),
-			translate( 'Install and activate the plugin' ),
-			translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}', {
+			translate( 'Install and activate the plugin.' ),
+			translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}.', {
 				components: { strong: <strong /> },
 			} ),
 			translate(
-				'Click the “activate license key” (at the bottom of the page) and enter the key below.'
+				'Click the “Activate license key” (at the bottom of the page) and enter the key below.'
 			),
 		],
 		[ translate, product, wporgPluginLink ]
