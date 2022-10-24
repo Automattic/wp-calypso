@@ -4,8 +4,6 @@ import request from 'wpcom-proxy-request';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useHasRedirectedAfterVideoUpload from '../../../dotcom-fse/lib/video-upload-redirect/use-has-redirected-after-video-upload';
 
-import './style.scss';
-
 const VideoPressUploadRedirectInner = () => {
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
@@ -53,7 +51,7 @@ const VideoPressUploadRedirectInner = () => {
 
 			if ( siteObj?.options?.launchpad_checklist_tasks_statuses?.video_uploaded ) {
 				updateHasRedirectedAfterVideoUpload( true );
-				window.location.href = `/setup/launchpad?flow=videopress&siteId=${ window._currentSiteId }`;
+				window.location.href = `https://wordpress.com/setup/launchpad?flow=videopress&siteId=${ window._currentSiteId }`;
 			}
 		};
 
