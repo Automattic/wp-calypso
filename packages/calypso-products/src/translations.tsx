@@ -791,6 +791,21 @@ export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 	);
 };
 
+export const useJetpack100GbStorageAmountText = (): TranslateResult => {
+	const _translate = useTranslate();
+
+	return useMemo(
+		() =>
+			_translate( '%(numberOfGigabytes)dTB', '%(numberOfGigabytes)dTB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: 1,
+				args: { numberOfGigabytes: 100 },
+			} ),
+		[ _translate ]
+	);
+};
+
 export const useJetpack1TbStorageAmountText = (): TranslateResult => {
 	const _translate = useTranslate();
 

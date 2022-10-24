@@ -8,6 +8,8 @@
 	width: 100%;
 	height: 100%;
 
+	margin-top: 10px;
+
 	flex-wrap: nowrap;
 	justify-content: space-between;
 	column-gap: 8px;
@@ -34,10 +36,6 @@
 	&.has-clickable-action:hover {
 		cursor: pointer;
 
-		.action-button__action-text {
-			text-decoration: underline;
-			text-decoration-thickness: 2px;
-		}
 
 		.action-button__arrow {
 			transform: translateX(8px);
@@ -58,5 +56,26 @@
 		color: var(--studio-jetpack-green);
 		font-size: $font-title-medium;
 		font-weight: 600;
+	}
+}
+
+.usage-warning__upsell-price {
+	&.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+	}
+	.display-price {
+		display: inline;
+	}
+	.plan-price {
+		font-size: 1rem;
+	}
+	.plan-price__integer,
+	.plan-price__fraction,
+	.plan-price__currency-symbol {
+		font-size: 1rem;
+	}
+	.display-price__billing-time-frame {
+		font-size: 1rem;
+		color: var(--color-text);
 	}
 }

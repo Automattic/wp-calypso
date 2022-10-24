@@ -28,6 +28,18 @@ export const PRODUCT_JETPACK_VIDEOPRESS_MONTHLY = 'jetpack_videopress_monthly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC = 'jetpack_social_basic_yearly';
 export const PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY = 'jetpack_social_basic_monthly';
 
+//add-on products
+export const PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY =
+	'jetpack_backup_addon_storage_10gb_monthly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY =
+	'jetpack_backup_addon_storage_100gb_monthly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY = 'jetpack_backup_addon_storage_1tb_monthly';
+
+export const PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY = 'jetpack_backup_addon_storage_10gb_yearly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY =
+	'jetpack_backup_addon_storage_100gb_yearly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY = 'jetpack_backup_addon_storage_1tb_yearly';
+
 // Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
 export const PRODUCT_JETPACK_BACKUP_REALTIME = 'jetpack_backup_realtime';
@@ -50,6 +62,20 @@ export const JETPACK_BACKUP_PRODUCTS_MONTHLY = <const>[
 export const JETPACK_BACKUP_PRODUCTS = <const>[
 	...JETPACK_BACKUP_PRODUCTS_YEARLY,
 	...JETPACK_BACKUP_PRODUCTS_MONTHLY,
+];
+export const JETPACK_BACKUP_ADDON_MONTHLY = <const>[
+	PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY,
+];
+export const JETPACK_BACKUP_ADDON_YEARLY = <const>[
+	PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY,
+];
+export const JETPACK_BACKUP_ADDON_PRODUCTS = <const>[
+	...JETPACK_BACKUP_ADDON_MONTHLY,
+	...JETPACK_BACKUP_ADDON_YEARLY,
 ];
 export const JETPACK_BACKUP_T1_PRODUCTS = <const>[
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
@@ -114,6 +140,7 @@ export const JETPACK_PRODUCTS_LIST = <const>[
 	...JETPACK_SEARCH_PRODUCTS,
 	...JETPACK_VIDEOPRESS_PRODUCTS,
 	...JETPACK_SOCIAL_PRODUCTS,
+	...JETPACK_BACKUP_ADDON_PRODUCTS,
 ];
 export const JETPACK_PRODUCTS_BY_TERM = <const>[
 	{
