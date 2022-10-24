@@ -17,6 +17,7 @@ import {
 	PRICING_PAGE,
 	TEAM_PAGE,
 } from 'calypso/signup/difm/constants';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
 
 /**
@@ -47,9 +48,16 @@ export function useTranslatedPageTitles() {
 	return pages;
 }
 
-export function useTranslatedPageDescriptions() {
+// Requesting Contexts
+export const BBE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_ONBOARDING_PAGE_PICKER_STEP';
+export const BBE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_WEBSITE_CONTENT_FILLING_STEP';
+type TranslationContext =
+	| typeof BBE_ONBOARDING_PAGE_PICKER_STEP
+	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP;
+
+export function useTranslatedPageDescriptions( pageId: PageId, context?: TranslationContext ) {
 	const translate = useTranslate();
-	const descriptions: Record< string, TranslateResult > = {
+	const defaultDescriptions: Partial< Record< PageId, TranslateResult > > = {
 		[ HOME_PAGE ]: translate(
 			'An overview of you, your writing, or your business. What phrases would someone search on Google to find you? What can visitors expect on this site?'
 		),
@@ -62,6 +70,7 @@ export function useTranslatedPageDescriptions() {
 		[ BLOG_PAGE ]: translate(
 			'Blog posts can be news stories, journal entries, or even recipes! We will set up the blog page and explain how you can add posts to your new site.'
 		),
+
 		[ PHOTO_GALLERY_PAGE ]: translate(
 			'A visual space to share pictures with your website visitors. Add a text summary to describe the gallery to your visitors.'
 		),
@@ -87,5 +96,23 @@ export function useTranslatedPageDescriptions() {
 			'Showcase a mini profile of each member of your business, with an image, name, and role description.'
 		),
 	};
-	return descriptions;
+
+	const contextBaseDescriptions = {
+		[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: {
+			...defaultDescriptions,
+		},
+		[ BBE_WEBSITE_CONTENT_FILLING_STEP ]: {
+			...defaultDescriptions,
+			[ BLOG_PAGE ]: translate(
+				'How would you introduce your journal entries/news-articles/chapters? Describe what readers can expect from your regularly published content!'
+			),
+			[ CONTACT_PAGE ]: translate(
+				'Visitors want to get in touch with you. How can they reach you?'
+			),
+		},
+	};
+	if ( ! context ) {
+		return [ pageId ];
+	}
+	return contextBaseDescriptions[ context ][ pageId ];
 }

@@ -17,5 +17,24 @@ export const TESTIMONIALS_PAGE = 'TESTIMONIALS_PAGE';
 export const PRICING_PAGE = 'PRICING_PAGE';
 export const TEAM_PAGE = 'TEAM_PAGE';
 
+export type PageId =
+	| typeof HOME_PAGE
+	| typeof BLOG_PAGE
+	| typeof CONTACT_PAGE
+	| typeof ABOUT_PAGE
+	| typeof PHOTO_GALLERY_PAGE
+	| typeof SERVICE_SHOWCASE_PAGE
+	| typeof VIDEO_GALLERY_PAGE
+	| typeof PODCAST_PAGE
+	| typeof PORTFOLIO_PAGE
+	| typeof FAQ_PAGE
+	| typeof SITEMAP_PAGE
+	| typeof PROFILE_PAGE
+	| typeof MENU_PAGE
+	| typeof SERVICES_PAGE
+	| typeof TESTIMONIALS_PAGE
+	| typeof PRICING_PAGE
+	| typeof TEAM_PAGE;
+
 //The maximum number of pages allowed
 export const PAGE_LIMIT = 5;
