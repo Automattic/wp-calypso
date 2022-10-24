@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
+import Gridicon from './gridicons';
 
 const Snippet = ( { note, snippet, url } ) => (
 	<a href={ url } { ...linkProps( note ) } target="_blank" rel="noopener noreferrer">
@@ -61,6 +62,42 @@ class UserHeader extends Component {
 	}
 }
 
+class WritingPromptHeader extends Component {
+	render() {
+		const icon = this.props.user.media[ 0 ];
+		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } />;
+		const home_url = this.props.user.ranges[ 0 ].url;
+
+		const get_home_link = function ( classNames, children ) {
+			if ( home_url ) {
+				return (
+					<a className={ classNames } href={ home_url } target="_blank" rel="noopener noreferrer">
+						{ children }
+					</a>
+				);
+			}
+			return (
+				<a className={ classNames + ' disabled' } disabled="disabled">
+					{ children }
+				</a>
+			);
+		};
+
+		return (
+			<div className="wpnc__user wpnc__header">
+				{ img_tag }
+				<div>
+					<span className="wpnc__user__username">
+						<span className="wpnc__excerpt">{ this.props.snippet.text }</span>
+						<Gridicon icon="bell-off" />
+					</span>
+				</div>
+				{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
+			</div>
+		);
+	}
+}
+
 class Header extends Component {
 	render() {
 		const subject = (
@@ -83,7 +120,7 @@ class Header extends Component {
 
 class SummaryInSingle extends Component {
 	render() {
-		let header_url;
+		let header_url = this.props.note.url;
 		let parser;
 		if ( ! this.props.note.header || 0 === this.props.note.header.length ) {
 			return <span />;
@@ -91,7 +128,6 @@ class SummaryInSingle extends Component {
 
 		if ( this.props.note.header.length > 1 ) {
 			if ( 'user' === this.props.note.header[ 0 ].ranges[ 0 ].type ) {
-				header_url = this.props.note.url;
 				if ( this.props.note.type === 'comment' ) {
 					if ( this.props.note.meta.ids.parent_comment ) {
 						parser = document.createElement( 'a' );
@@ -109,12 +145,22 @@ class SummaryInSingle extends Component {
 					/>
 				);
 			}
+			if ( this.props.note.type === 'writing_prompts_note' ) {
+				return (
+					<WritingPromptHeader
+						note={ this.props.note }
+						snippet={ this.props.note.header[ 1 ] }
+						url={ header_url }
+						user={ this.props.note.header[ 0 ] }
+					/>
+				);
+			}
 			return (
 				<Header
 					note={ this.props.note }
 					snippet={ this.props.note.header[ 1 ] }
 					subject={ this.props.note.header[ 0 ] }
-					url={ this.props.note.url }
+					url={ header_url }
 				/>
 			);
 		}
@@ -123,7 +169,7 @@ class SummaryInSingle extends Component {
 				note={ this.props.note }
 				snippet={ '' }
 				subject={ this.props.note.header[ 0 ] }
-				url={ this.props.note.url }
+				url={ header_url }
 			/>
 		);
 	}
