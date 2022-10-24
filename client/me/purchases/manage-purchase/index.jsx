@@ -543,12 +543,12 @@ class ManagePurchase extends Component {
 	renderRemoveSubscriptionWarningDialog( site, purchase ) {
 		if ( this.state.showRemoveSubscriptionWarningDialog ) {
 			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
-			const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
+			const primaryDomainName = hasCustomPrimaryDomain && primaryDomain ? primaryDomain.name : '';
+			const customDomain = hasCustomPrimaryDomain && primaryDomainName;
 			const isPlanRefundable = isRefundable( purchase );
 			const actionFunction = isPlanRefundable
 				? this.goToCancelLink
 				: this.showPreCancellationModalDialog;
-			const customDomain = hasCustomPrimaryDomain && primaryDomainName;
 
 			return (
 				<PreCancellationDialog
