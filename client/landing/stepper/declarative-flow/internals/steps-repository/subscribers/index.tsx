@@ -30,6 +30,7 @@ const Subscribers: Step = function ( { navigation } ) {
 					{ site?.ID && (
 						<AddSubscriberForm
 							siteId={ site.ID }
+							isSiteOnFreePlan={ !! site?.plan?.is_free }
 							flowName="onboarding_subscribers"
 							submitBtnName={ __( 'Continue' ) }
 							onImportFinished={ handleSubmit }

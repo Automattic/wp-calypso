@@ -10,7 +10,8 @@ describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
 		expect( getWebsiteContent( { signup: undefined } ) ).toEqual( {
 			pages: [],
-			siteLogoUrl: '',
+			siteLogoSection: { siteLogoUrl: '' },
+			feedbackSection: { genericFeedback: '' },
 		} );
 	} );
 

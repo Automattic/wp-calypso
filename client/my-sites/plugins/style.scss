@@ -102,6 +102,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	grid-template-areas:
 		"header header actions"
 		"content content actions";
+	grid-auto-rows: auto 1fr;
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		grid-template-areas:

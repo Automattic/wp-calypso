@@ -9,6 +9,7 @@ import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-brow
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useServerEffect } from '../../utils';
 
 export default function CollectionListView( {
 	category,
@@ -28,9 +29,14 @@ export default function CollectionListView( {
 	const categories = useCategories( [ category ] );
 
 	const plugins = useRef< Array< Plugin > >();
-	useEffect( () => {
+
+	const setPlugins = () => {
 		plugins.current = shuffle( categories[ category ].preview.slice( 0, 6 ) );
-	}, [ categories, category ] );
+	};
+	useEffect( setPlugins, [ categories, category ] );
+	useServerEffect( setPlugins ); // This is needed to ensure this runs on the server.
+
+	plugins.current = shuffle( categories[ category ].preview.slice( 0, 6 ) );
 
 	if ( isJetpackSelfHosted ) {
 		return null;

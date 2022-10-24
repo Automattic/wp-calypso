@@ -11,6 +11,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_REMOVED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
 	SIGNUP_STEPS_WEBSITE_FIELD_CHANGED,
+	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
@@ -65,6 +66,13 @@ export function logoUploadFailed() {
 export function logoRemoved() {
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_REMOVE_LOGO_URL,
+	};
+}
+
+export function updateFeedback( feedback: string ) {
+	return {
+		type: SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
+		payload: { feedback },
 	};
 }
 

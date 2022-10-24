@@ -13,7 +13,7 @@ import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import InfoPopover from 'calypso/components/info-popover';
 import PulsingDot from 'calypso/components/pulsing-dot';
-import Tootlip from 'calypso/components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -450,13 +450,13 @@ export class Theme extends Component {
 						) }
 					</a>
 
-					<Tootlip
+					<Tooltip
 						context={ this.themeThumbnailRef.current }
 						isVisible={ this.state.descriptionTooltipVisible }
 						showDelay={ 1000 }
 					>
 						<div className="theme__tooltip">{ themeDescription }</div>
-					</Tootlip>
+					</Tooltip>
 
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>
