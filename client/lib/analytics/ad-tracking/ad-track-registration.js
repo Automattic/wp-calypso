@@ -1,13 +1,6 @@
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import {
-	debug,
-	isFacebookEnabled,
-	isBingEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isFloodlightEnabled,
-	isPinterestEnabled,
-	TRACKING_IDS,
-} from './constants';
+import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { debug, TRACKING_IDS } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
 
@@ -26,7 +19,7 @@ export async function adTrackRegistration() {
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -40,7 +33,7 @@ export async function adTrackRegistration() {
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
 		const params = [ 'trackSingle', TRACKING_IDS.facebookInit, 'Lead' ];
 		debug( 'adTrackRegistration: [Facebook]', params );
 		window.fbq( ...params );
@@ -48,7 +41,7 @@ export async function adTrackRegistration() {
 
 	// Bing
 
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.BING ) ) {
 		const params = {
 			ec: 'registration',
 		};
@@ -58,7 +51,7 @@ export async function adTrackRegistration() {
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
 		debug( 'adTrackRegistration: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/regis0+unique',
@@ -67,7 +60,7 @@ export async function adTrackRegistration() {
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
 		const params = [ 'track', 'lead' ];
 		debug( 'adTrackRegistration: [Pinterest]', params );
 		window.pintrk( ...params );

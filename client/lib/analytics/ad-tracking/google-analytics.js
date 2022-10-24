@@ -1,8 +1,7 @@
-import { getCurrentUser, getDoNotTrack } from '@automattic/calypso-analytics';
-import config from '@automattic/calypso-config';
-import { isPiiUrl, mayWeTrackCurrentUser } from 'calypso/lib/analytics/utils';
+import { getCurrentUser } from '@automattic/calypso-analytics';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isGoogleAnalyticsEnabled, TRACKING_IDS } from './constants';
+import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { TRACKING_IDS } from './constants';
 import * as GA4 from './google-analytics-4';
 
 // Ensure setup has run.
@@ -18,12 +17,13 @@ export function setupGoogleAnalyticsGtag( params ) {
 	}
 }
 
+// TODO: Rewrite the js docs
 /**
  * Returns whether Google Analytics is allowed.
  *
  * This function returns false if:
  *
- * 1. `isGoogleAnalyticsEnabled` is `true`
+ * 1. `isGoogleAnalyticsEnabled` is `true` TODO: Change
  * 2. `ad-tracking` feature is disabled
  * 3. `Do Not Track` is enabled
  * 4. the current user could be in the GDPR zone and hasn't consented to tracking
@@ -34,13 +34,7 @@ export function setupGoogleAnalyticsGtag( params ) {
  * @returns {boolean} true if GA is allowed.
  */
 export function isGoogleAnalyticsAllowed() {
-	return (
-		isGoogleAnalyticsEnabled &&
-		config.isEnabled( 'ad-tracking' ) &&
-		! getDoNotTrack() &&
-		! isPiiUrl() &&
-		mayWeTrackCurrentUser( 'analytics' )
-	);
+	return mayWeTrackByTracker( AdTracker.GA );
 }
 
 /**

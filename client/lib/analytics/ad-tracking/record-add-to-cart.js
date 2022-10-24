@@ -1,14 +1,6 @@
 import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import {
-	debug,
-	isFacebookEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isFloodlightEnabled,
-	isPinterestEnabled,
-	TRACKING_IDS,
-} from './constants';
+import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -36,7 +28,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Google Ads Gtag
 
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -50,7 +42,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Facebook
 
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
 		// Fire both WP and JP pixels.
 
 		// WP
@@ -82,7 +74,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Bing
 
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.BING ) ) {
 		const params = {
 			ec: 'addtocart',
 			el: cartItem.product_slug,
@@ -93,7 +85,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// DCM Floodlight
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
 		debug( 'recordAddToCart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			u2: cartItem.product_name,
@@ -103,7 +95,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Criteo
 
-	if ( isCriteoEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		const params = [
 			'viewItem',
 			{
@@ -116,7 +108,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Pinterest
 
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
 		const params = [
 			'track',
 			'addtocart',

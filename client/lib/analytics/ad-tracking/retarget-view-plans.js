@@ -1,5 +1,5 @@
 import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
-import { isCriteoEnabled } from './constants';
+import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
 import { recordPlansViewInCriteo } from './criteo';
 
 // Ensure setup has run.
@@ -13,7 +13,7 @@ export function retargetViewPlans() {
 		return;
 	}
 
-	if ( isCriteoEnabled ) {
+	if ( mayWeTrackByTracker( AdTracker.CRITEO ) ) {
 		recordPlansViewInCriteo();
 	}
 }

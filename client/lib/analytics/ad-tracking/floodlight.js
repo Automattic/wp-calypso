@@ -2,9 +2,9 @@ import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-an
 import cookie from 'cookie';
 import { v4 as uuid } from 'uuid';
 import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
 import {
 	debug,
-	isFloodlightEnabled,
 	DCM_FLOODLIGHT_SESSION_COOKIE_NAME,
 	DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS,
 } from './constants';
@@ -18,7 +18,7 @@ import './setup';
  * @param {object} params An object of Floodlight params.
  */
 export function recordParamsInFloodlightGtag( params ) {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
 		return;
 	}
 
@@ -84,7 +84,7 @@ function floodlightSessionId() {
  * @returns {void}
  */
 export function recordPageViewInFloodlight( urlPath ) {
-	if ( ! isAdTrackingAllowed() || ! isFloodlightEnabled ) {
+	if ( ! isAdTrackingAllowed() || ! mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
 		return;
 	}
 
