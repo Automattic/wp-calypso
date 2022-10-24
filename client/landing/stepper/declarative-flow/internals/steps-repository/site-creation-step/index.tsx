@@ -37,7 +37,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			true
 		);
 
-		await addPlanToCart( site?.siteSlug as string, planCartItem, flow as string, true, theme );
+		await addPlanToCart(
+			site?.siteSlug as string,
+			{ product_slug: planCartItem },
+			flow as string,
+			true,
+			theme
+		);
 
 		return {
 			siteSlug: site?.siteSlug,
@@ -45,8 +51,10 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
-		setPendingAction( createSite );
-		navigation.submit?.();
+		if ( navigation.submit ) {
+			setPendingAction( createSite );
+			navigation.submit();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
