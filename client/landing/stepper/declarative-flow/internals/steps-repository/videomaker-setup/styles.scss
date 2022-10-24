@@ -45,7 +45,7 @@ $font-family: "SF Pro Text", $sans;
 			transform: scale(1);
 			z-index: 0;
 			cursor: pointer;
-			max-width: calc(min(800px, 80%));
+			max-width: 80%;
 
 			img {
 				display: block;
@@ -68,15 +68,11 @@ $font-family: "SF Pro Text", $sans;
 			flex-direction: row;
 			padding: 0 16px;
 			min-height: 312px;
-
-			img {
-				max-width: 100%;
-			}
 		}
 
 		@include break-large {
-			img {
-				max-width: 100%;
+			button {
+				max-width: 40%;
 			}
 		}
 	}
