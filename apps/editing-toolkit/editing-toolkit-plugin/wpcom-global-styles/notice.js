@@ -1,7 +1,7 @@
 /* global wpcomGlobalStyles */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button, Notice } from '@wordpress/components';
+import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -88,8 +88,7 @@ const GlobalStylesNotice = () => {
 				),
 				{
 					a: (
-						<Button
-							variant="link"
+						<ExternalLink
 							href={ wpcomGlobalStyles.upgradeUrl }
 							target="_blank"
 							onClick={ () =>
