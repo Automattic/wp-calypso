@@ -26,8 +26,6 @@ import {
 	TASK_WP_COURSES,
 	TASK_PROMOTE_POST,
 	TASK_REACTIVATE_EXPIRED_PLAN,
-	TASK_RESTORE_EXPIRED_FEATURES,
-	TASK_REVERTED_SITE_NOW_ATOMIC,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
@@ -44,8 +42,6 @@ import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import { ReactivateExpiredPlan } from 'calypso/my-sites/customer-home/cards/tasks/reactivate-expired-plan';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
-import { RevertedSiteIsNowAtomic } from 'calypso/my-sites/customer-home/cards/tasks/restore-expired-features';
-import { RestoreExpiredFeatures } from 'calypso/my-sites/customer-home/cards/tasks/reverted-site-is-now-atomic';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
@@ -71,8 +67,6 @@ const cardComponents = {
 	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
 	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 	[ TASK_REACTIVATE_EXPIRED_PLAN ]: ReactivateExpiredPlan,
-	[ TASK_RESTORE_EXPIRED_FEATURES ]: RestoreExpiredFeatures,
-	[ TASK_REVERTED_SITE_NOW_ATOMIC ]: RevertedSiteIsNowAtomic,
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_UPSELL_TITAN ]: TitanBanner,
 	[ TASK_WEBINARS ]: Webinars,
@@ -80,12 +74,7 @@ const cardComponents = {
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
 };
 
-const urgentTasks = [
-	TASK_RENEW_EXPIRED_PLAN,
-	TASK_REACTIVATE_EXPIRED_PLAN,
-	TASK_RESTORE_EXPIRED_FEATURES,
-	TASK_REVERTED_SITE_NOW_ATOMIC,
-];
+const urgentTasks = [ TASK_RENEW_EXPIRED_PLAN, TASK_REACTIVATE_EXPIRED_PLAN ];
 
 const Primary = ( { cards, trackCard } ) => {
 	const viewedCards = useRef( new Set() );
