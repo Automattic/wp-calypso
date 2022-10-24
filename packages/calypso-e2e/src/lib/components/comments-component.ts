@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 import { envVariables } from '../..';
-import { waitForWPWidgets } from '../../element-helper';
+import { waitForWPWidgetsIfNecessary } from '../../element-helper';
 
 /**
  * Represents the comments section of a post.
@@ -38,7 +38,7 @@ export class CommentsComponent {
 			// their sizes are not immediately set. For example, the Likes
 			// button height is re-calculated within a 500ms interval which can
 			// bypass Playwright's stability check.
-			await waitForWPWidgets( this.page );
+			await waitForWPWidgetsIfNecessary( this.page );
 
 			const parentFrame = this.page.frameLocator( '#jetpack_remote_comment' );
 
@@ -70,7 +70,7 @@ export class CommentsComponent {
 			// to use the following custom waiter to ensure the button is ready
 			// to be interacted with. Otherwise, the like click will most likely
 			// do nothing.
-			await waitForWPWidgets( this.page );
+			await waitForWPWidgetsIfNecessary( this.page );
 
 			const likeButtonFrame = this.page.frameLocator(
 				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`
@@ -100,7 +100,7 @@ export class CommentsComponent {
 
 		if ( envVariables.TEST_ON_ATOMIC ) {
 			// See the like() method for info on the following method call.
-			await waitForWPWidgets( this.page );
+			await waitForWPWidgetsIfNecessary( this.page );
 
 			const likeButtonFrame = this.page.frameLocator(
 				`iframe[name^="like-comment-frame"]:below(:text("${ comment }"))`

@@ -154,24 +154,29 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 }
 
 /**
- * Resolves once widgets.wp.com "message" events become idle. This can be
- * synonymous to the moment all the widgets become ready to use / stable. This
- * helper can be used, e.g., on Atomic pages where the widgets are loaded via
- * iframes causing layout shifting, and in consequence Playwright's stability
- * checks to fail.
+ * Resolves once widgets.wp.com `message` events become idle or when no
+ * `message` events are dispatched within the first 3 seconds. Once resolved,
+ * all the widgets should be ready to be interacted with. This helper can be
+ * used on Atomic sites where the iframed widgets have, e.g., custom resize
+ * handlers (like the like button), causing layout shifting and, consequently,
+ * Playwright's stability checks to fail.
  *
  * @param {Page} page The parent page object.
  */
-export async function waitForWPWidgets( page: Page ): Promise< void > {
+export async function waitForWPWidgetsIfNecessary( page: Page ): Promise< void > {
 	await page.evaluate( async () => {
 		await new Promise( ( resolve ) => {
-			const wait = () => setTimeout( resolve, 1000 );
-			let timeout = wait();
+			let timer: NodeJS.Timeout;
+			const setResolveTimer = ( delay: number ) => {
+				clearTimeout( timer );
+				timer = setTimeout( resolve, delay );
+			};
+
+			setResolveTimer( 3000 );
 
 			window.addEventListener( 'message', ( event ) => {
 				if ( event.origin === 'https://widgets.wp.com' ) {
-					clearTimeout( timeout );
-					timeout = setTimeout( resolve, 1000 );
+					setResolveTimer( 1000 );
 				}
 			} );
 		} );
