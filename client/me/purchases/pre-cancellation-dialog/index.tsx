@@ -80,62 +80,62 @@ export const PreCancellationDialog = ( {
 	 * @returns Fragment
 	 */
 	const FeaturesList = () => {
-		if ( typeof productSlug === 'string' ) {
-			const planFeatures = getPlanCancellationFeatures( productSlug );
+		if ( typeof productSlug !== 'string' ) {
+			return null;
+		}
 
-			return (
-				<>
-					<p>{ subTitle }</p>
-					<ul
-						className={
-							'remove-plan-dialog__list-plan-features' +
-							( domainFeature ? ' --with-domain-feature' : '' )
-						}
-					>
-						{ domainFeature && (
-							<li key="redirect-domain">
+		const planFeatures = getPlanCancellationFeatures( productSlug );
+
+		return (
+			<>
+				<p>{ subTitle }</p>
+				<ul
+					className={
+						'remove-plan-dialog__list-plan-features' +
+						( domainFeature ? ' --with-domain-feature' : '' )
+					}
+				>
+					{ domainFeature && (
+						<li key="redirect-domain">
+							<Gridicon
+								className="remove-plan-dialog__item-cross-small"
+								size={ 24 }
+								icon="cross-small"
+							/>
+							{ domainFeature }
+						</li>
+					) }
+					<li key="debug-refundable">
+						<Gridicon
+							className="remove-plan-dialog__item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						{ isRefundable ? 'Refundable: yes' : 'Refundable: no' }
+					</li>
+					<li key="debug-autorenew">
+						<Gridicon
+							className="remove-plan-dialog__item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						{ isAutoRenewing ? 'Auto-renew: yes' : 'Auto-renew: no' }
+					</li>
+					{ planFeatures.map( ( feature ) => {
+						return (
+							<li key={ feature }>
 								<Gridicon
 									className="remove-plan-dialog__item-cross-small"
 									size={ 24 }
 									icon="cross-small"
 								/>
-								{ domainFeature }
+								{ feature }
 							</li>
-						) }
-						<li key="debug-refundable">
-							<Gridicon
-								className="remove-plan-dialog__item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							{ isRefundable ? 'Refundable: yes' : 'Refundable: no' }
-						</li>
-						<li key="debug-autorenew">
-							<Gridicon
-								className="remove-plan-dialog__item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							{ isAutoRenewing ? 'Auto-renew: yes' : 'Auto-renew: no' }
-						</li>
-						{ planFeatures.map( ( feature ) => {
-							return (
-								<li key={ feature }>
-									<Gridicon
-										className="remove-plan-dialog__item-cross-small"
-										size={ 24 }
-										icon="cross-small"
-									/>
-									{ feature }
-								</li>
-							);
-						} ) }
-					</ul>
-				</>
-			);
-		}
-
-		return null;
+						);
+					} ) }
+				</ul>
+			</>
+		);
 	};
 
 	/**
