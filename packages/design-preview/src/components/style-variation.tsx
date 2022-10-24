@@ -19,6 +19,23 @@ interface StyleVariationPreviewProps {
 	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
+// This is a temporary workaround until we can
+// upgrade @wordpress/edit-site to fix CSS issues.
+//
+// See: https://github.com/WordPress/gutenberg/pull/43601
+const OVERRIDE_CONFIG = {
+	styles: {
+		spacing: {
+			padding: {
+				bottom: 0,
+				left: 0,
+				right: 0,
+				top: 0,
+			},
+		},
+	},
+};
+
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
 	base = {},
@@ -34,7 +51,10 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				styles: variation.styles ?? {},
 			},
 			base,
-			merged: mergeBaseAndUserConfigs( base, variation ),
+			merged: mergeBaseAndUserConfigs(
+				mergeBaseAndUserConfigs( base, variation ),
+				OVERRIDE_CONFIG
+			),
 		};
 	}, [ variation, base ] );
 
