@@ -329,14 +329,14 @@ export const setDomainForm = ( step: Record< string, string > ) => {
 	};
 };
 
-export const setDomainItem = ( domainItem: DomainItem | undefined ) => ( {
-	type: 'SET_DOMAIN_ITEM' as const,
-	domainItem,
+export const setDomainCartItem = ( domainCartItem: DomainItem | undefined ) => ( {
+	type: 'SET_DOMAIN_CART_ITEM' as const,
+	domainCartItem,
 } );
 
-export const setSignupValues = ( signupValues: object ) => ( {
-	type: 'SET_SIGNUP_VALUES' as const,
-	signupValues,
+export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
+	type: 'SET_HIDE_FREE_PLAN' as const,
+	hideFreePlan,
 } );
 
 export type OnboardAction = ReturnType<
@@ -381,10 +381,10 @@ export type OnboardAction = ReturnType<
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
 	| typeof setDomainForm
-	| typeof setDomainItem
+	| typeof setDomainCartItem
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
-	| typeof setSignupValues
+	| typeof setHideFreePlan
 	| typeof setPlanCartItem
 >;

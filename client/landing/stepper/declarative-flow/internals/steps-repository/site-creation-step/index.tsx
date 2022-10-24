@@ -6,9 +6,8 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
-	const { siteTitle, domainItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		domainItem: select( ONBOARD_STORE ).getDomainItem(),
+	const { domainCartItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
+		domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 		siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
 		planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
 	} ) );
@@ -17,7 +16,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 
 	const theme = flow === LINK_IN_BIO_FLOW ? 'pub/lynx' : 'pub/lettre';
 	const comingSoon = flow === LINK_IN_BIO_FLOW ? 1 : 0;
-	const isPaidDomainItem = Boolean( domainItem?.product_slug );
+	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
 	// if they have a paid domain, we hid the free plan for them
 	const shouldHideFreePlan = ! isPaidDomainItem;
@@ -28,7 +27,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			false,
 			true,
 			shouldHideFreePlan,
-			domainItem,
+			domainCartItem,
 			isPaidDomainItem,
 			theme,
 			comingSoon,
