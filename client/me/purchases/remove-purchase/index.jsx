@@ -24,7 +24,6 @@ import PrecancellationChatButton from 'calypso/components/marketing-survey/cance
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getName, isRefundable, isRemovable } from 'calypso/lib/purchases';
-import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -241,8 +240,8 @@ class RemovePurchase extends Component {
 	}
 
 	renderPreCancellationDialog() {
-		const { site, purchase, primaryDomain } = this.props;
-		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
+		const { site, purchase, primaryDomain, hasCustomPrimaryDomain } = this.props;
+		const primaryDomainName = hasCustomPrimaryDomain && primaryDomain ? primaryDomain.name : '';
 
 		return (
 			<PreCancellationDialog
@@ -250,7 +249,7 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
-				hasDomain={ hasCustomDomain }
+				hasDomain={ hasCustomPrimaryDomain }
 				isRefundable={ isRefundable( purchase ) }
 				isAutoRenewing={ purchase.isAutoRenewEnabled }
 				primaryDomain={ primaryDomainName }
