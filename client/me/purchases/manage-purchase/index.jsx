@@ -579,59 +579,6 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	removePurchase = async () => {
-		this.setState( { isRemoving: true } );
-
-		const { purchaseListUrl, purchase } = this.props;
-		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
-
-		// If the site has active Marketplace subscriptions, remove these as well
-		if ( activeSubscriptions?.length > 0 ) {
-			// no need to await here, as
-			// - the success/error messages are handled for each request separately
-			// - the plan removal is awaited below
-			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
-		}
-
-		await this.handlePurchaseRemoval( purchase );
-
-		page( purchaseListUrl );
-	};
-
-	handlePurchaseRemoval = async ( purchase ) => {
-		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
-
-		await this.props.removePurchase( purchase.id, userId );
-
-		const productName = getName( purchase );
-		let successMessage;
-
-		if ( purchasesError ) {
-			this.setState( { isRemoving: false } );
-			this.closeDialog();
-			this.props.errorNotice( purchasesError );
-			return;
-		}
-
-		if ( isDomainRegistration( purchase ) ) {
-			if ( isDomainOnlySite ) {
-				this.props.receiveDeletedSite( purchase.siteId );
-				this.props.setAllSitesSelected();
-			}
-
-			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
-				components: { domain: <em>{ productName }</em> },
-			} );
-		} else {
-			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-				args: { productName },
-				components: { siteName: <em>{ purchase.domain }</em> },
-			} );
-		}
-
-		this.props.successNotice( successMessage, { isPersistent: true } );
-	};
-
 	getCancellationFlowType = () => {
 		const { purchase } = this.props;
 		const isPlanRefundable = isRefundable( purchase );
