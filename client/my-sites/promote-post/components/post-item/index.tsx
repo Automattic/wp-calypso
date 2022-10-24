@@ -4,6 +4,7 @@ import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
@@ -35,6 +36,7 @@ type Props = {
 export default function PostItem( { post }: Props ) {
 	const [ loading, setLoading ] = useState( false );
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const keyValue = 'post-' + post.ID;
 	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
 		'blazepress-widget',
@@ -42,6 +44,7 @@ export default function PostItem( { post }: Props ) {
 	);
 
 	const onCloseWidget = () => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
 		setLoading( false );
 		closeModal();
 	};

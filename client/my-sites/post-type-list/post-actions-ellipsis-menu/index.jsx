@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
@@ -25,6 +26,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	const keyValue = globalId;
 	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
+	const queryClient = useQueryClient();
 
 	if ( includeDefaultActions ) {
 		actions.push(
@@ -58,7 +60,10 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ () => closeModal() }
+					onClose={ () => {
+						queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
+						closeModal();
+					} }
 				/>
 			) }
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>

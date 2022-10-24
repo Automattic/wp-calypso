@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -16,6 +17,7 @@ const PromotePost = ( props ) => {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 
 	const keyValue = 'post-' + postId;
 	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
@@ -51,6 +53,7 @@ const PromotePost = ( props ) => {
 						siteId={ selectedSiteId }
 						postId={ postId }
 						onClose={ () => {
+							queryClient.invalidateQueries( [ 'promote-post-campaigns', selectedSiteId ] );
 							closeModal();
 							onToggleVisibility( false );
 						} }
