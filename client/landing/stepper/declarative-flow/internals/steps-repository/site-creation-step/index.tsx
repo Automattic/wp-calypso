@@ -36,13 +36,12 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			siteAccentColor,
 			true
 		);
-		return await addPlanToCart(
-			site?.siteSlug as string,
-			planCartItem,
-			flow as string,
-			true,
-			theme
-		);
+
+		await addPlanToCart( site?.siteSlug as string, planCartItem, flow as string, true, theme );
+
+		return {
+			siteSlug: site?.siteSlug,
+		};
 	}
 
 	useEffect( () => {
@@ -50,6 +49,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		navigation.submit?.();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
 	return null;
 };
 

@@ -84,11 +84,13 @@ export const linkInBio: Flow = {
 
 				case 'plans':
 					return navigate( 'siteCreationStep' );
+
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':
-					if ( providedDependencies?.cartItem ) {
+					//We need to check if we need to redirect to checkout
+					if ( providedDependencies?.siteSlug ) {
 						const returnUrl = encodeURIComponent(
 							`${ window.location.origin }/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
 						);

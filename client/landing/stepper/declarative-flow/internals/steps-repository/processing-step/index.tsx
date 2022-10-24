@@ -60,25 +60,6 @@ const ProcessingStep: Step = function ( props ) {
 					captureFlowException( e );
 					submit?.( {}, ProcessingResult.FAILURE );
 				}
-			} else if ( Array.isArray( action ) ) {
-				//In this case we have multiple actions that will be executed one after the other
-				//and the function result will be passed to the next one. The result of the last one will
-				//be used as destination
-				const destination = await action.reduce( async ( prevFunctionPromise, currentFunction ) => {
-					const prevFunctionResult = await prevFunctionPromise;
-
-					try {
-						return await currentFunction.pendingAction( prevFunctionResult );
-					} catch ( e ) {
-						// eslint-disable-next-line no-console
-						console.error( 'ProcessingStep failed:', e );
-						captureFlowException( e );
-						submit?.( {}, ProcessingResult.FAILURE );
-					}
-				}, Promise.resolve() );
-
-				setDestinationState( destination );
-				setHasActionSuccessfullyRun( true );
 			} else {
 				submit?.( {}, ProcessingResult.NO_ACTION );
 			}
