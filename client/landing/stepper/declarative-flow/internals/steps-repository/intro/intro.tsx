@@ -10,7 +10,8 @@ interface Props {
 
 interface IntroContent {
 	[ key: string ]: {
-		title: WPElement;
+		title: WPElement | string;
+		text?: WPElement;
 		buttonText: string;
 	};
 }
@@ -20,11 +21,14 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 
 	const introContent: IntroContent = {
 		newsletter: {
-			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
+			title: __( 'Sign in. Set up. Send out.' ),
+			text: createInterpolateElement(
+				__(
+					`You’re a few steps away from launching a beautiful Newsletter with<br />everything you’ll ever need to grow your audience.`
+				),
 				{ br: <br /> }
 			),
-			buttonText: __( 'Get started' ),
+			buttonText: __( 'Start building your Newsletter' ),
 		},
 		'link-in-bio': {
 			title: createInterpolateElement(
@@ -40,6 +44,7 @@ const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
 			<h1 className="intro__title">
 				<span>{ introContent[ flowName ].title }</span>
 			</h1>
+			{ introContent[ flowName ].text && <div> { introContent[ flowName ].text } </div> }
 			<Button className="intro__button" primary onClick={ onSubmit }>
 				{ introContent[ flowName ].buttonText }
 			</Button>
