@@ -2,7 +2,7 @@ import { Dialog, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import getPlanFeatures from './get-plan-features';
+import getPlanCancellationFeatures from './get-plan-cancellation-features';
 import './style.scss';
 
 interface PreCancellationDialogProps {
@@ -81,7 +81,7 @@ export const PreCancellationDialog = ( {
 	 */
 	const FeaturesList = () => {
 		if ( typeof productSlug === 'string' ) {
-			const planFeatures = getPlanFeatures( productSlug );
+			const planFeatures = getPlanCancellationFeatures( productSlug );
 
 			return (
 				<>
