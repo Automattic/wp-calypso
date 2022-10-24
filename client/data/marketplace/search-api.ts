@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { categories } from 'calypso/my-sites/plugins/categories/use-categories';
+import { getCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { RETURNABLE_FIELDS } from './constants';
 import type { SearchParams } from './types';
 
@@ -129,7 +129,7 @@ function getFilterbyAuthor( author: string ): {
 function getFilterByCategory( category: string ): {
 	bool: object;
 } {
-	const categoryTags = categories[ category ]?.tags;
+	const categoryTags = getCategories()[ category ]?.tags;
 
 	return {
 		bool: {
