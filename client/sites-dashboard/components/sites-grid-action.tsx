@@ -26,6 +26,7 @@ const SITES_GRID_ACTION = css( {
 	left: 6,
 	top: 6,
 	width: 'calc( 100% - 12px )',
+	boxShadow: '0 0 4px var(--studio-gray-60)',
 } );
 
 const CONTENT = css( {
