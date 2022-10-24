@@ -41,7 +41,10 @@ export function useInView< T extends Element >( oneTimeCallback: () => void ): R
 		// When the effect is dismounted, stop observing
 		return () => {
 			observerRef.current?.disconnect?.();
-			if ( ! viewedRef.current ) {
+			if ( ! viewedRef.current && observerRef.current ) {
+				// This case prevents when the effect is dismounted and re-mounted due oneTimeCallback is not wrapped in useCallback
+				// We cannot show a warning, because it can be a valid use case.
+				// Valid case: When a component is unmounted and never was visible.
 				observerRef.current = undefined;
 			}
 		};
