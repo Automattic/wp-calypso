@@ -461,10 +461,17 @@ module.exports = {
 					// We need to support both symbols until we're sure Gutenberg < v10.7.x is not used anymore in WPCOM.
 					'__unstableInserterMenuExtension',
 					'__experimentalInserterMenuExtension',
+					'__unstableIframe',
+					'__unstableEditorStyles',
 				],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/edit-post': [ '__experimentalMainDashboardButton' ],
-				'@wordpress/components': [ '__experimentalNavigationBackButton' ],
+				'@wordpress/components': [
+					'__experimentalNavigationBackButton',
+					'__unstableMotion',
+					'__experimentalHStack',
+					'__experimentalVStack',
+				],
 			},
 		],
 
