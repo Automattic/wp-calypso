@@ -550,17 +550,9 @@ class ManagePurchase extends Component {
 				: this.showPreCancellationModalDialog;
 
 			let customDomain = false;
-			let wordpressComURL = '';
 
 			if ( hasCustomPrimaryDomain && primaryDomainName ) {
 				customDomain = true;
-			}
-
-			if ( typeof site.wpcom_url !== 'undefined' ) {
-				wordpressComURL =
-					site.wpcom_url.length < 35
-						? site.wpcom_url
-						: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
 			}
 
 			return (
@@ -573,7 +565,7 @@ class ManagePurchase extends Component {
 					isRefundable={ isPlanRefundable }
 					isAutoRenewing={ purchase.isAutoRenewEnabled }
 					primaryDomain={ primaryDomainName }
-					wpcomURL={ wordpressComURL }
+					wpcomURL={ site.wpcom_url }
 				/>
 			);
 		}

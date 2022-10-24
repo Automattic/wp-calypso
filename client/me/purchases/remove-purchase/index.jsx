@@ -244,14 +244,6 @@ class RemovePurchase extends Component {
 		const { site, purchase, primaryDomain } = this.props;
 		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
 
-		let wordpressComURL = '';
-		if ( typeof site.wpcom_url !== 'undefined' ) {
-			wordpressComURL =
-				site.wpcom_url.length < 35
-					? site.wpcom_url
-					: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
-		}
-
 		return (
 			<PreCancellationDialog
 				isDialogVisible={ this.state.isShowingPreCancellationDialog }
@@ -262,7 +254,7 @@ class RemovePurchase extends Component {
 				isRefundable={ isRefundable( purchase ) }
 				isAutoRenewing={ purchase.isAutoRenewEnabled }
 				primaryDomain={ primaryDomainName }
-				wpcomURL={ wordpressComURL }
+				wpcomURL={ site.wpcom_url }
 			/>
 		);
 	}
