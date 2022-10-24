@@ -775,6 +775,8 @@
 .licensing-activation .jetpack-license-key-clipboard__button.button {
 	margin-top: 0;
 	min-width: 100px;
+	background-color: var(--studio-black);
+	color: var(--studio-white);
 }
 
 .jetpack-checkout-thank-you {
@@ -852,9 +854,9 @@
 		height: 1.75em;
 		margin-inline-end: 0.75em;
 
-		background-color: var(--studio-jetpack-green-40);
+		background-color: var(--studio-gray-5);
 		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		color: var(--color-text-inverted);
+		color: var(--color-text-black);
 
 		font-weight: 700;
 	}
