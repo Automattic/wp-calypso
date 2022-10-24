@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import JetpackInstructionList from './jetpack-instruction-list';
 import { getWPORGPluginLink } from './utils';
 
 interface Props {
@@ -13,40 +15,31 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product }
 
 	const wporgPluginLink = getWPORGPluginLink( product.productSlug );
 
+	const items = useMemo(
+		() => [
+			translate( 'Login to an existing Wordpress site as an administrator.' ),
+			translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
+				components: { strong: <strong /> },
+			} ),
+			translate(
+				'Search for {{link}}{{strong}}Jetpack %(pluginName)s{{/strong}}{{/link}}, install and activate.',
+				{
+					components: {
+						strong: <strong />,
+						link: (
+							<Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />
+						),
+					},
+					args: { pluginName: product.shortName },
+				}
+			),
+		],
+		[ translate, product, wporgPluginLink ]
+	);
+
 	return (
 		<>
-			<ol className="licensing-thank-you-manual-activation-instructions__list">
-				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					{ translate( 'Login to an existing Wordpress site as an administrator.' ) }
-				</li>
-
-				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					{ translate( 'Go to {{strong}}Plugins > Add New{{/strong}} in the admin menu.', {
-						components: { strong: <strong /> },
-					} ) }
-				</li>
-
-				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					{ translate(
-						'Search for {{link}}{{strong}}Jetpack %(pluginName)s{{/strong}}{{/link}}, install and activate.',
-						{
-							components: {
-								strong: <strong />,
-								link: (
-									<Button
-										plain
-										href={ wporgPluginLink }
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
-							},
-							args: { pluginName: product.shortName },
-						}
-					) }
-				</li>
-			</ol>
-
+			<JetpackInstructionList items={ items } />
 			<p>
 				<ExternalLink
 					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
