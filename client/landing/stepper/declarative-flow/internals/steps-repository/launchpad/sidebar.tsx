@@ -73,7 +73,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 
 		[ siteName, topLevelDomain ] = getUrlInfo( domain );
 
-		isDomainSSLProcessing = sslStatus !== 'active';
+		isDomainSSLProcessing = sslStatus !== 'active' && sslStatus !== null;
 		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
