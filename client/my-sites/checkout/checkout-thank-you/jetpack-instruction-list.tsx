@@ -1,10 +1,10 @@
-import { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 export interface JetpackInstructionListProps {
 	items: ReactNode[];
 }
 
-const JetpackInstructionList: FC< JetpackInstructionListProps > = ( { items } ) => {
+const JetpackInstructionList: React.FC< JetpackInstructionListProps > = ( { items } ) => {
 	return (
 		<ol className="jetpack-instruction-list">
 			{ items.map( ( item, index ) => (
