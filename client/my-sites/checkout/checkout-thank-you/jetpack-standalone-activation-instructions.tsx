@@ -45,7 +45,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 			{
 				id: 4,
 				content: translate(
-					'Click the “Activate license key” (at the bottom of the page) and enter the key below.'
+					'Click “Activate license key” (at the bottom of the page) and enter the key below.'
 				),
 			},
 		],
