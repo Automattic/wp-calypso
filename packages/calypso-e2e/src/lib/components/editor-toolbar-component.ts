@@ -12,8 +12,7 @@ const selectors = {
 	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
 
 	// Draft
-	saveDraftButton: `${ panel } button:text-is("Save draft")`,
-	savedButton: `${ panel } button:text-is("Saved")`,
+	saveDraftButton: `${ panel } button[aria-label="Save draft"]`,
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
@@ -138,7 +137,7 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const savedButtonLocator = this.editor.locator( selectors.savedButton );
+		const savedButtonLocator = this.editor.locator( `${ selectors.saveDraftButton }.is-saved` );
 
 		await saveButtonLocator.click();
 		await savedButtonLocator.waitFor();
