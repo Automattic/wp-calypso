@@ -3,9 +3,9 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_MONTHLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
-	PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
-	PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY,
-	useJetpack100GbStorageAmountText,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	//useJetpack100GbStorageAmountText,
 	useJetpack10GbStorageAmountText,
 	useJetpack1TbStorageAmountText,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
@@ -60,18 +60,18 @@ export default ( siteId ) => {
 	const upsellSlug = useMemo( () => {
 		if ( sitePurchases.some( isJetpackT1Product ) ) {
 			return {
-				...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY ),
+				...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ),
 				storage: TEN_GIGABYTES,
 			} as SelectorProductWithStorage;
 		}
 		if ( sitePurchases.some( isJetpackT2Product ) ) {
 			return {
-				...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY ),
+				...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ),
 				storage: ONE_TERABYTES,
 			} as SelectorProductWithStorage;
 		}
 		return {
-			...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY ),
+			...slugToSelectorProduct( PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ),
 			storage: TEN_GIGABYTES,
 		} as SelectorProductWithStorage;
 	}, [ sitePurchases, TEN_GIGABYTES, ONE_TERABYTES ] );
