@@ -102,7 +102,7 @@ const VideoCelebrationModalInner = () => {
 					<Button onClick={ closeModal }>{ __( 'Continue editing', 'full-site-editing' ) }</Button>
 					<Button
 						isPrimary
-						href={ `https://wordpress.com/setup/launchpad?flow=videopress&siteId=${ window._currentSiteId }` }
+						href={ `https://wordpress.com/setup/launchpad?flow=videopress&siteSlug=${ window.location.hostname }` }
 						target="__blank"
 						rel="noopener noreferrer"
 					>
