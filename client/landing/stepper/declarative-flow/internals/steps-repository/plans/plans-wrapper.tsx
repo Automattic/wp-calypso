@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
-import { NEWSLETTER_FLOW, Notice } from 'calypso/../packages/onboarding/src';
+import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
@@ -26,13 +26,9 @@ import './style.scss';
 
 interface Props {
 	flowName: string;
-	stepName: string;
 	siteType: string;
-	planSlug: string;
-	site: any;
 	onSubmit: () => void;
 	plansLoaded: boolean;
-	processStep: ( step: any ) => void;
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
@@ -48,8 +44,9 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const site = useSite();
 	const locale = useLocale();
 	const { __ } = useI18n();
-	const isDesktop = useMediaQuery( '(min-width: 480px)' );
 
+	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	const stepName = 'plans';
 	const disableBloggerPlanWithNonBlogDomain = undefined;
 	const isLaunchPage = undefined;
 	const isReskinned = true;
@@ -110,24 +107,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const plansFeaturesList = () => {
 		const { flowName } = props;
 
-		let errorDisplay;
-		if ( 'invalid' === props.step?.status ) {
-			errorDisplay = (
-				<div>
-					<Notice status="is-error" showDismiss={ false }>
-						{ props.step.errors.message }
-					</Notice>
-				</div>
-			);
-		}
-
 		if ( ! props.plansLoaded ) {
 			return renderLoading();
 		}
 
 		return (
 			<div>
-				{ errorDisplay }
+				{ /* check if it can be removed */ }
 				<ProvideExperimentData
 					name="calypso_signup_plans_step_faq_202209_v2"
 					options={ {
@@ -135,6 +121,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 							[ 'en-gb', 'en' ].includes( locale ) && 'onboarding' === flowName && isDesktop,
 					} }
 				>
+					{ /*  */ }
 					{ ( isLoading, experimentAssignment ) => {
 						if ( isLoading ) {
 							return renderLoading();
@@ -208,7 +195,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const plansFeaturesSelection = () => {
-		const { flowName, stepName } = props;
+		const { flowName } = props;
 
 		const headerText = getHeaderText();
 		const fallbackHeaderText = headerText;
