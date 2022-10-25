@@ -1,5 +1,7 @@
+import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
@@ -17,6 +19,11 @@ export type BlazePressPromotionProps = {
 };
 
 type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
+
+export function goToOriginalEndpoint() {
+	const { pathname } = getUrlParts( window.location.href );
+	page( pathname );
+}
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
