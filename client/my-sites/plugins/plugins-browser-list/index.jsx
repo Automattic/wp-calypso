@@ -25,7 +25,7 @@ const PluginsBrowserList = ( {
 	browseAllLink,
 	size,
 	search,
-	noHeader,
+	noHeader = false,
 } ) => {
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
