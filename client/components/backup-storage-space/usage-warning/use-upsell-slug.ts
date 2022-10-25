@@ -76,7 +76,6 @@ export default ( siteId: number | null ) => {
 		if ( bytesUsed && bytesAvailable && bytesUsed > bytesAvailable ) {
 			const additionalBytesUsed = bytesUsed - bytesAvailable;
 
-			console.log( 'additionalBytesUsed', additionalBytesUsed );
 			// add aditional 25% buffer
 			const additionalBytesNeeded = additionalBytesUsed + additionalBytesUsed * 0.25;
 
