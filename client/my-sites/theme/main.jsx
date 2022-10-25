@@ -205,11 +205,9 @@ class ThemeSheet extends Component {
 				<span className="theme__sheet-bar-title">
 					{ title }
 					{ softLaunched && (
-						<button title={ translate( 'This theme is only visible to Automattic employees' ) }>
-							<span className="theme__sheet-bar-soft-launched">
-								{ translate( 'Soft Launched' ) }
-							</span>
-						</button>
+						<span className="theme__sheet-bar-soft-launched">
+							{ translate( 'Available to A8C-only' ) }
+						</span>
 					) }
 				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
