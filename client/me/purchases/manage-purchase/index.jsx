@@ -546,9 +546,10 @@ class ManagePurchase extends Component {
 			const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
 			const primaryDomainName = customDomain ? primaryDomain.name : '';
 			const isPlanRefundable = isRefundable( purchase );
-			const actionFunction = isPlanRefundable
-				? this.goToCancelLink
-				: this.showPreCancellationModalDialog;
+			const actionFunction =
+				isPlanRefundable && customDomain
+					? this.goToCancelLink
+					: this.showPreCancellationModalDialog;
 
 			return (
 				<PreCancellationDialog
