@@ -37,7 +37,7 @@ const PanelActionButtons = ( {
 			{ __( 'Reset', 'full-site-editing' ) }
 		</Button>
 		<Button
-			className="global-styles-sidebar__publish-button"
+			className={ 'global-styles-sidebar__publish-button' }
 			disabled={ ! hasLocalChanges }
 			isPrimary
 			onClick={ publishAction }
@@ -82,7 +82,7 @@ export default ( {
 			</PluginSidebarMoreMenuItem>
 			<PluginSidebar
 				icon={ typography }
-				name="global-styles"
+				name={ 'global-styles' }
 				title={ __( 'Global Styles', 'full-site-editing' ) }
 				className="global-styles-sidebar"
 			>
@@ -142,7 +142,7 @@ export default ( {
 						hasLocalChanges={ hasLocalChanges }
 						publishAction={ publish }
 						resetAction={ resetLocalChanges }
-						className="global-styles-sidebar__panel-action-buttons"
+						className={ 'global-styles-sidebar__panel-action-buttons' }
 					/>
 				</PanelBody>
 			</PluginSidebar>

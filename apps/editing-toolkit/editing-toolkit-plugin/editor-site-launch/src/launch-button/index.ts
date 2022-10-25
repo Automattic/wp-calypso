@@ -14,9 +14,7 @@ let handled = false;
 domReady( () => {
 	// If site launch options does not exist, stop.
 	const siteLaunchOptions = window.wpcomEditorSiteLaunch;
-	if ( ! siteLaunchOptions ) {
-		return;
-	}
+	if ( ! siteLaunchOptions ) return;
 
 	// Don't proceed if this function has already run
 	if ( handled ) {
