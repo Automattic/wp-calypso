@@ -283,7 +283,9 @@ describe( 'MediaLibraryList item selection', () => {
 			// Ideally though we should:
 			// @TODO: add tests for grid visible labels
 			render( <MediaList { ...props } /> );
-			screen.getAllByText( /September/ ).forEach( ( el ) => expect( el ).toBeVisible() );
+			const gridLabels = screen.getAllByText( /September/ );
+			expect( gridLabels ).toHaveLength( 8 );
+			gridLabels.forEach( ( el ) => expect( el ).toBeVisible() );
 		} );
 	} );
 } );
