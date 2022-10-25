@@ -2,6 +2,7 @@ import { Card, ProgressBar } from '@automattic/components';
 import classnames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FC } from 'react';
+import footerCardAltBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-alt-bg.svg';
 import footerCardBackground from 'calypso/assets/images/jetpack/jp-licensing-checkout-footer-bg.svg';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import Main from 'calypso/components/main';
@@ -45,7 +46,10 @@ const LicensingActivation: FC< Props > = ( {
 		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
 
 	return (
-		<Main fullWidthLayout className={ classnames( 'licensing-activation', className ) }>
+		<Main
+			fullWidthLayout
+			className={ classnames( 'licensing-activation', className, { 'is-alt-layout': altLayout } ) }
+		>
 			<Card className="licensing-activation__card">
 				<div className="licensing-activation__card-main">
 					<div className="licensing-activation__card-top">
@@ -76,7 +80,9 @@ const LicensingActivation: FC< Props > = ( {
 				</div>
 				<div
 					className="licensing-activation__card-footer"
-					style={ { backgroundImage: `url(${ footerCardBackground })` } }
+					style={ {
+						backgroundImage: `url(${ altLayout ? footerCardAltBackground : footerCardBackground })`,
+					} }
 				>
 					{ footerImage && (
 						<div className="licensing-activation__card-footer-image">
