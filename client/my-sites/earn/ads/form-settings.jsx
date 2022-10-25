@@ -344,7 +344,7 @@ class AdsFormSettings extends Component {
 						text={ translate(
 							'Enables a targeted advertising opt-out link for consumers from some US states.'
 						) }
-						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
+						privacyLink={ null }
 					/>
 					<ToggleControl
 						checked={ !! this.state.ccpa_enabled }
