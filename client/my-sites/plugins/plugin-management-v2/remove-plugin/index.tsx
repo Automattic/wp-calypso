@@ -21,7 +21,6 @@ export default function RemovePlugin( { site, plugin }: Props ) {
 			site={ site }
 			menuItem
 			isJetpackCloud
-			isMarketplaceProduct={ plugin.isMarketplaceProduct }
 			classNames="plugin-management-v2__actions"
 		/>
 	);

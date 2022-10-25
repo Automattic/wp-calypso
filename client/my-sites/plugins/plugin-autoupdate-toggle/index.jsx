@@ -59,7 +59,7 @@ export class PluginAutoUpdateToggle extends Component {
 	};
 
 	isAutoManaged = () =>
-		this.props.isMarketplaceProduct ||
+		this.props.plugin.isMarketplaceProduct ||
 		PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ||
 		AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
 
@@ -181,12 +181,10 @@ PluginAutoUpdateToggle.propTypes = {
 	plugin: PropTypes.object.isRequired,
 	wporg: PropTypes.bool,
 	disabled: PropTypes.bool,
-	isMarketplaceProduct: PropTypes.bool,
 };
 
 PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
-	isMarketplaceProduct: false,
 };
 
 export default connect(

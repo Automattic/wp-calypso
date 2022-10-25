@@ -30,7 +30,6 @@ interface Props {
 	fullPlugin: Plugin;
 	sitesWithPlugins: Array< SiteDetails >;
 	showPlaceholder: boolean;
-	isMarketplaceProduct: boolean;
 	isWpcom: boolean;
 }
 
@@ -40,7 +39,6 @@ export default function PluginDetailsV2( {
 	fullPlugin,
 	sitesWithPlugins,
 	showPlaceholder,
-	isMarketplaceProduct,
 	isWpcom,
 }: Props ) {
 	const translate = useTranslate();
@@ -120,11 +118,7 @@ export default function PluginDetailsV2( {
 			</div>
 			{ fullPlugin.fetched && (
 				<div className="plugin-details-v2__body-container">
-					<PluginDetailsBody
-						fullPlugin={ fullPlugin }
-						isMarketplaceProduct={ isMarketplaceProduct }
-						isWpcom={ isWpcom }
-					/>
+					<PluginDetailsBody fullPlugin={ fullPlugin } isWpcom={ isWpcom } />
 				</div>
 			) }
 		</div>

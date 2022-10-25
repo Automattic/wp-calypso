@@ -14,7 +14,6 @@ import {
 	isPluginActionInProgress,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
@@ -210,7 +209,6 @@ export default function PluginRowFormatter( {
 						plugin={ pluginOnSite }
 						site={ selectedSite }
 						wporg={ !! item.wporg }
-						isMarketplaceProduct={ isMarketplaceProduct( state, item?.slug ) }
 						disabled={ !! item?.isSelectable }
 					/>
 				</div>
