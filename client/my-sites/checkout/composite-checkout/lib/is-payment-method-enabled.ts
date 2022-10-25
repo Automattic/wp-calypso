@@ -12,9 +12,10 @@ export default function isPaymentMethodEnabled(
 		return true;
 	}
 
-	// If new cards are supported, so are existing cards.
-	if ( slug.startsWith( 'existingCard' ) && allowedPaymentMethods?.includes( 'card' ) ) {
-		return true;
+	// Existing cards have unique slugs but here we need only know if existing
+	// cards are allowed.
+	if ( slug.startsWith( 'existingCard' ) ) {
+		slug = 'existingCard';
 	}
 
 	// Some country-specific payment methods should only be available if that
