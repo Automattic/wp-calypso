@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -127,14 +128,15 @@ class StatsPostDetail extends Component {
 		}
 
 		// Set up for FixedNavigationHeader.
+		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const domain = this.props?.path.split( '/' ).pop();
 		const backLabel = translate( 'Traffic' );
 		const backLink = '/stats/day/' + ( domain || '' );
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-		const showHeaderCake = false;
+		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main className={ dynamicClassName } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -142,8 +144,9 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<FixedNavigationHeader navigationItems={ navigationItems } />
-				{ showHeaderCake && (
+				{ isFixedNavHeadersEnabled ? (
+					<FixedNavigationHeader navigationItems={ navigationItems } />
+				) : (
 					<HeaderCake
 						onClick={ this.goBack }
 						actionIcon={ showViewLink ? 'visible' : null }

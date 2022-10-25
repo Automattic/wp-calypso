@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import page from 'page';
@@ -240,27 +241,33 @@ class StatsSummary extends Component {
 		}
 
 		// Append the site domain and period as needed.
+		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const domain = this.props?.path.split( '/' ).pop();
 		if ( domain.length > 0 ) {
 			backLink += domain;
 		}
 		// Set up for FixedNavigationHeader.
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-		const showHeaderCake = false;
+		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
 
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main className={ dynamicClassName } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				<FixedNavigationHeader navigationItems={ navigationItems } />
+				{ isFixedNavHeadersEnabled && (
+					<FixedNavigationHeader navigationItems={ navigationItems } />
+				) }
+
 				<div id="my-stats-content">
-					{ showHeaderCake && <HeaderCake onClick={ this.goBack }>{ title }</HeaderCake> }
+					{ ! isFixedNavHeadersEnabled && (
+						<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
+					) }
 					{ summaryViews }
 				</div>
 				<JetpackColophon />
