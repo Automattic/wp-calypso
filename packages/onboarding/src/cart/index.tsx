@@ -13,6 +13,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const Visibility = Site.Visibility;
@@ -103,10 +104,6 @@ export const createSiteWithCart = async (
 	productsList: Record< string, ProductListItem >,
 	domainItem?: CartItem
 ) => {
-	if ( ! domainItem ) {
-		return;
-	}
-
 	const siteUrl = domainItem?.meta;
 
 	const newCartItems = [ domainItem ].filter( ( item ) => item );
@@ -114,8 +111,7 @@ export const createSiteWithCart = async (
 	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
 
 	if ( isManageSiteFlow ) {
-		//TODO: STILL TO FIX
-		const siteSlugManaged = 'dsffdsfsdfsdfsdfsd.wordpress.com'; //get( getSignupDependencyStore( state ), 'siteSlug', undefined );
+		const siteSlugManaged = getSignupCompleteSlug();
 		const newCartItems = [ domainItem ].filter( ( item ) => item );
 
 		await processItemCart(

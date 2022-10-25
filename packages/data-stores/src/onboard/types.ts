@@ -14,7 +14,7 @@ export type DomainForm = {
 	subdomainSearchResults?: DomainSuggestion[] | null;
 	loadingResults?: boolean;
 	searchResults?: DomainSuggestion[] | null;
+	hideInitialQuery?: boolean;
 };
 
-export type CartItem = Partial< RequestCartProduct > &
-	Pick< RequestCartProduct, 'product_slug' | 'extra' >;
+export type CartItem = Partial< RequestCartProduct > & Pick< RequestCartProduct, 'product_slug' >;
