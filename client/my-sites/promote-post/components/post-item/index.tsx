@@ -3,6 +3,7 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import page from 'page';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,6 +14,7 @@ import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type Post = {
 	ID: number;
@@ -38,6 +40,7 @@ export default function PostItem( { post }: Props ) {
 	const [ loading, setLoading ] = useState( false );
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const keyValue = 'post-' + post.ID;
 	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
 		'blazepress-widget',
@@ -46,10 +49,12 @@ export default function PostItem( { post }: Props ) {
 
 	const previousRoute = useSelector( getPreviousRoute );
 
-	const onCloseWidget = () => {
+	const onCloseWidget = ( redirectToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
 		setLoading( false );
-		if ( previousRoute ) {
+		if ( redirectToCampaigns ) {
+			page( `/advertising/${ selectedSiteSlug }/campaigns` );
+		} else if ( previousRoute ) {
 			closeModal();
 		} else {
 			goToOriginalEndpoint();
