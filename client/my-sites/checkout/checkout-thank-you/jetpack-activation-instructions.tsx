@@ -9,25 +9,34 @@ const JetpackActivationInstructions: React.FC = () => {
 
 	const items = useMemo(
 		() => [
-			translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
-				components: { strong: <strong /> },
-			} ),
-			translate(
-				'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
-				{
-					components: {
-						strong: <strong />,
-						link: (
-							<Button
-								plain
-								href="https://wordpress.org/plugins/jetpack/"
-								target="_blank"
-								rel="noreferrer noopener"
-							/>
-						),
-					},
-				}
-			),
+			{
+				id: 1,
+				content: translate(
+					'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.',
+					{
+						components: { strong: <strong /> },
+					}
+				),
+			},
+			{
+				id: 2,
+				content: translate(
+					'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
+					{
+						components: {
+							strong: <strong />,
+							link: (
+								<Button
+									plain
+									href="https://wordpress.org/plugins/jetpack/"
+									target="_blank"
+									rel="noreferrer noopener"
+								/>
+							),
+						},
+					}
+				),
+			},
 		],
 		[ translate ]
 	);

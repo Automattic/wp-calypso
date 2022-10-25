@@ -1,15 +1,18 @@
 import React, { ReactNode } from 'react';
 
 export interface JetpackInstructionListProps {
-	items: ReactNode[];
+	items: {
+		id: number;
+		content: ReactNode;
+	}[];
 }
 
 const JetpackInstructionList: React.FC< JetpackInstructionListProps > = ( { items } ) => {
 	return (
 		<ol className="jetpack-instruction-list">
-			{ items.map( ( item, index ) => (
-				<li className="jetpack-instruction-list__item" key={ index }>
-					<span>{ item }</span>
+			{ items.map( ( { id, content } ) => (
+				<li className="jetpack-instruction-list__item" key={ id }>
+					<span>{ content }</span>
 				</li>
 			) ) }
 		</ol>

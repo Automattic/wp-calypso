@@ -19,21 +19,35 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 
 	const items = useMemo(
 		() => [
-			translate( '{{link}}Download Jetpack %(pluginName)s.{{icon/}}{{/link}}', {
-				components: {
-					strong: <strong />,
-					link: <Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />,
-					icon: <Gridicon icon="external" size={ 16 } />,
-				},
-				args: { pluginName: product.shortName },
-			} ),
-			translate( 'Install and activate the plugin.' ),
-			translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}.', {
-				components: { strong: <strong /> },
-			} ),
-			translate(
-				'Click the “Activate license key” (at the bottom of the page) and enter the key below.'
-			),
+			{
+				id: 1,
+				content: translate( '{{link}}Download Jetpack %(pluginName)s.{{icon/}}{{/link}}', {
+					components: {
+						strong: <strong />,
+						link: (
+							<Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />
+						),
+						icon: <Gridicon icon="external" size={ 16 } />,
+					},
+					args: { pluginName: product.shortName },
+				} ),
+			},
+			{
+				id: 2,
+				content: translate( 'Install and activate the plugin.' ),
+			},
+			{
+				id: 3,
+				content: translate( 'Go to {{strong}}Jetpack > Dashboard > My Jetpack{{/strong}}.', {
+					components: { strong: <strong /> },
+				} ),
+			},
+			{
+				id: 4,
+				content: translate(
+					'Click the “Activate license key” (at the bottom of the page) and enter the key below.'
+				),
+			},
 		],
 		[ translate, product, wporgPluginLink ]
 	);
