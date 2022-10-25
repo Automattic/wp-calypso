@@ -4,10 +4,11 @@
 
 import {
 	DataHelper,
-	ReaderPage,
 	NavbarComponent,
 	NotificationsComponent,
+	RestAPIClient,
 	TestAccount,
+	SecretsManager,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -19,32 +20,23 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
 
 	let notificationsComponent: NotificationsComponent;
-	let readerPage: ReaderPage;
-
-	describe( `Leave a comment as ${ commentingUser }`, function () {
-		let page: Page;
-		let testAccount: TestAccount;
-
-		beforeAll( async function () {
-			page = await browser.newPage();
-			testAccount = new TestAccount( commentingUser );
-			await testAccount.authenticate( page );
-		} );
-
-		it( 'Visit latest post in reader stream', async function () {
-			readerPage = new ReaderPage( page );
-			await readerPage.visitPost( { index: 1 } );
-		} );
-
-		it( 'Leave a comment on the post', async function () {
-			await readerPage.comment( comment );
-		} );
-	} );
+	let restAPIClient: RestAPIClient;
 
 	describe( `Trash comment as ${ notificationsUser }`, function () {
 		let page: Page;
 
 		beforeAll( async function () {
+			// Authenticate the commenting user with the REST API.
+			restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.commentingUser );
+
+			// Get the first post from the blogs a user follows.
+			const response = await restAPIClient.getReaderFeed();
+			const siteID = response.siteID;
+			const postID = response.postID;
+
+			// Add a comment to the post.
+			await restAPIClient.createComment( siteID, postID, comment );
+
 			page = await browser.newPage();
 			const testAccount = new TestAccount( notificationsUser );
 			await testAccount.authenticate( page );

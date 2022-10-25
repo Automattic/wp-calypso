@@ -2,7 +2,13 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
+import {
+	BearerTokenErrorResponse,
+	NewCommentParams,
+	ReaderParams,
+	TestFile,
+	SettingsParams,
+} from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -164,6 +170,68 @@ export class RestAPIClient {
 	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
 		const response = await fetch( url.toString(), params as RequestInit );
 		return response.json();
+	}
+
+	/**
+	 * Gets the latest of post from the blogs a user follows.
+	 *
+	 *
+	 * @returns {Promise<ReaderParams}.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getReaderFeed(): Promise< ReaderParams > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Creates a comment on the given post.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 * @param {string} comment Details of the new comment.
+	 */
+	async createComment(
+		siteID: number,
+		postID: number,
+		comment: string
+	): Promise< NewCommentParams > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { content: comment } ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/replies/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/* Sites */

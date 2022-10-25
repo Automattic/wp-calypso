@@ -25,9 +25,18 @@ export interface NewPostParams {
 	title: string;
 	content?: string;
 }
-
 export interface SettingsParams {
 	[ key: string ]: string | number;
+}
+
+export interface ReaderParams {
+	postID: number;
+	siteID: number;
+}
+
+export interface NewCommentParams {
+	ID: number;
+	content: string;
 }
 
 /* Response Interfaces */
