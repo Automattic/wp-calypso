@@ -86,6 +86,7 @@ describe( 'MediaLibraryList item selection', () => {
 			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
 			await user.keyboard( '{Shift>}' ); // `>` means keep the `Shift` key pressed
 			await user.click( screen.getByTestId( `list-item-${ media[ 4 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
 
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 2, DUMMY_SITE_ID, media.slice( 1, 5 ) );
 		} );
@@ -99,6 +100,7 @@ describe( 'MediaLibraryList item selection', () => {
 			await user.click( screen.getByTestId( `list-item-${ media[ 5 ].ID }` ) );
 			await user.keyboard( '{Shift>}' );
 			await user.click( screen.getByTestId( `list-item-${ media[ 9 ].ID }` ) );
+			await user.keyboard( '{/Shift}' );
 
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, [
 				media[ 1 ],
@@ -120,6 +122,8 @@ describe( 'MediaLibraryList item selection', () => {
 			// Shift is still being pressed because of the `>` above
 			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
 
+			await user.keyboard( '{/Shift}' );
+
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, media.slice( 0, 7 ) );
 		} );
 
@@ -136,6 +140,8 @@ describe( 'MediaLibraryList item selection', () => {
 
 			// Shift is still being pressed because of the `>` above
 			await user.click( screen.getByTestId( `list-item-${ media[ 9 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
 
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, media.slice( 3 ) );
 		} );
@@ -164,6 +170,8 @@ describe( 'MediaLibraryList item selection', () => {
 			// Shift is still being pressed because of the `>`
 			await user.click( screen.getByTestId( `list-item-${ media[ 6 ].ID }` ) );
 
+			await user.keyboard( '{/Shift}' );
+
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 5, DUMMY_SITE_ID, [
 				media[ 0 ],
 				...media.slice( 7 ),
@@ -184,6 +192,8 @@ describe( 'MediaLibraryList item selection', () => {
 			// Shift is still being pressed because of the `>`
 			await user.click( screen.getByTestId( `list-item-${ media[ 1 ].ID }` ) );
 
+			await user.keyboard( '{/Shift}' );
+
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 3, DUMMY_SITE_ID, [] );
 		} );
 
@@ -202,6 +212,8 @@ describe( 'MediaLibraryList item selection', () => {
 			await user.click( screen.getByTestId( `list-item-${ media[ 5 ].ID }` ) );
 			await user.keyboard( '{Shift>}' );
 			await user.click( screen.getByTestId( `list-item-${ media[ 0 ].ID }` ) );
+
+			await user.keyboard( '{/Shift}' );
 
 			expect( selectMediaItems ).toHaveBeenNthCalledWith( 4, DUMMY_SITE_ID, [
 				...media.slice( 1, 5 ),
