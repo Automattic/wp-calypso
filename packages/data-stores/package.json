@@ -34,10 +34,10 @@
 		"@automattic/domain-utils": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
-		"@wordpress/api-fetch": "^6.6.0",
-		"@wordpress/data-controls": "^2.9.0",
-		"@wordpress/deprecated": "^3.9.0",
-		"@wordpress/url": "^3.10.0",
+		"@wordpress/api-fetch": "^6.17.0",
+		"@wordpress/data-controls": "^2.20.0",
+		"@wordpress/deprecated": "^3.20.0",
+		"@wordpress/url": "^3.21.0",
 		"fast-json-stable-stringify": "^2.1.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.9.1",
@@ -48,7 +48,7 @@
 		"validator": "^13.5.2"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^6",
+		"@wordpress/data": "^7.4.0",
 		"react": "^17.0.2"
 	},
 	"devDependencies": {
