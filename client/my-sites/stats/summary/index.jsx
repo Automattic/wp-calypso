@@ -240,7 +240,7 @@ class StatsSummary extends Component {
 		}
 
 		// Append the site domain and period as needed.
-		const domain = this.props.context?.path.split( '/' ).pop();
+		const domain = this.props?.path.split( '/' ).pop();
 		if ( domain.length > 0 ) {
 			backLink += domain;
 		}

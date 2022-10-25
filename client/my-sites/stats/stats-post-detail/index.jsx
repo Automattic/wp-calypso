@@ -127,7 +127,7 @@ class StatsPostDetail extends Component {
 		}
 
 		// Set up for FixedNavigationHeader.
-		const domain = this.props.context?.path.split( '/' ).pop();
+		const domain = this.props?.path.split( '/' ).pop();
 		const backLabel = translate( 'Traffic' );
 		const backLink = '/stats/day/' + ( domain || '' );
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
