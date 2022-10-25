@@ -52,6 +52,10 @@
 			font-size: 1rem;
 			cursor: pointer;
 		}
+
+		&-checkmark-icon {
+			fill: var(--studio-green-40);
+		}
 	}
 
 	&-close-button {
