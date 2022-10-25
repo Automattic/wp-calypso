@@ -9,7 +9,6 @@ import {
 	getPluginOnSite,
 	isPluginActionInProgress,
 } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -19,10 +18,7 @@ export const ActivationButton = ( { plugin, active } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, plugin.slug )
-	);
-	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const softwareSlug = getSoftwareSlug( plugin, plugin.isMarketplaceProduct );
 
 	// Site type
 	const selectedSite = useSelector( getSelectedSite );

@@ -26,7 +26,6 @@ import {
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
-import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -51,10 +50,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const currentUserId = useSelector( getCurrentUserId );
 
-	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, plugin.slug )
-	);
-	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
+	const softwareSlug = getSoftwareSlug( plugin, plugin.isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 
 	// Site type
@@ -64,7 +60,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
-	const pluginFeature = isMarketplaceProduct
+	const pluginFeature = plugin.isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
 	const incompatiblePlugin = ! isJetpackSelfHosted && ! isCompatiblePlugin( softwareSlug );
@@ -86,9 +82,9 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const isPluginInstalledOnsiteWithSubscription =
-		isPluginInstalledOnsite && ! isMarketplaceProduct
+		isPluginInstalledOnsite && ! plugin.isMarketplaceProduct
 			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+			: getPluginPurchased( plugin, purchases, plugin.isMarketplaceProduct )?.active;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
@@ -126,7 +122,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	 * marketplace addon which provides the ATOMIC feature, then we can ignore this
 	 * hold.
 	 */
-	if ( typeof eligibilityHolds !== 'undefined' && isMarketplaceProduct && ! shouldUpgrade ) {
+	if ( typeof eligibilityHolds !== 'undefined' && plugin.isMarketplaceProduct && ! shouldUpgrade ) {
 		eligibilityHolds = eligibilityHolds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' );
 	}
 
@@ -280,7 +276,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</PluginPrice>
 					</div>
 				) }
-				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
+				{ plugin.isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -299,7 +295,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						saasRedirectHRef={ getSaasRedirectHRef() }
 					/>
 				</div>
-				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
+				{ ! isJetpackSelfHosted && ! plugin.isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
 							'By installing, you agree to {{a}}WordPress.com’s Terms of Service{{/a}} and the {{thirdPartyTos}}Third-Party plugin Terms{{/thirdPartyTos}}.',
