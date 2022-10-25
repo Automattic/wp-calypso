@@ -29,9 +29,15 @@ function TestComponent( {
 describe( 'useInView suite', () => {
 	beforeEach( () => {
 		( window as any ).IntersectionObserver = class IO {
+			disconnected = false;
+
 			constructor( private handler: ( entries: { isIntersecting: boolean }[] ) => void ) {
 				// expose the handler so it can be called in tests
 				( window as any ).intersectionObserverHandler = () => {
+					if ( this.disconnected ) {
+						return;
+					}
+
 					handler( [ { isIntersecting: true } ] );
 				};
 			}
@@ -41,6 +47,7 @@ describe( 'useInView suite', () => {
 			}
 
 			disconnect() {
+				this.disconnected = true;
 				return null;
 			}
 		};
