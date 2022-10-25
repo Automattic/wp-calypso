@@ -1,17 +1,41 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
+import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { useInView } from 'calypso/lib/use-in-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
-import { SitesGridAction } from './sites-grid-action';
 
 interface SitesGridActionRenewProps {
 	site: SiteExcerptData;
 }
+
+const Container = styled.div( {
+	position: 'absolute',
+	top: 0,
+	left: 0,
+	padding: 6,
+	width: '100%',
+	boxSizing: 'border-box',
+	'.notice__text': {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+	},
+} );
+
+const RenewLink = styled.a( {
+	textDecoration: 'underline',
+	textUnderlineOffset: 4,
+	'&:hover': {
+		textDecoration: 'none',
+	},
+} );
+
 export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
@@ -29,27 +53,28 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 	const ref = useInView< HTMLSpanElement >( trackCallback );
 
 	return (
-		<SitesGridAction
-			icon="notice"
-			ctaProps={
-				isSiteOwner && {
-					title: __( 'Renew' ),
-					href: `/checkout/${ site.slug }/${ productSlug }`,
-					onClick: () => {
-						recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
-							product_slug: productSlug,
-							display_mode: 'grid',
-						} );
-					},
-				}
-			}
-		>
-			<span ref={ ref }>
-				{
-					/* translators: %s - the plan's product name, such as Business or Pro. */
-					sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
-				}
-			</span>
-		</SitesGridAction>
+		<Container>
+			<Notice icon="notice" showDismiss={ false }>
+				<span ref={ ref }>
+					{
+						/* translators: %s - the plan's product name, such as Business or Pro. */
+						sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
+					}
+				</span>
+				{ isSiteOwner && (
+					<RenewLink
+						href={ `/checkout/${ site.slug }/${ productSlug }` }
+						onClick={ () => {
+							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
+								product_slug: productSlug,
+								display_mode: 'grid',
+							} );
+						} }
+					>
+						{ __( 'Renew' ) }
+					</RenewLink>
+				) }
+			</Notice>
+		</Container>
 	);
 }
