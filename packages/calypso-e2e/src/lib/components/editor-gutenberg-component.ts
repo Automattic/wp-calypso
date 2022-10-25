@@ -101,7 +101,7 @@ export class EditorGutenbergComponent {
 			// Select the last Paragraph block which is empty.
 			const locator = this.editor.locator( selectors.paragraphBlock( { empty: true } ) ).last();
 
-			await locator.type( line );
+			await locator.fill( line );
 			await this.page.keyboard.press( 'Enter' );
 		}
 	}
