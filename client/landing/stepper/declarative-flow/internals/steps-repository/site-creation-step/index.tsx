@@ -3,11 +3,20 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import {
+	retrieveSignupDestination,
+	getSignupCompleteFlowName,
+	wasSignupCheckoutPageUnloaded,
+	getSignupCompleteSlug,
+} from 'calypso/signup/storageUtils';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { Step } from '../../types';
+
 import './styles.scss';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
+	const { submit } = navigation;
+
 	const { domainCartItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
 		domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 		siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
@@ -22,10 +31,24 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	const comingSoon = flow === LINK_IN_BIO_FLOW ? 1 : 0;
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
+	const signupDestinationCookieExists = retrieveSignupDestination();
+	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
+	//User has already reached checkout and then hit the browser back button.
+	//In this case, site has already been created, and plan added to cart. We need to avoid to create another site.
+	const isManageSiteFlow = Boolean(
+		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
+	);
+
 	async function createSite() {
+		if ( isManageSiteFlow ) {
+			return {
+				siteSlug: getSignupCompleteSlug(),
+				goToCheckout: true,
+			};
+		}
 		const site = await createSiteWithCart(
 			flow as string,
-			false,
+			isManageSiteFlow,
 			true,
 			isPaidDomainItem,
 			theme,
@@ -55,9 +78,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 	}
 
 	useEffect( () => {
-		if ( navigation.submit ) {
+		if ( submit ) {
 			setPendingAction( createSite );
-			navigation.submit();
+			submit();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );

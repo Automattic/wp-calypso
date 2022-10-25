@@ -40,7 +40,7 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
-import type { DomainSuggestion, SearchState } from '@automattic/data-stores';
+import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
 import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
@@ -288,7 +288,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	};
 
 	const renderDomainForm = () => {
-		let initialState: SearchState = {};
+		let initialState: DomainForm = {};
 		if ( domainForm ) {
 			initialState = domainForm;
 		}

@@ -6,6 +6,12 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { useQuery } from '../hooks/use-query';
+import {
+	clearSignupDestinationCookie,
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -72,6 +78,8 @@ export const linkInBio: Flow = {
 
 			switch ( _currentStep ) {
 				case 'intro':
+					clearSignupDestinationCookie();
+
 					if ( userIsLoggedIn ) {
 						return navigate( 'patterns' );
 					}
@@ -94,6 +102,10 @@ export const linkInBio: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.goToCheckout ) {
+						const destination = `/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`;
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
 						const returnUrl = encodeURIComponent(
 							`${ window.location.origin }/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
 						);
@@ -101,7 +113,7 @@ export const linkInBio: Flow = {
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								providedDependencies?.siteSlug
-							) }?redirect_to=${ returnUrl }`
+							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
 					return navigate(
