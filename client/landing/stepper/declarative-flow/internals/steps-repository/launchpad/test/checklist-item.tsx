@@ -54,10 +54,42 @@ describe( 'ChecklistItem', () => {
 		} );
 	} );
 
+	describe( 'and the task depends on the completion of other tasks', () => {
+		it( 'hides the task enabled icon', () => {
+			const otherTaskCompleted = false;
+			render(
+				<ChecklistItem task={ buildTask( { completed: false, disabled: ! otherTaskCompleted } ) } />
+			);
+			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+			expect( taskEnabledIcon ).toBeFalsy();
+		} );
+		it( 'disables the task', () => {
+			const otherTaskCompleted = false;
+			render(
+				<ChecklistItem task={ buildTask( { completed: false, disabled: ! otherTaskCompleted } ) } />
+			);
+			const taskButton = screen.queryByRole( 'button' );
+			expect( taskButton ).toHaveAttribute( 'disabled' );
+		} );
+	} );
+
+	describe( 'and the task does not depend on the completion of other tasks', () => {
+		it( 'shows the task enabled icon', () => {
+			render( <ChecklistItem task={ buildTask( { completed: false, disabled: false } ) } /> );
+			const taskEnabledIcon = screen.queryByLabelText( 'Task enabled' );
+			expect( taskEnabledIcon ).toBeTruthy();
+		} );
+		it( 'enables the task', () => {
+			render( <ChecklistItem task={ buildTask( { completed: false, disabled: false } ) } /> );
+			const taskButton = screen.queryByRole( 'button' );
+			expect( taskButton ).not.toHaveAttribute( 'disabled' );
+		} );
+	} );
+
 	describe( 'when a task is a primary action', () => {
 		it( 'displays a primary button', () => {
 			render(
-				<ChecklistItem task={ buildTask( { isCompleted: false } ) } isPrimaryAction={ true } />
+				<ChecklistItem task={ buildTask( { completed: false } ) } isPrimaryAction={ true } />
 			);
 			const taskButton = screen.queryByRole( 'button' );
 			expect( taskButton?.className ).toContain( 'launchpad__checklist-primary-button' );
