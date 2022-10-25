@@ -9,7 +9,7 @@ export default function AccountLevelAdvertisingLinks() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const shouldShowAdvertisingOption = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
-	if ( ! shouldShowAdvertisingOption ) {
+	if ( ! shouldShowAdvertisingOption || ! selectedSiteSlug ) {
 		return null;
 	}
 
