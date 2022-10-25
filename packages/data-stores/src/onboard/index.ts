@@ -11,6 +11,7 @@ export type { State };
 
 export { SiteGoal, SiteIntent } from './constants';
 export * as utils from './utils';
+export * from './types';
 let isRegistered = false;
 
 /**
@@ -64,6 +65,3 @@ declare module '@wordpress/data' {
 	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
 	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }
-
-export type { DomainItem } from './types';
-export type { PlanCartItem } from './types';

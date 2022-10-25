@@ -1,6 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import { DomainItem, PlanCartItem, SignupDomainValues } from './types';
+import { DomainForm, CartItem } from './types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
@@ -216,7 +216,7 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const planCartItem: Reducer< PlanCartItem | null, OnboardAction > = ( state = null, action ) => {
+const planCartItem: Reducer< CartItem | null, OnboardAction > = ( state = null, action ) => {
 	if ( action.type === 'SET_PLAN_CART_ITEM' ) {
 		return action.planCartItem;
 	}
@@ -388,7 +388,7 @@ const editEmail: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const domainForm: Reducer< object, OnboardAction > = ( state = {}, action ) => {
+const domainForm: Reducer< DomainForm, OnboardAction > = ( state = {}, action ) => {
 	if ( action.type === 'SET_DOMAIN_FORM' ) {
 		return {
 			...state,
@@ -412,7 +412,7 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
-const domainCartItem: Reducer< DomainItem | undefined, OnboardAction > = (
+const domainCartItem: Reducer< CartItem | undefined, OnboardAction > = (
 	state = undefined,
 	action
 ) => {

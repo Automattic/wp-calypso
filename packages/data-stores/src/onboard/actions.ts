@@ -6,7 +6,7 @@ import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { DomainItem, PlanCartItem } from './types';
+import { CartItem } from './types';
 import type { State } from '.';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
@@ -168,7 +168,7 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	planProductId,
 } );
 
-export const setPlanCartItem = ( planCartItem: PlanCartItem | null ) => ( {
+export const setPlanCartItem = ( planCartItem: CartItem | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
 } );
@@ -329,7 +329,7 @@ export const setDomainForm = ( step: Record< string, string > ) => {
 	};
 };
 
-export const setDomainCartItem = ( domainCartItem: DomainItem | undefined ) => ( {
+export const setDomainCartItem = ( domainCartItem: CartItem | undefined ) => ( {
 	type: 'SET_DOMAIN_CART_ITEM' as const,
 	domainCartItem,
 } );
