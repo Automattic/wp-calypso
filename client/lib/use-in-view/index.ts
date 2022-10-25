@@ -1,18 +1,17 @@
 import { RefObject, useEffect, useRef } from 'react';
 
 export function useInView< T extends Element >( oneTimeCallback: () => void ): RefObject< T > {
-	const viewedRef = useRef< boolean >( false );
+	const viewedRef = useRef( false );
 	const elementRef = useRef< T >( null );
-	const observerRef = useRef< IntersectionObserver >();
+	const oneTimeCallbackRef = useRef< () => void >();
+
+	useEffect( () => {
+		oneTimeCallbackRef.current = oneTimeCallback;
+	}, [ oneTimeCallback ] );
 
 	useEffect( () => {
 		// We can't do anything without a valid reference to an element on the page
 		if ( ! elementRef.current ) {
-			return;
-		}
-
-		// If the observer is already defined, no need to continue
-		if ( observerRef.current ) {
 			return;
 		}
 
@@ -27,28 +26,21 @@ export function useInView< T extends Element >( oneTimeCallback: () => void ): R
 				return;
 			}
 
-			oneTimeCallback();
+			oneTimeCallbackRef.current?.();
 			viewedRef.current = true;
-			observerRef.current?.disconnect?.();
+			// eslint-disable-next-line @typescript-eslint/no-use-before-define
+			observer.disconnect();
 		};
 
-		observerRef.current = new IntersectionObserver( handler, {
+		const observer = new IntersectionObserver( handler, {
 			// Only fire the event when 100% of the element becomes visible
 			threshold: [ 1 ],
 		} );
-		observerRef.current.observe( elementRef.current );
+		observer.observe( elementRef.current );
 
 		// When the effect is dismounted, stop observing
-		return () => {
-			observerRef.current?.disconnect?.();
-			if ( ! viewedRef.current && observerRef.current ) {
-				// This case prevents when the effect is dismounted and re-mounted due oneTimeCallback is not wrapped in useCallback
-				// We cannot show a warning, because it can be a valid use case.
-				// Valid case: When a component is unmounted and never was visible.
-				observerRef.current = undefined;
-			}
-		};
-	}, [ oneTimeCallback ] );
+		return () => observer.disconnect();
+	}, [ oneTimeCallbackRef, viewedRef, elementRef ] );
 
 	return elementRef;
 }
