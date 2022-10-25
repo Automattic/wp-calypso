@@ -86,18 +86,20 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail
-						displayMode="tile"
-						className={ siteThumbnail }
-						site={ site }
-						width={ THUMBNAIL_DIMENSION.width }
-						height={ THUMBNAIL_DIMENSION.height }
-						sizesAttr={ SIZES_ATTR }
-					/>
-				</ThumbnailLink>
+				<>
+					<ThumbnailLink { ...siteDashboardUrlProps }>
+						<SiteItemThumbnail
+							displayMode="tile"
+							className={ siteThumbnail }
+							site={ site }
+							width={ THUMBNAIL_DIMENSION.width }
+							height={ THUMBNAIL_DIMENSION.height }
+							sizesAttr={ SIZES_ATTR }
+						/>
+					</ThumbnailLink>
+					site.plan?.expired && <SitesGridActionRenew site={ site } />
+				</>
 			}
-			leadingAction={ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
 			primary={
 				<>
 					<SiteName fontSize={ 16 } { ...siteDashboardUrlProps }>
