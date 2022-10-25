@@ -10,6 +10,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import './style.scss';
 
 interface Props {
+	altLayout?: boolean;
 	className?: string;
 	title: TranslateResult;
 	footerImage?: string;
@@ -22,6 +23,7 @@ interface Props {
 }
 
 const LicensingActivation: FC< Props > = ( {
+	altLayout,
 	children,
 	className,
 	title,
@@ -61,6 +63,16 @@ const LicensingActivation: FC< Props > = ( {
 						{ preventWidows( title ) }
 					</h1>
 					{ children }
+
+					{ showContactUs && altLayout && (
+						<div className="licensing-activation__card-footer-text">
+							{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
+								components: {
+									a: <a href={ supportContactLink } target="_blank" rel="noopener noreferrer" />,
+								},
+							} ) }
+						</div>
+					) }
 				</div>
 				<div
 					className="licensing-activation__card-footer"
@@ -71,7 +83,7 @@ const LicensingActivation: FC< Props > = ( {
 							<img src={ footerImage } alt="Checkout Thank you" />
 						</div>
 					) }
-					{ showContactUs && (
+					{ showContactUs && ! altLayout && (
 						<div className="licensing-activation__card-footer-text">
 							{ translate( 'Do you need help? {{a}}Contact us{{/a}}.', {
 								components: {

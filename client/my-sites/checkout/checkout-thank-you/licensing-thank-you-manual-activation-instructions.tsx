@@ -66,6 +66,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 						: translate( 'Be sure that you have the latest version of Jetpack' )
 				}
 				footerImage={ jetpackPluginImage }
+				altLayout={ !! jetpackStandaloneProduct }
 				showContactUs
 				showProgressIndicator={ ! jetpackStandaloneProduct }
 				progressIndicatorValue={ 2 }
