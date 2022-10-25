@@ -530,7 +530,9 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@wordpress/block-editor": ^9.1.0
     "@wordpress/components": ^19.15.0
+    "@wordpress/compose": ^5.7.0
     "@wordpress/edit-site": ^4.6.0
     "@wordpress/react-i18n": ^3.7.0
     classnames: ^2.3.1
