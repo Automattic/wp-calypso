@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import licensingActivationPluginInstall from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -14,6 +13,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackActivationInstructions from './jetpack-activation-instructions';
 import { JetpackLicenseKeyProps } from './jetpack-license-key-clipboard';
 import JetpackStandaloneActivationInstructions from './jetpack-standalone-activation-instructions';
+import { getJetpackPluginImage } from './utils';
 
 const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 	productSlug,
@@ -30,6 +30,8 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 				: null,
 		[ productSlug ]
 	);
+
+	const jetpackPluginImage = getJetpackPluginImage( productSlug );
 
 	const onContinue = useCallback( () => {
 		dispatch(
@@ -63,7 +65,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 						  } )
 						: translate( 'Be sure that you have the latest version of Jetpack' )
 				}
-				footerImage={ licensingActivationPluginInstall }
+				footerImage={ jetpackPluginImage }
 				showContactUs
 				showProgressIndicator={ ! jetpackStandaloneProduct }
 				progressIndicatorValue={ 2 }
