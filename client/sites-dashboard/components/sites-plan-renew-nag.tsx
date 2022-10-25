@@ -6,7 +6,7 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
 import { useInView } from 'calypso/lib/use-in-view';
-import { PLAN_RENEW_EVENT_NAMES } from '../utils';
+import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
 	plan: SiteDetailsPlan;
@@ -53,7 +53,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 	const { __ } = useI18n();
 	const trackCallback = useCallback(
 		() =>
-			recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
+			recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.IN_VIEW, {
 				is_site_owner: isSiteOwner,
 				product_slug: plan.product_slug,
 				display_mode: 'list',
@@ -82,7 +82,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
-							recordTracksEvent( PLAN_RENEW_EVENT_NAMES.ON_CLICK, {
+							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
 								product_slug: plan.product_slug,
 								display_mode: 'list',
 							} );

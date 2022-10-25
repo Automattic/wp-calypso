@@ -42,7 +42,7 @@ export const MEDIA_QUERIES = {
 	wide: '@media screen and ( min-width: 1280px )',
 };
 
-export const PLAN_RENEW_EVENT_NAMES = {
+export const PLAN_RENEW_NAG_EVENT_NAMES = {
 	IN_VIEW: 'calypso_sites_dashboard_plan_renew_nag_inview',
 	ON_CLICK: 'calypso_sites_dashboard_plan_renew_nag_click',
 };
