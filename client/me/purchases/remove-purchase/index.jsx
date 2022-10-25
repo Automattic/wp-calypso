@@ -241,7 +241,8 @@ class RemovePurchase extends Component {
 
 	renderPreCancellationDialog() {
 		const { site, purchase, primaryDomain, hasCustomPrimaryDomain } = this.props;
-		const primaryDomainName = hasCustomPrimaryDomain && primaryDomain ? primaryDomain.name : '';
+		const customDomain = hasCustomPrimaryDomain && primaryDomain.name;
+		const primaryDomainName = customDomain ? primaryDomain.name : '';
 
 		return (
 			<PreCancellationDialog
@@ -249,7 +250,7 @@ class RemovePurchase extends Component {
 				closeDialog={ this.closeDialog }
 				removePlan={ this.showRemovePlanDialog }
 				site={ site }
-				hasDomain={ hasCustomPrimaryDomain }
+				hasDomain={ customDomain }
 				isRefundable={ isRefundable( purchase ) }
 				isAutoRenewing={ purchase.isAutoRenewEnabled }
 				primaryDomain={ primaryDomainName }
