@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
@@ -117,17 +117,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	}, [ selectedSite?.slug ] );
 
 	const getSaasRedirectHRef = useCallback( () => {
-		if ( ! plugin.saas_landing_page ) {
-			return null;
-		}
-		try {
-			const saasRedirectUrl = new URL( plugin.saas_landing_page );
-			saasRedirectUrl.searchParams.append( 'uuid', `${ currentUserId }+${ selectedSite?.ID }` );
-			return saasRedirectUrl.toString();
-		} catch ( error ) {
-			return null;
-		}
-	}, [ currentUserId, plugin.saas_landing_page, selectedSite?.ID ] );
+		return getSaasRedirectUrl( plugin, currentUserId, selectedSite?.ID );
+	}, [ currentUserId, plugin, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
 	 *
