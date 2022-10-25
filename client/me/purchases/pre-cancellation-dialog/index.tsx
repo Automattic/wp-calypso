@@ -76,8 +76,6 @@ export const PreCancellationDialog = ( {
 
 	/**
 	 * Return the list of features that the user will lose by canceling their plan.
-	 *
-	 * @returns Fragment
 	 */
 	const FeaturesList = () => {
 		if ( typeof productSlug !== 'string' ) {
