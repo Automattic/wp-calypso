@@ -1,7 +1,11 @@
 .step-container.domains {
-	padding: 0 20px;
 	max-width: 1280px;
 	margin: 0 auto;
+	padding: 35px 0 0;
+
+	.step-container__header {
+		margin-top: 0;
+	}
 
 	.register-domain-step__search {
 		padding-top: 0;
@@ -43,11 +47,10 @@
 		}
 
 		.domain-registration-suggestion__title-wrapper {
-			flex-direction: column-reverse;
+			flex-direction: row;
 			flex-wrap: nowrap;
-			.domain-registration-suggestion__title {
-				align-items: flex-start;
-				margin-top: 12px;
+			.domain-registration-suggestion__badges {
+				margin-left: 12px;
 			}
 		}
 
