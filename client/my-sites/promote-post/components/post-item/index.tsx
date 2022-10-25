@@ -1,5 +1,5 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -70,9 +70,7 @@ export default function PostItem( { post }: Props ) {
 				<h1 // eslint-disable-line
 					className="post-item__title"
 				>
-					<a href={ post.URL } className="post-item__title-link">
-						{ post.title || __( 'Untitled' ) }
-					</a>
+					<span className="post-item__title-link">{ post.title || __( 'Untitled' ) }</span>
 				</h1>
 				<div className="post-item__meta">
 					<span className="post-item__meta-time-status">
@@ -87,7 +85,8 @@ export default function PostItem( { post }: Props ) {
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
 					<span className="post-item__post-type">
 						<a href={ post.URL } className="post-item__title-view">
-							{ __( 'View' ) }
+							{ __( 'View' ) }{ ' ' }
+							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
 						</a>
 					</span>
 				</div>
