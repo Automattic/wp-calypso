@@ -97,7 +97,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 							sizesAttr={ SIZES_ATTR }
 						/>
 					</ThumbnailLink>
-					site.plan?.expired && <SitesGridActionRenew site={ site } />
+					{ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
 				</>
 			}
 			primary={
