@@ -64,19 +64,19 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 };
 
 interface TrackDesignViewProps {
-	categorization?: string | null;
+	category?: string | null;
 	design: Design;
 	isPremiumThemeAvailable?: boolean;
 }
 
 const TrackDesignView: React.FC< TrackDesignViewProps > = ( {
-	categorization,
+	category,
 	design,
 	isPremiumThemeAvailable,
 } ) => {
 	useEffect( () => {
 		recordTracksEvent( 'calypso_design_picker_design_display', {
-			category: categorization,
+			category,
 			design_type: design.design_type,
 			is_premium: design.is_premium,
 			is_premium_available: isPremiumThemeAvailable,
@@ -218,7 +218,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	return (
 		<>
 			<TrackDesignView
-				categorization={ categorization }
+				category={ categorization }
 				design={ props.design }
 				isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
 			/>
