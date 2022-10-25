@@ -7652,7 +7652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__data@npm:*, @types/wordpress__data@npm:^6.0.1":
+"@types/wordpress__data@npm:*":
   version: 6.0.1
   resolution: "@types/wordpress__data@npm:6.0.1"
   dependencies:
@@ -36272,7 +36272,6 @@ swiper@4.5.1:
     "@types/wordpress__block-library": ^2.6.1
     "@types/wordpress__components": ^19.10.3
     "@types/wordpress__compose": ^4.0.1
-    "@types/wordpress__data": ^6.0.1
     "@types/wordpress__data-controls": ^2.2.0
     "@types/wordpress__editor": ^11.0.0
     "@typescript-eslint/eslint-plugin": ^5.7.0

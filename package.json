@@ -171,7 +171,6 @@
 		"@types/wordpress__block-library": "^2.6.1",
 		"@types/wordpress__components": "^19.10.3",
 		"@types/wordpress__compose": "^4.0.1",
-		"@types/wordpress__data": "^6.0.1",
 		"@types/wordpress__data-controls": "^2.2.0",
 		"@types/wordpress__editor": "^11.0.0",
 		"@wordpress/base-styles": "^4.11.0",
