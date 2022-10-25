@@ -80,7 +80,6 @@ describe( 'EmailNotVerifiedNotice', () => {
 
 		expect( useSendEmailVerification ).toHaveBeenCalled();
 
-		console.log( 'calls', dispatch.mock.calls[ 0 ][ 0 ].notice.text );
 		await waitFor( () => {
 			expect(
 				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
