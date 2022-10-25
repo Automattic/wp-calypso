@@ -86,7 +86,7 @@ function progressStoreListener(
 	};
 }
 
-type OnCompleteCallback = ( dependencies: Dependencies, destination: string ) => void;
+type OnCompleteCallback = ( dependencies: Dependencies, destination: string ) => Promsise< void >;
 
 interface SignupFlowControllerOptions {
 	flowName: string;
@@ -344,7 +344,13 @@ export default class SignupFlowController {
 			this._assertFlowProvidedRequiredDependencies();
 			// deferred to ensure that the onComplete function is called after the stores have
 			// emitted their final change events.
-			defer( () => this._onComplete( dependencies, this._destination( dependencies ) ) );
+			// defer( () => {
+			console.log( '-------------------------on complete: ....' );
+				this._onComplete( dependencies, this._destination( dependencies ) ).then( () => {
+					console.log( '--------------------hey! we are done!', dependencies );
+				} );
+			// }
+
 		}
 	}
 

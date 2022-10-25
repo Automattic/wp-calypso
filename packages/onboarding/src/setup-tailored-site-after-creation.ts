@@ -64,6 +64,10 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 
 	const setIntent = ( siteId: number, flow: string ) => {
 		if ( isNewsletterOrLinkInBioFlow( flow ) ) {
+			if ( flow === 'link-in-bio-tld' ) {
+				console.log( '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! settting intent!' );
+				return setIntentOnSite( siteId.toString(), LINK_IN_BIO_FLOW );
+			}
 			return setIntentOnSite( siteId.toString(), flow );
 		}
 		return Promise.resolve();
@@ -79,14 +83,20 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 	};
 
 	const setPattern = async ( siteId: number, flow: string ) => {
-		if ( flow === LINK_IN_BIO_FLOW ) {
-			await wpcomRequest( {
-				// since this is a new site, its safe to assume that homepage ID is 2
-				path: `/sites/${ siteId }/pages/2`,
-				method: 'POST',
-				apiNamespace: 'wp/v2',
-				body: { content: selectedPatternContent, template: 'blank' },
-			} );
+		if ( flow === LINK_IN_BIO_FLOW || flow === 'link-in-bio-tld' ) {
+
+
+			try {
+				await wpcomRequest( {
+					// since this is a new site, its safe to assume that homepage ID is 2
+					path: `/sites/${ siteId }/pages/2`,
+					method: 'POST',
+					apiNamespace: 'wp/v2',
+					body: { content: selectedPatternContent, template: 'blank' },
+				} );
+			} catch ( e ) {
+				console.log( '-----------------------setPattern failed?', e );
+			}
 
 			return setStaticHomepageOnSite( siteId, 2 );
 		}
@@ -101,11 +111,14 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			setIntent( siteId, flowName ),
 			setLaunchpadScreen( siteId, flowName ),
 		] ).then( () => {
+			console.log( '----------------------------everything resolved? ' );
 			recordTracksEvent( 'calypso_signup_site_options_submit', {
 				has_site_title: !! siteTitle,
 				has_tagline: !! siteDescription,
 			} );
 			resetOnboardStore();
+		} ).catch( ( e ) => {
+			console.log( '----------- promsie.all: something goes wrong!' , e );
 		} );
 	}
 }

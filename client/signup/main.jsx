@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isTailoredSignupFlow, isNewsletterOrLinkInBioFlow, setupSiteAfterCreation } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -336,7 +336,17 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
-		return this.handleFlowComplete( dependencies, filteredDestination );
+		this.handleFlowComplete( dependencies, filteredDestination );
+		this.handleLogin( dependencies, destination );
+
+		const siteId = dependencies && dependencies.siteId;
+
+		if ( isTailoredSignupFlow( this.props.flowName ) || this.props.flowName === 'link-in-bio-tld' ) {
+			console.log( '-------------ready to run setupSiteAfterCreation' );
+			await setupSiteAfterCreation( { siteId, flowName: this.props.flowName } );
+		}
+
+		this.redirectDestination( dependencies, destination );
 	};
 
 	startTrackingForBusinessSite() {
@@ -465,9 +475,17 @@ class Signup extends Component {
 			startingPoint,
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
-
-		this.handleLogin( dependencies, destination );
 	};
+
+	redirectDestination( dependencies, destination ) {
+		// in this case, a regular login will be performed, so no redirect is needed.
+		if ( this.state.bearerToken && this.state.redirectTo ) {
+			console.log( '!!!!!!!!!!!!!!!!!!!!! redirect Destination!' );
+			return;
+		}
+
+		window.location.href = destination;
+	}
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const { isLoggedIn: userIsLoggedIn, progress } = this.props;
@@ -481,18 +499,18 @@ class Signup extends Component {
 			}
 		}
 
-		if ( userIsLoggedIn ) {
+		// if ( userIsLoggedIn ) {
 			// don't use page.js for external URLs (eg redirect to new site after signup)
-			if ( /^https?:\/\//.test( destination ) ) {
-				return ( window.location.href = destination );
-			}
-
-			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( () => {
-				debug( `Redirecting you to "${ destination }"` );
-				window.location.href = destination;
-			} );
-		}
+			// if ( /^https?:\/\//.test( destination ) ) {
+			// 	return ( window.location.href = destination );
+			// }
+            //
+			// // deferred in case the user is logged in and the redirect triggers a dispatch
+			// defer( () => {
+			// 	debug( `Redirecting you to "${ destination }"` );
+			// 	window.location.href = destination;
+			// } );
+		// }
 
 		const isRegularOauth2ClientSignup =
 			dependencies.oauth2_client_id && ! progress?.[ 'oauth2-user' ]?.service; // service is set for social signup (e.g. Google, Apple)
@@ -503,7 +521,7 @@ class Signup extends Component {
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || isRegularOauth2ClientSignup ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
-			window.location.href = destination;
+			// window.location.href = destination;
 			return;
 		}
 
@@ -517,7 +535,7 @@ class Signup extends Component {
 				isEmpty( username ) &&
 				'onboarding-registrationless' === this.props.flowName
 			) {
-				window.location.href = destination;
+				// window.location.href = destination;
 				return;
 			}
 

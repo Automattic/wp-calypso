@@ -292,29 +292,29 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				domainItem,
 				themeItem,
 			};
-			if ( isTailoredSignupFlow( flowToCheck ) || flowToCheck === 'link-in-bio-tld' ) {
-				setupSiteAfterCreation( { siteId, flowName: flowToCheck } ).then( () => {
-					processItemCart(
-						providedDependencies,
-						newCartItems,
-						callback,
-						reduxStore,
-						siteSlug,
-						isFreeThemePreselected,
-						themeSlugWithRepo
-					);
-				} );
-			} else {
-				processItemCart(
-					providedDependencies,
-					newCartItems,
-					callback,
-					reduxStore,
-					siteSlug,
-					isFreeThemePreselected,
-					themeSlugWithRepo
-				);
-			}
+			// if ( isTailoredSignupFlow( flowToCheck ) || flowToCheck === 'link-in-bio-tld' ) {
+			// 	setupSiteAfterCreation( { siteId, flowName: flowToCheck } ).then( () => {
+			// 		processItemCart(
+			// 			providedDependencies,
+			// 			newCartItems,
+			// 			callback,
+			// 			reduxStore,
+			// 			siteSlug,
+			// 			isFreeThemePreselected,
+			// 			themeSlugWithRepo
+			// 		);
+			// 	} );
+			// } else {
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo
+			);
+			// }
 		}
 	);
 }

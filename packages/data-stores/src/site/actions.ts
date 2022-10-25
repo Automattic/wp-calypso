@@ -223,7 +223,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			woocommerce_onboarding_profile?: { [ key: string ]: any };
 		}
 	) {
-		try {
+		// try {
 			// extract this into its own function as a generic settings setter
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
@@ -231,6 +231,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				body: settings,
 				method: 'POST',
 			} );
+
 			if ( 'blogname' in settings ) {
 				yield receiveSiteTitle( siteId, settings.blogname );
 			}
@@ -241,29 +242,28 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				yield receiveSiteVerticalId( siteId, settings.site_vertical_id );
 			}
 			yield updateSiteSettings( siteId, settings );
-		} catch ( e ) {}
+		// } catch ( e ) {
+		// 	console.log( '-------------------saveSiteSettings error!', e );
+		// 	debugger;
+		// }
 	}
 
 	function* setIntentOnSite( siteSlug: string, intent: string ) {
-		try {
-			yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
-				apiNamespace: 'wpcom/v2',
-				body: { site_intent: intent },
-				method: 'POST',
-			} );
-		} catch ( e ) {}
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/site-intent`,
+			apiNamespace: 'wpcom/v2',
+			body: { site_intent: intent },
+			method: 'POST',
+		} );
 	}
 
 	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
-		try {
-			yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
-				apiVersion: '1.1',
-				body: { is_page_on_front: true, page_on_front_id: pageId },
-				method: 'POST',
-			} );
-		} catch ( e ) {}
+		yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
+			apiVersion: '1.1',
+			body: { is_page_on_front: true, page_on_front_id: pageId },
+			method: 'POST',
+		} );
 	}
 
 	function* setGoalsOnSite( siteSlug: string, goals: SiteGoal[] ) {
