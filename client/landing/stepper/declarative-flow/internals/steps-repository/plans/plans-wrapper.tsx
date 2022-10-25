@@ -51,14 +51,13 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isLaunchPage = undefined;
 	const isReskinned = true;
 	const customerType = 'personal';
-	const positionInFlow = undefined;
 	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
 	const headerText = 'Choose a plan';
 
 	const translate = useTranslate();
 
-	const onSelectPlan = async ( selectedPlan: any ) => {
+	const onSelectPlan = ( selectedPlan: any ) => {
 		if ( selectedPlan ) {
 			recordTracksEvent( 'calypso_signup_plan_select', {
 				product_slug: selectedPlan?.product_slug,
@@ -94,7 +93,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const getIntervalType = () => {
 		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-		const intervalType = urlParts?.searchParams.get( 'intervalType' );
+		const intervalType = urlParts?.searchParams.get( 'intervalType' ) as string;
 
 		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
 			return intervalType;
@@ -129,6 +128,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 						return (
 							<PlansFeaturesMain
+								isPlansInsideStepper={ true }
 								site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
@@ -202,21 +202,17 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		const subHeaderText = getSubHeaderText();
 		const fallbackSubHeaderText = subHeaderText;
 
-		let queryParams;
-
 		return (
 			<>
 				<StepWrapper
 					flowName={ flowName }
 					stepName={ stepName }
-					positionInFlow={ positionInFlow }
 					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
 					isWideLayout={ true }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
-					queryParams={ queryParams }
 				/>
 			</>
 		);
