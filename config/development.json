@@ -165,6 +165,7 @@
 		"signup/social": true,
 		"signup/starting-point-courses": true,
 		"signup/stepper-flow": true,
+		"signup/tailored-ecommerce": true,
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
