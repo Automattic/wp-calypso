@@ -64,9 +64,11 @@ class UserHeader extends Component {
 
 class WritingPromptHeader extends Component {
 	render() {
-		const icon = this.props.user.media[ 0 ];
+		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } />;
-		const home_url = this.props.user.ranges[ 0 ].url;
+		const home_url = this.props.site.ranges[ 0 ].url;
+		const settings_url =
+			'/me/notifications#' + home_url?.replace( 'https://', '' ).replace( 'http://', '' );
 
 		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
@@ -88,11 +90,13 @@ class WritingPromptHeader extends Component {
 				{ img_tag }
 				<div>
 					<span className="wpnc__user__username">
-						<span className="wpnc__excerpt">{ this.props.snippet.text }</span>
-						<Gridicon icon="bell-off" />
+						<span className="wpnc__excerpt">{ this.props.prompt.text }</span>
+						<a href={ settings_url } target="_blank" rel="noopener noreferrer">
+							<Gridicon icon="bell-off" />
+						</a>
 					</span>
 				</div>
-				{ get_home_link( 'wpnc__user__home', this.props.user.text ) }
+				{ get_home_link( 'wpnc__user__home', this.props.site.text ) }
 			</div>
 		);
 	}
@@ -149,9 +153,9 @@ class SummaryInSingle extends Component {
 				return (
 					<WritingPromptHeader
 						note={ this.props.note }
-						snippet={ this.props.note.header[ 1 ] }
+						prompt={ this.props.note.header[ 1 ] }
 						url={ header_url }
-						user={ this.props.note.header[ 0 ] }
+						site={ this.props.note.header[ 0 ] }
 					/>
 				);
 			}
