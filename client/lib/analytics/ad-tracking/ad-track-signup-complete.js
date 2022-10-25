@@ -1,7 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { v4 as uuid } from 'uuid';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, AdTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
+import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import { debug, TRACKING_IDS, ICON_MEDIA_SIGNUP_PIXEL_URL } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 import { loadTrackingScripts } from './load-tracking-scripts';
@@ -26,7 +26,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 	await loadTrackingScripts();
 
 	// Record all signups up in DCM Floodlight (deprecated Floodlight pixels)
-	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		debug( 'adTrackSignupComplete: Floodlight:' );
 		recordParamsInFloodlightGtag( { send_to: 'DC-6355556/wordp0/signu0+unique' } );
 	}
@@ -63,7 +63,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Google Ads Gtag
 
-	if ( mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -80,7 +80,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Bing
 
-	if ( mayWeTrackByTracker( AdTracker.BING ) ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		if ( null !== usdCost ) {
 			const params = {
 				ec: 'signup',
@@ -95,7 +95,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Facebook
 
-	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		const params = [
 			'trackSingle',
 			TRACKING_IDS.facebookInit,
@@ -116,7 +116,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// DCM Floodlight
 
-	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		debug( 'recordSignup: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			send_to: 'DC-6355556/wordp0/signu1+unique',
@@ -125,7 +125,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Quantcast
 
-	if ( mayWeTrackByTracker( AdTracker.QUANTCAST ) ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) ) {
 		const params = {
 			qacct: TRACKING_IDS.quantcast,
 			labels:
@@ -141,14 +141,14 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Icon Media
 
-	if ( mayWeTrackByTracker( AdTracker.ICON_MEDIA ) ) {
+	if ( mayWeTrackByTracker( 'iconMedia' ) ) {
 		debug( 'recordSignup: [Icon Media]', ICON_MEDIA_SIGNUP_PIXEL_URL );
 		new window.Image().src = ICON_MEDIA_SIGNUP_PIXEL_URL;
 	}
 
 	// Pinterest
 
-	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const params = [
 			'track',
 			'signup',
@@ -163,7 +163,7 @@ export async function adTrackSignupComplete( { isNewUserSite } ) {
 
 	// Twitter
 
-	if ( mayWeTrackByTracker( AdTracker.TWITTER ) ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		const params = [ 'track', 'Signup', {} ];
 		debug( 'recordSignup: [Twitter]', params );
 		window.twq( ...params );

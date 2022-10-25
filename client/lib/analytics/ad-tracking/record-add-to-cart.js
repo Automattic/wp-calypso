@@ -1,5 +1,5 @@
 import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
-import { mayWeTrackByTracker, AdTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
+import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import { debug, TRACKING_IDS } from './constants';
 import { recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -28,7 +28,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Google Ads Gtag
 
-	if ( mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [
 			'event',
 			'conversion',
@@ -42,7 +42,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Facebook
 
-	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		// Fire both WP and JP pixels.
 
 		// WP
@@ -74,7 +74,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Bing
 
-	if ( mayWeTrackByTracker( AdTracker.BING ) ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		const params = {
 			ec: 'addtocart',
 			el: cartItem.product_slug,
@@ -85,7 +85,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// DCM Floodlight
 
-	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		debug( 'recordAddToCart: [Floodlight]' );
 		recordParamsInFloodlightGtag( {
 			u2: cartItem.product_name,
@@ -95,7 +95,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Criteo
 
-	if ( mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( mayWeTrackByTracker( 'criteo' ) ) {
 		const params = [
 			'viewItem',
 			{
@@ -108,7 +108,7 @@ export async function recordAddToCart( cartItem ) {
 
 	// Pinterest
 
-	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const params = [
 			'track',
 			'addtocart',

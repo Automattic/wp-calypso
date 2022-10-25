@@ -1,6 +1,6 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	debug,
 	TRACKING_IDS,
@@ -49,49 +49,49 @@ export const loadTrackingScripts = attemptLoad( async () => {
 function getTrackingScriptsToLoad() {
 	const scripts = [];
 
-	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		scripts.push( FACEBOOK_TRACKING_SCRIPT_URL );
 	}
 
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
-		mayWeTrackByTracker( AdTracker.GA ) && TRACKING_IDS.wpcomGoogleAnalyticsGtag, // TODO: WPCOM works only for WPCOM or also Jetpack??
-		mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) && TRACKING_IDS.wpcomGoogleAdsGtag,
-		mayWeTrackByTracker( AdTracker.FLOODLIGHT ) && TRACKING_IDS.wpcomFloodlightGtag,
+		mayWeTrackByTracker( 'ga' ) && TRACKING_IDS.wpcomGoogleAnalyticsGtag, // TODO: WPCOM works only for WPCOM or also Jetpack??
+		mayWeTrackByTracker( 'googleAds' ) && TRACKING_IDS.wpcomGoogleAdsGtag,
+		mayWeTrackByTracker( 'floodlight' ) && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( ( id ) => false !== id );
 	if ( enabledGtags.length > 0 ) {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.ICON_MEDIA ) ) {
+	if ( mayWeTrackByTracker( 'iconMedia' ) ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( mayWeTrackByTracker( 'criteo' ) ) {
 		scripts.push( CRITEO_TRACKING_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.QUANTCAST ) ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) ) {
 		scripts.push( quantcastAsynchronousTagURL() );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.TWITTER ) ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		scripts.push( TWITTER_TRACKING_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.LINKEDIN ) ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) ) {
 		scripts.push( LINKED_IN_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.QUORA ) ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		scripts.push( QUORA_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.OUTBRAIN ) ) {
+	if ( mayWeTrackByTracker( 'outbrain' ) ) {
 		scripts.push( OUTBRAIN_SCRIPT_URL );
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		scripts.push( PINTEREST_SCRIPT_URL );
 	}
 
@@ -100,12 +100,12 @@ function getTrackingScriptsToLoad() {
 
 function initLoadedTrackingScripts() {
 	// init Facebook
-	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		initFacebook();
 	}
 
 	// init Bing
-	if ( mayWeTrackByTracker( AdTracker.BING ) ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		const bingConfig = {
 			ti: TRACKING_IDS.bingInit,
 			q: window.uetq,
@@ -118,17 +118,17 @@ function initLoadedTrackingScripts() {
 	}
 
 	// init Twitter
-	if ( mayWeTrackByTracker( AdTracker.TWITTER ) ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		window.twq( 'init', TRACKING_IDS.twitterPixelId );
 	}
 
 	// init Quora
-	if ( mayWeTrackByTracker( AdTracker.QUORA ) ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		window.qp( 'init', TRACKING_IDS.quoraPixelId );
 	}
 
 	// init Pinterest
-	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		const currentUser = getCurrentUser();
 		const params = currentUser ? { em: currentUser.hashedPii.email } : {};
 		window.pintrk( 'load', TRACKING_IDS.pinterestInit, params );

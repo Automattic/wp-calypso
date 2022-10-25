@@ -1,4 +1,4 @@
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { debug } from './constants';
 import { recordParamsInFloodlightGtag } from './floodlight';
 
@@ -11,7 +11,7 @@ import './setup';
  * @returns {void}
  */
 export function recordAliasInFloodlight() {
-	if ( ! mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( ! mayWeTrackByTracker( 'floodlight' ) ) {
 		return;
 	}
 

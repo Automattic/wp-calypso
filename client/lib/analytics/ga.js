@@ -5,7 +5,7 @@ import {
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
 } from 'calypso/lib/analytics/ad-tracking';
-import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 
@@ -90,7 +90,7 @@ export const gaRecordEvent = makeGoogleAnalyticsTrackingFunction( function recor
  */
 export function makeGoogleAnalyticsTrackingFunction( func ) {
 	return function ( ...args ) {
-		if ( ! mayWeTrackByTracker( AdTracker.GA ) ) {
+		if ( ! mayWeTrackByTracker( 'ga' ) ) {
 			gaDebug( '[Disallowed] analytics %s( %o )', func.name, args );
 			return;
 		}

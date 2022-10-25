@@ -1,18 +1,14 @@
 import config from '@automattic/calypso-config';
 import debug from 'debug';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 const hotjarDebug = debug( 'calypso:analytics:hotjar' );
 
 let hotJarScriptLoaded = false;
 
 export function addHotJarScript() {
-	if (
-		hotJarScriptLoaded ||
-		! config( 'hotjar_enabled' ) ||
-		! mayWeTrackByTracker( AdTracker.HOTJAR )
-	) {
+	if ( hotJarScriptLoaded || ! config( 'hotjar_enabled' ) || ! mayWeTrackByTracker( 'hotjar' ) ) {
 		hotjarDebug( 'Not loading HotJar script' );
 		return;
 	}

@@ -3,7 +3,7 @@ import config from '@automattic/calypso-config';
 import debug from 'debug';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from './ad-tracking/constants';
-import { AdTracker, mayWeTrackByTracker } from './tracker-buckets';
+import { mayWeTrackByTracker } from './tracker-buckets';
 
 const fullStoryDebug = debug( 'calypso:analytics:fullstory' );
 
@@ -38,7 +38,7 @@ function maybeAddFullStoryScript() {
 	if (
 		fullStoryScriptLoaded ||
 		! config.isEnabled( 'fullstory' ) ||
-		! mayWeTrackByTracker( AdTracker.FULLSTORY )
+		! mayWeTrackByTracker( 'fullstory' )
 	) {
 		if ( ! fullStoryScriptLoaded ) {
 			fullStoryDebug( 'maybeAddFullStoryScript:', false );

@@ -1,4 +1,4 @@
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import { recordViewCheckoutInCriteo } from './criteo';
 
 // Ensure setup has run.
@@ -10,7 +10,7 @@ import './setup';
  * @param {object} cart - cart as `ResponseCart` object
  */
 export function recordViewCheckout( cart ) {
-	if ( mayWeTrackByTracker( AdTracker.CRITEO ) ) {
+	if ( mayWeTrackByTracker( 'criteo' ) ) {
 		recordViewCheckoutInCriteo( cart );
 	}
 }

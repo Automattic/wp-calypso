@@ -4,28 +4,30 @@ import { isPiiUrl, isUrlExcludedForPerformance } from 'calypso/lib/analytics/uti
 import { isE2ETest } from 'calypso/lib/e2e';
 import getTrackingPrefs from './utils/get-tracking-prefs';
 
-export enum AdTracker {
-	BING = 'bing',
-	FLOODLIGHT = 'floodlight',
-	FULLSTORY = 'fullstory',
-	GOOGLE_ADS = 'gads',
-	GA = 'ga',
-	GA_ENHANCED_ECOMMERCE = 'gaEnhancedEcommerce',
-	HOTJAR = 'hotjar',
-	OUTBRAIN = 'outbrain',
-	PINTEREST = 'pinterest',
-	TWITTER = 'twitter',
-	FACEBOOK = 'facebook',
-	QUANTCAST = 'quantast',
-	GEMINI = 'gemini',
-	EXPERIAN = 'experian',
-	ICON_MEDIA = 'icon-media',
-	LINKEDIN = 'linkedin',
-	CRITEO = 'criteo',
-	PANDORA = 'pandora',
-	QUORA = 'quora',
-	ADROLL = 'adroll',
-}
+const allAdTrackers = [
+	'bing',
+	'floodlight',
+	'fullstory',
+	'googleAds',
+	'ga',
+	'gaEnhancedEcommerce',
+	'hotjar',
+	'outbrain',
+	'pinterest',
+	'twitter',
+	'facebook',
+	'quantcast',
+	'gemini',
+	'experian',
+	'iconMedia',
+	'linkedin',
+	'criteo',
+	'pandora',
+	'quora',
+	'adroll',
+] as const;
+
+type AdTracker = typeof allAdTrackers[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',
@@ -35,30 +37,30 @@ export enum Bucket {
 
 export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	// Analytics trackers:
-	[ AdTracker.GA ]: Bucket.ANALYTICS,
+	ga: Bucket.ANALYTICS,
 
 	// Advertising trackers:
-	[ AdTracker.GA_ENHANCED_ECOMMERCE ]: Bucket.ADVERTISING,
-	[ AdTracker.FULLSTORY ]: Bucket.ADVERTISING,
-	[ AdTracker.HOTJAR ]: Bucket.ADVERTISING,
-	[ AdTracker.BING ]: Bucket.ADVERTISING,
-	[ AdTracker.FLOODLIGHT ]: Bucket.ADVERTISING,
-	[ AdTracker.GOOGLE_ADS ]: Bucket.ADVERTISING,
-	[ AdTracker.OUTBRAIN ]: Bucket.ADVERTISING,
-	[ AdTracker.PINTEREST ]: Bucket.ADVERTISING,
-	[ AdTracker.TWITTER ]: Bucket.ADVERTISING,
-	[ AdTracker.FACEBOOK ]: Bucket.ADVERTISING,
+	gaEnhancedEcommerce: Bucket.ADVERTISING,
+	fullstory: Bucket.ADVERTISING,
+	hotjar: Bucket.ADVERTISING,
+	bing: Bucket.ADVERTISING,
+	floodlight: Bucket.ADVERTISING,
+	googleAds: Bucket.ADVERTISING,
+	outbrain: Bucket.ADVERTISING,
+	pinterest: Bucket.ADVERTISING,
+	twitter: Bucket.ADVERTISING,
+	facebook: Bucket.ADVERTISING,
 
 	// Disabled trackers:
-	[ AdTracker.QUANTCAST ]: null,
-	[ AdTracker.GEMINI ]: null,
-	[ AdTracker.EXPERIAN ]: null,
-	[ AdTracker.ICON_MEDIA ]: null,
-	[ AdTracker.LINKEDIN ]: null,
-	[ AdTracker.CRITEO ]: null,
-	[ AdTracker.PANDORA ]: null,
-	[ AdTracker.QUORA ]: null,
-	[ AdTracker.ADROLL ]: null,
+	quantcast: null,
+	gemini: null,
+	experian: null,
+	iconMedia: null,
+	linkedin: null,
+	criteo: null,
+	pandora: null,
+	quora: null,
+	adroll: null,
 };
 
 export const mayWeTrackGeneral = () =>

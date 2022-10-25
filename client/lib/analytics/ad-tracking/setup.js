@@ -1,4 +1,4 @@
-import { mayWeTrackByTracker, AdTracker } from '../tracker-buckets';
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
@@ -8,66 +8,66 @@ import {
 } from './constants';
 
 if ( typeof window !== 'undefined' ) {
-	if ( mayWeTrackByTracker( AdTracker.GA ) ) {
+	if ( mayWeTrackByTracker( 'ga' ) ) {
 		setupGtag();
 	}
 
 	// Facebook
-	if ( mayWeTrackByTracker( AdTracker.FACEBOOK ) ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		setupFacebookGlobal();
 	}
 
 	// Bing
-	if ( mayWeTrackByTracker( AdTracker.BING ) && ! window.uetq ) {
+	if ( mayWeTrackByTracker( 'bing' ) && ! window.uetq ) {
 		window.uetq = [];
 	}
 
 	// Criteo
-	if ( mayWeTrackByTracker( AdTracker.CRITEO ) && ! window.criteo_q ) {
+	if ( mayWeTrackByTracker( 'criteo' ) && ! window.criteo_q ) {
 		window.criteo_q = [];
 	}
 
 	// Quantcast
-	if ( mayWeTrackByTracker( AdTracker.QUANTCAST ) && ! window._qevents ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) && ! window._qevents ) {
 		window._qevents = [];
 	}
 
 	// Google Ads Gtag for wordpress.com
-	if ( mayWeTrackByTracker( AdTracker.GOOGLE_ADS ) ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		setupWpcomGoogleAdsGtag();
 	}
 
-	if ( mayWeTrackByTracker( AdTracker.FLOODLIGHT ) ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
-	if ( mayWeTrackByTracker( AdTracker.TWITTER ) ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		setupTwitterGlobal();
 	}
 
 	// Linkedin
-	if ( mayWeTrackByTracker( AdTracker.LINKEDIN ) ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) ) {
 		setupLinkedinGlobal();
 	}
 
 	// Quora
-	if ( mayWeTrackByTracker( AdTracker.QUORA ) ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		setupQuoraGlobal();
 	}
 
 	// Outbrain
-	if ( mayWeTrackByTracker( AdTracker.OUTBRAIN ) ) {
+	if ( mayWeTrackByTracker( 'outbrain' ) ) {
 		setupOutbrainGlobal();
 	}
 
 	// Pinterest
-	if ( mayWeTrackByTracker( AdTracker.PINTEREST ) ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		setupPinterestGlobal();
 	}
 
 	// AdRoll
-	if ( mayWeTrackByTracker( AdTracker.ADROLL ) ) {
+	if ( mayWeTrackByTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
 }
