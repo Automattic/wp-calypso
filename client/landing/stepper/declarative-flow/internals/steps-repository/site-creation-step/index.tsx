@@ -6,7 +6,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { Step } from '../../types';
 import './styles.scss';
-import type { ProductsList } from '@automattic/onboarding';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } ) {
 	const { domainCartItem, planCartItem, siteAccentColor } = useSelect( ( select ) => ( {
@@ -15,7 +14,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
 	} ) );
 
-	const productsList: ProductsList = useSelector( ( state ) => getProductsList( state ) );
+	const productsList = useSelector( ( state ) => getProductsList( state ) );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
@@ -28,24 +27,26 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			flow as string,
 			false,
 			true,
-			domainCartItem,
 			isPaidDomainItem,
 			theme,
 			comingSoon,
 			'',
 			siteAccentColor,
 			true,
-			productsList
+			productsList,
+			domainCartItem
 		);
 
-		await addPlanToCart(
-			site?.siteSlug as string,
-			planCartItem,
-			flow as string,
-			true,
-			theme,
-			productsList
-		);
+		if ( planCartItem ) {
+			await addPlanToCart(
+				site?.siteSlug as string,
+				flow as string,
+				true,
+				theme,
+				productsList,
+				planCartItem
+			);
+		}
 
 		return {
 			siteSlug: site?.siteSlug,
