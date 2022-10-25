@@ -796,7 +796,7 @@ export const useJetpack100GbStorageAmountText = (): TranslateResult => {
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dTB', {
+			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 				comment:
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 100,
