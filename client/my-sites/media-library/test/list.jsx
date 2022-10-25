@@ -273,7 +273,7 @@ describe( 'MediaLibraryList item selection', () => {
 
 		test( 'should have no group label for an ungrouped source', () => {
 			render( <MediaList { ...props } source="pexels" /> );
-			expect( screen.queryAllByText( /September/ ) ).toEqual( [] );
+			expect( screen.queryAllByText( /September/ ) ).toHaveLength( 0 );
 		} );
 
 		test( 'should use group labels if source is not `pexels`', () => {
