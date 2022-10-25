@@ -12,6 +12,7 @@ import ActionPanelLink from 'calypso/components/action-panel/link';
 import DocumentHead from 'calypso/components/data/document-head';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { Gridicon } from 'calypso/devdocs/design/playground-scope';
@@ -45,7 +46,12 @@ const Plans = ( { intervalType }: { intervalType: 'yearly' | 'monthly' } ) => {
 					href: `/plugins/${ selectedSite?.slug || '' }`,
 					id: 'plugins',
 					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
+						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+							},
+						}
 					),
 				} )
 			);

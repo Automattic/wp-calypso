@@ -196,3 +196,33 @@ export async function waitForMutations(
 		{ target, options }
 	);
 }
+
+/**
+ * Resolves once widgets.wp.com `message` events become idle or when no
+ * `message` events are dispatched within the first 3 seconds. Once resolved,
+ * all the widgets should be ready to be interacted with. This helper can be
+ * used on Atomic sites where the iframed widgets have, e.g., custom resize
+ * handlers (like the like button), causing layout shifting and, consequently,
+ * Playwright's stability checks to fail.
+ *
+ * @param {Page} page The parent page object.
+ */
+export async function waitForWPWidgetsIfNecessary( page: Page ): Promise< void > {
+	await page.evaluate( async () => {
+		await new Promise( ( resolve ) => {
+			let timer: NodeJS.Timeout;
+			const setResolveTimer = ( delay: number ) => {
+				clearTimeout( timer );
+				timer = setTimeout( resolve, delay );
+			};
+
+			setResolveTimer( 3000 );
+
+			window.addEventListener( 'message', ( event ) => {
+				if ( event.origin === 'https://widgets.wp.com' ) {
+					setResolveTimer( 1000 );
+				}
+			} );
+		} );
+	} );
+}
