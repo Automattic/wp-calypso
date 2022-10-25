@@ -3564,6 +3564,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/cache@npm:^11.10.3":
+  version: 11.10.3
+  resolution: "@emotion/cache@npm:11.10.3"
+  dependencies:
+    "@emotion/memoize": ^0.8.0
+    "@emotion/sheet": ^1.2.0
+    "@emotion/utils": ^1.2.0
+    "@emotion/weak-memoize": ^0.3.0
+    stylis: 4.0.13
+  checksum: 5dde04418566adbd0c83042acb1b85f354dc40bad83e33f951694a36d00559ceea2dfcf533b9d9381f1bb5df8dbb436a94725b6558762da7c83f3171f1c0dbbe
+  languageName: node
+  linkType: hard
+
 "@emotion/core@npm:^10.1.1":
   version: 10.1.1
   resolution: "@emotion/core@npm:10.1.1"
@@ -12635,6 +12648,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wpcom-checkout": "workspace:^"
     "@babel/core": ^7.17.5
+    "@emotion/cache": ^11.10.3
     "@emotion/css": ^11.9.0
     "@emotion/jest": ^11.5.0
     "@emotion/react": ^11.4.1
@@ -12778,6 +12792,7 @@ __metadata:
     source-map-support: ^0.5.19
     store: ^2.0.12
     striptags: ^3.1.1
+    stylis-plugin-rtl: ^2.1.1
     superagent: ^3.8.3
     supertest: ^6.1.6
     textarea-caret: ^3.1.0
@@ -14737,6 +14752,13 @@ __metadata:
   version: 1.2.1
   resolution: "cssfontparser@npm:1.2.1"
   checksum: ceb9b2976d503dbff3ac2aff0229b263affb4fb221a6947b357682cd8a952f6995253646ca5f820020d2fe05b5e29b56dbdd2343388c32203e8dd0ed15bdc1ca
+  languageName: node
+  linkType: hard
+
+"cssjanus@npm:^2.0.1":
+  version: 2.1.0
+  resolution: "cssjanus@npm:2.1.0"
+  checksum: 51c381f1387693989d9a8dbd875a29e2e86da7ef8c9f67c3652d02ce879b35920120e64145ea968ea6d9e267baf58697df7d3adaf2d80f9065ec5d9c6a2ef5c9
   languageName: node
   linkType: hard
 
@@ -33010,6 +33032,17 @@ resolve@^2.0.0-next.3:
   bin:
     stylelint: bin/stylelint.js
   checksum: 481df15d03b5c8b7f947abbec1c7214b1efc4ed2684308381f3398014d1911fa92b26895320a920bdd7167fee5da3c4c88e94eaed19b523587e9f62832a98cc1
+  languageName: node
+  linkType: hard
+
+"stylis-plugin-rtl@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "stylis-plugin-rtl@npm:2.1.1"
+  dependencies:
+    cssjanus: ^2.0.1
+  peerDependencies:
+    stylis: 4.x
+  checksum: 706640bba51ca75e3a824f781b59e8d8b8d034a10b839aa93daea166aac6cc67a4e7c063496ea8a09c396b639cff9859a42f5d03937d8f89f8922fd6c7435739
   languageName: node
   linkType: hard
 

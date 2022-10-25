@@ -2,11 +2,13 @@ import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import createCache from '@emotion/cache';
 import debugFactory from 'debug';
 import page from 'page';
 import ReactDom from 'react-dom';
 import Modal from 'react-modal';
 import store from 'store';
+import rtlPlugin from 'stylis-plugin-rtl';
 import emailVerification from 'calypso/components/email-verification';
 import { ProviderWrappedLayout } from 'calypso/controller';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
@@ -56,7 +58,7 @@ import { setupLocale } from './locale';
 
 const debug = debugFactory( 'calypso' );
 
-const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
+const setupContextMiddleware = ( reduxStore, reactQueryClient, emotionCache ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
 		const parsed = getUrlParts( context.canonicalPath );
@@ -81,6 +83,7 @@ const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 
 		context.store = reduxStore;
 		context.queryClient = reactQueryClient;
+		context.emotionCache = emotionCache;
 
 		// client version of the isomorphic method for redirecting to another page
 		context.redirect = ( httpCode, newUrl = null ) => {
@@ -313,10 +316,10 @@ export function setupErrorLogger( reduxStore ) {
 	} );
 }
 
-const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
+const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient, emotionCache ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
-	setupContextMiddleware( reduxStore, reactQueryClient );
+	setupContextMiddleware( reduxStore, reactQueryClient, emotionCache );
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
@@ -419,6 +422,10 @@ const boot = async ( currentUser, registerRoutes ) => {
 	utils();
 	await loadPersistedState();
 	const queryClient = createQueryClient();
+	const emotionCache = createCache( {
+		stylisPlugins: [ rtlPlugin ],
+		key: 'css',
+	} );
 
 	await hydrateBrowserState( queryClient, currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
@@ -430,7 +437,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	setupLocale( currentUser, reduxStore );
 	configureReduxStore( currentUser, reduxStore );
-	setupMiddlewares( currentUser, reduxStore, queryClient );
+	setupMiddlewares( currentUser, reduxStore, queryClient, emotionCache );
 	detectHistoryNavigation.start();
 	if ( registerRoutes ) {
 		registerRoutes();

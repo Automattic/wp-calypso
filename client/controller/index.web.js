@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
+import { CacheProvider } from '@emotion/react';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { QueryClientProvider } from 'react-query';
@@ -36,6 +37,7 @@ export const ProviderWrappedLayout = ( {
 	primary,
 	secondary,
 	redirectUri,
+	emotionCache,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
@@ -47,20 +49,22 @@ export const ProviderWrappedLayout = ( {
 	);
 
 	return (
-		<CalypsoI18nProvider>
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
-				<QueryClientProvider client={ queryClient }>
-					<ReduxProvider store={ store }>
-						<MomentProvider>{ layout }</MomentProvider>
-					</ReduxProvider>
-					<CalypsoReactQueryDevtools />
-				</QueryClientProvider>
-			</RouteProvider>
-		</CalypsoI18nProvider>
+		<CacheProvider value={ emotionCache }>
+			<CalypsoI18nProvider>
+				<RouteProvider
+					currentSection={ currentSection }
+					currentRoute={ currentRoute }
+					currentQuery={ currentQuery }
+				>
+					<QueryClientProvider client={ queryClient }>
+						<ReduxProvider store={ store }>
+							<MomentProvider>{ layout }</MomentProvider>
+						</ReduxProvider>
+						<CalypsoReactQueryDevtools />
+					</QueryClientProvider>
+				</RouteProvider>
+			</CalypsoI18nProvider>
+		</CacheProvider>
 	);
 };
 

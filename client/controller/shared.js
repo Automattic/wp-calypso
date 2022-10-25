@@ -16,6 +16,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			primary,
 			secondary,
 			showGdprBanner,
+			emotionCache,
 		} = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
@@ -32,6 +33,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }
 					showGdprBanner={ showGdprBanner }
+					emotionCache={ emotionCache }
 				/>
 			);
 		}
