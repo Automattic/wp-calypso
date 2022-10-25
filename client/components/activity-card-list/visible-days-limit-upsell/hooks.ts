@@ -8,15 +8,13 @@ export const useTrackUpsellView = (
 ): RefObject< HTMLAnchorElement | HTMLButtonElement > => {
 	const dispatch = useDispatch();
 
-	const inViewCallback = useCallback( () => {
+	return useInView< HTMLAnchorElement | HTMLButtonElement >( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_activitylog_visiblelimit_upsell_view', {
 				site_id: siteId ?? undefined,
 			} )
 		);
-	}, [ siteId ] );
-
-	return useInView< HTMLAnchorElement | HTMLButtonElement >( inViewCallback );
+	} );
 };
 
 export const useTrackUpgradeClick = ( siteId: number | null ): ( () => void ) => {

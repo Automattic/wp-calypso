@@ -6,6 +6,7 @@ const container = css( {
 	width: '100%',
 	flexDirection: 'column',
 	minWidth: 0,
+	position: 'relative',
 } );
 
 const primaryContainer = css( {

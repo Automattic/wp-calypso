@@ -1,5 +1,12 @@
 import languages, { LanguageSlug } from '@automattic/languages';
-import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	useInfiniteQuery,
+	InfiniteData,
+	QueryKey,
+	QueryFunction,
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
@@ -107,44 +114,49 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
+export const getESPluginsInfiniteQueryParams = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const fetchFn = ( { pageParam = 1 } ) =>
+		search( {
+			query: searchTerm,
+			author,
+			groupId: 'wporg',
+			category: options.category,
+			pageHandle: pageParam + '',
+			pageSize,
+			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
+		} );
+	return [ cacheKey, fetchFn ];
+};
+
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
-	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
-	return useInfiniteQuery(
-		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
-		( { pageParam } ) =>
-			search( {
-				query: searchTerm,
-				author,
-				groupId: 'wporg',
-				category: options.category,
-				pageHandle: pageParam,
-				pageSize,
-				locale: getWpLocaleBySlug( options.locale || locale ),
-			} ),
-		{
-			select: ( data: InfiniteData< ESResponse > ) => {
-				return {
-					...data,
-					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
-					pagination: {
-						results: data.pages[ 0 ]?.data?.total,
-						pages: data?.pages || [],
-						page: data?.pageParams?.length || 0,
-					},
-				};
-			},
-			getNextPageParam: ( lastPage ) => {
-				return lastPage.data.page_handle || undefined;
-			},
-			enabled,
-			staleTime,
-			refetchOnMount,
-		}
-	);
+	return useInfiniteQuery( ...getESPluginsInfiniteQueryParams( options, locale ), {
+		select: ( data: InfiniteData< ESResponse > ) => {
+			return {
+				...data,
+				plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
+				pagination: {
+					results: data.pages[ 0 ]?.data?.total,
+					pages: data?.pages || [],
+					page: data?.pageParams?.length || 0,
+				},
+			};
+		},
+		getNextPageParam: ( lastPage ) => {
+			return lastPage.data.page_handle || undefined;
+		},
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };

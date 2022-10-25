@@ -4,6 +4,7 @@
 
 import {
 	DataHelper,
+	ElementHelper,
 	CommentsComponent,
 	EditorPage,
 	TestAccount,
@@ -32,7 +33,6 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 
 	const comment = DataHelper.getRandomPhrase();
 	let page: Page;
-	let publishedURL: URL;
 	let commentsComponent: CommentsComponent;
 	let editorPage: EditorPage;
 
@@ -59,8 +59,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Publish and visit post', async function () {
-		publishedURL = await editorPage.publish( { visit: true } );
-		expect( publishedURL.href ).toStrictEqual( page.url() );
+		await editorPage.publish( { visit: true } );
 	} );
 
 	it( 'Post a comment', async function () {
@@ -69,7 +68,13 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 	} );
 
 	it( 'Like the comment', async function () {
-		await commentsComponent.like( comment );
+		// Sometimes, in the Atomic env, the Likes widget is not immediately
+		// loaded and gets stuck in the "Loading…" state. The reason for that is
+		// that the API likes request for the created comment returns an
+		// "unknown_comment" error. This is most likely because it doesn't catch
+		// up with the automation speed, so we reload the page to fetch the
+		// likes status again.
+		await ElementHelper.reloadAndRetry( page, () => commentsComponent.like( comment ) );
 	} );
 
 	it( 'Unlike the comment', async function () {

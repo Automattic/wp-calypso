@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
-import { useInView } from 'calypso/lib/use-in-view/index';
+import { useInView } from 'calypso/lib/use-in-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
@@ -46,6 +46,10 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 	${ MEDIA_QUERIES.mediumOrSmaller } {
 		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-inline-end: 0;
+	}
+
+	.stats-sparkline__bar {
+		fill: var( --studio-gray-60 );
 	}
 `;
 
@@ -95,7 +99,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLTableDataCellElement >( () => setInViewOnce( true ) );
+	const ref = useInView< HTMLTableCellElement >( () => setInViewOnce( true ) );
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;

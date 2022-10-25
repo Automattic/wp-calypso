@@ -26,3 +26,4 @@ export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export { default as HorizontalBarList } from './horizontal-bar-list';
 export { default as HorizontalBarListItem } from './horizontal-bar-list/horizontal-bar-grid-item';
+export { default as StatsCard } from './horizontal-bar-list/stats-card';
