@@ -42,7 +42,10 @@ const generateLogoSection = (
 				component: (
 					<LogoUploadSection
 						sectionID={ LOGO_SECTION_ID }
-						logoUrl={ formValues.siteLogoSection.siteLogoUrl }
+						// The structure of the state tree changed and can generate errors for stale data where siteLogoUrl lived in the root of this state tree
+						// So the optional parameter was added to safegaurd for any errors.
+						// This should eventually be removed with a fix that prevents this type of bug
+						logoUrl={ formValues.siteLogoSection?.siteLogoUrl }
 					/>
 				),
 				showSkip: true,

@@ -47,6 +47,10 @@ const Column = styled.td< { mobileHidden?: boolean } >`
 		${ ( props ) => props.mobileHidden && 'display: none;' };
 		padding-inline-end: 0;
 	}
+
+	.stats-sparkline__bar {
+		fill: var( --studio-gray-60 );
+	}
 `;
 
 const SiteListTile = styled( ListTile )`

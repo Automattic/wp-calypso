@@ -18,7 +18,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { setBillingInterval } from 'calypso/state/marketplace/billing-interval/actions';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
@@ -51,6 +51,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 	const billingPeriod = useSelector( getBillingInterval );
+
+	const currentUserId = useSelector( getCurrentUserId );
 
 	const isMarketplaceProduct = useSelector( ( state ) =>
 		isMarketplaceProductSelector( state, plugin.slug )
@@ -113,6 +115,19 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		const pluginsPlansPage = `/plugins/plans/yearly/${ siteSlug }`;
 		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
 	}, [ selectedSite?.slug ] );
+
+	const getSaasRedirectHRef = useCallback( () => {
+		if ( ! plugin.saas_landing_page ) {
+			return null;
+		}
+		try {
+			const saasRedirectUrl = new URL( plugin.saas_landing_page );
+			saasRedirectUrl.searchParams.append( 'uuid', `${ currentUserId }+${ selectedSite?.ID }` );
+			return saasRedirectUrl.toString();
+		} catch ( error ) {
+			return null;
+		}
+	}, [ currentUserId, plugin.saas_landing_page, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
 	 *
@@ -296,6 +311,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
+						saasRedirectHRef={ getSaasRedirectHRef() }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
@@ -353,6 +369,7 @@ function PrimaryButton( {
 	userCantManageTheSite,
 	translate,
 	plugin,
+	saasRedirectHRef,
 } ) {
 	if ( ! isLoggedIn ) {
 		return (
@@ -372,7 +389,7 @@ function PrimaryButton( {
 			<Button
 				className="plugin-details-cta__install-button"
 				primary={ ! shouldUpgrade }
-				href={ plugin.saas_landing_page }
+				href={ saasRedirectHRef }
 			>
 				{ translate( 'Get started' ) }
 				<Gridicon icon="external" />

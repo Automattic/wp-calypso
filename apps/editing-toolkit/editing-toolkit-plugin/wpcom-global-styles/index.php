@@ -131,6 +131,7 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 	return $theme_json;
 }
 add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
+add_filter( 'wp_theme_json_data_user', 'wpcom_block_global_styles_frontend' );
 
 /**
  * Tracks when global styles are updated or reset after the post has actually been saved.
