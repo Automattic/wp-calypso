@@ -453,3 +453,15 @@
 	text-decoration: underline;
 	line-height: inherit;
 }
+
+.manage-purchase__gifting-toggle {
+	margin-top: 24px;
+
+	label {
+		font-size: $font-body-small;
+		line-height: inherit;
+	}
+	.info-popover {
+		margin-left: 5px;
+	}
+}
