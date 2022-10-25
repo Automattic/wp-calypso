@@ -4,8 +4,7 @@ import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
 export default function isPaymentMethodEnabled(
 	slug: CheckoutPaymentMethodSlug,
-	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[],
-	countryCode: string
+	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
 	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
 	if ( alwaysEnabledPaymentMethods.includes( slug ) ) {

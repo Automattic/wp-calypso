@@ -7,12 +7,10 @@ import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
 export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
-	countryCode,
 	responseCart,
 	allowedPaymentMethods,
 }: {
 	paymentMethodObjects: PaymentMethod[];
-	countryCode: string;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
 	responseCart: ResponseCart;
 } ): PaymentMethod[] {
@@ -39,6 +37,6 @@ export default function filterAppropriatePaymentMethods( {
 			if ( ! slug ) {
 				return false;
 			}
-			return isPaymentMethodEnabled( slug, allowedPaymentMethods, countryCode );
+			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
 		} );
 }
