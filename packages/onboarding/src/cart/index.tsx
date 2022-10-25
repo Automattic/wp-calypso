@@ -13,6 +13,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -49,12 +50,6 @@ type NewSiteParams = {
 	};
 	validate: boolean;
 };
-
-type NewCartItem = CartItem;
-export type ProductsList = {
-	product_slug: string;
-	is_privacy_protection_product_purchase_allowed?: boolean;
-}[];
 
 export const getNewSiteParams = ( {
 	flowToCheck,
@@ -99,15 +94,19 @@ export const createSiteWithCart = async (
 	flowName: string,
 	isManageSiteFlow: boolean,
 	userIsLoggedIn: boolean,
-	domainItem: CartItem,
 	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
 	comingSoon: 1 | 0,
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
-	productsList: ProductsList
+	productsList: Record< string, ProductListItem >,
+	domainItem?: CartItem
 ) => {
+	if ( ! domainItem ) {
+		return;
+	}
+
 	const siteUrl = domainItem?.meta;
 
 	const newCartItems = [ domainItem ].filter( ( item ) => item );
@@ -201,11 +200,11 @@ function prepareItemForAddingToCart( item: CartItem, lastKnownFlow?: string ) {
 
 export async function addPlanToCart(
 	siteSlug: string,
-	cartItem: CartItem,
 	flowName: string,
 	userIsLoggedIn: boolean,
 	themeSlugWithRepo: string,
-	productsList: ProductsList
+	productsList: Record< string, ProductListItem >,
+	cartItem: CartItem
 ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
@@ -226,13 +225,22 @@ export async function addPlanToCart(
 	);
 }
 
-const addPrivacyProtectionIfSupported = ( item: NewCartItem, productsList: ProductsList ) => {
+const addPrivacyProtectionIfSupported = (
+	item: CartItem,
+	productsList: Record< string, ProductListItem >
+) => {
 	const { product_slug: productSlug } = item;
+	const productListArray = Object.entries( productsList ).map(
+		( [ , { product_slug, is_privacy_protection_product_purchase_allowed } ] ) => ( {
+			product_slug,
+			is_privacy_protection_product_purchase_allowed,
+		} )
+	);
 
 	if (
 		productSlug &&
 		productsList &&
-		supportsPrivacyProtectionPurchase( productSlug, productsList )
+		supportsPrivacyProtectionPurchase( productSlug, productListArray )
 	) {
 		return updatePrivacyForDomain( item, true );
 	}
@@ -241,10 +249,10 @@ const addPrivacyProtectionIfSupported = ( item: NewCartItem, productsList: Produ
 };
 
 const addToCartAndProceed = async (
-	newCartItems: NewCartItem[],
+	newCartItems: CartItem[],
 	siteSlug: string,
 	flowName: string,
-	productsList: ProductsList
+	productsList: Record< string, ProductListItem >
 ) => {
 	const newCartItemsToAdd = newCartItems
 		.map( ( item ) => addPrivacyProtectionIfSupported( item, productsList ) )
@@ -285,13 +293,13 @@ export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: strin
 }
 
 async function processItemCart(
-	newCartItems: NewCartItem[],
+	newCartItems: CartItem[],
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,
 	lastKnownFlow: string,
 	userIsLoggedIn: boolean,
-	productsList: ProductsList
+	productsList: Record< string, ProductListItem >
 ) {
 	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
