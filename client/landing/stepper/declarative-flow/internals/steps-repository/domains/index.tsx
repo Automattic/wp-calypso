@@ -40,22 +40,8 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { DomainSuggestion, SearchState } from '@automattic/data-stores';
 import './style.scss';
-
-type DomainSuggestion = {
-	is_free: boolean;
-	domain_name: string;
-	isRecommended: boolean;
-	isBestAlternative: boolean;
-	is_premium?: boolean;
-	product_slug: string;
-};
-
-type SearchState = {
-	subdomainSearchResults?: DomainSuggestion[] | null;
-	loadingResults?: boolean;
-	searchResults?: DomainSuggestion[] | null;
-};
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { productsList, selectedSite } = useSelector( ( state ) => {
