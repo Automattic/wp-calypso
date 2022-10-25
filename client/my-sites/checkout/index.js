@@ -251,7 +251,7 @@ export default function () {
 	);
 
 	page(
-		'/checkout/:domainOrProduct/renewsub/:purchaseId',
+		'/checkout/:domainOrProduct/gift/:purchaseId',
 		redirectLoggedOut,
 		siteSelection,
 		checkout,

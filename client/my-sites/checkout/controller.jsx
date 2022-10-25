@@ -103,7 +103,7 @@ export function checkout( context, next ) {
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
-	const isRenewSubPurchase = context.path.includes( '/renewsub/' );
+	const isGiftPurchase = context.path.includes( '/gift/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -114,7 +114,7 @@ export function checkout( context, next ) {
 	if (
 		! selectedSite &&
 		! isDisallowedForSitePicker &&
-		! ( isJetpackCheckout || isRenewSubPurchase )
+		! ( isJetpackCheckout || isGiftPurchase )
 	) {
 		sites( context, next );
 		return;
@@ -178,7 +178,7 @@ export function checkout( context, next ) {
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
-				isRenewSubPurchase={ isRenewSubPurchase }
+				isGiftPurchase={ isGiftPurchase }
 			/>
 		</>
 	);

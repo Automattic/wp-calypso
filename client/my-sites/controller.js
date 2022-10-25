@@ -439,7 +439,7 @@ export function siteSelection( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
-	if ( context.path.includes( '/renewsub/' ) ) {
+	if ( context.path.includes( '/gift/' ) ) {
 		dispatch( setSelectedSiteId( null ) );
 		return next();
 	}

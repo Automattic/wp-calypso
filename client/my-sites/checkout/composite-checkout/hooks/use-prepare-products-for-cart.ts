@@ -45,7 +45,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
-	isRenewSubPurchase,
+	isGiftPurchase,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -54,7 +54,7 @@ export default function usePrepareProductsForCart( {
 	isPrivate: boolean;
 	siteSlug: string | undefined;
 	isLoggedOutCart?: boolean;
-	isRenewSubPurchase?: boolean;
+	isGiftPurchase?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
 	jetpackSiteSlug?: string;
@@ -72,8 +72,8 @@ export default function usePrepareProductsForCart( {
 		isLoggedOutCart,
 		'and isNoSiteCart',
 		isNoSiteCart,
-		'and isRenewSubPurchase',
-		isRenewSubPurchase,
+		'and isGiftPurchase',
+		isGiftPurchase,
 		'and isJetpackCheckout',
 		isJetpackCheckout,
 		'and jetpackSiteSlug',
@@ -115,7 +115,7 @@ export default function usePrepareProductsForCart( {
 	useAddRenewalItems( {
 		originalPurchaseId,
 		productAlias: productAliasFromUrl,
-		isRenewSubPurchase,
+		isGiftPurchase,
 		dispatch,
 		addHandler,
 	} );
@@ -248,13 +248,13 @@ function useAddProductsFromLocalStorage( {
 function useAddRenewalItems( {
 	originalPurchaseId,
 	productAlias,
-	isRenewSubPurchase,
+	isGiftPurchase,
 	dispatch,
 	addHandler,
 }: {
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
-	isRenewSubPurchase?: boolean;
+	isGiftPurchase?: boolean;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
 } ) {
@@ -274,7 +274,7 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				return createRenewalItemToAddToCart( productSlug, subscriptionId, isRenewSubPurchase );
+				return createRenewalItemToAddToCart( productSlug, subscriptionId, isGiftPurchase );
 			} )
 			.filter( isValueTruthy );
 
@@ -421,7 +421,7 @@ function getProductSlugFromAlias( productAlias: string ): string {
 function createRenewalItemToAddToCart(
 	productAlias: string,
 	purchaseId: string | number | undefined | null,
-	isRenewSubPurchase?: boolean
+	isGiftPurchase?: boolean
 ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
 	// Some product slugs contain slashes, so we decode them
@@ -434,7 +434,7 @@ function createRenewalItemToAddToCart(
 	const renewalItemExtra = {
 		purchaseId: String( purchaseId ),
 		purchaseType: 'renewal',
-		isRenewSubPurchase,
+		isGiftPurchase,
 	};
 	return {
 		// Some meta values include slashes, so we decode them

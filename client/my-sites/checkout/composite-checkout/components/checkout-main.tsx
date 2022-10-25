@@ -97,7 +97,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
-	isRenewSubPurchase,
+	isGiftPurchase,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -124,7 +124,7 @@ export default function CheckoutMain( {
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
-	isRenewSubPurchase?: boolean;
+	isGiftPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -182,7 +182,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
-		isRenewSubPurchase,
+		isGiftPurchase,
 	} );
 
 	const cartKey = useCartKey();
