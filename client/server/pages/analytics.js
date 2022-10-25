@@ -12,10 +12,13 @@ const logAnalyticsThrottled = throttle( ( { sectionName, duration, loggedIn, use
 			name: 'response_time',
 			value: duration,
 			type: 'timing',
+			isLegacy: true,
 		},
 		// More granular response-time metric including SSR and auth status.
 		{
-			name: `loggedin_${ loggedIn }.ssr_${ usedSSRHandler }.response_time`,
+			name: `response_time.${
+				loggedIn ? 'logged-in' : 'logged-out'
+			}.ssr_pipeline_${ usedSSRHandler }`,
 			value: duration,
 			type: 'timing',
 		},
