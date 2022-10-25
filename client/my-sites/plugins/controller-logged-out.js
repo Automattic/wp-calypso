@@ -1,9 +1,9 @@
 import config from '@automattic/calypso-config';
+import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
 	getWPCOMPluginsQueryParams,
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
-import { getWPORGPluginsQueryParams } from 'calypso/data/marketplace/use-wporg-plugin-query';
 import wpcom from 'calypso/lib/wp';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 
@@ -32,11 +32,14 @@ const prefetchPaidPlugins = ( queryClient, options ) =>
 		getWPCOMPluginsQueryParams( 'all', options.search, options.tag )
 	);
 
-const prefetchPopularPlugins = ( queryClient, options ) =>
-	prefetchPluginsData(
+const prefetchPopularPlugins = ( queryClient, options ) => {
+	const infinite = true;
+	return prefetchPluginsData(
 		queryClient,
-		getWPORGPluginsQueryParams( { ...options, category: 'popular' } )
+		getESPluginsInfiniteQueryParams( { ...options, category: 'popular', infinite }, infinite ),
+		true
 	);
+};
 
 const prefetchFeaturedPlugins = ( queryClient ) =>
 	prefetchPluginsData( queryClient, getWPCOMFeaturedPluginsQueryParams() );

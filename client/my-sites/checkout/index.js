@@ -96,7 +96,6 @@ export default function () {
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		redirectLoggedOut,
-		siteSelection,
 		checkoutPending,
 		makeLayout,
 		clientRender

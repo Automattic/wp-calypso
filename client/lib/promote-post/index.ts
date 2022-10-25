@@ -5,9 +5,6 @@ import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
-// Import translatable strings so that translations get associated with the module and loaded properly.
-import './string';
-
 declare global {
 	interface Window {
 		BlazePress?: {
@@ -27,6 +24,7 @@ declare global {
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
 			} ) => void;
+			strings: any;
 		};
 	}
 }
@@ -39,6 +37,10 @@ export async function loadDSPWidgetJS(): Promise< void > {
 	const src =
 		config( 'dsp_widget_js_src' ) + '?ver=' + Math.round( Date.now() / ( 1000 * 60 * 60 ) );
 	await loadScript( src );
+	// Load the strings so that translations get associated with the module and loaded properly.
+	// The module will assign the placeholder component to `window.BlazePress.strings` as a side-effect,
+	// in order to ensure that translate calls are not removed from the production build.
+	await import( './string' );
 }
 
 export async function showDSP(
@@ -73,24 +75,6 @@ export async function showDSP(
 			reject( false );
 		}
 	} );
-}
-
-export async function showDSPWidgetModal( siteSlug: string, siteId: number, postId?: number ) {
-	await loadDSPWidgetJS();
-
-	if ( window.BlazePress ) {
-		await window.BlazePress.render( {
-			siteSlug: siteSlug,
-			stripeKey: config( 'dsp_stripe_pub_key' ),
-			apiHost: 'https://public-api.wordpress.com',
-			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
-			// todo fetch rlt somehow
-			authToken: 'wpcom-proxy-request',
-			template: 'article',
-			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
-			showDialog: true, // for now
-		} );
-	}
 }
 
 /**
