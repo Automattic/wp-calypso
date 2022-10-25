@@ -1,12 +1,12 @@
 $modal-breakpoint-tablet: 1070px;
 $modal-breakpoint-mobile: 480px;
 
-.dialog__content.remove-plan-dialog {
+.dialog__content.pre-cancellation-dialog {
 	padding: 0;
 	max-width: 500px;
 	background: #fff;
 
-	.remove-plan-dialog__close-button {
+	.pre-cancellation-dialog__close-button {
 		cursor: pointer;
 		position: absolute;
 		right: 0;
@@ -35,7 +35,7 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
-	.remove-plan-dialog__grid-colmn {
+	.pre-cancellation-dialog__grid-colmn {
 		text-align: left;
 		padding: 48px 48px 0;
 
@@ -55,13 +55,13 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
-	.remove-plan-dialog__item-cross-small {
+	.pre-cancellation-dialog__item-cross-small {
 		color: #e65054;
 		vertical-align: middle;
 		margin-right: 10px;
 	}
 
-	.remove-plan-dialog__list-plan-features {
+	.pre-cancellation-dialog__list-plan-features {
 		list-style-type: none;
 		margin: 0;
 		text-align: left;
@@ -75,13 +75,13 @@ $modal-breakpoint-mobile: 480px;
 
 	&.--with-domain-feature {
 
-		.remove-plan-dialog__grid-colmn {
+		.pre-cancellation-dialog__grid-colmn {
 			@media ( max-width: $modal-breakpoint-mobile ) {
 				padding: 48px 24px;
 			}
 		}
 
-		.remove-plan-dialog__list-plan-features {
+		.pre-cancellation-dialog__list-plan-features {
 			margin-bottom: 98px;
 
 			@media ( max-width: $modal-breakpoint-tablet ) {
@@ -97,5 +97,17 @@ $modal-breakpoint-mobile: 480px;
 			margin-top: -67px;
 			margin-bottom: 27px;
 		}
+	}
+
+	.pre-cancellation-dialog--refund {
+		color: var(--color-success);
+		font-size: $font-body-small;
+		margin: 0;
+		padding: 0 10px 5px 0;
+		margin-top: 20px;
+	}
+
+	.pre-cancellation-dialog--support {
+		margin-top: 20px;
 	}
 }

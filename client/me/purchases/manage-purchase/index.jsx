@@ -557,9 +557,8 @@ class ManagePurchase extends Component {
 					closeDialog={ this.closeDialog }
 					removePlan={ actionFunction }
 					site={ site }
+					purchase={ purchase }
 					hasDomain={ customDomain }
-					isRefundable={ isPlanRefundable }
-					isAutoRenewing={ purchase.isAutoRenewEnabled }
 					primaryDomain={ primaryDomainName }
 					wpcomURL={ site.wpcom_url }
 				/>
