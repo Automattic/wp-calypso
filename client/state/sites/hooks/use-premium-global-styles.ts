@@ -99,5 +99,5 @@ export function usePremiumGlobalStyles(): GlobalStylesStatus {
 		}
 	);
 
-	return data;
+	return data ?? DEFAULT_GLOBAL_STYLES_INFO;
 }
