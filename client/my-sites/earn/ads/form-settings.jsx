@@ -342,7 +342,7 @@ class AdsFormSettings extends Component {
 				<FormFieldset>
 					<SupportInfo
 						text={ translate(
-							'Enables a targeted advertising opt-out link for California consumers, as required by the California Consumer Privacy Act (CCPA).'
+							'Enables a targeted advertising opt-out link for consumers from some US states.'
 						) }
 						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
 					/>
