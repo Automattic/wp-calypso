@@ -104,6 +104,17 @@ export function useCountriesAndStates() {
 			isLabel: false,
 		} );
 
+		// Alphabetizes country list after translated.
+		countries.sort( ( { label: countryA }, { label: countryB } ) => {
+			if ( countryA < countryB ) {
+				return -1;
+			}
+			if ( countryA > countryB ) {
+				return 1;
+			}
+			return 0;
+		} );
+
 		return {
 			countryOptions: countries as Option[],
 			stateOptionsMap: stateOptions,
