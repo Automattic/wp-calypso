@@ -91,9 +91,9 @@ export const PreCancellationDialog = ( {
 		const { refundText } = purchase;
 
 		return (
-			<>
-				<div className="pre-cancellation-dialog--support">
-					<strong className="pre-cancellation-dialog--support-information">
+			<div className="pre-cancellation-dialog--footer">
+				<div className="pre-cancellation-dialog--footer--support">
+					<strong className="pre-cancellation-dialog--footer--support-information">
 						{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
 							? translate(
 									'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
@@ -113,14 +113,14 @@ export const PreCancellationDialog = ( {
 							  ) }
 					</strong>
 				</div>
-				<div className="pre-cancellation-dialog--refund">
+				<div className="pre-cancellation-dialog--footer--refund">
 					{ hasAmountAvailableToRefund( purchase ) &&
 						translate( '%(refundText)s to be refunded', {
 							args: { refundText },
 							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 						} ) }
 				</div>
-			</>
+			</div>
 		);
 	};
 

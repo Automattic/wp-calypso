@@ -81,7 +81,7 @@ $modal-breakpoint-mobile: 480px;
 			}
 		}
 
-		.pre-cancellation-dialog__list-plan-features {
+		.pre-cancellation-dialog--footer {
 			margin-bottom: 98px;
 
 			@media ( max-width: $modal-breakpoint-tablet ) {
@@ -99,7 +99,7 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
-	.pre-cancellation-dialog--refund {
+	.pre-cancellation-dialog--footer--refund {
 		color: var(--color-success);
 		font-size: $font-body-small;
 		margin: 0;
@@ -107,7 +107,7 @@ $modal-breakpoint-mobile: 480px;
 		margin-top: 20px;
 	}
 
-	.pre-cancellation-dialog--support {
+	.pre-cancellation-dialog--footer--support {
 		margin-top: 20px;
 	}
 }
