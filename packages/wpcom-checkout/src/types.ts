@@ -210,7 +210,6 @@ export type CheckoutPaymentMethodSlug =
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'
-	| 'full-credits'
 	| 'stripe-three-d-secure'
 	| 'wechat'
 	| 'existingCard'
