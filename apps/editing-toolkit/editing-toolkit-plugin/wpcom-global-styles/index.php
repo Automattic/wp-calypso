@@ -113,7 +113,7 @@ add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_scripts_
  * @return WP_Theme_JSON_Data|WP_Theme_JSON_Data_Gutenberg Filtered data.
  */
 function wpcom_block_global_styles_frontend( $theme_json ) {
-	if ( ! wpcom_should_limit_global_styles() ) {
+	if ( ! wpcom_should_limit_global_styles() || wpcom_is_previewing_global_styles() ) {
 		return $theme_json;
 	}
 
@@ -216,8 +216,49 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 		'tooltip_link_url'   => $upgrade_url,
 		'icon_path'          => 'M13 9h-2V7h2v2zm0 2h-2v6h2v-6zm-1-7c-4.411 0-8 3.589-8 8s3.589 8 8 8 8-3.589 8-8-3.589-8-8-8m0-2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2z',
 		'icon_color'         => 'orange',
+		'extra_tooltip'      => 'toggle_global_styles',
 	);
 
 	return $custom_controls;
 }
 add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );
+
+/**
+ * Checks if the necessary conditions are met in order to establish that the supplied user should be considered as previewing Global Styles.
+ *
+ * @param int|null $user_id User id to check.
+ *
+ * @return bool
+ */
+function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
+	if ( null === $user_id ) {
+		$user_id = get_current_user_id();
+	}
+
+	if ( 0 === $user_id ) {
+		return false;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
+}
+
+/**
+ * Renders the link for previewing global styles in the launch banner.
+ *
+ * @return void
+ */
+function wpcom_display_global_styles_banner_extra_tooltip() {
+	if ( wpcom_is_previewing_global_styles() ) {
+		$text     = __( 'Hide premium styles', 'full-site-editing' );
+		$location = remove_query_arg( 'preview-global-styles' );
+	} else {
+		$text     = __( 'Preview styles before upgrading', 'full-site-editing' );
+		$location = add_query_arg( 'preview-global-styles', '' );
+	}
+
+	?>
+	<a class="launch-custom-link" href="<?php echo esc_url( $location ); ?>"><?php echo esc_html( $text ); ?></a>
+	<?php
+}
+add_action( 'launch_bar_extra_tooltip_toggle_global_styles', 'wpcom_display_global_styles_banner_extra_tooltip' );
