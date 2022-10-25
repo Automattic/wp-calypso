@@ -26,10 +26,7 @@ import {
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
-import {
-	isMarketplaceProduct as isMarketplaceProductSelector,
-	isSaasProduct as isSaasProductSelector,
-} from 'calypso/state/products-list/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -59,8 +56,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-
-	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, softwareSlug ) );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -263,7 +258,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<div className="plugin-details-cta__container">
-				{ ! isSaasProduct && (
+				{ ! plugin.isSaasProduct && (
 					<div className="plugin-details-cta__price">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 							{ ( { isFetching, price, period } ) =>
@@ -285,7 +280,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</PluginPrice>
 					</div>
 				) }
-				{ isMarketplaceProduct && ! isSaasProduct && (
+				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -295,7 +290,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				<div className="plugin-details-cta__install">
 					<PrimaryButton
 						isLoggedIn={ isLoggedIn }
-						isSaasProduct={ isSaasProduct }
 						shouldUpgrade={ shouldUpgrade }
 						hasEligibilityMessages={ hasEligibilityMessages }
 						incompatiblePlugin={ incompatiblePlugin }
@@ -330,10 +324,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ ! isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
 					<UpgradeRequiredContent translate={ translate } />
 				) }
-				{ isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
@@ -353,7 +347,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 function PrimaryButton( {
 	isLoggedIn,
-	isSaasProduct,
 	shouldUpgrade,
 	hasEligibilityMessages,
 	incompatiblePlugin,
@@ -375,7 +368,7 @@ function PrimaryButton( {
 			</Button>
 		);
 	}
-	if ( isSaasProduct ) {
+	if ( plugin.isSaasProduct ) {
 		return (
 			<Button
 				className="plugin-details-cta__install-button"
