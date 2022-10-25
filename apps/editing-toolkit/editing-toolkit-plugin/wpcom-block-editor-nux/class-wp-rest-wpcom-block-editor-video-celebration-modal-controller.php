@@ -1,6 +1,6 @@
 <?php
 /**
- * WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller file.
+ * WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller file.
  *
  * @package A8C\FSE
  */
@@ -8,15 +8,15 @@
 namespace A8C\FSE;
 
 /**
- * Class WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller.
+ * Class WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller.
  */
-class WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller extends \WP_REST_Controller {
+class WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller extends \WP_REST_Controller {
 	/**
-	 * WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller constructor.
+	 * WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller constructor.
 	 */
 	public function __construct() {
 		$this->namespace                       = 'wpcom/v2';
-		$this->rest_base                       = 'block-editor/has-redirected-after-video-upload';
+		$this->rest_base                       = 'block-editor/has-seen-video-celebration-modal';
 		$this->wpcom_is_site_specific_endpoint = true;
 		$this->wpcom_is_wpcom_only_endpoint    = true;
 	}
@@ -31,7 +31,7 @@ class WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller extends \WP_REST_Cont
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'has_redirected_after_video_upload' ),
+					'callback'            => array( $this, 'has_seen_video_celebration_modal' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 				),
 			)
@@ -42,10 +42,10 @@ class WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller extends \WP_REST_Cont
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
-					'callback'            => array( $this, 'set_has_redirected_after_video_upload' ),
+					'callback'            => array( $this, 'set_has_seen_video_celebration_modal' ),
 					'permission_callback' => array( $this, 'permission_callback' ),
 					'args'                => array(
-						'has_redirected_after_video_upload' => array(
+						'has_seen_video_celebration_modal' => array(
 							'required' => true,
 							'type'     => 'boolean',
 						),
@@ -66,37 +66,37 @@ class WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller extends \WP_REST_Cont
 	}
 
 	/**
-	 * Whether the user has redirected back to the launchpad after uploading their first video.
+	 * Whether the site has displayed the video upload celebration modal.
 	 *
 	 * @return WP_REST_Response
 	 */
-	public function has_redirected_after_video_upload() {
+	public function has_seen_video_celebration_modal() {
 		// See D69932-code and apps/editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nux/class-wp-rest-wpcom-block-editor-first-post-published-modal-controller.php.
 		if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
 			return rest_ensure_response(
 				array(
-					'has_redirected_after_video_upload' => true,
+					'has_seen_video_celebration_modal' => true,
 				)
 			);
 		}
-		$has_redirected_after_video_upload = (bool) get_option( 'has_redirected_after_video_upload', false );
+		$has_seen_video_celebration_modal = (bool) get_option( 'has_seen_video_celebration_modal', false );
 
 		return rest_ensure_response(
 			array(
-				'has_redirected_after_video_upload' => $has_redirected_after_video_upload,
+				'has_seen_video_celebration_modal' => $has_seen_video_celebration_modal,
 			)
 		);
 	}
 
 	/**
-	 * Update the option for whether the user has redirected to the launchpad after uploading their first video.
+	 * Update the option for whether the user has seen the video upload celebration modal.
 	 *
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response
 	 */
-	public function set_has_redirected_after_video_upload( $request ) {
+	public function set_has_seen_video_celebration_modal( $request ) {
 		$params = $request->get_json_params();
-		update_option( 'has_redirected_after_video_upload', $params['has_redirected_after_video_upload'] );
-		return rest_ensure_response( array( 'has_redirected_after_video_upload' => $params['has_redirected_after_video_upload'] ) );
+		update_option( 'has_seen_video_celebration_modal', $params['has_seen_video_celebration_modal'] );
+		return rest_ensure_response( array( 'has_seen_video_celebration_modal' => $params['has_seen_video_celebration_modal'] ) );
 	}
 }

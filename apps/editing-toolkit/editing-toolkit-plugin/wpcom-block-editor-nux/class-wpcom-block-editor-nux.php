@@ -92,9 +92,9 @@ class WPCOM_Block_Editor_NUX {
 		$seller_celebration_modal_controller = new WP_REST_WPCOM_Block_Editor_Seller_Celebration_Modal_Controller();
 		$seller_celebration_modal_controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-video-redirect-controller.php';
-		$video_redirect_controller = new WP_REST_WPCOM_Block_Editor_Video_Redirect_Controller();
-		$video_redirect_controller->register_rest_route();
+		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-video-celebration-modal-controller.php';
+		$video_celebration_modal_controller = new WP_REST_WPCOM_Block_Editor_Video_Celebration_Modal_Controller();
+		$video_celebration_modal_controller->register_rest_route();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_NUX', 'init' ) );
