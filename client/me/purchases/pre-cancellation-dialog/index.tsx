@@ -1,4 +1,5 @@
 import { Dialog, Gridicon } from '@automattic/components';
+import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -137,18 +138,15 @@ export const PreCancellationDialog = ( {
 	};
 
 	/**
-	 * Dialog classname
-	 */
-	const classDomainFeature = domainFeature ? ' --with-domain-feature' : '';
-	const dialogClassName = 'remove-plan-dialog' + classDomainFeature;
-
-	/**
 	 * Plan cancellation dialog.
 	 */
 	return (
 		<Dialog
 			buttons={ buttons }
-			className={ dialogClassName }
+			className={ cx( {
+				'remove-plan-dialog': true,
+				'--with-domain-feature': domainFeature !== null,
+			} ) }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
 		>
