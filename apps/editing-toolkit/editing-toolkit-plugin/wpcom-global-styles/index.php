@@ -144,6 +144,13 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// If the post isn't updated then we know the gs cpt is being created.
 	$event_name = 'wpcom_core_global_styles_create';
 
+	// These properties are for debugging purposes and should be eventually edited or removed.
+	$event_props = array(
+		'should_limit' => (bool) wpcom_should_limit_global_styles(),
+		'is_simple'    => (bool) ! function_exists( 'wpcomsh_record_tracks_event' ),
+		'theme'        => get_stylesheet(),
+	);
+
 	if ( $updated ) {
 		// This is a fragile way of checking if the global styles cpt is being reset, we might need to update this condition in the future.
 		$global_style_keys      = array_keys( json_decode( $post->post_content, true ) ?? array() );
@@ -160,10 +167,10 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 
 	// Invoke the correct function based on the underlying infrastructure.
 	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
-		wpcomsh_record_tracks_event( $event_name, array() );
+		wpcomsh_record_tracks_event( $event_name, $event_props );
 	} else {
 		require_lib( 'tracks/client' );
-		tracks_record_event( get_current_user_id(), $event_name );
+		tracks_record_event( get_current_user_id(), $event_name, $event_props );
 	}
 }
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
