@@ -399,7 +399,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (10GB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY,
 		term: TERM_MONTHLY,
@@ -409,7 +409,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_10GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (100GB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY,
 		term: TERM_MONTHLY,
@@ -419,7 +419,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_100GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (1TB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY,
 		term: TERM_MONTHLY,
@@ -429,7 +429,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_1TB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (10GB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
 		term: TERM_MONTHLY,
@@ -439,7 +439,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_10GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (100GB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY,
 		term: TERM_MONTHLY,
@@ -449,7 +449,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_100GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY ]: {
-		product_name: translate( 'Backup Add-On' ),
+		product_name: translate( 'Add-on Storage (1TB)' ),
 		product_slug: PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY,
 		type: PRODUCT_JETPACK_BACKUP_ADDON_1TB_MONTHLY,
 		term: TERM_MONTHLY,
