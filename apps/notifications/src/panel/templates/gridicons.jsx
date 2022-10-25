@@ -319,7 +319,12 @@ export default class extends Component {
 									fill="#797C82"
 								/>
 							</g>
-							<path d="M21.1406 6.14215L7.14062 20.1422" stroke="#797C82" strokeWidth="1.5" />
+							<path
+								className="bell"
+								d="M21.1406 6.14215L7.14062 20.1422"
+								stroke="#797C82"
+								strokeWidth="1.5"
+							/>
 							<path d="M20.1406 5.14215L5.14062 20.1421" stroke="white" strokeWidth="1.5" />
 						</g>
 					</svg>

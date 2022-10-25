@@ -158,6 +158,28 @@
 			position: absolute;
 			top: 10px;
 			right: 20px;
+
+			&:hover {
+				path.bell {
+					stroke: var(--color-link);
+				}
+
+				rect {
+					fill: var(--color-link);
+				}
+
+				g {
+					opacity: 1;
+				}
+			}
+		}
+
+		.wpnc__action-link {
+			&:hover {
+				svg.gridicons-pinned path {
+					fill: var(--color-link);
+				}
+			}
 		}
 	}
 }
