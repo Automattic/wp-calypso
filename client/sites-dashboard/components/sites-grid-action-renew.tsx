@@ -16,14 +16,15 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isSiteOwner = site.site_owner === userId;
+	const productSlug = site.plan?.product_slug;
 
 	const trackCallback = useCallback( () => {
 		recordTracksEvent( PLAN_RENEW_EVENT_NAMES.IN_VIEW, {
 			is_site_owner: isSiteOwner,
-			product_slug: site.plan?.product_slug,
+			product_slug: productSlug,
 			display_mode: 'grid',
 		} );
-	}, [ isSiteOwner, site.plan?.product_slug ] );
+	}, [ isSiteOwner, productSlug ] );
 
 	const ref = useInView< HTMLSpanElement >( trackCallback );
 
@@ -33,10 +34,10 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 			ctaProps={
 				isSiteOwner && {
 					title: __( 'Renew' ),
-					href: `/checkout/${ site.slug }/${ site.plan?.product_slug }`,
+					href: `/checkout/${ site.slug }/${ productSlug }`,
 					onClick: () => {
 						recordTracksEvent( PLAN_RENEW_EVENT_NAMES.ON_CLICK, {
-							product_slug: site.plan?.product_slug,
+							product_slug: productSlug,
 							display_mode: 'grid',
 						} );
 					},
