@@ -5,10 +5,13 @@ export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
 export const getPatternPreviewUrl = ( id: number, language: string ) => {
+	const params = new URL( location.href ).searchParams;
 	return addQueryArgs( PREVIEW_PATTERN_URL, {
 		stylesheet: STYLE_SHEET,
 		pattern_id: encodePatternId( id ),
 		language,
+		skip_cache: params.get( 'skip_cache' ),
+		set_cache: params.get( 'set_cache' ),
 	} );
 };
 
