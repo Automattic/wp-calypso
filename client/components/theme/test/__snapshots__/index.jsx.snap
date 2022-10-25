@@ -36,7 +36,9 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       <span
         class="theme__more-button"
       >
-        <button>
+        <button
+          aria-label="More options for theme Twenty Seventeen"
+        >
           <svg
             class="gridicon gridicons-ellipsis"
             height="24"
