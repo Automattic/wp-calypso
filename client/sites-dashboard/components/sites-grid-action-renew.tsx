@@ -54,7 +54,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 
 	return (
 		<Container>
-			<Notice icon="notice" showDismiss={ false }>
+			<Notice status="is-error" icon="notice" showDismiss={ false }>
 				<span ref={ ref }>
 					{
 						/* translators: %s - the plan's product name, such as Business or Pro. */
