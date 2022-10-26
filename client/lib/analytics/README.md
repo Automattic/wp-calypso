@@ -59,3 +59,14 @@ addToQueue( moduleName, trigger, arg1, arg2, ... );
 
 
 ## Tracker Buckets
+
+Tracker Buckets (`./tracker-buckets.ts`) is a simple mechanism that allows to categorize new tracker into one of three available categories: `essential`, `advertising`, and `analytics`.
+
+After adding the tracker to `allAdTrackers` array, and assiging it a category in `AdTrackersBuckets` object - you may wrap the functionality of the given tracker with a check against the current user tracking preferences, that is based on Automattic-wide used cookie `sensitive_pixel_options`.
+
+The code is fully typed in Typescript, so to ensure implementing new tracker is straightforward.
+
+There are three checking functions:
+- `mayWeTrackGeneral` - that checks if we can track user in general
+- `mayWeTrackByBucket` (runs `mayWeTrackGeneral` underneath) - that checks if user has given consent to track with a specific bucket
+- `mayWeTrackByTracker` (runs `mayWeTrackByBucket` underneath) - that checks if we can track user with a specific tracker (based on the bucket consent)
