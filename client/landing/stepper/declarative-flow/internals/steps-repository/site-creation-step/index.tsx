@@ -46,9 +46,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 				goToCheckout: true,
 			};
 		}
+
 		const site = await createSiteWithCart(
 			flow as string,
-			isManageSiteFlow,
 			true,
 			isPaidDomainItem,
 			theme,

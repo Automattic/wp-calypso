@@ -3,7 +3,6 @@ import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site, CartItem } from '@automattic/data-stores';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
-import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
@@ -13,7 +12,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
-import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
+import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const Visibility = Site.Visibility;
@@ -93,7 +92,6 @@ export const getNewSiteParams = ( {
 
 export const createSiteWithCart = async (
 	flowName: string,
-	isManageSiteFlow: boolean,
 	userIsLoggedIn: boolean,
 	isPurchasingDomainItem: boolean,
 	themeSlugWithRepo: string,
@@ -105,26 +103,7 @@ export const createSiteWithCart = async (
 	domainItem?: CartItem
 ) => {
 	const siteUrl = domainItem?.meta;
-
-	const newCartItems = [ domainItem ].filter( ( item ) => item );
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
-	// x	const bearerToken = get( getSignupDependencyStore( state ), 'bearer_token', null );
-
-	if ( isManageSiteFlow ) {
-		const siteSlugManaged = getSignupCompleteSlug();
-		const newCartItems = [ domainItem ].filter( ( item ) => item );
-
-		await processItemCart(
-			newCartItems,
-			siteSlugManaged,
-			isFreeThemePreselected,
-			themeSlugWithRepo,
-			flowName,
-			userIsLoggedIn,
-			productsList
-		);
-		return;
-	}
 
 	const newSiteParams = getNewSiteParams( {
 		flowToCheck: flowName,
@@ -171,13 +150,13 @@ export const createSiteWithCart = async (
 	}
 
 	await processItemCart(
-		newCartItems,
 		siteSlug,
 		isFreeThemePreselected,
 		themeSlugWithRepo,
 		flowName,
 		userIsLoggedIn,
-		productsList
+		productsList,
+		domainItem
 	);
 
 	return providedDependencies;
@@ -208,16 +187,15 @@ export async function addPlanToCart(
 	}
 
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
 
 	await processItemCart(
-		newCartItems,
 		siteSlug,
 		isFreeThemePreselected,
 		themeSlugWithRepo,
 		flowName,
 		userIsLoggedIn,
-		productsList
+		productsList,
+		cartItem
 	);
 }
 
@@ -245,23 +223,22 @@ const addPrivacyProtectionIfSupported = (
 };
 
 const addToCartAndProceed = async (
-	newCartItems: CartItem[],
+	newCartItem: CartItem,
 	siteSlug: string,
 	flowName: string,
 	productsList: Record< string, ProductListItem >
 ) => {
-	const newCartItemsToAdd = newCartItems
-		.map( ( item ) => addPrivacyProtectionIfSupported( item, productsList ) )
-		.map( ( item ) => prepareItemForAddingToCart( item, flowName ) );
+	const cartItemWithPrivacy = addPrivacyProtectionIfSupported( newCartItem, productsList );
+	const cartItem = prepareItemForAddingToCart( cartItemWithPrivacy, flowName );
 
-	if ( newCartItemsToAdd.length ) {
-		debug( 'adding products to cart', newCartItemsToAdd );
+	if ( cartItem ) {
+		debug( 'adding products to cart', cartItem );
 		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 
 		try {
 			const updatedCart = await cartManagerClient
 				.forCartKey( cartKey )
-				.actions.addProductsToCart( newCartItemsToAdd );
+				.actions.addProductsToCart( [ cartItem ] );
 
 			debug( 'product add request complete', updatedCart );
 		} catch ( error ) {
@@ -289,17 +266,18 @@ export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: strin
 }
 
 async function processItemCart(
-	newCartItems: CartItem[],
 	siteSlug: string,
 	isFreeThemePreselected: boolean,
 	themeSlugWithRepo: string,
 	lastKnownFlow: string,
 	userIsLoggedIn: boolean,
-	productsList: Record< string, ProductListItem >
+	productsList: Record< string, ProductListItem >,
+	newCartItem?: CartItem
 ) {
 	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow, productsList );
+		newCartItem &&
+			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
 	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
 		// fetchSitesAndUser(
 		// 	siteSlug,
@@ -307,11 +285,14 @@ async function processItemCart(
 		// 	reduxStore
 		// );
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow, productsList );
+		newCartItem &&
+			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
 	} else if ( userIsLoggedIn && siteSlug ) {
 		//fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
-		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow, productsList );
+		newCartItem &&
+			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
 	} else {
-		await addToCartAndProceed( newCartItems, siteSlug, lastKnownFlow, productsList );
+		newCartItem &&
+			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
 	}
 }
