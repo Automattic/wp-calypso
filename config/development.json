@@ -175,6 +175,7 @@
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": true,
+		"themes/third-party-premium": true,
 		"titan/iframe-control-panel": false,
 		"unified-pages/virtual-home-page": true,
 		"upgrades/redirect-payments": true,
