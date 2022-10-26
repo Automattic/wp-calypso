@@ -1,5 +1,6 @@
-import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import config from '@automattic/calypso-config';
+import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import i18n, { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -18,7 +19,6 @@ import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 export const Sharing = ( {
@@ -124,6 +124,9 @@ export const Sharing = ( {
 	}
 
 	const selected = find( filters, { route: pathname } );
+	const shouldShowNudge =
+		i18n.hasTranslation( 'No ads with WordPress.com Premium' ) ||
+		config( 'english_locales' ).includes( i18n.getLocaleSlug() );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Main wideLayout className="sharing">
@@ -152,12 +155,12 @@ export const Sharing = ( {
 					</NavTabs>
 				</SectionNav>
 			) }
-			{ ! isVip && ! isJetpack && (
+			{ ! isVip && ! isJetpack && shouldShowNudge && (
 				<UpsellNudge
 					event="sharing_no_ads"
-					feature={ WPCOM_FEATURES_NO_ADVERTS }
-					description={ translate( 'No ads with WordPress.com Premium.' ) }
-					title={ translate( 'No ads with WordPress.com Personal' ) }
+					feature={ FEATURE_NO_ADS }
+					description={ translate( 'Prevent ads from showing on your site.' ) }
+					title={ translate( 'No ads with WordPress.com Premium' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
