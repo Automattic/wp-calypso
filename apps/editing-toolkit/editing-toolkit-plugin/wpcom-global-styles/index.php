@@ -34,14 +34,7 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in via
-	// a blog sticker. This is a temporary check that will be removed as part of the public launch.
-	// Note that block stickers are not exposed by default to Atomic sites, so we're not limiting
-	// Global Styles on Atomic sites for now.
-	if ( ! function_exists( 'has_blog_sticker' ) ) {
-		return false;
-	}
-	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
+	return true;
 }
 
 /**
