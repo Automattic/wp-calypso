@@ -79,20 +79,21 @@ class CancelPurchaseForm extends Component {
 
 	getAllSurveySteps() {
 		const { willAtomicSiteRevert } = this.props;
+		let steps = [ FEEDBACK_STEP ];
+
+		if ( ! isPlan( this.props.purchase ) ) {
+			steps = [ NEXT_ADVENTURE_STEP ];
+		} else if ( this.state.upsell ) {
+			steps = [ FEEDBACK_STEP, UPSELL_STEP ];
+		} else if ( this.state.questionTwoOrder.length ) {
+			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
+		}
 
 		if ( willAtomicSiteRevert ) {
-			return [ FEEDBACK_STEP, ATOMIC_REVERT_STEP ];
+			steps.push( ATOMIC_REVERT_STEP );
 		}
 
-		if ( this.state.upsell ) {
-			return [ FEEDBACK_STEP, UPSELL_STEP ];
-		}
-
-		if ( this.state.questionTwoOrder.length ) {
-			return [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
-		}
-
-		return [ FEEDBACK_STEP ];
+		return steps;
 	}
 
 	initSurveyState() {
@@ -397,6 +398,7 @@ class CancelPurchaseForm extends Component {
 		if ( surveyStep === NEXT_ADVENTURE_STEP ) {
 			return (
 				<NextAdventureStep
+					isPlan={ isPlan( purchase ) }
 					adventureOptions={ this.state.questionTwoOrder }
 					onSelectNextAdventure={ this.onRadioTwoChange }
 					onChangeNextAdventureDetails={ this.onTextTwoChange }

@@ -5,6 +5,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { toSelectOption } from '../to-select-options';
 
 interface Props {
+	isPlan: boolean;
 	adventureOptions: string[];
 	onChangeText?: ( text: string ) => void;
 	onSelectNextAdventure?: ( nextAdventure: string ) => void;
@@ -90,16 +91,18 @@ export default function NextAdventureStep( props: Props ) {
 					name="improvementInput"
 					id="improvementInput"
 				/>
-				<SelectControl
-					label={ translate( 'Where is your next adventure taking you?' ) }
-					value={ nextAdventure }
-					options={ options }
-					onChange={ ( value: string ) => {
-						onDetailsChange( '' );
-						setNextAdventure( value );
-						props.onSelectNextAdventure?.( value );
-					} }
-				/>
+				{ props.isPlan && (
+					<SelectControl
+						label={ translate( 'Where is your next adventure taking you?' ) }
+						value={ nextAdventure }
+						options={ options }
+						onChange={ ( value: string ) => {
+							onDetailsChange( '' );
+							setNextAdventure( value );
+							props.onSelectNextAdventure?.( value );
+						} }
+					/>
+				) }
 				{ selectedAdventureOption?.textPlaceholder && (
 					<TextControl
 						placeholder={ selectedAdventureOption.textPlaceholder }
