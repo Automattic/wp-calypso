@@ -12,6 +12,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -241,6 +243,7 @@ export const SftpCard = ( {
 
 	return (
 		<Card className="sftp-card">
+			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 			<MaterialIcon icon="cloud" size={ 32 } />
 			<CardHeading>
 				{ siteHasSshFeature
