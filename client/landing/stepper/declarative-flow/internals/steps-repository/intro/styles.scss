@@ -11,14 +11,16 @@
 				background-repeat: no-repeat;
 				background-attachment: fixed;
 				background-position-x: center;
-				background-position-y: 100%;
-				background-size: cover;
+				background-position-y: bottom;
+				background-size: contain;
 
-				@include onboarding-break-mobile-landscape {
+				@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
+					background-size: cover;
 					background-position-y: 35vh;
 				}
 
 				@include break-huge {
+					background-size: cover;
 					background-position-y: 10vh;
 				}
 			}
