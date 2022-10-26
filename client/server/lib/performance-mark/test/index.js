@@ -116,7 +116,7 @@ describe( 'performanceMark', () => {
 		expect( marks.length ).toBe( 4 );
 	} );
 
-	it( 'does not overrwrite durations', () => {
+	it( 'does not overwrite durations', () => {
 		const req = { context: {} };
 
 		performanceMark( req, 'parent-1' );
