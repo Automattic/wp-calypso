@@ -624,7 +624,7 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	giftOptions() {
-		const { translate, fields, onChangeField } = this.props;
+		const { translate, fields, isRequestingSettings, isSavingSettings } = this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
 			return;
@@ -637,20 +637,21 @@ export class SiteSettingsFormGeneral extends Component {
 						title={ translate( 'Accept a gift subscription' ) }
 						id="site-settings__gifting-header"
 					/>
-					<CompactCard className="site-settings__gifting-explanation">
+					<CompactCard className="site-settings__gifting-content">
 						<ToggleControl
+							disabled={ isRequestingSettings || isSavingSettings }
 							className="site-settings__gifting-toggle"
 							label={ translate(
 								'Allow supporters to cover the WordPress plan to keep the site content up and running'
 							) }
 							checked={ fields.wpcom_gitfing_subscription }
-							onChange={ onChangeField( 'wpcom_gitfing_subscription' ) }
+							onChange={ this.props.handleToggle( 'wpcom_gitfing_subscription' ) }
 						/>
-						<p>
+						<FormSettingExplanation>
 							{ translate(
 								'Your readers will be able to pay for the WordPress subscription to keep the site and all the content that you have created up and running and available for everybody in the future.'
 							) }
-						</p>
+						</FormSettingExplanation>
 					</CompactCard>
 				</div>
 			</>
@@ -702,6 +703,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
+				{ this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -738,7 +740,6 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
-				{ this.giftOptions() }
 				{ this.toolbarOption() }
 			</div>
 		);
@@ -831,9 +832,10 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
-		wpcom_gitfing_subscription: settings.hasOwnProperty( 'wpcom_gitfing_subscription' )
-			? settings.wpcom_gitfing_subscription
-			: true,
+		wpcom_gitfing_subscription:
+			typeof settings.wpcom_gitfing_subscription === 'undefined'
+				? true
+				: settings.wpcom_gitfing_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
