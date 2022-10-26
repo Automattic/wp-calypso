@@ -95,6 +95,7 @@ function wpcom_global_styles_enqueue_scripts_and_styles() {
 		array(
 			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
 			'upgradeUrl' => "$calypso_domain/plans/$site_slug",
+			'inUse'      => wpcom_global_styles_in_use(),
 		)
 	);
 	wp_enqueue_style(

@@ -13,7 +13,7 @@ import './modal.scss';
 const GlobalStylesModal = () => {
 	const params = new URLSearchParams( window.location.search );
 	const [ showUnlockStylesModal, setShowUnlockStylesModal ] = useState(
-		params.get( 'unlock-styles' )
+		params.get( 'unlock-styles' ) && wpcomGlobalStyles.inUse
 	);
 
 	const isVisible = useSelect(
