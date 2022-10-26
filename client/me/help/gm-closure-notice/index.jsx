@@ -14,7 +14,7 @@ import './style.scss';
 const DATE_FORMAT_SHORT = 'MMMM D';
 const DATE_FORMAT_LONG = 'dddd, MMMM Do LT';
 
-export default function GMClosureNotice( { compact, closesAt, reopensAt } ) {
+export default function GMClosureNotice( { compact, displayAt, closesAt, reopensAt } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 
@@ -27,25 +27,26 @@ export default function GMClosureNotice( { compact, closesAt, reopensAt } ) {
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
 
-	const [ closes, reopens ] = [
-		moment.tz( closesAt, guessedTimezone ),
-		moment.tz( reopensAt, guessedTimezone ),
-	];
+	const displayAtMoment = moment.tz( displayAt, guessedTimezone );
+	const closesAtMoment = moment.tz( closesAt, guessedTimezone );
+	const reopensAtMoment = moment.tz( reopensAt, guessedTimezone );
 
-	if ( ! currentDate.isBetween( closes, reopens ) ) {
+	if ( ! currentDate.isBetween( displayAtMoment, reopensAtMoment ) ) {
 		return null;
 	}
 
 	const HEADING = translate( 'Limited Support %(closes)s – %(reopens)s', {
 		args: {
-			closes: closes.format( DATE_FORMAT_SHORT ),
-			reopens: reopens.format( reopens.isSame( closes, 'month' ) ? 'D' : DATE_FORMAT_SHORT ),
+			closes: closesAtMoment.format( DATE_FORMAT_SHORT ),
+			reopens: reopensAtMoment.format(
+				reopensAtMoment.isSame( closesAtMoment, 'month' ) ? 'D' : DATE_FORMAT_SHORT
+			),
 		},
 	} );
 
 	const mainMessageArgs = {
-		closes_at: closes.format( DATE_FORMAT_LONG ),
-		reopens_at: reopens.format( DATE_FORMAT_LONG ),
+		closes_at: closesAtMoment.format( DATE_FORMAT_LONG ),
+		reopens_at: reopensAtMoment.format( DATE_FORMAT_LONG ),
 	};
 
 	const MAIN_MESSAGES = {
@@ -104,7 +105,7 @@ export default function GMClosureNotice( { compact, closesAt, reopensAt } ) {
 		}
 	);
 
-	const period = currentDate.isBefore( closes ) ? 'before' : 'during';
+	const period = currentDate.isBefore( closesAtMoment ) ? 'before' : 'during';
 	const mainMessage = hasLiveChat
 		? MAIN_MESSAGES[ period ].hasLiveChat
 		: MAIN_MESSAGES[ period ].privateSupport;

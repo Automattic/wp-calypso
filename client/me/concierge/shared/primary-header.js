@@ -16,19 +16,31 @@ class PrimaryHeader extends Component {
 					displayAt="2022-04-10 00:00Z"
 					closesAt="2022-04-17 00:00Z"
 					reopensAt="2022-04-18 07:00Z"
-					holidayName="Easter"
+					holidayName={ translate( 'Easter', {
+						context: 'Holiday name',
+					} ) }
+				/>
+				<ClosureNotice
+					displayAt="2022-10-29 00:00Z"
+					closesAt="2022-11-05 00:00Z"
+					reopensAt="2022-11-14 07:00Z"
+					holidayName={ translate( 'annual company meetup' ) }
 				/>
 				<ClosureNotice
 					displayAt="2022-12-17 00:00Z"
 					closesAt="2022-12-24 00:00Z"
 					reopensAt="2022-12-26 07:00Z"
-					holidayName="Christmas"
+					holidayName={ translate( 'Christmas', {
+						context: 'Holiday name',
+					} ) }
 				/>
 				<ClosureNotice
 					displayAt="2022-12-26 07:00Z"
 					closesAt="2022-12-31 00:00Z"
 					reopensAt="2023-01-02 07:00Z"
-					holidayName="New Year's Day"
+					holidayName={ translate( "New Year's Day", {
+						context: 'Holiday name',
+					} ) }
 				/>
 				<Card>
 					<img

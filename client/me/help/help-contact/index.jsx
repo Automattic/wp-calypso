@@ -31,6 +31,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import ActiveTicketsNotice from 'calypso/me/help/active-tickets-notice';
 import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
+import GMClosureNotice from 'calypso/me/help/gm-closure-notice';
 import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
 import HelpContactForm from 'calypso/me/help/help-contact-form';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -580,6 +581,12 @@ class HelpContact extends Component {
 							displayAt="2022-04-10 00:00Z"
 							closesAt="2022-04-17 00:00Z"
 							reopensAt="2022-04-18 07:00Z"
+						/>
+						<GMClosureNotice
+							compact={ compact }
+							displayAt="2022-10-29 00:00Z"
+							closesAt="2022-11-05 00:00Z"
+							reopensAt="2022-11-14 07:00Z"
 						/>
 						<ChatHolidayClosureNotice
 							holidayName={ translate( 'Christmas', {
