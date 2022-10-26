@@ -131,7 +131,7 @@ class DisconnectJetpack extends PureComponent {
 
 		features.push(
 			translate(
-				'{{icon/}} Jetpack Stats, related content, and sharing tools',
+				'{{icon/}} Site stats, related content, and sharing tools',
 				this.getIcon( 'stats-alt' )
 			)
 		);
