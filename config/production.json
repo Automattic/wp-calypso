@@ -13,7 +13,7 @@
 	"facebook_app_id": "2373049596",
 	"bilmur_url": "/wp-content/js/bilmur.min.js",
 	"olark_chat_identity": "7089-503-10-5123",
-	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
+	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"features": {
 		"ad-tracking": true,
