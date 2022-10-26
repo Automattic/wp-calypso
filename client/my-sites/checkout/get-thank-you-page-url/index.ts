@@ -18,6 +18,8 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	isDomainRegistration,
+	isJetpackSearchSlug,
+	isJetpackSearchFreeSlug,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -455,6 +457,18 @@ function getFallbackDestination( {
 		productsWithCustomThankYou.find(
 			( productWithCustom ) => productWithCustom === productAliasFromUrl
 		);
+
+	if (
+		typeof purchasedProduct === 'string' &&
+		( isJetpackSearchSlug( purchasedProduct ) || isJetpackSearchFreeSlug( purchasedProduct ) )
+	) {
+		debug( 'bought jetpack search', siteSlug, purchasedProduct );
+		if ( redirectCheckoutToWpAdmin() && adminUrl ) {
+			debug( 'returning search dashboard wp-admin URL' );
+			return adminUrl + 'admin.php?page=jetpack-search';
+		}
+	}
+
 	if ( isJetpackNotAtomic && purchasedProduct ) {
 		debug( 'the site is jetpack and bought a jetpack product', siteSlug, purchasedProduct );
 
