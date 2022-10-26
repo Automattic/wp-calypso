@@ -102,7 +102,7 @@ export const linkInBio: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`;
+						const destination = `/setup/launchpad?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
@@ -112,7 +112,7 @@ export const linkInBio: Flow = {
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								providedDependencies?.siteSlug
+								providedDependencies?.siteSlug as string
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
