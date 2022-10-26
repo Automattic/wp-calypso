@@ -132,7 +132,7 @@ class PagesMain extends Component {
 					loadingExperience={ null }
 				/>
 				<Experiment
-					name={ 'explat_test_aaaaa_2021_08_26_18_59' }
+					name="explat_test_aaaaa_2021_08_26_18_59"
 					defaultExperience={ null }
 					treatmentExperience={ null }
 					loadingExperience={ null }

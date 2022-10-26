@@ -98,15 +98,20 @@ $head-foot-height: 50px;
 
 			&.is-minimized {
 				min-height: $head-foot-height;
+				top: unset;
+				bottom: calc(#{$header-height} + 16px);
+
+				.help-center__container-header {
+					cursor: pointer;
+				}
 			}
 		}
 
 		&.is-mobile {
-			top: 45px;
 			bottom: 0;
 			left: 0;
 			right: 0;
-			max-height: 100%;
+			max-height: calc(100% - 45px);
 
 			.help-center__container-content {
 				flex: auto;
@@ -213,6 +218,7 @@ $head-foot-height: 50px;
 
 		> *:not(iframe) {
 			padding: 16px;
+			box-sizing: border-box;
 		}
 	}
 
@@ -235,6 +241,12 @@ $head-foot-height: 50px;
 
 				&:hover {
 					background: var(--color-neutral-0);
+				}
+
+				> svg:last-child {
+					margin-left: auto;
+					margin-right: 0;
+					background: unset;
 				}
 			}
 		}
@@ -260,6 +272,7 @@ $head-foot-height: 50px;
 
 	.help-center-sibyl-articles__container {
 		padding-top: 0;
+		flex: 1;
 	}
 
 	.help-center-container__loading,
@@ -275,6 +288,20 @@ $head-foot-height: 50px;
 		.spinner__inner {
 			border-top-color: var(--wp-admin-theme-color);
 			border-right-color: var(--wp-admin-theme-color);
+		}
+	}
+
+	.help-center-contact-page__staging-notice {
+		margin: 2px 0;
+		.components-notice__content {
+			display: flex;
+			justify-content: space-between;
+			margin: 0;
+
+			.components-notice__action {
+				margin: 0;
+				font-weight: bold;
+			}
 		}
 	}
 

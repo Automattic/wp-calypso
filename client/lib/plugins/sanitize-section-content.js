@@ -1,7 +1,33 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from '@wordpress/url';
 import { filter } from 'lodash';
 import validUrl from 'valid-url';
+import { allowedTags, customTags } from './allowed-tags';
+
+let root = 'undefined' !== typeof window && window;
+let parser;
+
+/**
+ * Replace global root object with compatible one
+ *
+ * This is need in order to sanitize the content on the server.
+ *
+ * @param {object} newRoot window-like object to use as root
+ */
+export function overrideSanitizeSectionRoot( newRoot ) {
+	root = newRoot;
+	parser = new root.DOMParser();
+}
+
+/**
+ * Get the current root object
+ *
+ * This is need in order to sanitize the content on the server.
+ *
+ * @returns {object} window-like object used as root
+ */
+export function getSanitizeSectionRoot() {
+	return root;
+}
 
 /**
  * Determine if a given tag is allowed
@@ -13,32 +39,7 @@ import validUrl from 'valid-url';
  * @returns {boolean} whether the tag is allowed
  */
 const isAllowedTag = ( tagName ) => {
-	switch ( tagName ) {
-		case '#text':
-		case 'a':
-		case 'b':
-		case 'blockquote':
-		case 'code':
-		case 'div':
-		case 'em':
-		case 'h1':
-		case 'h2':
-		case 'h3':
-		case 'h4':
-		case 'h5':
-		case 'h6':
-		case 'i':
-		case 'img':
-		case 'li':
-		case 'ol':
-		case 'p':
-		case 'span':
-		case 'strong':
-		case 'ul':
-			return true;
-		default:
-			return false;
-	}
+	return !! allowedTags[ tagName ];
 };
 
 /**
@@ -55,40 +56,7 @@ const isAllowedTag = ( tagName ) => {
  * @returns {boolean} whether the attribute is allowed
  */
 const isAllowedAttr = ( tagName, attrName ) => {
-	switch ( tagName ) {
-		case 'a':
-			return 'href' === attrName;
-
-		case 'iframe':
-			switch ( attrName ) {
-				case 'class':
-				case 'type':
-				case 'height':
-				case 'width':
-				case 'src':
-					return true;
-				default:
-					return false;
-			}
-
-		case 'img':
-			switch ( attrName ) {
-				case 'alt':
-				case 'src':
-					return true;
-				default:
-					return false;
-			}
-
-		case 'div':
-			switch ( attrName ) {
-				case 'class':
-					return true;
-			}
-
-		default:
-			return false;
-	}
+	return !! allowedTags[ tagName ]?.[ attrName ];
 };
 
 const isValidYoutubeEmbed = ( node ) => {
@@ -104,7 +72,7 @@ const isValidYoutubeEmbed = ( node ) => {
 		return false;
 	}
 
-	const link = document.createElement( 'a' );
+	const link = root.document.createElement( 'a' );
 	link.href = node.getAttribute( 'src' );
 
 	return (
@@ -133,16 +101,14 @@ const replacementFor = ( node ) => {
  * @returns {string} sanitized HTML
  */
 export const sanitizeSectionContent = ( content ) => {
-	// @TODO: replace with server-side sanitizer
-	if ( isEnabled( 'plugins/ssr-landing' ) && 'undefined' === typeof DOMParser ) {
-		return content;
-	}
-	const parser = new DOMParser();
+	parser = parser || new root.DOMParser();
 	const doc = parser.parseFromString( content, 'text/html' );
 
+	if ( ! doc ) {
+		return '';
+	}
 	// this will let us visit every single DOM node programmatically
-	// the third & fourth arguments are required by IE 11
-	const walker = doc.createTreeWalker( doc.body, NodeFilter.SHOW_ALL, null, false );
+	const walker = doc.createTreeWalker( doc.body, root.NodeFilter.SHOW_ALL );
 
 	/**
 	 * we don't want to remove nodes while walking the tree
@@ -174,7 +140,7 @@ export const sanitizeSectionContent = ( content ) => {
 
 		const replacement = replacementFor( node );
 		if ( replacement ) {
-			replacements.push( [ node, document.createElement( replacement ) ] );
+			replacements.push( [ node, root.document.createElement( replacement ) ] );
 		}
 
 		// strip out anything not explicitly allowed
@@ -195,7 +161,7 @@ export const sanitizeSectionContent = ( content ) => {
 		filter(
 			node.attributes,
 			( { name, value } ) =>
-				! isAllowedAttr( tagName, name ) ||
+				! isAllowedAttr( isYoutube ? customTags.YOUTUBE : tagName, name ) ||
 				// only valid http(s) URLs are allowed
 				( ( 'href' === name || 'src' === name ) && ! validUrl.isWebUri( value ) )
 		).forEach( ( { name } ) => node.removeAttribute( name ) );

@@ -1,4 +1,5 @@
 import { SiteDetails } from '../site';
+import { Location } from './types';
 
 export const setShowHelpCenter = ( show: boolean ) =>
 	( {
@@ -6,10 +7,18 @@ export const setShowHelpCenter = ( show: boolean ) =>
 		show,
 	} as const );
 
-export const setDirectlyData = ( data: { isLoaded: boolean; hasSession: boolean } ) =>
+export const setRouterState = ( history: Location[], index: number ) =>
 	( {
-		type: 'HELP_CENTER_SET_DIRECTLY_DATA',
-		data,
+		type: 'HELP_CENTER_SET_ROUTER_STATE',
+		history,
+		index,
+	} as const );
+
+export const resetRouterState = () =>
+	( {
+		type: 'HELP_CENTER_SET_ROUTER_STATE',
+		history: undefined,
+		index: undefined,
 	} as const );
 
 export const setSite = ( site: SiteDetails | undefined ) =>
@@ -65,6 +74,13 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const startHelpCenterChat = function* ( site: SiteDetails, message: string ) {
+	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
+	yield setSite( site );
+	yield setMessage( message );
+	yield setShowHelpCenter( true );
+};
+
 export const resetStore = () =>
 	( {
 		type: 'HELP_CENTER_RESET_STORE',
@@ -72,9 +88,10 @@ export const resetStore = () =>
 
 export type HelpCenterAction = ReturnType<
 	| typeof setShowHelpCenter
-	| typeof setDirectlyData
 	| typeof setSite
 	| typeof setSubject
+	| typeof setRouterState
+	| typeof resetRouterState
 	| typeof resetStore
 	| typeof setMessage
 	| typeof setUserDeclaredSite

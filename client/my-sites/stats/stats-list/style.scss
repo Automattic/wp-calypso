@@ -663,6 +663,14 @@ ul.module-content-list-legend {
 	.avatar {
 		font-size: $font-title-large;
 		margin-right: 10px;
+		width: 32px;
+		height: 32px;
+		@include breakpoint-deprecated( ">960px" ) {
+			.stats__module-list & {
+				width: 24px;
+				height: 24px;
+			}
+		}
 	}
 
 	> .stats-list__module-content-list-item-wrapper
@@ -686,19 +694,6 @@ ul.module-content-list-legend {
 		.stats-list__module-content-list-item-label
 		.stats-list__icon {
 			margin-top: -2px; // Really couldn't figure out a better way to correctly position the avatar
-		}
-	}
-
-	> .stats-list__module-content-list-item-wrapper
-	.stats-list__module-content-list-item-label
-	.avatar {
-		width: 32px;
-		height: 32px;
-		@include breakpoint-deprecated( ">960px" ) {
-			.stats__module-list & {
-				width: 24px;
-				height: 24px;
-			}
 		}
 	}
 

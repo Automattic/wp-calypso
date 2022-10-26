@@ -20,19 +20,6 @@
 			@media screen and ( max-height: 512px ) {
 				margin: 0;
 			}
-
-			h1.formatted-header__title {
-				font-size: $font-title-medium;
-
-				@include break-medium {
-					font-size: $font-headline-medium;
-				}
-
-				// very narrow wide screens (mobile land scape)
-				@media screen and ( max-height: 512px ) {
-					font-size: $font-title-medium;
-				}
-			}
 		}
 
 		.step-container__jetpack-powered {

@@ -10,7 +10,7 @@
 }
 
 .search {
-	border-radius: 6px;
+	border-radius: 2px;
 	display: flex;
 	flex: 1 1 auto;
 	margin-bottom: 24px;
@@ -56,7 +56,11 @@
 	}
 
 	&.is-open.has-focus {
-		border-color: var( --color-primary );
+		border-color: var(--color-primary);
+		box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-10);
+		&:hover {
+			box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-20);
+		}
 	}
 
 	&.is-compact {

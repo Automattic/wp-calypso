@@ -1,6 +1,7 @@
 import { css } from '@emotion/css';
 import classnames from 'classnames';
 import { MEDIA_QUERIES } from '../utils';
+import { LinkInBioBanner } from './link-in-bio-banner/link-in-bio-banner';
 import { SitesGridItem } from './sites-grid-item';
 import { SitesGridItemLoading } from './sites-grid-item-loading';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -36,6 +37,7 @@ export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => 
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
 				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
+			<LinkInBioBanner displayMode="grid" />
 		</div>
 	);
 };

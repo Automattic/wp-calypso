@@ -41,14 +41,14 @@ class SearchStreamHeader extends Component {
 				<SectionNav>
 					<NavTabs>
 						<NavItem
-							key={ 'posts-nav' }
+							key="posts-nav"
 							selected={ selected === SEARCH_TYPES.POSTS }
 							onClick={ this.handlePostsSelected }
 						>
 							{ translate( 'Posts' ) }
 						</NavItem>
 						<NavItem
-							key={ 'sites-nav' }
+							key="sites-nav"
 							selected={ selected === SEARCH_TYPES.SITES }
 							onClick={ this.handleSitesSelected }
 						>

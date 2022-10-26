@@ -20,7 +20,6 @@ import { IntervalLength } from 'calypso/my-sites/email/email-providers-compariso
 import EmailProvidersStackedComparisonPage from 'calypso/my-sites/email/email-providers-comparison/stacked';
 import { emailManagementTitanSetUpMailbox, emailManagement } from 'calypso/my-sites/email/paths';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -49,7 +48,7 @@ const NoAccess = () => {
 		<ContentWithHeader>
 			<EmptyContent
 				title={ translate( 'You are not authorized to view this page' ) }
-				illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+				illustration="/calypso/images/illustrations/illustration-404.svg"
 			/>
 		</ContentWithHeader>
 	);
@@ -96,7 +95,6 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		}
 		return canCurrentUser( state, selectedSite.ID, 'manage_options' );
 	} );
-	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const hasSitesLoaded = useSelector( ( state ) => hasLoadedSites( state ) );
 
 	const addEmailForwardMutationActive = useAddEmailForwardMutationIsLoading();
@@ -196,22 +194,12 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 
 	return (
 		<ContentWithHeader>
-			{ showActiveDomainList && (
-				<EmailListActive
-					currentRoute={ currentRoute }
-					domains={ domainsWithEmail }
-					selectedSiteId={ selectedSite?.ID }
-					selectedSiteSlug={ selectedSite?.slug }
-					source={ source }
-				/>
-			) }
+			{ showActiveDomainList && <EmailListActive domains={ domainsWithEmail } source={ source } /> }
 
 			<EmailListInactive
-				currentRoute={ currentRoute }
 				domains={ domainsWithNoEmail }
 				headerComponent={ emailListInactiveHeader }
 				sectionHeaderLabel={ sectionHeaderLabel }
-				selectedSiteSlug={ selectedSite?.slug }
 				source={ source }
 			/>
 		</ContentWithHeader>

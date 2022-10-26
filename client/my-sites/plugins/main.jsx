@@ -32,6 +32,7 @@ import {
 	getPlugins,
 	isRequestingForSites,
 	isRequestingForAllSites,
+	requestPluginsError,
 } from 'calypso/state/plugins/installed/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
@@ -359,7 +360,7 @@ export class PluginsMain extends Component {
 		const showInstalledPluginList =
 			isJetpackCloud || ! isEmpty( currentPlugins ) || this.isFetchingPlugins();
 
-		if ( ! showInstalledPluginList && ! search ) {
+		if ( ! showInstalledPluginList && ! search && ! this.props.requestPluginsError ) {
 			const emptyContentData = this.getEmptyContentData();
 			if ( emptyContentData ) {
 				return (
@@ -381,6 +382,7 @@ export class PluginsMain extends Component {
 				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
 				searchTerm={ search }
+				requestPluginsError={ this.props.requestPluginsError }
 			/>
 		);
 
@@ -443,7 +445,7 @@ export class PluginsMain extends Component {
 			return <NavItem { ...attr }>{ filterItem.title }</NavItem>;
 		} );
 
-		const { isJetpackCloud, selectedSite, currentPlugins } = this.props;
+		const { isJetpackCloud, selectedSite } = this.props;
 
 		const pageTitle = isJetpackCloud
 			? this.props.translate( 'Plugins', { textOnly: true } )
@@ -457,6 +459,8 @@ export class PluginsMain extends Component {
 				{ count ? <Count count={ count } compact={ true } /> : null }
 			</span>
 		);
+
+		const currentPlugins = this.getCurrentPlugins();
 
 		return (
 			<>
@@ -516,18 +520,19 @@ export class PluginsMain extends Component {
 				</div>
 				<div className="plugins__main-content">
 					<div className="plugins__content-wrapper">
-						<div className="plugins__search">
-							<Search
-								hideFocus
-								isOpen
-								onSearch={ this.props.doSearch }
-								initialValue={ this.props.search }
-								hideClose={ ! this.props.search }
-								ref={ `url-search` }
-								analyticsGroup="Plugins"
-								placeholder={ this.props.translate( 'Search plugins' ) }
-							/>
-						</div>
+						{ currentPlugins?.length > 1 && (
+							<div className="plugins__search">
+								<Search
+									hideFocus
+									isOpen
+									onSearch={ this.props.doSearch }
+									initialValue={ this.props.search }
+									hideClose={ ! this.props.search }
+									analyticsGroup="Plugins"
+									placeholder={ this.props.translate( 'Search plugins' ) }
+								/>
+							</div>
+						) }
 						{ this.renderPluginsContent() }
 					</div>
 				</div>
@@ -588,6 +593,7 @@ export default flow(
 				hasInstallPurchasedPlugins: hasInstallPurchasedPlugins,
 				isJetpackCloud,
 				breadcrumbs,
+				requestPluginsError: requestPluginsError( state ),
 			};
 		},
 		{

@@ -43,7 +43,6 @@ const SITE_TAKEN_ERROR_CODES = [
 	'blog_name_exists',
 	'blog_name_reserved',
 	'blog_name_reserved_but_may_be_available',
-	'dotblog_subdomain_not_available',
 ];
 
 const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'video' ];
@@ -457,7 +456,7 @@ class VideoPressSite extends Component {
 			<>
 				<FormTextInput
 					id="site-address-input"
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="videopress-site__site-suggested-url"
 					disabled={ true }
 					name="suggested-site"
@@ -486,7 +485,7 @@ class VideoPressSite extends Component {
 				<FormTextInput
 					id="site-address-input"
 					ref={ this.customizeSiteInput }
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="videopress-site__site-url"
 					disabled={ submitting }
 					name="site"
@@ -541,7 +540,7 @@ class VideoPressSite extends Component {
 					<FormTextInput
 						id="site-title-input"
 						autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="videopress-site__site-title"
 						disabled={ submitting }
 						name="site-title"
@@ -556,7 +555,7 @@ class VideoPressSite extends Component {
 					</FormLabel>
 					<FormTextarea
 						id="site-description"
-						autoCapitalize={ 'off' }
+						autoCapitalize="off"
 						className="videopress-site__site-description"
 						disabled={ submitting }
 						name="site-description"

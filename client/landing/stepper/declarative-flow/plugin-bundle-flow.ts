@@ -41,12 +41,6 @@ export const pluginBundleFlow: Flow = {
 			window.location.replace( `/home/${ siteSlugParam }` );
 		}
 
-		// FIXME - Need to not redirect when getCurrentThemeSoftwareSets is still running
-		//
-		// if ( ! pluginSlug || ! pluginBundleData.hasOwnProperty( pluginSlug ) ) {
-		// 	window.location.replace( `/home/${ siteSlugParam }` );
-		// }
-
 		const steps: StepPath[] = [ 'getCurrentThemeSoftwareSets' ];
 		let bundlePluginSteps: StepPath[] = [];
 
@@ -105,7 +99,9 @@ export const pluginBundleFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					if ( ! siteSlug ) return;
+					if ( ! siteSlug ) {
+						return;
+					}
 
 					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
 

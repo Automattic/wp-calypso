@@ -128,7 +128,6 @@ $y-axis-padding: 0 20px 0 10px;
 	height: 200px;
 	text-align: center;
 	overflow: hidden;
-	display: -ms-flex;
 	display: flex;
 }
 
@@ -346,7 +345,6 @@ $y-axis-padding: 0 20px 0 10px;
 
 				.wrapper {
 					display: block;
-					line-height: inherit;
 					line-height: 24px;
 					clear: both;
 				}
@@ -374,6 +372,7 @@ $y-axis-padding: 0 20px 0 10px;
 		}
 	}
 
+	// @TODO Integrate styles with Stats
 	&.is-streak {
 		.popover__inner {
 			width: 160px;
@@ -402,6 +401,7 @@ $y-axis-padding: 0 20px 0 10px;
 }
 
 .chart__tooltip .module-content-list-item {
+	// @TODO Integrate styles with Stats
 	&.is-date-label {
 		font-size: $font-body-extra-small;
 		margin-bottom: 2px;
@@ -411,6 +411,7 @@ $y-axis-padding: 0 20px 0 10px;
 		padding-bottom: 2px;
 	}
 
+	// @TODO Integrate styles with Stats
 	&.is-published-item {
 		height: 19px;
 

@@ -19,11 +19,29 @@ class Help_Center {
 	private static $instance = null;
 
 	/**
+	 * Asset file.
+	 *
+	 * @var asset_file
+	 */
+	private $asset_file;
+
+	/**
+	 * Version number of the plugin.
+	 *
+	 * @var version
+	 */
+	private $version;
+
+	/**
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
+		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
+		$this->version    = $this->asset_file['version'];
+
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 	}
 
 	/**
@@ -51,18 +69,16 @@ class Help_Center {
 	}
 
 	/**
-	 * Enqueue block editor assets.
+	 * Enqueue Help Center assets.
 	 */
 	public function enqueue_script() {
-		$asset_file          = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
-		$script_dependencies = $asset_file['dependencies'];
-		$version             = $asset_file['version'];
+		$script_dependencies = $this->asset_file['dependencies'];
 
 		wp_enqueue_script(
 			'help-center-script',
 			plugins_url( 'dist/help-center.min.js', __FILE__ ),
 			is_array( $script_dependencies ) ? $script_dependencies : array(),
-			$version,
+			$this->version,
 			true
 		);
 
@@ -70,7 +86,7 @@ class Help_Center {
 			'help-center-style',
 			plugins_url( 'dist/help-center' . ( is_rtl() ? '.rtl.css' : '.css' ), __FILE__ ),
 			array(),
-			$version
+			$this->version
 		);
 
 		wp_localize_script(
@@ -88,6 +104,14 @@ class Help_Center {
 				)
 			),
 			'before'
+		);
+
+		wp_localize_script(
+			'help-center-script',
+			'helpCenterData',
+			array(
+				'currentSiteId' => get_current_blog_id(),
+			)
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
@@ -108,6 +132,62 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
 		$controller = new WP_REST_Help_Center_Fetch_Post();
 		$controller->register_rest_route();
+	}
+
+	/**
+	 * Add icon to WP-ADMIN admin bar.
+	 */
+	public function enqueue_wp_admin_scripts() {
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+		global $wp_admin_bar, $current_screen;
+
+		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+
+		if ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+			return;
+		}
+
+		// Enqueue wp-component styles because they're not enqueued in wp-admin outside of the editor.
+		if ( function_exists( 'gutenberg_url' ) ) {
+			wp_enqueue_style(
+				'wp-components',
+				gutenberg_url( 'build/components/style' . ( is_rtl() ? '.rtl.css' : '.css' ) ),
+				array( 'dashicons' ),
+				$this->version
+			);
+		}
+
+		// Crazy high number inorder to prevent Jetpack removing it
+		// https://github.com/Automattic/jetpack/blob/30213ee594cd06ca27199f73b2658236fda24622/projects/plugins/jetpack/modules/masterbar/masterbar/class-masterbar.php#L196.
+		add_action(
+			'wp_before_admin_bar_render',
+			function () {
+				global $wp_admin_bar;
+
+				wp_localize_script(
+					'help-center-script',
+					'helpCenterAdminBar',
+					array(
+						'isLoaded' => true,
+					)
+				);
+
+				$wp_admin_bar->add_menu(
+					array(
+						'id'     => 'help-center',
+						'title'  => file_get_contents( plugin_dir_path( __FILE__ ) . 'src/help-icon.svg', true ),
+						'parent' => 'top-secondary',
+						'meta'   => array(
+							'html'  => '<div id="help-center-masterbar" />',
+							'class' => 'menupop',
+						),
+					)
+				);
+			},
+			100000
+		);
+
+		$this->enqueue_script();
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\Help_Center', 'init' ) );

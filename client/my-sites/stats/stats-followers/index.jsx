@@ -156,7 +156,7 @@ class StatModuleFollowers extends Component {
 								{ hasEmailFollowers && (
 									<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
 								) }
-								{ hasEmailQueryFailed && <ErrorPanel className={ 'network-error' } /> }
+								{ hasEmailQueryFailed && <ErrorPanel className="network-error" /> }
 							</div>
 
 							<StatsModulePlaceholder isLoading={ isLoading } />

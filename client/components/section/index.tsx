@@ -23,7 +23,7 @@ const SectionContainer = styled.div< SectionContainerProps >`
 		box-sizing: border-box;
 		content: '';
 		background-color: ${ ( props ) =>
-			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-gray-0 )' };
+			props.dark ? 'var( --studio-gray-100 )' : 'var( --studio-white )' };
 		position: absolute;
 		height: 100%;
 		width: 200vw;
@@ -40,7 +40,6 @@ const SectionHeader = styled.div< SectionHeaderProps >`
 	letter-spacing: -0.4px;
 	text-align: left;
 	font-size: var( --scss-font-title-large );
-	line-height: 40px;
 `;
 
 const SectionSubHeader = styled.div< SectionHeaderProps >`
@@ -48,7 +47,6 @@ const SectionSubHeader = styled.div< SectionHeaderProps >`
 	font-weight: 400;
 	text-align: left;
 	font-size: var( --scss-font-body-small );
-	margin-top: 8px;
 `;
 
 const SectionHeaderContainer = styled.div< SectionHeaderProps >`

@@ -8,6 +8,7 @@ import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/goals/goals';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -15,6 +16,7 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -266,6 +268,8 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	const locale = getLocaleSlug();
+	// Pre Load Experiment relevant to the post site creation goal screen
+	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post(
 		'/sites/new',
@@ -402,14 +406,18 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
-	const { pages, siteLogoUrl: site_logo_url } = websiteContent;
+	const {
+		pages,
+		siteLogoSection: { siteLogoUrl: site_logo_url },
+		feedbackSection: { genericFeedback: generic_feedback },
+	} = websiteContent;
 	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: pagesDTO, site_logo_url },
+			body: { pages: pagesDTO, site_logo_url, generic_feedback },
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
@@ -870,6 +878,9 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		client_id: config( 'wpcom_signup_id' ),
 		client_secret: config( 'wpcom_signup_key' ),
 	};
+
+	// Pre Load Experiment relevant to the post site creation goal screen
+	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;

@@ -4,6 +4,7 @@ import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
 import { Task } from './types';
@@ -13,7 +14,8 @@ export function getEnhancedTasks(
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
-	goToStep?: NavigationControls[ 'goToStep' ]
+	goToStep?: NavigationControls[ 'goToStep' ],
+	flow?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -32,13 +34,23 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
+						keepActive: true,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace(
+								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
+							);
+						},
 					};
 					break;
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
 						keepActive: true,
-						actionUrl: `/plans/${ siteSlug }`,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace( `/plans/${ siteSlug }` );
+						},
 						badgeText: translatedPlanName,
 					};
 					break;
@@ -48,6 +60,7 @@ export function getEnhancedTasks(
 						keepActive: true,
 						actionDispatch: () => {
 							if ( goToStep ) {
+								recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 								goToStep( 'subscribers' );
 							}
 						},
@@ -56,7 +69,10 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
-						actionUrl: `/post/${ siteSlug }`,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace( `/post/${ siteSlug }` );
+						},
 					};
 					break;
 				case 'design_selected':
@@ -68,13 +84,21 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Personalize Link in Bio' ),
 						keepActive: true,
-						actionUrl: `/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace(
+								`/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`
+							);
+						},
 					};
 					break;
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
-						actionUrl: `/site-editor/${ siteSlug }`,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace( `/site-editor/${ siteSlug }` );
+						},
 						keepActive: true,
 						isCompleted: linkInBioLinksEditCompleted,
 					};
@@ -96,6 +120,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
 									window.location.replace( `/home/${ siteSlug }` );
 								} );
 
@@ -108,6 +133,19 @@ export function getEnhancedTasks(
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
 	return enhancedTaskList;
+}
+
+// Records a generic task click Tracks event
+function recordTaskClickTracksEvent(
+	flow: string | null | undefined,
+	is_completed: boolean,
+	task_id: string
+) {
+	recordTracksEvent( 'calypso_launchpad_task_clicked', {
+		task_id,
+		is_completed,
+		flow,
+	} );
 }
 
 // Returns list of tasks/checklist items for a specific flow

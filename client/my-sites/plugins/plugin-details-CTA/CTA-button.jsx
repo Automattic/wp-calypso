@@ -125,15 +125,15 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 				closeDialog={ () => setShowAddCustomDomain( false ) }
 			/>
 			<Dialog
-				additionalClassNames={ 'plugin-details-cta__dialog-content' }
-				additionalOverlayClassNames={ 'plugin-details-cta__modal-overlay' }
+				additionalClassNames="plugin-details-cta__dialog-content"
+				additionalOverlayClassNames="plugin-details-cta__modal-overlay"
 				isVisible={ showEligibility }
 				title={ translate( 'Eligibility' ) }
 				onClose={ () => setShowEligibility( false ) }
 				showCloseIcon={ true }
 			>
 				<EligibilityWarnings
-					currentContext={ 'plugin-details' }
+					currentContext="plugin-details"
 					isMarketplace={ isMarketplaceProduct }
 					standaloneProceed
 					onProceed={ () =>
@@ -220,7 +220,7 @@ function onClickInstallPlugin( {
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
-	dispatch( removePluginStatuses( 'completed', 'error' ) );
+	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
 		recordGoogleEvent( 'Plugins', 'Install on selected Site', 'Plugin Name', plugin.slug )

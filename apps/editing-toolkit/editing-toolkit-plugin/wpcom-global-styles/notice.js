@@ -1,29 +1,39 @@
 /* global wpcomGlobalStyles */
 
-import { Button, Notice } from '@wordpress/components';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { Button, ExternalLink, Notice } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 
 import './notice.scss';
 
 const GlobalStylesNotice = () => {
-	const { globalStylesId, otherDirtyEntityRecords } = useSelect( ( select ) => {
-		const { __experimentalGetCurrentGlobalStylesId, __experimentalGetDirtyEntityRecords } =
-			select( 'core' );
+	const { globalStylesConfig, globalStylesId, siteChanges } = useSelect( ( select ) => {
+		const {
+			getEditedEntityRecord,
+			__experimentalGetCurrentGlobalStylesId,
+			__experimentalGetDirtyEntityRecords,
+		} = select( 'core' );
+
+		const _globalStylesId = __experimentalGetCurrentGlobalStylesId
+			? __experimentalGetCurrentGlobalStylesId()
+			: null;
+		const globalStylesRecord = getEditedEntityRecord( 'root', 'globalStyles', _globalStylesId );
+
 		return {
-			globalStylesId: __experimentalGetCurrentGlobalStylesId
-				? __experimentalGetCurrentGlobalStylesId()
-				: null,
-			otherDirtyEntityRecords: __experimentalGetDirtyEntityRecords
-				? __experimentalGetDirtyEntityRecords().filter( ( { name } ) => name !== 'globalStyles' )
-				: [],
+			globalStylesConfig: {
+				styles: globalStylesRecord?.styles ?? {},
+				settings: globalStylesRecord?.settings ?? {},
+			},
+			globalStylesId: _globalStylesId,
+			siteChanges: __experimentalGetDirtyEntityRecords ? __experimentalGetDirtyEntityRecords() : [],
 		};
 	}, [] );
 
 	const { editEntityRecord } = useDispatch( 'core' );
 	const canRevertGlobalStyles = !! globalStylesId;
-	const revertGlobalStyles = () => {
+	const resetGlobalStyles = () => {
 		if ( ! canRevertGlobalStyles ) {
 			return;
 		}
@@ -33,10 +43,19 @@ const GlobalStylesNotice = () => {
 			settings: {},
 		} );
 
-		if ( ! otherDirtyEntityRecords.length ) {
+		recordTracksEvent( 'calypso_global_styles_gating_notice_reset_click', {
+			context: 'site-editor',
+		} );
+	};
+	// Do not show the notice if the use is trying to save the default styles.
+	const isVisible =
+		Object.keys( globalStylesConfig.styles ).length ||
+		Object.keys( globalStylesConfig.settings ).length;
+
+	// Closes the sidebar if there are no more changes to be saved.
+	useEffect( () => {
+		if ( ! siteChanges.length ) {
 			/*
-			 * Closes the sidebar if there are no more changes to be saved.
-			 *
 			 * This uses a fragile CSS selector to target the cancel button which might be broken on
 			 * future releases of Gutenberg. Unfortunately, Gutenberg doesn't provide any mechanism
 			 * for closing the sidebar – everything is handled using an internal state that it is not
@@ -44,12 +63,21 @@ const GlobalStylesNotice = () => {
 			 *
 			 * See https://github.com/WordPress/gutenberg/blob/0b30a4cb34d39c9627b6a3795a18aee21019ce25/packages/edit-site/src/components/editor/index.js#L137-L138.
 			 */
-			const closeSidebarButton = document.querySelector(
-				'.entities-saved-states__panel-header button:last-child'
-			);
-			closeSidebarButton?.click();
+			document.querySelector( '.entities-saved-states__panel-header button:last-child' )?.click();
 		}
-	};
+	}, [ siteChanges ] );
+
+	useEffect( () => {
+		if ( isVisible ) {
+			recordTracksEvent( 'calypso_global_styles_gating_notice_show', {
+				context: 'site-editor',
+			} );
+		}
+	}, [ isVisible ] );
+
+	if ( ! isVisible ) {
+		return null;
+	}
 
 	return (
 		<Notice status="warning" isDismissible={ false } className="wpcom-global-styles-notice">
@@ -59,13 +87,23 @@ const GlobalStylesNotice = () => {
 					'full-site-editing'
 				),
 				{
-					a: <Button variant="link" href={ wpcomGlobalStyles.upgradeUrl } target="_top" />,
+					a: (
+						<ExternalLink
+							href={ wpcomGlobalStyles.upgradeUrl }
+							target="_blank"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_global_styles_gating_notice_upgrade_click', {
+									context: 'site-editor',
+								} )
+							}
+						/>
+					),
 				}
 			) }
 			&nbsp;
 			{ canRevertGlobalStyles &&
-				createInterpolateElement( __( 'You can <a>revert your styles</a>.', 'full-site-editing' ), {
-					a: <Button variant="link" onClick={ revertGlobalStyles } />,
+				createInterpolateElement( __( 'You can <a>reset your styles</a>.', 'full-site-editing' ), {
+					a: <Button variant="link" onClick={ resetGlobalStyles } />,
 				} ) }
 		</Notice>
 	);

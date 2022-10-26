@@ -197,6 +197,11 @@
 		margin-top: 0;
 	}
 
+	.site-setup-list__task-icon {
+		width: 67px;
+		height: 35px;
+	}
+
 	.site-setup-list__task-skip {
 		&:focus-visible {
 			box-shadow: 0 0 0 2px var(--color-primary);
@@ -249,5 +254,15 @@
 
 	@include break-medium {
 		display: block;
+	}
+}
+
+.button.is-primary.is-jetpack-branded {
+	background-color: var(--studio-jetpack-green-40);
+	border-color: var(--studio-jetpack-green-40);
+
+	&:hover,
+	&:focus {
+		background-color: var(--studio-jetpack-green-60);
 	}
 }

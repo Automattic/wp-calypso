@@ -9,6 +9,7 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import MainComponent from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -201,7 +202,12 @@ function PluginDetails( props ) {
 					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
 					id: 'plugins',
 					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins.'
+						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+							},
+						}
 					),
 				} )
 			);
@@ -309,13 +315,7 @@ function PluginDetails( props ) {
 								) }
 
 								{ fullPlugin.wporg || isMarketplaceProduct ? (
-									<PluginSections
-										className="plugin-details__plugins-sections"
-										plugin={ fullPlugin }
-										isWpcom={ isWpcom }
-										addBanner
-										removeReadMore
-									/>
+									<PluginSections plugin={ fullPlugin } isWpcom={ isWpcom } addBanner />
 								) : (
 									<PluginSectionsCustom plugin={ fullPlugin } />
 								) }

@@ -9,11 +9,6 @@
 	"discover_blog_id": 53424024,
 	"discover_feed_id": 41325786,
 	"daily_post_blog_id": 489937,
-	"directly_rtm_widget_environment": "production",
-	"directly_rtm_widget_ids": {
-		"sandbox": "8a2968fc57d1e2f40157f42bf2d43160",
-		"production": "8a12a3ca5a21a619015a47e492b02cfc"
-	},
 	"discover_logged_out_redirect_url": false,
 	"happychat_pling_noise_path": "/calypso/audio/chat-pling.wav",
 	"facebook_api_key": false,
@@ -39,7 +34,7 @@
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"olark_chat_identity": false,
-	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
+	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"upwork_support_locales": [
 		"de",
@@ -178,7 +173,7 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "#055d9c",
+	"theme_color": "",
 	"reskinned_flows": [
 		"launch-site",
 		"onboarding",

@@ -113,6 +113,7 @@ section.contact-form-submit {
 		background-color: var(--color-accent);
 		border-color: var(--color-accent);
 		color: var(--color-text-inverted);
+		line-height: 2.7;
 
 		&:hover,
 		&:focus {
@@ -133,6 +134,10 @@ section.contact-form-submit {
 			border-color: var(--color-neutral-5) !important;
 			color: var(--color-neutral-20) !important;
 		}
+	}
+
+	.components-tip {
+		margin-top: 8px;
 	}
 }
 

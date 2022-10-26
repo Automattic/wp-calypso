@@ -52,7 +52,7 @@ export class TemplatePartBlock {
  */
 export class HeaderBlock extends TemplatePartBlock {
 	static blockName = 'Header';
-	static blockEditorSelector = 'header[aria-label="Block: Template Part"]';
+	static blockEditorSelector = 'header[aria-label="Block: Header"]';
 }
 
 /**

@@ -13,6 +13,24 @@
 	@media ( max-width: 660px ) {
 		padding-top: 60px;
 	}
+
+	.upsell-nudge {
+		margin-top: 16px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin: 16px;
+		}
+	}
+
+	.upsell-nudge.is-jetpack {
+		margin-top: 51px;
+		margin-bottom: -20px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			margin-top: 86px;
+			margin-bottom: -50px;
+		}
+	}
 }
 
 body.is-section-plugins.theme-default.color-scheme {
@@ -22,24 +40,6 @@ body.is-section-plugins.theme-default.color-scheme {
 .plugin__installed-on,
 .plugin-details__installed-on {
 	margin-bottom: 16px;
-}
-
-.upsell-nudge.is-jetpack {
-	margin-top: 51px;
-	margin-bottom: -20px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin-top: 86px;
-		margin-bottom: -50px;
-	}
-}
-
-.upsell-nudge {
-	margin-top: 16px;
-
-	@include breakpoint-deprecated( "<660px" ) {
-		margin: 16px;
-	}
 }
 
 .plugin__installed-on {
@@ -97,11 +97,12 @@ body.is-section-plugins.theme-default.color-scheme {
 	padding-top: 54px;
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 350px;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
 	grid-column-gap: 60px;
 	grid-template-areas:
 		"header header actions"
 		"content content actions";
+	grid-auto-rows: auto 1fr;
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		grid-template-areas:
@@ -109,7 +110,7 @@ body.is-section-plugins.theme-default.color-scheme {
 			"actions actions actions"
 			"content content content";
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		padding-top: 0;
+		padding-top: 20px;
 	}
 
 	.plugin-details__header {
@@ -292,7 +293,7 @@ body.is-section-plugins header .select-dropdown__item {
 }
 
 body.is-section-plugins #primary {
-	&::before {
+	.search-box-header::before {
 		box-sizing: border-box;
 		content: "";
 		background-color: #fdfdfd;
@@ -305,7 +306,7 @@ body.is-section-plugins #primary {
 
 	.categories__menu {
 		.components-button {
-			&:not(.is-pressed) {
+			&:not(.is-pressed):not(.is-selected) {
 				color: var(--studio-blue-90);
 			}
 			&.is-pressed {

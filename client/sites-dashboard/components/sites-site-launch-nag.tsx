@@ -1,8 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useRef } from 'react';
-import { useInView } from 'react-intersection-observer';
+import { useInView } from 'calypso/lib/use-in-view';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -24,13 +23,15 @@ const SiteLaunchDonutProgress = styled( SiteLaunchDonutBase )( {
 
 const SiteLaunchDonutContainer = styled.div( {
 	position: 'relative',
-	width: '13px',
-	marginTop: '3px',
-	marginRight: '4px',
+	flexShrink: 0,
+	height: '25px',
 } );
 
 const SiteLaunchNagLink = styled.a( {
 	display: 'flex',
+	alignItems: 'center',
+	gap: '25px',
+	marginLeft: '-5px',
 	fontSize: '12px',
 	lineHeight: '20px',
 	whiteSpace: 'nowrap',
@@ -39,35 +40,52 @@ const SiteLaunchNagLink = styled.a( {
 	},
 } );
 
+const SiteLaunchNagText = styled.span( {
+	overflow: 'hidden',
+	whiteSpace: 'normal',
+	textOverflow: 'ellipsis',
+} );
+
 const SiteLaunchDonut = () => {
 	return (
 		<SiteLaunchDonutContainer>
-			<SiteLaunchDonutProgress viewBox="0 0 26 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="M0 13.5C0 20.6797 5.8203 26.5 13 26.5C20.1797 26.5 26 20.6797 26 13.5C26 6.3203 20.1797 0.5 13 0.5V2.5C19.0751 2.5 24 7.42487 24 13.5C24 19.5751 19.0751 24.5 13 24.5C6.92487 24.5 2 19.5751 2 13.5H0Z"
-					fill="currentColor"
-				/>
+			<SiteLaunchDonutProgress
+				width="25"
+				height="25"
+				viewBox="0 0 27 27"
+				version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<circle
+					r="7"
+					cx="13.5"
+					cy="13.5"
+					fill="transparent"
+					stroke="#DCDCDE"
+					strokeWidth="3"
+				></circle>
+				<circle
+					r="7"
+					cx="13.5"
+					cy="13.5"
+					fill="transparent"
+					strokeDashoffset="-32.9823"
+					strokeDasharray="43.9823 11"
+					stroke="currentColor"
+					strokeWidth="3"
+				></circle>
 			</SiteLaunchDonutProgress>
-			<SiteLaunchDonutBase viewBox="0 0 26 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-				<circle cx="13" cy="13.5" r="12" stroke="#DCDCDE" strokeWidth="2" />
-			</SiteLaunchDonutBase>
 		</SiteLaunchDonutContainer>
 	);
 };
 
+const recordNagView = () => {
+	recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
+};
+
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
-	const { ref, inView } = useInView();
-	const hasRecordedInView = useRef( false );
-
-	useEffect( () => {
-		if ( inView && ! hasRecordedInView.current ) {
-			recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_inview' );
-			hasRecordedInView.current = true;
-		}
-	}, [ inView ] );
+	const ref = useInView< HTMLAnchorElement >( recordNagView );
 
 	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
 	// That's because sites that have been previously launched before going back to
@@ -96,7 +114,7 @@ export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_launch_nag_click' );
 			} }
 		>
-			<SiteLaunchDonut /> <span>{ text }</span>
+			<SiteLaunchDonut /> <SiteLaunchNagText>{ text }</SiteLaunchNagText>
 		</SiteLaunchNagLink>
 	);
 };

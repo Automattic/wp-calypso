@@ -56,6 +56,7 @@ const EmailProvidersStackedCard = ( {
 				<div className="email-provider-stacked-card__provider-card-main-details">
 					<Button
 						primary={ false }
+						disabled={ onExpandedChange === noop }
 						onClick={ toggleVisibility }
 						className="email-provider-stacked-card__provider-expand-cta"
 					>
@@ -76,7 +77,7 @@ const EmailProvidersStackedCard = ( {
 			titleComponentLocation={
 				isViewportSizeLowerThan660px ? TitleLocation.FIGURE : TitleLocation.BODY
 			}
-			icon={ '' }
+			icon=""
 		>
 			{ showFeaturesToggleButton && (
 				<div className="email-provider-stacked-card__provider-price-and-button">

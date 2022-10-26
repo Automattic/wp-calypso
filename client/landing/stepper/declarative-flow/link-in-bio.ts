@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import wpcom from 'calypso/lib/wp';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
@@ -30,6 +31,18 @@ export const linkInBio: Flow = {
 		const siteSlug = useSiteSlug();
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
+
+		// trigger guides on step movement, we don't care about failures or response
+		wpcom.req.post(
+			'guides/trigger',
+			{
+				apiNamespace: 'wpcom/v2/',
+			},
+			{
+				flow: flowName,
+				step: _currentStep,
+			}
+		);
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'

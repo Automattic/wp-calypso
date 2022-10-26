@@ -10,7 +10,7 @@ const NoSitesMessage = ( { translate } ) => {
 			line={ translate( 'Would you like to start one?' ) }
 			action={ translate( 'Create Site' ) }
 			actionURL={ onboardingUrl() + '?ref=calypso-nosites' }
-			illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
+			illustration="/calypso/images/illustrations/illustration-nosites.svg"
 		/>
 	);
 };

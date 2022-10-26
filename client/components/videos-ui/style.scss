@@ -385,9 +385,6 @@
 			}
 
 			&.is-loading {
-				.videos-ui__video-placeholder {
-					width: 100%;
-				}
 
 				.videos-ui__body-title {
 					margin-right: 0;
@@ -403,6 +400,7 @@
 				.videos-ui__video-placeholder {
 					margin-right: 20px;
 					flex-grow: 1;
+					width: 100%;
 				}
 
 			}

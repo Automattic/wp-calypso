@@ -1,0 +1,59 @@
+.premium-badge {
+	padding: 0;
+	margin: 0;
+	background: none;
+	border: none;
+	position: relative;
+
+	.badge {
+		background-color: var(--color-neutral-80);
+		color: var(--color-neutral-0);
+		font-size: 0.75rem;
+		padding-left: 6px;
+	}
+
+	svg {
+		fill: var(--color-neutral-0);
+		vertical-align: top;
+	}
+}
+
+.premium-badge__popover {
+	outline: none;
+
+	.popover__inner {
+		background-color: var(--color-neutral-80);
+		color: var(--color-neutral-0);
+		max-width: 320px;
+		text-align: center;
+		padding: 8px;
+		border: none;
+		box-shadow: none;
+	}
+
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
+			border-top-color: var(--color-neutral-80);
+			bottom: 4px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
+			border-bottom-color: var(--color-neutral-80);
+			top: 4px;
+
+			&::before {
+				display: none;
+			}
+		}
+	}
+}

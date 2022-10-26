@@ -1,9 +1,3 @@
-.activity-card-list {
-	.filterbar {
-		margin-bottom: 2rem;
-	}
-}
-
 .activity-card-list__pagination-top {
 	@include breakpoint-deprecated( "<480px" ) {
 		display: none;
@@ -70,6 +64,9 @@
 
 // make sure the vertical lines don't appear through the transparent backgrounds of the icons
 .activity-card-list {
+	.filterbar {
+		margin-bottom: 2rem;
+	}
 	.activity-card {
 		position: relative;
 		margin-bottom: 32px;

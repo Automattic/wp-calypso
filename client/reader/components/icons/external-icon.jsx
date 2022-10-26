@@ -1,6 +1,7 @@
 export default function ReaderExternalIcon( { iconSize } ) {
 	return (
 		<svg
+			key="external"
 			fill="none"
 			className="reader-external"
 			viewBox="0 0 20 20"

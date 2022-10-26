@@ -18,13 +18,11 @@ label {
 
 h3 {
 	text-align: center;
-	height: 40px;
-	line-height: 40px;
 	margin: -10px -10px 10px;
 	background: #aaa;
 	height: 24px;
 	line-height: 24px;
-	color: white;
+	color: var(--color-text-inverted);
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 10px;
 	text-transform: uppercase;
@@ -41,7 +39,7 @@ h3 {
 	padding: 10px;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	font-size: 12px;
-	background-color: white;
+	background-color: var(--studio-white);
 }
 
 .history-original img {
@@ -79,14 +77,9 @@ h3 {
 	padding: 9px;
 	margin-left: 15px;
 	float: left;
-}
-
-.image-container {
 	position: relative;
 	width: 300px;
 }
-
-.image-container .image-summary {}
 
 .image-container .image-summary span {
 	display: block;
@@ -101,7 +94,7 @@ h3 {
 	position: absolute;
 	top: 1px;
 	left: 1px;
-	background-color: white;
+	background-color: var(--studio-white);
 	padding: 0 3px;
 	border: 1px solid #eee;
 	border-radius: 3px; /* stylelint-disable-line scales/radii */
@@ -117,5 +110,5 @@ h3 {
 	height: 300px;
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-color: white;
+	background-color: var(--studio-white);
 }

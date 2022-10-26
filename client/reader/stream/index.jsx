@@ -75,7 +75,7 @@ class ReaderStream extends Component {
 		onUpdatesShown: noop,
 		className: '',
 		showDefaultEmptyContentIfMissing: true,
-		showPrimaryFollowButtonOnCards: true,
+		showPrimaryFollowButtonOnCards: false,
 		isDiscoverStream: false,
 		isMain: true,
 		useCompactCards: false,
@@ -111,8 +111,8 @@ class ReaderStream extends Component {
 	};
 
 	scrollToSelectedPost( animate ) {
-		const HEADER_OFFSET = -80; // a fixed position header means we can't just scroll the element into view.
-		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.is-selected' );
+		const HEADER_OFFSET = -32; // a fixed position header means we can't just scroll the element into view.
+		const selectedNode = ReactDom.findDOMNode( this ).querySelector( '.card.is-selected' );
 		if ( selectedNode ) {
 			const documentElement = document.documentElement;
 			selectedNode.focus();

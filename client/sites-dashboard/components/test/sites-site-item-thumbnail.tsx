@@ -4,7 +4,7 @@
 import { render, screen } from '@testing-library/react';
 import { SiteItemThumbnail } from '../sites-site-item-thumbnail';
 
-function makeTestSite( { title = 'test' } = {} ) {
+function makeTestSite( { title = 'test', is_coming_soon = false, lang = 'en' } = {} ) {
 	return {
 		ID: 1,
 		title,
@@ -13,6 +13,8 @@ function makeTestSite( { title = 'test' } = {} ) {
 		launch_status: 'launched',
 		options: {},
 		jetpack: false,
+		is_coming_soon,
+		lang,
 	};
 }
 
@@ -28,6 +30,7 @@ describe( '<SiteItemThumbnail>', () => {
 			test( 'site title can be multi-codepoint emoji', () => {
 				render(
 					<SiteItemThumbnail
+						displayMode="tile"
 						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
@@ -52,6 +55,7 @@ describe( '<SiteItemThumbnail>', () => {
 				// Without the Segmenter API we fall back to returning the first codepoint
 				render(
 					<SiteItemThumbnail
+						displayMode="tile"
 						site={ makeTestSite( { title: '👩‍👩‍👦‍👦 family: woman, woman, boy, boy' } ) }
 					/>
 				);
@@ -63,17 +67,17 @@ describe( '<SiteItemThumbnail>', () => {
 
 function defineCommonSiteInitialTests() {
 	test( 'an English site title', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: 'hello' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'hello' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^h$/ );
 	} );
 
 	test( 'diacritic mark on first letter', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: 'öwl' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: 'öwl' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toHaveTextContent( /^ö$/ );
 	} );
 
 	test( 'empty site title renders no initial', () => {
-		render( <SiteItemThumbnail site={ makeTestSite( { title: '' } ) } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ makeTestSite( { title: '' } ) } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
 	} );
 
@@ -82,7 +86,28 @@ function defineCommonSiteInitialTests() {
 		// @ts-expect-error Let's artificially remove the title so it tries to render an empty string
 		testSite.title = undefined;
 
-		render( <SiteItemThumbnail site={ testSite } /> );
+		render( <SiteItemThumbnail displayMode="tile" site={ testSite } /> );
 		expect( screen.getByLabelText( 'Site Icon' ) ).toBeEmptyDOMElement();
+	} );
+
+	test( 'shows "Coming soon" tile if site has not launched', () => {
+		render( <SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true } ) } /> );
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows "Coming soon" translated to site language', () => {
+		render(
+			<SiteItemThumbnail
+				site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'de-DE' } ) }
+			/>
+		);
+		expect( screen.getByTitle( 'Demnächst verfügbar' ) ).toBeInTheDocument();
+	} );
+
+	test( 'shows "Coming soon" in English when site language is not translated', () => {
+		render(
+			<SiteItemThumbnail site={ makeTestSite( { title: '', is_coming_soon: true, lang: 'zz' } ) } />
+		);
+		expect( screen.getByTitle( 'Coming Soon' ) ).toBeInTheDocument();
 	} );
 }

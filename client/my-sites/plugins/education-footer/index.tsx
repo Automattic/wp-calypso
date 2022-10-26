@@ -10,22 +10,41 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 
 const ThreeColumnContainer = styled.div`
-	@media ( max-width: 960px ) {
-		grid-template-columns: repeat( 1, 1fr );
-	}
-
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
 
-	display: grid;
-	grid-template-columns: repeat( 3, 1fr );
-	column-gap: 29px;
-	row-gap: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
 `;
 
 const EducationFooterContainer = styled.div`
-	margin-top: 48px;
+	margin-top: 32px;
+
+	> div:first-child {
+		padding: 0;
+		margin-bottom: 60px;
+
+		.wp-brand-font {
+			font-size: var( --scss-font-title-medium );
+		}
+
+		> div:first-child {
+			margin-bottom: 24px;
+		}
+	}
+
+	.card-block {
+		display: flex;
+		width: calc( 33% - 10px );
+
+		@media ( max-width: 660px ) {
+			display: block;
+			width: 100%;
+			margin-top: 10px;
+		}
+	}
 `;
 
 export const MarketplaceFooter = () => {
@@ -86,7 +105,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/website-building/what-are-wordpress-plugins-and-themes-a-beginners-guide/'
 						) }
-						background="studio-celadon-60"
+						background="#e5f3f0"
 						onClick={ () => onClickLinkCard( 'website_building' ) }
 					/>
 					<LinkCard
@@ -97,7 +116,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/customization/how-to-choose-wordpress-plugins-for-your-website-7-tips/'
 						) }
-						background="studio-purple-80"
+						background="#f9f0f6"
 						onClick={ () => onClickLinkCard( 'customization' ) }
 					/>
 					<LinkCard
@@ -108,7 +127,7 @@ const EducationFooter = () => {
 						url={ localizeUrl(
 							'https://wordpress.com/go/tips/do-you-need-to-use-seo-plugins-on-your-wordpress-com-site/'
 						) }
-						background="studio-wordpress-blue-80"
+						background="#e5f4ff"
 						onClick={ () => onClickLinkCard( 'seo' ) }
 					/>
 				</ThreeColumnContainer>

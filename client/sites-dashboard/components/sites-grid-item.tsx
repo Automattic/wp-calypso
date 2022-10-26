@@ -6,6 +6,7 @@ import { AnchorHTMLAttributes, memo } from 'react';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { displaySiteUrl, getDashboardUrl } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
+import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
 import SitesLaunchStatusBadge from './sites-launch-status-badge';
 import SitesP2Badge from './sites-p2-badge';
@@ -16,9 +17,10 @@ import { SiteUrl, Truncated } from './sites-site-url';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
-	'(min-width: 1400px) 401px',
-	'(min-width: 960px) calc(33vw - 48px)',
-	'(min-width: 660px) calc(50vw - 48px)',
+	'(min-width: 1345px) calc((1280px - 64px) / 3)',
+	'(min-width: 960px) calc((100vw - 128px) / 3)',
+	'(min-width: 780px) calc((100vw - 96px) / 2)',
+	'(min-width: 660px) calc((100vw - 64px) / 2)',
 	'calc(100vw - 32px)',
 ].join( ', ' );
 
@@ -40,6 +42,7 @@ export const siteThumbnail = css( {
 	aspectRatio: '16 / 11',
 	width: '100%',
 	height: 'auto',
+	boxSizing: 'border-box',
 } );
 
 const SitesGridItemSecondary = styled.div( {
@@ -83,15 +86,19 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	return (
 		<SitesGridTile
 			leading={
-				<ThumbnailLink { ...siteDashboardUrlProps }>
-					<SiteItemThumbnail
-						className={ siteThumbnail }
-						site={ site }
-						width={ THUMBNAIL_DIMENSION.width }
-						height={ THUMBNAIL_DIMENSION.height }
-						sizesAttr={ SIZES_ATTR }
-					/>
-				</ThumbnailLink>
+				<>
+					<ThumbnailLink { ...siteDashboardUrlProps }>
+						<SiteItemThumbnail
+							displayMode="tile"
+							className={ siteThumbnail }
+							site={ site }
+							width={ THUMBNAIL_DIMENSION.width }
+							height={ THUMBNAIL_DIMENSION.height }
+							sizesAttr={ SIZES_ATTR }
+						/>
+					</ThumbnailLink>
+					{ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
+				</>
 			}
 			primary={
 				<>

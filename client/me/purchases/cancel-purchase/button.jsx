@@ -297,7 +297,9 @@ class CancelPurchaseButton extends Component {
 				text = translate( 'Cancel and Refund' );
 			}
 		} else {
-			onClick = this.cancelPurchase;
+			onClick = () => {
+				this.cancelPurchase( purchase );
+			};
 
 			if ( isDomainRegistration( purchase ) ) {
 				text = translate( 'Cancel Domain' );

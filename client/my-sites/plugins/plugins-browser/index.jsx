@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import MainComponent from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useScrollAboveElement from 'calypso/lib/use-scroll-above-element';
@@ -87,7 +88,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const locale = useLocale();
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || __( 'Plugins' );
+	const categoryName = categories[ category ]?.menu || __( 'Plugins' );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -129,6 +130,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		<MainComponent wideLayout>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
+			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<PageViewTrackerWrapper
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }

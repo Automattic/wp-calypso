@@ -137,8 +137,8 @@ class CloneCloningStep extends Component {
 				stepName={ stepName }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				subHeaderText={ '' }
-				fallbackSubHeaderText={ '' }
+				subHeaderText=""
+				fallbackSubHeaderText=""
 				positionInFlow={ positionInFlow }
 				stepContent={ this.renderStepContent() }
 			/>

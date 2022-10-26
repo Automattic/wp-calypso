@@ -34,6 +34,7 @@
 		"@wordpress/base-styles": "^4.5.0",
 		"classnames": "^2.3.1",
 		"enzyme": "^3.11.0",
+		"framer-motion": "6.2.8",
 		"gridicons": "^3.4.0",
 		"i18n-calypso": "workspace:^",
 		"lodash": "^4.17.21",

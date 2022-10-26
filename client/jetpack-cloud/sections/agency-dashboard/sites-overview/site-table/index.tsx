@@ -1,13 +1,9 @@
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
-import { Fragment } from 'react';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
-import SiteActions from '../site-actions';
-import SiteErrorContent from '../site-error-content';
-import SiteStatusContent from '../site-status-content';
-import type { SiteData, SiteColumns } from '../types';
-
 import './style.scss';
+import SiteTableRow from '../site-table-row';
+import type { SiteData, SiteColumns } from '../types';
 
 interface Props {
 	isLoading: boolean;
@@ -47,48 +43,10 @@ export default function SiteTable( { isLoading, columns, items }: Props ) {
 					</tr>
 				) : (
 					items.map( ( item ) => {
-						const site = item.site;
-						const blogId = site.value.blog_id;
-						const siteError = site.error || item.monitor.error;
-						const isFavorite = item.isFavorite;
+						const blogId = item.site.value.blog_id;
+
 						return (
-							<Fragment key={ `table-row-${ blogId }` }>
-								<tr className="site-table__table-row">
-									{ columns.map( ( column ) => {
-										const row = item[ column.key ];
-										if ( row.type ) {
-											return (
-												<td
-													className={ classNames( site.error && 'site-table__td-with-error' ) }
-													key={ `table-data-${ row.type }-${ blogId }` }
-												>
-													<SiteStatusContent
-														rows={ item }
-														type={ row.type }
-														isLargeScreen
-														isFavorite={ isFavorite }
-													/>
-												</td>
-											);
-										}
-									} ) }
-									<td
-										className={ classNames(
-											site.error && 'site-table__td-with-error',
-											'site-table__actions'
-										) }
-									>
-										<SiteActions isLargeScreen site={ site } siteError={ siteError } />
-									</td>
-								</tr>
-								{ site.error ? (
-									<tr className="site-table__connection-error">
-										<td colSpan={ Object.keys( item ).length + 1 }>
-											{ <SiteErrorContent siteUrl={ site.value.url } /> }
-										</td>
-									</tr>
-								) : null }
-							</Fragment>
+							<SiteTableRow item={ item } columns={ columns } key={ `table-row-${ blogId }` } />
 						);
 					} )
 				) }

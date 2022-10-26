@@ -24,17 +24,26 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 	const theme = useThemeDetails( slug );
 	const features = theme.data && theme.data.taxonomies.theme_feature;
 	const featuresHeading = translate( 'Theme features' ) as string;
-	//@TODO This is a placeholder until we have theme products to choose from
-	const themeYearlyProduct = useSelect( ( select ) =>
-		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )
-	);
-	const themePrice = themeYearlyProduct?.combined_cost_display;
-
-	//Wait until we have theme and product data to show content
-	const isLoading = ! themeYearlyProduct?.cost || ! theme.data;
-
 	// Check current theme: Does it have a plugin bundled?
 	const theme_software_set = theme?.data?.taxonomies?.theme_software_set?.length;
+	const showBundleVersion = isEnabled( 'themes/plugin-bundling' ) && theme_software_set;
+
+	const premiumPlanProduct = useSelect( ( select ) =>
+		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'value_bundle' )
+	);
+	const businessPlanProduct = useSelect( ( select ) =>
+		select( PRODUCTS_LIST_STORE ).getProductBySlug( 'business-bundle' )
+	);
+
+	let themePrice;
+	if ( showBundleVersion ) {
+		themePrice = businessPlanProduct?.combined_cost_display;
+	} else {
+		themePrice = premiumPlanProduct?.combined_cost_display;
+	}
+
+	//Wait until we have theme and product data to show content
+	const isLoading = ! themePrice || ! theme.data;
 
 	let header = (
 		<h1 className="upgrade-modal__heading">{ translate( 'Unlock this premium theme' ) }</h1>
@@ -78,8 +87,6 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		</>
 	);
 
-	const showBundleVersion = isEnabled( 'themes/plugin-bundling' ) && theme_software_set;
-
 	if ( showBundleVersion ) {
 		header = (
 			<>
@@ -93,10 +100,10 @@ const UpgradeModal = ( { slug, isOpen, closeModal, checkout }: UpgradeModalProps
 		text = (
 			<p>
 				{ translate(
-					"This theme comes bundled with {{link}}WooCommerce{{/link}} and requires a Business plan to unlock. It's %s a year, risk-free with a 14-day money-back-guarantee.",
+					"This theme comes bundled with {{link}}WooCommerce{{/link}} plugin. Upgrade to a Business plan to select this theme and unlock all its features. It's %s per year with a 14-day money-back guarantee.",
 					{
 						components: {
-							link: <ExternalLink target="_blank" href={ 'https://woocommerce.com/' } />,
+							link: <ExternalLink target="_blank" href="https://woocommerce.com/" />,
 						},
 						args: themePrice,
 					}

@@ -29,7 +29,7 @@ class FeedEmptyContent extends PureComponent {
 				title={ translate( 'No recent posts' ) }
 				line={ translate( 'This site has not posted anything recently.' ) }
 				action={ action }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 500 }
 			/>
 		);
