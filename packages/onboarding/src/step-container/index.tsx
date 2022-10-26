@@ -196,7 +196,7 @@ const StepContainer: React.FC< Props > = ( {
 			{ ! hideSkip && skipButtonAlign === 'bottom' && (
 				<div className="step-container__buttons">
 					{ isLargeSkipLayout && <hr className="step-container__skip-hr" /> }
-					{ <SkipButton /> }
+					<SkipButton />
 				</div>
 			) }
 			{ showJetpackPowered && (
