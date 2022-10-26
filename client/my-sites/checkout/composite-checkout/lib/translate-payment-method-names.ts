@@ -102,6 +102,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
+		case 'WPCOM_Billing_MoneyPress_Stored':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
