@@ -243,8 +243,12 @@ class StatsSummary extends Component {
 		// Append the site domain and period as needed.
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const domain = this.props?.path.split( '/' ).pop();
+		const queryString = this.props.context?.querystring;
 		if ( domain.length > 0 ) {
 			backLink += domain;
+			if ( queryString.length > 0 ) {
+				backLink += `?${ queryString.split( '&' )[ 0 ] }`;
+			}
 		}
 		// Set up for FixedNavigationHeader.
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
