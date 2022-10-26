@@ -130,6 +130,7 @@ class DomainsTableHeader extends PureComponent {
 								'is-sortable': column?.isSortable,
 							} ) }
 							data-column={ column.name }
+							tabindex={ column.label ? 0 : -1 }
 						>
 							{ column.label }{ ' ' }
 							{ column.bubble > 0 && (
