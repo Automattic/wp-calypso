@@ -161,7 +161,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onBack = () => {
-		setShowPatternSelectorType( null );
+		const patterns = getPatterns();
+		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+			has_selected_patterns: patterns.length > 0,
+			pattern_count: patterns.length,
+		} );
+
+		goBack();
 	};
 
 	const stepContent = (
@@ -170,7 +176,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
-					onBack={ onBack }
+					onBack={ () => setShowPatternSelectorType( null ) }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout
@@ -260,7 +266,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		<StepContainer
 			stepName="pattern-assembler"
 			hideBack={ showPatternSelectorType !== null }
-			goBack={ goBack }
+			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
 			hideSkip={ true }
