@@ -60,29 +60,9 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	}
 }
 
-@mixin text-14() {
-	@include text-props(14, 22);
-}
-@mixin text-16() {
-	@include text-props(16, 26);
-}
-@mixin text-17() {
-	@include text-props(17, 26);
-}
-@mixin text-18() {
-	@include text-props(18, 26);
-}
-
-@mixin text-props($font-size, $line-height, $letter-spacing: 0) {
-	// prettier-ignore
-	font-size: $font-size * 0.1rem;
-	// prettier-ignore
-	line-height: $line-height * 0.1rem;
-	letter-spacing: if($letter-spacing == 0, 0, $letter-spacing / $font-size * 1em);
-}
-
 .lpc-footer-nav {
-	@include text-16;
+	font-size: 1rem;
+	line-height: 36px;
 	font-family: $lp-font-stack-default;
 	background: #2c3338;
 	padding: 25px 20px 80px;
@@ -95,7 +75,8 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 .lpc-footer-automattic-nav {
 	padding: 1rem 7%;
-	@include text-16;
+	font-size: 1rem;
+	line-height: 36px;
 	font-family: $lp-font-stack-default;
 	background: #fff;
 }
@@ -211,14 +192,13 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	display: inline-block;
 	vertical-align: top;
 	padding: 0.5em 0.65em calc(0.5em - 1px);
-	@include text-18;
 	font-weight: 600;
 	line-height: 1.1;
 	text-align: left;
 	white-space: nowrap;
 	text-decoration: none;
 	// prettier-ignore
-	font-size: 1.125rem;
+	font-size: 1.25rem;
 
 	&:link,
 	&:visited {
@@ -307,7 +287,7 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 .lp-app-button__line--top {
 	padding-bottom: 1px;
 	// prettier-ignore
-	font-size: 10px;
+	font-size: 0.75rem;
 	font-weight: 500;
 }
 
@@ -488,13 +468,14 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 
 	.lp-language-picker__content {
 		font-size: 0.875rem;
-		padding-top: 7px;
-		padding-bottom: 7px;
+		padding-top: 15px;
+		padding-bottom: 15px;
 	}
 
 	.lpc-footer-nav,
 	.lpc-footer-automattic-nav {
-		@include text-14;
+		font-size: 0.875rem;
+		line-height: 30px;
 	}
 
 	.lpc-footer-automattic-nav {
@@ -547,6 +528,18 @@ $breakpoints: 320px, 360px, 480px, 660px, 782px, 960px, 1140px, 1366px, 1440px, 
 	.lpc-footer-nav .lp-footer-social-icons {
 		justify-content: center;
 		padding: 0;
+	}
+
+	.lp-link-work {
+		display: none !important;
+	}
+
+	.lp-link-work-m {
+		display: block !important;
+	}
+
+	.lp-footer-social-media {
+		margin-bottom: 36px;
 	}
 }
 
