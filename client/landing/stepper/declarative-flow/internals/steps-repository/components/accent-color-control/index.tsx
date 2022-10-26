@@ -11,8 +11,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import PremiumBadge from 'calypso/components/premium-badge';
 import { SelectDropdownForwardingRef as SelectDropdown } from 'calypso/components/select-dropdown';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { tip } from 'calypso/signup/icons';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import './style.scss';
 import ColorSwatch from './color-swatch';
 

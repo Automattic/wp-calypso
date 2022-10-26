@@ -1,40 +1,51 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import ExternalLink from 'calypso/components/external-link';
+import JetpackInstructionList from './jetpack-instruction-list';
 
 const JetpackActivationInstructions: React.FC = () => {
 	const translate = useTranslate();
+
+	const items = useMemo(
+		() => [
+			{
+				id: 1,
+				content: translate(
+					'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.',
+					{
+						components: { strong: <strong /> },
+					}
+				),
+			},
+			{
+				id: 2,
+				content: translate(
+					'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
+					{
+						components: {
+							strong: <strong />,
+							link: (
+								<Button
+									plain
+									href="https://wordpress.org/plugins/jetpack/"
+									target="_blank"
+									rel="noreferrer noopener"
+								/>
+							),
+						},
+					}
+				),
+			},
+		],
+		[ translate ]
+	);
 
 	return (
 		<>
 			<p>{ translate( "If you don't have Jetpack installed, follow these instructions:" ) }</p>
 
-			<ol className="licensing-thank-you-manual-activation-instructions__list">
-				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					{ translate( 'Go to your WP Admin Dashboard and {{strong}}add a new plugin{{/strong}}.', {
-						components: { strong: <strong /> },
-					} ) }
-				</li>
-
-				<li className="licensing-thank-you-manual-activation-instructions__list-item">
-					{ translate(
-						'Search for {{link}}{{strong}}Jetpack{{/strong}}{{/link}}, install and activate.',
-						{
-							components: {
-								strong: <strong />,
-								link: (
-									<Button
-										plain
-										href="https://wordpress.org/plugins/jetpack/"
-										target="_blank"
-										rel="noreferrer noopener"
-									/>
-								),
-							},
-						}
-					) }
-				</li>
-			</ol>
+			<JetpackInstructionList items={ items } />
 
 			<p>
 				<ExternalLink
