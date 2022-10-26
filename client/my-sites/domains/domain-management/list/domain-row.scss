@@ -73,9 +73,9 @@
 
 .domain-row__mobile-container {
 	flex: 233 233 0;
-	overflow: hidden;
 	display: flex;
 	flex-basis: 100%;
+	max-width: 100%;
 }
 
 .domain-row__mobile-container2 {
@@ -204,7 +204,12 @@
 			color: var(--studio-gray-90);
 			cursor: pointer;
 			font-weight: 500;
-			button:hover {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+			max-width: 100%;
+
+			&:hover {
 				color: var(--color-link);
 			}
 
