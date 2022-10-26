@@ -42,7 +42,11 @@ class ReauthRequired extends Component {
 		this.props.twoStepAuthorization.off( 'change', this.update );
 	}
 
-	update = () => this.forceUpdate();
+	update = () => {
+		const twoStepStatus = ! this.props.twoStepAuthorization.isReauthRequired();
+		this.forceUpdate();
+		this.props.onTwoStepChange?.( { twoStepStatus } );
+	};
 
 	getClickHandler = ( action, callback ) => () => {
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );

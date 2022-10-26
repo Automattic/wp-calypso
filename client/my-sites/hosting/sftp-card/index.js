@@ -241,9 +241,21 @@ export const SftpCard = ( {
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
 		  );
 
+	const [ isTwoStepEnabled, setTwoStepEnabled ] = useState(
+		! twoStepAuthorization.isReauthRequired()
+	);
+
+	const onTwoStepChange = ( { twoStepStatus } ) => {
+		setTwoStepEnabled( twoStepStatus );
+	};
+	const showSshKeys = siteHasSshFeature && isSshAccessEnabled && isTwoStepEnabled;
+
 	return (
 		<Card className="sftp-card">
-			<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+			<ReauthRequired
+				twoStepAuthorization={ twoStepAuthorization }
+				onTwoStepChange={ onTwoStepChange }
+			/>
 			<MaterialIcon icon="cloud" size={ 32 } />
 			<CardHeading>
 				{ siteHasSshFeature
@@ -389,9 +401,7 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
-					{ siteHasSshFeature && isSshAccessEnabled && (
-						<SshKeys disabled={ disabled } siteId={ siteId } />
-					) }
+					{ showSshKeys && <SshKeys disabled={ disabled } siteId={ siteId } /> }
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
