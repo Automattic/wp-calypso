@@ -408,8 +408,8 @@ export class Theme extends Component {
 		);
 
 		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
+		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};

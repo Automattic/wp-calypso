@@ -89,6 +89,10 @@ export function normalizeWporgTheme( theme ) {
 		normalizedTheme.author = author;
 	}
 
+	if ( normalizedTheme.screenshot.startsWith( '//' ) ) {
+		normalizedTheme.screenshot = `https:${ normalizedTheme.screenshot }`;
+	}
+
 	if ( ! normalizedTheme.tags ) {
 		return normalizedTheme;
 	}
