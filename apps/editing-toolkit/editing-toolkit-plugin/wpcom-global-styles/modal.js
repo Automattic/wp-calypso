@@ -23,6 +23,7 @@ const GlobalStylesModal = () => {
 			}
 
 			// Show unlock styles modal on load, but wait for the global styles to be ready.
+			// Otherwise, the modal will show up before the editor is visible.
 			const { getEditedPostId, getEditedPostType } = select( 'core/edit-site' );
 			if ( getEditedPostType() === undefined || getEditedPostId() === undefined ) {
 				return false;
