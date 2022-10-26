@@ -93,7 +93,6 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
@@ -1207,7 +1206,5 @@ export default connect(
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
-		errorNotice,
-		successNotice,
 	}
 )( localize( ManagePurchase ) );
