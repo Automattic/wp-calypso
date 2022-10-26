@@ -196,9 +196,7 @@
 	}
 
 	.domain-row__domain-name {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		padding: 1px;
 		font-size: $font-body;
 		font-weight: 500;
 
@@ -206,9 +204,13 @@
 			color: var(--studio-gray-90);
 			cursor: pointer;
 			font-weight: 500;
-		}
-		button:hover {
-			color: var(--color-link);
+			button:hover {
+				color: var(--color-link);
+			}
+
+			&:focus {
+				outline: thin dotted;
+			}
 		}
 
 		@include break-mobile {
