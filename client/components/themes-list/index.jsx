@@ -36,6 +36,8 @@ export const ThemesList = ( props ) => {
 				translate={ props.translate }
 				recordTracksEvent={ props.recordTracksEvent }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				wpOrgThemes={ props.wpOrgThemes }
+				{ ...props }
 			/>
 		);
 	}
@@ -55,6 +57,7 @@ export const ThemesList = ( props ) => {
 
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
+	wpOrgThemes: PropTypes.array,
 	emptyContent: PropTypes.element,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
@@ -83,6 +86,7 @@ ThemesList.defaultProps = {
 	loading: false,
 	searchTerm: '',
 	themes: [],
+	wpOrgThemes: [],
 	recordTracksEvent: noop,
 	fetchNextPage: noop,
 	placeholderCount: DEFAULT_THEME_QUERY.number,
@@ -122,7 +126,15 @@ function ThemeBlock( props ) {
 	);
 }
 
-function Empty( { emptyContent, searchTerm, upsellCardDisplayed, translate, recordTracksEvent } ) {
+function Empty( props ) {
+	const {
+		wpOrgThemes,
+		emptyContent,
+		searchTerm,
+		upsellCardDisplayed,
+		translate,
+		recordTracksEvent,
+	} = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -156,8 +168,21 @@ function Empty( { emptyContent, searchTerm, upsellCardDisplayed, translate, reco
 
 	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
-			<div className="themes-list__not-found-text">
-				{ translate( 'No themes match your search' ) }
+			<div className="themes-list">
+				{ wpOrgThemes?.length ? (
+					wpOrgThemes.map( ( theme, index ) => (
+						<ThemeBlock
+							key={ 'theme-block' + index }
+							theme={ theme }
+							index={ index }
+							{ ...props }
+						/>
+					) )
+				) : (
+					<div className="themes-list__not-found-text">
+						{ translate( 'No themes match your search' ) }
+					</div>
+				) }
 			</div>
 
 			<div className="themes-list__upgrade-section-wrapper">
