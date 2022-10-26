@@ -156,8 +156,8 @@ export const Sharing = ( {
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
-					description={ translate( 'No ads with WordPress.com Premium.' ) }
-					title={ translate( 'No ads with WordPress.com Personal' ) }
+					description={ translate( 'Prevent ads from showing on your site.' ) }
+					title={ translate( 'No ads with WordPress.com Premium' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
