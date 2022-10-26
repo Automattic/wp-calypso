@@ -93,6 +93,19 @@ const GlobalStylesModal = () => {
 		return null;
 	}
 
+	let title = __( 'A powerful new way to style your site', 'full-site-editing' );
+	let description = __(
+		"Change all of your site's fonts, colors and more. Available on any paid plan.",
+		'full-site-editing'
+	);
+	if ( showUnlockStylesModal ) {
+		title = __( 'Publish your new site styles', 'full-site-editing' );
+		description = __(
+			"To activate your site styles, and unlock advanced design customization tools, you'll need upgrade to a paid plan.",
+			'full-site-editing'
+		);
+	}
+
 	return (
 		<Modal
 			className="wpcom-global-styles-modal"
@@ -101,22 +114,8 @@ const GlobalStylesModal = () => {
 			shouldCloseOnClickOutside={ false }
 		>
 			<div className="wpcom-global-styles-modal__text">
-				<h1 className="wpcom-global-styles-modal__heading">
-					{ showUnlockStylesModal
-						? __( 'Publish your new site styles', 'full-site-editing' )
-						: __( 'A powerful new way to style your site', 'full-site-editing' ) }
-				</h1>
-				<p className="wpcom-global-styles-modal__description">
-					{ showUnlockStylesModal
-						? __(
-								"To activate your site styles, and unlock advanced design customization tools, you'll need upgrade to a paid plan.",
-								'full-site-editing'
-						  )
-						: __(
-								"Change all of your site's fonts, colors and more. Available on any paid plan.",
-								'full-site-editing'
-						  ) }
-				</p>
+				<h1 className="wpcom-global-styles-modal__heading">{ title }</h1>
+				<p className="wpcom-global-styles-modal__description">{ description }</p>
 				<div className="wpcom-global-styles-modal__actions">
 					<Button variant="secondary" onClick={ closeModal }>
 						{ __( 'Try it out', 'full-site-editing' ) }
