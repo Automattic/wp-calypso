@@ -1,14 +1,17 @@
 import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
+import { getItemVariantDiscountPercentage } from '../item-variation-picker/variant-price';
 
 import './style.scss';
 
@@ -17,7 +20,7 @@ const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
 	const isFormLoading = FormStatus.READY !== formStatus;
-	const translate = useTranslate();
+	const { __ } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const siteId = useSelector( getSelectedSiteId );
@@ -30,10 +33,15 @@ export function CheckoutSidebarPlanUpsell() {
 	}
 
 	const biennialVariant = variants?.find( ( product ) => product.termIntervalInMonths === 24 );
-	debug( 'plan in cart:', plan );
+	const currentVariant = variants?.find( ( product ) => product.productId === plan.product_id );
 
 	if ( ! biennialVariant ) {
 		debug( 'plan in cart has no biennial variant; variants are', variants );
+		return null;
+	}
+
+	if ( ! currentVariant ) {
+		debug( 'plan in cart has no current variant; variants are', variants );
 		return null;
 	}
 
@@ -54,26 +62,36 @@ export function CheckoutSidebarPlanUpsell() {
 		replaceProductInCart( plan.uuid, newPlan );
 	};
 
+	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
+
+	const cardTitle = sprintf(
+		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		__( 'Save %(percentSavings)d%% by paying for two years' ),
+		{ percentSavings }
+	);
 	return (
-		<PromoCard
-			title={ translate( 'Save 10% by paying for two years' ) }
-			className="checkout-sidebar-plan-upsell"
-		>
+		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ translate( 'One year' ) }
+					{ currentVariant.variantLabel }
 				</div>
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">{ translate( '$60' ) }</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
-					{ translate( 'Two years' ) }
+					{ formatCurrency( currentVariant.price, currentVariant.currency, { stripZeros: true } ) }
 				</div>
-				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">{ translate( '$108' ) }</div>
+				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+					{ biennialVariant.variantLabel }
+				</div>
+				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+					{ formatCurrency( biennialVariant.price, biennialVariant.currency, {
+						stripZeros: true,
+					} ) }
+				</div>
 			</div>
 			<PromoCardCTA
 				cta={ {
 					disabled: isFormLoading,
 					busy: isFormLoading,
-					text: translate( 'Switch to two year plan' ),
+					text: __( 'Switch to two year plan' ),
 					action: onUpgradeClick,
 				} }
 			/>
