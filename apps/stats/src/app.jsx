@@ -20,7 +20,7 @@ import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
-// import stats from 'calypso/state/stats/reducer';
+// import statss from 'calypso/state/stats/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import { getUrlParts } from '../../../packages/calypso-url';
 import registerStatsPages from './routes';
