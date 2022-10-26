@@ -1,0 +1,25 @@
+.checkout-sidebar-plan-upsell {
+	margin-top: 24px;
+}
+
+.checkout-sidebar-plan-upsell .action-panel__title {
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid {
+	display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	border-bottom: 1px solid #ccc;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid > div:nth-child(even) {
+	text-align: right;
+}
+
+.checkout-sidebar-plan-upsell__plan-grid > div {
+	border-top: 1px solid #ccc;
+	padding: 0.5em 0;
+}
