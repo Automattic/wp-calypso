@@ -96,20 +96,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				? __( 'Included in your plan' )
 				: __( 'Available with WordPress.com Business' );
 		} else if ( isPremium && shouldUpgrade ) {
-			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-				text = sprintf(
-					/* translators: %(price)s - the price of the theme */
-					__( '%(price)s per year or included in WordPress.com Premium' ),
-					{
-						price: design.price,
-					}
-				);
-			} else {
-				text =
-					'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-						? __( 'Included in WordPress.com Premium' )
-						: __( 'Upgrade to Premium' );
-			}
+			text = sprintf(
+				/* translators: %(price)s - the price of the theme */
+				__( '%(price)s per year or included in WordPress.com Premium' ),
+				{
+					price: design.price,
+				}
+			);
 		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
 		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
