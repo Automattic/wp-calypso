@@ -49,10 +49,22 @@ export const tasks: Task[] = [
 		taskType: 'blog',
 		displayBadge: false,
 	},
+	{
+		id: 'unlock_styles',
+		isCompleted: false,
+		taskType: 'blog',
+		displayBadge: false,
+	},
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'unlock_styles',
+		'first_post_published',
+	],
 	'link-in-bio': [
 		'design_selected',
 		'setup_link_in_bio',

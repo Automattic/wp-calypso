@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
@@ -15,7 +16,9 @@ export function getEnhancedTasks(
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
 	goToStep?: NavigationControls[ 'goToStep' ],
-	flow?: string | null
+	flow?: string | null,
+	globalStylesInUse?: boolean,
+	shouldLimitGlobalStyles?: boolean
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -126,6 +129,19 @@ export function getEnhancedTasks(
 
 								submit?.();
 							}
+						},
+					};
+					break;
+				case 'unlock_styles':
+					if ( ! isEnabled( 'limit-global-styles' ) || ! globalStylesInUse ) {
+						return;
+					}
+					taskData = {
+						title: translate( 'Activate advanced design customization tools' ),
+						isCompleted: ! shouldLimitGlobalStyles,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace( `/site-editor/${ siteSlug }?unlock-styles` );
 						},
 					};
 					break;

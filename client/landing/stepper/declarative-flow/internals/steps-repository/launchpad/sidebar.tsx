@@ -11,6 +11,7 @@ import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
 import { tasks } from './tasks';
@@ -57,11 +58,24 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const site = useSite();
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
+	const { isFetchingGlobalStylesStatus, globalStylesInUse, shouldLimitGlobalStyles } =
+		usePremiumGlobalStyles( site?.ID );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
 	const enhancedTasks =
-		site && getEnhancedTasks( arrayOfFilteredTasks, siteSlug, site, submit, goToStep, flow );
+		site && ! isFetchingGlobalStylesStatus
+			? getEnhancedTasks(
+					arrayOfFilteredTasks,
+					siteSlug,
+					site,
+					submit,
+					goToStep,
+					flow,
+					globalStylesInUse,
+					shouldLimitGlobalStyles
+			  )
+			: null;
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );

@@ -5,7 +5,7 @@ import languages from '@automattic/languages';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
@@ -807,7 +807,8 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const siteId = useSelector( getSelectedSiteId );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( siteId );
 
 	return (
 		<SiteSettingsFormGeneral
