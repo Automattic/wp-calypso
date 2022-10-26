@@ -1,16 +1,5 @@
+import { mayWeTrackByTracker } from '../tracker-buckets';
 import {
-	isAdRollEnabled,
-	isBingEnabled,
-	isCriteoEnabled,
-	isFacebookEnabled,
-	isFloodlightEnabled,
-	isLinkedinEnabled,
-	isOutbrainEnabled,
-	isPinterestEnabled,
-	isQuantcastEnabled,
-	isQuoraEnabled,
-	isTwitterEnabled,
-	isWpcomGoogleAdsGtagEnabled,
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
 	ADROLL_PAGEVIEW_PIXEL_URL_2,
 	ADROLL_PURCHASE_PIXEL_URL_1,
@@ -19,64 +8,66 @@ import {
 } from './constants';
 
 if ( typeof window !== 'undefined' ) {
-	setupGtag();
+	if ( mayWeTrackByTracker( 'ga' ) ) {
+		setupGtag();
+	}
 
 	// Facebook
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		setupFacebookGlobal();
 	}
 
 	// Bing
-	if ( isBingEnabled && ! window.uetq ) {
+	if ( mayWeTrackByTracker( 'bing' ) && ! window.uetq ) {
 		window.uetq = [];
 	}
 
 	// Criteo
-	if ( isCriteoEnabled && ! window.criteo_q ) {
+	if ( mayWeTrackByTracker( 'criteo' ) && ! window.criteo_q ) {
 		window.criteo_q = [];
 	}
 
 	// Quantcast
-	if ( isQuantcastEnabled && ! window._qevents ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) && ! window._qevents ) {
 		window._qevents = [];
 	}
 
 	// Google Ads Gtag for wordpress.com
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		setupWpcomGoogleAdsGtag();
 	}
 
-	if ( isFloodlightEnabled ) {
+	if ( mayWeTrackByTracker( 'floodlight' ) ) {
 		setupWpcomFloodlightGtag();
 	}
 
 	// Twitter
-	if ( isTwitterEnabled ) {
+	if ( mayWeTrackByTracker( 'twitter' ) ) {
 		setupTwitterGlobal();
 	}
 
 	// Linkedin
-	if ( isLinkedinEnabled ) {
+	if ( mayWeTrackByTracker( 'linkedin' ) ) {
 		setupLinkedinGlobal();
 	}
 
 	// Quora
-	if ( isQuoraEnabled ) {
+	if ( mayWeTrackByTracker( 'quora' ) ) {
 		setupQuoraGlobal();
 	}
 
 	// Outbrain
-	if ( isOutbrainEnabled ) {
+	if ( mayWeTrackByTracker( 'outbrain' ) ) {
 		setupOutbrainGlobal();
 	}
 
 	// Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		setupPinterestGlobal();
 	}
 
 	// AdRoll
-	if ( isAdRollEnabled ) {
+	if ( mayWeTrackByTracker( 'adroll' ) ) {
 		setupAdRollGlobal();
 	}
 }

@@ -1,17 +1,7 @@
-import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
+import { mayWeTrackByTracker, mayWeTrackByBucket, Bucket } from '../tracker-buckets';
 import {
 	debug,
-	isFacebookEnabled,
-	isBingEnabled,
-	isQuantcastEnabled,
-	isWpcomGoogleAdsGtagEnabled,
-	isTwitterEnabled,
-	isQuoraEnabled,
-	isOutbrainEnabled,
-	isPinterestEnabled,
-	isAdRollEnabled,
-	isIconMediaEnabled,
-	isGeminiEnabled,
 	TRACKING_IDS,
 	ICON_MEDIA_RETARGETING_PIXEL_URL,
 	YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL,
@@ -38,7 +28,7 @@ let lastRetargetTime = 0;
 export async function retarget( urlPath ) {
 	await refreshCountryCodeCookieGdpr();
 
-	if ( ! isAdTrackingAllowed() ) {
+	if ( ! mayWeTrackByBucket( Bucket.ADVERTISING ) ) {
 		debug( 'retarget: [Skipping] ad tracking is not allowed', urlPath );
 		return;
 	}
@@ -50,7 +40,7 @@ export async function retarget( urlPath ) {
 	// Non rate limited retargeting (main trackers)
 
 	// Quantcast
-	if ( isQuantcastEnabled ) {
+	if ( mayWeTrackByTracker( 'quantcast' ) ) {
 		const params = {
 			qacct: TRACKING_IDS.quantcast,
 			event: 'refresh',
@@ -60,20 +50,20 @@ export async function retarget( urlPath ) {
 	}
 
 	// Facebook
-	if ( isFacebookEnabled ) {
+	if ( mayWeTrackByTracker( 'facebook' ) ) {
 		const params = [ 'trackSingle', TRACKING_IDS.facebookInit, 'PageView' ];
 		debug( 'retarget: [Facebook]', params );
 		window.fbq( ...params );
 	}
 
 	// Bing
-	if ( isBingEnabled ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		debug( 'retarget: [Bing]' );
 		window.uetq.push( 'pageLoad' );
 	}
 
 	// Wordpress.com Google Ads Gtag
-	if ( isWpcomGoogleAdsGtagEnabled ) {
+	if ( mayWeTrackByTracker( 'googleAds' ) ) {
 		const params = [ 'config', TRACKING_IDS.wpcomGoogleAdsGtag, { page_path: urlPath } ];
 		debug( 'retarget: [Google Ads] WPCom', params );
 		window.gtag( ...params );
@@ -83,13 +73,13 @@ export async function retarget( urlPath ) {
 	recordPageViewInFloodlight( urlPath );
 
 	// Pinterest
-	if ( isPinterestEnabled ) {
+	if ( mayWeTrackByTracker( 'pinterest' ) ) {
 		debug( 'retarget: [Pinterest]' );
 		window.pintrk( 'page' );
 	}
 
 	// AdRoll
-	if ( isAdRollEnabled ) {
+	if ( mayWeTrackByTracker( 'adroll' ) ) {
 		debug( 'retarget: [AdRoll]' );
 		window.adRoll.trackPageview();
 	}
@@ -101,35 +91,35 @@ export async function retarget( urlPath ) {
 		lastRetargetTime = nowTimestamp;
 
 		// Outbrain
-		if ( isOutbrainEnabled ) {
+		if ( mayWeTrackByTracker( 'outbrain' ) ) {
 			const params = [ 'track', 'PAGE_VIEW' ];
 			debug( 'retarget: [Outbrain] [rate limited]', params );
 			window.obApi( ...params );
 		}
 
 		// Icon Media
-		if ( isIconMediaEnabled ) {
+		if ( mayWeTrackByTracker( 'iconMedia' ) ) {
 			const params = ICON_MEDIA_RETARGETING_PIXEL_URL;
 			debug( 'retarget: [Icon Media] [rate limited]', params );
 			new window.Image().src = params;
 		}
 
 		// Twitter
-		if ( isTwitterEnabled ) {
+		if ( mayWeTrackByTracker( 'twitter' ) ) {
 			const params = [ 'track', 'PageView' ];
 			debug( 'retarget: [Twitter] [rate limited]', params );
 			window.twq( ...params );
 		}
 
 		// Yahoo Gemini
-		if ( isGeminiEnabled ) {
+		if ( mayWeTrackByTracker( 'gemini' ) ) {
 			const params = YAHOO_GEMINI_AUDIENCE_BUILDING_PIXEL_URL;
 			debug( 'retarget: [Yahoo Gemini] [rate limited]', params );
 			new window.Image().src = params;
 		}
 
 		// Quora
-		if ( isQuoraEnabled ) {
+		if ( mayWeTrackByTracker( 'quora' ) ) {
 			const params = [ 'track', 'ViewContent' ];
 			debug( 'retarget: [Quora] [rate limited]', params );
 			window.qp( ...params );

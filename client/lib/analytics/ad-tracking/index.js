@@ -5,7 +5,6 @@ export {
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsPageView,
 	getGoogleAnalyticsDefaultConfig,
-	isGoogleAnalyticsAllowed,
 	setupGoogleAnalyticsGtag,
 } from './google-analytics';
 export { recordAddToCart } from './record-add-to-cart';
