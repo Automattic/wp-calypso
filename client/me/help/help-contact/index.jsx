@@ -584,7 +584,7 @@ class HelpContact extends Component {
 						/>
 						<GMClosureNotice
 							compact={ compact }
-							displayAt="2022-10-29 00:00Z"
+							displayAt="2022-09-29 00:00Z"
 							closesAt="2022-11-05 00:00Z"
 							reopensAt="2022-11-14 07:00Z"
 						/>

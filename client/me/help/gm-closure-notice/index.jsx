@@ -3,11 +3,13 @@ import { WPCOM_FEATURES_LIVE_SUPPORT } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
@@ -23,6 +25,7 @@ export default function GMClosureNotice( { compact, displayAt, closesAt, reopens
 			siteHasFeature( state, ID ?? 0, WPCOM_FEATURES_LIVE_SUPPORT )
 		)
 	);
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) ); // Doesn't work on /help/contact with no localstorage
 
 	const currentDate = moment();
 	const guessedTimezone = moment.tz.guess();
@@ -129,8 +132,10 @@ export default function GMClosureNotice( { compact, displayAt, closesAt, reopens
 		);
 	}
 
+	console.log( { selectedSiteId, hasLiveChat } );
 	return (
 		<div className="gm-closure-notice">
+			<QuerySiteFeatures siteIds={ [ selectedSiteId ] } />
 			<FormSectionHeading>{ HEADING }</FormSectionHeading>
 			<div>
 				<p>{ mainMessage }</p>
