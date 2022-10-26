@@ -478,6 +478,7 @@ export class Theme extends Component {
 							<ThemeMoreButton
 								index={ this.props.index }
 								themeId={ this.props.theme.id }
+								themeName={ this.props.theme.name }
 								active={ this.props.active }
 								onMoreButtonClick={ this.props.onMoreButtonClick }
 								options={ this.props.buttonContents }

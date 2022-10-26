@@ -1,16 +1,20 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import page from 'page';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import BlazePressWidget from 'calypso/components/blazepress-widget';
+import { useQueryClient } from 'react-query';
+import { useDispatch, useSelector } from 'react-redux';
+import BlazePressWidget, { goToOriginalEndpoint } from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type Post = {
 	ID: number;
@@ -35,15 +39,26 @@ type Props = {
 export default function PostItem( { post }: Props ) {
 	const [ loading, setLoading ] = useState( false );
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const keyValue = 'post-' + post.ID;
 	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
 		'blazepress-widget',
 		keyValue
 	);
 
-	const onCloseWidget = () => {
+	const previousRoute = useSelector( getPreviousRoute );
+
+	const onCloseWidget = ( redirectToCampaigns?: boolean ) => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
 		setLoading( false );
-		closeModal();
+		if ( redirectToCampaigns ) {
+			page( `/advertising/${ selectedSiteSlug }/campaigns` );
+		} else if ( previousRoute ) {
+			closeModal();
+		} else {
+			goToOriginalEndpoint();
+		}
 	};
 
 	const onClickPromote = async () => {
@@ -53,15 +68,14 @@ export default function PostItem( { post }: Props ) {
 
 	const safeUrl = safeImageUrl( post.featured_image );
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
+
 	return (
 		<CompactCard className="post-item__panel">
 			<div className="post-item__detail">
 				<h1 // eslint-disable-line
 					className="post-item__title"
 				>
-					<a href={ post.URL } className="post-item__title-link">
-						{ post.title || __( 'Untitled' ) }
-					</a>
+					<span className="post-item__title-link">{ post.title || __( 'Untitled' ) }</span>
 				</h1>
 				<div className="post-item__meta">
 					<span className="post-item__meta-time-status">
@@ -76,7 +90,8 @@ export default function PostItem( { post }: Props ) {
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
 					<span className="post-item__post-type">
 						<a href={ post.URL } className="post-item__title-view">
-							{ __( 'View' ) }
+							{ __( 'View' ) }{ ' ' }
+							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
 						</a>
 					</span>
 				</div>

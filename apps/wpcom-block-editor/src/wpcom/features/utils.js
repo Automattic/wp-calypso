@@ -39,14 +39,15 @@ const buildPropsFromContextBlock = ( block ) => {
 
 	if ( block?.name === 'core/template-part' ) {
 		const templatePartId = `${ block.attributes.theme }//${ block.attributes.slug }`;
-		const { getActiveBlockVariation } = select( 'core/blocks' );
 
-		if ( typeof getActiveBlockVariation === 'function' ) {
-			const variation = getActiveBlockVariation( block.name, block.attributes );
+		const entity = select( 'core' ).getEntityRecord(
+			'postType',
+			'wp_template_part',
+			templatePartId
+		);
 
-			if ( variation?.name ) {
-				context = `${ context }/${ variation.name }`;
-			}
+		if ( entity?.area && entity?.area !== 'uncategorized' ) {
+			context = `${ context }/${ entity.area }`;
 		}
 
 		return {
