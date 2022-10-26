@@ -28867,15 +28867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-intersection-observer@npm:^9.4.0":
-  version: 9.4.0
-  resolution: "react-intersection-observer@npm:9.4.0"
-  peerDependencies:
-    react: ^15.0.0 || ^16.0.0 || ^17.0.0|| ^18.0.0
-  checksum: abd076bbc0ed011c0a531deb6eacf27d05ff76c174b00c15cbe7a7bc064091f62813b7271bbfcee1bc3c90817a654075f35f9cbafa213ab547c7c92bdbf884aa
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^16.12.0 || ^17.0.0, react-is@npm:^17.0.0, react-is@npm:^17.0.1, react-is@npm:^17.0.2":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -36071,7 +36062,6 @@ swiper@4.5.1:
     prettier: "npm:wp-prettier@2.6.2"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-intersection-observer: ^9.4.0
     readline-sync: ^1.4.10
     reakit-utils: ^0.15.1
     recursive-copy: ^2.0.14
