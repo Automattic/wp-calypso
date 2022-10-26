@@ -48,7 +48,6 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
-import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -78,6 +77,7 @@ import {
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
+import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
@@ -564,23 +564,6 @@ class ManagePurchase extends Component {
 		}
 	}
 
-	getCancellationFlowType = () => {
-		const { purchase } = this.props;
-		const isPlanRefundable = isRefundable( purchase );
-		const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
-
-		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
-			// If the subscription is refundable the subscription should be removed immediately.
-			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
-		} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
-			// If the subscription is not refundable and auto-renew is on turn off auto-renew.
-			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
-		}
-
-		// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
-		return CANCEL_FLOW_TYPE.REMOVE;
-	};
-
 	renderCancelSurvey() {
 		const { purchase } = this.props;
 
@@ -592,7 +575,7 @@ class ManagePurchase extends Component {
 				isVisible={ this.state.isCancelSurveyVisible }
 				onClose={ this.closeDialog }
 				onClickFinalConfirm={ this.cancelSubscription }
-				flowType={ this.getCancellationFlowType() }
+				flowType={ getPurchaseCancellationFlowType( purchase ) }
 			/>
 		);
 	}
