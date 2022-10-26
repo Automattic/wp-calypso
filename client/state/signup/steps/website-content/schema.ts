@@ -1,3 +1,4 @@
+import type { SiteId } from 'calypso/types';
 export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
 	title: 'Website content schema',
@@ -73,6 +74,9 @@ export const schema = {
 		imageUploadStates: {
 			type: 'object',
 		},
+		siteId: {
+			type: [ 'number', 'null' ],
+		},
 	},
 };
 
@@ -104,6 +108,7 @@ export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
 	imageUploadStates: Record< string, Record< string, string > >;
+	siteId: SiteId | null;
 }
 
 export const initialState: WebsiteContentCollection = {
@@ -114,4 +119,5 @@ export const initialState: WebsiteContentCollection = {
 		feedbackSection: { genericFeedback: '' },
 	},
 	imageUploadStates: {},
+	siteId: null,
 };

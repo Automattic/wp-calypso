@@ -33,7 +33,8 @@ export default withSchemaValidation(
 			case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
 				// When initializing page we need to leave pages that already exist alone
 				// so that persisted state can load correctly
-				const newPages = action.payload.map( ( page: PageData ) => ( {
+				const { pages, siteId } = action.payload;
+				const newPages = pages.map( ( page: PageData ) => ( {
 					...page,
 					...state.websiteContent.pages.find( ( oldPage ) => oldPage.id === page.id ),
 				} ) );
@@ -42,6 +43,7 @@ export default withSchemaValidation(
 					...state,
 					websiteContent: { ...state.websiteContent, pages: newPages },
 					imageUploadStates: {},
+					siteId,
 				};
 			}
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX:

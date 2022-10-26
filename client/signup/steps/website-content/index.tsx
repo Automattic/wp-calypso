@@ -18,6 +18,7 @@ import {
 	updateWebsiteContentCurrentIndex,
 } from 'calypso/state/signup/steps/website-content/actions';
 import {
+	getSiteIdForSavedWebsiteContent,
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 	isImageUploadInProgress,
@@ -74,6 +75,7 @@ function WebsiteContentStep( {
 	const translate = useTranslate();
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const websiteContent = useSelector( getWebsiteContent );
+	const siteIdForSavedWebsiteContent = useSelector( getSiteIdForSavedWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
 	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
 	const isImageUploading = useSelector( ( state ) =>
@@ -84,19 +86,30 @@ function WebsiteContentStep( {
 	const translatedPageTitles = useTranslatedPageTitles();
 
 	useEffect( () => {
-		if ( websiteContent.pages.length > 0 ) {
+		if (
+			websiteContent.pages.length &&
+			siteIdForSavedWebsiteContent &&
+			siteIdForSavedWebsiteContent === siteId
+		) {
 			// Already initialized.
 			return;
 		}
 
-		if ( pageTitles && pageTitles.length > 0 ) {
+		if ( siteId && pageTitles && pageTitles.length > 0 ) {
 			const pages = pageTitles.map( ( pageTitle ) => ( {
 				id: pageTitle,
 				name: translatedPageTitles[ pageTitle ],
 			} ) );
-			dispatch( initializePages( pages ) );
+			dispatch( initializePages( pages, siteId ) );
 		}
-	}, [ dispatch, pageTitles, translatedPageTitles, websiteContent.pages.length ] );
+	}, [
+		dispatch,
+		pageTitles,
+		siteId,
+		siteIdForSavedWebsiteContent,
+		translatedPageTitles,
+		websiteContent.pages.length,
+	] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
