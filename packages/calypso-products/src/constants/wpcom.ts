@@ -1,7 +1,6 @@
 export const GROUP_WPCOM = 'GROUP_WPCOM';
 
 // Products
-export const PRODUCT_NO_ADS = 'no-adverts/no-adverts.php';
 export const PRODUCT_WPCOM_SEARCH = 'wpcom_search';
 export const PRODUCT_WPCOM_SEARCH_MONTHLY = 'wpcom_search_monthly';
 export const PRODUCT_WPCOM_UNLIMITED_THEMES = 'unlimited_themes';

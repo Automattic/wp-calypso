@@ -22,7 +22,6 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	isMonthlyProduct,
-	isNoAds,
 	isP2Plus,
 	isPersonal,
 	isPlan,
@@ -441,12 +440,6 @@ export function customDesignItem(): MinimalRequestCartProduct {
 	};
 }
 
-export function noAdsItem(): MinimalRequestCartProduct {
-	return {
-		product_slug: 'no-adverts/no-adverts.php',
-	};
-}
-
 export function videoPressItem(): MinimalRequestCartProduct {
 	return {
 		product_slug: 'videopress',
@@ -539,10 +532,6 @@ function createRenewalCartItemFromProduct(
 
 	if ( isCustomDesign( product ) ) {
 		return customDesignItem();
-	}
-
-	if ( isNoAds( product ) ) {
-		return noAdsItem();
 	}
 
 	if ( isSiteRedirect( product ) ) {

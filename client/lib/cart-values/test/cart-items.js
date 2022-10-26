@@ -705,22 +705,6 @@ describe( 'getRenewalItemFromProduct()', () => {
 			} );
 		} );
 	} );
-	describe( 'isNoAds', () => {
-		test( 'should return the corresponding renewal item', () => {
-			expect(
-				getRenewalItemFromProduct(
-					buildPurchase( { product_slug: 'no-adverts/no-adverts.php', isRenewable: true } ),
-					properties
-				)
-			).toEqual( {
-				extra: {
-					purchaseId: 123,
-					purchaseType: 'renewal',
-				},
-				product_slug: 'no-adverts/no-adverts.php',
-			} );
-		} );
-	} );
 	describe( 'isCustomDesign', () => {
 		test( 'should return the corresponding renewal item', () => {
 			expect(

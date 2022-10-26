@@ -4,7 +4,6 @@ import {
 	isDomainProduct,
 	isDomainTransfer,
 	isMonthly,
-	isNoAds,
 	isPlan,
 	isWpComBusinessPlan,
 	isWpComEcommercePlan,
@@ -277,10 +276,6 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const translate = useTranslate();
-
-	const hasNoAdsAddOn = responseCart.products.some( ( product ) => isNoAds( product ) );
-
 	return (
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
@@ -293,13 +288,6 @@ function CheckoutSummaryFeaturesList( props: {
 					hasDomainsInCart={ hasDomainsInCart }
 					nextDomainIsFree={ nextDomainIsFree }
 				/>
-			) }
-
-			{ hasNoAdsAddOn && (
-				<CheckoutSummaryFeaturesListItem>
-					<WPCheckoutCheckIcon id="features-list-support-text" />
-					{ translate( 'Remove ads from your site with the No Ads add-on' ) }
-				</CheckoutSummaryFeaturesListItem>
 			) }
 
 			{ ! hasPlanInCart && <CheckoutSummaryChatIfAvailable siteId={ siteId } /> }
