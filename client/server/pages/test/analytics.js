@@ -78,12 +78,12 @@ describe( 'index', () => {
 
 				// Check the information sent to boom.gif.
 				expect(
-					includesBeacon( `reader.loggedin_true.ssr_false.response_time:${ THREE_SECONDS }` )
+					includesBeacon( `response_time.logged_in.ssr_pipeline_false:${ THREE_SECONDS }` )
 				).toBe( true );
 
 				// Double check the loggedin/ssr flags are set correctly.
 				expect(
-					includesBeacon( `reader.loggedin_false.ssr_true.response_time:${ THREE_SECONDS }` )
+					includesBeacon( `response_time.logged_out.ssr_pipeline_true:${ THREE_SECONDS }` )
 				).toBe( false );
 			} );
 
