@@ -335,7 +335,7 @@ __metadata:
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
-    page: ^1.11.6
+    page: ^1.11.5
     path-browserify: ^1.0.1
     postcss: ^8.3.11
     react: ^17.0.2
@@ -26730,15 +26730,6 @@ __metadata:
   dependencies:
     path-to-regexp: ~1.2.1
   checksum: 242617a422d2eb61ac8330ef7a2e70d64a371add078b6384697b0d02b6030e9fb00de596636f6417e8c82358ef0f783735e6c2c20361145f13cea2458ffd1490
-  languageName: node
-  linkType: hard
-
-"page@npm:^1.11.6":
-  version: 1.11.6
-  resolution: "page@npm:1.11.6"
-  dependencies:
-    path-to-regexp: ~1.2.1
-  checksum: efd321a5d15e5faa0816b736eb5191a500390355a04d9d0fb9a236e2805f9ee66ed77124838de534b3335156ff81baba7248323afa78f766ddf281e7c99b6ed8
   languageName: node
   linkType: hard
 
