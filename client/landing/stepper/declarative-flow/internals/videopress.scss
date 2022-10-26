@@ -68,7 +68,7 @@ body.is-videopress-stepper {
 			animation-iteration-count: 1;
 			animation-fill-mode: forwards;
 
-			min-height: 100vh;
+			min-height: calc(100vh - 10px);
 			display: flex;
 			flex-direction: column;
 
