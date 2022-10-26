@@ -3,6 +3,7 @@ import { WPCOM_FEATURES_LIVE_SUPPORT } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryAllSiteFeatures from 'calypso/components/data/query-all-site-features';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -131,6 +132,7 @@ export default function GMClosureNotice( { compact, displayAt, closesAt, reopens
 
 	return (
 		<div className="gm-closure-notice">
+			<QueryAllSiteFeatures />
 			<FormSectionHeading>{ HEADING }</FormSectionHeading>
 			<div>
 				<p>{ mainMessage }</p>
