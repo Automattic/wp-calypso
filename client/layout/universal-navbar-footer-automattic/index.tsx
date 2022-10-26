@@ -1,16 +1,22 @@
 import './style.scss';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
 
 const UniversalNavbarFooterAutomattic = () => {
 	const translate = useTranslate();
-	const automatticRoger = translate(
-		'An Automattic brainchild, An Automattic contraption, An Automattic creation, An Automattic experiment, An Automattic invention, An Automattic joint, An Automattic medley, An Automattic opus, An Automattic production, An Automattic ruckus, An Automattic thingamajig'
-	);
-	const [ roger, setRoger ] = useState( '' );
-	useEffect( () => {
-		setRoger( automatticRoger.split( ', ' )[ Math.floor( Math.random() * ( 10 - 0 + 1 ) + 0 ) ] );
-	}, [ automatticRoger ] );
+	const automatticRoger = [
+		translate( 'An Automattic brainchild' ),
+		translate( 'An Automattic contraption' ),
+		translate( 'An Automattic creation' ),
+		translate( 'An Automattic experiment' ),
+		translate( 'An Automattic invention' ),
+		translate( 'An Automattic joint' ),
+		translate( 'An Automattic medley' ),
+		translate( 'An Automattic opus' ),
+		translate( 'An Automattic production' ),
+		translate( 'An Automattic ruckus' ),
+		translate( 'An Automattic thingamajig' ),
+	];
+	const roger = automatticRoger[ Math.floor( Math.random() * ( 10 - 0 + 1 ) + 0 ) ];
 
 	return (
 		<div className="lpc-footer-automattic-nav">
