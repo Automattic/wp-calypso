@@ -455,6 +455,7 @@ __metadata:
     "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
+    "@automattic/shopping-cart": "workspace:^"
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.6.0
     "@wordpress/data-controls": ^2.9.0
