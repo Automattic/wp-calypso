@@ -145,6 +145,20 @@
 	font-weight: 500;
 }
 
+.launchpad__domain-notification {
+	display: flex;
+	margin-bottom: 16px;
+
+	@include break-large {
+		margin-bottom: 10px;
+	}
+}
+
+.launchpad__domain-checkmark-icon {
+	flex: 0 0 36px;
+	fill: var(--studio-green-40);
+}
+
 .launchpad__domain-upgrade-badge {
 	&:hover {
 		background: var(--studio-blue-10);

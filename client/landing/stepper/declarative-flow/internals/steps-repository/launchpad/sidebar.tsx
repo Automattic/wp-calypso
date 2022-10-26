@@ -139,11 +139,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					) }
 				</div>
 				{ isDomainSSLProcessing && (
-					<p>
-						{ translate(
-							'We are currently setting up your new domain! It may take a few minutes before it is ready.'
-						) }
-					</p>
+					<div className="launchpad__domain-notification">
+						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<p>
+							{ translate(
+								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+							) }
+						</p>
+					</div>
 				) }
 				<Checklist tasks={ enhancedTasks } />
 			</div>
