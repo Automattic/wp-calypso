@@ -97,7 +97,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	getSitePurchases,
 	getByPurchaseId,
-	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
@@ -1184,7 +1183,6 @@ export default connect(
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			productsList,
 			purchase,
-			purchasesError: getPurchasesError( state ),
 			purchases,
 			purchaseAttachedTo,
 			siteId,
