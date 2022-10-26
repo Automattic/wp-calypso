@@ -69,6 +69,7 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
+		"plugins/ssr-landing": true,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
