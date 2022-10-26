@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { NewSiteSuccessResponse, Site, CartItem } from '@automattic/data-stores';
+import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const Visibility = Site.Visibility;
@@ -100,7 +101,7 @@ export const createSiteWithCart = async (
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
 	productsList: Record< string, ProductListItem >,
-	domainItem?: CartItem
+	domainItem?: MinimalRequestCartProduct
 ) => {
 	const siteUrl = domainItem?.meta;
 	const isFreeThemePreselected = startsWith( themeSlugWithRepo, 'pub' );
@@ -162,7 +163,7 @@ export const createSiteWithCart = async (
 	return providedDependencies;
 };
 
-function prepareItemForAddingToCart( item: CartItem, lastKnownFlow?: string ) {
+function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownFlow?: string ) {
 	return {
 		...item,
 		extra: {
@@ -179,7 +180,7 @@ export async function addPlanToCart(
 	userIsLoggedIn: boolean,
 	themeSlugWithRepo: string,
 	productsList: Record< string, ProductListItem >,
-	cartItem: CartItem
+	cartItem: MinimalRequestCartProduct
 ) {
 	if ( isEmpty( cartItem ) ) {
 		// the user selected the free plan
@@ -200,7 +201,7 @@ export async function addPlanToCart(
 }
 
 const addPrivacyProtectionIfSupported = (
-	item: CartItem,
+	item: MinimalRequestCartProduct,
 	productsList: Record< string, ProductListItem >
 ) => {
 	const { product_slug: productSlug } = item;
@@ -223,7 +224,7 @@ const addPrivacyProtectionIfSupported = (
 };
 
 const addToCartAndProceed = async (
-	newCartItem: CartItem,
+	newCartItem: MinimalRequestCartProduct,
 	siteSlug: string,
 	flowName: string,
 	productsList: Record< string, ProductListItem >
@@ -272,7 +273,7 @@ async function processItemCart(
 	lastKnownFlow: string,
 	userIsLoggedIn: boolean,
 	productsList: Record< string, ProductListItem >,
-	newCartItem?: CartItem
+	newCartItem?: MinimalRequestCartProduct
 ) {
 	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
