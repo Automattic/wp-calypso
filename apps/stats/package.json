@@ -27,6 +27,7 @@
 	"dependencies": {
 		"@automattic/calypso-polyfills": "workspace:^",
 		"calypso": "workspace:^",
+		"debug": "^4.3.4",
 		"page": "^1.11.6",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
@@ -38,6 +39,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
+		"@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^",
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
@@ -50,7 +52,7 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
 		"webpack": "^5.68.0",
-		"webpack-bundle-analyzer": "^4.5.0",
+		"webpack-bundle-analyzer": "^4.7.0",
 		"webpack-dev-server": "^4.7.3"
 	}
 }

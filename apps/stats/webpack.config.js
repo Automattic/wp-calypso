@@ -12,10 +12,16 @@ const autoprefixerPlugin = require( 'autoprefixer' );
 const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 const outputPath = path.join( __dirname, 'dist' );
+
+const defaultBrowserslistEnv = 'evergreen';
+const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
+const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
+const cachePath = path.resolve( '.cache', extraPath );
 
 module.exports = {
 	bail: ! isDevelopment,
@@ -42,12 +48,20 @@ module.exports = {
 		strictExportPresence: true,
 		rules: [
 			TranspileConfig.loader( {
+				workerCount: 2,
+				configFile: path.resolve( '../../babel.config.js' ),
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+				cacheIdentifier,
+				cacheCompression: false,
 				exclude: /node_modules\//,
-				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/default' ) ],
 			} ),
 			TranspileConfig.loader( {
-				include: shouldTranspileDependency,
+				workerCount: 2,
 				presets: [ require.resolve( '@automattic/calypso-babel-config/presets/dependencies' ) ],
+				cacheDirectory: path.resolve( cachePath, 'babel-client' ),
+				cacheIdentifier,
+				cacheCompression: false,
+				include: shouldTranspileDependency,
 			} ),
 			SassConfig.loader( {
 				includePaths: [ __dirname ],

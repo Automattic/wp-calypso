@@ -322,6 +322,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-stats@workspace:apps/stats"
   dependencies:
+    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
@@ -330,6 +331,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
+    debug: ^4.3.4
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
@@ -343,7 +345,7 @@ __metadata:
     redux: ^4.1.2
     redux-thunk: ^2.3.0
     webpack: ^5.68.0
-    webpack-bundle-analyzer: ^4.5.0
+    webpack-bundle-analyzer: ^4.7.0
     webpack-dev-server: ^4.7.3
     wpcom: "workspace:^"
     wpcom-proxy-request: "workspace:^"
@@ -35569,6 +35571,25 @@ swiper@4.5.1:
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
   checksum: 5130be9fa58645e412e9824f98bd961afe540b9918951ddc87b688f3e176f4a101fcb16a304c74f0d1ddd9f2528ec2fa44bcfcea3fe07635fa9af0e3104644aa
+  languageName: node
+  linkType: hard
+
+"webpack-bundle-analyzer@npm:^4.7.0":
+  version: 4.7.0
+  resolution: "webpack-bundle-analyzer@npm:4.7.0"
+  dependencies:
+    acorn: ^8.0.4
+    acorn-walk: ^8.0.0
+    chalk: ^4.1.0
+    commander: ^7.2.0
+    gzip-size: ^6.0.0
+    lodash: ^4.17.20
+    opener: ^1.5.2
+    sirv: ^1.0.7
+    ws: ^7.3.1
+  bin:
+    webpack-bundle-analyzer: lib/bin/analyzer.js
+  checksum: 7ca9546dae1271ecd4524646bf45fad32dc69f2293c1ade5f9a0d581d44ab4a12af94294c5ecfe0ed12c5b9327f827a3adfc733b77c162ebe3e0411371f8788e
   languageName: node
   linkType: hard
 

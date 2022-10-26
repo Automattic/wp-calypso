@@ -20,6 +20,8 @@
 	</head>
 
 	<body>
+		<p></p>
+
 		<div id="wpcom"></div>
 		<script>
 			window.configData = {
@@ -36,7 +38,9 @@
 				upwork_support_locales: [ 'de' ],
 				jetpack_support_blog: 'jetpackme.wordpress.com',
 				wpcom_support_blog: 'en.support.wordpress.com',
+				mc_analytics_enabled: false,
 				gutenboarding_url: '/new',
+				"hostname": false,
 				features: {
 					stats: true,
 				},
@@ -52,6 +56,11 @@
 		<script charset="UTF-8" src="<%= script %>"></script>
 		<% } ) %>
 
-		<a href="/stats/day">stats</a>
+		<ul>
+			<li><a href="/">/</a></li>
+			<li><a href="/stats/day">/day</a></li>
+			<li><a href="/stats/insights">/insights</a></li>
+			<li><a href="/stats/test">/test</a></li>
+		  </ul>
 	</body>
 </html>
