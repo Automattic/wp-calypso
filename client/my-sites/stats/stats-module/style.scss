@@ -587,7 +587,7 @@ ul.module-header-actions {
 	font-size: $font-body-extra-small;
 }
 
-.stats-module--unified {
+.stats__module--unified {
 	.card {
 		&:first-child {
 			border-radius: 5px 5px 0 0; /* stylelint-disable-line scales/radii */
@@ -636,6 +636,10 @@ ul.module-header-actions {
 	.stats-list__module-content-list-item-wrapper > span {
 		display: flex;
 		align-items: center;
+
+		svg {
+			flex: 0 0 auto; // don't shrink svg next to a long label
+		}
 	}
 
 	.module-content-list-legend {
@@ -653,9 +657,14 @@ ul.module-header-actions {
 		&:last-child {
 			padding-bottom: 24px;
 		}
+
+		&.module-content-list-sublist {
+			padding: 4px 0;
+		}
 	}
 
-	.stats-module__expand {
+	.stats-module__expand,
+	.stats-module .module-expand {
 		padding: 20px 0;
 
 		a {

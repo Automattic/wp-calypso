@@ -242,7 +242,7 @@ class StatsSite extends Component {
 							/>
 						</StatsPeriodNavigation>
 					</StickyPanel>
-					<div className="stats__module-list is-events">
+					<div className="stats__module-list is-events stats__module--unified">
 						<div className="stats__module-column">
 							<StatsModule
 								path="posts"

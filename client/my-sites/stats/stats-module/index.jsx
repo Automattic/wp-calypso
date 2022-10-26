@@ -153,7 +153,7 @@ class StatsModule extends Component {
 		} );
 
 		return (
-			<div className={ classNames( { 'stats-module--unified': ! isAllTime } ) }>
+			<div>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
