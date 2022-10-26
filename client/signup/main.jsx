@@ -329,6 +329,9 @@ class Signup extends Component {
 			this.props.localeSlug
 		);
 
+		console.log( '-------------------filtered destination:', filteredDestination );
+
+
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
@@ -346,7 +349,7 @@ class Signup extends Component {
 			await setupSiteAfterCreation( { siteId, flowName: this.props.flowName } );
 		}
 
-		this.redirectDestination( dependencies, destination );
+		this.redirectDestination( dependencies, filteredDestination );
 	};
 
 	startTrackingForBusinessSite() {
