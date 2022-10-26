@@ -25,6 +25,132 @@ interface PreCancellationDialogProps {
 	wpcomURL: string;
 }
 
+/**
+ * Pre Cancellation Dialog list of features.
+ * Returns the list of features that the user will lose by canceling their plan.
+ */
+interface FeaturesListProps {
+	productSlug: string | undefined;
+	subTitle: string | undefined;
+	domainFeature: JSX.Element | null;
+	isPurchaseRefundable: boolean;
+	isPurchaseAutoRenewing: boolean;
+}
+export const FeaturesList = ( {
+	productSlug,
+	subTitle,
+	domainFeature,
+	isPurchaseRefundable,
+	isPurchaseAutoRenewing,
+}: FeaturesListProps ) => {
+	if ( typeof productSlug !== 'string' ) {
+		return null;
+	}
+
+	const planFeatures = getPlanCancellationFeatures( productSlug );
+
+	return (
+		<>
+			<p>{ subTitle }</p>
+			<ul
+				className={
+					'pre-cancellation-dialog__list-plan-features' +
+					( domainFeature ? ' --with-domain-feature' : '' )
+				}
+			>
+				{ domainFeature && (
+					<li key="redirect-domain">
+						<Gridicon
+							className="pre-cancellation-dialog__item-cross-small"
+							size={ 24 }
+							icon="cross-small"
+						/>
+						{ domainFeature }
+					</li>
+				) }
+				<li key="debug-refundable">
+					<Gridicon
+						className="pre-cancellation-dialog__item-cross-small"
+						size={ 24 }
+						icon="cross-small"
+					/>
+					{ isPurchaseRefundable ? 'Refundable: yes' : 'Refundable: no' }
+				</li>
+				<li key="debug-autorenew">
+					<Gridicon
+						className="pre-cancellation-dialog__item-cross-small"
+						size={ 24 }
+						icon="cross-small"
+					/>
+					{ isPurchaseAutoRenewing ? 'Auto-renew: yes' : 'Auto-renew: no' }
+				</li>
+				{ planFeatures.map( ( feature ) => {
+					return (
+						<li key={ feature }>
+							<Gridicon
+								className="pre-cancellation-dialog__item-cross-small"
+								size={ 24 }
+								icon="cross-small"
+							/>
+							{ feature }
+						</li>
+					);
+				} ) }
+			</ul>
+		</>
+	);
+};
+
+/**
+ * Pre Cancellation Dialog bottom text:
+ * - Link to contact support.
+ * - If refundable, the amount to be refunded.
+ */
+interface RenderFooterTextProps {
+	purchase: Purchase;
+}
+
+export const RenderFooterText = ( { purchase }: RenderFooterTextProps ) => {
+	const { refundText } = purchase;
+	const translate = useTranslate();
+
+	return (
+		<div className="pre-cancellation-dialog--footer">
+			<div className="pre-cancellation-dialog--footer--support">
+				<strong className="pre-cancellation-dialog--footer--support-information">
+					{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
+						? translate(
+								'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+								{
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+						  )
+						: translate(
+								'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
+								{
+									components: {
+										contactLink: <a href={ CALYPSO_CONTACT } />,
+									},
+								}
+						  ) }
+				</strong>
+			</div>
+			<div className="pre-cancellation-dialog--footer--refund">
+				{ hasAmountAvailableToRefund( purchase ) &&
+					translate( '%(refundText)s to be refunded', {
+						args: { refundText },
+						context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
+					} ) }
+			</div>
+		</div>
+	);
+};
+
+/**
+ * The Pre Cancellation Dialog component
+ */
 export const PreCancellationDialog = ( {
 	closeDialog,
 	removePlan,
@@ -83,110 +209,6 @@ export const PreCancellationDialog = ( {
 	];
 
 	/**
-	 * Render dialog bottom text:
-	 * - Link to contact support.
-	 * - If refundable, the amount to be refunded.
-	 */
-	const RenderFooterText = () => {
-		const { refundText } = purchase;
-
-		return (
-			<div className="pre-cancellation-dialog--footer">
-				<div className="pre-cancellation-dialog--footer--support">
-					<strong className="pre-cancellation-dialog--footer--support-information">
-						{ ! isRefundable( purchase ) && maybeWithinRefundPeriod( purchase )
-							? translate(
-									'Have a question? Want to request a refund? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-									{
-										components: {
-											contactLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-							  )
-							: translate(
-									'Have a question? {{contactLink}}Ask a Happiness Engineer!{{/contactLink}}',
-									{
-										components: {
-											contactLink: <a href={ CALYPSO_CONTACT } />,
-										},
-									}
-							  ) }
-					</strong>
-				</div>
-				<div className="pre-cancellation-dialog--footer--refund">
-					{ hasAmountAvailableToRefund( purchase ) &&
-						translate( '%(refundText)s to be refunded', {
-							args: { refundText },
-							context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
-						} ) }
-				</div>
-			</div>
-		);
-	};
-
-	/**
-	 * Return the list of features that the user will lose by canceling their plan.
-	 */
-	const FeaturesList = () => {
-		if ( typeof productSlug !== 'string' ) {
-			return null;
-		}
-
-		const planFeatures = getPlanCancellationFeatures( productSlug );
-
-		return (
-			<>
-				<p>{ subTitle }</p>
-				<ul
-					className={
-						'pre-cancellation-dialog__list-plan-features' +
-						( domainFeature ? ' --with-domain-feature' : '' )
-					}
-				>
-					{ domainFeature && (
-						<li key="redirect-domain">
-							<Gridicon
-								className="pre-cancellation-dialog__item-cross-small"
-								size={ 24 }
-								icon="cross-small"
-							/>
-							{ domainFeature }
-						</li>
-					) }
-					<li key="debug-refundable">
-						<Gridicon
-							className="pre-cancellation-dialog__item-cross-small"
-							size={ 24 }
-							icon="cross-small"
-						/>
-						{ isPurchaseRefundable ? 'Refundable: yes' : 'Refundable: no' }
-					</li>
-					<li key="debug-autorenew">
-						<Gridicon
-							className="pre-cancellation-dialog__item-cross-small"
-							size={ 24 }
-							icon="cross-small"
-						/>
-						{ isPurchaseAutoRenewing ? 'Auto-renew: yes' : 'Auto-renew: no' }
-					</li>
-					{ planFeatures.map( ( feature ) => {
-						return (
-							<li key={ feature }>
-								<Gridicon
-									className="pre-cancellation-dialog__item-cross-small"
-									size={ 24 }
-									icon="cross-small"
-								/>
-								{ feature }
-							</li>
-						);
-					} ) }
-				</ul>
-			</>
-		);
-	};
-
-	/**
 	 * Plan cancellation dialog.
 	 */
 	return (
@@ -216,8 +238,14 @@ export const PreCancellationDialog = ( {
 							} ) }
 							align="left"
 						/>
-						<FeaturesList />
-						<RenderFooterText />
+						<FeaturesList
+							productSlug={ productSlug }
+							subTitle={ subTitle }
+							domainFeature={ domainFeature }
+							isPurchaseRefundable={ isPurchaseRefundable }
+							isPurchaseAutoRenewing={ isPurchaseAutoRenewing }
+						/>
+						<RenderFooterText purchase={ purchase } />
 					</div>
 				</div>
 			</>
