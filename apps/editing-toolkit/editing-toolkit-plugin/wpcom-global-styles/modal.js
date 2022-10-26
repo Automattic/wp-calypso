@@ -79,8 +79,11 @@ const GlobalStylesModal = () => {
 	}, [ isVisible ] );
 
 	const closeModal = () => {
-		dismissModal();
-		setShowUnlockStylesModal( false );
+		if ( showUnlockStylesModal ) {
+			setShowUnlockStylesModal( false );
+		} else {
+			dismissModal();
+		}
 		recordTracksEvent( 'calypso_global_styles_gating_modal_dismiss', {
 			context: 'site-editor',
 		} );
