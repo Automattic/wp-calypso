@@ -120,6 +120,7 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
+			isPlanTaglineExperiment,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
