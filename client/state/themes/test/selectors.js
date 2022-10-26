@@ -3034,7 +3034,7 @@ describe( '#isExternallyManagedTheme()', () => {
 		expect( isExternallyManaged ).toEqual( false );
 	} );
 
-	test( 'Should return false when theme_type is different from managed-internal', () => {
+	test( 'Should return false when theme_type is different from managed-external', () => {
 		const isExternallyManaged = isExternallyManagedTheme(
 			{
 				themes: {
