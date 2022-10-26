@@ -3043,7 +3043,7 @@ describe( '#isExternallyManagedTheme()', () => {
 							items: {
 								twentysixteen: {
 									...twentysixteen,
-									theme_type: 'managed-internal',
+									theme_type: 'hosted-internal',
 								},
 							},
 						} ),
