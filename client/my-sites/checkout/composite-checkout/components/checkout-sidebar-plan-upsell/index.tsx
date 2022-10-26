@@ -11,7 +11,10 @@ import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
-import { getItemVariantDiscountPercentage } from '../item-variation-picker/variant-price';
+import {
+	getItemVariantCompareToPrice,
+	getItemVariantDiscountPercentage,
+} from '../item-variation-picker/variant-price';
 
 import './style.scss';
 
@@ -62,7 +65,15 @@ export function CheckoutSidebarPlanUpsell() {
 		replaceProductInCart( plan.uuid, newPlan );
 	};
 
+	const compareToPriceForVariantTerm = getItemVariantCompareToPrice(
+		biennialVariant,
+		currentVariant
+	);
 	const percentSavings = getItemVariantDiscountPercentage( biennialVariant, currentVariant );
+	if ( percentSavings === 0 ) {
+		debug( 'percent savings is too low', percentSavings );
+		return null;
+	}
 
 	const cardTitle = sprintf(
 		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
@@ -82,6 +93,13 @@ export function CheckoutSidebarPlanUpsell() {
 					{ biennialVariant.variantLabel }
 				</div>
 				<div className="checkout-sidebar-plan-upsell__plan-grid-cell">
+					{ compareToPriceForVariantTerm && (
+						<del className="checkout-sidebar-plan-upsell__do-not-pay">
+							{ formatCurrency( compareToPriceForVariantTerm, currentVariant.currency, {
+								stripZeros: true,
+							} ) }
+						</del>
+					) }
 					{ formatCurrency( biennialVariant.price, biennialVariant.currency, {
 						stripZeros: true,
 					} ) }

@@ -23,3 +23,14 @@
 	border-top: 1px solid #ccc;
 	padding: 0.5em 0;
 }
+
+.checkout-sidebar-plan-upsell__do-not-pay {
+	text-decoration: line-through;
+	margin-right: 8px;
+	color: #646970;
+
+	.rtl & {
+		margin-right: 0;
+		margin-left: 8px;
+	}
+}
