@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { mayWeTrackByTracker } from '../tracker-buckets';
+import { getGaGtag } from '../utils/get-ga-gtag';
 import {
 	debug,
 	TRACKING_IDS,
@@ -55,7 +56,7 @@ function getTrackingScriptsToLoad() {
 
 	// The Gtag script needs to be loaded with an ID in the URL so we search for the first available one.
 	const enabledGtags = [
-		mayWeTrackByTracker( 'ga' ) && TRACKING_IDS.wpcomGoogleAnalyticsGtag, // TODO: WPCOM works only for WPCOM or also Jetpack??
+		mayWeTrackByTracker( 'ga' ) && getGaGtag(),
 		mayWeTrackByTracker( 'googleAds' ) && TRACKING_IDS.wpcomGoogleAdsGtag,
 		mayWeTrackByTracker( 'floodlight' ) && TRACKING_IDS.wpcomFloodlightGtag,
 	].filter( ( id ) => false !== id );

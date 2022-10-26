@@ -51,7 +51,7 @@ export const TRACKING_IDS = {
 	quantcast: 'p-3Ma3jHaQMB_bS',
 	quoraPixelId: '420845cb70e444938cf0728887a74ca1',
 	twitterPixelId: 'nvzbs',
-	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ),
+	wpcomGoogleAnalyticsGtag: config( 'google_analytics_key' ), // google_analytics_key is only used in wpcom env
 	wpcomFloodlightGtag: 'DC-6355556',
 	wpcomGoogleAdsGtag: 'AW-946162814',
 	wpcomGoogleAdsGtagSignupStart: 'AW-946162814/baDICKzQiq4BEP6YlcMD', // "WordPress.com Signup Start"
