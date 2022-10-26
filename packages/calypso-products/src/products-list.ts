@@ -60,8 +60,8 @@ import {
 	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_PREMIUM,
-	PRODUCT_JETPACK_SOCIAL_PREMIUM_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 } from './constants';
 import { getJetpackProductsShortNames } from './translations';
 import type { ProductSlug, JetpackProductSlug, WPComProductSlug, Product } from './types';
@@ -363,27 +363,27 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getProductId: () => 2504,
 		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	},
-	[ PRODUCT_JETPACK_SOCIAL_PREMIUM ]: {
+	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: {
 		product_name: translate( 'Social Premium' ),
-		product_slug: PRODUCT_JETPACK_SOCIAL_PREMIUM,
-		type: PRODUCT_JETPACK_SOCIAL_PREMIUM,
+		product_slug: PRODUCT_JETPACK_SOCIAL_ADVANCED,
+		type: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		term: TERM_ANNUALLY,
 		bill_period: PLAN_ANNUAL_PERIOD,
 		categories: [],
 		getFeatures: () => [ FEATURE_SOCIAL_SHARES_1000, FEATURE_SOCIAL_ENHANCED_PUBLISHING ],
 		getProductId: () => 2600,
-		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_PREMIUM,
+		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	},
-	[ PRODUCT_JETPACK_SOCIAL_PREMIUM_MONTHLY ]: {
+	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: {
 		product_name: translate( 'Social Premium' ),
-		product_slug: PRODUCT_JETPACK_SOCIAL_PREMIUM_MONTHLY,
-		type: PRODUCT_JETPACK_SOCIAL_PREMIUM,
+		product_slug: PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+		type: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
 		getFeatures: () => [ FEATURE_SOCIAL_SHARES_1000, FEATURE_SOCIAL_ENHANCED_PUBLISHING ],
 		getProductId: () => 2601,
-		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_PREMIUM_MONTHLY,
+		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_VIDEOPRESS ]: {
 		product_name: translate( 'VideoPress' ),
