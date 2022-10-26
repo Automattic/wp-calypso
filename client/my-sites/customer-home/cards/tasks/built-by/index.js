@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import announcementImage from 'calypso/assets/images/marketplace/diamond.svg';
+import announcementImage from 'calypso/assets/images/marketplace/built-by-wp-hori-blue.svg';
 import { TASK_BUILT_BY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
