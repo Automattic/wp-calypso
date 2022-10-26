@@ -1,9 +1,11 @@
 import config from '@automattic/calypso-config';
+import { isMobile } from '@automattic/viewport';
 import { isEmpty } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
 import store from 'store';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { loadExperimentAssignment, ProvideExperimentData } from 'calypso/lib/explat';
 import { login } from 'calypso/lib/paths';
 import { sectionify } from 'calypso/lib/route';
 import flows from 'calypso/signup/config/flows';
@@ -83,9 +85,19 @@ export const removeP2SignupClassName = function () {
 };
 
 export default {
-	redirectTests( context, next ) {
+	async redirectTests( context, next ) {
 		const isLoggedIn = isUserLoggedIn( context.store.getState() );
 		const currentFlowName = getFlowName( context.params, isLoggedIn );
+		if (
+			isMobile() &&
+			[ 'onboarding', 'free', 'personal', 'premium', 'business', 'ecommerce' ].includes(
+				currentFlowName
+			)
+		) {
+			console.log( 'entered first if' );
+			await loadExperimentAssignment( 'calypso_signup_user_step_last_202210_v1' );
+		}
+		console.log( 'isreskinned: ' + currentFlowName + ' is ' + isReskinnedFlow( currentFlowName ) );
 		if ( isReskinnedFlow( currentFlowName ) ) {
 			next();
 		} else if (
@@ -290,20 +302,55 @@ export default {
 			context.store.dispatch( updateDependencies( { refParameter } ) );
 		}
 
-		context.primary = createElement( SignupComponent, {
-			store: context.store,
-			path: context.path,
-			initialContext,
-			locale: context.params.lang,
-			flowName,
-			queryObject: query,
-			refParameter,
-			stepName,
-			stepSectionName,
-			stepComponent,
-			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
-			isManageSiteFlow,
-		} );
+		context.primary = (
+			<ProvideExperimentData
+				name="calypso_signup_user_step_last_202210_v1"
+				options={ {
+					isEligible: isMobile() && [ 'onboarding', 'launch-site' ].includes( flowName ),
+				} }
+			>
+				{ ( isLoading, experimentAssignment ) => {
+					if ( isLoading ) {
+						return null;
+					}
+
+					const isTreatment = experimentAssignment?.variationName === 'treatment';
+					console.log( 'flowName: ' + flowName + ' and isMobile: ' + isMobile() );
+					console.log( experimentAssignment );
+
+					return (
+						<SignupComponent
+							store={ context.store }
+							path={ context.path }
+							initialContext={ initialContext }
+							locale={ context.params.lang }
+							flowName={ isTreatment ? 'onboarding-user-last' : flowName }
+							queryObject={ query }
+							refParameter={ query && query.ref }
+							stepName={ stepName }
+							stepSectionName={ stepSectionName }
+							stepComponent={ stepComponent }
+							pageTitle={ getFlowPageTitle( flowName ) }
+						/>
+					);
+				} }
+			</ProvideExperimentData>
+		);
+
+		// context.primary = createElement( SignupComponent, {
+		// 	store: context.store,
+		// 	path: context.path,
+		// 	initialContext,
+		// 	locale: context.params.lang,
+		// 	flowName,
+		// 	queryObject: query,
+		// 	refParameter,
+		// 	stepName,
+		// 	stepSectionName,
+		// 	stepComponent,
+		// 	pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
+		// 	isManageSiteFlow,
+		// } );
 
 		next();
 	},

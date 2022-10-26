@@ -207,7 +207,8 @@
 		"ecommerce-monthly",
 		"pro",
 		"starter",
-		"domain"
+		"domain",
+		"onboarding-user-last"
 	],
 	"bilmur_url": "https://s0.wp.com/wp-content/js/bilmur.min.js"
 }

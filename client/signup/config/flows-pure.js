@@ -164,6 +164,16 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'onboarding-user-last',
+			steps: isEnabled( 'signup/professional-email-step' )
+				? [ 'domains', 'emails', 'plans', 'user' ]
+				: [ 'domains', 'plans', 'user' ],
+			destination: getSignupDestination,
+			description: 'Signup flow A/B test with user step at the last',
+			lastModified: '2022-10-21',
+			showRecaptcha: true,
+		},
+		{
 			name: 'desktop',
 			steps: [ 'user' ],
 			destination: getSignupDestination,
