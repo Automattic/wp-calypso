@@ -76,6 +76,7 @@ export const schema = {
 		},
 		siteId: {
 			type: [ 'number', 'null' ],
+			description: 'The siteId of the stored website content',
 		},
 	},
 };
