@@ -30,12 +30,10 @@ export interface SettingsParams {
 }
 
 export interface ReaderParams {
-	postID: number;
-	siteID: number;
+	number: number;
 }
 
 export interface NewCommentParams {
-	ID: number;
 	content: string;
 }
 
@@ -143,6 +141,23 @@ export interface NewMediaResponse {
 	title: string;
 	file: string;
 }
+
+export interface ReaderMetadata {
+	ID: number;
+	site_ID: number;
+	author: {
+		ID: number;
+		login: string;
+	};
+}
+
+export interface ReaderResponse {
+	posts: Array< ReaderMetadata >;
+}
+
+// export interface NewCommentResponse {
+// 	// TODO: Find a way to get the response status code
+// }
 
 /* Error Responses */
 
