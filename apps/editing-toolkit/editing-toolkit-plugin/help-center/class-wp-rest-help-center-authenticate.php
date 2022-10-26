@@ -41,7 +41,11 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 	 */
 	public function get_chat_authentication() {
 		$body = Client::wpcom_json_api_request_as_user(
-			'help/authenticate/chat'
+			'help/authenticate/chat',
+			'2',
+			array(
+				'method' => 'POST',
+			)
 		);
 
 		if ( is_wp_error( $body ) ) {

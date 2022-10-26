@@ -75,8 +75,6 @@ class Help_Center {
 		$script_dependencies = $this->asset_file['dependencies'];
 		$logo_id             = get_option( 'site_logo' );
 
-		l( wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] );
-
 		wp_enqueue_script(
 			'help-center-script',
 			plugins_url( 'dist/help-center.min.js', __FILE__ ),
@@ -111,15 +109,17 @@ class Help_Center {
 
 		wp_localize_script(
 			'help-center-script',
-			'currentSite',
+			'helpCenterData',
 			array(
-				'ID'   => \Jetpack_Options::get_option( 'id' ),
-				'name' => get_bloginfo( 'name' ),
-				'url'  => get_bloginfo( 'url' ),
-				'logo' => array(
-					'id'    => $logo_id,
-					'sizes' => array(),
-					'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+				'currentSite' => array(
+					'ID'   => \Jetpack_Options::get_option( 'id' ),
+					'name' => get_bloginfo( 'name' ),
+					'url'  => get_bloginfo( 'url' ),
+					'logo' => array(
+						'id'    => $logo_id,
+						'sizes' => array(),
+						'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+					),
 				),
 			)
 		);

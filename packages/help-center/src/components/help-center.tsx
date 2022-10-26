@@ -17,7 +17,6 @@ import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import { HELP_CENTER_STORE, USER_STORE } from '../stores';
 import { Container } from '../types';
-import { SITE_STORE } from './help-center-contact-form';
 import HelpCenterContainer from './help-center-container';
 
 import '../styles.scss';
@@ -28,6 +27,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	const { data } = useHappychatAvailable( Boolean( chatStatus?.is_user_eligible ) );
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 	const { setUnreadCount } = useDispatch( HELP_CENTER_STORE );
+	const { setSite } = useDispatch( HELP_CENTER_STORE );
 
 	const { show, isMinimized } = useSelect( ( select ) => ( {
 		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
@@ -46,7 +46,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ data, setShowHelpCenter ] );
 
-	const { siteId, isSimpleSite } = useSelector( ( state ) => {
+	const { isSimpleSite } = useSelector( ( state ) => {
 		return {
 			siteId: getSelectedSiteId( state ),
 			isSimpleSite: getIsSimpleSite( state ),
@@ -54,7 +54,7 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 	} );
 
 	// prefetch the current site and user
-	useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	setSite( window.helpCenterData.currentSite );
 	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	useSupportAvailability( 'CHAT', isSimpleSite );
 	useStillNeedHelpURL();

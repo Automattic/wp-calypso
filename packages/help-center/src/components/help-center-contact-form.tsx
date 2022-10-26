@@ -26,7 +26,7 @@ import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
@@ -196,8 +196,7 @@ export const HelpCenterContactForm = () => {
 
 	const formTitles = useFormTitles( mode );
 
-	const siteId = useSelector( getSelectedSiteId );
-	const currentSite = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	const currentSite = selectedSite;
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
@@ -268,7 +267,7 @@ export const HelpCenterContactForm = () => {
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
-						is_automated_transfer: supportSite ? supportSite.options.is_automated_transfer : null,
+						is_automated_transfer: supportSite ? supportSite.options?.is_automated_transfer : null,
 						location: 'help-center',
 						section: sectionName,
 					} );
