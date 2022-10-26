@@ -1,5 +1,3 @@
-import type { RequestCartProduct } from '@automattic/shopping-cart';
-
 export type DomainSuggestion = {
 	is_free: boolean;
 	domain_name: string;
@@ -16,5 +14,3 @@ export type DomainForm = {
 	searchResults?: DomainSuggestion[] | null;
 	hideInitialQuery?: boolean;
 };
-
-export type CartItem = Partial< RequestCartProduct > & Pick< RequestCartProduct, 'product_slug' >;

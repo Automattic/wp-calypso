@@ -1,11 +1,12 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import { DomainForm, CartItem } from './types';
+import { DomainForm } from './types';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { Reducer } from 'redux';
 
 const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, action ) => {
@@ -216,7 +217,10 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
-const planCartItem: Reducer< CartItem | null, OnboardAction > = ( state = null, action ) => {
+const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > = (
+	state = null,
+	action
+) => {
 	if ( action.type === 'SET_PLAN_CART_ITEM' ) {
 		return action.planCartItem;
 	}
@@ -412,7 +416,7 @@ const hideFreePlan: Reducer< boolean, OnboardAction > = ( state = false, action 
 	return state;
 };
 
-const domainCartItem: Reducer< CartItem | undefined, OnboardAction > = (
+const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAction > = (
 	state = undefined,
 	action
 ) => {

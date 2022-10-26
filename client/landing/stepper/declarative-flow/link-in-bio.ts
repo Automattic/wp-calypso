@@ -108,7 +108,7 @@ export const linkInBio: Flow = {
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								providedDependencies?.siteSlug as string
+								( providedDependencies?.siteSlug as string ) ?? ''
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
