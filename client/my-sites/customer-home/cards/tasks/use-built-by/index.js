@@ -1,9 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import announcementImage from 'calypso/assets/images/marketplace/built-by-wp-hori-blue.svg';
-import { TASK_PROMOTE_BUILT_BY } from 'calypso/my-sites/customer-home/cards/constants';
+import { TASK_USE_BUILT_BY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 
-const PromoteBuiltBy = () => {
+const UseBuiltBy = () => {
 	const translate = useTranslate();
 
 	return (
@@ -15,9 +15,9 @@ const PromoteBuiltBy = () => {
 			actionText={ translate( 'Get Started' ) }
 			actionUrl="https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=bb-card-home"
 			illustration={ announcementImage }
-			taskId={ TASK_PROMOTE_BUILT_BY }
+			taskId={ TASK_USE_BUILT_BY }
 		/>
 	);
 };
 
-export default PromoteBuiltBy;
+export default UseBuiltBy;

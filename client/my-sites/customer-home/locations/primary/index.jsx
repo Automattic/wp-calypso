@@ -25,7 +25,7 @@ import {
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 	TASK_PROMOTE_POST,
-	TASK_PROMOTE_BUILT_BY,
+	TASK_USE_BUILT_BY,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -40,12 +40,12 @@ import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
-import PromoteBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/promote-built-by';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import { ReactivateExpiredPlan } from 'calypso/my-sites/customer-home/cards/tasks/reactivate-expired-plan';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
+import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
@@ -74,7 +74,7 @@ const cardComponents = {
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
-	[ TASK_PROMOTE_BUILT_BY ]: PromoteBuiltBy,
+	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 };
 
 const urgentTasks = [ TASK_RENEW_EXPIRED_PLAN, TASK_REACTIVATE_EXPIRED_PLAN ];
