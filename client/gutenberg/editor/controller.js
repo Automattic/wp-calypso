@@ -262,6 +262,7 @@ export const post = ( context, next ) => {
 export const siteEditor = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
+	const unlockStyles = 'unlock-styles' in context.query;
 
 	context.primary = (
 		<CalypsoifyIframe
@@ -269,6 +270,7 @@ export const siteEditor = ( context, next ) => {
 			// It will force the component to remount completely when the Id changes.
 			key={ siteId }
 			editorType="site"
+			unlockStyles={ unlockStyles }
 		/>
 	);
 

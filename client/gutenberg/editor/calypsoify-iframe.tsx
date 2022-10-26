@@ -79,6 +79,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
+	unlockStyles?: boolean;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -777,6 +778,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
+		unlockStyles,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -802,6 +804,7 @@ const mapStateToProps = (
 		openSidebar: getQueryArg( window.location.href, 'openSidebar' ),
 		showDraftPostModal,
 		...pressThisData,
+		...( unlockStyles && { 'unlock-styles': true } ),
 	} );
 
 	// needed for loading the editor in SU sessions

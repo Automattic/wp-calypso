@@ -3,7 +3,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Modal } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
@@ -11,17 +11,63 @@ import image from './image.svg';
 import './modal.scss';
 
 const GlobalStylesModal = () => {
+	const params = new URLSearchParams( window.location.search );
+	const [ showUnlockStylesModal, setShowUnlockStylesModal ] = useState(
+		params.get( 'unlock-styles' )
+	);
+
 	const isVisible = useSelect(
-		( select ) => select( 'automattic/wpcom-global-styles' ).isModalVisible(),
-		[]
+		( select ) => {
+			if ( ! showUnlockStylesModal ) {
+				return select( 'automattic/wpcom-global-styles' ).isModalVisible();
+			}
+
+			// Show unlock styles modal on load, but wait for the global styles to be ready.
+			const { getEditedPostId, getEditedPostType } = select( 'core/edit-site' );
+			if ( getEditedPostType() === undefined || getEditedPostId() === undefined ) {
+				return false;
+			}
+
+			const {
+				getEditedEntityRecord,
+				__experimentalGetCurrentGlobalStylesId,
+				__experimentalGetCurrentThemeBaseGlobalStyles,
+			} = select( 'core' );
+			// Do not wait any longer if the experimental selectors are not available.
+			if (
+				! __experimentalGetCurrentGlobalStylesId ||
+				! __experimentalGetCurrentThemeBaseGlobalStyles
+			) {
+				return true;
+			}
+
+			const userGlobalStyles = getEditedEntityRecord(
+				'root',
+				'globalStyles',
+				__experimentalGetCurrentGlobalStylesId()
+			);
+			const baseGlobalStyles = __experimentalGetCurrentThemeBaseGlobalStyles();
+
+			return (
+				( !! userGlobalStyles?.settings || !! userGlobalStyles?.styles ) && !! baseGlobalStyles
+			);
+		},
+		[ showUnlockStylesModal ]
 	);
 	const { dismissModal } = useDispatch( 'automattic/wpcom-global-styles' );
 	const { set: setPreference } = useDispatch( 'core/preferences' );
+	const { enableComplementaryArea } = useDispatch( 'core/interface' );
 
 	// Hide the welcome guide modal, so it doesn't conflict with our modal.
 	useEffect( () => {
 		setPreference( 'core/edit-site', 'welcomeGuideStyles', false );
 	}, [ setPreference ] );
+
+	useEffect( () => {
+		if ( showUnlockStylesModal ) {
+			enableComplementaryArea( 'core/edit-site', 'edit-site/global-styles' );
+		}
+	}, [ enableComplementaryArea, showUnlockStylesModal ] );
 
 	useEffect( () => {
 		if ( isVisible ) {
@@ -33,6 +79,7 @@ const GlobalStylesModal = () => {
 
 	const closeModal = () => {
 		dismissModal();
+		setShowUnlockStylesModal( false );
 		recordTracksEvent( 'calypso_global_styles_gating_modal_dismiss', {
 			context: 'site-editor',
 		} );
@@ -51,13 +98,20 @@ const GlobalStylesModal = () => {
 		>
 			<div className="wpcom-global-styles-modal__text">
 				<h1 className="wpcom-global-styles-modal__heading">
-					{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
+					{ showUnlockStylesModal
+						? __( 'Publish your new site styles', 'full-site-editing' )
+						: __( 'A powerful new way to style your site', 'full-site-editing' ) }
 				</h1>
 				<p className="wpcom-global-styles-modal__description">
-					{ __(
-						"Change all of your site's fonts, colors and more. Available on any paid plan.",
-						'full-site-editing'
-					) }
+					{ showUnlockStylesModal
+						? __(
+								"To activate your site styles, and unlock advanced design customization tools, you'll need upgrade to a paid plan.",
+								'full-site-editing'
+						  )
+						: __(
+								"Change all of your site's fonts, colors and more. Available on any paid plan.",
+								'full-site-editing'
+						  ) }
 				</p>
 				<div className="wpcom-global-styles-modal__actions">
 					<Button variant="secondary" onClick={ closeModal }>
