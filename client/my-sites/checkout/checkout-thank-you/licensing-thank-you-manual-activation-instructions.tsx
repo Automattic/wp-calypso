@@ -65,7 +65,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 				}
 				footerImage={ licensingActivationPluginInstall }
 				showContactUs
-				showProgressIndicator
+				showProgressIndicator={ false }
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
 			>
