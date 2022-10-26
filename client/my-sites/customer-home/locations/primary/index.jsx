@@ -25,7 +25,7 @@ import {
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 	TASK_PROMOTE_POST,
-	TASK_BUILT_BY,
+	TASK_PROMOTE_BUILT_BY,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
@@ -33,7 +33,6 @@ import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/ce
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
 import SiteLaunchSellerUpsell from 'calypso/my-sites/customer-home/cards/notices/site-launch-seller-upsell';
-import BuiltBy from 'calypso/my-sites/customer-home/cards/tasks/built-by';
 import Cloudflare from 'calypso/my-sites/customer-home/cards/tasks/cloudflare';
 import ConnectAccounts from 'calypso/my-sites/customer-home/cards/tasks/connect-accounts';
 import EarnFeatures from 'calypso/my-sites/customer-home/cards/tasks/earn-features';
@@ -41,6 +40,7 @@ import FindDomain from 'calypso/my-sites/customer-home/cards/tasks/find-domain';
 import GoMobile from 'calypso/my-sites/customer-home/cards/tasks/go-mobile';
 import Marketplace from 'calypso/my-sites/customer-home/cards/tasks/marketplace';
 import Podcasting from 'calypso/my-sites/customer-home/cards/tasks/podcasting';
+import PromoteBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/promote-built-by';
 import PromotePost from 'calypso/my-sites/customer-home/cards/tasks/promote-post';
 import { ReactivateExpiredPlan } from 'calypso/my-sites/customer-home/cards/tasks/reactivate-expired-plan';
 import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
@@ -74,7 +74,7 @@ const cardComponents = {
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
-	[ TASK_BUILT_BY ]: BuiltBy,
+	[ TASK_PROMOTE_BUILT_BY ]: PromoteBuiltBy,
 };
 
 const urgentTasks = [ TASK_RENEW_EXPIRED_PLAN, TASK_REACTIVATE_EXPIRED_PLAN ];
