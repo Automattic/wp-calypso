@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlan,
 	getProductFromSlug,
@@ -16,7 +15,6 @@ import {
 import { Card } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { getIntroductoryOfferIntervalDisplay } from '@automattic/wpcom-checkout';
-import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -25,7 +23,6 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import UserItem from 'calypso/components/user';
 import useUserLicenseBySubscriptionQuery from 'calypso/data/jetpack-licensing/use-user-license-by-subscription-query';
@@ -501,13 +498,6 @@ function PurchaseMetaExpiration( {
 	const hideAutoRenew =
 		purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) && ! isRenewable( purchase );
 
-	const [ isGiftingEnabled, setGifting ] = useState( true );
-	useEffect( () => {
-		if ( isGiftingEnabled ) {
-			setGifting( isGiftingEnabled );
-		}
-	}, [ isGiftingEnabled ] );
-
 	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
 		return null;
 	}
@@ -566,21 +556,6 @@ function PurchaseMetaExpiration( {
 			} );
 		}
 
-		const toggleLabel = (
-			<>
-				{ translate( 'Allow users to cover your subscription' ) }
-				<InfoPopover
-					screenReaderText={ translate( 'Learn more' ) }
-					icon="help-outline"
-					iconSize={ 14 }
-				>
-					{ translate(
-						'Proin nunc magna, ullamcorper id dapibus vel, suscipit eu mauris. Vivamus faucibus ligula et euismod vehicula. Curabitur suscipit diam nec luctus facilisis. Vestibulum dolor ante, suscipit vel euismod at, ornare ultrices nunc.'
-					) }
-				</InfoPopover>
-			</>
-		);
-
 		return (
 			<li className="manage-purchase__meta-expiration">
 				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
@@ -598,16 +573,6 @@ function PurchaseMetaExpiration( {
 				>
 					{ subsBillingText }
 				</span>
-				{ ! isAutorenewalEnabled && isEnabled( 'subscription-gifting' ) && (
-					<>
-						<ToggleControl
-							className="manage-purchase__gifting-toggle"
-							label={ toggleLabel }
-							checked={ isGiftingEnabled }
-							onChange={ setGifting }
-						/>
-					</>
-				) }
 			</li>
 		);
 	}

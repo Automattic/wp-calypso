@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -621,6 +623,40 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	giftOptions() {
+		const { translate, fields, onChangeField } = this.props;
+
+		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		return (
+			<>
+				<div className="site-settings__gifting-container">
+					<SettingsSectionHeader
+						title={ translate( 'Accept a gift subscription' ) }
+						id="site-settings__gifting-header"
+					/>
+					<CompactCard className="site-settings__gifting-explanation">
+						<ToggleControl
+							className="site-settings__gifting-toggle"
+							label={ translate(
+								'Allow supporters to cover the WordPress plan to keep the site content up and running'
+							) }
+							checked={ fields.wpcom_gitfing_subscription }
+							onChange={ onChangeField( 'wpcom_gitfing_subscription' ) }
+						/>
+						<p>
+							{ translate(
+								'Your readers will be able to pay for the WordPress subscription to keep the site and all the content that you have created up and running and available for everybody in the future.'
+							) }
+						</p>
+					</CompactCard>
+				</div>
+			</>
+		);
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -702,7 +738,7 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
-
+				{ this.giftOptions() }
 				{ this.toolbarOption() }
 			</div>
 		);
@@ -777,6 +813,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
+		wpcom_gitfing_subscription: true,
 		admin_url: '',
 	};
 
@@ -794,6 +831,9 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
+		wpcom_gitfing_subscription: settings.hasOwnProperty( 'wpcom_gitfing_subscription' )
+			? settings.wpcom_gitfing_subscription
+			: true,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
