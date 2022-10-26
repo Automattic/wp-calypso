@@ -123,9 +123,6 @@ export const Sharing = ( {
 		titleHeader = translate( 'Integrations' );
 	}
 
-	const upsellNudgeTitle = translate( 'Remove ads from your site with the No Ads add-on' );
-	const upsellNudgeHref = `/checkout/${ siteSlug }/no-ads`;
-
 	const selected = find( filters, { route: pathname } );
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -159,8 +156,8 @@ export const Sharing = ( {
 				<UpsellNudge
 					event="sharing_no_ads"
 					feature={ WPCOM_FEATURES_NO_ADVERTS }
-					href={ upsellNudgeHref }
-					title={ upsellNudgeTitle }
+					description={ translate( 'No ads with WordPress.com Premium.' ) }
+					title={ translate( 'No ads with WordPress.com Personal' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"
 					showIcon={ true }
