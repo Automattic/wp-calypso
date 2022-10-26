@@ -17,9 +17,8 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 	 * WP_REST_Help_Center_Authenticate constructor.
 	 */
 	public function __construct() {
-		$this->namespace                       = 'help-center/';
-		$this->rest_base                       = 'authenticate';
-		$this->wpcom_is_site_specific_endpoint = false;
+		$this->namespace = 'help-center';
+		$this->rest_base = '/authenticate/chat';
 	}
 
 	/**
@@ -28,7 +27,7 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 	public function register_rest_route() {
 		register_rest_route(
 			$this->namespace,
-			$this->rest_base . '/chat',
+			$this->rest_base,
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'get_chat_authentication' ),
@@ -42,11 +41,7 @@ class WP_REST_Help_Center_Authenticate extends \WP_REST_Controller {
 	 */
 	public function get_chat_authentication() {
 		$body = Client::wpcom_json_api_request_as_user(
-			'help/authenticate/chat',
-			'2',
-			array(
-				'method' => 'POST',
-			)
+			'help/authenticate/chat'
 		);
 
 		if ( is_wp_error( $body ) ) {

@@ -5,16 +5,26 @@ import type { HappychatAuth } from './types';
 
 export const happychatAuthQueryKey = 'getHappychatAuth-' + Date.now();
 
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
+
 export async function requestHappyChatAuth() {
-	return canAccessWpcomApis()
-		? ( ( await wpcomRequest( {
-				path: 'help/authenticate/chat',
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
-		  } ) ) as HappychatAuth )
-		: ( ( await apiFetch( {
-				path: '/help-center/authenticate/chat',
-		  } ) ) as HappychatAuth );
+	if ( canAccessWpcomApis() ) {
+		return ( await wpcomRequest( {
+			path: '/help/authenticate/chat',
+			apiNamespace: 'wpcom/v2',
+			apiVersion: '2',
+			method: 'POST',
+		} ) ) as HappychatAuth;
+	}
+
+	return ( await apiFetch( {
+		path: '/help-center/authenticate/chat',
+		method: 'POST',
+		global: true,
+	} as APIFetchOptions ) ) as HappychatAuth;
 }
 
 export default function useHappychatAuth( enabled = true ) {

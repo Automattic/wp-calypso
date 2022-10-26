@@ -73,6 +73,9 @@ class Help_Center {
 	 */
 	public function enqueue_script() {
 		$script_dependencies = $this->asset_file['dependencies'];
+		$logo_id             = get_option( 'site_logo' );
+
+		l( wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0] );
 
 		wp_enqueue_script(
 			'help-center-script',
@@ -108,9 +111,16 @@ class Help_Center {
 
 		wp_localize_script(
 			'help-center-script',
-			'helpCenterData',
+			'currentSite',
 			array(
-				'currentSiteId' => get_current_blog_id(),
+				'ID'   => \Jetpack_Options::get_option( 'id' ),
+				'name' => get_bloginfo( 'name' ),
+				'url'  => get_bloginfo( 'url' ),
+				'logo' => array(
+					'id'    => $logo_id,
+					'sizes' => array(),
+					'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+				),
 			)
 		);
 
@@ -121,6 +131,10 @@ class Help_Center {
 	 * Register the Help Center endpoints.
 	 */
 	public function register_rest_api() {
+		require_once __DIR__ . '/class-wp-rest-help-center-authenticate.php';
+		$controller = new WP_REST_Help_Center_Authenticate();
+		$controller->register_rest_route();
+
 		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
 		$controller = new WP_REST_Help_Center_Support_Availability();
 		$controller->register_rest_route();
