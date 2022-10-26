@@ -136,6 +136,7 @@
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
+		"themes/third-party-premium": false,
 		"unified-pages/virtual-home-page": false,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
