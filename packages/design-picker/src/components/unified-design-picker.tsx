@@ -4,7 +4,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf, hasTranslation } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
