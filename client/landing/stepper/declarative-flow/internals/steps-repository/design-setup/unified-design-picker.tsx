@@ -21,9 +21,9 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
