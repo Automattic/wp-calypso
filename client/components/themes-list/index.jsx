@@ -127,14 +127,7 @@ function ThemeBlock( props ) {
 }
 
 function Empty( props ) {
-	const {
-		wpOrgThemes,
-		emptyContent,
-		searchTerm,
-		upsellCardDisplayed,
-		translate,
-		recordTracksEvent,
-	} = props;
+	const { emptyContent, searchTerm, upsellCardDisplayed, translate, recordTracksEvent } = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
@@ -169,16 +162,7 @@ function Empty( props ) {
 	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
 			<div className="themes-list">
-				{ wpOrgThemes?.length ? (
-					wpOrgThemes.map( ( theme, index ) => (
-						<ThemeBlock
-							key={ 'theme-block' + index }
-							theme={ theme }
-							index={ index }
-							{ ...props }
-						/>
-					) )
-				) : (
+				{ <WPOrgMatchingThemes { ...props } /> || (
 					<div className="themes-list__not-found-text">
 						{ translate( 'No themes match your search' ) }
 					</div>
@@ -214,6 +198,30 @@ function Empty( props ) {
 			title={ translate( 'Sorry, no themes found.' ) }
 			line={ translate( 'Try a different search or more filters?' ) }
 		/>
+	);
+}
+
+function WPOrgMatchingThemes( props ) {
+	const { wpOrgThemes, searchTerm } = props;
+
+	const matchingThemes =
+		wpOrgThemes?.filter(
+			( wpOrgTheme ) =>
+				wpOrgTheme?.name?.toLowerCase() === searchTerm.toLowerCase() ||
+				wpOrgTheme?.id?.toLowerCase() === searchTerm.toLowerCase()
+		) || [];
+
+	if ( matchingThemes.length === 0 ) {
+		return null;
+	}
+
+	return (
+		<>
+			{ matchingThemes.map( ( theme, index ) => (
+				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+			) ) }
+			<TrailingItems />
+		</>
 	);
 }
 
