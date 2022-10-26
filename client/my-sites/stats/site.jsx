@@ -301,6 +301,13 @@ class StatsSite extends Component {
 					<div className="stats__module-list is-events stats__module--unified">
 						<div className="stats__module-column">
 							<StatsModule
+								path="emailsOpen"
+								moduleStrings={ moduleStrings.emailsOpenStats }
+								period={ this.props.period }
+								query={ query }
+								statType="statsEmailsOpen"
+							/>
+							<StatsModule
 								path="posts"
 								moduleStrings={ moduleStrings.posts }
 								period={ this.props.period }
