@@ -3,6 +3,8 @@ import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 import Gridicon from './gridicons';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 const Snippet = ( { note, snippet, url } ) => (
 	<a href={ url } { ...linkProps( note ) } target="_blank" rel="noopener noreferrer">
 		<span className="wpnc__excerpt">{ snippet.text }</span>
@@ -12,7 +14,9 @@ const Snippet = ( { note, snippet, url } ) => (
 class UserHeader extends Component {
 	render() {
 		const grav = this.props.user.media[ 0 ];
-		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
+		const grav_tag = (
+			<img src={ grav.url } height={ grav.height } width={ grav.width } alt="gravatar" />
+		);
 		const home_url = this.props.user.ranges[ 0 ].url;
 		const note = this.props.note;
 
@@ -25,6 +29,7 @@ class UserHeader extends Component {
 				);
 			}
 			return (
+				// eslint-disable-next-line jsx-a11y/anchor-is-valid
 				<a className={ classNames + ' disabled' } disabled="disabled">
 					{ children }
 				</a>
@@ -37,9 +42,10 @@ class UserHeader extends Component {
 			usercopy.text = this.props.user.text;
 			return (
 				<div className="wpnc__user wpnc__header">
-					<img src={ grav.url } />
+					<img src={ grav.url } alt="gravatar" />
 					<div
 						className="wpnc__user__usertitle"
+						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={ {
 							__html: html( usercopy ),
 						} }
@@ -65,7 +71,9 @@ class UserHeader extends Component {
 class WritingPromptHeader extends Component {
 	render() {
 		const icon = this.props.site.media[ 0 ];
-		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } />;
+		const img_tag = (
+			<img src={ icon.url } height={ icon.height } width={ icon.width } alt="prompt-icon" />
+		);
 		const home_url = this.props.site.ranges[ 0 ].url;
 		const settings_url =
 			'/me/notifications#' + home_url?.replace( 'https://', '' ).replace( 'http://', '' );
@@ -79,6 +87,7 @@ class WritingPromptHeader extends Component {
 				);
 			}
 			return (
+				// eslint-disable-next-line jsx-a11y/anchor-is-valid
 				<a className={ classNames + ' disabled' } disabled="disabled">
 					{ children }
 				</a>
@@ -107,6 +116,7 @@ class Header extends Component {
 		const subject = (
 			<div
 				className="wpnc__subject"
+				// eslint-disable-next-line react/no-danger
 				dangerouslySetInnerHTML={ {
 					__html: html( this.props.subject ),
 				} }
@@ -171,7 +181,7 @@ class SummaryInSingle extends Component {
 		return (
 			<Header
 				note={ this.props.note }
-				snippet={ '' }
+				snippet=""
 				subject={ this.props.note.header[ 0 ] }
 				url={ header_url }
 			/>
