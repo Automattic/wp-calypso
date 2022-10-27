@@ -7,7 +7,6 @@ interface PatternSelectorItemProps {
 	patternPostID: number | null;
 	title?: string;
 	stylesheet: string;
-	theme: string;
 	value?: string;
 }
 

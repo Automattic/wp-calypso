@@ -13,7 +13,6 @@ interface PagePatternsPluginProps {
 	patterns: PatternDefinition[];
 	locale?: string;
 	stylesheet?: string;
-	theme?: string;
 }
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ) {

@@ -16,7 +16,6 @@ interface PatternSelectorControlProps {
 	siteInformation?: Record< string, string >;
 	patterns?: PatternDefinition[];
 	stylesheet?: string;
-	theme?: string;
 }
 
 export const PatternSelectorControl = ( {
@@ -25,7 +24,6 @@ export const PatternSelectorControl = ( {
 	legendLabel,
 	patterns = [],
 	stylesheet = '',
-	theme = 'maywood',
 	locale = 'en',
 	onPatternSelect = noop,
 	siteInformation = {},
@@ -54,7 +52,6 @@ export const PatternSelectorControl = ( {
 							onSelect={ onPatternSelect }
 							patternPostID={ ID }
 							stylesheet={ stylesheet }
-							theme={ theme }
 							locale={ locale }
 						/>
 					</li>
