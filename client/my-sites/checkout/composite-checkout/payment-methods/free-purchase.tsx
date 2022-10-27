@@ -1,8 +1,13 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 export function createFreePaymentMethod(): PaymentMethod {
 	return {
@@ -23,6 +28,8 @@ function FreePurchaseSubmitButton( {
 	onClick?: ProcessPayment;
 } ) {
 	const { formStatus } = useFormStatus();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -45,24 +52,56 @@ function FreePurchaseSubmitButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } />
+			<ButtonContents formStatus={ formStatus } responseCart={ responseCart } />
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus }: { formStatus: FormStatus } ) {
+function ButtonContents( {
+	formStatus,
+	responseCart,
+}: {
+	formStatus: FormStatus;
+	responseCart: ResponseCart;
+} ) {
 	const { __ } = useI18n();
+
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return <>{ __( 'Processing…' ) }</>;
 	}
+
 	if ( formStatus === FormStatus.READY ) {
+		if ( doesPurchaseHaveFullCredits( responseCart ) ) {
+			const total = responseCart.sub_total_with_taxes_display;
+			/* translators: %s is the total to be paid in localized currency */
+			return <>{ sprintf( __( 'Pay %s with credits' ), total ) }</>;
+		}
 		return <>{ __( 'Complete Checkout' ) }</>;
 	}
+
 	return <>{ __( 'Please wait…' ) }</>;
 }
 
 function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
+	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
+		return (
+			<Fragment>
+				<div>
+					{
+						/* translators: %(amount)s is the total amount of credits available in localized currency */
+						sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
+							amount: responseCart.credits_display,
+						} )
+					}
+				</div>
+				<WordPressLogo />
+			</Fragment>
+		);
+	}
 
 	return (
 		<Fragment>
@@ -74,5 +113,12 @@ function WordPressFreePurchaseLabel() {
 
 function WordPressFreePurchaseSummary() {
 	const { __ } = useI18n();
+	const cartKey = useCartKey();
+	const { responseCart } = useShoppingCart( cartKey );
+
+	if ( doesPurchaseHaveFullCredits( responseCart ) ) {
+		return <div>{ __( 'WordPress.com Credits' ) }</div>;
+	}
+
 	return <div>{ __( 'Free Purchase' ) }</div>;
 }

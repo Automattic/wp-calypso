@@ -6,7 +6,7 @@ export default function isPaymentMethodEnabled(
 	slug: CheckoutPaymentMethodSlug,
 	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
-	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+	const alwaysEnabledPaymentMethods = [ 'free-purchase' ];
 	if ( alwaysEnabledPaymentMethods.includes( slug ) ) {
 		return true;
 	}
