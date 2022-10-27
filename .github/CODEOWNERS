@@ -115,7 +115,7 @@
 /packages/languages @Automattic/i18n
 
 # E2E specs
-/test/e2e @WunderBart @Automattic/kitkat @worldomonation
+/test/e2e @Automattic/kitkat @worldomonation
 /packages/calypso-e2e @Automattic/kitkat @worldomonation
 
 # Node updates
@@ -149,3 +149,13 @@
 /packages/wpcom.js/src/lib/domain.email.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domain.js @Automattic/nomado
 /packages/wpcom.js/src/lib/domains.js @Automattic/nomado
+
+#Plans
+/client/signup/steps/plans @Automattic/martech-autobots
+/client/lib/plans @Automattic/martech-autobots
+/client/my-sites/plan-features-comparison @Automattic/martech-autobots
+/client/my-sites/plan-features @Automattic/martech-autobots
+/client/my-sites/plans-comparison @Automattic/martech-autobots
+/client/my-sites/plans-features-main @Automattic/martech-autobots
+/client/my-sites/plan-price @Automattic/martech-autobots
+/packages/calypso-products/src/plans-list.tsx @Automattic/martech-autobots

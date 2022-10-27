@@ -53,6 +53,7 @@ import {
 	isThemeActive,
 	isThemePremium,
 	isPremiumThemeAvailable,
+	isSiteEligibleForBundledSoftware,
 	isWpcomTheme as isThemeWpcom,
 	isWporgTheme,
 	getCanonicalTheme,
@@ -102,6 +103,7 @@ class ThemeSheet extends Component {
 		siteSlug: PropTypes.string,
 		backPath: PropTypes.string,
 		isWpcomTheme: PropTypes.bool,
+		softLaunched: PropTypes.bool,
 		defaultOption: PropTypes.shape( {
 			label: PropTypes.string,
 			action: PropTypes.func,
@@ -192,7 +194,7 @@ class ThemeSheet extends Component {
 	};
 
 	renderBar = () => {
-		const { author, name, translate } = this.props;
+		const { author, name, translate, softLaunched } = this.props;
 
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
 		const title = name || placeholder;
@@ -200,7 +202,14 @@ class ThemeSheet extends Component {
 
 		return (
 			<div className="theme__sheet-bar">
-				<span className="theme__sheet-bar-title">{ title }</span>
+				<span className="theme__sheet-bar-title">
+					{ title }
+					{ softLaunched && (
+						<span className="theme__sheet-bar-soft-launched">
+							{ translate( 'Available to A8C-only' ) }
+						</span>
+					) }
+				</span>
 				<span className="theme__sheet-bar-tag">{ tag }</span>
 			</div>
 		);
@@ -431,7 +440,7 @@ class ThemeSheet extends Component {
 				</div>
 				<Button
 					primary={ buttonCount === 1 }
-					href={ '/help/contact/' }
+					href="/help/contact/"
 					onClick={ this.trackContactUsClick }
 				>
 					{ this.props.translate( 'Contact us' ) }
@@ -654,12 +663,14 @@ class ThemeSheet extends Component {
 			isAtomic,
 			isPremium,
 			isBundledSoftwareSet,
+			isSiteBundleEligible,
 			isJetpack,
 			isWpcomTheme,
 			isVip,
 			translate,
 			canUserUploadThemes,
 			isWPForTeamsSite,
+			isLoggedIn,
 		} = this.props;
 
 		const analyticsPath = `/theme/${ id }${ section ? '/' + section : '' }${
@@ -706,42 +717,42 @@ class ThemeSheet extends Component {
 
 		// Show theme upsell banner on Simple sites.
 		const hasWpComThemeUpsellBanner =
-			! isJetpack &&
-			isPremium &&
-			! isBundledSoftwareSet &&
-			! hasUnlimitedPremiumThemes &&
-			! isVip &&
-			! retired;
+			( ! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired ) ||
+			isBundledSoftwareSet;
 		// Show theme upsell banner on Jetpack sites.
 		const hasWpOrgThemeUpsellBanner =
 			! isAtomic && ! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
 		// Show theme upsell banner on Atomic sites.
 		const hasThemeUpsellBannerAtomic =
-			isAtomic &&
-			isPremium &&
-			! isBundledSoftwareSet &&
-			! canUserUploadThemes &&
-			! hasUnlimitedPremiumThemes;
+			isAtomic && isPremium && ! canUserUploadThemes && ! hasUnlimitedPremiumThemes;
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
 
 		if ( hasWpComThemeUpsellBanner ) {
+			const upsellTitle = isBundledSoftwareSet
+				? translate( 'Access this WooCommerce theme with a Business plan!' )
+				: translate( 'Access this theme for FREE with a Premium or Business plan!' );
+			const upsellDescription = isBundledSoftwareSet
+				? translate(
+						'This theme comes bundled with the WooCommerce plugin. Upgrade to a Business plan to select this theme and unlock all its features.'
+				  )
+				: translate(
+						'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
+				  );
+
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
 					className="theme__page-upsell-banner"
-					title={ translate( 'Access this theme for FREE with a Premium or Business plan!' ) }
-					description={ preventWidows(
-						translate(
-							'Instantly unlock all premium themes, more storage space, advanced customization, video support, and more when you upgrade.'
-						)
-					) }
+					title={ upsellTitle }
+					description={ preventWidows( upsellDescription ) }
 					event="themes_plan_particular_free_with_plan"
 					feature={ WPCOM_FEATURES_PREMIUM_THEMES }
 					forceHref={ true }
 					href={ plansUrl }
 					showIcon={ true }
+					forceDisplay={ isBundledSoftwareSet && ! isSiteBundleEligible }
 				/>
 			);
 		}
@@ -785,11 +796,15 @@ class ThemeSheet extends Component {
 				}
 				<QuerySitePlans siteId={ siteId } />
 				<DocumentHead title={ title } meta={ metas } />
-				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
+				<PageViewTracker
+					path={ analyticsPath }
+					title={ analyticsPageTitle }
+					properties={ { is_logged_in: isLoggedIn } }
+				/>
 				{ this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
-				<ThanksModal source={ 'details' } />
-				<AutoLoadingHomepageModal source={ 'details' } />
+				<ThanksModal source="details" />
+				<AutoLoadingHomepageModal source="details" />
 				{ pageUpsellBanner }
 				<HeaderCake
 					className="theme__sheet-action-bar"
@@ -905,6 +920,7 @@ export default connect(
 			isPremium: isThemePremium( state, id ),
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			isBundledSoftwareSet: doesThemeBundleSoftwareSet( state, id ),
+			isSiteBundleEligible: isSiteEligibleForBundledSoftware( state, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),
 			showTryAndCustomize: shouldShowTryAndCustomize( state, id, siteId ),
@@ -913,6 +929,7 @@ export default connect(
 			canonicalUrl: localizeUrl( englishUrl, getLocaleSlug(), false ).replace( /\/$/, '' ),
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			softLaunched: theme?.soft_launched,
 		};
 	},
 	{

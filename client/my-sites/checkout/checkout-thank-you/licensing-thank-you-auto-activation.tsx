@@ -247,7 +247,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		<>
 			<PageViewTracker
 				options={ { useJetpackGoogleAnalytics: true } }
-				path={ '/checkout/jetpack/thank-you/licensing-auto-activate/:product' }
+				path="/checkout/jetpack/thank-you/licensing-auto-activate/:product"
 				properties={ { product_slug: productSlug } }
 				title="Checkout > Jetpack Thank You Licensing Auto Activation"
 			/>

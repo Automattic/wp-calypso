@@ -68,14 +68,7 @@ const IntroPricingBanner: FunctionComponent< Props > = ( { productSlugs, siteId 
 				{ ( discountPercentage > 0 || isLoading ) && (
 					<div className="intro-pricing-banner__content">
 						<div className="intro-pricing-banner__item">
-							<img
-								className="intro-pricing-banner__item-icon"
-								src={ rocket }
-								alt={ translate( 'Rocket representing %(percent)d%% sale', {
-									args: { percent: discountPercentage },
-									textOnly: true,
-								} ) }
-							/>
+							<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
 							<span className="intro-pricing-banner__item-label">
 								{ preventWidows(
 									translate( 'Get up to %(percent)d%% off your first year.', {

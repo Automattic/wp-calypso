@@ -177,4 +177,23 @@ $design-button-primary-hover-color: var(--color-primary-60);
 		font-weight: 500;
 		margin-bottom: 5px;
 	}
+
+	.upgrade-modal__product-list {
+		width: 100%;
+		font-size: 0.875rem;
+
+		tr {
+			td {
+				padding: 15px 0;
+			}
+
+			&:first-child td {
+				border-bottom: 1px solid #ddd;
+			}
+
+			td:first-child {
+				width: 60%;
+			}
+		}
+	}
 }

@@ -1,5 +1,12 @@
 import languages, { LanguageSlug } from '@automattic/languages';
-import { UseQueryResult, UseQueryOptions, useInfiniteQuery, InfiniteData } from 'react-query';
+import {
+	UseQueryResult,
+	UseQueryOptions,
+	useInfiniteQuery,
+	InfiniteData,
+	QueryKey,
+	QueryFunction,
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
@@ -20,7 +27,9 @@ import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './typ
  */
 const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
-	if ( ! icons ) return defaultIconUrl;
+	if ( ! icons ) {
+		return defaultIconUrl;
+	}
 
 	let iconsObject: Record< string, Icon > = {};
 	try {
@@ -47,7 +56,9 @@ const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
 		iconByResolution.svg ||
 		iconByResolution.default;
 
-	if ( ! icon ) return defaultIconUrl;
+	if ( ! icon ) {
+		return defaultIconUrl;
+	}
 
 	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
 };
@@ -63,7 +74,9 @@ function buildDefaultIconUrl( pluginSlug: string ) {
 const mapStarRatingToPercent = ( starRating?: number ) => ( ( starRating ?? 0 ) / 5 ) * 100;
 
 const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
-	if ( ! results ) return [];
+	if ( ! results ) {
+		return [];
+	}
 	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin: Plugin = {
 			name: hit.plugin.title, // TODO: add localization
@@ -77,7 +90,7 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 			num_ratings: hit.plugin.num_ratings,
 			support_threads: hit[ 'plugin.support_threads' ],
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
-			active_installs: hit[ 'plugin.active_installs' ],
+			active_installs: hit.plugin.active_installs,
 			last_updated: hit.modified,
 			short_description: hit.plugin.excerpt, // TODO: add localization
 			icon: createIconUrl( hit.slug, hit.plugin.icons ),
@@ -101,39 +114,49 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
+export const getESPluginsInfiniteQueryParams = (
+	options: PluginQueryOptions,
+	locale: string
+): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
+	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
+	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
+	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const fetchFn = ( { pageParam = 1 } ) =>
+		search( {
+			query: searchTerm,
+			author,
+			groupId: 'wporg',
+			category: options.category,
+			pageHandle: pageParam + '',
+			pageSize,
+			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
+		} );
+	return [ cacheKey, fetchFn ];
+};
+
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
 	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
-	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
-	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
 
-	return useInfiniteQuery(
-		getPluginsListKey( 'DEBUG-new-site-seach', options, true ),
-		( { pageParam } ) =>
-			search( {
-				query: searchTerm,
-				author,
-				groupId: 'wporg',
-				pageHandle: pageParam,
-				pageSize,
-				locale: getWpLocaleBySlug( options.locale || locale ),
-			} ),
-		{
-			select: ( data: InfiniteData< ESResponse > ) => {
-				return {
-					...data,
-					plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
-					pagination: { results: data.pages[ 0 ]?.data?.total },
-				};
-			},
-			getNextPageParam: ( lastPage ) => {
-				return lastPage.data.page_handle || undefined;
-			},
-			enabled,
-			staleTime,
-			refetchOnMount,
-		}
-	);
+	return useInfiniteQuery( ...getESPluginsInfiniteQueryParams( options, locale ), {
+		select: ( data: InfiniteData< ESResponse > ) => {
+			return {
+				...data,
+				plugins: mapIndexResultsToPluginData( data.pages.flatMap( ( p ) => p.data.results ) ),
+				pagination: {
+					results: data.pages[ 0 ]?.data?.total,
+					pages: data?.pages || [],
+					page: data?.pageParams?.length || 0,
+				},
+			};
+		},
+		getNextPageParam: ( lastPage ) => {
+			return lastPage.data.page_handle || undefined;
+		},
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
 };

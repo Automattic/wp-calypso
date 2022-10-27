@@ -34,7 +34,7 @@
 	"facebook_app_id": "611241942420191",
 	"livechat_support_locales": [ "en", "en-gb" ],
 	"olark_chat_identity": false,
-	"dsp_stripe_pub_key": "pk_test_51L5t7gJQesStQBzSdEWhhLQtVOYNQFhZovJa6WkS7Mw0XcgPsfk7RcIMWsK2nHqjqxbUmTHgorTkctjjWX9948Fp00PKtwCxYq",
+	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"upwork_support_locales": [
 		"de",
@@ -173,7 +173,7 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "#055d9c",
+	"theme_color": "",
 	"reskinned_flows": [
 		"launch-site",
 		"onboarding",

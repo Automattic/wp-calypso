@@ -8,6 +8,7 @@ import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-brow
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
+import { PaidPluginsSection } from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
 
 /**
@@ -62,7 +63,7 @@ const PluginsSearchResultPage = ( {
 			);
 		}
 
-		if ( searchTerm && pluginsPagination ) {
+		if ( searchTerm && pluginsPagination.page ) {
 			dispatch(
 				recordTracksEvent( 'calypso_plugins_search_results_page', {
 					search_term: searchTerm,
@@ -72,7 +73,7 @@ const PluginsSearchResultPage = ( {
 				} )
 			);
 		}
-	}, [ searchTerm, pluginsPagination, dispatch, siteId ] );
+	}, [ searchTerm, pluginsPagination.page, pluginsPagination.results, dispatch, siteId ] );
 
 	if ( pluginsBySearchTerm.length > 0 || isFetchingPluginsBySearchTerm ) {
 		let title = translate( 'Search results for "%(searchTerm)s"', {
@@ -117,6 +118,8 @@ const PluginsSearchResultPage = ( {
 				<PluginsBrowserList
 					plugins={ pluginsBySearchTerm.filter( isNotBlocked ) }
 					listName={ 'plugins-browser-list__search-for_' + searchTerm.replace( /\s/g, '-' ) }
+					listType="search"
+					title={ translate( 'Search Results' ) }
 					subtitle={
 						<>
 							{ title }
@@ -140,11 +143,12 @@ const PluginsSearchResultPage = ( {
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="plugins-browser__no-results">
 			<NoResults
-				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-					textOnly: true,
-					components: { searchTerm: <em>{ searchTerm }</em> },
-				} ) }
+				text={ translate( 'No matches found' ) }
+				subtitle={ translate(
+					'Try using different keywords or check below our must-have premium plugins'
+				) }
 			/>
+			<PaidPluginsSection noHeader />
 		</div>
 	);
 };

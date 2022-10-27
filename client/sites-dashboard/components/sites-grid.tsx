@@ -37,7 +37,7 @@ export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => 
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
 				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
-			<LinkInBioBanner sites={ sites } displayMode={ 'grid' } />
+			<LinkInBioBanner displayMode="grid" />
 		</div>
 	);
 };

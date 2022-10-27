@@ -39,7 +39,7 @@ class SocialLogin extends Component {
 		return (
 			<div>
 				{ errorUpdatingSocialConnection && (
-					<Notice status={ 'is-error' } showDismiss={ false }>
+					<Notice status="is-error" showDismiss={ false }>
 						{ errorUpdatingSocialConnection.message }
 					</Notice>
 				) }

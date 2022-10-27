@@ -97,11 +97,12 @@ body.is-section-plugins.theme-default.color-scheme {
 	padding-top: 54px;
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 350px;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
 	grid-column-gap: 60px;
 	grid-template-areas:
 		"header header actions"
 		"content content actions";
+	grid-auto-rows: auto 1fr;
 
 	@include breakpoint-deprecated( "<1280px" ) {
 		grid-template-areas:
@@ -109,7 +110,7 @@ body.is-section-plugins.theme-default.color-scheme {
 			"actions actions actions"
 			"content content content";
 		grid-template-columns: repeat(3, minmax(0, 1fr));
-		padding-top: 0;
+		padding-top: 20px;
 	}
 
 	.plugin-details__header {
@@ -305,7 +306,7 @@ body.is-section-plugins #primary {
 
 	.categories__menu {
 		.components-button {
-			&:not(.is-pressed) {
+			&:not(.is-pressed):not(.is-selected) {
 				color: var(--studio-blue-90);
 			}
 			&.is-pressed {

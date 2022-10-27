@@ -159,7 +159,7 @@ class People extends Component {
 					/>
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
+						illustration="/calypso/images/illustrations/illustration-404.svg"
 					/>
 				</Main>
 			);
@@ -181,18 +181,16 @@ class People extends Component {
 					hasScreenOptions
 				/>
 				<div>
-					{
-						<PeopleSectionNav
-							isJetpack={ isJetpack }
-							isPrivate={ isPrivate }
-							isComingSoon={ isComingSoon }
-							canViewPeople={ canViewPeople }
-							search={ search }
-							filter={ filter }
-							site={ site }
-							includeSubscriberImporter={ includeSubscriberImporter }
-						/>
-					}
+					<PeopleSectionNav
+						isJetpack={ isJetpack }
+						isPrivate={ isPrivate }
+						isComingSoon={ isComingSoon }
+						canViewPeople={ canViewPeople }
+						search={ search }
+						filter={ filter }
+						site={ site }
+						includeSubscriberImporter={ includeSubscriberImporter }
+					/>
 					{ isWPForTeamsSite && <P2TeamBanner context={ filter } site={ site } /> }
 					{ this.renderPeopleList() }
 				</div>

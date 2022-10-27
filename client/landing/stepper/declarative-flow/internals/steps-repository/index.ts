@@ -31,6 +31,7 @@ export { default as wooConfirm } from './woo-confirm';
 export { default as wooVerifyEmail } from './woo-verify-email';
 export { default as editEmail } from './edit-email';
 export { default as newsletterSetup } from './newsletter-setup';
+export { default as newsletterPostSetup } from './newsletter-post-setup';
 export { default as difmStartingPoint } from './difm-starting-point';
 export { default as letsGetStarted } from './lets-get-started';
 export { default as intro } from './intro';
@@ -41,6 +42,7 @@ export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
+export { default as storeProfiler } from './store-profiler';
 
 export type StepPath =
 	| 'courses'
@@ -82,7 +84,9 @@ export type StepPath =
 	| 'linkInBioSetup'
 	| 'linkInBioPostSetup'
 	| 'newsletterSetup'
+	| 'newsletterPostSetup'
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
-	| 'getCurrentThemeSoftwareSets';
+	| 'getCurrentThemeSoftwareSets'
+	| 'storeProfiler';

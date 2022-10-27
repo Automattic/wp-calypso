@@ -44,12 +44,24 @@ $post-item-background-color: var(--color-surface);
 		vertical-align: bottom;
 	}
 
-	a.post-item__title-link,
-	a.post-item__title-link:visited {
+	.post-item__title-link,
+	.post-item__title-link:visited {
 		color: var(--color-neutral-70);
 		display: block;
 		padding-bottom: 2px;
 		padding-right: 8px;
+
+		.post-item__panel.is-untitled & {
+			color: var(--color-text-subtle);
+			font-style: italic;
+		}
+	}
+
+	a.post-item__title-view,
+	a.post-item__title-view:visited {
+		color: var(--color-neutral-70);
+		display: flex;
+		align-items: center;
 
 		&:hover {
 			color: var(--color-neutral-50);
@@ -58,6 +70,10 @@ $post-item-background-color: var(--color-surface);
 		.post-item__panel.is-untitled & {
 			color: var(--color-text-subtle);
 			font-style: italic;
+		}
+
+		.post-item__external-icon {
+			margin-left: 2px;
 		}
 	}
 

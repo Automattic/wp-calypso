@@ -46,6 +46,12 @@ function getTourAssets( key: string ): TourAsset | undefined {
 				type: 'image/gif',
 			},
 		},
+		videomakerWelcome: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-welcome.png`, type: 'image/png' },
+		},
+		videomakerEdit: {
+			desktop: { src: `${ CDN_PREFIX }/slide-videomaker-edit.png`, type: 'image/png' },
+		},
 	} as { [ key: string ]: TourAsset };
 
 	return tourAssets[ key ];
@@ -54,8 +60,10 @@ function getTourAssets( key: string ): TourAsset | undefined {
 function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
-	isSiteEditor = false
+	isSiteEditor = false,
+	themeName: string | null = null
 ): WpcomStep[] {
+	const isVideoMaker = [ 'videomaker', 'videomaker white' ].includes( themeName ?? '' );
 	return [
 		{
 			slug: 'welcome',
@@ -68,7 +76,7 @@ function getTourSteps(
 					),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'welcome' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
 			},
 			options: {
 				classNames: {
@@ -133,13 +141,18 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Click a block to change it', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Use the toolbar to change the appearance of a selected block. Try making it bold.',
-						'full-site-editing'
-					),
+					desktop: isVideoMaker
+						? __(
+								'Use the toolbar to change the appearance of a selected block. Try replacing a video!',
+								'full-site-editing'
+						  )
+						: __(
+								'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
-				imgSrc: getTourAssets( 'makeBold' ),
+				imgSrc: getTourAssets( isVideoMaker ? 'videomakerEdit' : 'makeBold' ),
 			},
 			options: {
 				classNames: {

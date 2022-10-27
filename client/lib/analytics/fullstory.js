@@ -79,7 +79,9 @@ function maybeAddFullStoryScript() {
 		y.parentNode.insertBefore( o, y );
 		g.identify = function ( i, v, s ) {
 			g( l, { uid: i }, s );
-			if ( v ) g( l, v, s );
+			if ( v ) {
+				g( l, v, s );
+			}
 		};
 		g.setUserVars = function ( v, s ) {
 			g( l, v, s );
@@ -117,10 +119,11 @@ function maybeAddFullStoryScript() {
 		g._w[ y ] = m[ y ];
 		y = 'fetch';
 		g._w[ y ] = m[ y ];
-		if ( m[ y ] )
+		if ( m[ y ] ) {
 			m[ y ] = function () {
 				return g._w[ y ].apply( this, arguments );
 			};
+		}
 		g._v = '1.3.0';
 	} )( window, document, window._fs_namespace, 'script', 'user' );
 }

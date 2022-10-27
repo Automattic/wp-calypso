@@ -4,7 +4,7 @@ const contextLinks = {
 		post_id: 80368,
 	},
 	advertising: {
-		link: 'https://wordpress.com/advertising/',
+		link: 'https://wordpress.com/support/promote-a-post/',
 		post_id: 213203,
 	},
 	autorenewal: {

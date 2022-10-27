@@ -3,7 +3,7 @@ import { Button, Dialog } from '@automattic/components';
 import { Button as ButtonType } from '@automattic/components/dist/types/dialog/button-bar';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import page from 'page';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryPurchaseCancellationOffers from 'calypso/components/data/query-purchase-cancellation-offers';
@@ -67,10 +67,11 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 
 		return steps.CANCELLATION_REASON_STEP;
-	}, [ flowType, purchase, steps ] );
+	}, [ flowType ] );
 	const [ cancellationStep, setCancellationStep ] = useState( initialCancellationStep ); // set initial state
 	const [ surveyAnswerId, setSurveyAnswerId ] = useState< string | null >( null );
 	const [ surveyAnswerText, setSurveyAnswerText ] = useState< TranslateResult | string >( '' );
+	const [ disableContinuation, setDisableContinuation ] = useState< boolean >( false );
 
 	const isAtomicSite = useSelector( ( state ) =>
 		isSiteAutomatedTransfer( state, purchase.siteId )
@@ -103,15 +104,10 @@ const CancelJetpackForm: React.FC< Props > = ( {
 
 	const offerDiscountBasedFromPurchasePrice = useMemo( () => {
 		if ( cancellationOffer ) {
-			// Get the percentage difference in the price of the offer over the price of the purchase.
-			// toFixed will round to the 3rd decimal place here.
-			// This will catch floats like .1999, and round them up.
-			const offerPercentageOfPurchaseAmount = Number(
-				1 - cancellationOffer.rawPrice / purchase.amount
-			).toFixed( 3 );
-			// Since toFixed returns a string, we use parseFloat here to get the decimal value.
-			// floor is used to get a whole percentage number value.
-			return Math.floor( Number.parseFloat( offerPercentageOfPurchaseAmount ) * 100 );
+			const offerDiscountPercentage = ( 1 - cancellationOffer.rawPrice / purchase.amount ) * 100;
+
+			// Round the cancellation offer discount percentage to the nearest whole number
+			return Math.round( offerDiscountPercentage );
 		}
 		return 0;
 	}, [ cancellationOffer, purchase ] );
@@ -120,24 +116,27 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	 * Set the cancellation flow back to the beginning
 	 * Clear out stored state for the flow
 	 */
-	const resetSurveyState = () => {
+	const resetSurveyState = useCallback( () => {
 		setCancellationStep( initialCancellationStep );
 		setSurveyAnswerId( null );
 		setSurveyAnswerText( '' );
-	};
+	}, [ initialCancellationStep ] );
 
 	// Record an event for Tracks
-	const recordEvent = ( name: string, properties = {} ) => {
-		dispatch(
-			recordTracksEvent( name, {
-				cancellation_flow: flowType,
-				product_slug: purchase.productSlug,
-				is_atomic: isAtomicSite,
+	const recordEvent = useCallback(
+		( name: string, properties = {} ) => {
+			dispatch(
+				recordTracksEvent( name, {
+					cancellation_flow: flowType,
+					product_slug: purchase.productSlug,
+					is_atomic: isAtomicSite,
 
-				...properties,
-			} )
-		);
-	};
+					...properties,
+				} )
+			);
+		},
+		[ dispatch, flowType, isAtomicSite, purchase.productSlug ]
+	);
 
 	/**
 	 * Get possible steps for the survey
@@ -177,12 +176,8 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 		return availableSteps;
 	}, [
-		CANCEL_FLOW_TYPE,
 		flowType,
-		steps,
 		purchase,
-		isPurchaseCancelable,
-		canReenableAutoRenewal,
 		cancellationOffer,
 		shouldProvideCancellationOffer,
 		isOfferPriceSameOrLowerThanPurchasePrice,
@@ -199,14 +194,14 @@ const CancelJetpackForm: React.FC< Props > = ( {
 	// run on mount
 	useEffect( () => {
 		resetSurveyState();
-	}, [] );
+	}, [ resetSurveyState ] );
 
 	// if isVisible changes
 	useEffect( () => {
 		if ( isVisible && cancellationStep === firstStep ) {
 			recordEvent( 'calypso_purchases_cancel_form_start' );
 		}
-	}, [ isVisible, firstStep ] );
+	}, [ isVisible, firstStep, cancellationStep, recordEvent ] );
 
 	const handleCloseDialog = () => {
 		props.onClose();
@@ -225,15 +220,27 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		}
 	};
 
-	const setSurveyStep = ( stepFunction: ( step: string, steps: string[] ) => string ) => {
-		const newStep = stepFunction( cancellationStep, availableSurveySteps );
+	const setSurveyStep = useCallback(
+		( stepFunction: ( step: string, steps: string[] ) => string ) => {
+			const newStep = stepFunction( cancellationStep, availableSurveySteps );
 
-		setCancellationStep( newStep );
+			setCancellationStep( newStep );
 
-		// record tracks event
-		// since the steps used for the Jetpack cancellation flow are different, use a different event name for Tracks
-		recordEvent( 'calypso_purchases_cancel_jetpack_survey_step', { new_step: newStep } );
-	};
+			// record tracks event
+			// since the steps used for the Jetpack cancellation flow are different, use a different event name for Tracks
+			recordEvent( 'calypso_purchases_cancel_jetpack_survey_step', { new_step: newStep } );
+		},
+		[ availableSurveySteps, cancellationStep, recordEvent ]
+	);
+
+	// Disable continuation button if "Other" is selected but no reason is written in
+	useEffect( () => {
+		if ( surveyAnswerId === 'another-reason' && ( surveyAnswerText as string ).trim() === '' ) {
+			setDisableContinuation( true );
+		} else {
+			setDisableContinuation( false );
+		}
+	}, [ surveyAnswerId, surveyAnswerText ] );
 
 	const clickNext = () => {
 		setSurveyStep( nextStep );
@@ -316,7 +323,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 		};
 		const next = {
 			action: 'next',
-			disabled: disabled,
+			disabled: disabled || disableContinuation,
 			label: translate( 'Next step' ),
 			onClick: clickNext,
 		};
@@ -328,7 +335,7 @@ const CancelJetpackForm: React.FC< Props > = ( {
 			flowType === CANCEL_FLOW_TYPE.REMOVE ? translate( 'Removing' ) : translate( 'Cancelling' );
 		const cancel = (
 			<Button
-				disabled={ disabled || applyingOffer }
+				disabled={ disabled || applyingOffer || disableContinuation }
 				busy={ disabled }
 				onClick={ onSubmit }
 				primary

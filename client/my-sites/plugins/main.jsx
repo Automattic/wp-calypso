@@ -528,7 +528,6 @@ export class PluginsMain extends Component {
 									onSearch={ this.props.doSearch }
 									initialValue={ this.props.search }
 									hideClose={ ! this.props.search }
-									ref={ `url-search` }
 									analyticsGroup="Plugins"
 									placeholder={ this.props.translate( 'Search plugins' ) }
 								/>

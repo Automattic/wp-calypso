@@ -1,5 +1,6 @@
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
-import SingleListView from '../plugins-browser/single-list-view';
+import CollectionListView from '../plugins-browser/collection-list-view';
+import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
 import './style.scss';
 import UpgradeNudge from './upgrade-nudge';
@@ -7,7 +8,6 @@ import UpgradeNudge from './upgrade-nudge';
 /**
  * Module variables
  */
-const SHORT_LIST_LENGTH = 6;
 
 function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	const displayedFeaturedSlugsMap = new Map(
@@ -22,7 +22,7 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-const PaidPluginsSection = ( props ) => {
+export const PaidPluginsSection = ( props ) => {
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
 	} );
@@ -85,13 +85,16 @@ const PluginsDiscoveryPage = ( props ) => {
 		<>
 			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
+			<CollectionListView category="monetization" { ...props } />
 			<UpgradeNudge { ...props } />
 			<FeaturedPluginsSection
 				{ ...props }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }
 				isFetchingPluginsByCategoryFeatured={ isFetchingPluginsByCategoryFeatured }
 			/>
+			<CollectionListView category="business" { ...props } />
 			<PopularPluginsSection { ...props } pluginsByCategoryFeatured={ pluginsByCategoryFeatured } />
+			<CollectionListView category="ecommerce" { ...props } />
 		</>
 	);
 };

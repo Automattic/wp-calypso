@@ -26,43 +26,43 @@ const JetpackReviewPromptExample: FunctionComponent = () => {
 			<JetpackReviewPrompt align={ align } type={ type } />
 			{ null === validFrom && (
 				<Card>
-					<p>{ 'No `validFrom` Date Set' }</p>
+					<p>No `validFrom` Date Set</p>
 					<Button onClick={ handleMakeValid } primary>
-						{ 'Set `validFrom` to now' }
+						Set `validFrom` to now
 					</Button>
 				</Card>
 			) }
 			{ isDismissed && (
 				<Card>
-					<p>{ 'Review Prompt is dismissed' }</p>
+					<p>Review Prompt is dismissed</p>
 					<Button onClick={ handleClearDismiss } primary>
-						{ 'Clear Dismissal' }
+						Clear Dismissal
 					</Button>
 				</Card>
 			) }
 			<Card>
-				<CardHeading>{ 'Type' }</CardHeading>
+				<CardHeading>Type</CardHeading>
 				<SegmentedControl primary>
 					<SegmentedControl.Item selected={ 'scan' === type } onClick={ () => setType( 'scan' ) }>
-						{ 'Scan Prompt' }
+						Scan Prompt
 					</SegmentedControl.Item>
 					<SegmentedControl.Item
 						selected={ 'restore' === type }
 						onClick={ () => setType( 'restore' ) }
 					>
-						{ 'Restore Prompt' }
+						Restore Prompt
 					</SegmentedControl.Item>
 				</SegmentedControl>
-				<CardHeading>{ 'Align' }</CardHeading>
+				<CardHeading>Align</CardHeading>
 				<SegmentedControl primary>
 					<SegmentedControl.Item
 						selected={ 'center' === align }
 						onClick={ () => setAlign( 'center' ) }
 					>
-						{ 'Center Align' }
+						Center Align
 					</SegmentedControl.Item>
 					<SegmentedControl.Item selected={ 'left' === align } onClick={ () => setAlign( 'left' ) }>
-						{ 'Left Align' }
+						Left Align
 					</SegmentedControl.Item>
 				</SegmentedControl>
 			</Card>

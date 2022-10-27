@@ -267,11 +267,12 @@ $font-family: "SF Pro Text", $sans;
 			iframe {
 				width: 1024px;
 				height: 665px;
-				transform: scale(0.2705);
+				transform: scale(0.268);
 				transform-origin: top left;
 				position: absolute;
 				border-radius: 4px;
 				pointer-events: none;
+				overflow: hidden;
 			}
 
 			div {
@@ -282,6 +283,7 @@ $font-family: "SF Pro Text", $sans;
 				overflow: hidden;
 				user-select: none;
 				cursor: pointer;
+				background: #fff;
 
 				&:not(:last-child) {
 					margin-bottom: 16px;

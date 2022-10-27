@@ -36,8 +36,9 @@ class FollowingManageEmptyContent extends Component {
 				action={ action }
 				title={ this.props.translate( "You haven't followed any sites yet" ) }
 				line={ this.props.translate( 'Search for a site above or explore Discover.' ) }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 400 }
+				illustrationHeight={ 250 }
 			/>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */

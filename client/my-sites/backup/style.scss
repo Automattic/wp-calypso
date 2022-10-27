@@ -2,9 +2,6 @@
 	.filterbar .filterbar__wrap.card {
 		display: flex;
 	}
-	.main {
-		padding-bottom: 0;
-	}
 }
 
 .backup__last-backup-status {
@@ -19,6 +16,7 @@
 }
 .backup__page .main {
 	overflow-y: auto;
+	padding-bottom: 0;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		overflow-y: visible;

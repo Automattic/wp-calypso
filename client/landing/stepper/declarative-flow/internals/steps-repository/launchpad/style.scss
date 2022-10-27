@@ -108,17 +108,48 @@
 	display: flex;
 	align-items: center;
 	height: 48px;
-	margin: 32px 0;
-	padding: 0 20px;
+	margin: 32px 0 16px 0;
+	padding: 0 12px;
 
-	// truncate long domain names
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	.launchpad__url-box-domain {
+		display: flex;
+		flex-grow: 1;
+		width: 0;
+	}
+
+	.launchpad__url-box-domain-text {
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		padding: 4px 0;
+		padding-right: 12px;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__url-box-domain-text {
+		padding-right: 0;
+	}
+
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
+		display: block;
+	}
+
+	.launchpad__clipboard-button {
+		padding-left: 8px;
+		padding-right: 8px;
+		display: none;
+		min-width: 34px;
+	}
 }
 
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
+}
+
+.launchpad__domain-upgrade-badge {
+	&:hover {
+		background: var(--studio-blue-10);
+	}
+
 }
 
 .launchpad__sidebar-admin-link {
@@ -178,6 +209,28 @@
 	@include break-large {
 		margin: 20px auto;
 	}
+
+	&-primary-button {
+		width: 100%;
+		font-weight: 500;
+		padding: 11px;
+		margin-top: 12px;
+		background-color: var(--color-primary);
+		border-color: var(--color-primary);
+		color: var(--color-text-inverted);
+
+		&:hover:not([disabled]) {
+			background-color: var(--color-primary-60);
+			border-color: var(--color-primary-60);
+			color: var(--color-text-inverted);
+		}
+
+		&[disabled] {
+			background-color: var(--color-primary-10);
+			border-color: var(--color-primary-10);
+			color: var(--color-text-inverted);
+		}
+	}
 }
 
 .launchpad__checklist-item {
@@ -201,7 +254,8 @@
 	border-bottom: 1px solid var(--studio-gray-5);
 }
 
-.launchpad__checklist-item .badge {
+.launchpad__checklist-item .badge,
+.launchpad__domain-upgrade-badge {
 	background-color: var(--studio-blue-5);
 	color: var(--studio-blue-80);
 }
@@ -229,6 +283,15 @@
 	line-height: 20px;
 	text-align: left;
 	font-weight: 600;
+}
+
+.launchpad__task:nth-last-child(2) {
+	// remove bottom border for last checklist item before the primary button
+	.launchpad__checklist-item,
+	.launchpad__checklist-item:hover,
+	.launchpad__checklist-item:focus {
+		border-bottom: none;
+	}
 }
 
 // completed tasks

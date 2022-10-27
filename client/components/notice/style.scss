@@ -78,6 +78,12 @@
 
 	.notice__dismiss {
 		overflow: hidden;
+		color: var(--color-neutral-20);
+
+		&:hover,
+		&:focus {
+			color: var(--color-text-inverted);
+		}
 	}
 
 	&.is-success,
@@ -185,15 +191,6 @@
 		.gridicon {
 			width: 24px;
 			height: 24px;
-		}
-	}
-
-	.notice & {
-		color: var(--color-neutral-20);
-
-		&:hover,
-		&:focus {
-			color: var(--color-text-inverted);
 		}
 	}
 }

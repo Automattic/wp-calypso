@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { getCategories } from 'calypso/my-sites/plugins/categories/use-categories';
 import { RETURNABLE_FIELDS } from './constants';
 import type { SearchParams } from './types';
 
@@ -16,7 +17,11 @@ const SORT_QUERY_MAP = new Map( [
  */
 function mapSortToApiValue( sort: string ) {
 	// Some sorts don't need to be mapped
-	if ( [ 'price_asc', 'price_desc', 'rating_desc' ].includes( sort ) ) {
+	if (
+		[ 'price_asc', 'price_desc', 'rating_desc', 'active_installs', 'plugin_modified' ].includes(
+			sort
+		)
+	) {
 		return sort;
 	}
 
@@ -32,6 +37,7 @@ function generateApiQueryString( {
 	query,
 	author,
 	groupId,
+	category,
 	pageHandle,
 	pageSize,
 	locale,
@@ -40,14 +46,16 @@ function generateApiQueryString( {
 
 	const params: {
 		fields: string[];
-		filter?: { bool: { must: object[] } };
+		filter?: { bool: object };
 		page_handle?: string;
 		query: string;
 		sort: string;
 		size: number;
 		group_id: string;
+		category?: string;
 		from?: number;
 		lang: string;
+		track_total_hits: boolean;
 	} = {
 		fields: [ ...RETURNABLE_FIELDS ],
 		page_handle: pageHandle,
@@ -56,10 +64,31 @@ function generateApiQueryString( {
 		size: pageSize,
 		lang: locale,
 		group_id: groupId,
+		track_total_hits: false,
 	};
 
 	if ( author ) {
 		params.filter = getFilterbyAuthor( author );
+	}
+	if ( category ) {
+		switch ( category ) {
+			case 'featured':
+				params.filter = getFilterFeaturedPlugins();
+				break;
+			case 'popular':
+				params.sort = 'active_installs';
+				params.track_total_hits = true;
+				break;
+			case 'new':
+				params.sort = 'date_desc';
+				break;
+			case 'updated':
+				params.sort = 'plugin_modified';
+				break;
+			default:
+				params.filter = getFilterByCategory( category );
+				params.sort = 'active_installs';
+		}
 	}
 
 	return params;
@@ -93,6 +122,33 @@ function getFilterbyAuthor( author: string ): {
 	return {
 		bool: {
 			must: [ { term: { 'plugin.author.raw': author } } ],
+		},
+	};
+}
+
+function getFilterByCategory( category: string ): {
+	bool: object;
+} {
+	const categoryTags = getCategories()[ category ]?.tags;
+
+	return {
+		bool: {
+			should: [
+				{ term: { 'taxonomy.plugin_category.slug': category } },
+				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+			],
+		},
+	};
+}
+
+function getFilterFeaturedPlugins(): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { 'taxonomy.plugin_section.slug': 'featured' } } ],
 		},
 	};
 }

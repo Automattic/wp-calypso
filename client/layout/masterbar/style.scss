@@ -31,9 +31,10 @@ $masterbar-color-secondary: #101517;
 	max-width: 100vw;
 	z-index: z-index("root", ".masterbar");
 	-webkit-font-smoothing: subpixel-antialiased;
-	transition: transform 0.2s ease-out;
 	box-sizing: border-box;
 	justify-content: space-between;
+	opacity: 1;
+	transition: all 0.3s ease-in-out;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -88,7 +89,7 @@ $masterbar-color-secondary: #101517;
 			.masterbar__item-content {
 				display: flex;
 				align-items: center;
-				color: white;
+				color: var(--color-text-inverted);
 				font-size: $font-body-small;
 				font-weight: 400;
 
@@ -143,15 +144,19 @@ $masterbar-color-secondary: #101517;
 .masterbar__section {
 	display: flex;
 
-	&--right {
-		flex: 1;
-		justify-content: flex-end;
-	}
-
 	@include breakpoint-deprecated( ">480px" ) {
 		flex: 2;
 		.masterbar__item {
 			flex: 0 0 auto;
+		}
+	}
+
+	&--right {
+		flex: 1;
+		justify-content: flex-end;
+
+		@include breakpoint-deprecated( ">480px" ) {
+			flex-grow: 0;
 		}
 	}
 }
@@ -162,12 +167,6 @@ $masterbar-color-secondary: #101517;
 
 	@include breakpoint-deprecated( ">480px" ) {
 		flex: 0 0 auto;
-	}
-}
-
-.masterbar__section--right {
-	@include breakpoint-deprecated( ">480px" ) {
-		flex-grow: 0;
 	}
 }
 
@@ -611,11 +610,6 @@ $masterbar-color-secondary: #101517;
 	color: $masterbar-color-primary;
 	font-size: $masterbar-font-size;
 
-	&:hover,
-	&[aria-expanded="true"] {
-		background: var(--studio-white);
-	}
-
 	@media only screen and ( max-width: 782px ) {
 		height: 34px;
 		margin-top: 6px;
@@ -655,6 +649,7 @@ $masterbar-color-secondary: #101517;
 
 	&:hover,
 	&[aria-expanded="true"] {
+		background: var(--studio-white);
 		.gridicon {
 			color: $masterbar-color-primary;
 
@@ -792,12 +787,6 @@ $masterbar-color-secondary: #101517;
 
 a.masterbar__quick-language-switcher {
 	cursor: pointer;
-}
-
-// Editor Transition
-.masterbar {
-	opacity: 1;
-	transition: all 0.3s ease-in-out;
 }
 
 .is-section-gutenberg-editor .masterbar {

@@ -11,6 +11,8 @@
 .conversations__stream .reader-post-card.card.is-compact {
 	.reader-post-card__post-details {
 		margin-top: -2px;
+		min-width: 0;
+		white-space: nowrap;
 	}
 
 	.reader-post-card__byline-details {
@@ -63,11 +65,6 @@
 	.reader-post-card__tags {
 		display: none;
 	}
-}
-
-.conversations__stream .reader-post-card.card.is-compact .reader-post-card__post-details {
-	min-width: 0;
-	white-space: nowrap;
 }
 
 .conversations__stream .conversation-caterpillar {

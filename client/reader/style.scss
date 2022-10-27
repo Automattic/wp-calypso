@@ -278,8 +278,6 @@
 
 .tiled-gallery-caption { /* Captions */
 	box-sizing: border-box; /* to make width: 100% work */
-	background: #222;
-	background: rgba(0, 0, 0, 0.3);
 	background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.2) 73%, rgba(0, 0, 0, 0.5) 100%);
 	color: var(--color-text-inverted);
 	font-family: $sans;

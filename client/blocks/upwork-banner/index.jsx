@@ -29,17 +29,17 @@ class UpworkBanner extends PureComponent {
 
 		return (
 			<UpsellNudge
-				event={ 'calypso_upwork_banner_start_now_button_click' }
+				event="calypso_upwork_banner_start_now_button_click"
 				forceDisplay //Upwork banner has its own logic for showing/hiding
 				className="upwork-banner__troubleshooting"
 				showIcon
 				onClick={ () => window.open( builtByWpUrl, '_blank' ) }
 				callToAction={ translate( 'Find your expert' ) }
-				dismissPreferenceName={ 'upwork-dismissible-banner' }
-				tracksClickName={ 'calypso_upwork_banner_start_now_button_click' }
+				dismissPreferenceName="upwork-dismissible-banner"
+				tracksClickName="calypso_upwork_banner_start_now_button_click"
 				tracksClickProperties={ { location, plan } }
-				tracksImpressionName={ 'calypso_upwork_banner_view' }
-				tracksDismissName={ 'calypso_upwork_banner_dismiss_icon_click' }
+				tracksImpressionName="calypso_upwork_banner_view"
+				tracksDismissName="calypso_upwork_banner_dismiss_icon_click"
 				tracksDismissProperties={ { location, plan } }
 				href="#"
 				title={ translate( 'Let our WordPress.com experts build your site!' ) }

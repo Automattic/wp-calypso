@@ -441,7 +441,7 @@ class TransferDomainStep extends Component {
 		}
 
 		return (
-			<div className={ 'transfer-domain-step__domain-availability' }>
+			<div className="transfer-domain-step__domain-availability">
 				<DomainRegistrationSuggestion
 					cart={ this.props.cart }
 					isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }

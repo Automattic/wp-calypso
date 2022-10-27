@@ -126,7 +126,7 @@ class Search extends Component {
 						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
 					) }
 					href={ href }
-					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
+					event="calypso_jetpack_search_settings_upgrade_nudge"
 					feature={ WPCOM_FEATURES_INSTANT_SEARCH }
 					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
 					showIcon={ true }

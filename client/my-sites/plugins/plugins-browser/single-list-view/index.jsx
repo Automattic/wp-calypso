@@ -11,7 +11,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Module variables
  */
-const SHORT_LIST_LENGTH = 6;
+export const SHORT_LIST_LENGTH = 4;
 
 const PLUGIN_SLUGS_BLOCKLIST = [];
 
@@ -32,14 +32,14 @@ function isNotInstalled( plugin, installedPlugins ) {
 	);
 }
 
-const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) => {
+const SingleListView = ( { category, plugins, isFetching, siteSlug, sites, noHeader } ) => {
 	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const domain = useSelector( ( state ) => getSiteDomain( state, siteId ) );
 
 	const categories = useCategories();
-	const categoryName = categories[ category ]?.name || translate( 'Plugins' );
+	const categoryName = categories[ category ]?.title || translate( 'Plugins' );
 	const categoryDescription = categories[ category ]?.description || null;
 
 	const { localizePath } = useLocalizedPlugins();
@@ -65,15 +65,17 @@ const SingleListView = ( { category, plugins, isFetching, siteSlug, sites } ) =>
 		<PluginsBrowserList
 			plugins={ plugins.slice( 0, SHORT_LIST_LENGTH ) }
 			listName={ category }
+			listType="discovery"
 			title={ categoryName }
 			subtitle={ categoryDescription }
 			site={ siteSlug }
-			expandedListLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
+			browseAllLink={ plugins.length > SHORT_LIST_LENGTH ? localizePath( listLink ) : false }
 			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ isFetching }
 			currentSites={ sites }
 			variant={ PluginsBrowserListVariant.Fixed }
 			extended
+			noHeader={ noHeader }
 		/>
 	);
 };

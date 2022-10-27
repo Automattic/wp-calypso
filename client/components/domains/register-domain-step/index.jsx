@@ -401,7 +401,7 @@ class RegisterDomainStep extends Component {
 						<Notice
 							className="register-domain-step__notice"
 							text={ `Please search for domains with more than ${ MIN_QUERY_LENGTH } characters length.` }
-							status={ `is-info` }
+							status="is-info"
 							showDismiss={ false }
 						/>
 					) }

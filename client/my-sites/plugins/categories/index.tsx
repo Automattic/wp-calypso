@@ -6,15 +6,24 @@ import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
 
 export type Category = {
-	name: string;
+	menu: string;
+	title: string;
 	slug: string;
 	tags: string[];
+	preview: Plugin[];
 	description?: string;
 	icon?: string;
 	separator?: boolean;
 };
 
-const Categories = ( { selected }: { selected?: string } ) => {
+export type Plugin = {
+	slug: string;
+	name: string;
+	short_description: string;
+	icon: string;
+};
+
+const Categories = ( { selected, noSelection }: { selected?: string; noSelection?: boolean } ) => {
 	const dispatch = useDispatch();
 	const getCategoryUrl = useGetCategoryUrl();
 
@@ -38,17 +47,18 @@ const Categories = ( { selected }: { selected?: string } ) => {
 	};
 
 	const current = selected ? categories.findIndex( ( { slug } ) => slug === selected ) : 0;
+	const activeIndex = noSelection ? -1 : current;
 
 	return (
 		<ResponsiveToolbarGroup
 			className="categories__menu"
-			initialActiveIndex={ current }
+			initialActiveIndex={ activeIndex }
 			onClick={ onClick }
 			hrefList={ categoryUrls }
 			forceSwipe={ 'undefined' === typeof window }
 		>
 			{ categories.map( ( category ) => (
-				<span key={ `category-${ category.slug }` }>{ category.name }</span>
+				<span key={ `category-${ category.slug }` }>{ category.menu }</span>
 			) ) }
 		</ResponsiveToolbarGroup>
 	);

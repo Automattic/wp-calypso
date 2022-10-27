@@ -67,7 +67,7 @@ class TagEmptyContent extends Component {
 				line={ message }
 				action={ action }
 				secondaryAction={ secondaryAction }
-				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
+				illustration="/calypso/images/illustrations/illustration-empty-results.svg"
 				illustrationWidth={ 400 }
 			/>
 		);

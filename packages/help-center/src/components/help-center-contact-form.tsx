@@ -3,6 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
@@ -15,11 +16,10 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown } from '@automattic/site-picker';
-import { TextControl, CheckboxControl } from '@wordpress/components';
+import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
-import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -119,6 +119,26 @@ function useFormTitles( mode: Mode ): {
 	}[ mode ];
 }
 
+const getSupportedLanguages = ( supportType: string, locale: string ) => {
+	const isLiveChatLanguageSupported = (
+		config( 'livechat_support_locales' ) as Array< string >
+	 ).includes( locale );
+
+	const isLanguageSupported = ( config( 'upwork_support_locales' ) as Array< string > ).includes(
+		locale
+	);
+
+	switch ( supportType ) {
+		case 'CHAT':
+			return ! isLiveChatLanguageSupported;
+		case 'EMAIL':
+			return ! isLanguageSupported && ! [ 'en', 'en-gb' ].includes( locale );
+
+		default:
+			return false;
+	}
+};
+
 type Mode = 'CHAT' | 'EMAIL' | 'FORUM';
 
 export const HelpCenterContactForm = () => {
@@ -138,7 +158,6 @@ export const HelpCenterContactForm = () => {
 	const userWithNoSites = userSites?.sites.length === 0;
 	const queryClient = useQueryClient();
 	const email = useSelector( getCurrentUserEmail );
-	const { hasTranslation } = useI18n();
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
@@ -281,6 +300,7 @@ export const HelpCenterContactForm = () => {
 						locale,
 						client: 'browser:help-center',
 						is_chat_overflow: overflow,
+						source: 'source_wpcom_help_center',
 						blog_url: supportSite.URL,
 					} )
 						.then( () => {
@@ -362,6 +382,8 @@ export const HelpCenterContactForm = () => {
 		);
 	};
 
+	const shouldShowHelpLanguagePrompt = getSupportedLanguages( mode, locale );
+
 	const isCTADisabled = () => {
 		if ( isSubmitting || ! message || ownershipStatusLoading ) {
 			return true;
@@ -382,19 +404,11 @@ export const HelpCenterContactForm = () => {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if (
-			mode === 'CHAT' &&
-			showingSibylResults &&
-			( hasTranslation( 'Still chat with us' ) || locale === 'en' )
-		) {
+		if ( mode === 'CHAT' && showingSibylResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if (
-			mode === 'EMAIL' &&
-			showingSibylResults &&
-			( hasTranslation( 'Still email us' ) || locale === 'en' )
-		) {
+		if ( mode === 'EMAIL' && showingSibylResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -409,11 +423,7 @@ export const HelpCenterContactForm = () => {
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
 			<SibylArticles
-				title={
-					hasTranslation( 'These are some helpful articles' ) || locale === 'en'
-						? __( 'These are some helpful articles', __i18n_text_domain__ )
-						: ''
-				}
+				title={ __( 'These are some helpful articles', __i18n_text_domain__ ) }
 				supportSite={ supportSite }
 				message={ message }
 				articleCanNavigateBack
@@ -529,6 +539,9 @@ export const HelpCenterContactForm = () => {
 				>
 					{ getCTALabel() }
 				</Button>
+				{ ! hasSubmittingError && shouldShowHelpLanguagePrompt && (
+					<Tip>{ __( 'Note: Support is only available in English at the moment.' ) }</Tip>
+				) }
 				{ hasSubmittingError && (
 					<FormInputValidation
 						isError

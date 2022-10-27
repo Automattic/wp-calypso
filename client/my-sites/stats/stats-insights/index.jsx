@@ -43,7 +43,7 @@ const StatsInsights = ( props ) => {
 				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
-			<StatsNavigation selectedItem={ 'insights' } siteId={ siteId } slug={ siteSlug } />
+			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<PostingActivity />
 				<SectionHeader label={ translate( 'All-time views' ) } />
@@ -72,11 +72,11 @@ const StatsInsights = ( props ) => {
 						</div>
 						<div className="stats__module-column">
 							<Reach />
-							<Followers path={ 'followers' } />
+							<Followers path="followers" />
 						</div>
 						<div className="stats__module-column">
 							<AllTime />
-							<Comments path={ 'comments' } />
+							<Comments path="comments" />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }

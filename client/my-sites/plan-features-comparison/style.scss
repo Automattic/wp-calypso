@@ -1,15 +1,6 @@
 $plan-features-header-banner-height: 20px;
 $plan-features-sidebar-width: 272px;
 
-.plan-pill.is-in-signup {
-	right: 52%;
-	transform: translate(50%);
-	border-radius: 4px;
-	background-color: var(--studio-green-5);
-	color: var(--studio-gray-80);
-	font-size: $font-body-small;
-}
-
 .plan-features--loading-container {
 	margin-top: 300px;
 }
@@ -33,26 +24,6 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features-comparison__table-item.is-top-buttons {
 	padding-top: 8px;
-}
-
-.plan-features-comparison__table-item.plan-features-comparison__unique-features {
-	padding-bottom: 0.5rem;
-	ul {
-		margin-bottom: 0;
-	}
-
-	& .is-last-feature {
-		.plan-features-comparison__item {
-			padding-bottom: 0;
-
-			margin-left: 0;
-			padding-left: 0;
-
-			svg {
-				display: none;
-			}
-		}
-	}
 }
 
 .plan-features-comparison__header {
@@ -146,7 +117,6 @@ $plan-features-sidebar-width: 272px;
 		background-color: var(--color-surface);
 		position: relative;
 
-		.is-bold,
 		&.is-bold {
 			font-weight: bold;
 		}
@@ -327,10 +297,6 @@ $plan-features-sidebar-width: 272px;
 		.plan-features-comparison__item-cross {
 			fill: #a7aaad;
 		}
-
-		&.is-bold {
-			font-weight: bold;
-		}
 	}
 }
 
@@ -419,6 +385,20 @@ body.is-section-signup.is-white-signup {
 		&:last-of-type {
 			border-right: none;
 		}
+
+		.plan-pill.is-in-signup {
+			font-size: 0.75rem;
+			font-weight: 500;
+			letter-spacing: 0.2px;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 1.25rem;
+			padding: 0 8px;
+			right: 52%;
+			transform: translate(50%);
+			border-radius: 4px;
+			background-color: var(--studio-green-5);
+			color: var(--studio-gray-80);
+		}
 	}
 
 	.plan-features-comparison__header {
@@ -445,15 +425,6 @@ body.is-section-signup.is-white-signup {
 		.plan-features-comparison__header-billing-info {
 			font-weight: 500;
 		}
-	}
-
-	.plan-pill.is-in-signup {
-		font-size: 0.75rem;
-		font-weight: 500;
-		letter-spacing: 0.2px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.25rem;
-		padding: 0 8px;
 	}
 
 	.plan-features-comparison__item-title {

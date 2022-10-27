@@ -162,6 +162,7 @@ class HelpContact extends Component {
 			locale: currentUserLocale,
 			client: config( 'client_slug' ),
 			is_chat_overflow: supportVariation === SUPPORT_CHAT_OVERFLOW,
+			source: 'source_wpcom_fab',
 		};
 		if ( site ) {
 			payload.blog_url = site.URL;
@@ -276,6 +277,8 @@ class HelpContact extends Component {
 			locale: currentUserLocale,
 			client: config( 'client_slug' ),
 			hide_blog_info: userRequestsHidingUrl,
+			should_use_test_forums:
+				config( 'env_id' ) === 'wpcalypso' || config( 'env_id' ) === 'development',
 		};
 
 		if ( site ) {

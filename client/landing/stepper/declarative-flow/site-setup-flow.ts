@@ -133,7 +133,9 @@ export const siteSetupFlow: Flow = {
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
-					if ( ! siteSlug ) return;
+					if ( ! siteSlug ) {
+						return;
+					}
 
 					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
 
@@ -394,7 +396,10 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'importReady': {
+					const depUrl = ( providedDependencies?.url as string ) || '';
+
 					if (
+						depUrl.startsWith( 'http' ) ||
 						[ 'blogroll', 'ghost', 'tumblr', 'livejournal', 'movabletype', 'xanga' ].indexOf(
 							providedDependencies?.platform as ImporterMainPlatform
 						) !== -1

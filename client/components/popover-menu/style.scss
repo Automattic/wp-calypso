@@ -33,25 +33,28 @@
 	&.is-selected,
 	&:hover,
 	&:focus {
-		background-color: var( --color-primary );
+		background-color: var(--color-primary);
 		border: 0;
 		box-shadow: none;
-		color: white;
+		color: var(--color-text-inverted);
 
-		.gridicon, .reader-follow-conversation, .reader-following-conversation {
-			color: var( --color-text-inverted );
+		.gridicon,
+		.reader-follow-conversation,
+		.reader-following-conversation {
+			color: var(--color-text-inverted);
 		}
 
 		svg.reader-external path {
-			fill: var( --color-text-inverted );
+			fill: var(--color-text-inverted);
 		}
 
-		svg.reader-follow-conversation path, svg.reader-following-conversation path {
+		svg.reader-follow-conversation path,
+		svg.reader-following-conversation path {
 			fill: none;
-			stroke: var( --color-text-inverted );
+			stroke: var(--color-text-inverted);
 
 			&.status {
-				fill: var( --color-primary );
+				fill: var(--color-primary);
 				stroke: none;
 			}
 		}
@@ -90,7 +93,9 @@
 		top: 2px;
 	}
 
-	.reader-external, .reader-follow-conversation, .reader-following-conversation {
+	.reader-external,
+	.reader-follow-conversation,
+	.reader-following-conversation {
 		margin: 0 6px -2px 0;
 		vertical-align: middle;
 		position: static;

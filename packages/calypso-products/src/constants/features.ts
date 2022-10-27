@@ -43,8 +43,7 @@ export const FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS = 'live-chat-support-all-days';
 export const FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS = 'live-chat-support-business-days';
 export const FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT = 'email-forwarding-extended-limit';
 export const FEATURE_PREMIUM_SUPPORT = 'priority-support';
-export const FEATURE_BASIC_DESIGN = 'basic-design';
-export const FEATURE_ADVANCED_DESIGN = 'advanced-design';
+export const FEATURE_CSS_CUSTOMIZATION = 'css-customization';
 export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
@@ -72,7 +71,7 @@ export const FEATURE_ALL_PERSONAL_FEATURES = 'all-personal-features';
 export const FEATURE_ALL_PERSONAL_FEATURES_JETPACK = 'all-personal-features-jetpack';
 export const FEATURE_ALL_PREMIUM_FEATURES = 'all-premium-features';
 export const FEATURE_ALL_PREMIUM_FEATURES_JETPACK = 'all-premium-features-jetpack';
-export const FEATURE_ADVANCED_CUSTOMIZATION = 'advanced-customization';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION = 'advanced-design-customization';
 export const FEATURE_UPLOAD_THEMES_PLUGINS = 'upload-themes-and-plugins';
 export const FEATURE_FREE_DOMAIN = 'free-custom-domain';
 export const FEATURE_FREE_BLOG_DOMAIN = 'free-blog-domain';
@@ -97,22 +96,16 @@ export const FEATURE_SECURITY_SETTINGS = 'security-settings';
 export const FEATURE_WOOP = 'woop';
 export const FEATURE_PREMIUM_THEMES = 'unlimited-premium-themes';
 
-//condensed_plan_features_v1 test
-export const FEATURE_HOSTING_TEST = 'hosting-test';
-export const FEATURE_PRIORITY_SUPPORT_TEST = 'priority-support-test';
-export const FEATURE_PLUGINS_TEST = 'plugins-test';
-export const FEATURE_SFTP_DATABASE_TEST = 'sftp-database-test';
-export const FEATURE_FREE_NEWSLETTER_V1 = 'free-newsletter';
-export const FEATURE_PAID_NEWSLETTER_V1 = 'paid-newsletter';
-export const FEATURE_MONETISE_V2 = 'monetize-v2';
-export const FEATURE_REPUBLICIZE_V3 = 'republicize-v3';
-export const FEATURE_UPLOAD_THEMES_V3 = 'upload-themes-v3';
-export const FEATURE_EDGE_CACHING_V2 = 'edge-caching-v2';
-export const FEATURE_ADVANCED_SEO_EXPANDED_ABBR_V2 = 'seo-v2';
-export const FEATURE_SITE_STATS_V2 = 'site-stats-v2';
-export const FEATURE_COLLECT_PAYMENTS_V3 = 'collect-payments-v3';
-export const FEATURE_FREE_THEMES_V2 = 'free-themes-v2';
-export const FEATURE_VIDEO_UPLOADS_V2 = 'video-upload-v2';
+/* START - PLAN TAGLINE EXPERIMENT */
+export const FEATURE_STORAGE_BANDWIDTH = 'storage-bandwidth';
+export const FEATURE_EMAIL_SUPPORT_SIGNUP_V2 = 'email-support-signup-v2';
+export const FEATURE_UNLTD_LIVE_CHAT_SUPPORT = 'unltd-live-chat-support';
+export const FEATURE_INSTALL_THEMES_PLUGINS = 'install-themes-plugins';
+export const FEATURE_DEVELOPER_TOOLS_V1 = 'developer-tools-v1';
+export const FEATURE_PRODUCT_LISTINGS = 'product-listings';
+export const FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS =
+	'advanced-design-customization-and-css';
+/* END - PLAN TAGLINE EXPERIMENT */
 
 // Jetpack features constants
 export const FEATURE_BLANK = 'blank-feature';

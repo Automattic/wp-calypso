@@ -139,15 +139,15 @@ const SiteOptions: Step = function SiteOptions( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'site-options' }
+			stepName="site-options"
 			className={ `is-step-${ intent }` }
 			headerImageUrl={ headerImage }
-			skipButtonAlign={ 'top' }
+			skipButtonAlign="top"
 			goBack={ goBack }
 			goNext={ goNext }
 			isHorizontalLayout={ true }
 			formattedHeader={
-				<FormattedHeader id={ 'site-options-header' } headerText={ headerText } align={ 'left' } />
+				<FormattedHeader id="site-options-header" headerText={ headerText } align="left" />
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }

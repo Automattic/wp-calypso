@@ -103,6 +103,7 @@ class SiteSettingsFormWriting extends Component {
 					<FeaturedImageTemplateToggle
 						isSavingSettings={ isSavingSettings }
 						isRequestingSettings={ isRequestingSettings }
+						handleAutosavingToggle={ handleAutosavingToggle }
 						fields={ fields }
 					/>
 				) }
@@ -212,6 +213,7 @@ const getFormSettings = ( settings ) => {
 		'timezone_string',
 		'podcasting_category_id',
 		'wpcom_publish_posts_with_markdown',
+		'featured_image_email_enabled',
 	] );
 
 	// handling `gmt_offset` and `timezone_string` values

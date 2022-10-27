@@ -213,6 +213,7 @@ body.is-focus-sites {
 		@include breakpoint-deprecated( "<660px" ) {
 			-webkit-overflow-scrolling: touch;
 			transform: translateX(-100%);
+			height: auto;
 		}
 	}
 

@@ -44,6 +44,7 @@ export { hasAutoLoadingHomepageModalAccepted } from 'calypso/state/themes/select
 export { isActivatingTheme } from 'calypso/state/themes/selectors/is-activating-theme';
 export { isAmbiguousThemeFilterTerm } from 'calypso/state/themes/selectors/is-ambiguous-theme-filter-term';
 export { isDownloadableFromWpcom } from 'calypso/state/themes/selectors/is-downloadable-from-wpcom';
+export { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 export { isFulfilledThemesForQuery } from 'calypso/state/themes/selectors/is-fulfilled-request-themes-for-query';
 export { isInstallingTheme } from 'calypso/state/themes/selectors/is-installing-theme';
 export { isPremiumThemeAvailable } from 'calypso/state/themes/selectors/is-premium-theme-available';
@@ -57,6 +58,7 @@ export { isThemeGutenbergFirst } from 'calypso/state/themes/selectors/is-theme-g
 export { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 export { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 export { isThemesLastPageForQuery } from 'calypso/state/themes/selectors/is-themes-last-page-for-query';
+export { isUpsellCardDisplayed } from 'calypso/state/themes/selectors/is-upsell-card-displayed';
 export { isValidThemeFilterTerm } from 'calypso/state/themes/selectors/is-valid-theme-filter-term';
 export { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 export { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';

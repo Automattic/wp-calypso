@@ -11,8 +11,10 @@ import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id'
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import { backupDownloadPath, backupRestorePath } from 'calypso/my-sites/backup/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { Activity } from '../types';
 import downloadIcon from './download-icon.svg';
@@ -45,9 +47,16 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 		getDoesRewindNeedCredentials( state, siteId )
 	);
 
+	const areCredentialsInvalid = useSelector( ( state ) =>
+		areJetpackCredentialsInvalid( state, siteId, 'main' )
+	);
+
 	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
 
-	const isRestoreDisabled = doesRewindNeedCredentials || isRestoreInProgress;
+	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
+
+	const isRestoreDisabled =
+		doesRewindNeedCredentials || isRestoreInProgress || ( ! isAtomic && areCredentialsInvalid );
 
 	return (
 		<>
@@ -74,7 +83,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				>
 					{ translate( 'Restore to this point' ) }
 				</Button>
-				{ doesRewindNeedCredentials && (
+				{ ! isAtomic && ( doesRewindNeedCredentials || areCredentialsInvalid ) && (
 					<div className="toolbar__credentials-warning">
 						<img src={ missingCredentialsIcon } alt="" role="presentation" />
 						<div className="toolbar__credentials-warning-text">

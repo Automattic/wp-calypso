@@ -367,13 +367,11 @@ export default function CheckoutMain( {
 	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getRecaptchaClientId()
 	);
-	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
-				countryCode,
 				allowedPaymentMethods,
 				responseCart,
 		  } );
@@ -695,7 +693,7 @@ export default function CheckoutMain( {
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
-			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type={ 'post' } /> }
+			{ cartHasSearchProduct && <QueryPostCounts siteId={ updatedSiteId || -1 } type="post" /> }
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Checkout"

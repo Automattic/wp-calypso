@@ -34,6 +34,13 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
+						keepActive: true,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+							window.location.replace(
+								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
+							);
+						},
 					};
 					break;
 				case 'plan_selected':
@@ -131,12 +138,12 @@ export function getEnhancedTasks(
 // Records a generic task click Tracks event
 function recordTaskClickTracksEvent(
 	flow: string | null | undefined,
-	isCompleted: boolean,
-	taskId: string
+	is_completed: boolean,
+	task_id: string
 ) {
 	recordTracksEvent( 'calypso_launchpad_task_clicked', {
-		taskId,
-		isCompleted,
+		task_id,
+		is_completed,
 		flow,
 	} );
 }

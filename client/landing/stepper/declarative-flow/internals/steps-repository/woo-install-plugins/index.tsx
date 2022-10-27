@@ -52,7 +52,9 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 	};
 
 	useEffect( () => {
-		if ( ! site?.ID ) return;
+		if ( ! site?.ID ) {
+			return;
+		}
 
 		setPendingAction( async () => {
 			setProgressTitle( 'Installing WooCommerce' );

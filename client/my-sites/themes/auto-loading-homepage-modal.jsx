@@ -189,7 +189,7 @@ class AutoLoadingHomepageModal extends Component {
 					onClick={ this.closeModalHandler( 'dismiss' ) }
 				/>
 				<TrackComponentView
-					eventName={ 'calypso_theme_autoloading_homepage_modal_view' }
+					eventName="calypso_theme_autoloading_homepage_modal_view"
 					eventProperties={ { theme: themeId } }
 				/>
 				<div className="themes__theme-preview-wrapper">

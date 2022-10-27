@@ -43,12 +43,12 @@ class MembershipsProductsSection extends Component {
 			<EllipsisMenu position="bottom left">
 				{ this.props.hasStripeFeature && (
 					<PopoverMenuItem onClick={ () => this.openAddEditDialog( productId ) }>
-						<Gridicon size={ 18 } icon={ 'pencil' } />
+						<Gridicon size={ 18 } icon="pencil" />
 						{ this.props.translate( 'Edit' ) }
 					</PopoverMenuItem>
 				) }
 				<PopoverMenuItem onClick={ () => this.openDeleteDialog( productId ) }>
-					<Gridicon size={ 18 } icon={ 'trash' } />
+					<Gridicon size={ 18 } icon="trash" />
 					{ this.props.translate( 'Delete' ) }
 				</PopoverMenuItem>
 			</EllipsisMenu>

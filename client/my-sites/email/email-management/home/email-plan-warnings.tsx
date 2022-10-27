@@ -10,7 +10,8 @@ import {
 } from 'calypso/lib/emails';
 import { getGoogleAdminWithTosUrl } from 'calypso/lib/gsuite';
 import { emailManagementTitanSetUpMailbox } from 'calypso/my-sites/email/paths';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { EmailPlanWarningNotice } from './email-plan-warning-notice';
 import type { EmailAccount } from 'calypso/data/emails/types';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
@@ -21,16 +22,16 @@ type EmailPlanWarningsProps = {
 
 const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) => {
 	const translate = useTranslate();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const selectedSite = useSelector( getSelectedSite );
+	const selectedSiteSlug = selectedSite?.slug ?? '';
 
-	const warning = emailAccount?.warnings?.[ 0 ];
+	const requiredAction = emailAccount?.warnings?.[ 0 ];
 
-	if ( ! warning && canCurrentUserAddEmail( domain ) ) {
+	const cannotAddEmailWarningReason = getCurrentUserCannotAddEmailReason( domain );
+	const cannotAddEmailWarningMessage = cannotAddEmailWarningReason?.message ?? '';
+	if ( ! requiredAction && canCurrentUserAddEmail( domain ) ) {
 		return null;
 	}
-
-	const cannotAddEmailReason = getCurrentUserCannotAddEmailReason( domain );
-	const cannotAddEmailMessage = cannotAddEmailReason?.message ?? '';
 
 	let cta = null;
 
@@ -63,18 +64,12 @@ const EmailPlanWarnings = ( { domain, emailAccount }: EmailPlanWarningsProps ) =
 
 	return (
 		<div className="email-plan-warnings__container">
-			{ cannotAddEmailMessage && (
-				<div className="email-plan-warnings__warning">
-					<div className="email-plan-warnings__message">
-						<span>{ cannotAddEmailMessage }</span>
-					</div>
-				</div>
-			) }
+			<EmailPlanWarningNotice selectedSite={ selectedSite } domain={ domain } />
 
-			{ ! cannotAddEmailMessage && warning && (
+			{ ! cannotAddEmailWarningMessage && requiredAction && (
 				<div className="email-plan-warnings__warning">
 					<div className="email-plan-warnings__message">
-						<span>{ warning.message }</span>
+						<span>{ requiredAction.message }</span>
 					</div>
 					<div className="email-plan-warnings__cta">{ cta }</div>
 				</div>

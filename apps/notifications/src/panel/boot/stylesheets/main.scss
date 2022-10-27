@@ -191,7 +191,6 @@
 	}
 
 	.wpnc__filter__segmented-control {
-		display: table-row; // fallback for browsers not supporting flexbox.
 		display: flex;
 		padding: 6px 8px;
 
@@ -210,7 +209,6 @@
 		user-select: none; // Makes text unselectable
 		box-sizing: border-box;
 		vertical-align: middle;
-		display: table-cell; // fallback for browsers not supporting flexbox.
 
 		// Flexbox
 		display: flex;
@@ -286,7 +284,7 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			color: white;
+			color: #fff;
 			height: 16px;
 			width: 16px;
 			border: {
@@ -483,7 +481,6 @@
 			top: 0;
 			z-index: 100;
 			text-align: left;
-			position: -webkit-sticky;
 			position: sticky;
 		}
 	}
@@ -676,10 +673,6 @@
 		}
 	}
 
-	.wpnc__body {
-		@extend %container;
-	}
-
 	.wpnc__summary {
 		@extend %container;
 		padding: $wpnc__padding-large 0;
@@ -695,6 +688,7 @@
 	}
 
 	.wpnc__body {
+		@extend %container;
 		.wpnc__paragraph {
 			word-wrap: break-word;
 			margin-top: $wpnc__padding-large;
@@ -899,9 +893,6 @@
 			}
 
 			-webkit-transform: translate3d(0, 0, 0); // fix for getting scrollbar in right z-index
-		}
-
-		.wpnc__single-view {
 			animation-name: wpnc__slideIn;
 			animation-timing-function: ease-out;
 			animation-fill-mode: forwards;
