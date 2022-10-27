@@ -1,12 +1,12 @@
 import { addQueryArgs } from '@wordpress/url';
-import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, STYLE_SHEET } from './constants';
+import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL } from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
-export const getPatternPreviewUrl = ( id: number, language: string ) => {
+export const getPatternPreviewUrl = ( id: number, language: string, stylesheet?: string ) => {
 	return addQueryArgs( PREVIEW_PATTERN_URL, {
-		stylesheet: STYLE_SHEET,
+		stylesheet,
 		pattern_id: encodePatternId( id ),
 		language,
 	} );
