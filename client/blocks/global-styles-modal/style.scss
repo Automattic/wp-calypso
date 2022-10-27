@@ -2,7 +2,7 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.wpcom-global-styles-modal {
+.global-styles-modal {
 	.components-modal__content {
 		padding: 0;
 		margin-top: 0;
@@ -25,8 +25,8 @@
 		}
 	}
 
-	.wpcom-global-styles-modal__text,
-	.wpcom-global-styles-modal__image {
+	.global-styles-modal__text,
+	.global-styles-modal__image {
 		width: 100%;
 
 		@include break-small {
@@ -35,13 +35,13 @@
 		}
 	}
 
-	.wpcom-global-styles-modal__text {
+	.global-styles-modal__text {
 		padding: 64px 48px;
 		display: flex;
 		flex-direction: column;
 	}
 
-	.wpcom-global-styles-modal__heading {
+	.global-styles-modal__heading {
 		margin-top: 0;
 		font-family: $brand-serif;
 		font-weight: 400;
@@ -50,26 +50,26 @@
 		margin-bottom: 16px;
 	}
 
-	.wpcom-global-styles-modal__description {
+	.global-styles-modal__description {
 		font-size: 1rem;
 		line-height: 24px;
 		margin-top: 0;
 		margin-bottom: 32px;
 	}
 
-	.wpcom-global-styles-modal__actions {
+	.global-styles-modal__actions {
 		display: flex;
 		justify-content: center;
 		gap: 16px;
 		margin-top: auto;
 
 		.components-button {
-			flex-grow: 1;
+			flex-grow: 0.5;
 			justify-content: center;
 		}
 	}
 
-	.wpcom-global-styles-modal__image {
+	.global-styles-modal__image {
 		background-color: #d0cce3;
 		padding: 64px 0 64px 64px;
 		display: flex;
