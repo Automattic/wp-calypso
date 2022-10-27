@@ -4,20 +4,31 @@
 .step-container.domains {
 	max-width: 1280px;
 	padding: 0 20px;
+	margin: 0;
 
-	@include break-mobile {
+	@include break-small {
 		margin: 0 0 0 20px;
 	}
 
-	@include break-large {
+	@include break-wide {
 		margin: 0 auto;
 	}
 
 	.step-container__header {
-		margin-top: 8px;
+		margin: 20px 24px 30px 20px;
+
+		@include break-small {
+			margin: 34px 0px 40px 0px;/* stylelint-disable-line length-zero-no-unit */
+		}
+
 		.formatted-header__title {
-			font-size: 2.75rem;
-			line-height: 48px;
+			font-size: 2.25rem;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			line-height: 2.5rem;
+			@include break-mobile {
+				font-size: 2.75rem;
+				line-height: 48px;
+			}
 		}
 	}
 
@@ -36,7 +47,7 @@
 
 	.register-domain-step__search-card {
 		background: var(--color-surface);
-		border: 1px solid #a7aaad;
+		border: 1px solid var(--studio-gray-20);
 		border-radius: 4px;
 		box-shadow: none;
 		display: flex;
@@ -44,12 +55,33 @@
 	}
 
 	.search-component__icon-search {
-		fill: #a7aaad;
+		fill: var(--studio-gray-20);
 		margin: 8px 6px 8px 8px;
 	}
 
+	.domain-search-results__domain-suggestions {
+		margin: 0;
+		@include break-mobile {
+			margin: 0 20px;
+		}
+		@include break-small {
+			margin: 0;
+		}
+	}
+
 	.featured-domain-suggestions {
+		border-top: 1px solid var(--studio-gray-5);
+		@include break-mobile {
+			border-top: none;
+		}
+
 		.featured-domain-suggestion {
+			border-bottom: 1px solid var(--studio-gray-5);
+			box-shadow: none;
+			@include break-mobile {
+				border-bottom: none;
+				box-shadow: 0 0 0 1px var(--color-border-subtle);
+			}
 			background: var(--color-surface);
 			border-radius: 4px;
 			box-sizing: border-box;
@@ -80,7 +112,7 @@
 	.domain-suggestion:not(.featured-domain-suggestion) {
 		box-shadow: unset;
 		background: none;
-		border-bottom: 1px solid #dcdcdea3;
+		border-bottom: 1px solid var(--studio-gray-5);
 		border-top: 1px solid #fff;
 		padding: 16px 5px;
 
@@ -89,8 +121,8 @@
 		}
 
 		&:hover {
-			border-bottom: 1px solid #646970;
-			border-top: 1px solid #646970;
+			border-bottom: 1px solid var(--studio-gray-50);
+			border-top: 1px solid var(--studio-gray-50);
 		}
 	}
 

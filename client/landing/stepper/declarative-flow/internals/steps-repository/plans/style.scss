@@ -28,11 +28,42 @@
 		}
 	}
 
-	.plan-features-comparison__table-item {
-		border-left: none;
+	.plan-features-comparison__table {
+		.plan-features-comparison__actions {
+			button.plan-features__actions-button {
+				border-radius: 4px;
+			}
+		}
 
-		&:last-of-type {
-			border-right: none;
+		.plan-features-comparison__row:last-child {
+			.plan-features-comparison__table-item {
+				border-bottom: none;
+			}
+		}
+		.plan-features-comparison__table-item {
+			border-left: none;
+			background-color: transparent;
+
+			&:last-of-type {
+				border-right: none;
+			}
+
+			.plan-pill.is-in-signup {
+				font-size: 0.75rem;
+				font-weight: 500;
+				letter-spacing: 0.2px;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				line-height: 1.25rem;
+				padding: 0 8px;
+				right: 52%;
+				transform: translate(50%);
+				border-radius: 4px;
+				background-color: var(--studio-green-5);
+				color: var(--studio-gray-80);
+			}
+			.plan-features-comparison__item-annual-plan {
+				color: var(--studio-orange-40) !important;
+			}
 		}
 	}
 
