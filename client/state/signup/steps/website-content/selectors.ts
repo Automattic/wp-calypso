@@ -16,10 +16,6 @@ export function getWebsiteContent( state: WebsiteContentStateModel ) {
 	);
 }
 
-export function getSiteIdForSavedWebsiteContent( state: WebsiteContentStateModel ) {
-	return state.signup.steps.websiteContentCollection.siteId;
-}
-
 export function getWebsiteContentDataCollectionIndex( state: WebsiteContentStateModel ) {
 	return state.signup?.steps?.websiteContentCollection?.currentIndex || initialState.currentIndex;
 }

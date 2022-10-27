@@ -1,7 +1,6 @@
 import { IMAGE_UPLOAD_STATES } from '../reducer';
 import { initialState } from '../schema';
 import {
-	getSiteIdForSavedWebsiteContent,
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 	isImageUploadInProgress,
@@ -78,20 +77,5 @@ describe( 'selectors', () => {
 				},
 			} )
 		).toEqual( false );
-	} );
-
-	test( 'should return the siteId from the state', () => {
-		expect(
-			getSiteIdForSavedWebsiteContent( {
-				signup: {
-					steps: {
-						websiteContentCollection: {
-							...initialState,
-							siteId: 123,
-						},
-					},
-				},
-			} )
-		).toEqual( 123 );
 	} );
 } );
