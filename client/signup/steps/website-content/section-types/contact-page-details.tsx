@@ -7,7 +7,10 @@ import {
 	HorizontalGrid,
 	ContactInformation,
 } from 'calypso/signup/accordion-form/form-components';
-import { ValidationErrors } from 'calypso/signup/accordion-form/types';
+import {
+	BBE_WEBSITE_CONTENT_FILLING_STEP,
+	useTranslatedPageDescriptions,
+} from 'calypso/signup/difm/translation-hooks';
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
@@ -20,28 +23,18 @@ import {
 	imageUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
-import type { TranslateResult } from 'i18n-calypso';
+import { PageDetailsParams } from './default-page-details';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
 
-export function ContactPageDetails( {
-	page,
-	formErrors,
-	label,
-	onChangeField,
-}: {
-	page: ContactPageData;
-	formErrors: ValidationErrors;
-	label: TranslateResult | undefined;
-	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
-} ) {
+export function ContactPageDetails( { page, formErrors, onChangeField }: PageDetailsParams ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
+	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
@@ -105,12 +98,7 @@ export function ContactPageDetails( {
 				onChange={ onFieldChanged }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={
-					label ||
-					translate( 'Please provide the text you want to appear on your %(pageTitle)s page.', {
-						args: { pageTitle },
-					} )
-				}
+				label={ description }
 			/>
 			<ContactInformation
 				displayEmailProps={ {

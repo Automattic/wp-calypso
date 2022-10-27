@@ -107,10 +107,10 @@ export function useTranslatedPageDescriptions(
 		[ BBE_WEBSITE_CONTENT_FILLING_STEP ]: {
 			...defaultDescriptions,
 			[ BLOG_PAGE ]: translate(
-				'How would you introduce your journal entries/news-articles/chapters? Describe what readers can expect from your regularly published content!'
+				'Add a short description to explain what type of posts will appear on your blog. We will set up the page so this description appears above your posts; you can add the posts later with the editor.'
 			),
 			[ CONTACT_PAGE ]: translate(
-				'Visitors want to get in touch with you. Do you have a message for them to say hello, and that it’s okay to get in touch? How can they reach you?'
+				'This page will include a contact form. Optionally provide text to appear above the form to let visitors know other ways they can reach you.'
 			),
 		},
 	};

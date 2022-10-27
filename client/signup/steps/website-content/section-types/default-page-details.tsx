@@ -21,22 +21,15 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
 import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
-import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
-
-export function DefaultPageDetails( {
-	page,
-	formErrors,
-	label,
-	onChangeField,
-}: {
+export interface PageDetailsParams {
 	page: PageData;
 	formErrors: ValidationErrors;
-	label: TranslateResult | undefined;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
-} ) {
+}
+export function DefaultPageDetails( { page, formErrors, onChangeField }: PageDetailsParams ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
@@ -106,7 +99,7 @@ export function DefaultPageDetails( {
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={ label || description }
+				label={ description }
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
