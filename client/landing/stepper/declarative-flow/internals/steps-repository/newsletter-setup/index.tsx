@@ -15,7 +15,7 @@ import './style.scss';
 
 export const defaultAccentColor = {
 	hex: '#113AF5',
-	rgb: { r: 29, g: 57, b: 235 },
+	rgb: { r: 17, g: 58, b: 245 },
 	default: true,
 };
 
