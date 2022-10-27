@@ -36,7 +36,7 @@ const useSteps = ( flowName: string ) => {
 			];
 	}
 
-	return useRef( steps.filter( Boolean ) );
+	return useRef< { title: string; duration?: number }[] >( steps.filter( Boolean ) );
 };
 
 export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName: string } ) {
