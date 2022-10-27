@@ -110,6 +110,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						{ showClipboardButton && (
 							<>
 								<ClipboardButton
+									aria-label={ translate( 'Copy URL' ) }
 									text={ siteSlug }
 									className="launchpad__clipboard-button"
 									borderless
