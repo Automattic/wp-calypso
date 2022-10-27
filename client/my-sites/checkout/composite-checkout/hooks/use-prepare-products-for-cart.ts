@@ -1,11 +1,4 @@
-import {
-	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-	getPlanByPathSlug,
-} from '@automattic/calypso-products';
+import { getPlanByPathSlug } from '@automattic/calypso-products';
 import { createRequestCartProduct } from '@automattic/shopping-cart';
 import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
@@ -321,8 +314,6 @@ function useAddProductFromSlug( {
 		() =>
 			productAliasFromUrl
 				?.split( ',' )
-				// Special treatment for Jetpack Search products
-				.map( ( productAlias ) => getJetpackSearchForSite( productAlias, usesJetpackProducts ) )
 				// Get the product information if it exists, and keep a reference to
 				// its product alias which we may need to get additional information like
 				// the domain name or theme (eg: 'theme:ovation').
@@ -435,31 +426,6 @@ function createRenewalItemToAddToCart(
 		product_slug: productSlug,
 		extra: renewalItemExtra,
 	};
-}
-
-/*
- * Provides an special handling for search products: Always add Jetpack Search to
- * Jetpack sites and WPCOM Search to WordPress.com sites, regardless of
- * which slug was provided. This allows e.g. code on jetpack.com to
- * redirect to a valid checkout URL for a search purchase without worrying
- * about which type of site the user has.
- */
-function getJetpackSearchForSite( productAlias: string, usesJetpackProducts: boolean ): string {
-	if (
-		productAlias &&
-		JETPACK_SEARCH_PRODUCTS.includes( productAlias as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
-	) {
-		if ( usesJetpackProducts ) {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_JETPACK_SEARCH_MONTHLY
-				: PRODUCT_JETPACK_SEARCH;
-		} else {
-			productAlias = productAlias.includes( 'monthly' )
-				? PRODUCT_WPCOM_SEARCH_MONTHLY
-				: PRODUCT_WPCOM_SEARCH;
-		}
-	}
-	return productAlias;
 }
 
 function createItemToAddToCart( {
