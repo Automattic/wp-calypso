@@ -199,9 +199,13 @@ function setupGtag() {
 }
 
 function setupWpcomGoogleAdsGtag() {
+	setupGtag();
+
 	window.gtag( 'config', TRACKING_IDS.wpcomGoogleAdsGtag );
 }
 
 function setupWpcomFloodlightGtag() {
+	setupGtag();
+
 	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
 }
