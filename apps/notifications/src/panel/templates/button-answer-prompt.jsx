@@ -6,6 +6,7 @@ import { getNewPostLink } from '../helpers/notes';
 import { answerPrompt } from '../state/ui/actions';
 import ActionButton from './action-button';
 
+// eslint-disable-next-line no-shadow
 const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
 	const newPostLink = getNewPostLink( note );
