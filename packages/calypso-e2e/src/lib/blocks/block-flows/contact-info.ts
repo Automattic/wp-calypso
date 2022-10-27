@@ -51,11 +51,13 @@ export class ContactInfoBlockFlow implements BlockFlow {
 		const numericOnlyPhoneNumber = this.configurationData.phoneNumber.replace( /\D/g, '' );
 
 		const expectedEmailLinkLocator = context.page.locator(
+			// 'main' needs to be specified due to the debug elements
 			`main [href="mailto:${ this.configurationData.email }"]`
 		);
 		await expectedEmailLinkLocator.waitFor();
 
 		const expectedPhoneLinkLocator = context.page.locator(
+			// 'main' needs to be specified due to the debug elements
 			`main [href="tel:${ numericOnlyPhoneNumber }"]`
 		);
 		await expectedPhoneLinkLocator.waitFor();
