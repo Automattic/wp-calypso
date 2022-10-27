@@ -6,15 +6,10 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
-import {
-	updatePrivacyForDomain,
-	supportsPrivacyProtectionPurchase,
-} from 'calypso/lib/cart-values/cart-items';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
 
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
@@ -105,7 +100,6 @@ export const createSiteWithCart = async (
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
-	productsList: Record< string, ProductListItem >,
 	username: string,
 	domainItem?: MinimalRequestCartProduct
 ) => {
@@ -163,7 +157,6 @@ export const createSiteWithCart = async (
 		themeSlugWithRepo,
 		flowName,
 		userIsLoggedIn,
-		productsList,
 		domainItem
 	);
 
@@ -186,7 +179,6 @@ export async function addPlanToCart(
 	flowName: string,
 	userIsLoggedIn: boolean,
 	themeSlugWithRepo: string,
-	productsList: Record< string, ProductListItem >,
 	cartItem: MinimalRequestCartProduct
 ) {
 	if ( isEmpty( cartItem ) ) {
@@ -202,42 +194,16 @@ export async function addPlanToCart(
 		themeSlugWithRepo,
 		flowName,
 		userIsLoggedIn,
-		productsList,
 		cartItem
 	);
 }
 
-const addPrivacyProtectionIfSupported = (
-	item: MinimalRequestCartProduct,
-	productsList: Record< string, ProductListItem >
-) => {
-	const { product_slug: productSlug } = item;
-	const productListArray = Object.entries( productsList ).map(
-		( [ , { product_slug, is_privacy_protection_product_purchase_allowed } ] ) => ( {
-			product_slug,
-			is_privacy_protection_product_purchase_allowed,
-		} )
-	);
-
-	if (
-		productSlug &&
-		productsList &&
-		supportsPrivacyProtectionPurchase( productSlug, productListArray )
-	) {
-		return updatePrivacyForDomain( item, true );
-	}
-
-	return item;
-};
-
 const addToCartAndProceed = async (
 	newCartItem: MinimalRequestCartProduct,
 	siteSlug: string,
-	flowName: string,
-	productsList: Record< string, ProductListItem >
+	flowName: string
 ) => {
-	const cartItemWithPrivacy = addPrivacyProtectionIfSupported( newCartItem, productsList );
-	const cartItem = prepareItemForAddingToCart( cartItemWithPrivacy, flowName );
+	const cartItem = prepareItemForAddingToCart( newCartItem, flowName );
 
 	if ( cartItem ) {
 		debug( 'adding products to cart', cartItem );
@@ -279,13 +245,11 @@ async function processItemCart(
 	themeSlugWithRepo: string,
 	lastKnownFlow: string,
 	userIsLoggedIn: boolean,
-	productsList: Record< string, ProductListItem >,
 	newCartItem?: MinimalRequestCartProduct
 ) {
 	if ( ! userIsLoggedIn && isFreeThemePreselected ) {
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		newCartItem &&
-			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
+		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
 		// fetchSitesAndUser(
 		// 	siteSlug,
@@ -293,14 +257,11 @@ async function processItemCart(
 		// 	reduxStore
 		// );
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		newCartItem &&
-			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
+		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else if ( userIsLoggedIn && siteSlug ) {
 		//fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
-		newCartItem &&
-			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
+		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else {
-		newCartItem &&
-			( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow, productsList ) );
+		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	}
 }

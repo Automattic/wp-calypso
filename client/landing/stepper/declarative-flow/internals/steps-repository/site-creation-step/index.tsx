@@ -10,7 +10,6 @@ import {
 	getSignupCompleteSlug,
 } from 'calypso/signup/storageUtils';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
-import { getProductsList } from 'calypso/state/products-list/selectors';
 import type { Step } from '../../types';
 
 import './styles.scss';
@@ -24,10 +23,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
 	} ) );
 
-	const { productsList, username } = useSelector( ( state ) => ( {
-		productsList: getProductsList( state ),
-		username: getCurrentUserName( state ),
-	} ) );
+	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
@@ -60,20 +56,12 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			'',
 			siteAccentColor,
 			true,
-			productsList,
 			username,
 			domainCartItem
 		);
 
 		if ( planCartItem ) {
-			await addPlanToCart(
-				site?.siteSlug as string,
-				flow as string,
-				true,
-				theme,
-				productsList,
-				planCartItem
-			);
+			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
 		}
 
 		return {
