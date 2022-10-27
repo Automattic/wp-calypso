@@ -14,6 +14,8 @@ import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 const getInitialReplyValue = ( note, translate ) => {
 	let ranges;
 	let username;
