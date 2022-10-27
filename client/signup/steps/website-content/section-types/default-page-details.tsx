@@ -24,12 +24,16 @@ import type { PageData } from 'calypso/state/signup/steps/website-content/schema
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
-export interface PageDetailsParams {
-	page: PageData;
+export interface PageDetailsParams< T > {
+	page: T;
 	formErrors: ValidationErrors;
 	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
 }
-export function DefaultPageDetails( { page, formErrors, onChangeField }: PageDetailsParams ) {
+export function DefaultPageDetails( {
+	page,
+	formErrors,
+	onChangeField,
+}: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );

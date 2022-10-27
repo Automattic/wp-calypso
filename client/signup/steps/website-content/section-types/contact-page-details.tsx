@@ -22,13 +22,18 @@ import {
 	imageUploadFailed,
 	imageUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
+import { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PageDetailsParams } from './default-page-details';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
 
-export function ContactPageDetails( { page, formErrors, onChangeField }: PageDetailsParams ) {
+export function ContactPageDetails( {
+	page,
+	formErrors,
+	onChangeField,
+}: PageDetailsParams< ContactPageData > ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
