@@ -44,7 +44,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
 					vendor={ flow }
-					basePath={ '' }
+					basePath=""
 					suggestion={ domainSuggestion }
 					domainsWithPlansOnly={ true }
 					isSignupStep={ true }
@@ -96,7 +96,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 
 		return (
 			<FormattedHeader
-				id={ 'choose-a-domain-header' }
+				id="choose-a-domain-header"
 				headerText="Choose a domain"
 				subHeaderText={
 					<>
@@ -109,7 +109,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 						</button>
 					</>
 				}
-				align={ 'center' }
+				align="center"
 			/>
 		);
 	};
