@@ -187,6 +187,7 @@
 		"upsell/concierge-session": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"newsletter/stats": false
 	}
 }
