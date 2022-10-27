@@ -32,10 +32,6 @@ const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStylesStatus
 			path: `sites/${ siteId }/global-styles/status`,
 			apiNamespace: 'wpcom/v2/',
 		} )
-		.then( ( response: GlobalStylesStatus ) => ( {
-			...DEFAULT_GLOBAL_STYLES_INFO,
-			...response,
-		} ) )
 		.catch( () => DEFAULT_GLOBAL_STYLES_INFO );
 };
 
