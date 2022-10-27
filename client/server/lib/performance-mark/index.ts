@@ -1,3 +1,26 @@
+type PerformanceMark = {
+	markName: string;
+	startTime: number;
+	duration?: number;
+	steps?: PerformanceMark[];
+};
+
+type PartialContext = {
+	performanceMarks?: PerformanceMark[];
+};
+
+// We don't have full types for the request object, so we're only using a small
+// subset for this file.
+type PartialReq = {
+	context?: PartialContext;
+};
+
+type LogastshMark = {
+	total_duration: number;
+} & Record< string, number >;
+
+type LogsatshPerfMarks = Record< string, LogastshMark >;
+
 /**
  * Updates the express request context with a new performance mark.
  *
@@ -9,11 +32,11 @@
  * Unfortunately, due to how express passes around the request object, this modifies
  * the request context by reference.
  *
- * @param {object}  req      The express request object.
- * @param {string}  markName A name for the marker being logged.
- * @param {boolean} isChild  Optionally note this occured as part of a different mark.
+ * @param req      The express request object.
+ * @param markName A name for the marker being logged.
+ * @param isChild  Optionally note this occured as part of a different mark.
  */
-export default function performanceMark( req, markName, isChild = false ) {
+export default function performanceMark( req: PartialReq, markName: string, isChild = false ) {
 	if ( ! req.context ) {
 		return;
 	}
@@ -33,7 +56,9 @@ export default function performanceMark( req, markName, isChild = false ) {
 	// If adding a child, we want to operate on the active marker's steps array.
 	// Otherwise, we're just adding a normal mark to the top-level array.
 	const targetArray =
-		isChild && perfMarks.length ? perfMarks[ perfMarks.length - 1 ].steps : perfMarks;
+		isChild && perfMarks.length
+			? ( perfMarks[ perfMarks.length - 1 ].steps as PerformanceMark[] ) // Was set to an array above.
+			: perfMarks;
 
 	// Mark the duration of the previous marker if a mark exists to be updated.
 	finalizeDuration( targetArray, currentTime );
@@ -47,7 +72,7 @@ export default function performanceMark( req, markName, isChild = false ) {
  * @param {object} req The express request object.
  * @returns object The normalized mark data for logstash in object format.
  */
-export function finalizePerfMarks( req ) {
+export function finalizePerfMarks( req: PartialReq ): LogsatshPerfMarks {
 	// Do nothing if there are no marks.
 	if ( ! req?.context?.performanceMarks?.length ) {
 		return {};
@@ -57,25 +82,25 @@ export function finalizePerfMarks( req ) {
 
 	// Logstash cannot accept arrays, so we transform our array into a more
 	// friendly structure for it.
-	return req.context.performanceMarks.reduce( ( marks, mark, i ) => {
+	return req.context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark, i ) => {
 		const markKey = markNameToKey( mark.markName, i );
 		// A mark like "setup request" becomes "0_setup_request"
 		marks[ markKey ] = {
-			total_duration: mark.duration,
+			total_duration: mark.duration as number, // All durations exist after "finalizeDuration"
 		};
 
 		mark.steps?.forEach( ( { markName, duration }, j ) => {
-			marks[ markKey ][ markNameToKey( markName, j ) ] = duration;
+			marks[ markKey ][ markNameToKey( markName, j ) ] = duration as number; // All durations exist after "finalizeDuration"
 		} );
 		return marks;
 	}, {} );
 }
 
-function markNameToKey( name, index ) {
+function markNameToKey( name: string, index: number ) {
 	return `${ index }_${ name.replace( /[- ]/g, '_' ) }`;
 }
 
-function finalizeDuration( markArr, currentTime ) {
+function finalizeDuration( markArr: PerformanceMark[] | undefined, currentTime: number ) {
 	if ( ! markArr?.length ) {
 		return;
 	}
