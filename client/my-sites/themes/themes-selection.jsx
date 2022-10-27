@@ -133,6 +133,9 @@ class ThemesSelection extends Component {
 					secondaryOption = null;
 				} else if ( this.props.isThemeActive( themeId ) ) {
 					defaultOption = options.customize;
+				} else if ( options.upgradePlanForBundledThemes ) {
+					defaultOption = options.upgradePlanForBundledThemes;
+					secondaryOption = null;
 				} else if ( options.purchase ) {
 					defaultOption = options.purchase;
 				} else if ( options.upgradePlan ) {
