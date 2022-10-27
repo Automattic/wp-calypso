@@ -644,8 +644,8 @@ export class SiteSettingsFormGeneral extends Component {
 							label={ translate(
 								'Allow supporters to cover the WordPress plan to keep the site content up and running'
 							) }
-							checked={ fields.wpcom_gitfing_subscription }
-							onChange={ this.props.handleToggle( 'wpcom_gitfing_subscription' ) }
+							checked={ fields.wpcom_gifting_subscription }
+							onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
 						/>
 						<FormSettingExplanation>
 							{ translate(
@@ -814,7 +814,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
-		wpcom_gitfing_subscription: true,
+		wpcom_gifting_subscription: true,
 		admin_url: '',
 	};
 
@@ -832,10 +832,10 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
-		wpcom_gitfing_subscription:
-			typeof settings.wpcom_gitfing_subscription === 'undefined'
+		wpcom_gifting_subscription:
+			typeof settings.wpcom_gifting_subscription === 'undefined'
 				? true
-				: settings.wpcom_gitfing_subscription,
+				: settings.wpcom_gifting_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
