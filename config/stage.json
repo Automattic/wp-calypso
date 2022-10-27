@@ -94,6 +94,7 @@
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,
+		"pre-cancellation-modal": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,

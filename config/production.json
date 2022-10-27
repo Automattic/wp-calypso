@@ -95,6 +95,7 @@
 		"plans/starter-plan": false,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
+		"pre-cancellation-modal": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
