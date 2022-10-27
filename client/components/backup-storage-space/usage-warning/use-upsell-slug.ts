@@ -19,6 +19,7 @@ import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 type SelectorProductWithStorage = SelectorProduct & {
 	storage: React.ReactChild;
@@ -37,19 +38,19 @@ const UPGRADEABLE_STORAGE_PRODUCT_SLUGS_T2 = [
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
 
-export const isJetpackT1Product = ( { subscriptionStatus, productSlug } ) => {
+export const isJetpackT1Product = ( { subscriptionStatus, productSlug }: Purchase ) => {
 	return (
 		subscriptionStatus === 'active' && UPGRADEABLE_STORAGE_PRODUCT_SLUGS_T1.includes( productSlug )
 	);
 };
 
-export const isJetpackT2Product = ( { subscriptionStatus, productSlug } ) => {
+export const isJetpackT2Product = ( { subscriptionStatus, productSlug }: Purchase ) => {
 	return (
 		subscriptionStatus === 'active' && UPGRADEABLE_STORAGE_PRODUCT_SLUGS_T2.includes( productSlug )
 	);
 };
 
-export default ( siteId ) => {
+export default ( siteId: number | null ) => {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
 	//const HUNDRED_GIGABYTES = useJetpack100GbStorageAmountText();
