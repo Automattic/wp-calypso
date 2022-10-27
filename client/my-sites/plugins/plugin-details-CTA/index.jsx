@@ -7,7 +7,7 @@ import {
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
@@ -102,7 +102,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getEligibility( state, selectedSite?.ID )
 	);
 
-	const getUpgradeToBusinessHRef = useCallback( () => {
+	const upgradeToBusinessHRef = useMemo( () => {
 		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 
 		const siteSlug = selectedSite?.slug;
@@ -111,7 +111,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
 	}, [ selectedSite?.slug ] );
 
-	const getSaasRedirectHRef = useCallback( () => {
+	const saasRedirectHRef = useMemo( () => {
 		return getSaasRedirectUrl( plugin, currentUserId, selectedSite?.ID );
 	}, [ currentUserId, plugin, selectedSite?.ID ] );
 	/*
@@ -296,7 +296,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
-						saasRedirectHRef={ getSaasRedirectHRef() }
+						saasRedirectHRef={ saasRedirectHRef }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
@@ -331,7 +331,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
-							href={ getUpgradeToBusinessHRef() }
+							href={ upgradeToBusinessHRef }
 							className="plugin-details-cta__install-button"
 							primary
 							onClick={ () => {} }
