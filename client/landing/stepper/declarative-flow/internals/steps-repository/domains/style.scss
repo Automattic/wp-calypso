@@ -1,10 +1,24 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/onboarding/styles/mixins";
+
 .step-container.domains {
 	max-width: 1280px;
-	margin: 0 auto;
-	padding: 35px 0 0;
+	padding: 0 20px;
+
+	@include break-mobile {
+		margin: 0 0 0 20px;
+	}
+
+	@include break-large {
+		margin: 0 auto;
+	}
 
 	.step-container__header {
-		margin-top: 0;
+		margin-top: 8px;
+		.formatted-header__title {
+			font-size: 2.75rem;
+			line-height: 48px;
+		}
 	}
 
 	.register-domain-step__search {
@@ -47,10 +61,13 @@
 		}
 
 		.domain-registration-suggestion__title-wrapper {
-			flex-direction: row;
 			flex-wrap: nowrap;
+			flex-direction: column-reverse;
+			margin-bottom: initial;
 			.domain-registration-suggestion__badges {
-				margin-left: 12px;
+				margin-left: 0;
+				margin-top: 0;
+				margin-bottom: 10px;
 			}
 		}
 
