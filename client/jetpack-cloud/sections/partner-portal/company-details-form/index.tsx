@@ -73,7 +73,7 @@ export default function CompanyDetailsForm( {
 }: Props ) {
 	const translate = useTranslate();
 	const { countryOptions, stateOptionsMap } = useCountriesAndStates();
-	const showCountryFields = countryOptions.length > 0;
+	const showCountryFields = countryOptions.length > 1;
 
 	const [ name, setName ] = useState( initialValues.name ?? '' );
 	const [ countryValue, setCountryValue ] = useState( initialValues.country ?? '' );
@@ -163,7 +163,6 @@ export default function CompanyDetailsForm( {
 							value={ country }
 							options={ countryOptions }
 							isDisabled={ isLoading }
-							isLoading={ countryOptions.length === 0 }
 							onChange={ ( option: any ) => {
 								setCountryValue( option.value );
 								// Reset the value of state since it no longer matches with the selected country.
