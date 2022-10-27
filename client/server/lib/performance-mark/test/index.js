@@ -137,24 +137,24 @@ describe( 'performanceMark', () => {
 } );
 
 describe( 'finalizePerfMarks', () => {
-	it( 'returns an empty array of no marks exist', () => {
+	it( 'returns an empty object of no marks exist', () => {
 		const req1 = {};
-		expect( finalizePerfMarks( req1 ) ).toStrictEqual( [] );
+		expect( finalizePerfMarks( req1 ) ).toStrictEqual( {} );
 
 		const req2 = { context: {} };
-		expect( finalizePerfMarks( req2 ) ).toStrictEqual( [] );
+		expect( finalizePerfMarks( req2 ) ).toStrictEqual( {} );
 
 		const req3 = { context: { performanceMarks: null } };
-		expect( finalizePerfMarks( req3 ) ).toStrictEqual( [] );
+		expect( finalizePerfMarks( req3 ) ).toStrictEqual( {} );
 
 		const req4 = { context: { performanceMarks: [] } };
-		expect( finalizePerfMarks( req4 ) ).toStrictEqual( [] );
+		expect( finalizePerfMarks( req4 ) ).toStrictEqual( {} );
 	} );
 
 	it( 'finalizes mark durations and returns the marks', () => {
 		const req = { context: {} };
 		performanceMark( req, 'test' );
-		performanceMark( req, 'test-child', true );
+		performanceMark( req, 'test child', true );
 		jest.advanceTimersByTime( 55 );
 
 		expect( req.context.performanceMarks[ 0 ].duration ).toBeUndefined();
@@ -164,7 +164,36 @@ describe( 'finalizePerfMarks', () => {
 		// The by-ref update still works:
 		expect( req.context.performanceMarks[ 0 ].duration ).toBe( 55 );
 		expect( req.context.performanceMarks[ 0 ].steps[ 0 ].duration ).toBe( 55 );
-		expect( finalMarks[ 0 ].duration ).toBe( 55 );
-		expect( finalMarks[ 0 ].steps[ 0 ].duration ).toBe( 55 );
+		expect( finalMarks[ '0_test' ].total_duration ).toBe( 55 );
+		expect( finalMarks[ '0_test' ][ '0_test_child' ] ).toBe( 55 );
+	} );
+
+	it( 'returns a array normalized to an object for logstash', () => {
+		const req = { context: {} };
+		performanceMark( req, 'test' );
+		performanceMark( req, 'test child', true );
+		jest.advanceTimersByTime( 55 );
+		performanceMark( req, 'another test' );
+		jest.advanceTimersByTime( 2 );
+		performanceMark( req, 'another test child', true );
+		jest.advanceTimersByTime( 1000 );
+		performanceMark( req, 'test child once more', true );
+		jest.advanceTimersByTime( 3 );
+		performanceMark( req, 'another-mark' );
+		jest.advanceTimersByTime( 70 );
+
+		const finalMarks = finalizePerfMarks( req );
+		// First mark has one child:
+		expect( finalMarks[ '0_test' ].total_duration ).toBe( 55 );
+		expect( finalMarks[ '0_test' ][ '0_test_child' ] ).toBe( 55 );
+
+		// Second mark has two children indexed correctly:
+		expect( finalMarks[ '1_another_test' ].total_duration ).toBe( 1005 );
+		expect( finalMarks[ '1_another_test' ][ '0_another_test_child' ] ).toBe( 1000 );
+		expect( finalMarks[ '1_another_test' ][ '1_test_child_once_more' ] ).toBe( 3 );
+
+		// Third mark has no children and just a total duration:
+		expect( finalMarks[ '2_another_mark' ].total_duration ).toBe( 70 );
+		expect( Object.keys( finalMarks[ '2_another_mark' ] ).length ).toBe( 1 );
 	} );
 } );

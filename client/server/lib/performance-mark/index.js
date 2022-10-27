@@ -45,16 +45,34 @@ export default function performanceMark( req, markName, isChild = false ) {
  * Finalize the duration of any active marks and return the final array of data.
  *
  * @param {object} req The express request object.
- * @returns array The array of finalized performance marks.
+ * @returns object The normalized mark data for logstash in object format.
  */
 export function finalizePerfMarks( req ) {
 	// Do nothing if there are no marks.
 	if ( ! req?.context?.performanceMarks?.length ) {
-		return [];
+		return {};
 	}
 
 	finalizeDuration( req.context.performanceMarks, Date.now() );
-	return req.context.performanceMarks;
+
+	// Logstash cannot accept arrays, so we transform our array into a more
+	// friendly structure for it.
+	return req.context.performanceMarks.reduce( ( marks, mark, i ) => {
+		const markKey = markNameToKey( mark.markName, i );
+		// A mark like "setup request" becomes "0_setup_request"
+		marks[ markKey ] = {
+			total_duration: mark.duration,
+		};
+
+		mark.steps?.forEach( ( { markName, duration }, j ) => {
+			marks[ markKey ][ markNameToKey( markName, j ) ] = duration;
+		} );
+		return marks;
+	}, {} );
+}
+
+function markNameToKey( name, index ) {
+	return `${ index }_${ name.replace( /[- ]/g, '_' ) }`;
 }
 
 function finalizeDuration( markArr, currentTime ) {
