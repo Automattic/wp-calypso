@@ -144,7 +144,7 @@ button {
  * Tailored flow stylings
  */
 .newsletter,
-.link-in-bio {
+.link-in-bio:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
