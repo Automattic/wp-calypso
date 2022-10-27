@@ -9507,6 +9507,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/jest-console@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "@wordpress/jest-console@npm:6.3.0"
+  dependencies:
+    "@babel/runtime": ^7.16.0
+    jest-matcher-utils: ^27.4.2
+  peerDependencies:
+    jest: ">=27"
+  checksum: 8ed73aae9ff5ad1048575cc386e0388c5ce18333a7175384ccccddaf8eeb06d57583080e6909f1e9162da382ff0c306ea08180d55b74f48c7eb0c29da2444baa
+  languageName: node
+  linkType: hard
+
+"@wordpress/jest-preset-default@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "@wordpress/jest-preset-default@npm:10.1.0"
+  dependencies:
+    "@wordpress/jest-console": ^6.3.0
+    babel-jest: ^27.4.5
+  peerDependencies:
+    "@babel/core": ">=7"
+    jest: ">=27"
+    react: ">=17"
+    react-dom: ">=17"
+  checksum: 84c848cf09947f84efc3aea57c3411a7e3185cedfb104ef5b093d4678aa22e11c9d3c07f48c060606b49e002beaf7ff497f3a35f8fbe5ec63fbf3c50f6fb1377
+  languageName: node
+  linkType: hard
+
 "@wordpress/jest-preset-default@npm:^8.2.0":
   version: 8.2.0
   resolution: "@wordpress/jest-preset-default@npm:8.2.0"
@@ -34750,6 +34777,24 @@ swiper@4.5.1:
   checksum: 0dde6db5ac1e5244e1f8bf5b26895a0d53c00797ea2bdbc1302623dd1aecab5cfb88b4f324d482cbd4c8b089464383d8c83db64dec5798ec0136820e22478e47
   languageName: node
   linkType: hard
+
+"upgrade-block@workspace:apps/upgrade-block":
+  version: 0.0.0-use.local
+  resolution: "upgrade-block@workspace:apps/upgrade-block"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@babel/core": ^7.17.5
+    "@testing-library/jest-dom": ^5.16.2
+    "@testing-library/react": ^12.1.3
+    "@wordpress/block-editor": ^9.1.0
+    "@wordpress/blocks": ^11.8.0
+    "@wordpress/jest-preset-default": ^10.1.0
+    "@wordpress/scripts": ^23.1.0
+    jest: ^27.3.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+  languageName: unknown
+  linkType: soft
 
 "upper-case@npm:^1.1.1":
   version: 1.1.3
