@@ -1,9 +1,9 @@
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import Preview from '@wordpress/edit-site/build-module/components/global-styles/preview';
-import { useMemo } from '@wordpress/element';
+import { useMemo, useState } from '@wordpress/element';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+import Preview from './style-variation-preview';
 import type { StyleVariation } from '@automattic/design-picker/src/types';
 import './style.scss';
 
@@ -19,23 +19,6 @@ interface StyleVariationPreviewProps {
 	showGlobalStylesPremiumBadge: () => React.ReactNode;
 }
 
-// This is a temporary workaround until we can
-// upgrade @wordpress/edit-site to fix CSS issues.
-//
-// See: https://github.com/WordPress/gutenberg/pull/43601
-const OVERRIDE_CONFIG = {
-	styles: {
-		spacing: {
-			padding: {
-				bottom: 0,
-				left: 0,
-				right: 0,
-				top: 0,
-			},
-		},
-	},
-};
-
 const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	variation,
 	base = {},
@@ -44,6 +27,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 	onClick,
 	showGlobalStylesPremiumBadge,
 } ) => {
+	const [ isFocused, setIsFocused ] = useState( false );
 	const context = useMemo( () => {
 		return {
 			user: {
@@ -51,10 +35,7 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				styles: variation.styles ?? {},
 			},
 			base,
-			merged: mergeBaseAndUserConfigs(
-				mergeBaseAndUserConfigs( base, variation ),
-				OVERRIDE_CONFIG
-			),
+			merged: mergeBaseAndUserConfigs( base, variation ),
 		};
 	}, [ variation, base ] );
 
@@ -74,10 +55,12 @@ const StyleVariationPreview: React.FC< StyleVariationPreviewProps > = ( {
 				}
 				onClick={ () => onClick( variation ) }
 				onKeyDown={ ( e ) => e.keyCode === SPACE_BAR_KEYCODE && onClick( variation ) }
+				onFocus={ () => setIsFocused( true ) }
+				onBlur={ () => setIsFocused( false ) }
 			>
 				{ isPremium && showGlobalStylesPremiumBadge() }
 				<GlobalStylesContext.Provider value={ context }>
-					<Preview label={ variation.title } />
+					<Preview label={ variation.title } isFocused={ isFocused } withHoverView />
 				</GlobalStylesContext.Provider>
 			</div>
 		</div>

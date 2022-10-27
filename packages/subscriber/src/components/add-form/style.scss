@@ -129,6 +129,8 @@
 		box-sizing: border-box;
 		font-size: 0.875rem;
 		padding: 0.875rem 1rem;
+		/* We need to allow space for the SVG checkmark */
+		padding-right: calc(0.5rem + 24px);
 
 		&::placeholder {
 			color: var(--studio-gray-20);
@@ -150,7 +152,7 @@
 	.components-base-control__help {
 		position: absolute;
 		top: 3px;
-		right: 10px;
+		right: 0.5rem;
 
 		svg {
 			fill: var(--color-success-50);

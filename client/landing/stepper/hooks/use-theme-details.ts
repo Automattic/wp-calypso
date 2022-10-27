@@ -8,6 +8,7 @@ type Theme = {
 	author_uri: string;
 	description: string;
 	date_updated: string;
+	price: string;
 	taxonomies: Record< string, [] >;
 };
 

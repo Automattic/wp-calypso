@@ -2,13 +2,11 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
 import { SiteDetailsPlan } from '@automattic/launch/src/stores';
 import styled from '@emotion/styled';
-import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect } from 'react';
-import { useInView } from 'react-intersection-observer';
-const PLAN_RENEW_NAG_IN_VIEW = 'calypso_sites_dashboard_plan_renew_nag_inview';
-const PLAN_RENEW_NAG_ON_CLICK = 'calypso_sites_dashboard_plan_renew_nag_click';
+import { useCallback } from 'react';
+import { useInView } from 'calypso/lib/use-in-view';
+import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
 	plan: SiteDetailsPlan;
@@ -53,16 +51,16 @@ const PlanRenewNoticeExpireText = styled.div( {
 
 export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
 	const { __ } = useI18n();
-	const { ref, inView: inViewOnce } = useInView( { triggerOnce: true } );
-
-	useEffect( () => {
-		if ( inViewOnce ) {
-			recordTracksEvent( PLAN_RENEW_NAG_IN_VIEW, {
+	const trackCallback = useCallback(
+		() =>
+			recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.IN_VIEW, {
 				is_site_owner: isSiteOwner,
 				product_slug: plan.product_slug,
-			} );
-		}
-	}, [ inViewOnce, isSiteOwner, plan.product_slug ] );
+				display_mode: 'list',
+			} ),
+		[ isSiteOwner, plan.product_slug ]
+	);
+	const ref = useInView< HTMLDivElement >( trackCallback );
 
 	const renewText = __( 'Renew plan' );
 	return (
@@ -73,21 +71,21 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 			</IconContainer>
 			<PlanRenewNotice>
 				<PlanRenewNoticeTextContainer>
-					{ createInterpolateElement(
-						sprintf(
+					<PlanRenewNoticeExpireText>
+						{ sprintf(
 							/* translators: %s - the plan's product name */
-							__( '<span>%s - Expired</span>' ),
+							__( '%s - Expired' ),
 							plan.product_name_short
-						),
-						{
-							span: <PlanRenewNoticeExpireText />,
-						}
-					) }
+						) }
+					</PlanRenewNoticeExpireText>
 				</PlanRenewNoticeTextContainer>
 				{ isSiteOwner && (
 					<PlanRenewLink
 						onClick={ () => {
-							recordTracksEvent( PLAN_RENEW_NAG_ON_CLICK, { product_slug: plan.product_slug } );
+							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {
+								product_slug: plan.product_slug,
+								display_mode: 'list',
+							} );
 						} }
 						href={ checkoutUrl }
 						title={ renewText }

@@ -29,6 +29,7 @@ import isSectionEnabled from 'calypso/sections-filter';
 import { serverRouter, getCacheKey } from 'calypso/server/isomorphic-routing';
 import analytics from 'calypso/server/lib/analytics';
 import isWpMobileApp from 'calypso/server/lib/is-wp-mobile-app';
+import performanceMark from 'calypso/server/lib/performance-mark/index.js';
 import {
 	serverRender,
 	renderJsx,
@@ -51,7 +52,6 @@ import middlewareAssets from '../middleware/assets.js';
 import middlewareCache from '../middleware/cache.js';
 import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
-
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -96,6 +96,8 @@ function setupLoggedInContext( req, res, next ) {
 }
 
 function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+	performanceMark( request, 'getDefaultContext' );
+
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
 	const showGdprBanner = shouldSeeGdprBanner(
 		request.cookies.country_code || geoIPCountryCode,
@@ -120,6 +122,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	 * are considered logged out. This shouldn't cause issues because only one
 	 * user is using the cache in dev mode -- so cross-request pollution won't happen.
 	 */
+	performanceMark( request, 'get cached redux state', true );
 	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
@@ -130,6 +133,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	};
 	const reduxStore = createReduxStore( getCachedState( initialReducer, 'root' ) );
 	setStore( reduxStore, getCachedState );
+	performanceMark( request, 'create basic options', true );
 
 	const devEnvironments = [ 'development', 'jetpack-cloud-development' ];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
@@ -149,6 +153,14 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
+
+	performanceMark( request, 'getFilesForEntrypoint', true );
+	const entrypointFiles = request.getFilesForEntrypoint( entrypoint );
+
+	performanceMark( request, 'getAssets', true );
+	const manifests = request.getAssets().manifests;
+
+	performanceMark( request, 'assign context object', true );
 	const context = Object.assign( {}, request.context, {
 		commitSha: process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)',
 		compileDebug: process.env.NODE_ENV === 'development',
@@ -160,8 +172,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		isWooDna: wooDnaConfig( request.query ).isWooDnaFlow(),
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
-		entrypoint: request.getFilesForEntrypoint( entrypoint ),
-		manifests: request.getAssets().manifests,
+		entrypoint: entrypointFiles,
+		manifests,
 		reactQueryDevtoolsHelper,
 		accountSettingsHelper,
 		authHelper,
@@ -185,6 +197,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		isDebug,
 	};
 
+	performanceMark( request, 'setup environments', true );
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
 		context.devDocs = true;
@@ -234,11 +247,15 @@ const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
 };
 
 function setUpLocalLanguageRevisions( req ) {
+	performanceMark( req, 'setUpLocalLanguageRevisions', true );
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
+
+	performanceMark( req, 'read language file', true );
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
+			performanceMark( req, 'parse language file', true );
 			req.context.languageRevisions = JSON.parse( languageRevisions );
 
 			return languageRevisions;
@@ -253,6 +270,7 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
+	performanceMark( req, 'setUpLoggedOutRoute', true );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -264,7 +282,10 @@ function setUpLoggedOutRoute( req, res, next ) {
 	}
 
 	Promise.all( setupRequests )
-		.then( () => next() )
+		.then( () => {
+			performanceMark( req, 'done with setup requests', true );
+			next();
+		} )
 		.catch( ( error ) => next( error ) );
 }
 
@@ -491,6 +512,8 @@ function setUpCSP( req, res, next ) {
 }
 
 function setUpRoute( req, res, next ) {
+	performanceMark( req, 'setUpRoute' );
+
 	if ( req.context.isRouteSetup === true ) {
 		req.logger.warn(
 			{

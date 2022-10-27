@@ -2,7 +2,6 @@ import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
@@ -67,6 +66,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		const pages = getPostsForQuery( state, selectedSiteId, queryPage );
 		return pages?.filter( ( page: any ) => ! page.password );
 	} );
+
 	const isLoadingPost = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
 	);
@@ -88,25 +88,14 @@ export default function PromotedPosts( { tab }: Props ) {
 		page( '/' );
 	}
 
-	const learnMoreLink = <InlineSupportLink supportContext="advertising" showIcon={ false } />;
-
-	const subtitle = campaignsData?.length
-		? translate(
-				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: learnMoreLink,
-					},
-				}
-		  )
-		: translate(
-				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: learnMoreLink,
-					},
-				}
-		  );
+	const subtitle = translate(
+		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+		{
+			components: {
+				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
+			},
+		}
+	);
 
 	if ( selectedSite?.is_coming_soon ) {
 		return (
@@ -148,17 +137,15 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	return (
 		<Main wideLayout className="promote-post">
-			<SitePreview />
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
 			<FormattedHeader
 				brandFont
 				className="advertising__page-header"
 				headerText={ translate( 'Advertising' ) }
-				subHeaderText={ campaignsData?.length ? subtitle : '' }
+				subHeaderText={ subtitle }
 				align="left"
 			/>
-			<SitePreview />
 
 			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
 
