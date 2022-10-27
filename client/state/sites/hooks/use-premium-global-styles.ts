@@ -17,6 +17,7 @@ const DEFAULT_GLOBAL_STYLES_INFO: GlobalStylesStatus = {
 };
 
 const getGlobalStylesInfoForSite = ( siteId: number | null ): GlobalStylesStatus => {
+	// When site id is null it means that the site hasn't been created yet.
 	if ( siteId === null ) {
 		return {
 			...DEFAULT_GLOBAL_STYLES_INFO,
