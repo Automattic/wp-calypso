@@ -83,7 +83,6 @@ export const linkInBio: Flow = {
 								providedDependencies.siteTitle as string
 							) }&search=yes&hide_initial_query=yes`
 						);
-						return navigate( 'patterns' );
 					}
 					return window.location.assign( logInUrl );
 
@@ -91,7 +90,9 @@ export const linkInBio: Flow = {
 					return navigate( 'linkInBioSetup' );
 
 				case 'linkInBioSetup':
-					return navigate( 'launchpad' );
+					return window.location.assign(
+						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&domain=${ domain }`
+					);
 
 				case 'launchpad': {
 					return navigate( 'processing' );

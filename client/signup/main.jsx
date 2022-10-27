@@ -329,9 +329,6 @@ class Signup extends Component {
 			this.props.localeSlug
 		);
 
-		console.log( '-------------------filtered destination:', filteredDestination );
-
-
 		// If the filtered destination is different from the flow destination (e.g. changes to checkout), then save the flow destination so the user ultimately arrives there
 		if ( destination !== filteredDestination ) {
 			persistSignupDestination( destination );
@@ -345,7 +342,6 @@ class Signup extends Component {
 		const siteId = dependencies && dependencies.siteId;
 
 		if ( isTailoredSignupFlow( this.props.flowName ) || this.props.flowName === 'link-in-bio-tld' ) {
-			console.log( '-------------ready to run setupSiteAfterCreation' );
 			await setupSiteAfterCreation( { siteId, flowName: this.props.flowName } );
 		}
 
@@ -481,12 +477,6 @@ class Signup extends Component {
 	};
 
 	redirectDestination( dependencies, destination ) {
-		// in this case, a regular login will be performed, so no redirect is needed.
-		if ( this.state.bearerToken && this.state.redirectTo ) {
-			console.log( '!!!!!!!!!!!!!!!!!!!!! redirect Destination!' );
-			return;
-		}
-
 		window.location.href = destination;
 	}
 
@@ -525,6 +515,7 @@ class Signup extends Component {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
 			// window.location.href = destination;
+			//
 			return;
 		}
 
@@ -588,6 +579,12 @@ class Signup extends Component {
 		if ( nextFlowName !== this.props.flowName ) {
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
+
+		if ( nextStepName === 'plans-link-in-bio' ) {
+			page( '/setup/patterns?flow=link-in-bio&tld=link' );
+			return;
+		}
+
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
