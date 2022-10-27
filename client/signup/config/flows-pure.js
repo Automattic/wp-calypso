@@ -129,8 +129,8 @@ export function generateFlows( {
 					dependencies.siteSlug
 				) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-09-20',
-			Recaptcha: true,
+			lastModified: '2022-08-16',
+			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
