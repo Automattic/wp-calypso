@@ -23,6 +23,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/block-editor": "^9.1.0",
 		"@wordpress/blocks": "^11.8.0",
+		"@wordpress/i18n": "^4.9.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2"
 	},
@@ -31,7 +32,6 @@
 		"@babel/core": "^7.17.5",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
-		"@wordpress/i18n": "^4.20.0",
 		"@wordpress/jest-preset-default": "^10.1.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^1.0.4",
 		"@wordpress/scripts": "^23.1.0",

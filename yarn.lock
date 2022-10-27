@@ -9342,15 +9342,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/hooks@npm:^3.20.0":
-  version: 3.20.0
-  resolution: "@wordpress/hooks@npm:3.20.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: 9a08d09ee1eef6b85d6ebde90c899063ba6c6d51e34132d70eb97f3563ff6b43569952d721b9fc2fce837e87f61705e3dcd47f72b33ec7cd3f52f2ec54e156a6
-  languageName: node
-  linkType: hard
-
 "@wordpress/html-entities@npm:^3.2.1, @wordpress/html-entities@npm:^3.2.3, @wordpress/html-entities@npm:^3.7.0, @wordpress/html-entities@npm:^3.9.0":
   version: 3.9.0
   resolution: "@wordpress/html-entities@npm:3.9.0"
@@ -9391,22 +9382,6 @@ __metadata:
   bin:
     pot-to-php: tools/pot-to-php.js
   checksum: 29e9cfa003358d262f23019fb26dea0ad1f2bf41ab2c13b146bb617725616cd40b0eaea163f95678bdda983994592e5ef17af01de26371add8e59a5b3673a9a5
-  languageName: node
-  linkType: hard
-
-"@wordpress/i18n@npm:^4.20.0":
-  version: 4.20.0
-  resolution: "@wordpress/i18n@npm:4.20.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/hooks": ^3.20.0
-    gettext-parser: ^1.3.1
-    memize: ^1.1.0
-    sprintf-js: ^1.1.1
-    tannin: ^1.2.0
-  bin:
-    pot-to-php: tools/pot-to-php.js
-  checksum: ba1937257572e298a9b28cd0fdc675315ad801a38412853b1d1170af20a197500f5143687214761a4e47d57eb7492068fdc02bca71aa10324064f587e0050a75
   languageName: node
   linkType: hard
 
@@ -34814,7 +34789,7 @@ swiper@4.5.1:
     "@testing-library/react": ^12.1.3
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
-    "@wordpress/i18n": ^4.20.0
+    "@wordpress/i18n": ^4.9.0
     "@wordpress/jest-preset-default": ^10.1.0
     "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/scripts": ^23.1.0
