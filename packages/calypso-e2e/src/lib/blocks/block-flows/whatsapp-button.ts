@@ -12,7 +12,7 @@ const selectors = {
 	buttonLabel: 'a.whatsapp-block__button',
 
 	// Published
-	block: 'div.wp-block-jetpack-whatsapp-button',
+	block: 'main div.wp-block-jetpack-whatsapp-button',
 };
 
 /**
