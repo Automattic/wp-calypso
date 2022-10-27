@@ -29,7 +29,7 @@ const StyledLi = styled.li`
 	color: var( --studio-gray-80 );
 	font-size: $font-body-small;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	margin: 5px 0;
 
 	.title {
@@ -40,7 +40,9 @@ const StyledLi = styled.li`
 	}
 
 	svg {
+		min-width: 16px;
 		margin-right: 8px;
+		margin-top: 4px;
 	}
 `;
 
