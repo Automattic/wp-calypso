@@ -112,7 +112,7 @@ const ProcessingStep: Step = function ( props ) {
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 
 	// Currently we have the Domains and Plans only for link in bio
-	if ( props.data?.isPreCheckout && flowName === LINK_IN_BIO_FLOW ) {
+	if ( flowName === LINK_IN_BIO_FLOW ) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 
