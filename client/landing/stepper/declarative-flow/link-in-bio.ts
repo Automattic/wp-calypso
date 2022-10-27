@@ -94,7 +94,9 @@ export const linkInBio: Flow = {
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
-					return navigate( 'processing' );
+					return navigate( 'processing', {
+						isPreCheckout: true,
+					} );
 
 				case 'processing':
 					if ( providedDependencies?.goToCheckout ) {
