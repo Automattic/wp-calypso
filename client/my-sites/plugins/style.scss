@@ -97,7 +97,7 @@ body.is-section-plugins.theme-default.color-scheme {
 	padding-top: 54px;
 
 	@include display-grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 350px;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
 	grid-column-gap: 60px;
 	grid-template-areas:
 		"header header actions"

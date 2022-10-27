@@ -769,6 +769,7 @@ export class EditorPage {
 			this.page.waitForNavigation( { url: '**/home/**' } ),
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
+			this.page.waitForNavigation( { url: '**/wp-admin/edit**' } ),
 		] );
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 

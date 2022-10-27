@@ -231,6 +231,11 @@ function wpcom_display_global_styles_banner( $custom_controls ) {
 add_filter( 'wpcom_custom_launch_bar_controls', 'wpcom_display_global_styles_banner' );
 
 /**
+ * Include the Rest API that returns the global style information for a give WordPress site.
+ */
+require_once __DIR__ . '/api/class-global-styles-status-rest-api.php';
+
+/**
  * Checks if the necessary conditions are met in order to establish that the supplied user should be considered as previewing Global Styles.
  *
  * @param int|null $user_id User id to check.
