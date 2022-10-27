@@ -1,4 +1,5 @@
 import type { DispatchFromMap } from '../mapped-types';
+import type { Plan } from '../plans';
 import type { FeatureId } from '../wpcom-features';
 import type { ActionCreators } from './actions';
 
@@ -120,7 +121,7 @@ export interface SiteDetails {
 	name: string | undefined;
 	options: SiteDetailsOptions;
 	p2_thumbnail_elements?: P2ThumbnailElements | null;
-	plan?: SiteDetailsPlan;
+	plan?: Plan | SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
 	single_user_site?: boolean;
 	site_owner?: number;
@@ -128,6 +129,7 @@ export interface SiteDetails {
 	visible?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
+	is_at?: boolean;
 }
 
 export interface SiteDetailsCapabilities {

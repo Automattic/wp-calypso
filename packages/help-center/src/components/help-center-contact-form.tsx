@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlanTermLabel } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -161,9 +161,9 @@ export const HelpCenterContactForm = () => {
 	const [ sitePickerChoice, setSitePickerChoice ] = useState< 'CURRENT_SITE' | 'OTHER_SITE' >(
 		'CURRENT_SITE'
 	);
-	const { selectedSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
 		return {
-			selectedSite: select( HELP_CENTER_STORE ).getSite(),
+			currentSite: select( HELP_CENTER_STORE ).getSite(),
 			subject: select( HELP_CENTER_STORE ).getSubject(),
 			message: select( HELP_CENTER_STORE ).getMessage(),
 			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
@@ -195,8 +195,6 @@ export const HelpCenterContactForm = () => {
 	}, [ userWithNoSites ] );
 
 	const formTitles = useFormTitles( mode );
-
-	const currentSite = selectedSite;
 
 	let ownershipResult: AnalysisReport = useSiteAnalysis(
 		// pass user email as query cache key
@@ -231,7 +229,7 @@ export const HelpCenterContactForm = () => {
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
 		supportSite = ownershipResult?.site;
 	} else {
-		supportSite = selectedSite || currentSite;
+		supportSite = currentSite;
 	}
 
 	const isAtomic = Boolean(
@@ -256,6 +254,20 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+		const productSlug = supportSite?.plan;
+		const {
+			productId,
+			productName,
+			productTerm,
+		}: any = () => {
+			const plan = getPlan( productSlug );
+			return {
+				productId: plan?.getProductId(),
+				productName: plan?.getTitle(),
+				productTerm: getPlanTermLabel( plan?.getTitle() as string, ( text ) => text ),
+			};
+		};
+
 		switch ( mode ) {
 			case 'CHAT':
 				if ( supportSite ) {
@@ -266,8 +278,8 @@ export const HelpCenterContactForm = () => {
 					} );
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
-						site_plan_product_id: supportSite ? supportSite.plan?.product_id : null,
-						is_automated_transfer: supportSite ? supportSite.options?.is_automated_transfer : null,
+						site_plan_product_id: productId,
+						is_automated_transfer: supportSite.is_at,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -278,18 +290,10 @@ export const HelpCenterContactForm = () => {
 
 			case 'EMAIL':
 				if ( supportSite ) {
-					let planName = supportSite.plan?.product_slug;
-
-					if ( supportSite.plan ) {
-						planName = `${ supportSite.plan.product_id } - ${
-							supportSite.plan.product_name_short
-						} (${ getPlanTermLabel(
-							supportSite.plan.product_slug,
-							( val ) => val // Passing an identity function instead of `translate` to always return the English string
-						) })`;
-					}
-
-					const ticketMeta = [ 'Site I need help with: ' + supportSite.URL, 'Plan: ' + planName ];
+					const ticketMeta = [
+						'Site I need help with: ' + supportSite.URL,
+						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
+					];
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 

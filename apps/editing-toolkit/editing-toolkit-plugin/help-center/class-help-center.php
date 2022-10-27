@@ -73,7 +73,6 @@ class Help_Center {
 	 */
 	public function enqueue_script() {
 		$script_dependencies = $this->asset_file['dependencies'];
-		$logo_id             = get_option( 'site_logo' );
 
 		wp_enqueue_script(
 			'help-center-script',
@@ -111,22 +110,42 @@ class Help_Center {
 			'help-center-script',
 			'helpCenterData',
 			array(
-				'currentSite' => array(
-					'ID'   => \Jetpack_Options::get_option( 'id' ),
-					'name' => get_bloginfo( 'name' ),
-					'url'  => get_bloginfo( 'url' ),
-					'logo' => array(
-						'id'    => $logo_id,
-						'sizes' => array(),
-						'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
-					),
-				),
+				'currentSite' => $this->get_current_site(),
 			)
 		);
 
 		wp_set_script_translations( 'help-center-script', 'full-site-editing' );
 	}
 
+	/**
+	 * Get current site details.
+	 */
+	public function get_current_site() {
+		$logo_id    = get_option( 'site_logo' );
+		$products   = wpcom_get_site_purchases();
+		$at_options = get_option( 'at_options' );
+		$plan       = array_pop(
+			array_filter(
+				$products,
+				function ( $product ) {
+					return 'bundle' === $product->product_type;
+				}
+			)
+		);
+
+		return array(
+			'ID'    => \Jetpack_Options::get_option( 'id' ),
+			'name'  => get_bloginfo( 'name' ),
+			'URL'   => get_bloginfo( 'url' ),
+			'plan'  => $plan->product_slug,
+			'is_at' => ! isset( $at_options ),
+			'logo'  => array(
+				'id'    => $logo_id,
+				'sizes' => array(),
+				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
+			),
+		);
+	}
 	/**
 	 * Register the Help Center endpoints.
 	 */

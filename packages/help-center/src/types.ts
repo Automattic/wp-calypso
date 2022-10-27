@@ -14,6 +14,7 @@ export interface Header {
 	onMaximize?: () => void;
 	onDismiss: () => void;
 }
+
 export interface SitePicker {
 	currentSite: SiteDetails | undefined;
 	onSelect: ( siteId: number | string ) => void;
