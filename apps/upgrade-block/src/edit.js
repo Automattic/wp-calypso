@@ -1,5 +1,4 @@
 import { useBlockProps } from '@wordpress/block-editor';
-import './editor.scss';
 
 /**
  * The edit function describes the structure of your block in the context of the
@@ -8,7 +7,7 @@ import './editor.scss';
  * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
  * @returns {import("@wordpress/element").WPElement} Element to render.
  */
-export const Edit = () => {
+export default function Edit() {
 	const blockProps = useBlockProps();
 	return <div { ...blockProps }>Upgrade plans placeholder</div>;
-};
+}

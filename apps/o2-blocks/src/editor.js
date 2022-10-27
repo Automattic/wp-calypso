@@ -7,4 +7,3 @@ import './todo/editor';
 import './task';
 import './project-status';
 import './github-issue-template/editor';
-import './pricing-plans';
