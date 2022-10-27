@@ -10,6 +10,14 @@ import { MemoryRouter } from 'react-router-dom';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
+jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
+	usePremiumGlobalStyles: () => ( {
+		isFetchingGlobalStylesStatus: false,
+		shouldLimitGlobalStyles: false,
+		globalStylesInUse: false,
+	} ),
+} ) );
+
 const siteName = 'testlinkinbio';
 const secondAndTopLevelDomain = 'wordpress.com';
 const siteSlug = `${ siteName }.${ secondAndTopLevelDomain }`;

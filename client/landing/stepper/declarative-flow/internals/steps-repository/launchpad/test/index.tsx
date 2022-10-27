@@ -31,6 +31,14 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	} ),
 } ) );
 
+jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
+	usePremiumGlobalStyles: () => ( {
+		isFetchingGlobalStylesStatus: false,
+		shouldLimitGlobalStyles: false,
+		globalStylesInUse: false,
+	} ),
+} ) );
+
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
 const replaceMock = jest.fn();

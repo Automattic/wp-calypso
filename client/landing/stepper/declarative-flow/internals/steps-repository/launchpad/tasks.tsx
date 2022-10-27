@@ -20,6 +20,12 @@ export const tasks: Task[] = [
 		displayBadge: false,
 	},
 	{
+		id: 'unlock_styles',
+		isCompleted: false,
+		taskType: 'blog',
+		displayBadge: false,
+	},
+	{
 		id: 'first_post_published',
 		isCompleted: false,
 		taskType: 'blog',
@@ -45,12 +51,6 @@ export const tasks: Task[] = [
 	},
 	{
 		id: 'link_in_bio_launched',
-		isCompleted: false,
-		taskType: 'blog',
-		displayBadge: false,
-	},
-	{
-		id: 'unlock_styles',
 		isCompleted: false,
 		taskType: 'blog',
 		displayBadge: false,
