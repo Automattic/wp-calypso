@@ -32,37 +32,27 @@
 		}
 	}
 
-	.domains__domain-side-content-container {
-		flex-direction: column;
-		margin-top: 40px;
-		display: none;
-
-		@include break-large {
-			width: 30vw;
-			margin-top: 0;
-			flex-direction: column;
-			display: flex;
+	.domains__step-section-wrapper {
+		.use-my-domain__page-heading {
+			padding-left: 24px;
+			padding-right: 24px;
+			text-align: center;
 		}
 
-		@include break-wide {
-			width: 350px;
-		}
-	}
+		.use-my-domain,
+		.connect-domain-step,
+		.domain-transfer-or-connect__content {
+			background: transparent;
+			box-shadow: none;
 
-	.register-domain-step .domains__domain-side-content-container {
-		display: flex;
-
-		@include break-small {
-			flex-direction: row;
-
-			.domains__domain-side-content {
-				padding-top: 0;
-				border-bottom: none;
+			.form-text-input {
+				height: 100%;
 			}
-		}
 
-		@include break-large {
-			display: none;
+			@include break-mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 	}
 
