@@ -28,9 +28,9 @@ object WPComPlugins : Project({
 
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
-	buildType(WpcomHappyBlocks)
 	buildType(Notifications)
 	buildType(O2Blocks)
+	buildType(HappyBlocks)
 	buildType(Happychat)
 	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
@@ -113,17 +113,6 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	docsLink = "PCYsg-l4k-p2",
 )
 
-private object WpcomHappyBlocks : WPComPluginBuild(
-	buildId = "WPComPlugins_WpcomHappyBlocks",
-	buildName = "Wpcom Happy Blocks",
-	pluginSlug = "wpcom-happy-blocks",
-	archiveDir = "./dist/",
-	buildEnv = "development",
-
-	// TODO: What should this be?
-	docsLink = "PCYsg-l4k-p2",
-)
-
 private object Notifications : WPComPluginBuild(
 	buildId = "WPComPlugins_Notifications",
 	buildName = "Notifications",
@@ -171,6 +160,29 @@ private object O2Blocks : WPComPluginBuild(
 			name = "Create release directory"
 			scriptContent = """
 				cd apps/o2-blocks
+
+				# Copy existing dist files to release directory
+				mkdir release-files
+				cp -r dist release-files/dist/
+
+				# Add index.php file
+				cp index.php release-files/
+			"""
+		}
+	}
+)
+
+private object HappyBlocks : WPComPluginBuild(
+	buildId="WPComPlugins_HappyBlocks",
+	buildName = "Happy Blocks",
+	pluginSlug = "happy-blocks",
+	archiveDir = "./release-files/",
+	docsLink = "PCYsg-r7r-p2",
+	buildSteps = {
+		bashNodeScript {
+			name = "Create release directory"
+			scriptContent = """
+				cd apps/happy-blocks
 
 				# Copy existing dist files to release directory
 				mkdir release-files
@@ -263,12 +275,6 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 			uploadPluginSourceMaps(
 				slug = "wpcom-block-editor",
 				buildId = "calypso_WPComPlugins_WpcomBlockEditor",
-				wpcomURL = "~/wpcom-block-editor"
-			)
-
-			uploadPluginSourceMaps(
-				slug = "wpcom-block-editor",
-				buildId = "calypso_WPComPlugins_WpcomHappyblocks",
 				wpcomURL = "~/wpcom-block-editor"
 			)
 
