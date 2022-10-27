@@ -19,10 +19,6 @@ function inBetween( start: Date, end: Date ) {
 	return date >= start && date <= end;
 }
 
-function isBefore( start: Date, end: Date ) {
-	return start < end;
-}
-
 export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Props ) {
 	const { __ } = useI18n();
 
@@ -62,7 +58,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 		return null;
 	}
 
-	const period = isBefore( new Date(), closesAtDate ) ? 'before' : 'during';
+	const period = inBetween( closesAtDate, reopensAtDate ) ? 'during' : 'before';
 
 	const isSameMonth = reopensAtDate.getMonth() === closesAtDate.getMonth();
 
