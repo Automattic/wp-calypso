@@ -30,8 +30,6 @@ import './style.scss';
 
 const debug = debugFactory( 'calypso:difm' );
 
-const MAXTRIES = 10;
-
 const DialogContent = styled.div`
 	padding: 16px;
 	p {
@@ -214,7 +212,13 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId, MAXTRIES );
+	const urlParams = new URLSearchParams( window.location.search );
+	const isFromCheckout = 'purchase-success' === urlParams.get( 'notice' );
+	// If the user is coming from checkout, we can wait for a longer period to
+	// ensure that the WoA sync has completed.
+	const maxTries = isFromCheckout ? 30 : 10;
+
+	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId, maxTries );
 
 	useEffect( () => {
 		if ( isPollingInProgress ) {
