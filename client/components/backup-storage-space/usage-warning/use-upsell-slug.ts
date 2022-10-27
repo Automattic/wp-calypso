@@ -50,11 +50,11 @@ const storageToUpsellProduct: Record< number, string > = {
 	[ BYTES_1TB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
 };
 export const isJetpackProductSlugMatch =
-	( slugList ) =>
+	( slugList: Array< string > ) =>
 	( { subscriptionStatus, productSlug }: Purchase ) =>
 		subscriptionStatus === 'active' && slugList.includes( productSlug );
 
-export default ( siteId: number | null ) => {
+export default ( siteId: number ) => {
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
@@ -67,7 +67,7 @@ export default ( siteId: number | null ) => {
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 
 	const upsellSlug = useMemo( () => {
-		const ADD_ON_STORAGE_MAP = {
+		const ADD_ON_STORAGE_MAP: Record< string, React.ReactChild > = {
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: HUNDRED_GIGABYTES,
 			[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: ONE_TERABYTES,
