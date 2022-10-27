@@ -96,7 +96,7 @@ function setupLoggedInContext( req, res, next ) {
 	next();
 }
 
-function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
+function getDefaultContext( request, response, entrypoint = 'entry-main', sectionName ) {
 	performanceMark( request, 'getDefaultContext' );
 
 	const geoIPCountryCode = request.headers[ 'x-geoip-country-code' ];
@@ -128,7 +128,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
 
-		logServerEvent( request.context.sectionName, {
+		logServerEvent( sectionName, {
 			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
 			name: `ssr.global_redux_cache.${ storedState ? 'hit' : 'miss' }`,
 			type: 'counting',
@@ -148,7 +148,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 
 	const oauthClientId = request.query.oauth2_client_id || request.query.client_id;
 	const isWCComConnect =
-		( 'login' === request.context.sectionName || 'signup' === request.context.sectionName ) &&
+		( 'login' === sectionName || 'signup' === sectionName ) &&
 		request.query[ 'wccom-from' ] &&
 		isWooOAuth2Client( { id: parseInt( oauthClientId ) } );
 
@@ -249,8 +249,8 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	return context;
 }
 
-const setupDefaultContext = ( entrypoint ) => ( req, res, next ) => {
-	req.context = getDefaultContext( req, res, entrypoint );
+const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) => {
+	req.context = getDefaultContext( req, res, entrypoint, sectionName );
 	next();
 };
 
@@ -721,7 +721,7 @@ function wpcomPages( app ) {
 	// Landing pages for domains-related emails
 	app.get(
 		'/domain-services/:action',
-		setupDefaultContext( 'entry-domains-landing' ),
+		setupDefaultContext( 'entry-domains-landing', 'domains-landing' ),
 		( req, res ) => {
 			const ctx = req.context;
 			attachBuildTimestamp( ctx );
@@ -840,7 +840,7 @@ export default function pages() {
 
 		app.get(
 			pathRegex,
-			setupDefaultContext( entrypoint ),
+			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further
 			// SSR checks aren't accounted for here, but happen in the SSR pipeline

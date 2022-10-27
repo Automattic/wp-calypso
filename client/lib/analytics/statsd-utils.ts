@@ -71,6 +71,7 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] | 
  * @param events List of events to send to the server.
  */
 export function logServerEvent( calypsoSection: string, events: BeaconData[] | BeaconData ) {
+	calypsoSection ??= 'unknown';
 	if ( typeof window === 'undefined' && config( 'server_side_boom_analytics_enabled' ) ) {
 		superagent.get( createStatsdURL( calypsoSection, events ) ).end();
 	}

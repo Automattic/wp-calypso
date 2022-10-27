@@ -95,5 +95,11 @@ describe( 'StatsD Analytics Utils', () => {
 
 			expect( superagent.get ).not.toHaveBeenCalled();
 		} );
+
+		test( 'sets calypso section to unknown if undefined', () => {
+			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
+			logServerEvent( undefined, { name: 'foo', type: 'counting' } );
+			expect( superagent.get ).toHaveBeenCalledWith( expect.stringContaining( 'u=unknown' ) );
+		} );
 	} );
 } );
