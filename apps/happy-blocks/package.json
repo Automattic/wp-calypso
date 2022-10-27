@@ -10,7 +10,8 @@
 		"build": "NODE_ENV=production yarn dev",
 		"test": "jest test",
 		"clean": "rm -rf build",
-		"dev": "yarn run calypso-apps-builder --sync --localPath build --remotePath /home/wpcom/public_html/wp-content/plugins/support-forums/blocks/upgrade-block",
+		"dev": "yarn run calypso-apps-builder --localPath / --remotePath /home/wpcom/public_html/wp-content/a8c-plugins/happy-blocks",
+		"build:happy-blocks": "calypso-build",
 		"format": "wp-scripts format",
 		"lint:css": "wp-scripts lint-style",
 		"lint:js": "wp-scripts lint-js",
@@ -19,6 +20,7 @@
 		"start": "wp-scripts start"
 	},
 	"dependencies": {
+		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/block-editor": "^9.1.0",
 		"@wordpress/blocks": "^11.8.0",
 		"react": "^17.0.2",
@@ -29,8 +31,12 @@
 		"@babel/core": "^7.17.5",
 		"@testing-library/jest-dom": "^5.16.2",
 		"@testing-library/react": "^12.1.3",
+		"@wordpress/i18n": "^4.20.0",
 		"@wordpress/jest-preset-default": "^10.1.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^1.0.4",
 		"@wordpress/scripts": "^23.1.0",
-		"jest": "^27.3.1"
+		"jest": "^27.3.1",
+		"postcss": "^8.4.5",
+		"webpack": "^5.68.0"
 	}
 }

@@ -28,6 +28,7 @@ object WPComPlugins : Project({
 
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
+	buildType(WpcomHappyBlocks)
 	buildType(Notifications)
 	buildType(O2Blocks)
 	buildType(Happychat)
@@ -109,6 +110,17 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	pluginSlug = "wpcom-block-editor",
 	archiveDir = "./dist/",
 	buildEnv = "development",
+	docsLink = "PCYsg-l4k-p2",
+)
+
+private object WpcomHappyBlocks : WPComPluginBuild(
+	buildId = "WPComPlugins_WpcomHappyBlocks",
+	buildName = "Wpcom Happy Blocks",
+	pluginSlug = "wpcom-happy-blocks",
+	archiveDir = "./dist/",
+	buildEnv = "development",
+
+	// TODO: What should this be?
 	docsLink = "PCYsg-l4k-p2",
 )
 
@@ -255,6 +267,12 @@ private object GutenbergUploadSourceMapsToSentry: BuildType() {
 			)
 
 			uploadPluginSourceMaps(
+				slug = "wpcom-block-editor",
+				buildId = "calypso_WPComPlugins_WpcomHappyblocks",
+				wpcomURL = "~/wpcom-block-editor"
+			)
+
+			uploadPluginSourceMaps(
 				slug = "notifications",
 				buildId = "calypso_WPComPlugins_Notifications",
 				wpcomURL = "~/notifications"
@@ -278,7 +296,7 @@ fun BuildSteps.uploadPluginSourceMaps(
 
 			# Downloads the latest release build for the plugin.
 			wget "%teamcity.serverUrl%/repository/download/$buildId/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
-			
+
 			unzip -q ./code.zip -d ./code
 			cd code
 

@@ -4,7 +4,7 @@
 
 import { render } from '@testing-library/react';
 import { useBlockProps } from '@wordpress/block-editor';
-import Save from '../src/save';
+import { Save } from '../save';
 import '@testing-library/jest-dom';
 
 jest.mock( '@wordpress/block-editor', () => ( {
