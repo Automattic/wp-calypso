@@ -32,6 +32,30 @@
 		}
 	}
 
+	.domains__step-section-wrapper {
+		.use-my-domain__page-heading {
+			padding-left: 24px;
+			padding-right: 24px;
+			text-align: center;
+		}
+
+		.use-my-domain,
+		.connect-domain-step,
+		.domain-transfer-or-connect__content {
+			background: transparent;
+			box-shadow: none;
+
+			.form-text-input {
+				height: 100%;
+			}
+
+			@include break-mobile {
+				padding-left: 0;
+				padding-right: 0;
+			}
+		}
+	}
+
 	.register-domain-step__search {
 		padding-top: 0;
 		padding-bottom: 16px;
