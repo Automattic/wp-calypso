@@ -1,5 +1,4 @@
 import type { DispatchFromMap } from '../mapped-types';
-import type { Plan } from '../plans';
 import type { FeatureId } from '../wpcom-features';
 import type { ActionCreators } from './actions';
 
@@ -121,7 +120,7 @@ export interface SiteDetails {
 	name: string | undefined;
 	options: SiteDetailsOptions;
 	p2_thumbnail_elements?: P2ThumbnailElements | null;
-	plan?: Plan | SiteDetailsPlan;
+	plan?: SiteDetailsPlan;
 	products?: SiteDetailsPlan[];
 	single_user_site?: boolean;
 	site_owner?: number;
