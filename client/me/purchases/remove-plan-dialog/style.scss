@@ -1,0 +1,188 @@
+$modal-breakpoint-tablet: 1070px;
+$modal-breakpoint-mobile: 480px;
+
+.dialog__content.remove-plan-dialog {
+	padding: 0;
+	max-width: 500px;
+	background: #fff;
+
+	.remove-plan-dialog__close-button {
+		cursor: pointer;
+		position: absolute;
+		right: 0;
+		top: 9px;
+
+		.gridicon {
+			color: #000;
+		}
+	}
+
+	.remove-plan-dialog__site-screenshot {
+		width: 365px;
+		height: 483px;
+		padding: 48px 24px;
+
+		&.site-thumbnail-loading {
+			background-color: transparent;
+			border: none;
+
+		}
+	}
+
+	& + .dialog__action-buttons {
+		&::before {
+			background: none;
+		}
+
+		margin-left: 48px;
+		margin-top: 32px;
+		margin-bottom: 48px;
+		border: none;
+		background: transparent;
+		text-align: left;
+		padding: 0;
+
+		@media ( max-width: $modal-breakpoint-mobile ) {
+			margin-right: 48px;
+		}
+	}
+
+	.remove-plan-dialog__grid-colmn {
+		text-align: left;
+		padding: 48px 48px 0;
+
+		.formatted-header__title {
+			font-size: 1.5rem;
+			font-weight: inherit;
+			margin-bottom: 0.75em;
+		}
+
+		.formatted-header.is-left-align,
+		.formatted-header.is-right-align {
+			margin: 0;
+		}
+
+		@media ( max-width: $modal-breakpoint-mobile ) {
+			padding: 48px 24px 0;
+		}
+	}
+
+	&.--with-screenshot {
+		max-width: 960px;
+
+		@media ( max-width: $modal-breakpoint-tablet ) {
+			max-width: 500px;
+		}
+
+		.remove-plan-dialog__grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			vertical-align: middle;
+			text-align: center;
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: block;
+			}
+
+			strong {
+				overflow-wrap: anywhere;
+			}
+		}
+
+		.remove-plan-dialog__grid-colmn:first-child {
+			background: #f0f0f0;
+			padding-bottom: 0;
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: none;
+			}
+		}
+
+		& + .dialog__action-buttons {
+			margin-left: calc(50% + 48px);
+			margin-top: -92px;
+			margin-bottom: 52px;
+			border: none;
+			background: transparent;
+			text-align: left;
+			padding: 0;
+
+			&::before {
+				content: none;
+			}
+
+			button:first-child {
+				margin-left: 0;
+			}
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				margin-left: 48px;
+				margin-top: 0;
+				margin-bottom: 48px;
+			}
+
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				margin-right: 48px;
+			}
+		}
+	}
+
+	.remove-plan-dialog__item-cross-small {
+		color: #e65054;
+		vertical-align: middle;
+		margin-right: 10px;
+	}
+
+	.remove-plan-dialog__list-plan-features {
+		list-style-type: none;
+		margin: 0;
+		text-align: left;
+
+		li {
+			display: grid;
+			grid-template-columns: 32px 1fr;
+			margin-bottom: 5px;
+		}
+	}
+
+	&.--with-domain-feature {
+
+		.remove-plan-dialog__grid-colmn {
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				padding: 48px 24px;
+			}
+		}
+
+		.remove-plan-dialog__list-plan-features {
+			margin-bottom: 98px;
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				margin-bottom: 98px;
+			}
+
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				margin-bottom: 58px;
+			}
+		}
+
+		&.--with-screenshot {
+
+			.remove-plan-dialog__list-plan-features {
+				margin-bottom: 0;
+				
+				@media ( max-width: $modal-breakpoint-tablet ) {
+					margin-bottom: 98px;
+				}
+
+				@media ( max-width: $modal-breakpoint-mobile ) {
+					margin-bottom: 58px;
+				}
+			}
+		}
+
+		& + .dialog__action-buttons {
+			margin-top: -67px;
+			margin-bottom: 27px;
+		}
+	}
+}

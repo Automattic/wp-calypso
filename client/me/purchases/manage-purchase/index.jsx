@@ -13,6 +13,7 @@ import {
 	isGoogleWorkspace,
 	isGSuiteOrGoogleWorkspace,
 	isThemePurchase,
+	isJetpackPlan,
 	isJetpackProduct,
 	isConciergeSession,
 	isTitanMail,
@@ -45,6 +46,8 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
+import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
+import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-purchase-form/constants';
 import MaterialIcon from 'calypso/components/material-icon';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -60,11 +63,13 @@ import {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
+	isAutoRenewing,
 	isPaidWithCredits,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
 	isPartnerPurchase,
+	isRefundable,
 	isRenewable,
 	isSubscription,
 	isCloseToExpiration,
@@ -77,6 +82,7 @@ import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
 import ProductLink from 'calypso/me/purchases/product-link';
+import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import PlanPrice from 'calypso/my-sites/plan-price';
@@ -87,14 +93,19 @@ import {
 	getCurrentUser,
 	getCurrentUserId,
 } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
+import { removePurchase } from 'calypso/state/purchases/actions';
 import {
 	getSitePurchases,
 	getByPurchaseId,
+	getPurchasesError,
 	hasLoadedUserPurchasesFromServer,
 	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors';
@@ -136,12 +147,14 @@ class ManagePurchase extends Component {
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
 		redirectTo: PropTypes.string,
+		removePurchase: PropTypes.func.isRequired,
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		selectedSiteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
 		isSiteLevel: PropTypes.bool,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -155,7 +168,10 @@ class ManagePurchase extends Component {
 
 	state = {
 		showNonPrimaryDomainWarningDialog: false,
+		showRemoveSubscriptionWarningDialog: false,
 		cancelLink: null,
+		isRemoving: false,
+		isCancelFormVisible: false,
 	};
 
 	componentDidMount() {
@@ -466,13 +482,39 @@ class ManagePurchase extends Component {
 	showNonPrimaryDomainWarningDialog( cancelLink ) {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: true,
+			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
+			isCancelFormVisible: false,
 			cancelLink,
 		} );
 	}
 
+	showRemoveSubscriptionWarningDialog( cancelLink ) {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: true,
+			isRemoving: false,
+			isCancelFormVisible: false,
+			cancelLink,
+		} );
+	}
+
+	showRemovePlanDialog = ( cancelLink ) => {
+		this.setState( {
+			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
+			isCancelFormVisible: true,
+			cancelLink,
+		} );
+	};
+
 	closeDialog = () => {
 		this.setState( {
 			showNonPrimaryDomainWarningDialog: false,
+			showRemoveSubscriptionWarningDialog: false,
+			isRemoving: false,
+			isCancelFormVisible: false,
 			cancelLink: null,
 		} );
 	};
@@ -498,6 +540,137 @@ class ManagePurchase extends Component {
 		}
 
 		return null;
+	}
+
+	renderRemoveSubscriptionWarningDialog( site, purchase ) {
+		if ( this.state.showRemoveSubscriptionWarningDialog ) {
+			const { hasCustomPrimaryDomain, primaryDomain } = this.props;
+			const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
+			let customDomain = false;
+			let wordpressComURL = '';
+
+			if (
+				isPlan( purchase ) &&
+				! isJetpackPlan( purchase ) &&
+				! isGSuiteOrGoogleWorkspace( purchase )
+			) {
+				const isPlanRefundable = isRefundable( purchase );
+				const actionFunction = isPlanRefundable ? this.goToCancelLink : this.showRemovePlanDialog;
+
+				if ( hasCustomPrimaryDomain && primaryDomainName ) {
+					customDomain = true;
+				}
+
+				if ( typeof site.wpcom_url !== 'undefined' ) {
+					wordpressComURL =
+						site.wpcom_url.length < 35
+							? site.wpcom_url
+							: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
+				}
+
+				return (
+					<RemovePlanDialog
+						isDialogVisible={ this.state.showRemoveSubscriptionWarningDialog }
+						closeDialog={ this.closeDialog }
+						removePlan={ actionFunction }
+						site={ site }
+						hasDomain={ customDomain }
+						isRefundable={ isPlanRefundable }
+						isAutoRenewing={ isAutoRenewing }
+						primaryDomain={ primaryDomainName }
+						wpcomURL={ wordpressComURL }
+					/>
+				);
+			}
+		}
+
+		return null;
+	}
+
+	removePurchase = async () => {
+		this.setState( { isRemoving: true } );
+
+		const { purchaseListUrl, purchase } = this.props;
+		const activeSubscriptions = this.getActiveMarketplaceSubscriptions();
+
+		// If the site has active Marketplace subscriptions, remove these as well
+		if ( activeSubscriptions?.length > 0 ) {
+			// no need to await here, as
+			// - the success/error messages are handled for each request separately
+			// - the plan removal is awaited below
+			activeSubscriptions.forEach( ( s ) => this.handlePurchaseRemoval( s ) );
+		}
+
+		await this.handlePurchaseRemoval( purchase );
+
+		page( purchaseListUrl );
+	};
+
+	handlePurchaseRemoval = async ( purchase ) => {
+		const { userId, isDomainOnlySite, translate, purchasesError } = this.props;
+
+		await this.props.removePurchase( purchase.id, userId );
+
+		const productName = getName( purchase );
+		let successMessage;
+
+		if ( purchasesError ) {
+			this.setState( { isRemoving: false } );
+			this.closeDialog();
+			this.props.errorNotice( purchasesError );
+			return;
+		}
+
+		if ( isDomainRegistration( purchase ) ) {
+			if ( isDomainOnlySite ) {
+				this.props.receiveDeletedSite( purchase.siteId );
+				this.props.setAllSitesSelected();
+			}
+
+			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
+				components: { domain: <em>{ productName }</em> },
+			} );
+		} else {
+			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+				args: { productName },
+				components: { siteName: <em>{ purchase.domain }</em> },
+			} );
+		}
+
+		this.props.successNotice( successMessage, { isPersistent: true } );
+	};
+
+	getCancellationFlowType = () => {
+		const { purchase } = this.props;
+		const isPlanRefundable = isRefundable( purchase );
+		const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
+
+		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
+			// If the subscription is refundable the subscription should be removed immediately.
+			return CANCEL_FLOW_TYPE.CANCEL_WITH_REFUND;
+		} else if ( ! isPlanRefundable && isPlanAutoRenewing ) {
+			// If the subscription is not refundable and auto-renew is on turn off auto-renew.
+			return CANCEL_FLOW_TYPE.CANCEL_AUTORENEW;
+		}
+
+		// If the subscription is not refundable and auto-renew is off subscription should be removed immediately.
+		return CANCEL_FLOW_TYPE.REMOVE;
+	};
+
+	renderCancelForm() {
+		const { purchase } = this.props;
+
+		return (
+			<CancelPurchaseForm
+				disableButtons={ this.state.isRemoving }
+				purchase={ purchase }
+				linkedPurchases={ this.getActiveMarketplaceSubscriptions() }
+				isVisible={ this.state.isCancelFormVisible }
+				onClose={ this.closeDialog }
+				onClickFinalConfirm={ this.removePurchase }
+				flowType={ this.getCancellationFlowType() }
+			/>
+		);
 	}
 
 	renderCancelPurchaseNavItem() {
@@ -536,6 +709,13 @@ class ManagePurchase extends Component {
 			if ( this.shouldShowNonPrimaryDomainWarning() ) {
 				event.preventDefault();
 				this.showNonPrimaryDomainWarningDialog( link );
+			}
+
+			if ( isSubscription( purchase ) ) {
+				if ( isPlan( purchase ) && ! isJetpackProduct( purchase ) && ! isJetpackPlan( purchase ) ) {
+					event.preventDefault();
+					this.showRemoveSubscriptionWarningDialog( link );
+				}
 			}
 		};
 
@@ -887,6 +1067,7 @@ class ManagePurchase extends Component {
 						{ ! isJetpackTemporarySite && this.renderUpgradeNavItem() }
 						{ this.renderEditPaymentMethodNavItem() }
 						{ this.renderCancelPurchaseNavItem() }
+						{ this.renderCancelForm() }
 						{ ! isJetpackTemporarySite && this.renderRemovePurchaseNavItem() }
 					</>
 				) }
@@ -971,6 +1152,7 @@ class ManagePurchase extends Component {
 				/>
 				{ this.renderPurchaseDetail( preventRenewal ) }
 				{ site && this.renderNonPrimaryDomainWarningDialog( site, purchase ) }
+				{ site && this.renderRemoveSubscriptionWarningDialog( site, purchase ) }
 			</Fragment>
 		);
 	}
@@ -1052,6 +1234,7 @@ export default connect(
 		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 		return {
 			hasLoadedDomains,
 			hasLoadedSites,
@@ -1064,6 +1247,7 @@ export default connect(
 			hasCustomPrimaryDomain: hasCustomDomain( site ),
 			productsList,
 			purchase,
+			purchasesError: getPurchasesError( state ),
 			purchases,
 			purchaseAttachedTo,
 			siteId,
@@ -1078,10 +1262,15 @@ export default connect(
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
 			isJetpackTemporarySite: purchase && isJetpackTemporarySitePurchase( purchase.domain ),
+			primaryDomain: primaryDomain,
+			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};
 	},
 	{
 		handleRenewNowClick,
 		handleRenewMultiplePurchasesClick,
+		removePurchase,
+		errorNotice,
+		successNotice,
 	}
 )( localize( ManagePurchase ) );

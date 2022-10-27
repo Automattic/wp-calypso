@@ -22,14 +22,17 @@ import { CANCEL_FLOW_TYPE } from 'calypso/components/marketing-survey/cancel-pur
 import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-survey/gsuite-cancel-purchase-dialog';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
-import { getName, isRemovable } from 'calypso/lib/purchases';
+import { getName, isAutoRenewing, isRefundable, isRemovable } from 'calypso/lib/purchases';
+import { hasCustomDomain } from 'calypso/lib/site/utils';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import { RemovePlanDialog } from 'calypso/me/purchases/remove-plan-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { removePurchase } from 'calypso/state/purchases/actions';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
 import isDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { receiveDeletedSite } from 'calypso/state/sites/actions';
@@ -58,6 +61,7 @@ class RemovePurchase extends Component {
 		purchaseListUrl: PropTypes.string,
 		activeSubscriptions: PropTypes.array,
 		linkIcon: PropTypes.string,
+		primaryDomain: PropTypes.object,
 	};
 
 	static defaultProps = {
@@ -68,6 +72,7 @@ class RemovePurchase extends Component {
 		isDialogVisible: false,
 		isRemoving: false,
 		isShowingNonPrimaryDomainWarning: false,
+		isShowingRemovePlanWarning: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
 	};
 
@@ -75,6 +80,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isDialogVisible: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingRemovePlanWarning: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
 		} );
 	};
@@ -83,6 +89,7 @@ class RemovePurchase extends Component {
 		this.setState( {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
+			isShowingRemovePlanWarning: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -93,7 +100,14 @@ class RemovePurchase extends Component {
 		if ( this.props.onClickTracks ) {
 			this.props.onClickTracks( event );
 		}
-		if (
+		if ( this.shouldShowPlanWarning() && ! this.state.isShowingRemovePlanWarning ) {
+			this.setState( {
+				isShowingRemovePlanWarning: true,
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
 			this.shouldShowNonPrimaryDomainWarning() &&
 			! this.state.isShowingNonPrimaryDomainWarning
 		) {
@@ -208,6 +222,40 @@ class RemovePurchase extends Component {
 				planName={ getName( purchase ) }
 				oldDomainName={ site.domain }
 				newDomainName={ site.wpcom_url }
+			/>
+		);
+	}
+
+	shouldShowPlanWarning() {
+		const { purchase } = this.props;
+		return (
+			isPlan( purchase ) && ! isJetpackPlan( purchase ) && ! isGSuiteOrGoogleWorkspace( purchase )
+		);
+	}
+
+	renderPlanWarningDialog() {
+		const { site, purchase, primaryDomain } = this.props;
+		const primaryDomainName = hasCustomDomain && primaryDomain ? primaryDomain.name : '';
+
+		let wordpressComURL = '';
+		if ( typeof site.wpcom_url !== 'undefined' ) {
+			wordpressComURL =
+				site.wpcom_url.length < 35
+					? site.wpcom_url
+					: site.wpcom_url.substr( 0, 10 ) + '…' + site.wpcom_url.slice( -20 );
+		}
+
+		return (
+			<RemovePlanDialog
+				isDialogVisible={ this.state.isShowingRemovePlanWarning }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				site={ site }
+				hasDomain={ hasCustomDomain }
+				isRefundable={ isRefundable( purchase ) }
+				isAutoRenewing={ isAutoRenewing( purchase ) }
+				primaryDomain={ primaryDomainName }
+				wpcomURL={ wordpressComURL }
 			/>
 		);
 	}
@@ -353,6 +401,21 @@ class RemovePurchase extends Component {
 
 		const wrapperClassName = classNames( 'remove-purchase__card', className );
 		const Wrapper = useVerticalNavItem ? VerticalNavItem : CompactCard;
+		const getWarningDialog = () => {
+			if ( this.shouldShowPlanWarning() ) {
+				return this.renderPlanWarningDialog();
+			}
+
+			if ( this.shouldShowNonPrimaryDomainWarning() ) {
+				return this.renderNonPrimaryDomainWarningDialog();
+			}
+
+			if ( this.shouldHandleMarketplaceSubscriptions() ) {
+				return this.renderMarketplaceSubscriptionsDialog();
+			}
+
+			return null;
+		};
 
 		return (
 			<>
@@ -360,9 +423,7 @@ class RemovePurchase extends Component {
 					{ this.props.children ? this.props.children : defaultContent }
 					<Gridicon className="card__link-indicator" icon={ this.props.linkIcon || 'trash' } />
 				</Wrapper>
-				{ this.shouldShowNonPrimaryDomainWarning() && this.renderNonPrimaryDomainWarningDialog() }
-				{ this.shouldHandleMarketplaceSubscriptions() &&
-					this.renderMarketplaceSubscriptionsDialog() }
+				{ getWarningDialog() }
 				{ this.renderDialog() }
 			</>
 		);
@@ -379,6 +440,7 @@ export default connect(
 			isJetpack,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
+			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),
 		};
 	},
 	{
