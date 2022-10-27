@@ -8,6 +8,10 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
+	BBE_WEBSITE_CONTENT_FILLING_STEP,
+	useTranslatedPageDescriptions,
+} from 'calypso/signup/difm/translation-hooks';
+import {
 	imageRemoved,
 	imageUploaded,
 	imageUploadFailed,
@@ -38,11 +42,12 @@ export function DefaultPageDetails( {
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
+	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
 			imageUploadFailed( {
-				pageId: page.id,
+				pageId: pageID,
 				mediaIndex,
 			} )
 		);
@@ -101,12 +106,7 @@ export function DefaultPageDetails( {
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={
-					label ||
-					translate( 'Please provide the text you want to appear on your %(pageTitle)s page.', {
-						args: { pageTitle },
-					} )
-				}
+				label={ label || description }
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {

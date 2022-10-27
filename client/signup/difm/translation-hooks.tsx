@@ -55,9 +55,12 @@ type TranslationContext =
 	| typeof BBE_ONBOARDING_PAGE_PICKER_STEP
 	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP;
 
-export function useTranslatedPageDescriptions( pageId: PageId, context?: TranslationContext ) {
+export function useTranslatedPageDescriptions(
+	pageId: PageId,
+	context?: TranslationContext
+): TranslateResult {
 	const translate = useTranslate();
-	const defaultDescriptions: Partial< Record< PageId, TranslateResult > > = {
+	const defaultDescriptions: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate(
 			'An overview of you, your writing, or your business. What phrases would someone search on Google to find you? What can visitors expect on this site?'
 		),
@@ -97,7 +100,7 @@ export function useTranslatedPageDescriptions( pageId: PageId, context?: Transla
 		),
 	};
 
-	const contextBaseDescriptions = {
+	const contextBaseDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {
 		[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: {
 			...defaultDescriptions,
 		},
@@ -107,12 +110,12 @@ export function useTranslatedPageDescriptions( pageId: PageId, context?: Transla
 				'How would you introduce your journal entries/news-articles/chapters? Describe what readers can expect from your regularly published content!'
 			),
 			[ CONTACT_PAGE ]: translate(
-				'Visitors want to get in touch with you. How can they reach you?'
+				'Visitors want to get in touch with you. Do you have a message for them to say hello, and that it’s okay to get in touch? How can they reach you?'
 			),
 		},
 	};
 	if ( ! context ) {
-		return [ pageId ];
+		return defaultDescriptions[ pageId ];
 	}
 	return contextBaseDescriptions[ context ][ pageId ];
 }

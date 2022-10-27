@@ -1,4 +1,6 @@
 import type { SiteId } from 'calypso/types';
+import { PageId } from 'calypso/signup/difm/constants';
+
 export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
 	title: 'Website content schema',
@@ -88,7 +90,7 @@ export interface ImageData {
 }
 
 export interface PageData {
-	id: string;
+	id: PageId;
 	title: string;
 	content: string;
 	images: Array< ImageData >;
