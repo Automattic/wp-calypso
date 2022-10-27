@@ -67,6 +67,39 @@ class StatsPostDetail extends Component {
 		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	};
 
+	getNavigationItemsWithTitle = ( title ) => {
+		// TODO: Localize this.
+		// Currently not recognizing 'translate' as a valid function.
+		const localizedTabNames = {
+			traffic: 'Traffic',
+			insights: 'Insights',
+			store: 'Store',
+			ads: 'Ads',
+		};
+		const possibleBackLinks = {
+			traffic: '/stats/day/',
+			insights: '/stats/insights/',
+			store: '/stats/store/',
+			ads: '/stats/ads/',
+		};
+		// TODO: Don't use localStorage?
+		// This feels dirty but it works for now.
+		const lastClickedTab = localStorage.getItem( 'jp-stats-last-tab' );
+		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
+		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
+		// Append the domain.
+		const domain = this.props?.path.split( '/' ).pop();
+		if ( domain.length > 0 ) {
+			backLink += domain;
+			const lastChartDate = localStorage.getItem( 'jp-stats-last-chart-date' );
+			if ( lastChartDate.length > 0 ) {
+				backLink += `?${ lastChartDate }`;
+			}
+		}
+		// Wrap it up!
+		return [ { label: backLabel, href: backLink }, { label: title } ];
+	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -129,11 +162,8 @@ class StatsPostDetail extends Component {
 
 		// Set up for FixedNavigationHeader.
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const domain = this.props?.path.split( '/' ).pop();
-		const backLabel = translate( 'Traffic' );
-		const backLink = '/stats/day/' + ( domain || '' );
-		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
+		const navigationItems = this.getNavigationItemsWithTitle( title );
 
 		return (
 			<Main className={ dynamicClassName } wideLayout>

@@ -127,6 +127,9 @@ class StatsSite extends Component {
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
+		// Track the last chart selection.
+		// Necessary to properly configure the fixed navigation headers.
+		localStorage.setItem( 'jp-stats-last-chart-date', updatedQs );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 
@@ -346,6 +349,10 @@ class StatsSite extends Component {
 	render() {
 		const { isJetpack, siteId, showEnableStatsModule } = this.props;
 		const { period } = this.props.period;
+
+		// Track the last viewed tab.
+		// Necessary to properly configure the fixed navigation headers.
+		localStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
 			<Main wideLayout>

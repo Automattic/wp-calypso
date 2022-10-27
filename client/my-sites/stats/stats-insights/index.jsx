@@ -30,6 +30,11 @@ const StatsInsights = ( props ) => {
 	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
+	// Track the last viewed tab.
+	// Necessary to properly configure the fixed navigation headers.
+	localStorage.setItem( 'jp-stats-last-tab', 'insights' );
+	localStorage.removeItem( 'jp-stats-last-chart-date' );
+
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
