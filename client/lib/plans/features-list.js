@@ -831,7 +831,7 @@ export const FEATURES_LIST = {
 	},
 	[ FEATURE_SITE_STATS ]: {
 		getSlug: () => FEATURE_SITE_STATS,
-		getTitle: () => i18n.translate( 'Jetpack Stats' ),
+		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' ),
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {

@@ -367,13 +367,11 @@ export default function CheckoutMain( {
 	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
 		select( 'wpcom-checkout' )?.getRecaptchaClientId()
 	);
-	const countryCode: string = contactDetails?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
-				countryCode,
 				allowedPaymentMethods,
 				responseCart,
 		  } );

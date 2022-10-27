@@ -15,6 +15,7 @@ import {
 } from 'calypso/lib/i18n-utils/switch-locale';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
@@ -213,6 +214,7 @@ export function attachBuildTimestamp( context ) {
 }
 
 export function serverRender( req, res ) {
+	performanceMark( req, 'serverRender' );
 	const context = req.context;
 
 	let cacheKey = false;
@@ -220,6 +222,7 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
+		performanceMark( req, 'render layout', true );
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
@@ -230,9 +233,11 @@ export function serverRender( req, res ) {
 		);
 	}
 
+	performanceMark( req, 'dehydrateQueryClient', true );
 	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
+		performanceMark( req, 'redux store', true );
 		attachHead( context );
 
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
@@ -258,11 +263,13 @@ export function serverRender( req, res ) {
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
+	performanceMark( req, 'final render', true );
 	context.clientData = config.clientData;
 
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
+	performanceMark( req, 'post-sending JSX' );
 }
 
 /**
