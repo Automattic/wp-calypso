@@ -129,6 +129,9 @@ module.exports = {
 	devServer: {
 		host: 'calypso.localhost',
 		port: 3000,
+		historyApiFallback: {
+			index: '/index.html',
+		},
 		static: {
 			directory: path.join( __dirname, 'dist' ),
 		},

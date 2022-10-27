@@ -1,6 +1,5 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import {
 	follows,
 	insights,
@@ -14,8 +13,16 @@ import {
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
+import { requestSite } from 'calypso/state/sites/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 import 'calypso/my-sites/stats/style.scss';
+
+const siteSelection = ( context, next ) =>
+	context.store
+		.dispatch( requestSite( 189825737 ) )
+		.then( () => context.store.dispatch( setSelectedSiteId( 189825737 ) ) )
+		.then( () => next( context, next ) );
 
 const statsPage = ( url, controller ) => {
 	page( url, controller, siteSelection, makeLayout, clientRender );
@@ -40,15 +47,9 @@ export default function () {
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
 	// page( '/', '/stats/day' );
-	// page( '/stats/day', function () {
-	// 	console.log( 'working' );
-	// 	document.body.textContent = 'It works';
-	// } );
 
 	// Stat Overview Page
 	statsPage( `/stats/:period(${ validPeriods })`, overview );
-
-	statsPage( '/stats/insights', sites );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );

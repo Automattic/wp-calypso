@@ -41,7 +41,7 @@ export const ProviderWrappedLayout = ( {
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout primary={ primary } secondary={ secondary } masterbarIsHidden={ true } />
 	) : (
 		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 	);

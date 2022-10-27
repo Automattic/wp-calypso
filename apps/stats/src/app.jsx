@@ -21,6 +21,7 @@ import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 // import statss from 'calypso/state/stats/reducer';
+import { hideMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import { getUrlParts } from '../../../packages/calypso-url';
 import registerStatsPages from './routes';
@@ -110,6 +111,8 @@ async function AppBoot() {
 		store.dispatch( setCurrentUser( user ) );
 	}
 
+	store.dispatch( hideMasterbar() );
+
 	setupContextMiddleware( store, queryClient );
 
 	registerStatsPages();
@@ -120,6 +123,7 @@ async function AppBoot() {
 		</QueryClientProvider>,
 		document.getElementById( 'wpcom' )
 	);
+
 	page();
 }
 AppBoot();

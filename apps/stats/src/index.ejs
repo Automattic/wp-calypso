@@ -20,13 +20,16 @@
 	</head>
 
 	<body>
-		<p></p>
-
+		<ul>
+			<li><a href="/">/</a></li>
+			<li><a href="/stats/day">/day</a></li>
+			<li><a href="/stats/insights/blog.kangzj.net">/insights</a></li>
+		</ul>
 		<div id="wpcom"></div>
 		<script>
 			window.configData = {
 				site_name: 'whatever',
-				env_id: "shared",
+				env_id: "jetpack-stats-app",
 				i18n_default_locale_slug: 'en',
 				google_analytics_key: 'UA-10673494-15',
 				client_slug: 'browser',
@@ -57,12 +60,5 @@
 		<% htmlWebpackPlugin.files.js.forEach( function( script ) { %>
 		<script charset="UTF-8" src="<%= script %>"></script>
 		<% } ) %>
-
-		<ul>
-			<li><a href="/">/</a></li>
-			<li><a href="/stats/day">/day</a></li>
-			<li><a href="/stats/insights/blog.kangzj.net">/insights</a></li>
-			<li><a href="/stats/test">/test</a></li>
-		  </ul>
 	</body>
 </html>
