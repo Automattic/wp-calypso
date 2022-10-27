@@ -48,7 +48,8 @@ object WPComPlugins : Project({
 					"notifications-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
-					"o2-blocks-release-build"
+					"o2-blocks-release-build",
+					"happy-blocks-release-build",
 				)
 			}
 			dataToKeep = everything()
