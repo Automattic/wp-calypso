@@ -1,7 +1,6 @@
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
-import { TextHighlight } from '@wordpress/components';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -42,7 +41,6 @@ const PluginsBrowserListElement = ( props ) => {
 		plugin = {},
 		variant = PluginsBrowserElementVariant.Compact,
 		currentSites,
-		search,
 	} = props;
 
 	const translate = useTranslate();
@@ -177,16 +175,12 @@ const PluginsBrowserListElement = ( props ) => {
 			>
 				<div className="plugins-browser-item__info">
 					<PluginIcon image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					<div className="plugins-browser-item__title">
-						<TextHighlight text={ plugin.name } highlight={ search } />
-					</div>
+					<div className="plugins-browser-item__title">{ plugin.name }</div>
 					{ variant === PluginsBrowserElementVariant.Extended && (
 						<>
 							<div className="plugins-browser-item__author">
 								{ translate( 'by ' ) }
-								<span className="plugins-browser-item__author-name">
-									<TextHighlight text={ plugin.author_name } highlight={ search } />
-								</span>
+								<span className="plugins-browser-item__author-name">{ plugin.author_name }</span>
 							</div>
 
 							<div className="plugins-browser-item__last-updated">
@@ -202,9 +196,7 @@ const PluginsBrowserListElement = ( props ) => {
 							</div>
 						</>
 					) }
-					<div className="plugins-browser-item__description">
-						<TextHighlight text={ plugin.short_description } highlight={ search } />
-					</div>
+					<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 				</div>
 				{ isUntestedVersion && (
 					<div className="plugins-browser-item__untested-notice">
@@ -330,8 +322,8 @@ const InstalledInOrPricing = ( {
 	return (
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-				{ ( { isFetching, price, period, isSaasProduct } ) => {
-					if ( isSaasProduct ) {
+				{ ( { isFetching, price, period } ) => {
+					if ( plugin.isSaasProduct ) {
 						// SaaS products do not display a price
 						return (
 							<>

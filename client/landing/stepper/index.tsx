@@ -38,6 +38,7 @@ import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
+import { tailoredEcommerceFlow } from './declarative-flow/tailored-ecommerce-flow';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
@@ -73,6 +74,9 @@ const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter-post-setup', pathToFlow: newsletterPostSetup },
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
+		: null,
+	config.isEnabled( 'signup/tailored-ecommerce' )
+		? { flowName: 'tailored-ecommerce', pathToFlow: tailoredEcommerceFlow }
 		: null,
 ].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 

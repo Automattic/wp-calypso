@@ -1,6 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
+import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useEffect, useRef } from 'react';
+import { ONBOARD_STORE } from '../../../../stores';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
@@ -15,6 +17,7 @@ type PatternSelectorProps = {
 const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
+	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
 	useEffect( () => {
 		if ( show ) {
@@ -41,7 +44,7 @@ const PatternSelector = ( { patterns, onSelect, title, show }: PatternSelectorPr
 					{ patterns?.map( ( item: Pattern, index: number ) => (
 						<PatternPreviewAutoHeight
 							key={ `${ index }-${ item.id }` }
-							url={ getPatternPreviewUrl( item.id, locale ) }
+							url={ getPatternPreviewUrl( item.id, locale, selectedDesign?.recipe?.stylesheet ) }
 							patternId={ item.id }
 							patternName={ item.name }
 						>

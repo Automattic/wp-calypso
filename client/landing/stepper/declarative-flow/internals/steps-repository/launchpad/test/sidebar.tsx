@@ -109,6 +109,60 @@ describe( 'Sidebar', () => {
 		expect( progressBar ).toBeVisible();
 	} );
 
+	it( 'does not show a custom domain setup notification for free wpcom domains', () => {
+		renderSidebar( {
+			...props,
+			sidebarDomain: buildDomainResponse( {
+				sslStatus: null,
+				isWPCOMDomain: true,
+			} ),
+		} );
+
+		const domainProcessingNotification = screen.queryByText(
+			/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+		);
+
+		expect( domainProcessingNotification ).not.toBeInTheDocument();
+	} );
+
+	describe( 'when a custom domain has been purchased', () => {
+		describe( 'and the domain SSL is still being processed', () => {
+			it( 'shows a notification explaining that the domain is being set up', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'pending',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.getByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).toBeInTheDocument();
+			} );
+		} );
+
+		describe( 'and the domain SSL has been activated', () => {
+			it( 'does not show a notification', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'active',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.queryByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).not.toBeInTheDocument();
+			} );
+		} );
+	} );
+
 	describe( 'when the tailored flow includes a task to launch the site', () => {
 		describe( 'and all tasks except the launch site task are complete', () => {
 			it( 'shows a launch title', () => {

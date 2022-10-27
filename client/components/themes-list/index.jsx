@@ -118,6 +118,7 @@ function ThemeBlock( props ) {
 			upsellUrl={ props.upsellUrl }
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
+			softLaunched={ theme.soft_launched }
 		/>
 	);
 }

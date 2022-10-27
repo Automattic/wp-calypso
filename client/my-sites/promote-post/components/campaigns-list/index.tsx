@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import ListEnd from 'calypso/components/list-end';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
@@ -44,7 +44,7 @@ export default function CampaignsList( {
 	if ( isLoading ) {
 		return (
 			<div className="campaigns-list__loading-container">
-				<LoadingEllipsis />
+				<SitePlaceholder />
 			</div>
 		);
 	}

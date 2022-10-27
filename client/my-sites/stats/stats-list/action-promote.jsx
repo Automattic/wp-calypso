@@ -18,12 +18,10 @@ const PromotePost = ( props ) => {
 	const dispatch = useDispatch();
 
 	const keyValue = 'post-' + postId;
-	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
-		'blazepress-widget',
-		keyValue
-	);
+	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
+
 	const site = useSelector( getSelectedSite );
 	const { is_private, is_coming_soon } = site;
 	const showPromotePost =
@@ -50,10 +48,7 @@ const PromotePost = ( props ) => {
 						isVisible={ isModalOpen && value === keyValue }
 						siteId={ selectedSiteId }
 						postId={ postId }
-						onClose={ () => {
-							closeModal();
-							onToggleVisibility( false );
-						} }
+						keyValue={ keyValue }
 					/>
 					<button
 						onClick={ showDSPWidget }

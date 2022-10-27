@@ -23,7 +23,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 	let actions = [];
 
 	const keyValue = globalId;
-	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { isModalOpen, value } = useRouteModal( 'blazepress-widget', keyValue );
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
 
 	if ( includeDefaultActions ) {
@@ -58,7 +58,6 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ () => closeModal() }
 				/>
 			) }
 			<EllipsisMenu position="bottom left" disabled={ ! globalId }>

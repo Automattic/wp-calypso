@@ -108,7 +108,7 @@
 	display: flex;
 	align-items: center;
 	height: 48px;
-	margin: 32px 0;
+	margin: 32px 0 16px 0;
 	padding: 0 12px;
 
 	.launchpad__url-box-domain {
@@ -294,9 +294,9 @@
 	}
 }
 
-// completed tasks
-.launchpad__task.completed-and-inactive,
-.launchpad__task.completed-and-active {
+// completed tasks (both enabled and disabled)
+.launchpad__task.completed.disabled,
+.launchpad__task.completed.enabled {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
@@ -309,11 +309,11 @@
 	}
 }
 
-// not-completed && completed-and-active tasks
-.launchpad__task.completed-and-active:hover,
-.launchpad__task.not-completed:hover,
-.launchpad__task.completed-and-active > a:focus,
-.launchpad__task.not-completed > a:focus {
+// pending tasks and completed enabled
+.launchpad__task.completed.enabled:hover,
+.launchpad__task.pending:hover,
+.launchpad__task.completed.enabled > a:focus,
+.launchpad__task.pending > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
@@ -326,6 +326,13 @@
 	// change badge color on hover (Choose a Plan step)
 	.badge {
 		background: var(--studio-blue-10);
+	}
+}
+
+// pending disabled tasks
+.launchpad__task.pending.disabled {
+	.launchpad__checklist-item-text {
+		color: inherit;
 	}
 }
 
