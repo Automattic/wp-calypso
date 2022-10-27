@@ -7,10 +7,10 @@ import {
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import { getPluginPurchased, getSoftwareSlug } from 'calypso/lib/plugins/utils';
+import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
@@ -26,10 +26,7 @@ import {
 	getSiteObjectsWithPlugin,
 	getPluginOnSite,
 } from 'calypso/state/plugins/installed/selectors';
-import {
-	isMarketplaceProduct as isMarketplaceProductSelector,
-	isSaasProduct as isSaasProductSelector,
-} from 'calypso/state/products-list/selectors';
+import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -59,8 +56,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-
-	const isSaasProduct = useSelector( ( state ) => isSaasProductSelector( state, softwareSlug ) );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -107,7 +102,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getEligibility( state, selectedSite?.ID )
 	);
 
-	const getUpgradeToBusinessHRef = useCallback( () => {
+	const upgradeToBusinessHRef = useMemo( () => {
 		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 
 		const siteSlug = selectedSite?.slug;
@@ -116,18 +111,9 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
 	}, [ selectedSite?.slug ] );
 
-	const getSaasRedirectHRef = useCallback( () => {
-		if ( ! plugin.saas_landing_page ) {
-			return null;
-		}
-		try {
-			const saasRedirectUrl = new URL( plugin.saas_landing_page );
-			saasRedirectUrl.searchParams.append( 'uuid', `${ currentUserId }+${ selectedSite?.ID }` );
-			return saasRedirectUrl.toString();
-		} catch ( error ) {
-			return null;
-		}
-	}, [ currentUserId, plugin.saas_landing_page, selectedSite?.ID ] );
+	const saasRedirectHRef = useMemo( () => {
+		return getSaasRedirectUrl( plugin, currentUserId, selectedSite?.ID );
+	}, [ currentUserId, plugin, selectedSite?.ID ] );
 	/*
 	 * Remove 'NO_BUSINESS_PLAN' holds if the INSTALL_PURCHASED_PLUGINS feature is present.
 	 *
@@ -272,7 +258,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		<Fragment>
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<div className="plugin-details-cta__container">
-				{ ! isSaasProduct && (
+				{ ! plugin.isSaasProduct && (
 					<div className="plugin-details-cta__price">
 						<PluginPrice plugin={ plugin } billingPeriod={ billingPeriod }>
 							{ ( { isFetching, price, period } ) =>
@@ -294,7 +280,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</PluginPrice>
 					</div>
 				) }
-				{ isMarketplaceProduct && ! isSaasProduct && (
+				{ isMarketplaceProduct && ! plugin.isSaasProduct && (
 					<BillingIntervalSwitcher
 						billingPeriod={ billingPeriod }
 						onChange={ ( interval ) => dispatch( setBillingInterval( interval ) ) }
@@ -304,14 +290,13 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 				<div className="plugin-details-cta__install">
 					<PrimaryButton
 						isLoggedIn={ isLoggedIn }
-						isSaasProduct={ isSaasProduct }
 						shouldUpgrade={ shouldUpgrade }
 						hasEligibilityMessages={ hasEligibilityMessages }
 						incompatiblePlugin={ incompatiblePlugin }
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
-						saasRedirectHRef={ getSaasRedirectHRef() }
+						saasRedirectHRef={ saasRedirectHRef }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
@@ -339,14 +324,14 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						) }
 					</div>
 				) }
-				{ ! isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ ! plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
 					<UpgradeRequiredContent translate={ translate } />
 				) }
-				{ isSaasProduct && shouldUpgrade && isLoggedIn && (
+				{ plugin.isSaasProduct && shouldUpgrade && isLoggedIn && (
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
-							href={ getUpgradeToBusinessHRef() }
+							href={ upgradeToBusinessHRef }
 							className="plugin-details-cta__install-button"
 							primary
 							onClick={ () => {} }
@@ -362,7 +347,6 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 function PrimaryButton( {
 	isLoggedIn,
-	isSaasProduct,
 	shouldUpgrade,
 	hasEligibilityMessages,
 	incompatiblePlugin,
@@ -384,7 +368,7 @@ function PrimaryButton( {
 			</Button>
 		);
 	}
-	if ( isSaasProduct ) {
+	if ( plugin.isSaasProduct ) {
 		return (
 			<Button
 				className="plugin-details-cta__install-button"
