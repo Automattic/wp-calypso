@@ -114,4 +114,16 @@
 			padding: 0;
 		}
 	}
+	.register-domain-step__next-page {
+		background: none;
+		box-shadow: none;
+
+		.register-domain-step__next-page-button {
+			padding: 0.57em 1.17em;
+
+			@include break-mobile {
+				padding: 0.65em 2.8em;
+			}
+		}
+	}
 }
