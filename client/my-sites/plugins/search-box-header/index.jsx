@@ -27,9 +27,9 @@ const SearchBox = ( { isMobile, searchTerm, searchBoxRef, isSearching } ) => {
 				fitsContainer={ isMobile }
 				onSearch={ pageToSearch }
 				defaultValue={ searchTerm }
-				searchMode="on-enter"
+				searchMode="when-typing"
 				placeholder={ translate( 'Try searching "ecommerce"' ) }
-				delaySearch={ false }
+				delaySearch={ true }
 				recordEvent={ recordSearchEvent }
 				searching={ isSearching }
 			/>
