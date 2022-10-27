@@ -1,7 +1,21 @@
+@import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .new-or-existing-site__placeholder {
 	padding: 0 20px;
 	animation: pulse-light 800ms ease-in-out infinite;
 	background-color: var(--color-neutral-10);
 	color: transparent;
 	min-height: $font-title-small;
+}
+
+.new-or-existing-site__wordpress-logo {
+	vertical-align: top;
+	height: 2.5rem;
+	width: 2.5rem;
+	@include break-mobile {
+		height: initial;
+		width: initial;
+	}
 }
