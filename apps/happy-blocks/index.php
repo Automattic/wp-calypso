@@ -14,8 +14,7 @@
  *
  *   2. The block code is built from a TeamCity job in Calypso
  *
- *      TODO: Update docs URL
- *      https://github.com/Automattic/wp-calypso/blob/a13e6ddacdf59ce5f2d6b26c22900c0f4afd1adb/.teamcity/_self/projects/WPComPlugins.kt#L107
+ *      https://github.com/Automattic/wp-calypso/blob/813bc5bc8a5e21593f05a68c76b02b9827a680f1/.teamcity/_self/projects/WPComPlugins.kt#L116
  *
  *      It's built on every Calypso deploy. Why not just the ones where we modify happy-blocks?
  *      Changes to Calypso's components, build system, and framework may indirectly change
