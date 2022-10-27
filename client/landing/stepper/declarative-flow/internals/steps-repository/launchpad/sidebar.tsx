@@ -1,7 +1,9 @@
 import { Gridicon, ProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
+import GlobalStylesModal from 'calypso/blocks/global-styles-modal';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
@@ -60,9 +62,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 	const { isFetchingGlobalStylesStatus, globalStylesInUse, shouldLimitGlobalStyles } =
 		usePremiumGlobalStyles( site?.ID );
+	const [ isGlobalStylesModalVisible, setIsGlobalStylesModalVisible ] = useState( false );
 
 	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks( tasks, flow );
+	const globalStylesConfig = {
+		hasUserStyles: globalStylesInUse,
+		areUserStylesBlocked: shouldLimitGlobalStyles,
+		showModal: () => setIsGlobalStylesModalVisible( true ),
+	};
 	const enhancedTasks =
 		site && ! isFetchingGlobalStylesStatus
 			? getEnhancedTasks(
@@ -72,8 +80,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					submit,
 					goToStep,
 					flow,
-					globalStylesInUse,
-					shouldLimitGlobalStyles
+					globalStylesConfig
 			  )
 			: null;
 
@@ -162,6 +169,17 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 					borderless={ true }
 				/>
 			</div>
+			<GlobalStylesModal
+				context="launchpad"
+				description={ __(
+					"To activate your site styles, and unlock advanced design customization tools, you'll need upgrade to a paid plan."
+				) }
+				heading={ __( 'Publish your new site styles' ) }
+				isVisible={ isGlobalStylesModalVisible }
+				onClose={ () => setIsGlobalStylesModalVisible( false ) }
+				showTryOutButton={ false }
+				upgradeUrl={ `/plans/${ siteSlug }` }
+			/>
 		</div>
 	);
 };

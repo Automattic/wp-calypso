@@ -17,8 +17,11 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null,
-	globalStylesInUse?: boolean,
-	shouldLimitGlobalStyles?: boolean
+	globalStylesConfig?: {
+		hasUserStyles: boolean;
+		areUserStylesBlocked: boolean;
+		showModal: () => void;
+	}
 ) {
 	const enhancedTaskList: Task[] = [];
 	const productSlug = site?.plan?.product_slug;
@@ -29,6 +32,10 @@ export function getEnhancedTasks(
 
 	const linkInBioSiteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+
+	const showUnlockStylesStep =
+		isEnabled( 'limit-global-styles' ) && globalStylesConfig?.hasUserStyles;
+	const isUnlockStylesCompleted = ! globalStylesConfig?.areUserStylesBlocked;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -133,15 +140,15 @@ export function getEnhancedTasks(
 					};
 					break;
 				case 'unlock_styles':
-					if ( ! isEnabled( 'limit-global-styles' ) || ! globalStylesInUse ) {
+					if ( ! showUnlockStylesStep ) {
 						return;
 					}
 					taskData = {
 						title: translate( 'Activate advanced design customization tools' ),
-						isCompleted: ! shouldLimitGlobalStyles,
+						isCompleted: isUnlockStylesCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace( `/site-editor/${ siteSlug }?unlock-styles` );
+							globalStylesConfig.showModal();
 						},
 					};
 					break;
