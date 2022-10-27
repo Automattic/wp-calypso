@@ -5,12 +5,12 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
-import getDIFMLiteSitePageTitles from 'calypso/state/selectors/get-difm-lite-site-page-titles';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
 	initializePages,
@@ -61,6 +61,13 @@ const LoadingContainer = styled.div`
 	}
 `;
 
+const PagesNotAvailable = styled( LoadingContainer )`
+	img {
+		max-height: 200px;
+		padding: 24px;
+	}
+`;
+
 interface WebsiteContentStepProps {
 	additionalStepData: object;
 	submitSignupStep: ( step: { stepName: string } ) => void;
@@ -68,10 +75,7 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
-	queryObject: {
-		siteSlug?: string;
-		siteId?: string;
-	};
+	pageTitles: string[];
 }
 
 function WebsiteContentStep( {
@@ -79,15 +83,13 @@ function WebsiteContentStep( {
 	stepName,
 	submitSignupStep,
 	goToNextStep,
-	queryObject,
+	pageTitles,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 	const websiteContent = useSelector( getWebsiteContent );
 	const currentIndex = useSelector( getWebsiteContentDataCollectionIndex );
-	const pageTitles = useSelector( ( state ) => getDIFMLiteSitePageTitles( state, siteId ) );
 	const isImageUploading = useSelector( ( state ) =>
 		isImageUploadInProgress( state as WebsiteContentStateModel )
 	);
@@ -218,7 +220,10 @@ export default function WrapperWebsiteContent(
 	// ensure that the WoA sync has completed.
 	const maxTries = isFromCheckout ? 30 : 10;
 
-	const { hasValidPurchase, isPollingInProgress } = usePollSiteForDIFMDetails( siteId, maxTries );
+	const { hasValidPurchase, pageTitles, isPollingInProgress } = usePollSiteForDIFMDetails(
+		siteId,
+		maxTries
+	);
 
 	useEffect( () => {
 		if ( isPollingInProgress ) {
@@ -230,9 +235,31 @@ export default function WrapperWebsiteContent(
 		}
 	}, [ hasValidPurchase, isPollingInProgress, queryObject.siteSlug ] );
 
-	return isPollingInProgress ? (
-		<Loader />
-	) : (
+	if ( isPollingInProgress ) {
+		return <Loader />;
+	}
+
+	if ( ! ( pageTitles && pageTitles.length ) ) {
+		return (
+			<PagesNotAvailable>
+				<img src={ errorIllustration } alt="" />
+				<div>
+					{ translate(
+						'We could not retrieve your site information. Please {{SupportLink}}contact support{{/SupportLink}}.',
+						{
+							components: {
+								SupportLink: (
+									<a className="subtitle-link" rel="noopener noreferrer" href="/help/contact" />
+								),
+							},
+						}
+					) }
+				</div>
+			</PagesNotAvailable>
+		);
+	}
+
+	return (
 		<StepWrapper
 			headerText={ headerText }
 			subHeaderText={ subHeaderText }
@@ -241,7 +268,7 @@ export default function WrapperWebsiteContent(
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			stepContent={ <WebsiteContentStep { ...props } /> }
+			stepContent={ <WebsiteContentStep { ...props } pageTitles={ pageTitles } /> }
 			goToNextStep={ false }
 			hideFormattedHeader={ false }
 			hideBack={ false }

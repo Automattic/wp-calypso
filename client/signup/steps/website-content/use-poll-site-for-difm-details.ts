@@ -36,6 +36,7 @@ export function usePollSiteForDIFMDetails(
 	maxTries = 10
 ): {
 	isPollingInProgress: boolean;
+	pageTitles: string[] | null;
 	hasValidPurchase: boolean;
 } {
 	const [ retryCount, setRetryCount ] = useState( 0 );
@@ -118,5 +119,6 @@ export function usePollSiteForDIFMDetails(
 	return {
 		isPollingInProgress,
 		hasValidPurchase: isPollingInProgress ? false : hasValidPurchase,
+		pageTitles,
 	};
 }
