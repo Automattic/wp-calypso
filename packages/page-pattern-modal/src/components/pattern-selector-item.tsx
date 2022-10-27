@@ -21,7 +21,7 @@ const getPatternPreviewUrl = (
 	patternId: string
 ): string => {
 	const params = new URLSearchParams( {
-		wpcom_site: window._currentSiteId.toString(),
+		demo_site: window._currentSiteId.toString(),
 		stylesheet,
 		source_site: PATTERN_SOURCE_SITE,
 		pattern_id: patternId,
