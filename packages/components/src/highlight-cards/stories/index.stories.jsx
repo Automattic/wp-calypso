@@ -5,7 +5,7 @@ export default { title: 'Highlight Cards' };
 
 const handleClick = action( 'click' );
 
-export const Default = () => (
+const HighlightCardsVariations = ( props ) => (
 	<HighlightCards
 		counts={ {
 			comments: 45,
@@ -23,5 +23,24 @@ export const Default = () => (
 		onClickLikes={ handleClick }
 		onClickViews={ handleClick }
 		onClickVisitors={ handleClick }
+		{ ...props }
 	/>
+);
+
+export const Default = () => <HighlightCardsVariations />;
+
+export const WithPartialPreviousCounts = () => (
+	<HighlightCardsVariations
+		previousCounts={ {
+			comments: null,
+			likes: null,
+			views: 4073,
+			visitors: 1412,
+		} }
+	/>
+);
+export const WithoutPreviousCounts = () => <HighlightCardsVariations previousCounts={ null } />;
+
+export const WithoutCounts = () => (
+	<HighlightCardsVariations counts={ null } previousCounts={ null } />
 );
