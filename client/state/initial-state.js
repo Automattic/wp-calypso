@@ -34,6 +34,47 @@ export function shouldPersist() {
 	return ! isSupportSession();
 }
 
+function warnDeveloperOfSympathy() {
+	const warningDiv = document.createElement( 'div' );
+	warningDiv.id = 'sympathy-dev-warning';
+	warningDiv.innerHTML = `
+	<div style="
+		width: 100vw;
+		height: 23px;
+		display: flex;
+		z-index: 999999999999999999;
+		top: 0;
+		position: absolute;
+		justify-content: center;
+	"
+	>
+		<div style="
+			position: relative;
+			z-index: 99999999;
+			background: var(--color-warning-20);
+			color: #bc2c2c;
+			letter-spacing: 1px;
+			border-radius: 2px;
+			max-width: 801px;
+			text-align: center;
+			font-size: 11px;
+			font-weight: bold;
+			padding: 1px 10px;
+			top: 0;
+			margin-top: 5px;
+			
+			">
+			DEV NOTICE: Persisted Redux State (Randomly) cleared. <a href="https://github.com/Automattic/wp-calypso/pull/14121">Read more.</a>
+		</div>
+	</div>
+	`;
+
+	document.body.appendChild( warningDiv );
+	setTimeout( () => {
+		document.getElementById( 'sympathy-dev-warning' ).remove();
+	}, 5000 );
+}
+
 /**
  * Determines whether to add "sympathy" by randomly clearing out persistent
  * browser state and loading without it
@@ -169,7 +210,6 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		window.resetState = () => clearPersistedState().then( () => window.location.reload( true ) );
-
 		if ( shouldAddSympathy() ) {
 			// eslint-disable-next-line no-console
 			console.log(
@@ -177,6 +217,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 				'font-size: 14px; color: red;'
 			);
 
+			warnDeveloperOfSympathy();
 			clearPersistedState();
 			return null;
 		}
