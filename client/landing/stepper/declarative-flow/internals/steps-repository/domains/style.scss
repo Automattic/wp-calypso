@@ -32,6 +32,41 @@
 		}
 	}
 
+	.domains__domain-side-content-container {
+		flex-direction: column;
+		margin-top: 40px;
+		margin-bottom: 40px;
+		display: none;
+
+		@include break-large {
+			width: 30vw;
+			margin-top: 0;
+			flex-direction: column;
+			display: flex;
+		}
+
+		@include break-wide {
+			width: 350px;
+		}
+	}
+
+	.register-domain-step .domains__domain-side-content-container {
+		display: flex;
+
+		@include break-small {
+			flex-direction: row;
+
+			.domains__domain-side-content {
+				padding-top: 0;
+				border-bottom: none;
+			}
+		}
+
+		@include break-large {
+			display: none;
+		}
+	}
+
 	.domains__step-section-wrapper {
 		.use-my-domain__page-heading {
 			padding-left: 24px;
