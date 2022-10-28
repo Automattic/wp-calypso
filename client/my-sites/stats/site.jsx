@@ -189,15 +189,16 @@ class StatsSite extends Component {
 			);
 		}
 
+		// For period option links
 		const traffic = {
 			label: translate( 'Traffic' ),
 			path: '/stats',
 			showIntervals: true,
 		};
-
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
+		// New feature gate
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
 		return (
