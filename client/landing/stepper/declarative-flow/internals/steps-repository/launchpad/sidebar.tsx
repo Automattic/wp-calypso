@@ -22,7 +22,7 @@ type SidebarProps = {
 	submit: NavigationControls[ 'submit' ];
 	goNext: NavigationControls[ 'goNext' ];
 	goToStep?: NavigationControls[ 'goToStep' ];
-	flow: stirng | null;
+	flow: string | null;
 };
 
 function getUrlInfo( url: string ) {
