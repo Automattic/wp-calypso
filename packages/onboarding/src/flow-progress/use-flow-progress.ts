@@ -33,6 +33,12 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		processing: 6,
 		launchpad: 7,
 	},
+	sensei: {
+		senseiSetup: 1,
+		chooseADomain: 2,
+		senseiPlan: 3,
+		launchpad: 4,
+	},
 };
 
 export const useFlowProgress = ( { stepName, flowName }: FlowProgress = {} ) => {

@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { SENSEI_FLOW } from 'calypso/../packages/onboarding/src';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
 import AsyncLoad from 'calypso/components/async-load';
@@ -37,6 +38,7 @@ import { newsletter } from './declarative-flow/newsletter';
 import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
+import { sensei } from './declarative-flow/sensei';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
@@ -69,6 +71,7 @@ interface configurableFlows {
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'videopress', pathToFlow: videopress },
+	{ flowName: SENSEI_FLOW, pathToFlow: sensei },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },

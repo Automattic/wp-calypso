@@ -44,6 +44,8 @@ export { default as launchpad } from './launchpad';
 export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
+export { default as senseiSetup } from './sensei-setup';
+export { default as senseiPlan } from './sensei-plan';
 
 export type StepPath =
 	| 'courses'
@@ -89,6 +91,8 @@ export type StepPath =
 	| 'intro'
 	| 'launchpad'
 	| 'subscribers'
+	| 'senseiSetup'
+	| 'senseiPlan'
 	| 'getCurrentThemeSoftwareSets'
 	| 'chooseAPlan'
 	| 'videomakerSetup';
