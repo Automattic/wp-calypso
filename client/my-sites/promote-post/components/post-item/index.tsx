@@ -3,18 +3,14 @@ import { CompactCard, Gridicon } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import page from 'page';
 import { useState } from 'react';
-import { useQueryClient } from 'react-query';
-import { useDispatch, useSelector } from 'react-redux';
-import BlazePressWidget, { goToOriginalEndpoint } from 'calypso/components/blazepress-widget';
+import { useDispatch } from 'react-redux';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export type Post = {
 	ID: number;
@@ -37,29 +33,10 @@ type Props = {
 };
 
 export default function PostItem( { post }: Props ) {
-	const [ loading, setLoading ] = useState( false );
+	const [ loading ] = useState( false );
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const keyValue = 'post-' + post.ID;
-	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
-		'blazepress-widget',
-		keyValue
-	);
-
-	const previousRoute = useSelector( getPreviousRoute );
-
-	const onCloseWidget = ( redirectToCampaigns?: boolean ) => {
-		queryClient.invalidateQueries( [ 'promote-post-campaigns', post.site_ID ] );
-		setLoading( false );
-		if ( redirectToCampaigns ) {
-			page( `/advertising/${ selectedSiteSlug }/campaigns` );
-		} else if ( previousRoute ) {
-			closeModal();
-		} else {
-			goToOriginalEndpoint();
-		}
-	};
+	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const onClickPromote = async () => {
 		openModal();
@@ -108,7 +85,7 @@ export default function PostItem( { post }: Props ) {
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ onCloseWidget }
+					keyValue={ keyValue }
 				/>
 				<Button
 					isPrimary={ true }
