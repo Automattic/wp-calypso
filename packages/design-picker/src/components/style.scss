@@ -426,6 +426,10 @@
 
 			.design-button-container {
 				margin-top: 32px;
+
+				&:first-child {
+					margin-top: 0;
+				}
 			}
 
 			.design-button-container--is-generated {
@@ -440,7 +444,7 @@
 			}
 
 			.design-button-container--is-generated--is-showing {
-				margin-top: 0;
+				margin-top: 32px;
 				max-height: none;
 
 				.theme-preview__container {

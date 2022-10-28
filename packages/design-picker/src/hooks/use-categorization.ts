@@ -13,13 +13,13 @@ export interface Categorization {
 interface UseCategorizationOptions {
 	defaultSelection: string | null;
 	showAllFilter: boolean;
-	showGeneratedDesignsFilter?: boolean;
+	generatedDesignsFilter: string | null;
 	sort?: ( a: Category, b: Category ) => number;
 }
 
 export function useCategorization(
 	designs: Design[],
-	{ defaultSelection, showAllFilter, showGeneratedDesignsFilter, sort }: UseCategorizationOptions
+	{ defaultSelection, showAllFilter, generatedDesignsFilter, sort }: UseCategorizationOptions
 ): Categorization {
 	const { __ } = useI18n();
 
@@ -29,9 +29,9 @@ export function useCategorization(
 			result.sort( sort );
 		}
 
-		if ( showGeneratedDesignsFilter ) {
+		if ( generatedDesignsFilter ) {
 			result.unshift( {
-				name: __( 'Customized for You', __i18n_text_domain__ ),
+				name: generatedDesignsFilter,
 				slug: SHOW_GENERATED_DESIGNS_SLUG,
 			} );
 		}
@@ -44,7 +44,7 @@ export function useCategorization(
 		}
 
 		return result;
-	}, [ designs, showAllFilter, showGeneratedDesignsFilter, sort, __ ] );
+	}, [ designs, showAllFilter, generatedDesignsFilter, sort, __ ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )
