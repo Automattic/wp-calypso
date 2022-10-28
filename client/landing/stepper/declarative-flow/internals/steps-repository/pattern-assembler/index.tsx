@@ -161,17 +161,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onBack = () => {
-		if ( showPatternSelectorType ) {
-			setShowPatternSelectorType( null );
-		} else {
-			const patterns = getPatterns();
-			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
-				has_selected_patterns: patterns.length > 0,
-				pattern_count: patterns.length,
-			} );
+		const patterns = getPatterns();
+		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+			has_selected_patterns: patterns.length > 0,
+			pattern_count: patterns.length,
+		} );
 
-			goBack();
-		}
+		goBack();
 	};
 
 	const stepContent = (
@@ -180,6 +176,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
+					onBack={ () => setShowPatternSelectorType( null ) }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout
@@ -268,6 +265,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName="pattern-assembler"
+			hideBack={ showPatternSelectorType !== null }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
