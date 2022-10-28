@@ -218,7 +218,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						{ props.cancelBundledDomain &&
 							props.includedDomainPurchase &&
 							translate(
-								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
+								'You will lose your free domain registration since that feature is only included in annual/biennual plans.'
 							) }
 						{ props.refundAmount && <br /> }
 						{ props.refundAmount &&
