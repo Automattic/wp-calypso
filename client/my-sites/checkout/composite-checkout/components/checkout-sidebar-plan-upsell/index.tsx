@@ -2,6 +2,7 @@ import { isPlan } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import formatCurrency from '@automattic/format-currency';
 import { useShoppingCart } from '@automattic/shopping-cart';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
@@ -84,11 +85,15 @@ export function CheckoutSidebarPlanUpsell() {
 		return null;
 	}
 
-	const cardTitle = sprintf(
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
-		__( 'Save %(percentSavings)d%% by paying for two years' ),
-		{ percentSavings }
+	const cardTitle = createInterpolateElement(
+		sprintf(
+			// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+			__( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ),
+			{ percentSavings }
+		),
+		{ strong: createElement( 'strong' ) }
 	);
+
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
 			<div className="checkout-sidebar-plan-upsell__plan-grid">
@@ -118,7 +123,7 @@ export function CheckoutSidebarPlanUpsell() {
 				cta={ {
 					disabled: isFormLoading,
 					busy: isFormLoading,
-					text: __( 'Switch to two year plan' ),
+					text: __( 'Switch to a two year plan' ),
 					action: onUpgradeClick,
 				} }
 			/>
