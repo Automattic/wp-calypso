@@ -56,6 +56,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const currentPurchase = getPluginPurchased( plugin, purchases, isMarketplaceProduct );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -86,9 +87,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const isPluginInstalledOnsiteWithSubscription =
-		isPluginInstalledOnsite && ! isMarketplaceProduct
-			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+		isPluginInstalledOnsite && ! isMarketplaceProduct ? true : currentPurchase?.active;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
@@ -217,6 +216,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</span>
 					}
 					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					productPurchase={ currentPurchase }
 					wporg
 				/>
 			</div>
