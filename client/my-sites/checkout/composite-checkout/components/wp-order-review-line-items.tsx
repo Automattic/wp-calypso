@@ -171,16 +171,18 @@ function LineItemWrapper( {
 	const variants = useGetProductVariants( siteId, product.product_slug );
 	const areThereVariants = variants.length > 1;
 
+	const isWooMobile = isWcMobileApp();
+	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
-	const isWooMobile = isWcMobileApp();
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
 				product={ product }
-				hasDeleteButton={ canItemBeRemovedFromCart( product, responseCart ) }
+				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
