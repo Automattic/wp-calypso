@@ -22,3 +22,9 @@
 		}
 	}
 }
+
+.ReactModalPortal {
+	.ReactModal__Content.ReactModal__Content--after-open.dialog.card {
+		max-width: 700px;
+	}
+}
