@@ -52,7 +52,7 @@ export function useCountriesAndStates() {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const countryOptions = <{ [ key: string ]: object }>{};
+		const countryOptions = <{ [ key: string ]: Option }>{};
 		const stateOptions = <{ [ key: string ]: Array< object > }>{};
 
 		Object.entries( countriesList ?? [] ).map( ( [ key, value ] ) => {
