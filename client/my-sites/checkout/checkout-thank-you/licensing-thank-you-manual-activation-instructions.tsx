@@ -12,14 +12,13 @@ import { isJetpackStandaloneProduct } from 'calypso/my-sites/plans/jetpack-plans
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackActivationInstructions from './jetpack-activation-instructions';
+import { JetpackLicenseKeyProps } from './jetpack-license-key-clipboard';
 import JetpackStandaloneActivationInstructions from './jetpack-standalone-activation-instructions';
 
-interface Props {
-	productSlug: string | 'no_product';
-	receiptId: number;
-}
-
-const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
+const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
+	productSlug,
+	receiptId,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -66,24 +65,29 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				}
 				footerImage={ licensingActivationPluginInstall }
 				showContactUs
-				showProgressIndicator
+				showProgressIndicator={ ! jetpackStandaloneProduct }
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
 			>
 				{ jetpackStandaloneProduct ? (
-					<JetpackStandaloneActivationInstructions product={ jetpackStandaloneProduct } />
+					<JetpackStandaloneActivationInstructions
+						product={ jetpackStandaloneProduct }
+						receiptId={ receiptId }
+					/>
 				) : (
-					<JetpackActivationInstructions />
-				) }
+					<>
+						<JetpackActivationInstructions />
 
-				<Button
-					className="licensing-thank-you-manual-activation-instructions__button"
-					primary
-					disabled={ false }
-					onClick={ onContinue }
-				>
-					{ translate( 'Continue ' ) }
-				</Button>
+						<Button
+							className="licensing-thank-you-manual-activation-instructions__button"
+							primary
+							disabled={ false }
+							onClick={ onContinue }
+						>
+							{ translate( 'Continue ' ) }
+						</Button>
+					</>
+				) }
 			</LicensingActivation>
 		</>
 	);

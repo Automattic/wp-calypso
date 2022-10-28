@@ -743,65 +743,40 @@
 	}
 }
 
-.licensing-thank-you-manual-activation-instructions__list {
-	margin: 0;
-
-	list-style: none;
-	counter-reset: item;
-}
-
-.licensing-thank-you-manual-activation-instructions__list-item {
-	margin-bottom: 1.5rem;
-
-	&::before {
-		content: counter(item);
-		counter-increment: item;
-
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-
-		min-width: 1.75em;
-		height: 1.75em;
-		margin-inline-end: 0.75em;
-
-		background-color: var(--studio-jetpack-green-40);
-		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		color: var(--color-text-inverted);
-
-		font-weight: 700;
-	}
-}
-
 .licensing-activation .licensing-thank-you-manual-activation-instructions__button.button {
 	margin-top: 0;
 }
 
-.licensing-thank-you-manual-activation-license-key__key {
+.jetpack-license-key-clipboard {
 	margin-top: 40px;
 }
 
-.licensing-thank-you-manual-activation-license-key__clipboard {
+.jetpack-license-key-clipboard__container {
 	display: flex;
-
 	margin-top: 8px;
+}
 
-	.licensing-thank-you-manual-activation-license-key__input.form-text-input {
-		margin-right: 8px;
+.jetpack-license-key-clipboard__container .jetpack-license-key-clipboard__input.form-text-input {
+	margin-right: 8px;
 
-		background-color: var(--studio-gray-0);
+	background-color: var(--studio-gray-0);
 
-		border: none;
-	}
+	border: none;
 
-	.licensing-thank-you-manual-activation-license-key__input.form-text-input.is-loading {
+	&.is-loading {
 		@include placeholder( --color-neutral-20 );
 	}
 }
 
-.licensing-activation .licensing-thank-you-manual-activation-license-key__button.button {
+.jetpack-standalone-activation-instructions .jetpack-license-key-clipboard {
+	margin: 32px 0 57.5px;
+}
+
+.licensing-activation .jetpack-license-key-clipboard__button.button {
 	margin-top: 0;
 	min-width: 100px;
+	background-color: var(--studio-black);
+	color: var(--studio-white);
 }
 
 .jetpack-checkout-thank-you {
@@ -853,4 +828,44 @@
 	.jetpack-checkout-thank-you__email-message-loading {
 		@include placeholder( --color-neutral-20 );
 	}
+}
+
+.jetpack-instruction-list {
+	margin: 0;
+
+	list-style: none;
+	counter-reset: item;
+}
+
+.jetpack-instruction-list__item {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 1.5rem;
+
+	strong {
+		font-weight: 700;
+	}
+
+	&::before {
+		content: counter(item);
+		counter-increment: item;
+
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+
+		min-width: 1.75em;
+		height: 1.75em;
+		margin-inline-end: 0.75em;
+
+		background-color: var(--studio-gray-5);
+		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		color: var(--color-text-black);
+
+		font-weight: 700;
+	}
+}
+
+.jetpack-instruction-list__item .gridicon {
+	margin-bottom: -3px;
 }

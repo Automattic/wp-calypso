@@ -5,7 +5,7 @@ import { getPost } from 'calypso/state/posts/selectors';
 
 const PageEllipsisMenuWrapper = ( { children, globalId } ) => {
 	const keyValue = globalId;
-	const { isModalOpen, value, closeModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { isModalOpen, value } = useRouteModal( 'blazepress-widget', keyValue );
 	const post = useSelector( ( state ) => getPost( state, globalId ) );
 
 	return (
@@ -15,7 +15,7 @@ const PageEllipsisMenuWrapper = ( { children, globalId } ) => {
 					isVisible={ isModalOpen && value === keyValue }
 					siteId={ post.site_ID }
 					postId={ post.ID }
-					onClose={ () => closeModal() }
+					keyValue={ globalId }
 				/>
 			) }
 			{ children }

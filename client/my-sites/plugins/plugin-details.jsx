@@ -46,6 +46,7 @@ import {
 import {
 	isMarketplaceProduct as isMarketplaceProductSelector,
 	getProductsList,
+	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
@@ -125,6 +126,10 @@ function PluginDetails( props ) {
 		isMarketplaceProductSelector( state, props.pluginSlug )
 	);
 
+	const isSaasProduct = useSelector( ( state ) =>
+		isSaasProductSelector( state, props.pluginSlug )
+	);
+
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
@@ -152,15 +157,22 @@ function PluginDetails( props ) {
 			...wpComPluginData,
 			fetched: isWpComPluginFetched,
 		};
-
 		return {
 			...wpcomPlugin,
 			...wporgPlugin,
 			...plugin,
 			fetched: wpcomPlugin?.fetched || wporgPlugin?.fetched,
 			isMarketplaceProduct,
+			isSaasProduct,
 		};
-	}, [ plugin, wporgPlugin, wpComPluginData, isWpComPluginFetched, isMarketplaceProduct ] );
+	}, [
+		plugin,
+		wporgPlugin,
+		wpComPluginData,
+		isWpComPluginFetched,
+		isMarketplaceProduct,
+		isSaasProduct,
+	] );
 
 	const existingPlugin = useMemo( () => {
 		if (
