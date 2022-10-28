@@ -22,9 +22,9 @@ import {
 	imageUploadFailed,
 	imageUploadInitiated,
 } from 'calypso/state/signup/steps/website-content/actions';
-import { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { PageDetailsParams } from './default-page-details';
+import type { PageDetailsParams } from './default-page-details';
+import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';

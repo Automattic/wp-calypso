@@ -92,7 +92,7 @@ export function useTranslatedPageDescriptions(
 		),
 	};
 
-	const contextBaseDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {
+	const contextualDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {
 		[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: {
 			...defaultDescriptions,
 		},
@@ -109,5 +109,5 @@ export function useTranslatedPageDescriptions(
 	if ( ! context ) {
 		return defaultDescriptions[ pageId ];
 	}
-	return contextBaseDescriptions[ context ][ pageId ];
+	return contextualDescriptions[ context ][ pageId ];
 }

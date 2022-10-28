@@ -1,4 +1,4 @@
-import { PageId } from 'calypso/signup/difm/constants';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { SiteId } from 'calypso/types';
 
 export const schema = {
