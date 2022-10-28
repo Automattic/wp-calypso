@@ -624,7 +624,8 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	giftOptions() {
-		const { translate, fields, isRequestingSettings, isSavingSettings } = this.props;
+		const { translate, fields, isRequestingSettings, isSavingSettings, handleSubmitForm } =
+			this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
 			return;
@@ -636,6 +637,10 @@ export class SiteSettingsFormGeneral extends Component {
 					<SettingsSectionHeader
 						title={ translate( 'Accept a gift subscription' ) }
 						id="site-settings__gifting-header"
+						disabled={ isRequestingSettings || isSavingSettings }
+						isSaving={ isSavingSettings }
+						onButtonClick={ handleSubmitForm }
+						showButton
 					/>
 					<CompactCard className="site-settings__gifting-content">
 						<ToggleControl
