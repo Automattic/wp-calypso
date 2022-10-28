@@ -3,7 +3,7 @@
  * External Dependencies
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Spinner } from '@automattic/components';
+import { Spinner, GMClosureNotice } from '@automattic/components';
 import { Notice } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { comment, Icon } from '@wordpress/icons';
@@ -23,7 +23,6 @@ import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-optio
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
 import Mail from '../icons/mail';
-import { GMClosureNotice } from './help-center-gm-closure-notice';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
@@ -71,7 +70,7 @@ export const HelpCenterContactPage: React.FC = () => {
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				<HelpCenterActiveTicketNotice tickets={ tickets } />
 				<GMClosureNotice
-					displayAt="2022-10-29 00:00Z"
+					displayAt="2022-10-27 00:00Z"
 					closesAt="2022-11-05 00:00Z"
 					reopensAt="2022-11-14 07:00Z"
 					enabled={ renderChat.render }

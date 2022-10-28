@@ -2,7 +2,7 @@ import { Panel, PanelBody, PanelRow } from '@wordpress/components';
 import { format } from '@wordpress/date';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import './help-center-gm-closure-notice.scss';
+import './gm-closure-notice.scss';
 
 const DATE_FORMAT_SHORT = 'F d';
 const DATE_FORMAT_LONG = 'l, F jS h:i A';
@@ -72,7 +72,7 @@ export function GMClosureNotice( { displayAt, closesAt, reopensAt, enabled }: Pr
 	);
 
 	return (
-		<Panel className="help-center__gm-notice">
+		<Panel className="a8c-components__gm-closure-notice">
 			<PanelBody initialOpen={ false } title={ heading }>
 				<PanelRow>{ MAIN_MESSAGES[ period ] }</PanelRow>
 			</PanelBody>
