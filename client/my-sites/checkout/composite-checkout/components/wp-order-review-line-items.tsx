@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -173,6 +174,7 @@ function LineItemWrapper( {
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
+	const isWooMobile = isWcMobileApp();
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
@@ -188,7 +190,7 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ! isJetpack && areThereVariants && shouldShowVariantSelector && ! isEditingTerm && (
+				{ ! isJetpack && ! isWooMobile && shouldShowVariantSelector && ! isEditingTerm && (
 					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
 				) }
 				{ areThereVariants && shouldShowVariantSelector && ( isJetpack || isEditingTerm ) && (
