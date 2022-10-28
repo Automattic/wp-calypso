@@ -29,6 +29,7 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
+	flow: 'link-in-bio',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 

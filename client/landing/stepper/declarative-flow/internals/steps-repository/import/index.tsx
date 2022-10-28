@@ -7,7 +7,6 @@ import CaptureStep from 'calypso/blocks/import/capture';
 import CaptureStepRetired from 'calypso/blocks/import/capture-retired';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useCurrentRoute } from 'calypso/landing/stepper/hooks/use-current-route';
-import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { BASE_ROUTE } from './config';
 import { generateStepPath } from './helper';
@@ -18,8 +17,7 @@ const isEnabledImportLight = isEnabled( 'onboarding/import-light-url-screen' );
 
 export const ImportWrapper: Step = function ( props ) {
 	const { __ } = useI18n();
-	const { navigation, children, stepName } = props;
-	const flowName = useFlowParam();
+	const { navigation, children, stepName, flow: flowName } = props;
 	const currentRoute = useCurrentRoute();
 	const shouldHideSkipBtn = currentRoute !== BASE_ROUTE;
 	const shouldHideBackBtn = flowName === IMPORT_FOCUSED_FLOW && currentRoute === BASE_ROUTE;

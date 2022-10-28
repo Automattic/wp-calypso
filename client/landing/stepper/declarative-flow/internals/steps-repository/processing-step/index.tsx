@@ -40,7 +40,7 @@ const ProcessingStep: Step = function ( props ) {
 		return progressTitle || loadingMessages[ currentMessageIndex ]?.title;
 	};
 
-	const captureFlowException = useCaptureFlowException( 'ProcessingStep' );
+	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
 	useEffect( () => {
 		( async () => {
