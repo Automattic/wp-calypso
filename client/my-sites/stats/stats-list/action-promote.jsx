@@ -1,8 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
-import BlazePressWidget, { goToOriginalEndpoint } from 'calypso/components/blazepress-widget';
+import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import {
 	recordDSPEntryPoint,
@@ -10,7 +9,6 @@ import {
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
@@ -18,16 +16,11 @@ const PromotePost = ( props ) => {
 
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const queryClient = useQueryClient();
 
 	const keyValue = 'post-' + postId;
-	const { isModalOpen, value, openModal, closeModal } = useRouteModal(
-		'blazepress-widget',
-		keyValue
-	);
+	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const previousRoute = useSelector( getPreviousRoute );
 
 	const site = useSelector( getSelectedSite );
 	const { is_private, is_coming_soon } = site;
@@ -55,15 +48,7 @@ const PromotePost = ( props ) => {
 						isVisible={ isModalOpen && value === keyValue }
 						siteId={ selectedSiteId }
 						postId={ postId }
-						onClose={ () => {
-							queryClient.invalidateQueries( [ 'promote-post-campaigns', selectedSiteId ] );
-							if ( previousRoute ) {
-								closeModal();
-							} else {
-								goToOriginalEndpoint();
-							}
-							onToggleVisibility( false );
-						} }
+						keyValue={ keyValue }
 					/>
 					<button
 						onClick={ showDSPWidget }

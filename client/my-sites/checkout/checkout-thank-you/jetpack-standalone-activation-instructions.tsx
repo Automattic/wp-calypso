@@ -1,8 +1,10 @@
 import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import ExternalLink from 'calypso/components/external-link';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';
 import { getWPORGPluginLink } from './utils';
@@ -13,9 +15,26 @@ interface Props {
 }
 
 const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, receiptId } ) => {
+	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const wporgPluginLink = getWPORGPluginLink( product.productSlug );
+	const { productSlug } = product;
+	const wporgPluginLink = getWPORGPluginLink( productSlug );
+
+	const handleDownloadClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_download_link_click', {
+				product_slug: productSlug,
+			} )
+		);
+	}, [ dispatch, productSlug ] );
+	const handleLearnMoreClick = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_learn_more_link_click', {
+				product_slug: productSlug,
+			} )
+		);
+	}, [ dispatch, productSlug ] );
 
 	const items = useMemo(
 		() => [
@@ -25,7 +44,13 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 					components: {
 						strong: <strong />,
 						link: (
-							<Button plain href={ wporgPluginLink } target="_blank" rel="noreferrer noopener" />
+							<Button
+								plain
+								href={ wporgPluginLink }
+								onClick={ handleDownloadClick }
+								target="_blank"
+								rel="noreferrer noopener"
+							/>
 						),
 						icon: <Gridicon icon="external" size={ 16 } />,
 					},
@@ -45,11 +70,11 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 			{
 				id: 4,
 				content: translate(
-					'Click the “Activate license key” (at the bottom of the page) and enter the key below.'
+					'Click “Activate license key” (at the bottom of the page) and enter the key below.'
 				),
 			},
 		],
-		[ translate, product, wporgPluginLink ]
+		[ translate, product, wporgPluginLink, handleDownloadClick ]
 	);
 
 	return (
@@ -62,6 +87,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 				<ExternalLink
 					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
 					icon
+					onClick={ handleLearnMoreClick }
 				>
 					{ translate( 'Learn more about how to install Jetpack %(pluginName)s', {
 						args: { pluginName: product.shortName },

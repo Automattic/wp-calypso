@@ -438,6 +438,11 @@
 				color: $gray-60;
 				grid-area: email;
 				margin-bottom: 0;
+				text-overflow: ellipsis;
+				width: 100%;
+				overflow: hidden;
+				white-space: nowrap;
+				text-align: left;
 			}
 
 		}

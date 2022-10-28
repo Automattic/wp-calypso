@@ -85,7 +85,8 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 		history?.pushState?.(
 			{},
 			'',
-			addQueryArgs( { [ TAB_QUERY_PARAM ]: currentView }, location.pathname + location.search )
+			addQueryArgs( { [ TAB_QUERY_PARAM ]: currentView }, location.pathname + location.search ) +
+				( location.hash ?? '' )
 		);
 	}, [ currentView ] );
 
