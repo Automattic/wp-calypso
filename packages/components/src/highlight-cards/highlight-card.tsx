@@ -33,7 +33,7 @@ export default function HighlightCard( {
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
 			<div className="highlight-card-count">
-				{ count }{ ' ' }
+				{ Number.isFinite( count ) ? count : '-' }{ ' ' }
 				{ difference !== null ? (
 					<span
 						className={ classNames( 'highlight-card-difference', {
