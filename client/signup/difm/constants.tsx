@@ -31,7 +31,7 @@ export type PageId =
 	| typeof PRICING_PAGE
 	| typeof TEAM_PAGE;
 
-export type DepricatedPageIds =
+export type DeprecatedPageIds =
 	| typeof SERVICE_SHOWCASE_PAGE
 	| typeof PODCAST_PAGE
 	| typeof SITEMAP_PAGE

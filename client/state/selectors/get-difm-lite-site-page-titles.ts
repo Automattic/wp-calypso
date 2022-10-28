@@ -23,6 +23,6 @@ export default function getDIFMLiteSitePageTitles(
 		return null;
 	}
 
-	const pageId = site.options?.difm_lite_site_options?.selected_page_titles as PageId[];
-	return pageId ?? null;
+	const pageIds = site.options?.difm_lite_site_options?.selected_page_titles as PageId[];
+	return pageIds ?? null;
 }
