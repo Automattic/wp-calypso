@@ -1,3 +1,6 @@
+$studio-blue-15: #e5f4ff;
+$studio-blue-30: #0675c4;
+
 .x-hidden {
 	border: 0;
 	clip: rect(0 0 0 0);
@@ -13,6 +16,8 @@
 	.masterbar {
 		height: 56px;
 		position: relative;
+		background: $studio-blue-15;
+		border-bottom: 1px solid $studio-blue-15;
 	}
 	.fixed-navigation-header__header {
 		position: absolute;
@@ -72,6 +77,10 @@
 	height: 36px;
 	overflow: hidden;
 	position: relative;
+
+	g {
+		fill: $studio-blue-30;
+	}
 }
 .x-icon span {
 	display: block;
@@ -122,6 +131,7 @@ $x-color-content-separator: rgba($studio-gray-5, 0.85);
 $studio-white-rgb: 255, 255, 255;
 $x-content-min-z-index: 801;
 $lp-font-weight-bold: 600;
+$lp-font-weight-semi-bold: 400;
 $lp-chevron-content-right: "\203A";
 $lp-chevron-content-down: "\25BE";
 $x-nav-breakpoint-small: $lp-breakpoint-S;
@@ -134,7 +144,7 @@ $x-nav-item-padding-x-narrow: 9px;
 $x-nav-item-padding-x-wide: 12px;
 $x-nav-item-height: 36px;
 $x-nav-item-default-color: $studio-white-rgb;
-$x-nav-item-font-size: 16px;
+$x-nav-item-font-size: 14px;
 $x-nav-item-line-height: $x-nav-item-font-size;
 
 $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-wide;
@@ -159,7 +169,15 @@ $x-nav-height: $x-nav-padding-top + $x-nav-item-height + $x-nav-item-padding-x-w
 
 .x-nav-item {
 	display: block;
-	color: unquote("rgb( var( --lp-color-nav-item, var( --lp-color-primary, #{$x-nav-item-default-color} ) ) )"); /* 1 */
+	color: $studio-blue-90;
+
+	.cta-btn-nav {
+		padding: 10px 24px 10px 24px !important;
+		border-radius: 4px;
+		background: $studio-blue-30 !important;
+		margin: 11px 14px 0 8px;
+		text-decoration: none !important;
+	}
 }
 
 .x-nav-item__wide {
@@ -186,7 +204,7 @@ button.x-nav-link.x-link {
 	padding: $offset-top $x-nav-item-padding-x-narrow $offset-bottom;
 	color: inherit !important; /* 2 */
 	font-size: $x-nav-item-font-size;
-	font-weight: $lp-font-weight-bold !important;
+	font-weight: $lp-font-weight-semi-bold !important;
 	line-height: $x-nav-item-line-height;
 	white-space: nowrap;
 
@@ -271,6 +289,7 @@ button.x-nav-link.x-link {
 .x-nav-link__chevron::after, /* 3 */
 .x-nav-link-chevron::before {
 	content: $lp-chevron-content-down;
+	color: $studio-blue-90;
 }
 
 .x-nav-link-suffix {
