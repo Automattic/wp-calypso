@@ -93,6 +93,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = '25%';
 	const couponCode = 'BIZC25';
+	const builtByURL =
+		'https://builtbywp.com/get-started/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=cancel-flow';
 
 	switch ( upsell ) {
 		case 'live-chat:plans':
@@ -128,7 +130,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
 					} }
-					acceptButtonUrl="https://builtbywp.com/get-started/"
+					acceptButtonUrl={ builtByURL }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBuiltBy }
 				>
