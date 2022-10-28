@@ -9,8 +9,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, hasTranslation } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import {
+	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
 	DEFAULT_VIEWPORT_WIDTH,
 	DEFAULT_VIEWPORT_HEIGHT,
@@ -217,7 +219,7 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 
 interface GeneratedDesignButtonContainerProps {
 	locale: string;
-	designs: Design[];
+	design: Design;
 	verticalId?: string;
 	isShowing: boolean;
 	onPreview: ( design: Design ) => void;
@@ -260,6 +262,33 @@ const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerPr
 		</div>
 	);
 };
+
+interface GeneratedDesignPickerProps {
+	locale: string;
+	designs: Design[];
+	verticalId?: string;
+	onPreview: ( design: Design ) => void;
+}
+
+const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
+	locale,
+	designs,
+	verticalId,
+	onPreview,
+} ) => (
+	<div className="design-picker__grid">
+		{ designs.map( ( design ) => (
+			<GeneratedDesignButtonContainer
+				key={ `generated-design__${ design.slug }` }
+				design={ design }
+				locale={ locale }
+				verticalId={ verticalId }
+				isShowing
+				onPreview={ onPreview }
+			/>
+		) ) }
+	</div>
+);
 
 const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Design ) =>
 	purchasedThemes
@@ -370,7 +399,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	purchasedThemes,
 	currentPlanFeatures,
 } ) => {
+	const translate = useTranslate();
 	const hasCategories = !! categorization?.categories.length;
+	const hasGeneratedDesigns = generatedDesigns.length > 0;
+	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
 
 	return (
 		<div
@@ -399,6 +431,26 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					currentPlanFeatures={ currentPlanFeatures }
 				/>
 			</div>
+			{ hasGeneratedDesigns && (
+				<div
+					className={ classnames( 'unified-design-picker__generated-designs', {
+						'unified-design-picker__generated-designs--is-showing': isShowAll,
+					} ) }
+				>
+					<div>
+						<h3> { translate( 'Custom designs for your site' ) } </h3>
+						<p className="unified-design-picker__subtitle">
+							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
+						</p>
+					</div>
+					<GeneratedDesignPicker
+						locale={ locale }
+						designs={ generatedDesigns }
+						verticalId={ verticalId }
+						onPreview={ onPreview }
+					/>
+				</div>
+			) }
 		</div>
 	);
 };
