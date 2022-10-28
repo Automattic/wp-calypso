@@ -319,7 +319,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const handleUseYourDomainClick = () => {
 		recordUseYourDomainButtonClick( getAnalyticsSection() );
-		page( getUseYourDomainUrl() );
+		getUseYourDomainUrl();
 	};
 
 	const getSideContent = () => {

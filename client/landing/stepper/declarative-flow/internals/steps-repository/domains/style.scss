@@ -35,6 +35,7 @@
 	.domains__domain-side-content-container {
 		flex-direction: column;
 		margin-top: 40px;
+		margin-bottom: 40px;
 		display: none;
 
 		@include break-large {
