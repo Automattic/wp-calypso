@@ -289,29 +289,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
-	const shouldHideUseYourDomain = () => {
-		return [ 'domain' ].includes( flow as string );
-	};
-
-	const shouldDisplayDomainOnlyExplainer = () => {
-		return [ 'domain' ].includes( flow as string );
-	};
-
-	const shouldHideDomainExplainer = () => {
-		return [
-			'free',
-			'personal',
-			'personal-monthly',
-			'premium',
-			'premium-monthly',
-			'business',
-			'business-monthly',
-			'ecommerce',
-			'ecommerce-monthly',
-			'domain',
-		].includes( flow as string );
-	};
-
 	const handleDomainExplainerClick = () => {
 		const hideFreePlan = true;
 		handleSkip( undefined, hideFreePlan );
@@ -319,36 +296,26 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const handleUseYourDomainClick = () => {
 		recordUseYourDomainButtonClick( getAnalyticsSection() );
-		getUseYourDomainUrl();
+		setShowUseYourDomain( true );
 	};
 
 	const getSideContent = () => {
-		const useYourDomain = ! shouldHideUseYourDomain() ? (
+		const useYourDomain = (
 			<div className="domains__domain-side-content">
 				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
 			</div>
-		) : null;
+		);
 
 		return (
 			<div className="domains__domain-side-content-container">
-				{ ! shouldHideDomainExplainer() && isPlanSelectionAvailableLaterInFlow && (
-					<div className="domains__domain-side-content domains__free-domain">
-						<ReskinSideExplainer
-							onClick={ handleDomainExplainerClick }
-							type="free-domain-explainer"
-							flowName={ flow }
-						/>
-					</div>
-				) }
+				<div className="domains__domain-side-content domains__free-domain">
+					<ReskinSideExplainer
+						onClick={ handleDomainExplainerClick }
+						type="free-domain-explainer"
+						flowName={ flow }
+					/>
+				</div>
 				{ useYourDomain }
-				{ shouldDisplayDomainOnlyExplainer() && (
-					<div className="domains__domain-side-content">
-						<ReskinSideExplainer
-							onClick={ handleDomainExplainerClick }
-							type="free-domain-only-explainer"
-						/>
-					</div>
-				) }
 			</div>
 		);
 	};
@@ -429,6 +396,17 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		} else {
 			content = renderDomainForm();
 		}
+
+		// if ( 'invalid' === this.props.step.status ) {
+		// 	content = (
+		// 		<div className="domains__step-section-wrapper">
+		// 			<Notice status="is-error" showDismiss={ false }>
+		// 				{ this.props.step.errors.message }
+		// 			</Notice>
+		// 			{ content }
+		// 		</div>
+		// 	);
+		// }
 
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
