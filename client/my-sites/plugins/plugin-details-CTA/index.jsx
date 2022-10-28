@@ -102,13 +102,14 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getEligibility( state, selectedSite?.ID )
 	);
 
-	const upgradeToBusinessHRef = useMemo( () => {
+	const upgradeToBusinessHref = useMemo( () => {
 		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 
 		const siteSlug = selectedSite?.slug;
 
 		const pluginsPlansPage = `/plugins/plans/yearly/${ siteSlug }`;
-		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
+		const checkoutPage = siteSlug ? `/checkout/${ siteSlug }/business` : `/checkout/business`;
+		return pluginsPlansPageFlag ? pluginsPlansPage : checkoutPage;
 	}, [ selectedSite?.slug ] );
 
 	const saasRedirectHRef = useMemo( () => {
@@ -145,8 +146,23 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
 				<span className="plugin-details-cta__preinstalled">
-					{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
+					{ selectedSite
+						? translate(
+								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
+								{ args: plugin.name }
+						  )
+						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 				</span>
+
+				{ selectedSite && (
+					<Button
+						href={ upgradeToBusinessHref }
+						className="plugin-details-cta__install-button"
+						primary
+					>
+						{ translate( 'Upgrade my plan' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -331,7 +347,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
-							href={ upgradeToBusinessHRef }
+							href={ upgradeToBusinessHref }
 							className="plugin-details-cta__install-button"
 							primary
 							onClick={ () => {} }
