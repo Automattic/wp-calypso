@@ -1,8 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import disconnectedDarkIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
-import disconnectedLightIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
+import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
@@ -40,7 +39,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 		switch ( card ) {
 			case TASK_REACTIVATE_EXPIRED_PLAN:
 				return {
-					title: translate( 'Restore your plan' ),
+					title: translate( 'Renew the Plan' ),
 					description: translate(
 						'Your plan expired and your site reverted to the Free plan. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, beginning with purchasing an eligible plan.{{lineBreak/}}No further action is needed if you wish to continue with the Free plan.',
 						{
@@ -48,31 +47,45 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 						}
 					),
 					timing: 1,
-					actionText: translate( 'Purchase plan' ),
+					actionText: translate( 'Renew the Plan' ),
 					actionUrl: `/plans/${ siteSlug }`,
 				};
 
-			default:
+			case TASK_REACTIVATE_ATOMIC_TRANSFER:
 				return {
-					title: '',
-					description: '',
-					timing: 1,
-					actionText: '',
-					actionUrl: '',
-					isUrgent: false,
+					title: translate( 'Restore Plugin Access' ),
+					description: translate(
+						'Your plan expired and your site lost access to plugins. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, by re-activating hosting configuration.{{lineBreak/}}No further action is needed if you do not need plugin access.',
+						{
+							components: { lineBreak, supportLink },
+						}
+					),
+					timing: 2,
+					actionText: translate( 'Restore Plugin Access' ),
+					actionUrl: `/hosting-config/${ siteSlug }`,
+					enableSkipOptions: false,
+					skipText: translate( 'I do not need plugin access' ),
+				};
+
+			case TASK_REACTIVATE_RESTORE_BACKUP:
+				return {
+					title: translate( 'Restore a Backup' ),
+					description: translate(
+						'Your plan expired and your site reverted to the Free plan. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, restoring your site to how it looked before the plan expired.{{lineBreak/}}No further action is needed if you do not need to restore from a backup.',
+						{
+							components: { lineBreak, supportLink },
+						}
+					),
+					timing: 30,
+					actionText: translate( 'Restore a Backup' ),
+					actionUrl: `/backup/${ siteSlug }`,
+					enableSkipOptions: false,
+					skipText: translate( 'I do not need to restore from a backup' ),
 				};
 		}
 	} )();
 
-	return (
-		<Task
-			{ ...taskProps }
-			taskId={ card }
-			illustration={
-				taskProps.isUrgent ? disconnectedDarkIllustration : disconnectedLightIllustration
-			}
-		/>
-	);
+	return <Task { ...taskProps } taskId={ card } illustration={ disconnectedIllustration } />;
 };
 
 const ATOMIC_REVIVAL_TASKS = [
