@@ -111,35 +111,35 @@ $sidebar-width-desktop: 324px;
 	.components-base-control__label {
 		@include screen-reader-text();
 	}
+
+	.block-editor-block-patterns-list {
+		display: grid;
+		grid-template-columns: 1fr;
+		column-gap: 1.5em;
+		row-gap: 3em;
+
+		@media screen and ( min-width: $breakpoint-mobile ) {
+			margin-top: 0;
+			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // allow grid to take over number of cols on large screens
+		}
+
+		@media screen and ( min-width: $breakpoint-huge ) {
+			grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+		}
+		@media screen and ( min-width: $breakpoint-xhuge ) {
+			grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+		}
+	}
 }
 
-.pattern-selector-control__options {
-	display: grid;
-	grid-template-columns: 1fr;
-	column-gap: 1.5em;
-	row-gap: 3em;
-
-	@media screen and ( min-width: $breakpoint-mobile ) {
-		margin-top: 0;
-		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // allow grid to take over number of cols on large screens
-	}
-
-	@media screen and ( min-width: $breakpoint-huge ) {
-		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-	}
-	@media screen and ( min-width: $breakpoint-xhuge ) {
-		grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-	}
-}
-
-.pattern-selector-item__label {
-	display: block;
+.pattern-selector-control .block-editor-block-preview__container {
+	display: flex;
 	width: 100%;
+	aspect-ratio: 16 / 9;
 	text-align: center;
-	border: none;
+	border: solid 1px $pattern-selector-border-color;
 	cursor: pointer;
 	appearance: none;
-	padding: 0;
 	overflow: hidden;
 	background-color: $pattern-selector-empty-background;
 	position: relative;
@@ -156,51 +156,8 @@ $sidebar-width-desktop: 324px;
 
 	&:hover {
 		color: $pattern-selector-link-hover-text;
-
-		.pattern-selector-item__preview-wrap {
-			border: solid 1px $pattern-selector-hover-border-color;
-		}
+		border: solid 1px $pattern-selector-hover-border-color;
 	}
-}
-
-.pattern-selector-item__preview-wrap {
-	width: 100%;
-	display: block;
-	margin: 0 auto;
-	background: $pattern-selector-empty-background;
-	border-radius: 0;
-	overflow: hidden;
-	height: 0;
-	// Aspect ratio of boxes. Height will be 65% of width.
-	padding-top: 65%;
-	position: relative;
-	opacity: 1;
-	transform: translateZ(0); // Fix for Safari rounded border overflow (2/2).
-	border: solid 1px $pattern-selector-border-color;
-	margin-bottom: 1em;
-
-	&.is-rendering {
-		opacity: 0.5;
-	}
-}
-
-// Correct position for child elements inside preview-wrap
-.pattern-selector-item__preview-wrap-inner-position {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-
-.pattern-selector-item__media {
-	width: 100%;
-	height: 100%;
-	display: block;
-	position: absolute;
-	top: 0;
-	left: 0;
-	object-fit: cover;
 }
 
 .page-pattern-modal__sidebar {

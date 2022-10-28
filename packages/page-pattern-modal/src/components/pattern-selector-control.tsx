@@ -1,32 +1,25 @@
+// @ts-expect-error Missing definition
+// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
+import { __experimentalBlockPatternsList as BlockPatternsList } from '@wordpress/block-editor';
 import { BaseControl } from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { memo } from '@wordpress/element';
-import replacePlaceholders from '../utils/replace-placeholders';
-import PatternSelectorItem from './pattern-selector-item';
-import type { PatternDefinition } from '../pattern-definition';
+import type { FormattedPattern } from '../pattern-definition';
 
 const noop = () => undefined;
 
 interface PatternSelectorControlProps {
 	instanceId: string | number;
 	label: string;
-	legendLabel?: string;
-	locale?: string;
 	onPatternSelect: ( patternName: string ) => void;
-	siteInformation?: Record< string, string >;
-	patterns?: PatternDefinition[];
-	theme?: string;
+	patterns?: FormattedPattern[];
 }
 
 export const PatternSelectorControl = ( {
 	instanceId,
 	label,
-	legendLabel,
 	patterns = [],
-	theme = 'maywood',
-	locale = 'en',
 	onPatternSelect = noop,
-	siteInformation = {},
 }: PatternSelectorControlProps ) => {
 	if ( ! Array.isArray( patterns ) || ! patterns.length ) {
 		return null;
@@ -38,25 +31,11 @@ export const PatternSelectorControl = ( {
 			label={ label }
 			className="pattern-selector-control"
 		>
-			<ul
-				className="pattern-selector-control__options"
-				data-testid="pattern-selector-control-options"
-				aria-label={ legendLabel }
-			>
-				{ patterns.map( ( { ID, name, title, description } ) => (
-					<li key={ `${ ID }-${ name }-${ legendLabel }` }>
-						<PatternSelectorItem
-							value={ name }
-							title={ replacePlaceholders( title, siteInformation ) }
-							description={ description }
-							onSelect={ onPatternSelect }
-							patternPostID={ ID }
-							theme={ theme }
-							locale={ locale }
-						/>
-					</li>
-				) ) }
-			</ul>
+			<BlockPatternsList
+				blockPatterns={ patterns }
+				shownPatterns={ patterns }
+				onClickPattern={ ( pattern: FormattedPattern ) => onPatternSelect( pattern.name ) }
+			/>
 		</BaseControl>
 	);
 };

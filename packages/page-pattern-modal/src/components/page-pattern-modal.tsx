@@ -1,4 +1,4 @@
-import { BlockInstance, parse as parseBlocks } from '@wordpress/blocks';
+import { parse as parseBlocks } from '@wordpress/blocks';
 import { Button, MenuItem, Modal, NavigableMenu, VisuallyHidden } from '@wordpress/components';
 import { withInstanceId } from '@wordpress/compose';
 import { Component } from '@wordpress/element';
@@ -11,7 +11,7 @@ import mapBlocksRecursively from '../utils/map-blocks-recursively';
 import replacePlaceholders from '../utils/replace-placeholders';
 import { trackDismiss, trackSelection, trackView } from '../utils/tracking';
 import PatternSelectorControl from './pattern-selector-control';
-import type { PatternCategory, PatternDefinition } from '../pattern-definition';
+import type { PatternCategory, PatternDefinition, FormattedPattern } from '../pattern-definition';
 import type { KeyboardEvent, MouseEvent, FocusEvent } from 'react';
 
 interface PagePatternModalProps {
@@ -46,32 +46,46 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	}
 
 	// Parse patterns blocks and memoize them.
-	getBlocksByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
-		const blocksByPatternSlugs = patterns.reduce( ( prev, { name, html } ) => {
-			prev[ name ] = html
-				? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
-				: [];
-			return prev;
-		}, {} as Record< string, BlockInstance[] > );
+	getFormattedPatternsByPatternSlugs = memoize( ( patterns: PatternDefinition[] ) => {
+		const blocksByPatternSlugs = patterns.reduce(
+			( prev, { name, description = '', html, pattern_meta } ) => {
+				const viewportWidth = pattern_meta?.viewport_width
+					? Number( pattern_meta.viewport_width )
+					: 1280;
+
+				prev[ name ] = {
+					name,
+					// Keep showing the description as before instead of the title
+					title: description,
+					description: '',
+					blocks: html
+						? parseBlocks( replacePlaceholders( html, this.props.siteInformation ) )
+						: [],
+					viewportWidth: Math.max( viewportWidth, 320 ),
+				};
+				return prev;
+			},
+			{} as Record< string, FormattedPattern >
+		);
 
 		// Remove patterns that include a missing block
 		return this.filterPatternsWithMissingBlocks( blocksByPatternSlugs );
 	} );
 
-	filterPatternsWithMissingBlocks( patterns: Record< string, BlockInstance[] > ) {
-		return Object.entries( patterns ).reduce( ( acc, [ name, patternBlocks ] ) => {
+	filterPatternsWithMissingBlocks( patterns: Record< string, FormattedPattern > ) {
+		return Object.entries( patterns ).reduce( ( acc, [ name, pattern ] ) => {
 			// Does the pattern contain any missing blocks?
-			const patternHasMissingBlocks = containsMissingBlock( patternBlocks );
+			const patternHasMissingBlocks = containsMissingBlock( pattern.blocks );
 
 			// Only retain the pattern in the collection if:
 			// 1. It does not contain any missing blocks
 			// 2. There are no blocks at all (likely the "blank" pattern placeholder)
-			if ( ! patternHasMissingBlocks || ! patternBlocks.length ) {
-				acc[ name ] = patternBlocks;
+			if ( ! patternHasMissingBlocks || ! pattern.blocks.length ) {
+				acc[ name ] = pattern;
 			}
 
 			return acc;
-		}, {} as Record< string, BlockInstance[] > );
+		}, {} as Record< string, FormattedPattern > );
 	}
 
 	getBlocksForSelection = ( selectedPattern: string ) => {
@@ -182,7 +196,7 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 	};
 
 	getBlocksByPatternSlug( name: string ) {
-		return this.getBlocksByPatternSlugs( this.props.patterns )?.[ name ] ?? [];
+		return this.getFormattedPatternsByPatternSlugs( this.props.patterns )?.[ name ]?.blocks ?? [];
 	}
 
 	getPatternGroups = () => {
@@ -275,9 +289,11 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		// filtered patterns from `getBlocksByPatternSlugs()` and filter this
 		// list to match. This ensures that the list of pattern thumbnails is
 		// filtered so that it does not include patterns that have missing Blocks.
-		const blocksByPatternSlug = this.getBlocksByPatternSlugs( this.props.patterns );
+		const formattedPatternsByPatternSlug = this.getFormattedPatternsByPatternSlugs(
+			this.props.patterns
+		);
 
-		const patternsWithoutMissingBlocks = Object.keys( blocksByPatternSlug );
+		const patternsWithoutMissingBlocks = Object.keys( formattedPatternsByPatternSlug );
 
 		const filterOutPatternsWithMissingBlocks = (
 			patternsToFilter: PatternDefinition[],
@@ -299,7 +315,9 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			<PatternSelectorControl
 				label={ __( 'Layout', __i18n_text_domain__ ) }
 				legendLabel={ groupTitle }
-				patterns={ filteredPatternsList }
+				patterns={ filteredPatternsList.map(
+					( pattern ) => formattedPatternsByPatternSlug[ pattern.name ]
+				) }
 				onPatternSelect={ this.setPattern }
 				theme={ this.props.theme }
 				locale={ this.props.locale }
