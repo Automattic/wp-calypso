@@ -183,16 +183,16 @@ describe( 'finalizePerfMarks', () => {
 
 		const finalMarks = finalizePerfMarks( req.context );
 		// First mark has one child:
-		expect( finalMarks[ '0_test' ].total_duration ).toBe( 55 );
-		expect( finalMarks[ '0_test' ][ '0_test_child' ] ).toBe( 55 );
+		expect( finalMarks.test.total_duration ).toBe( 55 );
+		expect( finalMarks.test.test_child ).toBe( 55 );
 
 		// Second mark has two children indexed correctly:
-		expect( finalMarks[ '1_another_test' ].total_duration ).toBe( 1005 );
-		expect( finalMarks[ '1_another_test' ][ '0_another_test_child' ] ).toBe( 1000 );
-		expect( finalMarks[ '1_another_test' ][ '1_test_child_once_more' ] ).toBe( 3 );
+		expect( finalMarks.another_test.total_duration ).toBe( 1005 );
+		expect( finalMarks.another_test.another_test_child ).toBe( 1000 );
+		expect( finalMarks.another_test.test_child_once_more ).toBe( 3 );
 
 		// Third mark has no children and just a total duration:
-		expect( finalMarks[ '2_another_mark' ].total_duration ).toBe( 70 );
-		expect( Object.keys( finalMarks[ '2_another_mark' ] ).length ).toBe( 1 );
+		expect( finalMarks.another_mark.total_duration ).toBe( 70 );
+		expect( Object.keys( finalMarks.another_mark ).length ).toBe( 1 );
 	} );
 } );

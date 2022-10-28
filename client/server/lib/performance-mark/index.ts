@@ -18,6 +18,11 @@ type LogsatshPerfMarks = Record< string, LogastshMark >;
 /**
  * Updates the express request context with a new performance mark.
  *
+ * IMPORTANT: The markName and / or children should be static. E.g. a child marker
+ * should always occur under the same parent, and any marker name should not encode
+ * any dynamic data. This is a limitation of logstash indices, where there can
+ * only be so many keys for a single index.
+ *
  * This pushes a new "performance mark" object to the array of performance marks.
  * This object includes the current time to note when this step of the pipeline
  * started. We also update the previous mark with its duration. (E.g. we expect
@@ -80,22 +85,27 @@ export function finalizePerfMarks( context: PartialContext ): LogsatshPerfMarks 
 
 	// Logstash cannot accept arrays, so we transform our array into a more
 	// friendly structure for it.
-	return context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark, i ) => {
-		const markKey = markNameToKey( mark.markName, i );
+	return context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark ) => {
+		const markKey = markNameToKey( mark.markName );
 		// A mark like "setup request" becomes "0_setup_request"
 		marks[ markKey ] = {
 			total_duration: mark.duration as number, // All durations exist after "finalizeDuration"
 		};
 
-		mark.steps?.forEach( ( { markName, duration }, j ) => {
-			marks[ markKey ][ markNameToKey( markName, j ) ] = duration as number; // All durations exist after "finalizeDuration"
+		mark.steps?.forEach( ( { markName, duration } ) => {
+			marks[ markKey ][ markNameToKey( markName ) ] = duration as number; // All durations exist after "finalizeDuration"
 		} );
 		return marks;
 	}, {} );
 }
 
-function markNameToKey( name: string, index: number ) {
-	return `${ index }_${ name.replace( /[- ]/g, '_' ) }`;
+function markNameToKey( name: string ) {
+	// Note: it would be nice to include an index in the name to better know the
+	// step. However, since indices can change, this would likely create to many
+	// possible keys for the logstash index. As a result, we only use the name.
+	// This way, the number of possible keys in logstash exactly matches the number
+	// of performanceMark calls in Calypso.
+	return `${ name.replace( /[- ]/g, '_' ) }`;
 }
 
 function finalizeDuration( markArr: PerformanceMark[] | undefined, currentTime: number ) {
