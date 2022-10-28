@@ -4,7 +4,7 @@ import WPCOM from 'wpcom';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import wpcomSupport from 'calypso/lib/wp/support';
-import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
+import wpcomXhrWrapper, { jetpack_site_xhr_wrapper } from 'calypso/lib/wpcom-xhr-wrapper';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
 import { injectLocalization } from './localization';
 
@@ -14,6 +14,8 @@ let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
+} else if ( config( 'env_id' ) === 'jetpack-stats-app' ) {
+	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
 } else {
 	wpcom = new WPCOM( wpcomProxyRequest );
 
