@@ -5,10 +5,11 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import {
@@ -22,6 +23,7 @@ const debug = debugFactory( 'calypso:checkout-sidebar-plan-upsell' );
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
+	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const { __ } = useI18n();
 	const cartKey = useCartKey();
@@ -62,6 +64,13 @@ export function CheckoutSidebarPlanUpsell() {
 			product_id: biennialVariant.productId,
 		};
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
+				upsell_type: 'biennial-plan',
+				switching_from: plan.product_slug,
+				switching_to: newPlan.product_slug,
+			} )
+		);
 		replaceProductInCart( plan.uuid, newPlan );
 	};
 
