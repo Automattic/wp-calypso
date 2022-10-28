@@ -69,6 +69,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 						submit={ navigation.submit }
 						goNext={ navigation.goNext }
 						goToStep={ navigation.goToStep }
+						flow={ flow }
 					/>
 				}
 				formattedHeader={
