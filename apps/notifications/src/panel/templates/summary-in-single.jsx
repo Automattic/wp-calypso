@@ -1,6 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { Component } from 'react';
+import { withoutHttp } from 'calypso/lib/url';
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 import Gridicon from './gridicons';
@@ -71,8 +72,7 @@ class WritingPromptHeader extends Component {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
-		const settings_url =
-			'/me/notifications#' + home_url?.replace( 'https://', '' ).replace( 'http://', '' );
+		const settings_url = '/me/notifications#' + withoutHttp( home_url );
 
 		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
