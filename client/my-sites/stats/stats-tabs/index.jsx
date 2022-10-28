@@ -17,11 +17,21 @@ class StatsTabs extends Component {
 		switchTab: PropTypes.func,
 		tabs: PropTypes.array,
 		borderless: PropTypes.bool,
+		iconSize: PropTypes.number,
 	};
 
 	render() {
-		const { children, data, activeIndex, activeKey, tabs, switchTab, selectedTab, borderless } =
-			this.props;
+		const {
+			children,
+			data,
+			activeIndex,
+			activeKey,
+			tabs,
+			switchTab,
+			selectedTab,
+			borderless,
+			iconSize,
+		} = this.props;
 		let statsTabs;
 
 		if ( data && ! children ) {
@@ -41,6 +51,7 @@ class StatsTabs extends Component {
 					tabClick: switchTab,
 					value: hasData ? activeData[ tab.attr ] : null,
 					format: tab.format,
+					iconSize: iconSize,
 				};
 
 				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;
