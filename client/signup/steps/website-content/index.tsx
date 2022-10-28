@@ -23,6 +23,7 @@ import {
 	WebsiteContentStateModel,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
 import { usePollSiteForDIFMDetails } from './use-poll-site-for-difm-details';
 
@@ -76,6 +77,7 @@ interface WebsiteContentStepProps {
 	stepName: string;
 	positionInFlow: string;
 	pageTitles: string[];
+	siteId: SiteId | null;
 }
 
 function WebsiteContentStep( {
@@ -84,6 +86,7 @@ function WebsiteContentStep( {
 	submitSignupStep,
 	goToNextStep,
 	pageTitles,
+	siteId,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
@@ -263,7 +266,9 @@ export default function WrapperWebsiteContent(
 			flowName={ flowName }
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
-			stepContent={ <WebsiteContentStep { ...props } pageTitles={ pageTitles } /> }
+			stepContent={
+				<WebsiteContentStep { ...props } pageTitles={ pageTitles } siteId={ siteId } />
+			}
 			goToNextStep={ false }
 			hideFormattedHeader={ false }
 			hideBack={ false }
