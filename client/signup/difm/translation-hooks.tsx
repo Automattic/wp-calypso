@@ -6,12 +6,8 @@ import {
 	ABOUT_PAGE,
 	PHOTO_GALLERY_PAGE,
 	VIDEO_GALLERY_PAGE,
-	PODCAST_PAGE,
 	PORTFOLIO_PAGE,
 	FAQ_PAGE,
-	SITEMAP_PAGE,
-	PROFILE_PAGE,
-	MENU_PAGE,
 	SERVICES_PAGE,
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
@@ -27,19 +23,15 @@ import type { TranslateResult } from 'i18n-calypso';
  */
 export function useTranslatedPageTitles() {
 	const translate = useTranslate();
-	const pages: Record< string, TranslateResult > = {
+	const pages: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate( 'Home' ),
 		[ BLOG_PAGE ]: translate( 'Blog' ),
 		[ CONTACT_PAGE ]: translate( 'Contact' ),
 		[ ABOUT_PAGE ]: translate( 'About' ),
 		[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
 		[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
-		[ PODCAST_PAGE ]: translate( 'Podcast' ),
 		[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
 		[ FAQ_PAGE ]: translate( 'FAQ' ),
-		[ SITEMAP_PAGE ]: translate( 'Sitemap' ),
-		[ PROFILE_PAGE ]: translate( 'Profile' ),
-		[ MENU_PAGE ]: translate( 'Menu' ),
 		[ SERVICES_PAGE ]: translate( 'Services' ),
 		[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
 		[ PRICING_PAGE ]: translate( 'Pricing' ),
