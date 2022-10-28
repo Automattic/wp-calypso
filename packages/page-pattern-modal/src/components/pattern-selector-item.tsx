@@ -6,38 +6,25 @@ interface PatternSelectorItemProps {
 	onSelect: ( value: string ) => void;
 	patternPostID: number | null;
 	title?: string;
-	stylesheet: string;
+	theme: string;
 	value?: string;
 }
 
-const PATTERN_PREVIEW_ENDPOINT = 'https://public-api.wordpress.com/wpcom/v2/block-previews/pattern';
-
-const PATTERN_SOURCE_SITE = 'dotcompatterns.wordpress.com';
-
-const getPatternPreviewUrl = (
-	stylesheet: string,
-	language: string,
-	patternId: string
-): string => {
-	const params = new URLSearchParams( {
-		demo_site: window._currentSiteId.toString(),
-		stylesheet,
-		source_site: PATTERN_SOURCE_SITE,
-		pattern_id: patternId,
-		language,
-	} );
-
-	return `${ PATTERN_PREVIEW_ENDPOINT }?${ params }`;
-};
-
 const PatternSelectorItem = ( props: PatternSelectorItemProps ) => {
-	const { value, onSelect, title, description, stylesheet, locale, patternPostID } = props;
+	const { value, onSelect, title, description, theme, locale, patternPostID } = props;
 
 	if ( title == null || value == null ) {
 		return null;
 	}
 
-	const previewUrl = getPatternPreviewUrl( stylesheet, locale, String( patternPostID ) );
+	const designsEndpoint = 'https://public-api.wordpress.com/rest/v1/template/demo/';
+	const sourceSiteUrl = 'dotcompatterns.wordpress.com';
+
+	const previewUrl = `${ designsEndpoint }${ encodeURIComponent( theme ) }/${ encodeURIComponent(
+		sourceSiteUrl
+	) }/?post_id=${ encodeURIComponent( patternPostID ?? '' ) }&language=${ encodeURIComponent(
+		locale
+	) }`;
 
 	const mShotsOptions = {
 		vpw: 1024,
