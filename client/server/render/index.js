@@ -93,6 +93,7 @@ function render( element, key, req ) {
 		 * This should not happen -- if it does, we need to investigate and fix it.
 		 */
 		if ( req.context.hasLayout && ! renderedLayout ) {
+			debug( 'SSR layout mismatch!' );
 			throw new Error( 'SSR layout cache mismatch!' );
 		}
 
@@ -342,7 +343,7 @@ function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			context.layout
+			( context.layout || context.hasLayout ) // A layout was generated or we have one cached.
 	);
 }
 
