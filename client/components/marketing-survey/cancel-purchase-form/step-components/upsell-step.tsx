@@ -1,8 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
+import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
 import imgBusinessPlan from 'calypso/assets/images/cancellation/business-plan.png';
 import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.png';
@@ -10,6 +12,7 @@ import imgLiveChat from 'calypso/assets/images/cancellation/live-chat.png';
 import imgMonthlyPayments from 'calypso/assets/images/cancellation/monthly-payments.png';
 import imgSwitchPlan from 'calypso/assets/images/cancellation/switch-plan.png';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { UpsellType } from '../get-upsell-type';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -86,8 +89,7 @@ type StepProps = {
 
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
-
-	// const canRefund = !! parseFloat( props.refundAmount );
+	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = '25%';
 	const couponCode = 'BIZC25';
@@ -174,14 +176,31 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onDecline={ props.onDeclineUpsell }
 					image={ imgMonthlyPayments }
 				>
-					{ translate(
-						'By switching to monthly payments, you’ll get an immediate partial refund of %(refundAmount)s and the flexibility of paying for your site month-to-month. ' +
-							'That way, you’ll keep almost all of the features of the annual plan (free annual domain aside) without the upfront cost. ' +
-							'How’s that sound?',
-						{
-							args: { refundAmount: props.refundAmount },
-						}
-					) }
+					<>
+						{ translate(
+							'By switching to monthly payments, you will keep most of the features for %(planCost)s per month.',
+							{
+								args: {
+									planCost: formatCurrency( props.downgradePlanPrice ?? 0, currencyCode ),
+								},
+							}
+						) }{ ' ' }
+						{ props.cancelBundledDomain &&
+							props.includedDomainPurchase &&
+							translate(
+								'You will lose your free domain registration since that feature is only included in annual/biennual plans.'
+							) }
+						{ props.refundAmount && <br /> }
+						{ props.refundAmount &&
+							translate(
+								'You can downgrade immediately and get a partial refund of %(refundAmount)s.',
+								{
+									args: {
+										refundAmount: formatCurrency( parseFloat( props.refundAmount ), currencyCode ),
+									},
+								}
+							) }
+					</>
 				</Upsell>
 			);
 		case 'downgrade-personal':

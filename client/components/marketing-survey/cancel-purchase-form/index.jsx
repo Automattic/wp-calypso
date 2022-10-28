@@ -337,6 +337,7 @@ class CancelPurchaseForm extends Component {
 					downgradePlanPrice={ this.props.downgradePlanPrice }
 					downgradeClick={ this.downgradeClick }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
+					includedDomainPurchase={ this.props.includedDomainPurchase }
 					onDeclineUpsell={ this.onSubmit }
 					onClickDowngrade={ this.downgradeClick }
 					onClickFreeMonthOffer={ this.freeMonthOfferClick }
