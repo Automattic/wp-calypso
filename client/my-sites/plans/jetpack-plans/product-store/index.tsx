@@ -103,6 +103,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 					duration={ duration }
 					filterBar={ null }
 					onSelectProduct={ onClickPurchase }
+					createButtonURL={ createCheckoutURL }
 				/>
 			) }
 
