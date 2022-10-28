@@ -388,6 +388,7 @@ class CancelPurchaseForm extends Component {
 					site={ site }
 					upsell={ this.state.upsell }
 					disabled={ this.state.isSubmitting }
+					refundAmount={ this.getRefundAmount() }
 					downgradePlanPrice={ this.props.downgradePlanPrice }
 					downgradeClick={ this.downgradeClick }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
