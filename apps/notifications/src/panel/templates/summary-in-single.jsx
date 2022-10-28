@@ -1,9 +1,9 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { Component } from 'react';
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 import Gridicon from './gridicons';
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const Snippet = ( { note, snippet, url } ) => (
 	<a href={ url } { ...linkProps( note ) } target="_blank" rel="noopener noreferrer">
