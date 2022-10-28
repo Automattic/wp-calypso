@@ -87,7 +87,16 @@ async function persistentStoreState( reduxStateKey, storageKey, state, _timestam
 	}
 
 	const newState = { ...state, _timestamp };
+
+	if ( storageKey === 'signup' ) {
+		console.log( '...........storing', newState, storageKey, reduxStateKey );
+	}
+
 	await storePersistedStateItem( reduxStateKey, newState );
+
+	if ( storageKey === 'signup' ) {
+		console.log( '...........stored!', storageKey, reduxStateKey );
+	}
 }
 
 export function persistOnChange( reduxStore, currentUserId ) {
@@ -110,9 +119,9 @@ export function persistOnChange( reduxStore, currentUserId ) {
 			const _timestamp = Date.now();
 			const reduxStateKey = getPersistenceKey( currentUserId );
 
-			const storeTasks = map( serializedState.get(), ( data, storageKey ) =>
+			const storeTasks = map( serializedState.get(), ( data, storageKey ) => {
 				persistentStoreState( reduxStateKey, storageKey, data, _timestamp )
-			);
+			} );
 
 			Promise.all( storeTasks ).catch( ( setError ) =>
 				debug( 'failed to set redux-store state', setError )
@@ -177,7 +186,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 				'font-size: 14px; color: red;'
 			);
 
-			clearPersistedState();
+			// clearPersistedState();
 			return null;
 		}
 	}
@@ -234,6 +243,8 @@ export const getStateFromCache = ( currentUserId ) => ( reducer, subkey ) => {
 		if ( persistedState && persistedState.progress && persistedState.progress.user ) {
 			delete persistedState.progress.user;
 		}
+
+		console.log( '-------------------whhhaat? load progress from cache?', getPersistenceKey( null, subkey ), persistedState );
 
 		debug( 'fetched signup state from logged out state', persistedState );
 	}

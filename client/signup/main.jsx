@@ -59,6 +59,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { storePersistedStateItem } from 'calypso/state/persisted-state';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
@@ -183,7 +184,20 @@ class Signup extends Component {
 
 		this.updateShouldShowLoadingScreen();
 
+		// console.log( '------------wait what? where is the resume point', this.props.resumePoint );
+
+		// if ( this.props.resumePoint ) {
+		// 	const { stepName, stepSectionName, flowName } = this.props.resumePoint;
+        //
+		// 	console.log( '---------------is this working?', stepName, stepSectionName, flowName );
+        //
+		// 	// this.props.clearResumePoint();
+		// 	this.goToStep( stepName, stepSectionName, flowName );
+		// 	return;
+		// }
+
 		if ( canResumeFlow( this.props.flowName, this.props.progress, this.props.isLoggedIn ) ) {
+
 			// Resume from the current window location
 			return;
 		}
@@ -195,6 +209,9 @@ class Signup extends Component {
 				.steps[ 0 ];
 			this.setState( { resumingStep: destinationStep } );
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
+
+			console.log( 'should not it be here?', this.props.flowName, destinationStep );
+
 			return page.redirect( getStepUrl( this.props.flowName, destinationStep, undefined, locale ) );
 		}
 	}
@@ -341,9 +358,15 @@ class Signup extends Component {
 
 		const siteId = dependencies && dependencies.siteId;
 
-		if ( isTailoredSignupFlow( this.props.flowName ) || this.props.flowName === 'link-in-bio-tld' ) {
-			await setupSiteAfterCreation( { siteId, flowName: this.props.flowName } );
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+
+		if ( flow.postCompleteCallback ) {
+			await flow.postCompleteCallback( { siteId, flowName: this.props.flowName } );
 		}
+
+		// if ( isTailoredSignupFlow( this.props.flowName ) || this.props.flowName === 'link-in-bio-tld' ) {
+		// 	await setupSiteAfterCreation( { siteId, flowName: this.props.flowName } );
+		// }
 
 		this.redirectDestination( dependencies, filteredDestination );
 	};
@@ -483,6 +506,8 @@ class Signup extends Component {
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const { isLoggedIn: userIsLoggedIn, progress } = this.props;
 
+		console.log( '!!!!!!!!!!!!!!!!!!! handleLogin is called!!!', progress );
+
 		debug( `Logging you in to "${ destination }"` );
 		if ( resetSignupFlowController ) {
 			this.signupFlowController.reset();
@@ -559,10 +584,17 @@ class Signup extends Component {
 		// `isEveryStepSubmitted` is still false. Thus, check the `stepName` here to avoid going
 		// to invalid step.
 		if ( stepName && ! this.isEveryStepSubmitted() ) {
+			console.log( '---------------???? got to step case 1' );
+
 			const locale = ! this.props.isLoggedIn ? this.props.locale : '';
 			const { siteId, siteSlug } = this.props.initialContext?.query ?? {};
+
+
 			page( getStepUrl( flowName, stepName, stepSectionName, locale, { siteId, siteSlug } ) );
 		} else if ( this.isEveryStepSubmitted() ) {
+			console.log( '---------------???? every step submitted?' );
+
+
 			this.goToFirstInvalidStep();
 		}
 	};
@@ -580,11 +612,14 @@ class Signup extends Component {
 			this.setState( { previousFlowName: this.props.flowName } );
 		}
 
-		if ( nextStepName === 'plans-link-in-bio' ) {
-			page( '/setup/patterns?flow=link-in-bio&tld=link' );
+		const branchDestinations = flows.getFlow( this.props.flowName ).branchDestinations;
+		const branchDestination = branchDestinations ? branchDestinations[ this.props.stepName ] : null;
+
+		if ( branchDestination ) {
+			page( branchDestination( this.props.signupDependencies ) );
+
 			return;
 		}
-
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
@@ -644,7 +679,10 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
+			console.log( '///////////////////////////////', this.props.flowName );
 		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
+			console.log( '!!!!!!!!!!!!!!!!', this.props.flowName );
+
 			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
 		}
 

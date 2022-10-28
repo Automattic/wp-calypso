@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -120,6 +121,7 @@ export function generateFlows( {
 			get pageTitle() {
 				return translate( 'Newsletter' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'link-in-bio',
@@ -134,10 +136,14 @@ export function generateFlows( {
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'link-in-bio-tld',
 			steps: [ 'user', 'domains', 'plans-link-in-bio' ],
+			branchDestinations: {
+				domains: ( dependencies ) => `/setup/patterns?flow=link-in-bio&tld=${ dependencies.tld }`,
+			},
 			destination: ( dependencies ) =>
 				`/setup/launchpad?flow=link-in-bio&tld=${ dependencies.tld }&siteSlug=${ encodeURIComponent(
 					dependencies.siteSlug
@@ -150,6 +156,7 @@ export function generateFlows( {
 				return translate( 'Link in Bio' );
 			},
 			providesDependenciesInQuery: [ 'tld' ],
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'with-add-ons',

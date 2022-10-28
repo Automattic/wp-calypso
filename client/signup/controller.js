@@ -188,6 +188,8 @@ export default {
 			}
 		}
 
+		console.log( '----------controller: redirectToFlow:', previousFlowName, flowName, signupProgress );
+
 		context.store.dispatch( setCurrentFlowName( flowName ) );
 
 		if ( ! userLoggedIn && shouldForceLogin( flowName, userLoggedIn ) ) {
@@ -214,6 +216,7 @@ export default {
 		}
 
 		if ( context.pathname !== getValidPath( context.params, userLoggedIn ) ) {
+			console.log( '-------------------is it here? valid path?' );
 			return page.redirect(
 				getValidPath( context.params, userLoggedIn ) +
 					( context.querystring ? '?' + context.querystring : '' )
@@ -235,6 +238,9 @@ export default {
 			flowName,
 			userLoggedIn
 		);
+
+
+		console.log( '---------------controller start:', flowName, stepName, context);
 
 		// Update initialContext to help woocommerce-install support site switching.
 		if ( 'woocommerce-install' === flowName ) {
@@ -304,6 +310,8 @@ export default {
 			pageTitle: getFlowPageTitle( flowName, userLoggedIn ),
 			isManageSiteFlow,
 		} );
+
+		console.log( '---------------------rendered signup component.' );
 
 		next();
 	},

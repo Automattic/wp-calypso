@@ -15,6 +15,7 @@ const useSteps = ( flowName ) => {
 
 	switch ( flowName ) {
 		case LINK_IN_BIO_FLOW:
+		case 'link-in-bio-tld':
 			steps = [
 				{ title: __( 'Great choices. Nearly there!' ) },
 				{ title: __( 'Shining and polishing your Bio' ) },

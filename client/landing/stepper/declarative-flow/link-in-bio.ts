@@ -31,7 +31,7 @@ export const linkInBio: Flow = {
 
 		const queryParams = useQuery();
 		const tld = queryParams.get( 'tld' );
-		const domain = queryParams.get( 'domain' );
+		const newDomainSearch = queryParams.get( 'new' ); // be consistent with how the Domain step works
 
 		// for the standard Link in Bio flow
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -70,8 +70,8 @@ export const linkInBio: Flow = {
 		function submitDomainFirst( providedDependencies: ProvidedDependencies = {} ) {
 			const logInUrl =
 				locale && locale !== 'en'
-					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&domain=${ domain }`
-					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&domain=${ domain }`;
+					? `/start/link-in-bio-tld/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`
+					: `/start/link-in-bio-tld?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`;
 
 			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
 
@@ -91,7 +91,7 @@ export const linkInBio: Flow = {
 
 				case 'linkInBioSetup':
 					return window.location.assign(
-						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&domain=${ domain }`
+						`/start/link-in-bio-tld/plans-link-in-bio?variationName=${ flowName }&pageTitle=Link%20in%20Bio&tld=${ tld }&new=${ newDomainSearch }`
 					);
 
 				case 'launchpad': {

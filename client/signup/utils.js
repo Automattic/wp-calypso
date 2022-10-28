@@ -169,6 +169,9 @@ export function canResumeFlow( flowName, progress, isUserLoggedIn ) {
 		},
 		isUserLoggedIn
 	);
+
+	console.log( '????????????what the heck is the progress?', progress, flowStepsInProgressStore );
+
 	return flowStepsInProgressStore.length > 0 && ! flow.disallowResume;
 }
 
