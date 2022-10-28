@@ -235,7 +235,7 @@ class Signup extends Component {
 
 	componentDidMount() {
 		debug( 'Signup component mounted' );
-		addHotJarScript();
+		this.props.flowName === 'onboarding' && addHotJarScript();
 		this.startTrackingForBusinessSite();
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 		if ( ! this.state.shouldShowLoadingScreen ) {
