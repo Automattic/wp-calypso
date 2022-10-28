@@ -26,6 +26,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
 import { usePollSiteForDIFMDetails } from './use-poll-site-for-difm-details';
+import type { PageId } from 'calypso/signup/difm/constants';
 
 import './style.scss';
 
@@ -76,7 +77,7 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
-	pageTitles: string[];
+	pageTitles: PageId[];
 	siteId: SiteId | null;
 }
 
