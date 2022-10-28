@@ -1,5 +1,5 @@
-import type { SiteId } from 'calypso/types';
 import { PageId } from 'calypso/signup/difm/constants';
+import type { SiteId } from 'calypso/types';
 
 export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
