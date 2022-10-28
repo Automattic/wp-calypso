@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getRewindBytesAvailable, getRewindBytesUsed } from 'calypso/state/rewind/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
@@ -61,8 +62,7 @@ export default ( siteId: number ) => {
 	const HUNDRED_GIGABYTES = useJetpack100GbStorageAmountText();
 	const ONE_TERABYTES = useJetpack1TbStorageAmountText();
 
-	const currencyCode = sitePurchases?.[ 0 ]?.currencyCode;
-
+	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const bytesAvailable = useSelector( ( state ) => getRewindBytesAvailable( state, siteId ) );
 	const bytesUsed = useSelector( ( state ) => getRewindBytesUsed( state, siteId ) );
 
