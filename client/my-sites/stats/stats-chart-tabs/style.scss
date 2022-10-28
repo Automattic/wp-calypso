@@ -230,3 +230,49 @@ ul.module-tabs {
 		}
 	}
 }
+
+// For feature `stats/new-main-chart`
+.is-new-featured {
+	background-color: var(--studio-white);
+
+	// Main Chart
+	.chart {
+		padding: 0;
+
+		.chart__bar {
+			// Cancel the chart bar styles
+			&.is-weekend {
+				background: none;
+			}
+
+			&:hover {
+				background-color: rgba(var(--color-neutral-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+			}
+
+			&.is-selected {
+				background-color: rgba(var(--color-primary-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+			}
+		}
+
+		.chart__bar-section {
+			background-color: var(--color-primary);
+			border-top-left-radius: 2px;
+			border-top-right-radius: 2px;
+		}
+
+		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
+			// font-size: $font-body-small;
+			font-weight: 400;
+			line-height: 24px;
+			color: var(--color-neutral-40);
+		}
+	}
+}
