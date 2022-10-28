@@ -86,7 +86,7 @@ function render( element, key, req ) {
 
 		logServerEvent( req.context.sectionName, {
 			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
-			name: `ssr.markup_cache.${ key }.${ renderedLayout ? 'hit' : 'miss' }`,
+			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
 			type: 'counting',
 		} );
 
