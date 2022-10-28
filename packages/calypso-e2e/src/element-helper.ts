@@ -171,9 +171,12 @@ export async function waitForMutations(
 	page: Page | Frame,
 	selector: string,
 	options = {
-		attributes: true,
-		subtree: true,
-		childList: true,
+		timeout: 1000,
+		observe: {
+			attributes: true,
+			subtree: true,
+			childList: true,
+		},
 	}
 ): Promise< void > {
 	const target = await page.waitForSelector( selector );
@@ -185,12 +188,12 @@ export async function waitForMutations(
 					let timer: NodeJS.Timeout;
 					return () => {
 						clearTimeout( timer );
-						timer = setTimeout( resolve, 1000 );
+						timer = setTimeout( resolve, args.options.timeout );
 					};
 				};
 
 				const observer = new MutationObserver( debounceResolve() );
-				observer.observe( args.target, args.options );
+				observer.observe( args.target, args.options.observe );
 			} );
 		},
 		{ target, options }
