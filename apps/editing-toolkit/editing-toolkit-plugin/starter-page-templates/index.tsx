@@ -11,7 +11,7 @@ declare global {
 		starterPageTemplatesConfig?: {
 			templates?: PatternDefinition[];
 			locale?: string;
-			theme?: string;
+			stylesheet?: string;
 			screenAction?: string;
 			tracksUserData?: Parameters< typeof initializeTracksWithIdentity >[ 0 ];
 		};
@@ -23,7 +23,7 @@ const {
 	templates: patterns = [],
 	tracksUserData,
 	screenAction,
-	theme,
+	stylesheet,
 	locale,
 } = window.starterPageTemplatesConfig ?? {};
 
@@ -39,7 +39,7 @@ if ( screenAction === 'add' ) {
 // Always register ability to open from document sidebar.
 registerPlugin( 'page-patterns', {
 	render: () => {
-		return <PagePatternsPlugin patterns={ patterns } theme={ theme } locale={ locale } />;
+		return <PagePatternsPlugin patterns={ patterns } stylesheet={ stylesheet } locale={ locale } />;
 	},
 
 	// `registerPlugin()` types assume `icon` is mandatory however it isn't

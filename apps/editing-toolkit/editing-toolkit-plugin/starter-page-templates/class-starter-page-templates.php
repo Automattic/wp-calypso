@@ -184,7 +184,7 @@ class Starter_Page_Templates {
 				'templates'    => array_merge( $default_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction' => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
-				'theme'        => normalize_theme_slug( get_stylesheet() ),
+				'stylesheet'   => get_stylesheet(),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'locale'       => $this->get_verticals_locale(),
 			)
