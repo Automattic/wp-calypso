@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import NavigationLink from 'calypso/signup/navigation-link';
 import { isReskinnedFlow } from '../utils';
 import './style.scss';
@@ -244,4 +245,4 @@ class StepWrapper extends Component {
 	}
 }
 
-export default localize( StepWrapper );
+export default localize( withTrackingTool( 'HotJar' )( StepWrapper ) );
