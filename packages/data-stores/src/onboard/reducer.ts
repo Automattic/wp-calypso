@@ -285,16 +285,6 @@ const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const verticalName: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_VERTICAL_NAME' ) {
-		return action.verticalName;
-	}
-	if ( [ 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
-		return '';
-	}
-	return state;
-};
-
 const startingPoint: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_STARTING_POINT' ) {
 		return action.startingPoint;
@@ -411,7 +401,6 @@ const reducer = combineReducers( {
 	hasOnboardingStarted,
 	lastLocation,
 	intent,
-	verticalName,
 	startingPoint,
 	pendingAction,
 	progress,

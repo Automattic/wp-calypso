@@ -23,7 +23,6 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
-	const verticalName = useSelect( ( select ) => select( ONBOARD_STORE ).getVerticalName() );
 	const site = useSite();
 
 	useEffect( () => {
@@ -57,7 +56,7 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 							url={ getPatternPreviewUrl( {
 								id: item.id,
 								language: locale,
-								siteTitle: site?.name || verticalName || translate( 'Site Title' ),
+								siteTitle: site?.name || translate( 'Site Title' ),
 								stylesheet: selectedDesign?.recipe?.stylesheet,
 							} ) }
 							patternId={ item.id }

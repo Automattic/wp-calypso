@@ -17,7 +17,6 @@ export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
 export const getSelectedSiteLogo = ( state: State ) => state.siteLogo;
 export const getSelectedSiteDescription = ( state: State ) => state.siteDescription;
 export const getIntent = ( state: State ) => state.intent;
-export const getVerticalName = ( state: State ) => state.verticalName;
 export const getStartingPoint = ( state: State ) => state.startingPoint;
 export const getStoreType = ( state: State ) => state.storeType;
 export const getPendingAction = ( state: State ) => state.pendingAction;
