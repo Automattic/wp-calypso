@@ -269,6 +269,7 @@ class Pages extends Component {
 
 	renderVirtualHomePage() {
 		const { site, blockEditorSettings, translate } = this.props;
+
 		if ( ! this.showVirtualHomepage() ) {
 			return null;
 		}
