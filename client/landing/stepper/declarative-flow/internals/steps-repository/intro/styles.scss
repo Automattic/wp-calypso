@@ -7,12 +7,16 @@
 
 		.step-container {
 			&.is-using-new-intro-design {
-				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.png);
 				background-repeat: no-repeat;
 				background-attachment: fixed;
 				background-position-x: center;
 				background-position-y: bottom;
 				background-size: contain;
+
+				@include break-medium {
+					background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
+				}
 
 				@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
 					background-size: cover;
