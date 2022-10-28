@@ -200,9 +200,9 @@ const UniversalNavbarHeader = () => {
 										className="x-nav-item x-nav-item__wide"
 										titleValue={ translate( 'Get Started' ) }
 										elementContent={ translate( 'Get Started' ) }
-										urlValue="//wordpress.com/start"
+										urlValue="/start/business/?ref=plugins-lp"
 										type="nav"
-										typeClassName="x-nav-link x-nav-link__primary x-link"
+										typeClassName="x-nav-link x-nav-link__primary x-link cta-btn-nav"
 									/>
 									<li className="x-nav-item x-nav-item__narrow">
 										<button
