@@ -182,7 +182,7 @@ class Pages extends Component {
 	}
 
 	showBlogPostsPage() {
-		const { site, homepageType, isFSEActive } = this.props;
+		const { site, homepageType, homepageId, isFSEActive } = this.props;
 		const { search, status } = this.props.query;
 
 		return (
@@ -190,7 +190,7 @@ class Pages extends Component {
 				/** Blog posts page is for themes that don't support FSE */
 				! isFSEActive ) &&
 			site &&
-			homepageType === 'posts' &&
+			( homepageType === 'posts' || ( homepageType === 'page' && ! homepageId ) ) &&
 			/** Under the "Published" tab */
 			status === 'publish,private' &&
 			/** Without any search term */
