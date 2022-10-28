@@ -72,7 +72,7 @@ export class StartImportFlow {
 	 * Validates that we've landed on the URL capture page.
 	 */
 	async validateURLCapturePage(): Promise< void > {
-		await this.page.waitForURL( /.*setup\/import.*/ );
+		await this.page.waitForURL( /.*setup\/site-setup\/import.*/ );
 	}
 
 	/**
