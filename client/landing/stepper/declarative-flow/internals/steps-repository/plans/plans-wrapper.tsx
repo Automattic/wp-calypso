@@ -3,7 +3,7 @@ import { getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
-import { useMediaQuery } from '@wordpress/compose';
+import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
@@ -45,7 +45,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const locale = useLocale();
 	const { __ } = useI18n();
 
-	const isDesktop = useMediaQuery( '(min-width: 480px)' );
+	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
 	const disableBloggerPlanWithNonBlogDomain = undefined;
 	const isLaunchPage = undefined;
