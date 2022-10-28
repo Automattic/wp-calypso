@@ -16,7 +16,12 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			primary,
 			secondary,
 			showGdprBanner,
+			hasLayout,
 		} = context;
+		// Layout exists in the cache; no need to do extra work which won't be used.
+		if ( hasLayout ) {
+			return next();
+		}
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! ( context.isServerSide && isUserLoggedIn( context.store.getState() ) ) ) {

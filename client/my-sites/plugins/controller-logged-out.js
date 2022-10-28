@@ -119,9 +119,9 @@ const prefetchTimebox = ( prefetchPromises, context ) => {
 };
 
 export async function fetchPlugins( context, next ) {
-	const { queryClient, store } = context;
+	const { queryClient, store, isServerSide, hasLayout } = context;
 
-	if ( ! context.isServerSide ) {
+	if ( ! isServerSide || hasLayout ) {
 		return next();
 	}
 
