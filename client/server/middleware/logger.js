@@ -43,11 +43,11 @@ const logRequest = ( req, res, options ) => {
 
 	// Requests which take longer than one second aren't performing well. We log
 	// extra performance data in this case to troubleshoot the cause.
-	if ( duration > 1000 ) {
+	if ( duration > 2 ) {
 		req.logger.info(
 			// TODO: does warn not exist here for tests?
 			{
-				performanceMarks: finalizePerfMarks( req ),
+				performanceMarks: finalizePerfMarks( req.context ),
 				didTimeout: duration > 49500, // A timeout occurs at 50s, so anything close to that is likely a timeout.
 				duration,
 			},

@@ -1,5 +1,6 @@
 import page from 'page';
 import { composeHandlers } from 'calypso/controller/shared';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import {
 	getThemeFilterStringFromTerm,
 	getThemeFilterTerm,
@@ -10,6 +11,7 @@ import { fetchThemeFilters } from './controller';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {
+	performanceMark( context, 'validateFilters' );
 	if ( ! context.params.filter ) {
 		return next();
 	}
@@ -39,6 +41,7 @@ export function validateFilters( context, next ) {
 }
 
 export function validateVertical( context, next ) {
+	performanceMark( context, 'fetchThemeFilters' );
 	const { vertical } = context.params;
 	const { store } = context;
 

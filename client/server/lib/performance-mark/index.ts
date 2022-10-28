@@ -9,12 +9,6 @@ type PartialContext = {
 	performanceMarks?: PerformanceMark[];
 };
 
-// We don't have full types for the request object, so we're only using a small
-// subset for this file.
-type PartialReq = {
-	context?: PartialContext;
-};
-
 type LogastshMark = {
 	total_duration: number;
 } & Record< string, number >;
@@ -32,19 +26,23 @@ type LogsatshPerfMarks = Record< string, LogastshMark >;
  * Unfortunately, due to how express passes around the request object, this modifies
  * the request context by reference.
  *
- * @param req      The express request object.
+ * @param context  The request.context object.
  * @param markName A name for the marker being logged.
  * @param isChild  Optionally note this occured as part of a different mark.
  */
-export default function performanceMark( req: PartialReq, markName: string, isChild = false ) {
-	if ( ! req.context ) {
+export default function performanceMark(
+	context: PartialContext,
+	markName: string,
+	isChild = false
+) {
+	if ( ! context ) {
 		return;
 	}
 
-	req.context.performanceMarks ??= [];
+	context.performanceMarks ??= [];
 
 	// Quick reference to the array for less verbosity.
-	const perfMarks = req.context.performanceMarks;
+	const perfMarks = context.performanceMarks;
 	const currentTime = Date.now();
 	const newMark = { markName, startTime: currentTime };
 
@@ -69,20 +67,20 @@ export default function performanceMark( req: PartialReq, markName: string, isCh
 /**
  * Finalize the duration of any active marks and return the final array of data.
  *
- * @param {object} req The express request object.
+ * @param context The request.context object.
  * @returns object The normalized mark data for logstash in object format.
  */
-export function finalizePerfMarks( req: PartialReq ): LogsatshPerfMarks {
+export function finalizePerfMarks( context: PartialContext ): LogsatshPerfMarks {
 	// Do nothing if there are no marks.
-	if ( ! req?.context?.performanceMarks?.length ) {
+	if ( ! context?.performanceMarks?.length ) {
 		return {};
 	}
 
-	finalizeDuration( req.context.performanceMarks, Date.now() );
+	finalizeDuration( context.performanceMarks, Date.now() );
 
 	// Logstash cannot accept arrays, so we transform our array into a more
 	// friendly structure for it.
-	return req.context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark, i ) => {
+	return context.performanceMarks.reduce( ( marks: LogsatshPerfMarks, mark, i ) => {
 		const markKey = markNameToKey( mark.markName, i );
 		// A mark like "setup request" becomes "0_setup_request"
 		marks[ markKey ] = {
