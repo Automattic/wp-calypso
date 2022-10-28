@@ -7,7 +7,7 @@ import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackInstructionList from './jetpack-instruction-list';
 import JetpackLicenseKeyClipboard from './jetpack-license-key-clipboard';
-import { getWPORGPluginLink } from './utils';
+import { getJetpackPluginSupportDocLink, getWPORGPluginLink } from './utils';
 
 interface Props {
 	product: SelectorProduct;
@@ -85,7 +85,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 
 			<p>
 				<ExternalLink
-					href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/"
+					href={ getJetpackPluginSupportDocLink( product.productSlug ) }
 					icon
 					onClick={ handleLearnMoreClick }
 				>
