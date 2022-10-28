@@ -2,6 +2,7 @@ import config from '@automattic/calypso-config';
 import { useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { PageId } from 'calypso/signup/difm/constants';
 import getDIFMLiteSitePageTitles from 'calypso/state/selectors/get-difm-lite-site-page-titles';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
@@ -36,7 +37,7 @@ export function usePollSiteForDIFMDetails(
 	maxTries = 10
 ): {
 	isPollingInProgress: boolean;
-	pageTitles: string[] | null;
+	pageTitles: PageId[] | null;
 	hasValidPurchase: boolean;
 } {
 	const [ retryCount, setRetryCount ] = useState( 0 );
