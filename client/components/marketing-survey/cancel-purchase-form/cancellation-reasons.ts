@@ -129,6 +129,12 @@ export const CANCELLATION_REASONS: CancellationReason[] = [
 					return translate( 'Couldn’t find what I wanted.' );
 				},
 			},
+			{
+				value: 'tooComplicated',
+				get label() {
+					return translate( 'It’s too complicated for me.' );
+				},
+			},
 		],
 	},
 	{

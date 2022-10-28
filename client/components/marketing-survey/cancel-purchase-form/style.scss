@@ -22,7 +22,6 @@
 	margin: 0 auto 2rem;
 }
 
-.cancel-purchase-form__upsell,
 .cancel-purchase-form__feedback-questions {
 	max-width: 540px;
 	margin: 0 auto;
@@ -140,63 +139,48 @@
 }
 
 .cancel-purchase-form__upsell {
-	padding: 1.5rem;
-	background-color: var(--studio-green-0);
-	border: 1px solid var(--studio-green-5);
-	border-radius: 5px; /* stylelint-disable-line scales/radii */
 	display: flex;
-	margin-bottom: 2rem;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	margin: 0 auto;
+	gap: 20px;
 
-	.cancel-purchase-form__upsell-image {
-		display: none;
-		width: 100px;
-		height: fit-content;
-		margin-right: 1.5rem;
+	.formatted-header.is-without-subhead {
+		text-align: initial;
+		margin: 20px 0;
 
-		@include break-small {
-			display: block;
+		> .formatted-header__title {
+			font-size: 3.375rem;
+			line-height: 1.1;
 		}
 	}
+}
 
-	.form-section-heading {
-		font-size: 1rem;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		line-height: 1.25rem;
-		margin-bottom: 0.5rem;
-		font-weight: 600;
-	}
+.cancel-purchase-form__upsell-subheader {
+	color: var(--studio-gray-70);
+}
 
-	.form-fieldset {
-		margin-bottom: 0;
+.cancel-purchase-form__upsell-content {
+	display: flex;
+	flex-direction: column;
+	flex-basis: 535px;
+}
 
-		p {
-			font-size: 0.875rem;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			margin-bottom: 0.5rem;
+.cancel-purchase-form__upsell-text {
+	line-height: 1.8;
+}
 
-			&:last-child {
-				margin-bottom: 0;
-			}
-		}
-	}
+.cancel-purchase-form__upsell-buttons {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+	margin: 2.2rem 0;
+}
 
-	.components-button {
-		margin-top: 1rem;
-		padding: 0.625rem 2rem;
-		border-radius: 4px;
-
-		&:not(.is-primary) {
-			padding-left: 0.5rem;
-			padding-right: 0.5rem;
-			margin-left: 0.5rem;
-		}
-	}
-
-	.button {
-		// Hide buttons rendered by old components, so we can still re-use them for rendering rest of content.
-		display: none;
-	}
+.cancel-purchase-form__upsell-image-container {
+	flex-basis: 400px;
+	text-align: center;
 }
 
 .blank-canvas.cancel-purchase-form .blank-canvas__back {
