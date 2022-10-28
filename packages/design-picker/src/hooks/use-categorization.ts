@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useMemo, useState } from 'react';
-import { SHOW_ALL_SLUG } from '../constants';
+import { SHOW_ALL_SLUG, SHOW_GENERATED_DESIGNS_SLUG } from '../constants';
 import { Category, Design } from '../types';
 import { gatherCategories } from '../utils';
 
@@ -13,12 +13,13 @@ export interface Categorization {
 interface UseCategorizationOptions {
 	defaultSelection: string | null;
 	showAllFilter: boolean;
+	showGeneratedDesignsFilter?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
 }
 
 export function useCategorization(
 	designs: Design[],
-	{ defaultSelection, showAllFilter, sort }: UseCategorizationOptions
+	{ defaultSelection, showAllFilter, showGeneratedDesignsFilter, sort }: UseCategorizationOptions
 ): Categorization {
 	const { __ } = useI18n();
 
@@ -26,6 +27,13 @@ export function useCategorization(
 		const result = gatherCategories( designs );
 		if ( sort ) {
 			result.sort( sort );
+		}
+
+		if ( showGeneratedDesignsFilter ) {
+			result.unshift( {
+				name: __( 'Customized for You', __i18n_text_domain__ ),
+				slug: SHOW_GENERATED_DESIGNS_SLUG,
+			} );
 		}
 
 		if ( showAllFilter && designs.length ) {
@@ -36,7 +44,7 @@ export function useCategorization(
 		}
 
 		return result;
-	}, [ designs, showAllFilter, sort, __ ] );
+	}, [ designs, showAllFilter, showGeneratedDesignsFilter, sort, __ ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )

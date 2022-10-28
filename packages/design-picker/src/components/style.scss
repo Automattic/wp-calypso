@@ -343,6 +343,24 @@
 	display: flex;
 	font-size: $font-body-small;
 
+	&--is-generated {
+		max-height: 0;
+		overflow: hidden;
+
+		.theme-preview__container {
+			opacity: 0;
+			transition: opacity 1.5s ease-in-out;
+		}
+
+		&--is-showing {
+			max-height: none;
+
+			.theme-preview__container {
+				opacity: 1;
+			}
+		}
+	}
+
 	.design-picker__design-option {
 		flex: 1;
 	}
@@ -406,9 +424,11 @@
 .design-picker.design-picker__unified {
 	display: block;
 	padding-bottom: 200px;
+
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
+
 	.design-picker__grid {
 		@supports ( display: grid ) {
 			@include break-medium {
@@ -427,11 +447,6 @@
 
 	.design-picker__design-option > button {
 		cursor: pointer;
-	}
-
-	.unified-design-picker__subtitle {
-		color: #50575e;
-		margin-bottom: 30px;
 	}
 
 	.generated-design-thumbnail {
@@ -457,22 +472,6 @@
 
 	.components-button.is-pressed:active:hover {
 		color: var(--theme-base-color);
-	}
-
-	// Customize styles for generated designs
-	.unified-design-picker__generated-designs {
-		.design-picker__grid {
-			padding-bottom: 32px;
-		}
-	}
-
-	// Customize styles for standard designs
-	.unified-design-picker__standard-designs {
-		min-height: 100vh;
-
-		.unified-design-picker__subtitle {
-			margin-bottom: 14px;
-		}
 	}
 }
 

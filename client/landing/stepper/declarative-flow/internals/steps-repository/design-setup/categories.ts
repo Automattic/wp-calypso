@@ -23,12 +23,18 @@ function makeSortCategoryToTop( slug: string ) {
 const sortBlogToTop = makeSortCategoryToTop( CATEGORY_BLOG );
 const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
 
-export function getCategorizationOptions( intent: string, showAllFilter: boolean ) {
+export function getCategorizationOptions(
+	intent: string,
+	showAllFilter: boolean,
+	showGeneratedDesignsFilter: boolean
+) {
 	const result = {
 		showAllFilter,
+		showGeneratedDesignsFilter,
 		defaultSelection: null,
 	} as {
 		showAllFilter: boolean;
+		showGeneratedDesignsFilter: boolean;
 		defaultSelection: string | null;
 		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
 	};

@@ -126,7 +126,11 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
 
-	const categorizationOptions = getCategorizationOptions( intent, true );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		true,
+		generatedDesigns.length > 0
+	);
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	// ********** Logic for selecting a design and style variation
