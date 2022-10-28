@@ -226,4 +226,10 @@
 			}
 		}
 	}
+	.reskin-side-explainer__subtitle-2 {
+		display: none;
+		@include break-small {
+			display: block;
+		}
+	}
 }
