@@ -9,7 +9,7 @@ import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation, Redirect } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { setupErrorLogger } from 'calypso/boot/common';
 import { setupLocale } from 'calypso/boot/locale';
@@ -81,22 +81,29 @@ const availableFlows: Array< configurableFlows > = [
 ].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	const location = useLocation();
 	const { anchorFmPodcastId } = useAnchorFmParams();
-	const flowName = useQuery().get( 'flow' );
 
+	const flowNameFromParam = useQuery().get( 'flow' );
+	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
 	let flow = siteSetupFlow;
+
+	// keep supporting the `flow` query param for backwards compatibility
+	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromParam ) ) {
+		return <Redirect to={ `/${ flowNameFromParam }` } />;
+	}
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
 	} else {
 		availableFlows.forEach( ( currentFlow ) => {
-			if ( currentFlow.flowName === flowName ) {
+			if ( currentFlow.flowName === flowNameFromPathName ) {
 				flow = currentFlow.pathToFlow;
 			}
 		} );
 	}
 
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	return <FlowRenderer flow={ flow } />;

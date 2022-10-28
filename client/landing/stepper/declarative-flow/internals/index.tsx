@@ -105,7 +105,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<Switch>
 				{ stepPaths.map( ( path ) => {
 					return (
-						<Route key={ path } path={ `/${ path }` }>
+						<Route key={ path } path={ `/${ flow.name }/${ path }` }>
 							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -120,7 +120,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					);
 				} ) }
 				<Route>
-					<Redirect to={ stepPaths[ 0 ] + search } />
+					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
 		</>
