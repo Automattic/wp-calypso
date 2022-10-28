@@ -45,6 +45,7 @@ function Upsell( { image, ...props }: UpsellProps ) {
 				<div className="cancel-purchase-form__upsell-buttons">
 					<Button
 						isPrimary
+						href={ props.acceptButtonUrl }
 						onClick={ () => {
 							setBusyButton( 'accept' );
 							props.onAccept?.();
