@@ -305,3 +305,63 @@
 		}
 	}
 }
+
+.theme-default {
+	--color-primary: #3057dc;
+	--color-primary-rgb: 48, 87, 220;
+}
+
+$segmented-control-border-radius: 4px;
+
+.new-main-chart {
+	// Traffic chart period header
+	.stats__period-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		background-color: var(--studio-white);
+		padding: 16px 0;
+		margin-top: 48px;
+
+		.stats-period-navigation {
+			flex: 1;
+		}
+
+		.segmented-control {
+			margin-left: 24px;
+
+			&.is-primary {
+				.segmented-control__item.is-selected {
+					.segmented-control__link {
+						border-color: var(--color-primary);
+						background-color: var(--color-primary);
+
+						&:hover {
+							background-color: var(--color-primary);
+						}
+					}
+				}
+			}
+
+			.segmented-control__item {
+				&:first-of-type .segmented-control__link {
+					border-top-left-radius: $segmented-control-border-radius;
+					border-bottom-left-radius: $segmented-control-border-radius;
+				}
+
+				&:last-of-type .segmented-control__link {
+					border-top-right-radius: $segmented-control-border-radius;
+					border-bottom-right-radius: $segmented-control-border-radius;
+				}
+			}
+		}
+
+		.segmented-control__link {
+			font-weight: 500;
+			line-height: 20px;
+			color: var(--studio-black);
+			width: 100px;
+			box-sizing: border-box;
+		}
+	}
+}

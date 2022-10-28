@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
@@ -67,7 +68,31 @@ class StatsPeriodNavigation extends PureComponent {
 			addQueryPrefix: true,
 		} );
 
-		return (
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		return isNewFeatured ? (
+			<div className="stats-period-navigation is-new-featured">
+				<div className="stats-period-navigation__children">{ children }</div>
+				<a
+					className={ classNames( 'stats-period-navigation__previous', {
+						'is-disabled': hidePreviousArrow,
+					} ) }
+					href={ `${ url }${ previousDayQuery }` }
+					onClick={ this.handleClickPrevious }
+				>
+					<Gridicon icon="arrow-left" size={ 24 } />
+				</a>
+				<a
+					className={ classNames( 'stats-period-navigation__next', {
+						'is-disabled': hideNextArrow || isToday,
+					} ) }
+					href={ `${ url }${ nextDayQuery }` }
+					onClick={ this.handleClickNext }
+				>
+					<Gridicon icon="arrow-right" size={ 24 } />
+				</a>
+			</div>
+		) : (
 			<div className="stats-period-navigation">
 				<a
 					className={ classNames( 'stats-period-navigation__previous', {
