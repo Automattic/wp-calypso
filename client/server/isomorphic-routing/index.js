@@ -2,7 +2,7 @@ import debugFactory from 'debug';
 import { isEmpty } from 'lodash';
 import { stringify } from 'qs';
 import { setSectionMiddleware } from 'calypso/controller';
-import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
+import { serverRender, setShouldServerSideRender, markupCache } from 'calypso/server/render';
 import { createQueryClientSSR } from 'calypso/state/query-client-ssr';
 import { setRoute } from 'calypso/state/route/actions';
 
@@ -13,6 +13,10 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			( req, res, next ) => {
+				if ( markupCache.get( getCacheKey( req ) ) ) {
+					debug( 'Markup for request exists!' );
+					req.context.hasLayout = true;
+				}
 				req.context.usedSSRHandler = true;
 				debug( `Using SSR pipeline for path: ${ req.path } with handler ${ route }` );
 				next();

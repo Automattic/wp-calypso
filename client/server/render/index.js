@@ -14,7 +14,6 @@ import {
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
@@ -30,7 +29,7 @@ import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
-const markupCache = new Lru( {
+export const markupCache = new Lru( {
 	max: 3000,
 	maxAge: HOUR_IN_MS,
 } );
@@ -84,11 +83,18 @@ function render( element, key, req ) {
 
 		let renderedLayout = markupCache.get( key );
 
-		logServerEvent( req.context.sectionName, {
-			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
-			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
-			type: 'counting',
-		} );
+		/**
+		 * If the SSR pipeline executed thinking that a layout would exist, it
+		 * likely skipped several important steps needed to generate a layout,
+		 * such as fetching the data rendered on the page. As a result, we can't
+		 * confidently render a page and the default error handler will allow
+		 * the client to render it instead.
+		 *
+		 * This should not happen -- if it does, we need to investigate and fix it.
+		 */
+		if ( req.context.hasLayout && ! renderedLayout ) {
+			throw new Error( 'SSR layout cache mismatch!' );
+		}
 
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
@@ -98,7 +104,7 @@ function render( element, key, req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				logToLogstash( {
+				req.logger.warn( {
 					feature: 'calypso_ssr',
 					message: 'render cache miss',
 					extra: {
@@ -114,6 +120,18 @@ function render( element, key, req ) {
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
+
+		logServerEvent( req.context.sectionName, [
+			{
+				name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+				type: 'counting',
+			},
+			{
+				name: 'ssr.react_render.duration',
+				type: 'timing',
+				value: rtsTimeMs,
+			},
+		] );
 
 		if ( rtsTimeMs > 100 ) {
 			// Server renders should probably never take longer than 100ms
