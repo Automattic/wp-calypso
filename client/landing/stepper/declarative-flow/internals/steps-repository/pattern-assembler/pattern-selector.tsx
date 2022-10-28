@@ -56,7 +56,7 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 							url={ getPatternPreviewUrl( {
 								id: item.id,
 								language: locale,
-								siteTitle: site?.name || translate( 'Site Title' ),
+								siteTitle: site?.name,
 								stylesheet: selectedDesign?.recipe?.stylesheet,
 							} ) }
 							patternId={ item.id }

@@ -12,8 +12,8 @@ export const getPatternPreviewUrl = ( {
 }: {
 	id: number;
 	language: string;
-	siteTitle: string;
-	stylesheet: string | undefined;
+	siteTitle?: string;
+	stylesheet?: string;
 } ) => {
 	return addQueryArgs( PREVIEW_PATTERN_URL, {
 		pattern_id: encodePatternId( id ),
