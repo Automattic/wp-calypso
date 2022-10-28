@@ -10,6 +10,7 @@ import {
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { SiteScreenshot } from '../site-screenshot';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import './style.scss';
@@ -163,13 +164,22 @@ export const PreCancellationDialog = ( {
 	wpcomURL,
 }: PreCancellationDialogProps ) => {
 	const translate = useTranslate();
-
 	/**
-	 * Instantiate site's plan variables.
+	 * Instantiate site's variables.
 	 */
+	const siteName = site.name ?? '';
 	const productSlug = site.plan?.product_slug;
 	const planLabel = site.plan?.product_name_short;
+	const isComingSoon = site.is_coming_soon;
+	const isPrivate = site.is_private;
+	const launchedStatus = site.launch_status === 'launched' ? true : false;
+	const shouldUseSiteThumbnail =
+		isComingSoon === false && isPrivate === false && launchedStatus === true;
 	const subTitle = translate( 'Subtitle' );
+
+	/**
+	 * Instantiate purchase variables.
+	 */
 	const isPurchaseRefundable = isRefundable( purchase );
 	const isPurchaseAutoRenewing = purchase.isAutoRenewEnabled;
 
@@ -231,6 +241,7 @@ export const PreCancellationDialog = ( {
 			className={ cx( {
 				'pre-cancellation-dialog': true,
 				'--with-domain-feature': domainFeature !== null,
+				'--with-screenshot': shouldUseSiteThumbnail,
 			} ) }
 			isVisible={ isDialogVisible }
 			onClose={ closeDialog }
@@ -261,6 +272,15 @@ export const PreCancellationDialog = ( {
 						/>
 						<RenderFooterText purchase={ purchase } />
 					</div>
+					{ shouldUseSiteThumbnail && (
+						<div className="pre-cancellation-dialog__grid-colmn">
+							<SiteScreenshot
+								className="pre-cancellation-dialog__site-screenshot"
+								site={ site }
+								alt={ siteName }
+							/>
+						</div>
+					) }
 				</div>
 			</>
 		</Dialog>

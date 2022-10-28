@@ -17,6 +17,18 @@ $modal-breakpoint-mobile: 480px;
 		}
 	}
 
+	.pre-cancellation-dialog__site-screenshot {
+		width: 365px;
+		height: 483px;
+		padding: 48px 24px;
+
+		&.site-thumbnail-loading {
+			background-color: transparent;
+			border: none;
+
+		}
+	}
+
 	& + .dialog__action-buttons {
 		&::before {
 			background: none;
@@ -52,6 +64,67 @@ $modal-breakpoint-mobile: 480px;
 
 		@media ( max-width: $modal-breakpoint-mobile ) {
 			padding: 48px 24px 0;
+		}
+	}
+
+	&.--with-screenshot {
+		max-width: 960px;
+
+		@media ( max-width: $modal-breakpoint-tablet ) {
+			max-width: 500px;
+		}
+
+		.pre-cancellation-dialog__grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			vertical-align: middle;
+			text-align: center;
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: block;
+			}
+
+			strong {
+				overflow-wrap: anywhere;
+			}
+		}
+
+		.pre-cancellation-dialog__grid-colmn:nth-child(2) {
+			background: #f0f0f0;
+			padding-bottom: 0;
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				display: none;
+			}
+		}
+
+		& + .dialog__action-buttons {
+			margin-left: 48px;
+			margin-top: -92px;
+			margin-bottom: 52px;
+			border: none;
+			background: transparent;
+			text-align: left;
+			padding: 0;
+
+			&::before {
+				content: none;
+			}
+
+			button {
+				margin-left: 0;
+				margin-right: 10px;
+			}
+
+			@media ( max-width: $modal-breakpoint-tablet ) {
+				margin-left: 48px;
+				margin-top: 0;
+				margin-bottom: 48px;
+			}
+
+			@media ( max-width: $modal-breakpoint-mobile ) {
+				margin-right: 48px;
+			}
 		}
 	}
 
