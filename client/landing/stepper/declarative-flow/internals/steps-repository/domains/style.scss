@@ -48,6 +48,15 @@
 		@include break-wide {
 			width: 350px;
 		}
+
+		.domains__domain-side-content {
+			border-bottom: 1px solid var(--studio-gray-5);
+			margin: 0;
+			padding: 20px 0 20px 0;
+			&:not(.domains__free-domain) {
+				border-bottom: none;
+			}
+		}
 	}
 
 	.register-domain-step .domains__domain-side-content-container {
@@ -211,7 +220,7 @@
 
 		.register-domain-step__next-page-button {
 			padding: 0.57em 1.17em;
-
+			border-radius: 4px;
 			@include break-mobile {
 				padding: 0.65em 2.8em;
 			}
