@@ -19,7 +19,6 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
-import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import { shouldSeeGdprBanner } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -127,12 +126,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main', sectio
 	const cachedServerState = request.context.isLoggedIn ? {} : stateCache.get( cacheKey ) || {};
 	const getCachedState = ( reducer, storageKey ) => {
 		const storedState = cachedServerState[ storageKey ];
-
-		logServerEvent( sectionName, {
-			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
-			name: `ssr.global_redux_cache.${ storedState ? 'hit' : 'miss' }`,
-			type: 'counting',
-		} );
 
 		if ( ! storedState ) {
 			return undefined;
