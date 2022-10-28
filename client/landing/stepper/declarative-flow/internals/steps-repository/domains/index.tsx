@@ -10,6 +10,8 @@ import { useDispatch as useReduxDispatch, useSelector } from 'react-redux';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode as inputMode } from 'calypso/components/domains/connect-domain-step/constants';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
+import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import UseMyDomain from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import {
@@ -287,6 +289,70 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		);
 	};
 
+	const shouldHideUseYourDomain = () => {
+		return [ 'domain' ].includes( flow as string );
+	};
+
+	const shouldDisplayDomainOnlyExplainer = () => {
+		return [ 'domain' ].includes( flow as string );
+	};
+
+	const shouldHideDomainExplainer = () => {
+		return [
+			'free',
+			'personal',
+			'personal-monthly',
+			'premium',
+			'premium-monthly',
+			'business',
+			'business-monthly',
+			'ecommerce',
+			'ecommerce-monthly',
+			'domain',
+		].includes( flow as string );
+	};
+
+	const handleDomainExplainerClick = () => {
+		const hideFreePlan = true;
+		handleSkip( undefined, hideFreePlan );
+	};
+
+	const handleUseYourDomainClick = () => {
+		recordUseYourDomainButtonClick( getAnalyticsSection() );
+		page( getUseYourDomainUrl() );
+	};
+
+	const getSideContent = () => {
+		const useYourDomain = ! shouldHideUseYourDomain() ? (
+			<div className="domains__domain-side-content">
+				<ReskinSideExplainer onClick={ handleUseYourDomainClick } type="use-your-domain" />
+			</div>
+		) : null;
+
+		return (
+			<div className="domains__domain-side-content-container">
+				{ ! shouldHideDomainExplainer() && isPlanSelectionAvailableLaterInFlow && (
+					<div className="domains__domain-side-content domains__free-domain">
+						<ReskinSideExplainer
+							onClick={ handleDomainExplainerClick }
+							type="free-domain-explainer"
+							flowName={ flow }
+						/>
+					</div>
+				) }
+				{ useYourDomain }
+				{ shouldDisplayDomainOnlyExplainer() && (
+					<div className="domains__domain-side-content">
+						<ReskinSideExplainer
+							onClick={ handleDomainExplainerClick }
+							type="free-domain-only-explainer"
+						/>
+					</div>
+				) }
+			</div>
+		);
+	};
+
 	const renderDomainForm = () => {
 		let initialState: DomainForm = {};
 		if ( domainForm ) {
@@ -328,6 +394,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					initialState={ initialState }
 					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableLaterInFlow }
 					isReskinned={ true }
+					reskinSideContent={ getSideContent() }
 					isSignupStep
 					key="domainForm"
 					mapDomainUrl={ getUseYourDomainUrl() }
@@ -363,17 +430,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			content = renderDomainForm();
 		}
 
-		// if ( 'invalid' === this.props.step.status ) {
-		// 	content = (
-		// 		<div className="domains__step-section-wrapper">
-		// 			<Notice status="is-error" showDismiss={ false }>
-		// 				{ this.props.step.errors.message }
-		// 			</Notice>
-		// 			{ content }
-		// 		</div>
-		// 	);
-		// }
-
 		return (
 			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
 		);
@@ -381,11 +437,11 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'domains' }
+			stepName="domains"
 			isWideLayout={ true }
 			hideBack={ true }
 			hideSkip={ true }
-			flowName={ 'linkInBio' }
+			flowName="linkInBio"
 			stepContent={
 				<div className="domains__content">
 					{ isEmpty( productsList ) && <QueryProductsList /> }
@@ -396,8 +452,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader
-					id={ 'domains-header' }
-					align={ 'left' }
+					id="domains-header"
+					align="left"
 					headerText={ getHeaderText() }
 					subHeaderText={ getSubHeaderText() }
 				/>
