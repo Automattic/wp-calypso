@@ -6,6 +6,7 @@ import StoreFooter from 'calypso/jetpack-connect/store-footer';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import PlanUpgradeSection from '../plan-upgrade';
 import StoreItemInfoContext from './context/store-item-info-context';
 import { useShowJetpackFree } from './hooks/use-show-jetpack-free';
 import { useStoreItemInfo } from './hooks/use-store-item-info';
@@ -29,6 +30,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 	enableUserLicensesDialog,
 	onClickPurchase,
 	urlQueryArgs,
+	planRecommendation,
 	header,
 } ) => {
 	const translate = useTranslate();
@@ -94,6 +96,15 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ header }
 
 			{ enableUserLicensesDialog && <UserLicensesDialog siteId={ siteId } /> }
+
+			{ planRecommendation && (
+				<PlanUpgradeSection
+					planRecommendation={ planRecommendation }
+					duration={ duration }
+					filterBar={ null }
+					onSelectProduct={ onClickPurchase }
+				/>
+			) }
 
 			<PricingBanner siteId={ siteId } duration={ duration } />
 

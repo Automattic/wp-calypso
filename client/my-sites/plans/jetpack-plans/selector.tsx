@@ -248,6 +248,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 						onClickPurchase={ selectProduct }
 						urlQueryArgs={ urlQueryArgs }
 						header={ header }
+						planRecommendation={ planRecommendation }
 					/>
 				) : (
 					<>
