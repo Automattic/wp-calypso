@@ -170,6 +170,20 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		goBack();
 	};
 
+	const getSelectedPattern = () => {
+		if ( 'header' === showPatternSelectorType ) {
+			return header;
+		}
+		if ( 'footer' === showPatternSelectorType ) {
+			return footer;
+		}
+		if ( 'section' === showPatternSelectorType && sectionPosition !== null ) {
+			return sections[ sectionPosition ];
+		}
+
+		return null;
+	};
+
 	const stepContent = (
 		<div className="pattern-assembler__wrapper">
 			<div className="pattern-assembler__sidebar">
@@ -177,6 +191,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
 					onBack={ () => setShowPatternSelectorType( null ) }
+					selectedPattern={ getSelectedPattern() }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout

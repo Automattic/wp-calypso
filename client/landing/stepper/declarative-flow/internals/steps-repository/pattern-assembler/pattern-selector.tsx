@@ -15,9 +15,17 @@ type PatternSelectorProps = {
 	onBack: () => void;
 	title: string | null;
 	show: boolean;
+	selectedPattern: Pattern | null;
 };
 
-const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSelectorProps ) => {
+const PatternSelector = ( {
+	patterns,
+	onSelect,
+	onBack,
+	title,
+	show,
+	selectedPattern,
+}: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -60,7 +68,10 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 								tabIndex={ show ? 0 : -1 }
 								role="option"
 								title={ item.name }
-								aria-selected={ false }
+								aria-selected={ item.id === selectedPattern?.id }
+								className={ classnames( {
+									'pattern-selector__block-list--selected-pattern': item.id === selectedPattern?.id,
+								} ) }
 								onClick={ () => onSelect( item ) }
 								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
 							/>
