@@ -243,6 +243,11 @@ export const setIntent = ( intent: string ) => ( {
 	intent,
 } );
 
+export const setVerticalName = ( verticalName: string ) => ( {
+	type: 'SET_VERTICAL_NAME' as const,
+	verticalName,
+} );
+
 export const setStartingPoint = ( startingPoint: string ) => ( {
 	type: 'SET_STARTING_POINT' as const,
 	startingPoint,
@@ -342,6 +347,7 @@ export type OnboardAction = ReturnType<
 	| typeof setAnchorSpotifyUrl
 	| typeof startOnboarding
 	| typeof setIntent
+	| typeof setVerticalName
 	| typeof setStartingPoint
 	| typeof setStoreAddressValue
 	| typeof setPendingAction

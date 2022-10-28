@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
+import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
@@ -22,6 +23,8 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
+	const verticalName = useSelect( ( select ) => select( ONBOARD_STORE ).getVerticalName() );
+	const site = useSite();
 
 	useEffect( () => {
 		if ( show ) {
@@ -51,7 +54,12 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 					{ patterns?.map( ( item: Pattern, index: number ) => (
 						<PatternPreviewAutoHeight
 							key={ `${ index }-${ item.id }` }
-							url={ getPatternPreviewUrl( item.id, locale, selectedDesign?.recipe?.stylesheet ) }
+							url={ getPatternPreviewUrl( {
+								id: item.id,
+								language: locale,
+								siteTitle: site?.name || verticalName || translate( 'Site Title' ),
+								stylesheet: selectedDesign?.recipe?.stylesheet,
+							} ) }
 							patternId={ item.id }
 							patternName={ item.name }
 						>

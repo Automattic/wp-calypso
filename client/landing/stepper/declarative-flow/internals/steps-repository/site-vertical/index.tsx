@@ -10,7 +10,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
-import { SITE_STORE } from '../../../../stores';
+import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import SiteVerticalForm from './form';
 import type { Step } from '../../types';
 import type { Vertical } from 'calypso/components/select-vertical/types';
@@ -20,6 +20,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const [ vertical, setVertical ] = React.useState< Vertical | null >();
 	const [ isBusy, setIsBusy ] = React.useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { setVerticalName } = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 	const siteVertical = useSelect(
 		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site?.ID ) ) || undefined
@@ -34,6 +35,7 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
+		setVerticalName( vertical.name );
 	};
 
 	const handleSubmit = async ( event: React.FormEvent, userInput: string ) => {
