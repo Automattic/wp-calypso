@@ -160,10 +160,10 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 							path,
 						} );
 						break;
-					case 'wpcom_gitfing_subscription':
+					case 'wpcom_gifting_subscription':
 						trackTracksEvent( 'calypso_settings_site_gifting', {
 							path,
-							value: fields.wpcom_gitfing_subscription,
+							value: fields.wpcom_gifting_subscription,
 						} );
 						break;
 				}
