@@ -13,7 +13,7 @@ export interface Categorization {
 interface UseCategorizationOptions {
 	defaultSelection: string | null;
 	showAllFilter: boolean;
-	generatedDesignsFilter: string | null;
+	generatedDesignsFilter?: string;
 	sort?: ( a: Category, b: Category ) => number;
 }
 

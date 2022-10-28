@@ -134,7 +134,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	const categorizationOptions = getCategorizationOptions(
 		intent,
 		true,
-		generatedDesigns.length > 0 ? siteVertical?.title : null
+		generatedDesigns.length > 0 && siteVertical?.title
 	);
 
 	const categorization = useCategorization( staticDesigns, categorizationOptions );

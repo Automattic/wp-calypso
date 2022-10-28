@@ -26,7 +26,7 @@ const sortStoreToTop = makeSortCategoryToTop( CATEGORY_STORE );
 export function getCategorizationOptions(
 	intent: string,
 	showAllFilter: boolean,
-	generatedDesignsFilter: string
+	generatedDesignsFilter?: string
 ) {
 	const result = {
 		showAllFilter,
@@ -34,7 +34,7 @@ export function getCategorizationOptions(
 		defaultSelection: null,
 	} as {
 		showAllFilter: boolean;
-		generatedDesignsFilter: string | null;
+		generatedDesignsFilter?: string;
 		defaultSelection: string | null;
 		sort: ( a: Category, b: Category ) => 0 | 1 | -1;
 	};
