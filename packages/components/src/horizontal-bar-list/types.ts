@@ -43,8 +43,11 @@ export type StatsCardProps = {
 	children: React.ReactNode;
 	className?: string;
 	title: string;
-	showMore?: {
+	footerAction?: {
 		label?: string;
 		url?: string;
 	};
+	isEmpty?: boolean;
+	emptyMessage?: string;
+	titleURL: string;
 };
