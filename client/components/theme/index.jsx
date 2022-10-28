@@ -50,6 +50,7 @@ export class Theme extends Component {
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
 			price: PropTypes.any,
+			soft_launched: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -90,6 +91,7 @@ export class Theme extends Component {
 		isUpdating: PropTypes.bool,
 		isUpdated: PropTypes.bool,
 		errorOnUpdate: PropTypes.bool,
+		softLaunched: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -309,6 +311,22 @@ export class Theme extends Component {
 		);
 	}
 
+	softLaunchedBanner = () => {
+		const { translate } = this.props;
+
+		return (
+			<>
+				{ this.props.softLaunched && (
+					<div className="theme__info-soft-launched">
+						<div className="theme__info-soft-launched-banner">
+							{ translate( 'Available to A8C-only' ) }
+						</div>
+					</div>
+				) }
+			</>
+		);
+	};
+
 	render() {
 		const {
 			active,
@@ -408,8 +426,8 @@ export class Theme extends Component {
 		);
 
 		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
+		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
@@ -457,6 +475,8 @@ export class Theme extends Component {
 					>
 						<div className="theme__tooltip">{ themeDescription }</div>
 					</Tooltip>
+
+					{ this.softLaunchedBanner() }
 
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>

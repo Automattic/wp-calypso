@@ -3,6 +3,7 @@ import {
 	JETPACK_BOOST_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
+	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 
@@ -18,6 +19,7 @@ const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...setWPORGPluginSlug( JETPACK_BOOST_PRODUCTS, 'jetpack-boost' ),
 	...setWPORGPluginSlug( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
 	...setWPORGPluginSlug( JETPACK_SEARCH_PRODUCTS, 'jetpack-search' ),
+	...setWPORGPluginSlug( JETPACK_VIDEOPRESS_PRODUCTS, 'jetpack-videopress' ),
 	// ...setWPORGPluginSlug( JETPACK_SCAN_PRODUCTS, 'jetpack-protect' ),
 };
 

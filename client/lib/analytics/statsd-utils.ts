@@ -1,21 +1,31 @@
 import config from '@automattic/calypso-config';
 import superagent from 'superagent';
 
-interface CountingBeacon {
+const IS_SERVER = typeof document === 'undefined';
+
+interface BeaconBase {
 	name: string;
+	isLegacy?: boolean;
+}
+
+interface CountingBeacon extends BeaconBase {
 	value?: number;
 	type: 'counting';
 }
 
-interface TimingBeacon {
-	name: string;
+interface TimingBeacon extends BeaconBase {
 	value: number;
 	type: 'timing';
 }
 
 export type BeaconData = CountingBeacon | TimingBeacon;
 
-function createBeacon( calypsoSection: string, { name, value, type }: BeaconData ) {
+/**
+ * Turns a beacon object into a string to send to boom.gif. The ultimate beacon
+ * has a format with hierarchy encoded. An example result is:
+ * "calypso.development.server.themes.$event:$value|$type"
+ */
+function createBeacon( calypsoSection: string, { name, value, type, isLegacy }: BeaconData ) {
 	const event = name.replace( '-', '_' );
 
 	// A counting event defaults to incrementing by one.
@@ -23,7 +33,13 @@ function createBeacon( calypsoSection: string, { name, value, type }: BeaconData
 		value ??= 1;
 	}
 
-	return `calypso.${ config( 'boom_analytics_key' ) }.${ calypsoSection }.${ event }:${ value }|${
+	// There is an old response time event we don't want to change, unfortunately...
+	// Otherwise, we want to encode "server" or "client" in the event.
+	const hierarchyString = isLegacy ? '' : `.${ IS_SERVER ? 'server' : 'client' }`;
+
+	return `calypso.${ config(
+		'boom_analytics_key'
+	) }${ hierarchyString }.${ calypsoSection }.${ event }:${ value }|${
 		type === 'timing' ? 'ms' : 'c'
 	}`;
 }
@@ -49,13 +65,14 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] | 
 /**
  * Logs server events to statsd. Uses superagent for server-side network requests
  * and can disable statsd events with the server_side_boom_analytics_enabled
- * config flag.
+ * config flag. Does nothing if called on the client.
  *
  * @param calypsoSection The Calypso section the event occurred under.
  * @param events List of events to send to the server.
  */
 export function logServerEvent( calypsoSection: string, events: BeaconData[] | BeaconData ) {
-	if ( config( 'server_side_boom_analytics_enabled' ) ) {
+	calypsoSection ??= 'unknown';
+	if ( typeof window === 'undefined' && config( 'server_side_boom_analytics_enabled' ) ) {
 		superagent.get( createStatsdURL( calypsoSection, events ) ).end();
 	}
 }
