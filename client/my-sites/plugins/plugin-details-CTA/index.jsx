@@ -168,7 +168,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return <PluginDetailsCTAPlaceholder />;
 	}
 
-	if ( isPluginInstalledOnsiteWithSubscription && sitePlugin ) {
+	if ( isPluginInstalledOnsite && sitePlugin ) {
 		// Check if already instlaled on the site
 		const activeText = translate( '{{span}}active{{/span}}', {
 			components: {
