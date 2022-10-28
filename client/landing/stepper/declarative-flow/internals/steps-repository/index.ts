@@ -45,6 +45,7 @@ export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as senseiSetup } from './sensei-setup';
+export { default as senseiDomain } from './sensei-domain';
 export { default as senseiPlan } from './sensei-plan';
 
 export type StepPath =
@@ -93,6 +94,7 @@ export type StepPath =
 	| 'subscribers'
 	| 'senseiSetup'
 	| 'senseiPlan'
+	| 'senseiDomain'
 	| 'getCurrentThemeSoftwareSets'
 	| 'chooseAPlan'
 	| 'videomakerSetup';

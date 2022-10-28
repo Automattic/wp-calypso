@@ -17,7 +17,7 @@ export const sensei: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_sensei', { flow: this.name } );
 		}, [] );
 
-		return [ 'senseiSetup', 'chooseADomain', 'senseiPlan', 'launchpad' ] as StepPath[];
+		return [ 'senseiSetup', 'senseiDomain', 'senseiPlan', 'launchpad' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
@@ -33,8 +33,8 @@ export const sensei: Flow = {
 		const goNext = () => {
 			switch ( _currentStep ) {
 				case 'senseiSetup':
-					return navigate( 'chooseADomain' );
-				case 'chooseADomain':
+					return navigate( 'senseiDomain' );
+				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
 				case 'senseiPlan':
 					return navigate( 'launchpad' );

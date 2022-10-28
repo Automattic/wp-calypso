@@ -93,6 +93,47 @@ export function* createVideoPressSite( {
 	return success;
 }
 
+export function* createSenseiSite( {
+	username = '',
+	languageSlug = '',
+	visibility = Visibility.PublicNotIndexed,
+} ) {
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
+
+	const siteUrl = domain?.domain_name || siteTitle || username;
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const defaultTheme = 'twentytwentytwo';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+
+	const success: NewSiteBlogDetails | undefined = yield dispatch( SITE_STORE, 'createSite', {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: blogTitle,
+		public: visibility,
+		options: {
+			site_information: {
+				title: blogTitle,
+			},
+			lang_id: lang_id,
+			site_creation_flow: 'sensei',
+			enable_fse: true,
+			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
+			timezone_string: guessTimezone(),
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
+			use_patterns: true,
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+		},
+	} );
+
+	return success;
+}
+
 export function* createSite( {
 	username,
 	languageSlug,

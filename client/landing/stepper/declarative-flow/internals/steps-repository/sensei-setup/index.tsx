@@ -1,5 +1,5 @@
 import { StepContainer, SENSEI_FLOW, SenseiStepContent } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -10,7 +10,10 @@ import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/ty
 const SenseiSetupStep: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 
-	const [ siteTitle, setSiteTitle ] = useState< string >( '' );
+	const initialSiteTitle = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedSiteTitle()
+	);
+	const [ siteTitle, setSiteTitle ] = useState< string >( initialSiteTitle );
 
 	const { submit } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
@@ -26,6 +29,9 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 			stepName="senseiSetup"
 			flowName={ SENSEI_FLOW }
 			isWideLayout
+			hideFormattedHeader
+			recordTracksEvent={ recordTracksEvent }
+			shouldHideNavButtons
 			stepContent={
 				<SenseiStepContent>
 					<Title>{ __( 'Set up your course site' ) }</Title>
@@ -37,15 +43,13 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 							setSiteTitle( ev.target.value );
 						} }
 						placeholder={ __( 'My Site Name' ) }
+						value={ siteTitle }
 					/>
 					<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
 						{ __( 'Continue' ) }
 					</Button>
 				</SenseiStepContent>
 			}
-			hideFormattedHeader
-			recordTracksEvent={ recordTracksEvent }
-			shouldHideNavButtons
 		/>
 	);
 };
