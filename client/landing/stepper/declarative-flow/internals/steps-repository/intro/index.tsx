@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import cx from 'classnames';
@@ -22,6 +22,15 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					{ br: <br /> }
 				),
 				buttonText: __( 'Get started' ),
+			};
+		}
+
+		if ( flowName === ECOMMERCE_FLOW ) {
+			return {
+				title: createInterpolateElement( __( 'Set up your online store<br />in minutes' ), {
+					br: <br />,
+				} ),
+				buttonText: __( 'Create your store' ),
 			};
 		}
 
