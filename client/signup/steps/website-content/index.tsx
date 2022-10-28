@@ -84,19 +84,14 @@ function WebsiteContentStep( {
 	const translatedPageTitles = useTranslatedPageTitles();
 
 	useEffect( () => {
-		if ( websiteContent.pages.length > 0 ) {
-			// Already initialized.
-			return;
-		}
-
-		if ( pageTitles && pageTitles.length > 0 ) {
+		if ( siteId && pageTitles && pageTitles.length > 0 ) {
 			const pages = pageTitles.map( ( pageTitle ) => ( {
 				id: pageTitle,
 				name: translatedPageTitles[ pageTitle ],
 			} ) );
-			dispatch( initializePages( pages ) );
+			dispatch( initializePages( pages, siteId ) );
 		}
-	}, [ dispatch, pageTitles, translatedPageTitles, websiteContent.pages.length ] );
+	}, [ dispatch, pageTitles, siteId, translatedPageTitles ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
