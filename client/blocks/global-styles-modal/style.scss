@@ -28,6 +28,7 @@
 	.global-styles-modal__text,
 	.global-styles-modal__image {
 		width: 100%;
+		box-sizing: border-box;
 
 		@include break-small {
 			width: auto;
@@ -36,19 +37,27 @@
 	}
 
 	.global-styles-modal__text {
-		padding: 64px 48px;
+		padding: 48px;
 		display: flex;
 		flex-direction: column;
-		box-sizing: border-box;
+
+		@include break-small {
+			padding: 64px 48px;
+		}
 	}
 
 	.global-styles-modal__heading {
 		margin-top: 0;
 		font-family: $brand-serif;
 		font-weight: 400;
-		font-size: 2rem;
-		line-height: 40px;
+		font-size: 1.75rem;
+		line-height: 32px;
 		margin-bottom: 16px;
+
+		@include break-small {
+			font-size: 2rem;
+			line-height: 40px;
+		}
 	}
 
 	.global-styles-modal__description {
@@ -72,9 +81,15 @@
 
 	.global-styles-modal__image {
 		background-color: #d0cce3;
-		padding: 64px 0 64px 64px;
+		padding: 48px 0 48px 48px;
 		display: flex;
 		justify-content: flex-end;
+		max-height: 50vh;
+
+		@include break-small {
+			padding: 64px 0 64px 64px;
+			max-height: none;
+		}
 
 		img {
 			width: 100%;
