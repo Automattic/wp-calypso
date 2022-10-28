@@ -49,8 +49,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( '/' + path )
-			: generatePath( '/' + path + search );
+			? generatePath( `/${ flow.name }/${ path }` )
+			: generatePath( `/${ flow.name }/${ path }${ search }` );
 
 		history.push( _path, stepPaths );
 	} );
