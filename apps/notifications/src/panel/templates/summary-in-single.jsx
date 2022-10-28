@@ -14,9 +14,7 @@ const Snippet = ( { note, snippet, url } ) => (
 class UserHeader extends Component {
 	render() {
 		const grav = this.props.user.media[ 0 ];
-		const grav_tag = (
-			<img src={ grav.url } height={ grav.height } width={ grav.width } alt="gravatar" />
-		);
+		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } alt="" />;
 		const home_url = this.props.user.ranges[ 0 ].url;
 		const note = this.props.note;
 
@@ -42,7 +40,7 @@ class UserHeader extends Component {
 			usercopy.text = this.props.user.text;
 			return (
 				<div className="wpnc__user wpnc__header">
-					<img src={ grav.url } alt="gravatar" />
+					<img src={ grav.url } alt="" />
 					<div
 						className="wpnc__user__usertitle"
 						// eslint-disable-next-line react/no-danger
@@ -71,9 +69,7 @@ class UserHeader extends Component {
 class WritingPromptHeader extends Component {
 	render() {
 		const icon = this.props.site.media[ 0 ];
-		const img_tag = (
-			<img src={ icon.url } height={ icon.height } width={ icon.width } alt="prompt-icon" />
-		);
+		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
 		const settings_url =
 			'/me/notifications#' + home_url?.replace( 'https://', '' ).replace( 'http://', '' );

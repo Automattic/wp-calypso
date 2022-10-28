@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,8 +15,6 @@ import TrashButton from './button-trash';
 import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
-
-/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 const getInitialReplyValue = ( note, translate ) => {
 	let ranges;
