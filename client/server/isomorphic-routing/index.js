@@ -26,7 +26,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				);
 				next();
 			},
-			setUpRoute, // Here?
+			setUpRoute,
 			combineMiddlewares(
 				setSectionMiddleware( section ),
 				setRouteMiddleware,
@@ -34,7 +34,7 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 				...middlewares
 			),
 			// Regular serverRender when there are no errors.
-			serverRender, // And here?
+			serverRender,
 
 			// Capture the error. This assumes that any of the previous middlewares
 			// have changed req.context to include info about the error, and serverRender
