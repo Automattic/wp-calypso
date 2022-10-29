@@ -6,6 +6,7 @@ describe( 'performanceMark', () => {
 	} );
 
 	it( 'does nothing if the context has not been created', () => {
+		//
 		const req = {};
 		performanceMark( req.context, 'test-marker' );
 		expect( Object.keys( req ).length ).toBe( 0 );
@@ -163,8 +164,8 @@ describe( 'finalizePerfMarks', () => {
 		// The by-ref update still works:
 		expect( req.context.performanceMarks[ 0 ].duration ).toBe( 55 );
 		expect( req.context.performanceMarks[ 0 ].steps[ 0 ].duration ).toBe( 55 );
-		expect( finalMarks[ '0_test' ].total_duration ).toBe( 55 );
-		expect( finalMarks[ '0_test' ][ '0_test_child' ] ).toBe( 55 );
+		expect( finalMarks.test.total_duration ).toBe( 55 );
+		expect( finalMarks.test.test_child ).toBe( 55 );
 	} );
 
 	it( 'returns a array normalized to an object for logstash', () => {
