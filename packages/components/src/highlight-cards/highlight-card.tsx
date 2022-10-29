@@ -18,6 +18,14 @@ function percent( part: number | null, whole: number | null ) {
 	return part === null || whole === null ? null : Math.round( ( part / whole ) * 100 );
 }
 
+const FORMATTER = new Intl.NumberFormat( 'en-GB', {
+	notation: 'compact',
+	compactDisplay: 'short',
+} );
+function formatNumber( number: number | null ) {
+	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
+}
+
 export default function HighlightCard( {
 	count,
 	previousCount,
@@ -33,7 +41,12 @@ export default function HighlightCard( {
 			<div className="highlight-card-icon">{ icon }</div>
 			<div className="highlight-card-heading">{ heading }</div>
 			<div className="highlight-card-count">
-				{ Number.isFinite( count ) ? count : '-' }{ ' ' }
+				<span
+					className="highlight-card-count-value"
+					title={ Number.isFinite( count ) ? String( count ) : undefined }
+				>
+					{ formatNumber( count ) }
+				</span>{ ' ' }
 				{ difference !== null ? (
 					<span
 						className={ classNames( 'highlight-card-difference', {
