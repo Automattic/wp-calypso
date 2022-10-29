@@ -192,9 +192,11 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ! isJetpack && ! isWooMobile && shouldShowVariantSelector && ! isEditingTerm && (
-					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
-				) }
+				{ ! isJetpack &&
+					! isWooMobile &&
+					areThereVariants &&
+					shouldShowVariantSelector &&
+					! isEditingTerm && <TermVariantEditButton onClick={ () => setEditingTerm( true ) } /> }
 				{ areThereVariants && shouldShowVariantSelector && ( isJetpack || isEditingTerm ) && (
 					<ItemVariationPicker
 						selectedItem={ product }
