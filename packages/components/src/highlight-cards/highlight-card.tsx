@@ -54,10 +54,19 @@ export default function HighlightCard( {
 							'highlight-card-difference--negative': difference > 0,
 						} ) }
 					>
-						{ difference < 0 && <Icon icon={ trendingDown } /> }
-						{ difference > 0 && <Icon icon={ trendingUp } /> }
-						{ Math.abs( difference ) }
-						{ percentage !== null && <> ({ percentage }%)</> }
+						<span className="highlight-card-difference-icon" title={ String( difference ) }>
+							{ difference < 0 && <Icon icon={ trendingDown } /> }
+							{ difference > 0 && <Icon icon={ trendingUp } /> }
+						</span>
+						<span className="highlight-card-difference-absolute-value">
+							{ Math.abs( difference ) }
+						</span>
+						{ percentage !== null && (
+							<span className="highlight-card-difference-absolute-percentage">
+								{ ' ' }
+								({ percentage }%)
+							</span>
+						) }
 					</span>
 				) : null }
 			</div>

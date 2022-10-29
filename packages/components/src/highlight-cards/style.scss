@@ -1,3 +1,4 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "../styles/typography";
 
 $header-font: Recoleta, sans-serif;
@@ -26,6 +27,7 @@ $header-font: Recoleta, sans-serif;
 		border-color: var(--studio-gray-5);
 		border-radius: 4px;
 		width: 100%;
+		min-width: 200px; // Minimum mobile width
 
 		margin-right: 24px;
 		&:last-child {
@@ -63,5 +65,30 @@ $header-font: Recoleta, sans-serif;
 	&.highlight-card-difference--negative {
 		color: var(--studio-green-50);
 		fill: var(--studio-green-50);
+	}
+}
+.highlight-card-difference-icon {
+	display: flex;
+	align-content: flex-end;
+}
+
+@media ( max-width: $break-small ) {
+	.highlight-cards {
+		overflow-y: auto;
+	}
+
+	.card.highlight-card {
+		padding: 16px 24px;
+	}
+
+	.highlight-cards-heading {
+		display: flex;
+		flex-flow: column;
+	}
+
+	.highlight-card-icon,
+	.highlight-card-difference-absolute-value,
+	.highlight-card-difference-absolute-percentage {
+		display: none;
 	}
 }
