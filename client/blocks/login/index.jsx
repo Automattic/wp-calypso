@@ -50,7 +50,7 @@ class Login extends Component {
 		disableAutoFocus: PropTypes.bool,
 		isLinking: PropTypes.bool,
 		isJetpack: PropTypes.bool.isRequired,
-		isGutenboarding: PropTypes.bool.isRequired,
+		isWhiteLogin: PropTypes.bool.isRequired,
 		isJetpackWooCommerceFlow: PropTypes.bool.isRequired,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
@@ -83,7 +83,7 @@ class Login extends Component {
 
 	static defaultProps = {
 		isJetpack: false,
-		isGutenboarding: false,
+		isWhiteLogin: false,
 		isJetpackWooCommerceFlow: false,
 	};
 
@@ -163,7 +163,7 @@ class Login extends Component {
 			page(
 				login( {
 					isJetpack: this.props.isJetpack,
-					isGutenboarding: this.props.isGutenboarding,
+					isWhiteLogin: this.props.isWhiteLogin,
 					// If no notification is sent, the user is using the authenticator for 2FA by default
 					twoFactorAuthType: authType,
 					locale: this.props.locale,
@@ -220,16 +220,8 @@ class Login extends Component {
 	};
 
 	getSignupUrl = () => {
-		const {
-			currentRoute,
-			oauth2Client,
-			currentQuery,
-			pathname,
-			locale,
-			isGutenboarding,
-			signupUrl,
-			isWoo,
-		} = this.props;
+		const { currentRoute, oauth2Client, currentQuery, pathname, locale, signupUrl, isWoo } =
+			this.props;
 
 		if ( signupUrl ) {
 			return signupUrl;
@@ -240,20 +232,13 @@ class Login extends Component {
 			return 'https://woocommerce.com/start/';
 		}
 
-		return getSignupUrl(
-			currentQuery,
-			currentRoute,
-			oauth2Client,
-			locale,
-			pathname,
-			isGutenboarding
-		);
+		return getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 	};
 
 	renderHeader() {
 		const {
 			isJetpack,
-			isGutenboarding,
+			isWhiteLogin,
 			isJetpackWooCommerceFlow,
 			isP2Login,
 			wccomFrom,
@@ -450,7 +435,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( isGutenboarding ) {
+		if ( isWhiteLogin ) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
@@ -495,7 +480,7 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
-			isGutenboarding,
+			isWhiteLogin,
 			isP2Login,
 			privateSite,
 			twoFactorAuthType,
@@ -553,7 +538,7 @@ class Login extends Component {
 						require="calypso/blocks/login/two-factor-authentication/two-factor-content"
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
-						isGutenboarding={ isGutenboarding }
+						isWhiteLogin={ isWhiteLogin }
 						isWoo={ isWoo }
 						isPartnerSignup={ isPartnerSignup }
 						twoFactorAuthType={ twoFactorAuthType }
@@ -608,7 +593,7 @@ class Login extends Component {
 							socialService={ socialService }
 							socialServiceResponse={ socialServiceResponse }
 							domain={ domain }
-							isGutenboarding={ isGutenboarding }
+							isWhiteLogin={ isWhiteLogin }
 							isP2Login={ isP2Login }
 							locale={ locale }
 							userEmail={ userEmail }
@@ -632,7 +617,7 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
-				isGutenboarding={ isGutenboarding }
+				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
 				locale={ locale }
 				userEmail={ userEmail }
@@ -647,7 +632,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isGutenboarding } = this.props;
+		const { isJetpack, oauth2Client, locale, isWhiteLogin } = this.props;
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -657,7 +642,7 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice locale={ locale } isGutenboarding={ isGutenboarding } />
+				<ErrorNotice locale={ locale } isWhiteLogin={ isWhiteLogin } />
 
 				{ this.renderNotice() }
 

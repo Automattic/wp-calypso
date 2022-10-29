@@ -76,7 +76,7 @@ export class LoginForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		userEmail: PropTypes.string,
-		isGutenboarding: PropTypes.bool,
+		isWhiteLogin: PropTypes.bool,
 		isPartnerSignup: PropTypes.bool,
 		locale: PropTypes.string,
 		showSocialLoginFormOnly: PropTypes.bool,
@@ -544,7 +544,6 @@ export class LoginForm extends Component {
 			requestError,
 			socialAccountIsLinking: linkingSocialUser,
 			isJetpackWooCommerceFlow,
-			isGutenboarding,
 			isP2Login,
 			isJetpackWooDnaFlow,
 			wccomFrom,
@@ -561,7 +560,7 @@ export class LoginForm extends Component {
 
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
-			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname, isGutenboarding );
+			: getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, pathname );
 
 		const socialToS = this.props.translate(
 			// To make any changes to this copy please speak to the legal team
