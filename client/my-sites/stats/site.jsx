@@ -226,78 +226,78 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ isNewFeatured ? (
-					<>
-						<div className="stats__period-header">
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-							>
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-								/>
-							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-						</div>
-
-						<ChartTabs
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ [] }
-							availableLegend={ this.getAvailableLegend() }
-							onChangeLegend={ this.onChangeLegend }
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ CHARTS }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.props.chartTab }
-						/>
-
-						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-					</>
-				) : (
-					<>
-						{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
-						{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
-
-						<ChartTabs
-							activeTab={ getActiveTab( this.props.chartTab ) }
-							activeLegend={ this.state.activeLegend }
-							availableLegend={ this.getAvailableLegend() }
-							onChangeLegend={ this.onChangeLegend }
-							barClick={ this.barClick }
-							switchTab={ this.switchChart }
-							charts={ CHARTS }
-							queryDate={ queryDate }
-							period={ this.props.period }
-							chartTab={ this.props.chartTab }
-						/>
-
-						<StickyPanel className="stats__sticky-navigation">
-							<StatsPeriodNavigation
-								date={ date }
-								period={ period }
-								url={ `/stats/${ period }/${ slug }` }
-							>
-								<DatePicker
-									period={ period }
-									date={ date }
-									query={ query }
-									statsType="statsTopPosts"
-									showQueryDate
-								/>
-							</StatsPeriodNavigation>
-						</StickyPanel>
-					</>
-				) }
-
 				<div id="my-stats-content">
+					{ isNewFeatured ? (
+						<>
+							<div className="stats__period-header">
+								<StatsPeriodNavigation
+									date={ date }
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+								>
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+									/>
+								</StatsPeriodNavigation>
+								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
+							</div>
+
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ [] }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+							/>
+
+							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
+							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+						</>
+					) : (
+						<>
+							{ isSitePrivate ? this.renderPrivateSiteBanner( siteId, slug ) : null }
+							{ ! isSitePrivate && <StatsNoContentBanner siteId={ siteId } siteSlug={ slug } /> }
+
+							<ChartTabs
+								activeTab={ getActiveTab( this.props.chartTab ) }
+								activeLegend={ this.state.activeLegend }
+								availableLegend={ this.getAvailableLegend() }
+								onChangeLegend={ this.onChangeLegend }
+								barClick={ this.barClick }
+								switchTab={ this.switchChart }
+								charts={ CHARTS }
+								queryDate={ queryDate }
+								period={ this.props.period }
+								chartTab={ this.props.chartTab }
+							/>
+
+							<StickyPanel className="stats__sticky-navigation">
+								<StatsPeriodNavigation
+									date={ date }
+									period={ period }
+									url={ `/stats/${ period }/${ slug }` }
+								>
+									<DatePicker
+										period={ period }
+										date={ date }
+										query={ query }
+										statsType="statsTopPosts"
+										showQueryDate
+									/>
+								</StatsPeriodNavigation>
+							</StickyPanel>
+						</>
+					) }
+
 					<div className="stats__module-list is-events">
 						<div className="stats__module-column">
 							<StatsModule
