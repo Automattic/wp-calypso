@@ -1,4 +1,5 @@
 import getRawSite from 'calypso/state/selectors/get-raw-site';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { AppState, SiteId } from 'calypso/types';
 
 /**
@@ -12,7 +13,7 @@ import type { AppState, SiteId } from 'calypso/types';
 export default function getDIFMLiteSitePageTitles(
 	state: AppState,
 	siteId: SiteId | null
-): string[] | null {
+): PageId[] | null {
 	if ( ! siteId ) {
 		return null;
 	}
@@ -22,5 +23,6 @@ export default function getDIFMLiteSitePageTitles(
 		return null;
 	}
 
-	return site.options?.difm_lite_site_options?.selected_page_titles ?? null;
+	const pageIds = site.options?.difm_lite_site_options?.selected_page_titles as PageId[];
+	return pageIds ?? null;
 }

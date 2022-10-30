@@ -52,7 +52,7 @@ export function useCountriesAndStates() {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const countryOptions = <{ [ key: string ]: object }>{};
+		const countryOptions = <{ [ key: string ]: Option }>{};
 		const stateOptions = <{ [ key: string ]: Array< object > }>{};
 
 		Object.entries( countriesList ?? [] ).map( ( [ key, value ] ) => {
@@ -102,6 +102,17 @@ export function useCountriesAndStates() {
 			value: '',
 			label: translate( '- Select Country -' ),
 			isLabel: false,
+		} );
+
+		// Alphabetizes country list after translated.
+		countries.sort( ( { label: countryA }, { label: countryB } ) => {
+			if ( countryA < countryB ) {
+				return -1;
+			}
+			if ( countryA > countryB ) {
+				return 1;
+			}
+			return 0;
 		} );
 
 		return {

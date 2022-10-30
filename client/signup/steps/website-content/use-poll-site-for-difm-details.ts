@@ -7,6 +7,7 @@ import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progre
 import isDIFMLiteWebsiteContentSubmitted from 'calypso/state/selectors/is-difm-lite-website-content-submitted';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isRequestingSite } from 'calypso/state/sites/selectors';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { SiteId } from 'calypso/types';
 
 /**
@@ -36,7 +37,7 @@ export function usePollSiteForDIFMDetails(
 	maxTries = 10
 ): {
 	isPollingInProgress: boolean;
-	pageTitles: string[] | null;
+	pageTitles: PageId[] | null;
 	hasValidPurchase: boolean;
 } {
 	const [ retryCount, setRetryCount ] = useState( 0 );
