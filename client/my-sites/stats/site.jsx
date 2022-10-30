@@ -202,7 +202,7 @@ class StatsSite extends Component {
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
 		return (
-			<div className={ isNewFeatured && 'new-main-chart' }>
+			<div className={ isNewFeatured ? 'stats--new-main-chart' : undefined }>
 				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				<FormattedHeader
 					brandFont

@@ -51,7 +51,7 @@ class StatsTabs extends Component {
 					tabClick: switchTab,
 					value: hasData ? activeData[ tab.attr ] : null,
 					format: tab.format,
-					iconSize: iconSize,
+					iconSize,
 				};
 
 				return <StatTab key={ tabOptions.attr } { ...tabOptions } />;

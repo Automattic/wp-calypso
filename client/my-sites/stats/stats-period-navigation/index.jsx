@@ -71,7 +71,7 @@ class StatsPeriodNavigation extends PureComponent {
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
 		return isNewFeatured ? (
-			<div className="stats-period-navigation is-new-featured">
+			<div className="stats-period-navigation stats-period-navigation--new-main-chart">
 				<div className="stats-period-navigation__children">{ children }</div>
 				<a
 					className={ classNames( 'stats-period-navigation__previous', {

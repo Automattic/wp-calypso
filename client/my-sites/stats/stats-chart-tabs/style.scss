@@ -232,7 +232,7 @@ ul.module-tabs {
 }
 
 // For feature `stats/new-main-chart`
-.is-new-featured {
+.chart-tabs--new-main-chart {
 	background-color: var(--studio-white);
 
 	// Main Chart
@@ -269,7 +269,6 @@ ul.module-tabs {
 		}
 
 		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
-			// font-size: $font-body-small;
 			font-weight: 400;
 			line-height: 24px;
 			color: var(--color-neutral-40);
