@@ -127,7 +127,6 @@ module.exports = {
 			} ),
 	].filter( Boolean ),
 	devServer: {
-		host: 'calypso.localhost',
 		port: 3000,
 		historyApiFallback: {
 			index: '/index.html',

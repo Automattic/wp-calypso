@@ -27,7 +27,7 @@ export async function jetpack_site_xhr_wrapper( params, callback ) {
 			'X-WP-Nonce': config( 'nonce' ),
 		},
 		isRestAPI: false,
-		apiNamespace: 'wp-json/jetpack/v4/stats-app',
+		apiNamespace: 'jetpack/v4/stats-app',
 	};
 
 	return xhr( params, async function ( error, response, headers ) {

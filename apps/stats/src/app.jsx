@@ -11,7 +11,6 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 // import StatsSummary from 'calypso/my-sites/stats/index';
 import { rawCurrentUserFetch, filterUserObject } from 'calypso/lib/user/shared-utils';
-// import StatsOverview from 'calypso/my-sites/stats/overview.jsx';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -115,7 +114,7 @@ async function AppBoot() {
 
 	setupContextMiddleware( store, queryClient );
 
-	registerStatsPages();
+	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
 
 	ReactDom.render(
 		<QueryClientProvider client={ queryClient }>
@@ -124,6 +123,6 @@ async function AppBoot() {
 		document.getElementById( 'wpcom' )
 	);
 
-	page();
+	page( '#!/stats/insights/193141071' );
 }
 AppBoot();

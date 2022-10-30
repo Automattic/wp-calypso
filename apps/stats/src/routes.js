@@ -20,8 +20,8 @@ import 'calypso/my-sites/stats/style.scss';
 
 const siteSelection = ( context, next ) =>
 	context.store
-		.dispatch( requestSite( 189825737 ) )
-		.then( () => context.store.dispatch( setSelectedSiteId( 189825737 ) ) )
+		.dispatch( requestSite( 193141071 ) )
+		.then( () => context.store.dispatch( setSelectedSiteId( 193141071 ) ) )
 		.then( () => next( context, next ) );
 
 const statsPage = ( url, controller ) => {
@@ -44,9 +44,11 @@ export default function () {
 		'annualstats',
 	].join( '|' );
 
+	page.base( '/wp-admin/wp-admin.php?page=jetpack-stats-app' );
+
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
-	// page( '/', '/stats/day' );
+	page( '/', '/stats/day' );
 
 	// Stat Overview Page
 	statsPage( `/stats/:period(${ validPeriods })`, overview );
@@ -82,4 +84,6 @@ export default function () {
 
 	// Anything else should redirect to default stats page
 	statsPage( '/stats/(.*)', redirectToDefaultSitePage );
+
+	page( { hashbang: true } );
 }
