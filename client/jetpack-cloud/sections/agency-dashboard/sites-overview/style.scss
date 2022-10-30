@@ -59,7 +59,8 @@
 	color: var(--studio-gray-60);
 	margin-bottom: 8px;
 }
-.sites-overview__status-add-new {
+.sites-overview__status-select-license,
+.sites-overview__status-unselect-license, {
 	display: inline-flex;
 	flex-direction: row;
 	justify-content: center;
@@ -75,6 +76,7 @@
 	color: var(--studio-gray-80);
 	border: 1px solid var(--studio-gray-5);
 	padding: 2px 11px;
+	cursor: pointer;
 	span {
 		margin: 0 0.2em;
 	}
@@ -85,6 +87,11 @@
 		background: var(--studio-gray-80);
 		color: var(--studio-white);
 	}
+}
+.sites-overview__status-unselect-license {
+	background: var(--studio-jetpack-green-50);
+	color: var(--studio-white);
+	border: none;
 }
 .sites-overview__grey-icon {
 	vertical-align: middle;

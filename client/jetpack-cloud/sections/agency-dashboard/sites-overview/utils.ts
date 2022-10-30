@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
@@ -227,7 +227,9 @@ const getLinks = (
 	switch ( type ) {
 		case 'backup': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
+				if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
+					link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-backup-t2&source=dashboard`;
+				}
 			} else {
 				link = `/backup/${ siteUrlWithMultiSiteSupport }`;
 			}
@@ -235,7 +237,9 @@ const getLinks = (
 		}
 		case 'scan': {
 			if ( status === 'inactive' ) {
-				link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
+				if ( ! isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
+					link = `/partner-portal/issue-license/?site_id=${ siteId }&product_slug=jetpack-scan&source=dashboard`;
+				}
 			} else {
 				link = `/scan/${ siteUrlWithMultiSiteSupport }`;
 			}
