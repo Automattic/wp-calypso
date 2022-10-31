@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { FEATURE_NO_ADS } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_NO_ADVERTS } from '@automattic/calypso-products';
 import i18n, { localize } from 'i18n-calypso';
 import { find } from 'lodash';
 import PropTypes from 'prop-types';
@@ -158,7 +158,7 @@ export const Sharing = ( {
 			{ ! isVip && ! isJetpack && shouldShowNudge && (
 				<UpsellNudge
 					event="sharing_no_ads"
-					feature={ FEATURE_NO_ADS }
+					feature={ WPCOM_FEATURES_NO_ADVERTS }
 					description={ translate( 'Prevent ads from showing on your site.' ) }
 					title={ translate( 'No ads with WordPress.com Premium' ) }
 					tracksImpressionName="calypso_upgrade_nudge_impression"
