@@ -47,8 +47,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 	const isDesktop = useDesktopBreakpoint();
 	const stepName = 'plans';
-	const disableBloggerPlanWithNonBlogDomain = undefined;
-	const isLaunchPage = undefined;
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
@@ -132,13 +130,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 								site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 								hideFreePlan={ hideFreePlan }
 								isInSignup={ true }
-								isLaunchPage={ isLaunchPage }
 								intervalType={ getIntervalType() }
 								onUpgradeClick={ onSelectPlan }
 								showFAQ={ false }
 								domainName={ getDomainName() }
 								customerType={ customerType }
-								disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 								plansWithScroll={ isDesktop }
 								planTypes={ planTypes }
 								flowName={ flowName }
