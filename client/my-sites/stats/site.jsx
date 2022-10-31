@@ -302,11 +302,11 @@ class StatsSite extends Component {
 						<div className="stats__module-column">
 							{ config.isEnabled( 'newsletter/stats' ) && (
 								<StatsModule
-									path="emailsOpen"
-									moduleStrings={ moduleStrings.emailsOpenStats }
+									path="emailOpens"
+									moduleStrings={ moduleStrings.emailOpensStats }
 									period={ this.props.period }
 									query={ query }
-									statType="statsEmailsOpen"
+									statType="statsEmailOpens"
 								/>
 							) }
 							<StatsModule

@@ -948,20 +948,20 @@ export const normalizers = {
 	},
 
 	/**
-	 * Returns a normalized statsEmailsOpen array, ready for use in stats-module
+	 * Returns a normalized statsEmailOpens array, ready for use in stats-module
 	 *
 	 * @param   {object} data   Stats data
 	 * @param   {object} query  Stats query
 	 * @returns {Array}       Normalized stats data
 	 */
-	statsEmailsOpen( data, query = {} ) {
+	statsEmailOpens( data, query = {} ) {
 		if ( ! data || ! query.period || ! query.date ) {
 			return [];
 		}
 		const { startOf } = rangeOfPeriod( query.period, query.date );
-		const emailsData = get( data, [ 'days', startOf, 'email_opens' ], [] );
+		const emailOpensData = get( data, [ 'days', startOf, 'email_opens' ], [] );
 
-		return emailsData.map( ( { id, href, date, title, type, opens } ) => {
+		return emailOpensData.map( ( { id, href, date, title, type, opens } ) => {
 			const record = {
 				id,
 				href,
