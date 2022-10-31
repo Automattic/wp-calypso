@@ -128,6 +128,7 @@ export default function getThankYouPageUrl( {
 	domains,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
+	debugger;
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
