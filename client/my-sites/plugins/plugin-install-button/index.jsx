@@ -12,9 +12,14 @@ import { connect } from 'react-redux';
 import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
 import ExternalLink from 'calypso/components/external-link';
 import InfoPopover from 'calypso/components/info-popover';
-import { marketplacePlanToAdd, getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
+import {
+	marketplacePlanToAdd,
+	getProductSlugByPeriodVariation,
+	getSaasRedirectUrl,
+} from 'calypso/lib/plugins/utils';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { installPlugin } from 'calypso/state/plugins/installed/actions';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
@@ -169,6 +174,8 @@ export class PluginInstallButton extends Component {
 		const {
 			translate,
 			selectedSite,
+			siteId,
+			userId,
 			plugin,
 			billingPeriod,
 			canInstallPurchasedPlugins,
@@ -177,6 +184,18 @@ export class PluginInstallButton extends Component {
 		const variationPeriod = getPeriodVariationValue( billingPeriod );
 		const variation = plugin?.variations?.[ variationPeriod ];
 		const product_slug = getProductSlugByPeriodVariation( variation, productsList );
+
+		if ( plugin.isSaasProduct ) {
+			const saasRedirectUrl = getSaasRedirectUrl( plugin, userId, siteId );
+			return (
+				<span className="plugin-install-button__install embed">
+					<Button href={ saasRedirectUrl }>
+						{ translate( 'Get started' ) }
+						<Gridicon icon="external" size={ 18 } />
+					</Button>
+				</span>
+			);
+		}
 
 		const buttonLink = canInstallPurchasedPlugins
 			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
@@ -318,6 +337,7 @@ export default connect(
 
 		return {
 			siteId,
+			userId: getCurrentUserId( state ),
 			siteIsConnected: getSiteConnectionStatus( state, siteId ),
 			siteIsWpcomAtomic: isSiteWpcomAtomic( state, siteId ),
 			canInstallPurchasedPlugins: siteHasFeature(

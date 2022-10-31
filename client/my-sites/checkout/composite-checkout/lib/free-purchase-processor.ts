@@ -1,7 +1,9 @@
 import { makeSuccessResponse, makeErrorResponse } from '@automattic/composite-checkout';
+import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { recordTransactionBeginAnalytics } from './analytics';
 import getDomainDetails from './get-domain-details';
+import getPostalCode from './get-postal-code';
 import submitWpcomTransaction from './submit-wpcom-transaction';
 import {
 	createTransactionEndpointRequestPayload,
@@ -33,6 +35,19 @@ export default async function freePurchaseProcessor(
 
 	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'free-purchase' } ) );
 
+	const taxData = doesPurchaseHaveFullCredits( responseCart )
+		? {
+				country: contactDetails?.countryCode?.value ?? '',
+				postalCode: getPostalCode( contactDetails ),
+				subdivisionCode: contactDetails?.state?.value,
+		  }
+		: {
+				// This data is intentionally empty so we do not charge taxes for free
+				// purchases that are not using credits.
+				country: '',
+				postalCode: '',
+		  };
+
 	const formattedTransactionData = prepareFreePurchaseTransaction(
 		{
 			name: '',
@@ -42,9 +57,7 @@ export default async function freePurchaseProcessor(
 				includeDomainDetails,
 				includeGSuiteDetails,
 			} ),
-			// this data is intentionally empty so we do not charge taxes
-			country: '',
-			postalCode: '',
+			...taxData,
 		},
 		transactionOptions
 	);
@@ -64,7 +77,9 @@ function prepareFreePurchaseTransaction(
 		cart: createTransactionEndpointCartFromResponseCart( {
 			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
 			contactDetails: transactionData.domainDetails ?? null,
-			responseCart: removeTaxInformationFromCart( transactionOptions.responseCart ),
+			responseCart: doesPurchaseHaveFullCredits( transactionOptions.responseCart )
+				? transactionOptions.responseCart
+				: removeTaxInformationFromCart( transactionOptions.responseCart ),
 		} ),
 		paymentMethodType: 'WPCOM_Billing_WPCOM',
 	} );

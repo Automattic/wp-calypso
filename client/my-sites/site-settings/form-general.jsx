@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -32,6 +34,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import {
 	getSiteOption,
@@ -260,6 +263,12 @@ export class SiteSettingsFormGeneral extends Component {
 		} );
 	};
 
+	trackAdvancedCustomizationUpgradeClick = () => {
+		this.props.recordTracksEvent( 'calypso_global_styles_gating_settings_notice_upgrade_click', {
+			cta_name: 'settings_site_privacy',
+		} );
+	};
+
 	trackFiverrLogoMakerClick = () => {
 		this.props.recordTracksEvent( 'calypso_site_icon_fiverr_logo_maker_cta_click', {
 			cta_name: 'site_icon_fiverr_logo_maker',
@@ -342,6 +351,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsJetpack,
 			siteIsAtomic,
 			translate,
+			shouldShowPremiumStylesNotice,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -365,6 +375,7 @@ export class SiteSettingsFormGeneral extends Component {
 					! isWPForTeamsSite &&
 					! isAtomicAndEditingToolkitDeactivated && (
 						<>
+							{ shouldShowPremiumStylesNotice && this.advancedCustomizationNotice() }
 							<FormLabel className={ comingSoonFormLabelClasses }>
 								<FormRadio
 									name="blog_public"
@@ -612,6 +623,46 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	giftOptions() {
+		const { translate, fields, isRequestingSettings, isSavingSettings, handleSubmitForm } =
+			this.props;
+
+		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		return (
+			<>
+				<div className="site-settings__gifting-container">
+					<SettingsSectionHeader
+						title={ translate( 'Accept a gift subscription' ) }
+						id="site-settings__gifting-header"
+						disabled={ isRequestingSettings || isSavingSettings }
+						isSaving={ isSavingSettings }
+						onButtonClick={ handleSubmitForm }
+						showButton
+					/>
+					<CompactCard className="site-settings__gifting-content">
+						<ToggleControl
+							disabled={ isRequestingSettings || isSavingSettings }
+							className="site-settings__gifting-toggle"
+							label={ translate(
+								'Allow supporters to cover the WordPress plan to keep the site content up and running'
+							) }
+							checked={ fields.wpcom_gifting_subscription }
+							onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+						/>
+						<FormSettingExplanation>
+							{ translate(
+								'Your readers will be able to pay for the WordPress subscription to keep the site and all the content that you have created up and running and available for everybody in the future.'
+							) }
+						</FormSettingExplanation>
+					</CompactCard>
+				</div>
+			</>
+		);
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -657,6 +708,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
+				{ this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -693,9 +745,38 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
-
 				{ this.toolbarOption() }
 			</div>
+		);
+	}
+
+	advancedCustomizationNotice() {
+		const { translate, selectedSite, siteSlug } = this.props;
+		const upgradeUrl = `/plans/${ siteSlug }`;
+
+		return (
+			<>
+				<div className="site-settings__advanced-customization-notice">
+					<div className="site-settings__advanced-customization-notice-cta">
+						<Gridicon icon="info-outline" />
+						<span>
+							{ translate( "Your style changes won't be public until you upgrade your plan." ) }
+						</span>
+					</div>
+					<div className="site-settings__advanced-customization-notice-buttons">
+						<Button href={ selectedSite.URL } target="_blank">
+							{ translate( 'View site' ) }
+						</Button>
+						<Button
+							className="is-primary"
+							href={ upgradeUrl }
+							onClick={ this.trackAdvancedCustomizationUpgradeClick }
+						>
+							{ translate( 'Upgrade' ) }
+						</Button>
+					</div>
+				</div>
+			</>
 		);
 	}
 }
@@ -738,6 +819,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
+		wpcom_gifting_subscription: true,
 		admin_url: '',
 	};
 
@@ -755,6 +837,7 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
+		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
@@ -767,7 +850,18 @@ const getFormSettings = ( settings ) => {
 	return formSettings;
 };
 
+const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	return (
+		<SiteSettingsFormGeneral
+			{ ...props }
+			shouldShowPremiumStylesNotice={ globalStylesInUse && shouldLimitGlobalStyles }
+		/>
+	);
+};
+
 export default flowRight(
 	connectComponent,
 	wrapSettingsForm( getFormSettings )
-)( SiteSettingsFormGeneral );
+)( SiteSettingsFormGeneralWithGlobalStylesNotice );

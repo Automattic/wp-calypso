@@ -21,9 +21,9 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -84,6 +84,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
+		// We need to remove the old one first
+		allDesigns.static.designs = allDesigns.static.designs.filter(
+			( design ) => design.slug !== 'blank-canvas-blocks'
+		);
+
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build intent

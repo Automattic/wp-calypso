@@ -194,7 +194,7 @@ class WordAds extends Component {
 									/>
 								</StatsPeriodNavigation>
 							</StickyPanel>
-							<div className="stats__module-list">
+							<div className="stats__module-list stats__module-headerless--unified">
 								<WordAdsEarnings site={ site } />
 							</div>
 						</div>

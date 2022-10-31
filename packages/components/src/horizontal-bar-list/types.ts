@@ -38,3 +38,13 @@ type StatsActions = {
 	data: string;
 	type: string;
 };
+
+export type StatsCardProps = {
+	children: React.ReactNode;
+	className?: string;
+	title: string;
+	showMore?: {
+		label?: string;
+		url?: string;
+	};
+};

@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { FC, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import licensingActivationPluginInstall from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -12,14 +11,14 @@ import { isJetpackStandaloneProduct } from 'calypso/my-sites/plans/jetpack-plans
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackActivationInstructions from './jetpack-activation-instructions';
+import { JetpackLicenseKeyProps } from './jetpack-license-key-clipboard';
 import JetpackStandaloneActivationInstructions from './jetpack-standalone-activation-instructions';
+import { getJetpackPluginImage } from './utils';
 
-interface Props {
-	productSlug: string | 'no_product';
-	receiptId: number;
-}
-
-const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId } ) => {
+const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
+	productSlug,
+	receiptId,
+} ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
@@ -31,6 +30,8 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 				: null,
 		[ productSlug ]
 	);
+
+	const jetpackPluginImage = getJetpackPluginImage( productSlug );
 
 	const onContinue = useCallback( () => {
 		dispatch(
@@ -64,26 +65,32 @@ const LicensingActivationInstructions: FC< Props > = ( { productSlug, receiptId 
 						  } )
 						: translate( 'Be sure that you have the latest version of Jetpack' )
 				}
-				footerImage={ licensingActivationPluginInstall }
+				footerImage={ jetpackPluginImage }
+				altLayout={ !! jetpackStandaloneProduct }
 				showContactUs
-				showProgressIndicator
+				showProgressIndicator={ ! jetpackStandaloneProduct }
 				progressIndicatorValue={ 2 }
 				progressIndicatorTotal={ 3 }
 			>
 				{ jetpackStandaloneProduct ? (
-					<JetpackStandaloneActivationInstructions product={ jetpackStandaloneProduct } />
+					<JetpackStandaloneActivationInstructions
+						product={ jetpackStandaloneProduct }
+						receiptId={ receiptId }
+					/>
 				) : (
-					<JetpackActivationInstructions />
-				) }
+					<>
+						<JetpackActivationInstructions />
 
-				<Button
-					className="licensing-thank-you-manual-activation-instructions__button"
-					primary
-					disabled={ false }
-					onClick={ onContinue }
-				>
-					{ translate( 'Continue ' ) }
-				</Button>
+						<Button
+							className="licensing-thank-you-manual-activation-instructions__button"
+							primary
+							disabled={ false }
+							onClick={ onContinue }
+						>
+							{ translate( 'Continue ' ) }
+						</Button>
+					</>
+				) }
 			</LicensingActivation>
 		</>
 	);

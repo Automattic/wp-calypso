@@ -12,7 +12,7 @@ import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks, isTaskDisabled } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
 import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
@@ -42,7 +42,7 @@ function getChecklistCompletionProgress( tasks: Task[] | null ) {
 	}
 
 	const totalCompletedTasks = tasks.reduce( ( total, currentTask ) => {
-		return currentTask.isCompleted ? total + 1 : total;
+		return currentTask.completed ? total + 1 : total;
 	}, 0 );
 
 	return Math.round( ( totalCompletedTasks / tasks.length ) * 100 );
@@ -52,6 +52,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 	let siteName = '';
 	let topLevelDomain = '';
 	let showClipboardButton = false;
+	let isDomainSSLProcessing: boolean | null = false;
 	const flow = useFlowParam();
 	const translate = useTranslate();
 	const site = useSite();
@@ -65,13 +66,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 
 	const taskCompletionProgress = site && getChecklistCompletionProgress( enhancedTasks );
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
-	const showLaunchTitle = launchTask && ! isTaskDisabled( launchTask );
+	const showLaunchTitle = launchTask && ! launchTask.disabled;
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
 
 		[ siteName, topLevelDomain ] = getUrlInfo( domain );
-		showClipboardButton = isWPCOMDomain ? true : sslStatus === 'active' && isPrimary;
+
+		isDomainSSLProcessing = sslStatus && sslStatus !== 'active';
+		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
 	return (
@@ -107,6 +110,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						{ showClipboardButton && (
 							<>
 								<ClipboardButton
+									aria-label={ translate( 'Copy URL' ) }
 									text={ siteSlug }
 									className="launchpad__clipboard-button"
 									borderless
@@ -135,6 +139,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep }: Sidebar
 						</a>
 					) }
 				</div>
+				{ isDomainSSLProcessing && (
+					<div className="launchpad__domain-notification">
+						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<p>
+							{ translate(
+								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+							) }
+						</p>
+					</div>
+				) }
 				<Checklist tasks={ enhancedTasks } />
 			</div>
 			<div className="launchpad__sidebar-admin-link">
