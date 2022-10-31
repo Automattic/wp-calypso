@@ -207,13 +207,10 @@
 	}
 }
 
-// Following styles are are mirrored at client/my-sites/store/style.scss.
-.is-stats-page {
-	background: var(--studio-white);
-}
-
 // Stats section scoped styles
-.is-stats-page { // stylelint-disable-line no-duplicate-selectors
+.is-section-stats {
+	background: var(--studio-white);
+
 	.followers-count .button {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
