@@ -36,6 +36,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -624,10 +625,18 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	giftOptions() {
-		const { translate, fields, isRequestingSettings, isSavingSettings, handleSubmitForm } =
-			this.props;
+		const {
+			translate,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			handleSubmitForm,
+			purchase,
+		} = this.props;
 
-		if ( ! isEnabled( 'subscription-gifting' ) ) {
+		const isAutorenewalEnabled = purchase?.autoRenew ?? false;
+
+		if ( ! isEnabled( 'subscription-gifting' ) || isAutorenewalEnabled ) {
 			return;
 		}
 
@@ -807,6 +816,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		purchase: getCurrentPlan( state, siteId ),
 	};
 }, mapDispatchToProps );
 
