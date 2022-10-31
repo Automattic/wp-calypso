@@ -125,18 +125,9 @@
 		padding-right: 12px;
 	}
 
-	// TODO: Fix layout shifting with this padding-right property
-	.launchpad__url-box-domain:hover > .launchpad__url-box-domain-text {
-		padding-right: 0;
-	}
-
 	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
 		position: inherit;
 		top: 0;
-	}
-
-	.launchpad__url-box-domain-text + .launchpad__clipboard-button:focus {
-		padding-right: 0;
 	}
 
 	.launchpad__clipboard-button:focus {
