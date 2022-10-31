@@ -715,7 +715,6 @@ class Signup extends Component {
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
 
 		let propsForCurrentStep = propsFromConfig;
-
 		if ( this.props.isManageSiteFlow ) {
 			propsForCurrentStep = {
 				...propsFromConfig,
