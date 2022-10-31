@@ -85,6 +85,7 @@ const JetpackStandaloneActivationInstructions: React.FC< Props > = ( { product, 
 
 			<p>
 				<ExternalLink
+					className="jetpack-standalone-activation-instructions__external-link"
 					href={ getJetpackPluginSupportDocLink( product.productSlug ) }
 					icon
 					onClick={ handleLearnMoreClick }

@@ -5,6 +5,12 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
+import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-backup.svg';
+import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
+import JetpackSearchPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-search.svg';
+import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-social.svg';
+import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
+import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 
 const buildKeyValuePairByProductSlugs = (
@@ -20,6 +26,14 @@ const WPORG_PLUGIN_SLUG_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, 'jetpack-social' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, 'jetpack-search' ),
 	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, 'jetpack-videopress' ),
+};
+
+const JETPACK_PLUGIN_IMAGE_MAP: Record< string, string > = {
+	...buildKeyValuePairByProductSlugs( JETPACK_BACKUP_PRODUCTS, JetpackBackupPluginImage ),
+	...buildKeyValuePairByProductSlugs( JETPACK_BOOST_PRODUCTS, JetpackBoostPluginImage ),
+	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, JetpackSocialPluginImage ),
+	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, JetpackSearchPluginImage ),
+	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, JetpackVideopressPluginImage ),
 };
 
 const JETPACK_SUPPORT_DOCS_MAP: Record< string, string > = {
@@ -39,6 +53,10 @@ const JETPACK_SUPPORT_DOCS_MAP: Record< string, string > = {
 		JETPACK_SEARCH_PRODUCTS,
 		'search/jetpack-search-plugin/#installing-jetpack-search-plugin'
 	),
+	...buildKeyValuePairByProductSlugs(
+		JETPACK_VIDEOPRESS_PRODUCTS,
+		'jetpack-videopress/#how-do-i-use-jetpack-videopress'
+	),
 };
 
 export function getWPORGPluginLink( productSlug: string ): string {
@@ -53,6 +71,10 @@ export function getJetpackPluginSupportDocLink( productSlug: string ): string {
 		'https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/';
 
 	return supportDoc ? `https://jetpack.com/support/${ supportDoc }` : DEFAULT_SUPPORT_DOC_LINK;
+}
+
+export function getJetpackPluginImage( productSlug: string ): string {
+	return JETPACK_PLUGIN_IMAGE_MAP[ productSlug ] ?? JetpackPluginImage;
 }
 
 export function getDomainManagementUrl(

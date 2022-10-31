@@ -170,6 +170,7 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
+		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
