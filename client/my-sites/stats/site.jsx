@@ -298,7 +298,7 @@ class StatsSite extends Component {
 						</>
 					) }
 
-					<div className="stats__module-list is-events">
+					<div className="stats__module-list is-events stats__module--unified">
 						<div className="stats__module-column">
 							<StatsModule
 								path="posts"
@@ -364,19 +364,20 @@ class StatsSite extends Component {
 					</div>
 				</div>
 
-				<PromoCardBlock
-					productSlug="wordpress-seo-premium"
-					impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
-					clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
-					headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
-					contentText={ translate(
-						'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
-					) }
-					ctaText={ translate( 'Learn more' ) }
-					image={ wordpressSeoIllustration }
-					href={ `/plugins/wordpress-seo-premium/${ slug }` }
-				/>
-
+				<div className="stats-content-promo">
+					<PromoCardBlock
+						productSlug="wordpress-seo-premium"
+						impressionEvent="calypso_stats_wordpress_seo_premium_banner_view"
+						clickEvent="calypso_stats_wordpress_seo_premium_banner_click"
+						headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+						contentText={ translate(
+							'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+						) }
+						ctaText={ translate( 'Learn more' ) }
+						image={ wordpressSeoIllustration }
+						href={ `/plugins/wordpress-seo-premium/${ slug }` }
+					/>
+				</div>
 				<JetpackColophon />
 			</div>
 		);

@@ -3,10 +3,9 @@
 @import "@wordpress/base-styles/variables";
 
 @mixin jetpack-primary-button() {
-	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-	background-color: var(--studio-jetpack-green-50);
-	border-color: var(--studio-jetpack-green-50);
-	color: var(--color-text-inverted);
+	background-color: var(--studio-black);
+	border-color: var(--studio-black);
+	color: var(--studio-white);
 
 	&:hover,
 	&:focus {
@@ -134,13 +133,21 @@
 }
 
 .licensing-activation__card-footer-text {
+	color: var(--color-neutral-60);
+	font-size: rem(14px);
+	line-height: rem(21px);
+
+	> a {
+		color: var(--color-neutral-60);
+	}
+}
+
+:is(.licensing-activation__card-footer) .licensing-activation__card-footer-text {
 	position: absolute;
+	font-size: inherit;
+	line-height: inherit;
 	width: 100%;
 	text-align: center;
 	left: 0;
 	bottom: 7%;
-	color: var(--color-neutral-60);
-	> a {
-		color: var(--color-neutral-60);
-	}
 }

@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getPlanTermLabel } from '@automattic/calypso-products';
-import { Card } from '@automattic/components';
+import { Card, GMClosureNotice } from '@automattic/components';
 import { HelpCenter } from '@automattic/data-stores';
 import {
 	shouldShowHelpCenterToUser,
@@ -580,6 +580,12 @@ class HelpContact extends Component {
 							displayAt="2022-04-10 00:00Z"
 							closesAt="2022-04-17 00:00Z"
 							reopensAt="2022-04-18 07:00Z"
+						/>
+						<GMClosureNotice
+							displayAt="2022-10-29 00:00Z"
+							closesAt="2022-11-05 00:00Z"
+							reopensAt="2022-11-14 07:00Z"
+							enabled={ this.props.isHappychatUserEligible }
 						/>
 						<ChatHolidayClosureNotice
 							holidayName={ translate( 'Christmas', {

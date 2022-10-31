@@ -71,12 +71,6 @@ const generateWebsiteContentSections = (
 	const { translate, formValues, formErrors, onChangeField } = params;
 
 	const OPTIONAL_PAGES: Record< string, boolean > = { [ CONTACT_PAGE ]: true };
-	const PAGE_LABELS: Record< string, TranslateResult > = {
-		[ CONTACT_PAGE ]: translate(
-			"We'll add a standard contact form on this page, plus a comment box. " +
-				'If you would like text to appear above this form, please enter it below.'
-		),
-	};
 
 	const websiteContentSections = formValues.pages.map( ( page, index ) => {
 		const fieldNumber = elapsedSections + index + 1;
@@ -103,7 +97,6 @@ const generateWebsiteContentSections = (
 				<DisplayedPageComponent
 					page={ page }
 					formErrors={ formErrors }
-					label={ PAGE_LABELS[ page.id ] }
 					onChangeField={ onChangeField }
 				/>
 			),

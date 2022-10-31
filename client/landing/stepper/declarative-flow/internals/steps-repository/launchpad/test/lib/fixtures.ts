@@ -188,9 +188,9 @@ export const defaultSiteDetails: SiteDetails = {
 
 export const defaultTask: Task = {
 	id: 'foo_task',
-	isCompleted: false,
+	completed: false,
+	disabled: true,
 	taskType: 'blog',
-	displayBadge: false,
 	title: 'Foo Task',
 };
 
