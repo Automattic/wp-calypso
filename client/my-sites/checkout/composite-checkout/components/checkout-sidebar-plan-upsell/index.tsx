@@ -26,7 +26,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
 	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
-	const { __ } = useI18n();
+	const { __, hasTranslation } = useI18n();
 	const cartKey = useCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const siteId = useSelector( getSelectedSiteId );
@@ -93,6 +93,10 @@ export function CheckoutSidebarPlanUpsell() {
 		),
 		{ strong: createElement( 'strong' ) }
 	);
+
+	if ( ! hasTranslation( '<strong>Save %(percentSavings)d%%</strong> by paying for two years' ) ) {
+		return null;
+	}
 
 	return (
 		<PromoCard title={ cardTitle } className="checkout-sidebar-plan-upsell">
