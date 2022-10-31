@@ -837,10 +837,7 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
-		wpcom_gifting_subscription:
-			typeof settings.wpcom_gifting_subscription === 'undefined'
-				? true
-				: settings.wpcom_gifting_subscription,
+		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values
