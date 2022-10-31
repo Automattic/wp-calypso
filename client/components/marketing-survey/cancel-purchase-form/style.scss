@@ -123,17 +123,22 @@
 }
 
 .cancel-purchase-form__buttons {
-	display: inline-block;
+	display: flex;
 	position: relative;
 
+	@include break-small {
+		display: inline-block;
+	}
+
 	.components-button {
-		margin-right: 1rem;
+		flex: 1;
 		padding: 0.625rem 1rem;
 		border-radius: 4px;
+		justify-content: center;
 
 		@include break-small {
-			margin: 0 0.625rem;
 			padding: 0.625rem 2rem;
+			justify-content: unset;
 		}
 	}
 }
@@ -151,8 +156,12 @@
 		margin: 20px 0;
 
 		> .formatted-header__title {
-			font-size: 3.375rem;
+			font-size: 2.25rem;
 			line-height: 1.1;
+
+			@include break-small {
+				font-size: 3.375rem;
+			}
 		}
 	}
 }
@@ -164,7 +173,7 @@
 .cancel-purchase-form__upsell-content {
 	display: flex;
 	flex-direction: column;
-	flex-basis: 535px;
+	flex: 0 1 535px;
 }
 
 .cancel-purchase-form__upsell-text {
@@ -174,19 +183,64 @@
 .cancel-purchase-form__upsell-buttons {
 	display: flex;
 	flex-direction: row;
+	flex-wrap: wrap;
 	gap: 16px;
 	margin: 2.2rem 0;
+
+	> .components-button {
+		flex-grow: 1;
+		padding: 0 1.5rem;
+		height: 40px;
+		justify-content: center;
+
+		@include break-small {
+			flex-grow: 0;
+		}
+	}
 }
 
 .cancel-purchase-form__upsell-image-container {
-	flex-basis: 400px;
+	flex: 0 1 400px;
 	text-align: center;
 }
 
-.blank-canvas.cancel-purchase-form .blank-canvas__back {
-	z-index: 1;
-}
+.blank-canvas.cancel-purchase-form {
+	.blank-canvas__back {
+		z-index: 1;
+		font-size: 0.875rem;
+	}
 
-.blank-canvas.cancel-purchase-form .blank-canvas__header-title {
-	z-index: 0;
+	.blank-canvas__header {
+		padding: 0 1rem;
+		margin-bottom: 4rem;
+		box-shadow: none;
+
+		.wordpress-logo {
+			display: none;
+
+			@include break-small {
+				display: block;
+			}
+		}
+	}
+
+	.blank-canvas__header-title {
+		z-index: 0;
+		top: 5rem;
+		left: 1rem;
+
+		@include break-small {
+			top: unset;
+			left: unset;
+		}
+	}
+
+	.blank-canvas__content {
+		padding: 0 1rem;
+	}
+
+	.blank-canvas__footer {
+		position: static;
+		box-shadow: none;
+	}
 }
