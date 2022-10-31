@@ -45,9 +45,11 @@ const StatsInsights = ( props ) => {
 			/>
 			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 			<div>
-				<PostingActivity />
-				<SectionHeader label={ translate( 'All-time views' ) } />
-				<StatsViews />
+				<div className="stats__module--insights-unified">
+					<PostingActivity />
+					<SectionHeader label={ translate( 'All-time views' ) } />
+					<StatsViews />
+				</div>
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
@@ -56,7 +58,7 @@ const StatsInsights = ( props ) => {
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
-					<div className="stats__module-list">
+					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />

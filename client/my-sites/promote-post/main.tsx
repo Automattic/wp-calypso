@@ -38,6 +38,10 @@ const queryPage = {
 	type: 'page',
 };
 
+export type DSPMessage = {
+	errorCode?: string;
+};
+
 function sortItemsByPublishedDate( items: Post[] ) {
 	return items.slice( 0 ).sort( function ( a, b ) {
 		if ( a.date && b.date ) {
@@ -50,6 +54,8 @@ function sortItemsByPublishedDate( items: Post[] ) {
 		return b.ID - a.ID;
 	} );
 }
+
+const ERROR_NO_LOCAL_USER = 'no_local_user';
 
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
@@ -75,7 +81,10 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
+	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
+	const { data: campaignsData } = campaigns;
+
+	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
 	const translate = useTranslate();
 
@@ -152,6 +161,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && (
 				<CampaignsList
+					hasLocalUser={ hasLocalUser }
 					isError={ isError }
 					isLoading={ campaignsIsLoading }
 					campaigns={ campaignsData || [] }

@@ -87,7 +87,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const setScrollToSelectorByPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
-		setScrollToSelector( `.entry-content > .wp-block-group:nth-child( ${ patternPosition + 1 } )` );
+		setScrollToSelector(
+			`.wp-site-blocks > .wp-block-group > :nth-child( ${ patternPosition + 1 } )`
+		);
 	};
 
 	const addSection = ( pattern: Pattern ) => {
@@ -161,17 +163,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onBack = () => {
-		if ( showPatternSelectorType ) {
-			setShowPatternSelectorType( null );
-		} else {
-			const patterns = getPatterns();
-			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
-				has_selected_patterns: patterns.length > 0,
-				pattern_count: patterns.length,
-			} );
+		const patterns = getPatterns();
+		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+			has_selected_patterns: patterns.length > 0,
+			pattern_count: patterns.length,
+		} );
 
-			goBack();
-		}
+		goBack();
 	};
 
 	const stepContent = (
@@ -180,6 +178,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
+					onBack={ () => setShowPatternSelectorType( null ) }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout
@@ -202,6 +201,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							trackEventPatternAdd( 'section' );
 							setSectionPosition( null );
 							setShowPatternSelectorType( 'section' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onReplaceSection={ ( position: number ) => {
 							setSectionPosition( position );
@@ -222,10 +222,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onAddFooter={ () => {
 							trackEventPatternAdd( 'footer' );
 							setShowPatternSelectorType( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onReplaceFooter={ () => {
 							setShowPatternSelectorType( 'footer' );
-							setScrollToSelector( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onDeleteFooter={ () => {
 							setFooter( null );
@@ -268,6 +269,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName="pattern-assembler"
+			hideBack={ showPatternSelectorType !== null }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

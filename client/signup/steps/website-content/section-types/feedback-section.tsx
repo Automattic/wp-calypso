@@ -1,10 +1,9 @@
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { TextAreaField } from 'calypso/signup/accordion-form/form-components';
+import { TextAreaField, Label } from 'calypso/signup/accordion-form/form-components';
 import { updateFeedback } from 'calypso/state/signup/steps/website-content/actions';
 import type { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
-
 export function FeedbackSection( {
 	data,
 	onChangeField,
@@ -23,14 +22,19 @@ export function FeedbackSection( {
 		onChangeField && onChangeField( e );
 	};
 	return (
-		<TextAreaField
-			rows={ 3 }
-			name="generic_feedback"
-			onChange={ onContentChange }
-			value={ data.genericFeedback }
-			label={ translate(
-				'Optional: Is there anything else you would like the site builder to know?'
-			) }
-		/>
+		<>
+			<TextAreaField
+				rows={ 3 }
+				name="generic_feedback"
+				onChange={ onContentChange }
+				value={ data.genericFeedback }
+				label={ translate(
+					'Optional: Is there anything else you would like the site builder to know?'
+				) }
+			/>
+			<Label>
+				{ translate( 'Click Submit when you are finished providing content for all pages.' ) }
+			</Label>
+		</>
 	);
 }
