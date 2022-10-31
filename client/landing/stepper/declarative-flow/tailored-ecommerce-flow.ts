@@ -31,7 +31,7 @@ export const ecommerceFlow: Flow = {
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`
-				: `/start/account/user?variationName=${ flowName }redirect_to=/setup/storeProfiler?flow=${ flowName }`;
+				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`;
 		};
 
 		setStepProgress( { progress: 1, count: 4 } );
