@@ -23,7 +23,6 @@ export type isPendingAddingProductsFromUrl = boolean;
 export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
-	isJetpackSitelessCheckout,
 	productsForCart,
 	areCartProductsPreparing,
 	couponCodeFromUrl,
@@ -33,7 +32,6 @@ export default function useAddProductsFromUrl( {
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
-	isJetpackSitelessCheckout: boolean;
 	productsForCart: RequestCartProduct[];
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
@@ -109,7 +107,6 @@ export default function useAddProductsFromUrl( {
 		applyCoupon,
 		productsForCart,
 		addProductsToCart,
-		isJetpackSitelessCheckout,
 		replaceProductsInCart,
 	] );
 
