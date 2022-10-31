@@ -6,6 +6,7 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
+import { isCalypsoLive } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -134,7 +135,10 @@ export default function getThankYouPageUrl( {
 	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
-
+		if ( isCalypsoLive() ) {
+			debug( 'is calypso live, so returning that', redirectTo );
+			return redirectTo;
+		}
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
@@ -143,6 +147,7 @@ export default function getThankYouPageUrl( {
 			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
 			return redirectTo;
 		}
+
 		// We cannot simply compare `hostname` to `siteSlug`, since the latter
 		// might contain a path in the case of Jetpack subdirectory installs.
 		if ( adminUrl && redirectTo.startsWith( `${ adminUrl }post.php?` ) ) {
