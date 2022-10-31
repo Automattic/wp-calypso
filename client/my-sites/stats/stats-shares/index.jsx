@@ -53,8 +53,7 @@ const StatShares = ( { siteId } ) => {
 								);
 							}
 						} ) }
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					{ ! isLoading && ! siteStats?.stats.shares && (
+					{ ! isLoading && ! siteStats?.stats?.shares && (
 						<ErrorPanel message={ translate( 'No shares recorded' ) } />
 					) }
 				</StatsTabs>
