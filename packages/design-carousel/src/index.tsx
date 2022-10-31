@@ -61,7 +61,8 @@ export default function DesignCarousel( { onPick }: Props ) {
 							className="design-carousel__slide swiper-slide"
 							key={ `${ design.slug }-slide-item` }
 						>
-							<Item design={ design } />
+							<Item design={ design } type="desktop" className="design-carousel__item-desktop" />
+							<Item design={ design } type="mobile" className="design-carousel__item-mobile" />
 						</div>
 					) ) }
 				</div>
