@@ -18,7 +18,7 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	const commentingUser = 'commentingUser';
 	const notificationsUser = 'notificationsUser';
-	const comment = DataHelper.getRandomPhrase() + ' notifications-trash-spec';
+	const comment = DataHelper.getRandomPhrase() + ' notification-actions-spec';
 
 	let notificationsComponent: NotificationsComponent;
 	let restAPIClient: RestAPIClient;
@@ -44,7 +44,7 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		} );
 	} );
 
-	describe( `Trash comment as ${ notificationsUser }`, function () {
+	describe( `View notification as ${ notificationsUser }`, function () {
 		let page: Page;
 
 		beforeAll( async function () {
@@ -62,13 +62,57 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 			notificationsComponent = new NotificationsComponent( page );
 			await notificationsComponent.clickNotification( comment );
 		} );
+	} );
 
-		it( 'Delete comment from notification', async function () {
+	describe( 'Approve comment from notification', function () {
+		it( 'Approve comment', async function () {
+			// TODO: Handle notifications that have been already approved.
+			await notificationsComponent.clickNotificationAction( 'Approve' );
+		} );
+
+		it( 'Unapprove comment', async function () {
+			await notificationsComponent.clickNotificationAction( 'Approved' );
+		} );
+	} );
+
+	describe( 'Like comment from notification', function () {
+		it( 'Like comment', async function () {
+			await notificationsComponent.clickNotificationAction( 'Like' );
+		} );
+
+		it( 'Unlike comment', async function () {
+			await notificationsComponent.clickNotificationAction( 'Liked' );
+		} );
+	} );
+
+	// TODO: Edit comment from notification.
+
+	describe( 'Mark comment as spam from notification', function () {
+		it( 'Mark comment as spam', async function () {
+			await notificationsComponent.clickNotificationAction( 'Spam' );
+		} );
+
+		it( 'Undo mark comment as spam', async function () {
+			await notificationsComponent.clickUndo();
+			// TODO: Assert comment was un-marked as spam.
+		} );
+	} );
+
+	describe( 'Trash comment from notification', function () {
+		it( 'Trash comment', async function () {
+			await notificationsComponent.clickNotificationAction( 'Trash' );
+		} );
+
+		it( 'Undo trash comment', async function () {
+			await notificationsComponent.clickUndo();
+			// TODO: Assert comment was not deleted.
+		} );
+
+		it( 'Trash comment again', async function () {
 			await notificationsComponent.clickNotificationAction( 'Trash' );
 		} );
 
 		it( 'Confirm comment is trashed', async function () {
-			await notificationsComponent.waitForUndoMessage();
 			await notificationsComponent.waitForUndoMessageToDisappear();
 		} );
 	} );
