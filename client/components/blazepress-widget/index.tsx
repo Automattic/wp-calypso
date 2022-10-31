@@ -141,6 +141,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						}
 					>
 						<Dialog
+							additionalOverlayClassNames="blazepress-widget"
 							isVisible={ showCancelDialog && showCancelButton }
 							buttons={ cancelDialogButtons }
 							onClose={ () => setShowCancelDialog( false ) }
