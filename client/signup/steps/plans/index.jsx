@@ -18,7 +18,7 @@ import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-// import { parse as parseQs } from 'qs';
+import { parse as parseQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
@@ -28,7 +28,6 @@ import Notice from 'calypso/components/notice';
 import { getTld, isSubdomain } from 'calypso/lib/domains';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
-import { addPlanToCart } from 'calypso/lib/signup/step-actions';
 import wp from 'calypso/lib/wp';
 import PlansComparison, {
 	isEligibleForProPlan,
@@ -42,12 +41,7 @@ import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
-import {
-	saveSignupStep,
-	submitSignupStep,
-	processStep,
-	completeSignupStep,
-} from 'calypso/state/signup/progress/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import './style.scss';
@@ -146,21 +140,7 @@ export class PlansStep extends Component {
 				cartItem,
 				themeSlugWithRepo: 'pub/lynx',
 			} );
-
-			this.props.processStep( step );
-
-			addPlanToCart(
-				() => {
-					this.props.completeSignupStep( step, {
-						cartItem,
-						themeSlugWithRepo: 'pub/lynx',
-					} );
-					this.props.goToNextStep( 'lanchpad' );
-				},
-				{ siteSlug: this.props.slug },
-				step,
-				window.redux
-			);
+			this.props.goToNextStep();
 		} else {
 			const signupVals = { cartItem };
 
@@ -193,7 +173,6 @@ export class PlansStep extends Component {
 
 	handleFreePlanButtonClick = () => {
 		this.onSelectPlan( null ); // onUpgradeClick expects a cart item -- null means Free Plan.
-		this.props.goToNextStep();
 	};
 
 	getIntervalType() {
@@ -498,7 +477,6 @@ PlansStep.propTypes = {
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
 	isTreatmentPlansReorderTest: PropTypes.bool,
-	slug: PropTypes.string,
 };
 
 /**
@@ -518,37 +496,29 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } } ) => {
-		return {
-			// Blogger plan is only available if user chose either a free domain or a .blog domain registration
-			disableBloggerPlanWithNonBlogDomain:
-				domainItem &&
-				! isSubdomain( domainItem.meta ) &&
-				! isDotBlogDomainRegistration( domainItem ),
-			// This step could be used to set up an existing site, in which case
-			// some descendants of this component may display discounted prices if
-			// they apply to the given site.
-			selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
-			// customerType: parseQs( path.split( '?' ).pop() ).customerType,
-			siteType: getSiteType( state ),
-			hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-			showTreatmentPlansReorderTest:
-				'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
-			isLoadingExperiment: false,
-			// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
-			// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
-			// treatment for the `vertical_plan_listing_v2` experiment is implemented.
-			isInVerticalScrollingPlansExperiment: true,
-			plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-			eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
-		};
-	},
-	{
-		recordTracksEvent,
-		saveSignupStep,
-		submitSignupStep,
-		errorNotice,
-		processStep,
-		completeSignupStep,
-	}
+	(
+		state,
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+	) => ( {
+		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
+		disableBloggerPlanWithNonBlogDomain:
+			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
+		// This step could be used to set up an existing site, in which case
+		// some descendants of this component may display discounted prices if
+		// they apply to the given site.
+		selectedSite: siteSlug ? getSiteBySlug( state, siteSlug ) : null,
+		customerType: parseQs( path.split( '?' ).pop() ).customerType,
+		siteType: getSiteType( state ),
+		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		showTreatmentPlansReorderTest:
+			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
+		isLoadingExperiment: false,
+		// IMPORTANT NOTE: The following is always set to true. It's a hack to resolve the bug reported
+		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
+		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
+		isInVerticalScrollingPlansExperiment: true,
+		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
+	} ),
+	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );
