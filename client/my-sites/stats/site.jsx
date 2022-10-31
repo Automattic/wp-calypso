@@ -227,7 +227,7 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
-				{ showHighlights && <HighlightsSection /> }
+				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
 				<div id="my-stats-content">
 					{ isNewFeatured ? (
