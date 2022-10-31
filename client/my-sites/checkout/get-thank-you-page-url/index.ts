@@ -128,7 +128,6 @@ export default function getThankYouPageUrl( {
 	domains,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
-	debugger;
 
 	// If we're given an explicit `redirectTo` query arg, make sure it's either internal
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
@@ -137,17 +136,16 @@ export default function getThankYouPageUrl( {
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
 
+		if ( isCalypsoLive() ) {
+			debug( 'has same site redirectTo, so returning that', redirectTo );
+			return redirectTo;
+		}
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
 		}
 		if ( ! isExternal( redirectTo ) ) {
 			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
-			return redirectTo;
-		}
-
-		if ( isCalypsoLive() ) {
-			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
 		}
 
