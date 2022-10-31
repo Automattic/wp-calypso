@@ -70,10 +70,15 @@ function getTourSteps(
 			meta: {
 				heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 				descriptions: {
-					desktop: __(
-						'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
-						'full-site-editing'
-					),
+					desktop: isSiteEditor
+						? __(
+								'Take this short, interactive tour to learn the fundamentals of the WordPress Full Site Editor.',
+								'full-site-editing'
+						  )
+						: __(
+								'Take this short, interactive tour to learn the fundamentals of the WordPress editor.',
+								'full-site-editing'
+						  ),
 					mobile: null,
 				},
 				imgSrc: getTourAssets( isVideoMaker ? 'videomakerWelcome' : 'welcome' ),
@@ -299,12 +304,24 @@ function getTourSteps(
 						meta: {
 							heading: __( 'Edit your site', 'full-site-editing' ),
 							descriptions: {
-								desktop: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
-									'full-site-editing'
+								desktop: createInterpolateElement(
+									__(
+										'Design everything on your site - from the header right down to the footer - in the Full Site Editor. <link_to_fse_docs>Learn more</link_to_fse_docs>',
+										'full-site-editing'
+									),
+									{
+										link_to_fse_docs: (
+											<ExternalLink
+												href={ localizeUrl(
+													'https://wordpress.com/support/full-site-editing/',
+													localeSlug
+												) }
+											/>
+										),
+									}
 								),
 								mobile: __(
-									'Design everything on your site - from the header right down to the footer - using blocks.',
+									'Design everything on your site - from the header right down to the footer - in the Full Site Editor.',
 									'full-site-editing'
 								),
 							},
