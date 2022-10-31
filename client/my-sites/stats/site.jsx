@@ -300,7 +300,7 @@ class StatsSite extends Component {
 
 					<div className="stats__module-list is-events stats__module--unified">
 						<div className="stats__module-column">
-							{ config.isEnabled( 'newsletter/stats' ) && (
+							{ config.isEnabled( 'stats/newsletter' ) && (
 								<StatsModule
 									path="emailOpens"
 									moduleStrings={ moduleStrings.emailOpensStats }

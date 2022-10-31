@@ -171,6 +171,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
 		"stats/new-main-chart": true,
+		"stats/newsletter": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
@@ -187,7 +188,6 @@
 		"upsell/concierge-session": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false,
-		"newsletter/stats": false
+		"wpcom-user-bootstrap": false
 	}
 }
