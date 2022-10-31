@@ -321,7 +321,6 @@ export class PlansStep extends Component {
 			flowName,
 			hideFreePlan,
 			locale,
-			subHeaderText,
 			translate,
 			useEmailOnboardingSubheader,
 		} = this.props;
@@ -368,24 +367,16 @@ export class PlansStep extends Component {
 			);
 		}
 
-		if ( ! hideFreePlan ) {
-			if ( this.state.isDesktop ) {
-				return translate(
-					"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
-					{ components: { link: freePlanButton } }
-				);
-			}
-
-			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
-				components: { link: freePlanButton },
-			} );
-		}
-
 		if ( this.state.isDesktop ) {
-			return translate( "Pick one that's right for you and unlock features that help you grow." );
+			return translate(
+				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
+				{ components: { link: freePlanButton } }
+			);
 		}
 
-		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
+			components: { link: freePlanButton },
+		} );
 	}
 
 	isTailoredFlow() {
