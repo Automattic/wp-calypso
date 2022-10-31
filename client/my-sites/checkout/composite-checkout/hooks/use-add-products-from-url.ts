@@ -90,19 +90,7 @@ export default function useAddProductsFromUrl( {
 		debug( 'adding initial products to cart', productsForCart );
 		const cartPromises = [];
 		if ( productsForCart.length > 0 ) {
-			// The siteless checkout backend cannot handle multiple product checkout yet,
-			// so therefore we only want one product in the cart (The most recently selected).
-			if ( isJetpackSitelessCheckout ) {
-				debug(
-					'siteless checkout: replacing the cart with the most recently selected product',
-					productsForCart[ productsForCart.length - 1 ]
-				);
-				cartPromises.push(
-					replaceProductsInCart( [ productsForCart[ productsForCart.length - 1 ] ] )
-				);
-			} else {
-				cartPromises.push( addProductsToCart( productsForCart ) );
-			}
+			cartPromises.push( addProductsToCart( productsForCart ) );
 		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
