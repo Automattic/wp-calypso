@@ -135,9 +135,8 @@ export default function getThankYouPageUrl( {
 	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
-
 		if ( isCalypsoLive() ) {
-			debug( 'has same site redirectTo, so returning that', redirectTo );
+			debug( 'is calypso live, so returning that', redirectTo );
 			return redirectTo;
 		}
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {

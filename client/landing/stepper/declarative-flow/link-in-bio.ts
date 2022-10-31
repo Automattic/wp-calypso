@@ -103,7 +103,7 @@ export const linkInBio: Flow = {
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 						const returnUrl = encodeURIComponent(
-							`${ window.location.origin }/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
+							`/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
 						);
 
 						return window.location.assign(
