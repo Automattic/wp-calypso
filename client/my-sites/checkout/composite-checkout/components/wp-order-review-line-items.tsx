@@ -1,4 +1,4 @@
-import { isPremium } from '@automattic/calypso-products';
+import { isJetpackPurchasableItem, isPremium } from '@automattic/calypso-products';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import {
 	canItemBeRemovedFromCart,
@@ -173,14 +173,24 @@ function LineItemWrapper( {
 	const currentVariant = allVariants.find(
 		( variant ) => variant.productId === product.product_id
 	);
+	const isJetpack = responseCart.products.some( ( product ) =>
+		isJetpackPurchasableItem( product.product_slug )
+	);
 
 	// Only show term variants which are equal to or longer than the currently
-	// selected variant. See https://github.com/Automattic/wp-calypso/issues/69633
-	const variants = currentVariant
-		? allVariants.filter(
-				( variant ) => variant.termIntervalInMonths >= currentVariant.termIntervalInMonths
-		  )
-		: [];
+	// selected variant for WordPress.com. See
+	// https://github.com/Automattic/wp-calypso/issues/69633
+	const variants = ( () => {
+		if ( ! currentVariant ) {
+			return [];
+		}
+		if ( isJetpack ) {
+			return allVariants;
+		}
+		return allVariants.filter(
+			( variant ) => variant.termIntervalInMonths >= currentVariant.termIntervalInMonths
+		);
+	} )();
 
 	const areThereVariants = variants.length > 1;
 
