@@ -74,5 +74,8 @@ function flattenPurchases(
 function flattenFailedPurchases(
 	purchases: RawFailedReceiptPurchases | Array< void >
 ): Array< RawFailedReceiptPurchase > {
+	if ( Array.isArray( purchases ) ) {
+		return [];
+	}
 	return Object.values( purchases ).flat();
 }
