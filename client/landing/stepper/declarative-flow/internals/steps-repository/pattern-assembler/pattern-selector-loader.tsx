@@ -29,7 +29,7 @@ const PatternSelectorLoader = ( {
 				title={ translate( 'Choose a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
-			<Delayed>
+			<Delayed waitBeforeShow={ 500 }>
 				<PatternSelector
 					show={ showPatternSelectorType === 'footer' }
 					patterns={ footerPatterns }
@@ -39,7 +39,7 @@ const PatternSelectorLoader = ( {
 					selectedPattern={ selectedPattern }
 				/>
 			</Delayed>
-			<Delayed>
+			<Delayed waitBeforeShow={ 500 }>
 				<PatternSelector
 					show={ showPatternSelectorType === 'section' }
 					patterns={ sectionPatterns }
