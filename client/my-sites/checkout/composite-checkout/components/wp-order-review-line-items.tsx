@@ -169,7 +169,19 @@ function LineItemWrapper( {
 		! isRenewal &&
 		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
 		! hasPartnerCoupon;
-	const variants = useGetProductVariants( siteId, product.product_slug );
+	const allVariants = useGetProductVariants( siteId, product.product_slug );
+	const currentVariant = allVariants.find(
+		( variant ) => variant.productId === product.product_id
+	);
+
+	// Only show term variants which are equal to or longer than the currently
+	// selected variant. See https://github.com/Automattic/wp-calypso/issues/69633
+	const variants = currentVariant
+		? allVariants.filter(
+				( variant ) => variant.termIntervalInMonths >= currentVariant.termIntervalInMonths
+		  )
+		: [];
+
 	const areThereVariants = variants.length > 1;
 
 	return (
