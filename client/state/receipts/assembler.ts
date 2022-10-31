@@ -61,6 +61,9 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 function flattenPurchases(
 	purchases: RawReceiptPurchases | Array< void >
 ): Array< RawReceiptPurchase > {
+	if ( Array.isArray( purchases ) ) {
+		return [];
+	}
 	return Object.values( purchases ).flat();
 }
 
