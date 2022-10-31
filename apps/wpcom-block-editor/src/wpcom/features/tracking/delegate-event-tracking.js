@@ -15,6 +15,11 @@ import wpcomBlockPremiumContentPlanUpgrade from './wpcom-block-premium-content-p
 import wpcomBlockPremiumContentStripeConnect from './wpcom-block-premium-content-stripe-connect';
 import wpcomInserterInlineSearchTerm from './wpcom-inserter-inline-search-term';
 import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
+import {
+	wpcomSiteEditorDocumentActionsDropdownOpen,
+	wpcomSiteEditorDocumentActionsTemplateAreaClick,
+	wpcomSiteEditorDocumentActionsShowAllClick,
+} from './wpcom-site-editor-document-actions-dropdown-click';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
 import {
 	wpcomTemplatePartChooseCapture,
@@ -67,6 +72,9 @@ const EVENTS_MAPPING = [
 	wpcomBlockEditorSaveClick(),
 	wpcomBlockEditorSaveDraftClick(),
 	wpcomSiteEditorExitClick(),
+	wpcomSiteEditorDocumentActionsDropdownOpen(),
+	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
+	wpcomSiteEditorDocumentActionsShowAllClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
 const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! capture );
