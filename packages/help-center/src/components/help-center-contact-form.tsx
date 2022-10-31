@@ -13,9 +13,11 @@ import {
 	useUserSites,
 	AnalysisReport,
 	useSibylQuery,
+	SiteDetails,
+	HelpCenterSite,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { SitePickerDropDown } from '@automattic/site-picker';
+import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
 import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -64,15 +66,15 @@ const HelpCenterSitePicker: React.FC< SitePicker > = ( {
 	const otherSite = {
 		name: __( 'Other site', __i18n_text_domain__ ),
 		ID: 0,
-		logo: { id: '', sizes: [], url: '' },
+		logo: { id: '', sizes: [] as never[], url: '' },
 		URL: '',
-	};
+	} as const;
 
-	function pickSite( ID: number ) {
+	function pickSite( ID: number | string ) {
 		onSelect( ID );
 	}
 
-	const options = [ currentSite, otherSite ];
+	const options: ( SitePickerSite | undefined )[] = [ currentSite, otherSite ];
 
 	return (
 		<SitePickerDropDown
@@ -219,29 +221,26 @@ export const HelpCenterContactForm = () => {
 	// record the resolved site
 	useEffect( () => {
 		if ( ownershipResult?.site && sitePickerChoice === 'OTHER_SITE' ) {
-			setUserDeclaredSite( ownershipResult?.site );
+			setUserDeclaredSite( ownershipResult?.site as SiteDetails );
 		}
 	}, [ ownershipResult, setUserDeclaredSite, sitePickerChoice ] );
 
-	let supportSite: typeof currentSite;
+	let supportSite: SiteDetails | HelpCenterSite;
 
 	// if the user picked "other site", force them to declare a site
 	if ( sitePickerChoice === 'OTHER_SITE' ) {
-		supportSite = ownershipResult?.site;
+		supportSite = ownershipResult?.site as SiteDetails;
 	} else {
-		supportSite = currentSite;
+		supportSite = currentSite as HelpCenterSite;
 	}
-
-	const isAtomic = Boolean(
-		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
-	);
-	const isJetpack = Boolean(
-		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
-	);
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
-	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
+	const { data: sibylArticles } = useSibylQuery(
+		debouncedMessage,
+		Boolean( supportSite?.jetpack ),
+		Boolean( supportSite?.is_wpcom_atomic )
+	);
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
 
@@ -254,7 +253,7 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
-		const productSlug = supportSite?.plan;
+		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
 		const {
 			productId,
 			productName,
@@ -279,7 +278,7 @@ export const HelpCenterContactForm = () => {
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: productId,
-						is_automated_transfer: supportSite.is_at,
+						is_automated_transfer: supportSite.is_wpcom_atomic,
 						location: 'help-center',
 						section: sectionName,
 					} );
@@ -330,7 +329,6 @@ export const HelpCenterContactForm = () => {
 			case 'FORUM':
 				submitTopic( {
 					ownershipResult,
-					site: supportSite,
 					message: message ?? '',
 					subject: subject ?? '',
 					locale,

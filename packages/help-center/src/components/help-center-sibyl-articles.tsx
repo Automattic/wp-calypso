@@ -8,9 +8,9 @@ import {
 	getContextResults,
 	RESULT_TOUR,
 	RESULT_VIDEO,
+	HelpCenterSite,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { useSelect } from '@wordpress/data';
 import { external, Icon, page } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
@@ -25,7 +25,7 @@ export const SITE_STORE = 'automattic/site' as const;
 type Props = {
 	title?: string;
 	message?: string;
-	supportSite?: SiteDetails;
+	supportSite?: SiteDetails | HelpCenterSite;
 	articleCanNavigateBack?: boolean;
 };
 
@@ -95,12 +95,8 @@ export function SibylArticles( {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
-	const isAtomic = Boolean(
-		useSelect( ( select ) => supportSite && select( SITE_STORE ).isSiteAtomic( supportSite?.ID ) )
-	);
-	const isJetpack = Boolean(
-		useSelect( ( select ) => select( SITE_STORE ).isJetpackSite( supportSite?.ID ) )
-	);
+	const isAtomic = Boolean( supportSite?.is_wpcom_atomic );
+	const isJetpack = Boolean( supportSite?.jetpack );
 
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 

@@ -101,7 +101,7 @@ export interface DifmLiteSiteOptions {
 
 // is_fse_active && is_fse_eligible properties have been deprecated and removed from SiteDetails interface
 export interface SiteDetails {
-	ID: number;
+	ID: number | string;
 	URL: string;
 	capabilities: SiteDetailsCapabilities;
 	description: string;

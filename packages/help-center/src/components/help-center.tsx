@@ -8,14 +8,13 @@ import { useHappychatAvailable } from '@automattic/happychat-connection';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createPortal, useEffect, useRef } from '@wordpress/element';
 import { useSelector } from 'react-redux';
-import getIsSimpleSite from 'calypso/state/sites/selectors/is-simple-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
  */
 import { useHCWindowCommunicator } from '../happychat-window-communicator';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import { HELP_CENTER_STORE, USER_STORE } from '../stores';
+import { HELP_CENTER_STORE, USER_STORE, SITE_STORE } from '../stores';
 import { Container } from '../types';
 import HelpCenterContainer from './help-center-container';
 
@@ -46,17 +45,16 @@ const HelpCenter: React.FC< Container > = ( { handleClose, hidden } ) => {
 		}
 	}, [ data, setShowHelpCenter ] );
 
-	const { isSimpleSite } = useSelector( ( state ) => {
-		return {
-			siteId: getSelectedSiteId( state ),
-			isSimpleSite: getIsSimpleSite( state ),
-		};
-	} );
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
-	// prefetch the current site and user
-	setSite( window.helpCenterData.currentSite );
 	useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	useSupportAvailability( 'CHAT', isSimpleSite );
+
+	const currentSite = window?.helpCenterData?.currentSite;
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+
+	setSite( currentSite ? currentSite : site );
+	useSupportAvailability( 'CHAT' );
+
 	useStillNeedHelpURL();
 
 	useEffect( () => {

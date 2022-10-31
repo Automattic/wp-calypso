@@ -121,6 +121,7 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
+		$site       = \Jetpack_Options::get_option( 'id' );
 		$logo_id    = get_option( 'site_logo' );
 		$products   = wpcom_get_site_purchases();
 		$at_options = get_option( 'at_options' );
@@ -134,18 +135,22 @@ class Help_Center {
 		);
 
 		return array(
-			'ID'    => \Jetpack_Options::get_option( 'id' ),
-			'name'  => get_bloginfo( 'name' ),
-			'URL'   => get_bloginfo( 'url' ),
-			'plan'  => $plan->product_slug,
-			'is_at' => ! isset( $at_options ),
-			'logo'  => array(
+			'ID'              => $site,
+			'name'            => get_bloginfo( 'name' ),
+			'URL'             => get_bloginfo( 'url' ),
+			'plan'            => array(
+				'product_slug' => $plan->product_slug,
+			),
+			'is_wpcom_atomic' => boolval( $at_options ),
+			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'            => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
 			),
 		);
 	}
+
 	/**
 	 * Register the Help Center endpoints.
 	 */

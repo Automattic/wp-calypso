@@ -11,20 +11,18 @@ interface APIFetchOptions {
 }
 
 export async function requestHappyChatAuth() {
-	if ( canAccessWpcomApis() ) {
-		return ( await wpcomRequest( {
-			path: '/help/authenticate/chat',
-			apiNamespace: 'wpcom/v2',
-			apiVersion: '2',
-			method: 'POST',
-		} ) ) as HappychatAuth;
-	}
-
-	return ( await apiFetch( {
-		path: '/help-center/authenticate/chat',
-		method: 'POST',
-		global: true,
-	} as APIFetchOptions ) ) as HappychatAuth;
+	return canAccessWpcomApis()
+		? ( ( await wpcomRequest( {
+				path: '/help/authenticate/chat',
+				apiNamespace: 'wpcom/v2',
+				apiVersion: '2',
+				method: 'POST',
+		  } ) ) as HappychatAuth )
+		: ( ( await apiFetch( {
+				path: '/help-center/authenticate/chat',
+				method: 'POST',
+				global: true,
+		  } as APIFetchOptions ) ) as HappychatAuth );
 }
 
 export default function useHappychatAuth( enabled = true ) {
