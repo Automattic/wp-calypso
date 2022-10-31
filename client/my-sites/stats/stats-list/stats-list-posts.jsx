@@ -20,7 +20,7 @@ const StatsListPosts = ( {
 	title,
 	emptyMessage,
 	titleURL,
-	error,
+	// error,
 	isLoading,
 } ) => {
 	// const [ activeGroups, setActiveGroup ] = useState( [] );
