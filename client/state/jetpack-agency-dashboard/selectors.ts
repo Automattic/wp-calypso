@@ -34,11 +34,15 @@ export function getPurchasedLicense( state: AppState ): PurchasedProduct | null 
 /**
  * Returns the selected licenses from the dashboard.
  */
-export function getSelectedLicenses( state: AppState ): {
-	siteId: number | null;
-	licenses: Array< string >;
-} {
-	return state.agencyDashboard.selectedLicenses;
+export function getSelectedLicenses( state: AppState ): Array< string > {
+	return state.agencyDashboard?.selectedLicenses?.licenses;
+}
+
+/**
+ * Returns the selected licenses site.
+ */
+export function getSelectedLicensesSiteId( state: AppState ): number | null {
+	return state.agencyDashboard?.selectedLicenses?.siteId;
 }
 
 /**
@@ -50,7 +54,7 @@ export function hasSelectedLicensesOfType(
 	type: AllowedTypes
 ): boolean {
 	return (
-		state.agencyDashboard.selectedLicenses?.siteId === siteId &&
-		state.agencyDashboard.selectedLicenses?.licenses.includes( type )
+		state.agencyDashboard?.selectedLicenses?.siteId === siteId &&
+		state.agencyDashboard?.selectedLicenses?.licenses.includes( type )
 	);
 }

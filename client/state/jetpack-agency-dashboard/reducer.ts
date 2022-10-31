@@ -6,6 +6,7 @@ import {
 	JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE,
 	JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 } from './action-types';
 import type { PurchasedProduct } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
@@ -31,11 +32,21 @@ const selectedLicenses: Reducer<
 				siteId: action.siteId,
 				licenses: [ ...state.licenses, action.license ],
 			};
-		case JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE:
+		case JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE: {
+			const filtered = state.licenses.filter( ( license ) => license !== action.license );
+
 			return {
 				...state,
-				siteId: action.siteId,
-				licenses: state.licenses.filter( ( license ) => license !== action.license ),
+				// Reset the selected site in case there are no selected licenses.
+				siteId: filtered.length === 0 ? null : action.siteId,
+				licenses: filtered,
+			};
+		}
+		case JETPACK_AGENCY_DASHBOARD_RESET_SITE:
+			return {
+				...state,
+				siteId: null,
+				licenses: [],
 			};
 	}
 	return state;

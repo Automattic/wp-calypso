@@ -105,6 +105,9 @@
 	color: var(--studio-gray-5);
 	cursor: not-allowed;
 	opacity: 0.5;
+	button {
+		pointer-events: none;
+	}
 }
 .sites-overview__row-text {
 	display: inline-block;

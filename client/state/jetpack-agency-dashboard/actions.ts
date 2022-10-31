@@ -10,6 +10,7 @@ import {
 	JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE,
 	JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
 } from './action-types';
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
@@ -43,4 +44,8 @@ export function selectLicense( siteId: number, license: string ): AnyAction {
 
 export function unselectLicense( siteId: number, license: string ): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE, siteId: siteId, license: license };
+}
+
+export function resetSite(): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_RESET_SITE };
 }
