@@ -9,6 +9,7 @@ import JetpackBackupPluginImage from 'calypso/assets/images/jetpack/jetpack-plug
 import JetpackBoostPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-boost.svg';
 import JetpackSearchPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-search.svg';
 import JetpackSocialPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-social.svg';
+import JetpackVideopressPluginImage from 'calypso/assets/images/jetpack/jetpack-plugin-image-videopress.svg';
 import JetpackPluginImage from 'calypso/assets/images/jetpack/licensing-activation-plugin-install.svg';
 import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
 
@@ -32,6 +33,7 @@ const JETPACK_PLUGIN_IMAGE_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs( JETPACK_BOOST_PRODUCTS, JetpackBoostPluginImage ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SOCIAL_PRODUCTS, JetpackSocialPluginImage ),
 	...buildKeyValuePairByProductSlugs( JETPACK_SEARCH_PRODUCTS, JetpackSearchPluginImage ),
+	...buildKeyValuePairByProductSlugs( JETPACK_VIDEOPRESS_PRODUCTS, JetpackVideopressPluginImage ),
 };
 
 const JETPACK_SUPPORT_DOCS_MAP: Record< string, string > = {
@@ -50,6 +52,10 @@ const JETPACK_SUPPORT_DOCS_MAP: Record< string, string > = {
 	...buildKeyValuePairByProductSlugs(
 		JETPACK_SEARCH_PRODUCTS,
 		'search/jetpack-search-plugin/#installing-jetpack-search-plugin'
+	),
+	...buildKeyValuePairByProductSlugs(
+		JETPACK_VIDEOPRESS_PRODUCTS,
+		'jetpack-videopress/#how-do-i-use-jetpack-videopress'
 	),
 };
 
