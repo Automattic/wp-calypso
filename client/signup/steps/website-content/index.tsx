@@ -213,24 +213,31 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const [ pageTitles, setPageTitles ] = useState( [] );
+	const [ pageTitles, setPageTitles ] = useState< string[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		async function fetchData() {
-			const response = await wpcom.req.get( {
-				path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
-				apiNamespace: 'wpcom/v2',
-			} );
-			setPageTitles( response.selected_page_titles );
-			setIsLoading( false );
+		async function fetchSelectedPageTitles() {
+			try {
+				const response: { selected_page_titles: string[]; is_website_content_submitted: boolean } =
+					await wpcom.req.get( {
+						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
+						apiNamespace: 'wpcom/v2',
+					} );
 
-			if ( response.is_website_content_submitted ) {
-				debug( 'Website content content already submitted, redirecting to home' );
-				page( `/home/${ queryObject.siteSlug }` );
+				setIsLoading( false );
+				setPageTitles( response.selected_page_titles );
+
+				if ( response.is_website_content_submitted ) {
+					debug( 'Website content content already submitted, redirecting to home' );
+					page( `/home/${ queryObject.siteSlug }` );
+				}
+			} catch ( error ) {
+				setIsLoading( false );
 			}
 		}
-		fetchData();
+
+		fetchSelectedPageTitles();
 	}, [ queryObject.siteSlug ] );
 
 	if ( isLoading ) {
