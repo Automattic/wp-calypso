@@ -54,6 +54,7 @@ const initialTestState = {
 			},
 		],
 	},
+	siteId: null,
 };
 
 describe( 'reducer', () => {
@@ -73,20 +74,23 @@ describe( 'reducer', () => {
 		expect(
 			websiteContentCollectionReducer(
 				{ ...initialState },
-				initializePages( [
-					{
-						id: 'page-1',
-						name: 'Page 1',
-					},
-					{
-						id: 'page-2',
-						name: 'Page 2',
-					},
-					{
-						id: 'page-3',
-						name: 'Page 3',
-					},
-				] )
+				initializePages(
+					[
+						{
+							id: 'page-1',
+							name: 'Page 1',
+						},
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+					],
+					1234
+				)
 			)
 		).toEqual( {
 			...initialTestState,
@@ -125,10 +129,40 @@ describe( 'reducer', () => {
 					},
 				],
 			},
+			siteId: 1234,
 		} );
 	} );
 
-	test( 'When initializing page data existing page data should not be overridden', () => {
+	test( 'When initializing page data existing page data should not be overwritten if the site id is same', () => {
+		const existingState = {
+			...initialState,
+			siteId: 1234,
+		};
+		expect(
+			websiteContentCollectionReducer(
+				existingState,
+				initializePages(
+					[
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+						{
+							id: 'page-4',
+							name: 'Page 4',
+						},
+					],
+					1234
+				)
+			)
+		).toEqual( existingState );
+	} );
+
+	test( 'When initializing page data existing page data should be overwritten if the site id is different', () => {
 		const existingState = {
 			...initialState,
 			websiteContent: {
@@ -166,24 +200,28 @@ describe( 'reducer', () => {
 					},
 				],
 			},
+			siteId: 1234,
 		};
 		expect(
 			websiteContentCollectionReducer(
 				existingState,
-				initializePages( [
-					{
-						id: 'page-2',
-						name: 'Page 2',
-					},
-					{
-						id: 'page-3',
-						name: 'Page 3',
-					},
-					{
-						id: 'page-4',
-						name: 'Page 4',
-					},
-				] )
+				initializePages(
+					[
+						{
+							id: 'page-2',
+							name: 'Page 2',
+						},
+						{
+							id: 'page-3',
+							name: 'Page 3',
+						},
+						{
+							id: 'page-4',
+							name: 'Page 4',
+						},
+					],
+					1337
+				)
 			)
 		).toEqual( {
 			...initialTestState,
@@ -193,9 +231,9 @@ describe( 'reducer', () => {
 					{
 						id: 'page-2',
 						title: 'Page 2',
-						content: 'Some existing Page 2 content',
+						content: '',
 						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -203,9 +241,9 @@ describe( 'reducer', () => {
 					{
 						id: 'page-3',
 						title: 'Page 3',
-						content: 'Some existing Page 3 content',
+						content: '',
 						images: [
-							{ caption: 'sample.jpg', url: 'sample.jpg' },
+							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 							{ caption: '', url: '' },
 						],
@@ -222,6 +260,7 @@ describe( 'reducer', () => {
 					},
 				],
 			},
+			siteId: 1337,
 		} );
 	} );
 
