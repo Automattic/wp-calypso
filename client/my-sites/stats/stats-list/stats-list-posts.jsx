@@ -20,6 +20,8 @@ const StatsListPosts = ( {
 	title,
 	emptyMessage,
 	titleURL,
+	error,
+	isLoading,
 } ) => {
 	// const [ activeGroups, setActiveGroup ] = useState( [] );
 	const moduleNameTitle = titlecase( moduleName );
@@ -53,9 +55,10 @@ const StatsListPosts = ( {
 						: undefined
 				}
 				emptyMessage={ emptyMessage }
-				isEmpty={ ! data || ! data?.length }
+				isEmpty={ ! isLoading && ( ! data || ! data?.length ) }
 				titleURL={ titleURL }
 			>
+				{ !! isLoading && isLoading }
 				<HorizontalBarList className="list-posts-pages" data={ data }>
 					{ data?.map( ( item ) => {
 						return (
@@ -73,7 +76,6 @@ const StatsListPosts = ( {
 			</StatsCard>
 		</>
 	);
-	// }
 };
 
 export default StatsListPosts;

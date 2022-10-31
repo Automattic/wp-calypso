@@ -3,7 +3,6 @@ import React from 'react';
 export type HorizontalBarListProps = {
 	children: React.ReactNode;
 	className?: string;
-	data: Array< StatDataObject >;
 };
 
 export type HorizontalBarListItemProps = {

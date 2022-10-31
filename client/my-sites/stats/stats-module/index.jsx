@@ -174,7 +174,11 @@ class StatsModule extends Component {
 								: undefined
 						}
 						titleURL={ this.getHref() }
-					/>
+						error={ hasError && <ErrorPanel /> }
+						isLoading={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					>
+						{ this.props.children }
+					</StatsListPosts>
 				) }
 
 				<div>

@@ -6,12 +6,7 @@ import './style.scss';
 
 const BASE_CLASS_NAME = 'horizontal-bar-list';
 
-const HorizontalBarList = ( { children, className, data }: HorizontalBarListProps ) => {
-	if ( ! data || ! data.length ) {
-		//TODO: handle loading indicator
-		return <div>No data</div>; // This will come from a prop to handle different message.
-	}
-
+const HorizontalBarList = ( { children, className }: HorizontalBarListProps ) => {
 	const baseClass = classnames( className, BASE_CLASS_NAME );
 
 	return <ul className={ baseClass }>{ children }</ul>;
