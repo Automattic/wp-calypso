@@ -1,5 +1,12 @@
-// eslint-disable-next-line import/named
-import { HorizontalBarList, HorizontalBarListItem, StatsCard } from '@automattic/components';
+import {
+	// eslint-disable-next-line import/named
+	HorizontalBarList,
+	// eslint-disable-next-line import/named
+	HorizontalBarListItem,
+	// eslint-disable-next-line import/named
+	StatsCard,
+	Gridicon,
+} from '@automattic/components';
 // import classNames from 'classnames';
 import debugFactory from 'debug';
 import page from 'page';
@@ -9,6 +16,37 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 // import StatsListItem from './stats-list-item';
 
 const debug = debugFactory( 'calypso:stats:list:posts' ); // what is this?
+
+// TODO: move to a new component
+const LinkNode = ( { href, moduleName, translate } ) => {
+	const onClick = ( event ) => {
+		event.stopPropagation();
+		gaRecordEvent( 'Stats', 'Clicked on External Link in ' + moduleName + ' List Action Menu' );
+	};
+
+	return (
+		<a
+			href={ href }
+			onClick={ onClick }
+			target="_blank"
+			rel="noopener noreferrer"
+			className="stats-list__item-action-wrapper module-content-list-item-action-wrapper"
+			title={ translate( 'View content in a new window', {
+				textOnly: true,
+				context: 'Stats action tooltip: View content in a new window',
+			} ) }
+			aria-label={ translate( 'View content in a new window', {
+				textOnly: true,
+				context: 'Stats ARIA label: View content in new window action',
+			} ) }
+		>
+			<Gridicon icon="external" size={ 18 } />
+			<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
+				{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
+			</span>
+		</a>
+	);
+};
 
 // TODO: check loaders
 const StatsListPosts = ( {
@@ -22,6 +60,7 @@ const StatsListPosts = ( {
 	titleURL,
 	// error,
 	isLoading,
+	translate,
 } ) => {
 	// const [ activeGroups, setActiveGroup ] = useState( [] );
 	const moduleNameTitle = titlecase( moduleName );
@@ -68,7 +107,19 @@ const StatsListPosts = ( {
 								maxValue={ barMaxValue }
 								hasIndicator={ item?.className?.includes( 'published' ) }
 								onClick={ ( e ) => localClickHandler( e, item ) }
-								rightSideItem={ <div>abc</div> } // TODO: create link component and use type and url in `action` prop
+								rightSideItem={
+									item?.actions?.length &&
+									item.actions.map( ( action ) =>
+										action?.type === 'link' ? (
+											<LinkNode
+												href={ action.data }
+												key={ `posts-${ item?.id }-${ action.type }` }
+												moduleName="posts"
+												translate={ translate }
+											/>
+										) : undefined
+									)
+								}
 							/>
 						);
 					} ) }
@@ -78,4 +129,5 @@ const StatsListPosts = ( {
 	);
 };
 
+// TODO: add localize
 export default StatsListPosts;
