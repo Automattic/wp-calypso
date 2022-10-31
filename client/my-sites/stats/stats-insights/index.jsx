@@ -34,12 +34,12 @@ const StatsInsights = ( props ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ translate( 'Stats and Insights' ) } />
+			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
-				headerText={ translate( 'Stats and Insights' ) }
+				headerText={ translate( 'Jetpack Stats' ) }
 				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
