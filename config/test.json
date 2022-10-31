@@ -89,6 +89,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/new-main-chart": false,
+		"stats/show-traffic-highlights": false,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
