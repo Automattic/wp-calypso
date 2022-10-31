@@ -18,8 +18,7 @@ const JPCOM_HOME = 'https://jetpack.com';
 const A8C_HOME = 'https://automattic.com/';
 const A8C_WORK = 'https://automattic.com/work-with-us/';
 const GOOGLE_PLAY_JETPACK_URL = 'https://play.google.com/store/apps/details?id=com.jetpack.android';
-const APP_STORE_JETPACK_URL =
-	'https://apps.apple.com/us/app/jetpack-wp-security-speed/id1565481562';
+const APP_STORE_JETPACK_URL = 'https://apps.apple.com/us/app/jetpack-website-builder/id1565481562';
 
 const utmParams = {
 	utm_medium: 'automattic_referred',
