@@ -1,21 +1,29 @@
-// @ts-check
-
-import { flatten } from 'lodash';
+import type {
+	RawFailedReceiptPurchase,
+	RawFailedReceiptPurchases,
+	RawReceiptData,
+	RawReceiptPurchase,
+	RawReceiptPurchases,
+	ReceiptData,
+} from './types';
 
 /**
  * Converts raw receipt data into receipt data
  *
- * @param {import('./types').RawReceiptData} data The raw data returned from the server after a transaction
- * @returns {import('./types').ReceiptData} The formatted receipt data
+ * @param {RawReceiptData} data The raw data returned from the server after a transaction
+ * @returns {ReceiptData} The formatted receipt data
  */
-export function createReceiptObject( data ) {
+export function createReceiptObject( data: RawReceiptData ): ReceiptData {
+	const purchases = Array.isArray( data.purchases ) ? {} : data.purchases;
+	const failedPurchases = Array.isArray( data.failed_purchases ) ? {} : data.failed_purchases;
+
 	return {
 		receiptId: data.receipt_id,
 		displayPrice: data.display_price,
 		currency: data.currency,
 		priceInteger: data.price_integer,
 		priceFloat: data.price_float,
-		purchases: flattenPurchases( data.purchases || {} ).map( ( purchase ) => {
+		purchases: flattenPurchases( purchases || {} ).map( ( purchase ) => {
 			return {
 				delayedProvisioning: Boolean( purchase.delayed_provisioning ),
 				freeTrial: Boolean( purchase.free_trial ),
@@ -34,7 +42,7 @@ export function createReceiptObject( data ) {
 				willAutoRenew: Boolean( purchase.will_auto_renew ),
 			};
 		} ),
-		failedPurchases: flattenFailedPurchases( data.failed_purchases || {} ).map( ( purchase ) => {
+		failedPurchases: flattenFailedPurchases( failedPurchases || {} ).map( ( purchase ) => {
 			return {
 				meta: purchase.product_meta,
 				productId: purchase.product_id,
@@ -49,21 +57,19 @@ export function createReceiptObject( data ) {
 /**
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
- *
- * @param {import('./types').RawReceiptPurchases | Array<void>} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array<import('./types').RawReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
-function flattenPurchases( purchases ) {
-	return flatten( Object.values( purchases ) );
+function flattenPurchases(
+	purchases: RawReceiptPurchases | Array< void >
+): Array< RawReceiptPurchase > {
+	return Object.values( purchases ).flat();
 }
 
 /**
  * Purchases are of the format { [siteId]: [ { productId: ... } ] }
  * so we need to flatten them to get a list of purchases
- *
- * @param {import('./types').RawFailedReceiptPurchases | Array<void>} purchases keyed by siteId { [siteId]: [ { productId: ... } ] }
- * @returns {Array<import('./types').RawFailedReceiptPurchase>} of product objects [ { productId: ... }, ... ]
  */
-function flattenFailedPurchases( purchases ) {
-	return flatten( Object.values( purchases ) );
+function flattenFailedPurchases(
+	purchases: RawFailedReceiptPurchases | Array< void >
+): Array< RawFailedReceiptPurchase > {
+	return Object.values( purchases ).flat();
 }
