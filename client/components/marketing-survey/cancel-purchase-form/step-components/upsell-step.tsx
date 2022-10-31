@@ -2,7 +2,9 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useTranslate, numberFormat } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import imgBuiltBy from 'calypso/assets/images/cancellation/built-by.png';
@@ -75,6 +77,21 @@ function Upsell( { image, ...props }: UpsellProps ) {
 	);
 }
 
+function getLiveChatUrl( type: UpsellType, site: SiteDetails, purchase: Purchase ) {
+	switch ( type ) {
+		case 'live-chat:plans':
+			return `/purchases/subscriptions/${ site.slug }/${ purchase.id }`;
+		case 'live-chat:plugins':
+			return `/plugins/${ site.slug }`;
+		case 'live-chat:themes':
+			return `/themes/${ site.slug }`;
+		case 'live-chat:domains':
+			return `/domains/manage/${ site.slug }`;
+	}
+
+	return '';
+}
+
 type StepProps = {
 	upsell: UpsellType;
 	site: SiteDetails;
@@ -91,6 +108,7 @@ type StepProps = {
 export default function UpsellStep( { upsell, site, purchase, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
+	const helpCenter = useDispatch( 'automattic/help-center' );
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = '25%';
 	const couponCode = 'BIZC25';
@@ -110,6 +128,21 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						recordTracksEvent( 'calypso_cancellation_upsell_step_live_chat_click', {
 							type: upsell,
 						} );
+						page( getLiveChatUrl( upsell, site, purchase ) );
+						helpCenter.setShowHelpCenter( true );
+						helpCenter.resetRouterState();
+						helpCenter.setRouterState(
+							[
+								{
+									pathname: '/',
+								},
+								{
+									pathname: '/contact-form',
+									search: 'mode=CHAT',
+								},
+							],
+							1
+						);
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
