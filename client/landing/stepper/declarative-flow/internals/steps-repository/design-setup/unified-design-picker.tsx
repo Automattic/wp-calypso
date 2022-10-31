@@ -84,6 +84,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
+		// We need to remove the old one first
+		allDesigns.static.designs = allDesigns.static.designs.filter(
+			( design ) => design.slug !== 'blank-canvas-blocks'
+		);
+
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build intent
