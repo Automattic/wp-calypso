@@ -1,6 +1,7 @@
 /**
  * Global polyfills
  */
+import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import debugFactory from 'debug';
 import page from 'page';
@@ -10,6 +11,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 // import StatsSummary from 'calypso/my-sites/stats/index';
+import QuerySites from 'calypso/components/data/query-sites';
 import { rawCurrentUserFetch, filterUserObject } from 'calypso/lib/user/shared-utils';
 import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
@@ -20,7 +22,8 @@ import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 // import statss from 'calypso/state/stats/reducer';
-import { hideMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
+import { setLocale as setLocaleAction } from 'calypso/state/ui/language/actions';
+import { hideMasterbar as hideMasterbarAction } from 'calypso/state/ui/masterbar-visibility/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import { getUrlParts } from '../../../packages/calypso-url';
 import registerStatsPages from './routes';
@@ -87,6 +90,16 @@ const setupContextMiddleware = ( reduxStore, reactQueryClient ) => {
 	} );
 };
 
+const setLocale = ( dispatch ) => {
+	const defaultLocale = config( 'i18n_default_locale_slug' ) || 'en';
+	const siteLocale = config( 'i18n_locale_slug' );
+	dispatch( setLocaleAction( siteLocale ? siteLocale : defaultLocale ) );
+};
+
+const hideMasterbar = ( dispatch ) => {
+	dispatch( hideMasterbarAction() );
+};
+
 async function AppBoot() {
 	const rootReducer = combineReducers( {
 		currentUser,
@@ -110,19 +123,21 @@ async function AppBoot() {
 		store.dispatch( setCurrentUser( user ) );
 	}
 
-	store.dispatch( hideMasterbar() );
+	setLocale( store.dispatch );
+	hideMasterbar( store.dispatch );
 
 	setupContextMiddleware( store, queryClient );
 
-	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
-
 	ReactDom.render(
 		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }></Provider>
+			<Provider store={ store }>
+				<QuerySites siteId="193141071" />
+			</Provider>
 		</QueryClientProvider>,
 		document.getElementById( 'wpcom' )
 	);
 
-	page( '#!/stats/insights/193141071' );
+	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
+	// page( '#!/stats/day/193141071' );
 }
 AppBoot();

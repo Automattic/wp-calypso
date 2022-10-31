@@ -1,9 +1,9 @@
+import config from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	follows,
 	insights,
-	overview,
 	post,
 	site,
 	summary,
@@ -13,22 +13,20 @@ import {
 	redirectToDefaultSitePage,
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
-import { requestSite } from 'calypso/state/sites/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 
 import 'calypso/my-sites/stats/style.scss';
 
-const siteSelection = ( context, next ) =>
-	context.store
-		.dispatch( requestSite( 193141071 ) )
-		.then( () => context.store.dispatch( setSelectedSiteId( 193141071 ) ) )
-		.then( () => next( context, next ) );
+const siteSelection = ( context, next ) => {
+	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
+	next( context, next );
+};
 
 const statsPage = ( url, controller ) => {
 	page( url, controller, siteSelection, makeLayout, clientRender );
 };
 
-export default function () {
+export default function ( pageBase = '/' ) {
 	const validPeriods = [ 'day', 'week', 'month', 'year' ].join( '|' );
 
 	const validModules = [
@@ -44,14 +42,14 @@ export default function () {
 		'annualstats',
 	].join( '|' );
 
-	page.base( '/wp-admin/wp-admin.php?page=jetpack-stats-app' );
+	page.base( pageBase );
 
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
-	page( '/', '/stats/day' );
+	// page( '/', '/stats/day/:site' );
 
 	// Stat Overview Page
-	statsPage( `/stats/:period(${ validPeriods })`, overview );
+	// statsPage( `/stats/:period(${ validPeriods })`, overview );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
@@ -84,6 +82,6 @@ export default function () {
 
 	// Anything else should redirect to default stats page
 	statsPage( '/stats/(.*)', redirectToDefaultSitePage );
-
+	// Enable hashbang for routing in Jetpack.
 	page( { hashbang: true } );
 }
