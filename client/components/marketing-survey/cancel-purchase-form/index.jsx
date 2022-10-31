@@ -78,7 +78,7 @@ class CancelPurchaseForm extends Component {
 		if ( ! isPlan( this.props.purchase ) ) {
 			steps = [ NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.upsell ) {
-			steps = [ FEEDBACK_STEP, UPSELL_STEP ];
+			steps = [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ];
 		} else if ( this.state.questionTwoOrder.length ) {
 			steps = [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP ];
 		}
@@ -327,6 +327,9 @@ class CancelPurchaseForm extends Component {
 		}
 
 		if ( surveyStep === UPSELL_STEP ) {
+			const allSteps = this.getAllSurveySteps();
+			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
 			return (
 				<UpsellStep
 					upsell={ this.state.upsell }
@@ -338,7 +341,7 @@ class CancelPurchaseForm extends Component {
 					downgradeClick={ this.downgradeClick }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
 					includedDomainPurchase={ this.props.includedDomainPurchase }
-					onDeclineUpsell={ this.onSubmit }
+					onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }
 					onClickDowngrade={ this.downgradeClick }
 					onClickFreeMonthOffer={ this.freeMonthOfferClick }
 				/>
