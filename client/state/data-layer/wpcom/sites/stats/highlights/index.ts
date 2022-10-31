@@ -3,7 +3,6 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { receiveHighlights } from 'calypso/state/stats/highlights/actions';
-// import fromApi from './from-api';
 import type { AnyAction } from 'redux';
 
 export const fetch = ( action: AnyAction ) => {
