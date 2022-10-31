@@ -37,6 +37,7 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import HighlightsSection from './highlights-section';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
@@ -198,8 +199,8 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
 		return (
 			<div className={ isNewFeatured ? 'stats--new-main-chart' : undefined }>
@@ -225,6 +226,8 @@ class StatsSite extends Component {
 					siteId={ siteId }
 					slug={ slug }
 				/>
+
+				{ showHighlights && <HighlightsSection /> }
 
 				<div id="my-stats-content">
 					{ isNewFeatured ? (
