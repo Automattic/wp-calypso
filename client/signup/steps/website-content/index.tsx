@@ -213,13 +213,13 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const [ pageTitles, setPageTitles ] = useState< string[] >( [] );
+	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
 		async function fetchSelectedPageTitles() {
 			try {
-				const response: { selected_page_titles: string[]; is_website_content_submitted: boolean } =
+				const response: { selected_page_titles: PageId[]; is_website_content_submitted: boolean } =
 					await wpcom.req.get( {
 						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
 						apiNamespace: 'wpcom/v2',
