@@ -3,40 +3,62 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import React, { useEffect } from 'react';
+import React from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
+import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
+import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { useSite } from '../../../../hooks/use-site';
-import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
+import { SITE_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
 const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
-	const [ tagline, setTagline ] = React.useState( '' );
-	const [ formTouched, setFormTouched ] = React.useState( false );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const [ vertical, setVertical ] = React.useState( '' );
+	const [ country, setCountry ] = React.useState( '' );
+	// const [ formTouched, setFormTouched ] = React.useState( false );
 	const translate = useTranslate();
-	const site = useSite();
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const site = {}; // TODO: how to we initialize new site programmatically?
+	const verticals = useSiteVerticalsFeatured();
+	const verticalsOptions = React.useMemo( () => {
+		const sorted = verticals.data?.sort( ( a, b ) => {
+			if ( a.name === b.name ) {
+				return 0;
+			}
+			return a.name > b.name ? 1 : -1;
+		} );
+		return sorted?.map( ( v ) => (
+			<option value={ v.id } key={ v.id }>
+				{ v.name }
+			</option>
+		) );
+	}, [ verticals ] );
+	// TODO: This may not be the right source for this info.
+	const countries = useCountries();
+	const countriesOptions = React.useMemo( () => {
+		const data = countries.data as Record< string, string >;
+		console.log( data );
+		const options = [];
+		for ( const abbrev in data ) {
+			const country = data[ abbrev ];
+			options.push(
+				<option value={ abbrev } key={ abbrev }>
+					{ country }
+				</option>
+			);
+		}
+		return options;
+	}, [ countries ] );
 
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	console.log( site );
-	useEffect( () => {
-		if ( ! site ) {
-			return;
-		}
-
-		if ( formTouched ) {
-			return;
-		}
-
-		setSiteTitle( site.name || '' );
-		setTagline( site.description );
-	}, [ site, formTouched ] );
+	console.log( { currentUser, newUser } );
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -48,16 +70,20 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 				has_site_title: !! siteTitle,
 			} );
 
-			submit?.( { siteTitle, tagline } );
+			submit?.( { siteTitle } );
 		}
 	};
-	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
+	const onChange = ( event: React.FormEvent< HTMLInputElement | HTMLSelectElement > ) => {
 		if ( site ) {
 			setFormTouched( true );
 
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
 					return setSiteTitle( event.currentTarget.value );
+				case 'siteVertical':
+					return setVertical( event.currentTarget.value );
+				case 'siteCountry':
+					return setCountry( event.currentTarget.value );
 			}
 		}
 	};
@@ -79,6 +105,22 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
+			<FormFieldset disabled={ ! site } className="store-profiler__form-fieldset">
+				<FormLabel htmlFor="siteVertical" optional>
+					{ translate( 'In which industry does your store operate?' ) }{ ' ' }
+				</FormLabel>
+				<FormSelect name="siteVertical" id="siteVertical" value={ vertical } onChange={ onChange }>
+					{ verticalsOptions }
+				</FormSelect>
+			</FormFieldset>
+			<FormFieldset disabled={ ! site } className="store-profiler__form-fieldset">
+				<FormLabel htmlFor="siteCountry" optional>
+					{ translate( 'Where will your business be located?' ) }{ ' ' }
+				</FormLabel>
+				<FormSelect name="siteCountry" id="siteCountry" value={ country } onChange={ onChange }>
+					{ countriesOptions }
+				</FormSelect>
+			</FormFieldset>
 
 			<Button disabled={ ! site } className="store-profiler__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
@@ -89,7 +131,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	return (
 		<StepContainer
 			stepName="store-profiler"
-			className={ `is-step-${ intent }` }
 			skipButtonAlign="top"
 			goBack={ goBack }
 			goNext={ goNext }
