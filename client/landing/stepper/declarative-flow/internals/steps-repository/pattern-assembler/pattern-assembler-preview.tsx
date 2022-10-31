@@ -37,12 +37,11 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 		...selectedDesign,
 		recipe: {
 			...selectedDesign?.recipe,
-			// The blank canvas blocks demo site doesn't have the header, so we inject the header into the first pattern
+			// The blank canvas demo site doesn't have the header and footer, so we inject them into the first and last
 			// of the content.
-			pattern_ids: [ header, ...sections ]
+			pattern_ids: [ header, ...sections, footer ]
 				.filter( Boolean )
 				.map( ( pattern ) => encodePatternId( pattern!.id ) ),
-			footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
 		},
 	} as Design;
 
