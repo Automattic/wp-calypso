@@ -20,7 +20,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	height: calc(100% - 10rem);
+	height: calc(100% - 40px);
 	outline: none;
 
 	@include break-small {
@@ -35,11 +35,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 
 	@media ( max-height: 375px ) {
 		aspect-ratio: 0.5;
-	}
-
-	// needed for iOS Safari. iOS has
-	@supports ( min-height: 65svh ) {
-		height: calc(65svh - 50px);
 	}
 
 	opacity: 0.5;
@@ -65,7 +60,6 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	}
 
 	.swiper-slide-active {
-		.pattern-picker__cta,
 		.pattern-picker__item {
 			opacity: 1;
 			filter: blur(0);
@@ -125,9 +119,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 }
 
 .pattern-picker__select {
-	display: flex;
+	display: inline-flex;
 	justify-content: center;
-	text-align: center;
 	width: 28vh;
 
 	svg {
@@ -150,10 +143,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 }
 
 .pattern-picker__cta {
-	text-align: center;
-	opacity: 0;
-
-	button {
-		display: inline-flex;
-	}
+	position: absolute;
+	margin-top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
 }
