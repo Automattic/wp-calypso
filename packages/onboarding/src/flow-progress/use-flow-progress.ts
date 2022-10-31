@@ -37,7 +37,7 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		senseiSetup: 1,
 		senseiDomain: 2,
 		senseiPlan: 3,
-		launchpad: 4,
+		senseiLaunch: 4,
 	},
 };
 

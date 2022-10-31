@@ -47,6 +47,7 @@ export { default as getCurrentThemeSoftwareSets } from './get-current-theme-soft
 export { default as senseiSetup } from './sensei-setup';
 export { default as senseiDomain } from './sensei-domain';
 export { default as senseiPlan } from './sensei-plan';
+export { default as senseiLaunch } from './sensei-launch';
 
 export type StepPath =
 	| 'courses'
@@ -93,8 +94,9 @@ export type StepPath =
 	| 'launchpad'
 	| 'subscribers'
 	| 'senseiSetup'
-	| 'senseiPlan'
 	| 'senseiDomain'
+	| 'senseiPlan'
+	| 'senseiLaunch'
 	| 'getCurrentThemeSoftwareSets'
 	| 'chooseAPlan'
 	| 'videomakerSetup';

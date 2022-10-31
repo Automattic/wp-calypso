@@ -1,8 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import React from 'react';
 import { Plans } from 'calypso/../packages/data-stores/src';
 import { SenseiStepContent, SENSEI_FLOW, StepContainer } from 'calypso/../packages/onboarding/src';
 import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
@@ -21,21 +21,21 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { ProgressingTitle } from '../sensei-launch/components';
 import type { Step } from '../../types';
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
 
 const SenseiPlan: Step = ( { flow } ) => {
-	const [ billingPeriod, setBillingPeriod ] =
-		React.useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
-	const [ allPlansExpanded, setAllPlansExpanded ] = React.useState( true );
+	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
+	const [ isBundling, setIsBundling ] = useState< boolean >( false );
 
 	const { __ } = useI18n();
 	const locale = useLocale();
 	const visibility = useNewSiteVisibility();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
-	const { createSenseiSite } = useDispatch( ONBOARD_STORE );
+	const { createSenseiSite, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
 	const productList =
 		useSelect( ( select ) => select( PRODUCTS_LIST_STORE ).getProductsList(), [] ) || {};
@@ -59,6 +59,7 @@ const SenseiPlan: Step = ( { flow } ) => {
 
 	const onPlanSelect = async () => {
 		try {
+			setIsBundling( true );
 			await createSenseiSite( {
 				username: currentUser?.username || '',
 				languageSlug: locale,
@@ -66,6 +67,7 @@ const SenseiPlan: Step = ( { flow } ) => {
 			} );
 
 			const newSite = getNewSite();
+			setSelectedSite( newSite?.blogid );
 			setIntentOnSite( newSite?.site_slug as string, SENSEI_FLOW );
 			saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
@@ -124,37 +126,40 @@ const SenseiPlan: Step = ( { flow } ) => {
 			shouldHideNavButtons
 			stepContent={
 				<SenseiStepContent>
-					<div className="plans-grid">
-						<PlansIntervalToggle
-							intervalType={ billingPeriod }
-							onChange={ handlePlanBillingPeriodChange }
-							maxMonthlyDiscountPercentage={ maxAnnualDiscount }
-							className="plans-grid__toggle"
-						/>
+					{ isBundling ? (
+						<ProgressingTitle>{ __( 'Preparing Your Bundle' ) }</ProgressingTitle>
+					) : (
+						<div className="plans-grid">
+							<PlansIntervalToggle
+								intervalType={ billingPeriod }
+								onChange={ handlePlanBillingPeriodChange }
+								maxMonthlyDiscountPercentage={ maxAnnualDiscount }
+								className="plans-grid__toggle"
+							/>
 
-						<div className="plans-grid__table">
-							<div className="plans-grid__table-container">
-								<div className="plans-table">
-									<span>
-										<PlanItem
-											popularBadgeVariation="ON_TOP"
-											allPlansExpanded={ allPlansExpanded }
-											slug="business"
-											domain={ domain }
-											CTAVariation="NORMAL"
-											features={ planObject?.features ?? [] }
-											billingPeriod={ billingPeriod }
-											name="business"
-											onSelect={ onPlanSelect }
-											onPickDomainClick={ undefined }
-											onToggleExpandAll={ () => setAllPlansExpanded( ( expand ) => ! expand ) }
-											popularBadgeText={ __( 'Best for Video' ) }
-										/>
-									</span>
+							<div className="plans-grid__table">
+								<div className="plans-grid__table-container">
+									<div className="plans-table">
+										<span>
+											<PlanItem
+												popularBadgeVariation="ON_TOP"
+												allPlansExpanded
+												slug="business"
+												domain={ domain }
+												CTAVariation="NORMAL"
+												features={ planObject?.features ?? [] }
+												billingPeriod={ billingPeriod }
+												name="business"
+												onSelect={ onPlanSelect }
+												onPickDomainClick={ undefined }
+												popularBadgeText={ __( 'Best for Video' ) }
+											/>
+										</span>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					) }
 				</SenseiStepContent>
 			}
 		/>
