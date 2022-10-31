@@ -743,6 +743,11 @@
 	}
 }
 
+.licensing-activation .button.is-primary {
+	background-color: var(--studio-black);
+	color: var(--studio-white);
+}
+
 .licensing-activation .licensing-thank-you-manual-activation-instructions__button.button {
 	margin-top: 0;
 }
@@ -780,8 +785,6 @@
 .licensing-activation .jetpack-license-key-clipboard__button.button {
 	margin-top: 0;
 	min-width: 100px;
-	background-color: var(--studio-black);
-	color: var(--studio-white);
 }
 
 .jetpack-checkout-thank-you {
