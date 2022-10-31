@@ -246,6 +246,7 @@ class Layout extends Component {
 			'is-jetpack-mobile-flow': this.props.isJetpackMobileFlow,
 			'is-jetpack-woocommerce-flow': this.props.isJetpackWooCommerceFlow,
 			'is-jetpack-woo-dna-flow': this.props.isJetpackWooDnaFlow,
+			'is-stats-page': this.props.isStatsPage,
 			'is-wccom-oauth-flow': isWooOAuth2Client( this.props.oauth2Client ) && this.props.wccomFrom,
 		} );
 
@@ -399,6 +400,9 @@ export default withCurrentRoute(
 		].includes( sectionName );
 		const sidebarIsHidden = ! secondary || isWcMobileApp();
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
+		const isStatsPage =
+			( typeof sectionName === 'string' && sectionName?.includes( 'sectionName' ) ) ||
+			( typeof sectionJitmPath === 'string' && sectionJitmPath?.includes( 'stats' ) );
 
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) &&
@@ -415,6 +419,7 @@ export default withCurrentRoute(
 			isEligibleForJITM,
 			oauth2Client,
 			wccomFrom,
+			isStatsPage,
 			isSupportSession: isSupportSession( state ),
 			sectionGroup,
 			sectionName,
