@@ -9212,22 +9212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.12.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
-  version: 4.12.0
-  resolution: "@wordpress/element@npm:4.12.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@types/react": ^17.0.37
-    "@types/react-dom": ^17.0.11
-    "@wordpress/escape-html": ^2.14.0
-    lodash: ^4.17.21
-    react: ^17.0.2
-    react-dom: ^17.0.2
-  checksum: 22162e567fc17cc1251b7581f49d54ed32ecdec98481d922e3dc6ca535d84dcf0695a7b15701ad6f74c884304d47544076593892294448afa2988056f604d359
-  languageName: node
-  linkType: hard
-
-"@wordpress/element@npm:^4.18.0":
+"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.18.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
   version: 4.18.0
   resolution: "@wordpress/element@npm:4.18.0"
   dependencies:
@@ -9274,16 +9259,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.14.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.9.0":
-  version: 2.14.0
-  resolution: "@wordpress/escape-html@npm:2.14.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-  checksum: 88cd44de524346e95ab0eeaebc91afa4dee10e330b032a93b5106fa06ffd5568eb6bcab2597288a427ec4f0549d6ec8ef4840bb2b8cfc3e958f6643c2eea60cd
-  languageName: node
-  linkType: hard
-
-"@wordpress/escape-html@npm:^2.20.0":
+"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.20.0, @wordpress/escape-html@npm:^2.9.0":
   version: 2.20.0
   resolution: "@wordpress/escape-html@npm:2.20.0"
   dependencies:
@@ -9466,18 +9442,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.0.0, @wordpress/icons@npm:^9.4.0, @wordpress/icons@npm:^9.5.0":
-  version: 9.5.0
-  resolution: "@wordpress/icons@npm:9.5.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.12.0
-    "@wordpress/primitives": ^3.12.0
-  checksum: 03e5885e79a20846ae0d906277afa6a159a1718acb647052bae5052d0ab49d2e78f475c93a7341ffcdee0ede55176fcaf87217bcb238980d1bad728e2f476412
-  languageName: node
-  linkType: hard
-
-"@wordpress/icons@npm:^9.11.0":
+"@wordpress/icons@npm:^9.0.0, @wordpress/icons@npm:^9.11.0, @wordpress/icons@npm:^9.4.0, @wordpress/icons@npm:^9.5.0":
   version: 9.11.0
   resolution: "@wordpress/icons@npm:9.11.0"
   dependencies:
@@ -9750,18 +9715,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.12.0, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0, @wordpress/primitives@npm:^3.8.0":
-  version: 3.12.0
-  resolution: "@wordpress/primitives@npm:3.12.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.12.0
-    classnames: ^2.3.1
-  checksum: 55b9bcb6a0cfa4405b8f45105251321173b396c4cb4263a89797939a4415cdc454743e7ff3779074c0437bf51a161875c6e2d2f4b793cc7b440ee4552124a262
-  languageName: node
-  linkType: hard
-
-"@wordpress/primitives@npm:^3.18.0":
+"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.18.0, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0, @wordpress/primitives@npm:^3.8.0":
   version: 3.18.0
   resolution: "@wordpress/primitives@npm:3.18.0"
   dependencies:
@@ -12878,17 +12832,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camel-case@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "camel-case@npm:4.1.1"
-  dependencies:
-    pascal-case: ^3.1.1
-    tslib: ^1.10.0
-  checksum: d8113f24a3ac764a81a6ec7a5de5d339bcc749da741e6a088c8f1dc8768845ef5299ce37d94449a0608727ac0a7c33e9c47fecfa820a1ab2b4145c0f5129c584
-  languageName: node
-  linkType: hard
-
-"camel-case@npm:^4.1.2":
+"camel-case@npm:^4.1.1, camel-case@npm:^4.1.2":
   version: 4.1.2
   resolution: "camel-case@npm:4.1.2"
   dependencies:
@@ -15969,16 +15913,6 @@ __metadata:
     domelementtype: ^2.2.0
     domhandler: ^4.2.0
   checksum: d58e2ae01922f0dd55894e61d18119924d88091837887bf1438f2327f32c65eb76426bd9384f81e7d6dcfb048e0f83c19b222ad7101176ad68cdc9c695b563db
-  languageName: node
-  linkType: hard
-
-"dot-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "dot-case@npm:3.0.3"
-  dependencies:
-    no-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: f4bbaa2f6cb5521f63bb0f6d7c79b902c7d618a9c51696f882e459257d17a4aee9db5d96d9a3fd2cc6d17264623509db0e1aa86bb7d478c5dd662f26e84d26db
   languageName: node
   linkType: hard
 
@@ -23855,15 +23789,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lower-case@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "lower-case@npm:2.0.1"
-  dependencies:
-    tslib: ^1.10.0
-  checksum: 3dad40e357d2a56e93e03b9dc1233c010a255dfd2dfc5b7203d351ca75944f4baa5f7ec9ede4ae99907548ef09eda56e6f52845e9607462f44436b50d0c83ffb
-  languageName: node
-  linkType: hard
-
 "lower-case@npm:^2.0.2":
   version: 2.0.2
   resolution: "lower-case@npm:2.0.2"
@@ -25565,16 +25490,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"no-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "no-case@npm:3.0.3"
-  dependencies:
-    lower-case: ^2.0.1
-    tslib: ^1.10.0
-  checksum: ef23b5a5712e5f7d68eb4bc12c6e076709c86a9edfa30fb563adf53c4ab9be78f8fc24ee91240593aa2d4d79e3f901f838d2d27e4f7e3b45582d5b871d98f171
-  languageName: node
-  linkType: hard
-
 "no-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "no-case@npm:3.0.4"
@@ -26760,17 +26675,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"param-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "param-case@npm:3.0.3"
-  dependencies:
-    dot-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: c90d69d2fb9dbd157abebf85f1bf0ee7b5f4e3f24429ecc726f1d81a952fe858c3e4a7043e9da3b4f84a278b4e94e71aa90099cb7c244bd48e61fb73070eabea
-  languageName: node
-  linkType: hard
-
-"param-case@npm:^3.0.4":
+"param-case@npm:^3.0.3, param-case@npm:^3.0.4":
   version: 3.0.4
   resolution: "param-case@npm:3.0.4"
   dependencies:
@@ -26979,16 +26884,6 @@ __metadata:
   version: 1.3.3
   resolution: "parseurl@npm:1.3.3"
   checksum: 90dd4760d6f6174adb9f20cf0965ae12e23879b5f5464f38e92fce8073354341e4b3b76fa3d878351efe7d01e617121955284cfd002ab087fba1a0726ec0b4f5
-  languageName: node
-  linkType: hard
-
-"pascal-case@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "pascal-case@npm:3.1.1"
-  dependencies:
-    no-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: d9f975e2720514224e58df96ec08628be6b5a29446e233c946b203c77e43f90080ad37d52a93eefd5e9c6d446bf86a233d9470af09173e20c093153a4bdfb0e2
   languageName: node
   linkType: hard
 
