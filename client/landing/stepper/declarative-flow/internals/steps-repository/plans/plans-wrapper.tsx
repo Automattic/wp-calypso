@@ -20,13 +20,11 @@ import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
 import './style.scss';
 
 interface Props {
-	flowName: string;
-	siteType: string;
+	flowName: string | null;
 	onSubmit: () => void;
 	plansLoaded: boolean;
 }
@@ -51,7 +49,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
-	const headerText = 'Choose a plan';
+	const headerText = __( 'Choose a plan' );
 
 	const translate = useTranslate();
 
@@ -231,7 +229,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 export default connect( ( state ) => {
 	return {
-		siteType: getSiteType( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 	};
 } )( localize( PlansWrapper ) );
