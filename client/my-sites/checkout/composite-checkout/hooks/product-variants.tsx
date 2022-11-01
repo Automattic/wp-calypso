@@ -17,7 +17,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useJITCallback } from 'calypso/lib/use-jit-callback';
+import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
@@ -100,7 +100,7 @@ export function useGetProductVariants(
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
-	const filterCallbackMemoized = useJITCallback( filterCallback ?? fallbackFilter );
+	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
