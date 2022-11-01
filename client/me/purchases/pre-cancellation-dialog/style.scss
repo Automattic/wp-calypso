@@ -34,9 +34,9 @@ $modal-breakpoint-mobile: 480px;
 			background: none;
 		}
 
-		margin-left: 48px;
+		margin-left: 38px;
 		margin-top: 32px;
-		margin-bottom: 48px;
+		margin-bottom: 92px;
 		border: none;
 		background: transparent;
 		text-align: left;
@@ -89,23 +89,16 @@ $modal-breakpoint-mobile: 480px;
 	.pre-cancellation-dialog--support {
 		font-size: $font-body-small;
 		position: absolute;
-		margin-top: -72px;
+		margin-top: 92px;
 		margin-left: 48px;
 
 		@media ( max-width: $modal-breakpoint-tablet ) {
-			margin-top: 82px;
-			margin-left: 0;
-			margin-right: 0;
-			text-align: center;
-			width: 100%;
+			margin-top: 92px;
 		}
 
 		@media ( max-width: $modal-breakpoint-mobile ) {
-			margin-top: 122px;
-			margin-left: 0;
-			margin-right: 0;
-			text-align: center;
-			width: 100%;
+			margin-top: 132px;
+			margin-left: 38px;
 		}
 	}
 
@@ -137,6 +130,13 @@ $modal-breakpoint-mobile: 480px;
 			}
 		}
 
+		.pre-cancellation-dialog--support {
+			@media ( min-width: $modal-breakpoint-tablet ) {
+				margin-top: -72px;
+				margin-left: 38px;
+			}
+		}
+
 		.pre-cancellation-dialog__grid-colmn:nth-child(2) {
 			background: #f0f0f0;
 			padding-bottom: 0;
@@ -147,7 +147,7 @@ $modal-breakpoint-mobile: 480px;
 		}
 
 		& + .dialog__action-buttons {
-			margin-left: 48px;
+			margin-left: 38px;
 			margin-top: -136px;
 			margin-bottom: 52px;
 			border: none;
@@ -167,7 +167,7 @@ $modal-breakpoint-mobile: 480px;
 			@media ( max-width: $modal-breakpoint-tablet ) {
 				margin-left: 48px;
 				margin-top: 24px;
-				margin-bottom: 92px;
+				margin-bottom: 102px;
 			}
 
 			@media ( max-width: $modal-breakpoint-mobile ) {
