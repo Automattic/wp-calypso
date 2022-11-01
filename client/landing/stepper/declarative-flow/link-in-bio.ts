@@ -30,11 +30,11 @@ export const linkInBio: Flow = {
 			'intro',
 			'linkInBioSetup',
 			'domains',
+			'plans',
 			'patterns',
 			'siteCreationStep',
 			'processing',
 			'launchpad',
-			'plans',
 		] as StepPath[];
 	},
 
@@ -44,11 +44,7 @@ export const linkInBio: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
 		setStepProgress( flowProgress );
 		const siteSlug = useSiteSlug();
-		const { userIsLoggedIn } = useSelect( ( select ) => {
-			return {
-				userIsLoggedIn: select( USER_STORE ).isCurrentUserLoggedIn(),
-			};
-		} );
+		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
 
 		// trigger guides on step movement, we don't care about failures or response
