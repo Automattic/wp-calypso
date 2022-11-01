@@ -139,9 +139,9 @@ async function AppBoot() {
 		document.getElementById( 'wpcom' )
 	);
 
-	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
 	if ( ! window.location?.hash ) {
-		page( `#!/stats/day/${ siteId }` );
+		window.location.hash = `#!/stats/day/${ siteId }`;
 	}
+	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
 }
 AppBoot();
