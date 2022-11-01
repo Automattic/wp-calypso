@@ -21,7 +21,7 @@ export type CallbackFunction< Args extends CallbackArgs, ReturnValue > = (
  * See https://github.com/reactjs/rfcs/blob/useevent/text/0000-useevent.md for
  * more explanation of why this is helpful.
  */
-export function useJITCallback< Args extends CallbackArgs, ReturnValue >(
+export function useStableCallback< Args extends CallbackArgs, ReturnValue >(
 	handler: CallbackFunction< Args, ReturnValue >
 ): ( ...args: Args ) => ReturnValue {
 	const handlerRef = useRef( handler );
