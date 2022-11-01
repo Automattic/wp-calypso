@@ -44,6 +44,14 @@
 		}
 	}
 
+	pre {
+		border: none;
+	}
+
+	textarea.form-textarea {
+		overflow: hidden;
+	}
+
 	.form-input-validation {
 		padding-bottom: 0;
 	}
