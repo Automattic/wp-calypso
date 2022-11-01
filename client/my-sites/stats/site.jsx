@@ -41,6 +41,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 
@@ -229,7 +230,7 @@ class StatsSite extends Component {
 				<div id="my-stats-content">
 					{ isNewFeatured ? (
 						<>
-							<div className="stats__period-header">
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ date }
 									period={ period }
@@ -244,7 +245,7 @@ class StatsSite extends Component {
 									/>
 								</StatsPeriodNavigation>
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</div>
+							</StatsPeriodHeader>
 
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }

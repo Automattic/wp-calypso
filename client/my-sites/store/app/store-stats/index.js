@@ -15,6 +15,7 @@ import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import StatsPeriodHeader from 'calypso/my-sites/stats/stats-period-header';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { sparkWidgets, topProducts, topCategories, topCoupons, noDataMsg } from './constants';
@@ -83,7 +84,7 @@ class StoreStats extends Component {
 
 				{ isNewFeatured ? (
 					<>
-						<div className="stats__period-header">
+						<StatsPeriodHeader>
 							<StatsPeriodNavigation
 								date={ selectedDate }
 								period={ unit }
@@ -105,7 +106,7 @@ class StoreStats extends Component {
 								/>
 							</StatsPeriodNavigation>
 							<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
-						</div>
+						</StatsPeriodHeader>
 
 						<Chart
 							query={ orderQuery }
