@@ -197,7 +197,6 @@ Chart.propTypes = {
 	data: PropTypes.array,
 	isPlaceholder: PropTypes.bool,
 	isRtl: PropTypes.bool,
-	loading: PropTypes.bool,
 	minBarWidth: PropTypes.number,
 	minTouchBarWidth: PropTypes.number,
 	numberFormat: PropTypes.func,
