@@ -658,15 +658,13 @@ export class SiteSettingsFormGeneral extends Component {
 							<ToggleControl
 								disabled={ isRequestingSettings || isSavingSettings }
 								className="site-settings__gifting-toggle"
-								label={ translate(
-									'Allow supporters to cover the WordPress plan to keep the site content up and running.'
-								) }
+								label={ translate( 'Allow a site visitor to gift site upgrade costs.' ) }
 								checked={ fields.wpcom_gifting_subscription }
 								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									'Your readers will be able to pay for the WordPress subscription to keep the site and all the content that you have created up and running and available for everybody in the future.'
+									"Allow a site visitor to cover the full cost of your site's upgrades."
 								) }
 							</FormSettingExplanation>
 						</CompactCard>
