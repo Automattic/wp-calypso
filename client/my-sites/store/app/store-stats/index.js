@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -5,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -39,15 +42,33 @@ class StoreStats extends Component {
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
+		// New feature gate
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		// For period option links
+		const store = {
+			label: translate( 'Store' ),
+			path: '/store/stats/orders',
+			showIntervals: true,
+		};
+		const slugPath = slug ? `/${ slug }` : '';
+		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
+
+		const classes = classNames( 'store-stats', 'woocommerce', {
+			'stats--new-main-chart': isNewFeatured,
+		} );
+
 		return (
-			<Main className="store-stats woocommerce" wideLayout>
+			<Main className={ classes } wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
 				/>
+
 				{ siteId && (
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
+
 				<FormattedHeader
 					brandFont
 					className="store-stats__section-header"
@@ -57,32 +78,75 @@ class StoreStats extends Component {
 						'Learn valuable insights about the purchases made on your store.'
 					) }
 				/>
+
 				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
-				<Chart
-					query={ orderQuery }
-					selectedDate={ endSelectedDate }
-					siteId={ siteId }
-					unit={ unit }
-					slug={ slug }
-				/>
-				<StatsPeriodNavigation
-					date={ selectedDate }
-					period={ unit }
-					url={ `/store/stats/orders/${ unit }/${ slug }` }
-				>
-					<DatePicker
-						period={ unit }
-						// this is needed to counter the +1d adjustment made in DatePicker for weeks
-						date={
-							unit === 'week'
-								? moment( selectedDate, 'YYYY-MM-DD' ).subtract( 1, 'days' ).format( 'YYYY-MM-DD' )
-								: selectedDate
-						}
-						query={ orderQuery }
-						statsType="statsOrders"
-						showQueryDate
-					/>
-				</StatsPeriodNavigation>
+
+				{ isNewFeatured ? (
+					<>
+						<div className="stats__period-header">
+							<StatsPeriodNavigation
+								date={ selectedDate }
+								period={ unit }
+								url={ `/store/stats/orders/${ unit }/${ slug }` }
+							>
+								<DatePicker
+									period={ unit }
+									// this is needed to counter the +1d adjustment made in DatePicker for weeks
+									date={
+										unit === 'week'
+											? moment( selectedDate, 'YYYY-MM-DD' )
+													.subtract( 1, 'days' )
+													.format( 'YYYY-MM-DD' )
+											: selectedDate
+									}
+									query={ orderQuery }
+									statsType="statsOrders"
+									showQueryDate
+								/>
+							</StatsPeriodNavigation>
+							<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
+						</div>
+
+						<Chart
+							query={ orderQuery }
+							selectedDate={ endSelectedDate }
+							siteId={ siteId }
+							unit={ unit }
+							slug={ slug }
+						/>
+					</>
+				) : (
+					<>
+						<Chart
+							query={ orderQuery }
+							selectedDate={ endSelectedDate }
+							siteId={ siteId }
+							unit={ unit }
+							slug={ slug }
+						/>
+						<StatsPeriodNavigation
+							date={ selectedDate }
+							period={ unit }
+							url={ `/store/stats/orders/${ unit }/${ slug }` }
+						>
+							<DatePicker
+								period={ unit }
+								// this is needed to counter the +1d adjustment made in DatePicker for weeks
+								date={
+									unit === 'week'
+										? moment( selectedDate, 'YYYY-MM-DD' )
+												.subtract( 1, 'days' )
+												.format( 'YYYY-MM-DD' )
+										: selectedDate
+								}
+								query={ orderQuery }
+								statsType="statsOrders"
+								showQueryDate
+							/>
+						</StatsPeriodNavigation>
+					</>
+				) }
+
 				<div className="store-stats__widgets">
 					{ sparkWidgets.map( ( widget, index ) => (
 						<div
@@ -139,6 +203,7 @@ class StoreStats extends Component {
 						);
 					} ) }
 				</div>
+
 				<JetpackColophon />
 			</Main>
 		);
