@@ -58,14 +58,17 @@ class StatsDatePicker extends Component {
 		const localizedDate = moment( momentDate.format( 'YYYY-MM-DD' ) );
 		let formattedDate;
 
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		// ll is a date localized with abbreviated Month by momentjs
+		const weekPeriodFormat = isNewFeatured ? 'll' : 'LL';
+
 		switch ( period ) {
 			case 'week':
 				formattedDate = translate( '%(startDate)s - %(endDate)s', {
 					context: 'Date range for which stats are being displayed',
 					args: {
-						// LL is a date localized by momentjs
-						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
-						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( 'LL' ),
+						startDate: localizedDate.startOf( 'week' ).add( 1, 'd' ).format( weekPeriodFormat ),
+						endDate: localizedDate.endOf( 'week' ).add( 1, 'd' ).format( weekPeriodFormat ),
 					},
 				} );
 				break;
