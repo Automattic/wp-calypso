@@ -23,6 +23,7 @@
 
 		@include onboarding-break-mobile-landscape {
 			padding: 25px 0 0;
+			height: auto;
 		}
 
 		@media screen and (orientation: landscape) and ( max-height: 720px ) {
