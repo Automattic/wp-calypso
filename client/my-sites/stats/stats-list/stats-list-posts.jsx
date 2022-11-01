@@ -5,7 +5,6 @@ import {
 	HorizontalBarListItem,
 	// eslint-disable-next-line import/named
 	StatsCard,
-	Gridicon,
 } from '@automattic/components';
 // import classNames from 'classnames';
 import debugFactory from 'debug';
@@ -13,42 +12,10 @@ import page from 'page';
 import React from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-// import StatsListItem from './stats-list-item';
+import StatsListActions from './stats-list-actions';
 
 const debug = debugFactory( 'calypso:stats:list:posts' ); // what is this?
 
-// TODO: move to a new component
-const LinkNode = ( { href, moduleName, translate } ) => {
-	const onClick = ( event ) => {
-		event.stopPropagation();
-		gaRecordEvent( 'Stats', 'Clicked on External Link in ' + moduleName + ' List Action Menu' );
-	};
-
-	return (
-		<a
-			href={ href }
-			onClick={ onClick }
-			target="_blank"
-			rel="noopener noreferrer"
-			className="stats-list__item-action-wrapper module-content-list-item-action-wrapper"
-			title={ translate( 'View content in a new window', {
-				textOnly: true,
-				context: 'Stats action tooltip: View content in a new window',
-			} ) }
-			aria-label={ translate( 'View content in a new window', {
-				textOnly: true,
-				context: 'Stats ARIA label: View content in new window action',
-			} ) }
-		>
-			<Gridicon icon="external" size={ 18 } />
-			<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
-				{ translate( 'View', { context: 'Stats: List item action to view content' } ) }
-			</span>
-		</a>
-	);
-};
-
-// TODO: check loaders
 const StatsListPosts = ( {
 	data,
 	// clickHandler,
@@ -96,9 +63,10 @@ const StatsListPosts = ( {
 				emptyMessage={ emptyMessage }
 				isEmpty={ ! isLoading && ( ! data || ! data?.length ) }
 				titleURL={ titleURL }
+				className="list-posts-pages"
 			>
 				{ !! isLoading && isLoading }
-				<HorizontalBarList className="list-posts-pages" data={ data }>
+				<HorizontalBarList data={ data }>
 					{ data?.map( ( item ) => {
 						return (
 							<HorizontalBarListItem
@@ -108,17 +76,7 @@ const StatsListPosts = ( {
 								hasIndicator={ item?.className?.includes( 'published' ) }
 								onClick={ ( e ) => localClickHandler( e, item ) }
 								rightSideItem={
-									item?.actions?.length &&
-									item.actions.map( ( action ) =>
-										action?.type === 'link' ? (
-											<LinkNode
-												href={ action.data }
-												key={ `posts-${ item?.id }-${ action.type }` }
-												moduleName="posts"
-												translate={ translate }
-											/>
-										) : undefined
-									)
+									<StatsListActions data={ item } translate={ translate } moduleName="posts" />
 								}
 							/>
 						);

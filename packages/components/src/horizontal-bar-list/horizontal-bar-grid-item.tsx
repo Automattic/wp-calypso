@@ -52,7 +52,7 @@ const HorizontalBarListItem = ( {
 		>
 			<div className={ `${ BASE_CLASS_NAME }-item-bar` }>
 				{ leftSideItem && <span>{ leftSideItem }</span> }
-				<TagName className="label" href={ url }>
+				<TagName className="label" href={ url } tabIndex={ 0 }>
 					{ labelText }
 				</TagName>
 				{ /* // TODO: check if inner action links won't interfere with parent onClick */ }

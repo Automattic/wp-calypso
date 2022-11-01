@@ -154,6 +154,8 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
+		const shouldHideOldModule = isEnabled( 'stats/new-stats-module-component' ) && path === 'posts';
+
 		return (
 			<>
 				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'posts' && (
@@ -182,7 +184,7 @@ class StatsModule extends Component {
 					</StatsListPosts>
 				) }
 
-				<div>
+				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
 					{ siteId && statType && (
 						<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 					) }

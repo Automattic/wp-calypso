@@ -37,8 +37,9 @@
 
 	.stats-card--footer {
 		font-weight: 600;
-		padding: $padding-outside $padding-outside 0;
+		margin: $padding-outside $padding-outside 0;
 		display: block;
+		color: var(--color-text);
 
 		&:visited {
 			color: $font-color;
