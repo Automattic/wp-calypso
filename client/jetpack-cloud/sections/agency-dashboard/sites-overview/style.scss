@@ -60,15 +60,18 @@
 	color: var(--studio-gray-60);
 	margin-bottom: 8px;
 }
-.sites-overview__page-licenses {
-	margin-left: auto;
-}
 .sites-overview__licenses-buttons {
+	margin-left: auto;
+
+	button,
+	a {
+		font-size: 1rem;
+	}
+
 	&-cancel {
 		text-decoration: underline;
 		padding: 2;
 		margin-inline-end: 32px;
-		font-size: 1rem;
 		text-underline-offset: 3px;
 	}
 }

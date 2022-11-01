@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -134,13 +134,13 @@ export default function SitesOverview() {
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
 	const issueLicenseRedirectUrl = useMemo( () => {
-		// Convert the product type (e.g., backup, scan) to comma-separated product slugs
-		// that can be used to issue multiple licenses.
-		const commaSeparatedProductSlugs = selectedLicenses
-			?.map( ( type: string ) => getProductSlugFromProductType( type ) )
-			.join( ',' );
-
-		return `/partner-portal/issue-license/?site_id=${ selectedLicensesSiteId }&product_slug=${ commaSeparatedProductSlugs }&source=dashboard`;
+		return addQueryArgs( `/partner-portal/issue-license/`, {
+			site_id: selectedLicensesSiteId,
+			product_slug: selectedLicenses?.map( ( type: string ) =>
+				getProductSlugFromProductType( type )
+			),
+			source: 'dashboard',
+		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
 
 	const renderIssueLicenseButton = () => {
@@ -188,9 +188,7 @@ export default function SitesOverview() {
 									{ translate( 'Manage all your Jetpack sites from one location' ) }
 								</div>
 							</div>
-							<div className="sites-overview__page-licenses">
-								{ selectedLicensesCount > 0 && renderIssueLicenseButton() }
-							</div>
+							{ selectedLicensesCount > 0 && renderIssueLicenseButton() }
 						</div>
 						<SectionNav
 							applyUpdatedStyles
