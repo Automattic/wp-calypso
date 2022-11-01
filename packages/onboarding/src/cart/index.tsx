@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
@@ -6,9 +5,9 @@ import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
-import wpcom from 'calypso/lib/wp';
-import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import wpcomRequest from 'wpcom-proxy-request';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
+import cartManagerClient from './cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const Visibility = Site.Visibility;
@@ -124,13 +123,17 @@ export const createSiteWithCart = async (
 	// }
 
 	const locale = getLocaleSlug();
-
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post( '/sites/new', {
-		...newSiteParams,
-		locale,
-		lang_id: getLanguage( locale as string )?.value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
+		path: '/sites/new',
+		apiVersion: '1.1',
+		method: 'POST',
+		body: {
+			...newSiteParams,
+			locale,
+			lang_id: getLanguage( locale as string )?.value,
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+		},
 	} );
 
 	if ( ! siteCreationResponse.success ) {
@@ -148,7 +151,7 @@ export const createSiteWithCart = async (
 	};
 
 	if ( isTailoredSignupFlow( flowName ) ) {
-		await setupSiteAfterCreation( { siteId, flowName: flowName } );
+		await setupSiteAfterCreation( { siteId, flowName } );
 	}
 
 	await processItemCart(
@@ -233,7 +236,14 @@ export async function setThemeOnSite( siteSlug: string, themeSlugWithRepo: strin
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	try {
-		await wpcom.req.post( `/sites/${ siteSlug }/themes/mine`, { theme } );
+		await wpcomRequest( {
+			path: `/sites/${ siteSlug }/themes/mine`,
+			method: 'POST',
+			apiVersion: '1.1',
+			body: {
+				theme,
+			},
+		} );
 	} catch ( error ) {
 		//TODO: Manage error
 	}
