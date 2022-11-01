@@ -31,7 +31,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 			href={ localizeUrl(
 				'https://wordpress.com/support/restore-your-site-after-the-plan-expires/'
 			) }
-			tracksEventName="calypso_customer_home_reactivate_support_page_view"
+			tracksEventName="calypso_customer_home_restore_site_support_page_click"
 		/>
 	);
 
