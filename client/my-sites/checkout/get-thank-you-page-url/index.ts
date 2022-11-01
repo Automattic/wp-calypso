@@ -6,7 +6,6 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
-import { isCalypsoLive } from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -135,10 +134,7 @@ export default function getThankYouPageUrl( {
 	// (and WP.com's) paid blocks Upgrade Nudge.
 	if ( redirectTo ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
-		if ( isCalypsoLive() ) {
-			debug( 'is calypso live, so returning that', redirectTo );
-			return redirectTo;
-		}
+
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
