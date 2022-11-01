@@ -6,6 +6,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import wpcom from 'calypso/lib/wp';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import {
@@ -87,6 +88,10 @@ class AtomicStoreThankYouCard extends Component {
 		const { isEmailVerified, translate, siteWooCommerceWizardUrl } = this.props;
 		const { resendStatus } = this.state;
 
+		if ( isWcMobileApp() ) {
+			return;
+		}
+
 		if ( ! isEmailVerified ) {
 			return (
 				<div className="checkout-thank-you__atomic-store-action-buttons">
@@ -116,6 +121,10 @@ class AtomicStoreThankYouCard extends Component {
 
 	renderDescription() {
 		const { emailAddress, isEmailVerified, translate } = this.props;
+
+		if ( isWcMobileApp() ) {
+			return translate( 'One moment while we create your store&hellip;' );
+		}
 
 		if ( ! isEmailVerified ) {
 			return (
