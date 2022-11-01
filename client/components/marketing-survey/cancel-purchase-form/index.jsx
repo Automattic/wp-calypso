@@ -339,6 +339,7 @@ class CancelPurchaseForm extends Component {
 					refundAmount={ this.getRefundAmount() }
 					downgradePlanPrice={ this.props.downgradePlanPrice }
 					downgradeClick={ this.downgradeClick }
+					closeDialog={ this.closeDialog }
 					cancelBundledDomain={ this.props.cancelBundledDomain }
 					includedDomainPurchase={ this.props.includedDomainPurchase }
 					onDeclineUpsell={ isLastStep ? this.onSubmit : this.clickNext }

@@ -98,6 +98,7 @@ type StepProps = {
 	purchase: Purchase;
 	refundAmount: string;
 	downgradePlanPrice: number | null;
+	closeDialog: () => void;
 	cancelBundledDomain: boolean;
 	includedDomainPurchase: object;
 	onDeclineUpsell: () => void;
@@ -129,20 +130,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 							type: upsell,
 						} );
 						page( getLiveChatUrl( upsell, site, purchase ) );
-						helpCenter.setShowHelpCenter( true );
-						helpCenter.resetRouterState();
-						helpCenter.setRouterState(
-							[
-								{
-									pathname: '/',
-								},
-								{
-									pathname: '/contact-form',
-									search: 'mode=CHAT',
-								},
-							],
-							1
-						);
+						helpCenter.startHelpCenterChat( site, 'THIS IS A TEST by a11n.' );
+						props.closeDialog();
 					} }
 					onDecline={ props.onDeclineUpsell }
 					image={ imgLiveChat }
@@ -224,7 +213,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						{ props.cancelBundledDomain &&
 							props.includedDomainPurchase &&
 							translate(
-								'You will lose your free domain registration since that feature is only included in annual/biennual plans.'
+								'You will lose your free domain registration since that feature is only included in annual/biannual plans.'
 							) }
 						{ props.refundAmount && <br /> }
 						{ props.refundAmount &&
