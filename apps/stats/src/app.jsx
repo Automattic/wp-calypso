@@ -101,6 +101,8 @@ const hideMasterbar = ( dispatch ) => {
 };
 
 async function AppBoot() {
+	const siteId = config( 'blog_id' );
+
 	const rootReducer = combineReducers( {
 		currentUser,
 		sites,
@@ -131,13 +133,15 @@ async function AppBoot() {
 	ReactDom.render(
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
-				<QuerySites siteId="193141071" />
+				<QuerySites siteId={ siteId } />
 			</Provider>
 		</QueryClientProvider>,
 		document.getElementById( 'wpcom' )
 	);
 
 	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
-	// page( '#!/stats/day/193141071' );
+	if ( ! window.location?.hash ) {
+		page( `#!/stats/day/${ siteId }` );
+	}
 }
 AppBoot();
