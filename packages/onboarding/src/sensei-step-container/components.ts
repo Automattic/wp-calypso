@@ -8,6 +8,7 @@ export const Container = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	padding-top: 10px;
+	overflow-y: auto;
 `;
 
 export const TitleContainer = styled.div`
@@ -23,4 +24,19 @@ export const Title = styled.h1`
 	font-size: 18px;
 	line-height: 24px;
 	font-family: 'Recoleta';
+`;
+
+export const Footer = styled.div`
+	margin-top: auto;
+	padding: 56px 0;
+`;
+
+export const FooterText = styled.p`
+	font-size: 13px;
+	line-height: 20px;
+	color: #3c434a;
+	text-align: center;
+	&:not( :last-of-type ) {
+		margin-bottom: 6px;
+	}
 `;

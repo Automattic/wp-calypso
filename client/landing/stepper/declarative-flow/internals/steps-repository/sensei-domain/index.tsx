@@ -1,5 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { StepContainer, SenseiStepContent, SENSEI_FLOW } from '@automattic/onboarding';
+import { SenseiStepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
@@ -32,32 +32,22 @@ const SenseiDomain: Step = ( { navigation } ) => {
 	const domainSuggestion = domain ? domain.domain_name : siteTitle;
 
 	return (
-		<StepContainer
-			stepName="senseiDomain"
-			flowName={ SENSEI_FLOW }
-			isWideLayout
-			hideFormattedHeader
-			recordTracksEvent={ recordTracksEvent }
-			shouldHideNavButtons
-			stepContent={
-				<CalypsoShoppingCartProvider>
-					<SenseiStepContent>
-						<RegisterDomainStep
-							suggestion={ domainSuggestion }
-							domainsWithPlansOnly
-							isSignupStep
-							basePath=""
-							includeWordPressDotCom
-							onAddDomain={ onAddDomain }
-							onSkip={ onSkip }
-							products={ productsList }
-							useProvidedProductsList
-							showSkipButton
-						/>
-					</SenseiStepContent>
-				</CalypsoShoppingCartProvider>
-			}
-		/>
+		<SenseiStepContainer stepName="senseiDomain" recordTracksEvent={ recordTracksEvent }>
+			<CalypsoShoppingCartProvider>
+				<RegisterDomainStep
+					suggestion={ domainSuggestion }
+					domainsWithPlansOnly
+					isSignupStep
+					basePath=""
+					includeWordPressDotCom
+					onAddDomain={ onAddDomain }
+					onSkip={ onSkip }
+					products={ productsList }
+					useProvidedProductsList
+					showSkipButton
+				/>
+			</CalypsoShoppingCartProvider>
+		</SenseiStepContainer>
 	);
 };
 

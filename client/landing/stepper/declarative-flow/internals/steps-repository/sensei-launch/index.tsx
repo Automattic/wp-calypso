@@ -1,4 +1,4 @@
-import { StepContainer, SenseiStepContent, SENSEI_FLOW } from '@automattic/onboarding';
+import { SenseiStepContainer } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useEffect } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -62,19 +62,9 @@ const SenseiLaunch = () => {
 	}, [ plugins, senseiHomeUrl, dispatch, siteId ] );
 
 	return (
-		<StepContainer
-			stepName="senseiSetup"
-			flowName={ SENSEI_FLOW }
-			isWideLayout
-			hideFormattedHeader
-			recordTracksEvent={ recordTracksEvent }
-			shouldHideNavButtons
-			stepContent={
-				<SenseiStepContent>
-					<ProgressingTitle>{ __( 'Installing Sensei' ) }</ProgressingTitle>
-				</SenseiStepContent>
-			}
-		/>
+		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
+			<ProgressingTitle>{ __( 'Installing Sensei' ) }</ProgressingTitle>
+		</SenseiStepContainer>
 	);
 };
 

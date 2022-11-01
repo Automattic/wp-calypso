@@ -4,7 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { Plans } from 'calypso/../packages/data-stores/src';
-import { SenseiStepContent, SENSEI_FLOW, StepContainer } from 'calypso/../packages/onboarding/src';
+import { SENSEI_FLOW, SenseiStepContainer } from 'calypso/../packages/onboarding/src';
 import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
@@ -117,52 +117,42 @@ const SenseiPlan: Step = ( { flow } ) => {
 	};
 
 	return (
-		<StepContainer
-			stepName="senseiPlan"
-			flowName={ SENSEI_FLOW }
-			isWideLayout
-			hideFormattedHeader
-			recordTracksEvent={ recordTracksEvent }
-			shouldHideNavButtons
-			stepContent={
-				<SenseiStepContent>
-					{ isBundling ? (
-						<ProgressingTitle>{ __( 'Preparing Your Bundle' ) }</ProgressingTitle>
-					) : (
-						<div className="plans-grid">
-							<PlansIntervalToggle
-								intervalType={ billingPeriod }
-								onChange={ handlePlanBillingPeriodChange }
-								maxMonthlyDiscountPercentage={ maxAnnualDiscount }
-								className="plans-grid__toggle"
-							/>
+		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
+			{ isBundling ? (
+				<ProgressingTitle>{ __( 'Preparing Your Bundle' ) }</ProgressingTitle>
+			) : (
+				<div className="plans-grid">
+					<PlansIntervalToggle
+						intervalType={ billingPeriod }
+						onChange={ handlePlanBillingPeriodChange }
+						maxMonthlyDiscountPercentage={ maxAnnualDiscount }
+						className="plans-grid__toggle"
+					/>
 
-							<div className="plans-grid__table">
-								<div className="plans-grid__table-container">
-									<div className="plans-table">
-										<span>
-											<PlanItem
-												popularBadgeVariation="ON_TOP"
-												allPlansExpanded
-												slug="business"
-												domain={ domain }
-												CTAVariation="NORMAL"
-												features={ planObject?.features ?? [] }
-												billingPeriod={ billingPeriod }
-												name="business"
-												onSelect={ onPlanSelect }
-												onPickDomainClick={ undefined }
-												popularBadgeText={ __( 'Best for Video' ) }
-											/>
-										</span>
-									</div>
-								</div>
+					<div className="plans-grid__table">
+						<div className="plans-grid__table-container">
+							<div className="plans-table">
+								<span>
+									<PlanItem
+										popularBadgeVariation="ON_TOP"
+										allPlansExpanded
+										slug="business"
+										domain={ domain }
+										CTAVariation="NORMAL"
+										features={ planObject?.features ?? [] }
+										billingPeriod={ billingPeriod }
+										name="business"
+										onSelect={ onPlanSelect }
+										onPickDomainClick={ undefined }
+										popularBadgeText={ __( 'Best for Video' ) }
+									/>
+								</span>
 							</div>
 						</div>
-					) }
-				</SenseiStepContent>
-			}
-		/>
+					</div>
+				</div>
+			) }
+		</SenseiStepContainer>
 	);
 };
 

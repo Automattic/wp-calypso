@@ -1,4 +1,4 @@
-import { StepContainer, SENSEI_FLOW, SenseiStepContent } from '@automattic/onboarding';
+import { SenseiStepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -25,32 +25,22 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 	}, [ siteTitle, dispatch, submit ] );
 
 	return (
-		<StepContainer
-			stepName="senseiSetup"
-			flowName={ SENSEI_FLOW }
-			isWideLayout
-			hideFormattedHeader
-			recordTracksEvent={ recordTracksEvent }
-			shouldHideNavButtons
-			stepContent={
-				<SenseiStepContent>
-					<Title>{ __( 'Set up your course site' ) }</Title>
-					<Label htmlFor="sensei_site_title">{ __( 'Site name' ) }</Label>
-					<Input
-						id="sensei_site_title"
-						type="text"
-						onChange={ ( ev ) => {
-							setSiteTitle( ev.target.value );
-						} }
-						placeholder={ __( 'My Site Name' ) }
-						value={ siteTitle }
-					/>
-					<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
-						{ __( 'Continue' ) }
-					</Button>
-				</SenseiStepContent>
-			}
-		/>
+		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
+			<Title>{ __( 'Set up your course site' ) }</Title>
+			<Label htmlFor="sensei_site_title">{ __( 'Site name' ) }</Label>
+			<Input
+				id="sensei_site_title"
+				type="text"
+				onChange={ ( ev ) => {
+					setSiteTitle( ev.target.value );
+				} }
+				placeholder={ __( 'My Site Name' ) }
+				value={ siteTitle }
+			/>
+			<Button disabled={ ! siteTitle } onClick={ handleSubmit }>
+				{ __( 'Continue' ) }
+			</Button>
+		</SenseiStepContainer>
 	);
 };
 
