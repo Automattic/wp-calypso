@@ -1,5 +1,6 @@
+import { Button } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
+import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -13,9 +14,12 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
 	getPurchasedLicense,
+	getSelectedLicenses,
+	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SitesOverviewContext from './context';
@@ -23,6 +27,7 @@ import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
+import { getProductSlugFromProductType } from './utils';
 
 import './style.scss';
 
@@ -33,6 +38,10 @@ export default function SitesOverview() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const purchasedLicense = useSelector( getPurchasedLicense );
+	const selectedLicenses = useSelector( getSelectedLicenses );
+	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
+
+	const selectedLicensesCount = selectedLicenses?.length;
 
 	const highlightFavoriteTab = getQueryArg( window.location.href, 'highlight' ) === 'favorite-tab';
 
@@ -124,6 +133,43 @@ export default function SitesOverview() {
 
 	const isFavoritesTab = selectedTab.key === 'favorites';
 
+	const issueLicenseRedirectUrl = useMemo( () => {
+		return addQueryArgs( `/partner-portal/issue-license/`, {
+			site_id: selectedLicensesSiteId,
+			product_slug: selectedLicenses?.map( ( type: string ) =>
+				getProductSlugFromProductType( type )
+			),
+			source: 'dashboard',
+		} );
+	}, [ selectedLicensesSiteId, selectedLicenses ] );
+
+	const renderIssueLicenseButton = () => {
+		return (
+			<div className="sites-overview__licenses-buttons">
+				<Button
+					borderless
+					className="sites-overview__licenses-buttons-cancel"
+					onClick={ () => dispatch( resetSite() ) }
+				>
+					{ translate( 'Cancel', { context: 'button label' } ) }
+				</Button>
+				<Button
+					primary
+					className="sites-overview__licenses-buttons-issue-license"
+					href={ issueLicenseRedirectUrl }
+				>
+					{ translate( 'Issue %(numLicenses)d new license', 'Issue %(numLicenses)d new licenses', {
+						context: 'button label',
+						count: selectedLicensesCount,
+						args: {
+							numLicenses: selectedLicensesCount,
+						},
+					} ) }
+				</Button>
+			</div>
+		);
+	};
+
 	return (
 		<div className="sites-overview">
 			<DocumentHead title={ pageTitle } />
@@ -136,10 +182,13 @@ export default function SitesOverview() {
 							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
 						) }
 						<div className="sites-overview__page-title-container">
-							<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-							<div className="sites-overview__page-subtitle">
-								{ translate( 'Manage all your Jetpack sites from one location' ) }
+							<div className="sites-overview__page-heading">
+								<h2 className="sites-overview__page-title">{ pageTitle }</h2>
+								<div className="sites-overview__page-subtitle">
+									{ translate( 'Manage all your Jetpack sites from one location' ) }
+								</div>
 							</div>
+							{ selectedLicensesCount > 0 && renderIssueLicenseButton() }
 						</div>
 						<SectionNav
 							applyUpdatedStyles

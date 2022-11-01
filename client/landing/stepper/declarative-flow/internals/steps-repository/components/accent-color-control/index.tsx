@@ -28,7 +28,7 @@ export type AccentColor = {
 };
 
 enum COLORS {
-	Lettre = '#1D39EB',
+	Lettre = '#113AF5',
 	Black = '#000000',
 	VividRed = '#CF2E2E',
 	VividPurple = '#9B51E0',

@@ -241,11 +241,34 @@ $font-family: "SF Pro Text", $sans;
 			pointer-events: none;
 		}
 
-		.pattern-selector__header h1 {
-			font-family: $font-family;
-			font-size: $font-title-small;
-			font-weight: 500;
-			line-height: 26px;
+		.pattern-selector__header {
+			display: flex;
+
+			.button {
+				padding: 0;
+				width: 25px;
+				margin-right: 10px;
+
+				&:hover svg {
+					fill: var(--color-neutral-70);
+				}
+			}
+
+			svg {
+				width: 16px;
+				height: 16px;
+				top: 4px;
+				margin-right: 12px;
+				margin-left: 4px;
+				fill: var(--studio-gray-100);
+			}
+
+			h1 {
+				font-family: $font-family;
+				font-size: $font-title-small;
+				font-weight: 500;
+				line-height: 26px;
+			}
 		}
 
 		.pattern-selector__body {
@@ -287,6 +310,10 @@ $font-family: "SF Pro Text", $sans;
 
 				&:not(:last-child) {
 					margin-bottom: 16px;
+				}
+
+				&.pattern-selector__block-list--selected-pattern {
+					box-shadow: 0 0 0 2px var(--studio-gray);
 				}
 
 				&:focus,

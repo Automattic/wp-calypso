@@ -8,6 +8,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -82,6 +83,13 @@ function render( element, key, req ) {
 		debug( 'cache access for key', key );
 
 		let renderedLayout = markupCache.get( key );
+
+		logServerEvent( req.context.sectionName, {
+			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
+			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+			type: 'counting',
+		} );
+
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );

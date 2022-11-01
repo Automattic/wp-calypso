@@ -27,4 +27,30 @@
 			visibility: hidden;
 		}
 	}
+
+	// For feature `stats/new-main-chart`
+	&.stats-period-navigation--new-main-chart {
+		margin: 0;
+		padding: 0;
+		align-items: baseline;
+
+		.stats-period-navigation__children {
+			text-align: left;
+		}
+
+		.stats-section-title {
+			font-size: $font-title-large;
+			line-height: 40px;
+			color: var(--studio-gray-100);
+		}
+
+		.stats-period-navigation__previous,
+		.stats-period-navigation__next {
+			color: #1e1e1e;
+		}
+
+		.stats-period-navigation__next {
+			margin-left: 4px;
+		}
+	}
 }

@@ -1,49 +1,30 @@
 import { Button } from '@automattic/components';
-import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
 import type { WPElement } from '@wordpress/element';
 
 interface Props {
 	onSubmit: () => void;
-	flowName: string;
+	introContent: IntroContent;
 }
 
-interface IntroContent {
-	[ key: string ]: {
-		title: WPElement;
-		buttonText: string;
-	};
+export interface IntroContent {
+	title: WPElement | string;
+	text?: WPElement;
+	buttonText: string;
 }
 
-const Intro: React.FC< Props > = ( { onSubmit, flowName } ) => {
-	const { __ } = useI18n();
-
-	const introContent: IntroContent = {
-		newsletter: {
-			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
-				{ br: <br /> }
-			),
-			buttonText: __( 'Get started' ),
-		},
-		'link-in-bio': {
-			title: createInterpolateElement(
-				__( 'You’re 3 minutes away from<br />a stand-out Link in Bio site.<br />Ready? ' ),
-				{ br: <br /> }
-			),
-			buttonText: __( 'Get started' ),
-		},
-	};
-
+const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	return (
-		<div className="intro__content">
-			<h1 className="intro__title">
-				<span>{ introContent[ flowName ].title }</span>
-			</h1>
-			<Button className="intro__button" primary onClick={ onSubmit }>
-				{ introContent[ flowName ].buttonText }
-			</Button>
-		</div>
+		<>
+			<div className="intro__content">
+				<h1 className="intro__title">
+					<span>{ introContent.title }</span>
+				</h1>
+				{ introContent.text && <div className="intro__description"> { introContent.text } </div> }
+				<Button className="intro__button" primary onClick={ onSubmit }>
+					{ introContent.buttonText }
+				</Button>
+			</div>
+		</>
 	);
 };
 

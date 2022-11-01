@@ -352,8 +352,21 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		title: string,
 		content: string
 	) {
+		const templateId = `${ stylesheet }//${ slug }`;
+		let existed = true;
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/templates/${ templateId }`,
+				apiNamespace: 'wp/v2',
+				method: 'GET',
+			} );
+		} catch {
+			existed = false;
+		}
+
+		const templatePath = `templates/${ existed ? templateId : '' }`;
 		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/templates`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/${ templatePath }`,
 			apiNamespace: 'wp/v2',
 			body: {
 				slug,

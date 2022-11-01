@@ -25,6 +25,7 @@ import {
 	TASK_WEBINARS,
 	TASK_WP_COURSES,
 	TASK_PROMOTE_POST,
+	TASK_USE_BUILT_BY,
 	TASK_REACTIVATE_EXPIRED_PLAN,
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
 	TASK_REACTIVATE_RESTORE_BACKUP,
@@ -46,6 +47,7 @@ import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import { ReviveAutoRevertedAtomic } from 'calypso/my-sites/customer-home/cards/tasks/revive-auto-reverted-atomic';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import TitanBanner from 'calypso/my-sites/customer-home/cards/tasks/titan-banner';
+import UseBuiltBy from 'calypso/my-sites/customer-home/cards/tasks/use-built-by';
 import VerifyEmail from 'calypso/my-sites/customer-home/cards/tasks/verify-email';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
 import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
@@ -76,6 +78,7 @@ const cardComponents = {
 	[ TASK_WEBINARS ]: Webinars,
 	[ TASK_WP_COURSES ]: WPCourses,
 	[ TASK_VERIFY_EMAIL ]: VerifyEmail,
+	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 };
 
 const urgentTasks = [ TASK_RENEW_EXPIRED_PLAN ];
