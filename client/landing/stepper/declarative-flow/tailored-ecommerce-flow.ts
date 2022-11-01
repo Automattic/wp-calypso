@@ -20,10 +20,10 @@ export const ecommerceFlow: Flow = {
 		return [ 'intro', 'storeProfiler', 'designCarousel' ] as StepPath[];
 	},
 
-	useStepNavigation( _currentStep, navigate ) {
+	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
 		const locale = useLocale();
@@ -34,13 +34,11 @@ export const ecommerceFlow: Flow = {
 				: `/start/account/user?variationName=${ flowName }&redirect_to=/setup/storeProfiler?flow=${ flowName }`;
 		};
 
-		setStepProgress( { progress: 1, count: 4 } );
-
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
-			recordSubmitStep( providedDependencies, '', flowName, _currentStep );
+			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
 			const logInUrl = getStartUrl();
 
-			switch ( _currentStep ) {
+			switch ( _currentStepName ) {
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'storeProfiler' );
@@ -56,7 +54,7 @@ export const ecommerceFlow: Flow = {
 		}
 
 		const goBack = () => {
-			switch ( _currentStep ) {
+			switch ( _currentStepName ) {
 				case 'designCarousel':
 					return navigate( 'storeProfiler' );
 				default:
@@ -66,7 +64,7 @@ export const ecommerceFlow: Flow = {
 		};
 
 		const goNext = () => {
-			switch ( _currentStep ) {
+			switch ( _currentStepName ) {
 				case 'intro':
 					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
