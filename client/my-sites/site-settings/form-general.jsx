@@ -659,7 +659,7 @@ export class SiteSettingsFormGeneral extends Component {
 								disabled={ isRequestingSettings || isSavingSettings }
 								className="site-settings__gifting-toggle"
 								label={ translate(
-									'Allow supporters to cover the WordPress plan to keep the site content up and running'
+									'Allow supporters to cover the WordPress plan to keep the site content up and running.'
 								) }
 								checked={ fields.wpcom_gifting_subscription }
 								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
