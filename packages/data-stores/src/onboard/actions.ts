@@ -69,7 +69,7 @@ export function* createVideoPressSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'videopress',
 			enable_fse: true,
-			theme: defaultTheme,
+			theme: 'pub/twentytwentytwo', // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {
