@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import Delayed from './delayed-render-hook';
 import PatternSelector from './pattern-selector';
 import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data';
 import type { Pattern } from './types';
@@ -29,26 +28,22 @@ const PatternSelectorLoader = ( {
 				title={ translate( 'Choose a header' ) }
 				selectedPattern={ selectedPattern }
 			/>
-			<Delayed waitBeforeShow={ 500 }>
-				<PatternSelector
-					show={ showPatternSelectorType === 'footer' }
-					patterns={ footerPatterns }
-					onSelect={ onSelect }
-					onBack={ onBack }
-					title={ translate( 'Choose a footer' ) }
-					selectedPattern={ selectedPattern }
-				/>
-			</Delayed>
-			<Delayed waitBeforeShow={ 500 }>
-				<PatternSelector
-					show={ showPatternSelectorType === 'section' }
-					patterns={ sectionPatterns }
-					onSelect={ onSelect }
-					onBack={ onBack }
-					title={ translate( 'Add a section' ) }
-					selectedPattern={ selectedPattern }
-				/>
-			</Delayed>
+			<PatternSelector
+				show={ showPatternSelectorType === 'footer' }
+				patterns={ footerPatterns }
+				onSelect={ onSelect }
+				onBack={ onBack }
+				title={ translate( 'Choose a footer' ) }
+				selectedPattern={ selectedPattern }
+			/>
+			<PatternSelector
+				show={ showPatternSelectorType === 'section' }
+				patterns={ sectionPatterns }
+				onSelect={ onSelect }
+				onBack={ onBack }
+				title={ translate( 'Add a section' ) }
+				selectedPattern={ selectedPattern }
+			/>
 		</>
 	);
 };
