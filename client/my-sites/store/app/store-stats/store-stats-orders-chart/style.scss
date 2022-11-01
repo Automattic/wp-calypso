@@ -95,7 +95,7 @@
 					border: 1.5px solid transparent;
 					border-radius: 4px;
 					overflow: hidden;
-					color: var(--studio-black);
+					color: var(--color-neutral-60);
 
 					&:hover {
 						background-color: var(--color-neutral-0);
@@ -127,8 +127,6 @@
 				&.is-selected,
 				&.is-selected.is-low {
 					a {
-						color: var(--studio-black);
-
 						&:hover {
 							color: var(--studio-black);
 
@@ -145,6 +143,7 @@
 
 				&.is-selected {
 					a {
+						color: var(--studio-black);
 						border-color: var(--color-primary);
 						background-color: var(--color-surface);
 					}
