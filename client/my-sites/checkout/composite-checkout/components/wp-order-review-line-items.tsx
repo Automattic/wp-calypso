@@ -12,10 +12,14 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
+import { useEffect, useState, useRef } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { ItemVariationPicker } from './item-variation-picker';
+import {
+	useGetProductVariants,
+	canVariantBePurchased,
+} from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { ItemVariationPicker, WPCOMProductVariant } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -169,28 +173,49 @@ function LineItemWrapper( {
 		! isRenewal &&
 		! isPremiumPlanWithDIFMInTheCart( product, responseCart ) &&
 		! hasPartnerCoupon;
-	const allVariants = useGetProductVariants( siteId, product.product_slug );
-	const currentVariant = allVariants.find(
-		( variant ) => variant.productId === product.product_id
-	);
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
+	const { formStatus } = useFormStatus();
+	const didSetInitialVariant = useRef< boolean >( false );
+	const [ initialVariant, setInitialVariant ] = useState< WPCOMProductVariant | undefined >();
 
-	// Only show term variants which are equal to or longer than the currently
-	// selected variant for WordPress.com. See
-	// https://github.com/Automattic/wp-calypso/issues/69633
-	const variants = ( () => {
+	const variants = useGetProductVariants(
+		siteId,
+		product.product_slug,
+		( variant, currentInterval ) => {
+			if ( ! canVariantBePurchased( variant, currentInterval ) ) {
+				return false;
+			}
+
+			// Only show term variants which are equal to or longer than the variant that
+			// was in the cart when checkout finished loading (not necessarily the
+			// current variant). For WordPress.com only, not Jetpack. See
+			// https://github.com/Automattic/wp-calypso/issues/69633
+			if ( ! initialVariant ) {
+				return true;
+			}
+			if ( isJetpack ) {
+				return true;
+			}
+			return variant.termIntervalInMonths >= initialVariant.termIntervalInMonths;
+		}
+	);
+
+	const currentVariant = variants.find( ( variant ) => variant.productId === product.product_id );
+	useEffect( () => {
+		if ( formStatus !== FormStatus.READY ) {
+			return;
+		}
 		if ( ! currentVariant ) {
-			return [];
+			return;
 		}
-		if ( isJetpack ) {
-			return allVariants;
+		if ( didSetInitialVariant.current ) {
+			return;
 		}
-		return allVariants.filter(
-			( variant ) => variant.termIntervalInMonths >= currentVariant.termIntervalInMonths
-		);
-	} )();
+		setInitialVariant( currentVariant );
+		didSetInitialVariant.current = true;
+	}, [ formStatus, currentVariant ] );
 
 	const areThereVariants = variants.length > 1;
 
