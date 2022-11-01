@@ -17,6 +17,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useJITCallback } from 'calypso/lib/use-jit-callback';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
@@ -72,12 +73,31 @@ export interface SitesPlansResult {
 	data: SitePlanData[] | null;
 }
 
+export type VariantFilterCallback = (
+	variant: AvailableProductVariant,
+	activePlanRenewalInterval: number | undefined
+) => boolean;
+
+const fallbackFilter = () => true;
+
+/**
+ * Return all product variants for a particular product.
+ *
+ * This will return all available variants but you probably want to filter them
+ * using the `filterCallback` argument. Consider using `canVariantBePurchased` as
+ * the filter if you are using this for a new purchase.
+ *
+ * `filterCallback` can safely be an anonymous function without causing
+ * identity stability issues (no need to use `useMemo` or `useCallback`).
+ */
 export function useGetProductVariants(
 	siteId: number | undefined,
-	productSlug: string
+	productSlug: string,
+	filterCallback?: VariantFilterCallback
 ): WPCOMProductVariant[] {
 	const translate = useTranslate();
 	const reduxDispatch = useDispatch();
+	const filterCallbackMemoized = useJITCallback( filterCallback ?? fallbackFilter );
 
 	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
@@ -127,9 +147,9 @@ export function useGetProductVariants(
 
 	const filteredVariants = useMemo( () => {
 		return variantsWithPrices.filter( ( product ) =>
-			isVariantAllowed( product, activePlan?.interval )
+			filterCallbackMemoized( product, activePlan?.interval )
 		);
-	}, [ activePlan?.interval, variantsWithPrices ] );
+	}, [ activePlan?.interval, variantsWithPrices, filterCallbackMemoized ] );
 
 	return useMemo( () => {
 		debug( 'found filtered variants', filteredVariants );
@@ -137,18 +157,19 @@ export function useGetProductVariants(
 	}, [ getProductVariantFromAvailableVariant, filteredVariants ] );
 }
 
-function isVariantAllowed(
+export function canVariantBePurchased(
 	variant: AvailableProductVariant,
 	activePlanRenewalInterval: number | undefined
 ): boolean {
-	// Allow the variant when the item added to the cart is not a plan.
+	// Always allow the variant when the item added to the cart is not a plan.
 	if ( ! isPlan( variant.product ) ) {
 		return true;
 	}
 
 	// If this is a plan, does the site currently own a plan? If so, is the term
 	// of the variant lower than the term of the currently owned plan? If so, do
-	// not allow the variant.
+	// not allow the variant because our backend does not support plan upgrades
+	// with term downgrades.
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
