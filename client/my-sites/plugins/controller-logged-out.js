@@ -125,13 +125,17 @@ export async function fetchCategoryPlugins( context, next ) {
 		return next();
 	}
 
+	const categories = getCategories();
+	const category = getCategoryForPluginsBrowser( context );
+
+	const categoryTags = categories[ category || '' ]?.tags || [ category ];
+	const tag = categoryTags.join( ',' );
+
 	const options = {
 		...getQueryOptions( context ),
-		category: getCategoryForPluginsBrowser( context ),
+		category,
+		tag,
 	};
-	const categories = getCategories();
-	const categoryTags = categories[ options.category || '' ]?.tags || [ options.category ];
-	options.tag = categoryTags.join( ',' );
 
 	await prefetchTimebox(
 		[
