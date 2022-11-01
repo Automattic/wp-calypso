@@ -1,6 +1,7 @@
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
+//TODO This className seems not to be used
 ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var(--color-neutral-0);
@@ -231,9 +232,22 @@ ul.module-tabs {
 	}
 }
 
+.is-chart-tabs {
+	&.is-loading {
+		// Extract .stats-module.is-loading from StatsModulePlaceholder
+		.chart {
+			display: none;
+		}
+	}
+}
+
 // For feature `stats/new-main-chart`
 .chart-tabs--new-main-chart {
 	background-color: var(--studio-white);
+
+	.stats-module__placeholder.is-chart {
+		height: 228px;
+	}
 
 	// Main Chart
 	.chart {

@@ -96,11 +96,20 @@ class StatModuleChartTabs extends Component {
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
 		const { isActiveTabLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+
+		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
+		const classes = [
+			'is-chart-tabs',
+			{
+				'is-loading': isActiveTabLoading,
+				'stats-module': ! isNewFeatured,
+				'chart-tabs--new-main-chart': isNewFeatured,
+			},
+		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
 		return isNewFeatured ? (
-			<div className="chart-tabs--new-main-chart">
+			<div className={ classNames( ...classes ) }>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart
