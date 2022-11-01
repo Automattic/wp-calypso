@@ -138,7 +138,6 @@ window.AppBoot = async () => {
 	const reduxStore = createReduxStore( initialState, initialReducer );
 	setStore( reduxStore, getStateFromCache( userId ) );
 	setupLocale( user, reduxStore );
-	window.redux = reduxStore;
 
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
