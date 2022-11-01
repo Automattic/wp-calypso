@@ -12,21 +12,19 @@ $studio-blue-30: #0675c4;
 	width: 1px;
 }
 
-.is-section-plugins {
-	[data-calypso-ssr="true"] {
-		.masterbar {
-			height: 56px;
-			position: relative;
-			background: $studio-blue-15;
-			border-bottom: 1px solid $studio-blue-15;
-		}
-		.fixed-navigation-header__header {
-			position: absolute;
-			top: 0;
-		}
-		.search-box-header.fixed-top .search-box-header__search {
-			margin-top: -32px;
-		}
+.is-section-plugins.has-no-sidebar {
+	.masterbar {
+		height: 56px;
+		position: relative;
+		background: $studio-blue-15;
+		border-bottom: 1px solid $studio-blue-15;
+	}
+	.fixed-navigation-header__header {
+		position: absolute;
+		top: 0;
+	}
+	.search-box-header.fixed-top .search-box-header__search {
+		margin-top: -32px;
 	}
 }
 
