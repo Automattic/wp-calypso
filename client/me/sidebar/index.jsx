@@ -58,6 +58,8 @@ class MeSidebar extends Component {
 		const { context, translate } = this.props;
 		const path = context.path.replace( '/me', '' ); // Remove base path.
 
+		const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
+
 		return (
 			<Sidebar>
 				<SidebarRegion>
@@ -147,8 +149,8 @@ class MeSidebar extends Component {
 						<SidebarItem
 							selected={ itemLinkMatches( '/get-apps', path ) }
 							link="/me/get-apps"
-							label={ translate( 'Get Apps' ) }
-							icon="my-sites"
+							label={ displayJetpackAppBranding ? translate( 'Apps' ) : translate( 'Get Apps' ) }
+							icon={ displayJetpackAppBranding ? 'plans' : 'my-sites' }
 							onNavigate={ this.onNavigate }
 						/>
 					</SidebarMenu>
