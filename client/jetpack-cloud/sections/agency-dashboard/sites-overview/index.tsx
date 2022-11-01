@@ -137,7 +137,7 @@ export default function SitesOverview() {
 		// Convert the product type (e.g., backup, scan) to comma-separated product slugs
 		// that can be used to issue multiple licenses.
 		const commaSeparatedProductSlugs = selectedLicenses
-			.map( ( type: string ) => getProductSlugFromProductType( type ) )
+			?.map( ( type: string ) => getProductSlugFromProductType( type ) )
 			.join( ',' );
 
 		return `/partner-portal/issue-license/?site_id=${ selectedLicensesSiteId }&product_slug=${ commaSeparatedProductSlugs }&source=dashboard`;
