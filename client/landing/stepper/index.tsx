@@ -70,7 +70,9 @@ interface configurableFlows {
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
-	{ flowName: 'videopress', pathToFlow: videopress },
+	config.isEnabled( 'videopress/tailored-onboarding' )
+		? { flowName: 'videopress', pathToFlow: videopress }
+		: null,
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
