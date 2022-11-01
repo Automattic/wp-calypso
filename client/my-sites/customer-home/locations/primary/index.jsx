@@ -81,7 +81,12 @@ const cardComponents = {
 	[ TASK_USE_BUILT_BY ]: UseBuiltBy,
 };
 
-const urgentTasks = [ TASK_RENEW_EXPIRED_PLAN ];
+const urgentTasks = [
+	TASK_RENEW_EXPIRED_PLAN,
+	TASK_REACTIVATE_EXPIRED_PLAN,
+	TASK_REACTIVATE_ATOMIC_TRANSFER,
+	TASK_REACTIVATE_RESTORE_BACKUP,
+];
 
 const Primary = ( { cards, trackCard } ) => {
 	const viewedCards = useRef( new Set() );

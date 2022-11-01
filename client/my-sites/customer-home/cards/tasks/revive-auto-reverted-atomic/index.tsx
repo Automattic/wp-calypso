@@ -85,7 +85,9 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 		}
 	} )();
 
-	return <Task { ...taskProps } taskId={ card } illustration={ disconnectedIllustration } />;
+	return (
+		<Task isUrgent { ...taskProps } taskId={ card } illustration={ disconnectedIllustration } />
+	);
 };
 
 const ATOMIC_REVIVAL_TASKS = [
