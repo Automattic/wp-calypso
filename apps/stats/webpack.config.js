@@ -16,7 +16,8 @@ const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-ide
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
-const outputPath = path.join( __dirname, 'dist' );
+const outBasePath = process.env.STATS_PACKAGE_PATH ? process.env.STATS_PACKAGE_PATH : __dirname;
+const outputPath = path.join( outBasePath, 'dist' );
 
 const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
