@@ -381,8 +381,8 @@ $font-size: rem(14px);
 
 	&.is-sidebar-collapsed {
 		.layout:not(.focus-sites) {
-			--sidebar-width-max: 36px;
-			--sidebar-width-min: 36px;
+			--sidebar-width-max: 52px;
+			--sidebar-width-min: 52px;
 		}
 
 		.sidebar__actions {
@@ -426,7 +426,7 @@ $font-size: rem(14px);
 
 		// client/my-sites/current-site/style.scss
 		.current-site__switch-sites .button.is-borderless {
-			height: 34px;
+			height: 44px;
 			padding: 0;
 		}
 
@@ -443,7 +443,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar .site__content {
-			padding: 10px 2px;
+			padding: 10px 2px 0;
 
 			.count {
 				margin: 0;
@@ -455,17 +455,17 @@ $font-size: rem(14px);
 		}
 
 		.site__home {
-			left: 2px;
+			left: 8px;
 		}
 
 		.sidebar .site .site-icon {
-			margin-bottom: 4px;
+			margin: 0 auto;
 		}
 
 		// client/blocks/upsell-nudge/style.scss
 		.upsell-nudge.banner.card.is-compact {
-			margin: 8px 3px 7px;
-			padding: 2px 12px 2px 4px;
+			margin: 8px 0 7px;
+			padding: 2px 16px;
 		}
 
 		.current-site__notices > .banner {
