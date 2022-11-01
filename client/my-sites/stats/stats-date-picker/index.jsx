@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import PropTypes from 'prop-types';
@@ -111,11 +112,13 @@ class StatsDatePicker extends Component {
 	};
 
 	render() {
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace*/
 		const { summary, translate, query, showQueryDate, isActivity } = this.props;
 		const isSummarizeQuery = get( query, 'summarize' );
 
-		const sectionTitle = isActivity
+		let sectionTitle = isActivity
 			? translate( 'Activity for {{period/}}', {
 					components: {
 						period: (
@@ -142,6 +145,14 @@ class StatsDatePicker extends Component {
 					comment:
 						'Example: "Stats for December 7", "Stats for December 8 - December 14", "Stats for December", "Stats for 2014"',
 			  } );
+
+		if ( isNewFeatured ) {
+			sectionTitle = (
+				<span className="period">
+					<span className="date">{ this.dateForDisplay() }</span>
+				</span>
+			);
+		}
 
 		return (
 			<div>
