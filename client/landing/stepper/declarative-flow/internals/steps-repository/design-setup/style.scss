@@ -215,14 +215,10 @@ $break-design-preview: 1024px;
 				}
 			}
 
-			@include break-mobile {
+			@include break-small {
 				margin: 16px 0 24px;
 				transform: translateY(-58px);
 				min-height: 42px;
-
-				#design-setup-header {
-					padding: 0 60px;
-				}
 			}
 		}
 
@@ -230,7 +226,7 @@ $break-design-preview: 1024px;
 			height: calc(100vh - 245px);
 			margin-top: 74px;
 
-			@include break-mobile {
+			@include break-small {
 				height: calc(100vh - 225px);
 				margin-top: 32px;
 			}

@@ -36,6 +36,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
+import type { PageId } from 'calypso/signup/difm/constants';
 import type { Dependencies } from 'calypso/signup/types';
 
 import './style.scss';
@@ -111,7 +112,7 @@ const PageCellBadge = styled.div`
 `;
 
 interface PageCellType {
-	pageId: string;
+	pageId: PageId;
 	selectedPages: string[];
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
@@ -126,7 +127,7 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 	const isDisabled =
 		! config.isEnabled( 'difm/allow-extra-pages' ) && PAGE_LIMIT <= totalSelections;
 	const title = useTranslatedPageTitles()[ pageId ];
-	const description = useTranslatedPageDescriptions()[ pageId ];
+	const description = useTranslatedPageDescriptions( pageId );
 
 	return (
 		<GridCellContainer isSelected={ isSelected } isClickDisabled={ isDisabled }>

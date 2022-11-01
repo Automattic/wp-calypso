@@ -26,6 +26,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
 import { usePollSiteForDIFMDetails } from './use-poll-site-for-difm-details';
+import type { PageId } from 'calypso/signup/difm/constants';
 
 import './style.scss';
 
@@ -76,7 +77,7 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
-	pageTitles: string[];
+	pageTitles: PageId[];
 	siteId: SiteId | null;
 }
 
@@ -159,10 +160,10 @@ function WebsiteContentStep( {
 				buttons={ dialogButtons }
 			>
 				<DialogContent>
-					<h1>{ translate( 'Submit Content?' ) }</h1>
+					<h1>{ translate( 'Are you ready to submit your content?' ) }</h1>
 					<p>
 						{ translate(
-							'Click "Submit" to start your site build or "Cancel" to make further edits.'
+							'Click the Submit button if you have finished adding content. We will build your new website and then email you within 4 business days with details about your new site.'
 						) }
 					</p>
 				</DialogContent>
@@ -208,7 +209,7 @@ export default function WrapperWebsiteContent(
 	const translate = useTranslate();
 	const headerText = translate( 'Website Content' );
 	const subHeaderText = translate(
-		'Add your logo, page text and media to be used on your website.'
+		'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 

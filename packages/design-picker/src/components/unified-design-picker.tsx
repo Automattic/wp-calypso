@@ -3,10 +3,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
-import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { createInterpolateElement } from '@wordpress/element';
-import { sprintf, hasTranslation } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -79,7 +77,6 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 	design,
 	isPremiumThemeAvailable = false,
 	hasPurchasedTheme = false,
-	onCheckout,
 	verticalId,
 	currentPlanFeatures,
 } ) => {
@@ -99,37 +96,13 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 				? __( 'Included in your plan' )
 				: __( 'Available with WordPress.com Business' );
 		} else if ( isPremium && shouldUpgrade ) {
-			if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-				text = createInterpolateElement(
-					sprintf(
-						/* translators: %(price)s - the price of the theme */
-						__( '%(price)s per year or <button>included in WordPress.com Premium</button>' ),
-						{
-							price: design.price,
-						}
-					),
-					{
-						button: (
-							<Button
-								isLink={ true }
-								className="design-picker__button-link"
-								onClick={ ( e: any ) => {
-									e.stopPropagation();
-									onCheckout?.();
-								} }
-							/>
-						),
-					}
-				);
-			} else {
-				text = (
-					<Button isLink={ true } className="design-picker__button-link">
-						{ 'en' === locale || hasTranslation( 'Included in WordPress.com Premium' )
-							? __( 'Included in WordPress.com Premium' )
-							: __( 'Upgrade to Premium' ) }
-					</Button>
-				);
-			}
+			text = sprintf(
+				/* translators: %(price)s - the price of the theme */
+				__( '%(price)s per year or included in WordPress.com Premium' ),
+				{
+					price: design.price,
+				}
+			);
 		} else if ( isPremium && ! shouldUpgrade && hasPurchasedTheme ) {
 			text = __( 'Purchased on an annual subscription' );
 		} else if ( isPremium && ! shouldUpgrade && ! hasPurchasedTheme ) {
