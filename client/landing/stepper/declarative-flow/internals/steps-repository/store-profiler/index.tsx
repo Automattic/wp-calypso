@@ -25,7 +25,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const translate = useTranslate();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const site = {}; // TODO: how to we initialize new site programmatically?
+	const site = { ID: 0 }; // TODO: how to we initialize new site programmatically?
 	const verticals = useSiteVerticalsFeatured();
 	const verticalsOptions = React.useMemo( () => {
 		const sorted = verticals.data?.sort( ( a, b ) => {
@@ -75,7 +75,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement | HTMLSelectElement > ) => {
 		if ( site ) {
-			setFormTouched( true );
+			// setFormTouched( true );
 
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
