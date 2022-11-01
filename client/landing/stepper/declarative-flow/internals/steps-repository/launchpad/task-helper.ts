@@ -129,6 +129,7 @@ export function getEnhancedTasks(
 					break;
 				case 'videopress_setup':
 					taskData = {
+						completed: true,
 						title: translate( 'Set up your Video site' ),
 					};
 					break;
@@ -147,7 +148,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch Video site' ),
 						completed: siteLaunchCompleted,
-						dependencies: [ videoPressUploadCompleted ],
+						disabled: ! videoPressUploadCompleted,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );

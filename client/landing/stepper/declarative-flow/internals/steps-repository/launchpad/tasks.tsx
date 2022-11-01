@@ -51,21 +51,21 @@ export const tasks: Task[] = [
 	},
 	{
 		id: 'videopress_setup',
-		isCompleted: true,
+		completed: true,
 		taskType: 'blog',
-		displayBadge: false,
+		disabled: false,
 	},
 	{
 		id: 'videopress_upload',
-		isCompleted: false,
+		completed: false,
 		taskType: 'blog',
-		displayBadge: false,
+		disabled: false,
 	},
 	{
 		id: 'videopress_launched',
-		isCompleted: false,
+		completed: false,
 		taskType: 'blog',
-		displayBadge: false,
+		disabled: true,
 	},
 ];
 
