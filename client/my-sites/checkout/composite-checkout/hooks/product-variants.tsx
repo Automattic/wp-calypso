@@ -21,7 +21,6 @@ import { useStableCallback } from 'calypso/lib/use-stable-callback';
 import { requestPlans } from 'calypso/state/plans/actions';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import type { WPCOMProductVariant } from '../components/item-variation-picker';
 import type { Plan, Product } from '@automattic/calypso-products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -73,10 +72,7 @@ export interface SitesPlansResult {
 	data: SitePlanData[] | null;
 }
 
-export type VariantFilterCallback = (
-	variant: WPCOMProductVariant,
-	activePlanRenewalInterval: number | undefined
-) => boolean;
+export type VariantFilterCallback = ( variant: WPCOMProductVariant ) => boolean;
 
 const fallbackFilter = () => true;
 
@@ -102,11 +98,7 @@ export function useGetProductVariants(
 	const reduxDispatch = useDispatch();
 	const filterCallbackMemoized = useStableCallback( filterCallback ?? fallbackFilter );
 
-	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
-	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
-	debug( 'activePlan', activePlan );
-
-	const variantProductSlugs = useVariantPlanProductSlugs( productSlug, activePlan?.productSlug );
+	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
 	debug( 'variantProductSlugs', variantProductSlugs );
 
 	const variantsWithPrices: AvailableProductVariant[] = useSelector( ( state ) => {
@@ -154,10 +146,8 @@ export function useGetProductVariants(
 	}, [ getProductVariantFromAvailableVariant, variantsWithPrices ] );
 
 	const filteredVariants = useMemo( () => {
-		return convertedVariants.filter( ( product ) =>
-			filterCallbackMemoized( product, activePlan?.interval )
-		);
-	}, [ activePlan?.interval, convertedVariants, filterCallbackMemoized ] );
+		return convertedVariants.filter( ( product ) => filterCallbackMemoized( product ) );
+	}, [ convertedVariants, filterCallbackMemoized ] );
 
 	return filteredVariants;
 }
@@ -221,24 +211,8 @@ function getVariantPlanProductSlugs( productSlug: string | undefined ): string[]
 		  } );
 }
 
-function isVariantOfActivePlan(
-	activePlanSlug: string | undefined,
-	variantPlanSlug: string
-): boolean {
-	return getVariantPlanProductSlugs( activePlanSlug ).includes( variantPlanSlug );
-}
-
-function useVariantPlanProductSlugs(
-	productSlug: string | undefined,
-	activePlanSlug: string | undefined
-): string[] {
-	return useMemo(
-		() =>
-			getVariantPlanProductSlugs( productSlug ).filter(
-				( slug ) => ! isVariantOfActivePlan( activePlanSlug, slug )
-			),
-		[ productSlug, activePlanSlug ]
-	);
+function useVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
+	return useMemo( () => getVariantPlanProductSlugs( productSlug ), [ productSlug ] );
 }
 
 function getTermText( term: string, translate: ReturnType< typeof useTranslate > ): string {

@@ -13,12 +13,14 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
 	useGetProductVariants,
 	canVariantBePurchased,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
@@ -184,27 +186,26 @@ function LineItemWrapper( {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	const variants = useGetProductVariants(
-		siteId,
-		product.product_slug,
-		( variant, currentInterval ) => {
-			if ( ! canVariantBePurchased( variant, currentInterval ) ) {
-				return false;
-			}
+	const sitePlans = useSelector( ( state ) => getPlansBySiteId( state, siteId ) );
+	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 
-			// Only show term variants which are equal to or longer than the variant that
-			// was in the cart when checkout finished loading (not necessarily the
-			// current variant). For WordPress.com only, not Jetpack. See
-			// https://github.com/Automattic/wp-calypso/issues/69633
-			if ( ! initialVariantTerm ) {
-				return true;
-			}
-			if ( isJetpack ) {
-				return true;
-			}
-			return variant.termIntervalInMonths >= initialVariantTerm;
+	const variants = useGetProductVariants( siteId, product.product_slug, ( variant ) => {
+		if ( ! canVariantBePurchased( variant, activePlan?.interval ) ) {
+			return false;
 		}
-	);
+
+		// Only show term variants which are equal to or longer than the variant that
+		// was in the cart when checkout finished loading (not necessarily the
+		// current variant). For WordPress.com only, not Jetpack. See
+		// https://github.com/Automattic/wp-calypso/issues/69633
+		if ( ! initialVariantTerm ) {
+			return true;
+		}
+		if ( isJetpack ) {
+			return true;
+		}
+		return variant.termIntervalInMonths >= initialVariantTerm;
+	} );
 
 	const areThereVariants = variants.length > 1;
 
