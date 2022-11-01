@@ -65,9 +65,6 @@ const prefetchProductList = ( queryClient, store ) => {
 		} );
 };
 
-// const prefetchCategoryPlugins = ( queryClient, options ) =>
-// 	prefetchPluginsData( queryClient, getFetchWPORGInfinitePlugins( options ), true );
-
 const prefetchTimebox = ( prefetchPromises, context ) => {
 	const racingPromises = [ Promise.all( prefetchPromises ) ];
 	const isBot = context.res?.req?.useragent?.isBot;
