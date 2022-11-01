@@ -16,6 +16,9 @@ import 'calypso/state/themes/init';
  * @returns {boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
+	// TODO: We'll need to update this condition once we have a way to check
+	// whether the theme is subscribed to. This is related to the third-party premium
+	// themes project.
 	if ( isThemePurchased( state, themeId, siteId ) ) {
 		return true;
 	}
