@@ -250,20 +250,7 @@ describe(
 					);
 				} );
 
-				// This test will fail because the entity_context property will be wrong,
-				// and due to a bug in Gutenberg, not immediately fixable. It's wrong because
-				// we have code that attempts to detect that block variation and append it to
-				// the entity_context. So entity_context will be something like
-				// core/template-part/[template-part-id-here]. We could fix this by adding
-				// the template part identifier below, but there's also a bug such that
-				// Gutenberg's getActiveBlockVariation() method is retrieving the wrong block
-				// variation for generic (non header or footer) template parts. For now,
-				// skipping this, and will create separate issue.
-				//
-				// In order to test nearly equivalent behavior, we've added another test below
-				// that runs through same sequence but with a header block, which predictably
-				// populates the right entity_context.
-				it.skip( '"wpcom_block_inserted" event fires with correct "entity_context" and "template_part_id"', async function () {
+				it( '"wpcom_block_inserted" event fires with correct "entity_context" and "template_part_id"', async function () {
 					const eventDidFire = await editorTracksEventManager.didEventFire(
 						'wpcom_block_inserted',
 						{
@@ -309,8 +296,6 @@ describe(
 					expect( eventDidFire ).toBe( false );
 				} );
 
-				// The following two steps were added to replace a skipped
-				// test further above for inserting blocks into template parts.
 				it( 'Add a Page List block to the header template part', async function () {
 					const openInlineInserter: OpenInlineInserter = async () => {
 						await headerBlock.clickAddBlockButton();
