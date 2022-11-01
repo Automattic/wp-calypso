@@ -7,12 +7,14 @@ type PatternSelectorLoaderProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	showPatternSelectorType: string | null;
+	selectedPattern: Pattern | null;
 };
 
 const PatternSelectorLoader = ( {
 	showPatternSelectorType,
 	onSelect,
 	onBack,
+	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
 
@@ -24,6 +26,7 @@ const PatternSelectorLoader = ( {
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Choose a header' ) }
+				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
 				show={ showPatternSelectorType === 'footer' }
@@ -31,6 +34,7 @@ const PatternSelectorLoader = ( {
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Choose a footer' ) }
+				selectedPattern={ selectedPattern }
 			/>
 			<PatternSelector
 				show={ showPatternSelectorType === 'section' }
@@ -38,6 +42,7 @@ const PatternSelectorLoader = ( {
 				onSelect={ onSelect }
 				onBack={ onBack }
 				title={ translate( 'Add a section' ) }
+				selectedPattern={ selectedPattern }
 			/>
 		</>
 	);
