@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { findIndex, find } from 'lodash';
@@ -134,7 +135,34 @@ class StoreStatsChart extends Component {
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
-		return (
+
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		return isNewFeatured ? (
+			<div className={ className }>
+				<div className="store-stats-chart__top">
+					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
+					{ this.renderLegend( selectedTabIndex ) }
+				</div>
+				<ElementChart
+					loading={ isLoading }
+					data={ chartData }
+					barClick={ this.barClick }
+					chartXPadding={ 0 }
+					minBarWidth={ 35 }
+				/>
+				{ ! isLoading &&
+					renderTabs( {
+						chartData,
+						selectedIndex,
+						selectedTabIndex,
+						selectedDate,
+						unit,
+						tabClick: this.tabClick,
+						iconSize: 24,
+					} ) }
+			</div>
+		) : (
 			<Card className={ classnames( className, 'stats-module' ) }>
 				<div className="store-stats-chart__top">
 					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>

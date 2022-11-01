@@ -13,3 +13,103 @@
 .store-stats-orders-chart {
 	padding: 0;
 }
+
+// For feature `stats/new-main-chart`
+.chart-tabs--new-main-chart {
+	.store-stats-chart__top {
+		display: flex;
+		justify-content: end;
+		background-color: var(--color-surface);
+		padding-bottom: 16px;
+
+		.chart__legend {
+			margin: 0;
+		}
+
+		.store-stats-chart__title {
+			display: none;
+		}
+
+		.chart__legend-options {
+			text-transform: none;
+		}
+
+		.chart__legend-option {
+			&:not(:first-child) {
+				margin-left: 24px;
+			}
+		}
+
+		.chart__legend-label {
+			color: var(--studio-black);
+			font-size: $font-body-small;
+			font-weight: 400;
+			line-height: 18px;
+			padding: 0;
+
+			.chart__legend-checkbox {
+				width: 20px;
+				height: 20px;
+				background-color: var(--color-surface);
+				border: 1px solid var(--color-neutral-10);
+				border-radius: 2px;
+				margin-right: 8px;
+
+				&:checked::before {
+					margin: 3px auto;
+				}
+			}
+		}
+
+		.chart__legend-color {
+			width: 20px;
+			height: 20px;
+			margin: 0 8px 0 0;
+			border-radius: 4px;
+		}
+	}
+
+	// Main Chart
+	.chart {
+		padding: 0;
+
+		.chart__bar {
+			// Cancel the chart bar styles
+			&.is-weekend {
+				background: none;
+			}
+
+			&:hover {
+				background-color: rgba(var(--color-neutral-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+			}
+
+			&.is-selected {
+				background-color: rgba(var(--color-primary-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+
+				.chart__bar-section-inner {
+					background-color: var(--color-primary-dark);
+				}
+			}
+		}
+
+		.chart__bar-section {
+			background-color: var(--color-primary);
+			border-top-left-radius: 2px;
+			border-top-right-radius: 2px;
+		}
+
+		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
+			font-weight: 400;
+			line-height: 24px;
+			color: var(--color-neutral-40);
+		}
+	}
+}
