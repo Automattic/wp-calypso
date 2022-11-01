@@ -21,12 +21,10 @@ interface PagePatternModalProps {
 	instanceId: string | number;
 	isOpen: boolean;
 	isWelcomeGuideActive?: boolean;
-	locale?: string;
 	savePatternChoice: ( name: string ) => void;
 	onClose: () => void;
 	siteInformation?: Record< string, string >;
 	patterns: PatternDefinition[];
-	theme?: string;
 	title?: string;
 	description?: string;
 }
@@ -274,12 +272,10 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 			return null;
 		}
 
-		const groupTitle = this.getPatternGroups()?.[ selectedCategory ]?.title;
-
-		return this.renderPatternsList( patterns, groupTitle );
+		return this.renderPatternsList( patterns );
 	};
 
-	renderPatternsList = ( patternsList: PatternDefinition[], groupTitle?: string ) => {
+	renderPatternsList = ( patternsList: PatternDefinition[] ) => {
 		if ( ! patternsList.length ) {
 			return null;
 		}
@@ -314,14 +310,10 @@ class PagePatternModal extends Component< PagePatternModalProps, PagePatternModa
 		return (
 			<PatternSelectorControl
 				label={ __( 'Layout', __i18n_text_domain__ ) }
-				legendLabel={ groupTitle }
 				patterns={ filteredPatternsList.map(
 					( pattern ) => formattedPatternsByPatternSlug[ pattern.name ]
 				) }
 				onPatternSelect={ this.setPattern }
-				theme={ this.props.theme }
-				locale={ this.props.locale }
-				siteInformation={ this.props.siteInformation }
 			/>
 		);
 	};
