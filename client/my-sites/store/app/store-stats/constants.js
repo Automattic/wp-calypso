@@ -118,15 +118,9 @@ export const chartTabs = [
 		label: translate( 'Gross Sales' ),
 		attr: 'gross_sales',
 		type: 'currency',
-		tabLabel: translate( 'Sales' ),
+		tabLabel: translate( 'Gross Sales' ),
 		availableCharts: [ 'net_sales' ],
-	},
-	{ label: translate( 'Orders' ), attr: 'orders', type: 'number', availableCharts: [] },
-	{
-		label: translate( 'Average Order Value' ),
-		attr: 'avg_order_value',
-		type: 'currency',
-		availableCharts: [],
+		gridicon: 'credit-card',
 	},
 	{
 		label: translate( 'Net Sales' ),
@@ -134,6 +128,21 @@ export const chartTabs = [
 		isHidden: true,
 		availableCharts: [],
 		type: 'currency',
+		gridicon: 'money',
+	},
+	{
+		label: translate( 'Orders' ),
+		attr: 'orders',
+		type: 'number',
+		availableCharts: [],
+		gridicon: 'shipping',
+	},
+	{
+		label: translate( 'Avg. Order Value' ),
+		attr: 'avg_order_value',
+		type: 'currency',
+		availableCharts: [],
+		gridicon: 'special-character',
 	},
 ];
 
