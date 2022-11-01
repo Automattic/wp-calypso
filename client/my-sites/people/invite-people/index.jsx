@@ -407,17 +407,20 @@ class InvitePeople extends Component {
 			site,
 			translate,
 			needsVerification,
+			isAtomic,
 			isJetpack,
+			isPrivateSite: isPrivate,
 			showSSONotice,
 			includeSubscriberImporter,
 		} = this.props;
-		let includeFollower;
+
+		let includeFollower = isPrivate && ! isAtomic;
 		const includeSubscriber = ! includeSubscriberImporter;
 
 		if ( ! includeSubscriberImporter ) {
 			// Atomic private sites don't support Viewers/Followers.
 			// @see https://github.com/Automattic/wp-calypso/issues/43919
-			includeFollower = ! this.props.isAtomic;
+			includeFollower = ! isAtomic;
 		}
 
 		const inviteForm = (
