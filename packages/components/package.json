@@ -32,6 +32,7 @@
 		"@automattic/search": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@wordpress/base-styles": "^4.5.0",
+		"@wordpress/icons": "^9.11.0",
 		"classnames": "^2.3.1",
 		"enzyme": "^3.11.0",
 		"framer-motion": "6.2.8",

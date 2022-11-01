@@ -8,6 +8,10 @@ import {
 } from 'calypso/signup/accordion-form/form-components';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import {
+	BBE_WEBSITE_CONTENT_FILLING_STEP,
+	useTranslatedPageDescriptions,
+} from 'calypso/signup/difm/translation-hooks';
+import {
 	imageRemoved,
 	imageUploaded,
 	imageUploadFailed,
@@ -17,32 +21,30 @@ import {
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { MediaUploadData, WordpressMediaUpload } from '../wordpress-media-upload';
 import type { PageData } from 'calypso/state/signup/steps/website-content/schema';
-import type { TranslateResult } from 'i18n-calypso';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
-
+export interface PageDetailsParams< T > {
+	page: T;
+	formErrors: ValidationErrors;
+	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
+}
 export function DefaultPageDetails( {
 	page,
 	formErrors,
-	label,
 	onChangeField,
-}: {
-	page: PageData;
-	formErrors: ValidationErrors;
-	label: TranslateResult | undefined;
-	onChangeField?: ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => void;
-} ) {
+}: PageDetailsParams< PageData > ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
+	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
 			imageUploadFailed( {
-				pageId: page.id,
+				pageId: pageID,
 				mediaIndex,
 			} )
 		);
@@ -101,12 +103,7 @@ export function DefaultPageDetails( {
 				onChange={ onContentChange }
 				value={ page.content }
 				error={ formErrors[ fieldName ] }
-				label={
-					label ||
-					translate( 'Please provide the text you want to appear on your %(pageTitle)s page.', {
-						args: { pageTitle },
-					} )
-				}
+				label={ description }
 			/>
 			<Label>
 				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {

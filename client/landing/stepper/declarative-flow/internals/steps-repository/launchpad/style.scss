@@ -29,6 +29,47 @@
 	}
 }
 
+.launchpad__container {
+	display: flex;
+	flex-direction: column;
+}
+
+.launchpad__email-validation-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px;
+	background: var(--studio-gray-0);
+
+	&-content {
+		gap: 16px;
+		display: flex;
+		align-items: center;
+
+		&-resend-button {
+			color: var(--color-link);
+			padding: 0;
+			font-size: 1rem;
+			cursor: pointer;
+		}
+
+		&-checkmark-icon {
+			fill: var(--studio-green-40);
+		}
+	}
+
+	&-close-button {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&-close-icon {
+			fill: var(--studio-gray-20);
+		}
+	}
+}
+
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
@@ -143,6 +184,20 @@
 
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
+}
+
+.launchpad__domain-notification {
+	display: flex;
+	margin-bottom: 16px;
+
+	@include break-large {
+		margin-bottom: 10px;
+	}
+}
+
+.launchpad__domain-checkmark-icon {
+	flex: 0 0 36px;
+	fill: var(--studio-green-40);
 }
 
 .launchpad__domain-upgrade-badge {

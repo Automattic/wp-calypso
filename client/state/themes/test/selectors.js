@@ -1,9 +1,11 @@
 import {
+	FEATURE_WOOP,
 	PLAN_FREE,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
 	WPCOM_FEATURES_PREMIUM_THEMES,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
@@ -45,6 +47,7 @@ import {
 	areRecommendedThemesLoading,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -2594,6 +2597,44 @@ describe( 'themes selectors', () => {
 			);
 			expect( parentId ).toEqual( 'superhero' );
 		} );
+	} );
+
+	test( 'has managed-external theme features', () => {
+		const isSiteEligible = isSiteEligibleForManagedExternalThemes(
+			{
+				sites: {
+					features: {
+						1234: {
+							data: {
+								active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+							},
+						},
+					},
+				},
+			},
+			1234
+		);
+
+		expect( isSiteEligible ).toEqual( true );
+	} );
+
+	test( 'does not have managed-external theme features', () => {
+		const isSiteEligible = isSiteEligibleForManagedExternalThemes(
+			{
+				sites: {
+					features: {
+						1234: {
+							data: {
+								active: [ 'i-can-has-feature' ],
+							},
+						},
+					},
+				},
+			},
+			1234
+		);
+
+		expect( isSiteEligible ).toEqual( false );
 	} );
 } );
 

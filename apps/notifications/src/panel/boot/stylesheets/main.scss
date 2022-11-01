@@ -814,7 +814,8 @@
 
 	.wpnc__comment .wpnc__body .wpnc__body-content,
 	.wpnc__new_post .wpnc__body .wpnc__body-content,
-	.wpnc__automattcher .wpnc__body .wpnc__body-content {
+	.wpnc__automattcher .wpnc__body .wpnc__body-content,
+	.wpnc__writing_prompts_note .wpnc__body .wpnc__body-content {
 		border-bottom: 1px solid var(--color-neutral-5);
 		padding-top: $wpnc__padding-small;
 	}

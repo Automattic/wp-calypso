@@ -51,11 +51,13 @@ class ThemesSelection extends Component {
 		source: PropTypes.oneOfType( [ PropTypes.number, PropTypes.oneOf( [ 'wpcom', 'wporg' ] ) ] ),
 		themes: PropTypes.array,
 		themesCount: PropTypes.number,
+		forceWpOrgSearch: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		emptyContent: null,
 		showUploadButton: true,
+		forceWpOrgSearch: false,
 	};
 
 	componentDidMount() {
@@ -162,9 +164,13 @@ class ThemesSelection extends Component {
 		return (
 			<div className="themes__selection">
 				<QueryThemes query={ query } siteId={ source } />
+				{ this.props.forceWpOrgSearch && source !== 'wporg' && (
+					<QueryThemes query={ query } siteId="wporg" />
+				) }
 				<ThemesList
 					upsellUrl={ upsellUrl }
 					themes={ this.props.customizedThemesList || this.props.themes }
+					wpOrgThemes={ this.props.wpOrgThemes }
 					fetchNextPage={ this.fetchNextPage }
 					recordTracksEvent={ this.props.recordTracksEvent }
 					onMoreButtonClick={ this.recordSearchResultsClick }
@@ -212,6 +218,7 @@ export const ConnectedThemesSelection = connect(
 			vertical,
 			siteId,
 			source,
+			forceWpOrgSearch,
 			isLoading: isCustomizedThemeListLoading,
 		}
 	) => {
@@ -249,6 +256,10 @@ export const ConnectedThemesSelection = connect(
 		};
 
 		const themes = getThemesForQueryIgnoringPage( state, sourceSiteId, query ) || [];
+		const wpOrgThemes =
+			forceWpOrgSearch && sourceSiteId !== 'wporg'
+				? getThemesForQueryIgnoringPage( state, 'wporg', query ) || []
+				: [];
 
 		return {
 			query,
@@ -270,6 +281,7 @@ export const ConnectedThemesSelection = connect(
 			// redundant AJAX requests, we're not rendering these query components locally.
 			getPremiumThemePrice: bindGetPremiumThemePrice( state, siteId ),
 			filterString: prependThemeFilterKeys( state, query.filter ),
+			wpOrgThemes,
 		};
 	},
 	{ setThemePreviewOptions, recordGoogleEvent, recordTracksEvent }

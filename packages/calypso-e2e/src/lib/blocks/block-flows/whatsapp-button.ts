@@ -12,7 +12,8 @@ const selectors = {
 	buttonLabel: 'a.whatsapp-block__button',
 
 	// Published
-	block: 'div.wp-block-jetpack-whatsapp-button',
+	// 'main' needs to be specified due to the debug elements
+	block: 'main div.wp-block-jetpack-whatsapp-button',
 };
 
 /**

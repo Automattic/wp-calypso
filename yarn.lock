@@ -394,6 +394,7 @@ __metadata:
     "@testing-library/react": ^12.1.3
     "@testing-library/react-hooks": 7.0.2
     "@wordpress/base-styles": ^4.5.0
+    "@wordpress/icons": ^9.11.0
     classnames: ^2.3.1
     enzyme: ^3.11.0
     framer-motion: 6.2.8
@@ -9211,18 +9212,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.12.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
-  version: 4.12.0
-  resolution: "@wordpress/element@npm:4.12.0"
+"@wordpress/element@npm:^4.0.1, @wordpress/element@npm:^4.0.4, @wordpress/element@npm:^4.1.1, @wordpress/element@npm:^4.11.0, @wordpress/element@npm:^4.18.0, @wordpress/element@npm:^4.5.0, @wordpress/element@npm:^4.7.0":
+  version: 4.18.0
+  resolution: "@wordpress/element@npm:4.18.0"
   dependencies:
     "@babel/runtime": ^7.16.0
     "@types/react": ^17.0.37
     "@types/react-dom": ^17.0.11
-    "@wordpress/escape-html": ^2.14.0
-    lodash: ^4.17.21
+    "@wordpress/escape-html": ^2.20.0
+    change-case: ^4.1.2
+    is-plain-object: ^5.0.0
     react: ^17.0.2
     react-dom: ^17.0.2
-  checksum: 22162e567fc17cc1251b7581f49d54ed32ecdec98481d922e3dc6ca535d84dcf0695a7b15701ad6f74c884304d47544076593892294448afa2988056f604d359
+  checksum: d48240ab46f00344cc23f1c83b2c405046b49e2c59f3c604fae988b2263461c7c956f2e0d561f1ab8494b2d50cf6d344e6022de161df061098fd152b317bfa7a
   languageName: node
   linkType: hard
 
@@ -9257,12 +9259,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.14.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.9.0":
-  version: 2.14.0
-  resolution: "@wordpress/escape-html@npm:2.14.0"
+"@wordpress/escape-html@npm:^2.13.0, @wordpress/escape-html@npm:^2.2.0, @wordpress/escape-html@npm:^2.2.1, @wordpress/escape-html@npm:^2.2.3, @wordpress/escape-html@npm:^2.20.0, @wordpress/escape-html@npm:^2.9.0":
+  version: 2.20.0
+  resolution: "@wordpress/escape-html@npm:2.20.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-  checksum: 88cd44de524346e95ab0eeaebc91afa4dee10e330b032a93b5106fa06ffd5568eb6bcab2597288a427ec4f0549d6ec8ef4840bb2b8cfc3e958f6643c2eea60cd
+  checksum: 860cd7a21c41b0542bd96fc30bc5080ebc73e9f609c5f89c23adc5e4ea1790a2302f6f4063d0d46f4c6163376370482e0878c20fa323fa72b4be32282a7fc21a
   languageName: node
   linkType: hard
 
@@ -9440,14 +9442,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.0.0, @wordpress/icons@npm:^9.4.0, @wordpress/icons@npm:^9.5.0":
-  version: 9.5.0
-  resolution: "@wordpress/icons@npm:9.5.0"
+"@wordpress/icons@npm:^9.0.0, @wordpress/icons@npm:^9.11.0, @wordpress/icons@npm:^9.4.0, @wordpress/icons@npm:^9.5.0":
+  version: 9.11.0
+  resolution: "@wordpress/icons@npm:9.11.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.12.0
-    "@wordpress/primitives": ^3.12.0
-  checksum: 03e5885e79a20846ae0d906277afa6a159a1718acb647052bae5052d0ab49d2e78f475c93a7341ffcdee0ede55176fcaf87217bcb238980d1bad728e2f476412
+    "@wordpress/element": ^4.18.0
+    "@wordpress/primitives": ^3.18.0
+  checksum: 101063fb7d5ea60b63be65f00f54f858d63fb4edc326941181c77447818d005c85eab61873a57130dbbc0cb76ade818da847d7f01d4de520361855ed09020e0a
   languageName: node
   linkType: hard
 
@@ -9713,14 +9715,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.12.0, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0, @wordpress/primitives@npm:^3.8.0":
-  version: 3.12.0
-  resolution: "@wordpress/primitives@npm:3.12.0"
+"@wordpress/primitives@npm:^3.0.1, @wordpress/primitives@npm:^3.0.4, @wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.18.0, @wordpress/primitives@npm:^3.5.0, @wordpress/primitives@npm:^3.7.0, @wordpress/primitives@npm:^3.8.0":
+  version: 3.18.0
+  resolution: "@wordpress/primitives@npm:3.18.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^4.12.0
+    "@wordpress/element": ^4.18.0
     classnames: ^2.3.1
-  checksum: 55b9bcb6a0cfa4405b8f45105251321173b396c4cb4263a89797939a4415cdc454743e7ff3779074c0437bf51a161875c6e2d2f4b793cc7b440ee4552124a262
+  checksum: 5090684e11d80d94fcf813dda71c0fcdadf036006509a448de54f7eb63ded6d668d7fa246b9f1f923b11268afac6c0aca4c1fd7f9cfb5d82055923cad6d607af
   languageName: node
   linkType: hard
 
@@ -12830,13 +12832,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"camel-case@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "camel-case@npm:4.1.1"
+"camel-case@npm:^4.1.1, camel-case@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "camel-case@npm:4.1.2"
   dependencies:
-    pascal-case: ^3.1.1
-    tslib: ^1.10.0
-  checksum: d8113f24a3ac764a81a6ec7a5de5d339bcc749da741e6a088c8f1dc8768845ef5299ce37d94449a0608727ac0a7c33e9c47fecfa820a1ab2b4145c0f5129c584
+    pascal-case: ^3.1.2
+    tslib: ^2.0.3
+  checksum: bf9eefaee1f20edbed2e9a442a226793bc72336e2b99e5e48c6b7252b6f70b080fc46d8246ab91939e2af91c36cdd422e0af35161e58dd089590f302f8f64c8a
   languageName: node
   linkType: hard
 
@@ -12930,6 +12932,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"capital-case@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "capital-case@npm:1.0.4"
+  dependencies:
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+    upper-case-first: ^2.0.2
+  checksum: 6a034af73401f6e55d91ea35c190bbf8bda21714d4ea8bb8f1799311d123410a80f0875db4e3236dc3f97d74231ff4bf1c8783f2be13d7733c7d990c57387281
+  languageName: node
+  linkType: hard
+
 "capture-exit@npm:^2.0.0":
   version: 2.0.0
   resolution: "capture-exit@npm:2.0.0"
@@ -13012,6 +13025,26 @@ __metadata:
     ansi-styles: ^4.1.0
     supports-color: ^7.1.0
   checksum: 4a3fef5cc34975c898ffe77141450f679721df9dde00f6c304353fa9c8b571929123b26a0e4617bde5018977eb655b31970c297b91b63ee83bb82aeb04666880
+  languageName: node
+  linkType: hard
+
+"change-case@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "change-case@npm:4.1.2"
+  dependencies:
+    camel-case: ^4.1.2
+    capital-case: ^1.0.4
+    constant-case: ^3.0.4
+    dot-case: ^3.0.4
+    header-case: ^2.0.4
+    no-case: ^3.0.4
+    param-case: ^3.0.4
+    pascal-case: ^3.1.2
+    path-case: ^3.0.4
+    sentence-case: ^3.0.4
+    snake-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: 95a6e48563cd393241ce18470c7310a8a050304a64b63addac487560ab039ce42b099673d1d293cc10652324d92060de11b5d918179fe3b5af2ee521fb03ca58
   languageName: node
   linkType: hard
 
@@ -14011,6 +14044,17 @@ __metadata:
   version: 2.0.2
   resolution: "consolidated-events@npm:2.0.2"
   checksum: d82df47cfd4d43289cdbc5c6d9a924f1445b1c753d36ee1250efa2ee008bca0bc72702ab2e9bda58e1deb8083dc45efdbe3deb363e094fcba7ec6b7b3589df53
+  languageName: node
+  linkType: hard
+
+"constant-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "constant-case@npm:3.0.4"
+  dependencies:
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+    upper-case: ^2.0.2
+  checksum: 91d54f18341fcc491ae66d1086642b0cc564be3e08984d7b7042f8b0a721c8115922f7f11d6a09f13ed96ff326eabae11f9d1eb0335fa9d8b6e39e4df096010e
   languageName: node
   linkType: hard
 
@@ -15872,13 +15916,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dot-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "dot-case@npm:3.0.3"
+"dot-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "dot-case@npm:3.0.4"
   dependencies:
-    no-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: f4bbaa2f6cb5521f63bb0f6d7c79b902c7d618a9c51696f882e459257d17a4aee9db5d96d9a3fd2cc6d17264623509db0e1aa86bb7d478c5dd662f26e84d26db
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: 5b859ea65097a7ea870e2c91b5768b72ddf7fa947223fd29e167bcdff58fe731d941c48e47a38ec8aa8e43044c8fbd15cd8fa21689a526bc34b6548197cd5b05
   languageName: node
   linkType: hard
 
@@ -19626,6 +19670,16 @@ __metadata:
   bin:
     he: bin/he
   checksum: a27d478befe3c8192f006cdd0639a66798979dfa6e2125c6ac582a19a5ebfec62ad83e8382e6036170d873f46e4536a7e795bf8b95bf7c247f4cc0825ccc8c17
+  languageName: node
+  linkType: hard
+
+"header-case@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "header-case@npm:2.0.4"
+  dependencies:
+    capital-case: ^1.0.4
+    tslib: ^2.0.3
+  checksum: c9f295d9d8e38fa50679281fd70d80726962256e888a76c8e72e526453da7a1832dcb427caa716c1ad5d79841d4537301b90156fa30298fefd3d68f4ea2181bb
   languageName: node
   linkType: hard
 
@@ -23735,12 +23789,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lower-case@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "lower-case@npm:2.0.1"
+"lower-case@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "lower-case@npm:2.0.2"
   dependencies:
-    tslib: ^1.10.0
-  checksum: 3dad40e357d2a56e93e03b9dc1233c010a255dfd2dfc5b7203d351ca75944f4baa5f7ec9ede4ae99907548ef09eda56e6f52845e9607462f44436b50d0c83ffb
+    tslib: ^2.0.3
+  checksum: 3d925e090315cf7dc1caa358e0477e186ffa23947740e4314a7429b6e62d72742e0bbe7536a5ae56d19d7618ce998aba05caca53c2902bd5742fdca5fc57fd7b
   languageName: node
   linkType: hard
 
@@ -25436,13 +25490,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"no-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "no-case@npm:3.0.3"
+"no-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "no-case@npm:3.0.4"
   dependencies:
-    lower-case: ^2.0.1
-    tslib: ^1.10.0
-  checksum: ef23b5a5712e5f7d68eb4bc12c6e076709c86a9edfa30fb563adf53c4ab9be78f8fc24ee91240593aa2d4d79e3f901f838d2d27e4f7e3b45582d5b871d98f171
+    lower-case: ^2.0.2
+    tslib: ^2.0.3
+  checksum: 8ef545f0b3f8677c848f86ecbd42ca0ff3cd9dd71c158527b344c69ba14710d816d8489c746b6ca225e7b615108938a0bda0a54706f8c255933703ac1cf8e703
   languageName: node
   linkType: hard
 
@@ -26621,13 +26675,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"param-case@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "param-case@npm:3.0.3"
+"param-case@npm:^3.0.3, param-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "param-case@npm:3.0.4"
   dependencies:
-    dot-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: c90d69d2fb9dbd157abebf85f1bf0ee7b5f4e3f24429ecc726f1d81a952fe858c3e4a7043e9da3b4f84a278b4e94e71aa90099cb7c244bd48e61fb73070eabea
+    dot-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: ccc053f3019f878eca10e70ec546d92f51a592f762917dafab11c8b532715dcff58356118a6f350976e4ab109e321756f05739643ed0ca94298e82291e6f9e76
   languageName: node
   linkType: hard
 
@@ -26833,13 +26887,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pascal-case@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "pascal-case@npm:3.1.1"
+"pascal-case@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "pascal-case@npm:3.1.2"
   dependencies:
-    no-case: ^3.0.3
-    tslib: ^1.10.0
-  checksum: d9f975e2720514224e58df96ec08628be6b5a29446e233c946b203c77e43f90080ad37d52a93eefd5e9c6d446bf86a233d9470af09173e20c093153a4bdfb0e2
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: 05ff7c344809fd272fc5030ae0ee3da8e4e63f36d47a1e0a4855ca59736254192c5a27b5822ed4bae96e54048eec5f6907713cfcfff7cdf7a464eaf7490786d8
   languageName: node
   linkType: hard
 
@@ -26861,6 +26915,16 @@ __metadata:
   version: 1.0.1
   resolution: "path-browserify@npm:1.0.1"
   checksum: 8b8c3fd5c66bd340272180590ae4ff139769e9ab79522e2eb82e3d571a89b8117c04147f65ad066dccfb42fcad902e5b7d794b3d35e0fd840491a8ddbedf8c66
+  languageName: node
+  linkType: hard
+
+"path-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "path-case@npm:3.0.4"
+  dependencies:
+    dot-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: b6b14637228a558793f603aaeb2fcd981e738b8b9319421b713532fba96d75aa94024b9f6b9ae5aa33d86755144a5b36697d28db62ae45527dbd672fcc2cf0b7
   languageName: node
   linkType: hard
 
@@ -31591,6 +31655,17 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"sentence-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "sentence-case@npm:3.0.4"
+  dependencies:
+    no-case: ^3.0.4
+    tslib: ^2.0.3
+    upper-case-first: ^2.0.2
+  checksum: 9a90527a51300cf5faea7fae0c037728f9ddcff23ac083883774c74d180c0a03c31aab43d5c3347512e8c1b31a0d4712512ec82beb71aa79b85149f9abeb5467
+  languageName: node
+  linkType: hard
+
 "serialize-error@npm:^2.1.0":
   version: 2.1.0
   resolution: "serialize-error@npm:2.1.0"
@@ -31993,6 +32068,16 @@ resolve@^2.0.0-next.3:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: a16775323e1404dd43fabafe7460be13a471e021637bc7889468eb45ce6a6b207261f454e4e530a19500cc962c4cc5348583520843b363f4193cee5c00e1e539
+  languageName: node
+  linkType: hard
+
+"snake-case@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "snake-case@npm:3.0.4"
+  dependencies:
+    dot-case: ^3.0.4
+    tslib: ^2.0.3
+  checksum: ab19a913969f58f4474fe9f6e8a026c8a2142a01f40b52b79368068343177f818cdfef0b0c6b9558f298782441d5ca8ed5932eb57822439fad791d866e62cecd
   languageName: node
   linkType: hard
 
@@ -34060,7 +34145,7 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
-"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
+"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"
   checksum: eb19bda3ae545b03caea6a244b34593468e23d53b26bf8649fbc20fce43e9b21a71127fd6d2b9662c0fe48ee6ff668ead48fd00d3b88b2b716b1c12edae25b5d
@@ -34742,10 +34827,28 @@ swiper@4.5.1:
   languageName: node
   linkType: hard
 
+"upper-case-first@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "upper-case-first@npm:2.0.2"
+  dependencies:
+    tslib: ^2.0.3
+  checksum: ccad6a0b143310ebfba2b5841f30bef71246297385f1329c022c902b2b5fc5aee009faf1ac9da5ab3ba7f615b88f5dc1cd80461b18a8f38cb1d4c3eb92538ea9
+  languageName: node
+  linkType: hard
+
 "upper-case@npm:^1.1.1":
   version: 1.1.3
   resolution: "upper-case@npm:1.1.3"
   checksum: 3e4d3a90519915bb591db84d72610392518806d8287b8f7541d87642d30388f42b2def1ed2f687e5792ee025e8f7e17d3a0dcbd5b3b59e306ceb1f3b8121ef54
+  languageName: node
+  linkType: hard
+
+"upper-case@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "upper-case@npm:2.0.2"
+  dependencies:
+    tslib: ^2.0.3
+  checksum: 5ac176c9d3757abb71400df167f9abb46d63152d5797c630d1a9f083fbabd89711fb4b3dc6de06ff0138fe8946fa5b8518b4fcdae9ca8a3e341417075beae069
   languageName: node
   linkType: hard
 
