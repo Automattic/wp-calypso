@@ -47,7 +47,8 @@
 .sites-overview__page-title-container {
 	display: none;
 	@include breakpoint-deprecated( ">660px" ) {
-		display: block;
+		display: flex;
+		align-items: center;
 	}
 }
 .sites-overview__page-title {
@@ -58,6 +59,21 @@
 	font-size: 0.875rem;
 	color: var(--studio-gray-60);
 	margin-bottom: 8px;
+}
+.sites-overview__licenses-buttons {
+	margin-left: auto;
+
+	button,
+	a {
+		font-size: 1rem;
+	}
+
+	&-cancel {
+		text-decoration: underline;
+		padding: 2;
+		margin-inline-end: 32px;
+		text-underline-offset: 3px;
+	}
 }
 .sites-overview__status-select-license,
 .sites-overview__status-unselect-license, {
