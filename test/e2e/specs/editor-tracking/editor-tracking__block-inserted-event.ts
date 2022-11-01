@@ -295,31 +295,6 @@ describe(
 					);
 					expect( eventDidFire ).toBe( false );
 				} );
-
-				it( 'Add a Page List block to the header template part', async function () {
-					const openInlineInserter: OpenInlineInserter = async () => {
-						await headerBlock.clickAddBlockButton();
-					};
-					await fullSiteEditorPage.addBlockInline(
-						'Page List',
-						'[aria-label="Block: Page List"]',
-						openInlineInserter
-					);
-				} );
-
-				it( '"wpcom_block_inserted" event fires with correct "entity_context" and "template_part_id"', async function () {
-					const eventDidFire = await editorTracksEventManager.didEventFire(
-						'wpcom_block_inserted',
-						{
-							matchingProperties: {
-								block_name: 'core/page-list',
-								entity_context: 'core/template-part/header',
-								template_part_id: 'pub/blockbase//header-centered',
-							},
-						}
-					);
-					expect( eventDidFire ).toBe( true );
-				} );
 			} );
 
 			// Always try to delete the created template part.
