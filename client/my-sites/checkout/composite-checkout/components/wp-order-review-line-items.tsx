@@ -12,14 +12,14 @@ import {
 	getPartnerCoupon,
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
-import { useEffect, useState, useRef } from 'react';
+import { useState } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
 	useGetProductVariants,
 	canVariantBePurchased,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
-import { ItemVariationPicker, WPCOMProductVariant } from './item-variation-picker';
+import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -89,9 +89,13 @@ export function WPOrderReviewLineItems( {
 		products: responseCart.products,
 	} );
 
+	const [ initialVariantTerms ] = useState( () =>
+		responseCart.products.map( ( product ) => product.months_per_bill_period )
+	);
+
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ responseCart.products.map( ( product ) => (
+			{ responseCart.products.map( ( product, i ) => (
 				<LineItemWrapper
 					key={ product.product_slug }
 					product={ product }
@@ -107,6 +111,7 @@ export function WPOrderReviewLineItems( {
 					onRemoveProductCancel={ onRemoveProductCancel }
 					hasPartnerCoupon={ hasPartnerCoupon }
 					isDisabled={ isDisabled }
+					initialVariantTerm={ initialVariantTerms[ i ] }
 				/>
 			) ) }
 			{ couponLineItem && (
@@ -148,6 +153,7 @@ function LineItemWrapper( {
 	onRemoveProductCancel,
 	hasPartnerCoupon,
 	isDisabled,
+	initialVariantTerm,
 }: {
 	product: ResponseCartProduct;
 	siteId?: number | undefined;
@@ -162,6 +168,7 @@ function LineItemWrapper( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
+	initialVariantTerm: number | null;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
@@ -176,9 +183,6 @@ function LineItemWrapper( {
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
-	const { formStatus } = useFormStatus();
-	const didSetInitialVariant = useRef< boolean >( false );
-	const [ initialVariant, setInitialVariant ] = useState< WPCOMProductVariant | undefined >();
 
 	const variants = useGetProductVariants(
 		siteId,
@@ -192,30 +196,15 @@ function LineItemWrapper( {
 			// was in the cart when checkout finished loading (not necessarily the
 			// current variant). For WordPress.com only, not Jetpack. See
 			// https://github.com/Automattic/wp-calypso/issues/69633
-			if ( ! initialVariant ) {
+			if ( ! initialVariantTerm ) {
 				return true;
 			}
 			if ( isJetpack ) {
 				return true;
 			}
-			return variant.termIntervalInMonths >= initialVariant.termIntervalInMonths;
+			return variant.termIntervalInMonths >= initialVariantTerm;
 		}
 	);
-
-	const currentVariant = variants.find( ( variant ) => variant.productId === product.product_id );
-	useEffect( () => {
-		if ( formStatus !== FormStatus.READY ) {
-			return;
-		}
-		if ( ! currentVariant ) {
-			return;
-		}
-		if ( didSetInitialVariant.current ) {
-			return;
-		}
-		setInitialVariant( currentVariant );
-		didSetInitialVariant.current = true;
-	}, [ formStatus, currentVariant ] );
 
 	const areThereVariants = variants.length > 1;
 
