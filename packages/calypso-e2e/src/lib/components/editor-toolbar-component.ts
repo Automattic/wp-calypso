@@ -9,7 +9,7 @@ const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
 	// Note the partial class match. This is to support site and post editor. We can't use aria-label because of i18n. :(
-	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
+	blockInserterButton: `${ panel } button[class*="inserter-toggle"]`,
 
 	// Draft
 	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
