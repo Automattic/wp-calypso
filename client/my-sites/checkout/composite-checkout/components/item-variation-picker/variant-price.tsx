@@ -81,11 +81,10 @@ const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent
 	);
 };
 
-export const ItemVariantPrice: FunctionComponent< {
-	variant: WPCOMProductVariant;
-	compareTo?: WPCOMProductVariant;
-} > = ( { variant, compareTo } ) => {
-	const isMobile = useMobileBreakpoint();
+export function getItemVariantCompareToPrice(
+	variant: WPCOMProductVariant,
+	compareTo?: WPCOMProductVariant
+): number | undefined {
 	// This is the price that the compareTo variant would be if it was using the
 	// billing term of the variant. For example, if the price of the compareTo
 	// variant was 120 per year, and the variant we are displaying here is 5 per
@@ -95,11 +94,29 @@ export const ItemVariantPrice: FunctionComponent< {
 	const compareToPriceForVariantTerm = compareTo
 		? compareTo.pricePerMonth * variant.termIntervalInMonths
 		: undefined;
+	return compareToPriceForVariantTerm;
+}
+
+export function getItemVariantDiscountPercentage(
+	variant: WPCOMProductVariant,
+	compareTo?: WPCOMProductVariant
+): number {
+	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
 	// Extremely low "discounts" are possible if the price of the longer term has been rounded
 	// if they cannot be rounded to at least a percentage point we should not show them.
 	const discountPercentage = compareToPriceForVariantTerm
 		? Math.floor( 100 - ( variant.price / compareToPriceForVariantTerm ) * 100 )
 		: 0;
+	return discountPercentage;
+}
+
+export const ItemVariantPrice: FunctionComponent< {
+	variant: WPCOMProductVariant;
+	compareTo?: WPCOMProductVariant;
+} > = ( { variant, compareTo } ) => {
+	const isMobile = useMobileBreakpoint();
+	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
+	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
 		stripZeros: true,
 	} );
