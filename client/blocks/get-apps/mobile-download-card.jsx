@@ -168,7 +168,47 @@ class MobileDownloadCard extends Component {
 		return this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
 	}
 
+	getAppStoreBadges() {
+		const { isiPad, isiPod, isiPhone } = userAgent;
+		const isIos = isiPad || isiPod || isiPhone;
 
+		return (
+			<div className="get-apps__badges jetpack">
+				<p className="get-apps__card-text jetpack">
+					{ translate(
+						'Everything you need to publish, manage, and grow your site anywhere, any time.'
+					) }
+				</p>
+				<AppsBadge
+					storeName={ isIos ? 'ios' : 'android' }
+					utm_source={ isIos ? 'calypso-get-apps-button' : 'calypso-get-apps' }
+				/>
+			</div>
+		);
+	}
+
+	getQrCode() {
+		return (
+			<div className="get-apps__qr-code-subpanel jetpack">
+				<QRCode
+					value={ localizeUrl( 'https://apps.wordpress.com/mobile/?campaign=calypso-qrcode-apps' ) }
+					size={ 150 }
+				/>
+				<p className="get-apps__card-text jetpack">
+					{ translate(
+						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
+						{
+							components: {
+								a: <a className="get-apps__jetpack-branded-link" href="https://wp.com/app" />,
+							},
+						}
+					) }
+				</p>
+			</div>
+		);
+	}
+
+	getJetpackBrandedPanel() {
 		const { isMobile } = userAgent;
 
 		return (
@@ -194,6 +234,7 @@ class MobileDownloadCard extends Component {
 						<img src={ AppImage } alt="" width="220px" height="212px" />
 					</div>
 				</div>
+				{ isMobile ? this.getAppStoreBadges() : this.getQrCode() }
 			</>
 		);
 	}
