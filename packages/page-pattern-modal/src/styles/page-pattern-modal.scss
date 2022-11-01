@@ -1,7 +1,9 @@
 @import "@automattic/color-studio/dist/color-variables";
 @import "@automattic/typography/styles/fonts";
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/mixins";
 @import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/breakpoints";
 
 @mixin screen-reader-text() {
 	border: 0;
@@ -113,50 +115,35 @@ $sidebar-width-desktop: 324px;
 	}
 
 	.block-editor-block-patterns-list {
-		display: grid;
-		grid-template-columns: 1fr;
+		column-count: 1;
 		column-gap: 1.5em;
 		row-gap: 3em;
+		margin-top: 20px;
 
-		@media screen and ( min-width: $breakpoint-mobile ) {
+		@include break-small {
 			margin-top: 0;
-			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // allow grid to take over number of cols on large screens
 		}
 
-		@media screen and ( min-width: $breakpoint-huge ) {
-			grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+		@include break-large {
+			column-count: 2;
 		}
-		@media screen and ( min-width: $breakpoint-xhuge ) {
-			grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+
+		@include break-huge {
+			column-count: 3;
 		}
 	}
-}
 
-.pattern-selector-control .block-editor-block-preview__container {
-	display: flex;
-	width: 100%;
-	aspect-ratio: 16 / 9;
-	text-align: center;
-	border: solid 1px $pattern-selector-border-color;
-	cursor: pointer;
-	appearance: none;
-	overflow: hidden;
-	background-color: $pattern-selector-empty-background;
-	position: relative;
-	transform: translateZ(0); // Fix for Safari rounded border overflow (1/2).
-	color: $pattern-selector-link-text;
-
-	&:focus {
-		box-shadow:
-			0 0 0 1px $pattern-selector-empty-background,
-			0 0 0 3px $pattern-selector-focus-color;
-		// Windows High Contrast mode will show this outline, but not the box-shadow.
-		outline: 2px solid transparent;
+	.block-editor-block-patterns-list__list-item {
+		break-inside: avoid-column;
 	}
 
-	&:hover {
-		color: $pattern-selector-link-hover-text;
-		border: solid 1px $pattern-selector-hover-border-color;
+	.block-editor-block-preview__container {
+		min-height: 100px;
+		border: solid 1px #dcdcde;
+	}
+
+	.block-editor-block-preview__content {
+		width: 100%;
 	}
 }
 
