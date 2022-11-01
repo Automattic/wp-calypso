@@ -166,7 +166,7 @@ $font-size: rem(14px);
 
 		.sidebar__inline-text {
 			position: absolute;
-			right: 20px;
+			right: 16px;
 			top: 50%;
 			transform: translateY(-50%);
 			opacity: 0.8;
@@ -279,7 +279,7 @@ $font-size: rem(14px);
 		}
 
 		.sidebar__menu.is-togglable .sidebar__expandable-arrow {
-			margin-right: 10px;
+			margin-right: 11px;
 		}
 
 		.notice {
@@ -562,7 +562,7 @@ $font-size: rem(14px);
 	}
 
 	.sidebar__sparkline {
-		margin-right: 8px;
+		margin-right: 16px;
 	}
 
 	// Reader specific styles
