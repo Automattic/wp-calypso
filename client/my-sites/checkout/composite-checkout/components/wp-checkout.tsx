@@ -50,6 +50,7 @@ import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import { CheckoutCompleteRedirecting } from './checkout-complete-redirecting';
 import CheckoutHelpLink from './checkout-help-link';
 import CheckoutNextSteps from './checkout-next-steps';
+import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
 import PaymentMethodStepContent from './payment-method-step';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -310,6 +311,7 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
+							<CheckoutSidebarPlanUpsell />
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }

@@ -51,7 +51,7 @@ class StoreStats extends Component {
 				<FormattedHeader
 					brandFont
 					className="store-stats__section-header"
-					headerText={ translate( 'Stats and Insights' ) }
+					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
 						'Learn valuable insights about the purchases made on your store.'

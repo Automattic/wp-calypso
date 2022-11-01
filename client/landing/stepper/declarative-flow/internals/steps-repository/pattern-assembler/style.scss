@@ -246,6 +246,8 @@ $font-family: "SF Pro Text", $sans;
 
 			.button {
 				padding: 0;
+				width: 25px;
+				margin-right: 10px;
 
 				&:hover svg {
 					fill: var(--color-neutral-70);
@@ -308,6 +310,10 @@ $font-family: "SF Pro Text", $sans;
 
 				&:not(:last-child) {
 					margin-bottom: 16px;
+				}
+
+				&.pattern-selector__block-list--selected-pattern {
+					box-shadow: 0 0 0 2px var(--studio-gray);
 				}
 
 				&:focus,

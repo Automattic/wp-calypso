@@ -12,7 +12,6 @@ import './style.scss';
 
 const noop = () => {};
 const isTouch = hasTouch();
-const CHART_PADDING = 20;
 
 /**
  * Auxiliary method to calculate the maximum value for the Y axis, based on a dataset.
@@ -54,6 +53,7 @@ function Chart( {
 	minTouchBarWidth,
 	numberFormat,
 	translate,
+	chartXPadding,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
@@ -104,7 +104,7 @@ function Chart( {
 
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
-	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - CHART_PADDING; // mobile safari bug with zero width
+	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
 	const maxBars = Math.floor( width / minWidth );
 
 	// Memoize data calculations to avoid performing them too often.
@@ -202,6 +202,7 @@ Chart.propTypes = {
 	minTouchBarWidth: PropTypes.number,
 	numberFormat: PropTypes.func,
 	translate: PropTypes.func,
+	chartXPadding: PropTypes.number,
 };
 
 Chart.defaultProps = {
@@ -209,6 +210,7 @@ Chart.defaultProps = {
 	isPlaceholder: false,
 	minBarWidth: 15,
 	minTouchBarWidth: 42,
+	chartXPadding: 20,
 };
 
 export default withRtl( localize( Chart ) );

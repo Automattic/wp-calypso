@@ -177,6 +177,7 @@ import {
 	FEATURE_PRODUCT_LISTINGS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
 	/* END - PLAN TAGLINE EXPERIMENT */
+	WPCOM_FEATURES_NO_ADVERTS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n from 'i18n-calypso';
@@ -611,7 +612,7 @@ export const FEATURES_LIST = {
 	},
 
 	[ FEATURE_NO_ADS ]: {
-		getSlug: () => FEATURE_NO_ADS,
+		getSlug: () => WPCOM_FEATURES_NO_ADVERTS,
 		getTitle: () => i18n.translate( 'Remove WordPress.com ads' ),
 		getDescription: () =>
 			i18n.translate(
