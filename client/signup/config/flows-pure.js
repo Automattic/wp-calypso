@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { setupSiteAfterCreation } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -115,11 +116,12 @@ export function generateFlows( {
 			destination: ( dependencies ) =>
 				`/setup/subscribers?flow=newsletter&siteSlug=${ dependencies.siteSlug }`,
 			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-08-15',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Newsletter' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'link-in-bio',
@@ -129,11 +131,12 @@ export function generateFlows( {
 					dependencies.siteSlug
 				) }`,
 			description: 'Beginning of the flow to create a link in bio',
-			lastModified: '2022-08-16',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'with-add-ons',
@@ -273,8 +276,9 @@ export function generateFlows( {
 			steps: VIDEOPRESS_ONBOARDING_FLOW_STEPS,
 			destination: ( dependencies ) => `/site-editor/${ dependencies.siteSlug }`,
 			description: 'VideoPress signup flow',
-			lastModified: '2022-07-06',
+			lastModified: '2022-11-01',
 			showRecaptcha: true,
+			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			// When adding steps, make sure that signup campaign ref's continue to work.

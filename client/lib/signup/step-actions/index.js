@@ -5,7 +5,6 @@ import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
-import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/goals/goals';
@@ -296,29 +295,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				domainItem,
 				themeItem,
 			};
-			if ( isTailoredSignupFlow( flowToCheck ) ) {
-				setupSiteAfterCreation( { siteId, flowName: flowToCheck } ).then( () => {
-					processItemCart(
-						providedDependencies,
-						newCartItems,
-						callback,
-						reduxStore,
-						siteSlug,
-						isFreeThemePreselected,
-						themeSlugWithRepo
-					);
-				} );
-			} else {
-				processItemCart(
-					providedDependencies,
-					newCartItems,
-					callback,
-					reduxStore,
-					siteSlug,
-					isFreeThemePreselected,
-					themeSlugWithRepo
-				);
-			}
+
+			processItemCart(
+				providedDependencies,
+				newCartItems,
+				callback,
+				reduxStore,
+				siteSlug,
+				isFreeThemePreselected,
+				themeSlugWithRepo
+			);
 		}
 	);
 }
