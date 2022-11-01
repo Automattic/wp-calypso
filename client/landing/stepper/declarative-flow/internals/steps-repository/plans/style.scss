@@ -120,28 +120,3 @@
 		}
 	}
 }
-
-.plans-step__compare-plans-link {
-	clear: both;
-	display: block;
-	font-size: $font-body-extra-small;
-	margin: 20px 0 0;
-	text-align: center;
-
-	.gridicon {
-		margin: -2px 3px 0 0;
-		vertical-align: middle;
-	}
-}
-
-.plans-step__compare {
-	margin-top: 25px;
-}
-
-.plans__loading {
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	position: relative;
-}
