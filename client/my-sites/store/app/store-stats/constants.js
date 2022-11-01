@@ -125,7 +125,7 @@ export const chartTabs = [
 	{
 		label: translate( 'Net Sales' ),
 		attr: 'net_sales',
-		isHidden: true,
+		isHidden: false,
 		availableCharts: [],
 		type: 'currency',
 		gridicon: 'money',
