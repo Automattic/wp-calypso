@@ -74,7 +74,7 @@ export interface SitesPlansResult {
 }
 
 export type VariantFilterCallback = (
-	variant: AvailableProductVariant,
+	variant: WPCOMProductVariant,
 	activePlanRenewalInterval: number | undefined
 ) => boolean;
 
@@ -89,6 +89,9 @@ const fallbackFilter = () => true;
  *
  * `filterCallback` can safely be an anonymous function without causing
  * identity stability issues (no need to use `useMemo` or `useCallback`).
+ *
+ * `filterCallback` gets two arguments: the first is a variant and the second
+ * is the term interval of the currently active plan, if any.
  */
 export function useGetProductVariants(
 	siteId: number | undefined,
@@ -138,6 +141,7 @@ export function useGetProductVariants(
 				productId: variant.product.product_id,
 				price,
 				termIntervalInMonths: getBillingMonthsForTerm( variant.plan.term ),
+				termIntervalInDays: getTermDuration( variant.plan.term ) ?? 0,
 				pricePerMonth,
 				currency: variant.product.currency_code,
 			};
@@ -145,24 +149,25 @@ export function useGetProductVariants(
 		[ translate ]
 	);
 
+	const convertedVariants = useMemo( () => {
+		return variantsWithPrices.map( getProductVariantFromAvailableVariant );
+	}, [ getProductVariantFromAvailableVariant, variantsWithPrices ] );
+
 	const filteredVariants = useMemo( () => {
-		return variantsWithPrices.filter( ( product ) =>
+		return convertedVariants.filter( ( product ) =>
 			filterCallbackMemoized( product, activePlan?.interval )
 		);
-	}, [ activePlan?.interval, variantsWithPrices, filterCallbackMemoized ] );
+	}, [ activePlan?.interval, convertedVariants, filterCallbackMemoized ] );
 
-	return useMemo( () => {
-		debug( 'found filtered variants', filteredVariants );
-		return filteredVariants.map( getProductVariantFromAvailableVariant );
-	}, [ getProductVariantFromAvailableVariant, filteredVariants ] );
+	return filteredVariants;
 }
 
 export function canVariantBePurchased(
-	variant: AvailableProductVariant,
+	variant: WPCOMProductVariant,
 	activePlanRenewalInterval: number | undefined
 ): boolean {
 	// Always allow the variant when the item added to the cart is not a plan.
-	if ( ! isPlan( variant.product ) ) {
+	if ( ! isPlan( variant ) ) {
 		return true;
 	}
 
@@ -173,7 +178,7 @@ export function canVariantBePurchased(
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
-	const variantRenewalInterval = getTermDuration( variant.plan.term ) ?? 0;
+	const variantRenewalInterval = variant.termIntervalInDays;
 	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
 		return true;
 	}
