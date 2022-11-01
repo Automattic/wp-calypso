@@ -53,25 +53,25 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 
 			case TASK_REACTIVATE_ATOMIC_TRANSFER:
 				return {
-					title: translate( 'Restore Plugin Access' ),
+					title: translate( 'Activate Hosting Access' ),
 					description: translate(
-						'Your plan expired and your site lost access to plugins. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, by re-activating hosting configuration.{{lineBreak/}}No further action is needed if you do not need plugin access.',
+						'When your plan previously expired, your site lost access to hosting features, including plugins. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, by re-activating hosting configuration.{{lineBreak/}}No further action is needed if you do not need hosting features.',
 						{
 							components: { lineBreak, supportLink },
 						}
 					),
 					timing: 2,
-					actionText: translate( 'Restore Plugin Access' ),
+					actionText: translate( 'Activate Hosting Access' ),
 					actionUrl: `/hosting-config/${ siteSlug }`,
 					enableSkipOptions: false,
-					skipText: translate( 'I do not need plugin access' ),
+					skipText: translate( 'I do not need hosting features' ),
 				};
 
 			case TASK_REACTIVATE_RESTORE_BACKUP:
 				return {
 					title: translate( 'Restore a Backup' ),
 					description: translate(
-						'Your plan expired and your site reverted to the Free plan. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, restoring your site to how it looked before the plan expired.{{lineBreak/}}No further action is needed if you do not need to restore from a backup.',
+						'When your plan previously expired, your site reverted. {{supportLink}}Follow these steps to restore a backup{{/supportLink}}, restoring your site to how it looked before the plan expired.{{lineBreak/}}No further action is needed if you do not need to restore from a backup.',
 						{
 							components: { lineBreak, supportLink },
 						}
