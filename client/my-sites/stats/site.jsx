@@ -207,7 +207,7 @@ class StatsSite extends Component {
 				<FormattedHeader
 					brandFont
 					className="stats__section-header"
-					headerText={ translate( 'Stats and Insights' ) }
+					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
@@ -411,7 +411,7 @@ class StatsSite extends Component {
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
-				<DocumentHead title={ translate( 'Stats and Insights' ) } />
+				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/${ period }/:site` }
 					title={ `Stats > ${ titlecase( period ) }` }

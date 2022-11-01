@@ -21,6 +21,7 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
+import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
@@ -82,6 +83,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		)
 	);
 
+	// ********** Logic for vertical
+	const { data: siteVertical, isLoading: isLoadingSiteVertical } =
+		useSiteVerticalQueryById( siteVerticalId );
+
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
 		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
@@ -132,7 +137,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
 
-	const categorizationOptions = getCategorizationOptions( intent, true );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		true,
+		generatedDesigns.length > 0 ? siteVertical?.title : undefined
+	);
+
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	// ********** Logic for selecting a design and style variation
@@ -436,8 +446,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Main render logic
 
-	// Don't render until we've fetched the designs from the backend.
-	if ( ! site || isLoadingDesigns ) {
+	// Don't render until we've done fetching all the data needed for initial render.
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
 		return null;
 	}
 
