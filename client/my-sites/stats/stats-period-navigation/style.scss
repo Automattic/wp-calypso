@@ -44,9 +44,17 @@
 			color: var(--studio-gray-100);
 		}
 
+		.stats-date-picker__refresh-status {
+			font-size: $font-body-small;
+			line-height: 16px;
+		}
+
 		.stats-period-navigation__previous,
 		.stats-period-navigation__next {
 			color: #1e1e1e;
+			// Icon size 24x24
+			width: 24px;
+			height: 24px;
 		}
 
 		.stats-period-navigation__next {
