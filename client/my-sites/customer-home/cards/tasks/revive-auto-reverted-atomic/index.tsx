@@ -53,7 +53,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 
 			case TASK_REACTIVATE_ATOMIC_TRANSFER:
 				return {
-					title: translate( 'Activate Hosting Access' ),
+					title: translate( 'Activate Hosting Features' ),
 					description: translate(
 						'When your plan previously expired, your site lost access to hosting features, including plugins. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, by re-activating hosting configuration.{{lineBreak/}}No further action is needed if you do not need hosting features.',
 						{
@@ -61,7 +61,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 						}
 					),
 					timing: 2,
-					actionText: translate( 'Activate Hosting Access' ),
+					actionText: translate( 'Activate Hosting Features' ),
 					actionUrl: `/hosting-config/${ siteSlug }`,
 					enableSkipOptions: false,
 					skipText: translate( 'I do not need hosting features' ),
