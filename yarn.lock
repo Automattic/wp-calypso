@@ -481,6 +481,37 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/design-carousel@workspace:^, @automattic/design-carousel@workspace:packages/design-carousel":
+  version: 0.0.0-use.local
+  resolution: "@automattic/design-carousel@workspace:packages/design-carousel"
+  dependencies:
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/i18n-utils": "workspace:^"
+    "@automattic/onboarding": "workspace:^"
+    classnames: ^2.3.1
+    postcss: ^8.4.5
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    redux: ^4.1.2
+    tslib: ^2.3.0
+    typescript: ^4.7.4
+    utility-types: ^3.10.0
+    webpack: ^5.68.0
+    wpcom-proxy-request: "workspace:^"
+  peerDependencies:
+    "@wordpress/data": ^6.7.0
+    "@wordpress/element": ^4.5.0
+    "@wordpress/i18n": ^4.7.0
+    debug: ^4.3.3
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    reakit-utils: ^0.15.1
+    redux: ^4.1.2
+  languageName: unknown
+  linkType: soft
+
 "@automattic/design-picker@workspace:^, @automattic/design-picker@workspace:packages/design-picker":
   version: 0.0.0-use.local
   resolution: "@automattic/design-picker@workspace:packages/design-picker"
@@ -36048,6 +36079,7 @@ swiper@4.5.1:
     "@automattic/color-studio": 2.5.0
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
+    "@automattic/design-carousel": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"

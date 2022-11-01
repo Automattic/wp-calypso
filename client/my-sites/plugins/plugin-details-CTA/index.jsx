@@ -56,6 +56,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	);
 	const softwareSlug = getSoftwareSlug( plugin, isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const currentPurchase = getPluginPurchased( plugin, purchases, isMarketplaceProduct );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -86,9 +87,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isPluginInstalledOnsite =
 		sitesWithPlugins.length && ! requestingPluginsForSites ? !! sitePlugin : false;
 	const isPluginInstalledOnsiteWithSubscription =
-		isPluginInstalledOnsite && ! isMarketplaceProduct
-			? true
-			: getPluginPurchased( plugin, purchases, isMarketplaceProduct )?.active;
+		isPluginInstalledOnsite && ! isMarketplaceProduct ? true : currentPurchase?.active;
 	const sitesWithPlugin = useSelector( ( state ) =>
 		getSiteObjectsWithPlugin( state, siteIds, softwareSlug )
 	);
@@ -184,7 +183,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return <PluginDetailsCTAPlaceholder />;
 	}
 
-	if ( isPluginInstalledOnsiteWithSubscription && sitePlugin ) {
+	if ( isPluginInstalledOnsite && sitePlugin ) {
 		// Check if already instlaled on the site
 		const activeText = translate( '{{span}}active{{/span}}', {
 			components: {
@@ -233,6 +232,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</span>
 					}
 					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					productPurchase={ currentPurchase }
 					wporg
 				/>
 			</div>
@@ -375,12 +375,12 @@ function PrimaryButton( {
 		return (
 			<Button
 				type="a"
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				primary
 				onClick={ ( e ) => e.stopPropagation() }
-				href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
+				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
 			>
-				{ translate( 'View plans' ) }
+				{ translate( 'Get started' ) }
 			</Button>
 		);
 	}

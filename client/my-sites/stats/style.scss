@@ -209,6 +209,8 @@
 
 // Stats section scoped styles
 .is-section-stats {
+	background: var(--studio-white);
+
 	.followers-count .button {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
