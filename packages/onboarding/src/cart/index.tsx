@@ -251,15 +251,7 @@ async function processItemCart(
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else if ( userIsLoggedIn && isFreeThemePreselected ) {
-		// fetchSitesAndUser(
-		// 	siteSlug,
-		// 	setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
-		// 	reduxStore
-		// );
 		await setThemeOnSite( siteSlug, themeSlugWithRepo );
-		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
-	} else if ( userIsLoggedIn && siteSlug ) {
-		//fetchSitesAndUser( siteSlug, addToCartAndProceed, window.reduxStore );
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
 	} else {
 		newCartItem && ( await addToCartAndProceed( newCartItem, siteSlug, lastKnownFlow ) );
