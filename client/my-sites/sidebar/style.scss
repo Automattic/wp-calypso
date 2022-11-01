@@ -30,7 +30,7 @@
 }
 
 // Local Vars
-$sidebar-item-padding: 8px 0;
+$sidebar-item-padding: 11px 0;
 $font-size: rem(14px);
 
 .clear-secondary-layout-transitions {
@@ -125,7 +125,7 @@ $font-size: rem(14px);
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
-			max-height: 34px;
+			max-height: 40px;
 			box-sizing: border-box;
 		}
 
