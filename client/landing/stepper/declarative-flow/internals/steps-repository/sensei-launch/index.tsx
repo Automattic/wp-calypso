@@ -8,7 +8,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
-import { ProgressingTitle } from './components';
+import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 
 interface InstalledPlugin {
 	id: string;
@@ -61,7 +61,7 @@ const SenseiLaunch = () => {
 
 	return (
 		<SenseiStepContainer stepName="senseiSetup" recordTracksEvent={ recordTracksEvent }>
-			<ProgressingTitle>{ __( 'Installing Sensei' ) }</ProgressingTitle>
+			<SenseiStepProgress>{ __( 'Installing Sensei' ) }</SenseiStepProgress>
 		</SenseiStepContainer>
 	);
 };
