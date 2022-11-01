@@ -11,6 +11,8 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
+import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -130,11 +132,8 @@ const LayoutLoggedOut = ( {
 			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
 			{ sectionName === 'plugins' && (
 				<>
-					<AsyncLoad require="calypso/layout/universal-navbar-footer" placeholder={ null } />
-					<AsyncLoad
-						require="calypso/layout/universal-navbar-footer-automattic"
-						placeholder={ null }
-					/>
+					<UniversalNavbarFooter />
+					<UniversalNavbarFooterAutomattic />
 				</>
 			) }
 		</div>
