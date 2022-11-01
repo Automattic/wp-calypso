@@ -119,9 +119,9 @@ describe( 'UnifiedDesignPickerStep', () => {
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Pick a design' ) ).toBeInTheDocument();
-				expect(
-					container.getElementsByClassName( 'unified-design-picker__standard-designs' )
-				).toHaveLength( 1 );
+				expect( container.getElementsByClassName( 'unified-design-picker__designs' ) ).toHaveLength(
+					1
+				);
 			} );
 		} );
 	} );
