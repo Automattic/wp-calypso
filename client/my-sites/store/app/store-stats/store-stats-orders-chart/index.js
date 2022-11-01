@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -26,7 +28,15 @@ class StoreStatsOrdersChart extends Component {
 		slug: PropTypes.string,
 	};
 
-	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
+	renderTabs = ( {
+		chartData,
+		selectedIndex,
+		selectedTabIndex,
+		selectedDate,
+		unit,
+		tabClick,
+		iconSize,
+	} ) => {
 		const { deltas, moment } = this.props;
 		return (
 			<Tabs data={ chartData }>
@@ -49,6 +59,8 @@ class StoreStatsOrdersChart extends Component {
 							label={ tab.tabLabel || tab.label }
 							selected={ tabIndex === selectedTabIndex }
 							tabClick={ tabClick }
+							iconSize={ iconSize }
+							gridicon={ iconSize && tab.gridicon }
 						>
 							<span className="store-stats-orders-chart__value value">
 								{ formatValue( value, tab.type, itemChartData.data.currency ) }
@@ -69,9 +81,15 @@ class StoreStatsOrdersChart extends Component {
 
 	render() {
 		const { data, selectedDate, unit, slug } = this.props;
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		const classes = classNames( 'store-stats-orders-chart', {
+			'chart-tabs--new-main-chart': isNewFeatured,
+		} );
+
 		return (
 			<StoreStatsChart
-				className="store-stats-orders-chart"
+				className={ classes }
 				data={ data }
 				selectedDate={ selectedDate }
 				unit={ unit }
