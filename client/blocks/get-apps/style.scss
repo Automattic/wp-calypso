@@ -30,8 +30,42 @@ body.get-apps__body {
 	font-size: $font-body;
 	margin-bottom: 4px;
 
+	&.jetpack {
+		font-size: $font-headline-small;
+		line-height: 41px;
+		@extend .wp-brand-font;
+	}
+
 	@include breakpoint-deprecated(">480px") {
 		font-size: $font-title-small;
+
+		&.jetpack {
+			font-size: $font-headline-medium;
+			line-height: 52px;
+		}
+	}
+}
+
+.get-apps__jetpack-branded-text {
+	color: var(--studio-jetpack-green-40);
+}
+
+.get-apps__jetpack-branded-link {
+	color: var(--studio-jetpack-green-40);
+	font-weight: 700;
+	cursor: pointer;
+
+	&:visited {
+		color: var(--studio-jetpack-green-40);
+	}
+
+	&:hover,
+	&:active,
+	&.is-active,
+	&:focus {
+		color: var(--studio-jetpack-green-60);
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 }
 
@@ -60,6 +94,16 @@ body.get-apps__body {
 
 .get-apps__mobile > div {
 	width: 100%;
+}
+
+.get-apps__mobile-icon {
+	width: 132px;
+	height: 70px;
+	margin-bottom: 30px;
+
+	@include breakpoint-deprecated(">480px") {
+		margin-bottom: 32px;
+	}
 }
 
 .get-apps__description {
@@ -102,6 +146,35 @@ body.get-apps__body {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
+
+			&.jetpack {
+				margin-top: 30px;
+
+				.get-apps__app-badge {
+					margin-left: 0;
+				}
+			}
+		}
+
+		.get-apps__graphic {
+			display: none;
+
+			@include breakpoint-deprecated( ">1040px" ) {
+				display: flex;
+				align-self: end;
+				justify-content: flex-end;
+				min-width: 250px;
+			}
+		}
+	}
+
+	.get-apps__badges {
+		&.jetpack {
+			margin-top: 30px;
+
+			.get-apps__app-badge {
+				margin-left: 0;
+			}
 		}
 	}
 
@@ -113,8 +186,19 @@ body.get-apps__body {
 		// This is a hack to allow us to use a feature flag to hide this subpanel
 		// without the parent card having a big ugly blank space at the bottom.
 		margin-top: 64px;
-	}
 
+		&.jetpack {
+			margin-top: 50px;
+			margin-bottom: 40px;
+			display: flex;
+			align-items: center;
+
+			.get-apps__card-text {
+				padding: 0 50px;
+				margin-bottom: 0;
+			}
+		}
+	}
 }
 
 .get-apps__illustration {
@@ -155,6 +239,12 @@ body.get-apps__body {
 }
 
 .get-apps__card-text {
+
+	&.jetpack {
+		color: var(--studio-blue-80);
+		font-size: $font-body-large;
+	}
+
 	@include breakpoint-deprecated(">480px") {
 		flex: 1;
 	}

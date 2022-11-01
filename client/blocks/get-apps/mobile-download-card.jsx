@@ -1,12 +1,14 @@
 import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import i18n, { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import i18n, { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AppImage from 'calypso/assets/images/jetpack/jetpack-app-graphic.png';
+import AnimatedIcon from 'calypso/components/animated-icon';
 import phoneValidation from 'calypso/lib/phone-validation';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import userAgent from 'calypso/lib/user-agent';
@@ -166,15 +168,42 @@ class MobileDownloadCard extends Component {
 		return this.props.hasUserSettings && this.props.hasLoadedAccountRecoveryPhone;
 	}
 
-	render() {
-		const { translate } = this.props;
 
+		const { isMobile } = userAgent;
+
+		return (
+			<>
+				<div className="get-apps__store-subpanel">
+					<div className="get-apps__card-text jetpack">
+						<AnimatedIcon
+							icon="/calypso/animations/app-promo/wp-to-jp.json"
+							className="get-apps__mobile-icon"
+						/>
+						<h1 className="get-apps__card-title jetpack">
+							{ translate(
+								'Take WordPress on the go with the {{span}}Jetpack{{/span}} mobile app',
+								{
+									components: {
+										span: <span className="get-apps__jetpack-branded-text" />,
+									},
+								}
+							) }
+						</h1>
+					</div>
+					<div className="get-apps__graphic">
+						<img src={ AppImage } alt="" width="220px" height="212px" />
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	getWordPressBrandedPanel() {
 		const { isMobile } = userAgent;
 		const featureIsEnabled = ! isMobile;
 
 		return (
-				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
-
+			<>
 				<div className="get-apps__store-subpanel">
 					<div className="get-apps__card-text">
 						<h3 className="get-apps__card-title">{ translate( 'Mobile Apps' ) }</h3>
@@ -221,11 +250,21 @@ class MobileDownloadCard extends Component {
 						</Button>
 					</div>
 				</div>
+			</>
+		);
+	}
+
+	render() {
+		return (
 			<Card
 				className={ classnames( 'get-apps__mobile', {
 					jetpack: displayJetpackAppBranding,
 				} ) }
 			>
+				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				{ displayJetpackAppBranding
+					? this.getJetpackBrandedPanel()
+					: this.getWordPressBrandedPanel() }
 			</Card>
 		);
 	}
