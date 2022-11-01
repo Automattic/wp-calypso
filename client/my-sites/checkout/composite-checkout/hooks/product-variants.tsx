@@ -183,7 +183,7 @@ export function canVariantBePurchased(
 	return false;
 }
 
-function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
+export function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
 	const chosenPlan = getPlan( productSlug ?? '' )
 		? getPlan( productSlug ?? '' )
 		: getProductFromSlug( productSlug ?? '' );

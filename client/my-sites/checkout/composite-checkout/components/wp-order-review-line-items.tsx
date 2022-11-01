@@ -17,8 +17,9 @@ import { useSelector } from 'react-redux';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import {
-	useGetProductVariants,
 	canVariantBePurchased,
+	getVariantPlanProductSlugs,
+	useGetProductVariants,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { ItemVariationPicker } from './item-variation-picker';
@@ -91,13 +92,11 @@ export function WPOrderReviewLineItems( {
 		products: responseCart.products,
 	} );
 
-	const [ initialVariantTerms ] = useState( () =>
-		responseCart.products.map( ( product ) => product.months_per_bill_period )
-	);
+	const [ initialProducts ] = useState( () => responseCart.products );
 
 	return (
 		<WPOrderReviewList className={ joinClasses( [ className, 'order-review-line-items' ] ) }>
-			{ responseCart.products.map( ( product, i ) => (
+			{ responseCart.products.map( ( product ) => (
 				<LineItemWrapper
 					key={ product.product_slug }
 					product={ product }
@@ -113,7 +112,12 @@ export function WPOrderReviewLineItems( {
 					onRemoveProductCancel={ onRemoveProductCancel }
 					hasPartnerCoupon={ hasPartnerCoupon }
 					isDisabled={ isDisabled }
-					initialVariantTerm={ initialVariantTerms[ i ] }
+					initialVariantTerm={
+						initialProducts.find( ( initialProduct ) => {
+							const variants = getVariantPlanProductSlugs( initialProduct.product_slug );
+							return variants.includes( product.product_slug );
+						} )?.months_per_bill_period
+					}
 				/>
 			) ) }
 			{ couponLineItem && (
@@ -170,7 +174,7 @@ function LineItemWrapper( {
 	onRemoveProductCancel?: ( label: string ) => void;
 	hasPartnerCoupon: boolean;
 	isDisabled: boolean;
-	initialVariantTerm: number | null;
+	initialVariantTerm: number | null | undefined;
 } ) {
 	const isRenewal = isWpComProductRenewal( product );
 	const isWooMobile = isWcMobileApp();
