@@ -1,6 +1,8 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
@@ -23,6 +25,8 @@ import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import hasUserSettings from 'calypso/state/selectors/has-user-settings';
 import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 import AppsBadge from './apps-badge';
+
+const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 function sendSMS( phone ) {
 	function onSuccess( dispatch ) {
@@ -169,7 +173,6 @@ class MobileDownloadCard extends Component {
 		const featureIsEnabled = ! isMobile;
 
 		return (
-			<Card className="get-apps__mobile">
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<div className="get-apps__store-subpanel">
@@ -218,6 +221,11 @@ class MobileDownloadCard extends Component {
 						</Button>
 					</div>
 				</div>
+			<Card
+				className={ classnames( 'get-apps__mobile', {
+					jetpack: displayJetpackAppBranding,
+				} ) }
+			>
 			</Card>
 		);
 	}

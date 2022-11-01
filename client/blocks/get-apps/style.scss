@@ -1,3 +1,13 @@
+body.get-apps__body {
+	background: var(--studio-white);
+	--color-surface-backdrop: var(--studio-white);
+
+	.layout__content,
+	.layout__primary .main {
+		padding-bottom: 0;
+	}
+}
+
 .get-apps__wrapper {
 	display: flex;
 	flex-direction: column;
@@ -5,6 +15,15 @@
 
 .get-apps__wrapper > div {
 	width: 100%;
+}
+
+.get-apps__wrapper.jetpack .card {
+	box-shadow: none;
+
+	@include breakpoint-deprecated("<480px") {
+		padding: 30px;
+	}
+
 }
 
 .get-apps__card-title {
@@ -17,6 +36,21 @@
 }
 
 .get-apps__desktop {
+
+	&.jetpack {
+		background: #e9eff5;
+		margin-bottom: 0;
+
+		&::before {
+			content: "";
+			background-color: #e9eff5;
+			position: absolute;
+			height: 100%;
+			width: 200vw;
+			left: -100vw;
+			z-index: -1;
+		}
+
 	@include breakpoint-deprecated(">480px") {
 		display: flex;
 		flex-direction: row;
@@ -50,6 +84,10 @@
 
 	@include breakpoint-deprecated(">480px") {
 		order: 2;
+
+		&.jetpack {
+			order: inherit;
+		}
 	}
 
 	.get-apps__store-subpanel {
