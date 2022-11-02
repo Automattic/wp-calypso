@@ -1,0 +1,21 @@
+.writing-prompt {
+	.card.writing-prompt__card {
+		padding-bottom: 24px;
+	}
+	.writing-prompt__lightbulb-icon {
+		vertical-align: middle;
+		path {
+			fill: var(--color-neutral-20);
+		}
+	}
+	h1.card-heading {
+		font-size: $font-body-small;
+		font-weight: normal;
+		color: var(--color-text-subtle);
+	}
+	.writing-prompt__prompt-text {
+		font-size: $font-title-small;
+		font-weight: 500;
+		padding-bottom: 20px;
+	}
+}

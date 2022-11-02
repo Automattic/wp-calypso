@@ -18,6 +18,7 @@ export const NOTICE_CELEBRATE_SITE_LAUNCH = 'home-notice-celebrate-site-launch';
 export const NOTICE_CELEBRATE_SITE_MIGRATION = 'home-notice-celebrate-site-migration';
 export const NOTICE_CELEBRATE_SITE_SETUP_COMPLETE = 'home-notice-celebrate-site-setup-complete';
 export const SECTION_LEARN_GROW = 'home-section-learn-grow';
+export const SECTION_WRITING_PROMPT = 'home-section-writing-prompt';
 export const SECTION_MANAGE_SITE = 'home-section-manage-site';
 export const TASK_CONNECT_ACCOUNTS = 'home-task-connect-accounts';
 export const TASK_EARN_FEATURES = 'home-task-earn-features';
