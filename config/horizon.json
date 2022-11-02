@@ -80,6 +80,7 @@
 		"plugins/ssr-categories": false,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
+		"post-list/qr-code-link": false,
 		"pre-cancellation-modal": false,
 		"press-this": true,
 		"publicize-preview": true,

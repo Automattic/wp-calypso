@@ -51,6 +51,7 @@
 		"layout/support-article-dialog": false,
 		"marketplace-domain-bundle": false,
 		"marketplace-test": false,
+		"post-list/qr-code-link": false,
 		"oauth": false,
 		"purchases/new-payment-methods": true,
 		"site-indicator": false,

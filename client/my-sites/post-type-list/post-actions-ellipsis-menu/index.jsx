@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import PropTypes from 'prop-types';
 import { Children, cloneElement } from 'react';
 import { useSelector } from 'react-redux';
@@ -39,9 +40,12 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
 			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
-			<PostActionsEllipsisMenuTrash key="trash" />,
-			<PostActionsEllipsisMenuQRCode key="bug" />
+			<PostActionsEllipsisMenuTrash key="trash" />
 		);
+
+		if ( config.isEnabled( 'post-list/qr-code-link' ) ) {
+			actions.push( <PostActionsEllipsisMenuQRCode key="bug" /> );
+		}
 	}
 
 	children = Children.toArray( children );
