@@ -101,7 +101,7 @@ export default function IssueMultipleLicensesForm( {
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
 									isSelected={ productOption.slug === product }
-									tabIndex={ 100 + i }
+									tabIndex={ 100 + ( products?.length || 0 ) + i }
 								/>
 							) ) }
 					</div>
