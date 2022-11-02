@@ -1,7 +1,7 @@
 import { Icon } from '@wordpress/components';
+import { Component } from '@wordpress/element';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPost } from 'calypso/state/posts/selectors';
