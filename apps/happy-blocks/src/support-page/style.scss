@@ -1,0 +1,77 @@
+.wp-block-p2-embed {
+	margin: 0 0 1.5em 0;
+	clear: both;
+
+	&__wrapper {
+		position: relative;
+
+		&::before {
+			content: "";
+			display: block;
+			padding-top: 50%;
+		}
+	}
+
+	&__interactive-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		opacity: 0;
+	}
+
+	iframe {
+		max-width: 100%;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+	}
+
+	.wp-block[data-align="left"] > &,
+	.wp-block[data-align="right"] > &,
+	&.alignleft,
+	&.alignright {
+		max-width: 360px;
+		width: 100%;
+
+	}
+
+	&-editmode {
+		.logo {
+			width: 24px;
+			height: 24px;
+			margin-right: 10px;
+		}
+
+		.components-base-control {
+			width: 100%;
+		}
+
+		.components-base-control__label {
+			text-align: left;
+		}
+
+		.components-base-control__help {
+			color: #ff4500;
+		}
+
+		iframe {
+			pointer-events: none;
+		}
+
+		&-sidebar {
+			margin-top: 16px;
+
+			hr {
+				margin: 16px -16px;
+				border: none;
+				border-top: 1px solid #e2e4e7;
+			}
+		}
+	}
+}
