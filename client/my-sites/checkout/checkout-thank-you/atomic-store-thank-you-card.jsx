@@ -89,7 +89,7 @@ class AtomicStoreThankYouCard extends Component {
 		const { resendStatus } = this.state;
 
 		if ( isWcMobileApp() ) {
-			return;
+			return <></>; // Non-empty return so that action default doesn't get applied instead.
 		}
 
 		if ( ! isEmailVerified ) {
@@ -123,7 +123,7 @@ class AtomicStoreThankYouCard extends Component {
 		const { emailAddress, isEmailVerified, translate } = this.props;
 
 		if ( isWcMobileApp() ) {
-			return translate( 'One moment while we create your store&hellip;' );
+			return translate( 'One moment while we create your store.' );
 		}
 
 		if ( ! isEmailVerified ) {
