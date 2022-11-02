@@ -4,6 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
+import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
 import { selectAlphaticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -97,7 +98,7 @@ export default function IssueMultipleLicensesForm( {
 					<div className="issue-multiple-licenses-form__bottom">
 						{ bundles &&
 							bundles.map( ( productOption, i ) => (
-								<LicenseProductCard
+								<LicenseBundleCard
 									key={ productOption.slug }
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
