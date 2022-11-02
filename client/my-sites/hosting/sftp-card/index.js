@@ -241,14 +241,12 @@ export const SftpCard = ( {
 				"Access and edit your website's files directly by creating SFTP credentials and using an SFTP client."
 		  );
 
-	const [ isReauthRequired, setIsReauthRequired ] = useState(
-		twoStepAuthorization.isReauthRequired()
-	);
+	const [ reauthRequired, setReauthRequired ] = useState( twoStepAuthorization.isReauthRequired() );
 
-	const onTwoStepChange = ( { reauthStatus } ) => {
-		setIsReauthRequired( reauthStatus );
+	const onTwoStepChange = ( { isReauthRequired } ) => {
+		setReauthRequired( isReauthRequired );
 	};
-	const showSshKeys = siteHasSshFeature && isSshAccessEnabled && ! isReauthRequired;
+	const showSshKeys = siteHasSshFeature && isSshAccessEnabled && ! reauthRequired;
 
 	return (
 		<Card className="sftp-card">
