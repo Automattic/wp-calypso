@@ -44,7 +44,7 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 		);
 
 		if ( config.isEnabled( 'post-list/qr-code-link' ) ) {
-			actions.push( <PostActionsEllipsisMenuQRCode key="bug" /> );
+			actions.push( <PostActionsEllipsisMenuQRCode key="qrcode" /> );
 		}
 	}
 
