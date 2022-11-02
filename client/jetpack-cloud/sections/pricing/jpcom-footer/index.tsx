@@ -123,6 +123,11 @@ const JetpackComFooter: React.FC = () => {
 						href: addQueryArgs( utmParams, 'https://automattic.com/privacy/' ),
 						trackId: 'privacy_policy',
 					},
+					{
+						label: translate( 'GDPR ' ),
+						href: addQueryArgs( utmParams, 'https://jetpack.com/gdpr/' ),
+						trackId: 'gdpr',
+					},
 					hideCaliforniaNotice
 						? null
 						: {
