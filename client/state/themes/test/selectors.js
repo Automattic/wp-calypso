@@ -2551,6 +2551,55 @@ describe( 'themes selectors', () => {
 				expect( isAvailable ).toBe( true );
 			} );
 		} );
+
+		test( "Should return false when the customer has a premium plan but didn't purchase a externally managed theme", () => {
+			const active = [ WPCOM_FEATURES_PREMIUM_THEMES ];
+			const isAvailable = isPremiumThemeAvailable(
+				{
+					sites: {
+						items: {
+							2916284: {},
+						},
+						plans: {
+							2916284: {
+								data: [
+									{
+										currentPlan: true,
+										productSlug: PLAN_PREMIUM,
+									},
+								],
+							},
+						},
+						features: {
+							2916284: {
+								data: {
+									active,
+								},
+							},
+						},
+					},
+					themes: {
+						queries: {
+							wpcom: new ThemeQueryManager( {
+								items: {
+									mood: {
+										...mood,
+										theme_type: 'managed-external',
+									},
+								},
+							} ),
+						},
+					},
+					purchases: {
+						data: [],
+					},
+				},
+				'mood',
+				2916284
+			);
+
+			expect( isAvailable ).toBe( false );
+		} );
 	} );
 
 	describe( 'getWpcomParentThemeId', () => {

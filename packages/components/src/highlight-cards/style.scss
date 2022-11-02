@@ -2,9 +2,10 @@
 @import "../styles/typography";
 
 $header-font: Recoleta, sans-serif;
+$vertical-margin: 32px;
 
 .highlight-cards {
-	padding: 64px 0;
+	margin: $vertical-margin 0;
 	color: var(--studio-gray-100);
 	font-size: $font-body-small;
 }
@@ -14,6 +15,7 @@ $header-font: Recoleta, sans-serif;
 	font-weight: 400;
 	line-height: 40px;
 	font-family: $header-font;
+	margin-bottom: $vertical-margin / 2;
 	small {
 		font-size: $font-body-small;
 	}

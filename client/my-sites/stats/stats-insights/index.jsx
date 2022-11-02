@@ -67,13 +67,13 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							{ ! isJetpack && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-								/>
-							) }
+
+							<StatsModule
+								path="tags-categories"
+								moduleStrings={ moduleStrings.tags }
+								statType="statsTags"
+							/>
+
 							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
 							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>
