@@ -312,30 +312,28 @@ class DesktopDownloadCard extends Component {
 		const { isMobile } = userAgent;
 
 		return (
-			<>
-				<div className="get-apps__card-text jetpack">
-					<SVGIcon
-						name="desktop-app-logo"
-						size="50"
-						viewBox="0 0 50 50"
-						icon={ DesktopAppLogo }
-						classes="get-apps__desktop-icon"
-					/>
-					<h1 className="get-apps__card-title jetpack">
-						{ translate( 'WordPress.com desktop app' ) }
-					</h1>
-					<p>
-						{ translate(
-							'The full WordPress.com experience packaged as an app for your laptop or desktop.'
-						) }
-					</p>
-					<div className="get-apps__desktop-download-subpanel">
-						{ isMobile
-							? this.getMobileDeviceDownloadOptions()
-							: this.getDesktopDeviceDownloadOptions() }
-					</div>
+			<div className="get-apps__card-text jetpack">
+				<SVGIcon
+					name="desktop-app-logo"
+					size="50"
+					viewBox="0 0 50 50"
+					icon={ DesktopAppLogo }
+					classes="get-apps__desktop-icon"
+				/>
+				<h1 className="get-apps__card-title jetpack">
+					{ translate( 'WordPress.com desktop app' ) }
+				</h1>
+				<p>
+					{ translate(
+						'The full WordPress.com experience packaged as an app for your laptop or desktop.'
+					) }
+				</p>
+				<div className="get-apps__desktop-download-subpanel">
+					{ isMobile
+						? this.getMobileDeviceDownloadOptions()
+						: this.getDesktopDeviceDownloadOptions() }
 				</div>
-			</>
+			</div>
 		);
 	}
 
