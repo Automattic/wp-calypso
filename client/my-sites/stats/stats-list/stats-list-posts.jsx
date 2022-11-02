@@ -15,16 +15,9 @@ const StatsListPosts = ( {
 	title,
 	emptyMessage,
 	titleURL,
-	// error,
 	loader,
-	translate,
 } ) => {
-	// const [ activeGroups, setActiveGroup ] = useState( [] );
 	const moduleNameTitle = titlecase( moduleName );
-
-	// const isGroupActive = ( groupName ) => {
-	// 	return activeGroups.indexOf( groupName ) >= 0;
-	// };
 
 	const localClickHandler = ( event, listItemData ) => {
 		debug( 'clickHandler' );
@@ -60,9 +53,7 @@ const StatsListPosts = ( {
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ ( e ) => localClickHandler( e, item ) }
-							rightSideItem={
-								<StatsListActions data={ item } translate={ translate } moduleName="posts" />
-							}
+							rightSideItem={ <StatsListActions data={ item } moduleName="posts" /> }
 						/>
 					);
 				} ) }

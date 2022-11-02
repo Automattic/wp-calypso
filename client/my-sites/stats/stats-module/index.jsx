@@ -178,7 +178,6 @@ class StatsModule extends Component {
 						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						translate={ translate }
 					>
 						{ this.props.children }
 					</StatsListPosts>
