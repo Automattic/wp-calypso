@@ -436,7 +436,7 @@ export function setDesignOnSite( callback, { siteSlug, selectedDesign } ) {
 	const { theme } = selectedDesign;
 
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: true } )
+		.post( `/sites/${ siteSlug }/themes/mine`, { theme, dont_change_homepage: false } )
 		.then( () =>
 			wpcom.req.post( {
 				path: `/sites/${ siteSlug }/theme-setup`,

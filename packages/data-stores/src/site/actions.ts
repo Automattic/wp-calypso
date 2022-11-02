@@ -289,7 +289,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
-			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: true },
+			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: false },
 			method: 'POST',
 		} );
 	}
@@ -303,7 +303,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			body: {
 				theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme,
 				style_variation_slug: options?.styleVariation?.slug,
-				dont_change_homepage: true,
+				dont_change_homepage: false,
 			},
 			method: 'POST',
 		} );
