@@ -14,7 +14,7 @@ let wpcom;
 
 if ( config.isEnabled( 'oauth' ) ) {
 	wpcom = new WPCOM( oauthToken.getToken(), wpcomXhrWrapper );
-} else if ( config( 'env_id' ) === 'jetpack-stats-app' ) {
+} else if ( config( 'is_running_in_jetpack_site' ) ) {
 	wpcom = new WPCOM( jetpack_site_xhr_wrapper );
 } else {
 	wpcom = new WPCOM( wpcomProxyRequest );
