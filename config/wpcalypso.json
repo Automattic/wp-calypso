@@ -100,6 +100,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plugins/ssr-categories": true,
+		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
 		"press-this": true,

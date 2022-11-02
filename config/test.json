@@ -70,6 +70,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plugins/ssr-categories": true,
+		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
 		"press-this": true,
 		"publicize-preview": true,
