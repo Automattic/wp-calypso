@@ -4,25 +4,41 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { getPost } from 'calypso/state/posts/selectors';
+import PostActionsQRCode from '../../post-actions-qr-code';
 
 class PostActionsEllipsisMenuQRCode extends Component {
 	static propTypes = {
 		globalId: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		siteId: PropTypes.number,
-		postId: PropTypes.number,
 		status: PropTypes.string,
 	};
 
-	generateQRCode = () => {};
+	constructor( props ) {
+		super( props );
+		this.state = {
+			showQRCode: false,
+		};
+	}
+
+	generateQRCode = () => {
+		this.setState( { showQRCode: true } );
+	};
 
 	render() {
-		const { translate } = this.props;
+		const { translate, url, status } = this.props;
+
+		// The QR option will be available only for `publish` status
+		if ( ! [ 'publish' ].includes( status ) ) {
+			return null;
+		}
 
 		return (
-			<PopoverMenuItem onClick={ this.generateQRCode } icon="bug">
-				{ translate( 'QR Code' ) }
-			</PopoverMenuItem>
+			<>
+				<PopoverMenuItem onClick={ this.generateQRCode } icon="bug">
+					{ translate( 'QR Code' ) }
+				</PopoverMenuItem>
+				<PostActionsQRCode siteUrl={ url } showQRCode={ this.state.showQRCode } />
+			</>
 		);
 	}
 }
@@ -34,10 +50,8 @@ const mapStateToProps = ( state, { globalId } ) => {
 	}
 
 	return {
-		siteId: post.site_ID,
 		status: post.status,
-		type: post.type,
-		url: post.url,
+		url: post.URL,
 	};
 };
 
