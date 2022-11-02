@@ -194,7 +194,7 @@ function LineItemWrapper( {
 	const activePlan = sitePlans?.data?.find( ( plan ) => plan.currentPlan );
 
 	const variants = useGetProductVariants( siteId, product.product_slug, ( variant ) => {
-		if ( ! canVariantBePurchased( variant, activePlan?.interval ) ) {
+		if ( ! canVariantBePurchased( variant, activePlan?.interval, activePlan?.productSlug ) ) {
 			return false;
 		}
 

@@ -154,33 +154,46 @@ export function useGetProductVariants(
 
 export function canVariantBePurchased(
 	variant: WPCOMProductVariant,
-	activePlanRenewalInterval: number | undefined
+	activePlanRenewalInterval: number | undefined,
+	activePlanSlug: string | undefined
 ): boolean {
 	// Always allow the variant when the item added to the cart is not a plan.
 	if ( ! isPlan( variant ) ) {
 		return true;
 	}
 
-	// If this is a plan, does the site currently own a plan? If so, is the term
-	// of the variant lower than the term of the currently owned plan? If so, do
-	// not allow the variant because our backend does not support plan upgrades
-	// with term downgrades.
+	// If the variant is a plan and there is no active plan, always allow the variant.
 	if ( ! activePlanRenewalInterval || activePlanRenewalInterval < 1 ) {
 		return true;
 	}
+
+	// If the variant is a plan and the site has an active plan, only allow the
+	// variant if the term of the variant is longer than the term of the active
+	// plan. This is because our backend does not support plan upgrades which are
+	// term downgrades.
 	const variantRenewalInterval = variant.termIntervalInDays;
-	if ( activePlanRenewalInterval <= variantRenewalInterval ) {
-		return true;
+	if ( activePlanRenewalInterval > variantRenewalInterval ) {
+		debug(
+			'filtering out plan variant',
+			variant,
+			'with interval',
+			variantRenewalInterval,
+			'because it is a downgrade from',
+			activePlanRenewalInterval
+		);
+		return false;
 	}
-	debug(
-		'filtering out plan variant',
-		variant,
-		'with interval',
-		variantRenewalInterval,
-		'because it is a downgrade from',
-		activePlanRenewalInterval
-	);
-	return false;
+
+	// If the variant is a plan and the site has an active plan, only allow the
+	// variant it is not a variant of the active plan. In other words, do not
+	// show the variant picker when purchasing a term upgrade for the active
+	// plan. This is because such a case is already an upsell and does not
+	// benefit from a term picker.
+	if ( getVariantPlanProductSlugs( activePlanSlug ).includes( variant.productSlug ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 export function getVariantPlanProductSlugs( productSlug: string | undefined ): string[] {
