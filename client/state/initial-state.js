@@ -34,47 +34,6 @@ export function shouldPersist() {
 	return ! isSupportSession();
 }
 
-function warnDeveloperOfSympathy() {
-	const warningDiv = document.createElement( 'div' );
-	warningDiv.id = 'sympathy-dev-warning';
-	warningDiv.innerHTML = `
-	<div style="
-		width: 100vw;
-		height: 23px;
-		display: flex;
-		z-index: 999999999999999999;
-		top: 0;
-		position: absolute;
-		justify-content: center;
-	"
-	>
-		<div style="
-			position: relative;
-			z-index: 99999999;
-			background: var(--color-warning-20);
-			color: #bc2c2c;
-			letter-spacing: 1px;
-			border-radius: 2px;
-			max-width: 801px;
-			text-align: center;
-			font-size: 11px;
-			font-weight: bold;
-			padding: 1px 10px;
-			top: 0;
-			margin-top: 5px;
-			
-			">
-			DEV NOTICE: Persisted Redux State (Randomly) cleared. <a href="https://github.com/Automattic/wp-calypso/pull/14121">Read more.</a>
-		</div>
-	</div>
-	`;
-
-	document.body.appendChild( warningDiv );
-	setTimeout( () => {
-		document.getElementById( 'sympathy-dev-warning' ).remove();
-	}, 5000 );
-}
-
 /**
  * Determines whether to add "sympathy" by randomly clearing out persistent
  * browser state and loading without it
@@ -216,14 +175,34 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 				'%cSkipping initial state rehydration. (This runs during random page requests in the Calypso development environment, to simulate loading the application with an empty cache.)',
 				'font-size: 14px; color: red;'
 			);
-
-			warnDeveloperOfSympathy();
 			clearPersistedState();
+
+			const isStateRandomlyCleared = ! config.isEnabled( 'force-sympathy' );
+			if ( isStateRandomlyCleared ) {
+				// If randomly cleared show warning to the deeloper
+				return {
+					notices: {
+						items: {
+							'Sympathy-Dev-Warning': {
+								showDismiss: true,
+								displayOnNextPage: true,
+								status: 'is-warning',
+								// Read more about sympathy :  https://github.com/Automattic/wp-calypso/pull/14121
+								// tldr: We try to clear state randomly to match closely the UX of our user i.e. Sympathy.
+								// In other words, you cannot rely on user's persisted state to be reliable.
+								text: 'DEV NOTICE: Persisted Redux State (Randomly) cleared',
+							},
+						},
+
+						lastTimeShown: { 'Sympathy-Dev-Warning': Date.now() },
+					},
+				};
+			}
 			return null;
 		}
 	}
 
-	let initialStoredState = getStateFromPersistence( initialReducer, undefined, currentUserId );
+	let initialStoredState = getStateFromPersistence( initialReducer, currentUserId );
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	function loadReducerState( { storageKey, reducer } ) {
