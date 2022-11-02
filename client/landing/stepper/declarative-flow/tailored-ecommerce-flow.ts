@@ -62,6 +62,11 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
+					// Coming from designCarousel Step
+					if ( providedDependencies?.selectedDesign ) {
+						window.location.assign( `/home/${ providedDependencies.siteSlug }` );
+						return;
+					}
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/intro?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
 						persistSignupDestination( destination );
@@ -77,7 +82,10 @@ export const ecommerceFlow: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate( 'intro' );
+
+					return navigate(
+						`intro?flow=${ flowName }&siteSlug=${ providedDependencies?.siteSlug }`
+					);
 
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -89,7 +97,7 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'designCarousel' );
 
 				case 'designCarousel':
-					return navigate( 'designCarousel' );
+					return navigate( 'processing' );
 			}
 			return providedDependencies;
 		}
