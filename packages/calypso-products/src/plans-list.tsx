@@ -224,15 +224,7 @@ import {
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
 	JETPACK_TAG_FOR_ONLINE_FORUMS,
-	/* START - PLAN TAGLINE EXPERIMENT */
-	FEATURE_STORAGE_BANDWIDTH,
-	FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	FEATURE_INSTALL_THEMES_PLUGINS,
-	FEATURE_DEVELOPER_TOOLS_V1,
-	FEATURE_PRODUCT_LISTINGS,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-	/* END - PLAN TAGLINE EXPERIMENT */
 } from './constants';
 import type {
 	BillingTerm,
@@ -284,7 +276,6 @@ const getDotcomPlanDetails = () => ( {
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 		FEATURE_LIVE_CHAT_SUPPORT_ALL_DAYS,
-		FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
 	],
 } );
 
@@ -446,11 +437,6 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 		FEATURE_TRACK_VIEWS_CLICKS,
 	],
-	getOnboardingHighlightedFeatures: () => [
-		FEATURE_FREE_DOMAIN,
-		FEATURE_STORAGE_BANDWIDTH,
-		FEATURE_EMAIL_SUPPORT_SIGNUP_V2,
-	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
@@ -554,11 +540,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SHIPPING_CARRIERS,
 			PREMIUM_DESIGN_FOR_STORES,
 		].filter( isValueTruthy ),
-	getOnboardingHighlightedFeatures: () => [
-		FEATURE_PRODUCT_LISTINGS,
-		FEATURE_ACCEPT_PAYMENTS,
-		FEATURE_SHIPPING_CARRIERS,
-	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -708,11 +689,6 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			isEnabled( 'themes/premium' ) ? FEATURE_PREMIUM_THEMES : null,
 			FEATURE_GOOGLE_ANALYTICS,
 		].filter( isValueTruthy ),
-	getOnboardingHighlightedFeatures: () => [
-		FEATURE_PREMIUM_THEMES,
-		FEATURE_ADVANCED_DESIGN_CUSTOMIZATION_AND_CSS,
-		FEATURE_UNLTD_LIVE_CHAT_SUPPORT,
-	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -813,11 +789,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_SITE_BACKUPS_AND_RESTORE,
 			FEATURE_SFTP_DATABASE,
 		].filter( isValueTruthy ),
-	getOnboardingHighlightedFeatures: () => [
-		FEATURE_INSTALL_THEMES_PLUGINS,
-		FEATURE_ADVANCED_SEO_TOOLS,
-		FEATURE_DEVELOPER_TOOLS_V1,
-	],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,

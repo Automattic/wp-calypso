@@ -41,7 +41,6 @@ export interface WPComPlan extends Plan {
 	getLinkInBioDescription?: () => string;
 	getLinkInBioSignupFeatures?: () => Feature[];
 	getLinkInBioHighlightedFeatures?: () => Feature[];
-	getOnboardingHighlightedFeatures?: () => Feature[];
 	getPromotedFeatures?: () => Feature[];
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
