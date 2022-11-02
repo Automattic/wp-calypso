@@ -54,7 +54,6 @@ function sendSMS( phone ) {
 
 class MobileDownloadCard extends Component {
 	static propTypes = {
-		translate: PropTypes.func,
 		countriesList: PropTypes.array.isRequired,
 		storedPhone: PropTypes.shape( {
 			countryCode: PropTypes.string,
