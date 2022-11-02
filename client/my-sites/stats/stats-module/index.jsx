@@ -158,6 +158,9 @@ class StatsModule extends Component {
 
 		return (
 			<>
+				{ siteId && statType && (
+					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
+				) }
 				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'posts' && (
 					<StatsListPosts
 						moduleName={ path }
@@ -184,9 +187,6 @@ class StatsModule extends Component {
 				) }
 
 				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
-					{ siteId && statType && (
-						<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
-					) }
 					{ ! isAllTime && (
 						<SectionHeader
 							className={ headerClass }

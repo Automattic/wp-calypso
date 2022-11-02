@@ -87,12 +87,7 @@ const StatsListActions = ( { data, moduleName } ) => {
 };
 
 StatsListActions.propTypes = {
-	data: PropTypes.arrayOf(
-		PropTypes.shape( {
-			data: PropTypes.oneOfType( [ PropTypes.object, PropTypes.string ] ),
-			type: PropTypes.string,
-		} )
-	),
+	data: PropTypes.object,
 	moduleName: PropTypes.string,
 };
 
