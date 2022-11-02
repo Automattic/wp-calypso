@@ -105,6 +105,6 @@ describe( 'createReceiptObject', () => {
 		const clonedStandardAssembledReceipt = { ...standardAssembledReceipt };
 		clonedStandardAssembledReceipt.purchases[ 0 ].saasRedirectUrl = url;
 
-		expect( actual ).toEqual( standardAssembledReceipt );
+		expect( actual ).toEqual( clonedStandardAssembledReceipt );
 	} );
 } );
