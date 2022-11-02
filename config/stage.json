@@ -93,7 +93,7 @@
 		"plugins/ssr-categories": false,
 		"plugins/ssr-landing": true,
 		"post-editor/checkout-overlay": true,
-		"post-list/qr-code-link": false,
+		"post-list/qr-code-link": true,
 		"press-this": true,
 		"pre-cancellation-modal": false,
 		"publicize-preview": true,
