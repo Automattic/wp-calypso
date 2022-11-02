@@ -200,7 +200,12 @@ class MobileDownloadCard extends Component {
 						'Visit {{a}}wp.com/app{{/a}} from your mobile device, or scan the code to download the Jetpack mobile app.',
 						{
 							components: {
-								a: <a className="get-apps__jetpack-branded-link" href="https://wp.com/app" />,
+								a: (
+									<a
+										className="get-apps__jetpack-branded-link"
+										href="https://apps.wordpress.com/get?campaign=calypso-get-apps-link"
+									/>
+								),
 							},
 						}
 					) }
