@@ -27,6 +27,7 @@ import {
 	getPlansItemsState,
 	createTestReduxStore,
 	countryList,
+	mockUserAgent,
 } from './util';
 
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -251,7 +252,9 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
 			const discountPercentage = Math.floor( 100 - ( finalPrice / priceBeforeDiscount ) * 100 );
-			expect( screen.getByText( `Save ${ discountPercentage }%` ) ).toBeInTheDocument();
+			expect(
+				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
+			).toBeInTheDocument();
 		}
 	);
 
@@ -310,6 +313,20 @@ describe( 'CheckoutMain with a variant picker', () => {
 	it( 'does not render the variant picker for a renewal of the current plan', async () => {
 		const currentPlanRenewal = { ...planWithoutDomain, extra: { purchaseType: 'renewal' } };
 		const cartChanges = { products: [ currentPlanRenewal ] };
+		render( <MyCheckout cartChanges={ cartChanges } /> );
+
+		await expect(
+			screen.findByLabelText( 'Change the billing term for this product' )
+		).toNeverAppear();
+	} );
+
+	it( 'does not render the variant picker when userAgent is Woo mobile', async () => {
+		getPlansBySiteId.mockImplementation( () => ( {
+			data: getActivePersonalPlanDataForType( 'none' ),
+		} ) );
+		const cartChanges = { products: [ getBusinessPlanForInterval( 'yearly' ) ] };
+
+		mockUserAgent( 'wc-ios' );
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
 		await expect(

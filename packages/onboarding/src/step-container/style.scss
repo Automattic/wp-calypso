@@ -254,19 +254,34 @@
 	/**
 	 * Jetpack Powered
 	 */
-	.step-container__jetpack-powered {
+	.step-container__jetpack-powered,
+	.step-container__header-jetpack-powered {
 		display: flex;
 		justify-content: center;
-		width: 100%;
 		text-align: center;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 20px;
-		margin: 1rem 0;
 
 		svg {
 			margin-inline-end: 6px;
+		}
+	}
+
+	.step-container__jetpack-powered {
+		margin: 1rem 0;
+		width: 100%;
+	}
+
+	.step-container__header-jetpack-powered {
+		position: absolute;
+		top: 32px;
+		right: 32px;
+		visibility: hidden;
+
+		@include break-small {
+			visibility: visible;
 		}
 	}
 }

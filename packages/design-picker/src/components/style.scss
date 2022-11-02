@@ -406,14 +406,50 @@
 .design-picker.design-picker__unified {
 	display: block;
 	padding-bottom: 200px;
+
 	.responsive-toolbar-group__dropdown .responsive-toolbar-group__grouped-list {
 		justify-content: flex-start;
 	}
+
 	.design-picker__grid {
 		@supports ( display: grid ) {
+			row-gap: 0;
+
 			@include break-medium {
 				grid-template-columns: 1fr 1fr 1fr;
 				column-gap: 24px;
+
+				.design-button-container:nth-child(-n+3) {
+					margin-top: 0;
+				}
+			}
+
+			.design-button-container {
+				margin-top: 32px;
+
+				&:first-child {
+					margin-top: 0;
+				}
+			}
+
+			.design-button-container--is-generated {
+				margin-top: 0;
+				max-height: 0;
+				overflow: hidden;
+
+				.theme-preview__container {
+					opacity: 0;
+					transition: opacity 1.5s ease-in-out;
+				}
+			}
+
+			.design-button-container--is-generated--is-showing {
+				margin-top: 32px;
+				max-height: none;
+
+				.theme-preview__container {
+					opacity: 1;
+				}
 			}
 		}
 	}
@@ -427,11 +463,6 @@
 
 	.design-picker__design-option > button {
 		cursor: pointer;
-	}
-
-	.unified-design-picker__subtitle {
-		color: #50575e;
-		margin-bottom: 30px;
 	}
 
 	.generated-design-thumbnail {
@@ -459,19 +490,20 @@
 		color: var(--theme-base-color);
 	}
 
-	// Customize styles for generated designs
-	.unified-design-picker__generated-designs {
-		.design-picker__grid {
-			padding-bottom: 32px;
-		}
+	.unified-design-picker__designs {
+		min-height: 100vh;
 	}
 
-	// Customize styles for standard designs
-	.unified-design-picker__standard-designs {
-		min-height: 100vh;
+	.unified-design-picker__generated-designs {
+		max-height: 0;
+		overflow: hidden;
 
-		.unified-design-picker__subtitle {
-			margin-bottom: 14px;
+		&.unified-design-picker__generated-designs--is-showing {
+			max-height: none;
+		}
+
+		.design-picker__grid {
+			padding-top: 32px;
 		}
 	}
 }

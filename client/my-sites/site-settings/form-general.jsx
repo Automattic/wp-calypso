@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
+import {
+	isDotComPlan,
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_NO_WPCOM_BRANDING,
+} from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
@@ -36,6 +40,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -624,43 +629,49 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	giftOptions() {
-		const { translate, fields, isRequestingSettings, isSavingSettings, handleSubmitForm } =
-			this.props;
+		const {
+			translate,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			handleSubmitForm,
+			currentPlan,
+		} = this.props;
 
 		if ( ! isEnabled( 'subscription-gifting' ) ) {
 			return;
 		}
 
-		return (
-			<>
-				<div className="site-settings__gifting-container">
-					<SettingsSectionHeader
-						title={ translate( 'Accept a gift subscription' ) }
-						id="site-settings__gifting-header"
-						disabled={ isRequestingSettings || isSavingSettings }
-						isSaving={ isSavingSettings }
-						onButtonClick={ handleSubmitForm }
-						showButton
-					/>
-					<CompactCard className="site-settings__gifting-content">
-						<ToggleControl
+		if ( currentPlan && isDotComPlan( currentPlan ) && ! currentPlan?.autoRenew ) {
+			return (
+				<>
+					<div className="site-settings__gifting-container">
+						<SettingsSectionHeader
+							title={ translate( 'Accept a gift subscription' ) }
+							id="site-settings__gifting-header"
 							disabled={ isRequestingSettings || isSavingSettings }
-							className="site-settings__gifting-toggle"
-							label={ translate(
-								'Allow supporters to cover the WordPress plan to keep the site content up and running'
-							) }
-							checked={ fields.wpcom_gifting_subscription }
-							onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
 						/>
-						<FormSettingExplanation>
-							{ translate(
-								'Your readers will be able to pay for the WordPress subscription to keep the site and all the content that you have created up and running and available for everybody in the future.'
-							) }
-						</FormSettingExplanation>
-					</CompactCard>
-				</div>
-			</>
-		);
+						<CompactCard className="site-settings__gifting-content">
+							<ToggleControl
+								disabled={ isRequestingSettings || isSavingSettings }
+								className="site-settings__gifting-toggle"
+								label={ translate( 'Allow a site visitor to gift site upgrade costs.' ) }
+								checked={ fields.wpcom_gifting_subscription }
+								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									"Allow a site visitor to cover the full cost of your site's upgrades."
+								) }
+							</FormSettingExplanation>
+						</CompactCard>
+					</div>
+				</>
+			);
+		}
 	}
 
 	render() {
@@ -807,6 +818,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		currentPlan: getCurrentPlan( state, siteId ),
 	};
 }, mapDispatchToProps );
 
