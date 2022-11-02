@@ -1,5 +1,6 @@
 import { action } from '@storybook/addon-actions';
 import HighlightCards from '../';
+import AnnualHighlightCards from '../annual-highlight-cards';
 
 export default { title: 'Highlight Cards' };
 
@@ -43,4 +44,17 @@ export const WithoutPreviousCounts = () => <HighlightCardsVariations previousCou
 
 export const WithoutCounts = () => (
 	<HighlightCardsVariations counts={ null } previousCounts={ null } />
+);
+
+export const AnnualHighlights = () => (
+	<AnnualHighlightCards
+		counts={ {
+			comments: 72490,
+			likes: 12298,
+			posts: 79,
+			words: 205035,
+			followers: 1113323,
+		} }
+		year={ 2022 }
+	/>
 );
