@@ -16,7 +16,10 @@ const translate = ( x ) => x;
 const requestSftpUsers = ( x ) => x;
 const removePasswordFromState = ( x ) => x;
 
-const store = createStore( ( state ) => state, { ui: { selectedSiteId: 1 } } );
+const store = createStore( ( state ) => state, {
+	ui: { selectedSiteId: 1 },
+	currentUser: { id: 1 },
+} );
 
 const props = {
 	translate,
