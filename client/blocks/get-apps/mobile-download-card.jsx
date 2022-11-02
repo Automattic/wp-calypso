@@ -192,7 +192,7 @@ class MobileDownloadCard extends Component {
 		return (
 			<div className="get-apps__qr-code-subpanel jetpack">
 				<QRCode
-					value={ localizeUrl( 'https://apps.wordpress.com/mobile/?campaign=calypso-qrcode-apps' ) }
+					value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 					size={ 150 }
 				/>
 				<p className="get-apps__card-text jetpack">
@@ -269,9 +269,7 @@ class MobileDownloadCard extends Component {
 						</p>
 
 						<QRCode
-							value={ localizeUrl(
-								'https://apps.wordpress.com/mobile/?campaign=calypso-qrcode-apps'
-							) }
+							value={ localizeUrl( 'https://apps.wordpress.com/get?campaign=calypso-qrcode-apps' ) }
 							size={ 180 }
 						/>
 					</div>
