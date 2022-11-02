@@ -7,7 +7,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 import { startsWith, isEmpty } from 'lodash';
 import wpcomRequest from 'wpcom-proxy-request';
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '../';
-import cartManagerClient from './cart-manager-client';
+import cartManagerClient from './create-cart-manager-client';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const Visibility = Site.Visibility;
