@@ -306,13 +306,13 @@ add_action( 'launch_bar_extra_tooltip_toggle_global_styles', 'wpcom_display_glob
  * Invalidates the cached Global Styles after changing them or when previewing them.
  */
 function wpcom_invalidate_global_styles_cache() {
-	$transient_name = 'gutenberg_global_styles_' . get_stylesheet();
+	$gutenberg_global_styles_transient_name = 'gutenberg_global_styles_' . get_stylesheet();
 
 	if ( wpcom_should_limit_global_styles() && wpcom_is_previewing_global_styles() ) {
-		add_filter( 'pre_transient_' . $transient_name, '__return_null' );
-		add_filter( 'pre_set_transient_' . $transient_name, '__return_false' );
+		add_filter( 'pre_transient_' . $gutenberg_global_styles_transient_name, '__return_null' );
+		add_filter( 'pre_set_transient_' . $gutenberg_global_styles_transient_name, '__return_false' );
 	}
 
-	add_action( 'save_post_wp_global_styles', fn() => delete_transient( $transient_name ) );
+	add_action( 'save_post_wp_global_styles', fn() => delete_transient( $gutenberg_global_styles_transient_name ) );
 }
 add_action( 'init', 'wpcom_invalidate_global_styles_cache' );
