@@ -25,8 +25,8 @@ const APP_STORE_BADGE_URLS = {
 				: '335703880'; // WordPress
 			return `https://apps.apple.com/app/apple-store/id${ appId }?pt=299112&ct=${ utm_source }&mt=8`;
 		},
-		getTitleText: () =>
-			this.displayJetpackAppBranding
+		getTitleText: ( displayJetpackAppBranding ) =>
+			displayJetpackAppBranding
 				? translate( 'Download the Jetpack iOS mobile app.' )
 				: translate( 'Download the WordPress iOS mobile app.' ),
 		getAltText: () => translate( 'Apple App Store download badge' ),
@@ -49,8 +49,8 @@ const APP_STORE_BADGE_URLS = {
 			const appId = displayJetpackAppBranding ? 'com.jetpack.android' : 'org.wordpress.android';
 			return `https://play.google.com/store/apps/details?id=${ appId }&referrer=utm_source%3D%${ utm_source }%26utm_medium%3D${ utm_medium }%26utm_campaign%3D${ utm_campaign }`;
 		},
-		getTitleText: () =>
-			this.displayJetpackAppBranding
+		getTitleText: ( displayJetpackAppBranding ) =>
+			displayJetpackAppBranding
 				? translate( 'Download the Jetpack Android mobile app.' )
 				: translate( 'Download the WordPress Android mobile app.' ),
 		getAltText: () => translate( 'Google Play Store download badge' ),
@@ -157,7 +157,7 @@ export class AppsBadge extends PureComponent {
 				>
 					<img
 						src={ imageSrc }
-						title={ titleText ? titleText : badge.getTitleText() }
+						title={ titleText ? titleText : badge.getTitleText( this.displayJetpackAppBranding ) }
 						alt={ altText ? altText : badge.getAltText() }
 					/>
 				</a>
