@@ -96,6 +96,7 @@ export const domainProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	months_per_bill_period: 12,
 };
 
 export const caDomainProduct = {
@@ -120,6 +121,7 @@ export const caDomainProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	months_per_bill_period: 12,
 };
 
 export const gSuiteProduct = {
@@ -137,6 +139,7 @@ export const gSuiteProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	months_per_bill_period: 12,
 };
 
 export const domainTransferProduct = {
@@ -160,6 +163,7 @@ export const domainTransferProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	months_per_bill_period: 12,
 };
 
 export const planWithBundledDomain = {
@@ -179,6 +183,7 @@ export const planWithBundledDomain = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 12,
 };
 
 export const planWithoutDomain = {
@@ -197,6 +202,7 @@ export const planWithoutDomain = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 12,
 };
 
 export const planWithoutDomainMonthly = {
@@ -215,6 +221,7 @@ export const planWithoutDomainMonthly = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 1,
 };
 
 export const planWithoutDomainBiannual = {
@@ -233,6 +240,7 @@ export const planWithoutDomainBiannual = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 24,
 };
 
 export const planLevel2 = {
@@ -251,6 +259,7 @@ export const planLevel2 = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 12,
 };
 
 export const planLevel2Monthly = {
@@ -269,6 +278,7 @@ export const planLevel2Monthly = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 1,
 };
 
 export const planLevel2Biannual = {
@@ -287,6 +297,7 @@ export const planLevel2Biannual = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	months_per_bill_period: 24,
 };
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
