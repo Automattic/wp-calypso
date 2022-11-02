@@ -1,7 +1,42 @@
-export default function getPlanCancellationFeatures( productSlug: string | undefined ): string[] {
+import { getPlan, isMonthly } from '@automattic/calypso-products';
+
+export default function getPlanFeatures(
+	productSlug: string | undefined,
+	hasDomain: boolean,
+	wpcomSiteURL: string
+): string[] {
 	if ( ! productSlug ) {
 		return [];
 	}
 
-	return [ 'Feature 1', 'Feature 2', 'Feature 3' ];
+	const isMonthlyPlan = isMonthly( productSlug );
+
+	const plan = getPlan( productSlug );
+	if ( ! plan || ! plan.getCancellationFeatureList ) {
+		return [];
+	}
+
+	const featureList = plan.getCancellationFeatureList();
+
+	/**
+	 * Return plan + domain cancellation flow feature list
+	 */
+	if ( hasDomain === true && wpcomSiteURL.length > 0 && featureList.withDomain ) {
+		return featureList.withDomain;
+	}
+
+	/**
+	 * Return monthly or yearly cancellation flow feature list
+	 */
+	// Monthly plan
+	if ( isMonthlyPlan && featureList.monthly ) {
+		return featureList.monthly;
+	}
+
+	// Yearly plan
+	if ( ! isMonthlyPlan && featureList.yearly ) {
+		return featureList.yearly;
+	}
+
+	return [];
 }

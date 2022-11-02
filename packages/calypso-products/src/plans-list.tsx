@@ -233,6 +233,7 @@ import type {
 	WPComPlan,
 	IncompleteWPcomPlan,
 	IncompleteJetpackPlan,
+	CancellationFeatureList,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -287,6 +288,31 @@ const plansDescriptionHeadingComponent = {
 };
 /* eslint-enable */
 
+const cancellationFeatureListTerms = {
+	ACCEPT_PAYMENTS: i18n.translate( 'Accept payments in 60+ countries' ),
+	AD_FREE_SITE: i18n.translate( 'An ad-free site' ),
+	AND_MORE: i18n.translate( 'and more…' ),
+	BACKUPS: i18n.translate( 'Automated website backups' ),
+	BACKUPS_AND_RESTORE: i18n.translate( 'Automated site backups and one-click restore' ),
+	COLLECT_PAYMENTS: i18n.translate( 'The ability to collect payments' ),
+	EARN_AD_REVENUE: i18n.translate( 'The ability to earn ad revenue' ),
+	EMAIL_SUPPORT: i18n.translate( 'Unlimited customer support via email' ),
+	GOOGLE_ANALYTICS: i18n.translate( 'Google Analytics integration' ),
+	HIGH_QUALITY_VIDEOS: i18n.translate( 'High quality videos' ),
+	JETPACK_ESSENTIALS: i18n.translate( 'Jetpack essentials' ),
+	LIVE_CHAT: i18n.translate( 'Access to live chat support' ),
+	MANAGED_HOSTINGS: i18n.translate( 'Access to managed hosting' ),
+	PLUGINS: i18n.translate( 'Access to more than 50,000 plugins' ),
+	PREMIUM_DESIGN: i18n.translate( 'Premium design options customized for online stores' ),
+	PREMIUM_THEMES: i18n.translate( 'Access to premium themes' ),
+	SECURITY_AND_SPAM: i18n.translate( 'Professional security and spam protection' ),
+	SEO_TOOLS: i18n.translate( 'Advanced SEO tools' ),
+	SEO_AND_SOCIAL: i18n.translate( 'SEO and social tools' ),
+	SFTP_AND_DATABASE: i18n.translate( 'SFTP and database access' ),
+	SHIPPING_CARRIERS: i18n.translate( 'Integration with top shipping carriers' ),
+	UNLIMITED_TRAFFIC: i18n.translate( 'Unlimited traffic' ),
+};
+
 const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	...getDotcomPlanDetails(),
 	group: GROUP_WPCOM,
@@ -336,6 +362,23 @@ const getPlanBloggerDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+		yearly: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+	} ),
 } );
 
 const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
@@ -440,6 +483,23 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [ FEATURE_AUDIO_UPLOADS ],
 	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+		yearly: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+	} ),
 } );
 
 const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
@@ -555,6 +615,31 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.ACCEPT_PAYMENTS,
+			cancellationFeatureListTerms.SHIPPING_CARRIERS,
+			cancellationFeatureListTerms.PREMIUM_DESIGN,
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.SEO_TOOLS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		yearly: [
+			cancellationFeatureListTerms.ACCEPT_PAYMENTS,
+			cancellationFeatureListTerms.SHIPPING_CARRIERS,
+			cancellationFeatureListTerms.PREMIUM_DESIGN,
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.SEO_TOOLS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.ACCEPT_PAYMENTS,
+			cancellationFeatureListTerms.SHIPPING_CARRIERS,
+			cancellationFeatureListTerms.PREMIUM_DESIGN,
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+	} ),
 } );
 
 const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
@@ -698,6 +783,31 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.GOOGLE_ANALYTICS,
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+		],
+		yearly: [
+			cancellationFeatureListTerms.LIVE_CHAT,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.GOOGLE_ANALYTICS,
+			cancellationFeatureListTerms.AD_FREE_SITE,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.GOOGLE_ANALYTICS,
+			cancellationFeatureListTerms.COLLECT_PAYMENTS,
+			cancellationFeatureListTerms.AD_FREE_SITE,
+		],
+	} ),
 } );
 
 const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
@@ -803,6 +913,31 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_BACKUPS,
 	],
 	getInferiorFeatures: () => [],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.SEO_TOOLS,
+			cancellationFeatureListTerms.BACKUPS_AND_RESTORE,
+			cancellationFeatureListTerms.SFTP_AND_DATABASE,
+			cancellationFeatureListTerms.EMAIL_SUPPORT,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		yearly: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.SEO_TOOLS,
+			cancellationFeatureListTerms.BACKUPS_AND_RESTORE,
+			cancellationFeatureListTerms.SFTP_AND_DATABASE,
+			cancellationFeatureListTerms.LIVE_CHAT,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.SEO_TOOLS,
+			cancellationFeatureListTerms.BACKUPS_AND_RESTORE,
+			cancellationFeatureListTerms.SFTP_AND_DATABASE,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+	} ),
 } );
 
 const getPlanProDetails = (): IncompleteWPcomPlan => ( {
@@ -868,6 +1003,31 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.HIGH_QUALITY_VIDEOS,
+			cancellationFeatureListTerms.SFTP_AND_DATABASE,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		yearly: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.HIGH_QUALITY_VIDEOS,
+			cancellationFeatureListTerms.SFTP_AND_DATABASE,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.PLUGINS,
+			cancellationFeatureListTerms.PREMIUM_THEMES,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.HIGH_QUALITY_VIDEOS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+	} ),
 } );
 
 const getJetpackPersonalDetails = (): IncompleteJetpackPlan => ( {
@@ -1335,6 +1495,31 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getBillingTimeFrame: () => i18n.translate( 'for life' ),
 		getIncludedFeatures: () => [],
 		getInferiorFeatures: () => [],
+		getCancellationFeatureList: (): CancellationFeatureList => ( {
+			monthly: [
+				cancellationFeatureListTerms.MANAGED_HOSTINGS,
+				cancellationFeatureListTerms.SEO_AND_SOCIAL,
+				cancellationFeatureListTerms.EARN_AD_REVENUE,
+				cancellationFeatureListTerms.SECURITY_AND_SPAM,
+				cancellationFeatureListTerms.JETPACK_ESSENTIALS,
+				cancellationFeatureListTerms.AND_MORE,
+			],
+			yearly: [
+				cancellationFeatureListTerms.MANAGED_HOSTINGS,
+				cancellationFeatureListTerms.SEO_AND_SOCIAL,
+				cancellationFeatureListTerms.EARN_AD_REVENUE,
+				cancellationFeatureListTerms.SECURITY_AND_SPAM,
+				cancellationFeatureListTerms.JETPACK_ESSENTIALS,
+				cancellationFeatureListTerms.AND_MORE,
+			],
+			withDomain: [
+				cancellationFeatureListTerms.MANAGED_HOSTINGS,
+				cancellationFeatureListTerms.SEO_AND_SOCIAL,
+				cancellationFeatureListTerms.EARN_AD_REVENUE,
+				cancellationFeatureListTerms.SECURITY_AND_SPAM,
+				cancellationFeatureListTerms.AND_MORE,
+			],
+		} ),
 	},
 
 	[ PLAN_BLOGGER ]: {
