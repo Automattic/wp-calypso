@@ -9,6 +9,7 @@ import { selectAlphaticallySortedProductOptions } from 'calypso/jetpack-cloud/se
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import type { IssueMultipleLicensesFormProps } from './types';
+
 import './style.scss';
 
 export default function IssueMultipleLicensesForm( {
