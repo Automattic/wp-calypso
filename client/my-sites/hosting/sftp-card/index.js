@@ -12,6 +12,8 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import MaterialIcon from 'calypso/components/material-icon';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
 import {
 	withAnalytics,
 	composeAnalytics,
@@ -386,9 +388,15 @@ export const SftpCard = ( {
 						<FormLabel className="sftp-card__ssh-label">{ translate( 'SSH Access' ) }</FormLabel>
 					) }
 					{ siteHasSshFeature && renderSshField() }
-					{ siteHasSshFeature && isSshAccessEnabled && (
-						<SshKeys disabled={ disabled } siteId={ siteId } />
-					) }
+					<ReauthRequired twoStepAuthorization={ twoStepAuthorization }>
+						{ () => (
+							<>
+								{ siteHasSshFeature && isSshAccessEnabled && (
+									<SshKeys disabled={ disabled } siteId={ siteId } />
+								) }
+							</>
+						) }
+					</ReauthRequired>
 				</FormFieldset>
 			) }
 			{ isLoading && <Spinner /> }
