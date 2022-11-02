@@ -28,6 +28,7 @@ import {
 	createTestReduxStore,
 	countryList,
 	mockUserAgent,
+	getPlanSubtitleTextForInterval,
 } from './util';
 
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -150,6 +151,46 @@ describe( 'CheckoutMain with a variant picker', () => {
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			expect(
+				await screen.findByRole( 'option', {
+					name: getVariantItemTextForInterval( expectedVariant ),
+				} )
+			).toBeVisible();
+		}
+	);
+
+	it.each( [
+		{ initialPlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ initialPlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ initialPlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ initialPlan: 'yearly', cartPlan: 'two-year', expectedVariant: 'yearly' },
+	] )(
+		'renders the variant picker with a $expectedVariant variant when the cart initially contains $initialPlan and then is changed to $cartPlan',
+		async ( { initialPlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( 'none' ),
+			} ) );
+			const user = userEvent.setup();
+			const cartChanges = { products: [ getBusinessPlanForInterval( initialPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } /> );
+
+			// Open the variant picker
+			let openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			// Select the new variant
+			const variantOption = await screen.findByLabelText(
+				getVariantItemTextForInterval( cartPlan )
+			);
+			await user.click( variantOption );
+
+			// Wait for the cart to refresh with the new variant
+			await screen.findByText( getPlanSubtitleTextForInterval( cartPlan ) );
+
+			// Open the variant picker again so we can look for the result
+			openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
 			expect(
