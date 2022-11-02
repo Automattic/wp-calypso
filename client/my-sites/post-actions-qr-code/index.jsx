@@ -1,7 +1,13 @@
 import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { useCallback, useState, useEffect } from 'react';
+
+PostActionsQRCode.propTypes = {
+	siteUrl: PropTypes.string.isRequired,
+	showQRCode: PropTypes.bool.isRequired,
+};
 
 function PostActionsQRCode( { siteUrl, showQRCode } ) {
 	const translate = useTranslate();
