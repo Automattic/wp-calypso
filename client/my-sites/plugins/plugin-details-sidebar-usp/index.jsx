@@ -23,8 +23,8 @@ const Container = styled( FoldableCard )`
 		padding-right: 0;
 		${ ( props ) => ! props.showAsAccordion && 'display: none' };
 	}
-
-	&.is-expanded .foldable-card__content {
+	// Increase specificity to avoid conflicts with foldable-card styles
+	&&.is-expanded .foldable-card__content {
 		${ ( props ) => props.first && 'border-top: 0' };
 		${ ( props ) => props.showAsAccordion && 'border: 0' };
 		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };

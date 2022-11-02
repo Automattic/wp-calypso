@@ -91,8 +91,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 		case 'apple-pay':
 		case 'google-pay':
 			return 'WPCOM_Billing_Web_Payment';
-		case 'full-credits':
-			return 'WPCOM_Billing_WPCOM';
 		case 'free-purchase':
 			return 'WPCOM_Billing_WPCOM';
 	}
@@ -102,6 +100,7 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
+		case 'WPCOM_Billing_MoneyPress_Stored':
 		case 'WPCOM_Billing_Ebanx':
 		case 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking':
 		case 'WPCOM_Billing_PayPal_Direct':
@@ -147,7 +146,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'stripe-three-d-secure':
 		case 'wechat':
 		case 'web-pay':
-		case 'full-credits':
 		case 'free-purchase':
 			return slug;
 		case 'apple-pay':

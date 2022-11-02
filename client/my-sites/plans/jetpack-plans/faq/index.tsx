@@ -130,6 +130,19 @@ const JetpackFAQ: FC = () => {
 					) }
 				</FoldableFAQ>
 				<FoldableFAQ
+					id="multiyear-plans"
+					question={ translate( 'Do you have discounts for multi-year plans?' ) }
+					onToggle={ onFaqToggle }
+					className="jetpack-faq__section"
+				>
+					{ translate(
+						"We currently do not offer multi-year subscriptions or discounts for Jetpack products. However if you're an Enterprise, {{helpLink}}contact us{{/helpLink}}.",
+						{
+							components: { helpLink: getHelpLink( 'multiyear-questions' ) },
+						}
+					) }
+				</FoldableFAQ>
+				<FoldableFAQ
 					id="wpcom-account"
 					question={ translate( 'Why do I need a WordPress.com account?' ) }
 					onToggle={ onFaqToggle }

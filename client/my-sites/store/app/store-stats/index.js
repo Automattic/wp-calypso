@@ -51,7 +51,7 @@ class StoreStats extends Component {
 				<FormattedHeader
 					brandFont
 					className="store-stats__section-header"
-					headerText={ translate( 'Stats and Insights' ) }
+					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
 						'Learn valuable insights about the purchases made on your store.'
@@ -85,7 +85,10 @@ class StoreStats extends Component {
 				</StatsPeriodNavigation>
 				<div className="store-stats__widgets">
 					{ sparkWidgets.map( ( widget, index ) => (
-						<div className="store-stats__widgets-column widgets" key={ index }>
+						<div
+							className="store-stats__widgets-column widgets stats__module-headerless--unified"
+							key={ index }
+						>
 							<Module
 								siteId={ siteId }
 								emptyMessage={ noDataMsg }
@@ -107,7 +110,10 @@ class StoreStats extends Component {
 							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
 						);
 						return (
-							<div className="store-stats__widgets-column" key={ widget.basePath }>
+							<div
+								className="store-stats__widgets-column stats__module--unified"
+								key={ widget.basePath }
+							>
 								{ siteId && (
 									<QuerySiteStats
 										statType={ widget.statType }

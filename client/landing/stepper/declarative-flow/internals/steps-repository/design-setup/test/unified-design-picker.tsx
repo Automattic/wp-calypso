@@ -39,6 +39,10 @@ jest.mock( '../../../../../hooks/use-site', () => ( {
 	useSite: () => MOCKED_SITE,
 } ) );
 
+jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
+	usePremiumGlobalStyles: () => ( { shouldLimitGlobalStyles: false } ),
+} ) );
+
 /**
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock
@@ -115,9 +119,9 @@ describe( 'UnifiedDesignPickerStep', () => {
 
 			await waitFor( () => {
 				expect( screen.getByText( 'Pick a design' ) ).toBeInTheDocument();
-				expect(
-					container.getElementsByClassName( 'unified-design-picker__standard-designs' )
-				).toHaveLength( 1 );
+				expect( container.getElementsByClassName( 'unified-design-picker__designs' ) ).toHaveLength(
+					1
+				);
 			} );
 		} );
 	} );

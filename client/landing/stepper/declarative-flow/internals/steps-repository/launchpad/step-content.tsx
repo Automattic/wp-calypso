@@ -1,8 +1,15 @@
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ResponseDomain } from 'calypso/lib/domains/types';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
+import EmailValidationBanner from './email-validation-banner';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
 
@@ -38,16 +45,35 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	const iFrameURL = wpcomDomains.length ? wpcomDomains[ 0 ]?.domain : nonWpcomDomains[ 0 ]?.domain;
 
+	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
+	const email = useSelector( getCurrentUserEmail );
+	const [ showEmailValidationBanner, setShowEmailValidationBanner ] = useState( false );
+
+	useEffect( () => {
+		// check if the current user's email hasn't been verified yet
+		if ( email && ! isEmailVerified ) {
+			setShowEmailValidationBanner( true );
+		}
+	}, [ email, isEmailVerified ] );
+
 	return (
-		<div className="launchpad__content">
-			<Sidebar
-				sidebarDomain={ sidebarDomain }
-				siteSlug={ siteSlug }
-				submit={ submit }
-				goNext={ goNext }
-				goToStep={ goToStep }
-			/>
-			<LaunchpadSitePreview siteSlug={ iFrameURL } />
+		<div className="launchpad__container">
+			{ showEmailValidationBanner && (
+				<EmailValidationBanner
+					email={ email }
+					closeBanner={ () => setShowEmailValidationBanner( false ) }
+				/>
+			) }
+			<div className="launchpad__content">
+				<Sidebar
+					sidebarDomain={ sidebarDomain }
+					siteSlug={ siteSlug }
+					submit={ submit }
+					goNext={ goNext }
+					goToStep={ goToStep }
+				/>
+				<LaunchpadSitePreview siteSlug={ iFrameURL } />
+			</div>
 		</div>
 	);
 };

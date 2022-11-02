@@ -9,13 +9,10 @@ const moreOptionsLabel = 'Options';
 const selectors = {
 	// Block Inserter
 	// Note the partial class match. This is to support site and post editor. We can't use aria-label because of i18n. :(
-	blockInserterButton: `${ panel } button[class*="header-toolbar__inserter-toggle"]`,
+	blockInserterButton: `${ panel } button[class*="inserter-toggle"]`,
 
 	// Draft
-	saveDraftButton: ( state: 'disabled' | 'enabled' ) => {
-		const buttonState = state === 'disabled' ? 'true' : 'false';
-		return `${ panel } button[aria-label="Save draft"][aria-disabled="${ buttonState }"]`;
-	},
+	saveDraftButton: `${ panel } button[aria-label="Save draft"]`,
 	switchToDraftButton: `${ panel } button.editor-post-switch-to-draft`,
 
 	// Preview
@@ -132,7 +129,7 @@ export class EditorToolbarComponent {
 	 * If the button cannot be clicked, the method short-circuits.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton( 'enabled' ) );
+		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton );
 
 		try {
 			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
@@ -140,10 +137,9 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		await saveButtonLocator.click();
+		const savedButtonLocator = this.editor.locator( `${ selectors.saveDraftButton }.is-saved` );
 
-		// Ensure the Save Draft button is disabled after successful save.
-		const savedButtonLocator = this.editor.locator( selectors.saveDraftButton( 'disabled' ) );
+		await saveButtonLocator.click();
 		await savedButtonLocator.waitFor();
 	}
 

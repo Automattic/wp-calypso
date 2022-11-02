@@ -131,11 +131,7 @@ class WordAdsChartTabs extends Component {
 					/>
 					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-					<Chart
-						barClick={ this.props.barClick }
-						data={ this.buildChartData() }
-						loading={ isDataLoading }
-					/>
+					<Chart barClick={ this.props.barClick } data={ this.buildChartData() } />
 					<StatTabs
 						data={ this.props.data }
 						tabs={ this.props.charts }
