@@ -664,7 +664,7 @@ export class SiteSettingsFormGeneral extends Component {
 							/>
 							<FormSettingExplanation>
 								{ translate(
-									"Allow a site visitor to cover the full cost of your site's WordPress plan."
+									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
 								) }
 							</FormSettingExplanation>
 						</CompactCard>
