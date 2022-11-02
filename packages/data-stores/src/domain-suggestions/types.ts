@@ -142,6 +142,10 @@ export interface DomainSuggestion {
 	 * Whether the domain is unavailable
 	 */
 	unavailable: boolean;
+
+	isRecommended: boolean;
+	isBestAlternative: boolean;
+	is_premium?: boolean;
 }
 export interface DomainCategory {
 	/**
