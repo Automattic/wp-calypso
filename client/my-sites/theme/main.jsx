@@ -145,13 +145,9 @@ class ThemeSheet extends Component {
 		return !! this.props.screenshots;
 	};
 
-	isRemoved = () => {
-		// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
-		return (
-			this.props?.taxonomies?.theme_status.filter( ( status ) => status.slug === 'removed' )
-				.length === 1
-		);
-	};
+	// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
+	isRemoved = () =>
+		!! this.props.taxonomies?.theme_status?.find( ( status ) => status.slug === 'removed' );
 
 	onButtonClick = () => {
 		const { defaultOption, id } = this.props;
