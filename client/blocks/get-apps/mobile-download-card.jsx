@@ -1,8 +1,9 @@
 import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
-import i18n, { localize, translate } from 'i18n-calypso';
+import i18n, { localize, translate, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import QRCode from 'qrcode.react';
 import { Component } from 'react';
@@ -64,6 +65,7 @@ class MobileDownloadCard extends Component {
 		} ),
 		hasLoadedStoredPhone: PropTypes.bool,
 		hasSendingError: PropTypes.bool,
+		isRtl: PropTypes.bool,
 	};
 
 	state = {
@@ -210,13 +212,14 @@ class MobileDownloadCard extends Component {
 
 	getJetpackBrandedPanel() {
 		const { isMobile } = userAgent;
-
 		return (
 			<>
 				<div className="get-apps__store-subpanel">
 					<div className="get-apps__card-text jetpack">
 						<AnimatedIcon
-							icon="/calypso/animations/app-promo/wp-to-jp.json"
+							icon={ `/calypso/animations/app-promo/wp-to-jp${
+								this.props.isRtl ? '-rtl' : ''
+							}.json` }
 							className="get-apps__mobile-icon"
 						/>
 						<h1 className="get-apps__card-title jetpack">
@@ -345,13 +348,17 @@ const sendMagicLink = ( email ) =>
 		sendEmailLogin( email, { showGlobalNotices: true, isMobileAppLogin: true } )
 	);
 
-export default connect(
-	( state ) => ( {
-		countriesList: getCountries( state, 'sms' ),
-		accountRecoveryPhone: getAccountRecoveryPhone( state ),
-		hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
-		userSettings: getUserSettings( state ),
-		hasUserSettings: hasUserSettings( state ),
-	} ),
-	{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
-)( localize( MobileDownloadCard ) );
+export default compose(
+	connect(
+		( state ) => ( {
+			countriesList: getCountries( state, 'sms' ),
+			accountRecoveryPhone: getAccountRecoveryPhone( state ),
+			hasLoadedAccountRecoveryPhone: isAccountRecoverySettingsReady( state ),
+			userSettings: getUserSettings( state ),
+			hasUserSettings: hasUserSettings( state ),
+		} ),
+		{ sendSMS, sendMagicLink, fetchUserSettings, accountRecoverySettingsFetch, recordTracksEvent }
+	),
+	withRtl,
+	localize
+)( MobileDownloadCard );
