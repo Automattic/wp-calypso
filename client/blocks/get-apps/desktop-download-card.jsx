@@ -65,15 +65,15 @@ class DesktopDownloadCard extends Component {
 		switch ( platform ) {
 			case 'MacIntel':
 			case MAC_LINK:
-				return <SVGIcon name="apple-logo" size="24" icon={ Apple } />;
+				return <SVGIcon aria-hidden="true" name="apple-logo" size="24" icon={ Apple } />;
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
 			case LINUX_TAR_LINK:
 			case LINUX_DEB_LINK:
-				return <SVGIcon name="linux-logo" size="24" icon={ Linux } />;
+				return <SVGIcon aria-hidden="true" name="linux-logo" size="24" icon={ Linux } />;
 			case WINDOWS_LINK:
 			default:
-				return <SVGIcon name="windows-logo" size="24" icon={ Windows } />;
+				return <SVGIcon aria-hidden="true" name="windows-logo" size="24" icon={ Windows } />;
 		}
 	}
 
