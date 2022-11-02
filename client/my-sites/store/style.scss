@@ -1,3 +1,5 @@
+@import "client/my-sites/stats/modernized-tooltip-styles.scss";
+
 .woocommerce {
 	@import "app/dashboard/style";
 	@import "app/store-stats/store-stats-chart/style";
@@ -12,8 +14,6 @@
 	@import "components/delta/style";
 	@import "components/table/style";
 	@import "components/woocommerce-colophon/style";
-
-	@import "client/my-sites/stats/modernized-tooltip-styles.scss";
 
 	.main {
 		padding-top: 72px;
