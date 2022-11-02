@@ -44,14 +44,17 @@ class StoreStatsOrdersChart extends Component {
 					if ( tab.isHidden ) {
 						return null;
 					}
+
 					const itemChartData = chartData[ selectedIndex ];
 					const delta = getDelta( deltas, selectedDate, tab.attr );
 					const deltaValue =
 						delta.direction === 'is-undefined-increase'
 							? '-'
 							: Math.abs( Math.round( delta.percentage_change * 100 ) );
+
 					const periodFormat = getPeriodFormat( unit, delta.reference_period );
 					const value = itemChartData.data[ tab.attr ];
+
 					return (
 						<Tab
 							key={ tab.attr }
@@ -71,6 +74,7 @@ class StoreStatsOrdersChart extends Component {
 								suffix={ `since ${ moment( delta.reference_period, periodFormat ).format(
 									UNITS[ unit ].shortFormat
 								) }` }
+								iconSize={ 24 }
 							/>
 						</Tab>
 					);

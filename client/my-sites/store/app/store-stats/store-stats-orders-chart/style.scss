@@ -130,6 +130,10 @@
 						&:hover {
 							color: var(--studio-black);
 
+							.label {
+								color: var(--studio-black);
+							}
+
 							.value {
 								color: var(--studio-black);
 							}
@@ -146,6 +150,14 @@
 						color: var(--studio-black);
 						border-color: var(--color-primary);
 						background-color: var(--color-surface);
+
+						.label {
+							color: var(--studio-black);
+						}
+
+						.value {
+							color: var(--studio-black);
+						}
 					}
 				}
 			}
