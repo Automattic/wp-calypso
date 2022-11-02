@@ -1,10 +1,20 @@
+import config from '@automattic/calypso-config';
 import { Card, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
+import { localize, translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import Apple from 'calypso/assets/images/icons/apple-logo.svg';
+import DesktopAppLogo from 'calypso/assets/images/icons/desktop-app-logo.svg';
+import Linux from 'calypso/assets/images/icons/linux-logo.svg';
+import Windows from 'calypso/assets/images/icons/windows-logo.svg';
+import SVGIcon from 'calypso/components/svg-icon';
+import userAgent from 'calypso/lib/user-agent';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+
+const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';
@@ -29,7 +39,6 @@ class DesktopDownloadCard extends Component {
 	};
 
 	getDescription( platform ) {
-		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
 			case 'Linux i686':
@@ -41,7 +50,6 @@ class DesktopDownloadCard extends Component {
 	}
 
 	getRequirementsText( platform ) {
-		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
 				return translate( 'Requires Mac OS X 10.11+. ' );
@@ -53,6 +61,22 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
+	getPlatformImage( platform ) {
+		switch ( platform ) {
+			case 'MacIntel':
+			case MAC_LINK:
+				return <SVGIcon name="apple-logo" size="24" icon={ Apple } />;
+			case 'Linux i686':
+			case 'Linux i686 on x86_64':
+			case LINUX_TAR_LINK:
+			case LINUX_DEB_LINK:
+				return <SVGIcon name="linux-logo" size="24" icon={ Linux } />;
+			case WINDOWS_LINK:
+			default:
+				return <SVGIcon name="windows-logo" size="24" icon={ Windows } />;
+		}
+	}
+
 	getTranslateComponents( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
@@ -60,6 +84,11 @@ class DesktopDownloadCard extends Component {
 					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					...( displayJetpackAppBranding && {
+						firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+					} ),
 				};
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
@@ -67,18 +96,27 @@ class DesktopDownloadCard extends Component {
 					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+					...( displayJetpackAppBranding && {
+						firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+						secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+						thirdAvailableIcon: this.getPlatformImage( MAC_LINK ),
+					} ),
 				};
 			default:
 				return {
 					firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
 					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
 					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					...( displayJetpackAppBranding && {
+						firstAvailableIcon: this.getPlatformImage( MAC_LINK ),
+						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+					} ),
 				};
 		}
 	}
 
 	getAlsoAvailableText( platform ) {
-		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
 				return translate(
@@ -103,6 +141,33 @@ class DesktopDownloadCard extends Component {
 						'{{firstAvailableLink}}MacOS{{/firstAvailableLink}}, ' +
 						'{{secondAvailableLink}}Linux (.tar.gz){{/secondAvailableLink}}, ' +
 						'{{thirdAvailableLink}}Linux (.deb){{/thirdAvailableLink}}.',
+					{ components: this.getTranslateComponents( platform ) }
+				);
+		}
+	}
+
+	getAlsoAvailableTextJetpack( platform ) {
+		switch ( platform ) {
+			case 'MacIntel':
+				return translate(
+					'{{firstAvailableLink}}{{firstAvailableIcon /}}Windows{{/firstAvailableLink}}' +
+						'{{secondAvailableLink}} {{secondAvailableIcon /}} Linux (.tar.gz){{/secondAvailableLink}}' +
+						'{{thirdAvailableLink}} {{thirdAvailableIcon /}} Linux (.deb){{/thirdAvailableLink}}',
+					{ components: this.getTranslateComponents( platform ) }
+				);
+			case 'Linux i686':
+			case 'Linux i686 on x86_64':
+				return translate(
+					'{{firstAvailableLink}}{{firstAvailableIcon /}}Linux (.deb){{/firstAvailableLink}}' +
+						'{{secondAvailableLink}}{{secondAvailableIcon /}}Windows{{/secondAvailableLink}}' +
+						'{{thirdAvailableLink}}{{thirdAvailableIcon /}}Mac{{/thirdAvailableLink}}',
+					{ components: this.getTranslateComponents( platform ) }
+				);
+			default:
+				return translate(
+					'{{firstAvailableLink}}{{firstAvailableIcon /}}MacOS{{/firstAvailableLink}}' +
+						'{{secondAvailableLink}}{{secondAvailableIcon /}}Linux (.tar.gz){{/secondAvailableLink}}' +
+						'{{thirdAvailableLink}}{{thirdAvailableIcon /}}Linux (.deb){{/thirdAvailableLink}}',
 					{ components: this.getTranslateComponents( platform ) }
 				);
 		}
@@ -135,8 +200,19 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
+	getButtonText( platform ) {
+		switch ( platform ) {
+			case 'MacIntel':
+				return translate( 'Download for Mac (Intel)' );
+			case 'Linux i686':
+			case 'Linux i686 on x86_64':
+				return translate( 'Download for Linux' );
+			default:
+				return translate( 'Download for Windows' );
+		}
+	}
+
 	getCardTitle( platform ) {
-		const { translate } = this.props;
 		switch ( platform ) {
 			case 'MacIntel':
 				return translate( 'Desktop App for Mac' );
@@ -153,22 +229,120 @@ class DesktopDownloadCard extends Component {
 
 		switch ( platformLink ) {
 			case MAC_LINK:
-				return <a href={ localizeUrl( platformLink ) } onClick={ trackMacClick } />;
+				return (
+					<a
+						href={ localizeUrl( platformLink ) }
+						onClick={ trackMacClick }
+						className={ classnames( {
+							'get-apps__desktop-link': displayJetpackAppBranding,
+						} ) }
+					/>
+				);
 			case LINUX_TAR_LINK:
-				return <a href={ localizeUrl( platformLink ) } onClick={ trackLinuxTarClick } />;
+				return (
+					<a
+						href={ localizeUrl( platformLink ) }
+						onClick={ trackLinuxTarClick }
+						className={ classnames( {
+							'get-apps__desktop-link': displayJetpackAppBranding,
+						} ) }
+					/>
+				);
 			case LINUX_DEB_LINK:
-				return <a href={ localizeUrl( platformLink ) } onClick={ trackLinuxDebClick } />;
+				return (
+					<a
+						href={ localizeUrl( platformLink ) }
+						onClick={ trackLinuxDebClick }
+						className={ classnames( {
+							'get-apps__desktop-link': displayJetpackAppBranding,
+						} ) }
+					/>
+				);
 			default:
-				return <a href={ localizeUrl( platformLink ) } onClick={ trackWindowsClick } />;
+				return (
+					<a
+						href={ localizeUrl( platformLink ) }
+						onClick={ trackWindowsClick }
+						className={ classnames( {
+							'get-apps__desktop-link': displayJetpackAppBranding,
+						} ) }
+					/>
+				);
 		}
 	}
 
-	render() {
-		const { translate } = this.props;
+	getMobileDeviceOptions() {
+		return translate( 'Visit {{a}}desktop.wordpress.com{{/a}} on your desktop.', {
+			components: {
+				a: <a href="https://desktop.wordpress.com" className="get-apps__desktop-link" />,
+			},
+		} );
+	}
+
+	getDesktopDeviceOptions() {
 		const platform =
 			navigator.platform && navigator.platform.length > 0 ? navigator.platform : false;
+
 		return (
-			<Card className="get-apps__desktop">
+			<>
+				<Button
+					className="get-apps__desktop-button jetpack"
+					href={ localizeUrl( this.getButtonLink( platform ) ) }
+					onClick={ this.getButtonClickHandler( platform ) }
+				>
+					{ this.getButtonText( platform ) }
+				</Button>
+				<div className="get-apps__requirements-wrapper">
+					{ this.getPlatformImage( platform ) }
+					<p className="get-apps__requirements-paragraph">
+						{ this.getRequirementsText( platform ) }
+					</p>
+				</div>
+				<div className="get-apps__also-available jetpack">
+					<p>{ translate( 'Also available for:' ) }</p>
+					<div className="get-apps__also-available-link-group">
+						{ this.getAlsoAvailableTextJetpack( platform ) }
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	getJetpackBrandedCard() {
+		const { isMobile } = userAgent;
+
+		return (
+			<>
+				<div className="get-apps__card-text jetpack">
+					<SVGIcon
+						name="desktop-app-logo"
+						size="50"
+						viewBox="0 0 50 50"
+						icon={ DesktopAppLogo }
+						classes="get-apps__desktop-icon"
+					/>
+					<h1 className="get-apps__card-title jetpack">
+						{ translate( 'WordPress.com desktop app' ) }
+					</h1>
+					<p>
+						{ translate(
+							'The full WordPress.com experience packaged as an app for your laptop or desktop.'
+						) }
+					</p>
+					<div className="get-apps__desktop-download-subpanel">
+						{ isMobile ? this.getMobileDeviceOptions() : this.getDesktopDeviceOptions() }
+					</div>
+				</div>
+			</>
+		);
+	}
+
+	getWordPressBrandedCard() {
+		const platform =
+			navigator.platform && navigator.platform.length > 0 ? navigator.platform : false;
+
+		return (
+			<>
 				<div className="get-apps__card-text">
 					<h3 className="get-apps__card-title">{ this.getCardTitle( platform ) }</h3>
 					<p className="get-apps__description">{ this.getDescription( platform ) }</p>
@@ -184,6 +358,20 @@ class DesktopDownloadCard extends Component {
 				>
 					{ translate( 'Download' ) }
 				</Button>
+			</>
+		);
+	}
+
+	render() {
+		return (
+			<Card
+				className={ classnames( 'get-apps__desktop', {
+					jetpack: displayJetpackAppBranding,
+				} ) }
+			>
+				{ displayJetpackAppBranding
+					? this.getJetpackBrandedCard()
+					: this.getWordPressBrandedCard() }
 			</Card>
 		);
 	}

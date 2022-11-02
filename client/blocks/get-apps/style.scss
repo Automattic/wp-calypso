@@ -85,15 +85,60 @@ body.get-apps__body {
 			z-index: -1;
 		}
 
+		.get-apps__card-title {
+			margin-bottom: 20px;
+			font-size: $font-title-large;
+		}
+	}
+
 	@include breakpoint-deprecated(">480px") {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+
+		&.jetpack {
+			.get-apps__card-title {
+				margin-bottom: 10px;
+				font-size: $font-headline-small;
+			}
+		}
+
 	}
 }
 
 .get-apps__mobile > div {
 	width: 100%;
+}
+
+.get-apps__desktop-icon {
+	margin-bottom: 14px;
+
+	@include breakpoint-deprecated(">480px") {
+		height: 60px;
+		width: 60px;
+		margin-top: 56px;
+		margin-bottom: 30px;
+	}
+
+}
+
+.get-apps__desktop-link {
+	color: var(--studio-blue-50);
+	font-weight: 700;
+	cursor: pointer;
+
+	&:visited {
+		color: var(--studio-blue-50);
+	}
+
+	&:hover,
+	&:active,
+	&.is-active,
+	&:focus {
+		color: var(--studio-blue-80);
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
 }
 
 .get-apps__mobile-icon {
@@ -254,10 +299,68 @@ body.get-apps__body {
 	color: var(--color-text-subtle);
 	font-size: $font-body-small;
 	font-style: italic;
+
+	&.jetpack {
+		color: var(--studio-blue-80);
+		margin-top: 50px;
+		margin-bottom: 80px;
+		font-style: inherit;
+		font-size: $font-body-large;
+
+		p {
+			margin-bottom: 15px;
+		}
+
+		a {
+			padding-right: 35px;
+			color: var(--studio-blue-50);
+			display: flex;
+			align-items: center;
+			font-weight: 400;
+		}
+
+		.svg-icon {
+			padding-right: 5px;
+		}
+
+		.get-apps__also-available-link-group {
+			display: flex;
+		}
+	}
 }
 
-.get-apps__desktop-button {
+.get-apps__desktop-button.button {
 	@include breakpoint-deprecated(">480px") {
 		margin-left: 24px;
 	}
+
+	&.jetpack {
+		margin: 46px 0 15px;
+		font-weight: 500;
+		padding: 10px 24px;
+		width: fit-content;
+
+		&:visited {
+			color: var(--studio-blue-80);
+		}
+	}
+}
+
+.get-apps__requirements-wrapper {
+	display: flex;
+	align-items: center;
+
+	.svg-icon {
+		filter: brightness(0.5);
+	}
+
+	.get-apps__requirements-paragraph {
+		margin-bottom: 0;
+		padding-left: 5px;
+		color: var(--studio-blue-80);
+	}
+}
+
+.get-apps__desktop-download-subpanel {
+	color: var(--studio-gray-70);
 }
