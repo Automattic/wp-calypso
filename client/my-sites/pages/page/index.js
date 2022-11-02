@@ -494,7 +494,6 @@ class Page extends Component {
 						{ viewItem }
 						{ promoteItem }
 						{ statsItem }
-						{ qrCodeItem }
 						{ copyPageItem }
 						{ copyLinkItem }
 						{ restoreItem }
@@ -502,6 +501,7 @@ class Page extends Component {
 						{ postsPageItem }
 						{ exportItem }
 						{ sendToTrashItem }
+						{ qrCodeItem }
 						{ moreInfoItem }
 					</EllipsisMenu>
 				</PageEllipsisMenuWrapper>
