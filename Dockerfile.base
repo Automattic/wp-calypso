@@ -69,6 +69,7 @@ ENV DISPLAY=:99
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
+		awscli \
 		fonts-liberation \
 		# Install non-Latin fonts
 		fonts-noto-cjk \
@@ -88,6 +89,7 @@ RUN apt-get update \
 		libx11-xcb1 \
 		libxss1 \
 		libxtst6 \
+		openjdk-17-jre \
 		openssl \
 		xauth \
 		xvfb \
