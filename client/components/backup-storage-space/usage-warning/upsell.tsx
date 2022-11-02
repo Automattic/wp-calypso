@@ -34,10 +34,11 @@ const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 		'is-placeholder': isPriceFetching,
 	} );
 
+	const billingTerm = upsellSlug?.displayTerm || upsellSlug?.term || 'TERM_MONTHLY';
 	return (
 		<span className={ priceClass }>
 			<PlanPrice displayFlatPrice rawPrice={ originalPrice } currencyCode={ currencyCode } />
-			<TimeFrame billingTerm={ upsellSlug?.displayTerm || upsellSlug?.term || 'TERM_ANNUALLY' } />
+			<TimeFrame billingTerm={ billingTerm } />
 		</span>
 	);
 };
