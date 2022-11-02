@@ -171,6 +171,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
 		"stats/new-main-chart": true,
+		"stats/new-annual-highlights": true,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
