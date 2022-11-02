@@ -165,7 +165,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [ { activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
+	] )(
 		'renders the variant picker without a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
@@ -187,7 +190,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [ { activePlan: 'two-year', cartPlan: 'yearly' } ] )(
+	it.each( [
+		{ activePlan: 'two-year', cartPlan: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'two-year' },
+	] )(
 		'does not render the variant picker when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
