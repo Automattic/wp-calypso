@@ -80,7 +80,7 @@ const StatsListActions = ( { data, moduleName, translate } ) => {
 					postId={ data.id }
 					key={ 'promote-post-' + data.id }
 					moduleName={ moduleNameTitle }
-					onToggleVisibility={ () => {} } // obsolete function that was blocing a general onClick handler from publishing unrelated GA events
+					onToggleVisibility={ () => {} } // obsolete function that was blocking a general onClick handler from publishing unrelated GA events
 				/>
 			);
 		}

@@ -28,9 +28,7 @@ const StatsListPosts = ( {
 
 	const localClickHandler = ( event, listItemData ) => {
 		debug( 'clickHandler' );
-
 		page( listItemData?.page );
-
 		gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } Summary Link in List` );
 	};
 
