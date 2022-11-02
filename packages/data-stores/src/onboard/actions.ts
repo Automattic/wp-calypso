@@ -6,7 +6,7 @@ import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types'
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
-import type { DomainSuggestion } from './types';
+import type { DomainSuggestion } from '../domain-suggestions';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

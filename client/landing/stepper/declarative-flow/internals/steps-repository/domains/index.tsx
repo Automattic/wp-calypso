@@ -72,7 +72,6 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 	const { submit } = navigation;
 	const path = '/start/link-in-bio/domains?new=test';
-	const lastQuery = domainForm?.lastQuery;
 	let showExampleSuggestions: boolean | undefined = undefined;
 	let includeWordPressDotCom: boolean | undefined = undefined;
 	let showSkipButton: boolean | undefined = undefined;
@@ -142,7 +141,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		if ( suggestion ) {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug,
+				productSlug: suggestion.product_slug || '',
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
@@ -222,7 +221,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			return true;
 		}
 
-		return typeof lastQuery === 'string' && lastQuery.includes( '.blog' );
+		return typeof domainForm?.lastQuery === 'string' && domainForm?.lastQuery.includes( '.blog' );
 	}
 
 	const getUseYourDomainUrl = () => {
@@ -276,7 +275,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 					<UseMyDomain
 						analyticsSection={ getAnalyticsSection() }
 						basePath={ path }
-						initialQuery={ lastQuery }
+						initialQuery={ domainForm?.lastQuery }
 						initialMode={ inputMode.domainInput }
 						onNextStep={ null }
 						isSignupStep
