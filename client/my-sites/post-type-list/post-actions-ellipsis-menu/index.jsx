@@ -12,6 +12,7 @@ import PostActionsEllipsisMenuDuplicate from './duplicate';
 import PostActionsEllipsisMenuEdit from './edit';
 import PostActionsEllipsisMenuPromote from './promote';
 import PostActionsEllipsisMenuPublish from './publish';
+import PostActionsEllipsisMenuQRCode from './qrcode';
 import PostActionsEllipsisMenuRestore from './restore';
 import PostActionsEllipsisMenuShare from './share';
 import PostActionsEllipsisMenuStats from './stats';
@@ -38,7 +39,8 @@ export default function PostActionsEllipsisMenu( { globalId, includeDefaultActio
 			<PostActionsEllipsisMenuRestore key="restore" />,
 			<PostActionsEllipsisMenuDuplicate key="duplicate" />,
 			<PostActionsEllipsisMenuCopyLink key="copyLink" />,
-			<PostActionsEllipsisMenuTrash key="trash" />
+			<PostActionsEllipsisMenuTrash key="trash" />,
+			<PostActionsEllipsisMenuQRCode key="bug" />
 		);
 	}
 
