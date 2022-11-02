@@ -1,4 +1,4 @@
-import { StepContainer } from 'calypso/../packages/onboarding/src';
+import { StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
 import type { Step } from '../../types';
