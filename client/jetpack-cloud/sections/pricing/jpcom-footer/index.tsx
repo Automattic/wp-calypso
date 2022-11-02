@@ -124,7 +124,10 @@ const JetpackComFooter: React.FC = () => {
 						trackId: 'privacy_policy',
 					},
 					{
-						label: translate( 'GDPR ' ),
+						label: translate( 'GDPR', {
+							comment:
+								'GDPR refers to the General Data Protection Regulation in effect in the European Union',
+						} ),
 						href: addQueryArgs( utmParams, 'https://jetpack.com/gdpr/' ),
 						trackId: 'gdpr',
 					},
