@@ -117,6 +117,10 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 		return $theme_json;
 	}
 
+	/*
+	 * Because Gutenberg overrides Core, the order in which we check the existence of
+	 * the classes below is important in order to give Gutenberg priority if available.
+	 */
 	if ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
 		return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
 	} elseif ( class_exists( 'WP_Theme_JSON_Data' ) ) {
@@ -184,6 +188,11 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  */
 function wpcom_global_styles_in_use() {
 	$current_theme = wp_get_theme();
+
+	/*
+	 * Because Gutenberg overrides Core, the order in which we check the existence of
+	 * the classes below is important in order to give Gutenberg priority if available.
+	 */
 	if ( class_exists( 'WP_Theme_JSON_Resolver_Gutenberg' ) ) {
 		$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( $current_theme );
 	} elseif ( class_exists( 'WP_Theme_JSON_Resolver' ) ) {
