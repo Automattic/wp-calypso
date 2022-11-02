@@ -117,10 +117,10 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 		return $theme_json;
 	}
 
-	if ( class_exists( 'WP_Theme_JSON_Data' ) ) {
-		return new WP_Theme_JSON_Data( array(), 'custom' );
-	} elseif ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
+	if ( class_exists( 'WP_Theme_JSON_Data_Gutenberg' ) ) {
 		return new WP_Theme_JSON_Data_Gutenberg( array(), 'custom' );
+	} elseif ( class_exists( 'WP_Theme_JSON_Data' ) ) {
+		return new WP_Theme_JSON_Data( array(), 'custom' );
 	}
 
 	/*
@@ -130,7 +130,6 @@ function wpcom_block_global_styles_frontend( $theme_json ) {
 	 */
 	return $theme_json;
 }
-add_filter( 'theme_json_user', 'wpcom_block_global_styles_frontend' );
 add_filter( 'wp_theme_json_data_user', 'wpcom_block_global_styles_frontend' );
 
 /**
@@ -184,7 +183,14 @@ add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
  * @return bool Returns true if custom styles are in use.
  */
 function wpcom_global_styles_in_use() {
-	$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( wp_get_theme() );
+	$current_theme = wp_get_theme();
+	if ( class_exists( 'WP_Theme_JSON_Resolver_Gutenberg' ) ) {
+		$user_cpt = WP_Theme_JSON_Resolver_Gutenberg::get_user_data_from_wp_global_styles( $current_theme );
+	} elseif ( class_exists( 'WP_Theme_JSON_Resolver' ) ) {
+		$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( $current_theme );
+	} else {
+		return false;
+	}
 
 	if ( ! isset( $user_cpt['post_content'] ) ) {
 		do_action( 'global_styles_log', 'global_styles_not_in_use' );
@@ -286,3 +292,23 @@ function wpcom_display_global_styles_banner_extra_tooltip() {
 	<?php
 }
 add_action( 'launch_bar_extra_tooltip_toggle_global_styles', 'wpcom_display_global_styles_banner_extra_tooltip' );
+
+/**
+ * Invalidates the cached Global Styles after changing them or when previewing them.
+ */
+function wpcom_invalidate_global_styles_cache() {
+	$transient_name = 'gutenberg_global_styles_' . get_stylesheet();
+
+	if ( wpcom_should_limit_global_styles() && wpcom_is_previewing_global_styles() ) {
+		add_filter( 'pre_transient_' . $transient_name, '__return_null' );
+		add_filter( 'pre_set_transient_' . $transient_name, '__return_false' );
+	}
+
+	add_action(
+		'save_post_wp_global_styles',
+		function () use ( $transient_name ) {
+			delete_transient( $transient_name );
+		}
+	);
+}
+add_action( 'init', 'wpcom_invalidate_global_styles_cache' );
