@@ -13,7 +13,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import MarketingMessage from 'calypso/components/marketing-message';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -221,7 +220,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	return (
 		<div className="stepper-plans">
 			<QueryPlans />
-			<MarketingMessage path="signup/plans" />
 			<div className={ classes }>{ plansFeaturesSelection() }</div>
 		</div>
 	);
