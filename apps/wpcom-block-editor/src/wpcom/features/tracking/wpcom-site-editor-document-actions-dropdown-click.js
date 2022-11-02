@@ -41,14 +41,16 @@ export const wpcomSiteEditorDocumentActionsTemplateAreaClick = () => ( {
 			previousElementSiblingHTML?.includes( headerSVGSnippet ) ||
 			targetHTML?.includes( headerSVGSnippet )
 		) {
-			tracksRecordEvent( 'wpcom_site_editor_document_actions_header_click' );
-		}
-
-		if (
+			tracksRecordEvent( 'wpcom_site_editor_document_actions_template_area_click', {
+				template_area: 'Header',
+			} );
+		} else if (
 			previousElementSiblingHTML?.includes( footerSVGSnippet ) ||
 			targetHTML?.includes( footerSVGSnippet )
 		) {
-			tracksRecordEvent( 'wpcom_site_editor_document_actions_footer_click' );
+			tracksRecordEvent( 'wpcom_site_editor_document_actions_template_area_click', {
+				template_area: 'Footer',
+			} );
 		}
 	},
 } );
