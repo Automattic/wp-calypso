@@ -128,7 +128,6 @@ export interface SiteDetails {
 	visible?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
-	is_at?: boolean;
 }
 
 export interface SiteDetailsCapabilities {
