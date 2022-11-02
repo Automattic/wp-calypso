@@ -184,13 +184,14 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 					notices: {
 						items: {
 							'Sympathy-Dev-Warning': {
+								noticeId: 'Sympathy-Dev-Warning',
 								showDismiss: true,
 								displayOnNextPage: true,
 								status: 'is-warning',
-								// Read more about sympathy :  https://github.com/Automattic/wp-calypso/pull/14121
-								// tldr: We try to clear state randomly to match closely the UX of our user i.e. Sympathy.
-								// In other words, you cannot rely on user's persisted state to be reliable.
-								text: 'DEV NOTICE: Persisted Redux State (Randomly) cleared',
+								// Read more about sympathy :  https://github.com/Automattic/wp-calypso/pull/14121, p4TIVU-6Ed-p2
+								// tldr: We try to clear state randomly to match closely to the UX of our user i.e. Sympathy.
+								// In other words, you cannot rely on user's persisted state to be reliable so we randomly clear it to simulate that experience.
+								text: 'DEV NOTICE: Persisted redux state was randomly cleared',
 							},
 						},
 
