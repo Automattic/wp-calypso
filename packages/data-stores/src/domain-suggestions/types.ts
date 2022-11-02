@@ -143,8 +143,8 @@ export interface DomainSuggestion {
 	 */
 	unavailable: boolean;
 
-	isRecommended: boolean;
-	isBestAlternative: boolean;
+	isRecommended?: boolean;
+	isBestAlternative?: boolean;
 	is_premium?: boolean;
 }
 export interface DomainCategory {
