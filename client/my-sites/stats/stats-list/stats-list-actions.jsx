@@ -7,21 +7,14 @@ import Page from './action-page';
 import Promote from './action-promote';
 import Spam from './action-spam';
 
-const StatsListActions = ( { data, moduleName } ) => {
+const StatsListActions = ( { data, moduleName, translate } ) => {
 	const [ isDisabled, setIsDisabled ] = useState( false );
-	// eslint-disable-next-line no-unused-vars
-	const [ promoteWidgetOpen, setPromoteWidgetOpen ] = useState( false );
 	let actionList;
 	const moduleNameTitle = titlecase( moduleName );
 	const actionMenu = data.actionMenu;
 	const actionClassSet = classNames( 'stats-list-actions', 'module-content-list-item-actions', {
 		collapsed: actionMenu && ! isDisabled,
 	} );
-
-	// TODO: check what is this used for...
-	const onTogglePromoteWidget = ( visible ) => {
-		setPromoteWidgetOpen( visible );
-	};
 
 	if ( data.actions ) {
 		const actionItems = [];
@@ -38,13 +31,19 @@ const StatsListActions = ( { data, moduleName } ) => {
 								moduleName={ moduleNameTitle }
 								isFollowing={ !! action.data.is_following }
 								siteId={ action.data.blog_id }
+								translate={ translate }
 							/>
 						);
 					}
 					break;
 				case 'page':
 					actionItem = (
-						<Page page={ action.page } key={ action.type } moduleName={ moduleNameTitle } />
+						<Page
+							page={ action.page }
+							key={ action.type }
+							moduleName={ moduleNameTitle }
+							translate={ translate }
+						/>
 					);
 					break;
 				case 'spam':
@@ -54,12 +53,18 @@ const StatsListActions = ( { data, moduleName } ) => {
 							key={ action.type }
 							afterChange={ setIsDisabled }
 							moduleName={ moduleNameTitle }
+							translate={ translate }
 						/>
 					);
 					break;
 				case 'link':
 					actionItem = (
-						<OpenLink href={ action.data } key={ action.type } moduleName={ moduleNameTitle } />
+						<OpenLink
+							href={ action.data }
+							key={ action.type }
+							moduleName={ moduleNameTitle }
+							translate={ translate }
+						/>
 					);
 					break;
 			}
@@ -75,18 +80,23 @@ const StatsListActions = ( { data, moduleName } ) => {
 					postId={ data.id }
 					key={ 'promote-post-' + data.id }
 					moduleName={ moduleNameTitle }
-					onToggleVisibility={ onTogglePromoteWidget }
+					onToggleVisibility={ () => {} } // obsolete function that was blocing a general onClick handler from publishing unrelated GA events
 				/>
 			);
 		}
 
 		if ( actionItems.length > 0 ) {
-			actionList = <ul className={ actionClassSet }>{ actionItems }</ul>;
+			actionList = (
+				// prevent actions from triggering row click handler and redirect
+				// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+				<ul className={ actionClassSet } onClick={ ( e ) => e.stopPropagation() }>
+					{ actionItems }
+				</ul>
+			);
 		}
 	}
 
 	return actionList;
 };
 
-// TODO: add localize
 export default StatsListActions;

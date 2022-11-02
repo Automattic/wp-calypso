@@ -36,7 +36,6 @@ const HorizontalBarListItem = ( {
 	const labelText = decodeEntities( label );
 
 	// TODO: investivate `label` and `shortLabel`
-	// TODO: investigate <Promote> component
 	return (
 		<li
 			className={ classnames(

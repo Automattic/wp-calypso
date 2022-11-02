@@ -177,7 +177,7 @@ class StatsModule extends Component {
 						}
 						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
-						isLoading={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 						translate={ translate }
 					>
 						{ this.props.children }
@@ -204,38 +204,40 @@ class StatsModule extends Component {
 							) }
 						</SectionHeader>
 					) }
-					<Card compact className={ cardClasses }>
-						{ statType === 'statsFileDownloads' && (
-							<StatsModuleAvailabilityWarning
-								statType={ statType }
-								startOfPeriod={ period && period.startOf }
-							/>
-						) }
-						{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-						{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-						{ hasError && <ErrorPanel /> }
-						{ this.props.children }
-						<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-						<StatsModulePlaceholder isLoading={ isLoading } />
-						<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
-						{ this.props.showSummaryLink && displaySummaryLink && (
-							<StatsModuleExpand href={ summaryLink } />
-						) }
-						{ summary && 'countryviews' === path && (
-							<UpsellNudge
-								title={ translate( 'Add Google Analytics' ) }
-								description={ translate(
-									'Upgrade to a Premium Plan for Google Analytics integration.'
-								) }
-								event="googleAnalytics-stats-countries"
-								feature={ FEATURE_GOOGLE_ANALYTICS }
-								plan={ PLAN_PREMIUM }
-								tracksImpressionName="calypso_upgrade_nudge_impression"
-								tracksClickName="calypso_upgrade_nudge_cta_click"
-								showIcon={ true }
-							/>
-						) }
-					</Card>
+					{ ! shouldHideOldModule && (
+						<Card compact className={ cardClasses }>
+							{ statType === 'statsFileDownloads' && (
+								<StatsModuleAvailabilityWarning
+									statType={ statType }
+									startOfPeriod={ period && period.startOf }
+								/>
+							) }
+							{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
+							{ this.props.children }
+							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+							<StatsModulePlaceholder isLoading={ isLoading } />
+							<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							{ this.props.showSummaryLink && displaySummaryLink && (
+								<StatsModuleExpand href={ summaryLink } />
+							) }
+							{ summary && 'countryviews' === path && (
+								<UpsellNudge
+									title={ translate( 'Add Google Analytics' ) }
+									description={ translate(
+										'Upgrade to a Premium Plan for Google Analytics integration.'
+									) }
+									event="googleAnalytics-stats-countries"
+									feature={ FEATURE_GOOGLE_ANALYTICS }
+									plan={ PLAN_PREMIUM }
+									tracksImpressionName="calypso_upgrade_nudge_impression"
+									tracksClickName="calypso_upgrade_nudge_cta_click"
+									showIcon={ true }
+								/>
+							) }
+						</Card>
+					) }
 					{ isAllTime && (
 						<div className="stats-module__footer-actions">
 							<DownloadCsv
