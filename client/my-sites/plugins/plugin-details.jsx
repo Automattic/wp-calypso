@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@automattic/viewport-react';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
@@ -24,7 +24,11 @@ import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sideba
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
-import { siteObjectsToSiteIds, useLocalizedPlugins } from 'calypso/my-sites/plugins/utils';
+import {
+	siteObjectsToSiteIds,
+	useLocalizedPlugins,
+	useServerEffect,
+} from 'calypso/my-sites/plugins/utils';
 import {
 	composeAnalytics,
 	recordGoogleEvent,
@@ -66,8 +70,6 @@ import NoPermissionsError from './no-permissions-error';
 function PluginDetails( props ) {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
-
-	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	// Site information.
 	const selectedSite = useSelector( getSelectedSite );
@@ -207,35 +209,46 @@ function PluginDetails( props ) {
 		requestingPluginsForSites,
 	] );
 
-	useEffect( () => {
-		if ( breadcrumbs?.length === 0 ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: translate( 'Plugins' ),
-					href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
-					id: 'plugins',
-					helpBubble: translate(
-						'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
-							},
-						}
-					),
-				} )
-			);
-		}
+	const setBreadcrumbs = useCallback(
+		( isBreadcrumbsPopulated ) => {
+			if ( ! isBreadcrumbsPopulated ) {
+				dispatch(
+					appendBreadcrumb( {
+						label: translate( 'Plugins' ),
+						href: localizePath( `/plugins/${ selectedSite?.slug || '' }` ),
+						id: 'plugins',
+						helpBubble: translate(
+							'Add new functionality and integrations to your site with plugins. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: <InlineSupportLink supportContext="plugins" showIcon={ false } />,
+								},
+							}
+						),
+					} )
+				);
+			}
 
-		if ( fullPlugin.name && props.pluginSlug ) {
-			dispatch(
-				appendBreadcrumb( {
-					label: fullPlugin.name,
-					href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
-					id: `plugin-${ props.pluginSlug }`,
-				} )
-			);
-		}
-	}, [ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ] );
+			if ( fullPlugin.name && props.pluginSlug ) {
+				dispatch(
+					appendBreadcrumb( {
+						label: fullPlugin.name,
+						href: localizePath( `/plugins/${ props.pluginSlug }/${ selectedSite?.slug || '' }` ),
+						id: `plugin-${ props.pluginSlug }`,
+					} )
+				);
+			}
+		},
+		[ fullPlugin.name, props.pluginSlug, selectedSite, dispatch, translate, localizePath ]
+	);
+	useServerEffect( setBreadcrumbs );
+
+	// We need to get the breadcrumbs here, after initial append dispatches on server.
+	const breadcrumbs = useSelector( getBreadcrumbs );
+
+	useEffect( () => {
+		setBreadcrumbs( breadcrumbs.length !== 0 );
+	}, [ setBreadcrumbs, breadcrumbs.length ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
