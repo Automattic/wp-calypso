@@ -80,39 +80,54 @@ class DesktopDownloadCard extends Component {
 	getTranslateComponents( platform ) {
 		switch ( platform ) {
 			case 'MacIntel':
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-					} ),
-				};
+				return displayJetpackAppBranding
+					? {
+							firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+
+							firstAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+							secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+							thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+					  }
+					: {
+							firstAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					  };
 			case 'Linux i686':
 			case 'Linux i686 on x86_64':
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-						secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( MAC_LINK ),
-					} ),
-				};
+				return displayJetpackAppBranding
+					? {
+							firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+
+							firstAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+							secondAvailableIcon: this.getPlatformImage( WINDOWS_LINK ),
+							thirdAvailableIcon: this.getPlatformImage( MAC_LINK ),
+					  }
+					: {
+							firstAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( WINDOWS_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+					  };
 			default:
-				return {
-					firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
-					secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
-					thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
-					...( displayJetpackAppBranding && {
-						firstAvailableIcon: this.getPlatformImage( MAC_LINK ),
-						secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
-						thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
-					} ),
-				};
+				return displayJetpackAppBranding
+					? {
+							firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+
+							firstAvailableIcon: this.getPlatformImage( MAC_LINK ),
+							secondAvailableIcon: this.getPlatformImage( LINUX_TAR_LINK ),
+							thirdAvailableIcon: this.getPlatformImage( LINUX_DEB_LINK ),
+					  }
+					: {
+							firstAvailableLink: this.getLinkAnchorTag( MAC_LINK ),
+							secondAvailableLink: this.getLinkAnchorTag( LINUX_TAR_LINK ),
+							thirdAvailableLink: this.getLinkAnchorTag( LINUX_DEB_LINK ),
+					  };
 		}
 	}
 
