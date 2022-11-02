@@ -1,5 +1,4 @@
 import {
-	JETPACK_BACKUP_ADDON_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	TERM_MONTHLY,
@@ -190,15 +189,6 @@ const useItemPrice = (
 	) {
 		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;
-	}
-
-	if (
-		item &&
-		JETPACK_BACKUP_ADDON_PRODUCTS.includes(
-			item.productSlug as typeof JETPACK_BACKUP_ADDON_PRODUCTS[ number ]
-		)
-	) {
-		originalPrice = 3;
 	}
 
 	return {

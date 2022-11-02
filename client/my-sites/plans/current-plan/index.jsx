@@ -28,6 +28,7 @@ import QueryConciergeInitial from 'calypso/components/data/query-concierge-initi
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -214,6 +215,7 @@ class CurrentPlan extends Component {
 					<QuerySites siteId={ selectedSiteId } />
 					<QuerySitePlans siteId={ selectedSiteId } />
 					<QuerySitePurchases siteId={ selectedSiteId } />
+					<QuerySiteProducts siteId={ selectedSiteId } />
 					{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 					{ showThankYou && ! this.state.hideThankYouModal && (

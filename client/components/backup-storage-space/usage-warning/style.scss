@@ -65,21 +65,33 @@
 	}
 
 	.display-price {
-		display: inline;
+		&__billing-time-frame {
+			font-size: 1rem;
+			color: inherit;
+		}
 	}
 
 	.plan-price {
-		font-size: 1rem;
+		font-size: inherit;
+		line-height: inherit;
+		color: inherit;
 	}
 
-	.plan-price__integer,
-	.plan-price__fraction,
+	.plan-price__fraction {
+		font-weight: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
+	}
+
+	.plan-price__integer {
+		margin: 0;
+		font-weight: inherit;
+	}
+
 	.plan-price__currency-symbol {
-		font-size: 1rem;
+		color: inherit;
+		font-size: inherit;
+		vertical-align: inherit;
 	}
 
-	.display-price__billing-time-frame {
-		font-size: 1rem;
-		color: var(--color-text);
-	}
 }

@@ -405,7 +405,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2140,
+		getProductId: () => 2041,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: {
@@ -415,7 +415,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2144,
+		getProductId: () => 2045,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: {
@@ -425,7 +425,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2148,
+		getProductId: () => 2049,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
@@ -435,7 +435,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2141,
+		getProductId: () => 2040,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: {
@@ -445,7 +445,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2145,
+		getProductId: () => 2044,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: {
@@ -455,7 +455,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		term: TERM_MONTHLY,
 		bill_period: PLAN_MONTHLY_PERIOD,
 		categories: [],
-		getProductId: () => 2149,
+		getProductId: () => 2048,
 		getStoreSlug: () => PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
 	},
 };
