@@ -330,6 +330,7 @@ class DesktopDownloadCard extends Component {
 			<div className="get-apps__card-text jetpack">
 				<SVGIcon
 					name="desktop-app-logo"
+					aria-hidden="true"
 					size="50"
 					viewBox="0 0 50 50"
 					icon={ DesktopAppLogo }
