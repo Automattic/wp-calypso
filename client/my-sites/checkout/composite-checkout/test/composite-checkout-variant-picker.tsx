@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -133,17 +133,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	} );
 
 	it.each( [
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
 		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
 		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
-		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
 		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'two-year' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'monthly' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'yearly' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'two-year' },
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
@@ -247,27 +242,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 			expect(
 				within( variantItem ).getByText( `Save ${ discountPercentage }%` )
 			).toBeInTheDocument();
-		}
-	);
-
-	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
-		'renders the $expectedVariant variant without a discount percentage for a $cartPlan plan when the current plan is $activePlan',
-		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			getPlansBySiteId.mockImplementation( () => ( {
-				data: getActivePersonalPlanDataForType( activePlan ),
-			} ) );
-			const user = userEvent.setup();
-			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			render( <MyCheckout cartChanges={ cartChanges } /> );
-
-			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
-			await user.click( openVariantPicker );
-
-			const variantItem = await screen.findByRole( 'option', {
-				name: getVariantItemTextForInterval( expectedVariant ),
-			} );
-
-			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
 		}
 	);
 
