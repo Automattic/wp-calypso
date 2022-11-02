@@ -6,7 +6,7 @@ export type HighlightCardProps = {
 	count: number | null;
 	heading: React.ReactNode;
 	icon: React.ReactNode;
-	onClick?: () => void;
+	onClick?: ( event: MouseEvent ) => void;
 	previousCount?: number | null;
 };
 
