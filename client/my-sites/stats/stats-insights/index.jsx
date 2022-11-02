@@ -74,7 +74,7 @@ const StatsInsights = ( props ) => {
 									statType="statsTags"
 								/>
 							) }
-							<AnnualSiteStats isWidget />
+							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
 							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">
