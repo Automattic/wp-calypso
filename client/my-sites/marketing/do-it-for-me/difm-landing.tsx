@@ -397,7 +397,7 @@ export default function DIFMLanding( {
 						<FoldableFAQ
 							id="faq-1"
 							expanded={ true }
-							question={ translate( 'What is Do It For Me: Website Design Service?' ) }
+							question={ translate( 'What is Built By WordPress.com Express?' ) }
 						>
 							<p>
 								{ translate(
