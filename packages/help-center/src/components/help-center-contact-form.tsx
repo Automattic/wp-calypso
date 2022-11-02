@@ -254,18 +254,10 @@ export const HelpCenterContactForm = () => {
 			return;
 		}
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
-		const {
-			productId,
-			productName,
-			productTerm,
-		}: any = () => {
-			const plan = getPlan( productSlug );
-			return {
-				productId: plan?.getProductId(),
-				productName: plan?.getTitle(),
-				productTerm: getPlanTermLabel( plan?.getTitle() as string, ( text ) => text ),
-			};
-		};
+		const plan = getPlan( productSlug );
+		const productId = plan?.getProductId();
+		const productName = plan?.getTitle();
+		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
 
 		switch ( mode ) {
 			case 'CHAT':
