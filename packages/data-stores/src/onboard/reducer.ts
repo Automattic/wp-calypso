@@ -1,9 +1,8 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import { DomainForm } from './types';
-import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
+import type { DomainSuggestion, DomainForm } from './types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
