@@ -145,6 +145,14 @@ class ThemeSheet extends Component {
 		return !! this.props.screenshots;
 	};
 
+	isRemoved = () => {
+		// If a theme has been removed by a theme shop, then the theme will still exist and a8c will take over any support responsibilities.
+		return (
+			this.props?.taxonomies?.theme_status.filter( ( status ) => status.slug === 'removed' )
+				.length === 1
+		);
+	};
+
 	onButtonClick = () => {
 		const { defaultOption, id } = this.props;
 		defaultOption.action && defaultOption.action( id );
@@ -600,6 +608,15 @@ class ThemeSheet extends Component {
 					</Button>
 				</Card>
 
+				{ this.isRemoved() && (
+					<Card>
+						<p>
+							{ this.props.translate(
+								'This theme has been renamed to reflect that limited support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
+							) }
+						</p>
+					</Card>
+				) }
 				<div className="theme__sheet-footer-line">
 					<Gridicon icon="my-sites" />
 				</div>
@@ -784,6 +801,9 @@ class ThemeSheet extends Component {
 		}
 
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
+		const columnsClassName = classNames( 'theme__sheet-columns', {
+			'is-removed': this.isRemoved(),
+		} );
 
 		return (
 			<Main className={ className }>
@@ -813,12 +833,14 @@ class ThemeSheet extends Component {
 				>
 					{ ! retired && ! hasWpOrgThemeUpsellBanner && ! isWPForTeamsSite && this.renderButton() }
 				</HeaderCake>
-				<div className="theme__sheet-columns">
+				<div className={ columnsClassName }>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
-					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+					{ ! this.isRemoved() && (
+						<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
+					) }
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PerformanceTrackerStop />
