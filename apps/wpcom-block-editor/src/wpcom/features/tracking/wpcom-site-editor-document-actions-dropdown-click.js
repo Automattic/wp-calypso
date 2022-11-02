@@ -51,6 +51,10 @@ export const wpcomSiteEditorDocumentActionsTemplateAreaClick = () => ( {
 			tracksRecordEvent( 'wpcom_site_editor_document_actions_template_area_click', {
 				template_area: 'Footer',
 			} );
+		} else {
+			tracksRecordEvent( 'wpcom_site_editor_document_actions_template_area_click', {
+				template_area: 'Unknown',
+			} );
 		}
 	},
 } );
