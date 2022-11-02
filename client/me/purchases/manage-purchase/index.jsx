@@ -77,6 +77,7 @@ import {
 	shouldRenderMonthlyRenewalOption,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
+import { disableAutoRenew, cancelAndRefundPurchase } from 'calypso/lib/purchases/actions';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
 import { hasCustomDomain } from 'calypso/lib/site/utils';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -580,9 +581,78 @@ class ManagePurchase extends Component {
 		);
 	}
 
-	cancelSubscription = () => {
-		this.closeDialog();
-		page.redirect( this.props.purchaseListUrl );
+	cancelSubscription = async () => {
+		const { purchase } = this.props;
+		const isPlanRefundable = isRefundable( purchase );
+		const isPlanAutoRenewing = purchase?.isAutoRenewEnabled ?? false;
+
+		this.setState( { submitting: true } );
+
+		if ( isPlanAutoRenewing ) {
+			// If the subscription is not refundable and auto-renew is on turn off auto-renew.
+			disableAutoRenew( purchase.id, ( success ) => {
+				const { translate } = this.props;
+
+				if ( success ) {
+					const successMessage = translate( 'Auto-renewal has been turned off successfully.' );
+
+					this.props.successNotice( successMessage, { displayOnNextPage: true } );
+
+					page.redirect( this.props.purchaseListUrl );
+
+					return;
+				}
+
+				const errorMessage = translate(
+					"We've failed to enable auto-renewal for you. Please try again."
+				);
+
+				this.props.errorNotice( errorMessage, { displayOnNextPage: true } );
+				this.setState( { submitting: false } );
+
+				return;
+			} );
+		}
+
+		if ( isPlanRefundable && hasAmountAvailableToRefund( purchase ) ) {
+			const data = {
+				confirm: true,
+				product_id: purchase.productId,
+				blog_id: purchase.siteId,
+			};
+
+			// If the subscription is refundable the subscription should be removed immediately.
+			cancelAndRefundPurchase( purchase.id, data, ( error ) => {
+				const { translate } = this.props;
+
+				if ( error ) {
+					this.props.errorNotice(
+						error.message ||
+							translate(
+								'Unable to cancel your purchase. Please try again later or contact support.'
+							)
+					);
+
+					return;
+				}
+
+				this.props.refreshSitePlans( purchase.siteId );
+				this.props.clearPurchases();
+
+				const successMessage = translate(
+					'You subscription was successfully cancelled and refunded.'
+				);
+
+				this.setState( { submitting: false } );
+
+				this.props.successNotice( successMessage, { displayOnNextPage: true } );
+
+				page.redirect( this.props.purchaseListUrl );
+
+				return;
+			} );
+		}
+
 		return;
 	};
 
