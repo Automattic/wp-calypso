@@ -271,7 +271,7 @@ class DesktopDownloadCard extends Component {
 		}
 	}
 
-	getMobileDeviceOptions() {
+	getMobileDeviceDownloadOptions() {
 		return translate( 'Visit {{a}}desktop.wordpress.com{{/a}} on your desktop.', {
 			components: {
 				a: <a href="https://desktop.wordpress.com" className="get-apps__desktop-link" />,
@@ -279,7 +279,7 @@ class DesktopDownloadCard extends Component {
 		} );
 	}
 
-	getDesktopDeviceOptions() {
+	getDesktopDeviceDownloadOptions() {
 		const platform =
 			navigator.platform && navigator.platform.length > 0 ? navigator.platform : false;
 
@@ -330,7 +330,9 @@ class DesktopDownloadCard extends Component {
 						) }
 					</p>
 					<div className="get-apps__desktop-download-subpanel">
-						{ isMobile ? this.getMobileDeviceOptions() : this.getDesktopDeviceOptions() }
+						{ isMobile
+							? this.getMobileDeviceDownloadOptions()
+							: this.getDesktopDeviceDownloadOptions() }
 					</div>
 				</div>
 			</>
