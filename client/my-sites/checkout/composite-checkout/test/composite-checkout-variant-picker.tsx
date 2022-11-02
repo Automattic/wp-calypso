@@ -3,7 +3,7 @@
  */
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -270,12 +270,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 				( plan ) => plan.product_slug === variantSlug
 			);
 			const finalPrice = variantData.raw_price;
-			const variantInterval = variantData.bill_period;
+			const variantInterval = parseInt( variantData.bill_period, 10 );
 			const currentVariantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === currentVariantSlug
 			);
 			const currentVariantPrice = currentVariantData.raw_price;
-			const currentVariantInterval = currentVariantData.bill_period;
+			const currentVariantInterval = parseInt( currentVariantData.bill_period, 10 );
 			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
