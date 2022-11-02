@@ -304,11 +304,6 @@ function wpcom_invalidate_global_styles_cache() {
 		add_filter( 'pre_set_transient_' . $transient_name, '__return_false' );
 	}
 
-	add_action(
-		'save_post_wp_global_styles',
-		function () use ( $transient_name ) {
-			delete_transient( $transient_name );
-		}
-	);
+	add_action( 'save_post_wp_global_styles', fn() => delete_transient( $transient_name ) );
 }
 add_action( 'init', 'wpcom_invalidate_global_styles_cache' );
