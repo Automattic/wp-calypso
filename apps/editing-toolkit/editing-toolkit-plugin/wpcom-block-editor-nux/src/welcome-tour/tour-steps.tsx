@@ -72,7 +72,7 @@ function getTourSteps(
 				descriptions: {
 					desktop: isSiteEditor
 						? __(
-								'Take this short, interactive tour to learn the fundamentals of the WordPress Full Site Editor.',
+								'Take this short, interactive tour to learn the fundamentals of the WordPress Site Editor.',
 								'full-site-editing'
 						  )
 						: __(
@@ -306,7 +306,7 @@ function getTourSteps(
 							descriptions: {
 								desktop: createInterpolateElement(
 									__(
-										'Design everything on your site - from the header right down to the footer - in the Full Site Editor. <link_to_fse_docs>Learn more</link_to_fse_docs>',
+										'Design everything on your site - from the header right down to the footer - in the Site Editor. <link_to_fse_docs>Learn more</link_to_fse_docs>',
 										'full-site-editing'
 									),
 									{
@@ -321,7 +321,7 @@ function getTourSteps(
 									}
 								),
 								mobile: __(
-									'Design everything on your site - from the header right down to the footer - in the Full Site Editor.',
+									'Design everything on your site - from the header right down to the footer - in the Site Editor.',
 									'full-site-editing'
 								),
 							},
