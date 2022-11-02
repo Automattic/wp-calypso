@@ -32,7 +32,6 @@
 		"devdocs/color-scheme-picker": true,
 		"devdocs/redirect-loggedout-homepage": false,
 		"difm/allow-woa-sites": false,
-		"difm/allow-extra-pages": true,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
