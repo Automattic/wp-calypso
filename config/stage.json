@@ -13,6 +13,7 @@
 	"olark_chat_identity": "7089-503-10-5123",
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0ePTwefdm7seki4pRuc4a19gPMGUba5mzuosz0IBR0cp4T57FiBgxK911ky0LNwlX2IHbm0SS00uPHEQNBO",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
+	"zendesk_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
 		"ad-tracking": false,
 		"calypso/help-center": true,
