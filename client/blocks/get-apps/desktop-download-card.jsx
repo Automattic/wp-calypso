@@ -308,7 +308,7 @@ class DesktopDownloadCard extends Component {
 		);
 	}
 
-	getJetpackBrandedCard() {
+	getJetpackBrandedPanel() {
 		const { isMobile } = userAgent;
 
 		return (
@@ -339,7 +339,7 @@ class DesktopDownloadCard extends Component {
 		);
 	}
 
-	getWordPressBrandedCard() {
+	getWordPressBrandedPanel() {
 		const platform =
 			navigator.platform && navigator.platform.length > 0 ? navigator.platform : false;
 
@@ -372,8 +372,8 @@ class DesktopDownloadCard extends Component {
 				} ) }
 			>
 				{ displayJetpackAppBranding
-					? this.getJetpackBrandedCard()
-					: this.getWordPressBrandedCard() }
+					? this.getJetpackBrandedPanel()
+					: this.getWordPressBrandedPanel() }
 			</Card>
 		);
 	}
