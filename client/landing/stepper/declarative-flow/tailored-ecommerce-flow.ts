@@ -4,6 +4,11 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	setSignupCompleteSlug,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import type { StepPath } from './internals/steps-repository';
@@ -17,7 +22,15 @@ export const ecommerceFlow: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'storeProfiler', 'designCarousel' ] as StepPath[];
+		return [
+			'domains',
+			'plans',
+			'siteCreationStep',
+			'processing',
+			'intro',
+			'storeProfiler',
+			'designCarousel',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -39,6 +52,33 @@ export const ecommerceFlow: Flow = {
 			const logInUrl = getStartUrl();
 
 			switch ( _currentStepName ) {
+				case 'domains':
+					return navigate( 'plans' );
+
+				case 'plans':
+					return navigate( 'siteCreationStep' );
+
+				case 'siteCreationStep':
+					return navigate( 'processing' );
+
+				case 'processing':
+					if ( providedDependencies?.goToCheckout ) {
+						const destination = `/setup/intro?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
+						persistSignupDestination( destination );
+						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteFlowName( flowName );
+						const returnUrl = encodeURIComponent(
+							`/setup/intro?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
+						);
+
+						return window.location.assign(
+							`/checkout/${ encodeURIComponent(
+								( providedDependencies?.siteSlug as string ) ?? ''
+							) }?redirect_to=${ returnUrl }&signup=1`
+						);
+					}
+					return navigate( 'intro' );
+
 				case 'intro':
 					if ( userIsLoggedIn ) {
 						return navigate( 'storeProfiler' );
@@ -47,6 +87,7 @@ export const ecommerceFlow: Flow = {
 
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
+
 				case 'designCarousel':
 					return navigate( 'designCarousel' );
 			}
