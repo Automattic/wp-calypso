@@ -356,7 +356,7 @@ class Page extends Component {
 		if ( ! config.isEnabled( 'post-list/qr-code-link' ) ) {
 			return null;
 		}
-		return <PostActionsEllipsisMenuQRCode globalId={ this.props.page.global_ID } key="bug" />;
+		return <PostActionsEllipsisMenuQRCode globalId={ this.props.page.global_ID } key="qrcode" />;
 	}
 
 	getCopyLinkItem() {
