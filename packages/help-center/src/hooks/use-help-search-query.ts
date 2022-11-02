@@ -30,7 +30,7 @@ export const useHelpSearchQuery = (
 				  } as APIFetchOptions ),
 		{
 			onSuccess: async ( data ) => {
-				if ( ! data[ 0 ].content ) {
+				if ( ! data[ 0 ]?.content ) {
 					const newData = await Promise.all(
 						data.map( async ( result: SearchResult ) => {
 							const article: { [ content: string ]: string } = canAccessWpcomApis()
