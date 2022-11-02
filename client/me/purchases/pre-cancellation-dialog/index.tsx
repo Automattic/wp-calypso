@@ -9,6 +9,7 @@ import {
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import './style.scss';
@@ -176,10 +177,16 @@ export const PreCancellationDialog = ( {
 	 * Click events, buttons tracking and action.
 	 */
 	const clickCancelPlan = () => {
+		recordTracksEvent( 'calypso_remove_purchase_cancellation_modal_cancel_plan_click', {
+			product_slug: productSlug,
+		} );
 		removePlan();
 	};
 
 	const clickCloseDialog = () => {
+		recordTracksEvent( 'calypso_remove_purchase_cancellation_modal_keep_plan_click', {
+			product_slug: productSlug,
+		} );
 		closeDialog();
 	};
 
