@@ -18,6 +18,7 @@ import wpcomInserterTabPanelSelected from './wpcom-inserter-tab-panel-selected';
 import {
 	wpcomSiteEditorDocumentActionsDropdownOpen,
 	wpcomSiteEditorDocumentActionsTemplateAreaClick,
+	wpcomSiteEditorDocumentActionsRevertClick,
 	wpcomSiteEditorDocumentActionsShowAllClick,
 } from './wpcom-site-editor-document-actions-dropdown-click';
 import wpcomSiteEditorExitClick from './wpcom-site-editor-exit-click';
@@ -74,6 +75,7 @@ const EVENTS_MAPPING = [
 	wpcomSiteEditorExitClick(),
 	wpcomSiteEditorDocumentActionsDropdownOpen(),
 	wpcomSiteEditorDocumentActionsTemplateAreaClick(),
+	wpcomSiteEditorDocumentActionsRevertClick(),
 	wpcomSiteEditorDocumentActionsShowAllClick(),
 ];
 const EVENTS_MAPPING_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => capture );
