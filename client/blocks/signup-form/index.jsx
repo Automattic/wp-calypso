@@ -163,6 +163,14 @@ class SignupForm extends Component {
 		this.maybeRedirectToSocialConnect();
 	}
 
+	UNSAFE_componentWillReceiveProps( nextProps ) {
+		if ( this.props.step?.status === 'processing' && nextProps.step?.status === 'invalid' ) {
+			this.setState( {
+				submitting: false,
+			} );
+		}
+	}
+
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.step && this.props.step && prevProps.step.status !== this.props.step.status ) {
 			this.maybeRedirectToSocialConnect();
