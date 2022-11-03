@@ -28,7 +28,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
 	const { goBack, goNext, submit } = navigation;
-	const { setDesignOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
+	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -251,16 +251,23 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							if ( siteSlugOrId ) {
 								const design = getDesign();
 								const stylesheet = design.recipe!.stylesheet!;
+								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
 								setPendingAction( () =>
-									createCustomTemplate(
-										siteSlugOrId,
-										stylesheet,
-										'home',
-										translate( 'Home' ),
-										createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
-									)
-										.then( () => setDesignOnSite( siteSlugOrId, design ) )
+									// We have to switch theme first. Otherwise, the unique suffix might append to
+									// the slug of newly created Home template if the current activated theme has
+									// modified Home template.
+									setThemeOnSite( siteSlugOrId, theme, undefined, false )
+										.then( () =>
+											createCustomTemplate(
+												siteSlugOrId,
+												stylesheet,
+												'home',
+												translate( 'Home' ),
+												createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
+											)
+										)
+										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
 										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 								);
 
