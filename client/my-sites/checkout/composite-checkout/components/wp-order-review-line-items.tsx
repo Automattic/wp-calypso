@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { hasDIFMProduct } from 'calypso/lib/cart-values/cart-items';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { ItemVariationPicker } from './item-variation-picker';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -170,6 +171,9 @@ function LineItemWrapper( {
 	const variants = useGetProductVariants( siteId, product.product_slug );
 	const areThereVariants = variants.length > 1;
 
+	const isWooMobile = isWcMobileApp();
+	const isDeletable = canItemBeRemovedFromCart( product, responseCart ) && ! isWooMobile;
+
 	const isJetpack = responseCart.products.some( ( product ) =>
 		isJetpackPurchasableItem( product.product_slug )
 	);
@@ -178,7 +182,7 @@ function LineItemWrapper( {
 		<WPOrderReviewListItem key={ product.uuid }>
 			<LineItem
 				product={ product }
-				hasDeleteButton={ canItemBeRemovedFromCart( product, responseCart ) }
+				hasDeleteButton={ isDeletable }
 				removeProductFromCart={ removeProductFromCart }
 				isSummary={ isSummary }
 				createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
@@ -188,9 +192,11 @@ function LineItemWrapper( {
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
 			>
-				{ ! isJetpack && areThereVariants && shouldShowVariantSelector && ! isEditingTerm && (
-					<TermVariantEditButton onClick={ () => setEditingTerm( true ) } />
-				) }
+				{ ! isJetpack &&
+					! isWooMobile &&
+					areThereVariants &&
+					shouldShowVariantSelector &&
+					! isEditingTerm && <TermVariantEditButton onClick={ () => setEditingTerm( true ) } /> }
 				{ areThereVariants && shouldShowVariantSelector && ( isJetpack || isEditingTerm ) && (
 					<ItemVariationPicker
 						selectedItem={ product }

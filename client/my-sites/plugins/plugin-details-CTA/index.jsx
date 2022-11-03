@@ -375,12 +375,12 @@ function PrimaryButton( {
 		return (
 			<Button
 				type="a"
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				primary
 				onClick={ ( e ) => e.stopPropagation() }
-				href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
+				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
 			>
-				{ translate( 'View plans' ) }
+				{ translate( 'Get started' ) }
 			</Button>
 		);
 	}

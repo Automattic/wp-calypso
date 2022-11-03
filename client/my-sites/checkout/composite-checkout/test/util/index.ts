@@ -1063,3 +1063,11 @@ expect.extend( {
 		};
 	},
 } );
+
+export function mockUserAgent( agent ) {
+	Object.defineProperty( window.navigator, 'userAgent', {
+		get() {
+			return agent;
+		},
+	} );
+}

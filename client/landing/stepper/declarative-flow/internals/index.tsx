@@ -32,7 +32,6 @@ const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-
 export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	// Configure app element that React Modal will aria-hide when modal is open
 	Modal.setAppElement( '#wpcom' );
-
 	const stepPaths = flow.useSteps();
 	const location = useLocation();
 	const currentRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' ) as StepPath;

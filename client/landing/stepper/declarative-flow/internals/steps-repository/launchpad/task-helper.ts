@@ -36,7 +36,7 @@ export function getEnhancedTasks(
 						title: translate( 'Personalize Newsletter' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace(
+							window.location.assign(
 								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
@@ -47,7 +47,7 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a Plan' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( `/plans/${ siteSlug }` );
+							window.location.assign( `/plans/${ siteSlug }` );
 						},
 						badgeText: translatedPlanName,
 					};
@@ -68,7 +68,7 @@ export function getEnhancedTasks(
 						title: translate( 'Write your first post' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace( `/post/${ siteSlug }` );
+							window.location.assign( `/post/${ siteSlug }` );
 						},
 					};
 					break;
@@ -82,7 +82,7 @@ export function getEnhancedTasks(
 						title: translate( 'Personalize Link in Bio' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.replace(
+							window.location.assign(
 								`/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
@@ -94,7 +94,7 @@ export function getEnhancedTasks(
 						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
-							window.location.replace( `/site-editor/${ siteSlug }` );
+							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
 					};
 					break;
@@ -116,7 +116,7 @@ export function getEnhancedTasks(
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, linkInBioSiteLaunchCompleted, task.id );
-									window.location.replace( `/home/${ siteSlug }` );
+									window.location.assign( `/home/${ siteSlug }` );
 								} );
 
 								submit?.();

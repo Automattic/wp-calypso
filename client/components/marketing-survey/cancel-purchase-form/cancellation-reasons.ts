@@ -66,7 +66,7 @@ export const LAST_REASON: CancellationReason = {
 		return translate( 'Another reason…' );
 	},
 	get textPlaceholder() {
-		return translate( 'Can you please specify?' );
+		return translate( 'Why do you want to cancel?' );
 	},
 };
 
