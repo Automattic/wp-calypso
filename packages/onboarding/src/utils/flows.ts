@@ -7,6 +7,13 @@ export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const ECOMMERCE_FLOW = 'ecommerce';
 
+export const isLinkInBioFlow = ( flowName: string | null ) => {
+	return Boolean(
+		flowName &&
+			[ LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, LINK_IN_BIO_POST_SETUP_FLOW ].includes( flowName )
+	);
+};
+
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
 		flowName &&
