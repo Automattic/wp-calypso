@@ -316,8 +316,8 @@ class DesktopDownloadCard extends Component {
 				<SVGIcon
 					name="desktop-app-logo"
 					aria-hidden="true"
-					size="50"
-					viewBox="0 0 50 50"
+					size="51"
+					viewBox="0 0 50 51"
 					icon={ DesktopAppLogo }
 					classes="get-apps__desktop-icon"
 				/>
