@@ -138,6 +138,7 @@
 		"ssr/sample-log-cache-misses": true,
 		"stats/new-annual-highlights": false,
 		"stats/new-main-chart": false,
+		"stats/new-stats-module-component": false,
 		"stats/show-traffic-highlights": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
