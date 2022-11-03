@@ -10,6 +10,7 @@ class StatsTabsTab extends Component {
 	static propTypes = {
 		className: PropTypes.string,
 		gridicon: PropTypes.string,
+		iconSize: PropTypes.number,
 		href: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
@@ -43,6 +44,7 @@ class StatsTabsTab extends Component {
 			compact,
 			children,
 			gridicon,
+			iconSize = 18,
 			href,
 			label,
 			loading,
@@ -59,7 +61,7 @@ class StatsTabsTab extends Component {
 			'no-icon': ! gridicon,
 		} );
 
-		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ 18 } /> : null;
+		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ iconSize } /> : null;
 		const tabLabel = <span className="stats-tabs__label label">{ label }</span>;
 		const tabValue = <span className="stats-tabs__value value">{ this.ensureValue( value ) }</span>;
 		const hasClickAction = href || tabClick;

@@ -128,7 +128,7 @@
 
 		.task__description a {
 			color: var(--color-neutral-0);
-			font-weight: bold;
+			text-decoration: underline;
 		}
 		.task__skip:hover {
 			color: var(--color-neutral-20);

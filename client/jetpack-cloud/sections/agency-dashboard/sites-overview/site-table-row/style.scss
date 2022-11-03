@@ -17,6 +17,16 @@
 			visibility: visible;
 		}
 	}
+	&-disabled {
+		opacity: 0.5;
+		user-select: none;
+	}
+	&-active {
+		border-width: 0 1px;
+		border-style: solid;
+		border-color: var(--studio-gray-5);
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.16);
+	}
 }
 
 .site-table__connection-error {

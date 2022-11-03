@@ -1,0 +1,96 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "../styles/typography";
+
+$header-font: Recoleta, sans-serif;
+$vertical-margin: 32px;
+
+.highlight-cards {
+	margin: $vertical-margin 0;
+	color: var(--studio-gray-100);
+	font-size: $font-body-small;
+}
+
+.highlight-cards-heading {
+	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 40px;
+	font-family: $header-font;
+	margin-bottom: $vertical-margin / 2;
+	small {
+		font-size: $font-body-small;
+	}
+}
+
+.highlight-cards-list {
+	display: flex;
+	flex-flow: row nowrap;
+
+	.highlight-card {
+		border-color: var(--studio-gray-5);
+		border-radius: 4px;
+		width: 100%;
+		min-width: 200px; // Minimum mobile width
+
+		margin-right: 24px;
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+
+.highlight-card-heading {
+	font-weight: 500;
+	line-height: 20px;
+	font-family: $header-font;
+}
+
+.highlight-card-count {
+	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
+	font-weight: 400;
+	line-height: 40px;
+	display: flex;
+	align-items: flex-end;
+}
+
+.highlight-card-difference {
+	align-items: flex-end;
+	color: var(--studio-gray-20);
+	display: flex;
+	font-size: $font-body-small;
+	font-weight: 600;
+	line-height: 24px;
+	margin-left: 8px;
+	&.highlight-card-difference--positive {
+		color: var(--studio-red-50);
+		fill: var(--studio-red-50);
+	}
+	&.highlight-card-difference--negative {
+		color: var(--studio-green-50);
+		fill: var(--studio-green-50);
+	}
+}
+.highlight-card-difference-icon {
+	display: flex;
+	align-content: flex-end;
+}
+
+@media ( max-width: $break-small ) {
+	.highlight-cards {
+		overflow-y: auto;
+	}
+
+	.card.highlight-card {
+		padding: 16px 24px;
+	}
+
+	.highlight-cards-heading {
+		display: flex;
+		flex-flow: column;
+	}
+
+	.highlight-card-icon,
+	.highlight-card-difference-absolute-value,
+	.highlight-card-difference-absolute-percentage {
+		display: none;
+	}
+}

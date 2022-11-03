@@ -1,12 +1,12 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Button, FormInputValidation } from '@automattic/components';
+import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
 import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormInput from 'calypso/components/forms/form-text-input';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 
@@ -63,15 +63,6 @@ const SetupForm = ( {
 		reader.onerror = () => setBase64Image( null );
 	};
 
-	const onChange = ( event: React.FormEvent< HTMLInputElement > ) => {
-		switch ( event.currentTarget.name ) {
-			case 'setup-form-input-name':
-				return setComponentSiteTitle( event.currentTarget.value );
-			case 'setup-form-input-description':
-				return setTagline( event.currentTarget.value );
-		}
-	};
-
 	useEffect( () => {
 		if ( siteTitle.trim().length && invalidSiteTitle ) {
 			setInvalidSiteTitle( false );
@@ -91,14 +82,13 @@ const SetupForm = ( {
 				selectedFile={ selectedFile }
 			/>
 			<FormFieldset>
-				<FormLabel htmlFor="setup-form-input-name">{ __( 'Site name' ) }</FormLabel>
-				<FormInput
+				<TextControl
+					label={ __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
 					value={ siteTitle }
-					onChange={ onChange }
+					onChange={ ( value ) => setComponentSiteTitle( value ) }
 					placeholder={ translatedText?.titlePlaceholder || __( 'My Site Name' ) }
-					isError={ invalidSiteTitle }
 				/>
 				{ invalidSiteTitle && (
 					<FormInputValidation
@@ -118,7 +108,9 @@ const SetupForm = ( {
 					value={ tagline }
 					placeholder={ translatedText?.taglinePlaceholder || __( 'Add a short description here' ) }
 					enableAutoFocus={ false }
-					onChange={ onChange }
+					onChange={ ( event: React.FormEvent< HTMLInputElement > ) =>
+						setTagline( event.currentTarget.value )
+					}
 				/>
 			</FormFieldset>
 			{ children }

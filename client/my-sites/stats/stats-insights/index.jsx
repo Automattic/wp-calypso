@@ -38,20 +38,22 @@ const StatsInsights = ( props ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main wideLayout>
-			<DocumentHead title={ translate( 'Stats and Insights' ) } />
+			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<FormattedHeader
 				brandFont
 				className="stats__section-header"
-				headerText={ translate( 'Stats and Insights' ) }
+				headerText={ translate( 'Jetpack Stats' ) }
 				subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				align="left"
 			/>
 			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 			<div>
-				<PostingActivity />
-				<SectionHeader label={ translate( 'All-time views' ) } />
-				<StatsViews />
+				<div className="stats__module--insights-unified">
+					<PostingActivity />
+					<SectionHeader label={ translate( 'All-time views' ) } />
+					<StatsViews />
+				</div>
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
@@ -60,17 +62,17 @@ const StatsInsights = ( props ) => {
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
-					<div className="stats__module-list">
+					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							{ ! isJetpack && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-								/>
-							) }
+
+							<StatsModule
+								path="tags-categories"
+								moduleStrings={ moduleStrings.tags }
+								statType="statsTags"
+							/>
+
 							<AnnualSiteStats isWidget />
 							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>

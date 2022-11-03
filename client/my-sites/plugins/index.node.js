@@ -5,7 +5,7 @@ import { setHrefLangLinks, setLocalizedCanonicalUrl } from 'calypso/controller/l
 import { overrideSanitizeSectionRoot } from 'calypso/lib/plugins/sanitize-section-content';
 import { isEnabled } from 'calypso/server/config';
 import { browsePlugins } from './controller';
-import { fetchPlugins, skipIfLoggedIn } from './controller-logged-out';
+import { fetchPlugins, fetchCategoryPlugins, skipIfLoggedIn } from './controller-logged-out';
 
 export default function ( router ) {
 	const langParam = getLanguageRouteParam();
@@ -18,6 +18,19 @@ export default function ( router ) {
 			skipIfLoggedIn,
 			ssrSetupLocale,
 			fetchPlugins,
+			setHrefLangLinks,
+			setLocalizedCanonicalUrl,
+			browsePlugins,
+			makeLayout
+		);
+	}
+
+	if ( isEnabled( 'plugins/ssr-categories' ) ) {
+		router(
+			`/${ langParam }/plugins/browse/:category`,
+			skipIfLoggedIn,
+			ssrSetupLocale,
+			fetchCategoryPlugins,
 			setHrefLangLinks,
 			setLocalizedCanonicalUrl,
 			browsePlugins,

@@ -95,6 +95,7 @@ export interface APIProductFamilyProduct {
 	currency: string;
 	amount: number;
 	price_interval: string;
+	family_slug: string;
 }
 
 export interface APIProductFamily {

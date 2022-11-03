@@ -18,8 +18,7 @@ const JPCOM_HOME = 'https://jetpack.com';
 const A8C_HOME = 'https://automattic.com/';
 const A8C_WORK = 'https://automattic.com/work-with-us/';
 const GOOGLE_PLAY_JETPACK_URL = 'https://play.google.com/store/apps/details?id=com.jetpack.android';
-const APP_STORE_JETPACK_URL =
-	'https://apps.apple.com/us/app/jetpack-wp-security-speed/id1565481562';
+const APP_STORE_JETPACK_URL = 'https://apps.apple.com/us/app/jetpack-website-builder/id1565481562';
 
 const utmParams = {
 	utm_medium: 'automattic_referred',
@@ -123,6 +122,14 @@ const JetpackComFooter: React.FC = () => {
 						label: translate( 'Privacy Policy' ),
 						href: addQueryArgs( utmParams, 'https://automattic.com/privacy/' ),
 						trackId: 'privacy_policy',
+					},
+					{
+						label: translate( 'GDPR', {
+							comment:
+								'GDPR refers to the General Data Protection Regulation in effect in the European Union',
+						} ),
+						href: addQueryArgs( utmParams, 'https://jetpack.com/gdpr/' ),
+						trackId: 'gdpr',
 					},
 					hideCaliforniaNotice
 						? null

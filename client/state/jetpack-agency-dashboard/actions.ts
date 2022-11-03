@@ -6,7 +6,12 @@ import {
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
-import { JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE } from './action-types';
+import {
+	JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE,
+	JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
+	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
+} from './action-types';
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	if ( ! filterOptions.length ) {
@@ -31,4 +36,16 @@ export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => 
 
 export function setPurchasedLicense( product?: PurchasedProduct ): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_PURCHASED_LICENSE_CHANGE, payload: product };
+}
+
+export function selectLicense( siteId: number, license: string ): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE, siteId: siteId, license: license };
+}
+
+export function unselectLicense( siteId: number, license: string ): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE, siteId: siteId, license: license };
+}
+
+export function resetSite(): AnyAction {
+	return { type: JETPACK_AGENCY_DASHBOARD_RESET_SITE };
 }

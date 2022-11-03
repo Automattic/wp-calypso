@@ -7,7 +7,6 @@ $headerHeight: 72px;
 	display: flex;
 	flex-direction: column;
 	z-index: 1001;
-	height: 100%;
 
 	.blazepress-widget__header-bar {
 		align-items: center;
@@ -57,4 +56,8 @@ $headerHeight: 72px;
 			height: 100%;
 		}
 	}
+}
+
+.blazepress-widget.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
 }
