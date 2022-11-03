@@ -205,6 +205,14 @@ describe( 'getProductSlugFromContext', () => {
 			selectedSite: undefined,
 			expected: newProduct,
 		},
+		{
+			product: newProduct,
+			domainOrProduct: undefined,
+			pathname: `/checkout/${ newProduct }/gift/1234`,
+			productSlug: undefined,
+			selectedSite: undefined,
+			expected: newProduct,
+		},
 	] )(
 		`returns '$expected' when :product is '$product', :domainOrProduct is '$domainOrProduct', productSlug is '$productSlug', pathname is '$pathname', and selected site is '$selectedSite'`,
 		( { product, domainOrProduct, productSlug, selectedSite, expected, pathname } ) => {
