@@ -1,3 +1,4 @@
+import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
 import 'calypso/state/themes/init';
@@ -14,7 +15,11 @@ export function getThemeSignupUrl( state, themeId ) {
 		return null;
 	}
 
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + themeId;
+	const flow = ! doesThemeBundleSoftwareSet( state, themeId )
+		? 'with-theme'
+		: 'with-business-theme';
+
+	let url = `/start/${ flow }?ref=calypshowcase&theme=${ themeId }`;
 
 	if ( isThemePremium( state, themeId ) ) {
 		url += '&premium=true';

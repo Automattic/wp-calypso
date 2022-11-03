@@ -86,6 +86,14 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
+			name: 'with-business-theme',
+			steps: [ 'domains-theme-preselected', 'plans-business', 'user' ],
+			destination: getChecklistThemeDestination,
+			description: 'Preselect a theme to activate/buy from an external source',
+			lastModified: '2020-08-11',
+			showRecaptcha: true,
+		},
+		{
 			name: 'design-first',
 			steps: [
 				'template-first-themes',
