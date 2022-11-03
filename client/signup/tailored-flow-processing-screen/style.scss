@@ -3,7 +3,8 @@
 
 .signup {
 	&.is-newsletter,
-	&.is-link-in-bio {
+	&.is-link-in-bio,
+	&.is-import-focused {
 		.signup-header {
 			z-index: 1;
 

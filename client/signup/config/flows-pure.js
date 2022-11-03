@@ -136,6 +136,18 @@ export function generateFlows( {
 			},
 		},
 		{
+			name: 'import-focused',
+			steps: [ 'domains', 'plans-import' ],
+			destination: ( dependencies ) =>
+				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
+			description: 'Beginning of the flow to import content',
+			lastModified: '2022-10-03',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Import' );
+			},
+		},
+		{
 			name: 'with-add-ons',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans', 'add-ons' ]
