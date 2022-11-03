@@ -181,6 +181,7 @@
 		"themes/atomic-homepage-replace": true,
 		"themes/plugin-bundling": true,
 		"themes/premium": true,
+		"themes/showcase-i4/search-and-filter": true,
 		"themes/subscription-purchases": true,
 		"themes/third-party-premium": true,
 		"titan/iframe-control-panel": false,
