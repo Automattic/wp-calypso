@@ -155,10 +155,6 @@ export interface NewCommentResponse {
 	ID: number;
 }
 
-export interface DeleteCommentResponse {
-	ID: number;
-}
-
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {

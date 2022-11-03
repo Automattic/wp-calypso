@@ -571,7 +571,6 @@ export class RestAPIClient {
 
 	/**
 	 * Gets the latest posts from blogs a user follows.
-	 * TODO: Find an elegant way to pass in query parameters for better filtering.
 	 *
 	 * @returns {Promise<ReaderResponse>} An Array of posts.
 	 * @throws {Error} If API responded with an error.
