@@ -40,6 +40,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProduct,
 			domainOrProduct: wpcomSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: wpcomStagingSiteSlug,
 			expected: newProduct,
@@ -47,6 +48,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: wpcomSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: wpcomStagingSiteSlug,
 			expected: '',
@@ -54,6 +56,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProduct,
 			domainOrProduct: domainSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
@@ -61,6 +64,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: domainSiteSlug,
 			domainOrProduct: newProduct,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
@@ -68,6 +72,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProductWithDomain,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDomain,
@@ -75,6 +80,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: newProductWithDomain,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDomain,
@@ -82,6 +88,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProductWithDot,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDot,
@@ -89,6 +96,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: newProductWithDot,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDot,
@@ -96,6 +104,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProduct,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: undefined,
 			expected: '',
@@ -103,6 +112,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: newProduct,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: undefined,
 			expected: newProduct,
@@ -110,6 +120,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: domainSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: '',
@@ -117,6 +128,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: domainSiteSlug,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: '',
@@ -124,6 +136,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProduct,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
@@ -131,6 +144,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: newProduct,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
@@ -138,6 +152,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: subdomainSiteSlug,
 			domainOrProduct: newProduct,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: subdomainSiteSlug,
 			expected: newProduct,
@@ -145,6 +160,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: newProduct,
 			domainOrProduct: subdomainSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: subdomainSiteSlug,
 			expected: newProduct,
@@ -152,6 +168,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: subdomainSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: subdomainSiteSlug,
 			expected: '',
@@ -159,6 +176,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: subdomainSiteSlug,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: '',
@@ -166,6 +184,7 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: undefined,
 			selectedSite: domainSiteSlug,
 			expected: '',
@@ -173,13 +192,22 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			product: undefined,
 			domainOrProduct: undefined,
+			pathname: undefined,
 			productSlug: newProduct,
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
 		},
+		{
+			product: undefined,
+			domainOrProduct: newProduct,
+			pathname: `/checkout/${ newProduct }/gift/1234`,
+			productSlug: undefined,
+			selectedSite: undefined,
+			expected: newProduct,
+		},
 	] )(
-		`returns '$expected' when :product is '$product', :domainOrProduct is '$domainOrProduct', productSlug is '$productSlug', and selected site is '$selectedSite'`,
-		( { product, domainOrProduct, productSlug, selectedSite, expected } ) => {
+		`returns '$expected' when :product is '$product', :domainOrProduct is '$domainOrProduct', productSlug is '$productSlug', pathname is '$pathname', and selected site is '$selectedSite'`,
+		( { product, domainOrProduct, productSlug, selectedSite, expected, pathname } ) => {
 			const store = mockStore( {
 				ui: {
 					selectedSiteId: getSiteIdFromDomain( selectedSite ),
@@ -191,6 +219,7 @@ describe( 'getProductSlugFromContext', () => {
 
 			const actual = getProductSlugFromContext(
 				{
+					pathname: pathname ?? '',
 					store,
 					params: {
 						domainOrProduct,
