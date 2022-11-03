@@ -87,10 +87,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-business-theme',
-			steps: [ 'domains-theme-preselected', 'plans-business', 'user' ],
+			steps: [ 'domains-theme-preselected', 'plans-business-monthly', 'user' ],
 			destination: getChecklistThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2020-08-11',
+			lastModified: '2022-11-03',
 			showRecaptcha: true,
 		},
 		{
