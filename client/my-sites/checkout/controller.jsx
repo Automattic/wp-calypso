@@ -42,7 +42,7 @@ import { getProductSlugFromContext } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
-export function checkoutSiteless( context, next ) {
+export function checkoutJetpackSiteless( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product } = context.params;
