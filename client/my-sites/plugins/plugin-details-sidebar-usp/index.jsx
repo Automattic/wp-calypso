@@ -30,6 +30,14 @@ const Container = styled( FoldableCard )`
 		padding: ${ ( props ) => ( props.first ? '0 0 32px' : '32px 0' ) };
 		${ ( props ) => props.showAsAccordion && 'padding: 0' };
 	}
+
+	&:last-child.is-expanded {
+		margin-bottom: 0;
+
+		&.is-expanded .foldable-card__content {
+			padding-bottom: 0;
+		}
+	}
 `;
 
 const Icon = styled.img`
