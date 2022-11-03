@@ -42,7 +42,7 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-size: 14px;
 	${ ( props ) => ! props.showAsAccordion && 'font-weight: 600' };
-	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 4px;' };
+	${ ( props ) => ! props.showAsAccordion && 'margin-bottom: 8px;' };
 `;
 const Description = styled.div`
 	color: var( --studio-gray-60 );
