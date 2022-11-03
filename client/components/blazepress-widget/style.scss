@@ -57,3 +57,7 @@ $headerHeight: 72px;
 		}
 	}
 }
+
+.blazepress-widget.dialog__backdrop {
+	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+}

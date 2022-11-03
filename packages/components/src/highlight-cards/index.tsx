@@ -18,15 +18,19 @@ export type HighlightCardsProps = {
 		views: number | null;
 		visitors: number | null;
 	};
-	onClickComments: string;
-	onClickLikes: string;
-	onClickViews: string;
-	onClickVisitors: string;
+	onClickComments: ( event: MouseEvent ) => void;
+	onClickLikes: ( event: MouseEvent ) => void;
+	onClickViews: ( event: MouseEvent ) => void;
+	onClickVisitors: ( event: MouseEvent ) => void;
 };
 
 export default function HighlightCards( {
 	className,
 	counts,
+	onClickComments,
+	onClickLikes,
+	onClickViews,
+	onClickVisitors,
 	previousCounts,
 }: HighlightCardsProps ) {
 	const translate = useTranslate();
@@ -44,24 +48,28 @@ export default function HighlightCards( {
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.visitors ?? null }
 					previousCount={ previousCounts?.visitors ?? null }
+					onClick={ onClickVisitors }
 				/>
 				<HighlightCard
 					heading={ translate( 'Views' ) }
 					icon={ <Icon icon={ navigation } /> }
 					count={ counts?.views ?? null }
 					previousCount={ previousCounts?.views ?? null }
+					onClick={ onClickViews }
 				/>
 				<HighlightCard
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
 					previousCount={ previousCounts?.likes ?? null }
+					onClick={ onClickLikes }
 				/>
 				<HighlightCard
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ comment } /> }
 					count={ counts?.comments ?? null }
 					previousCount={ previousCounts?.comments ?? null }
+					onClick={ onClickComments }
 				/>
 			</div>
 		</div>
