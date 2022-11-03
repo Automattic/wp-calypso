@@ -21,8 +21,7 @@ import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
-import StatsListPosts from '../stats-list/stats-list-posts';
-import StatsListVideos from '../stats-list/stats-list-videos';
+import StatsListCard from '../stats-list/stats-list-card';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -155,8 +154,9 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldHideOldModule =
+		const shouldShowNewModule =
 			isEnabled( 'stats/new-stats-module-component' ) &&
+			! summary &&
 			( path === 'posts' || path === 'videoplays' );
 
 		return (
@@ -164,74 +164,52 @@ class StatsModule extends Component {
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'posts' && (
-					<StatsListPosts
-						moduleName={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ this.getModuleLabel() }
-						emptyMessage={ moduleStrings.empty }
-						showMore={
-							this.props.showSummaryLink && displaySummaryLink
-								? {
-										url: this.getHref(),
-										label: this.props.translate( 'View all', {
-											context: 'Stats: Button label to expand a panel',
-										} ),
-								  }
-								: undefined
-						}
-						titleURL={ this.getHref() }
-						error={ hasError && <ErrorPanel /> }
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					>
-						{ this.props.children }
-					</StatsListPosts>
-				) }
-
-				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'videoplays' && (
-					<StatsListVideos
-						moduleName={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ this.getModuleLabel() }
-						emptyMessage={ moduleStrings.empty }
-						showMore={
-							this.props.showSummaryLink && displaySummaryLink
-								? {
-										url: this.getHref(),
-										label: this.props.translate( 'View all', {
-											context: 'Stats: Button label to expand a panel',
-										} ),
-								  }
-								: undefined
-						}
-						titleURL={ this.getHref() }
-						error={ hasError && <ErrorPanel /> }
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					>
-						{ this.props.children }
-					</StatsListVideos>
-				) }
-
-				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
-					{ ! isAllTime && (
-						<SectionHeader
-							className={ headerClass }
-							label={ this.getModuleLabel() }
-							href={ ! summary ? summaryLink : null }
+				{ shouldShowNewModule && (
+					<>
+						<StatsListCard
+							moduleType={ path }
+							data={ data }
+							useShortLabel={ useShortLabel }
+							title={ this.getModuleLabel() }
+							emptyMessage={ moduleStrings.empty }
+							showMore={
+								this.props.showSummaryLink && displaySummaryLink
+									? {
+											url: this.getHref(),
+											label: this.props.translate( 'View all', {
+												context: 'Stats: Button label to expand a panel',
+											} ),
+									  }
+									: undefined
+							}
+							titleURL={ this.getHref() }
+							error={ hasError && <ErrorPanel /> }
+							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 						>
-							{ summary && (
-								<DownloadCsv
-									statType={ statType }
-									query={ query }
-									path={ path }
-									period={ period }
-								/>
-							) }
-						</SectionHeader>
-					) }
-					{ ! shouldHideOldModule && (
+							{ this.props.children }
+						</StatsListCard>
+					</>
+				) }
+
+				{ ! shouldShowNewModule && (
+					<div>
+						{ ! isAllTime && (
+							// what is this exactly?
+							<SectionHeader
+								className={ headerClass }
+								label={ this.getModuleLabel() }
+								href={ ! summary ? summaryLink : null }
+							>
+								{ summary && (
+									<DownloadCsv
+										statType={ statType }
+										query={ query }
+										path={ path }
+										period={ period }
+									/>
+								) }
+							</SectionHeader>
+						) }
 						<Card compact className={ cardClasses }>
 							{ statType === 'statsFileDownloads' && (
 								<StatsModuleAvailabilityWarning
@@ -264,19 +242,19 @@ class StatsModule extends Component {
 								/>
 							) }
 						</Card>
-					) }
-					{ isAllTime && (
-						<div className="stats-module__footer-actions">
-							<DownloadCsv
-								statType={ statType }
-								query={ query }
-								path={ path }
-								borderless
-								period={ period }
-							/>
-						</div>
-					) }
-				</div>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</div>
+				) }
 			</>
 		);
 	}
