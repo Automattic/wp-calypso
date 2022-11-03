@@ -796,9 +796,11 @@ class ThemeSheet extends Component {
 			} );
 		}
 
+		const isRemoved = this.isRemoved();
+
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
 		const columnsClassName = classNames( 'theme__sheet-columns', {
-			'is-removed': this.isRemoved(),
+			'is-removed': isRemoved,
 		} );
 
 		return (
@@ -834,7 +836,7 @@ class ThemeSheet extends Component {
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
-					{ ! this.isRemoved() && (
+					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 					) }
 				</div>
