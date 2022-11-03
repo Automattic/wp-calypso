@@ -102,13 +102,28 @@ export function checkout( context, next ) {
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
 	const jetpackSiteSlug = context.params.siteSlug;
 
+	const isGiftPurchase = context.pathname.includes( '/gift/' );
+
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
 		page( context.path.replace( '/checkout/jetpack', '/checkout' ) );
 		return;
 	}
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
+	const shouldAllowNoSelectedSite = () => {
+		if ( isDisallowedForSitePicker ) {
+			return true;
+		}
+		if ( isJetpackCheckout ) {
+			return true;
+		}
+		if ( isGiftPurchase ) {
+			return true;
+		}
+		return false;
+	};
+
+	if ( ! selectedSite && ! shouldAllowNoSelectedSite() ) {
 		sites( context, next );
 		return;
 	}
@@ -168,6 +183,7 @@ export function checkout( context, next ) {
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
 				isJetpackCheckout={ isJetpackCheckout }
+				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
