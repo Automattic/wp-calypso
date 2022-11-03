@@ -13,9 +13,11 @@ import { setStore } from 'calypso/state/redux-store';
 
 const props = {
 	siteSlug: 'testsite.wordpress.com',
+	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
+	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
 jest.mock( 'react-router-dom', () => ( {
