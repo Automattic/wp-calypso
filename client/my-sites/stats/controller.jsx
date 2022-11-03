@@ -200,9 +200,7 @@ export function overview( context, next ) {
 
 	bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 
-	context.primary = (
-		<StatsOverview period={ activeFilter.period } path={ '#!' + context.pathname } />
-	);
+	context.primary = <StatsOverview period={ activeFilter.period } path={ context.pathname } />;
 	next();
 }
 
@@ -252,7 +250,7 @@ export function site( context, next ) {
 
 	context.primary = (
 		<StatsSite
-			path={ '#!' + context.pathname }
+			path={ context.pathname }
 			date={ date }
 			chartTab={ chartTab }
 			context={ context }
@@ -336,7 +334,7 @@ export function summary( context, next ) {
 
 	context.primary = (
 		<StatsSummary
-			path={ '#!' + context.pathname }
+			path={ context.pathname }
 			statsQueryOptions={ statsQueryOptions }
 			date={ date }
 			context={ context }
@@ -359,9 +357,7 @@ export function post( context, next ) {
 		return next();
 	}
 
-	context.primary = (
-		<StatsPostDetail path={ '#!' + context.path } postId={ postId } context={ context } />
-	);
+	context.primary = <StatsPostDetail path={ context.path } postId={ postId } context={ context } />;
 
 	next();
 }
@@ -391,7 +387,7 @@ export function follows( context, next ) {
 
 	context.primary = (
 		<StatsCommentFollows
-			path={ '#!' + context.path }
+			path={ context.path }
 			page={ pageNum }
 			perPage="20"
 			total="10"
@@ -434,7 +430,7 @@ export function wordAds( context, next ) {
 
 	context.primary = (
 		<WordAds
-			path={ '#!' + context.pathname }
+			path={ context.pathname }
 			date={ date }
 			chartTab={ queryOptions.tab || 'impressions' }
 			context={ context }
