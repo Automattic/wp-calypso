@@ -17,7 +17,7 @@ import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import AnnualSiteHighlights from '../annual-site-highlights';
+import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
@@ -50,7 +50,7 @@ const StatsInsights = ( props ) => {
 			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<div className="stats__module--insights-unified">
-					{ showNewAnnualHighlights && <AnnualSiteHighlights siteId={ siteId } /> }
+					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />

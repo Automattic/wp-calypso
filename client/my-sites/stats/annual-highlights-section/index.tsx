@@ -32,7 +32,7 @@ type Followers = {
 const FOLLOWERS_QUERY = { type: 'wpcom', max: 0 };
 
 // Meant to replace annual-site-stats section
-export default function AnnualSiteHighlights( { siteId }: { siteId: number } ) {
+export default function AnnualHighlightsSection( { siteId }: { siteId: number } ) {
 	const year = new Date().getFullYear();
 	const insights = useSelector( ( state ) =>
 		getSiteStatsNormalizedData( state, siteId, 'statsInsights' )
