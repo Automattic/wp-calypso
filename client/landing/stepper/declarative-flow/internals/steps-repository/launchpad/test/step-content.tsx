@@ -1,15 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import StepContent from '../step-content';
 import { render, screen, fireEvent } from '@testing-library/react';
-import EmailValidationBanner from '../email-validation-banner';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
-import { Provider as ReduxProvider } from 'react-redux';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { setStore } from 'calypso/state/redux-store';
+import EmailValidationBanner from '../email-validation-banner';
+import StepContent from '../step-content';
 
 const props = {
 	siteSlug: 'testsite.wordpress.com',
@@ -109,48 +109,4 @@ describe( 'EmailValidationBanner', () => {
 
 		expect( emailValidationBanner ).not.toBeInTheDocument();
 	} );
-
-	// it( 'fires success notice action when resend is successful', async () => {
-	// 	const dispatch = jest.fn();
-
-	// 	jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
-
-	// 	const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
-	// 	useSendEmailVerification.mockImplementation( () => () => {
-	// 		return Promise.resolve( {
-	// 			success: true,
-	// 		} );
-	// 	} );
-
-	// 	render(
-	// 		<ReduxProvider store={ createTestStore( false ) }>
-	// 			<EmailNotVerifiedNotice />
-	// 		</ReduxProvider>
-	// 	);
-
-	// 	const resendButton = screen.getByText( 'Resend email' );
-	// 	await userEvent.click( resendButton );
-
-	// 	expect( useSendEmailVerification ).toHaveBeenCalled();
-	// 	await waitFor( () => {
-	// 		expect(
-	// 			dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
-	// 				'Verification email resent. Please check your inbox.'
-	// 			)
-	// 		).toBeTruthy();
-	// 	} );
-	// } );
-	// it( 'clicking the resend email button dispatches an API call', () => {
-	// } );
 } );
-
-// x does not show the notice if already verified'
-// x 'shows the notice if not verified
-// x clicking close closes the banner
-// x clicking change email redirects
-
-// clicking resend email resends email
-
-// 'fires success notice action when resend is successful
-
-// fires error notice action when resend is unsuccessful
