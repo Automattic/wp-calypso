@@ -973,7 +973,7 @@ object KPIDashboardTests : BuildType({
 
 				tar cvfz %build.counter%-%build.vcs.number%.tgz allure-results
 
-				aws s3 sync %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
 			""".trimIndent()
 			dockerImage = "%docker_image_allure%"
 		}
@@ -982,7 +982,7 @@ object KPIDashboardTests : BuildType({
 			name = "Send webhook to start report generation"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"newest_allure_results": "%%build.counter%-%build.vcs.number%.tgz%"}}'
+				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
 		}
