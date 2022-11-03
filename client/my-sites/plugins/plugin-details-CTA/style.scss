@@ -35,7 +35,8 @@
 	@extend %placeholder;
 }
 
-.plugin-details-cta__period {
+.plugin-details-cta__period,
+.plugin-details-cta__notice {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
