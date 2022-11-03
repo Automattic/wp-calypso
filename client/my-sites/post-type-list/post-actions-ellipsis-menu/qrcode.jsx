@@ -9,17 +9,14 @@ import PostActionsQRCode from '../../post-actions-qr-code';
 
 class PostActionsEllipsisMenuQRCode extends Component {
 	static propTypes = {
-		globalId: PropTypes.string,
+		globalId: PropTypes.string.isRequired,
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			showQRCode: false,
-		};
-	}
+	state = {
+		showQRCode: false,
+	};
 
 	generateQRCode = () => {
 		this.setState( { showQRCode: true } );
@@ -28,8 +25,12 @@ class PostActionsEllipsisMenuQRCode extends Component {
 	render() {
 		const { translate, url, status } = this.props;
 
+		if ( ! url || ! status ) {
+			return null;
+		}
+
 		// The QR option will be available only for `publish` status
-		if ( ! [ 'publish' ].includes( status ) ) {
+		if ( status !== 'publish' ) {
 			return null;
 		}
 
