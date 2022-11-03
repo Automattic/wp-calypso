@@ -30,6 +30,7 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -453,6 +454,20 @@ export function jetpackCheckoutThankYou( context, next ) {
 
 	context.primary = (
 		<JetpackCheckoutThankYou
+			site={ context.params.site }
+			productSlug={ context.params.product }
+			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
+		/>
+	);
+
+	next();
+}
+
+export function giftThankYou( context, next ) {
+	const isUserlessCheckoutFlow = context.path.includes( '/checkout/gift' );
+
+	context.primary = (
+		<GiftThankYou
 			site={ context.params.site }
 			productSlug={ context.params.product }
 			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }

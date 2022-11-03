@@ -18,6 +18,7 @@ import {
 	licensingThankYouAutoActivation,
 	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
+	giftThankYou,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -95,6 +96,14 @@ export default function () {
 
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
+	page(
+		'/checkout/gift/thank-you/:site/:product',
+		// redirectLoggedOut,
+		giftThankYou,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		redirectLoggedOut,
