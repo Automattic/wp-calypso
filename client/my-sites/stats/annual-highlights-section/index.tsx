@@ -2,6 +2,7 @@ import { AnnualHighlightCards } from '@automattic/components';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import './style.scss';
 
@@ -53,6 +54,9 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 		};
 	}, [ year, followers, insights ] );
 
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const viewMoreHref = siteSlug ? `/stats/annualstats/${ siteSlug }` : null;
+
 	return (
 		<div className="stats__annual-highlights-section">
 			{ siteId && (
@@ -61,7 +65,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 					<QuerySiteStats siteId={ siteId } statType="statsFollowers" query={ FOLLOWERS_QUERY } />
 				</>
 			) }
-			<AnnualHighlightCards counts={ counts } year={ year } />
+			<AnnualHighlightCards counts={ counts } titleHref={ viewMoreHref } year={ year } />
 		</div>
 	);
 }

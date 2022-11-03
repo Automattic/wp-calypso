@@ -1,8 +1,8 @@
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import './style.scss';
 import HighlightCard from './highlight-card';
+import './style.scss';
 
 export type AnnualHighlightCardsProps = {
 	className?: string;
@@ -13,28 +13,35 @@ export type AnnualHighlightCardsProps = {
 		words: number | null;
 		followers: number | null;
 	};
+	titleHref?: string | null;
 	year?: string | number | null;
-	onClickComments?: ( event: MouseEvent ) => void;
-	onClickLikes?: ( event: MouseEvent ) => void;
-	onClickPosts?: ( event: MouseEvent ) => void;
-	onClickWords?: ( event: MouseEvent ) => void;
-	onClickFollowers?: ( event: MouseEvent ) => void;
 };
 
 export default function AnnualHighlightCards( {
 	className,
 	counts,
+	titleHref,
 	year,
 }: AnnualHighlightCardsProps ) {
 	const translate = useTranslate();
 
+	const header = (
+		<h1 className="highlight-cards-heading">
+			{ Number.isFinite( year )
+				? translate( '%(year)s in review', { args: { year } } )
+				: translate( 'Year in review' ) }
+		</h1>
+	);
+
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			<h1 className="highlight-cards-heading">
-				{ Number.isFinite( year )
-					? translate( '%(year)s in review', { args: { year } } )
-					: translate( 'Year in review' ) }
-			</h1>
+			{ titleHref ? (
+				<a className="highlight-cards-heading-wrapper" href={ titleHref }>
+					{ header }
+				</a>
+			) : (
+				header
+			) }
 
 			<div className="highlight-cards-list">
 				<HighlightCard
