@@ -122,14 +122,6 @@ export const siteSetupFlow: Flow = {
 			setStepProgress( flowProgress );
 		}
 
-		// Redirect to /goals or /intent screen if the goals/intent is empty
-		if ( ! [ 'goals', 'vertical', 'intent' ].includes( currentStep ) && ! intent ) {
-			if ( goalsStepEnabled ) {
-				return navigate( 'goals' );
-			}
-			return navigate( 'vertical' );
-		}
-
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				/**

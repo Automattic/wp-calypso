@@ -99,6 +99,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	// Redirect to first step screen if the goals/intent is empty
+	if ( ! [ 'goals', 'vertical', 'intent' ].includes( currentRoute ) && ! intent ) {
+		const _path = currentRoute.includes( '?' )
+			? generatePath( '/' + stepPaths[ 0 ] )
+			: generatePath( '/' + stepPaths[ 0 ] + search );
+
+		history.push( _path, stepPaths );
+	}
+
 	return (
 		<>
 			<DocumentHead title={ getDocumentHeadTitle() } />
