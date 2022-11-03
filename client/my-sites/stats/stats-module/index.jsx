@@ -22,6 +22,7 @@ import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
 import StatsListPosts from '../stats-list/stats-list-posts';
+import StatsListVideos from '../stats-list/stats-list-videos';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -154,7 +155,9 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldHideOldModule = isEnabled( 'stats/new-stats-module-component' ) && path === 'posts';
+		const shouldHideOldModule =
+			isEnabled( 'stats/new-stats-module-component' ) &&
+			( path === 'posts' || path === 'videoplays' );
 
 		return (
 			<>
@@ -184,6 +187,31 @@ class StatsModule extends Component {
 					>
 						{ this.props.children }
 					</StatsListPosts>
+				) }
+
+				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'videoplays' && (
+					<StatsListVideos
+						moduleName={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ this.getModuleLabel() }
+						emptyMessage={ moduleStrings.empty }
+						showMore={
+							this.props.showSummaryLink && displaySummaryLink
+								? {
+										url: this.getHref(),
+										label: this.props.translate( 'View all', {
+											context: 'Stats: Button label to expand a panel',
+										} ),
+								  }
+								: undefined
+						}
+						titleURL={ this.getHref() }
+						error={ hasError && <ErrorPanel /> }
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					>
+						{ this.props.children }
+					</StatsListVideos>
 				) }
 
 				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
