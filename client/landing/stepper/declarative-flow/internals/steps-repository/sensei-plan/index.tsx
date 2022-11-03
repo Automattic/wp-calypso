@@ -20,15 +20,22 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { SenseiStepError } from '../sensei-setup/sensei-step-error';
 import { SenseiStepProgress } from '../sensei-setup/sensei-step-progress';
 import { Tagline, Title, PlansIntervalToggle } from './components';
 import type { Step } from '../../types';
 import type { Props as PlanItemProps } from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import './styles.scss';
 
+enum Status {
+	Initial,
+	Bundling,
+	Error,
+}
+
 const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< Plans.PlanBillingPeriod >( 'ANNUALLY' );
-	const [ isBundling, setIsBundling ] = useState< boolean >( false );
+	const [ status, setStatus ] = useState< Status >( Status.Initial );
 
 	const { __ } = useI18n();
 	const locale = useLocale();
@@ -65,7 +72,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 
 	const onPlanSelect = async () => {
 		try {
-			setIsBundling( true );
+			setStatus( Status.Bundling );
 			await createSenseiSite( {
 				username: currentUser?.username || '',
 				languageSlug: locale,
@@ -116,9 +123,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 				`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
 			);
 		} catch ( err ) {
-			/**
-			 * @todo Need to report user that something went wrong.
-			 */
+			setStatus( Status.Error );
 		}
 	};
 
@@ -156,9 +161,7 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 
 	return (
 		<SenseiStepContainer stepName="senseiPlan" recordTracksEvent={ recordTracksEvent }>
-			{ isBundling ? (
-				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
-			) : (
+			{ status === Status.Initial && (
 				<>
 					<Title>{ __( 'Choose Monthly or Annually' ) }</Title>
 
@@ -186,6 +189,10 @@ const SenseiPlan: Step = ( { flow, navigation: { goToStep } } ) => {
 					/>
 				</>
 			) }
+			{ status === Status.Bundling && (
+				<SenseiStepProgress>{ __( 'Preparing Your Bundle' ) }</SenseiStepProgress>
+			) }
+			{ status === Status.Error && <SenseiStepError /> }
 		</SenseiStepContainer>
 	);
 };
