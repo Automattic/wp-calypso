@@ -274,7 +274,7 @@ export const PreCancellationDialog = ( {
 							<SiteScreenshot
 								className="pre-cancellation-dialog__site-screenshot"
 								site={ site }
-								alt={ siteName }
+								alt={ 'The screenshot of the site: ' + siteName }
 							/>
 						</div>
 					) }
