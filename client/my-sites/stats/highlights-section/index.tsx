@@ -24,7 +24,7 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 	);
 
 	return (
-		<div className="stats-highlights-section">
+		<div className="stats__highlights-section">
 			<HighlightCards
 				counts={ counts }
 				previousCounts={ {
