@@ -248,7 +248,7 @@ export function serverRender( req, res ) {
 		performanceMark( req, 'redux store', true );
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
@@ -266,8 +266,12 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			const { documentHead, themes, plugins } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				plugins,
+			} );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
