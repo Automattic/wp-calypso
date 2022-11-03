@@ -16,7 +16,7 @@ import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { RequestCartProduct } from '@automattic/shopping-cart';
+import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
@@ -56,6 +56,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	source,
+	isGiftPurchase,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -69,6 +70,7 @@ export default function usePrepareProductsForCart( {
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	source?: string;
+	isGiftPurchase?: boolean;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -124,6 +126,7 @@ export default function usePrepareProductsForCart( {
 		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
+		isGiftPurchase,
 	} );
 	useNothingToAdd( { addHandler, dispatch } );
 
@@ -256,11 +259,13 @@ function useAddRenewalItems( {
 	productAlias,
 	dispatch,
 	addHandler,
+	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
+	isGiftPurchase?: boolean;
 } ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
@@ -278,7 +283,11 @@ function useAddRenewalItems( {
 				if ( ! productSlug ) {
 					return null;
 				}
-				return createRenewalItemToAddToCart( productSlug, subscriptionId );
+				return createRenewalItemToAddToCart( {
+					productAlias: productSlug,
+					purchaseId: subscriptionId,
+					isGiftPurchase,
+				} );
 			} )
 			.filter( isValueTruthy );
 
@@ -299,7 +308,15 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, selectedSiteSlug ] );
+	}, [
+		addHandler,
+		translate,
+		originalPurchaseId,
+		productAlias,
+		dispatch,
+		selectedSiteSlug,
+		isGiftPurchase,
+	] );
 }
 
 function useAddProductFromSlug( {
@@ -422,10 +439,15 @@ function getProductSlugFromAlias( productAlias: string ): string {
 	return decodedAlias;
 }
 
-function createRenewalItemToAddToCart(
-	productAlias: string,
-	purchaseId: string | number | undefined | null
-): RequestCartProduct | null {
+function createRenewalItemToAddToCart( {
+	productAlias,
+	purchaseId,
+	isGiftPurchase,
+}: {
+	productAlias: string;
+	purchaseId: string | number | undefined | null;
+	isGiftPurchase?: boolean;
+} ): RequestCartProduct | null {
 	const [ slug, meta ] = productAlias.split( ':' );
 	// Some product slugs contain slashes, so we decode them
 	const productSlug = decodeProductFromUrl( slug );
@@ -434,9 +456,10 @@ function createRenewalItemToAddToCart(
 		return null;
 	}
 
-	const renewalItemExtra = {
+	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
 		purchaseType: 'renewal',
+		isGiftPurchase,
 	};
 	return {
 		// Some meta values include slashes, so we decode them
