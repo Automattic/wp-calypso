@@ -1,10 +1,20 @@
 import './style.scss';
+import { getUrlParts } from '@automattic/calypso-url';
+import { getPathParts, getLanguage } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import SocialLogo from 'calypso/components/social-logo';
 import { navigate } from 'calypso/lib/navigate';
 
+function getRealPathName( path: string ) {
+	const urlParts = getUrlParts( path );
+	const locale = getPathParts( urlParts.pathname ).shift();
+	return 'undefined' === typeof getLanguage( locale ) ? path : path.replace( `${ locale }/`, '' );
+}
+
 const UniversalNavbarFooter = () => {
 	const translate = useTranslate();
+	const realPathName = getRealPathName( window.location.pathname.slice( 1 ) );
+
 	return (
 		<>
 			<section
@@ -155,68 +165,64 @@ const UniversalNavbarFooter = () => {
 									className="lp-language-picker__content"
 									title={ translate( 'Change Language' ) }
 									onChange={ ( e ) => navigate( e.target.value ) }
-									defaultValue={
-										translate.localeSlug === 'en'
-											? `/plugins`
-											: `/${ translate.localeSlug }/plugins`
-									}
+									defaultValue={ `${ window.location.pathname }` }
 								>
 									<option>{ translate( 'Change Language' ) }</option>
-									<option lang="es" value="/es/plugins">
+									<option lang="es" value={ `/es/${ realPathName }` }>
 										Español
 									</option>
-									<option lang="pt-br" value="/pt-br/plugins">
+									<option lang="pt-br" value={ `/pt-br/${ realPathName }` }>
 										Português do Brasil
 									</option>
-									<option lang="de" value="/de/plugins">
+									<option lang="de" value={ `/de/${ realPathName }` }>
 										Deutsch
 									</option>
-									<option lang="fr" value="/fr/plugins">
+									<option lang="fr" value={ `/fr/${ realPathName }` }>
 										Français
 									</option>
-									<option lang="he" value="/he/plugins">
+									<option lang="he" value={ `/he/${ realPathName }` }>
 										עִבְרִית
 									</option>
-									<option lang="ja" value="/ja/plugins">
+									<option lang="ja" value={ `/ja/${ realPathName }` }>
 										日本語
 									</option>
-									<option lang="it" value="/it/plugins">
+									<option lang="it" value={ `/it/${ realPathName }` }>
 										Italiano
 									</option>
-									<option lang="nl" value="/nl/plugins">
+									<option lang="nl" value={ `/nl/${ realPathName }` }>
 										Nederlands
 									</option>
-									<option lang="ru" value="/ru/plugins">
+									<option lang="ru" value={ `/ru/${ realPathName }` }>
 										Русский
 									</option>
-									<option lang="tr" value="/tr/plugins">
+									<option lang="tr" value={ `/tr/${ realPathName }` }>
 										Türkçe
 									</option>
-									<option lang="id" value="/id/plugins">
+									<option lang="id" value={ `/id/${ realPathName }` }>
 										Bahasa Indonesia
 									</option>
-									<option lang="zh-cn" value="/zh-cn/plugins">
+									<option lang="zh-cn" value={ `/zh-cn/${ realPathName }` }>
 										简体中文
 									</option>
-									<option lang="zh-tw" value="/zh-tw/plugins">
+									<option lang="zh-tw" value={ `/zh-tw/${ realPathName }` }>
 										繁體中文
 									</option>
-									<option lang="ko" value="/ko/plugins">
+									<option lang="ko" value={ `/ko/${ realPathName }` }>
 										한국어
 									</option>
-									<option lang="ar" value="/ar/plugins">
+									<option lang="ar" value={ `/ar/${ realPathName }` }>
 										العربية
 									</option>
-									<option lang="sv" value="/sv/plugins">
+									<option lang="sv" value={ `/sv/${ realPathName }` }>
 										Svenska
 									</option>
-									<option lang="el" value="/el/plugins">
+									<option lang="el" value={ `/el/${ realPathName }` }>
 										Ελληνικά
 									</option>
-									<option lang="en" value="/plugins">
+									<option lang="en" value={ `/${ realPathName }` }>
 										English
 									</option>
-									<option lang="ro" value="/ro/plugins">
+									<option lang="ro" value={ `/ro/${ realPathName }` }>
 										Română
 									</option>
 								</select>

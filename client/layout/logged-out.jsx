@@ -133,7 +133,7 @@ const LayoutLoggedOut = ( {
 				</div>
 			</div>
 			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
-			{ sectionName === 'plugins' && (
+			{ ( sectionName === 'themes' || sectionName === 'theme' || sectionName === 'plugins' ) && (
 				<>
 					<UniversalNavbarFooter />
 					<UniversalNavbarFooterAutomattic />
