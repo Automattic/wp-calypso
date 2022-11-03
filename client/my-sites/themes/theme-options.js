@@ -91,7 +91,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
-				`${ origin }/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+				`${ origin }/setup/site-setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
 			);
 
 			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;

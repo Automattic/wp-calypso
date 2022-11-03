@@ -21,9 +21,7 @@ export const linkInBioPostSetup: Flow = {
 
 			switch ( currentStep ) {
 				case 'linkInBioPostSetup':
-					return window.location.assign(
-						`/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }`
-					);
+					return window.location.assign( `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` );
 			}
 		}
 

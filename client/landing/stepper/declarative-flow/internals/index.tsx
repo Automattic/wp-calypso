@@ -34,7 +34,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	Modal.setAppElement( '#wpcom' );
 	const stepPaths = flow.useSteps();
 	const location = useLocation();
-	const currentRoute = location.pathname.substring( 1 ).replace( /\/+$/, '' ) as StepPath;
+	const currentRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' ) as StepPath;
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
@@ -48,8 +48,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( '/' + path )
-			: generatePath( '/' + path + search );
+			? generatePath( `/${ flow.name }/${ path }` )
+			: generatePath( `/${ flow.name }/${ path }${ search }` );
 
 		history.push( _path, stepPaths );
 	} );
@@ -104,7 +104,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<Switch>
 				{ stepPaths.map( ( path ) => {
 					return (
-						<Route key={ path } path={ `/${ path }` }>
+						<Route key={ path } path={ `/${ flow.name }/${ path }` }>
 							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -119,7 +119,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					);
 				} ) }
 				<Route>
-					<Redirect to={ stepPaths[ 0 ] + search } />
+					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
 		</>
