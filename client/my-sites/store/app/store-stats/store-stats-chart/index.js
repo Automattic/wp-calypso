@@ -138,12 +138,8 @@ class StoreStatsChart extends Component {
 
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
-		const classes = classNames( className, {
-			'chart-tabs--new-main-chart': isNewFeatured,
-		} );
-
 		return isNewFeatured ? (
-			<div className={ classes }>
+			<div>
 				<div className="store-stats-chart__top">
 					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
 					{ this.renderLegend( selectedTabIndex ) }
