@@ -24,6 +24,9 @@ $vertical-margin: 32px;
 .highlight-cards-list {
 	display: flex;
 	flex-flow: row nowrap;
+	max-width: 100%;
+	overflow-x: scroll;
+	padding: 1px; // Ensures scrollable content box doesn't cover the highlight card.
 
 	.highlight-card {
 		border-color: var(--studio-gray-5);
