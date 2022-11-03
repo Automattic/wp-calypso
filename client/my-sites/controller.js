@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
-``;
 import { some, startsWith } from 'lodash';
 import page from 'page';
 import { createElement } from 'react';
