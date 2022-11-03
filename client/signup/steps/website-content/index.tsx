@@ -7,6 +7,7 @@ import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
+import wpcom from 'calypso/lib/wp';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
 import { ValidationErrors } from 'calypso/signup/accordion-form/types';
 import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
@@ -25,7 +26,6 @@ import {
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
-import { usePollSiteForDIFMDetails } from './use-poll-site-for-difm-details';
 import type { PageId } from 'calypso/signup/difm/constants';
 
 import './style.scss';
@@ -213,28 +213,34 @@ export default function WrapperWebsiteContent(
 	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const isFromCheckout = 'purchase-success' === urlParams.get( 'notice' );
-	// If the user is coming from checkout, we can wait for a longer period to
-	// ensure that the WoA sync has completed.
-	const maxTries = isFromCheckout ? 30 : 10;
-
-	const { hasValidPurchase, pageTitles, isPollingInProgress } = usePollSiteForDIFMDetails(
-		siteId,
-		maxTries
-	);
+	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
+	const [ isLoading, setIsLoading ] = useState( true );
 
 	useEffect( () => {
-		if ( isPollingInProgress ) {
-			return;
-		}
-		if ( ! hasValidPurchase ) {
-			debug( 'Website content content already submitted, redirecting to home' );
-			page( `/home/${ queryObject.siteSlug }` );
-		}
-	}, [ hasValidPurchase, isPollingInProgress, queryObject.siteSlug ] );
+		async function fetchSelectedPageTitles() {
+			try {
+				const response: { selected_page_titles: PageId[]; is_website_content_submitted: boolean } =
+					await wpcom.req.get( {
+						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
+						apiNamespace: 'wpcom/v2',
+					} );
 
-	if ( isPollingInProgress ) {
+				setIsLoading( false );
+				setPageTitles( response.selected_page_titles );
+
+				if ( response.is_website_content_submitted ) {
+					debug( 'Website content content already submitted, redirecting to home' );
+					page( `/home/${ queryObject.siteSlug }` );
+				}
+			} catch ( error ) {
+				setIsLoading( false );
+			}
+		}
+
+		fetchSelectedPageTitles();
+	}, [ queryObject.siteSlug ] );
+
+	if ( isLoading ) {
 		return <Loader />;
 	}
 

@@ -1,6 +1,7 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
+import { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { isSiteEligibleForBundledSoftware } from 'calypso/state/themes/selectors/is-site-eligible-for-bundled-software';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
 
@@ -15,9 +16,20 @@ import 'calypso/state/themes/init';
  * @returns {boolean}         True if the premium theme is available for the given site
  */
 export function isPremiumThemeAvailable( state, themeId, siteId ) {
+	// TODO: We'll need to update this condition once we have a way to check
+	// whether the theme is subscribed to. This is related to the third-party premium
+	// themes project.
 	if ( isThemePurchased( state, themeId, siteId ) ) {
 		return true;
 	}
+
+	/**
+	 * If the theme is externally managed and is not purchased, it is not available.
+	 */
+	if ( isExternallyManagedTheme( state, themeId ) ) {
+		return false;
+	}
+
 	const hasPremiumThemesFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES );
 
 	/**

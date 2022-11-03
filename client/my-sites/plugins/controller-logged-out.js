@@ -6,6 +6,8 @@ import {
 } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import wpcom from 'calypso/lib/wp';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
+import { getCategories } from './categories/use-categories';
+import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_BOTS = 10000;
@@ -37,6 +39,15 @@ const prefetchPopularPlugins = ( queryClient, options ) => {
 	return prefetchPluginsData(
 		queryClient,
 		getESPluginsInfiniteQueryParams( { ...options, category: 'popular', infinite }, infinite ),
+		true
+	);
+};
+
+const prefetchCategoryPlugins = ( queryClient, options ) => {
+	const infinite = true;
+	return prefetchPluginsData(
+		queryClient,
+		getESPluginsInfiniteQueryParams( { ...options, infinite }, infinite ),
 		true
 	);
 };
@@ -100,6 +111,36 @@ export async function fetchPlugins( context, next ) {
 			prefetchPaidPlugins( queryClient, options ),
 			prefetchPopularPlugins( queryClient, options ),
 			prefetchFeaturedPlugins( queryClient, options ),
+		],
+		context
+	);
+
+	next();
+}
+
+export async function fetchCategoryPlugins( context, next ) {
+	const { queryClient } = context;
+
+	if ( ! context.isServerSide ) {
+		return next();
+	}
+
+	const categories = getCategories();
+	const category = getCategoryForPluginsBrowser( context );
+
+	const categoryTags = categories[ category || '' ]?.tags || [ category ];
+	const tag = categoryTags.join( ',' );
+
+	const options = {
+		...getQueryOptions( context ),
+		category,
+		tag,
+	};
+
+	await prefetchTimebox(
+		[
+			prefetchPaidPlugins( queryClient, options ),
+			prefetchCategoryPlugins( queryClient, options ),
 		],
 		context
 	);

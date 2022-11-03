@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { getDIFMTieredPriceDetails, WPCOM_DIFM_LITE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -20,7 +19,6 @@ import {
 	VIDEO_GALLERY_PAGE,
 	PORTFOLIO_PAGE,
 	FAQ_PAGE,
-	PAGE_LIMIT,
 	SERVICES_PAGE,
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
@@ -122,19 +120,16 @@ interface PageCellType {
 function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
-	const totalSelections = selectedPages.length;
 	const isSelected = Boolean( selectedIndex > -1 );
-	const isDisabled =
-		! config.isEnabled( 'difm/allow-extra-pages' ) && PAGE_LIMIT <= totalSelections;
 	const title = useTranslatedPageTitles()[ pageId ];
 	const description = useTranslatedPageDescriptions( pageId );
 
 	return (
-		<GridCellContainer isSelected={ isSelected } isClickDisabled={ isDisabled }>
+		<GridCellContainer isSelected={ isSelected } isClickDisabled={ false }>
 			<BrowserView
 				onClick={ () => onClick( pageId ) }
 				pageId={ pageId }
-				isClickDisabled={ isDisabled }
+				isClickDisabled={ false }
 				isSelected={ isSelected }
 				selectedIndex={ selectedIndex >= 0 ? selectedIndex : -1 }
 			/>
@@ -159,16 +154,12 @@ function PageSelector( {
 } ) {
 	const onPageClick = ( pageId: string ) => {
 		const isPageSelected = selectedPages.includes( pageId );
-		const numberOfPagesSelected = selectedPages.length;
 		// The home page cannot be touched and is always included
 		if ( pageId !== HOME_PAGE ) {
 			if ( isPageSelected ) {
 				// Unselect selected page
 				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
-			} else if (
-				config.isEnabled( 'difm/allow-extra-pages' ) ||
-				numberOfPagesSelected < PAGE_LIMIT
-			) {
+			} else {
 				setSelectedPages( [ ...selectedPages, pageId ] );
 			}
 		}
@@ -317,40 +308,31 @@ function DIFMPagePicker( props: StepProps ) {
 		components: { wbr: <wbr /> },
 	} );
 
-	let subHeaderText = translate(
-		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}You can select up to 5 pages.',
+	const subHeaderText = translate(
+		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
 		{
-			components: { br: <br /> },
+			components: {
+				br: <br />,
+				PriceWrapper:
+					difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+						<span />
+					) : (
+						<Placeholder />
+					),
+			},
+			args: {
+				freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+				extraPagePrice: formatCurrency(
+					difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+					effectiveCurrencyCode ?? '',
+					{
+						stripZeros: true,
+						isSmallestUnit: true,
+					}
+				),
+			},
 		}
 	);
-
-	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
-		subHeaderText = translate(
-			'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
-			{
-				components: {
-					br: <br />,
-					PriceWrapper:
-						difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
-							<span />
-						) : (
-							<Placeholder />
-						),
-				},
-				args: {
-					freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
-					extraPagePrice: formatCurrency(
-						difmTieredPriceDetails?.perExtraPagePrice ?? 0,
-						effectiveCurrencyCode ?? '',
-						{
-							stripZeros: true,
-							isSmallestUnit: true,
-						}
-					),
-				},
-			}
-		);
-	}
 
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 
@@ -368,33 +350,23 @@ function DIFMPagePicker( props: StepProps ) {
 			isHorizontalLayout={ true }
 			isWideLayout={ false }
 			headerButton={
-				config.isEnabled( 'difm/allow-extra-pages' ) ? (
-					<StyledButton
-						disabled={ isFormattedCurrencyLoading }
-						busy={
-							( isExistingSite &&
-								( isProductsLoading ||
-									isCartPendingUpdate ||
-									isCartLoading ||
-									isCartUpdateStarted ) ) ||
-							isCheckoutPressed
-						}
-						primary
-						onClick={ submitPickedPages }
-					>
-						{ translate( 'Go to Checkout' ) }
-					</StyledButton>
-				) : (
-					<StyledButton primary busy={ isCheckoutPressed } onClick={ submitPickedPages }>
-						{ translate( 'Go to Checkout' ) }
-					</StyledButton>
-				)
+				<StyledButton
+					disabled={ isFormattedCurrencyLoading }
+					busy={
+						( isExistingSite &&
+							( isProductsLoading ||
+								isCartPendingUpdate ||
+								isCartLoading ||
+								isCartUpdateStarted ) ) ||
+						isCheckoutPressed
+					}
+					primary
+					onClick={ submitPickedPages }
+				>
+					{ translate( 'Go to Checkout' ) }
+				</StyledButton>
 			}
-			headerContent={
-				config.isEnabled( 'difm/allow-extra-pages' ) && (
-					<ShoppingCartForDIFM selectedPages={ selectedPages } />
-				)
-			}
+			headerContent={ <ShoppingCartForDIFM selectedPages={ selectedPages } /> }
 			{ ...props }
 		/>
 	);
