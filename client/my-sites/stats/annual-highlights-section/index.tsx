@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import './style.scss';
 
 type Insights = {
 	day?: string;
@@ -53,7 +54,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 	}, [ year, followers, insights ] );
 
 	return (
-		<>
+		<div className="stats__annual-highlights-section">
 			{ siteId && (
 				<>
 					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
@@ -61,6 +62,6 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 				</>
 			) }
 			<AnnualHighlightCards counts={ counts } year={ year } />
-		</>
+		</div>
 	);
 }
