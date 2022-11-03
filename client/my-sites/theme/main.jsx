@@ -63,6 +63,8 @@ import {
 	getThemeForumUrl,
 	getThemeDemoUrl,
 	shouldShowTryAndCustomize,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -552,6 +554,8 @@ class ThemeSheet extends Component {
 			isPurchased,
 			translate,
 			isBundledSoftwareSet,
+			isExternallyManagedTheme,
+			isSiteEligibleForManagedExternalThemes,
 		} = this.props;
 		if ( isActive ) {
 			// Customize site
@@ -565,7 +569,12 @@ class ThemeSheet extends Component {
 			if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 				// purchase
 				return translate( 'Pick this design' );
-			} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
+			} else if (
+				isPremium &&
+				! isPurchased &&
+				( isBundledSoftwareSet ||
+					( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) )
+			) {
 				// upgrade plan
 				return translate( 'Upgrade to activate', {
 					comment:
@@ -847,6 +856,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		demoUrl,
 		showTryAndCustomize,
 		isBundledSoftwareSet,
+		isExternallyManagedTheme,
+		isSiteEligibleForManagedExternalThemes,
 	} = props;
 
 	let defaultOption;
@@ -864,6 +875,8 @@ const ThemeSheetWithOptions = ( props ) => {
 		defaultOption = 'customize';
 	} else if ( needsJetpackPlanUpgrade ) {
 		defaultOption = 'upgradePlan';
+	} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
+		defaultOption = 'upgradePlanForExternallyManagedThemes';
 	} else if ( isPremium && ! isPurchased && ! isBundledSoftwareSet ) {
 		defaultOption = 'purchase';
 	} else if ( isPremium && ! isPurchased && isBundledSoftwareSet ) {
@@ -930,6 +943,11 @@ export default connect(
 			demoUrl: getThemeDemoUrl( state, id, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			softLaunched: theme?.soft_launched,
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme?.id ),
+			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
+				state,
+				siteId
+			),
 		};
 	},
 	{
