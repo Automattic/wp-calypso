@@ -170,6 +170,10 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-fetch-post.php';
 		$controller = new WP_REST_Help_Center_Fetch_Post();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-ticket.php';
+		$controller = new WP_REST_Help_Center_Ticket();
+		$controller->register_rest_route();
 	}
 
 	/**
