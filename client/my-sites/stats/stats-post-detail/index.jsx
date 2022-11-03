@@ -82,14 +82,10 @@ class StatsPostDetail extends Component {
 		const lastClickedTab = localStorage.getItem( 'jp-stats-last-tab' );
 		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
 		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
-		// Append the domain.
+		// Append the domain as needed.
 		const domain = this.props?.path.split( '/' ).pop();
-		if ( domain.length > 0 ) {
+		if ( domain?.length > 0 ) {
 			backLink += domain;
-			const lastChartDate = localStorage.getItem( 'jp-stats-last-chart-date' );
-			if ( lastChartDate.length > 0 ) {
-				backLink += `?${ lastChartDate }`;
-			}
 		}
 		// Wrap it up!
 		return [ { label: backLabel, href: backLink }, { label: title } ];

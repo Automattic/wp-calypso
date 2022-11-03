@@ -127,9 +127,6 @@ class StatsSite extends Component {
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
 		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
-		// Track the last chart selection.
-		// Necessary to properly configure the fixed navigation headers.
-		localStorage.setItem( 'jp-stats-last-chart-date', updatedQs );
 		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
 	};
 

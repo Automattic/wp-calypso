@@ -240,15 +240,11 @@ class StatsSummary extends Component {
 				break;
 		}
 
-		// Append the site domain and period as needed.
+		// Append the site domain as needed.
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const domain = this.props?.path.split( '/' ).pop();
-		if ( domain.length > 0 ) {
+		if ( domain?.length > 0 ) {
 			backLink += domain;
-			const lastChartDate = localStorage.getItem( 'jp-stats-last-chart-date' );
-			if ( lastChartDate?.length > 0 ) {
-				backLink += `?${ lastChartDate }`;
-			}
 		}
 		// Set up for FixedNavigationHeader.
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
