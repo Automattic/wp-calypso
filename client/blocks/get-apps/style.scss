@@ -5,6 +5,9 @@ body.get-apps__body {
 	.layout__content,
 	.layout__primary .main {
 		padding-bottom: 0;
+		// Setting the min-height is necessary to ensure the desktop panel's background
+		// extends the full height of larger screens.
+		min-height: calc(100vh - 79px);
 	}
 }
 
@@ -79,10 +82,12 @@ body.get-apps__body {
 			content: "";
 			background-color: #e9eff5;
 			position: absolute;
-			height: 100%;
+			height: 100vh;
 			width: 200vw;
+			top: 0;
 			left: -100vw;
 			z-index: -1;
+			overflow: hidden;
 		}
 
 		.get-apps__card-title {
