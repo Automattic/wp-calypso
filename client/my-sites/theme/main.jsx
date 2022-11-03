@@ -608,7 +608,7 @@ class ThemeSheet extends Component {
 					<Card>
 						<p>
 							{ this.props.translate(
-								'This theme has been renamed to reflect that limited support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
+								'This theme has been renamed to reflect that support for it is now provided directly by WordPress.com. The theme will continue to work as before.'
 							) }
 						</p>
 					</Card>
