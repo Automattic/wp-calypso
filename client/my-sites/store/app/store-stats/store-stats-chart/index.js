@@ -1,5 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -98,7 +99,7 @@ class StoreStatsChart extends Component {
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const { activeCharts } = this.state;
-		const className = classnames( item.classNames.join( ' ' ), {
+		const className = classNames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		const nestedValue = item[ activeCharts[ 0 ] ];
@@ -134,8 +135,39 @@ class StoreStatsChart extends Component {
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
-		return (
-			<Card className={ classnames( className, 'stats-module' ) }>
+
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		const classes = classNames( className, {
+			'chart-tabs--new-main-chart': isNewFeatured,
+		} );
+
+		return isNewFeatured ? (
+			<div className={ classes }>
+				<div className="store-stats-chart__top">
+					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
+					{ this.renderLegend( selectedTabIndex ) }
+				</div>
+				<ElementChart
+					loading={ isLoading }
+					data={ chartData }
+					barClick={ this.barClick }
+					chartXPadding={ 0 }
+					minBarWidth={ 35 }
+				/>
+				{ ! isLoading &&
+					renderTabs( {
+						chartData,
+						selectedIndex,
+						selectedTabIndex,
+						selectedDate,
+						unit,
+						tabClick: this.tabClick,
+						iconSize: 24,
+					} ) }
+			</div>
+		) : (
+			<Card className={ classNames( className, 'stats-module' ) }>
 				<div className="store-stats-chart__top">
 					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
 					{ this.renderLegend( selectedTabIndex ) }
