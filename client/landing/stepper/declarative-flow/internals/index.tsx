@@ -100,7 +100,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	};
 
 	// Redirect to first step screen if the goals/intent is empty
-	if ( ! [ 'goals', 'vertical', 'intent' ].includes( currentRoute ) && ! intent ) {
+	if ( ! [ 'goals', 'vertical', 'intent', 'processing' ].includes( currentRoute ) && ! intent ) {
 		const _path = ! search
 			? generatePath( '/' + stepPaths[ 0 ] )
 			: generatePath( '/' + stepPaths[ 0 ] + search );
