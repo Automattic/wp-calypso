@@ -101,7 +101,6 @@ export function SibylArticles( {
 	const [ debouncedMessage ] = useDebounce( message || '', 500 );
 
 	const { data: sibylArticles } = useSibylQuery( debouncedMessage, isJetpack, isAtomic );
-
 	const { data: intent } = useSiteIntent( supportSite?.ID );
 
 	const sectionName = useSelector( getSectionName );

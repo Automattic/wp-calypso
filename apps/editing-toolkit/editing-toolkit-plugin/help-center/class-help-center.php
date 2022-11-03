@@ -159,6 +159,10 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Authenticate();
 		$controller->register_rest_route();
 
+		require_once __DIR__ . '/class-wp-rest-help-center-sibyl.php';
+		$controller = new WP_REST_Help_Center_Sibyl();
+		$controller->register_rest_route();
+
 		require_once __DIR__ . '/class-wp-rest-help-center-support-availability.php';
 		$controller = new WP_REST_Help_Center_Support_Availability();
 		$controller->register_rest_route();

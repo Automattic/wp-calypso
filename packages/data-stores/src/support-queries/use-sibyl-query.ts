@@ -1,6 +1,6 @@
-import config from '@automattic/calypso-config';
+import { apiFetch } from '@wordpress/data-controls';
 import { useQuery } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 export type SupportArticleResult = {
 	id: string;
@@ -10,20 +10,29 @@ export type SupportArticleResult = {
 	link: string;
 };
 
-const wpcomSupportBlog = config( 'wpcom_support_blog' ) as string;
-const jetpackSupportBlog = config( 'jetpack_support_blog' ) as string;
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
 
 export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: boolean ) {
-	const site = ! isJetpackSite || isAtomic ? wpcomSupportBlog : jetpackSupportBlog;
+	const site = ! isJetpackSite || isAtomic ? 'wpcom' : 'jpop';
 
 	return useQuery< SupportArticleResult[] >(
 		query,
 		async () =>
-			await wpcomRequest( {
-				path: '/help/qanda',
-				apiVersion: '1.1',
-				query: `query=${ encodeURIComponent( query ) }&site=${ encodeURIComponent( site ) }`,
-			} ),
+			canAccessWpcomApis()
+				? await wpcomRequest( {
+						path: 'help/sibyl',
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+						query: `query=${ encodeURIComponent( query ) }&site=${ site }`,
+				  } )
+				: ( ( await apiFetch( {
+						path: 'help-center/sibyl',
+						global: true,
+						query: `query=${ encodeURIComponent( query ) }&site=${ site }`,
+				  } as APIFetchOptions ) ) as SupportArticleResult[] ),
 		{
 			refetchOnWindowFocus: false,
 			keepPreviousData: true,
