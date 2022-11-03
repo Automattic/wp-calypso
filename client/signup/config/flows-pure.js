@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { setupSiteAfterCreation } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	setupSiteAfterCreation,
+} from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './constants';
 
@@ -124,12 +128,25 @@ export function generateFlows( {
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
-			name: 'link-in-bio',
+			name: LINK_IN_BIO_FLOW,
 			steps: [ 'domains', 'plans-link-in-bio' ],
 			destination: ( dependencies ) =>
 				`/setup/link-in-bio/launchpad?siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
 			lastModified: '2022-11-01',
+			showRecaptcha: true,
+			get pageTitle() {
+				return translate( 'Link in Bio' );
+			},
+			postCompleteCallback: setupSiteAfterCreation,
+		},
+		{
+			name: LINK_IN_BIO_TLD_FLOW,
+			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
+			destination: ( dependencies ) =>
+				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
+			description: 'Beginning of the flow to create a link in bio',
+			lastModified: '2022-11-03',
 			showRecaptcha: true,
 			get pageTitle() {
 				return translate( 'Link in Bio' );
