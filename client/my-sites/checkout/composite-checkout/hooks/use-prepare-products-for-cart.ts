@@ -32,6 +32,17 @@ const initialPreparedProductsState = {
 	error: null,
 };
 
+/**
+ * Hook to collect requested products from places like the URL or localStorage
+ * and turn them into `RequestCartProduct` objects.
+ *
+ * Objects created by this hook will then be added to the cart by
+ * `useAddProductsFromUrl()`.
+ *
+ * Because this process may be async, the return value of this hook includes an
+ * `isLoading` property which should be true before using the `productsForCart`
+ * it produces.
+ */
 export default function usePrepareProductsForCart( {
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
