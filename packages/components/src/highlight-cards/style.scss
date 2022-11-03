@@ -33,6 +33,8 @@ $vertical-margin: 32px;
 		border-radius: 5px; // stylelint-disable-line scales/radii
 		width: 100%;
 		min-width: 200px; // Minimum mobile width
+		padding: 16px 24px;
+		margin-bottom: 0;
 
 		margin-right: 24px;
 		&:last-child {
