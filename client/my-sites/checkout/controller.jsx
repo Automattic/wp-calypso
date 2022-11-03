@@ -128,9 +128,7 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	const product = isJetpackCheckout
-		? context.params.productSlug
-		: getProductSlugFromContext( context );
+	const product = getProductSlugFromContext( context, { isJetpackCheckout } );
 
 	if ( 'thank-you' === product ) {
 		return;

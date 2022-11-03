@@ -24,13 +24,25 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
  * 5. `/checkout/example.com::blog/pro` (path contains a domain followed by a product)
  * 6. `/checkout/pro/example.com::blog` (path contains a product followed by a domain)
  */
-export function getProductSlugFromContext( { params, store }: PageJS.Context ): string {
+export function getProductSlugFromContext(
+	{ params, store }: PageJS.Context,
+	options?: { isJetpackCheckout?: boolean }
+): string | undefined {
 	const {
 		domainOrProduct,
 		product,
-	}: { domainOrProduct: string | undefined; product: string | undefined } = params;
+		productSlug,
+	}: {
+		domainOrProduct: string | undefined;
+		product: string | undefined;
+		productSlug: string | undefined;
+	} = params;
 	const state = store.getState();
 	const selectedSite = getSelectedSite( state );
+
+	if ( options?.isJetpackCheckout ) {
+		return productSlug;
+	}
 
 	if ( ! domainOrProduct && ! product ) {
 		return '';
