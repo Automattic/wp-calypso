@@ -253,6 +253,9 @@ export default function () {
 		clientRender
 	);
 
+	// Gift purchases work logged-out, so do not include redirectLoggedOut or siteSelection.
+	page( '/checkout/:product/gift/:purchaseId', noSite, checkout, makeLayout, clientRender );
+
 	page(
 		'/checkout/:site/with-gsuite/:domain/:receiptId?',
 		redirectLoggedOut,
