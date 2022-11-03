@@ -277,7 +277,7 @@ const UniversalNavbarFooter = () => {
 													{ translate( 'Get it on' ) }
 												</span>
 												<span className="lp-app-button__line lp-app-button__line--bottom">
-													{ translate( 'Google Play' ) }
+													Google Play
 												</span>
 											</span>
 										</span>
@@ -305,7 +305,7 @@ const UniversalNavbarFooter = () => {
 													{ translate( 'Download on the' ) }
 												</span>
 												<span className="lp-app-button__line lp-app-button__line--bottom">
-													{ translate( 'App Store' ) }
+													App Store
 												</span>
 											</span>
 										</span>
