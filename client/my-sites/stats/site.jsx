@@ -349,7 +349,7 @@ class StatsSite extends Component {
 
 		// Track the last viewed tab.
 		// Necessary to properly configure the fixed navigation headers.
-		localStorage.setItem( 'jp-stats-last-tab', 'traffic' );
+		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
 			<Main wideLayout>

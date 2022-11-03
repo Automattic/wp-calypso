@@ -77,9 +77,8 @@ class StatsPostDetail extends Component {
 			store: '/stats/store/',
 			ads: '/stats/ads/',
 		};
-		// TODO: Don't use localStorage?
-		// This feels dirty but it works for now.
-		const lastClickedTab = localStorage.getItem( 'jp-stats-last-tab' );
+		// We track the parent tab via sessionStorage.
+		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
 		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
 		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
 		// Append the domain as needed.

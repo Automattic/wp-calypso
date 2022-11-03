@@ -32,7 +32,7 @@ const StatsInsights = ( props ) => {
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
-	localStorage.setItem( 'jp-stats-last-tab', 'insights' );
+	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
