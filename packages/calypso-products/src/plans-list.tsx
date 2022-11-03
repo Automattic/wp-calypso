@@ -2156,6 +2156,31 @@ PLANS_LIST[ PLAN_WPCOM_STARTER ] = {
 		FEATURE_TITAN_EMAIL,
 	],
 	getIncludedFeatures: () => [ WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS ],
+	getCancellationFeatureList: (): CancellationFeatureList => ( {
+		monthly: [
+			cancellationFeatureListTerms.MANAGED_HOSTINGS,
+			cancellationFeatureListTerms.SEO_AND_SOCIAL,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.SECURITY_AND_SPAM,
+			cancellationFeatureListTerms.JETPACK_ESSENTIALS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		yearly: [
+			cancellationFeatureListTerms.MANAGED_HOSTINGS,
+			cancellationFeatureListTerms.SEO_AND_SOCIAL,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.SECURITY_AND_SPAM,
+			cancellationFeatureListTerms.JETPACK_ESSENTIALS,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+		withDomain: [
+			cancellationFeatureListTerms.MANAGED_HOSTINGS,
+			cancellationFeatureListTerms.SEO_AND_SOCIAL,
+			cancellationFeatureListTerms.EARN_AD_REVENUE,
+			cancellationFeatureListTerms.SECURITY_AND_SPAM,
+			cancellationFeatureListTerms.AND_MORE,
+		],
+	} ),
 };
 
 PLANS_LIST[ PLAN_WPCOM_FLEXIBLE ] = {
