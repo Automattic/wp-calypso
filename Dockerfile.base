@@ -123,17 +123,3 @@ RUN wget http://mirrors.kernel.org/ubuntu/pool/main/libf/libffi/libffi6_3.2.1-8_
 RUN wget -O - https://sentry.io/get-cli/ | bash
 
 ENTRYPOINT [ "/bin/bash" ]
-
-#### ci-allure image
-#### This image is used to process Allure reports in Calypso.
-
-FROM base as ci-allure
-# RUN curl -L "https://github.com/allure-framework/allure2/releases/download/2.19.0/allure_2.19.0-1_all.deb" -o "allure.deb"
-
-# RUN ls -la .
-RUN apt-get update && \
-	# apt-get install -y --no-install-recommends software-properties-common awscli
-	apt-get install -y --no-install-recommends awscli openjdk-17-jre && \
-	npm install -g allure-commandline
-
-ENTRYPOINT [ "/bin/bash" ]

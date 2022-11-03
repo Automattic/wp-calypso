@@ -971,17 +971,21 @@ object KPIDashboardTests : BuildType({
 				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
 				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
 
-				tar cvfz %build.counter%-%build.vcs.number%.tgz allure-results
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
 
 				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
 			""".trimIndent()
-			dockerImage = "%docker_image_allure%"
+			dockerImage = "%docker_image_e2e%"
 		}
 
 		bashNodeScript {
 			name = "Send webhook to start report generation"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
+				# Issue call as matticbot.
+				# The GitHub Action workflow expects the filename of the most recent Allure report
+				# as param.
 				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
 			""".trimIndent()
 			dockerImage = "%docker_image_e2e%"
