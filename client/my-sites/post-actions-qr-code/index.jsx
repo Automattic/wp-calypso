@@ -25,11 +25,9 @@ function PostActionsQRCode( { siteUrl, showQRCode } ) {
 	}, [] );
 
 	return (
-		<>
-			<Dialog isVisible={ showQRCodeDialog } buttons={ buttons } onClose={ onCloseDialog }>
-				<QRCode value={ siteUrl } size={ 200 } renderAs="canvas" level="H" />
-			</Dialog>
-		</>
+		<Dialog isVisible={ showQRCodeDialog } buttons={ buttons } onClose={ onCloseDialog }>
+			<QRCode value={ siteUrl } size={ 200 } renderAs="canvas" level="H" />
+		</Dialog>
 	);
 }
 
