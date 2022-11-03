@@ -14,6 +14,7 @@ $sensei-mobile-layout-width: 1200px;
 
 	.domains__step-content {
 		display: flex;
+		margin-top: 50px;
 
 		.domains__domain-side-content-container {
 			flex-direction: column;
@@ -50,9 +51,6 @@ $sensei-mobile-layout-width: 1200px;
 			@include break-wide {
 				margin: 0 0 0 80px;
 			}
-		}
-
-		.domains__domain-side-content {
 			&:first-of-type {
 				padding-top: 0;
 			}
@@ -67,10 +65,6 @@ $sensei-mobile-layout-width: 1200px;
 	.signup__step.is-domains,
 	.signup__step.is-mailbox-domain {
 		padding: 0 20px;
-	}
-
-	.domains__step-content {
-		margin-top: 50px;
 	}
 
 	.register-domain-step__search {
@@ -131,12 +125,12 @@ $sensei-mobile-layout-width: 1200px;
 				display: flex;
 				flex-direction: column;
 				align-items: flex-start;
-				font-size: 14px;
+				font-size: 14px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 				font-weight: normal;
 				gap: 12px;
 
 				h2 {
-					font-size: 20px;
+					font-size: 20px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 					font-weight: normal;
 				}
 
