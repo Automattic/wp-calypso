@@ -192,3 +192,10 @@ export function selectAlphaticallySortedProductOptions(
 ): APIProductFamilyProduct[] {
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
+
+export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
+	if ( typeof product === 'string' ) {
+		return [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ].includes( product );
+	}
+	return product.family_slug === 'jetpack-packs';
+}
