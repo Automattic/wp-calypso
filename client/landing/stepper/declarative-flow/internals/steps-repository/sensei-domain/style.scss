@@ -1,0 +1,249 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+$sensei-mobile-layout-width: 1200px;
+
+.sensei.sensei-domain {
+	--color-text-subtle: #a7aaad;
+	--studio-green-60: #1e8133;
+
+	.sensei-domain.is-wide-layout {
+		max-width: 1160px;
+	}
+
+	.domains__step-content {
+		display: flex;
+
+		.domains__domain-side-content-container {
+			flex-direction: column;
+			margin-top: 40px;
+			display: none;
+
+			@include break-large {
+				width: 30vw;
+				margin-top: 0;
+				flex-direction: column;
+				display: flex;
+			}
+
+			@include break-wide {
+				width: 350px;
+			}
+		}
+
+		.domains__domain-side-content {
+			border-bottom: 1px solid;
+			border-bottom-color: var(--studio-gray-5);
+			padding: 20px 0;
+			margin: 0;
+
+			@include break-small {
+				margin: 0 20px;
+			}
+
+			@include break-large {
+				margin: 0 20px 0 40px;
+				padding: 40px 0;
+			}
+
+			@include break-wide {
+				margin: 0 0 0 80px;
+			}
+		}
+
+		.domains__domain-side-content {
+			&:first-of-type {
+				padding-top: 0;
+			}
+
+			&:last-of-type {
+				border-bottom: none;
+			}
+		}
+	}
+
+	.signup__step.is-domain-only,
+	.signup__step.is-domains,
+	.signup__step.is-mailbox-domain {
+		padding: 0 20px;
+	}
+
+	.domains__step-content {
+		margin-top: 50px;
+	}
+
+	.register-domain-step__search {
+		@media (min-width: $sensei-mobile-layout-width) {
+			padding-top: 8px;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		padding: 20px;
+		padding-bottom: 24px;
+	}
+
+	.step-container__content {
+		@media (min-width: $sensei-mobile-layout-width) {
+			flex-direction: row;
+		}
+
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 80px;
+
+		.register-domain-step {
+			@media (min-width: $sensei-mobile-layout-width) {
+				width: 800px;
+			}
+			width: 100%;
+		}
+
+		.register-domain-step__domain-side-content-container-domain-explanation-image {
+			display: none;
+		}
+
+		.aside-sections {
+			@media (min-width: $sensei-mobile-layout-width) {
+				width: 280px;
+			}
+			width: 100%;
+
+			display: flex;
+			flex-direction: column;
+			gap: 40px;
+
+			.aside-spacer {
+				display: block;
+				height: 1px;
+				width: 100%;
+				background-color: rgba(255, 255, 255, 0.2);
+			}
+
+			.aside-section {
+				@media (min-width: $sensei-mobile-layout-width) {
+					padding: 0;
+				}
+
+				padding: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+				font-size: 14px;
+				font-weight: normal;
+				gap: 12px;
+
+				h2 {
+					font-size: 20px;
+					font-weight: normal;
+				}
+
+				span {
+					color: #a7aaad;
+				}
+
+				button {
+					font-weight: normal;
+					padding: 0;
+					margin: 0;
+				}
+			}
+		}
+	}
+
+	.formatted-header__subtitle {
+		text-align: center !important;
+	}
+
+	.step-container__navigation-link {
+		font-size: 1rem;
+		line-height: 1.55;
+		margin-left: 5px;
+	}
+
+	.register-domain-step__search-card {
+		border-radius: 4px;
+	}
+
+	.search-component {
+		box-shadow: none;
+
+		button,
+		.components-button:focus:not(:disabled),
+		input {
+			border: 0;
+			outline: none;
+		}
+	}
+
+	.search-filters__dropdown-filters {
+		button {
+			border: 0;
+			background: none;
+		}
+	}
+
+	.domain-suggestion {
+		margin-bottom: 10px;
+
+		.domain-suggestion__action {
+			border-radius: 4px;
+			background: none;
+		}
+	}
+
+	.domain-suggestion.is-placeholder,
+	.featured-domain-suggestion--is-placeholder {
+		background: none;
+		box-shadow: none;
+		border: solid 1px rgba(255, 255, 255, 0.2);
+
+		.domain-registration-suggestion__badges,
+		.domain-registration-suggestion__match-reasons {
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	.domain-suggestion.is-placeholder {
+		.domain-suggestion__content {
+			background-color: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	.featured-domain-suggestions {
+		.domain-suggestion__action {
+			border: none;
+			border-radius: 4px;
+			background-color: #0675c4;
+		}
+		.domain-product-price.is-free-domain .domain-product-price__price {
+			color: #8e9196;
+		}
+	}
+
+	.register-domain-step__next-page {
+		background: none;
+		border: none;
+		box-shadow: none;
+	}
+
+	.badge {
+		box-sizing: content-box;
+	}
+	.domain-suggestion .premium-badge {
+		padding: 1px 10px;
+
+		.info-popover {
+			padding: 0;
+		}
+	}
+}
+.search-filters__popover {
+	$accent-blue: #117ac9;
+	.button.is-primary {
+		background: $accent-blue;
+		border-color: $accent-blue;
+	}
+}
