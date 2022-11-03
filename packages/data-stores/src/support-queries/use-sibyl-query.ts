@@ -1,4 +1,4 @@
-import { apiFetch } from '@wordpress/data-controls';
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
@@ -9,11 +9,6 @@ export type SupportArticleResult = {
 	description: string;
 	link: string;
 };
-
-interface APIFetchOptions {
-	global: boolean;
-	path: string;
-}
 
 export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: boolean ) {
 	const site = ! isJetpackSite || isAtomic ? 'wpcom' : 'jpop';
@@ -29,9 +24,8 @@ export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: 
 						query: `query=${ encodeURIComponent( query ) }&site=${ site }`,
 				  } )
 				: ( ( await apiFetch( {
-						path: 'help-center/sibyl',
+						path: `help-center/sibyl?query=${ encodeURIComponent( query ) }&site=${ site }`,
 						global: true,
-						query: `query=${ encodeURIComponent( query ) }&site=${ site }`,
 				  } as APIFetchOptions ) ) as SupportArticleResult[] ),
 		{
 			refetchOnWindowFocus: false,
