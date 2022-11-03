@@ -10,6 +10,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
 import {
 	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
 	NEWSLETTER_FLOW,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
@@ -331,7 +332,7 @@ export class PlansStep extends Component {
 						{ components: { link: freePlanButton } }
 				  );
 		}
-		if ( flowName === LINK_IN_BIO_FLOW ) {
+		if ( flowName === LINK_IN_BIO_FLOW || flowName === LINK_IN_BIO_TLD_FLOW ) {
 			return hideFreePlan
 				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
 				: translate(
