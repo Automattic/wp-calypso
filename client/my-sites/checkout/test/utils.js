@@ -194,7 +194,7 @@ describe( 'getProductSlugFromContext', () => {
 			domainOrProduct: undefined,
 			pathname: undefined,
 			productSlug: newProduct,
-			selectedSite: domainSiteSlug,
+			selectedSite: undefined,
 			expected: newProduct,
 		},
 		{
