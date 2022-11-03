@@ -33,9 +33,7 @@ export default function IssueMultipleLicensesForm( {
 
 	const defaultProducts = getQueryArg( window.location.href, 'product' )?.toString().split( ',' );
 
-	const [ selectedProducts, setSelectedProducts ] = useState(
-		defaultProducts ? defaultProducts : []
-	);
+	const [ selectedProducts, setSelectedProducts ] = useState( defaultProducts ?? [] );
 
 	const [ issueLicense, isLoading ] = useIssueMultipleLicenses( selectedProducts, selectedSite );
 

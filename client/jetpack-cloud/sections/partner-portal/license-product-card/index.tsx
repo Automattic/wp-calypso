@@ -43,7 +43,9 @@ export default function LicenseProductCard( props: Props ) {
 
 	useEffect( () => {
 		if ( suggestedProduct ) {
-			if ( product.slug === suggestedProduct ) {
+			const suggestedProducts = suggestedProduct.split( ',' );
+
+			if ( suggestedProducts.includes( product.slug ) ) {
 				onSelect();
 			}
 		}

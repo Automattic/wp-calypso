@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import CardHeading from 'calypso/components/card-heading';
@@ -13,8 +12,6 @@ import { AssignLicenceProps } from '../../types';
 
 export default function IssueLicense( { selectedSite, suggestedProduct }: AssignLicenceProps ) {
 	const translate = useTranslate();
-
-	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
 
 	useEffect( () => {
 		const layoutClass = 'layout__content--partner-portal-issue-license';
@@ -35,7 +32,10 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
 			{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ? (
-				<IssueMultipleLicensesForm selectedSite={ selectedSite } selectedProductSlugs={ [] } />
+				<IssueMultipleLicensesForm
+					selectedSite={ selectedSite }
+					suggestedProduct={ suggestedProduct }
+				/>
 			) : (
 				<IssueLicenseForm selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 			) }

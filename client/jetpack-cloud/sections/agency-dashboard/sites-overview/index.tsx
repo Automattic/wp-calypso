@@ -135,9 +135,10 @@ export default function SitesOverview() {
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses?.map( ( type: string ) =>
-				getProductSlugFromProductType( type )
-			),
+			product_slug: selectedLicenses
+				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				// If multiple products are selected, pass them as a comma-separated list.
+				.join( ',' ),
 			source: 'dashboard',
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
