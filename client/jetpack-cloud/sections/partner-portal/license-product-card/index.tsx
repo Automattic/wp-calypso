@@ -11,7 +11,7 @@ interface Props {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
-	onSelectProduct: ( value: string ) => void | null;
+	onSelectProduct: ( value: APIProductFamilyProduct ) => void | null;
 	suggestedProduct?: string | null;
 }
 
@@ -21,7 +21,7 @@ export default function LicenseProductCard( props: Props ) {
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {
-		onSelectProduct?.( product.slug );
+		onSelectProduct?.( product );
 	}, [ onSelectProduct ] );
 
 	const onKeyDown = useCallback(
