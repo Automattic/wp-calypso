@@ -58,12 +58,12 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep }: StepContentProps )
 
 	return (
 		<div className="launchpad__container">
-			{
+			{ showEmailValidationBanner && (
 				<EmailValidationBanner
 					email={ email }
 					closeBanner={ () => setShowEmailValidationBanner( false ) }
 				/>
-			}
+			) }
 			<div className="launchpad__content">
 				<Sidebar
 					sidebarDomain={ sidebarDomain }
