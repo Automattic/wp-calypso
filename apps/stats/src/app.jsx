@@ -142,6 +142,6 @@ async function AppBoot() {
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	}
-	registerStatsPages( '/wp-admin/admin.php?page=jetpack-stats-app' );
+	registerStatsPages( config( 'admin_page_base' ) );
 }
 AppBoot();
