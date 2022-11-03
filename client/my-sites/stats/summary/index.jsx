@@ -246,7 +246,7 @@ class StatsSummary extends Component {
 		if ( domain.length > 0 ) {
 			backLink += domain;
 			const lastChartDate = localStorage.getItem( 'jp-stats-last-chart-date' );
-			if ( lastChartDate.length > 0 ) {
+			if ( lastChartDate?.length > 0 ) {
 				backLink += `?${ lastChartDate }`;
 			}
 		}
