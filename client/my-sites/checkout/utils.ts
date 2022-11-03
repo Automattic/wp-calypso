@@ -47,7 +47,7 @@ export function getProductSlugFromContext(
 	}
 
 	if ( isGiftPurchase ) {
-		return domainOrProduct;
+		return domainOrProduct || product;
 	}
 
 	if ( ! domainOrProduct && ! product ) {
