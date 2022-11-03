@@ -1,0 +1,37 @@
+.step-container.senseiPlan {
+	.plan-item {
+		&__viewport {
+			border: none;
+		}
+
+		&__heading {
+			justify-content: center;
+		}
+		&__price-amount,
+		&__price-note,
+		&__price-discount,
+		&__actions {
+			text-align: center;
+		}
+
+		&__select-button {
+			width: 100%;
+		}
+	}
+
+	.plans-feature-list {
+		&__item-group {
+			list-style: none;
+		}
+		&__item-bullet-icon path {
+			fill: #008a20;
+			stroke: #008a20;
+		}
+		&__item--requires-annual-disabled {
+			.plans-feature-list__item-bullet-icon path {
+				fill: var(--studio-orange-40);
+				stroke: var(--studio-orange-40);
+			}
+		}
+	}
+}
