@@ -123,8 +123,11 @@ export const siteSetupFlow: Flow = {
 		}
 
 		// Redirect to /goals or /intent screen if the goals/intent is empty
-		if ( verticalsStepEnabled && currentStep !== 'goals' && ! goals.length ) {
-			navigate( 'goals' );
+		if ( ! [ 'goals', 'vertical', 'intent' ].includes( currentStep ) && ! intent ) {
+			if ( goalsStepEnabled ) {
+				return navigate( 'goals' );
+			}
+			return navigate( 'vertical' );
 		}
 
 		const exitFlow = ( to: string ) => {
