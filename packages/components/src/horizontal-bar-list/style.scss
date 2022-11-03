@@ -37,7 +37,7 @@
 			}
 
 			.horizontal-bar-list--hover-action {
-				visibility: visible;
+				display: block;
 			}
 		}
 	}
@@ -47,8 +47,9 @@
 		position: relative;
 		display: flex;
 		height: auto;
-		width: calc(100% - $value-column-width);
+		width: calc(100% - $value-column-width - $bar-left-spacing);
 		align-items: center;
+		flex: 1 0 auto;
 
 		&::before {
 			width: var(--horizontal-bar-list-fill);
@@ -64,7 +65,9 @@
 	}
 
 	.horizontal-bar-list--hover-action {
-		visibility: hidden;
+		display: none;
+		position: relative;
+		z-index: 1;
 	}
 
 	.label {
@@ -77,7 +80,7 @@
 	}
 
 	.value {
-		flex: 0 1 $value-column-width;
+		flex: 0 0 $value-column-width;
 		text-align: right;
 		align-self: center;
 	}
