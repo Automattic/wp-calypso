@@ -1,5 +1,5 @@
 /**
- * @group quarantined
+ * @group calypso-pr
  */
 
 import {
@@ -10,6 +10,7 @@ import {
 	ReaderResponse,
 	SecretsManager,
 	TestAccount,
+	NewCommentResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
@@ -22,9 +23,10 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	let notificationsComponent: NotificationsComponent;
 	let restAPIClient: RestAPIClient;
+	let siteID: number;
+	let commentID: number;
 
 	describe( `Leave a comment as ${ commentingUser }`, function () {
-		let siteID: number;
 		let postID: number;
 
 		beforeAll( async function () {
@@ -32,15 +34,18 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		} );
 
 		it( 'Get the latest post in reader stream', async function () {
-			// TODO: Find a way to create the post if it's not found (less fragile).
 			const response: ReaderResponse = await restAPIClient.getReaderFeed();
 			siteID = response.posts[ 0 ].site_ID;
 			postID = response.posts[ 0 ].ID;
 		} );
 
 		it( 'Leave a comment on the post', async function () {
-			await restAPIClient.createComment( siteID, postID, comment );
-			// TODO: Assert on a success status code.
+			const response: NewCommentResponse = await restAPIClient.createComment(
+				siteID,
+				postID,
+				comment
+			);
+			commentID = response.ID;
 		} );
 	} );
 
@@ -66,12 +71,11 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 	describe( 'Approve comment from notification', function () {
 		it( 'Approve comment', async function () {
-			// TODO: Handle notifications that have been already approved.
 			await notificationsComponent.clickNotificationAction( 'Approve' );
 		} );
 
 		it( 'Unapprove comment', async function () {
-			await notificationsComponent.clickNotificationAction( 'Approved' );
+			await notificationsComponent.clickNotificationAction( 'Approve' );
 		} );
 	} );
 
@@ -85,8 +89,6 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 		} );
 	} );
 
-	// TODO: Edit comment from notification.
-
 	describe( 'Mark comment as spam from notification', function () {
 		it( 'Mark comment as spam', async function () {
 			await notificationsComponent.clickNotificationAction( 'Spam' );
@@ -94,7 +96,6 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 		it( 'Undo mark comment as spam', async function () {
 			await notificationsComponent.clickUndo();
-			// TODO: Assert comment was un-marked as spam.
 		} );
 	} );
 
@@ -105,15 +106,22 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 
 		it( 'Undo trash comment', async function () {
 			await notificationsComponent.clickUndo();
-			// TODO: Assert comment was not deleted.
 		} );
+	} );
 
-		it( 'Trash comment again', async function () {
-			await notificationsComponent.clickNotificationAction( 'Trash' );
-		} );
+	// Delete test comment that was created.
+	afterAll( async function () {
+		if ( typeof commentID === 'undefined' ) {
+			console.log( 'commentid ' + commentID );
+			return;
+		}
 
-		it( 'Confirm comment is trashed', async function () {
-			await notificationsComponent.waitForUndoMessageToDisappear();
-		} );
+		try {
+			restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.notificationsUser );
+			await restAPIClient.deleteComment( siteID, commentID );
+			console.log( 'Successfully cleaned up comment.' );
+		} catch ( e: unknown ) {
+			console.warn( `Failed to clean up test comment from user ${ commentingUser }` );
+		}
 	} );
 } );

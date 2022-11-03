@@ -29,10 +29,6 @@ export interface SettingsParams {
 	[ key: string ]: string | number;
 }
 
-export interface ReaderParams {
-	number: number;
-}
-
 export interface NewCommentParams {
 	content: string;
 }
@@ -155,9 +151,13 @@ export interface ReaderResponse {
 	posts: Array< ReaderMetadata >;
 }
 
-// export interface NewCommentResponse {
-// 	// TODO: Find a way to get the response status code
-// }
+export interface NewCommentResponse {
+	ID: number;
+}
+
+export interface DeleteCommentResponse {
+	ID: number;
+}
 
 /* Error Responses */
 

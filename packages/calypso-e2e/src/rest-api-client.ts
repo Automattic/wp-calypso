@@ -2,13 +2,7 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import {
-	BearerTokenErrorResponse,
-	NewCommentParams,
-	ReaderParams,
-	TestFile,
-	SettingsParams,
-} from './types';
+import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -24,11 +18,13 @@ import type {
 	NewSiteResponse,
 	NewSiteParams,
 	NewInviteResponse,
+	NewCommentResponse,
 	AllInvitesResponse,
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
 	NewPostResponse,
+	ReaderResponse,
 	Invite,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
@@ -662,6 +658,37 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/replies/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a given comment from a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 * @returns {Promise< any >} Decoded JSON response.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async deleteComment( siteID: number, commentID: number ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/delete` ),
 			params
 		);
 
