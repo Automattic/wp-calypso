@@ -143,6 +143,9 @@ export function generateFlows( {
 		{
 			name: LINK_IN_BIO_TLD_FLOW,
 			steps: [ 'domains', 'user', 'plans-link-in-bio' ],
+			middleDestination: {
+				user: ( dependencies ) => `/setup/patterns?flow=link-in-bio&tld=${ dependencies.tld }`,
+			},
 			destination: ( dependencies ) =>
 				`/setup/launchpad?flow=link-in-bio&siteSlug=${ encodeURIComponent( dependencies.siteSlug ) }`,
 			description: 'Beginning of the flow to create a link in bio',
@@ -151,6 +154,7 @@ export function generateFlows( {
 			get pageTitle() {
 				return translate( 'Link in Bio' );
 			},
+			providesDependenciesInQuery: [ 'tld' ],
 			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
