@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -99,7 +99,7 @@ class StoreStatsChart extends Component {
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const { activeCharts } = this.state;
-		const className = classnames( item.classNames.join( ' ' ), {
+		const className = classNames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		const nestedValue = item[ activeCharts[ 0 ] ];
@@ -138,8 +138,12 @@ class StoreStatsChart extends Component {
 
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
+		const classes = classNames( className, {
+			'chart-tabs--new-main-chart': isNewFeatured,
+		} );
+
 		return isNewFeatured ? (
-			<div className={ className }>
+			<div className={ classes }>
 				<div className="store-stats-chart__top">
 					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
 					{ this.renderLegend( selectedTabIndex ) }
@@ -163,7 +167,7 @@ class StoreStatsChart extends Component {
 					} ) }
 			</div>
 		) : (
-			<Card className={ classnames( className, 'stats-module' ) }>
+			<Card className={ classNames( className, 'stats-module' ) }>
 				<div className="store-stats-chart__top">
 					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
 					{ this.renderLegend( selectedTabIndex ) }

@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -85,15 +83,10 @@ class StoreStatsOrdersChart extends Component {
 
 	render() {
 		const { data, selectedDate, unit, slug } = this.props;
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
-		const classes = classNames( 'store-stats-orders-chart', {
-			'chart-tabs--new-main-chart': isNewFeatured,
-		} );
 
 		return (
 			<StoreStatsChart
-				className={ classes }
+				className="store-stats-orders-chart"
 				data={ data }
 				selectedDate={ selectedDate }
 				unit={ unit }
