@@ -80,7 +80,7 @@ export default function IssueMultipleLicensesForm( {
 						<p className="issue-multiple-licenses-form__description">
 							{ selectedSiteDomain
 								? translate(
-										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomian)s{{/strong}}:',
+										'Select the Jetpack products you would like to add to {{strong}}%(selectedSiteDomain)s{{/strong}}:',
 										{
 											args: { selectedSiteDomain },
 											components: { strong: <strong /> },
