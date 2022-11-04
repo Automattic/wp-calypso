@@ -193,9 +193,11 @@ export function selectAlphaticallySortedProductOptions(
 	return sortBy( selectProductOptions( families ), ( product ) => product.name );
 }
 
+export const JETPACK_BUNDLES = [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ];
+
 export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
 	if ( typeof product === 'string' ) {
-		return [ 'jetpack-complete', 'jetpack-security-t1', 'jetpack-security-t2' ].includes( product );
+		return JETPACK_BUNDLES.includes( product );
 	}
 	return product.family_slug === 'jetpack-packs';
 }
