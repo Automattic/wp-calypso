@@ -211,7 +211,7 @@ class PluginRemoveButton extends Component {
 			return null;
 		}
 
-		if ( this.props.plugin.isMarketplaceProduct ) {
+		if ( this.props.plugin.isMarketplaceProduct && this.props.productPurchase ) {
 			// Purchased Marketplace products are auto-managed.
 			return null;
 		}
