@@ -479,7 +479,6 @@ class Login extends Component {
 		const {
 			domain,
 			isJetpack,
-			isWhiteLogin,
 			isP2Login,
 			privateSite,
 			twoFactorAuthType,
@@ -537,7 +536,6 @@ class Login extends Component {
 						require="calypso/blocks/login/two-factor-authentication/two-factor-content"
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
-						isWhiteLogin={ isWhiteLogin }
 						isWoo={ isWoo }
 						isPartnerSignup={ isPartnerSignup }
 						twoFactorAuthType={ twoFactorAuthType }
@@ -592,7 +590,6 @@ class Login extends Component {
 							socialService={ socialService }
 							socialServiceResponse={ socialServiceResponse }
 							domain={ domain }
-							isWhiteLogin={ isWhiteLogin }
 							isP2Login={ isP2Login }
 							locale={ locale }
 							userEmail={ userEmail }
@@ -616,7 +613,6 @@ class Login extends Component {
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }
 				domain={ domain }
-				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
 				locale={ locale }
 				userEmail={ userEmail }
@@ -631,7 +627,7 @@ class Login extends Component {
 	}
 
 	render() {
-		const { isJetpack, oauth2Client, locale, isWhiteLogin } = this.props;
+		const { isJetpack, oauth2Client, locale } = this.props;
 		return (
 			<div
 				className={ classNames( 'login', {
@@ -641,7 +637,7 @@ class Login extends Component {
 			>
 				{ this.renderHeader() }
 
-				<ErrorNotice locale={ locale } isWhiteLogin={ isWhiteLogin } />
+				<ErrorNotice locale={ locale } />
 
 				{ this.renderNotice() }
 
