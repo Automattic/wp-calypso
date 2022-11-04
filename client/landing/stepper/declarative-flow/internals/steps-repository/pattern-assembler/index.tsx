@@ -1,7 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -9,6 +9,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
+import { PA_THEME_SLUG } from './constants';
 import PatternAssemblerPreview from './pattern-assembler-preview';
 import PatternLayout from './pattern-layout';
 import PatternSelectorLoader from './pattern-selector-loader';
@@ -36,6 +37,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+
+	useEffect( () => {
+		// Require to start the flow from the first step
+		if ( ! selectedDesign ) {
+			location.href = `/setup${ location.search }`;
+		}
+	} );
 
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
@@ -251,7 +259,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							if ( siteSlugOrId ) {
 								const design = getDesign();
 								const stylesheet = design.recipe!.stylesheet!;
-								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
+								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme || PA_THEME_SLUG;
 
 								setPendingAction( () =>
 									// We have to switch theme first. Otherwise, the unique suffix might append to
