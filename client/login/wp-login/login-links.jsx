@@ -104,6 +104,7 @@ export class LoginLinks extends Component {
 			locale: this.props.locale,
 			twoFactorAuthType: 'link',
 			signupUrl: this.props.query?.signup_url,
+			oauth2ClientId: this.props.oauth2ClientId,
 		};
 
 		if ( this.props.currentRoute === '/log-in/jetpack' ) {

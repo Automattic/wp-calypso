@@ -261,6 +261,7 @@ export class Login extends Component {
 						isP2Login={ isP2Login }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
+						oauth2ClientId={ this.props.oauth2Client?.id }
 					/>
 				) }
 				{ isLoginView && <TranslatorInvite path={ path } /> }

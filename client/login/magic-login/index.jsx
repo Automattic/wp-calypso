@@ -55,7 +55,6 @@ class MagicLogin extends Component {
 
 		const loginParameters = {
 			isJetpack: this.props.isJetpackLogin,
-			isGutenboarding: true,
 			locale: this.props.locale,
 			emailAddress: this.props.query?.email_address,
 			signupUrl: this.props.query?.signup_url,
@@ -67,7 +66,7 @@ class MagicLogin extends Component {
 	renderLinks() {
 		const { isJetpackLogin, locale, showCheckYourEmail, translate } = this.props;
 
-		if ( showCheckYourEmail ) {
+		if ( showCheckYourEmail || this.props.query?.client_id ) {
 			return null;
 		}
 
@@ -77,7 +76,6 @@ class MagicLogin extends Component {
 		// paste somewhere else, their email address isn't included in it.
 		const loginParameters = {
 			isJetpack: isJetpackLogin,
-			isGutenboarding: true,
 			locale: locale,
 			signupUrl: this.props.query?.signup_url,
 		};
