@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import GreenCheckmark from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
-import type { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
