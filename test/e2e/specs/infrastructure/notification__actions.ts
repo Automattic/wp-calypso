@@ -24,40 +24,33 @@ describe( DataHelper.createSuiteTitle( 'Notifications' ), function () {
 	let notificationsComponent: NotificationsComponent;
 	let restAPIClient: RestAPIClient;
 	let siteID: number;
+	let postID: number;
 	let commentID: number;
+	let page: Page;
 
-	describe( `Leave a comment as ${ commentingUser }`, function () {
-		let postID: number;
+	beforeAll( async function () {
+		restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.commentingUser );
 
-		beforeAll( async function () {
-			restAPIClient = new RestAPIClient( SecretsManager.secrets.testAccounts.commentingUser );
-		} );
+		// Get the latest post in the reader stream.
+		const readerFeed: ReaderResponse = await restAPIClient.getReaderFeed();
+		siteID = readerFeed.posts[ 0 ].site_ID;
+		postID = readerFeed.posts[ 0 ].ID;
 
-		it( 'Get the latest post in reader stream', async function () {
-			const response: ReaderResponse = await restAPIClient.getReaderFeed();
-			siteID = response.posts[ 0 ].site_ID;
-			postID = response.posts[ 0 ].ID;
-		} );
+		// Leave a comment on the post.
+		const response: NewCommentResponse = await restAPIClient.createComment(
+			siteID,
+			postID,
+			comment
+		);
+		commentID = response.ID;
 
-		it( 'Leave a comment on the post', async function () {
-			const response: NewCommentResponse = await restAPIClient.createComment(
-				siteID,
-				postID,
-				comment
-			);
-			commentID = response.ID;
-		} );
+		// Log in as the notification user.
+		page = await browser.newPage();
+		const testAccount = new TestAccount( notificationsUser );
+		await testAccount.authenticate( page );
 	} );
 
 	describe( `View notification as ${ notificationsUser }`, function () {
-		let page: Page;
-
-		beforeAll( async function () {
-			page = await browser.newPage();
-			const testAccount = new TestAccount( notificationsUser );
-			await testAccount.authenticate( page );
-		} );
-
 		it( 'Open notification using keyboard shortcut', async function () {
 			const navbarComponent = new NavbarComponent( page );
 			await navbarComponent.openNotificationsPanel( { useKeyboard: true } );

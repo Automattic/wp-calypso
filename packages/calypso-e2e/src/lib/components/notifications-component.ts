@@ -56,7 +56,7 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickUndo(): Promise< void > {
-		this.waitForUndoMessage();
+		await this.waitForUndoMessage();
 		await this.page.click( selectors.undoLink );
 	}
 
@@ -75,7 +75,7 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async waitForUndoMessageToDisappear(): Promise< void > {
-		this.waitForUndoMessage();
+		await this.waitForUndoMessage();
 		await this.page.waitForSelector( selectors.undoLocator, { state: 'hidden' } );
 	}
 }
