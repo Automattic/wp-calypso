@@ -45,9 +45,11 @@ export const SelectGoals = ( {
 }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals( displayAllGoals );
-	const [ isBuiltByExpressExperimentLoading ] = useExperiment(
+	let [ isBuiltByExpressExperimentLoading ] = useExperiment(
 		CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
 	);
+	// Experiment is currently inactive and will be run again in the future
+	isBuiltByExpressExperimentLoading = false;
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
