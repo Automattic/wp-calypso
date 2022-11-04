@@ -424,9 +424,9 @@ export class PlanFeaturesHeader extends Component {
 			return <div className={ classes } />;
 		}
 
-		if ( availableForPurchase && ! isLoggedInMonthlyPricing ) {
+		if ( availableForPurchase ) {
 			// Only multiply price by 12 for Jetpack plans where we sell both monthly and yearly
-			if ( isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
+			if ( ! isLoggedInMonthlyPricing && isJetpack && ! isSiteAT && relatedMonthlyPlan ) {
 				return this.renderPriceGroup(
 					relatedMonthlyPlan.raw_price * 12,
 					discountPrice || rawPrice
@@ -436,7 +436,7 @@ export class PlanFeaturesHeader extends Component {
 			}
 		}
 
-		return this.renderPriceGroup( rawPrice, discountPrice );
+		return this.renderPriceGroup( rawPrice );
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
