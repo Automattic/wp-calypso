@@ -162,8 +162,8 @@ const PluginsNavigationHeader = ( { navigationHeaderRef, categoryName, category,
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	useEffect( () => {
-		setBreadcrumbs( breadcrumbs.length !== 0 );
-	}, [ setBreadcrumbs, breadcrumbs.length ] );
+		setBreadcrumbs( ( breadcrumbs || [] ).length !== 0 );
+	}, [ setBreadcrumbs, breadcrumbs ] );
 
 	return (
 		<FixedNavigationHeader

@@ -247,8 +247,8 @@ function PluginDetails( props ) {
 	const breadcrumbs = useSelector( getBreadcrumbs );
 
 	useEffect( () => {
-		setBreadcrumbs( breadcrumbs.length !== 0 );
-	}, [ setBreadcrumbs, breadcrumbs.length ] );
+		setBreadcrumbs( ( breadcrumbs || [] ).length !== 0 );
+	}, [ setBreadcrumbs, breadcrumbs ] );
 
 	const getPageTitle = () => {
 		return translate( '%(pluginName)s Plugin', {
