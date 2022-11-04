@@ -1,19 +1,14 @@
 import { Button } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLicenseIssuing } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
-import LicenseBundleCard from 'calypso/jetpack-cloud/sections/partner-portal/license-bundle-card';
 import LicenseProductCard from 'calypso/jetpack-cloud/sections/partner-portal/license-product-card';
-import {
-	isJetpackBundle,
-	selectAlphaticallySortedProductOptions,
-} from 'calypso/jetpack-cloud/sections/partner-portal/utils';
+import { selectAlphaticallySortedProductOptions } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import type { IssueMultipleLicensesFormProps } from './types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -36,24 +31,16 @@ export default function IssueMultipleLicensesForm( {
 	const [ issueLicense, isLoading ] = useLicenseIssuing( product, selectedSite );
 
 	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
+		( value ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
-					product: product.slug,
+					product: value,
 				} )
 			);
-			setProduct( product.slug );
+			setProduct( value );
 		},
-		[ dispatch, setProduct ]
+		[ setProduct ]
 	);
-
-	useEffect( () => {
-		// In the case of a bundle, we want to take the user immediately to the next step since
-		// they can't select any additional item after selecting a bundle.
-		if ( isJetpackBundle( product ) ) {
-			issueLicense();
-		}
-	}, [ issueLicense, product ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 
@@ -110,10 +97,11 @@ export default function IssueMultipleLicensesForm( {
 					<div className="issue-multiple-licenses-form__bottom">
 						{ bundles &&
 							bundles.map( ( productOption, i ) => (
-								<LicenseBundleCard
+								<LicenseProductCard
 									key={ productOption.slug }
 									product={ productOption }
 									onSelectProduct={ onSelectProduct }
+									isSelected={ productOption.slug === product }
 									tabIndex={ 100 + ( products?.length || 0 ) + i }
 								/>
 							) ) }
