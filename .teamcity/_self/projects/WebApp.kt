@@ -885,7 +885,7 @@ object PreReleaseE2ETests : BuildType({
 				# Issue call as matticbot.
 				# The GitHub Action workflow expects the filename of the most recent Allure report
 				# as param.
-				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
+				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/generate-report.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
 			""".trimIndent()
 			conditions {
 				exists("env.ALLURE_RESULTS_PATH")
