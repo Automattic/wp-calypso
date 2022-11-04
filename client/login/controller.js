@@ -45,15 +45,20 @@ const enhanceContextWithLogin = ( context ) => {
 	const socialServiceResponse = client_id
 		? { client_id, user_email, user_name, id_token, state }
 		: null;
+	const isJetpackLogin = isJetpack === 'jetpack';
+	const isP2Login = query && query.from === 'p2';
+	const isWhiteLogin =
+		! isJetpackLogin &&
+		! isP2Login &&
+		Boolean( query?.client_id ) === false &&
+		Boolean( query?.oauth2_client_id ) === false;
 
 	context.primary = (
 		<WPLogin
 			action={ action }
-			isJetpack={ isJetpack === 'jetpack' }
-			isWhiteLogin={
-				Boolean( query?.client_id ) === false || Boolean( query?.oauth2_client_id ) === false
-			}
-			isP2Login={ query && query.from === 'p2' }
+			isJetpack={ isJetpackLogin }
+			isWhiteLogin={ isWhiteLogin }
+			isP2Login={ isP2Login }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }
