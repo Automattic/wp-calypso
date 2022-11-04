@@ -1,5 +1,10 @@
 import { addQueryArgs } from '@wordpress/url';
-import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, SITE_TAGLINE } from './constants';
+import {
+	PATTERN_SOURCE_SITE_ID,
+	PREVIEW_PATTERN_URL,
+	SITE_TAGLINE,
+	PA_STYLESHEET,
+} from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
@@ -8,7 +13,7 @@ export const getPatternPreviewUrl = ( {
 	id,
 	language,
 	siteTitle,
-	stylesheet,
+	stylesheet = PA_STYLESHEET,
 }: {
 	id: number;
 	language: string;
@@ -34,7 +39,7 @@ export const handleKeyboard =
 	};
 
 export function createCustomHomeTemplateContent(
-	stylesheet: string,
+	stylesheet: string = PA_STYLESHEET,
 	hasHeader: boolean,
 	hasFooter: boolean
 ) {

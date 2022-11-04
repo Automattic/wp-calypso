@@ -11,7 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
 import PreviewToolbar from '../design-setup/preview-toolbar';
-import { SITE_TAGLINE } from './constants';
+import { SITE_TAGLINE, PA_STYLESHEET, PA_THEME_SLUG } from './constants';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
@@ -34,10 +34,13 @@ const PatternAssemblerPreview = ( { header, sections = [], footer, scrollToSelec
 	const hasSelectedPatterns = header || sections.length > 0 || footer;
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 
+	// TODO: Fetch the Blank canvas 3 theme design
 	const mergedDesign = {
 		...selectedDesign,
+		slug: PA_THEME_SLUG,
 		recipe: {
 			...selectedDesign?.recipe,
+			stylesheet: selectedDesign?.recipe?.stylesheet || PA_STYLESHEET,
 			// The blank canvas demo site doesn't have the header and footer, so we inject them into the first and last
 			// of the content.
 			pattern_ids: [ header, ...sections, footer ]
