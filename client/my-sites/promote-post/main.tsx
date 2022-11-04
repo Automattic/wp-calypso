@@ -9,7 +9,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
-import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import {
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	useCanPromoteProducts,
+} from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
@@ -110,6 +114,8 @@ export default function PromotedPosts( { tab }: Props ) {
 		page( '/' );
 	}
 
+	const productsEnabled = useCanPromoteProducts() === PromoteWidgetStatus.ENABLED;
+
 	const subtitle = translate(
 		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 		{
@@ -187,7 +193,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
-			<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			{ productsEnabled && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			) }
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>
