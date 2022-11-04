@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -536,8 +537,10 @@ export class UserStep extends Component {
 			return null; // return nothing so that we don't see the error message and the sign up form.
 		}
 
+		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
+				hideBack={ this.props.flowName === LINK_IN_BIO_TLD_FLOW }
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }

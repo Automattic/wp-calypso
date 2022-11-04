@@ -5,7 +5,7 @@ import {
 	isDomainMapping,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -120,7 +120,13 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [ 'pressable-nux', 'setup-site', 'importer', 'domain' ];
+	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
+		'pressable-nux',
+		'setup-site',
+		'importer',
+		'domain',
+		LINK_IN_BIO_TLD_FLOW,
+	];
 
 	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
 }
