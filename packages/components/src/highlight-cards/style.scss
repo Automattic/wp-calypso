@@ -1,3 +1,4 @@
+@use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "../styles/typography";
 
@@ -10,12 +11,21 @@ $vertical-margin: 32px;
 	font-size: $font-body-small;
 }
 
+.highlight-cards a.highlight-cards-heading-wrapper {
+	color: var(--color-text);
+	transition: color 100ms linear;
+	&:focus,
+	&:hover {
+		color: var(--color-link);
+	}
+}
+
 .highlight-cards-heading {
 	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
 	font-family: $header-font;
-	margin-bottom: $vertical-margin / 2;
+	margin-bottom: math.div($vertical-margin, 2);
 	small {
 		font-size: $font-body-small;
 	}
@@ -32,7 +42,7 @@ $vertical-margin: 32px;
 		border-color: var(--studio-gray-5);
 		border-radius: 5px; // stylelint-disable-line scales/radii
 		width: 100%;
-		min-width: 200px; // Minimum mobile width
+		min-width: 180px; // Minimum mobile width
 		padding: 16px 24px;
 		margin-bottom: 0;
 
