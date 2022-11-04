@@ -13,7 +13,6 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useProductsQuery from 'calypso/state/partner-portal/licenses/hooks/use-products-query';
 import type { IssueMultipleLicensesFormProps } from './types';
-import type { APIProductFamilyProduct } from 'calypso/state/partner-portal/types';
 
 import './style.scss';
 
@@ -36,7 +35,7 @@ export default function IssueMultipleLicensesForm( {
 	const [ issueLicense, isLoading ] = useLicenseIssuing( product, selectedSite );
 
 	const onSelectProduct = useCallback(
-		( product: APIProductFamilyProduct ) => {
+		( product ) => {
 			dispatch(
 				recordTracksEvent( 'calypso_partner_portal_issue_license_product_select', {
 					product: product.slug,
