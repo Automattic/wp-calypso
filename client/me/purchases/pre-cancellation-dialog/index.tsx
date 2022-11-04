@@ -3,13 +3,13 @@ import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasAmountAvailableToRefund,
 	isRefundable,
 	maybeWithinRefundPeriod,
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getPlanCancellationFeatures from './get-plan-cancellation-features';
 import type { Purchase } from 'calypso/lib/purchases/types';
 import './style.scss';
@@ -177,16 +177,12 @@ export const PreCancellationDialog = ( {
 	 * Click events, buttons tracking and action.
 	 */
 	const clickCancelPlan = () => {
-		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan_click', {
-			product_slug: productSlug,
-		} );
+		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan' );
 		removePlan();
 	};
 
 	const clickCloseDialog = () => {
-		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan_click', {
-			product_slug: productSlug,
-		} );
+		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan' );
 		closeDialog();
 	};
 
