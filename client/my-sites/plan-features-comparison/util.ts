@@ -1,7 +1,7 @@
 import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
-	LINK_IN_BIO_FLOW,
+	isLinkInBioFlow,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
 
@@ -10,7 +10,7 @@ const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 };
 
 const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return flowName === LINK_IN_BIO_FLOW && plan.getLinkInBioSignupFeatures;
+	return isLinkInBioFlow( flowName ) && plan.getLinkInBioSignupFeatures;
 };
 
 const signupFlowDefaultFeatures = (
@@ -50,7 +50,7 @@ const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomP
 };
 
 const linkInBioHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
-	return flowName === LINK_IN_BIO_FLOW && plan.getLinkInBioHighlightedFeatures;
+	return isLinkInBioFlow( flowName ) && plan.getLinkInBioHighlightedFeatures;
 };
 
 export const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
@@ -77,7 +77,7 @@ export const getPlanDescriptionForMobile = ( {
 		return plan.getNewsletterDescription();
 	}
 
-	if ( flowName === LINK_IN_BIO_FLOW && plan.getLinkInBioDescription ) {
+	if ( isLinkInBioFlow( LINK_IN_BIO_FLOW ) && plan.getLinkInBioDescription ) {
 		return plan.getLinkInBioDescription();
 	}
 
