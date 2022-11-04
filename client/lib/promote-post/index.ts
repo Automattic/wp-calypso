@@ -136,3 +136,21 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 	} );
 	return value;
 };
+
+/**
+ * Hook to verify if we should enable the products in the
+ *
+ * @returns bool
+ */
+export const useCanPromoteProducts = (): PromoteWidgetStatus => {
+	return useSelector( ( state ) => {
+		const userData = getCurrentUser( state );
+		if ( userData ) {
+			const originalSetting = userData[ 'can_promote_products' ];
+			if ( originalSetting !== undefined ) {
+				return originalSetting ? PromoteWidgetStatus.ENABLED : PromoteWidgetStatus.DISABLED;
+			}
+		}
+		return PromoteWidgetStatus.FETCHING;
+	} );
+};
