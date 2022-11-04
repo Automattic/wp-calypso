@@ -4,8 +4,8 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureAction
@@ -37,7 +37,6 @@ object WebApp : Project({
 	buildType(PreReleaseE2ETests)
 	buildType(AuthenticationE2ETests)
 	buildType(HelpCentreE2ETests)
-	buildType(KPIDashboardTests)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -940,7 +939,6 @@ object PreReleaseE2ETests : BuildType({
 			}
 		}
 	}
-
 })
 
 object AuthenticationE2ETests : E2EBuildType(
@@ -1018,18 +1016,115 @@ object HelpCentreE2ETests : E2EBuildType(
 	}
 )
 
-object KPIDashboardTests : E2EBuildType(
-	buildId = "Calypso_E2E_KPI_Dashboard",
-	buildUuid = "441efac5-721a-4557-9448-9234e89fb6b1",
-	buildName = "Test build for KPI Dashboard project",
-	buildDescription = "Test build configuration for KPI dashboard.",
-	testGroup = "kpi",
-	buildParams = {
+object KPIDashboardTests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_KPI_Dashboard")
+	uuid = "441efac5-721a-4557-9448-9234e89fb6b1"
+	name = "Test build for KPI Dashboard project"
+	description = "Test build configuration for KPI dashboard."
+	artifactRules = """
+		logs.tgz => logs.tgz
+		screenshots => screenshots
+		trace => trace
+		allure-results.tgz => allure-results.tgz
+	""".trimIndent()
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.TEAMCITY_VERSION", "2021")
+		param("env.HEADLESS", "false")
+		param("env.LOCALE", "en")
+		param("env.DEBUG", "")
 		param("env.VIEWPORT_NAME", "desktop")
-	},
-	buildFeatures = {
-	},
-)
+		param("env.ALLURE_RESULTS_PATH", "allure-results")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				# Must do before build so the secrets are in the dist output
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run tests"
+			scriptContent = """
+				# Configure bash shell.
+				shopt -s globstar
+				set -x
+
+				# Enter testing directory.
+				cd test/e2e
+				mkdir temp
+
+				# Run suite.
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=kpi
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+
+				mkdir -p allure-results
+				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 tar cvfz allure-results.tgz
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+	}
+
+	// By default, no triggers are defined for this template class.
+	triggers {}
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+})
 
 object QuarantinedE2ETests: E2EBuildType(
 	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
