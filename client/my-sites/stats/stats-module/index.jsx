@@ -194,7 +194,6 @@ class StatsModule extends Component {
 				{ ! shouldShowNewModule && (
 					<div>
 						{ ! isAllTime && (
-							// what is this exactly?
 							<SectionHeader
 								className={ headerClass }
 								label={ this.getModuleLabel() }
