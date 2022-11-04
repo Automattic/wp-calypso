@@ -36,10 +36,10 @@ const StatsListCard = ( { data, moduleType, showMore, title, emptyMessage, title
 		>
 			{ !! loader && loader }
 			<HorizontalBarList data={ data }>
-				{ data?.map( ( item ) => {
+				{ data?.map( ( item, index ) => {
 					return (
 						<HorizontalBarListItem
-							key={ item?.id }
+							key={ item?.id || index } // not every item has an id
 							data={ item }
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
