@@ -242,7 +242,7 @@ class StatsSummary extends Component {
 
 		// Append the site domain as needed.
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const domain = this.props?.path.split( '/' ).pop();
+		const domain = this.props.path?.split( '/' ).pop();
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
