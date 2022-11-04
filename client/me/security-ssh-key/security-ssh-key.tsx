@@ -60,8 +60,8 @@ export const SecuritySSHKey = () => {
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_add_success' ) );
 			dispatch( successNotice( __( 'SSH key added to account.' ), noticeOptions ) );
-			if ( queryArgs.redirectUrl ) {
-				page.redirect( queryArgs.redirectUrl as string );
+			if ( queryArgs.source && queryArgs.siteSlug ) {
+				page.redirect( `/${ queryArgs.source }/${ queryArgs.siteSlug }` );
 			}
 		},
 		onError: ( error ) => {

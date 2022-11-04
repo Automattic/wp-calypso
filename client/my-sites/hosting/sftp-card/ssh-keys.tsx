@@ -81,7 +81,8 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
 	const SSH_ADD_URL = useMemo( () => {
 		return addQueryArgs( '/me/security/ssh-key', {
-			redirectUrl: `/hosting-config/${ siteSlug }`,
+			source: 'hosting-config',
+			siteSlug,
 		} );
 	}, [ siteSlug ] );
 
