@@ -24,15 +24,12 @@ export const useGoals = ( displayAllGoals = false ): Goal[] => {
 
 	let builtByExpressGoalDisplayText;
 	switch ( variationName ) {
+		// Experiment skeleton left in for future copy change tests
 		case VARIATION_BUY:
-			builtByExpressGoalDisplayText = translate( 'Buy a website' );
-			break;
 		case VARIATION_GET:
-			builtByExpressGoalDisplayText = translate( 'Get a website quickly' );
-			break;
 		case VARIATION_CONTROL:
 		default:
-			builtByExpressGoalDisplayText = translate( 'Hire a professional to design my website' );
+			builtByExpressGoalDisplayText = translate( 'Get a website quickly' );
 	}
 
 	const goals = [
