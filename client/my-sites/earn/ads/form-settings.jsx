@@ -342,7 +342,7 @@ class AdsFormSettings extends Component {
 				<FormFieldset>
 					<SupportInfo
 						text={ translate(
-							'Enables a targeted advertising opt-out link for consumers from some US states.'
+							'Enables a targeted advertising opt-out link in US States where this is legally required.'
 						) }
 						privacyLink={ null }
 					/>
@@ -368,7 +368,7 @@ class AdsFormSettings extends Component {
 							<FormLabel>{ translate( 'Do Not Sell Link' ) }</FormLabel>
 							<span>
 								{ translate(
-									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
+									'If you enable targeted advertising in all US states you are required to place a "Do Not Sell or Share My Personal Information" link on every page of your site where targeted advertising will appear. You can use the {{a}}Do Not Sell Link Widget{{/a}}, or the {{code}}[privacy-do-not-sell-link]{{/code}} shortcode to automatically place this link on your site. Note: the link will always display to logged in administrators regardless of geolocation.',
 									{
 										components: {
 											a: (
