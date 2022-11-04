@@ -169,8 +169,8 @@ const WooConfirm: Step = function WooCommerceConfirm( { navigation } ) {
 		required: requiresUpgrade,
 		checkoutUrl: addQueryArgs(
 			{
-				redirect_to: addQueryArgs( queryArgs, '/setup/wooTransfer' ),
-				cancel_to: addQueryArgs( queryArgs, '/setup/wooConfirm' ),
+				redirect_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooTransfer' ),
+				cancel_to: addQueryArgs( queryArgs, '/setup/plugin-bundle/wooConfirm' ),
 			},
 			`/checkout/${ wpcomDomain }/${ upgradingPlan?.product_slug ?? '' }`
 		),

@@ -37,6 +37,3 @@ export type DeprecatedPageIds =
 	| typeof SITEMAP_PAGE
 	| typeof PROFILE_PAGE
 	| typeof MENU_PAGE;
-
-//The maximum number of pages allowed
-export const PAGE_LIMIT = 5;

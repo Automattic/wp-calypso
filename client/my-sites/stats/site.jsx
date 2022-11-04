@@ -37,10 +37,12 @@ import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-act
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import HighlightsSection from './highlights-section';
 import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 
@@ -198,8 +200,8 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
 		return (
 			<div className={ isNewFeatured ? 'stats--new-main-chart' : undefined }>
@@ -226,10 +228,12 @@ class StatsSite extends Component {
 					slug={ slug }
 				/>
 
+				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
+
 				<div id="my-stats-content">
 					{ isNewFeatured ? (
 						<>
-							<div className="stats__period-header">
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ date }
 									period={ period }
@@ -244,7 +248,7 @@ class StatsSite extends Component {
 									/>
 								</StatsPeriodNavigation>
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</div>
+							</StatsPeriodHeader>
 
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
@@ -394,9 +398,9 @@ class StatsSite extends Component {
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
-					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
+					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
 				) }
-				action={ translate( 'Enable Site Stats' ) }
+				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
 		);

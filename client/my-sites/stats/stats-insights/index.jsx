@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
 import PropTypes from 'prop-types';
@@ -16,6 +17,7 @@ import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
@@ -29,6 +31,8 @@ import StatsViews from '../stats-views';
 const StatsInsights = ( props ) => {
 	const { isJetpack, siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
+
+	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -46,6 +50,7 @@ const StatsInsights = ( props ) => {
 			<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 			<div>
 				<div className="stats__module--insights-unified">
+					{ showNewAnnualHighlights && <AnnualHighlightsSection siteId={ siteId } /> }
 					<PostingActivity />
 					<SectionHeader label={ translate( 'All-time views' ) } />
 					<StatsViews />
@@ -62,14 +67,14 @@ const StatsInsights = ( props ) => {
 						<div className="stats__module-column">
 							<LatestPostSummary />
 							<MostPopular />
-							{ ! isJetpack && (
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-								/>
-							) }
-							<AnnualSiteStats isWidget />
+
+							<StatsModule
+								path="tags-categories"
+								moduleStrings={ moduleStrings.tags }
+								statType="statsTags"
+							/>
+
+							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
 							{ ! isJetpack && <StatShares siteId={ siteId } /> }
 						</div>
 						<div className="stats__module-column">

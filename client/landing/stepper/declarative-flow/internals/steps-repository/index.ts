@@ -43,6 +43,7 @@ export { default as subscribers } from './subscribers';
 export { default as patterns } from './patterns';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as storeProfiler } from './store-profiler';
+export { default as designCarousel } from './design-carousel';
 
 export type StepPath =
 	| 'courses'
@@ -89,4 +90,5 @@ export type StepPath =
 	| 'launchpad'
 	| 'subscribers'
 	| 'getCurrentThemeSoftwareSets'
+	| 'designCarousel'
 	| 'storeProfiler';

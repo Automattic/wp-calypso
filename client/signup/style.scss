@@ -29,6 +29,7 @@ body.is-section-signup {
 		.signup__step.is-mailbox-plan .step-wrapper__navigation,
 		.signup__step.is-plans .step-wrapper__navigation,
 		.signup__step.is-domains .step-wrapper__navigation,
+		.signup__step.is-plans-site-selected .step-wrapper__navigation,
 		.signup__step.is-mailbox-domain .step-wrapper__navigation {
 			@include breakpoint-deprecated( "<660px" ) {
 				display: none;
@@ -804,6 +805,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup__step.is-plans-newsletter,
 	.signup__step.is-plans-link-in-bio,
 	.signup__step.is-mailbox-plan,
+	.signup__step.is-plans-site-selected,
 	.signup__step.is-plans {
 		.formatted-header {
 			.formatted-header__title {
@@ -848,6 +850,7 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	.signup__step.is-plans-link-in-bio,
 	.signup__step.is-plans-newsletter,
 	.signup__step.is-mailbox-plan,
+	.signup__step.is-plans-site-selected,
 	.signup__step.is-plans {
 		.formatted-header__title {
 			font-weight: 500;

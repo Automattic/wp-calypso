@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import difmImage from 'calypso/assets/images/difm/difm.svg';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { preventWidows } from 'calypso/lib/formatting';
 import useBranchSteps from 'calypso/signup/hooks/use-branch-steps';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -43,7 +44,11 @@ export default function NewOrExistingSiteStep( props: Props ) {
 	const displayCost = useSelector( ( state ) => getProductDisplayCost( state, WPCOM_DIFM_LITE ) );
 	const isLoading = useSelector( isProductsListFetching );
 
-	const headerText = translate( 'Do It For Me' );
+	const headerText = translate( 'Built By {{wordPressLogo}}{{/wordPressLogo}} Express', {
+		components: {
+			wordPressLogo: <WordPressLogo size={ 48 } className="new-or-existing-site__wordpress-logo" />,
+		},
+	} );
 
 	const subHeaderText = translate(
 		'Get a professionally designed, mobile-optimized website in %(fulfillmentDays)d business days or less for a one-time fee of {{PriceWrapper}}%(displayCost)s{{/PriceWrapper}} plus an additional purchase of the %(plan)s plan.',

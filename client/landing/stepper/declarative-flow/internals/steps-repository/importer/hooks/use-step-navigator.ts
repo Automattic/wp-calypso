@@ -9,6 +9,7 @@ import type { NavigationControls } from '../../../types';
 import type { StepNavigator } from 'calypso/blocks/importer/types';
 
 export function useStepNavigator(
+	flow: string | null,
 	navigation: NavigationControls,
 	siteId: number | undefined | null,
 	siteSlug: string | undefined | null,
@@ -17,7 +18,7 @@ export function useStepNavigator(
 	const checkoutUrl = useCheckoutUrl( siteId, siteSlug );
 
 	function navigator( path: string ) {
-		const stepPath = removeLeadingSlash( path.replace( BASE_STEPPER_ROUTE, '' ) );
+		const stepPath = removeLeadingSlash( path.replace( `${ BASE_STEPPER_ROUTE }/${ flow }`, '' ) );
 		navigation.goToStep?.( stepPath as StepPath );
 	}
 

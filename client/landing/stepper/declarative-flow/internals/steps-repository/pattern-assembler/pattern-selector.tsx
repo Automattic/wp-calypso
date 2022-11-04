@@ -6,24 +6,34 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE } from '../../../../stores';
+import Delayed from './delayed-render-hook';
 import PatternPreviewAutoHeight from './pattern-preview-auto-height';
 import { getPatternPreviewUrl, handleKeyboard } from './utils';
 import type { Pattern } from './types';
 
 type PatternSelectorProps = {
-	patterns: Pattern[] | null;
+	patterns: Pattern[];
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 	onBack: () => void;
 	title: string | null;
 	show: boolean;
+	selectedPattern: Pattern | null;
 };
 
-const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSelectorProps ) => {
+const PatternSelector = ( {
+	patterns,
+	onSelect,
+	onBack,
+	title,
+	show,
+	selectedPattern,
+}: PatternSelectorProps ) => {
 	const locale = useLocale();
 	const patternSelectorRef = useRef< HTMLDivElement >( null );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
 	const translate = useTranslate();
 	const site = useSite();
+	const [ firstPattern, ...restPatterns ] = patterns;
 
 	useEffect( () => {
 		if ( show ) {
@@ -31,6 +41,34 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 			patternSelectorRef.current?.removeAttribute( 'tabindex' );
 		}
 	}, [ show ] );
+
+	const renderPatterns = ( patternList: Pattern[] ) =>
+		patternList?.map( ( item: Pattern, index: number ) => (
+			<PatternPreviewAutoHeight
+				key={ `${ index }-${ item.id }` }
+				url={ getPatternPreviewUrl( {
+					id: item.id,
+					language: locale,
+					siteTitle: site?.name,
+					stylesheet: selectedDesign?.recipe?.stylesheet,
+				} ) }
+				patternId={ item.id }
+				patternName={ item.name }
+			>
+				<div
+					aria-label={ item.name }
+					tabIndex={ show ? 0 : -1 }
+					role="option"
+					title={ item.name }
+					aria-selected={ item.id === selectedPattern?.id }
+					className={ classnames( {
+						'pattern-selector__block-list--selected-pattern': item.id === selectedPattern?.id,
+					} ) }
+					onClick={ () => onSelect( item ) }
+					onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
+				/>
+			</PatternPreviewAutoHeight>
+		) );
 
 	return (
 		<div
@@ -50,29 +88,10 @@ const PatternSelector = ( { patterns, onSelect, onBack, title, show }: PatternSe
 			</div>
 			<div className="pattern-selector__body">
 				<div className="pattern-selector__block-list" role="listbox">
-					{ patterns?.map( ( item: Pattern, index: number ) => (
-						<PatternPreviewAutoHeight
-							key={ `${ index }-${ item.id }` }
-							url={ getPatternPreviewUrl( {
-								id: item.id,
-								language: locale,
-								siteTitle: site?.name,
-								stylesheet: selectedDesign?.recipe?.stylesheet,
-							} ) }
-							patternId={ item.id }
-							patternName={ item.name }
-						>
-							<div
-								aria-label={ item.name }
-								tabIndex={ show ? 0 : -1 }
-								role="option"
-								title={ item.name }
-								aria-selected={ false }
-								onClick={ () => onSelect( item ) }
-								onKeyUp={ handleKeyboard( () => onSelect( item ) ) }
-							/>
-						</PatternPreviewAutoHeight>
-					) ) }
+					{ renderPatterns( [ firstPattern ] ) }
+					<Delayed>
+						<>{ renderPatterns( restPatterns ) }</>
+					</Delayed>
 				</div>
 			</div>
 		</div>
