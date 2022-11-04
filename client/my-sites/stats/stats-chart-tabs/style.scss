@@ -1,6 +1,7 @@
 // Module Tabs
 // (currently only used for the bar chart module at the top)
 
+//TODO This className seems not to be used
 ul.module-tabs {
 	@include clear-fix;
 	border-top: 1px solid var(--color-neutral-0);
@@ -227,6 +228,148 @@ ul.module-tabs {
 
 		a {
 			background: var(--color-neutral-0);
+		}
+	}
+}
+
+.is-chart-tabs {
+	&.is-loading {
+		// Extract .stats-module.is-loading from StatsModulePlaceholder
+		.chart {
+			display: none;
+		}
+	}
+}
+
+// For feature `stats/new-main-chart`
+.chart-tabs--new-main-chart {
+	background-color: var(--studio-white);
+
+	.stats-module__placeholder.is-chart {
+		height: 228px;
+	}
+
+	// Main Chart
+	.chart {
+		padding: 0;
+
+		.chart__bar {
+			// Cancel the chart bar styles
+			&.is-weekend {
+				background: none;
+			}
+
+			&:hover {
+				background-color: rgba(var(--color-neutral-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+			}
+
+			&.is-selected {
+				background-color: rgba(var(--color-primary-rgb), 0.1);
+
+				.chart__bar-section.is-bar {
+					background-color: var(--color-primary);
+				}
+			}
+		}
+
+		.chart__bar-section {
+			background-color: var(--color-primary);
+			border-top-left-radius: 2px;
+			border-top-right-radius: 2px;
+		}
+
+		.chart__x-axis-label:not(.chart__x-axis-width-spacer) {
+			font-weight: 400;
+			line-height: 24px;
+			color: var(--color-neutral-40);
+		}
+	}
+
+	// Chart Tabs
+	.stats-tabs {
+		width: 100%;
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		padding: 24px 0 16px;
+		margin-bottom: 32px;
+		border: 0;
+
+		&.is-enabled {
+			background-color: var(--color-surface);
+		}
+
+		.stats-tab {
+			flex: 1;
+			width: auto;
+			border: 0;
+
+			&:not(:first-child) {
+				margin-left: 16px;
+			}
+
+			a {
+				background-color: #eeeeef;
+				border: 1.5px solid transparent;
+				border-radius: 4px;
+				overflow: hidden;
+				color: var(--studio-black);
+
+				&:hover {
+					color: var(--studio-black);
+					background-color: #eeeeef;
+
+					.value {
+						color: var(--studio-black);
+					}
+				}
+
+				.label {
+					color: var(--color-neutral-60);
+					font-size: $font-body-small;
+					line-height: 20px;
+					text-transform: none;
+					letter-spacing: -0.15px;
+				}
+
+				.value {
+					color: var(--studio-black);
+					font-size: $font-title-small;
+					font-weight: 500;
+					line-height: 30px;
+				}
+			}
+
+			&.is-low,
+			&.is-selected,
+			&.is-selected.is-low {
+				a {
+					color: var(--studio-black);
+
+					&:hover {
+						color: var(--studio-black);
+
+						.value {
+							color: var(--studio-black);
+						}
+					}
+
+					.value {
+						color: var(--studio-black);
+					}
+				}
+			}
+
+			&.is-selected {
+				a {
+					border-color: var(--color-primary);
+					background-color: var(--color-surface);
+				}
+			}
 		}
 	}
 }

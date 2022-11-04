@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -92,11 +93,42 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
 		const { isActiveTabLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isActiveTabLoading } ];
+
+		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
+		const classes = [
+			'is-chart-tabs',
+			{
+				'is-loading': isActiveTabLoading,
+				'stats-module': ! isNewFeatured,
+				'chart-tabs--new-main-chart': isNewFeatured,
+			},
+		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
-		return (
+		return isNewFeatured ? (
+			<div className={ classNames( ...classes ) }>
+				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
+				<Chart
+					barClick={ this.props.barClick }
+					data={ this.props.chartData }
+					chartXPadding={ 0 }
+					minBarWidth={ 35 }
+				/>
+				<StatTabs
+					data={ this.props.counts }
+					tabs={ this.props.charts }
+					switchTab={ this.props.switchTab }
+					selectedTab={ this.props.chartTab }
+					activeIndex={ this.props.queryDate }
+					activeKey="period"
+					iconSize={ 24 }
+				/>
+			</div>
+		) : (
 			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
@@ -107,11 +139,7 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart
-					barClick={ this.props.barClick }
-					data={ this.props.chartData }
-					loading={ isActiveTabLoading }
-				/>
+				<Chart barClick={ this.props.barClick } data={ this.props.chartData } />
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }

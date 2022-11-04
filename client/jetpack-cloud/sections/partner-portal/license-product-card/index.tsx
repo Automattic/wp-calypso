@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
@@ -11,7 +12,7 @@ interface Props {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
-	onSelectProduct: ( value: string ) => void | null;
+	onSelectProduct: ( value: APIProductFamilyProduct | string ) => void | null;
 	suggestedProduct?: string | null;
 }
 
@@ -21,8 +22,12 @@ export default function LicenseProductCard( props: Props ) {
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {
-		onSelectProduct?.( product.slug );
-	}, [ onSelectProduct ] );
+		if ( isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
+			onSelectProduct?.( product );
+		} else {
+			onSelectProduct?.( product.slug );
+		}
+	}, [ onSelectProduct, product ] );
 
 	const onKeyDown = useCallback(
 		( e: any ) => {

@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import proThemesBanner from 'calypso/assets/images/themes/pro-themes-banner.svg';
 import EmptyContent from 'calypso/components/empty-content';
@@ -36,6 +36,8 @@ export const ThemesList = ( props ) => {
 				translate={ props.translate }
 				recordTracksEvent={ props.recordTracksEvent }
 				upsellCardDisplayed={ props.upsellCardDisplayed }
+				wpOrgThemes={ props.wpOrgThemes }
+				{ ...props }
 			/>
 		);
 	}
@@ -55,6 +57,7 @@ export const ThemesList = ( props ) => {
 
 ThemesList.propTypes = {
 	themes: PropTypes.array.isRequired,
+	wpOrgThemes: PropTypes.array,
 	emptyContent: PropTypes.element,
 	loading: PropTypes.bool.isRequired,
 	recordTracksEvent: PropTypes.func.isRequired,
@@ -83,6 +86,7 @@ ThemesList.defaultProps = {
 	loading: false,
 	searchTerm: '',
 	themes: [],
+	wpOrgThemes: [],
 	recordTracksEvent: noop,
 	fetchNextPage: noop,
 	placeholderCount: DEFAULT_THEME_QUERY.number,
@@ -118,26 +122,27 @@ function ThemeBlock( props ) {
 			upsellUrl={ props.upsellUrl }
 			bookmarkRef={ bookmarkRef }
 			siteId={ siteId }
+			softLaunched={ theme.soft_launched }
 		/>
 	);
 }
 
-function Empty( { emptyContent, searchTerm, upsellCardDisplayed, translate, recordTracksEvent } ) {
+function Empty( props ) {
+	const { wpOrgThemes, emptyContent, searchTerm, upsellCardDisplayed, translate } = props;
 	const selectedSite = useSelector( getSelectedSite );
 	const shouldUpgradeToInstallThemes = useSelector(
 		( state ) => ! siteHasFeature( state, selectedSite?.ID, FEATURE_INSTALL_THEMES )
 	);
 
-	const onUpgradeClick = useCallback( () => {
-		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
-			site_plan: selectedSite?.plan?.product_slug,
-			search_term: searchTerm,
-		} );
-
-		return page(
-			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
-		);
-	}, [ selectedSite, searchTerm ] );
+	const matchingThemes = useMemo(
+		() =>
+			wpOrgThemes?.filter(
+				( wpOrgTheme ) =>
+					wpOrgTheme?.name?.toLowerCase() === searchTerm.toLowerCase() ||
+					wpOrgTheme?.id?.toLowerCase() === searchTerm.toLowerCase()
+			) || [],
+		[ wpOrgThemes, searchTerm ]
+	);
 
 	useEffect( () => {
 		if ( shouldUpgradeToInstallThemes && ! emptyContent ) {
@@ -156,39 +161,84 @@ function Empty( { emptyContent, searchTerm, upsellCardDisplayed, translate, reco
 
 	return shouldUpgradeToInstallThemes ? (
 		<div className="themes-list__empty-container">
-			<div className="themes-list__not-found-text">
-				{ translate( 'No themes match your search' ) }
-			</div>
-
-			<div className="themes-list__upgrade-section-wrapper">
-				<div className="themes-list__upgrade-section-title">
-					{ translate( 'Use any theme on WordPress.com' ) }
+			{ matchingThemes.length ? (
+				<WPOrgMatchingThemes matchingThemes={ matchingThemes } { ...props } />
+			) : (
+				<div className="themes-list__not-found-text">
+					{ translate( 'No themes match your search' ) }
 				</div>
-				<div className="themes-list__upgrade-section-subtitle">
-					{ translate(
-						'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
-					) }
-				</div>
-
-				<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
-					{ translate( 'Upgrade your plan' ) }
-				</Button>
-
-				<div className="themes-list__themes-images">
-					<img
-						src={ proThemesBanner }
-						alt={ translate(
-							'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
-						) }
-					/>
-				</div>
-			</div>
+			) }
+			<PlanUpgradeCTA
+				selectedSite={ selectedSite }
+				searchTerm={ searchTerm }
+				translate={ translate }
+			/>
 		</div>
 	) : (
-		<EmptyContent
-			title={ translate( 'Sorry, no themes found.' ) }
-			line={ translate( 'Try a different search or more filters?' ) }
-		/>
+		<>
+			{ matchingThemes.length ? (
+				<WPOrgMatchingThemes matchingThemes={ matchingThemes } { ...props } />
+			) : (
+				<EmptyContent
+					title={ translate( 'Sorry, no themes found.' ) }
+					line={ translate( 'Try a different search or more filters?' ) }
+				/>
+			) }
+		</>
+	);
+}
+
+function WPOrgMatchingThemes( props ) {
+	const { matchingThemes } = props;
+
+	return (
+		<>
+			<div className="themes-list">
+				{ matchingThemes.map( ( theme, index ) => (
+					<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
+				) ) }
+				<TrailingItems />
+			</div>
+		</>
+	);
+}
+
+function PlanUpgradeCTA( { selectedSite, searchTerm, translate, recordTracksEvent } ) {
+	const onUpgradeClick = useCallback( () => {
+		recordTracksEvent( 'calypso_themeshowcase_search_empty_results_upgrade_plan', {
+			site_plan: selectedSite?.plan?.product_slug,
+			search_term: searchTerm,
+		} );
+
+		return page(
+			`/checkout/${ selectedSite.slug }/${ PLAN_BUSINESS }?redirect_to=/themes/${ selectedSite.slug }`
+		);
+	}, [ selectedSite, searchTerm ] );
+
+	return (
+		<div className="themes-list__upgrade-section-wrapper">
+			<div className="themes-list__upgrade-section-title">
+				{ translate( 'Use any theme on WordPress.com' ) }
+			</div>
+			<div className="themes-list__upgrade-section-subtitle">
+				{ translate(
+					'Have a theme in mind that we don’t show here? Unlock the ability to use any theme, including Astra, with a Business plan.'
+				) }
+			</div>
+
+			<Button primary className="themes-list__upgrade-section-cta" onClick={ onUpgradeClick }>
+				{ translate( 'Upgrade your plan' ) }
+			</Button>
+
+			<div className="themes-list__themes-images">
+				<img
+					src={ proThemesBanner }
+					alt={ translate(
+						'Themes banner featuring Astra, Neve, GeneratePress, and Hestia theme'
+					) }
+				/>
+			</div>
+		</div>
 	);
 }
 

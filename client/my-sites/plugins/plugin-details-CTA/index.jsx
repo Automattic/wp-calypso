@@ -7,7 +7,7 @@ import {
 import { Gridicon, Button } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment, useState, useCallback } from 'react';
+import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
@@ -52,6 +52,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 
 	const softwareSlug = getSoftwareSlug( plugin, plugin.isMarketplaceProduct );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const currentPurchase = getPluginPurchased( plugin, purchases, plugin.isMarketplaceProduct );
 
 	// Site type
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
@@ -98,16 +99,17 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		getEligibility( state, selectedSite?.ID )
 	);
 
-	const getUpgradeToBusinessHRef = useCallback( () => {
+	const upgradeToBusinessHref = useMemo( () => {
 		const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 
 		const siteSlug = selectedSite?.slug;
 
 		const pluginsPlansPage = `/plugins/plans/yearly/${ siteSlug }`;
-		return pluginsPlansPageFlag ? pluginsPlansPage : `/checkout/${ siteSlug }/business`;
+		const checkoutPage = siteSlug ? `/checkout/${ siteSlug }/business` : `/checkout/business`;
+		return pluginsPlansPageFlag ? pluginsPlansPage : checkoutPage;
 	}, [ selectedSite?.slug ] );
 
-	const getSaasRedirectHRef = useCallback( () => {
+	const saasRedirectHRef = useMemo( () => {
 		return getSaasRedirectUrl( plugin, currentUserId, selectedSite?.ID );
 	}, [ currentUserId, plugin, selectedSite?.ID ] );
 	/*
@@ -141,8 +143,23 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 			<div className="plugin-details-cta__container">
 				<div className="plugin-details-cta__price">{ translate( 'Free' ) }</div>
 				<span className="plugin-details-cta__preinstalled">
-					{ translate( '%s is automatically managed for you.', { args: plugin.name } ) }
+					{ selectedSite
+						? translate(
+								'%s is automatically managed for you. Upgrade your plan and get access to another 50,000 WordPress plugins to extend functionality for your site.',
+								{ args: plugin.name }
+						  )
+						: translate( '%s is automatically managed for you.', { args: plugin.name } ) }
 				</span>
+
+				{ selectedSite && (
+					<Button
+						href={ upgradeToBusinessHref }
+						className="plugin-details-cta__install-button"
+						primary
+					>
+						{ translate( 'Upgrade my plan' ) }
+					</Button>
+				) }
 			</div>
 		);
 	}
@@ -164,7 +181,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 		return <PluginDetailsCTAPlaceholder />;
 	}
 
-	if ( isPluginInstalledOnsiteWithSubscription && sitePlugin ) {
+	if ( isPluginInstalledOnsite && sitePlugin ) {
 		// Check if already instlaled on the site
 		const activeText = translate( '{{span}}active{{/span}}', {
 			components: {
@@ -213,6 +230,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						</span>
 					}
 					isMarketplaceProduct={ plugin.isMarketplaceProduct }
+					productPurchase={ currentPurchase }
 					wporg
 				/>
 			</div>
@@ -268,7 +286,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
-											translate( 'Free' )
+											<FreePrice />
 										) }
 									</>
 								)
@@ -292,7 +310,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						userCantManageTheSite={ userCantManageTheSite }
 						translate={ translate }
 						plugin={ plugin }
-						saasRedirectHRef={ getSaasRedirectHRef() }
+						saasRedirectHRef={ saasRedirectHRef }
 					/>
 				</div>
 				{ ! isJetpackSelfHosted && ! plugin.isMarketplaceProduct && (
@@ -327,7 +345,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 					<div className="plugin-details-cta__upgrade-required-card">
 						<UpgradeRequiredContent translate={ translate } />
 						<Button
-							href={ getUpgradeToBusinessHRef() }
+							href={ upgradeToBusinessHref }
 							className="plugin-details-cta__install-button"
 							primary
 							onClick={ () => {} }
@@ -355,12 +373,12 @@ function PrimaryButton( {
 		return (
 			<Button
 				type="a"
-				className="plugin-details-CTA__install-button"
+				className="plugin-details-cta__install-button"
 				primary
 				onClick={ ( e ) => e.stopPropagation() }
-				href={ localizeUrl( 'https://wordpress.com/pricing/' ) }
+				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
 			>
-				{ translate( 'View plans' ) }
+				{ translate( 'Get started' ) }
 			</Button>
 		);
 	}
@@ -384,6 +402,22 @@ function PrimaryButton( {
 			disabled={ incompatiblePlugin || userCantManageTheSite }
 		/>
 	);
+}
+
+function FreePrice() {
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( ! isLoggedIn ) {
+		return (
+			<>
+				{ translate( 'Free' ) }
+				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+			</>
+		);
+	}
+
+	return translate( 'Free' );
 }
 
 function UpgradeRequiredContent( { translate } ) {

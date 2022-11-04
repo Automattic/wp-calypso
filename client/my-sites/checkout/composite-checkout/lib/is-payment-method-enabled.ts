@@ -4,23 +4,17 @@ import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 
 export default function isPaymentMethodEnabled(
 	slug: CheckoutPaymentMethodSlug,
-	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[],
-	countryCode: string
+	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
-	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+	const alwaysEnabledPaymentMethods = [ 'free-purchase' ];
 	if ( alwaysEnabledPaymentMethods.includes( slug ) ) {
 		return true;
 	}
 
-	// If new cards are supported, so are existing cards.
-	if ( slug.startsWith( 'existingCard' ) && allowedPaymentMethods?.includes( 'card' ) ) {
-		return true;
-	}
-
-	// Some country-specific payment methods should only be available if that
-	// country is selected in the contact information.
-	if ( slug === 'netbanking' && countryCode !== 'IN' ) {
-		return false;
+	// Existing cards have unique slugs but here we need only know if existing
+	// cards are allowed.
+	if ( slug.startsWith( 'existingCard' ) ) {
+		slug = 'existingCard';
 	}
 
 	// Redirect payments might not be possible in some cases - for example in the desktop app

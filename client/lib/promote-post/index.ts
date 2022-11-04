@@ -77,24 +77,6 @@ export async function showDSP(
 	} );
 }
 
-export async function showDSPWidgetModal( siteSlug: string, siteId: number, postId?: number ) {
-	await loadDSPWidgetJS();
-
-	if ( window.BlazePress ) {
-		await window.BlazePress.render( {
-			siteSlug: siteSlug,
-			stripeKey: config( 'dsp_stripe_pub_key' ),
-			apiHost: 'https://public-api.wordpress.com',
-			apiPrefix: `/wpcom/v2/sites/${ siteId }/wordads/dsp`,
-			// todo fetch rlt somehow
-			authToken: 'wpcom-proxy-request',
-			template: 'article',
-			urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
-			showDialog: true, // for now
-		} );
-	}
-}
-
 /**
  * Add tracking when launching the DSP widget, in both tracks event and MC stats.
  *

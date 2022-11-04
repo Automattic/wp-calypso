@@ -140,6 +140,10 @@ export function extractAuthorUrl( authorElementSource ) {
 }
 
 export function extractScreenshots( screenshotsHtml ) {
+	if ( 'undefined' === typeof window ) {
+		return null;
+	}
+
 	const screenshotsDom = parseHtml( screenshotsHtml );
 
 	const list = screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
@@ -470,7 +474,7 @@ export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) =>
  * @returns The URL of the SaaS redirect page or null if it doesn't exist or is an invalid URL
  */
 export function getSaasRedirectUrl( plugin, userId, siteId ) {
-	if ( ! plugin.saas_landing_page ) {
+	if ( ! plugin?.saas_landing_page ) {
 		return null;
 	}
 	try {

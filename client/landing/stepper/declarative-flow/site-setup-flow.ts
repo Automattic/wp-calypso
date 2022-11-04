@@ -243,7 +243,7 @@ export const siteSetupFlow: Flow = {
 						isPluginBundleEligible &&
 						siteSlug
 					) {
-						return exitFlow( `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle` );
+						return exitFlow( `/setup/plugin-bundle/?siteSlug=${ siteSlug }` );
 					}
 
 					return exitFlow( `/home/${ siteSlug }` );
