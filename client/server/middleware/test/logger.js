@@ -177,4 +177,43 @@ describe( 'Logger middleware', () => {
 			} )
 		);
 	} );
+
+	it( 'Does not log static requests in dev mode', () => {
+		const oldNodeEnv = process.env.NODE_ENV;
+		process.env.NODE_ENV = 'development';
+		simulateRequest( {
+			req: fakeRequest( {
+				url: '/calypso/abc',
+			} ),
+			res: fakeResponse(),
+		} );
+		process.env.NODE_ENV = oldNodeEnv;
+		expect( requestLogger.info ).not.toBeCalled();
+	} );
+
+	it( 'Does not log non-static requests in dev mode', () => {
+		const oldNodeEnv = process.env.NODE_ENV;
+		process.env.NODE_ENV = 'development';
+		simulateRequest( {
+			req: fakeRequest( {
+				url: '/home',
+			} ),
+			res: fakeResponse(),
+		} );
+		process.env.NODE_ENV = oldNodeEnv;
+		expect( requestLogger.info ).toBeCalled();
+	} );
+
+	it( 'Does log static requests in non-dev mode', () => {
+		const oldNodeEnv = process.env.NODE_ENV;
+		process.env.NODE_ENV = 'foo';
+		simulateRequest( {
+			req: fakeRequest( {
+				url: '/calypso/abc',
+			} ),
+			res: fakeResponse(),
+		} );
+		process.env.NODE_ENV = oldNodeEnv;
+		expect( requestLogger.info ).toBeCalled();
+	} );
 } );
