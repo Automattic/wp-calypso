@@ -2,6 +2,7 @@ import { Button, Spinner } from '@automattic/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useMemo, useState } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -18,6 +19,7 @@ import './ssh-keys.scss';
 
 interface SshKeysProps {
 	siteId: number;
+	siteSlug: string;
 	username: string;
 	disabled: boolean;
 }
@@ -28,7 +30,7 @@ const noticeOptions = {
 
 const sshKeyAttachFailureNoticeId = 'ssh-key-attach-failure';
 
-function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
+function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const { data: keys, isLoading: isLoadingKeys } = useAtomicSshKeys( siteId, {
@@ -77,6 +79,11 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 	const isLoading = isLoadingKeys || isLoadingUserKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
+	const SSH_ADD_URL = useMemo( () => {
+		return addQueryArgs( '/me/security/ssh-key', {
+			redirectUrl: `/hosting-config/${ siteSlug }`,
+		} );
+	}, [ siteSlug ] );
 
 	return (
 		<div className="ssh-keys">
@@ -126,7 +133,7 @@ function SshKeys( { siteId, username, disabled }: SshKeysProps ) {
 						{
 							a: (
 								<a
-									href="/me/security/ssh-key"
+									href={ SSH_ADD_URL }
 									onClick={ () => {
 										dispatch(
 											recordTracksEvent( 'calypso_hosting_configuration_add_ssh_key_link_click' )

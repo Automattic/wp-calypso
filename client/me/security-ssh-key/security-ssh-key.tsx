@@ -5,12 +5,14 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -49,6 +51,7 @@ export const SecuritySSHKey = () => {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const { __ } = useI18n();
+	const queryArgs = getQueryArgs();
 
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
@@ -57,6 +60,9 @@ export const SecuritySSHKey = () => {
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_add_success' ) );
 			dispatch( successNotice( __( 'SSH key added to account.' ), noticeOptions ) );
+			if ( queryArgs.redirectUrl ) {
+				page.redirect( queryArgs.redirectUrl as string );
+			}
 		},
 		onError: ( error ) => {
 			dispatch(
