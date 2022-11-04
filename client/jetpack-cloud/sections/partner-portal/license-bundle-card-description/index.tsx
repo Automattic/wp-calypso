@@ -1,4 +1,3 @@
-import { ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import GreenCheckmark from 'calypso/assets/images/jetpack/jetpack-green-checkmark.svg';
 import type { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
@@ -44,15 +43,7 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 
 	return (
 		<div className="license-bundle-card-description">
-			<p className="license-bundle-card-description__text">
-				{ textDescription }
-				<ExternalLink
-					className="license-bundle-card-description__learn-more"
-					href="https://jetpack.com"
-				>
-					{ translate( 'Learn more' ) }
-				</ExternalLink>
-			</p>
+			<p className="license-bundle-card-description__text">{ textDescription }</p>
 			<ul className="license-bundle-card-description__list">
 				{ features.map( ( feature ) => (
 					<li key={ feature }>
