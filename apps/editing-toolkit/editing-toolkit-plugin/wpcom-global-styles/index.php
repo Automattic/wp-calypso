@@ -306,13 +306,38 @@ add_action( 'launch_bar_extra_tooltip_toggle_global_styles', 'wpcom_display_glob
  * Invalidates the cached Global Styles after changing them or when previewing them.
  */
 function wpcom_invalidate_global_styles_cache() {
+	// This is copied from https://github.com/WordPress/gutenberg/blob/0d9d73f3282e4a0bcd4e0400176d65fcbd5dccb8/lib/compat/wordpress-6.0/class-wp-theme-json-resolver-6-0.php#L171-L186.
+	$args = array(
+		'numberposts' => 1,
+		'orderby'     => 'date',
+		'order'       => 'desc',
+		'post_type'   => 'wp_global_styles',
+		'post_status' => array( 'publish' ),
+		'tax_query'   => array(
+			array(
+				'taxonomy' => 'wp_theme',
+				'field'    => 'name',
+				'terms'    => wp_get_theme()->get_stylesheet(),
+			),
+		),
+	);
+	// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- needed to mimic Core behavior.
+	$core_global_styles_cache_key = sprintf( 'wp_global_styles_%s', md5( serialize( $args ) ) );
+
+	// This is copied from https://github.com/WordPress/gutenberg/blob/9ff5888a1fcd5aa218cbdab5e58c09953bd9bd8b/lib/compat/wordpress-6.1/get-global-styles-and-settings.php#L78.
 	$gutenberg_global_styles_transient_name = 'gutenberg_global_styles_' . get_stylesheet();
 
-	if ( wpcom_should_limit_global_styles() && wpcom_is_previewing_global_styles() ) {
+	if ( wpcom_is_previewing_global_styles() && wpcom_should_limit_global_styles() ) {
 		add_filter( 'pre_transient_' . $gutenberg_global_styles_transient_name, '__return_null' );
 		add_filter( 'pre_set_transient_' . $gutenberg_global_styles_transient_name, '__return_false' );
 	}
 
-	add_action( 'save_post_wp_global_styles', fn() => delete_transient( $gutenberg_global_styles_transient_name ) );
+	add_action(
+		'save_post_wp_global_styles',
+		function () use ( $core_global_styles_cache_key, $gutenberg_global_styles_transient_name ) {
+			wp_cache_delete( $core_global_styles_cache_key );
+			delete_transient( $gutenberg_global_styles_transient_name );
+		}
+	);
 }
 add_action( 'init', 'wpcom_invalidate_global_styles_cache' );
