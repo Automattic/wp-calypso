@@ -136,7 +136,7 @@ export function generateFlows( {
 			},
 		},
 		{
-			name: 'import-focused',
+			name: 'import',
 			steps: [ 'domains', 'plans-import' ],
 			destination: ( dependencies ) =>
 				`/setup/import?flow=import-focused&siteSlug=${ dependencies.siteSlug }`,
