@@ -36,11 +36,12 @@ export const handleKeyboard =
 export function createCustomHomeTemplateContent(
 	stylesheet: string,
 	hasHeader: boolean,
-	hasFooter: boolean
+	hasFooter: boolean,
+	hasSections: boolean
 ) {
 	const content: string[] = [];
-
-	if ( hasHeader ) {
+	const noSelection = ! hasHeader && ! hasFooter && ! hasSections;
+	if ( hasHeader || noSelection ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
@@ -52,7 +53,7 @@ export function createCustomHomeTemplateContent(
 	</main>
 <!-- /wp:group -->` );
 
-	if ( hasFooter ) {
+	if ( hasFooter || noSelection ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);

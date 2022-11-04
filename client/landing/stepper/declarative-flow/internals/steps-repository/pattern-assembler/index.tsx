@@ -264,7 +264,12 @@ const PatternAssembler: Step = ( { navigation } ) => {
 												stylesheet,
 												'home',
 												translate( 'Home' ),
-												createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
+												createCustomHomeTemplateContent(
+													stylesheet,
+													!! header,
+													!! footer,
+													!! sections.length
+												)
 											)
 										)
 										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
