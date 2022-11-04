@@ -104,12 +104,19 @@ export class UserStep extends Component {
 		recaptchaClientId: null,
 	};
 
-	componentDidUpdate() {
-		if ( this.props.step?.status === 'completed' ) {
+	shouldComponentUpdate( nextProps ) {
+		// This used to be done in componentDidUpdate. However, when the user step is the last we'd actually introduce one extra frame of SignupForm with a notice
+		// saying "Your account has already been created", by the code at line 903 of blocks/signup-form/index.jsx at the momemt of writing this.
+		// It had gone unnoticed since the processing screen would hide it.
+		// Now the link-in-bio-tld case introduce a chance that there is no processing screen, revealing the bug.
+		if ( nextProps.step?.status === 'completed' ) {
 			this.props.goToNextStep();
-			return;
+			return false;
 		}
+		return true;
+	}
 
+	componentDidUpdate() {
 		if ( this.userCreationCompletedAndHasHistory( this.props ) ) {
 			// It looks like the user just completed the User Registartion Step
 			// And clicked the back button. Lets redirect them to the this page but this time they will be logged in.
