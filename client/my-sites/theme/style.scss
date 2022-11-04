@@ -55,6 +55,9 @@
 		flex-direction: column-reverse;
 	}
 }
+.theme__sheet-columns.is-removed {
+	justify-content: center;
+}
 
 .theme__sheet-column-left,
 .theme__sheet-column-right {
