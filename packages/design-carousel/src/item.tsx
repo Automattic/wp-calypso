@@ -1,18 +1,18 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import './styles.scss';
-import { MShotsImage, MShotsOptions } from '@automattic/onboarding';
+import { ThemePreview, Design } from '@automattic/design-picker';
 import cx from 'classnames';
 
 type Props = {
 	className?: string;
 	style?: React.CSSProperties;
-	design: any;
-	type: 'desktop' | 'mobile';
+	design: Design;
+	inlineCss?: string;
 };
 
-const getDesignPreviewUrl = ( design: any ): string => {
+const getDesignPreviewUrl = ( design: Design ): string => {
 	const params = new URLSearchParams( {
-		stylesheet: design.recipe?.stylesheet,
+		stylesheet: design.recipe?.stylesheet || '',
 		language: 'en',
 		viewport_height: '1040',
 		source_site: 'patternboilerplates.wordpress.com',
@@ -23,22 +23,13 @@ const getDesignPreviewUrl = ( design: any ): string => {
 	return `https://public-api.wordpress.com/wpcom/v2/block-previews/site?${ params }`;
 };
 
-export function Item( { style, design, className, type }: Props ) {
-	// Default to mobile options
-	let options: MShotsOptions = { w: 400, vpw: 400, vph: 872, format: 'png' };
-
-	if ( type === 'desktop' ) {
-		options = { w: 1280, vpw: 1920, vph: 1280, format: 'png' };
-	}
+export function Item( { style, design, className, inlineCss }: Props ) {
+	const url = getDesignPreviewUrl( design );
 
 	return (
 		<div style={ style } className={ cx( 'design-carousel__item', className ) }>
-			<MShotsImage
-				url={ getDesignPreviewUrl( design ) }
-				options={ options }
-				alt={ design.title }
-				aria-labelledby=""
-			/>
+			<ThemePreview url={ url } inlineCss={ inlineCss } />
+			<div className="design-carousel__item-overlay"></div>
 		</div>
 	);
 }

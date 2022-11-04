@@ -6,26 +6,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	"chloe-currie", "emily", "luis-carvelleda", "mesh-gradient", "paul-nyberg", "tengfai";
 
 .design-carousel__item {
+	aspect-ratio: 1.5;
 	flex: 1;
-
-	@include break-small {
-		aspect-ratio: 1.5;
-	}
-
-	&.design-carousel__item-mobile {
-		@include break-small {
-			display: none !important;
-		}
-	}
-	&.design-carousel__item-desktop {
-		display: none !important;
-		@include break-small {
-			display: flex !important;
-		}
-	}
-
-	// iPhone aspect ratio
-	aspect-ratio: 0.48;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -37,8 +19,17 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	height: calc(65vh - 50px);
+	height: calc(75vh - 50px);
+	max-width: 90vw;
 	outline: none;
+
+	.design-carousel__item-overlay {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
 
 	@media (max-height: 375px) {
 		aspect-ratio: 0.5;

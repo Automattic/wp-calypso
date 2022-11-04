@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { Design } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
@@ -9,7 +10,7 @@ import Swiper from 'swiper';
 import { Item } from './item';
 import 'swiper/dist/css/swiper.css';
 
-type Props = { onPick: ( design: any ) => void };
+type Props = { onPick: ( design: Design ) => void };
 
 export default function DesignCarousel( { onPick }: Props ) {
 	const { __ } = useI18n();
@@ -20,14 +21,31 @@ export default function DesignCarousel( { onPick }: Props ) {
 
 	const { data: allDesigns } = useStarterDesignsQuery( {
 		vertical_id: '',
-		intent: 'sell',
+		intent: '',
 		_locale: locale,
 	} );
 
-	const staticDesigns = allDesigns?.static?.designs.slice( 0, 10 ) || [];
+	const designList = [ 'tsubaki', 'thriving-artist', 'twentytwentytwo' ];
+	const staticDesigns = allDesigns?.static?.designs || [];
+	const selectedDesigns = staticDesigns.filter( ( design ) => designList.includes( design.slug ) );
+	const allVariations: ( Design & { inlineCss?: string } )[] = [];
+
+	selectedDesigns.forEach( ( design ) => {
+		if ( design?.style_variations?.length ) {
+			// Add each variation as an option
+			design?.style_variations?.forEach( ( variation ) => {
+				allVariations.push( {
+					...design,
+					inlineCss: variation.inline_css || '',
+				} );
+			} );
+		} else {
+			allVariations.push( design );
+		}
+	} );
 
 	useEffect( () => {
-		if ( staticDesigns ) {
+		if ( allVariations ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
 				autoHeight: true,
 				mousewheel: true,
@@ -46,9 +64,9 @@ export default function DesignCarousel( { onPick }: Props ) {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ staticDesigns ] );
+	}, [ allVariations ] );
 
-	if ( ! staticDesigns ) {
+	if ( ! allVariations ) {
 		return null;
 	}
 
@@ -56,13 +74,12 @@ export default function DesignCarousel( { onPick }: Props ) {
 		<div className="design-carousel">
 			<div className="design-carousel__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ staticDesigns.map( ( design ) => (
+					{ allVariations.map( ( design ) => (
 						<div
 							className="design-carousel__slide swiper-slide"
-							key={ `${ design.slug }-slide-item` }
+							key={ `${ design.slug + design.inlineCss }-slide-item` }
 						>
-							<Item design={ design } type="desktop" className="design-carousel__item-desktop" />
-							<Item design={ design } type="mobile" className="design-carousel__item-mobile" />
+							<Item design={ design } inlineCss={ design.inlineCss } />
 						</div>
 					) ) }
 				</div>
