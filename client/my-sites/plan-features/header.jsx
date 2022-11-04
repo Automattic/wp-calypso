@@ -412,7 +412,6 @@ export class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			relatedMonthlyPlan,
-			isFirstYearPromotionalDiscount,
 			isLoggedInMonthlyPricing,
 		} = this.props;
 
@@ -437,10 +436,7 @@ export class PlanFeaturesHeader extends Component {
 			}
 		}
 
-		if ( isFirstYearPromotionalDiscount ) {
-			return this.renderPriceGroup( rawPrice, discountPrice );
-		}
-		return this.renderPriceGroup( rawPrice );
+		return this.renderPriceGroup( rawPrice, discountPrice );
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
@@ -610,16 +606,10 @@ export default connect( ( state, { planType, relatedMonthlyPlan } ) => {
 	const isYearly = !! relatedMonthlyPlan;
 	const relatedYearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planType ) );
 
-	const isFirstYearPromotionalDiscount =
-		isYearly &&
-		relatedYearlyPlan &&
-		'first_year_promotional_discounts' === relatedYearlyPlan.overridden_price_reason;
-
 	return {
 		currentSitePlan,
 		isSiteAT: isSiteAutomatedTransfer( state, selectedSiteId ),
 		isYearly,
-		isFirstYearPromotionalDiscount,
 		relatedYearlyPlan,
 		siteSlug: getSiteSlug( state, selectedSiteId ),
 		eligibleForWpcomMonthlyPlans: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
