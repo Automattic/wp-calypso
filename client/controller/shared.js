@@ -16,10 +16,10 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			primary,
 			secondary,
 			showGdprBanner,
-			hasLayout,
+			cachedMarkup,
 		} = context;
-		// Layout exists in the cache; no need to do extra work which won't be used.
-		if ( hasLayout ) {
+		// Markup exists in the cache; no need to do extra work which won't be used.
+		if ( cachedMarkup ) {
 			return next();
 		}
 

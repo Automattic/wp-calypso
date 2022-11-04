@@ -13,12 +13,16 @@ export function serverRouter( expressApp, setUpRoute, section ) {
 		expressApp.get(
 			route,
 			( req, res, next ) => {
-				if ( markupCache.get( getCacheKey( req ) ) ) {
-					debug( 'Markup for request exists!' );
-					req.context.hasLayout = true;
+				const markup = markupCache.get( getCacheKey( req ) );
+				if ( markup ) {
+					req.context.cachedMarkup = markup;
 				}
 				req.context.usedSSRHandler = true;
-				debug( `Using SSR pipeline for path: ${ req.path } with handler ${ route }` );
+				debug(
+					`Using SSR pipeline for path: ${
+						req.path
+					} with handler ${ route }. Cached layout: ${ !! markup }`
+				);
 				next();
 			},
 			setUpRoute,

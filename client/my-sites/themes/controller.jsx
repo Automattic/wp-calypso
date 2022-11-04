@@ -43,7 +43,7 @@ export function loggedOut( context, next ) {
 }
 
 export function fetchThemeData( context, next ) {
-	if ( ! context.isServerSide || context.hasLayout ) {
+	if ( ! context.isServerSide || context.cachedMarkup ) {
 		debug( 'Skipping theme data fetch' );
 		return next();
 	}
@@ -73,7 +73,7 @@ export function fetchThemeData( context, next ) {
 }
 
 export function fetchThemeFilters( context, next ) {
-	if ( context.hasLayout ) {
+	if ( context.cachedMarkup ) {
 		debug( 'Skipping theme filter data fetch' );
 		return next();
 	}

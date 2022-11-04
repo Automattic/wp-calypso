@@ -81,22 +81,8 @@ function render( element, key, req ) {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let renderedLayout = markupCache.get( key );
-
-		/**
-		 * If the SSR pipeline executed thinking that a layout would exist, it
-		 * likely skipped several important steps needed to generate a layout,
-		 * such as fetching the data rendered on the page. As a result, we can't
-		 * confidently render a page and the default error handler will allow
-		 * the client to render it instead.
-		 *
-		 * This should not happen -- if it does, we need to investigate and fix it.
-		 */
-		if ( req.context.hasLayout && ! renderedLayout ) {
-			debug( 'SSR layout mismatch!' );
-			throw new Error( 'SSR layout cache mismatch!' );
-		}
-
+		// If the cached layout was stored earlier in the request, no need to get it again.
+		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -253,11 +239,7 @@ export function serverRender( req, res ) {
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
-		context.renderedLayout = render(
-			context.layout,
-			req.error ? req.error.message : cacheKey,
-			req
-		);
+		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
 	}
 
 	performanceMark( req, 'dehydrateQueryClient', true );
@@ -343,7 +325,7 @@ function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			( context.layout || context.hasLayout ) // A layout was generated or we have one cached.
+			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 
