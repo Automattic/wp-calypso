@@ -288,7 +288,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 												<span className="plugin-details-cta__period">{ period }</span>
 											</>
 										) : (
-											translate( 'Free' )
+											<FreePrice />
 										) }
 									</>
 								)
@@ -404,6 +404,22 @@ function PrimaryButton( {
 			disabled={ incompatiblePlugin || userCantManageTheSite }
 		/>
 	);
+}
+
+function FreePrice() {
+	const translate = useTranslate();
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
+	if ( ! isLoggedIn ) {
+		return (
+			<>
+				{ translate( 'Free' ) }
+				<span className="plugin-details-cta__notice">{ translate( 'on Business plan' ) }</span>
+			</>
+		);
+	}
+
+	return translate( 'Free' );
 }
 
 function UpgradeRequiredContent( { translate } ) {
