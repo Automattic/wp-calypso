@@ -43,6 +43,7 @@ export default function LicenseProductCard( props: Props ) {
 
 	useEffect( () => {
 		if ( suggestedProduct ) {
+			// Transform the comma-separated list of products to array.
 			const suggestedProducts = suggestedProduct.split( ',' );
 
 			if ( suggestedProducts.includes( product.slug ) ) {

@@ -44,11 +44,16 @@ export default function IssueMultipleLicensesForm( {
 					product: product.slug,
 				} )
 			);
-			const allProducts = [ ...selectedProducts ];
-			selectedProducts.indexOf( product.slug ) === -1
-				? allProducts.push( product.slug )
-				: allProducts.splice( selectedProducts.indexOf( product.slug ), 1 );
-			setSelectedProducts( allProducts );
+
+			setSelectedProducts( ( previousValue ) => {
+				const allProducts = [ ...previousValue ];
+
+				! allProducts.includes( product.slug )
+					? allProducts.push( product.slug )
+					: allProducts.splice( selectedProducts.indexOf( product.slug ), 1 );
+
+				return allProducts;
+			} );
 		},
 		[ dispatch, selectedProducts ]
 	);
