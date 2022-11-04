@@ -4,6 +4,7 @@ import Settings
 import _self.bashNodeScript
 import _self.lib.customBuildType.E2EBuildType
 import _self.lib.utils.mergeTrunk
+import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStepConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
@@ -37,7 +38,6 @@ object WebApp : Project({
 	buildType(AuthenticationE2ETests)
 	buildType(HelpCentreE2ETests)
 	buildType(KPIDashboardTests)
-	buildType(CalypsoPreReleaseDashboard)
 	buildType(QuarantinedE2ETests)
 })
 
@@ -775,18 +775,139 @@ fun playwrightPrBuildType( targetDevice: String, buildUuid: String ): E2EBuildTy
 	)
 }
 
-object PreReleaseE2ETests : E2EBuildType(
-	buildId = "calypso_WebApp_Calypso_E2E_Pre_Release",
-	buildUuid = "9c2f634f-6582-4245-bb77-fb97d9f16533",
-	buildName = "Pre-Release E2E Tests",
-	buildDescription = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production.",
-	concurrentBuilds = 1,
-	testGroup = "calypso-release",
-	buildParams = {
+object PreReleaseE2ETests : BuildType({
+	id("calypso_WebApp_Calypso_E2E_Pre_Release")
+	uuid = "9c2f634f-6582-4245-bb77-fb97d9f16533"
+	name = "Pre-Release E2E Tests"
+	description = "Runs a pre-release suite of E2E tests against trunk on staging, intended to be run after PR merge, but before deployment to production."
+	artifactRules = """
+		logs => logs.tgz
+		screenshots => screenshots
+		trace => trace
+		allure-results => allure-results.tgz
+	"""
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	params {
+		param("env.NODE_CONFIG_ENV", "test")
+		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
+		param("env.TEAMCITY_VERSION", "2021")
+		param("env.HEADLESS", "true")
+		param("env.LOCALE", "en")
 		param("env.VIEWPORT_NAME", "desktop")
 		param("env.CALYPSO_BASE_URL", "https://wpcalypso.wordpress.com")
-	},
-	buildFeatures = {
+		param("env.ALLURE_RESULTS_PATH", "allure-results")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				# Install deps
+				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
+
+				# Decrypt secrets
+				# Must do before build so the secrets are in the dist output
+				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
+
+				# Build packages
+				yarn workspace @automattic/calypso-e2e build
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Run tests"
+			scriptContent = """
+				# Configure bash shell.
+				shopt -s globstar
+				set -x
+
+				# Enter testing directory.
+				cd test/e2e
+				mkdir temp
+
+				# Run suite.
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=calypso-release
+			"""
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Collect results"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -x
+
+				mkdir -p screenshots
+				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
+
+				mkdir -p logs
+				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
+
+				mkdir -p trace
+				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
+
+				mkdir -p allure-results
+				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
+			""".trimIndent()
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Upload Allure results to S3"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -ex
+
+				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
+				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
+
+				# Need to use -C to avoid creation of an unnecessary top level directory.
+				tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
+
+				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
+			""".trimIndent()
+			conditions {
+				exists("env.ALLURE_RESULTS_PATH")
+				equals("teamcity.build.branch", "trunk")
+			}
+			dockerImage = "%docker_image_e2e%"
+		}
+
+		bashNodeScript {
+			name = "Send webhook to GitHub Actions"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				# Issue call as matticbot.
+				# The GitHub Action workflow expects the filename of the most recent Allure report
+				# as param.
+				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
+			""".trimIndent()
+			conditions {
+				exists("env.ALLURE_RESULTS_PATH")
+				equals("teamcity.build.branch", "trunk")
+			}
+			dockerImage = "%docker_image_e2e%"
+		}
+	}
+
+	features {
+		perfmon {
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${Settings.WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
@@ -802,7 +923,25 @@ object PreReleaseE2ETests : E2EBuildType(
 			buildProbablyHanging = true
 		}
 	}
-)
+
+	failureConditions {
+		executionTimeoutMin = 20
+		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
+		nonZeroExitCode = false
+
+		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
+		failOnMetricChange {
+			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
+			threshold = 50
+			units = BuildFailureOnMetric.MetricUnit.PERCENTS
+			comparison = BuildFailureOnMetric.MetricComparison.LESS
+			compareTo = build {
+				buildRule = lastSuccessful()
+			}
+		}
+	}
+
+})
 
 object AuthenticationE2ETests : E2EBuildType(
 	buildId = "calypso_WebApp_Calypso_E2E_Authentication",
@@ -879,201 +1018,18 @@ object HelpCentreE2ETests : E2EBuildType(
 	}
 )
 
-object KPIDashboardTests : BuildType({
-	id("calypso_WebApp_Calypso_E2E_KPI_Dashboard")
-	uuid = "441efac5-721a-4557-9448-9234e89fb6b1"
-	name = "Test build for KPI Dashboard project"
-	description = "Test build configuration for KPI dashboard."
-	artifactRules = """
-		logs => logs.tgz
-		screenshots => screenshots
-		trace => trace
-		allure-results => allure-results.tgz
-	""".trimIndent()
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = true
-	}
-
-	params {
-		param("env.NODE_CONFIG_ENV", "test")
-		param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-		param("env.TEAMCITY_VERSION", "2021")
-		param("env.HEADLESS", "false")
-		param("env.LOCALE", "en")
-		param("env.DEBUG", "")
+object KPIDashboardTests : E2EBuildType(
+	buildId = "Calypso_E2E_KPI_Dashboard",
+	buildUuid = "441efac5-721a-4557-9448-9234e89fb6b1",
+	buildName = "Test build for KPI Dashboard project",
+	buildDescription = "Test build configuration for KPI dashboard.",
+	testGroup = "kpi",
+	buildParams = {
 		param("env.VIEWPORT_NAME", "desktop")
-		param("env.ALLURE_RESULTS_PATH", "allure-results")
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Prepare environment"
-			scriptContent = """
-				# Install deps
-				yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-				# Decrypt secrets
-				# Must do before build so the secrets are in the dist output
-				E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-				# Build packages
-				yarn workspace @automattic/calypso-e2e build
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Run tests"
-			scriptContent = """
-				# Configure bash shell.
-				shopt -s globstar
-				set -x
-
-				# Enter testing directory.
-				cd test/e2e
-				mkdir temp
-
-				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=kpi
-			"""
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Collect results"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -x
-
-				mkdir -p screenshots
-				find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
-
-				mkdir -p logs
-				find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
-
-				mkdir -p trace
-				find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace
-
-				mkdir -p allure-results
-				find test/e2e/allure-results -name '*.json' -print0 | xargs -r -0 mv -t allure-results
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Upload Allure results to S3"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -ex
-
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-				# Need to use -C to avoid creation of an unnecessary top level directory.
-				tar cvfz %build.counter%-%build.vcs.number%.tgz -C allure-results .
-
-				aws s3 cp %build.counter%-%build.vcs.number%.tgz %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-
-		bashNodeScript {
-			name = "Send webhook to start report generation"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				# Issue call as matticbot.
-				# The GitHub Action workflow expects the filename of the most recent Allure report
-				# as param.
-				curl https://api.github.com/repos/Automattic/wp-calypso-test-results/actions/workflows/pages.yml/dispatches -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer %MATTICBOT_GITHUB_BEARER_TOKEN%" -d '{"ref":"trunk","inputs":{"allure_result_filename": "%build.counter%-%build.vcs.number%.tgz"}}'
-			""".trimIndent()
-			dockerImage = "%docker_image_e2e%"
-		}
-	}
-
-	features {
-		perfmon {
-		}
-	}
-
-	failureConditions {
-		executionTimeoutMin = 20
-		// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
-		nonZeroExitCode = false
-
-		// Fail if the number of passing tests is 50% or less than the last build. This will catch the case where the test runner crashes and no tests are run.
-		failOnMetricChange {
-			metric = BuildFailureOnMetric.MetricType.PASSED_TEST_COUNT
-			threshold = 50
-			units = BuildFailureOnMetric.MetricUnit.PERCENTS
-			comparison = BuildFailureOnMetric.MetricComparison.LESS
-			compareTo = build {
-				buildRule = lastSuccessful()
-			}
-		}
-	}
-})
-
-object CalypsoPreReleaseDashboard : BuildType({
-	id("calypso_WebApp_Calypso_Dashboard_Pre_Release_Dashboard")
-	uuid = "e07c2ff3-2a9f-416e-9a03-637690334da8"
-	name = "Calypso Pre-Release Dashboard"
-	description = "Generate Dashboard for Pre-Release Tests"
-
-	params {
-		param("docker_image", "registry.a8c.com/calypso/ci-allure:latest")
-	}
-
-	vcs {
-		root(Settings.WpCalypso)
-		cleanCheckout = false
-	}
-
-	dependencies {
-		artifacts (KPIDashboardTests) {
-			artifactRules = """
-				allure-results.tgz!/*.json => allure-results
-			"""
-		}
-	}
-
-	triggers {
-	}
-
-	steps {
-		bashNodeScript {
-			name = "Install dependencies"
-			scriptContent = """
-
-				aws configure set aws_access_key_id %CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID%
-				aws configure set aws_secret_access_key %CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY%
-
-				export FIRST_RUN=false
-				if [ "$(aws s3 ls %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% | wc -l)" -eq "0" ]; then
-					echo "Previous report not found."
-					export FIRST_RUN=true
-				else
-					echo "Found previous report."
-					mkdir %teamcity.build.checkoutDir%/previous_allure_report
-					aws s3 sync %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT%/ %teamcity.build.checkoutDir%/previous_allure_report
-				fi
-
-				# -------
-				mkdir %teamcity.build.checkoutDir%/new_allure_report
-				# Copy history trend from previous run
-				cp -R %teamcity.build.checkoutDir%/previous_allure_report/history %teamcity.build.checkoutDir%/allure-results
-				# Generate report
-				allure generate %teamcity.build.checkoutDir%/allure-results -o %teamcity.build.checkoutDir%/new_allure_report
-
-				aws s3 sync %teamcity.build.checkoutDir%/new_allure_report %CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT% --delete
-
-				echo "Done"
-			""".trimIndent()
-			dockerImage = "%docker_image_allure%"
-		}
-	}
-})
+	},
+	buildFeatures = {
+	},
+)
 
 object QuarantinedE2ETests: E2EBuildType(
 	buildId = "calypso_WebApp_Quarantined_E2E_Tests",
