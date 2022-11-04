@@ -166,7 +166,9 @@ export default withCurrentRoute(
 		const isPartnerSignup = isPartnerSignupQuery( currentQuery );
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isReskinLoginRoute =
-			currentRoute.endsWith( 'log-in' ) && Boolean( currentQuery?.client_id ) === false;
+			currentRoute.startsWith( '/log-in' ) &&
+			! isJetpackLogin &&
+			Boolean( currentQuery?.client_id ) === false;
 		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
