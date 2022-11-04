@@ -28,7 +28,7 @@ export function checkIfJetpackSiteGotDisconnected( state: AppState ): boolean {
 }
 
 export function getPurchasedLicense( state: AppState ): PurchasedProductsInfo | null {
-	return state.agencyDashboard.purchasedLicense.purchasedLicenseInfo;
+	return state.agencyDashboard.purchasedLicense?.purchasedLicenseInfo;
 }
 
 /**
