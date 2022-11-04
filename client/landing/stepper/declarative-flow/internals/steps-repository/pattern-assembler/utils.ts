@@ -41,10 +41,12 @@ export function createCustomHomeTemplateContent(
 ) {
 	const content: string[] = [];
 	const noSelection = ! hasHeader && ! hasFooter && ! hasSections;
-	if ( hasHeader || noSelection ) {
+	if ( hasHeader ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
+	} else if ( noSelection ) {
+		content.push( `<!-- wp:template-part {"area":"header","theme":"${ stylesheet }"} /-->` );
 	}
 
 	content.push( `
@@ -53,10 +55,12 @@ export function createCustomHomeTemplateContent(
 	</main>
 <!-- /wp:group -->` );
 
-	if ( hasFooter || noSelection ) {
+	if ( hasFooter ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
+	} else if ( noSelection ) {
+		content.push( `<!-- wp:template-part {"area":"footer","theme":"${ stylesheet }"} /-->` );
 	}
 
 	return content.join( '\n' );
