@@ -1,6 +1,6 @@
 import { getPlan, isMonthly } from '@automattic/calypso-products';
 
-export default function getPlanFeatures(
+export default function getPlanCancellationFeatures(
 	productSlug: string | undefined,
 	hasDomain: boolean
 ): string[] {

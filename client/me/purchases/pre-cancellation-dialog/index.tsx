@@ -40,7 +40,7 @@ export const FeaturesList = ( {
 		return null;
 	}
 
-	const planFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
+	const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
 	const domainFeature =
 		hasDomain && primaryDomain && wpcomURL ? <p>Debug domain: traffic will be redirected</p> : null;
 
@@ -62,7 +62,7 @@ export const FeaturesList = ( {
 						{ domainFeature }
 					</li>
 				) }
-				{ planFeatures.map( ( feature ) => {
+				{ planCancellationFeatures.map( ( feature ) => {
 					if ( feature === FEATURE_CANCELLATION_AND_MORE ) {
 						return (
 							<li className="pre-cancellation-dialog__item-more" key={ feature }>
