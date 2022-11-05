@@ -179,6 +179,9 @@ export const PreCancellationDialog = ( {
 	const clickCancelPlan = () => {
 		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan', {
 			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
 		} );
 
 		removePlan();
@@ -187,6 +190,9 @@ export const PreCancellationDialog = ( {
 	const clickCloseDialog = () => {
 		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan', {
 			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
 		} );
 		closeDialog();
 	};
