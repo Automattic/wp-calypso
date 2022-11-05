@@ -267,3 +267,27 @@ export const FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS = 'customize-themes-buttons
 export const FEATURE_TRACK_VIEWS_CLICKS = 'track-views-clicks';
 export const FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO = 'collect-payments-link-in-bio';
 export const FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION = 'link-in-bio-themes-customization';
+
+// Cancellation flow related features
+export const FEATURE_CANCELLATION_ACCEPT_PAYMENTS = 'cancellation-accept-payments';
+export const FEATURE_CANCELLATION_AD_FREE_SITE = 'cancellation-ad-free';
+export const FEATURE_CANCELLATION_BACKUPS = 'cancellation-backups';
+export const FEATURE_CANCELLATION_BACKUPS_AND_RESTORE = 'cancellation-backups-restore';
+export const FEATURE_CANCELLATION_COLLECT_PAYMENTS = 'cancellation-collect-payments';
+export const FEATURE_CANCELLATION_EARN_AD_REVENUE = 'cancellation-ad-revenue';
+export const FEATURE_CANCELLATION_EMAIL_SUPPORT = 'cancellation-email-support';
+export const FEATURE_CANCELLATION_GOOGLE_ANALYTICS = 'cancellation-google-analytics';
+export const FEATURE_CANCELLATION_HIGH_QUALITY_VIDEOS = 'cancellation-hq-videos';
+export const FEATURE_CANCELLATION_JETPACK_ESSENTIALS = 'cancellation-jetpack-essentials';
+export const FEATURE_CANCELLATION_LIVE_CHAT = 'cancellation-live-chat';
+export const FEATURE_CANCELLATION_MANAGED_HOSTINGS = 'cancellation-managed-hostings';
+export const FEATURE_CANCELLATION_PLUGINS = 'cancellation-plugins';
+export const FEATURE_CANCELLATION_PREMIUM_DESIGN = 'cancellation-premium-design';
+export const FEATURE_CANCELLATION_PREMIUM_THEMES = 'cancellation-premium-themes';
+export const FEATURE_CANCELLATION_SECURITY_AND_SPAM = 'cancellation-security-and-spam';
+export const FEATURE_CANCELLATION_SEO_TOOLS = 'cancellation-seo-tools';
+export const FEATURE_CANCELLATION_SEO_AND_SOCIAL = 'cancellation-seo-social';
+export const FEATURE_CANCELLATION_SFTP_AND_DATABASE = 'cancellation-sfpt-database';
+export const FEATURE_CANCELLATION_SHIPPING_CARRIERS = 'cancellation-shipping-carriers';
+export const FEATURE_CANCELLATION_UNLIMITED_TRAFFIC = 'cancellation-unlimited-traffic';
+export const FEATURE_CANCELLATION_AND_MORE = 'cancellation-and-more';

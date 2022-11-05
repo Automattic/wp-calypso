@@ -1,9 +1,11 @@
+import { FEATURE_CANCELLATION_AND_MORE } from '@automattic/calypso-products';
 import { Dialog, Gridicon } from '@automattic/components';
 import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import {
 	hasAmountAvailableToRefund,
 	isRefundable,
@@ -61,6 +63,15 @@ export const FeaturesList = ( {
 					</li>
 				) }
 				{ planFeatures.map( ( feature ) => {
+					if ( feature === FEATURE_CANCELLATION_AND_MORE ) {
+						return (
+							<li className="pre-cancellation-dialog__item-more" key={ feature }>
+								<span className="pre-cancellation-dialog__item-more-span">
+									{ getFeatureByKey( feature ) }
+								</span>
+							</li>
+						);
+					}
 					return (
 						<li key={ feature }>
 							<Gridicon
@@ -68,7 +79,7 @@ export const FeaturesList = ( {
 								size={ 24 }
 								icon="cross-small"
 							/>
-							{ feature }
+							{ getFeatureByKey( feature ) }
 						</li>
 					);
 				} ) }

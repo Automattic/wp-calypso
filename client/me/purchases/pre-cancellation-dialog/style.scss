@@ -9,8 +9,8 @@ $modal-breakpoint-mobile: 480px;
 	.pre-cancellation-dialog__close-button {
 		cursor: pointer;
 		position: absolute;
-		right: 0;
-		top: 9px;
+		right: 7px;
+		top: 10px;
 
 		.gridicon {
 			color: #000;
@@ -83,6 +83,20 @@ $modal-breakpoint-mobile: 480px;
 			display: grid;
 			grid-template-columns: 32px 1fr;
 			margin-bottom: 5px;
+
+			.pre-cancellation-dialog__item-cross-small {
+				color: #e65054;
+				vertical-align: middle;
+				margin-right: 10px;
+			}
+
+			&.pre-cancellation-dialog__item-more {
+				display: block;
+
+				span {
+					margin-left: 32px;
+				}
+			}
 		}
 	}
 
