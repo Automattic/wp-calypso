@@ -177,12 +177,17 @@ export const PreCancellationDialog = ( {
 	 * Click events, buttons tracking and action.
 	 */
 	const clickCancelPlan = () => {
-		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan' );
+		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan', {
+			product_slug: productSlug,
+		} );
+
 		removePlan();
 	};
 
 	const clickCloseDialog = () => {
-		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan' );
+		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan', {
+			product_slug: productSlug,
+		} );
 		closeDialog();
 	};
 
