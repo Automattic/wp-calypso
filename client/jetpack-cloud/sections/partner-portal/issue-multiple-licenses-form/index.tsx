@@ -31,11 +31,12 @@ export default function IssueMultipleLicensesForm( {
 	const products =
 		allProducts?.filter( ( { family_slug } ) => family_slug !== 'jetpack-packs' ) || [];
 
-	const defaultProducts = getQueryArg( window.location.href, 'product' )?.toString().split( ',' );
+	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
+	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
+	const defaultProducts = getQueryArg( window.location.href, 'products' )?.toString().split( ',' );
 
 	const [ selectedProducts, setSelectedProducts ] = useState( defaultProducts ?? [] );
-
-	const [ issueLicense, isLoading ] = useIssueMultipleLicenses( selectedProducts, selectedSite );
+	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses( selectedProducts, selectedSite );
 
 	const onSelectProduct = useCallback(
 		( product ) => {
@@ -47,6 +48,11 @@ export default function IssueMultipleLicensesForm( {
 
 			setSelectedProducts( ( previousValue ) => {
 				const allProducts = [ ...previousValue ];
+
+				// A bundle cannot be combined with other products.
+				if ( isJetpackBundle( product.slug ) ) {
+					return [ product.slug ];
+				}
 
 				! allProducts.includes( product.slug )
 					? allProducts.push( product.slug )
@@ -61,12 +67,10 @@ export default function IssueMultipleLicensesForm( {
 	useEffect( () => {
 		// In the case of a bundle, we want to take the user immediately to the next step since
 		// they can't select any additional item after selecting a bundle.
-		selectedProducts.forEach( ( product ) => {
-			if ( isJetpackBundle( product ) ) {
-				issueLicense();
-			}
-		} );
-	}, [ issueLicense, selectedProducts ] );
+		if ( selectedProducts.find( ( product ) => isJetpackBundle( product ) ) ) {
+			issueLicenses();
+		}
+	}, [ selectedProducts ] );
 
 	const selectedSiteDomain = selectedSite?.domain;
 
@@ -96,7 +100,7 @@ export default function IssueMultipleLicensesForm( {
 								className="issue-multiple-licenses-form__select-license"
 								disabled={ ! selectedProducts.length }
 								busy={ isLoading }
-								onClick={ issueLicense }
+								onClick={ issueLicenses }
 							>
 								{ translate( 'Select License' ) }
 							</Button>

@@ -13,7 +13,7 @@ import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -432,6 +432,7 @@ export function useIssueMultipleLicenses(
 			selectedSite: selectedSite?.domain || '',
 			selectedProducts: allSelectedProducts,
 		};
+		dispatch( resetSite() );
 		dispatch( setPurchasedLicense( assignLicenseStatus ) );
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
