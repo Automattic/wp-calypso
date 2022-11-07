@@ -252,7 +252,7 @@ class StatsSite extends Component {
 
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ [] }
+								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
 								barClick={ this.barClick }
