@@ -217,7 +217,27 @@ const countryData = [
 	},
 ];
 
-const filedownloadsData = [];
+const filedownloadsData = [
+	{
+		label: '/2021/01/sample-file.pdf',
+		shortLabel: 'sample-file.pdf',
+		page: null,
+		value: 45,
+		link: 'https://www.google.com',
+		linkTitle: '/2021/01/sample-file.pdf',
+		labelIcon: 'external',
+	},
+	{
+		label: '/2017/12/test-file.pdf',
+		shortLabel: 'test-file.pdf',
+		page: null,
+		value: 25,
+		link: 'https://www.google.com',
+		linkTitle: '/2017/12/test-file.pdf',
+		labelIcon: 'external',
+	},
+];
+
 const searchTermsData = [];
 
 const postsData = [
