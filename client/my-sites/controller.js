@@ -420,6 +420,7 @@ export function noSite( context, next ) {
 
 	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
 		siteSelection( context, next );
+		return;
 	}
 
 	context.store.dispatch( setSelectedSiteId( null ) );
