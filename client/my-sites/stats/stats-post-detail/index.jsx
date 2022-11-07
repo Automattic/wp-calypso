@@ -63,13 +63,11 @@ class StatsPostDetail extends Component {
 	};
 
 	getNavigationItemsWithTitle = ( title ) => {
-		// TODO: Localize this.
-		// Currently not recognizing 'translate' as a valid function.
 		const localizedTabNames = {
-			traffic: 'Traffic',
-			insights: 'Insights',
-			store: 'Store',
-			ads: 'Ads',
+			traffic: this.props.translate( 'Traffic' ),
+			insights: this.props.translate( 'Insights' ),
+			store: this.props.translate( 'Store' ),
+			ads: this.props.translate( 'Ads' ),
 		};
 		const possibleBackLinks = {
 			traffic: '/stats/day/',
