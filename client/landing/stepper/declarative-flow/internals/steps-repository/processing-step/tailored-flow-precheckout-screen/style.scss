@@ -2,11 +2,14 @@
 @import "@wordpress/base-styles/breakpoints";
 
 .is-section-stepper {
+	.processing {
+		.signup-header {
+			z-index: 1;
+		}
+	}
 	.newsletter,
 	.link-in-bio {
 		.signup-header {
-			z-index: 1;
-
 			.signup-header__right {
 				visibility: hidden;
 			}

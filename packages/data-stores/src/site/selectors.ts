@@ -22,7 +22,9 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
 export const getSite = ( state: State, siteId: number | string ) => {
 	return (
 		state.sites[ siteId ] ||
-		Object.values( state.sites ).find( ( site ) => site && new URL( site.URL ).host === siteId )
+		Object.values( state.sites ).find(
+			( site ) => site?.URL && new URL( site.URL ).host === siteId
+		)
 	);
 };
 
