@@ -181,12 +181,14 @@ export default function useCreatePaymentCompleteCallback( {
 				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
-			if (
-				( responseCart.create_new_blog &&
-					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
-					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
-				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
-			) {
+			const isValidNewSiteCreationRequest =
+				responseCart.create_new_blog &&
+				Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
+				Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0;
+
+			const isDomainOnlySiteAndSiteless = isDomainOnly && hasPlan( responseCart ) && ! siteId;
+
+			if ( isValidNewSiteCreationRequest || isDomainOnlySiteAndSiteless ) {
 				reduxDispatch( infoNotice( translate( 'Almost done…' ) ) );
 
 				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
