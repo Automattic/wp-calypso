@@ -3,7 +3,8 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -18,11 +19,14 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
+import { warningNotice } from 'calypso/state/notices/actions';
 import {
 	getCurrentOAuth2Client,
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { developerNotificationCompleted } from 'calypso/state/startup-states/actions';
+import { getIsStateRandomlyCleared } from 'calypso/state/startup-states/selectors';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -50,6 +54,29 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	locale,
 } ) => {
+	const dispatch = useDispatch();
+	const isStateRandomlyCleared = useSelector( getIsStateRandomlyCleared );
+
+	useEffect( () => {
+		if ( isStateRandomlyCleared ) {
+			setTimeout( () => {
+				dispatch(
+					// Read more about this (sympathy) :  https://github.com/Automattic/wp-calypso/pull/14121, p4TIVU-6Ed-p2
+					// TLDR: We try to clear state randomly to match closely to the UX of our user i.e. Sympathy.
+					// In other words, you cannot rely on user's persisted state to be reliable so we randomly clear it to simulate that experience.
+					warningNotice( 'DEV NOTICE: Persisted redux state was randomly cleared', {
+						id: 'Sympathy-Dev-Warning',
+						duration: 8000,
+						showDismiss: true,
+						displayOnNextPage: true,
+						status: 'is-warning',
+					} )
+				);
+				dispatch( developerNotificationCompleted() );
+			}, 1200 );
+		}
+	}, [ isStateRandomlyCleared, dispatch ] );
+
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
