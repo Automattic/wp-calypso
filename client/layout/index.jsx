@@ -31,12 +31,14 @@ import { isOffline } from 'calypso/state/application/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
-import { warningNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { developerNotificationCompleted } from 'calypso/state/startup-states/actions';
+import {
+	developerNotificationCompleted,
+	sympathyWarningNotice,
+} from 'calypso/state/startup-states/actions';
 import { getIsStateRandomlyCleared } from 'calypso/state/startup-states/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
@@ -170,18 +172,7 @@ class Layout extends Component {
 		if ( this.props.isStateRandomlyCleared ) {
 			const { dispatch } = this.props;
 			setTimeout( () => {
-				dispatch(
-					// Read more about this (sympathy) :  https://github.com/Automattic/wp-calypso/pull/14121, p4TIVU-6Ed-p2
-					// TLDR: We try to clear state randomly to match closely to the UX of our user i.e. Sympathy.
-					// In other words, you cannot rely on user's persisted state to be reliable so we randomly clear it to simulate that experience.
-					warningNotice( 'DEV NOTICE: Persisted redux state was randomly cleared', {
-						id: 'Sympathy-Dev-Warning',
-						duration: 8000,
-						showDismiss: true,
-						displayOnNextPage: true,
-						status: 'is-warning',
-					} )
-				);
+				dispatch( sympathyWarningNotice() );
 				dispatch( developerNotificationCompleted() );
 			}, 1200 );
 		}
