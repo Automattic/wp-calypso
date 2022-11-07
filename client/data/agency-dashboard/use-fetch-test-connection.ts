@@ -34,6 +34,9 @@ const useFetchTestConnection = (
 				),
 			enabled: isPartnerOAuthTokenLoaded,
 			refetchOnWindowFocus: false,
+			// We don't want to trigger another API request to the /test-connection endpoint for a given site
+			// five minutes after the first successful one.
+			staleTime: 1000 * 60 * 5,
 		}
 	);
 };
