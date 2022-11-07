@@ -153,7 +153,6 @@ class StatsPostDetail extends Component {
 		const title = this.getTitle();
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
-		const navigationItems = this.getNavigationItemsWithTitle( title );
 
 		return (
 			<Main className={ dynamicClassName } wideLayout>
@@ -165,7 +164,7 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				{ isFixedNavHeadersEnabled ? (
-					<FixedNavigationHeader navigationItems={ navigationItems } />
+					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) } />
 				) : (
 					<HeaderCake
 						onClick={ this.goBack }
