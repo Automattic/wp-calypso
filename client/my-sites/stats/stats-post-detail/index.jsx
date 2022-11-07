@@ -152,10 +152,10 @@ class StatsPostDetail extends Component {
 		// Set up for FixedNavigationHeader.
 		const title = this.getTitle();
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
+		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
 
 		return (
-			<Main className={ dynamicClassName } wideLayout>
+			<Main className={ className } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
