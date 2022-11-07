@@ -62,7 +62,7 @@ class ThanksModal extends Component {
 			// Redirect to plugin-bundle flow for themes including software (like woocommerce)
 			const { siteSlug, doesThemeBundleUsableSoftware } = this.props;
 			if ( doesThemeBundleUsableSoftware ) {
-				const dest = `/setup/?siteSlug=${ siteSlug }&flow=plugin-bundle`;
+				const dest = `/setup/plugin-bundle?siteSlug=${ siteSlug }`;
 				window.location.replace( dest );
 			}
 		}

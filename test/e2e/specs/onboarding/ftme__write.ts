@@ -61,9 +61,9 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Enter Onboarding flow for the selected domain', async function () {
-			await expect( page.waitForURL( /setup\/goals\?/ ) ).resolves.not.toThrow();
+			await expect( page.waitForURL( /setup\/site-setup\/goals\?/ ) ).resolves.not.toThrow();
 
-			const urlRegex = `/setup/goals?siteSlug=${ selectedFreeDomain }`;
+			const urlRegex = `/setup/site-setup/goals?siteSlug=${ selectedFreeDomain }`;
 			expect( page.url() ).toMatch( urlRegex );
 		} );
 

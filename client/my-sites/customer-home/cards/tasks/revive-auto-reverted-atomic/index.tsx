@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { translate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
+import disconnectedIllustration from 'calypso/assets/images/customer-home/disconnected-dark.svg';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import {
 	TASK_REACTIVATE_ATOMIC_TRANSFER,
@@ -39,7 +39,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 		switch ( card ) {
 			case TASK_REACTIVATE_EXPIRED_PLAN:
 				return {
-					title: translate( 'Renew the Plan' ),
+					title: translate( 'Renew Your Plan' ),
 					description: translate(
 						'Your plan expired and your site reverted to the Free plan. {{supportLink}}Follow these steps to continue using your previous features{{/supportLink}}, beginning with purchasing an eligible plan.{{lineBreak/}}No further action is needed if you wish to continue with the Free plan.',
 						{
@@ -47,7 +47,7 @@ export const ReviveAutoRevertedAtomic = ( { card }: { card: string } ) => {
 						}
 					),
 					timing: 1,
-					actionText: translate( 'Renew the Plan' ),
+					actionText: translate( 'Renew Your Plan' ),
 					actionUrl: `/plans/${ siteSlug }`,
 				};
 

@@ -14,6 +14,7 @@ export interface RawReceiptPurchase {
 	is_root_domain_with_us?: boolean;
 	is_renewal?: boolean;
 	will_auto_renew?: boolean;
+	saas_redirect_url?: string;
 }
 
 export interface RawFailedReceiptPurchase {
@@ -39,6 +40,7 @@ export interface ReceiptPurchase {
 	isRootDomainWithUs: boolean;
 	isRenewal: boolean;
 	willAutoRenew: boolean;
+	saasRedirectUrl: string;
 }
 
 export interface FailedReceiptPurchase {

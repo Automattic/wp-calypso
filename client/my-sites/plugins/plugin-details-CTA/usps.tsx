@@ -20,7 +20,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 
 const StyledUl = styled.ul`
-	margin-top: 20px;
 	margin-left: 0;
 	list-style-type: none;
 `;
