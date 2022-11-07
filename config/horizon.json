@@ -95,7 +95,7 @@
 		"settings/security/monitor": true,
 		"sign-in-with-apple": false,
 		"signup/anchor-fm": true,
-		"signup/design-picker-pattern-assembler": false,
+		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-categories": true,
 		"signup/design-picker-premium-themes-checkout": true,
 		"signup/design-picker-use-featured-picks-buttons": true,
