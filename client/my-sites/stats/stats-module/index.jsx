@@ -165,30 +165,28 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				{ shouldShowNewModule && (
-					<>
-						<StatsListCard
-							moduleType={ path }
-							data={ data }
-							useShortLabel={ useShortLabel }
-							title={ this.getModuleLabel() }
-							emptyMessage={ moduleStrings.empty }
-							showMore={
-								this.props.showSummaryLink && displaySummaryLink
-									? {
-											url: this.getHref(),
-											label: this.props.translate( 'View all', {
-												context: 'Stats: Button label to expand a panel',
-											} ),
-									  }
-									: undefined
-							}
-							titleURL={ this.getHref() }
-							error={ hasError && <ErrorPanel /> }
-							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						>
-							{ this.props.children }
-						</StatsListCard>
-					</>
+					<StatsListCard
+						moduleType={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ this.getModuleLabel() }
+						emptyMessage={ moduleStrings.empty }
+						showMore={
+							this.props.showSummaryLink && displaySummaryLink
+								? {
+										url: this.getHref(),
+										label: this.props.translate( 'View all', {
+											context: 'Stats: Button label to expand a panel',
+										} ),
+								  }
+								: undefined
+						}
+						titleURL={ this.getHref() }
+						error={ hasError && <ErrorPanel /> }
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					>
+						{ this.props.children }
+					</StatsListCard>
 				) }
 
 				{ ! shouldShowNewModule && (
