@@ -7,7 +7,7 @@ import { User as UserStore } from '@automattic/data-stores';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter, useLocation, Redirect } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
@@ -23,6 +23,7 @@ import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { loadPersistedState } from 'calypso/state/persisted-state';
+import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -125,17 +126,12 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const queryClient = new QueryClient( {
-		defaultOptions: {
-			queries: {
-				refetchOnWindowFocus: false,
-			},
-		},
-	} );
-
 	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
+
+	const queryClient = createQueryClient();
+	await hydrateBrowserState( queryClient, userId );
 
 	initializeAnalytics( user, generateGetSuperProps() );
 
