@@ -1,3 +1,5 @@
+@import "client/my-sites/stats/modernized-chart-tabs-styles.scss";
+
 @include breakpoint-deprecated( ">480px" ) {
 	.wordads .stats-tabs .stats-tab {
 		width: 33.33%;

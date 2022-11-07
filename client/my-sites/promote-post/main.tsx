@@ -9,7 +9,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
-import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import {
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	useCanPromoteProducts,
+} from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
@@ -36,6 +40,11 @@ const queryPost = {
 const queryPage = {
 	...queryPost,
 	type: 'page',
+};
+
+const queryProducts = {
+	...queryPost,
+	type: 'product',
 };
 
 export type DSPMessage = {
@@ -73,11 +82,19 @@ export default function PromotedPosts( { tab }: Props ) {
 		return pages?.filter( ( page: any ) => ! page.password );
 	} );
 
+	const products = useSelector( ( state ) => {
+		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
+		return products?.filter( ( product: any ) => ! product.password );
+	} );
+
 	const isLoadingPost = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
 	);
 	const isLoadingPage = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPage )
+	);
+	const isLoadingProducts = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
 	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
@@ -96,6 +113,8 @@ export default function PromotedPosts( { tab }: Props ) {
 	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
 		page( '/' );
 	}
+
+	const productsEnabled = useCanPromoteProducts() === PromoteWidgetStatus.ENABLED;
 
 	const subtitle = translate(
 		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
@@ -140,9 +159,13 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = sortItemsByPublishedDate( [ ...( posts || [] ), ...( pages || [] ) ] );
+	const content = sortItemsByPublishedDate( [
+		...( posts || [] ),
+		...( pages || [] ),
+		...( products || [] ),
+	] );
 
-	const isLoading = isLoadingPage && isLoadingPost;
+	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
@@ -170,6 +193,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
+			{ productsEnabled && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			) }
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>

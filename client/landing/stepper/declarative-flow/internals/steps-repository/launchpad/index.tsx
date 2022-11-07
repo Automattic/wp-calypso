@@ -5,7 +5,6 @@ import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
-import { useFlowParam } from 'calypso/landing/stepper/hooks/use-flow-param';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -17,14 +16,14 @@ import './style.scss';
 
 type LaunchpadProps = {
 	navigation: NavigationControls;
+	flow: string | null;
 };
 
-const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
+const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const translate = useTranslate();
 	const almostReadyToLaunchText = translate( 'Almost ready to launch' );
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
-	const flow = useFlowParam();
 	const site = useSite();
 	const launchpadScreenOption = site?.options?.launchpad_screen;
 	const dispatch = useDispatch();
@@ -70,6 +69,7 @@ const Launchpad: Step = ( { navigation }: LaunchpadProps ) => {
 						submit={ navigation.submit }
 						goNext={ navigation.goNext }
 						goToStep={ navigation.goToStep }
+						flow={ flow }
 					/>
 				}
 				formattedHeader={

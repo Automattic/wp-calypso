@@ -10,11 +10,12 @@
 }
 
 .plugin-details-sidebar__plugin-details-content {
-	margin: 32px 0;
-	padding: 32px 0;
+	margin-top: 32px;
+	padding-top: 32px;
 	border-style: solid none;
 	border-width: 1px;
 	border-color: #eee;
+	border-bottom: none;
 
 	.title {
 		color: var(--studio-gray-60);

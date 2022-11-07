@@ -502,8 +502,25 @@ export interface ResponseCartProduct {
 	is_sale_coupon_applied: boolean;
 	meta: string;
 	time_added_to_cart: number;
+
+	/**
+	 * The billing term in days in numeric format, but as a string.
+	 *
+	 * Typically one of '31' (monthly), '365' (annual), or '730' (biennial).
+	 *
+	 * Similar to `months_per_bill_period`.
+	 */
 	bill_period: string;
+
+	/**
+	 * The billing term in months in numeric format.
+	 *
+	 * Typically one of 1 (monthly), 12 (annual), or 24 (biennial).
+	 *
+	 * Similar to `bill_period`.
+	 */
 	months_per_bill_period: number | null;
+
 	volume: number;
 	quantity: number | null;
 	current_quantity: number | null;
@@ -511,7 +528,15 @@ export interface ResponseCartProduct {
 	item_tax: number;
 	product_type: string;
 	included_domain_purchase_amount: number;
+
+	/**
+	 * True if the product is a renewal.
+	 *
+	 * This does not get set for `RequestCartProduct` which instead uses
+	 * `extra.purchaseType` set to 'renewal'.
+	 */
 	is_renewal?: boolean;
+
 	subscription_id?: string;
 	introductory_offer_terms?: IntroductoryOfferTerms;
 
@@ -545,7 +570,19 @@ export interface ResponseCartProductExtra {
 	google_apps_users?: GSuiteProductUser[];
 	google_apps_registration_data?: DomainContactDetails;
 	receipt_for_domain?: number;
+
+	/**
+	 * Set to 'renewal' if requesting a renewal.
+	 *
+	 * Often this does not need to be explicitly set because the shopping cart
+	 * endpoint will automatically make a requested product into a renewal if the
+	 * product is already owned.
+	 *
+	 * This is not set for `ResponseCartProduct` objects which use `is_renewal`
+	 * instead.
+	 */
 	purchaseType?: string;
+
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
 	is_marketplace_product?: boolean;

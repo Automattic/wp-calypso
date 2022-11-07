@@ -36,6 +36,7 @@ export type OptionalUserData = {
 	site_count: number;
 	jetpack_site_count?: number;
 	has_promote_widget?: boolean;
+	can_promote_products?: boolean;
 	has_jetpack_partner_access?: boolean;
 	jetpack_partner_types?: string[];
 	social_login_connections: unknown;
