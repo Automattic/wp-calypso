@@ -118,17 +118,4 @@ module.exports = {
 				},
 			} ),
 	].filter( Boolean ),
-	devServer: {
-		port: 3000,
-		historyApiFallback: {
-			index: '/index.html',
-		},
-		static: {
-			directory: path.join( __dirname, 'dist' ),
-		},
-		client: {
-			progress: true,
-		},
-		watchFiles: [ 'dist/**/*' ],
-	},
 };
