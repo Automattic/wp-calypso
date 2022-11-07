@@ -46,7 +46,7 @@ export function createCustomHomeTemplateContent(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
 	} else if ( noSelection ) {
-		content.push( `<!-- wp:template-part {"area":"header","theme":"${ stylesheet }"} /-->` );
+		content.push( `<!-- wp:template-part {"area":"header"} /-->` );
 	}
 
 	content.push( `
