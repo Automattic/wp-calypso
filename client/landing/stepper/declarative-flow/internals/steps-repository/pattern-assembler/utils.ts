@@ -60,7 +60,7 @@ export function createCustomHomeTemplateContent(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
 	} else if ( noSelection ) {
-		content.push( `<!-- wp:template-part {"area":"footer","theme":"${ stylesheet }"} /-->` );
+		content.push( `<!-- wp:template-part {"area":"footer"} /-->` );
 	}
 
 	return content.join( '\n' );
