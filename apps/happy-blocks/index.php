@@ -39,7 +39,7 @@
  * Load editor assets.
  */
 function a8c_happyblocks_assets() {
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
+	$assets = require_once plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
 
 	wp_enqueue_script(
 		'a8c-happyblocks-js',
