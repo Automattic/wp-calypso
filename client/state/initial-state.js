@@ -183,7 +183,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 		}
 	}
 
-	let initialStoredState = getStateFromPersistence( initialReducer, currentUserId );
+	let initialStoredState = getStateFromPersistence( initialReducer, undefined, currentUserId );
 	const storageKeys = [ ...initialReducer.getStorageKeys() ];
 
 	function loadReducerState( { storageKey, reducer } ) {
