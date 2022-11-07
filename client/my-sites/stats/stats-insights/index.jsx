@@ -33,7 +33,7 @@ const StatsInsights = ( props ) => {
 	const moduleStrings = statsStrings();
 
 	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
-  
+
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
 	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
