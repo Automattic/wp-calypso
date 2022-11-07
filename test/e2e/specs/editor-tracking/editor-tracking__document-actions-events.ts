@@ -97,43 +97,54 @@ describe(
 			} );
 		} );
 
-		// describe( 'wpcom_site_editor_document_actions_revert_click', function () {
-		// 	let page: Page;
-		// 	let testAccount: TestAccount;
-		// 	let fullSiteEditorPage: FullSiteEditorPage;
-		// 	let editorTracksEventManager: EditorTracksEventManager;
+		describe( 'wpcom_site_editor_document_actions_revert_click', function () {
+			let page: Page;
+			let testAccount: TestAccount;
+			let fullSiteEditorPage: FullSiteEditorPage;
+			let editorTracksEventManager: EditorTracksEventManager;
 
-		// 	beforeAll( async () => {
-		// 		page = await browser.newPage();
+			beforeAll( async () => {
+				page = await browser.newPage();
 
-		// 		testAccount = new TestAccount( accountName );
-		// 		await testAccount.authenticate( page );
-		// 		editorTracksEventManager = new EditorTracksEventManager( page );
-		// 		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
-		// 	} );
+				testAccount = new TestAccount( accountName );
+				await testAccount.authenticate( page );
+				editorTracksEventManager = new EditorTracksEventManager( page );
+				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+			} );
 
-		// 	it( 'Visit the site editor', async function () {
-		// 		await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
-		// 		await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
-		// 	} );
+			it( 'Visit the site editor', async function () {
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
 
-		// 	it( 'Open the document actions dropdown', async function () {
-		// 		await fullSiteEditorPage.openDocumentActionsDropdown();
-		// 	} );
+			it( 'Customize the current template', async function () {
+				await fullSiteEditorPage.addBlockFromSidebar(
+					'Paragraph',
+					'p[aria-label="Empty block; start writing or type forward slash to choose a block"]'
+				);
+			} );
 
-		// 	it( 'Click the template area clear customizations button in the document actions dropdown', async function () {
-		// 		await fullSiteEditorPage.clickDocumentActionsDropdownItem(
-		// 			'.edit-site-template-details__revert'
-		// 		);
-		// 	} );
+			it( 'Save the editor', async function () {
+				await fullSiteEditorPage.save();
+			} );
 
-		// 	it( '"wpcom_site_editor_document_actions_revert_click" event fires', async function () {
-		// 		const eventDidFire = await editorTracksEventManager.didEventFire(
-		// 			'wpcom_site_editor_document_actions_revert_click'
-		// 		);
-		// 		expect( eventDidFire ).toBe( true );
-		// 	} );
-		// } );
+			it( 'Open the document actions dropdown', async function () {
+				await fullSiteEditorPage.openDocumentActionsDropdown();
+			} );
+
+			it( 'Click the template area clear customizations button in the document actions dropdown', async function () {
+				await fullSiteEditorPage.clickDocumentActionsDropdownItem(
+					'.edit-site-template-details__revert'
+				);
+			} );
+
+			it( '"wpcom_site_editor_document_actions_revert_click" event fires', async function () {
+				const eventDidFire = await editorTracksEventManager.didEventFire(
+					'wpcom_site_editor_document_actions_revert_click'
+				);
+				expect( eventDidFire ).toBe( true );
+			} );
+		} );
 
 		describe( 'wpcom_site_editor_document_actions_show_all_click', function () {
 			let page: Page;
