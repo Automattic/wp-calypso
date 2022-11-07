@@ -23,7 +23,6 @@
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": false,
 		"devdocs": false,
-		"difm/allow-woa-sites": false,
 		"domains/gdpr-consent-page": true,
 		"domains/kracken-ui/exact-match-filter": true,
 		"domains/kracken-ui/pagination": true,
