@@ -94,12 +94,12 @@ export const linkInBio: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/launchpad?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
+						const destination = `/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
 						const returnUrl = encodeURIComponent(
-							`/setup/launchpad?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
+							`/setup/${ flowName }/launchpad?siteSlug=${ providedDependencies?.siteSlug }`
 						);
 
 						return window.location.assign(
@@ -108,9 +108,7 @@ export const linkInBio: Flow = {
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-					return navigate(
-						`launchpad?flow=${ flowName }&siteSlug=${ providedDependencies?.siteSlug }`
-					);
+					return navigate( `launchpad?siteSlug=${ providedDependencies?.siteSlug }` );
 
 				case 'launchpad': {
 					return navigate( 'processing' );
