@@ -47,9 +47,10 @@ const PatternLayout = ( {
 				<h2>{ translate( 'Design your page' ) }</h2>
 				<p>
 					{ translate(
-						'Kick start the content on your page by picking your patterns. First choose a header for your page layout, then choose at least one section pattern, and finally choose your footer.'
+						'First choose a header for your page layout, then choose at least one section pattern, and finally choose your footer.'
 					) }
 				</p>
+				<p>{ translate( 'You can change this later.' ) }</p>
 			</div>
 			<div className="pattern-layout__body">
 				<ul>
