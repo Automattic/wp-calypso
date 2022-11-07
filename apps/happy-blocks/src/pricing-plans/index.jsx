@@ -8,7 +8,7 @@ const blockAttributes = {};
 export function registerBlock() {
 	registerBlockType( 'happy-blocks/pricing-plans', {
 		title: __( 'Pricing plans', 'happy-blocks' ),
-		icon: 'leftright',
+		icon: 'cart',
 		category: 'a8c',
 		description: __( 'List of available pricing plans', 'happy-blocks' ),
 		keywords: [
