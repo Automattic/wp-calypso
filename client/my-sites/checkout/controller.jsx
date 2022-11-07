@@ -38,11 +38,11 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext } from './utils';
+import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
-export function checkoutSiteless( context, next ) {
+export function checkoutJetpackSiteless( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product } = context.params;
@@ -93,14 +93,10 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
-	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
-		context.query?.source
-	);
-	const isJetpackCheckout =
-		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
-		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
+
+	const isGiftPurchase = context.pathname.includes( '/gift/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -108,14 +104,25 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
+	const shouldAllowNoSelectedSite = () => {
+		if ( isDisallowedForSitePicker ) {
+			return true;
+		}
+		if ( isJetpackCheckout ) {
+			return true;
+		}
+		if ( isGiftPurchase ) {
+			return true;
+		}
+		return false;
+	};
+
+	if ( ! selectedSite && ! shouldAllowNoSelectedSite() ) {
 		sites( context, next );
 		return;
 	}
 
-	const product = isJetpackCheckout
-		? context.params.productSlug
-		: getProductSlugFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -168,6 +175,7 @@ export function checkout( context, next ) {
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
 				isJetpackCheckout={ isJetpackCheckout }
+				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }

@@ -33,6 +33,8 @@ const useFetchTestConnection = (
 					)
 				),
 			enabled: isPartnerOAuthTokenLoaded,
+			refetchOnWindowFocus: false,
+			refetchOnMount: false,
 		}
 	);
 };
