@@ -2,13 +2,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { isURL } from '@wordpress/url';
 import debugFactory from 'debug';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useSelector, useDispatch, useStore } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import { hasPlan, hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
-import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -17,10 +14,8 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { infoNotice } from 'calypso/state/notices/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
-import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -81,11 +76,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
-	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isDomainOnly =
-		useSelector( ( state ) => siteId && isDomainOnlySite( state, siteId ) ) || false;
-	const reduxStore = useStore();
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isJetpackNotAtomic =
@@ -181,37 +172,6 @@ export default function useCreatePaymentCompleteCallback( {
 				reduxDispatch( fetchSiteFeatures( siteId ) );
 			}
 
-			const isValidNewSiteCreationRequest =
-				responseCart.create_new_blog &&
-				Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
-				Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0;
-
-			const isDomainOnlySiteAndSiteless = isDomainOnly && hasPlan( responseCart ) && ! siteId;
-
-			if ( isValidNewSiteCreationRequest || isDomainOnlySiteAndSiteless ) {
-				reduxDispatch( infoNotice( translate( 'Almost done…' ) ) );
-
-				const domainName = getDomainNameFromReceiptOrCart( transactionResult, responseCart );
-
-				if ( domainName ) {
-					debug( 'purchase needs to fetch before redirect', domainName );
-					fetchSitesAndUser(
-						domainName,
-						() => {
-							reloadCart();
-							redirectThroughPending( url, {
-								siteSlug,
-								orderId: transactionResult.order_id,
-								receiptId: transactionResult.receipt_id,
-							} );
-						},
-						reduxStore
-					);
-
-					return;
-				}
-			}
-
 			// Checkout in the modal might not need thank you page.
 			// For example, Focused Launch is showing a success dialog directly in editor instead of a thank you page.
 			// See https://github.com/Automattic/wp-calypso/pull/47808#issuecomment-755196691
@@ -269,11 +229,8 @@ export default function useCreatePaymentCompleteCallback( {
 			productAliasFromUrl,
 			isComingFromUpsell,
 			isInModal,
-			reduxStore,
-			isDomainOnly,
 			reduxDispatch,
 			siteId,
-			translate,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
