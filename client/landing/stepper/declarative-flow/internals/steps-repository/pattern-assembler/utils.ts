@@ -52,6 +52,7 @@ export function createCustomHomeTemplateContent(
 	content.push( `
 <!-- wp:group {"tagName":"main"} -->
 	<main class="wp-block-group">
+	<p></p>
 	</main>
 <!-- /wp:group -->` );
 
