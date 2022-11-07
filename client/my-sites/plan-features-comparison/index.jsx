@@ -90,7 +90,7 @@ export class PlanFeaturesComparison extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { basePlansPath, planProperties, isReskinned } = this.props;
+		const { basePlansPath, planProperties, isReskinned, flowName } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -138,6 +138,7 @@ export class PlanFeaturesComparison extends Component {
 						title={ planConstantObj.getTitle() }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
+						flow={ flowName }
 					/>
 				</th>
 			);

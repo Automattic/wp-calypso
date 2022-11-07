@@ -5,10 +5,8 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import PlanPill from 'calypso/components/plans/plan-pill';
 import PlanPrice from 'calypso/my-sites/plan-price';
-import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 
 const PLANS_LIST = getPlans();
 
@@ -174,8 +172,4 @@ PlanFeaturesComparisonHeader.defaultProps = {
 	popular: false,
 };
 
-export default connect( ( state ) => {
-	return {
-		flow: getCurrentFlowName( state ),
-	};
-} )( localize( PlanFeaturesComparisonHeader ) );
+export default localize( PlanFeaturesComparisonHeader );
