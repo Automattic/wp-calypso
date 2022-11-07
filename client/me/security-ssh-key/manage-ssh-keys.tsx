@@ -8,7 +8,7 @@ import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 	ManageSSHKeyProps,
-	'userLogin' | 'onDelete' | 'keyBeingDeleted'
+	'userLogin' | 'onDelete' | 'keyBeingDeleted' | 'onUpdate'
 >;
 
 const SSHKeyItemCard = styled( CompactCard )( {
@@ -38,7 +38,7 @@ const SSHKeyAddedDate = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps ) => {
+const SSHKey = ( { userLogin, sshKey, onDelete, onUpdate, keyBeingDeleted }: SSHKeyProps ) => {
 	const { __ } = useI18n();
 	const handleDeleteClick = () => {
 		accept(
@@ -48,6 +48,17 @@ const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps )
 			( accepted: boolean ) => {
 				if ( accepted ) {
 					onDelete( sshKey.name );
+				}
+			}
+		);
+	};
+
+	const handleUpdateClick = () => {
+		accept(
+			__( 'Are you sure you want to update this SSH key? It will affect all attached sites.' ),
+			( updated: boolean ) => {
+				if ( updated ) {
+					onUpdate( sshKey.name );
 				}
 			}
 		);
@@ -73,12 +84,15 @@ const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps )
 					) }
 				</SSHKeyAddedDate>
 			</div>
+			<Button primary={ true } onClick={ handleUpdateClick } style={ { marginLeft: 'auto' } }>
+				{ __( 'Update SSH key' ) }
+			</Button>
 			<Button
 				busy={ keyBeingDeleted === sshKey.name }
 				disabled={ !! keyBeingDeleted }
 				scary
 				onClick={ handleDeleteClick }
-				style={ { marginLeft: 'auto' } }
+				style={ { marginLeft: '10px' } }
 			>
 				{ __( 'Remove SSH key' ) }
 			</Button>
@@ -89,6 +103,7 @@ const SSHKey = ( { userLogin, sshKey, onDelete, keyBeingDeleted }: SSHKeyProps )
 interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
+	onUpdate( name: string ): void;
 	keyBeingDeleted: string | null;
 	userLogin: string;
 }
@@ -97,6 +112,7 @@ export const ManageSSHKeys = ( {
 	userLogin,
 	sshKeys,
 	onDelete,
+	onUpdate,
 	keyBeingDeleted,
 }: ManageSSHKeyProps ) => {
 	return (
@@ -106,6 +122,7 @@ export const ManageSSHKeys = ( {
 					key={ sshKey.key }
 					userLogin={ userLogin }
 					sshKey={ sshKey }
+					onUpdate={ onUpdate }
 					onDelete={ onDelete }
 					keyBeingDeleted={ keyBeingDeleted }
 				/>
