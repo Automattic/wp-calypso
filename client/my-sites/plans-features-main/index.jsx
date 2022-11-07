@@ -145,6 +145,7 @@ export class PlansFeaturesMain extends Component {
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
 					plans={ plans }
+					flowName={ flowName }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -263,6 +264,7 @@ export class PlansFeaturesMain extends Component {
 						isJetpack,
 						availablePlans: visiblePlans,
 					} ) }
+					flowName={ flowName }
 					siteId={ siteId }
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					kindOfPlanTypeSelector={ this.getKindOfPlanTypeSelector( this.props ) }
