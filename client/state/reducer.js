@@ -12,7 +12,7 @@ import sites from './sites/reducer'; // eslint-disable-line no-restricted-import
 /**
  * Maintains flags related to any app loading mechanics
  */
-import { startupFlagsReducer as startupFlags } from './startup-states/reducer'; // eslint-disable-line no-restricted-imports
+import { startupFlagsReducer as startupFlags } from './startup-flags/reducer'; // eslint-disable-line no-restricted-imports
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.

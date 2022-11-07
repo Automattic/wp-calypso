@@ -1,4 +1,4 @@
-import type { IStartupFlags } from './startup-states/reducer';
+import type { IStartupFlags } from './startup-flags/reducer';
 import type { IMarketplaceState } from 'calypso/state/marketplace/types';
 import type { IPluginsState } from 'calypso/state/plugins/reducer';
 import type { DefaultRootState } from 'react-redux';

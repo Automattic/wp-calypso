@@ -38,8 +38,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	developerNotificationCompleted,
 	sympathyWarningNotice,
-} from 'calypso/state/startup-states/actions';
-import { getIsStateRandomlyCleared } from 'calypso/state/startup-states/selectors';
+} from 'calypso/state/startup-flags/actions';
+import { getIsStateRandomlyCleared } from 'calypso/state/startup-flags/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {

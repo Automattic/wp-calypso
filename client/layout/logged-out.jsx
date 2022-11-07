@@ -27,8 +27,8 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 import {
 	developerNotificationCompleted,
 	sympathyWarningNotice,
-} from 'calypso/state/startup-states/actions';
-import { getIsStateRandomlyCleared } from 'calypso/state/startup-states/selectors';
+} from 'calypso/state/startup-flags/actions';
+import { getIsStateRandomlyCleared } from 'calypso/state/startup-flags/selectors';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
