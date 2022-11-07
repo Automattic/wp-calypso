@@ -30,7 +30,6 @@ object WPComPlugins : Project({
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
 	buildType(O2Blocks)
-	buildType(HappyBlocks)
 	buildType(Happychat)
 	buildType(InlineHelp)
 	buildType(GutenbergUploadSourceMapsToSentry);
@@ -48,8 +47,7 @@ object WPComPlugins : Project({
 					"notifications-release-build",
 					"etk-release-build",
 					"wpcom-block-editor-release-build",
-					"o2-blocks-release-build",
-					"happy-blocks-release-build",
+					"o2-blocks-release-build"
 				)
 			}
 			dataToKeep = everything()
@@ -173,29 +171,6 @@ private object O2Blocks : WPComPluginBuild(
 	}
 )
 
-private object HappyBlocks : WPComPluginBuild(
-	buildId="WPComPlugins_HappyBlocks",
-	buildName = "Happy Blocks",
-	pluginSlug = "happy-blocks",
-	archiveDir = "./release-files/",
-	docsLink = "PCYsg-r7r-p2",
-	buildSteps = {
-		bashNodeScript {
-			name = "Create release directory"
-			scriptContent = """
-				cd apps/happy-blocks
-
-				# Copy existing dist files to release directory
-				mkdir release-files
-				cp -r dist release-files/dist/
-
-				# Add index.php file
-				cp index.php release-files/
-			"""
-		}
-	}
-)
-
 private object Happychat : WPComPluginBuild(
 	buildId = "WPComPlugins_Happychat",
 	buildName = "Happychat",
@@ -303,7 +278,7 @@ fun BuildSteps.uploadPluginSourceMaps(
 
 			# Downloads the latest release build for the plugin.
 			wget "%teamcity.serverUrl%/repository/download/$buildId/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
-
+			
 			unzip -q ./code.zip -d ./code
 			cd code
 
