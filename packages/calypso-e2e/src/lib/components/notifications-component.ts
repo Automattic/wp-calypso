@@ -8,6 +8,7 @@ const selectors = {
 	// Comment actions
 	commentAction: ( action: string ) => `button.wpnc__action-link:has-text("${ action }"):visible`,
 	undoLocator: '.wpnc__undo-item',
+	undoLink: '.wpnc__undo-link',
 };
 /**
  * Component representing the notifications panel and notifications themselves.
@@ -42,11 +43,21 @@ export class NotificationsComponent {
 	 * @param {string} action Predefined list of strings that are accepted.
 	 * @returns {Promise<void>} No return value.
 	 */
-	async clickNotificationAction( action: 'Trash' ): Promise< void > {
+	async clickNotificationAction( action: string ): Promise< void > {
 		// we need to make sure we're in a specific notification view before proceeding with the individual action
 		const elementHandle = await this.page.waitForSelector( selectors.activeSingleViewPanel );
 		await elementHandle.waitForElementState( 'stable' );
 		await this.page.click( selectors.commentAction( action ) );
+	}
+
+	/**
+	 * Clicks the undo link to undo the previous action.
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickUndo(): Promise< void > {
+		await this.waitForUndoMessage();
+		await this.page.click( selectors.undoLink );
 	}
 
 	/**
@@ -64,6 +75,7 @@ export class NotificationsComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async waitForUndoMessageToDisappear(): Promise< void > {
+		await this.waitForUndoMessage();
 		await this.page.waitForSelector( selectors.undoLocator, { state: 'hidden' } );
 	}
 }

@@ -50,6 +50,8 @@ export default function AssignLicenseForm( {
 	const [ selectedSite, setSelectedSite ] = useState( false );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 	const licenseKey = getQueryArg( window.location.href, 'key' ) as string;
+	const licenseKeys = getQueryArg( window.location.href, 'keys' ) as string;
+	const licenseKeysArray = licenseKeys !== undefined ? licenseKeys.split( ',' ) : [ licenseKey ];
 	const onSelectSite = ( site: any ) => setSelectedSite( site );
 	const notificationId = 'partner-portal-assign-license-form';
 
@@ -133,7 +135,12 @@ export default function AssignLicenseForm( {
 						busy={ isSubmitting }
 						onClick={ onAssignLicense }
 					>
-						{ translate( 'Assign to website' ) }
+						{ translate( 'Assign %(numLicenses)d License', 'Assign %(numLicenses)d Licenses', {
+							count: licenseKeysArray.length,
+							args: {
+								numLicenses: licenseKeysArray.length,
+							},
+						} ) }
 					</Button>
 				</div>
 			</div>

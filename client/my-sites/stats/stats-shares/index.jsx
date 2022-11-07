@@ -42,7 +42,13 @@ const StatShares = ( { siteId } ) => {
 							let count;
 							if ( ( count = siteStats.stats[ 'shares_' + service.ID ] ) ) {
 								return (
-									<StatsTab label={ service.name } loading={ isLoading } value={ count } compact />
+									<StatsTab
+										compact
+										key={ service.ID }
+										label={ service.name }
+										loading={ isLoading }
+										value={ count }
+									/>
 								);
 							}
 						} ) }

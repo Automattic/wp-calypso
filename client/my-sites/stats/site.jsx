@@ -42,6 +42,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 
@@ -232,7 +233,7 @@ class StatsSite extends Component {
 				<div id="my-stats-content">
 					{ isNewFeatured ? (
 						<>
-							<div className="stats__period-header">
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ date }
 									period={ period }
@@ -247,7 +248,7 @@ class StatsSite extends Component {
 									/>
 								</StatsPeriodNavigation>
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</div>
+							</StatsPeriodHeader>
 
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
@@ -397,9 +398,9 @@ class StatsSite extends Component {
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
-					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
+					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
 				) }
-				action={ translate( 'Enable Site Stats' ) }
+				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
 		);

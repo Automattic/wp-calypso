@@ -96,6 +96,8 @@ export const domainProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const caDomainProduct = {
@@ -120,6 +122,8 @@ export const caDomainProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const gSuiteProduct = {
@@ -137,6 +141,8 @@ export const gSuiteProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const domainTransferProduct = {
@@ -160,6 +166,8 @@ export const domainTransferProduct = {
 	item_original_cost_display: 'R$5',
 	item_subtotal_integer: 500,
 	item_subtotal_display: 'R$5',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const planWithBundledDomain = {
@@ -179,6 +187,8 @@ export const planWithBundledDomain = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const planWithoutDomain = {
@@ -197,6 +207,8 @@ export const planWithoutDomain = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
 export const planWithoutDomainMonthly = {
@@ -215,6 +227,8 @@ export const planWithoutDomainMonthly = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '31',
+	months_per_bill_period: 1,
 };
 
 export const planWithoutDomainBiannual = {
@@ -233,6 +247,8 @@ export const planWithoutDomainBiannual = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '730',
+	months_per_bill_period: 24,
 };
 
 export const planLevel2 = {
@@ -251,9 +267,11 @@ export const planLevel2 = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '365',
+	months_per_bill_period: 12,
 };
 
-export const planLevel2Monthly = {
+export const planLevel2Monthly: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business Monthly',
 	product_slug: 'business-bundle-monthly',
@@ -261,7 +279,6 @@ export const planLevel2Monthly = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1018,
 	volume: 1,
@@ -269,9 +286,11 @@ export const planLevel2Monthly = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '31',
+	months_per_bill_period: 1,
 };
 
-export const planLevel2Biannual = {
+export const planLevel2Biannual: ResponseCartProduct = {
 	...getEmptyResponseCartProduct(),
 	product_name: 'WordPress.com Business 2 Year',
 	product_slug: 'business-bundle-2y',
@@ -279,7 +298,6 @@ export const planLevel2Biannual = {
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1028,
 	volume: 1,
@@ -287,6 +305,8 @@ export const planLevel2Biannual = {
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
 	item_subtotal_display: 'R$144',
+	bill_period: '730',
+	months_per_bill_period: 24,
 };
 
 export const fetchStripeConfiguration = async () => stripeConfiguration;
@@ -361,6 +381,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$144',
 					item_subtotal_integer: 14400,
 					item_subtotal_display: 'R$144',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -379,6 +400,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$0',
 					item_subtotal_integer: 0,
 					item_subtotal_display: 'R$0',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -397,6 +419,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -415,6 +438,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$70',
 					item_subtotal_integer: 70,
 					item_subtotal_display: 'R$70',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -467,6 +491,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$41',
 					item_subtotal_integer: 4100,
 					item_subtotal_display: 'R$41',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -485,6 +510,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: 'R$42',
 					item_subtotal_integer: 4200,
 					item_subtotal_display: 'R$42',
+					bill_period: '365',
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -503,6 +529,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: planLevel2.item_original_cost_display,
 					item_subtotal_integer: planLevel2.item_subtotal_integer,
 					item_subtotal_display: planLevel2.item_subtotal_display,
+					bill_period: planLevel2.bill_period,
 					months_per_bill_period: 12,
 					item_tax: 0,
 					meta: product.meta,
@@ -521,6 +548,7 @@ function convertRequestProductToResponseProduct(
 					item_original_cost_display: planLevel2Biannual.item_original_cost_display,
 					item_subtotal_integer: planLevel2Biannual.item_subtotal_integer,
 					item_subtotal_display: planLevel2Biannual.item_subtotal_display,
+					bill_period: planLevel2Biannual.bill_period,
 					months_per_bill_period: 24,
 					item_tax: 0,
 					meta: product.meta,
@@ -661,12 +689,25 @@ export function getVariantItemTextForInterval( type: string ) {
 	}
 }
 
+export function getPlanSubtitleTextForInterval( type: string ) {
+	switch ( type ) {
+		case 'monthly':
+			return /per month/;
+		case 'yearly':
+			return /per year/;
+		case 'two-year':
+			return /per two years/;
+		default:
+			throw new Error( `Unknown plan type '${ type }'` );
+	}
+}
+
 export function getPlansItemsState() {
 	return [
 		{
 			product_id: planWithoutDomain.product_id,
 			product_slug: planWithoutDomain.product_slug,
-			bill_period: 365,
+			bill_period: '365',
 			product_type: 'bundle',
 			available: true,
 			price: '$48',
@@ -676,7 +717,7 @@ export function getPlansItemsState() {
 		{
 			product_id: planWithoutDomainMonthly.product_id,
 			product_slug: planWithoutDomainMonthly.product_slug,
-			bill_period: 30,
+			bill_period: '31',
 			product_type: 'bundle',
 			available: true,
 			price: '$7',
@@ -686,7 +727,7 @@ export function getPlansItemsState() {
 		{
 			product_id: planWithoutDomainBiannual.product_id,
 			product_slug: planWithoutDomainBiannual.product_slug,
-			bill_period: 730,
+			bill_period: '730',
 			product_type: 'bundle',
 			available: true,
 			price: '$84',
@@ -696,7 +737,7 @@ export function getPlansItemsState() {
 		{
 			product_id: planLevel2.product_id,
 			product_slug: planLevel2.product_slug,
-			bill_period: 365,
+			bill_period: '365',
 			product_type: 'bundle',
 			available: true,
 			price: '$300',
@@ -706,7 +747,7 @@ export function getPlansItemsState() {
 		{
 			product_id: planLevel2Monthly.product_id,
 			product_slug: planLevel2Monthly.product_slug,
-			bill_period: 30,
+			bill_period: '30',
 			product_type: 'bundle',
 			available: true,
 			price: '$33',
@@ -716,7 +757,7 @@ export function getPlansItemsState() {
 		{
 			product_id: planLevel2Biannual.product_id,
 			product_slug: planLevel2Biannual.product_slug,
-			bill_period: 730,
+			bill_period: '730',
 			product_type: 'bundle',
 			available: true,
 			price: '$499',

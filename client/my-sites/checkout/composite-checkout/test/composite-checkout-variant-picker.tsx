@@ -28,6 +28,7 @@ import {
 	createTestReduxStore,
 	countryList,
 	mockUserAgent,
+	getPlanSubtitleTextForInterval,
 } from './util';
 
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -133,17 +134,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 	} );
 
 	it.each( [
-		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
 		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' },
 		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
-		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
 		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'yearly' },
 		{ activePlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'two-year' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'monthly' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'yearly' },
-		{ activePlan: 'monthly', cartPlan: 'two-year', expectedVariant: 'two-year' },
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
@@ -154,10 +150,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const editLineItem = await screen.findByLabelText(
-				'Change the billing term for this product'
-			);
-			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -169,7 +161,50 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [ { activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
+	it.each( [
+		{ initialPlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'yearly' },
+		{ initialPlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'two-year' },
+		{ initialPlan: 'monthly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ initialPlan: 'yearly', cartPlan: 'two-year', expectedVariant: 'yearly' },
+	] )(
+		'renders the variant picker with a $expectedVariant variant when the cart initially contains $initialPlan and then is changed to $cartPlan',
+		async ( { initialPlan, cartPlan, expectedVariant } ) => {
+			getPlansBySiteId.mockImplementation( () => ( {
+				data: getActivePersonalPlanDataForType( 'none' ),
+			} ) );
+			const user = userEvent.setup();
+			const cartChanges = { products: [ getBusinessPlanForInterval( initialPlan ) ] };
+			render( <MyCheckout cartChanges={ cartChanges } /> );
+
+			// Open the variant picker
+			let openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			// Select the new variant
+			const variantOption = await screen.findByLabelText(
+				getVariantItemTextForInterval( cartPlan )
+			);
+			await user.click( variantOption );
+
+			// Wait for the cart to refresh with the new variant
+			await screen.findByText( getPlanSubtitleTextForInterval( cartPlan ) );
+
+			// Open the variant picker again so we can look for the result
+			openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
+			await user.click( openVariantPicker );
+
+			expect(
+				await screen.findByRole( 'option', {
+					name: getVariantItemTextForInterval( expectedVariant ),
+				} )
+			).toBeVisible();
+		}
+	);
+
+	it.each( [
+		{ activePlan: 'yearly', cartPlan: 'yearly', expectedVariant: 'monthly' },
+		{ activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' },
+	] )(
 		'renders the variant picker without a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
@@ -180,10 +215,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const editLineItem = await screen.findByLabelText(
-				'Change the billing term for this product'
-			);
-			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -195,7 +226,10 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [ { activePlan: 'two-year', cartPlan: 'yearly' } ] )(
+	it.each( [
+		{ activePlan: 'two-year', cartPlan: 'yearly' },
+		{ activePlan: 'none', cartPlan: 'two-year' },
+	] )(
 		'does not render the variant picker when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan } ) => {
 			getPlansBySiteId.mockImplementation( () => ( {
@@ -205,9 +239,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await expect(
-				screen.findByLabelText( 'Change the billing term for this product' )
-			).toNeverAppear();
+			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 		}
 	);
 
@@ -221,10 +253,6 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			const editLineItem = await screen.findByLabelText(
-				'Change the billing term for this product'
-			);
-			await user.click( editLineItem );
 			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
 			await user.click( openVariantPicker );
 
@@ -242,12 +270,12 @@ describe( 'CheckoutMain with a variant picker', () => {
 				( plan ) => plan.product_slug === variantSlug
 			);
 			const finalPrice = variantData.raw_price;
-			const variantInterval = variantData.bill_period;
+			const variantInterval = parseInt( variantData.bill_period, 10 );
 			const currentVariantData = getPlansItemsState().find(
 				( plan ) => plan.product_slug === currentVariantSlug
 			);
 			const currentVariantPrice = currentVariantData.raw_price;
-			const currentVariantInterval = currentVariantData.bill_period;
+			const currentVariantInterval = parseInt( currentVariantData.bill_period, 10 );
 			const intervalsInVariant = Math.round( variantInterval / currentVariantInterval );
 			const priceBeforeDiscount = currentVariantPrice * intervalsInVariant;
 
@@ -258,38 +286,11 @@ describe( 'CheckoutMain with a variant picker', () => {
 		}
 	);
 
-	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'monthly' } ] )(
-		'renders the $expectedVariant variant without a discount percentage for a $cartPlan plan when the current plan is $activePlan',
-		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			getPlansBySiteId.mockImplementation( () => ( {
-				data: getActivePersonalPlanDataForType( activePlan ),
-			} ) );
-			const user = userEvent.setup();
-			const cartChanges = { products: [ getBusinessPlanForInterval( cartPlan ) ] };
-			render( <MyCheckout cartChanges={ cartChanges } /> );
-
-			const editLineItem = await screen.findByLabelText(
-				'Change the billing term for this product'
-			);
-			await user.click( editLineItem );
-			const openVariantPicker = await screen.findByLabelText( 'Pick a product term' );
-			await user.click( openVariantPicker );
-
-			const variantItem = await screen.findByRole( 'option', {
-				name: getVariantItemTextForInterval( expectedVariant ),
-			} );
-
-			expect( within( variantItem ).queryByText( /Save \d+%/ ) ).not.toBeInTheDocument();
-		}
-	);
-
 	it( 'does not render the variant picker if there are no variants', async () => {
 		const cartChanges = { products: [ domainProduct ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
-		await expect(
-			screen.findByLabelText( 'Change the billing term for this product' )
-		).toNeverAppear();
+		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
 
 	it.each( [
@@ -304,9 +305,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 			const cartChanges = { products: [ getPersonalPlanForInterval( cartPlan ) ] };
 			render( <MyCheckout cartChanges={ cartChanges } /> );
 
-			await expect(
-				screen.findByLabelText( 'Change the billing term for this product' )
-			).toNeverAppear();
+			await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 		}
 	);
 
@@ -315,9 +314,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 		const cartChanges = { products: [ currentPlanRenewal ] };
 		render( <MyCheckout cartChanges={ cartChanges } /> );
 
-		await expect(
-			screen.findByLabelText( 'Change the billing term for this product' )
-		).toNeverAppear();
+		await expect( screen.findByLabelText( 'Pick a product term' ) ).toNeverAppear();
 	} );
 
 	it( 'does not render the variant picker when userAgent is Woo mobile', async () => {
