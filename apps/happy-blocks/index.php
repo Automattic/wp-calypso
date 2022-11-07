@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Happy Blocks
  * Version:     0.1.0
- * Description: Happyness Engineering Specific Blocks
+ * Description: Happiness Engineering Specific Blocks
  * Author: A8C
  * Text Domain: happy-blocks
  *
