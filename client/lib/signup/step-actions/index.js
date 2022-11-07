@@ -8,7 +8,6 @@ import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils
 import { setupSiteAfterCreation, isTailoredSignupFlow } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
-import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/goals/goals';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -16,7 +15,6 @@ import {
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
 } from 'calypso/lib/cart-values/cart-items';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
@@ -269,7 +267,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 
 	const locale = getLocaleSlug();
 	// Pre Load Experiment relevant to the post site creation goal screen
-	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post(
 		'/sites/new',
@@ -878,7 +876,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	};
 
 	// Pre Load Experiment relevant to the post site creation goal screen
-	loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
+	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
 	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
 		let providedDependencies;
