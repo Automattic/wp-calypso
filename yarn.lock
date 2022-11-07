@@ -25253,11 +25253,11 @@ __metadata:
   linkType: hard
 
 "moment-timezone@npm:^0.5.31":
-  version: 0.5.31
-  resolution: "moment-timezone@npm:0.5.31"
+  version: 0.5.38
+  resolution: "moment-timezone@npm:0.5.38"
   dependencies:
     moment: ">= 2.9.0"
-  checksum: e33b5312e6dd2b4fd093eb92fe4af746b40b8a7bd74b17a024ad9823306dcf557bf32dfe6873cac1940e9437b54ca5bda50fdea9a0618fc33adb151cf1904e1b
+  checksum: 25e6a835900ba45bcf6dda04e03d8a2251bea73ab3bad01fccba594098b9e61c33918d63f303670dcf98fbabd6adc3bc87e66be18fabebd60bd1d385d5da7421
   languageName: node
   linkType: hard
 
