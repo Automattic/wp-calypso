@@ -22,6 +22,7 @@ const allowedKeys = [
 	'primary_blog',
 	'primary_blog_is_jetpack',
 	'has_promote_widget',
+	'can_promote_products',
 	'has_jetpack_partner_access',
 	'jetpack_partner_types',
 	'primary_blog_url',
