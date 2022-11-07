@@ -177,7 +177,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 			);
 			clearPersistedState();
 
-			// If state was randomly cleared save a state indicating this
+			// If state was randomly cleared save a flag indicating this
 			const isStateRandomlyCleared = ! config.isEnabled( 'force-sympathy' );
 			return { startupFlags: { isStateRandomlyCleared } };
 		}

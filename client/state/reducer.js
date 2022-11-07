@@ -10,7 +10,7 @@ import currentUser from './current-user/reducer'; // eslint-disable-line no-rest
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import sites from './sites/reducer'; // eslint-disable-line no-restricted-imports
 /**
- * Maintains the logic related to any app loading mechanics
+ * Maintains flags related to any app loading mechanics
  */
 import { startupFlagsReducer as startupFlags } from './startup-states/reducer'; // eslint-disable-line no-restricted-imports
 
