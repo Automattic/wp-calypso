@@ -322,8 +322,8 @@ const InstalledInOrPricing = ( {
 	return (
 		<div className="plugins-browser-item__pricing">
 			<PluginPrice plugin={ plugin } billingPeriod={ IntervalLength.MONTHLY }>
-				{ ( { isFetching, price, period, isSaasProduct } ) => {
-					if ( isSaasProduct ) {
+				{ ( { isFetching, price, period } ) => {
+					if ( plugin.isSaasProduct ) {
 						// SaaS products do not display a price
 						return (
 							<>

@@ -1,3 +1,4 @@
 export type IssueMultipleLicensesFormProps = {
-	// Coming soon!
+	selectedSite?: { ID: number; domain: string } | null;
+	selectedProductSlugs?: string[];
 };

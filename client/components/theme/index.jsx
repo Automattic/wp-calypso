@@ -24,6 +24,8 @@ import {
 	doesThemeBundleSoftwareSet as getDoesThemeBundleSoftwareSet,
 	isSiteEligibleForBundledSoftware as getIsSiteEligibleForBundledSoftware,
 	isPremiumThemeAvailable as getIsPremiumThemeAvailable,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 import { isThemePremium as getIsThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -50,6 +52,7 @@ export class Theme extends Component {
 			taxonomies: PropTypes.object,
 			update: PropTypes.object,
 			price: PropTypes.any,
+			soft_launched: PropTypes.bool,
 		} ),
 		// If true, highlight this theme as active
 		active: PropTypes.bool,
@@ -90,6 +93,7 @@ export class Theme extends Component {
 		isUpdating: PropTypes.bool,
 		isUpdated: PropTypes.bool,
 		errorOnUpdate: PropTypes.bool,
+		softLaunched: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -270,6 +274,8 @@ export class Theme extends Component {
 			translate,
 			doesThemeBundleSoftwareSet,
 			isSiteEligibleForBundledSoftware,
+			isExternallyManagedTheme,
+			isSiteEligibleForManagedExternalThemes,
 		} = this.props;
 
 		// Premium themes (non-bundled): Only require premium themes feature (Premium or higher plans)
@@ -280,6 +286,27 @@ export class Theme extends Component {
 
 		if ( didPurchaseTheme && ! isUsablePremiumTheme && ! isUsableBundledTheme ) {
 			return translate( 'You have purchased an annual subscription for this theme' );
+		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
+			// This is a third-party theme but the user doesn't have an eligible plan.
+			return createInterpolateElement(
+				translate(
+					'This premium theme costs %(price)s per year and can only be purchased if you have the <Link>Business plan</Link> on your site.',
+					{
+						args: { price: theme.price },
+					}
+				),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
+		} else if ( isExternallyManagedTheme && isSiteEligibleForManagedExternalThemes ) {
+			// This is a third-party theme and the user has an eligible plan.
+			return translate(
+				'This premium theme is only available while your current plan is active and costs %(price)s per year.',
+				{
+					args: { price: theme.price },
+				}
+			);
 		} else if ( isUsablePremiumTheme ) {
 			return translate( 'The premium theme is included in your plan.' );
 		} else if ( isUsableBundledTheme ) {
@@ -309,6 +336,22 @@ export class Theme extends Component {
 		);
 	}
 
+	softLaunchedBanner = () => {
+		const { translate } = this.props;
+
+		return (
+			<>
+				{ this.props.softLaunched && (
+					<div className="theme__info-soft-launched">
+						<div className="theme__info-soft-launched-banner">
+							{ translate( 'Available to A8C-only' ) }
+						</div>
+					</div>
+				) }
+			</>
+		);
+	};
+
 	render() {
 		const {
 			active,
@@ -321,6 +364,7 @@ export class Theme extends Component {
 			didPurchaseTheme,
 			doesThemeBundleSoftwareSet,
 			isPremiumThemeAvailable,
+			isExternallyManagedTheme,
 		} = this.props;
 		const { name, description, screenshot } = theme;
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -374,8 +418,11 @@ export class Theme extends Component {
 		) : (
 			<div>
 				<div data-testid="upsell-header" className="theme__upsell-header">
-					{ ! doesThemeBundleSoftwareSet && translate( 'Premium theme' ) }
-					{ doesThemeBundleSoftwareSet && translate( 'WooCommerce theme' ) }
+					{ ( ! doesThemeBundleSoftwareSet || isExternallyManagedTheme ) &&
+						translate( 'Premium theme' ) }
+					{ doesThemeBundleSoftwareSet &&
+						! isExternallyManagedTheme &&
+						translate( 'WooCommerce theme' ) }
 				</div>
 				<div data-testid="upsell-message">{ this.getUpsellMessage() }</div>
 			</div>
@@ -408,8 +455,8 @@ export class Theme extends Component {
 		);
 
 		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } );
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } );
+		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
@@ -457,6 +504,8 @@ export class Theme extends Component {
 					>
 						<div className="theme__tooltip">{ themeDescription }</div>
 					</Tooltip>
+
+					{ this.softLaunchedBanner() }
 
 					<div className="theme__info">
 						<h2 className="theme__info-title">{ name }</h2>
@@ -510,6 +559,11 @@ export default connect(
 			siteSlug: getSiteSlug( state, siteId ),
 			didPurchaseTheme: isThemePurchased( state, theme.id, siteId ),
 			isPremiumThemeAvailable: getIsPremiumThemeAvailable( state, theme.id, siteId ),
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, theme.id ),
+			isSiteEligibleForManagedExternalThemes: getIsSiteEligibleForManagedExternalThemes(
+				state,
+				siteId
+			),
 		};
 	},
 	{ recordTracksEvent, setThemesBookmark, updateThemes }

@@ -6,10 +6,6 @@ const headerPatterns: Pattern[] = [
 		name: 'Centered header',
 	},
 	{
-		id: 5608,
-		name: 'Centred Header with Logo and Navigation',
-	},
-	{
 		id: 5582,
 		name: 'Simple Header With Large Font Size',
 	},

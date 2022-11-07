@@ -1,7 +1,13 @@
-import { PLAN_BUSINESS, WPCOM_FEATURES_NO_WPCOM_BRANDING } from '@automattic/calypso-products';
+import { isEnabled } from '@automattic/calypso-config';
+import {
+	isDotComPlan,
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_NO_WPCOM_BRANDING,
+} from '@automattic/calypso-products';
 import { Card, CompactCard, Button, Gridicon } from '@automattic/components';
 import { guessTimezone } from '@automattic/i18n-utils';
 import languages from '@automattic/languages';
+import { ToggleControl } from '@wordpress/components';
 import classNames from 'classnames';
 import { flowRight, get } from 'lodash';
 import { Component, Fragment } from 'react';
@@ -34,6 +40,7 @@ import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import {
 	getSiteOption,
 	isJetpackSite,
@@ -621,6 +628,52 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
+	giftOptions() {
+		const {
+			translate,
+			fields,
+			isRequestingSettings,
+			isSavingSettings,
+			handleSubmitForm,
+			currentPlan,
+		} = this.props;
+
+		if ( ! isEnabled( 'subscription-gifting' ) ) {
+			return;
+		}
+
+		if ( currentPlan && isDotComPlan( currentPlan ) && ! currentPlan?.autoRenew ) {
+			return (
+				<>
+					<div className="site-settings__gifting-container">
+						<SettingsSectionHeader
+							title={ translate( 'Accept a gift subscription' ) }
+							id="site-settings__gifting-header"
+							disabled={ isRequestingSettings || isSavingSettings }
+							isSaving={ isSavingSettings }
+							onButtonClick={ handleSubmitForm }
+							showButton
+						/>
+						<CompactCard className="site-settings__gifting-content">
+							<ToggleControl
+								disabled={ isRequestingSettings || isSavingSettings }
+								className="site-settings__gifting-toggle"
+								label={ translate( 'Allow a site visitor to gift site plan costs.' ) }
+								checked={ fields.wpcom_gifting_subscription }
+								onChange={ this.props.handleToggle( 'wpcom_gifting_subscription' ) }
+							/>
+							<FormSettingExplanation>
+								{ translate(
+									"Allow a site visitor to cover the full cost of your site's WordPress.com plan."
+								) }
+							</FormSettingExplanation>
+						</CompactCard>
+					</div>
+				</>
+			);
+		}
+	}
+
 	render() {
 		const {
 			customizerUrl,
@@ -666,6 +719,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
+				{ this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -702,7 +756,6 @@ export class SiteSettingsFormGeneral extends Component {
 						) }
 					</div>
 				) }
-
 				{ this.toolbarOption() }
 			</div>
 		);
@@ -765,6 +818,7 @@ const connectComponent = connect( ( state ) => {
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		currentPlan: getCurrentPlan( state, siteId ),
 	};
 }, mapDispatchToProps );
 
@@ -777,6 +831,7 @@ const getFormSettings = ( settings ) => {
 		blog_public: '',
 		wpcom_coming_soon: '',
 		wpcom_public_coming_soon: '',
+		wpcom_gifting_subscription: true,
 		admin_url: '',
 	};
 
@@ -794,6 +849,7 @@ const getFormSettings = ( settings ) => {
 
 		wpcom_coming_soon: settings.wpcom_coming_soon,
 		wpcom_public_coming_soon: settings.wpcom_public_coming_soon,
+		wpcom_gifting_subscription: !! settings.wpcom_gifting_subscription,
 	};
 
 	// handling `gmt_offset` and `timezone_string` values

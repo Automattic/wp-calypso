@@ -66,9 +66,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 
 		const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
 		useSendEmailVerification.mockImplementation( () => () => {
-			return Promise.resolve( {
-				success: false,
-			} );
+			return Promise.reject();
 		} );
 
 		render(
@@ -81,6 +79,7 @@ describe( 'EmailNotVerifiedNotice', () => {
 		await userEvent.click( resendButton );
 
 		expect( useSendEmailVerification ).toHaveBeenCalled();
+
 		await waitFor( () => {
 			expect(
 				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(

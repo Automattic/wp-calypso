@@ -285,64 +285,78 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* setThemeOnSite( siteSlug: string, theme: string, styleVariationSlug?: string ) {
-		yield wpcomRequest( {
-			path: `/sites/${ siteSlug }/themes/mine`,
-			apiVersion: '1.1',
-			body: { theme: theme, style_variation_slug: styleVariationSlug, dont_change_homepage: true },
-			method: 'POST',
-		} );
-	}
-
-	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
-		const { theme, recipe } = selectedDesign;
-
+	function* setThemeOnSite(
+		siteSlug: string,
+		theme: string,
+		styleVariationSlug?: string,
+		keepHomepage = true
+	) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
-				theme: recipe?.stylesheet?.split( '/' )[ 1 ] || theme,
-				style_variation_slug: options?.styleVariation?.slug,
-				dont_change_homepage: true,
+				theme: theme,
+				style_variation_slug: styleVariationSlug,
+				dont_change_homepage: keepHomepage,
 			},
 			method: 'POST',
 		} );
+	}
+
+	function* runThemeSetupOnSite(
+		siteSlug: string,
+		selectedDesign: Design,
+		options?: DesignOptions
+	) {
+		const { recipe, verticalizable } = selectedDesign;
 
 		/*
 		 * Anchor themes are set up directly via Headstart on the server side
 		 * so exclude them from theme setup.
 		 */
 		const anchorDesigns = [ 'hannah', 'gilbert', 'riley' ];
-		if ( anchorDesigns.indexOf( selectedDesign.template ) < 0 ) {
-			const themeSetupOptions: ThemeSetupOptions = {
-				trim_content: true,
-			};
-
-			if ( selectedDesign.verticalizable ) {
-				themeSetupOptions.vertical_id = options?.verticalId;
-			}
-
-			if ( recipe?.pattern_ids ) {
-				themeSetupOptions.pattern_ids = recipe?.pattern_ids;
-			}
-
-			if ( recipe?.header_pattern_ids ) {
-				themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
-			}
-
-			if ( recipe?.footer_pattern_ids ) {
-				themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
-			}
-
-			const response: { blog: string } = yield wpcomRequest( {
-				path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
-				apiNamespace: 'wpcom/v2',
-				body: themeSetupOptions,
-				method: 'POST',
-			} );
-
-			return response;
+		if ( anchorDesigns.indexOf( selectedDesign.template ) >= 0 ) {
+			return;
 		}
+
+		const themeSetupOptions: ThemeSetupOptions = {
+			trim_content: true,
+		};
+
+		if ( verticalizable ) {
+			themeSetupOptions.vertical_id = options?.verticalId;
+		}
+
+		if ( recipe?.pattern_ids ) {
+			themeSetupOptions.pattern_ids = recipe?.pattern_ids;
+		}
+
+		if ( recipe?.header_pattern_ids ) {
+			themeSetupOptions.header_pattern_ids = recipe?.header_pattern_ids;
+		}
+
+		if ( recipe?.footer_pattern_ids ) {
+			themeSetupOptions.footer_pattern_ids = recipe?.footer_pattern_ids;
+		}
+
+		const response: { blog: string } = yield wpcomRequest( {
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/theme-setup`,
+			apiNamespace: 'wpcom/v2',
+			body: themeSetupOptions,
+			method: 'POST',
+		} );
+
+		return response;
+	}
+
+	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
+		yield* setThemeOnSite(
+			siteSlug,
+			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
+			options?.styleVariation?.slug
+		);
+
+		return yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
 	}
 
 	function* createCustomTemplate(
@@ -352,8 +366,21 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		title: string,
 		content: string
 	) {
+		const templateId = `${ stylesheet }//${ slug }`;
+		let existed = true;
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteSlug ) }/templates/${ templateId }`,
+				apiNamespace: 'wp/v2',
+				method: 'GET',
+			} );
+		} catch {
+			existed = false;
+		}
+
+		const templatePath = `templates/${ existed ? templateId : '' }`;
 		yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteSlug ) }/templates`,
+			path: `/sites/${ encodeURIComponent( siteSlug ) }/${ templatePath }`,
 			apiNamespace: 'wp/v2',
 			body: {
 				slug,
@@ -562,6 +589,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
 		setThemeOnSite,
+		runThemeSetupOnSite,
 		setDesignOnSite,
 		createCustomTemplate,
 		createSite,

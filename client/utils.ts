@@ -27,11 +27,10 @@ export function redirectToLaunchpad(
 ) {
 	const launchpadRedirectionURL = addQueryArgs(
 		{
-			flow: launchpadFlow,
 			siteSlug,
 			verified: verifiedParam ? 1 : undefined,
 		},
-		'/setup/launchpad'
+		`/setup/${ launchpadFlow }/launchpad`
 	);
 	window.location.replace( launchpadRedirectionURL );
 }

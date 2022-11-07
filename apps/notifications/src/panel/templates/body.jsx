@@ -6,6 +6,7 @@ import { wpcom } from '../rest-client/wpcom';
 import NoteActions from './actions';
 import Comment from './block-comment';
 import Post from './block-post';
+import PromptBlock from './block-prompt';
 import User from './block-user';
 import { p, zipWithSignature } from './functions';
 import NotePreface from './preface';
@@ -120,6 +121,11 @@ export class NoteBody extends Component {
 					break;
 				case 'reply':
 					replyBlock = <ReplyBlock key={ blockKey } block={ block.block } />;
+					break;
+				case 'prompt':
+					body.push(
+						<PromptBlock key={ blockKey } block={ block.block } meta={ this.props.note.meta } />
+					);
 					break;
 				default:
 					body.push( <div key={ blockKey }>{ p( html( block.block ) ) }</div> );

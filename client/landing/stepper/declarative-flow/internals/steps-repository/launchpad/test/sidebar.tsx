@@ -29,6 +29,7 @@ const props = {
 	submit: () => {},
 	goNext: () => {},
 	goToStep: () => {},
+	flow: 'link-in-bio',
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
@@ -44,9 +45,7 @@ function renderSidebar( props, siteDetails = defaultSiteDetails ) {
 		receiveSite( siteDetails.ID, siteDetails );
 
 		return (
-			<MemoryRouter
-				initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
-			>
+			<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
 				<Sidebar { ...props } />
 			</MemoryRouter>
 		);
@@ -107,6 +106,106 @@ describe( 'Sidebar', () => {
 
 		const progressBar = screen.getByRole( 'progressbar' );
 		expect( progressBar ).toBeVisible();
+	} );
+
+	describe( 'when no custom domain has been purchased', () => {
+		it( 'shows a copy url to clipboard button', () => {
+			renderSidebar( {
+				...props,
+				sidebarDomain: buildDomainResponse( {
+					sslStatus: null,
+					isWPCOMDomain: true,
+				} ),
+			} );
+
+			const clipboardButton = screen.getByLabelText( /Copy URL/i );
+
+			expect( clipboardButton ).toBeInTheDocument();
+		} );
+
+		it( 'does not show a custom domain setup notification for free wpcom domains', () => {
+			renderSidebar( {
+				...props,
+				sidebarDomain: buildDomainResponse( {
+					sslStatus: null,
+					isWPCOMDomain: true,
+				} ),
+			} );
+
+			const domainProcessingNotification = screen.queryByText(
+				/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+			);
+
+			expect( domainProcessingNotification ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'when a custom domain has been purchased', () => {
+		describe( 'and the domain SSL is still being processed', () => {
+			it( 'does not show a copy url to clipboard button', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'pending',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const clipboardButton = screen.queryByLabelText( /Copy URL/i );
+
+				expect( clipboardButton ).not.toBeInTheDocument();
+			} );
+
+			it( 'shows a notification explaining that the domain is being set up', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'pending',
+						isWPCOMDomain: false,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.getByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).toBeInTheDocument();
+			} );
+		} );
+
+		describe( 'and the domain SSL has been activated', () => {
+			it( 'shows a copy url to clipboard button', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'active',
+						isWPCOMDomain: false,
+						isPrimary: true,
+					} ),
+				} );
+
+				const clipboardButton = screen.getByLabelText( /Copy URL/i );
+
+				expect( clipboardButton ).toBeInTheDocument();
+			} );
+
+			it( 'does not show a notification', () => {
+				renderSidebar( {
+					...props,
+					sidebarDomain: buildDomainResponse( {
+						sslStatus: 'active',
+						isWPCOMDomain: false,
+						isPrimary: true,
+					} ),
+				} );
+
+				const domainProcessingNotification = screen.queryByText(
+					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				);
+
+				expect( domainProcessingNotification ).not.toBeInTheDocument();
+			} );
+		} );
 	} );
 
 	describe( 'when the tailored flow includes a task to launch the site', () => {

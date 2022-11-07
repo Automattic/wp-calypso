@@ -59,7 +59,7 @@ export class PluginAutoUpdateToggle extends Component {
 	};
 
 	isAutoManaged = () =>
-		this.props.isMarketplaceProduct ||
+		( this.props.isMarketplaceProduct && this.props.productPurchase ) ||
 		PREINSTALLED_PLUGINS.includes( this.props.plugin.slug ) ||
 		AUTOMOMANAGED_PLUGINS.includes( this.props.plugin.slug );
 
