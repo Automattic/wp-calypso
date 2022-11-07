@@ -42,7 +42,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 		if ( ! selectedDesign ) {
 			goToStep?.( 'goals' );
 		}
-	} );
+	}, [] );
 
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
