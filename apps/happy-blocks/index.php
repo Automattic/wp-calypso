@@ -4,7 +4,7 @@
  * Version:     0.1.0
  * Description: Happyness Engineering Specific Blocks
  * Author: A8C
- * Text Domain: full-site-editing
+ * Text Domain: happy-blocks
  *
  * @package happy-blocks
  *
