@@ -2,9 +2,8 @@ import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useExperiment } from 'calypso/lib/explat';
 import DIFMLink from './difm-link';
-import { CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME, useGoals } from './goals';
+import { useGoals } from './goals';
 import ImportLink from './import-link';
 import SelectCard from './select-card';
 
@@ -45,11 +44,17 @@ export const SelectGoals = ( {
 }: SelectGoalsProps ) => {
 	const translate = useTranslate();
 	const goalOptions = useGoals( displayAllGoals );
-	let [ isBuiltByExpressExperimentLoading ] = useExperiment(
-		CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
-	);
-	// Experiment is currently inactive and will be run again in the future
-	isBuiltByExpressExperimentLoading = false;
+
+	// *******************************************************************************
+	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
+	// *******************************************************************************
+	//
+	// let [ isBuiltByExpressExperimentLoading ] = useExperiment(
+	// 	CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME
+	// );
+	//
+	// *******************************************************************************
+	const isBuiltByExpressExperimentLoading = false;
 
 	const addGoal = ( goal: Onboard.SiteGoal ) => {
 		const goalSet = new Set( selectedGoals );
