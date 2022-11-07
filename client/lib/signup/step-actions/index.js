@@ -266,6 +266,10 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 	}
 
 	const locale = getLocaleSlug();
+
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
 	// Pre Load Experiment relevant to the post site creation goal screen
 	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
@@ -875,6 +879,9 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 		client_secret: config( 'wpcom_signup_key' ),
 	};
 
+	// ************************************************************************
+	// ****  Experiment skeleton left in for future BBE copy change tests  ****
+	// ************************************************************************
 	// Pre Load Experiment relevant to the post site creation goal screen
 	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
