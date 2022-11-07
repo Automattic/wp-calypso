@@ -3,15 +3,32 @@
 @import "@wordpress/base-styles/variables";
 
 $sensei-mobile-layout-width: 1200px;
+$sensei-color: #43af99;
 
 .sensei.sensei-domain {
-	--color-text-subtle: #a7aaad;
-	--studio-green-60: #1e8133;
-
+	.css-1l7urtg-Container {
+		height: auto;
+	}
+	.progress-bar__progress {
+		background-color: $sensei-color;
+	}
 	.sensei-domain.is-wide-layout {
 		max-width: 1160px;
 	}
+	.domain-search-results__domain-suggestions {
+		.card {
+			box-shadow: none;
+			border-bottom: 1px solid var(--color-border-subtle);
+			border-top: 1px solid #fff;
+			background: none;
+			margin: 0;
 
+			&:hover {
+				border-top: 1px solid #000;
+				border-bottom: 1px solid #000;
+			}
+		}
+	}
 	.domains__step-content {
 		display: flex;
 		margin-top: 50px;
@@ -180,7 +197,7 @@ $sensei-mobile-layout-width: 1200px;
 	}
 
 	.domain-suggestion {
-		margin-bottom: 10px;
+		// margin-bottom: 10px;
 
 		.domain-suggestion__action {
 			border-radius: 4px;
@@ -210,11 +227,19 @@ $sensei-mobile-layout-width: 1200px;
 		.domain-suggestion__action {
 			border: none;
 			border-radius: 4px;
-			background-color: #0675c4;
+			background-color: $sensei-color;
+			color: #000;
+
+			&:hover {
+				background: lighten($sensei-color, 10%);
+			}
 		}
-		.domain-product-price.is-free-domain .domain-product-price__price {
-			color: #8e9196;
-		}
+	}
+	.domain-product-price.is-free-domain .domain-product-price__price {
+		color: #8e9196;
+	}
+	.domain-product-price .domain-product-price__free-price {
+		color: $sensei-color;
 	}
 
 	.register-domain-step__next-page {
