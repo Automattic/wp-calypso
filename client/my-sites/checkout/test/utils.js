@@ -281,18 +281,6 @@ describe( 'getProductSlugFromContext', () => {
 		{
 			context: createMockContext( {
 				params: {
-					product: undefined,
-					domainOrProduct: newProduct,
-					productSlug: undefined,
-				},
-				pathname: `/checkout/${ newProduct }/gift/1234`,
-			} ),
-			selectedSite: undefined,
-			expected: newProduct,
-		},
-		{
-			context: createMockContext( {
-				params: {
 					product: newProduct,
 					domainOrProduct: undefined,
 					productSlug: undefined,
