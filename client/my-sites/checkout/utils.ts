@@ -40,12 +40,14 @@ export function getProductSlugFromContext( context: PageJS.Context ): string | u
 	const selectedSite = getSelectedSite( state );
 	const isGiftPurchase = pathname.includes( '/gift/' );
 
+	// Jetpack siteless checkout routes always use `:productSlug` in the path.
 	if ( isContextJetpackSitelessCheckout( context ) ) {
 		return productSlug;
 	}
 
+	// Gift purchase routes always use `:product` in the path.
 	if ( isGiftPurchase ) {
-		return domainOrProduct || product;
+		return product;
 	}
 
 	if ( ! domainOrProduct && ! product ) {
