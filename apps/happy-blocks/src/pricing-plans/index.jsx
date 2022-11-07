@@ -5,7 +5,7 @@ import { Save } from './save';
 
 const blockAttributes = {};
 
-export function registerBlock() {
+function registerBlock() {
 	registerBlockType( 'happy-blocks/pricing-plans', {
 		title: __( 'Pricing plans', 'happy-blocks' ),
 		icon: 'cart',
