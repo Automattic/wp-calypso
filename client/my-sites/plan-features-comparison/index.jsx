@@ -298,6 +298,7 @@ PlanFeaturesComparison.propTypes = {
 	planProperties: PropTypes.array,
 	selectedFeature: PropTypes.string,
 	purchaseId: PropTypes.number,
+	flowName: PropTypes.string,
 	siteId: PropTypes.number,
 };
 
@@ -330,11 +331,18 @@ const hasPlaceholders = ( planProperties ) =>
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 export default connect(
 	( state, ownProps ) => {
-		const { isInSignup, placeholder, plans, isLandingPage, siteId, visiblePlans, popularPlanSpec } =
-			ownProps;
+		const {
+			isInSignup,
+			placeholder,
+			plans,
+			isLandingPage,
+			siteId,
+			visiblePlans,
+			popularPlanSpec,
+			flowName = getCurrentFlowName( state ),
+		} = ownProps;
 		const signupDependencies = getSignupDependencyStore( state );
 		const siteType = signupDependencies.designType;
-		const flowName = getCurrentFlowName( state );
 
 		let planProperties = compact(
 			map( plans, ( plan ) => {
