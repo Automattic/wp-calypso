@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import debugFactory from 'debug';
 import page from 'page';
+import React from 'react';
 import ReactDom from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
@@ -13,7 +14,6 @@ import thunkMiddleware from 'redux-thunk';
 // import StatsSummary from 'calypso/my-sites/stats/index';
 import QuerySites from 'calypso/components/data/query-sites';
 import { rawCurrentUserFetch, filterUserObject } from 'calypso/lib/user/shared-utils';
-import analyticsMiddleware from 'calypso/state/analytics/middleware';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import currentUser from 'calypso/state/current-user/reducer';
@@ -115,7 +115,7 @@ async function AppBoot() {
 		compose(
 			consoleDispatcher,
 			addReducerEnhancer,
-			applyMiddleware( thunkMiddleware, analyticsMiddleware, wpcomApiMiddleware )
+			applyMiddleware( thunkMiddleware, wpcomApiMiddleware )
 		)
 	);
 

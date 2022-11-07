@@ -8,6 +8,11 @@ const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' )
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const {
+	defaultRequestToExternal,
+	defaultRequestToHandle,
+} = require( '@wordpress/dependency-extraction-webpack-plugin/lib/util' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
@@ -34,6 +39,7 @@ module.exports = {
 	},
 	optimization: {
 		minimize: ! isDevelopment,
+		concatenateModules: ! shouldEmitStats,
 		minimizer: Minify( {
 			extractComments: false,
 			terserOptions: {
@@ -94,6 +100,17 @@ module.exports = {
 		...SassConfig.plugins( {
 			filename: 'build.min.css',
 			minify: ! isDevelopment,
+		} ),
+		new DependencyExtractionWebpackPlugin( {
+			injectPolyfill: true,
+			useDefaults: false,
+			requestToHandle: defaultRequestToHandle,
+			requestToExternal: ( request ) => {
+				if ( request !== 'react' && request !== 'react-dom' ) {
+					return;
+				}
+				return defaultRequestToExternal( request );
+			},
 		} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
