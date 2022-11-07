@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -22,6 +23,7 @@ import { ManageSSHKeys } from './manage-ssh-keys';
 import { useAddSSHKeyMutation } from './use-add-ssh-key-mutation';
 import { useDeleteSSHKeyMutation } from './use-delete-ssh-key-mutation';
 import { useSSHKeyQuery } from './use-ssh-key-query';
+import { useUpdateSSHKeyMutation } from './use-update-ssh-key-mutation';
 
 const SSHKeyLoadingPlaceholder = styled( LoadingPlaceholder )( {
 	':not(:last-child)': {
@@ -44,11 +46,14 @@ const noticeOptions = {
 };
 
 const sshKeySaveFailureNoticeId = 'ssh-key-save-failure';
+const sshKeyUpdateFailureNoticeId = 'ssh-key-update-failure';
 
 export const SecuritySSHKey = () => {
 	const { data, isLoading } = useSSHKeyQuery();
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
+	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
+
 	const { __ } = useI18n();
 	const queryArgs = getQueryArgs();
 
@@ -95,6 +100,34 @@ export const SecuritySSHKey = () => {
 					// translators: "reason" is why deleting the ssh key failed.
 					sprintf( __( 'Failed to delete SSH key: %(reason)s' ), { reason: error.message } ),
 					noticeOptions
+				)
+			);
+		},
+	} );
+
+	const { updateSSHKey, isLoading: keyBeingUpdated } = useUpdateSSHKeyMutation( {
+		onMutate: () => {
+			dispatch( removeNotice( sshKeyUpdateFailureNoticeId ) );
+		},
+		onSuccess: () => {
+			dispatch( recordTracksEvent( 'calypso_security_ssh_key_update_success' ) );
+			dispatch( successNotice( __( 'SSH key updated to account.' ), noticeOptions ) );
+			setSSHKeyNameToUpdate( '' );
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_security_ssh_key_update_failure', {
+					code: error.code,
+				} )
+			);
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why adding the ssh key failed.
+					sprintf( __( 'Failed to update SSH key: %(reason)s' ), { reason: error.message } ),
+					{
+						...noticeOptions,
+						id: sshKeySaveUpdateNoticeId,
+					}
 				)
 			);
 		},
@@ -154,6 +187,13 @@ export const SecuritySSHKey = () => {
 						) }
 					</p>
 				</div>
+				{ sshKeyNameToUpdate ? (
+					<AddSSHKeyForm
+						addSSHKey={ updateSSHKey }
+						isAdding={ keyBeingUpdated }
+						saveText="Update SSH Key"
+					/>
+				) : null }
 
 				{ isLoading ? (
 					<Placeholders />
@@ -164,11 +204,12 @@ export const SecuritySSHKey = () => {
 					/>
 				) : null }
 			</CompactCard>
-			{ hasKeys && currentUser?.username && (
+			{ hasKeys && currentUser?.username && ! sshKeyNameToUpdate && (
 				<ManageSSHKeys
 					userLogin={ currentUser.username }
 					sshKeys={ data }
 					onDelete={ ( sshKeyName ) => deleteSSHKey( { sshKeyName } ) }
+					onUpdate={ setSSHKeyNameToUpdate }
 					keyBeingDeleted={ keyBeingDeleted }
 				/>
 			) }
