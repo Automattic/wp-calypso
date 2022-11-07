@@ -121,7 +121,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				const newSite = getNewSite();
 				setSelectedSite( newSite?.blogid );
-				setIntentOnSite( newSite?.site_slug as string, flow );
+				setIntentOnSite( newSite?.site_slug as string, flow as string );
 				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
 				const planObject = supportedPlans.find(
