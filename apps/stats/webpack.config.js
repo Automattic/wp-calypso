@@ -9,7 +9,6 @@ const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpac
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
-const HtmlWebpackPlugin = require( 'html-webpack-plugin' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
@@ -103,14 +102,6 @@ module.exports = {
 			/^calypso\/server\/lib\/logger$/,
 			'calypso/lib/explat/internals/logger-browser-replacement'
 		),
-		new HtmlWebpackPlugin( {
-			filename: path.join( outputPath, 'index.html' ),
-			template: path.join( __dirname, 'src', 'index.ejs' ),
-			title: 'Stats',
-			hash: true,
-			inject: false,
-			isRTL: false,
-		} ),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
