@@ -36,23 +36,20 @@ export const handleKeyboard =
 export function createCustomHomeTemplateContent(
 	stylesheet: string,
 	hasHeader: boolean,
-	hasFooter: boolean,
-	hasSections: boolean
+	hasFooter: boolean
 ) {
 	const content: string[] = [];
-	const noSelection = ! hasHeader && ! hasFooter && ! hasSections;
 	if ( hasHeader ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
-	} else if ( noSelection ) {
+	} else {
 		content.push( `<!-- wp:template-part {"area":"header"} /-->` );
 	}
 
 	content.push( `
 <!-- wp:group {"tagName":"main"} -->
 	<main class="wp-block-group">
-	<p></p>
 	</main>
 <!-- /wp:group -->` );
 
@@ -60,7 +57,7 @@ export function createCustomHomeTemplateContent(
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
-	} else if ( noSelection ) {
+	} else {
 		content.push( `<!-- wp:template-part {"area":"footer"} /-->` );
 	}
 
