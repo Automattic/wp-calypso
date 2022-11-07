@@ -6,18 +6,9 @@ import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import StatsListActions from './stats-list-actions';
 
-const debug = debugFactory( 'calypso:stats:list:posts' );
-
-const StatsListPosts = ( {
-	data,
-	moduleName,
-	showMore,
-	title,
-	emptyMessage,
-	titleURL,
-	loader,
-} ) => {
-	const moduleNameTitle = titlecase( moduleName );
+const StatsListCard = ( { data, moduleType, showMore, title, emptyMessage, titleURL, loader } ) => {
+	const moduleNameTitle = titlecase( moduleType );
+	const debug = debugFactory( `calypso:stats:list:${ moduleType }` );
 
 	const localClickHandler = ( event, listItemData ) => {
 		debug( 'clickHandler' );
@@ -41,19 +32,19 @@ const StatsListPosts = ( {
 			emptyMessage={ emptyMessage }
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			titleURL={ titleURL }
-			className="list-posts-pages"
+			className={ `list-${ moduleType }-pages` }
 		>
 			{ !! loader && loader }
 			<HorizontalBarList data={ data }>
-				{ data?.map( ( item ) => {
+				{ data?.map( ( item, index ) => {
 					return (
 						<HorizontalBarListItem
-							key={ item?.id }
+							key={ item?.id || index } // not every item has an id
 							data={ item }
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ ( e ) => localClickHandler( e, item ) }
-							rightSideItem={ <StatsListActions data={ item } moduleName="posts" /> }
+							rightSideItem={ <StatsListActions data={ item } moduleName={ moduleType } /> }
 						/>
 					);
 				} ) }
@@ -62,4 +53,4 @@ const StatsListPosts = ( {
 	);
 };
 
-export default StatsListPosts;
+export default StatsListCard;

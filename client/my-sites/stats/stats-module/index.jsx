@@ -21,7 +21,7 @@ import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
-import StatsListPosts from '../stats-list/stats-list-posts';
+import StatsListCard from '../stats-list/stats-list-card';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -154,16 +154,19 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldHideOldModule = isEnabled( 'stats/new-stats-module-component' ) && path === 'posts';
+		const shouldShowNewModule =
+			isEnabled( 'stats/new-stats-module-component' ) &&
+			! summary &&
+			( path === 'posts' || path === 'videoplays' );
 
 		return (
 			<>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ isEnabled( 'stats/new-stats-module-component' ) && ! summary && path === 'posts' && (
-					<StatsListPosts
-						moduleName={ path }
+				{ shouldShowNewModule && (
+					<StatsListCard
+						moduleType={ path }
 						data={ data }
 						useShortLabel={ useShortLabel }
 						title={ this.getModuleLabel() }
@@ -183,27 +186,27 @@ class StatsModule extends Component {
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					>
 						{ this.props.children }
-					</StatsListPosts>
+					</StatsListCard>
 				) }
 
-				<div className={ classNames( { 'old-stats-module-hidden': shouldHideOldModule } ) }>
-					{ ! isAllTime && (
-						<SectionHeader
-							className={ headerClass }
-							label={ this.getModuleLabel() }
-							href={ ! summary ? summaryLink : null }
-						>
-							{ summary && (
-								<DownloadCsv
-									statType={ statType }
-									query={ query }
-									path={ path }
-									period={ period }
-								/>
-							) }
-						</SectionHeader>
-					) }
-					{ ! shouldHideOldModule && (
+				{ ! shouldShowNewModule && (
+					<div>
+						{ ! isAllTime && (
+							<SectionHeader
+								className={ headerClass }
+								label={ this.getModuleLabel() }
+								href={ ! summary ? summaryLink : null }
+							>
+								{ summary && (
+									<DownloadCsv
+										statType={ statType }
+										query={ query }
+										path={ path }
+										period={ period }
+									/>
+								) }
+							</SectionHeader>
+						) }
 						<Card compact className={ cardClasses }>
 							{ statType === 'statsFileDownloads' && (
 								<StatsModuleAvailabilityWarning
@@ -236,19 +239,19 @@ class StatsModule extends Component {
 								/>
 							) }
 						</Card>
-					) }
-					{ isAllTime && (
-						<div className="stats-module__footer-actions">
-							<DownloadCsv
-								statType={ statType }
-								query={ query }
-								path={ path }
-								borderless
-								period={ period }
-							/>
-						</div>
-					) }
-				</div>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</div>
+				) }
 			</>
 		);
 	}
