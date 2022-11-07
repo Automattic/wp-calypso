@@ -55,14 +55,23 @@
 				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 				line-height: 1.25rem;
 				padding: 0 8px;
-				right: 52%;
+				right: 50%;
 				transform: translate(50%);
 				border-radius: 4px;
 				background-color: var(--studio-green-5);
 				color: var(--studio-gray-80);
 			}
+
 			.plan-features-comparison__item-annual-plan {
 				color: var(--studio-orange-40) !important;
+			}
+
+			.plan-features-comparison__header {
+				padding: 12px 15px;
+			}
+
+			.plan-features-comparison__pricing .plan-price {
+				margin-right: 0;
 			}
 		}
 	}
