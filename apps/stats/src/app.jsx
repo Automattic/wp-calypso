@@ -5,28 +5,20 @@ import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import debugFactory from 'debug';
 import page from 'page';
-import React from 'react';
-import ReactDom from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider } from 'react-redux';
+import { QueryClient } from 'react-query';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-// import StatsSummary from 'calypso/my-sites/stats/index';
-import QuerySites from 'calypso/components/data/query-sites';
-import { rawCurrentUserFetch, filterUserObject } from 'calypso/lib/user/shared-utils';
 import consoleDispatcher from 'calypso/state/console-dispatch';
-import { setCurrentUser } from 'calypso/state/current-user/actions';
 import currentUser from 'calypso/state/current-user/reducer';
-// import ui from 'calypso/state/ui/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
-// import statss from 'calypso/state/stats/reducer';
 import { setLocale as setLocaleAction } from 'calypso/state/ui/language/actions';
 import { hideMasterbar as hideMasterbarAction } from 'calypso/state/ui/masterbar-visibility/actions';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import { getUrlParts } from '../../../packages/calypso-url';
 import registerStatsPages from './routes';
+
 import 'calypso/assets/stylesheets/style.scss';
 
 const debug = debugFactory( 'calypso' );
@@ -112,6 +104,7 @@ async function AppBoot() {
 
 	const store = createStore(
 		rootReducer,
+		config( 'intial_state' ) ?? {},
 		compose(
 			consoleDispatcher,
 			addReducerEnhancer,
@@ -120,24 +113,9 @@ async function AppBoot() {
 	);
 
 	setStore( store );
-	const user = await rawCurrentUserFetch().then( filterUserObject );
-	if ( user ) {
-		store.dispatch( setCurrentUser( user ) );
-	}
-
 	setLocale( store.dispatch );
 	hideMasterbar( store.dispatch );
-
 	setupContextMiddleware( store, queryClient );
-
-	ReactDom.render(
-		<QueryClientProvider client={ queryClient }>
-			<Provider store={ store }>
-				<QuerySites siteId={ siteId } />
-			</Provider>
-		</QueryClientProvider>,
-		document.getElementById( 'wpcom' )
-	);
 
 	if ( ! window.location?.hash ) {
 		window.location.hash = `#!/stats/day/${ siteId }`;
