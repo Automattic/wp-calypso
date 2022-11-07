@@ -31,7 +31,6 @@ const StatsListCard = ( {
 			page( listItemData.page );
 		} else {
 			// downloads component
-			// } else if ( this.props.data.link && ! this.props.children && ! this.getSiteIdForFollow() ) {
 			gaRecordEvent( 'Stats', ` Clicked ${ moduleNameTitle } External Link in List` );
 
 			window.open( listItemData?.link );
