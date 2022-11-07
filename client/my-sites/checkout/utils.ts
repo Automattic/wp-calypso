@@ -1,4 +1,5 @@
 import { untrailingslashit } from 'calypso/lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
@@ -128,4 +129,26 @@ export function addHttpIfMissing( inputUrl: string, httpsIsDefault = true ): str
 		url = `${ scheme }://` + url;
 	}
 	return untrailingslashit( url );
+}
+
+export function isContextJetpackSitelessCheckout( context: PageJS.Context ): boolean {
+	const hasJetpackPurchaseToken = Boolean( context.query.purchasetoken );
+	const hasJetpackPurchaseNonce = Boolean( context.query.purchaseNonce );
+	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
+		context.query?.source
+	);
+	const state = context.store.getState();
+	const isLoggedOut = ! isUserLoggedIn( state );
+
+	if ( ! context.pathname.includes( '/checkout/jetpack' ) ) {
+		return false;
+	}
+	if ( ! isLoggedOut && ! isUserComingFromLoginForm && ! isUserComingFromPlansPage ) {
+		return false;
+	}
+	if ( ! hasJetpackPurchaseToken && ! hasJetpackPurchaseNonce ) {
+		return false;
+	}
+	return true;
 }
