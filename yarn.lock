@@ -9540,33 +9540,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/jest-console@npm:^6.4.0":
-  version: 6.4.0
-  resolution: "@wordpress/jest-console@npm:6.4.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    jest-matcher-utils: ^27.4.2
-  peerDependencies:
-    jest: ">=27"
-  checksum: ad867fdf6505d16329db13e62ccfa497c75d1ba2533ccebcc7b85ef3702c98385b11b338f2a8e65d2ada9a33277c31a0137d293334a731afad16fb44baaaf69a
-  languageName: node
-  linkType: hard
-
-"@wordpress/jest-preset-default@npm:^10.1.0":
-  version: 10.2.0
-  resolution: "@wordpress/jest-preset-default@npm:10.2.0"
-  dependencies:
-    "@wordpress/jest-console": ^6.4.0
-    babel-jest: ^27.4.5
-  peerDependencies:
-    "@babel/core": ">=7"
-    jest: ">=27"
-    react: ">=17"
-    react-dom: ">=17"
-  checksum: 87fbafa5a35503684dc9fc1b982d25ab33ed13b8d8810075b1a8362d4913cf85628fc2c8deecc75f689c5bb19d500f2d36c0b6882ddd7039fdf078218a0b78a2
-  languageName: node
-  linkType: hard
-
 "@wordpress/jest-preset-default@npm:^8.2.0":
   version: 8.2.0
   resolution: "@wordpress/jest-preset-default@npm:8.2.0"
@@ -19471,14 +19444,9 @@ __metadata:
   dependencies:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
-    "@babel/core": ^7.17.5
-    "@testing-library/jest-dom": ^5.16.2
-    "@testing-library/react": ^12.1.3
     "@wordpress/block-editor": ^9.1.0
     "@wordpress/blocks": ^11.8.0
     "@wordpress/i18n": ^4.9.0
-    "@wordpress/jest-preset-default": ^10.1.0
-    "@wordpress/readable-js-assets-webpack-plugin": ^1.0.4
     "@wordpress/scripts": ^23.1.0
     jest: ^27.3.1
     postcss: ^8.4.5
