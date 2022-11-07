@@ -175,6 +175,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 				'%cSkipping initial state rehydration. (This runs during random page requests in the Calypso development environment, to simulate loading the application with an empty cache.)',
 				'font-size: 14px; color: red;'
 			);
+
 			clearPersistedState();
 
 			// If state was randomly cleared save a flag indicating this
