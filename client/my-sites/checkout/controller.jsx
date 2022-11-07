@@ -38,7 +38,7 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext } from './utils';
+import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -93,13 +93,7 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
-	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
-		context.query?.source
-	);
-	const isJetpackCheckout =
-		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
-		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	const isGiftPurchase = context.pathname.includes( '/gift/' );
@@ -128,7 +122,7 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	const product = getProductSlugFromContext( context, { isJetpackCheckout } );
+	const product = getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
