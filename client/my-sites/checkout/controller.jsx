@@ -464,17 +464,11 @@ export function jetpackCheckoutThankYou( context, next ) {
 }
 
 export function giftThankYou( context, next ) {
-	const isUserlessCheckoutFlow = context.path.includes( '/checkout/gift' );
-
-	context.primary = (
-		<GiftThankYou
-			site={ context.params.site }
-			productSlug={ context.params.product }
-			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
-		/>
-	);
-
-	next();
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-gift-thank-you
+	context.section.name = 'checkout-gift-thank-you';
+	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
 }
 
 function getRememberedCoupon() {

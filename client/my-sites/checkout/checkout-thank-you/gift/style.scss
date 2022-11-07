@@ -1,87 +1,49 @@
-.checkout-thank-you__wordpress-logo {
-	height: 180px;
-	width: 180px;
-	fill: var(--color-wpcom);
-	margin: 0 auto;
-	display: block;
-	transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
-	transform: scale(0.13333);
-	transform-origin: 50% 0;
+// Global override, prevent grey around the no-sidebar layout padding
+.is-section-checkout-gift-thank-you {
+	background-color: var(--studio-white);
 
-	&.is-large {
-		transform: scale(1);
-	}
-}
-
-@mixin jetpack-primary-button() {
-	// button colors imported from packages/calypso-color-schemes/src/shared/color-schemes/_jetpack-cloud.scss
-	// background-color: var(--studio-jetpack-green-50);
-	// border-color: var(--studio-jetpack-green-50);
-	color: var(--color-text-inverted);
-
-	&:hover,
-	&:focus {
-		// background-color: var(--studio-jetpack-green-60);
-		// border-color: var(--studio-jetpack-green-60);
-		color: var(--color-text-inverted);
-	}
-
-	&[disabled],
-	&:disabled,
-	&.disabled {
-		color: var(--color-neutral-20);
-		background-color: var(--color-surface);
-		border-color: var(--color-neutral-5);
+	// Override and reset
+	.layout__content {
+		padding-top: 0;
+		margin-top: var(--masterbar-height);
 	}
 }
 
 .gift-thank-you {
-	.gift-thank-you__card,
-	.gift-thank-you__card-loading {
-		box-shadow: 0 0 40px 0 #00000014;
-
+	.button {
 		width: 100%;
-		max-width: none;
-		padding: 16px;
+	}
 
-		// @include break-mobile {
-		// 	width: auto;
-		// 	max-width: 650px;
-		// 	padding: 96px;
-		// }
+	.gift-thank-you__container {
+		margin-top: 0;
+	}
+	.gift-thank-you__header-body {
+		line-height: 28px;
+	}
+	.gift-thank-you__loader {
+		display: flex;
+		justify-content: center;
+		margin-top: 160px;
+	}
 
-		.gift-thank-you__main-message {
-			font-size: $font-headline-small;
-			font-weight: 700;
-			margin-bottom: 24px;
+	// Thankyou component overrides
+	.thank-you__header-title {
+		margin-bottom: 24px;
+	}
 
-			// @include break-mobile {
-			// font-size: $font-headline-medium;
-			// }
+	.thank-you__container-header {
+		padding-top: 50px;
+		@media screen and (max-width: 782px) {
+			padding-top: 30px;
 		}
-
-		.gift-thank-you__sub-message-loading,
-		.gift-thank-you__sub-message {
-			font-size: $font-title-medium;
-			font-weight: 500;
-			margin-bottom: 64px;
-		}
-
-		.gift-thank-you__email-message-loading,
-		.gift-thank-you__email-message {
-			margin-top: -32px;
-			margin-bottom: 64px;
-		}
-
-		.gift-thank-you__button,
-		.gift-thank-you__button:visited {
-			border-radius: calc(2px * 2);
-			@include jetpack-primary-button;
+		min-height: 0;
+		padding-bottom: 0;
+		img {
+			margin-bottom: 32px;
 		}
 	}
 
-	.gift-thank-you__sub-message-loading,
-	.gift-thank-you__email-message-loading {
-		@include placeholder(--color-neutral-20);
+	.thank-you__body {
+		margin-top: 69px;
 	}
 }

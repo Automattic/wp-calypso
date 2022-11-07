@@ -97,8 +97,8 @@ export default function () {
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page(
-		'/checkout/gift/thank-you/:site/:product',
-		// redirectLoggedOut,
+		'/checkout/gift/thank-you/:site',
+		redirectLoggedOut,
 		giftThankYou,
 		makeLayout,
 		clientRender
