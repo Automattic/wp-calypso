@@ -300,7 +300,7 @@ export function useIssueMultipleLicenses(
 
 	const assignLicense = useAssignLicenseMutation( {
 		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
 
@@ -347,20 +347,23 @@ export function useIssueMultipleLicenses(
 	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
 
 	const issue = useCallback( async () => {
-		if ( isLoading ) {
+		if ( isLoading && ! selectedProducts.length ) {
 			return;
 		}
-
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_issue_mutiple_licenses_submit', {
 				products: selectedProducts.join( ',' ),
 			} )
 		);
 
+		const selectedSiteId = selectedSite?.ID;
+
 		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
 					products: selectedProducts.join( ',' ),
+					...( selectedSiteId && { site_id: selectedSiteId } ),
+					...( fromDashboard && { source: 'dashboard' } ),
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
@@ -374,8 +377,6 @@ export function useIssueMultipleLicenses(
 			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
 		} );
 		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
-
-		const selectedSiteId = selectedSite?.ID;
 
 		const assignLicenseRequests: any = [];
 
@@ -416,16 +417,18 @@ export function useIssueMultipleLicenses(
 
 		assignLicensePromises.forEach( ( promise: any ) => {
 			const { status, value: license } = promise;
-			const licenseKey = license.license_key;
-			const productSlug = licenseKey.split( '_' )[ 0 ];
-			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
-			if ( selectedProduct ) {
-				const item = {
-					key: licenseKey,
-					name: getProductTitle( selectedProduct.name ),
-					status,
-				};
-				allSelectedProducts.push( item );
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
 			}
 		} );
 		const assignLicenseStatus = {

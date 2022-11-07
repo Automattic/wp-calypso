@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	ReloadSetupIntentId,
 	StripeHookProvider,
@@ -24,6 +25,7 @@ import PaymentMethodImage from 'calypso/jetpack-cloud/sections/partner-portal/cr
 import {
 	useReturnUrl,
 	useLicenseIssuing,
+	useIssueMultipleLicenses,
 } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { assignNewCardProcessor } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/assignment-processor-functions';
 import { getStripeConfiguration } from 'calypso/jetpack-cloud/sections/partner-portal/payment-methods/get-stripe-configuration';
@@ -36,6 +38,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
 import { fetchStoredCards } from 'calypso/state/partner-portal/stored-cards/actions';
+import getSites from 'calypso/state/selectors/get-sites';
 
 import './style.scss';
 
@@ -63,6 +66,8 @@ function PaymentMethodAdd() {
 		select( 'credit-card' ).useAsPrimaryPaymentMethod()
 	);
 
+	const sites = useSelector( getSites );
+
 	const returnQueryArg = useMemo(
 		() => ( getQueryArg( window.location.href, 'return' ) || '' ).toString(),
 		[ window.location.href, getQueryArg ]
@@ -73,7 +78,28 @@ function PaymentMethodAdd() {
 		[ window.location.href, getQueryArg ]
 	);
 
+	const products = useMemo(
+		() => ( getQueryArg( window.location.href, 'products' ) || '' ).toString(),
+		[]
+	);
+
+	const siteId = useMemo(
+		() => getQueryArg( window.location.href, 'site_id' ) || '',
+		[]
+	).toString();
+
+	const source = useMemo(
+		() => getQueryArg( window.location.href, 'source' ) || '',
+		[]
+	).toString();
+
+	const isMulti = isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' );
+
 	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
+	const [ issueMultipleLicense, isIssuingMultipleLicenses ] = useIssueMultipleLicenses(
+		products ? products.split( ',' ) : [],
+		siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null
+	);
 
 	useReturnUrl( ! paymentMethodRequired );
 
@@ -113,7 +139,7 @@ function PaymentMethodAdd() {
 		// assign the license after adding a payment method.
 		//
 		// product - will make sure there will be a license issuing for that product
-		if ( returnQueryArg || product ) {
+		if ( returnQueryArg || product || products ) {
 			reduxDispatch(
 				fetchStoredCards( {
 					startingAfter: '',
@@ -123,13 +149,19 @@ function PaymentMethodAdd() {
 		} else {
 			page( partnerPortalBasePath( '/payment-methods' ) );
 		}
-	}, [ page, product, reduxDispatch, partnerPortalBasePath, returnQueryArg ] );
+	}, [ returnQueryArg, product, products, reduxDispatch ] );
 
 	useEffect( () => {
 		if ( product && ! paymentMethodRequired ) {
 			issueLicense();
 		}
 	}, [ paymentMethodRequired, product ] );
+
+	useEffect( () => {
+		if ( isMulti && ! paymentMethodRequired && products ) {
+			issueMultipleLicense();
+		}
+	}, [ paymentMethodRequired ] );
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
@@ -144,6 +176,20 @@ function PaymentMethodAdd() {
 	}, [ setupIntentError, reduxDispatch ] );
 
 	const elements = useElements();
+
+	const getPreviousPageLink = () => {
+		if ( products || product ) {
+			return addQueryArgs(
+				{
+					product: product || products,
+					...( siteId && { site_id: siteId } ),
+					...( source && { source } ),
+				},
+				partnerPortalBasePath( '/issue-license' )
+			);
+		}
+		return partnerPortalBasePath( '/payment-methods/' );
+	};
 
 	return (
 		<Main wideLayout className="payment-method-add">
@@ -211,12 +257,8 @@ function PaymentMethodAdd() {
 							<div className="payment-method-add__navigation-buttons">
 								<Button
 									className="payment-method-add__back-button"
-									href={
-										product
-											? addQueryArgs( { product }, partnerPortalBasePath( '/issue-license' ) )
-											: partnerPortalBasePath( '/payment-methods/' )
-									}
-									disabled={ isStripeLoading || isLoading }
+									href={ getPreviousPageLink() }
+									disabled={ isStripeLoading || isLoading || isIssuingMultipleLicenses }
 									onClick={ onGoToPaymentMethods }
 								>
 									{ translate( 'Go back' ) }
