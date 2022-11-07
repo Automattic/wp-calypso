@@ -9,6 +9,9 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
+# Repository configuration
+.github @Automattic/kitkat
+
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
 

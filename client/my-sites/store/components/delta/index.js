@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { includes } from 'lodash';
@@ -18,9 +19,14 @@ export default class Delta extends Component {
 	};
 
 	render() {
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
 		const { className, icon, iconSize, suffix, value } = this.props;
-		const deltaClasses = classnames( 'delta', className );
+		const deltaClasses = classnames( 'delta', className, {
+			'delta--new-main-chart': isNewFeatured,
+		} );
 		const undefinedIncrease = includes( className, 'is-undefined-increase' );
+
 		let deltaIcon;
 		if ( icon ) {
 			deltaIcon = icon;
@@ -29,6 +35,7 @@ export default class Delta extends Component {
 				includes( className, 'is-increase' ) || undefinedIncrease ? 'arrow-up' : 'arrow-down';
 			deltaIcon = includes( className, 'is-neutral' ) ? 'minus-small' : deltaIcon;
 		}
+
 		return (
 			<div className={ deltaClasses }>
 				<Gridicon className="delta__icon" icon={ deltaIcon } size={ iconSize } />

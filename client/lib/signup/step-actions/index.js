@@ -344,9 +344,7 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 		extra,
 	};
 
-	if ( config.isEnabled( 'difm/allow-extra-pages' ) ) {
-		cartItem.quantity = dependencies.selectedPageTitles.length;
-	}
+	cartItem.quantity = dependencies.selectedPageTitles.length;
 
 	const providedDependencies = {
 		selectedDesign,

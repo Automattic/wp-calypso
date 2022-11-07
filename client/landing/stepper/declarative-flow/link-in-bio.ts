@@ -61,8 +61,8 @@ export const linkInBio: Flow = {
 
 		const getStartUrl = () => {
 			return locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/patterns?flow=${ flowName }`;
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Link%20in%20Bio&redirect_to=/setup/${ flowName }/patterns`;
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {

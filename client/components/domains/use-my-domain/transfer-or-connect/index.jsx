@@ -60,6 +60,8 @@ function DomainTransferOrConnect( {
 
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
+		setActionClicked( true );
+
 		onTransfer( { domain, selectedSite, transferDomainUrl }, () => setActionClicked( false ) );
 	};
 

@@ -27,6 +27,8 @@ import {
 	isThemePremium,
 	doesThemeBundleSoftwareSet,
 	shouldShowTryAndCustomize,
+	isExternallyManagedTheme,
+	isSiteEligibleForManagedExternalThemes,
 } from 'calypso/state/themes/selectors';
 
 const identity = ( theme ) => theme;
@@ -48,6 +50,31 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isThemePremium( state, themeId ) || // Not a premium theme
 			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased
+			isExternallyManagedTheme( state, themeId ) || // Third-party themes cannot be purchased
+			isThemeActive( state, themeId, siteId ), // Already active
+	};
+
+	const subscribe = {
+		label: translate( 'Subscribe', {
+			context: 'verb',
+		} ),
+		extendedLabel: translate( 'Subscribe to this design' ),
+		header: translate( 'Subscribe on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to purchase a theme',
+		} ),
+		getUrl: () => {
+			// TODO - The checkout url will come later once the store product functionality is done on wpcom
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
+			! isUserLoggedIn( state ) || // Not logged in
+			! isThemePremium( state, themeId ) || // Not a premium theme
+			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
+			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isSiteEligibleForManagedExternalThemes( state, siteId ) ) || // User must have appropriate plan to subscribe
 			isThemeActive( state, themeId, siteId ), // Already active
 	};
 
@@ -70,6 +97,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
 			! isThemePremium( state, themeId ) ||
+			isExternallyManagedTheme( state, themeId ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId ),
 	};
@@ -91,7 +119,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 				typeof window !== 'undefined' ? window.location : {};
 			const slug = getSiteSlug( state, siteId );
 			const redirectTo = encodeURIComponent(
-				`${ origin }/setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
+				`${ origin }/setup/site-setup/designSetup?siteSlug=${ slug }&theme=${ themeId }`
 			);
 
 			return `/checkout/${ slug }/business?redirect_to=${ redirectTo }`;
@@ -102,6 +130,33 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			! isUserLoggedIn( state ) ||
 			! isThemePremium( state, themeId ) ||
 			! doesThemeBundleSoftwareSet( state, themeId ) ||
+			isExternallyManagedTheme( state, themeId ) ||
+			isThemeActive( state, themeId, siteId ) ||
+			isPremiumThemeAvailable( state, themeId, siteId ),
+	};
+
+	const upgradePlanForExternallyManagedThemes = {
+		label: translate( 'Upgrade to subscribe', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		extendedLabel: translate( 'Upgrade to subscribe', {
+			comment: 'label prompting user to upgrade the WordPress.com plan to activate a certain theme',
+		} ),
+		header: translate( 'Upgrade on:', {
+			context: 'verb',
+			comment: 'label for selecting a site for which to upgrade a plan',
+		} ),
+		getUrl: () => {
+			// TODO - The checkout url will come later once the store product functionality is done on wpcom
+		},
+		hideForTheme: ( state, themeId, siteId ) =>
+			isJetpackSite( state, siteId ) ||
+			isSiteWpcomAtomic( state, siteId ) ||
+			! isUserLoggedIn( state ) ||
+			! isThemePremium( state, themeId ) ||
+			! isExternallyManagedTheme( state, themeId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			isPremiumThemeAvailable( state, themeId, siteId ),
 	};
@@ -202,8 +257,10 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		customize,
 		preview,
 		purchase,
+		subscribe,
 		upgradePlan,
 		upgradePlanForBundledThemes,
+		upgradePlanForExternallyManagedThemes,
 		activate,
 		tryandcustomize,
 		deleteTheme,

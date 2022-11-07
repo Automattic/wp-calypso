@@ -65,6 +65,7 @@ button {
 .link-in-bio-post-setup,
 .anchor-fm,
 .subscribers,
+.ecommerce,
 .intro {
 	padding: 60px 0 0;
 	box-sizing: border-box;
@@ -228,17 +229,6 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
-		}
-
-		input[type="text"].form-text-input,
-		textarea.form-textarea {
-			font-size: $font-body-small;
-			border-radius: 4px;
-			border: 1px solid var(--studio-gray-10);
-
-			&:focus {
-				box-shadow: 0 0 0 2px #e2eaf1;
-			}
 		}
 	}
 

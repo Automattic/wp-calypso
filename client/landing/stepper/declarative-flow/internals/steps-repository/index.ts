@@ -46,6 +46,7 @@ export { default as plans } from './plans';
 export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
 export { default as domains } from './domains';
 export { default as storeProfiler } from './store-profiler';
+export { default as designCarousel } from './design-carousel';
 
 export type StepPath =
 	| 'courses'
@@ -96,4 +97,5 @@ export type StepPath =
 	| 'getCurrentThemeSoftwareSets'
 	| 'domains'
 	| 'getCurrentThemeSoftwareSets'
+	| 'designCarousel'
 	| 'storeProfiler';

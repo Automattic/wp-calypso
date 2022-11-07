@@ -1,3 +1,6 @@
+import type { PageId } from 'calypso/signup/difm/constants';
+import type { SiteId } from 'calypso/types';
+
 export const schema = {
 	$schema: 'https://json-schema.org/draft/2020-12/schema',
 	title: 'Website content schema',
@@ -73,6 +76,10 @@ export const schema = {
 		imageUploadStates: {
 			type: 'object',
 		},
+		siteId: {
+			type: [ 'number', 'null' ],
+			description: 'The siteId of the stored website content',
+		},
 	},
 };
 
@@ -83,7 +90,7 @@ export interface ImageData {
 }
 
 export interface PageData {
-	id: string;
+	id: PageId;
 	title: string;
 	content: string;
 	images: Array< ImageData >;
@@ -104,6 +111,7 @@ export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
 	imageUploadStates: Record< string, Record< string, string > >;
+	siteId: SiteId | null;
 }
 
 export const initialState: WebsiteContentCollection = {
@@ -114,4 +122,5 @@ export const initialState: WebsiteContentCollection = {
 		feedbackSection: { genericFeedback: '' },
 	},
 	imageUploadStates: {},
+	siteId: null,
 };

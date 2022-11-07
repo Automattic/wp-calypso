@@ -8,6 +8,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -82,6 +83,13 @@ function render( element, key, req ) {
 		debug( 'cache access for key', key );
 
 		let renderedLayout = markupCache.get( key );
+
+		logServerEvent( req.context.sectionName, {
+			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
+			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+			type: 'counting',
+		} );
+
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -240,7 +248,7 @@ export function serverRender( req, res ) {
 		performanceMark( req, 'redux store', true );
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
@@ -258,8 +266,12 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			const { documentHead, themes, plugins } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				plugins,
+			} );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
