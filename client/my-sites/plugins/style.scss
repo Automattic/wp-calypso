@@ -93,8 +93,13 @@ body.is-section-plugins.theme-default.color-scheme {
 	}
 }
 
+$layout-padding-top: 54px;
+$calypso-header-height: 31px;
 .plugin-details__layout {
-	padding-top: 54px;
+	padding-top: $layout-padding-top;
+	&:not(.is-logged-in) {
+		padding-top: calc($layout-padding-top - $calypso-header-height);
+	}
 
 	@include display-grid;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 395px;
