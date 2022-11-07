@@ -28,6 +28,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
+		"@testing-library/react": "^12.1.3",
 		"@wordpress/readable-js-assets-webpack-plugin": "^1.0.4",
 		"@wordpress/scripts": "^23.1.0",
 		"jest": "^27.3.1",
