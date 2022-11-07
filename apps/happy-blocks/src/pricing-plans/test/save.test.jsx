@@ -5,7 +5,6 @@
 import { render } from '@testing-library/react';
 import { useBlockProps } from '@wordpress/block-editor';
 import { Save } from '../save';
-import '@testing-library/jest-dom';
 
 jest.mock( '@wordpress/block-editor', () => ( {
 	...jest.requireActual( '@wordpress/block-editor' ),
