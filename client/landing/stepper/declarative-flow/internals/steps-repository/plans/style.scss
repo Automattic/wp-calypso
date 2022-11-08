@@ -68,6 +68,11 @@
 
 			.plan-features-comparison__header {
 				padding: 12px 15px;
+				background-color: unset;
+
+				.plan-features-comparison__header-title {
+					margin: 0 0 6px 0;
+				}
 			}
 
 			.plan-features-comparison__pricing .plan-price {
