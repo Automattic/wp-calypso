@@ -276,7 +276,6 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
-				<SympathyDevWarning />
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -333,7 +332,10 @@ class Layout extends Component {
 					<AsyncLoad require="calypso/components/happychat" />
 				) }
 				{ 'development' === process.env.NODE_ENV && (
-					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					<>
+						<SympathyDevWarning />
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					</>
 				) }
 				{ loadInlineHelp && (
 					<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
