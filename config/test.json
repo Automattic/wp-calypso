@@ -86,7 +86,6 @@
 		"signup/anchor-fm": true,
 		"signup/inline-help": false,
 		"signup/social": true,
-		"signup/stepper-flow": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
 		"stats/fixed-nav-headers": false,

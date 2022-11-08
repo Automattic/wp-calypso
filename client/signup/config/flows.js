@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { get, includes, reject } from 'lodash';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -77,12 +76,7 @@ function getSignupDestination( { domainItem, siteId, siteSlug, refParameter } ) 
 		queryParam.ref = refParameter;
 	}
 
-	if ( isEnabled( 'signup/stepper-flow' ) ) {
-		return addQueryArgs( queryParam, '/setup' );
-	}
-
-	queryParam.loading_ellipsis = 1;
-	return addQueryArgs( queryParam, '/start/setup-site' );
+	return addQueryArgs( queryParam, '/setup' );
 }
 
 function getLaunchDestination( dependencies ) {
