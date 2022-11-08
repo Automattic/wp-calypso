@@ -54,6 +54,9 @@ class StatsNavigation extends Component {
 		const { label, showIntervals, path } = navItems[ selectedItem ];
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ path }/{{ interval }}${ slugPath }`;
+
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+
 		return (
 			<div className="stats-navigation">
 				<SectionNav selectedText={ label }>
@@ -77,10 +80,12 @@ class StatsNavigation extends Component {
 								);
 							} ) }
 					</NavTabs>
-					{ showIntervals && <Intervals selected={ interval } pathTemplate={ pathTemplate } /> }
+					{ ! isNewMainChart && showIntervals && (
+						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
+					) }
 					<FollowersCount />
 				</SectionNav>
-				{ showIntervals && (
+				{ ! isNewMainChart && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
 				) }
 			</div>
