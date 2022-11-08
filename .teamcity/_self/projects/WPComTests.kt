@@ -89,6 +89,10 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			param("env.VIEWPORT_NAME", "$targetDevice")
 			if (atomic) {
 				param("env.TEST_ON_ATOMIC", "true")
+				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
+				// The reason for this is an inconsistent issue breaking the login in AT test sites when
+				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
+				param("env.JEST_MAX_WORKERS", "1")
 			}
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
