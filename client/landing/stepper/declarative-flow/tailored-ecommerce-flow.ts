@@ -27,7 +27,6 @@ export const ecommerceFlow: Flow = {
 			'domains',
 			'siteCreationStep',
 			'processing',
-			'wooInstallPlugins',
 			'intro',
 			'storeProfiler',
 			'designCarousel',
@@ -72,11 +71,6 @@ export const ecommerceFlow: Flow = {
 						return;
 					}
 
-					// Coming from wooInstallPlugins Step
-					if ( providedDependencies?.finishedInstallPlugins ) {
-						return navigate( 'intro' );
-					}
-
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/intro?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
 						persistSignupDestination( destination );
@@ -86,9 +80,10 @@ export const ecommerceFlow: Flow = {
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/wooInstallPlugins?siteSlug=${ (
-								providedDependencies?.siteSlug as string
-							 )?.replace( 'wordpress.com', 'wpcomstaging.com' ) }&flow=${ flowName }`
+							`/setup/intro?siteSlug=${ ( providedDependencies?.siteSlug as string )?.replace(
+								'wordpress.com',
+								'wpcomstaging.com'
+							) }&flow=${ flowName }`
 						);
 
 						return window.location.assign(
@@ -112,9 +107,6 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'designCarousel' );
 
 				case 'designCarousel':
-					return navigate( 'processing' );
-
-				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 			}
 			return providedDependencies;
