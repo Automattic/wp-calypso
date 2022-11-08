@@ -30,9 +30,15 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
 			setPendingAction( async () => {
-				await setDesignOnSite( siteSlugOrId, _selectedDesign ).then( () =>
-					reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
-				);
+				try {
+					await setDesignOnSite( siteSlugOrId, _selectedDesign ).then( () =>
+						reduxDispatch( requestActiveTheme( site?.ID || -1 ) )
+					);
+				} catch ( e ) {
+					// For Atomic sites I get "Theme not found" for most of themes I tested
+					// eslint-disable-next-line no-console
+					console.log( e );
+				}
 				return { selectedDesign: _selectedDesign, siteSlug };
 			} );
 			submit?.();

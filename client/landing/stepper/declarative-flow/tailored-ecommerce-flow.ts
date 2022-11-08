@@ -1,3 +1,4 @@
+import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -24,9 +25,9 @@ export const ecommerceFlow: Flow = {
 
 		return [
 			'domains',
-			'plans',
 			'siteCreationStep',
 			'processing',
+			'wooInstallPlugins',
 			'intro',
 			'storeProfiler',
 			'designCarousel',
@@ -35,7 +36,7 @@ export const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
@@ -53,9 +54,12 @@ export const ecommerceFlow: Flow = {
 
 			switch ( _currentStepName ) {
 				case 'domains':
-					return navigate( 'plans' );
+					recordTracksEvent( 'calypso_signup_plan_select', {
+						product_slug: PLAN_ECOMMERCE,
+						from_section: 'default',
+					} );
 
-				case 'plans':
+					setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
@@ -67,13 +71,24 @@ export const ecommerceFlow: Flow = {
 						window.location.assign( `/home/${ providedDependencies.siteSlug }` );
 						return;
 					}
+
+					// Coming from wooInstallPlugins Step
+					if ( providedDependencies?.finishedInstallPlugins ) {
+						return navigate( 'intro' );
+					}
+
 					if ( providedDependencies?.goToCheckout ) {
 						const destination = `/setup/intro?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
 						persistSignupDestination( destination );
 						setSignupCompleteSlug( providedDependencies?.siteSlug );
 						setSignupCompleteFlowName( flowName );
+
+						// The site is coming from the checkout already Atomic (and with the new URL)
+						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/intro?siteSlug=${ providedDependencies?.siteSlug }&flow=${ flowName }`
+							`/setup/wooInstallPlugins?siteSlug=${ (
+								providedDependencies?.siteSlug as string
+							 )?.replace( 'wordpress.com', 'wpcomstaging.com' ) }&flow=${ flowName }`
 						);
 
 						return window.location.assign(
@@ -97,6 +112,9 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'designCarousel' );
 
 				case 'designCarousel':
+					return navigate( 'processing' );
+
+				case 'wooInstallPlugins':
 					return navigate( 'processing' );
 			}
 			return providedDependencies;
