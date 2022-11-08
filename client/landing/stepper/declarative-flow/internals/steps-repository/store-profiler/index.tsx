@@ -38,12 +38,18 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			}
 			return a.name > b.name ? 1 : -1;
 		} );
-		return sorted?.map( ( v ) => (
+		const options = sorted?.map( ( v ) => (
 			<option value={ v.id } key={ v.id }>
 				{ v.name }
 			</option>
 		) );
-	}, [ verticals ] );
+		options?.unshift(
+			<option value="" key="">
+				{ translate( '- Select Industry -' ) }
+			</option>
+		);
+		return options;
+	}, [ verticals, translate ] );
 	// TODO: This may not be the right source for this info.
 	const countriesAndStates = useCountriesAndStates();
 	const countriesOptions = React.useMemo( () => {
