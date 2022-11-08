@@ -7,36 +7,37 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
-import useStartingPoints from './starting-points';
+import useStartingPoints from './use-starting-points';
 import type { Step } from '../../types';
 
-/**
- * The starting point step
- */
-const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
+const PatternAssemblerStartingPointStep: Step = ( { navigation } ) => {
 	const { goBack, submit } = navigation;
 	const translate = useTranslate();
 	const headerText = translate( 'Nice job! Now it’s{{br}}{{/br}} time to get creative.', {
 		components: { br: <br /> },
 	} );
-	const subHeaderText = translate( "Don't worry. You can come back to these steps!" );
-	const intents = useStartingPoints();
+	const subHeaderText = translate(
+		'Continue to the WordPress Site Editor or take a few moments to learn the basics.'
+	);
+	const startingPoints = useStartingPoints();
 	const { setStartingPoint } = useDispatch( ONBOARD_STORE );
 
-	const submitIntent = ( startingPoint: string ) => {
+	const submitStartingPoint = ( startingPoint: string ) => {
 		const providedDependencies = { startingPoint };
-		recordTracksEvent( 'calypso_signup_starting_point_select', { starting_point: startingPoint } );
+		recordTracksEvent( 'calypso_signup_pa_starting_point_select', {
+			starting_point: startingPoint,
+		} );
 		setStartingPoint( startingPoint );
 		submit?.( providedDependencies, startingPoint );
 	};
 
 	return (
 		<StepContainer
-			stepName="blogger-starting-point"
+			stepName="pattern-assembler-starting-point"
 			headerImageUrl={ startingPointImageUrl }
 			goBack={ goBack }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
-			goNext={ () => submitIntent( 'skip-to-my-home' ) }
+			goNext={ () => submitStartingPoint( 'skip-to-my-home' ) }
 			skipButtonAlign="top"
 			isHorizontalLayout={ true }
 			formattedHeader={
@@ -49,9 +50,9 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 			}
 			stepContent={
 				<IntentScreen
-					intents={ intents }
+					intents={ startingPoints }
 					intentsAlt={ [] }
-					onSelect={ submitIntent }
+					onSelect={ submitStartingPoint }
 					preventWidows={ preventWidows }
 				/>
 			}
@@ -60,4 +61,4 @@ const StartingPointStep: Step = function StartingPointStep( { navigation } ) {
 	);
 };
 
-export default StartingPointStep;
+export default PatternAssemblerStartingPointStep;
