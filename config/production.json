@@ -137,7 +137,7 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/fixed-nav-headers": false,
-		"stats/new-annual-highlights": false,
+		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": false,
 		"stats/new-stats-module-component": false,
 		"stats/show-traffic-highlights": false,
