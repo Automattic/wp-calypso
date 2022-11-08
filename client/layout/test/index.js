@@ -13,7 +13,6 @@ describe( 'index', () => {
 						store={ {
 							dispatch: () => {},
 							getState: () => ( {
-								startupFlags: { isStateRandomlyCleared: false },
 								ui: {},
 								notices: {
 									items: {},

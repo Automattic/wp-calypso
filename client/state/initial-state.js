@@ -20,6 +20,7 @@ const HOUR_IN_MS = 3600000;
 export const SERIALIZE_THROTTLE = 5000;
 export const MAX_AGE = 7 * DAY_IN_HOURS * HOUR_IN_MS;
 export const BASE_STALE_TIME = 2 * HOUR_IN_MS;
+export const SYMPATHY_DEV_WARNING_KEY = 'is-state-randomly-cleared';
 
 // Store the timestamp at which the module loads as a proxy for the timestamp
 // when the server data (if any) was generated.
@@ -180,7 +181,8 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 
 			// If state was randomly cleared save a flag indicating this
 			const isStateRandomlyCleared = ! config.isEnabled( 'force-sympathy' );
-			return { startupFlags: { isStateRandomlyCleared } };
+			storePersistedStateItem( SYMPATHY_DEV_WARNING_KEY, { isStateRandomlyCleared } );
+			return null;
 		}
 	}
 

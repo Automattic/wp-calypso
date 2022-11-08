@@ -9,10 +9,6 @@ import { combineReducers } from 'calypso/state/utils';
 import currentUser from './current-user/reducer'; // eslint-disable-line no-restricted-imports
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import sites from './sites/reducer'; // eslint-disable-line no-restricted-imports
-/**
- * Maintains flags related to any app loading mechanics
- */
-import { startupFlagsReducer as startupFlags } from './startup-flags/reducer'; // eslint-disable-line no-restricted-imports
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -21,7 +17,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	sites,
-	startupFlags,
 };
 
 export default combineReducers( reducers );
