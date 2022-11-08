@@ -154,6 +154,16 @@ class StatsPostDetail extends Component {
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
 
+		// Set up for View button.
+		let viewPreviewButton;
+		if ( showViewLink ) {
+			viewPreviewButton = (
+				<Button onClick={ this.openPreview }>
+					<span>{ actionLabel }</span>
+				</Button>
+			);
+		}
+
 		return (
 			<Main className={ className } wideLayout>
 				<PageViewTracker
@@ -164,7 +174,9 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				{ isFixedNavHeadersEnabled ? (
-					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) } />
+					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
+						{ viewPreviewButton }
+					</FixedNavigationHeader>
 				) : (
 					<HeaderCake
 						onClick={ this.goBack }
