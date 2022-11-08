@@ -410,6 +410,10 @@ class StatsSite extends Component {
 		const { isJetpack, siteId, showEnableStatsModule } = this.props;
 		const { period } = this.props.period;
 
+		// Track the last viewed tab.
+		// Necessary to properly configure the fixed navigation headers.
+		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
+
 		return (
 			<Main wideLayout>
 				<QueryKeyringConnections />

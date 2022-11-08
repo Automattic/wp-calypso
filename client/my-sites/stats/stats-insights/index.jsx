@@ -34,6 +34,10 @@ const StatsInsights = ( props ) => {
 
 	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
 
+	// Track the last viewed tab.
+	// Necessary to properly configure the fixed navigation headers.
+	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
+
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
