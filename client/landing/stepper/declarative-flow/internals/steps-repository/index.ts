@@ -1,50 +1,3 @@
-export { default as courses } from './courses';
-export { default as intent } from './intent-step';
-export { default as goals } from './goals';
-export { default as podcastTitle } from './podcast-title';
-export { default as login } from './login';
-export { default as options } from './site-options';
-export { default as bloggerStartingPoint } from './blogger-starting-point';
-export { default as storeFeatures } from './store-features';
-export { default as designSetup } from './design-setup';
-export { default as patternAssembler } from './pattern-assembler';
-export { default as import } from './import';
-export { default as importLight } from './import-light';
-export { default as importList } from './import-list';
-export { default as importReady } from './import-ready';
-export { default as importReadyNot } from './import-ready-not';
-export { default as importReadyWpcom } from './import-ready-wpcom';
-export { default as importReadyPreview } from './import-ready-preview';
-export { default as importerWix } from './importer-wix';
-export { default as importerBlogger } from './importer-blogger';
-export { default as importerMedium } from './importer-medium';
-export { default as importerSquarespace } from './importer-squarespace';
-export { default as importerWordpress } from './importer-wordpress';
-export { default as businessInfo } from './business-info';
-export { default as storeAddress } from './store-address';
-export { default as vertical } from './site-vertical';
-export { default as wooTransfer } from './woo-transfer';
-export { default as wooInstallPlugins } from './woo-install-plugins';
-export { default as processing } from './processing-step';
-export { default as error } from './error-step';
-export { default as wooConfirm } from './woo-confirm';
-export { default as wooVerifyEmail } from './woo-verify-email';
-export { default as editEmail } from './edit-email';
-export { default as newsletterSetup } from './newsletter-setup';
-export { default as newsletterPostSetup } from './newsletter-post-setup';
-export { default as difmStartingPoint } from './difm-starting-point';
-export { default as letsGetStarted } from './lets-get-started';
-export { default as intro } from './intro';
-export { default as linkInBioSetup } from './link-in-bio-setup';
-export { default as linkInBioPostSetup } from './link-in-bio-post-setup';
-export { default as chooseADomain } from './choose-a-domain';
-export { default as launchpad } from './launchpad';
-export { default as subscribers } from './subscribers';
-export { default as patterns } from './patterns';
-export { default as getCurrentThemeSoftwareSets } from './get-current-theme-software-sets';
-export { default as storeProfiler } from './store-profiler';
-export { default as designCarousel } from './design-carousel';
-
 export type StepPath =
 	| 'courses'
 	| 'intent'
@@ -92,3 +45,50 @@ export type StepPath =
 	| 'getCurrentThemeSoftwareSets'
 	| 'designCarousel'
 	| 'storeProfiler';
+
+/**
+ * If you add a new step, and this step's folder name is not camelCase, you should map the step name to the correct camelCase name here.
+ * If your step's folder name is camelCase (eg intro, or designSetup), you don't have to add it below.
+ */
+
+export const stepsNameMap: Partial< Record< StepPath, string > > = {
+	courses: 'courses',
+	intent: 'intent-step',
+	podcastTitle: 'podcast-title',
+	options: 'site-options',
+	bloggerStartingPoint: 'blogger-starting-point',
+	storeFeatures: 'store-features',
+	designSetup: 'design-setup',
+	patternAssembler: 'pattern-assembler',
+	importLight: 'import-light',
+	importList: 'import-list',
+	importReady: 'import-ready',
+	importReadyNot: 'import-ready-not',
+	importReadyWpcom: 'import-ready-wpcom',
+	importReadyPreview: 'import-ready-preview',
+	importerWix: 'importer-wix',
+	importerBlogger: 'importer-blogger',
+	importerMedium: 'importer-medium',
+	importerSquarespace: 'importer-squarespace',
+	importerWordpress: 'importer-wordpress',
+	businessInfo: 'business-info',
+	storeAddress: 'store-address',
+	vertical: 'site-vertical',
+	wooTransfer: 'woo-transfer',
+	wooInstallPlugins: 'woo-install-plugins',
+	processing: 'processing-step',
+	error: 'error-step',
+	wooConfirm: 'woo-confirm',
+	wooVerifyEmail: 'woo-verify-email',
+	editEmail: 'edit-email',
+	newsletterSetup: 'newsletter-setup',
+	newsletterPostSetup: 'newsletter-post-setup',
+	difmStartingPoint: 'difm-starting-point',
+	letsGetStarted: 'lets-get-started',
+	linkInBioSetup: 'link-in-bio-setup',
+	linkInBioPostSetup: 'link-in-bio-post-setup',
+	chooseADomain: 'choose-a-domain',
+	getCurrentThemeSoftwareSets: 'get-current-theme-software-sets',
+	storeProfiler: 'store-profiler',
+	designCarousel: 'design-carousel',
+};

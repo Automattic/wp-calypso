@@ -2,7 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,7 +11,7 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
-import * as Steps from './steps-repository';
+import { stepsNameMap } from './steps-repository';
 import { AssertConditionState, Flow } from './types';
 import type { StepPath } from './steps-repository';
 import './global.scss';
@@ -88,7 +88,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
-		const StepComponent = Steps[ path ];
+		const StepComponent = React.lazy(
+			() => import( `./steps-repository/${ stepsNameMap[ path ] || path }` )
+		);
+
 		return <StepComponent navigation={ stepNavigation } flow={ flow.name } data={ stepData } />;
 	};
 
@@ -113,7 +116,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 									total={ 100 }
 								/>
 								<SignupHeader pageTitle={ flow.title } />
-								{ renderStep( path ) }
+								<Suspense fallback={ null }>{ renderStep( path ) }</Suspense>
 							</div>
 						</Route>
 					);
