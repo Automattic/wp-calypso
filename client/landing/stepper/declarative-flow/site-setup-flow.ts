@@ -37,7 +37,7 @@ export const siteSetupFlow: Flow = {
 
 	useSteps() {
 		return [
-			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
+			'goals',
 			'vertical',
 			'intent',
 			'options',
@@ -107,7 +107,6 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
 
@@ -130,11 +129,10 @@ export const siteSetupFlow: Flow = {
 						return;
 					}
 
-					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-
-					if ( goalsStepEnabled ) {
-						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-					}
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
@@ -360,21 +358,17 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
-					if ( goalsStepEnabled ) {
-						if ( goals.includes( SiteGoal.Import ) ) {
-							return navigate( 'import' );
-						}
-
-						switch ( intent ) {
-							case SiteIntent.Write:
-							case SiteIntent.Sell:
-								return navigate( 'options' );
-							default:
-								return navigate( 'designSetup' );
-						}
+					if ( goals.includes( SiteGoal.Import ) ) {
+						return navigate( 'import' );
 					}
 
-					return navigate( 'intent' );
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						default:
+							return navigate( 'designSetup' );
+					}
 				}
 
 				case 'importReady': {
@@ -453,11 +447,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'goals' );
 					}
 
-					if ( goalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					return navigate( 'intent' );
+					return navigate( 'vertical' );
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
@@ -492,24 +482,16 @@ export const siteSetupFlow: Flow = {
 					if ( intent === 'difm' ) {
 						return navigate( 'difmStartingPoint' );
 					}
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'options':
-					if ( goalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
+					return navigate( 'vertical' );
 
 				case 'import':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'difmStartingPoint':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				default:
 					return navigate( 'intent' );

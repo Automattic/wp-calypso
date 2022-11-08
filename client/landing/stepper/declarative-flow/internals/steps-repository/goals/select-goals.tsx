@@ -2,13 +2,10 @@ import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import DIFMLink from './difm-link';
 import { useGoals } from './goals';
-import ImportLink from './import-link';
 import SelectCard from './select-card';
 
 type SelectGoalsProps = {
-	displayAllGoals: boolean;
 	onChange: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	onSubmit: ( selectedGoals: Onboard.SiteGoal[] ) => void;
 	selectedGoals: Onboard.SiteGoal[];
@@ -36,14 +33,9 @@ const Placeholder = styled.div`
 
 const SiteGoal = Onboard.SiteGoal;
 
-export const SelectGoals = ( {
-	displayAllGoals,
-	onChange,
-	onSubmit,
-	selectedGoals,
-}: SelectGoalsProps ) => {
+export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsProps ) => {
 	const translate = useTranslate();
-	const goalOptions = useGoals( displayAllGoals );
+	const goalOptions = useGoals();
 
 	// *******************************************************************************
 	// ****  Experiment skeleton left in for future BBE (Goal) copy change tests  ****
@@ -77,21 +69,10 @@ export const SelectGoals = ( {
 		onSubmit( selectedGoals );
 	};
 
-	const handleImportLinkClick = () => {
-		const selectedGoalsWithImport = addGoal( SiteGoal.Import );
-		onSubmit( selectedGoalsWithImport );
-	};
-
-	const handleDIFMLinkClick = () => {
-		const selectedGoalsWithDIFM = addGoal( SiteGoal.DIFM );
-		onSubmit( selectedGoalsWithDIFM );
-	};
 	const hasBuiltByExpressGoal = goalOptions.some( ( g ) => g.key === SiteGoal.DIFM );
 	return (
 		<>
-			{ displayAllGoals && (
-				<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
-			) }
+			<div className="select-goals__cards-hint">{ translate( 'Select all that apply' ) }</div>
 
 			<div className="select-goals__cards-container">
 				{ /* We only need to show the goal loader only if the BBE goal will be displayed */ }
@@ -126,13 +107,6 @@ export const SelectGoals = ( {
 					{ translate( 'Continue' ) }
 				</Button>
 			</div>
-
-			{ ! displayAllGoals && (
-				<div className="select-goals__links-container">
-					<ImportLink onClick={ handleImportLinkClick } />
-					<DIFMLink onClick={ handleDIFMLinkClick } />
-				</div>
-			) }
 		</>
 	);
 };

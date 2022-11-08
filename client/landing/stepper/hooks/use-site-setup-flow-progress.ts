@@ -10,13 +10,7 @@ export function useSiteSetupFlowProgress(
 	intent: string,
 	storeType: string
 ) {
-	const goalsStepEnabled = isEnabled( 'signup/goals-step' );
-
-	const beginningSteps = [
-		...( goalsStepEnabled ? [ 'goals' ] : [] ),
-		'vertical',
-		...( ! goalsStepEnabled ? [ 'intent' ] : [] ),
-	];
+	const beginningSteps = [ 'goals', 'vertical' ];
 
 	let beginningSegment = ( beginningSteps.length - 1 ) / MAX_STEPS;
 	let middleSegment = 0;

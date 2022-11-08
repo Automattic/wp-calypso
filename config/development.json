@@ -151,8 +151,6 @@
 		"signup/anchor-fm": true,
 		"signup/design-picker-pattern-assembler": true,
 		"signup/design-picker-categories": true,
-		"signup/goals-step": true,
-		"signup/goals-step-2": true,
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -29,7 +28,6 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const subHeaderText = translate( 'Choose a category that defines your website the best.' );
 	const isEnglishLocale = useIsEnglishLocale();
 	const isSkipSynonyms = useQuery().get( 'isSkipSynonyms' ) ?? ! isEnglishLocale;
-	const goalsCaptureStepEnabled = isEnabled( 'signup/goals-step' );
 
 	const handleSiteVerticalSelect = ( vertical: Vertical ) => {
 		setVertical( vertical );
@@ -65,13 +63,12 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 			<DocumentHead title={ headerText } />
 			<StepContainer
 				stepName="site-vertical"
-				goBack={ goalsCaptureStepEnabled ? goBack : undefined }
+				goBack={ goBack }
 				goNext={ goNext }
 				headerImageUrl={ siteVerticalImage }
 				skipLabelText={ translate( 'Skip to dashboard' ) }
 				skipButtonAlign="top"
 				isHorizontalLayout={ true }
-				hideBack={ ! goalsCaptureStepEnabled }
 				formattedHeader={
 					<FormattedHeader
 						id="site-vertical-header"
