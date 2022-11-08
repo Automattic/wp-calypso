@@ -14,6 +14,7 @@ export type HorizontalBarListItemProps = {
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
 	rightSideItem?: React.ReactNode | HTMLElement;
 	useShortLabel?: boolean;
+	isStatic?: boolean;
 };
 
 type StatDataObject = {

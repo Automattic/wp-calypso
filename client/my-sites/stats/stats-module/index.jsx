@@ -161,6 +161,7 @@ class StatsModule extends Component {
 			( path === 'posts' ||
 				path === 'videoplays' ||
 				path === 'filedownloads' ||
+				path === 'searchterms' ||
 				path === 'countryviews' );
 
 		return (
@@ -188,9 +189,8 @@ class StatsModule extends Component {
 						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					>
-						{ path === 'countryviews' && <Geochart query={ query } /> }
-					</StatsListCard>
+						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					/>
 				) }
 
 				{ ( ! shouldShowNewModule || path === 'countryviews' ) && (
