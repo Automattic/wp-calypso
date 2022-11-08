@@ -240,6 +240,7 @@ export default function CheckoutMain( {
 		isInModal,
 		isJetpackCheckout,
 		domains,
+		isGiftPurchase,
 	} );
 
 	const getThankYouUrl = useCallback( () => {

@@ -89,6 +89,7 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
+	isGiftPurchase?: boolean;
 }
 
 /**
@@ -125,6 +126,7 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
+	isGiftPurchase = false,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -231,6 +233,14 @@ export default function getThankYouPageUrl( {
 	if ( noPurchaseMade ) {
 		debug( 'there was no purchase, so returning calypso root' );
 		return '/';
+	}
+
+	// Gift purchases need to bypass everything below, especially the updateUrlInCookie
+	// redirection to the ecommerce thank you page for ecommerce plan checkouts.
+	// It's possible this might need to be moved further up later if we want to cover gift purchase on Jetpack sites.
+	if ( isGiftPurchase ) {
+		debug( 'gift purchase' );
+		return `/checkout/gift/thank-you/${ siteSlug }`;
 	}
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to

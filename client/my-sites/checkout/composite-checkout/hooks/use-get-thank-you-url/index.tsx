@@ -36,6 +36,7 @@ export default function useGetThankYouUrl( {
 	isInModal,
 	isJetpackCheckout = false,
 	domains,
+	isGiftPurchase,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 
@@ -55,6 +56,7 @@ export default function useGetThankYouUrl( {
 			isInModal,
 			isJetpackCheckout,
 			domains,
+			isGiftPurchase,
 		};
 
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
@@ -75,6 +77,7 @@ export default function useGetThankYouUrl( {
 		hideNudge,
 		isJetpackCheckout,
 		domains,
+		isGiftPurchase,
 	] );
 	return getThankYouUrl;
 }
@@ -91,4 +94,5 @@ export interface GetThankYouUrlProps {
 	isInModal?: boolean;
 	isJetpackCheckout?: boolean;
 	domains: ResponseDomain[] | undefined;
+	isGiftPurchase?: boolean;
 }
