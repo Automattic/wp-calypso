@@ -48,6 +48,7 @@ import {
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes,
+	getIsLoadingCart,
 } from '../selectors';
 
 const twentyfifteen = {
@@ -3144,5 +3145,25 @@ describe( '#isExternallyManagedTheme()', () => {
 		);
 
 		expect( isExternallyManaged ).toEqual( false );
+	} );
+
+	describe( 'getIsLoadingCart', () => {
+		test( 'should return true if the cart is loading', () => {
+			const isLoading = getIsLoadingCart( {
+				themes: {
+					isLoadingCart: true,
+				},
+			} );
+			expect( isLoading ).toBe( true );
+		} );
+
+		test( 'should return false if the cart has loaded', () => {
+			const isLoading = getIsLoadingCart( {
+				themes: {
+					isLoadingCart: false,
+				},
+			} );
+			expect( isLoading ).toBe( false );
+		} );
 	} );
 } );
