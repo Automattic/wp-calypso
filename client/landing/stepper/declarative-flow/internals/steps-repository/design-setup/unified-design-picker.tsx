@@ -282,10 +282,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			);
 		}
 
-		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			return goToCheckout();
-		}
-
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
@@ -300,11 +296,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function goToCheckout() {
-		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-				theme: selectedDesign?.slug,
-			} );
-		}
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'

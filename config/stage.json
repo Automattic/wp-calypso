@@ -114,7 +114,6 @@
 		"signup/inline-help": false,
 		"signup/professional-email-step": false,
 		"signup/reskin": true,
-		"signup/seller-upgrade-modal": true,
 		"signup/social": true,
 		"signup/tailored-ecommerce": false,
 		"signup/woo-verify-email": false,
