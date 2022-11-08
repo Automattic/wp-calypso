@@ -1,6 +1,6 @@
+import DesignCarouselSwiper from '@automattic/design-carousel';
 import { StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import AsyncLoad from 'calypso/components/async-load';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { Step } from '../../types';
@@ -20,13 +20,7 @@ const DesignCarousel: Step = function DesignCarousel( { navigation } ) {
 			goNext={ goNext }
 			shouldHideNavButtons
 			isFullLayout={ true }
-			stepContent={
-				<AsyncLoad
-					require="@automattic/design-carousel"
-					placeholder={ null }
-					onPick={ handleSubmit }
-				/>
-			}
+			stepContent={ <DesignCarouselSwiper onPick={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			formattedHeader={
 				<FormattedHeader

@@ -28,6 +28,7 @@
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
+		"@automattic/design-carousel": "workspace:^",
 		"@automattic/design-picker": "workspace:^",
 		"@automattic/design-preview": "workspace:^",
 		"@automattic/domain-picker": "workspace:^",
