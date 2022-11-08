@@ -178,7 +178,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 };
 
 export const isReskinnedFlow = ( flowName ) => {
-	return config.isEnabled( 'signup/reskin' ) && config( 'reskinned_flows' ).includes( flowName );
+	return config( 'reskinned_flows' ).includes( flowName );
 };
 
 export const isP2Flow = ( flowName ) => {
