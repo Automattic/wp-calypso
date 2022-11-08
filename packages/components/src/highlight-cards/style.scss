@@ -76,6 +76,7 @@ $vertical-margin: 32px;
 	align-items: flex-end;
 	color: var(--studio-gray-20);
 	display: flex;
+	fill: var(--studio-gray-20);
 	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 24px;
@@ -92,6 +93,9 @@ $vertical-margin: 32px;
 .highlight-card-difference-icon {
 	display: flex;
 	align-content: flex-end;
+}
+.highlight-card-difference-absolute-value {
+	margin-right: 2px;
 }
 
 @media ( max-width: $break-small ) {

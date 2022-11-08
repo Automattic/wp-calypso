@@ -1,4 +1,4 @@
-import { Icon, trendingDown, trendingUp } from '@wordpress/icons';
+import { Icon, arrowRight, trendingDown, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Card } from '../';
 
@@ -65,6 +65,7 @@ export default function HighlightCard( {
 					>
 						<span className="highlight-card-difference-icon" title={ String( difference ) }>
 							{ difference < 0 && <Icon icon={ trendingDown } /> }
+							{ difference === 0 && <Icon icon={ arrowRight } /> }
 							{ difference > 0 && <Icon icon={ trendingUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
