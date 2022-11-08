@@ -585,7 +585,15 @@ export function mockCartEndpoint( initialCart: ResponseCart, currency: string, l
 
 export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 	return async () => {
-		return initialCart;
+		const isFree =
+			initialCart.total_cost_integer === 0 ||
+			initialCart.credits_integer >= initialCart.total_cost_integer;
+		return {
+			...initialCart,
+			allowed_payment_methods: isFree
+				? [ 'WPCOM_Billing_WPCOM' ]
+				: [ 'WPCOM_Billing_PayPal_Express' ],
+		};
 	};
 }
 
