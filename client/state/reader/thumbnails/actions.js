@@ -43,9 +43,19 @@ export const requestThumbnail = ( embedUrl ) => ( dispatch ) => {
 			return Promise.resolve();
 		}
 		case 'videopress': {
-			const thumbnailUrl = `https://thumbs.videopress.com/${ id }?c=1`;
-			dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
-			return Promise.resolve();
+			const posterEndpoint = `https://public-api.wordpress.com/rest/v1.1/videos/${ id }/poster`;
+
+			return globalThis.fetch( posterEndpoint ).then( async ( response ) => {
+				let json;
+				try {
+					json = await response.json();
+				} catch ( error ) {}
+
+				const thumbnailUrl = json?.poster ?? '';
+				if ( thumbnailUrl ) {
+					dispatch( receiveThumbnail( embedUrl, thumbnailUrl ) );
+				}
+			} );
 		}
 		case 'vimeo': {
 			debug( `Requesting thumbnail for embed ${ embedUrl }` );
