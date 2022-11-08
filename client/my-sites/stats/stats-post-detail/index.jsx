@@ -164,7 +164,13 @@ class StatsPostDetail extends Component {
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
 				{ isFixedNavHeadersEnabled ? (
-					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) } />
+					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
+						{ showViewLink && (
+							<Button onClick={ this.openPreview }>
+								<span>{ actionLabel }</span>
+							</Button>
+						) }
+					</FixedNavigationHeader>
 				) : (
 					<HeaderCake
 						onClick={ this.goBack }
