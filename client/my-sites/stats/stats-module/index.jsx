@@ -157,7 +157,7 @@ class StatsModule extends Component {
 		const shouldShowNewModule =
 			isEnabled( 'stats/new-stats-module-component' ) &&
 			! summary &&
-			( path === 'posts' || path === 'videoplays' );
+			( path === 'posts' || path === 'videoplays' || path === 'filedownloads' );
 
 		return (
 			<>
