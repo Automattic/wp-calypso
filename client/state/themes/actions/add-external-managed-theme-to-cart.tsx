@@ -45,17 +45,25 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 		}
 
 		const siteSlug = getSiteSlug( getState(), siteId );
-
-		const isSiteEligibleForManagedExternalThemes = getIsSiteEligibleForManagedExternalThemes(
-			getState(),
-			siteId
-		);
 		// TODO: use the marketplaceThemeProduct function from #69831
 		const externalManagedThemeProduct = {
 			product_slug: themeId,
 		};
 
+		/**
+		 * This holds the products that will be added to the cart. We always want to add the
+		 * theme product, but we only want to add the business plan if the site is not eligible
+		 */
 		const cartItems: Array< MinimalRequestCartProduct > = [ externalManagedThemeProduct ];
+
+		/**
+		 * If the site is not eligible for the external themes, means that it doesn't have a business plan.
+		 * We need to add the business plan to the cart.
+		 */
+		const isSiteEligibleForManagedExternalThemes = getIsSiteEligibleForManagedExternalThemes(
+			getState(),
+			siteId
+		);
 
 		if ( ! isSiteEligibleForManagedExternalThemes ) {
 			cartItems.push( { product_slug: PLAN_BUSINESS_MONTHLY } );
