@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
-import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	follows,
 	insights,
@@ -14,6 +13,7 @@ import {
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { makeLayout, render as clientRender } from './page-middleware/layout';
 
 import 'calypso/my-sites/stats/style.scss';
 
@@ -46,10 +46,7 @@ export default function ( pageBase = '/' ) {
 
 	// Redirect this to default /stats/day view in order to keep
 	// the paths and page view reporting consistent.
-	// page( '/', '/stats/day/:site' );
-
-	// Stat Overview Page
-	// statsPage( `/stats/:period(${ validPeriods })`, overview );
+	page( '/', '/stats/day/:site' );
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );

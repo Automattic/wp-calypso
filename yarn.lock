@@ -328,11 +328,13 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@wordpress/dependency-extraction-webpack-plugin": ^4.4.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
+    classnames: ^2.3.2
     debug: ^4.3.4
     enzyme: ^3.11.0
     html-webpack-plugin: ^5.0.0-beta.4
@@ -340,6 +342,7 @@ __metadata:
     page: ^1.11.5
     path-browserify: ^1.0.1
     postcss: ^8.3.11
+    prop-types: ^15.8.1
     react: ^17.0.2
     react-dom: ^17.0.2
     react-query: ^3.32.1
@@ -13385,6 +13388,13 @@ __metadata:
   version: 2.3.1
   resolution: "classnames@npm:2.3.1"
   checksum: e3b832219042802464e648c41c2e8be96c2c64d2522cfa22fbb5ec088418406c61ab351a682c077c07f691c8b00c9f0ee7939b20fabc6c23da69063252a4ab89
+  languageName: node
+  linkType: hard
+
+"classnames@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "classnames@npm:2.3.2"
+  checksum: cd50ead57b4f97436aaa9f9885c6926323efc7c2bea8e3d4eb10e4e972aa6a1cfca1c7a0e06f8a199ca7498d4339e30bb6002e589e61c9f21248cbf3e8b0b18d
   languageName: node
   linkType: hard
 
