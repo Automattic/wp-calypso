@@ -6,27 +6,30 @@
 	}
 
 	// FormattedHeader styles
-	.formatted-header.stats__section-header {
-		margin: 0;
-
-		.formatted-header__title {
-			margin-bottom: 4px;
-			font-weight: 500;
-			font-size: $font-title-small;
-			line-height: 26px;
-			color: var(--color-neutral-100);
-		}
-
-		.formatted-header__subtitle {
+	.formatted-header {
+		&.is-left-align,
+		&.is-right-align {
 			margin: 0;
-			font-weight: 400;
-			font-size: $font-body-small;
-			line-height: 20px;
-			color: var(--color-neutral-60);
-		}
 
-		.inline-support-link {
-			color: var(--color-primary);
+			.formatted-header__title {
+				margin-bottom: 4px;
+				font-weight: 500;
+				font-size: $font-title-small;
+				line-height: 26px;
+				color: var(--color-neutral-100);
+			}
+
+			.formatted-header__subtitle {
+				margin: 0;
+				font-weight: 400;
+				font-size: $font-body-small;
+				line-height: 20px;
+				color: var(--color-neutral-60);
+			}
+
+			.inline-support-link {
+				color: var(--color-primary);
+			}
 		}
 	}
 
