@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_PREMIUM, WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import DesignPicker, {
@@ -59,10 +58,6 @@ export default function DesignPickerStep( props ) {
 
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
-	const tier =
-		isPremiumThemeAvailable || isEnabled( 'signup/design-picker-premium-themes-checkout' )
-			? 'all'
-			: 'free';
 
 	const getThemeFilters = () => {
 		if ( props.useDIFMThemes ) {
@@ -72,7 +67,10 @@ export default function DesignPickerStep( props ) {
 		return 'auto-loading-homepage,full-site-editing';
 	};
 
-	const { data: apiThemes = [] } = useThemeDesignsQuery( { filter: getThemeFilters(), tier } );
+	const { data: apiThemes = [] } = useThemeDesignsQuery( {
+		filter: getThemeFilters(),
+		tier: 'all',
+	} );
 
 	useEffect(
 		() => {
@@ -207,10 +205,6 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderCheckoutModal() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
-
 		return <AsyncCheckoutModal />;
 	}
 

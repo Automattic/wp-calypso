@@ -300,10 +300,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function goToCheckout() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
-
 		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
 			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 				theme: selectedDesign?.slug,
