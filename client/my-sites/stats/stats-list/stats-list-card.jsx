@@ -39,7 +39,12 @@ const StatsListCard = ( {
 		}
 	};
 
-	const barMaxValue = data?.[ 0 ]?.value || 0;
+	let barMaxValue = 0;
+
+	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.
+	data?.forEach( ( item ) => {
+		barMaxValue = item?.value > barMaxValue ? item?.value : barMaxValue;
+	} );
 
 	return (
 		<StatsCard
