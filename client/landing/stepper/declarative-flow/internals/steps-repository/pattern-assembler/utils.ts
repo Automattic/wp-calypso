@@ -1,14 +1,26 @@
 import { addQueryArgs } from '@wordpress/url';
-import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, STYLE_SHEET } from './constants';
+import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, SITE_TAGLINE } from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
-export const getPatternPreviewUrl = ( id: number, language: string ) => {
+export const getPatternPreviewUrl = ( {
+	id,
+	language,
+	siteTitle,
+	stylesheet,
+}: {
+	id: number;
+	language: string;
+	siteTitle?: string;
+	stylesheet?: string;
+} ) => {
 	return addQueryArgs( PREVIEW_PATTERN_URL, {
-		stylesheet: STYLE_SHEET,
 		pattern_id: encodePatternId( id ),
 		language,
+		site_title: siteTitle,
+		site_tagline: SITE_TAGLINE,
+		stylesheet,
 	} );
 };
 
@@ -27,16 +39,20 @@ export function createCustomHomeTemplateContent(
 	hasFooter: boolean
 ) {
 	const content: string[] = [];
-
 	if ( hasHeader ) {
 		content.push(
 			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
 		);
+	} else {
+		content.push( `<!-- wp:template-part {"area":"header"} /-->` );
 	}
 
 	content.push( `
 <!-- wp:group {"tagName":"main"} -->
 	<main class="wp-block-group">
+	<!-- wp:paragraph -->
+	<p></p>
+	<!-- /wp:paragraph -->
 	</main>
 <!-- /wp:group -->` );
 
@@ -44,6 +60,8 @@ export function createCustomHomeTemplateContent(
 		content.push(
 			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
 		);
+	} else {
+		content.push( `<!-- wp:template-part {"area":"footer"} /-->` );
 	}
 
 	return content.join( '\n' );

@@ -41,6 +41,7 @@ export default function CheckoutMainWrapper( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isJetpackCheckout,
+	isGiftPurchase,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -57,6 +58,7 @@ export default function CheckoutMainWrapper( {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isJetpackCheckout?: boolean;
+	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -113,6 +115,7 @@ export default function CheckoutMainWrapper( {
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
 							isJetpackCheckout={ isJetpackCheckout }
+							isGiftPurchase={ isGiftPurchase }
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }
 							isUserComingFromLoginForm={ isUserComingFromLoginForm }

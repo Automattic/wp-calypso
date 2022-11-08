@@ -105,6 +105,7 @@ class SiteSettingsFormWriting extends Component {
 						isRequestingSettings={ isRequestingSettings }
 						handleAutosavingToggle={ handleAutosavingToggle }
 						fields={ fields }
+						translate={ translate }
 					/>
 				) }
 

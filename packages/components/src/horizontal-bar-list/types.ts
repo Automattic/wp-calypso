@@ -3,7 +3,6 @@ import React from 'react';
 export type HorizontalBarListProps = {
 	children: React.ReactNode;
 	className?: string;
-	data: Array< StatDataObject >;
 };
 
 export type HorizontalBarListItemProps = {
@@ -14,6 +13,7 @@ export type HorizontalBarListItemProps = {
 	hasIndicator?: boolean;
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
 	rightSideItem?: React.ReactNode | HTMLElement;
+	useShortLabel?: boolean;
 };
 
 type StatDataObject = {
@@ -32,9 +32,24 @@ type StatDataObject = {
 	countryCode?: string;
 	region?: string;
 	public?: boolean;
+	shortLabel?: string;
 };
 
 type StatsActions = {
 	data: string;
 	type: string;
+};
+
+export type StatsCardProps = {
+	children: React.ReactNode;
+	className?: string;
+	title: string;
+	titleURL: string;
+	footerAction?: {
+		label?: string;
+		url?: string;
+	};
+	isEmpty?: boolean;
+	emptyMessage?: string;
+	metricLabel?: string;
 };

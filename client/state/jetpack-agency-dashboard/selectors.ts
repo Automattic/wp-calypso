@@ -1,7 +1,8 @@
 import { getPreference } from 'calypso/state/preferences/selectors';
 import type {
 	Preference,
-	PurchasedProduct,
+	AllowedTypes,
+	PurchasedProductsInfo,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import type { AppState } from 'calypso/types';
 
@@ -26,6 +27,34 @@ export function checkIfJetpackSiteGotDisconnected( state: AppState ): boolean {
 	return !! state.sites.jetpackSiteDisconnected;
 }
 
-export function getPurchasedLicense( state: AppState ): PurchasedProduct | null {
-	return state.agencyDashboard.purchasedLicense;
+export function getPurchasedLicense( state: AppState ): PurchasedProductsInfo | null {
+	return state.agencyDashboard.purchasedLicense?.purchasedLicenseInfo;
+}
+
+/**
+ * Returns the selected licenses from the dashboard.
+ */
+export function getSelectedLicenses( state: AppState ): Array< string > {
+	return state.agencyDashboard?.selectedLicenses?.licenses;
+}
+
+/**
+ * Returns the selected licenses site.
+ */
+export function getSelectedLicensesSiteId( state: AppState ): number | null {
+	return state.agencyDashboard?.selectedLicenses?.siteId;
+}
+
+/**
+ * Returns licenses of a specific type among the selected ones.
+ */
+export function hasSelectedLicensesOfType(
+	state: AppState,
+	siteId: number,
+	type: AllowedTypes
+): boolean {
+	return (
+		state.agencyDashboard?.selectedLicenses?.siteId === siteId &&
+		state.agencyDashboard?.selectedLicenses?.licenses.includes( type )
+	);
 }

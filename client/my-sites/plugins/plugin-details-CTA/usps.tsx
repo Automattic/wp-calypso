@@ -14,10 +14,12 @@ import PluginDetailsSidebarUSP from 'calypso/my-sites/plugins/plugin-details-sid
 import usePluginsSupportText from 'calypso/my-sites/plugins/use-plugins-support-text/';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { PREINSTALLED_PLUGINS } from '../constants';
 
 const StyledUl = styled.ul`
-	margin-top: 20px;
 	margin-left: 0;
 	list-style-type: none;
 `;
@@ -26,7 +28,7 @@ const StyledLi = styled.li`
 	color: var( --studio-gray-80 );
 	font-size: $font-body-small;
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	margin: 5px 0;
 
 	.title {
@@ -37,7 +39,9 @@ const StyledLi = styled.li`
 	}
 
 	svg {
+		min-width: 16px;
 		margin-right: 8px;
+		margin-top: 4px;
 	}
 `;
 
@@ -61,6 +65,7 @@ const useRequiredPlan = ( shouldUpgrade: boolean ) => {
 };
 
 interface Props {
+	pluginSlug: string;
 	shouldUpgrade: boolean;
 	isFreePlan: boolean;
 	isMarketplaceProduct: boolean;
@@ -100,8 +105,17 @@ export const USPS: React.FC< Props > = ( { isMarketplaceProduct, billingPeriod }
 	);
 };
 
-export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billingPeriod } ) => {
+export const PlanUSPS: React.FC< Props > = ( {
+	pluginSlug,
+	shouldUpgrade,
+	isFreePlan,
+	billingPeriod,
+} ) => {
 	const translate = useTranslate();
+
+	const selectedSite = useSelector( getSelectedSite );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
+	const isPreInstalledPlugin = ! isJetpack && PREINSTALLED_PLUGINS.includes( pluginSlug );
 
 	const isAnnualPeriod = billingPeriod === IntervalLength.ANNUALLY;
 	const supportText = usePluginsSupportText();
@@ -139,10 +153,21 @@ export const PlanUSPS: React.FC< Props > = ( { shouldUpgrade, isFreePlan, billin
 			break;
 	}
 
+	const preInstalledPluginUSPS = [
+		translate( 'Remove WordPress.com ads' ),
+		translate( 'Collect payments' ),
+		translate( 'Earn ad revenue' ),
+		translate( 'Premium themes' ),
+		translate( 'Google Analytics integration' ),
+		translate( 'Advanced SEO (Search Engine Optimisation) tools' ),
+		translate( 'Automated site backups and one-click restore' ),
+		translate( 'SFTP (SSH File Transfer Protocol) and Database Access' ),
+	];
 	const filteredUSPS = [
 		...( isFreePlan && isAnnualPeriod ? [ translate( 'Free domain for one year' ) ] : [] ),
 		translate( 'Best-in-class hosting' ),
 		supportText,
+		...( isPreInstalledPlugin ? preInstalledPluginUSPS : [] ),
 	];
 
 	return (

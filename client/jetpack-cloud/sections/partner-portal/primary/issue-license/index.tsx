@@ -32,7 +32,10 @@ export default function IssueLicense( { selectedSite, suggestedProduct }: Assign
 			<CardHeading size={ 36 }>{ translate( 'Issue a new License' ) }</CardHeading>
 
 			{ isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ? (
-				<IssueMultipleLicensesForm />
+				<IssueMultipleLicensesForm
+					selectedSite={ selectedSite }
+					suggestedProduct={ suggestedProduct }
+				/>
 			) : (
 				<IssueLicenseForm selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
 			) }

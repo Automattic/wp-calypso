@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -9,16 +10,13 @@ import titlecase from 'to-title-case';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
-import {
-	getSitePost,
-	isRequestingSitePost,
-	getPostPreviewUrl,
-} from 'calypso/state/posts/selectors';
+import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getSiteOption,
@@ -41,7 +39,6 @@ class StatsPostDetail extends Component {
 		postId: PropTypes.number,
 		translate: PropTypes.func,
 		context: PropTypes.object,
-		isRequestingPost: PropTypes.bool,
 		isRequestingStats: PropTypes.bool,
 		countViews: PropTypes.number,
 		post: PropTypes.object,
@@ -65,6 +62,32 @@ class StatsPostDetail extends Component {
 		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	};
 
+	getNavigationItemsWithTitle = ( title ) => {
+		const localizedTabNames = {
+			traffic: this.props.translate( 'Traffic' ),
+			insights: this.props.translate( 'Insights' ),
+			store: this.props.translate( 'Store' ),
+			ads: this.props.translate( 'Ads' ),
+		};
+		const possibleBackLinks = {
+			traffic: '/stats/day/',
+			insights: '/stats/insights/',
+			store: '/stats/store/',
+			ads: '/stats/ads/',
+		};
+		// We track the parent tab via sessionStorage.
+		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
+		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
+		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
+		// Append the domain as needed.
+		const domain = this.props.path?.split( '/' ).pop();
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
+		// Wrap it up!
+		return [ { label: backLabel, href: backLink }, { label: title } ];
+	};
+
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
@@ -81,10 +104,27 @@ class StatsPostDetail extends Component {
 		} );
 	};
 
+	getTitle() {
+		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+
+		if ( isLatestPostsHomepage ) {
+			return translate( 'Home page / Archives' );
+		}
+
+		if ( typeof post?.title === 'string' && post.title.length ) {
+			return decodeEntities( stripHTML( post.title ) );
+		}
+
+		if ( typeof postFallback?.post_title === 'string' && postFallback.post_title.length ) {
+			return decodeEntities( stripHTML( postFallback.post_title ) );
+		}
+
+		return null;
+	}
+
 	render() {
 		const {
 			isLatestPostsHomepage,
-			isRequestingPost,
 			isRequestingStats,
 			countViews,
 			post,
@@ -95,23 +135,7 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 		} = this.props;
-		const postOnRecord = post && post.title !== null;
 		const isLoading = isRequestingStats && ! countViews;
-		let title;
-
-		if ( postOnRecord ) {
-			if ( typeof post.title === 'string' && post.title.length ) {
-				title = decodeEntities( stripHTML( post.title ) );
-			}
-		}
-
-		if ( ! postOnRecord && ! isLatestPostsHomepage && ! isRequestingPost ) {
-			title = translate( "We don't have that post on record yet." );
-		}
-
-		if ( isLatestPostsHomepage ) {
-			title = translate( 'Home page / Archives' );
-		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
 		let actionLabel;
@@ -125,8 +149,13 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		// Set up for FixedNavigationHeader.
+		const title = this.getTitle();
+		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
+		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
+
 		return (
-			<Main wideLayout>
+			<Main className={ className } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -134,14 +163,18 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<HeaderCake
-					onClick={ this.goBack }
-					actionIcon={ showViewLink ? 'visible' : null }
-					actionText={ showViewLink ? actionLabel : null }
-					actionOnClick={ showViewLink ? this.openPreview : null }
-				>
-					{ title }
-				</HeaderCake>
+				{ isFixedNavHeadersEnabled ? (
+					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) } />
+				) : (
+					<HeaderCake
+						onClick={ this.goBack }
+						actionIcon={ showViewLink ? 'visible' : null }
+						actionText={ showViewLink ? actionLabel : null }
+						actionOnClick={ showViewLink ? this.openPreview : null }
+					>
+						{ title }
+					</HeaderCake>
+				) }
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
@@ -206,8 +239,9 @@ const connectComponent = connect( ( state, { postId } ) => {
 
 	return {
 		post: getSitePost( state, siteId, postId ),
+		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
+		postFallback: getPostStat( state, siteId, postId, 'post' ),
 		isLatestPostsHomepage,
-		isRequestingPost: isRequestingSitePost( state, siteId, postId ),
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),

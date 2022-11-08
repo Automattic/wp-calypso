@@ -4,6 +4,7 @@ import { FunctionComponent, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { onboardingUrl } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -23,7 +24,14 @@ const SiteSelectorAddSite: FunctionComponent = () => {
 	return (
 		<Button
 			primary
-			href={ `${ onboardingUrl() }?ref=calypso-selector&source=my-home&siteSlug=${ siteSlug }` }
+			href={ addQueryArgs(
+				{
+					ref: 'calypso-selector',
+					source: 'my-home',
+					siteSlug,
+				},
+				onboardingUrl()
+			) }
 			onClick={ recordAddNewSite }
 		>
 			{ translate( 'Add new site' ) }

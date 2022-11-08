@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -116,35 +117,61 @@ class WordAdsChartTabs extends Component {
 	}
 
 	render() {
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
 		const { siteId, query, isDataLoading } = this.props;
-		const classes = [ 'stats-module', 'is-chart-tabs', { 'is-loading': isDataLoading } ];
+		const classes = [
+			'is-chart-tabs',
+			{
+				'stats-module': ! isNewFeatured,
+				'is-loading': isDataLoading,
+			},
+		];
 
 		return (
 			<div>
 				{ siteId && <QuerySiteStats statType="statsAds" siteId={ siteId } query={ query } /> }
 
-				<Card className={ classNames( ...classes ) }>
-					<Legend
-						activeCharts={ this.props.activeLegend }
-						activeTab={ this.props.activeTab }
-						tabs={ this.props.charts }
-					/>
-					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-					<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
-					<Chart
-						barClick={ this.props.barClick }
-						data={ this.buildChartData() }
-						loading={ isDataLoading }
-					/>
-					<StatTabs
-						data={ this.props.data }
-						tabs={ this.props.charts }
-						switchTab={ this.props.switchTab }
-						selectedTab={ this.props.chartTab }
-						activeIndex={ this.props.queryDate }
-						activeKey="period"
-					/>
-				</Card>
+				{ isNewFeatured ? (
+					<div className={ classNames( ...classes ) }>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
+						<Chart
+							barClick={ this.props.barClick }
+							data={ this.buildChartData() }
+							chartXPadding={ 0 }
+							minBarWidth={ 35 }
+						/>
+						<StatTabs
+							data={ this.props.data }
+							tabs={ this.props.charts }
+							switchTab={ this.props.switchTab }
+							selectedTab={ this.props.chartTab }
+							activeIndex={ this.props.queryDate }
+							activeKey="period"
+							iconSize={ 24 }
+						/>
+					</div>
+				) : (
+					<Card className={ classNames( ...classes ) }>
+						<Legend
+							activeCharts={ this.props.activeLegend }
+							activeTab={ this.props.activeTab }
+							tabs={ this.props.charts }
+						/>
+						{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+						<StatsModulePlaceholder className="is-chart" isLoading={ isDataLoading } />
+						<Chart barClick={ this.props.barClick } data={ this.buildChartData() } />
+						<StatTabs
+							data={ this.props.data }
+							tabs={ this.props.charts }
+							switchTab={ this.props.switchTab }
+							selectedTab={ this.props.chartTab }
+							activeIndex={ this.props.queryDate }
+							activeKey="period"
+						/>
+					</Card>
+				) }
 			</div>
 		);
 	}

@@ -29,6 +29,47 @@
 	}
 }
 
+.launchpad__container {
+	display: flex;
+	flex-direction: column;
+}
+
+.launchpad__email-validation-banner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px;
+	background: var(--studio-gray-0);
+
+	&-content {
+		gap: 16px;
+		display: flex;
+		align-items: center;
+
+		&-resend-button {
+			color: var(--color-link);
+			padding: 0;
+			font-size: 1rem;
+			cursor: pointer;
+		}
+
+		&-checkmark-icon {
+			fill: var(--studio-green-40);
+		}
+	}
+
+	&-close-button {
+		padding: 0;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&-close-icon {
+			fill: var(--studio-gray-20);
+		}
+	}
+}
+
 .launchpad__content {
 	display: flex;
 	flex-direction: column;
@@ -108,7 +149,7 @@
 	display: flex;
 	align-items: center;
 	height: 48px;
-	margin: 32px 0;
+	margin: 32px 0 16px 0;
 	padding: 0 12px;
 
 	.launchpad__url-box-domain {
@@ -143,6 +184,20 @@
 
 .launchpad__url-box-top-level-domain {
 	font-weight: 500;
+}
+
+.launchpad__domain-notification {
+	display: flex;
+	margin-bottom: 16px;
+
+	@include break-large {
+		margin-bottom: 10px;
+	}
+}
+
+.launchpad__domain-checkmark-icon {
+	flex: 0 0 36px;
+	fill: var(--studio-green-40);
 }
 
 .launchpad__domain-upgrade-badge {
@@ -294,9 +349,9 @@
 	}
 }
 
-// completed tasks
-.launchpad__task.completed-and-inactive,
-.launchpad__task.completed-and-active {
+// completed tasks (both enabled and disabled)
+.launchpad__task.completed.disabled,
+.launchpad__task.completed.enabled {
 	.launchpad__checklist-item-text {
 		color: var(--studio-gray-50);
 		font-weight: 400;
@@ -309,11 +364,11 @@
 	}
 }
 
-// not-completed && completed-and-active tasks
-.launchpad__task.completed-and-active:hover,
-.launchpad__task.not-completed:hover,
-.launchpad__task.completed-and-active > a:focus,
-.launchpad__task.not-completed > a:focus {
+// pending tasks and completed enabled
+.launchpad__task.completed.enabled:hover,
+.launchpad__task.pending:hover,
+.launchpad__task.completed.enabled > a:focus,
+.launchpad__task.pending > a:focus {
 	.launchpad__checklist-item-text {
 		color: var(--studio-blue-50);
 	}
@@ -326,6 +381,13 @@
 	// change badge color on hover (Choose a Plan step)
 	.badge {
 		background: var(--studio-blue-10);
+	}
+}
+
+// pending disabled tasks
+.launchpad__task.pending.disabled {
+	.launchpad__checklist-item-text {
+		color: inherit;
 	}
 }
 

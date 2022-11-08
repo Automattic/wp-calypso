@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -20,6 +21,7 @@ import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
 import StatsList from '../stats-list';
 import StatsListLegend from '../stats-list/legend';
+import StatsListCard from '../stats-list/stats-list-card';
 import AllTimeNav from './all-time-nav';
 import StatsModuleAvailabilityWarning from './availability-warning';
 import StatsModuleExpand from './expand';
@@ -152,66 +154,105 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
+		const shouldShowNewModule =
+			isEnabled( 'stats/new-stats-module-component' ) &&
+			! summary &&
+			( path === 'posts' || path === 'videoplays' || path === 'filedownloads' );
+
 		return (
-			<div>
+			<>
 				{ siteId && statType && (
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
-				{ ! isAllTime && (
-					<SectionHeader
-						className={ headerClass }
-						label={ this.getModuleLabel() }
-						href={ ! summary ? summaryLink : null }
+				{ shouldShowNewModule && (
+					<StatsListCard
+						moduleType={ path }
+						data={ data }
+						useShortLabel={ useShortLabel }
+						title={ this.getModuleLabel() }
+						emptyMessage={ moduleStrings.empty }
+						showMore={
+							this.props.showSummaryLink && displaySummaryLink
+								? {
+										url: this.getHref(),
+										label: this.props.translate( 'View all', {
+											context: 'Stats: Button label to expand a panel',
+										} ),
+								  }
+								: undefined
+						}
+						titleURL={ this.getHref() }
+						error={ hasError && <ErrorPanel /> }
+						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
 					>
-						{ summary && (
-							<DownloadCsv statType={ statType } query={ query } path={ path } period={ period } />
-						) }
-					</SectionHeader>
+						{ this.props.children }
+					</StatsListCard>
 				) }
-				<Card compact className={ cardClasses }>
-					{ statType === 'statsFileDownloads' && (
-						<StatsModuleAvailabilityWarning
-							statType={ statType }
-							startOfPeriod={ period && period.startOf }
-						/>
-					) }
-					{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
-					{ this.props.children }
-					<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-					<StatsModulePlaceholder isLoading={ isLoading } />
-					<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
-					{ this.props.showSummaryLink && displaySummaryLink && (
-						<StatsModuleExpand href={ summaryLink } />
-					) }
-					{ summary && 'countryviews' === path && (
-						<UpsellNudge
-							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
+
+				{ ! shouldShowNewModule && (
+					<div>
+						{ ! isAllTime && (
+							<SectionHeader
+								className={ headerClass }
+								label={ this.getModuleLabel() }
+								href={ ! summary ? summaryLink : null }
+							>
+								{ summary && (
+									<DownloadCsv
+										statType={ statType }
+										query={ query }
+										path={ path }
+										period={ period }
+									/>
+								) }
+							</SectionHeader>
+						) }
+						<Card compact className={ cardClasses }>
+							{ statType === 'statsFileDownloads' && (
+								<StatsModuleAvailabilityWarning
+									statType={ statType }
+									startOfPeriod={ period && period.startOf }
+								/>
 							) }
-							event="googleAnalytics-stats-countries"
-							feature={ FEATURE_GOOGLE_ANALYTICS }
-							plan={ PLAN_PREMIUM }
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-						/>
-					) }
-				</Card>
-				{ isAllTime && (
-					<div className="stats-module__footer-actions">
-						<DownloadCsv
-							statType={ statType }
-							query={ query }
-							path={ path }
-							borderless
-							period={ period }
-						/>
+							{ isAllTime && <AllTimeNav path={ path } query={ query } period={ period } /> }
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
+							{ this.props.children }
+							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+							<StatsModulePlaceholder isLoading={ isLoading } />
+							<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							{ this.props.showSummaryLink && displaySummaryLink && (
+								<StatsModuleExpand href={ summaryLink } />
+							) }
+							{ summary && 'countryviews' === path && (
+								<UpsellNudge
+									title={ translate( 'Add Google Analytics' ) }
+									description={ translate(
+										'Upgrade to a Premium Plan for Google Analytics integration.'
+									) }
+									event="googleAnalytics-stats-countries"
+									feature={ FEATURE_GOOGLE_ANALYTICS }
+									plan={ PLAN_PREMIUM }
+									tracksImpressionName="calypso_upgrade_nudge_impression"
+									tracksClickName="calypso_upgrade_nudge_cta_click"
+									showIcon={ true }
+								/>
+							) }
+						</Card>
+						{ isAllTime && (
+							<div className="stats-module__footer-actions">
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
 					</div>
 				) }
-			</div>
+			</>
 		);
 	}
 }

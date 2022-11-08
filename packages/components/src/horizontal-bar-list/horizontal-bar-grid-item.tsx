@@ -15,8 +15,9 @@ const HorizontalBarListItem = ( {
 	hasIndicator,
 	leftSideItem,
 	rightSideItem,
+	useShortLabel,
 }: HorizontalBarListItemProps ) => {
-	const { label, value } = data;
+	const { label, value, shortLabel } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
 	const isLink = url || onClick;
 
@@ -33,10 +34,8 @@ const HorizontalBarListItem = ( {
 	};
 
 	const TagName = isLink ? 'a' : 'div'; // group parents and countries don't use anchors.
-	const labelText = decodeEntities( label );
+	const labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
 
-	// TODO: investivate `label` and `shortLabel`
-	// TODO: investigate <Promote> component
 	return (
 		<li
 			className={ classnames(
@@ -52,7 +51,7 @@ const HorizontalBarListItem = ( {
 		>
 			<div className={ `${ BASE_CLASS_NAME }-item-bar` }>
 				{ leftSideItem && <span>{ leftSideItem }</span> }
-				<TagName className="label" href={ url }>
+				<TagName className="label" href={ url } tabIndex={ 0 }>
 					{ labelText }
 				</TagName>
 				{ /* // TODO: check if inner action links won't interfere with parent onClick */ }

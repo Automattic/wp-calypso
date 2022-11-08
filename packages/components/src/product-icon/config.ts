@@ -1,4 +1,5 @@
 import jetpackAntiSpam from './images/jetpack-anti-spam.svg';
+import jetpackBackupAddon from './images/jetpack-backup-addon.svg';
 import jetpackBackup from './images/jetpack-backup.svg';
 import jetpackBoost from './images/jetpack-boost.svg';
 import jetpackComplete from './images/jetpack-complete.svg';
@@ -40,6 +41,7 @@ export const paths = {
 	'wpcom-free': wpcomFree,
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
+	'jetpack-backup-addon': jetpackBackupAddon,
 };
 
 export type SupportedSlugs =
@@ -124,7 +126,13 @@ export type SupportedSlugs =
 	| 'jetpack_security_t2_yearly'
 	| 'jetpack_security_t2_monthly'
 	| 'jetpack_videopress'
-	| 'jetpack_videopress_monthly';
+	| 'jetpack_videopress_monthly'
+	| 'jetpack_backup_addon_storage_10gb_monthly'
+	| 'jetpack_backup_addon_storage_100gb_monthly'
+	| 'jetpack_backup_addon_storage_1tb_monthly'
+	| 'jetpack_backup_addon_storage_10gb_yearly'
+	| 'jetpack_backup_addon_storage_100gb_yearly'
+	| 'jetpack_backup_addon_storage_1tb_yearly';
 
 export const iconToProductSlugMap: Record< keyof typeof paths, readonly SupportedSlugs[] > = {
 	'wpcom-free': [ 'free_plan' ],
@@ -165,6 +173,14 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_backup_t1_monthly',
 		'jetpack_backup_t2_yearly',
 		'jetpack_backup_t2_monthly',
+	],
+	'jetpack-backup-addon': [
+		'jetpack_backup_addon_storage_10gb_monthly',
+		'jetpack_backup_addon_storage_100gb_monthly',
+		'jetpack_backup_addon_storage_1tb_monthly',
+		'jetpack_backup_addon_storage_10gb_yearly',
+		'jetpack_backup_addon_storage_100gb_yearly',
+		'jetpack_backup_addon_storage_1tb_yearly',
 	],
 	'jetpack-boost': [ 'jetpack_boost', 'jetpack_boost_monthly' ],
 	'jetpack-scan': [

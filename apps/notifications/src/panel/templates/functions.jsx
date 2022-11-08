@@ -218,7 +218,10 @@ export function getSignature( blocks, note ) {
 			return { type: type, id: id };
 		}
 
-		if ( 'undefined' !== typeof block.meta.ids.comment ) {
+		if ( 'undefined' !== typeof block.meta.ids.prompt ) {
+			type = 'prompt';
+			id = block.meta.ids.prompt;
+		} else if ( 'undefined' !== typeof block.meta.ids.comment ) {
 			type = 'comment';
 			id = block.meta.ids.comment;
 		} else if ( 'undefined' !== typeof block.meta.ids.post ) {

@@ -9,7 +9,6 @@ import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
-import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
 import PostCheckoutUpsellExperimentRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
@@ -31,6 +30,7 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -39,11 +39,11 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext } from './utils';
+import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
-export function checkoutSiteless( context, next ) {
+export function checkoutJetpackSiteless( context, next ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
 	const { productSlug: product } = context.params;
@@ -94,14 +94,10 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
-	const isUserComingFromPlansPage = [ 'jetpack-plans', 'jetpack-connect-plans' ].includes(
-		context.query?.source
-	);
-	const isJetpackCheckout =
-		context.pathname.includes( '/checkout/jetpack' ) &&
-		( isLoggedOut || isUserComingFromLoginForm || isUserComingFromPlansPage ) &&
-		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
+
+	const isGiftPurchase = context.pathname.includes( '/gift/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -109,14 +105,25 @@ export function checkout( context, next ) {
 		return;
 	}
 
-	if ( ! selectedSite && ! isDisallowedForSitePicker && ! isJetpackCheckout ) {
+	const shouldAllowNoSelectedSite = () => {
+		if ( isDisallowedForSitePicker ) {
+			return true;
+		}
+		if ( isJetpackCheckout ) {
+			return true;
+		}
+		if ( isGiftPurchase ) {
+			return true;
+		}
+		return false;
+	};
+
+	if ( ! selectedSite && ! shouldAllowNoSelectedSite() ) {
 		sites( context, next );
 		return;
 	}
 
-	const product = isJetpackCheckout
-		? context.params.productSlug
-		: getProductSlugFromContext( context );
+	const product = getProductSlugFromContext( context );
 
 	if ( 'thank-you' === product ) {
 		return;
@@ -169,6 +176,7 @@ export function checkout( context, next ) {
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
 				isJetpackCheckout={ isJetpackCheckout }
+				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
@@ -373,17 +381,6 @@ export function redirectToSupportSession( context ) {
 	page.redirect( `/checkout/offer-support-session/${ site }` );
 }
 
-export function licensingThankYouManualActivation( context, next ) {
-	const { product } = context.params;
-	const { receiptId } = context.query;
-
-	context.primary = (
-		<LicensingThankYouManualActivation productSlug={ product } receiptId={ receiptId } />
-	);
-
-	next();
-}
-
 export function licensingThankYouManualActivationInstructions( context, next ) {
 	const { product } = context.params;
 	const { receiptId } = context.query;
@@ -464,6 +461,14 @@ export function jetpackCheckoutThankYou( context, next ) {
 	);
 
 	next();
+}
+
+export function giftThankYou( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-gift-thank-you
+	context.section.name = 'checkout-gift-thank-you';
+	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
 }
 
 function getRememberedCoupon() {

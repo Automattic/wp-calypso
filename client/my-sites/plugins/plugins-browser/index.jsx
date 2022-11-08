@@ -163,7 +163,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				renderTitleInH1={ ! category }
 			/>
 
-			{ ! search && <Categories selected={ category } /> }
+			<Categories selected={ category } noSelection={ search ? true : false } />
 			<div className="plugins-browser__main-container">{ renderList() }</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>
