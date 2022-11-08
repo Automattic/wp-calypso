@@ -52,4 +52,5 @@ export type StatsCardProps = {
 	isEmpty?: boolean;
 	emptyMessage?: string;
 	metricLabel?: string;
+	heroElement?: React.ReactNode;
 };

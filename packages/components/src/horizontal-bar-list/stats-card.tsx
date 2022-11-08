@@ -15,6 +15,7 @@ const StatsCard = ( {
 	isEmpty,
 	emptyMessage,
 	metricLabel,
+	heroElement,
 }: StatsCardProps ) => {
 	const translate = useTranslate();
 	const baseClass = classnames( className, BASE_CLASS_NAME );
@@ -29,6 +30,7 @@ const StatsCard = ( {
 
 	return (
 		<div className={ baseClass }>
+			<div className={ `${ BASE_CLASS_NAME }--hero` }>{ !! heroElement && heroElement }</div>
 			{ title && (
 				<div className={ `${ BASE_CLASS_NAME }--header` }>
 					{ titleNode }

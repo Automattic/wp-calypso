@@ -18,6 +18,7 @@ const StatsListCard = ( {
 	loader,
 	useShortLabel,
 	error,
+	children,
 } ) => {
 	const translate = useTranslate();
 	const moduleNameTitle = titlecase( moduleType );
@@ -55,6 +56,7 @@ const StatsListCard = ( {
 			isEmpty={ ! loader && ( ! data || ! data?.length ) }
 			className={ `list-${ moduleType }-pages` }
 			metricLabel={ moduleType === 'filedownloads' ? translate( 'Downloads' ) : undefined }
+			heroElement={ !! children && children }
 		>
 			{ !! loader && loader }
 			{ !! error && error }
@@ -80,6 +82,7 @@ const StatsListCard = ( {
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ ( e ) => localClickHandler( e, item ) }
+							leftSideItem={ <div></div> }
 							rightSideItem={ rightSideItem }
 							useShortLabel={ useShortLabel }
 						/>
