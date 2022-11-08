@@ -424,10 +424,10 @@ class StatsSite extends Component {
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
+		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
 
 		return (
-			<Main className={ wrapperClass } wideLayout>
+			<Main className={ mainWrapperClass } wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
