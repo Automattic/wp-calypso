@@ -1,10 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import {
-	PATTERN_SOURCE_SITE_ID,
-	PREVIEW_PATTERN_URL,
-	SITE_TAGLINE,
-	REMOVE_ASSETS,
-} from './constants';
+import { PATTERN_SOURCE_SITE_ID, PREVIEW_PATTERN_URL, SITE_TAGLINE } from './constants';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
@@ -26,7 +21,7 @@ export const getPatternPreviewUrl = ( {
 		site_title: siteTitle,
 		site_tagline: SITE_TAGLINE,
 		stylesheet,
-		remove_assets: REMOVE_ASSETS,
+		remove_assets: true,
 	} );
 };
 
