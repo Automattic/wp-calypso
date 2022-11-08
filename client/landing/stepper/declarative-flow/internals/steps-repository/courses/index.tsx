@@ -46,8 +46,6 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 							onComplete={ () => submit?.() }
 						/>
 					) }
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore - It's not recognizing the property as optional
 					intent={ intent }
 				/>
 			}

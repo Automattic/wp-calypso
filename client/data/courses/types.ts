@@ -23,6 +23,8 @@ export interface Course {
 		action: string;
 		url: string;
 	};
-	videos: CourseVideo[];
+	videos: {
+		[ key: string ]: CourseVideo;
+	};
 	completions: { [ key in VideoSlug ]: boolean | boolean[] };
 }

@@ -14,7 +14,7 @@ interface CourseDetails {
 	headerSummary: string[];
 }
 
-const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined => {
+const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails => {
 	const translate = useTranslate();
 
 	if ( courseSlug === COURSE_SLUGS.BLOGGING_QUICK_START ) {
@@ -51,6 +51,12 @@ const useCourseDetails = ( courseSlug: CourseSlug ): CourseDetails | undefined =
 			],
 		};
 	}
+
+	return {
+		headerTitle: '',
+		headerSubtitle: '',
+		headerSummary: [],
+	};
 };
 
 export default useCourseDetails;
