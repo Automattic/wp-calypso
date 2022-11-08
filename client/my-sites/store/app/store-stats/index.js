@@ -9,6 +9,7 @@ import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -53,11 +54,14 @@ class StoreStats extends Component {
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
 		// New feature gate
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const statsWrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
+		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
+			'stats--new-wrapper': isNewMainChart,
+		} );
 
 		return (
-			<Main className="store-stats woocommerce" wideLayout>
+			<Main className={ mainWrapperClass } wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
@@ -67,20 +71,30 @@ class StoreStats extends Component {
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
 
-				<FormattedHeader
-					brandFont
-					className="store-stats__section-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					align="left"
-					subHeaderText={ translate(
-						'Learn valuable insights about the purchases made on your store.'
-					) }
+				<FixedNavigationHeader
+					headerNode={
+						<FormattedHeader
+							brandFont
+							className="store-stats__section-header"
+							headerText={ translate( 'Jetpack Stats' ) }
+							align="left"
+							subHeaderText={ translate(
+								'Learn valuable insights about the purchases made on your store.'
+							) }
+						/>
+					}
+					tabListNode={
+						<StatsNavigation
+							selectedItem="store"
+							siteId={ siteId }
+							slug={ slug }
+							interval={ unit }
+						/>
+					}
 				/>
 
-				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
-
-				<div id="my-stats-content" class={ wrapperClasses }>
-					{ isNewFeatured ? (
+				<div id="my-stats-content" className={ statsWrapperClass }>
+					{ isNewMainChart ? (
 						<>
 							<StatsPeriodHeader>
 								<StatsPeriodNavigation
