@@ -6,6 +6,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
 import { getProductTitle } from '../utils';
+
 import './style.scss';
 
 interface Props {
@@ -14,10 +15,11 @@ interface Props {
 	isSelected: boolean;
 	onSelectProduct: ( value: APIProductFamilyProduct | string ) => void | null;
 	suggestedProduct?: string | null;
+	isMultiSelect?: boolean;
 }
 
 export default function LicenseProductCard( props: Props ) {
-	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct } = props;
+	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct, isMultiSelect } = props;
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
 
@@ -41,17 +43,20 @@ export default function LicenseProductCard( props: Props ) {
 
 	useEffect( () => {
 		if ( suggestedProduct ) {
-			if ( product.slug === suggestedProduct ) {
+			// Transform the comma-separated list of products to array.
+			const suggestedProducts = suggestedProduct.split( ',' );
+
+			if ( suggestedProducts.includes( product.slug ) ) {
 				onSelect();
 			}
 		}
-	}, [ onSelect, product, suggestedProduct ] );
+	}, [] );
 
 	return (
 		<div
 			onClick={ onSelect }
 			onKeyDown={ onKeyDown }
-			role="radio"
+			role={ isMultiSelect ? 'checkbox' : 'radio' }
 			tabIndex={ tabIndex }
 			aria-checked={ isSelected }
 			className={ classNames( {
@@ -62,7 +67,11 @@ export default function LicenseProductCard( props: Props ) {
 			<div className="license-product-card__inner">
 				<div className="license-product-card__details">
 					<h3 className="license-product-card__title">{ productTitle }</h3>
-					<div className="license-product-card__radio">
+					<div
+						className={ classNames( 'license-product-card__select-button', {
+							'license-product-card_multi-select': isMultiSelect,
+						} ) }
+					>
 						{ isSelected && <Gridicon icon="checkmark" /> }
 					</div>
 					<div className="license-product-card__pricing">
