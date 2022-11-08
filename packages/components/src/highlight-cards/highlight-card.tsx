@@ -18,8 +18,13 @@ function percent( part: number | null, whole: number | null ) {
 	if ( part === null || whole === null ) {
 		return null;
 	}
-
-	return whole === 0 ? 0 : Math.round( ( part / whole ) * 100 );
+	// Handle NaN case.
+	if ( part === 0 && whole === 0 ) {
+		return 0;
+	}
+	const answer = ( part / whole ) * 100;
+	// Handle Infinities.
+	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
 const FORMATTER = new Intl.NumberFormat( 'en-GB', {

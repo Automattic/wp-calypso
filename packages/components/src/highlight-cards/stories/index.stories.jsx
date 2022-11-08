@@ -16,7 +16,7 @@ const HighlightCardsVariations = ( props ) => (
 		} }
 		previousCounts={ {
 			comments: 45,
-			likes: 0,
+			likes: 100,
 			views: 4073,
 			visitors: 1412,
 		} }
