@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -60,9 +59,6 @@ export const SecuritySSHKey = () => {
 		onSuccess: () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_add_success' ) );
 			dispatch( successNotice( __( 'SSH key added to account.' ), noticeOptions ) );
-			if ( queryArgs.source && queryArgs.siteSlug ) {
-				page.redirect( `/${ queryArgs.source }/${ queryArgs.siteSlug }` );
-			}
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -105,6 +101,7 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const hasKeys = data && data.length > 0;
+	const redirectToHosting = queryArgs.source && queryArgs.siteSlug;
 
 	return (
 		<Main wideLayout className="security">
@@ -113,7 +110,12 @@ export const SecuritySSHKey = () => {
 
 			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
 
-			<HeaderCake backText={ __( 'Back' ) } backHref="/me/security">
+			<HeaderCake
+				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
+				backHref={
+					redirectToHosting ? `/${ queryArgs.source }/${ queryArgs.siteSlug }` : '/me/security'
+				}
+			>
 				{ __( 'SSH Key' ) }
 			</HeaderCake>
 
