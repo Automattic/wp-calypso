@@ -29,4 +29,5 @@ export { default as HorizontalBarList } from './horizontal-bar-list';
 export { default as HorizontalBarListItem } from './horizontal-bar-list/horizontal-bar-grid-item';
 export { default as StatsCard } from './horizontal-bar-list/stats-card';
 export { default as HighlightCards } from './highlight-cards';
+export { default as AnnualHighlightCards } from './highlight-cards/annual-highlight-cards';
 export { default as HighlightCard } from './highlight-cards/highlight-card';

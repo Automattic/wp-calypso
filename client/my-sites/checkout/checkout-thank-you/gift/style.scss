@@ -1,0 +1,49 @@
+// Global override, prevent grey around the no-sidebar layout padding
+.is-section-checkout-gift-thank-you {
+	background-color: var(--studio-white);
+
+	// Override and reset
+	.layout__content {
+		padding-top: 0;
+		margin-top: var(--masterbar-height);
+	}
+}
+
+.gift-thank-you {
+	.button {
+		width: 100%;
+	}
+
+	.gift-thank-you__container {
+		margin-top: 0;
+	}
+	.gift-thank-you__header-body {
+		line-height: 28px;
+	}
+	.gift-thank-you__loader {
+		display: flex;
+		justify-content: center;
+		margin-top: 160px;
+	}
+
+	// Thankyou component overrides
+	.thank-you__header-title {
+		margin-bottom: 24px;
+	}
+
+	.thank-you__container-header {
+		padding-top: 50px;
+		@media screen and (max-width: 782px) {
+			padding-top: 30px;
+		}
+		min-height: 0;
+		padding-bottom: 0;
+		img {
+			margin-bottom: 32px;
+		}
+	}
+
+	.thank-you__body {
+		margin-top: 69px;
+	}
+}

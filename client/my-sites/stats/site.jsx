@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
@@ -42,6 +43,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
 
@@ -199,11 +201,13 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+
 		return (
-			<div className={ isNewFeatured ? 'stats--new-main-chart' : undefined }>
+			<div>
 				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				<FormattedHeader
 					brandFont
@@ -229,10 +233,10 @@ class StatsSite extends Component {
 
 				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
-				<div id="my-stats-content">
+				<div id="my-stats-content" className={ wrapperClasses }>
 					{ isNewFeatured ? (
 						<>
-							<div className="stats__period-header">
+							<StatsPeriodHeader>
 								<StatsPeriodNavigation
 									date={ date }
 									period={ period }
@@ -247,11 +251,11 @@ class StatsSite extends Component {
 									/>
 								</StatsPeriodNavigation>
 								<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ false } />
-							</div>
+							</StatsPeriodHeader>
 
 							<ChartTabs
 								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ [] }
+								activeLegend={ this.state.activeLegend }
 								availableLegend={ this.getAvailableLegend() }
 								onChangeLegend={ this.onChangeLegend }
 								barClick={ this.barClick }
@@ -397,9 +401,9 @@ class StatsSite extends Component {
 				illustration="/calypso/images/illustrations/illustration-404.svg"
 				title={ translate( 'Looking for stats?' ) }
 				line={ translate(
-					'Enable site stats to see detailed information about your traffic, likes, comments, and subscribers.'
+					'Enable Jetpack Stats to see detailed information about your traffic, likes, comments, and subscribers.'
 				) }
-				action={ translate( 'Enable Site Stats' ) }
+				action={ translate( 'Enable Jetpack Stats' ) }
 				actionCallback={ this.enableStatsModule }
 			/>
 		);
@@ -408,6 +412,10 @@ class StatsSite extends Component {
 	render() {
 		const { isJetpack, siteId, showEnableStatsModule } = this.props;
 		const { period } = this.props.period;
+
+		// Track the last viewed tab.
+		// Necessary to properly configure the fixed navigation headers.
+		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
 			<Main wideLayout>

@@ -35,11 +35,12 @@
 	@extend %placeholder;
 }
 
-.plugin-details-cta__period {
+.plugin-details-cta__period,
+.plugin-details-cta__notice {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
-	padding-left: 3px;
+	padding-left: 8px;
 }
 
 .plugin-details-cta__uprade-required {

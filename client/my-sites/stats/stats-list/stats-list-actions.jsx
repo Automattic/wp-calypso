@@ -11,10 +11,10 @@ import Spam from './action-spam';
 /**
  * Render a list of `action` icons based on action array from a list item.
  * Possible types: External Link redirect, Specific page statistics redirect, Spam, Promote, Follow.
+ * If `data` is not provided, renders `children`.
  */
-const StatsListActions = ( { data, moduleName } ) => {
+const StatsListActions = ( { data, moduleName, children } ) => {
 	const [ isDisabled, setIsDisabled ] = useState( false );
-	const moduleNameTitle = titlecase( moduleName );
 	const actionMenu = data?.actionMenu;
 	const actionClassSet = classNames( 'stats-list-actions', 'module-content-list-item-actions', {
 		collapsed: actionMenu && ! isDisabled,
@@ -22,6 +22,8 @@ const StatsListActions = ( { data, moduleName } ) => {
 	const actionItems = [];
 
 	if ( data?.actions ) {
+		const moduleNameTitle = titlecase( moduleName );
+
 		data.actions.forEach( ( action ) => {
 			let actionItem;
 
@@ -77,11 +79,12 @@ const StatsListActions = ( { data, moduleName } ) => {
 		}
 	}
 
-	return actionItems.length ? (
+	return actionItems?.length || children ? (
 		// prevent actions from triggering row click handler and redirect
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 		<ul className={ actionClassSet } onClick={ ( e ) => e.stopPropagation() }>
-			{ actionItems }
+			{ !! actionItems?.length && actionItems }
+			{ !! children && children }
 		</ul>
 	) : null;
 };
@@ -89,6 +92,7 @@ const StatsListActions = ( { data, moduleName } ) => {
 StatsListActions.propTypes = {
 	data: PropTypes.object,
 	moduleName: PropTypes.string,
+	children: PropTypes.node,
 };
 
 export default StatsListActions;
