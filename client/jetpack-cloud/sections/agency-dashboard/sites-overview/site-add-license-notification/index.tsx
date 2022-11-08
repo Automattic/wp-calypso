@@ -45,8 +45,8 @@ export default function SiteAddLicenseNotification() {
 				<div className="site-add-license-notification__license-banner">
 					<Notice onDismissClick={ () => clearLicenses( 'fulfilled' ) } status="is-success">
 						{ translate(
-							'{{strong}}%(assignedLicenses)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow few minutes for your features to activate.',
-							'{{strong}}%(assignedLicenses)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please all a few minutes for your features to activate.',
+							'{{strong}}%(assignedLicenses)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+							'{{strong}}%(assignedLicenses)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
 
 							{
 								count: assignedLicenses.length,
