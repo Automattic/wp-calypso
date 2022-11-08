@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { SelectItems, SelectItem } from '@automattic/onboarding';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import React from 'react';
@@ -30,7 +29,6 @@ const useStartingPoints = ( { translate }: Pick< Props, 'translate' > ): Startin
 			icon: play,
 			value: 'courses',
 			actionText: translate( 'Start learning' ),
-			hidden: ! isEnabled( 'signup/starting-point-courses' ),
 		},
 		{
 			key: 'design',
