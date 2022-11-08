@@ -38,7 +38,7 @@ export const siteSetupFlow: Flow = {
 	useSteps() {
 		return [
 			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
+			'vertical',
 			'intent',
 			'options',
 			'designSetup',
@@ -107,7 +107,6 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' );
 		const goalsStepEnabled = isEnabled( 'signup/goals-step' );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
@@ -272,18 +271,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'difmStartingPoint' );
 					}
 
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							return navigate( 'options' );
-						case SiteIntent.Build:
-						default:
-							return navigate( 'designSetup' );
-					}
+					return navigate( 'vertical' );
 				}
 
 				case 'intent': {
@@ -431,7 +419,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'options' );
 
 				case 'intent':
-					return navigate( verticalsStepEnabled ? 'vertical' : 'intent' );
+					return navigate( 'vertical' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
@@ -466,10 +454,7 @@ export const siteSetupFlow: Flow = {
 					}
 
 					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
+						return navigate( 'vertical' );
 					}
 
 					return navigate( 'intent' );
@@ -513,10 +498,7 @@ export const siteSetupFlow: Flow = {
 
 				case 'options':
 					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
+						return navigate( 'vertical' );
 					}
 
 				case 'import':
@@ -556,11 +538,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint': {
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					return navigate( 'designSetup' );
+					return navigate( 'vertical' );
 				}
 
 				default:
