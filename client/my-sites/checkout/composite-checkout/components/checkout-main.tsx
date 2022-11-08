@@ -578,6 +578,7 @@ export default function CheckoutMain( {
 		siteSlug: updatedSiteSlug,
 		isJetpackCheckout,
 		checkoutFlow,
+		isGiftPurchase,
 	} );
 
 	const handleStepChanged = useCallback(
