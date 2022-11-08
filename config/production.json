@@ -135,6 +135,7 @@
 		"ssr/log-prefetch-errors": true,
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
+		"stats/fixed-nav-headers": false,
 		"stats/new-annual-highlights": false,
 		"stats/new-main-chart": false,
 		"stats/new-stats-module-component": false,

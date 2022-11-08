@@ -11,13 +11,14 @@ import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/c
 import {
 	checkout,
 	checkoutPending,
-	checkoutSiteless,
+	checkoutJetpackSiteless,
 	checkoutThankYou,
 	licensingThankYouManualActivationInstructions,
 	licensingThankYouManualActivationLicenseKey,
 	licensingThankYouAutoActivation,
 	licensingThankYouAutoActivationCompleted,
 	jetpackCheckoutThankYou,
+	giftThankYou,
 	redirectJetpackLegacyPlans,
 	redirectToSupportSession,
 	upsellNudge,
@@ -27,11 +28,12 @@ import {
 export default function () {
 	page( '/checkout*', recordSiftScienceUser );
 
+	// Jetpack siteless checkout works logged-out, so do not include redirectLoggedOut or siteSelection.
 	page(
 		`/checkout/jetpack/:productSlug`,
 		setLocaleMiddleware(),
 		noSite,
-		checkoutSiteless,
+		checkoutJetpackSiteless,
 		makeLayout,
 		clientRender
 	);
@@ -92,6 +94,16 @@ export default function () {
 		clientRender
 	);
 
+	// The no-site post-checkout route is for purchases not tied to a site so do
+	// not include the `siteSelection` middleware.
+	page(
+		'/checkout/gift/thank-you/:site',
+		redirectLoggedOut,
+		giftThankYou,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/checkout/thank-you/no-site/pending/:orderId',
 		redirectLoggedOut,
@@ -100,6 +112,8 @@ export default function () {
 		clientRender
 	);
 
+	// The no-site post-checkout route is for purchases not tied to a site so do
+	// not include the `siteSelection` middleware.
 	page(
 		'/checkout/thank-you/no-site/:receiptId?',
 		redirectLoggedOut,
@@ -243,6 +257,17 @@ export default function () {
 		'/checkout/:product/renew/:purchaseId/:domain',
 		redirectLoggedOut,
 		siteSelection,
+		checkout,
+		makeLayout,
+		clientRender
+	);
+
+	// Gift purchases work without a site, so do not include the `siteSelection`
+	// middleware.
+	page(
+		'/checkout/:product/gift/:purchaseId',
+		redirectLoggedOut,
+		noSite,
 		checkout,
 		makeLayout,
 		clientRender
