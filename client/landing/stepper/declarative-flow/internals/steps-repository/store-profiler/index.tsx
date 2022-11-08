@@ -12,7 +12,7 @@ import FormInput from 'calypso/components/forms/form-text-input';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { USER_STORE, ONBOARD_STORE } from '../../../../stores';
+import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -50,7 +50,6 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		);
 		return options;
 	}, [ verticals, translate ] );
-	// TODO: This may not be the right source for this info.
 	const countriesAndStates = useCountriesAndStates();
 	const countriesOptions = React.useMemo( () => {
 		return countriesAndStates.countryOptions.map( ( c ) => (
