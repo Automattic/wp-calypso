@@ -342,7 +342,7 @@ class AdsFormSettings extends Component {
 				<FormFieldset>
 					<SupportInfo
 						text={ translate(
-							'Enables a targeted advertising opt-out link in US States where this is legally required.'
+							'Enables a targeted advertising opt-out link in US states where this is legally required.'
 						) }
 						link="https://wordpress.com/support/us-privacy-laws-and-your-wordpress-com-site/"
 					/>
@@ -356,7 +356,7 @@ class AdsFormSettings extends Component {
 					<div className="ads__child-settings">
 						<FormSettingExplanation>
 							{ translate(
-								'Some US States have laws that require offering site visitors an opt-out from having their data used to personalize ads. Targeted advertising is off in certain states unless you enable it.'
+								'Some US states have laws that require offering site visitors an opt-out from having their data used to personalize ads. Targeted advertising is off in certain states unless you enable it.'
 							) }
 						</FormSettingExplanation>
 					</div>
