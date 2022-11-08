@@ -21,6 +21,15 @@ const isLoadingCart = ( isLoading: boolean ) => ( dispatch: CalypsoDispatch ) =>
 	} );
 };
 
+/**
+ * Add the business plan and/or the external theme to the cart and redirect to checkout.
+ * This action also manages the loading state of the cart. We'll use it to lock the CTA
+ * button while the cart is being updated.
+ *
+ * @param themeId Theme ID to add to cart
+ * @param siteId
+ * @returns
+ */
 export function addExternalManagedThemeToCart( themeId: string, siteId: number ) {
 	return async ( dispatch: CalypsoDispatch, getState: AppState ) => {
 		const isExternallyManagedTheme = getIsExternallyManagedTheme( getState(), themeId );
@@ -29,9 +38,9 @@ export function addExternalManagedThemeToCart( themeId: string, siteId: number )
 			throw new Error( 'Theme is not externally managed' );
 		}
 
-		const isPurchased = isPremiumThemeAvailable( getState(), themeId, siteId );
+		const isThemePurchased = isPremiumThemeAvailable( getState(), themeId, siteId );
 
-		if ( isPurchased ) {
+		if ( isThemePurchased ) {
 			throw new Error( 'Theme is already purchased' );
 		}
 
