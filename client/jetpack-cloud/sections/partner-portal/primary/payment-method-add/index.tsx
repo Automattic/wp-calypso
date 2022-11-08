@@ -84,16 +84,18 @@ function PaymentMethodAdd() {
 	);
 
 	const siteId = useMemo(
-		() => getQueryArg( window.location.href, 'site_id' ) || '',
+		() => ( getQueryArg( window.location.href, 'site_id' ) || '' ).toString(),
 		[]
-	).toString();
+	);
 
 	const source = useMemo(
-		() => getQueryArg( window.location.href, 'source' ) || '',
+		() => ( getQueryArg( window.location.href, 'source' ) || '' ).toString(),
 		[]
-	).toString();
+	);
 
-	const isMulti = isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' );
+	const isMultipleLicenseIssueEnabled = isEnabled(
+		'jetpack/partner-portal-issue-multiple-licenses'
+	);
 
 	const [ issueLicense, isLoading ] = useLicenseIssuing( product );
 	const [ issueMultipleLicense, isIssuingMultipleLicenses ] = useIssueMultipleLicenses(
@@ -158,7 +160,7 @@ function PaymentMethodAdd() {
 	}, [ paymentMethodRequired, product ] );
 
 	useEffect( () => {
-		if ( isMulti && ! paymentMethodRequired && products ) {
+		if ( isMultipleLicenseIssueEnabled && ! paymentMethodRequired && products ) {
 			issueMultipleLicense();
 		}
 	}, [ paymentMethodRequired ] );

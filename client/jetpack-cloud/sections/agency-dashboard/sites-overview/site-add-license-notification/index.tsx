@@ -31,7 +31,7 @@ export default function SiteAddLicenseNotification() {
 	const assignedLicenses = selectedProducts.filter( ( product ) => product.status === 'fulfilled' );
 	const rejectedLicenses = selectedProducts.filter( ( product ) => product.status === 'rejected' );
 
-	const clearLicenses = ( type: string ) => {
+	const clearLicenses = ( type: 'fulfilled' | 'rejected' ) => {
 		const license = {
 			...licenseInfo,
 			selectedProducts: selectedProducts.filter( ( product ) => product.status !== type ),
@@ -51,7 +51,9 @@ export default function SiteAddLicenseNotification() {
 							{
 								count: assignedLicenses.length,
 								args: {
-									assignedLicenses: assignedLicenses.map( ( l ) => l.name ).join( ', ' ),
+									assignedLicenses: assignedLicenses
+										.map( ( license ) => license.name )
+										.join( ', ' ),
 									selectedSite,
 								},
 								components: {
@@ -72,7 +74,9 @@ export default function SiteAddLicenseNotification() {
 							{
 								count: rejectedLicenses.length,
 								args: {
-									rejectedLicenses: rejectedLicenses.map( ( l ) => l.name ).join( ', ' ),
+									rejectedLicenses: rejectedLicenses
+										.map( ( license ) => license.name )
+										.join( ', ' ),
 									selectedSite,
 								},
 								components: {
