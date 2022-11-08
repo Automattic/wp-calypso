@@ -15,7 +15,6 @@ import { getWidgetPath, formatValue } from '../utils';
 class StoreStatsChart extends Component {
 	static propTypes = {
 		basePath: PropTypes.string.isRequired,
-		chartTitle: PropTypes.node,
 		data: PropTypes.array.isRequired,
 		renderTabs: PropTypes.func.isRequired,
 		selectedDate: PropTypes.string.isRequired,
@@ -128,7 +127,7 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { chartTitle, className, data, renderTabs, selectedDate, tabs, unit } = this.props;
+		const { className, data, renderTabs, selectedDate, tabs, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
@@ -138,16 +137,9 @@ class StoreStatsChart extends Component {
 
 		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 
-		const classes = classNames( className, {
-			'chart-tabs--new-main-chart': isNewFeatured,
-		} );
-
 		return isNewFeatured ? (
-			<div className={ classes }>
-				<div className="store-stats-chart__top">
-					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
-					{ this.renderLegend( selectedTabIndex ) }
-				</div>
+			<div>
+				{ this.renderLegend( selectedTabIndex ) }
 				<ElementChart
 					loading={ isLoading }
 					data={ chartData }
@@ -168,10 +160,7 @@ class StoreStatsChart extends Component {
 			</div>
 		) : (
 			<Card className={ classNames( className, 'stats-module' ) }>
-				<div className="store-stats-chart__top">
-					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
-					{ this.renderLegend( selectedTabIndex ) }
-				</div>
+				{ this.renderLegend( selectedTabIndex ) }
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
 				{ ! isLoading &&
 					renderTabs( {
