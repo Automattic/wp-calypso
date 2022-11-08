@@ -60,7 +60,7 @@ const HorizontalBarListItem = ( {
 					<span className={ `${ BASE_CLASS_NAME }--hover-action` }>{ rightSideItem }</span>
 				) }
 			</div>
-			<div className="value">{ value }</div>
+			<div className="value">{ value }</div> { /* Add number format */ }
 		</li>
 	);
 };

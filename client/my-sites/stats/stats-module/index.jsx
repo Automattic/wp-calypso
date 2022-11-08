@@ -193,7 +193,7 @@ class StatsModule extends Component {
 					/>
 				) }
 
-				{ ( ! shouldShowNewModule || path === 'countryviews' ) && (
+				{ ! shouldShowNewModule && (
 					<div>
 						{ ! isAllTime && (
 							<SectionHeader

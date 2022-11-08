@@ -64,13 +64,13 @@ const StatsListCard = ( {
 			<HorizontalBarList data={ data }>
 				{ data?.map( ( item, index ) => {
 					let rightSideItem;
-					const isInteractive = item.link || item.page || item.children;
+					const isInteractive = item?.link || item?.page || item?.children;
 
 					if ( moduleType === 'filedownloads' || ( moduleType === 'searchterms' && item.link ) ) {
 						// exception for items without actions
 						rightSideItem = (
 							<StatsListActions>
-								<OpenLink href={ item.link } key={ `link-${ index }` } moduleName={ moduleType } />
+								<OpenLink href={ item?.link } key={ `link-${ index }` } moduleName={ moduleType } />
 							</StatsListActions>
 						);
 					} else {
@@ -85,7 +85,7 @@ const StatsListCard = ( {
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ ( e ) => localClickHandler( e, item ) }
 							leftSideItem={
-								item.countryCode && <StatsListCountryFlag countryCode={ item.countryCode } />
+								item?.countryCode && <StatsListCountryFlag countryCode={ item.countryCode } />
 							}
 							rightSideItem={ rightSideItem }
 							useShortLabel={ useShortLabel }
