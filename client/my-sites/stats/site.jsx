@@ -19,6 +19,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -196,45 +197,50 @@ class StatsSite extends Component {
 		const traffic = {
 			label: translate( 'Traffic' ),
 			path: '/stats',
-			showIntervals: true,
 		};
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
 		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
 
 		return (
 			<div>
-				<JetpackBackupCredsBanner event="stats-backup-credentials" />
-				<FormattedHeader
-					brandFont
-					className="stats__section-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					align="left"
-					subHeaderText={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
-						{
-							components: {
-								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-							},
-						}
-					) }
+				<FixedNavigationHeader
+					headerNode={
+						<FormattedHeader
+							brandFont
+							className="stats__section-header"
+							headerText={ translate( 'Jetpack Stats' ) }
+							align="left"
+							subHeaderText={ translate(
+								"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+								{
+									components: {
+										learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+									},
+								}
+							) }
+						/>
+					}
+					tabListNode={
+						<StatsNavigation
+							selectedItem="traffic"
+							interval={ period }
+							siteId={ siteId }
+							slug={ slug }
+						/>
+					}
 				/>
 
-				<StatsNavigation
-					selectedItem="traffic"
-					interval={ period }
-					siteId={ siteId }
-					slug={ slug }
-				/>
+				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 
 				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
-				<div id="my-stats-content" className={ wrapperClasses }>
-					{ isNewFeatured ? (
+				<div id="my-stats-content" className={ wrapperClass }>
+					{ isNewMainChart ? (
 						<>
 							<StatsPeriodHeader>
 								<StatsPeriodNavigation
@@ -417,8 +423,11 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
+
 		return (
-			<Main wideLayout>
+			<Main className={ wrapperClass } wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
