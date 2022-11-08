@@ -80,7 +80,7 @@ class StatsPostDetail extends Component {
 		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
 		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
 		// Append the domain as needed.
-		const domain = this.props.path?.split( '/' ).pop();
+		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
