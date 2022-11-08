@@ -15,10 +15,19 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 	const highlights = useSelector( ( state ) => getHighlights( state, siteId ) );
 	const counts = useMemo(
 		() => ( {
-			comments: highlights?.comments ?? null,
-			likes: highlights?.likes ?? null,
-			views: highlights?.views ?? null,
-			visitors: highlights?.visitors ?? null,
+			comments: highlights?.past_seven_days?.comments ?? null,
+			likes: highlights?.past_seven_days?.likes ?? null,
+			views: highlights?.past_seven_days?.views ?? null,
+			visitors: highlights?.past_seven_days?.visitors ?? null,
+		} ),
+		[ highlights ]
+	);
+	const previousCounts = useMemo(
+		() => ( {
+			comments: highlights?.between_past_eight_and_fifteen_days?.comments ?? null,
+			likes: highlights?.between_past_eight_and_fifteen_days?.likes ?? null,
+			views: highlights?.between_past_eight_and_fifteen_days?.views ?? null,
+			visitors: highlights?.between_past_eight_and_fifteen_days?.visitors ?? null,
 		} ),
 		[ highlights ]
 	);
@@ -27,12 +36,7 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 		<div className="stats__highlights-section">
 			<HighlightCards
 				counts={ counts }
-				previousCounts={ {
-					comments: null,
-					likes: null,
-					views: null,
-					visitors: null,
-				} }
+				previousCounts={ previousCounts }
 				onClickComments={ () => null }
 				onClickLikes={ () => null }
 				onClickViews={ () => null }
