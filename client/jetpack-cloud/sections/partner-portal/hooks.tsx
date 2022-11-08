@@ -367,8 +367,7 @@ export function useIssueMultipleLicenses(
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
-			page( nextStep );
-			return;
+			return page( nextStep );
 		}
 
 		const issueLicenseRequests: any[] = [];
@@ -440,12 +439,14 @@ export function useIssueMultipleLicenses(
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}
+		return page.redirect( partnerPortalBasePath( '/licenses' ) );
 	}, [
 		isLoading,
-		dispatch,
 		selectedProducts,
+		dispatch,
+		selectedSite?.ID,
+		selectedSite?.domain,
 		paymentMethodRequired,
-		selectedSite,
 		fromDashboard,
 		issueLicense,
 		products?.data,
