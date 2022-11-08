@@ -2,7 +2,6 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import { withCurrentRoute } from 'calypso/components/route';
 import LayoutLoader from 'calypso/layout/loader';
@@ -10,7 +9,6 @@ import OfflineStatus from 'calypso/layout/offline-status';
 import { isOffline } from 'calypso/state/application/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Layout extends Component {
 	static propTypes = {
@@ -18,9 +16,9 @@ class Layout extends Component {
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
 		// connected props
-		sectionGroup: PropTypes.string,
-		sectionName: PropTypes.string,
 		colorSchemePreference: PropTypes.string,
+		currentLayoutFocus: PropTypes.string,
+		isOffline: PropTypes.bool,
 	};
 
 	render() {
@@ -48,37 +46,17 @@ class Layout extends Component {
 						{ this.props.primary }
 					</div>
 				</div>
-				<AsyncLoad require="calypso/layout/community-translator" placeholder={ null } />
-				{ 'development' === process.env.NODE_ENV && (
-					<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
-				) }
 			</div>
 		);
 	}
 }
 
 export default withCurrentRoute(
-	connect( ( state, { currentSection } ) => {
-		const sectionGroup = currentSection?.group ?? null;
-		const sectionName = currentSection?.name ?? null;
-		const siteId = getSelectedSiteId( state );
-		const isEligibleForJITM = [
-			'home',
-			'stats',
-			'plans',
-			'themes',
-			'plugins',
-			'comments',
-		].includes( sectionName );
-
+	connect( ( state ) => {
 		return {
-			isEligibleForJITM,
-			sectionGroup,
-			sectionName,
 			isOffline: isOffline( state ),
-			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			colorSchemePreference: getPreference( state, 'colorScheme' ),
-			siteId,
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	} )( Layout )
 );
