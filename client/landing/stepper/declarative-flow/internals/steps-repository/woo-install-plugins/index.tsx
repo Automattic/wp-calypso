@@ -103,10 +103,11 @@ const WooInstallPlugins: Step = function WooInstallPlugins( { navigation } ) {
 			}
 
 			setProgress( 1 );
+			return { finishedInstallPlugins: true };
 		} );
 
 		submit?.();
-	}, [] );
+	}, [ site ] );
 
 	return null;
 };
