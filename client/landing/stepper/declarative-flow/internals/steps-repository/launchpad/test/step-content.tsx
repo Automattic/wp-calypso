@@ -1,13 +1,15 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Provider as ReduxProvider } from 'react-redux';
+import * as redux from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import * as sendEmail from '../../../../../../../landing/stepper/hooks/use-send-email-verification';
 import EmailValidationBanner from '../email-validation-banner';
 import StepContent from '../step-content';
 
@@ -55,13 +57,13 @@ function renderStepContent( emailVerified = false ) {
 	const queryClient = new QueryClient();
 
 	render(
-		<ReduxProvider store={ reduxStore }>
+		<redux.Provider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
 				<StepContent { ...props }>
 					<EmailValidationBanner />
 				</StepContent>
 			</QueryClientProvider>
-		</ReduxProvider>
+		</redux.Provider>
 	);
 }
 
@@ -108,5 +110,65 @@ describe( 'EmailValidationBanner', () => {
 		fireEvent.click( closeButton );
 
 		expect( emailValidationBanner ).not.toBeInTheDocument();
+	} );
+
+	it( 'fires success notice action when resend is successful', async () => {
+		const dispatch = jest.fn();
+
+		jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
+
+		const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
+		useSendEmailVerification.mockImplementation( () => () => {
+			return Promise.resolve( {
+				success: true,
+			} );
+		} );
+
+		renderStepContent( false );
+
+		const resendEmailButton = screen.queryByText( /Resend email/i );
+
+		expect( resendEmailButton ).toBeInTheDocument();
+
+		await userEvent.click( resendEmailButton as HTMLElement );
+
+		expect( useSendEmailVerification ).toHaveBeenCalled();
+
+		await waitFor( () => {
+			expect(
+				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
+					'Verification email resent. Please check your inbox.'
+				)
+			).toBeTruthy();
+		} );
+	} );
+
+	it( 'fires error notice action when resend is unsuccessful', async () => {
+		const dispatch = jest.fn();
+
+		jest.spyOn( redux, 'useDispatch' ).mockReturnValue( dispatch );
+
+		const useSendEmailVerification = jest.spyOn( sendEmail, 'useSendEmailVerification' );
+		useSendEmailVerification.mockImplementation( () => () => {
+			return Promise.reject();
+		} );
+
+		renderStepContent( false );
+
+		const resendEmailButton = screen.queryByText( /Resend email/i );
+
+		expect( resendEmailButton ).toBeInTheDocument();
+
+		await userEvent.click( resendEmailButton as HTMLElement );
+
+		expect( useSendEmailVerification ).toHaveBeenCalled();
+
+		await waitFor( () => {
+			expect(
+				dispatch.mock.calls[ 0 ][ 0 ].notice.text.includes(
+					"Couldn't resend verification email. Please try again."
+				)
+			).toBeTruthy();
+		} );
 	} );
 } );
