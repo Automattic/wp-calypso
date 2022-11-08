@@ -15,7 +15,11 @@ function subtract( a: number | null, b: number | null | undefined ): number | nu
 }
 
 function percent( part: number | null, whole: number | null ) {
-	return part === null || whole === null ? null : Math.round( ( part / whole ) * 100 );
+	if ( part === null || whole === null ) {
+		return null;
+	}
+
+	return whole === 0 ? 0 : Math.round( ( part / whole ) * 100 );
 }
 
 const FORMATTER = new Intl.NumberFormat( 'en-GB', {

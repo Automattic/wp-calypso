@@ -10,13 +10,13 @@ const HighlightCardsVariations = ( props ) => (
 	<HighlightCards
 		counts={ {
 			comments: 45,
-			likes: 103,
+			likes: 0,
 			views: 4673,
 			visitors: 1548,
 		} }
 		previousCounts={ {
-			comments: 50,
-			likes: 123,
+			comments: 45,
+			likes: 0,
 			views: 4073,
 			visitors: 1412,
 		} }
