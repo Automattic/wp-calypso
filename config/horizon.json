@@ -119,7 +119,7 @@
 		"stats/fixed-nav-headers": false,
 		"stats/new-main-chart": false,
 		"stats/new-stats-module-component": false,
-		"stats/show-traffic-highlights": false,
+		"stats/show-traffic-highlights": true,
 		"stats/new-annual-highlights": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
