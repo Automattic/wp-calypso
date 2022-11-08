@@ -20,6 +20,7 @@ import {
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
 	RECOMMENDED_THEMES_FAIL,
+	THEMES_LOADING_CART,
 } from 'calypso/state/themes/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, {
@@ -35,6 +36,7 @@ import reducer, {
 	themeInstalls,
 	completedActivationRequests,
 	recommendedThemes,
+	isLoadingCart,
 } from '../reducer';
 
 const twentysixteen = {
@@ -82,6 +84,7 @@ describe( 'reducer', () => {
 				'themesUI',
 				'uploadTheme',
 				'recommendedThemes',
+				'isLoadingCart',
 			] )
 		);
 	} );
@@ -1025,6 +1028,18 @@ describe( 'reducer', () => {
 				}
 			);
 			expect( state ).toEqual( { [ filter ]: { isLoading: false, themes: [ 'a' ] } } );
+		} );
+	} );
+
+	describe( 'isLoadingCart', () => {
+		test( 'should be false the default value', () => {
+			const state = isLoadingCart( undefined, {} );
+			expect( state ).toBe( false );
+		} );
+
+		test( 'should be true when we define it', () => {
+			const state = isLoadingCart( undefined, { type: THEMES_LOADING_CART, isLoading: true } );
+			expect( state ).toBe( true );
 		} );
 	} );
 } );
