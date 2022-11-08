@@ -30,7 +30,7 @@ const StatsCard = ( {
 
 	return (
 		<div className={ baseClass }>
-			<div className={ `${ BASE_CLASS_NAME }--hero` }>{ !! heroElement && heroElement }</div>
+			{ !! heroElement && <div className={ `${ BASE_CLASS_NAME }--hero` }>{ heroElement }</div> }
 			{ title && (
 				<div className={ `${ BASE_CLASS_NAME }--header` }>
 					{ titleNode }
