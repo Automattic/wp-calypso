@@ -79,14 +79,14 @@ const StatsListActions = ( { data, moduleName, children } ) => {
 		}
 	}
 
-	return (
+	return actionItems?.length || children ? (
 		// prevent actions from triggering row click handler and redirect
 		// eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
 		<ul className={ actionClassSet } onClick={ ( e ) => e.stopPropagation() }>
 			{ !! actionItems?.length && actionItems }
 			{ !! children && children }
 		</ul>
-	);
+	) : null;
 };
 
 StatsListActions.propTypes = {
