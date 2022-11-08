@@ -16,6 +16,7 @@ import QuerySiteSelectedEditor from 'calypso/components/data/query-site-selected
 import QuerySites from 'calypso/components/data/query-sites';
 import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import HtmlIsIframeClassname from 'calypso/layout/html-is-iframe-classname';
@@ -35,11 +36,6 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getPreference } from 'calypso/state/preferences/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	developerNotificationCompleted,
-	sympathyWarningNotice,
-} from 'calypso/state/startup-flags/actions';
-import { getIsStateRandomlyCleared } from 'calypso/state/startup-flags/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import {
@@ -168,14 +164,6 @@ class Layout extends Component {
 				}
 			}
 		}
-
-		if ( this.props.isStateRandomlyCleared ) {
-			const { dispatch } = this.props;
-			setTimeout( () => {
-				dispatch( sympathyWarningNotice() );
-				dispatch( developerNotificationCompleted() );
-			}, 1200 );
-		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -288,6 +276,7 @@ class Layout extends Component {
 
 		return (
 			<div className={ sectionClass }>
+				<SympathyDevWarning />
 				<HelpCenterLoader
 					sectionName={ this.props.sectionName }
 					loadHelpCenter={ loadHelpCenter }
@@ -417,7 +406,6 @@ export default withCurrentRoute(
 		const userAllowedToHelpCenter =
 			config.isEnabled( 'calypso/help-center' ) &&
 			shouldShowHelpCenterToUser( getCurrentUserId( state ) );
-		const isStateRandomlyCleared = getIsStateRandomlyCleared( state );
 
 		return {
 			masterbarIsHidden,
@@ -449,7 +437,6 @@ export default withCurrentRoute(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			sidebarIsCollapsed: sectionName !== 'reader' && getSidebarIsCollapsed( state ),
 			userAllowedToHelpCenter,
-			isStateRandomlyCleared,
 		};
 	} )( Layout )
 );

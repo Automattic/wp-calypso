@@ -3,11 +3,11 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
@@ -24,11 +24,6 @@ import {
 	showOAuth2Layout,
 } from 'calypso/state/oauth2-clients/ui/selectors';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
-import {
-	developerNotificationCompleted,
-	sympathyWarningNotice,
-} from 'calypso/state/startup-flags/actions';
-import { getIsStateRandomlyCleared } from 'calypso/state/startup-flags/selectors';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import BodySectionCssClass from './body-section-css-class';
 
@@ -56,18 +51,6 @@ const LayoutLoggedOut = ( {
 	isPartnerSignupStart,
 	locale,
 } ) => {
-	const dispatch = useDispatch();
-	const isStateRandomlyCleared = useSelector( getIsStateRandomlyCleared );
-
-	useEffect( () => {
-		if ( isStateRandomlyCleared ) {
-			setTimeout( () => {
-				dispatch( sympathyWarningNotice() );
-				dispatch( developerNotificationCompleted() );
-			}, 1200 );
-		}
-	}, [ isStateRandomlyCleared, dispatch ] );
-
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
 	const isJetpackCheckout =
@@ -135,6 +118,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			<SympathyDevWarning />
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			{ isJetpackCloud() && (
