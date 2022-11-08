@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { isEnabled } from '@automattic/calypso-config';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { IntentScreen, StepContainer } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -18,8 +17,6 @@ import type { Step } from '../../types';
  */
 const IntentStep: Step = function IntentStep( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
-	const isEnglishLocale = useIsEnglishLocale();
-	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 	const translate = useTranslate();
 	const headerText = translate( 'Where will you start?' );
 	const subHeaderText = translate( 'You can change your mind at any time.' );
@@ -52,7 +49,7 @@ const IntentStep: Step = function IntentStep( { navigation } ) {
 			goNext={ goNext }
 			skipLabelText={ translate( 'Skip to dashboard' ) }
 			skipButtonAlign="top"
-			hideBack={ ! ( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ) }
+			hideBack={ ! isEnabled( 'signup/site-vertical-step' ) }
 			isHorizontalLayout={ true }
 			formattedHeader={
 				<FormattedHeader

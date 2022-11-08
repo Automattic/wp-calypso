@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
@@ -37,12 +36,9 @@ export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
-
 		return [
-			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
+			...( isEnabled( 'signup/goals-step' ) ? [ 'goals' ] : [] ),
+			...( isEnabled( 'signup/site-vertical-step' ) ? [ 'vertical' ] : [] ),
 			'intent',
 			'options',
 			'designSetup',
@@ -89,8 +85,6 @@ export const siteSetupFlow: Flow = {
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
 
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
 		const isDesktop = useViewportMatch( 'large' );
@@ -113,8 +107,8 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
+		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' );
+		const goalsStepEnabled = isEnabled( 'signup/goals-step' );
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
 
