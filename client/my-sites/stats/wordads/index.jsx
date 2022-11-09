@@ -141,12 +141,15 @@ class WordAds extends Component {
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
 		// New feature gate
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClasses = classNames( 'wordads', { 'stats--new-main-chart': isNewFeatured } );
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const statsWrapperClass = classNames( 'wordads', { 'stats--new-main-chart': isNewMainChart } );
+		const mainWrapperClass = classNames( {
+			'stats--new-wrapper': isNewMainChart,
+		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main wideLayout>
+			<Main className={ mainWrapperClass } wideLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
@@ -182,8 +185,8 @@ class WordAds extends Component {
 							slug={ slug }
 						/>
 
-						<div id="my-stats-content" className={ wrapperClasses }>
-							{ isNewFeatured ? (
+						<div id="my-stats-content" className={ statsWrapperClass }>
+							{ isNewMainChart ? (
 								<>
 									<StatsPeriodHeader>
 										<StatsPeriodNavigation

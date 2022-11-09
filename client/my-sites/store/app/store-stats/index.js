@@ -53,11 +53,14 @@ class StoreStats extends Component {
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
 		// New feature gate
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const statsWrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
+		const mainWrapperClass = classNames( 'store-stats', 'woocommerce', {
+			'stats--new-wrapper': isNewMainChart,
+		} );
 
 		return (
-			<Main className="store-stats woocommerce" wideLayout>
+			<Main className={ mainWrapperClass } wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
@@ -79,8 +82,8 @@ class StoreStats extends Component {
 
 				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
-				<div id="my-stats-content" class={ wrapperClasses }>
-					{ isNewFeatured ? (
+				<div id="my-stats-content" className={ statsWrapperClass }>
+					{ isNewMainChart ? (
 						<>
 							<StatsPeriodHeader>
 								<StatsPeriodNavigation

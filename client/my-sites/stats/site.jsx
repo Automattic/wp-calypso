@@ -196,26 +196,26 @@ class StatsSite extends Component {
 		const traffic = {
 			label: translate( 'Traffic' ),
 			path: '/stats',
-			showIntervals: true,
 		};
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
 		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
 
 		return (
 			<div>
 				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+
 				<FormattedHeader
 					brandFont
 					className="stats__section-header"
 					headerText={ translate( 'Jetpack Stats' ) }
 					align="left"
 					subHeaderText={ translate(
-						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}.",
+						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
 								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
@@ -233,8 +233,8 @@ class StatsSite extends Component {
 
 				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
-				<div id="my-stats-content" className={ wrapperClasses }>
-					{ isNewFeatured ? (
+				<div id="my-stats-content" className={ wrapperClass }>
+					{ isNewMainChart ? (
 						<>
 							<StatsPeriodHeader>
 								<StatsPeriodNavigation
@@ -417,8 +417,11 @@ class StatsSite extends Component {
 		// Necessary to properly configure the fixed navigation headers.
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
+		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
+		const mainWrapperClass = classNames( { 'stats--new-wrapper': isNewMainChart } );
+
 		return (
-			<Main wideLayout>
+			<Main className={ mainWrapperClass } wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				<QuerySiteKeyrings siteId={ siteId } />
