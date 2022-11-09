@@ -226,6 +226,7 @@ function LineItemWrapper( {
 				onRemoveProduct={ onRemoveProduct }
 				onRemoveProductClick={ onRemoveProductClick }
 				onRemoveProductCancel={ onRemoveProductCancel }
+				hidePrice={ ! isJetpack && areThereVariants && shouldShowVariantSelector }
 			>
 				{ areThereVariants && shouldShowVariantSelector && (
 					<ItemVariationPicker
