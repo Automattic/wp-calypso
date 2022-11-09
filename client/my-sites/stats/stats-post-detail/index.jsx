@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -46,19 +45,10 @@ class StatsPostDetail extends Component {
 		previewUrl: PropTypes.string,
 		hasNavigated: PropTypes.bool,
 	};
+	// ToDo: Remove hasNavigated prop.
 
 	state = {
 		showPreview: false,
-	};
-
-	goBack = () => {
-		if ( window.history.length > 1 && this.props.hasNavigated ) {
-			window.history.back();
-			return;
-		}
-
-		const pathParts = this.props.path.split( '/' );
-		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
 	};
 
 	getNavigationItemsWithTitle = ( title ) => {
