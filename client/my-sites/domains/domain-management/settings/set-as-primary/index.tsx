@@ -1,5 +1,6 @@
 import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
+import { Icon, info } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -105,19 +106,27 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 					} ) }
 				</p>
 				{ shouldDisableSetAsPrimaryButton && (
-					<p className="set-as-primary__content">
-						{ translate(
-							"{{strong}}%(domainName)s{{/strong}} is still activating, so you can't set it as primary just yet.",
-							{
-								args: {
-									domainName: domain.name,
-								},
-								components: {
-									strong: <strong />,
-								},
-							}
-						) }
-					</p>
+					<div className="set-as-primary__notice">
+						<Icon
+							icon={ info }
+							size={ 18 }
+							className="set-as-primary__notice-icon gridicon"
+							viewBox="2 2 20 20"
+						/>
+						<div className="set-as-primary__notice-message">
+							{ translate(
+								"{{strong}}%(domainName)s{{/strong}} is still activating, so you can't set it as primary just yet.",
+								{
+									args: {
+										domainName: domain.name,
+									},
+									components: {
+										strong: <strong />,
+									},
+								}
+							) }
+						</div>
+					</div>
 				) }
 				<Button
 					onClick={ handleSetPrimaryDomainClick }
