@@ -7,12 +7,18 @@ export type PromoCardProps = {
 	data: {
 		title: string | null;
 		message: string | null;
-		cta?: string;
+		isMobile?: boolean;
 	};
 };
 
-export default function PromoCard( { className, data: { title, message, cta } }: PromoCardProps ) {
-	const isAppStore = cta === 'app-store';
+export default function PromoCard( {
+	className,
+	data: { title, message, isMobile },
+}: PromoCardProps ) {
+	// ToDo: Fix mobile logic.
+	// Should this maybe come a media query in the CSS?
+	// Also, does it make sense to push one app store over the other?
+	// Might make more sense to have a custom SVG image that goes to wp.com/app.
 	return (
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
@@ -24,8 +30,8 @@ export default function PromoCard( { className, data: { title, message, cta } }:
 				<p className="promo-card__message">{ message }</p>
 			</div>
 			<div className="promo-rhs">
-				{ ! isAppStore && <QRCodeSVG /> }
-				{ isAppStore && <AppStoreSVG /> }
+				{ ! isMobile && <QRCodeSVG /> }
+				{ isMobile && <AppStoreSVG /> }
 			</div>
 		</div>
 	);
