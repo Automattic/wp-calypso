@@ -38,7 +38,7 @@ export const EmbedPlaceHolder = ( props: EmbedPlaceHolderProps ) => {
 						onChange={ ( event ) => props.updateUrl( event.target.value ) }
 					/>
 					<Button isPrimary type="submit">
-						{ _x( 'Embed', 'button label', 'p2-blocks' ) }
+						{ _x( 'Embed', 'button label', 'happy-blocks' ) }
 					</Button>
 				</form>
 			</Placeholder>

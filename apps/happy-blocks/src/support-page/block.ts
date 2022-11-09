@@ -19,9 +19,18 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 	) }`;
 	const pageResponse = await fetch( apiUrl );
 
-	// TODO validate response
+	if ( ! pageResponse.ok ) {
+		throw new Error( 'Failed to load the page. Check URL' );
+	}
+
 	const page = await pageResponse.json();
 
-	// TODO strip html?
-	return { url, content: page.content, title: 'Domains » Change a Domain Name' };
+	const title = page.parent?.title ? `${ page.parent.title } » ${ page.title }` : page.title;
+
+	return { url, content: stripHtml( page.content ), title };
+}
+
+function stripHtml( html: string ): string {
+	const doc = new DOMParser().parseFromString( html, 'text/html' );
+	return doc.body.textContent || '';
 }

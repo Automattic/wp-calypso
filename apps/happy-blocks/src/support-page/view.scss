@@ -17,6 +17,10 @@
 	font-size: $font-body-small;
 	line-height: 20px;
 
+	a {
+		text-decoration: none !important;
+	}
+
 	&__header {
 		display: flex;
 		gap: 24px;
