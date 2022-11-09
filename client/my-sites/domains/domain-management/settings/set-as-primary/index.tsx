@@ -110,7 +110,7 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 							"{{strong}}%(domainName)s{{/strong}} is still activating, so you can't set it as primary just yet.",
 							{
 								args: {
-									domainName: selectedSite.domain,
+									domainName: domain.name,
 								},
 								components: {
 									strong: <strong />,
