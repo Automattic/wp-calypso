@@ -294,6 +294,8 @@ export function useIssueMultipleLicenses(
 		select: selectAlphaticallySortedProductOptions,
 	} );
 
+	const sites = useSelector( getSites ).length;
+
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 
 	const fromDashboard = getQueryArg( window.location.href, 'source' ) === 'dashboard';
@@ -378,6 +380,58 @@ export function useIssueMultipleLicenses(
 		} );
 		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
 
+		if ( ! selectedSiteId ) {
+			let nextStep = partnerPortalBasePath( '/licenses' );
+			if ( sites > 0 ) {
+				nextStep = addQueryArgs(
+					{
+						products: selectedProducts.join( ',' ),
+					},
+					partnerPortalBasePath( '/assign-license' )
+				);
+			}
+
+			const assignedLicenses = selectedProducts
+				.map(
+					( product ) =>
+						products.data?.find( ( productOption ) => productOption.slug === product )?.name
+				)
+				.filter( ( license ) => license );
+
+			if ( assignedLicenses.length > 0 ) {
+				const lastItem = assignedLicenses.slice( -1 )[ 0 ];
+				const remainingItems = assignedLicenses.slice( 0, -1 );
+				const messageArgs = {
+					args: {
+						lastItem: lastItem,
+						remainingItems: remainingItems.join( ', ' ),
+					},
+					components: {
+						strong: <strong />,
+					},
+				};
+
+				dispatch(
+					successNotice(
+						// We are not using the same translate method for plural form since we have different arguments.
+						assignedLicenses.length > 1
+							? translate(
+									'{{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} were succesfully issued',
+									messageArgs
+							  )
+							: translate(
+									'{{strong}}%(lastItem)s{{/strong}} was succesfully issued',
+									messageArgs
+							  ),
+						{
+							displayOnNextPage: true,
+						}
+					)
+				);
+			}
+			return page.redirect( nextStep );
+		}
+
 		const assignLicenseRequests: any = [];
 
 		const assignedProducts: Array< any > = [];
@@ -448,7 +502,9 @@ export function useIssueMultipleLicenses(
 		selectedSite,
 		fromDashboard,
 		issueLicense,
-		products?.data,
+		sites,
+		translate,
+		products.data,
 		assignLicense,
 	] );
 
