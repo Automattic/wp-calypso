@@ -76,9 +76,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
-		const { container } = render(
-			<EditorMediaModal { ...baseProps } single={ true } view={ null } />
-		);
+		const { container } = render( <EditorMediaModal { ...baseProps } single view={ null } /> );
 		Modal.setAppElement( container );
 		expect( selectMediaItems ).toHaveBeenCalledWith( DUMMY_SITE.ID, [] );
 	} );
