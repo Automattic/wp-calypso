@@ -21,7 +21,11 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 				</div>
 			</div>
 			<div className="hb-support-page-embed__content">{ props.attributes.content }</div>
-			<div className="hb-support-page-embed__reactions">923 people have found this useful!</div>
+			{ props.attributes.likes && (
+				<div className="hb-support-page-embed__reactions">
+					${ props.attributes.likes } people have found this useful!
+				</div>
+			) }
 		</div>
 	);
 };
