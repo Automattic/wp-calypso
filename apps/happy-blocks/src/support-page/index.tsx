@@ -21,6 +21,9 @@ registerBlockType( 'happy-blocks/support-page', {
 		title: {
 			type: 'string',
 		},
+		minutesToRead: {
+			type: 'number',
+		},
 	},
 	supports: {
 		align: true,

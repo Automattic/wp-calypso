@@ -15,7 +15,9 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 						<span>in</span>
 						<a href={ props.attributes.url }>WordPress.com Support</a>
 					</div>
-					<div className="hb-support-page-embed__time-to-read">2 min read</div>
+					{ props.attributes.minutesToRead && (
+						<div className="hb-support-page-embed__time-to-read">2 min read</div>
+					) }
 				</div>
 			</div>
 			<div className="hb-support-page-embed__content">{ props.attributes.content }</div>

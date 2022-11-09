@@ -1,12 +1,13 @@
 export const SUPPORT_PAGE_PATTERN = /^http[s]?:\/\/(?:www\.)?wordpress\.com(?:.*)?/i;
 const EMBED_CONTENT_MAXLENGTH = 400;
+const AVERAGE_READING_SPEED = 250; // words per minute
 
 export type SupportPageBlockAttributes = {
 	url: string;
 	title: string;
 	content: string;
+	minutesToRead: number | null;
 
-	timeToRead?: string;
 	likes?: number;
 };
 
@@ -29,11 +30,15 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 	const title = page.parent?.title ? `${ page.parent.title } » ${ page.title }` : page.title;
 
 	let content = stripHtml( page.content );
+
+	const words = content.trim().split( /\s+/ );
+	const minutesToRead = words.length ? Math.ceil( words.length / AVERAGE_READING_SPEED ) : null;
+
 	if ( content.length > EMBED_CONTENT_MAXLENGTH ) {
 		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
 	}
 
-	return { url, content: content, title };
+	return { url, content: content, title, minutesToRead };
 }
 
 function stripHtml( html: string ): string {
