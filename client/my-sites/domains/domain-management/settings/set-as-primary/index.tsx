@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import { type } from 'calypso/lib/domains/constants';
 import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
+import { isRecentlyRegisteredAndDoesNotPointToWpcom } from 'calypso/lib/domains/utils/is-recently-registered-and-does-not-point-to-wpcom';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -85,6 +86,8 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 		}
 	};
 
+	const shouldDisableSetAsPrimaryButton = isRecentlyRegisteredAndDoesNotPointToWpcom( domain );
+
 	return (
 		<div className="set-as-primary">
 			<Accordion
@@ -101,7 +104,26 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 						},
 					} ) }
 				</p>
-				<Button onClick={ handleSetPrimaryDomainClick } busy={ isSettingPrimaryDomain }>
+				{ shouldDisableSetAsPrimaryButton && (
+					<p className="set-as-primary__content">
+						{ translate(
+							"{{strong}}%(domainName)s{{/strong}} is still activating, so you can't set it as primary just yet.",
+							{
+								args: {
+									domainName: selectedSite.domain,
+								},
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+				) }
+				<Button
+					onClick={ handleSetPrimaryDomainClick }
+					busy={ isSettingPrimaryDomain }
+					disabled={ shouldDisableSetAsPrimaryButton }
+				>
 					{ translate( 'Set this domain as primary' ) }
 				</Button>
 			</Accordion>
