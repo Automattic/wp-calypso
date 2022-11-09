@@ -88,16 +88,18 @@ describe( 'Favicons', () => {
 		const safariLink = links.find(
 			( el ) => el.rel === 'mask-icon' && el.type === 'image/svg+xml'
 		);
-		expect( safariLink.getAttribute( 'color' ) ).toEqual( '#00be28' );
-		expect( safariLink.getAttribute( 'href' ) ).toEqual( `${ basePath }/safari-pinned-tab.svg` );
+		expect( safariLink ).toHaveAttribute( 'color', '#00be28' );
+		expect( safariLink ).toHaveAttribute( 'href', `${ basePath }/safari-pinned-tab.svg` );
 
 		// Windows/IE tile
-		expect(
-			metas.find( ( meta ) => meta.name === 'application-name' ).getAttribute( 'content' )
-		).toEqual( 'Jetpack.com' );
-		expect(
-			metas.find( ( meta ) => meta.name === 'msapplication-config' ).getAttribute( 'content' )
-		).toEqual( `${ basePath }/browserconfig.xml` );
+		expect( metas.find( ( { name } ) => name === 'application-name' ) ).toHaveAttribute(
+			'content',
+			'Jetpack.com'
+		);
+		expect( metas.find( ( { name } ) => name === 'msapplication-config' ) ).toHaveAttribute(
+			'content',
+			`${ basePath }/browserconfig.xml`
+		);
 
 		// Android favicons
 		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '512x512' } ) ).toHaveAttribute(
