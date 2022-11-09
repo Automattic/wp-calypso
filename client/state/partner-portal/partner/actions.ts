@@ -7,6 +7,7 @@ import {
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE_ERROR,
 	JETPACK_PARTNER_PORTAL_PARTNER_RECEIVE,
 } from 'calypso/state/action-types';
+import { setUserJetpackPartnerType } from 'calypso/state/current-user/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import {
 	getActivePartnerKey,
@@ -66,6 +67,10 @@ export function receivePartner( partner: Partner ): PartnerPortalThunkAction {
 		if ( newKeyId ) {
 			dispatch( setActivePartnerKey( newKeyId ) );
 		}
+
+		// Set the correct partner type as it's used across the UI for conditional
+		// displaying various components.
+		dispatch( setUserJetpackPartnerType( partner?.partner_type ) );
 	};
 }
 
