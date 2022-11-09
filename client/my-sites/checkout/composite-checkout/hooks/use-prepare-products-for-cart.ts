@@ -132,7 +132,9 @@ export default function usePrepareProductsForCart( {
 
 	// Do not strip products from url until the URL has been parsed
 	const areProductsRetrievedFromUrl = ! state.isLoading && ! isInModal;
-	const doNotStripProducts = Boolean( ! areProductsRetrievedFromUrl || isJetpackCheckout );
+	const doNotStripProducts = Boolean(
+		! areProductsRetrievedFromUrl || isJetpackCheckout || isGiftPurchase
+	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
 
 	return state;
