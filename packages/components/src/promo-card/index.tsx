@@ -1,7 +1,9 @@
+import classNames from 'classnames';
 import './style.scss';
 import { AppStoreSVG, JetpackSVG, QRCodeSVG, WordPressSVG } from './svg-icons';
 
 export type PromoCardProps = {
+	className?: string;
 	data: {
 		title: string | null;
 		message: string | null;
@@ -9,10 +11,10 @@ export type PromoCardProps = {
 	};
 };
 
-export default function PromoCard( { data: { title, message, cta } }: PromoCardProps ) {
+export default function PromoCard( { className, data: { title, message, cta } }: PromoCardProps ) {
 	const isAppStore = cta === 'app-store';
 	return (
-		<div className="promo-card">
+		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
 				<div className="promo-card__icons">
 					<WordPressSVG />

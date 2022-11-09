@@ -23,4 +23,5 @@ Mobile.args = {
 			'Check your stats on-the-go and get real-time notifications with the Jetpack mobile app.',
 		cta: 'app-store',
 	},
+	className: 'example-extra-classname',
 };
