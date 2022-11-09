@@ -30,6 +30,7 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
 import UpsellNudge, {
@@ -460,6 +461,14 @@ export function jetpackCheckoutThankYou( context, next ) {
 	);
 
 	next();
+}
+
+export function giftThankYou( context, next ) {
+	// Overriding section name here in order to apply a top level
+	// background via .is-section-checkout-gift-thank-you
+	context.section.name = 'checkout-gift-thank-you';
+	context.primary = <GiftThankYou site={ context.params.site } />;
+	next( context );
 }
 
 function getRememberedCoupon() {

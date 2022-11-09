@@ -13,7 +13,7 @@ import { partnerPortalBasePath } from 'calypso/lib/jetpack/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { setPurchasedLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
+import { setPurchasedLicense, resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import useAssignLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-assign-license-mutation';
 import useIssueLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-issue-license-mutation';
@@ -146,10 +146,13 @@ export function useLicenseIssuing(
 			dispatch(
 				setPurchasedLicense( {
 					selectedSite: selectedSite?.domain,
-					selectedProduct: {
-						name: getProductTitle( selectedProduct.name ),
-						key: licenseKey,
-					},
+					selectedProducts: [
+						{
+							name: getProductTitle( selectedProduct.name ),
+							key: licenseKey,
+							status: 'fulfilled',
+						},
+					],
 				} )
 			);
 		}
@@ -297,7 +300,7 @@ export function useIssueMultipleLicenses(
 
 	const assignLicense = useAssignLicenseMutation( {
 		onError: ( error: Error ) => {
-			dispatch( errorNotice( error.message ) );
+			dispatch( errorNotice( error.message, { isPersistent: true } ) );
 		},
 	} );
 
@@ -344,20 +347,23 @@ export function useIssueMultipleLicenses(
 	const isLoading = assignLicense.isLoading || issueLicense.isLoading;
 
 	const issue = useCallback( async () => {
-		if ( isLoading ) {
+		if ( isLoading && ! selectedProducts.length ) {
 			return;
 		}
-
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_issue_mutiple_licenses_submit', {
-				products: selectedProducts,
+				products: selectedProducts.join( ',' ),
 			} )
 		);
+
+		const selectedSiteId = selectedSite?.ID;
 
 		if ( paymentMethodRequired ) {
 			const nextStep = addQueryArgs(
 				{
-					product: selectedProducts.join( ',' ),
+					products: selectedProducts.join( ',' ),
+					...( selectedSiteId && { site_id: selectedSiteId } ),
+					...( fromDashboard && { source: 'dashboard' } ),
 				},
 				partnerPortalBasePath( '/payment-methods/add' )
 			);
@@ -371,8 +377,6 @@ export function useIssueMultipleLicenses(
 			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
 		} );
 		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
-
-		const selectedSiteId = selectedSite?.ID;
 
 		const assignLicenseRequests: any = [];
 
@@ -402,7 +406,7 @@ export function useIssueMultipleLicenses(
 
 		dispatch(
 			recordTracksEvent( 'calypso_partner_portal_multiple_linceses_issued', {
-				products: assignedProducts,
+				products: assignedProducts.join( ',' ),
 			} )
 		);
 
@@ -413,18 +417,26 @@ export function useIssueMultipleLicenses(
 
 		assignLicensePromises.forEach( ( promise: any ) => {
 			const { status, value: license } = promise;
-			const licenseKey = license.license_key;
-			const productSlug = licenseKey.split( '_' )[ 0 ];
-			const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
-			if ( selectedProduct ) {
-				const item = {
-					key: licenseKey,
-					name: getProductTitle( selectedProduct.name ),
-					status,
-				};
-				allSelectedProducts.push( item );
+			if ( license ) {
+				const licenseKey = license.license_key;
+				const productSlug = licenseKey.split( '_' )[ 0 ];
+				const selectedProduct = products?.data?.find( ( p ) => p.slug === productSlug );
+				if ( selectedProduct ) {
+					const item = {
+						key: licenseKey,
+						name: getProductTitle( selectedProduct.name ),
+						status,
+					};
+					allSelectedProducts.push( item );
+				}
 			}
 		} );
+		const assignLicenseStatus = {
+			selectedSite: selectedSite?.domain || '',
+			selectedProducts: allSelectedProducts,
+		};
+		dispatch( resetSite() );
+		dispatch( setPurchasedLicense( assignLicenseStatus ) );
 		if ( fromDashboard ) {
 			return page.redirect( '/dashboard' );
 		}

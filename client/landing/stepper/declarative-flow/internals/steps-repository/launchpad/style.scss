@@ -166,18 +166,21 @@
 		padding-right: 12px;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__url-box-domain-text {
-		padding-right: 0;
+	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
+		position: inherit;
+		top: 0;
 	}
 
-	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		display: block;
+	.launchpad__clipboard-button:focus {
+		position: inherit;
+		top: 0;
 	}
 
 	.launchpad__clipboard-button {
 		padding-left: 8px;
 		padding-right: 8px;
-		display: none;
+		position: absolute;
+		top: -1000em;
 		min-width: 34px;
 	}
 }
