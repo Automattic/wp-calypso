@@ -9,10 +9,10 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 				<div>
 					<div className="hb-support-page-embed__title">
 						Domains » Change a Domain Name
-						<div className="hb-support-page-embed__badge">Support article</div>
+						<span className="hb-support-page-embed__badge">Support article</span>
 					</div>
-					<div>
-						in
+					<div className="hb-support-page-embed__source">
+						<span>in</span>
 						<a href={ props.attributes.url }>WordPress.com Support</a>
 					</div>
 					<div className="hb-support-page-embed__time-to-read">2 min read</div>
