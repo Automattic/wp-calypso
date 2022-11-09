@@ -5,7 +5,7 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 	return (
 		<div className="hb-support-page-embed">
 			<div className="hb-support-page-embed__header">
-				<WordPressIcon variant="large" />
+				<WordPressIcon variant="raster" />
 				<div>
 					<div className="hb-support-page-embed__title">
 						{ props.attributes.title }
