@@ -17,7 +17,7 @@ describe( 'UpgradeBlock/Edit', () => {
 	} );
 
 	test( 'should render', () => {
-		const wrapper = render( <Edit /> );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <Edit /> );
+		expect( container ).toMatchSnapshot();
 	} );
 } );

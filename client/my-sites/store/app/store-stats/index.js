@@ -43,9 +43,6 @@ class StoreStats extends Component {
 		const topWidgets = [ topProducts, topCategories, topCoupons ];
 		const widgetPath = getWidgetPath( unit, slug, queryParams );
 
-		// New feature gate
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		// For period option links
 		const store = {
 			label: translate( 'Store' ),
@@ -55,12 +52,12 @@ class StoreStats extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ store.path }/{{ interval }}${ slugPath }`;
 
-		const classes = classNames( 'store-stats', 'woocommerce', {
-			'stats--new-main-chart': isNewFeatured,
-		} );
+		// New feature gate
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
 
 		return (
-			<Main className={ classes } wideLayout>
+			<Main className="store-stats woocommerce" wideLayout>
 				<PageViewTracker
 					path={ `/store/stats/orders/${ unit }/:site` }
 					title={ `Store > Stats > Orders > ${ titlecase( unit ) }` }
@@ -82,9 +79,50 @@ class StoreStats extends Component {
 
 				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
-				{ isNewFeatured ? (
-					<>
-						<StatsPeriodHeader>
+				<div id="my-stats-content" class={ wrapperClasses }>
+					{ isNewFeatured ? (
+						<>
+							<StatsPeriodHeader>
+								<StatsPeriodNavigation
+									date={ selectedDate }
+									period={ unit }
+									url={ `/store/stats/orders/${ unit }/${ slug }` }
+								>
+									<DatePicker
+										period={ unit }
+										// this is needed to counter the +1d adjustment made in DatePicker for weeks
+										date={
+											unit === 'week'
+												? moment( selectedDate, 'YYYY-MM-DD' )
+														.subtract( 1, 'days' )
+														.format( 'YYYY-MM-DD' )
+												: selectedDate
+										}
+										query={ orderQuery }
+										statsType="statsOrders"
+										showQueryDate
+									/>
+								</StatsPeriodNavigation>
+								<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
+							</StatsPeriodHeader>
+
+							<Chart
+								query={ orderQuery }
+								selectedDate={ endSelectedDate }
+								siteId={ siteId }
+								unit={ unit }
+								slug={ slug }
+							/>
+						</>
+					) : (
+						<>
+							<Chart
+								query={ orderQuery }
+								selectedDate={ endSelectedDate }
+								siteId={ siteId }
+								unit={ unit }
+								slug={ slug }
+							/>
 							<StatsPeriodNavigation
 								date={ selectedDate }
 								period={ unit }
@@ -105,104 +143,65 @@ class StoreStats extends Component {
 									showQueryDate
 								/>
 							</StatsPeriodNavigation>
-							<Intervals selected={ unit } pathTemplate={ pathTemplate } compact={ false } />
-						</StatsPeriodHeader>
+						</>
+					) }
 
-						<Chart
-							query={ orderQuery }
-							selectedDate={ endSelectedDate }
-							siteId={ siteId }
-							unit={ unit }
-							slug={ slug }
-						/>
-					</>
-				) : (
-					<>
-						<Chart
-							query={ orderQuery }
-							selectedDate={ endSelectedDate }
-							siteId={ siteId }
-							unit={ unit }
-							slug={ slug }
-						/>
-						<StatsPeriodNavigation
-							date={ selectedDate }
-							period={ unit }
-							url={ `/store/stats/orders/${ unit }/${ slug }` }
-						>
-							<DatePicker
-								period={ unit }
-								// this is needed to counter the +1d adjustment made in DatePicker for weeks
-								date={
-									unit === 'week'
-										? moment( selectedDate, 'YYYY-MM-DD' )
-												.subtract( 1, 'days' )
-												.format( 'YYYY-MM-DD' )
-										: selectedDate
-								}
-								query={ orderQuery }
-								statsType="statsOrders"
-								showQueryDate
-							/>
-						</StatsPeriodNavigation>
-					</>
-				) }
-
-				<div className="store-stats__widgets">
-					{ sparkWidgets.map( ( widget, index ) => (
-						<div
-							className="store-stats__widgets-column widgets stats__module-headerless--unified"
-							key={ index }
-						>
-							<Module
-								siteId={ siteId }
-								emptyMessage={ noDataMsg }
-								query={ orderQuery }
-								statType="statsOrders"
-							>
-								<WidgetList
-									siteId={ siteId }
-									query={ orderQuery }
-									selectedDate={ endSelectedDate }
-									statType="statsOrders"
-									widgets={ widget }
-								/>
-							</Module>
-						</div>
-					) ) }
-					{ topWidgets.map( ( widget ) => {
-						const header = (
-							<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
-						);
-						return (
+					<div className="store-stats__widgets">
+						{ sparkWidgets.map( ( widget, index ) => (
 							<div
-								className="store-stats__widgets-column stats__module--unified"
-								key={ widget.basePath }
+								className="store-stats__widgets-column widgets stats__module-headerless--unified"
+								key={ index }
 							>
-								{ siteId && (
-									<QuerySiteStats
-										statType={ widget.statType }
-										siteId={ siteId }
-										query={ topListQuery }
-									/>
-								) }
 								<Module
 									siteId={ siteId }
-									header={ header }
-									emptyMessage={ widget.empty }
-									query={ topListQuery }
-									statType={ widget.statType }
+									emptyMessage={ noDataMsg }
+									query={ orderQuery }
+									statType="statsOrders"
 								>
-									<List
+									<WidgetList
 										siteId={ siteId }
-										values={ widget.values }
-										query={ topListQuery }
-										statType={ widget.statType }
+										query={ orderQuery }
+										selectedDate={ endSelectedDate }
+										statType="statsOrders"
+										widgets={ widget }
 									/>
 								</Module>
 							</div>
-						);
-					} ) }
+						) ) }
+						{ topWidgets.map( ( widget ) => {
+							const header = (
+								<SectionHeader href={ widget.basePath + widgetPath } label={ widget.title } />
+							);
+							return (
+								<div
+									className="store-stats__widgets-column stats__module--unified"
+									key={ widget.basePath }
+								>
+									{ siteId && (
+										<QuerySiteStats
+											statType={ widget.statType }
+											siteId={ siteId }
+											query={ topListQuery }
+										/>
+									) }
+									<Module
+										siteId={ siteId }
+										header={ header }
+										emptyMessage={ widget.empty }
+										query={ topListQuery }
+										statType={ widget.statType }
+									>
+										<List
+											siteId={ siteId }
+											values={ widget.values }
+											query={ topListQuery }
+											statType={ widget.statType }
+										/>
+									</Module>
+								</div>
+							);
+						} ) }
+					</div>
 				</div>
 
 				<JetpackColophon />

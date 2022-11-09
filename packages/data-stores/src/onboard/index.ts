@@ -55,6 +55,8 @@ export function register(): typeof STORE_KEY {
 			'storeType',
 			'domainCartItem',
 			'planCartItem',
+			'verticalId',
+			'storeLocationCountryCode',
 		],
 	} );
 	isRegistered = true;

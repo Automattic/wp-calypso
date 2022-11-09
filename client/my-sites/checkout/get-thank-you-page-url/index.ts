@@ -234,6 +234,18 @@ export default function getThankYouPageUrl( {
 		return '/';
 	}
 
+	// Gift purchases need to bypass everything below, especially the updateUrlInCookie
+	// redirection to the ecommerce thank you page for ecommerce plan checkouts.
+	if ( cart?.is_gift_purchase ) {
+		debug( 'gift purchase cart.gift_details', cart?.gift_details );
+		// Missing receiver_blog_slug should never happen but if it's missing we incorrectly
+		// show a purchase thank you page for the users primary site instead.
+		if ( ! cart?.gift_details?.receiver_blog_slug ) {
+			throw new Error( 'Expected receiver_blog_slug in cart.gift_details, slug not found.' );
+		}
+		return `/checkout/gift/thank-you/${ cart?.gift_details?.receiver_blog_slug }`;
+	}
+
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
 	// the manage purchases page.
 	const firstRenewalInCart =

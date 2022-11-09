@@ -320,6 +320,16 @@ export const setEditEmail = ( email: string ) => ( {
 	email,
 } );
 
+export const setVerticalId = ( verticalId: string ) => ( {
+	type: 'SET_VERTICAL_ID' as const,
+	verticalId,
+} );
+
+export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) => ( {
+	type: 'SET_STORE_LOCATION_COUNTRY_CODE' as const,
+	storeLocationCountryCode,
+} );
+
 export const setDomainForm = ( step: Record< string, string > ) => {
 	const lastUpdated = Date.now();
 
@@ -385,6 +395,8 @@ export type OnboardAction = ReturnType<
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
+	| typeof setVerticalId
+	| typeof setStoreLocationCountryCode
 	| typeof setHideFreePlan
 	| typeof setPlanCartItem
 >;

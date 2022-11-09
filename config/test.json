@@ -71,6 +71,7 @@
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
+		"post-list/qr-code-link": false,
 		"press-this": true,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
