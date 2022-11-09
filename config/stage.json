@@ -151,6 +151,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
+		"videopress/tailored-onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true

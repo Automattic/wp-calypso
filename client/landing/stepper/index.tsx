@@ -39,6 +39,7 @@ import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
 import { ecommerceFlow } from './declarative-flow/tailored-ecommerce-flow';
+import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
@@ -54,6 +55,7 @@ function generateGetSuperProps() {
 	} );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
 	config.isEnabled( 'signup/inline-help' ) && reduxStore.dispatch( requestHappychatEligibility() );
 	reduxStore.dispatch( setCurrentUser( user ) );
@@ -68,6 +70,9 @@ interface configurableFlows {
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
+	config.isEnabled( 'videopress/tailored-onboarding' )
+		? { flowName: 'videopress', pathToFlow: videopress }
+		: null,
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
@@ -106,6 +111,8 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
+	// console.log(flow);
+	// return;
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {

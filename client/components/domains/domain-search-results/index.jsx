@@ -55,6 +55,7 @@ class DomainSearchResults extends Component {
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
 		domainAndPlanUpsellFlow: PropTypes.bool,
+		useProvidedProductsList: PropTypes.bool,
 	};
 
 	renderDomainAvailability() {
@@ -280,6 +281,7 @@ class DomainSearchResults extends Component {
 					unavailableDomains={ this.props.unavailableDomains }
 					isReskinned={ this.props.isReskinned }
 					domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+					products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 				/>
 			);
 
@@ -309,6 +311,7 @@ class DomainSearchResults extends Component {
 						unavailableDomains={ this.props.unavailableDomains }
 						isReskinned={ this.props.isReskinned }
 						domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+						products={ this.props.useProvidedProductsList ? this.props.products : undefined }
 					/>
 				);
 			} );
