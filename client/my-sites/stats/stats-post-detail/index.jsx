@@ -139,7 +139,6 @@ class StatsPostDetail extends Component {
 		}
 
 		// Set up for FixedNavigationHeader.
-		const title = this.getTitle();
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
 		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
 
@@ -152,7 +151,9 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
+				<FixedNavigationHeader
+					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+				>
 					{ showViewLink && (
 						<Button onClick={ this.openPreview }>
 							<span>{ actionLabel }</span>
