@@ -194,7 +194,7 @@ class StatsModule extends Component {
 				) }
 
 				{ ! shouldShowNewModule && (
-					<div>
+					<div className={ `stats__module-wrapper stats__module-wrapper--${ path }` }>
 						{ ! isAllTime && (
 							<SectionHeader
 								className={ headerClass }
@@ -222,9 +222,11 @@ class StatsModule extends Component {
 							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
 							{ hasError && <ErrorPanel /> }
 							{ this.props.children }
-							<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
-							<StatsModulePlaceholder isLoading={ isLoading } />
-							<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							<div className="stats__list-wrapper">
+								<StatsListLegend value={ moduleStrings.value } label={ moduleStrings.item } />
+								<StatsModulePlaceholder isLoading={ isLoading } />
+								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
+							</div>
 							{ this.props.showSummaryLink && displaySummaryLink && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
