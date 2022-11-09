@@ -173,24 +173,8 @@ class StatsSite extends Component {
 		const queryDate = date.format( 'YYYY-MM-DD' );
 		const { period, endOf } = this.props.period;
 		const moduleStrings = statsStrings();
-		let fileDownloadList;
 
 		const query = memoizedQuery( period, endOf );
-
-		// File downloads are not yet supported in Jetpack Stats
-		if ( ! isJetpack ) {
-			fileDownloadList = (
-				<StatsModule
-					path="filedownloads"
-					moduleStrings={ moduleStrings.filedownloads }
-					period={ this.props.period }
-					query={ query }
-					statType="statsFileDownloads"
-					showSummaryLink
-					useShortLabel={ true }
-				/>
-			);
-		}
 
 		// For period option links
 		const traffic = {
@@ -305,69 +289,80 @@ class StatsSite extends Component {
 						</>
 					) }
 
-					<div className="stats__module-list is-events stats__module--unified">
-						<div className="stats__module-column">
-							<StatsModule
-								path="posts"
-								moduleStrings={ moduleStrings.posts }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopPosts"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="searchterms"
-								moduleStrings={ moduleStrings.search }
-								period={ this.props.period }
-								query={ query }
-								statType="statsSearchTerms"
-								showSummaryLink
-							/>
-							{ fileDownloadList }
-						</div>
-						<div className="stats__module-column">
-							<Countries
-								path="countries"
-								period={ this.props.period }
-								query={ query }
-								summary={ false }
-							/>
-							<StatsModule
-								path="clicks"
-								moduleStrings={ moduleStrings.clicks }
-								period={ this.props.period }
-								query={ query }
-								statType="statsClicks"
-								showSummaryLink
-							/>
-						</div>
-						<div className="stats__module-column">
-							<StatsModule
-								path="referrers"
-								moduleStrings={ moduleStrings.referrers }
-								period={ this.props.period }
-								query={ query }
-								statType="statsReferrers"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="authors"
-								moduleStrings={ moduleStrings.authors }
-								period={ this.props.period }
-								query={ query }
-								statType="statsTopAuthors"
-								className="stats__author-views"
-								showSummaryLink
-							/>
-							<StatsModule
-								path="videoplays"
-								moduleStrings={ moduleStrings.videoplays }
-								period={ this.props.period }
-								query={ query }
-								statType="statsVideoPlays"
-								showSummaryLink
-							/>
-						</div>
+					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
+						<StatsModule
+							path="posts"
+							moduleStrings={ moduleStrings.posts }
+							period={ this.props.period }
+							query={ query }
+							statType="statsTopPosts"
+							showSummaryLink
+						/>
+						<StatsModule
+							path="referrers"
+							moduleStrings={ moduleStrings.referrers }
+							period={ this.props.period }
+							query={ query }
+							statType="statsReferrers"
+							showSummaryLink
+						/>
+
+						<Countries
+							path="countries"
+							period={ this.props.period }
+							query={ query }
+							summary={ false }
+						/>
+
+						<StatsModule
+							path="authors"
+							moduleStrings={ moduleStrings.authors }
+							period={ this.props.period }
+							query={ query }
+							statType="statsTopAuthors"
+							className="stats__author-views"
+							showSummaryLink
+						/>
+						<StatsModule
+							path="searchterms"
+							moduleStrings={ moduleStrings.search }
+							period={ this.props.period }
+							query={ query }
+							statType="statsSearchTerms"
+							showSummaryLink
+						/>
+
+						<StatsModule
+							path="clicks"
+							moduleStrings={ moduleStrings.clicks }
+							period={ this.props.period }
+							query={ query }
+							statType="statsClicks"
+							showSummaryLink
+						/>
+						<StatsModule
+							path="videoplays"
+							moduleStrings={ moduleStrings.videoplays }
+							period={ this.props.period }
+							query={ query }
+							statType="statsVideoPlays"
+							showSummaryLink
+						/>
+						{
+							// File downloads are not yet supported in Jetpack Stats
+							// TODO: Confirm the above statement.
+							! isJetpack && (
+								<StatsModule
+									path="filedownloads"
+									moduleStrings={ moduleStrings.filedownloads }
+									period={ this.props.period }
+									query={ query }
+									statType="statsFileDownloads"
+									showSummaryLink
+									useShortLabel={ true }
+								/>
+							)
+						}
 					</div>
 				</div>
 
