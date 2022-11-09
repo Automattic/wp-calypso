@@ -291,6 +291,7 @@ class Signup extends Component {
 				this.props.locale
 			);
 			this.handleLogin( this.props.signupDependencies, stepUrl, false );
+			this.handleDestination( this.props.signupDependencies, stepUrl );
 		}
 	}
 
@@ -323,6 +324,15 @@ class Signup extends Component {
 		}
 	}
 
+	handlePostFlowCallbacks = async ( dependencies ) => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+
+		if ( flow.postCompleteCallback ) {
+			const siteId = dependencies && dependencies.siteId;
+			await flow.postCompleteCallback( { siteId, flowName: this.props.flowName } );
+		}
+	};
+
 	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
 		const filteredDestination = getDestination(
 			destination,
@@ -338,7 +348,13 @@ class Signup extends Component {
 			setSignupCompleteFlowName( this.props.flowName );
 		}
 
-		return this.handleFlowComplete( dependencies, filteredDestination );
+		this.handleFlowComplete( dependencies, filteredDestination );
+
+		this.handleLogin( dependencies, filteredDestination );
+
+		await this.handlePostFlowCallbacks( dependencies );
+
+		this.handleDestination( dependencies, filteredDestination );
 	};
 
 	startTrackingForBusinessSite() {
@@ -467,9 +483,26 @@ class Signup extends Component {
 			startingPoint,
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
-
-		this.handleLogin( dependencies, destination );
 	};
+
+	handleDestination( dependencies, destination ) {
+		if ( this.props.isLoggedIn ) {
+			// don't use page.js for external URLs (eg redirect to new site after signup)
+			if ( /^https?:\/\//.test( destination ) ) {
+				return ( window.location.href = destination );
+			}
+
+			// deferred in case the user is logged in and the redirect triggers a dispatch
+			defer( () => {
+				debug( `Redirecting you to "${ destination }"` );
+				window.location.href = destination;
+			} );
+
+			return;
+		}
+
+		window.location.href = destination;
+	}
 
 	handleLogin( dependencies, destination, resetSignupFlowController = true ) {
 		const { isLoggedIn: userIsLoggedIn, progress } = this.props;
@@ -483,19 +516,6 @@ class Signup extends Component {
 			}
 		}
 
-		if ( userIsLoggedIn ) {
-			// don't use page.js for external URLs (eg redirect to new site after signup)
-			if ( /^https?:\/\//.test( destination ) ) {
-				return ( window.location.href = destination );
-			}
-
-			// deferred in case the user is logged in and the redirect triggers a dispatch
-			defer( () => {
-				debug( `Redirecting you to "${ destination }"` );
-				window.location.href = destination;
-			} );
-		}
-
 		const isRegularOauth2ClientSignup =
 			dependencies.oauth2_client_id && ! progress?.[ 'oauth2-user' ]?.service; // service is set for social signup (e.g. Google, Apple)
 		// If the user is not logged in, we need to log them in first.
@@ -505,7 +525,6 @@ class Signup extends Component {
 		if ( ! userIsLoggedIn && ( config.isEnabled( 'oauth' ) || isRegularOauth2ClientSignup ) ) {
 			debug( `Handling oauth login` );
 			oauthToken.setToken( dependencies.bearer_token );
-			window.location.href = destination;
 			return;
 		}
 
@@ -519,7 +538,6 @@ class Signup extends Component {
 				isEmpty( username ) &&
 				'onboarding-registrationless' === this.props.flowName
 			) {
-				window.location.href = destination;
 				return;
 			}
 
@@ -530,6 +548,8 @@ class Signup extends Component {
 					username: dependencies.username,
 					redirectTo: this.loginRedirectTo( destination ),
 				} );
+
+				return;
 			}
 		}
 	}
