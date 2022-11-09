@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
 
@@ -17,25 +17,24 @@ describe( 'Favicons', () => {
 		isJetpackCloud.mockRestore();
 	} );
 
-	const findFaviconURL = ( wrapper, props ) =>
-		wrapper.find( { type: 'image/png', ...props } ).prop( 'href' );
+	const findFavicon = ( links, { rel, type } ) =>
+		links.find( ( el ) => el.rel === rel && el.type === type );
+
+	const findFaviconBySizes = ( links, { rel, sizes } ) =>
+		links.find( ( el ) => el.rel === rel && el.getAttribute( 'sizes' ) === sizes );
 
 	test( "should render environment favicons using the 'environmentFaviconURL' property", () => {
 		const arbitraryURL = 'https://arbitrary-favicon-url/';
+		const { container } = render( <Favicons environmentFaviconURL={ arbitraryURL } /> );
+		const links = Array.from( container.getElementsByTagName( 'link' ) );
 
-		const wrapper = shallow( <Favicons environmentFaviconURL={ arbitraryURL } /> );
-
-		expect( wrapper ).toMatchSnapshot();
-
-		expect(
-			findFaviconURL( wrapper, { rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' } )
-		).toEqual( arbitraryURL );
-		expect( findFaviconURL( wrapper, { rel: 'shortcut icon', type: 'image/x-icon' } ) ).toEqual(
-			arbitraryURL
-		);
-		expect( findFaviconURL( wrapper, { rel: 'icon', type: 'image/x-icon' } ) ).toEqual(
-			arbitraryURL
-		);
+		[
+			{ rel: 'shortcut icon', type: 'image/vnd.microsoft.icon' },
+			{ rel: 'shortcut icon', type: 'image/x-icon' },
+			{ rel: 'icon', type: 'image/x-icon' },
+		].forEach( ( params ) => {
+			expect( findFavicon( links, params ) ).toHaveAttribute( 'href', arbitraryURL );
+		} );
 	} );
 
 	test( 'should only render WordPress favicons if not running Jetpack Cloud', () => {
@@ -62,13 +61,14 @@ describe( 'Favicons', () => {
 		const baseUrl = '//s1.wp.com/i/favicons';
 
 		expect( isJetpackCloud() ).toEqual( false );
-		const wrapper = shallow( <Favicons environmentFaviconURL="" /> );
+		const { container } = render( <Favicons environmentFaviconURL="" /> );
 
-		expect( wrapper ).toMatchSnapshot();
+		const links = Array.from( container.getElementsByTagName( 'link' ) );
 
 		favicons.forEach( ( icon ) => {
 			const [ rel, size, filename ] = icon;
-			expect( findFaviconURL( wrapper, { rel, sizes: `${ size }x${ size }` } ) ).toEqual(
+			expect( findFaviconBySizes( links, { rel, sizes: `${ size }x${ size }` } ) ).toHaveAttribute(
+				'href',
 				`${ baseUrl }/${ filename }`
 			);
 		} );
@@ -79,34 +79,39 @@ describe( 'Favicons', () => {
 
 		isJetpackCloud.mockImplementation( () => true );
 		expect( isJetpackCloud() ).toEqual( true );
-		const wrapper = shallow( <Favicons environmentFaviconURL="" /> );
+		const { container } = render( <Favicons environmentFaviconURL="" /> );
 
-		expect( wrapper ).toMatchSnapshot();
+		const links = Array.from( container.getElementsByTagName( 'link' ) );
+		const metas = Array.from( container.getElementsByTagName( 'meta' ) );
 
 		// Safari pinned tab icon (foreground color should be Jetpack Green)
-		const safariLink = wrapper.find( { rel: 'mask-icon', type: 'image/svg+xml' } );
-		expect( safariLink.prop( 'color' ) ).toEqual( '#00be28' );
-		expect( safariLink.prop( 'href' ) ).toEqual( `${ basePath }/safari-pinned-tab.svg` );
+		const safariLink = links.find(
+			( el ) => el.rel === 'mask-icon' && el.type === 'image/svg+xml'
+		);
+		expect( safariLink.getAttribute( 'color' ) ).toEqual( '#00be28' );
+		expect( safariLink.getAttribute( 'href' ) ).toEqual( `${ basePath }/safari-pinned-tab.svg` );
 
 		// Windows/IE tile
-		expect( wrapper.find( 'meta' ).find( { name: 'application-name' } ).prop( 'content' ) ).toEqual(
-			'Jetpack.com'
-		);
 		expect(
-			wrapper.find( 'meta' ).find( { name: 'msapplication-config' } ).prop( 'content' )
+			metas.find( ( meta ) => meta.name === 'application-name' ).getAttribute( 'content' )
+		).toEqual( 'Jetpack.com' );
+		expect(
+			metas.find( ( meta ) => meta.name === 'msapplication-config' ).getAttribute( 'content' )
 		).toEqual( `${ basePath }/browserconfig.xml` );
 
 		// Android favicons
-		expect( findFaviconURL( wrapper, { rel: 'icon', sizes: '512x512' } ) ).toEqual(
-			`${ basePath }/android-chrome-512x512.png`
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '512x512' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( `${ basePath }/android-chrome-512x512.png` )
 		);
-		expect( findFaviconURL( wrapper, { rel: 'icon', sizes: '192x192' } ) ).toEqual(
-			`${ basePath }/android-chrome-192x192.png`
+		expect( findFaviconBySizes( links, { rel: 'icon', sizes: '192x192' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( `${ basePath }/android-chrome-192x192.png` )
 		);
 
 		// Apple touch icon
-		expect( findFaviconURL( wrapper, { rel: 'apple-touch-icon', sizes: '180x180' } ) ).toEqual(
-			`${ basePath }/apple-touch-icon.png`
-		);
+		expect(
+			findFaviconBySizes( links, { rel: 'apple-touch-icon', sizes: '180x180' } )
+		).toHaveAttribute( 'href', expect.stringContaining( `${ basePath }/apple-touch-icon.png` ) );
 	} );
 } );
