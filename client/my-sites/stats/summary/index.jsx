@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import HeaderCake from 'calypso/components/header-cake';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -260,16 +259,9 @@ class StatsSummary extends Component {
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
-				{ isFixedNavHeadersEnabled && (
-					<FixedNavigationHeader navigationItems={ navigationItems } />
-				) }
+				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content">
-					{ ! isFixedNavHeadersEnabled && (
-						<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
-					) }
-					{ summaryViews }
-				</div>
+				<div id="my-stats-content">{ summaryViews }</div>
 				<JetpackColophon />
 			</Main>
 		);

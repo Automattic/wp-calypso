@@ -11,7 +11,6 @@ import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
-import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -163,24 +162,13 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				{ isFixedNavHeadersEnabled ? (
-					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
-						{ showViewLink && (
-							<Button onClick={ this.openPreview }>
-								<span>{ actionLabel }</span>
-							</Button>
-						) }
-					</FixedNavigationHeader>
-				) : (
-					<HeaderCake
-						onClick={ this.goBack }
-						actionIcon={ showViewLink ? 'visible' : null }
-						actionText={ showViewLink ? actionLabel : null }
-						actionOnClick={ showViewLink ? this.openPreview : null }
-					>
-						{ title }
-					</HeaderCake>
-				) }
+				<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
+					{ showViewLink && (
+						<Button onClick={ this.openPreview }>
+							<span>{ actionLabel }</span>
+						</Button>
+					) }
+				</FixedNavigationHeader>
 
 				<StatsPlaceholder isLoading={ isLoading } />
 
