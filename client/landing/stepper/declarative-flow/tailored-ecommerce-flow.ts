@@ -17,7 +17,7 @@ export const ecommerceFlow: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
-		return [ 'intro', 'storeProfiler', 'designCarousel' ] as StepPath[];
+		return [ 'intro', 'storeProfiler', 'designCarousel', 'processing' ] as StepPath[];
 	},
 
 	useStepNavigation( _currentStepName, navigate ) {
@@ -48,7 +48,9 @@ export const ecommerceFlow: Flow = {
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
 				case 'designCarousel':
-					return navigate( 'designCarousel' );
+					return navigate( 'processing' );
+				case 'processing':
+					return navigate( 'intro' );
 			}
 			return providedDependencies;
 		}

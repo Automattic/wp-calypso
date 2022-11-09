@@ -285,6 +285,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
+	function* installTheme( siteSlugOrId: string, themeSlug: string ) {
+		yield wpcomRequest( {
+			path: `/sites/${ siteSlugOrId }/themes/${ themeSlug }/install`,
+			apiVersion: '1.1',
+			method: 'POST',
+		} );
+	}
+
 	function* setThemeOnSite(
 		siteSlug: string,
 		theme: string,
@@ -588,6 +596,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
+		installTheme,
 		setThemeOnSite,
 		runThemeSetupOnSite,
 		setDesignOnSite,
