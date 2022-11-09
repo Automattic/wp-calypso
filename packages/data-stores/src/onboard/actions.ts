@@ -1,14 +1,15 @@
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
-import { DomainSuggestion } from '../domain-suggestions/types';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
+import type { DomainSuggestion } from '../domain-suggestions';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 // copied from design picker to avoid a circular dependency
 function isBlankCanvasDesign( design: { slug: string } | undefined ): boolean {
@@ -219,6 +220,11 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 	planProductId,
 } );
 
+export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
+	type: 'SET_PLAN_CART_ITEM' as const,
+	planCartItem,
+} );
+
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
 	type: 'SET_RANDOMIZED_DESIGNS' as const,
 	randomizedDesigns,
@@ -377,6 +383,25 @@ export const setStoreLocationCountryCode = ( storeLocationCountryCode: string ) 
 	storeLocationCountryCode,
 } );
 
+export const setDomainForm = ( step: Record< string, string > ) => {
+	const lastUpdated = Date.now();
+
+	return {
+		type: 'SET_DOMAIN_FORM' as const,
+		step: { ...step, lastUpdated },
+	};
+};
+
+export const setDomainCartItem = ( domainCartItem: MinimalRequestCartProduct | undefined ) => ( {
+	type: 'SET_DOMAIN_CART_ITEM' as const,
+	domainCartItem,
+} );
+
+export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
+	type: 'SET_HIDE_FREE_PLAN' as const,
+	hideFreePlan,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -418,9 +443,13 @@ export type OnboardAction = ReturnType<
 	| typeof resetIntent
 	| typeof resetSelectedDesign
 	| typeof setEditEmail
+	| typeof setDomainForm
+	| typeof setDomainCartItem
 	| typeof setSiteDescription
 	| typeof setSiteLogo
 	| typeof setSiteAccentColor
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
+	| typeof setHideFreePlan
+	| typeof setPlanCartItem
 >;

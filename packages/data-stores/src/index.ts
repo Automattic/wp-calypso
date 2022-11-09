@@ -29,6 +29,8 @@ export * from './starter-designs-queries';
 export { useSibylQuery } from './support-queries/use-sibyl-query';
 export * from './site/types';
 export * from './templates';
+export * from './onboard/types';
+export * from './domain-suggestions/types';
 
 export {
 	Analyzer,

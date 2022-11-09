@@ -127,6 +127,7 @@ class RegisterDomainStep extends Component {
 		showAlreadyOwnADomain: PropTypes.bool,
 		domainAndPlanUpsellFlow: PropTypes.bool,
 		useProvidedProductsList: PropTypes.bool,
+		handleClickUseYourDomain: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -1336,7 +1337,7 @@ class RegisterDomainStep extends Component {
 				onClickMapping={ this.goToMapDomainStep }
 				onAddTransfer={ this.props.onAddTransfer }
 				onClickTransfer={ this.goToTransferDomainStep }
-				onClickUseYourDomain={ this.useYourDomainFunction() }
+				onClickUseYourDomain={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
 				tracksButtonClickSource="exact-match-top"
 				suggestions={ suggestions }
 				premiumDomains={ premiumDomains }

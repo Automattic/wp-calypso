@@ -1,4 +1,8 @@
-import { StepContainer, isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import {
+	StepContainer,
+	isNewsletterOrLinkInBioFlow,
+	LINK_IN_BIO_FLOW,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState } from 'react';
@@ -9,6 +13,7 @@ import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
+import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { Step } from '../../types';
 import './style.scss';
 
@@ -48,27 +53,29 @@ const ProcessingStep: Step = function ( props ) {
 	const captureFlowException = useCaptureFlowException( props.flow, 'ProcessingStep' );
 
 	useEffect( () => {
-		( async () => {
-			if ( typeof action === 'function' ) {
-				try {
-					const destination = await action();
-					// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
-					// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
-					// that is frozen from before we called action().
-					// We can now get the most up to date values from hooks inside the flow creating submit(),
-					// including the values that were updated during the action() running.
-					setDestinationState( destination );
-					setHasActionSuccessfullyRun( true );
-				} catch ( e ) {
-					// eslint-disable-next-line no-console
-					console.error( 'ProcessingStep failed:', e );
-					captureFlowException( e );
-					submit?.( {}, ProcessingResult.FAILURE );
+		if ( action ) {
+			( async () => {
+				if ( typeof action === 'function' ) {
+					try {
+						const destination = await action();
+						// Don't call submit() directly; instead, turn on a flag that signals we should call submit() next.
+						// This allows us to call the newest submit() created. Otherwise, we would be calling a submit()
+						// that is frozen from before we called action().
+						// We can now get the most up to date values from hooks inside the flow creating submit(),
+						// including the values that were updated during the action() running.
+						setDestinationState( destination );
+						setHasActionSuccessfullyRun( true );
+					} catch ( e ) {
+						// eslint-disable-next-line no-console
+						console.error( 'ProcessingStep failed:', e );
+						captureFlowException( e );
+						submit?.( {}, ProcessingResult.FAILURE );
+					}
+				} else {
+					submit?.( {}, ProcessingResult.NO_ACTION );
 				}
-			} else {
-				submit?.( {}, ProcessingResult.NO_ACTION );
-			}
-		} )();
+			} )();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ action ] );
 
@@ -108,6 +115,11 @@ const ProcessingStep: Step = function ( props ) {
 
 	const flowName = props.flow || '';
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
+
+	// Currently we have the Domains and Plans only for link in bio
+	if ( flowName === LINK_IN_BIO_FLOW ) {
+		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
+	}
 
 	return (
 		<StepContainer

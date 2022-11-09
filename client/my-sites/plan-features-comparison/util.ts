@@ -33,7 +33,7 @@ export const getPlanFeatureAccessor = ( {
 	plan,
 }: {
 	flowName?: string;
-	isInVerticalScrollingPlansExperiment: boolean;
+	isInVerticalScrollingPlansExperiment?: boolean;
 	plan: IncompleteWPcomPlan;
 } ) => {
 	return [

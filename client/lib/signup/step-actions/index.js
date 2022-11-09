@@ -289,7 +289,6 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 			}
 
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
-
 			const siteSlug = parsedBlogURL.hostname;
 			const siteId = response.blog_details.blogid;
 			const providedDependencies = {
