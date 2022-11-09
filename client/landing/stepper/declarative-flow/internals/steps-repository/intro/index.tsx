@@ -1,8 +1,6 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
-import cx from 'classnames';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
@@ -11,8 +9,7 @@ import type { Step } from '../../types';
 import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+	const { __ } = useI18n();
 
 	return useMemo( () => {
 		if ( flowName === LINK_IN_BIO_FLOW ) {
@@ -34,14 +31,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			};
 		}
 
-		if (
-			locale === 'en' ||
-			[
-				`Sign in. Set up. Send out.`,
-				`You’re a few steps away from launching a beautiful Newsletter with<br />everything you’ll ever need to grow your audience.`,
-				'Start building your Newsletter',
-			].every( ( translation ) => hasTranslation( translation ) )
-		) {
+		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
 				title: __( 'Sign in. Set up. Send out.' ),
 				text: createInterpolateElement(
@@ -60,13 +50,12 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, locale, __, hasTranslation ] );
+	}, [ flowName, __ ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const introContent = useIntroContent( flow );
-	const showNewNewsletterIntro = flow === NEWSLETTER_FLOW && 'text' in introContent;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -74,15 +63,13 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 	return (
 		<StepContainer
 			stepName="intro"
-			className={ cx( { 'is-using-new-intro-design': showNewNewsletterIntro } ) }
 			goBack={ goBack }
 			isHorizontalLayout={ false }
 			isWideLayout={ true }
 			isLargeSkipLayout={ false }
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
-			showHeaderJetpackPowered={ showNewNewsletterIntro }
-			showJetpackPowered={ flow === NEWSLETTER_FLOW && ! showNewNewsletterIntro }
+			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
 		/>
 	);
 };
