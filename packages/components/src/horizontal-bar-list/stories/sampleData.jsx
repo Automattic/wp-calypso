@@ -238,7 +238,19 @@ const filedownloadsData = [
 	},
 ];
 
-const searchTermsData = [];
+const searchTermsData = [
+	{
+		label: 'https://www.google.com',
+		className: 'user-selectable',
+		value: 2,
+	},
+	{
+		label: 'Unknown Search Terms',
+		value: 3,
+		link: 'https://wordpress.com/support/stats/#search-engine-terms',
+		labelIcon: 'external',
+	},
+];
 
 const postsData = [
 	{
