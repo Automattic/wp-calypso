@@ -482,7 +482,6 @@ class Signup extends Component {
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
 		
-		
 	};
 
 	handleDestination( dependencies, destination ) {
