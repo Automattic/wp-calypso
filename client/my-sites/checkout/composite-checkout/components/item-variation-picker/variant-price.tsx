@@ -5,16 +5,15 @@ import { FunctionComponent } from 'react';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
-	color: ${ ( props ) => props.theme.colors.discount };
+	color: #234929;
 	display: block;
+	background-color: #b8e6bf;
+	padding: 0 1em;
+	border-radius: 4px;
 
 	.rtl & {
 		margin-right: 0;
 		margin-left: 8px;
-	}
-
-	.item-variant-option--selected & {
-		color: #b8e6bf;
 	}
 
 	@media ( max-width: 660px ) {
