@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -9,6 +10,7 @@ import titlecase from 'to-title-case';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
@@ -58,6 +60,32 @@ class StatsPostDetail extends Component {
 
 		const pathParts = this.props.path.split( '/' );
 		page( '/stats/' + pathParts[ pathParts.length - 1 ] );
+	};
+
+	getNavigationItemsWithTitle = ( title ) => {
+		const localizedTabNames = {
+			traffic: this.props.translate( 'Traffic' ),
+			insights: this.props.translate( 'Insights' ),
+			store: this.props.translate( 'Store' ),
+			ads: this.props.translate( 'Ads' ),
+		};
+		const possibleBackLinks = {
+			traffic: '/stats/day/',
+			insights: '/stats/insights/',
+			store: '/stats/store/',
+			ads: '/stats/ads/',
+		};
+		// We track the parent tab via sessionStorage.
+		const lastClickedTab = sessionStorage.getItem( 'jp-stats-last-tab' );
+		const backLabel = localizedTabNames[ lastClickedTab ] || localizedTabNames.traffic;
+		let backLink = possibleBackLinks[ lastClickedTab ] || possibleBackLinks.traffic;
+		// Append the domain as needed.
+		const domain = this.props.siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
+		// Wrap it up!
+		return [ { label: backLabel, href: backLink }, { label: title } ];
 	};
 
 	componentDidMount() {
@@ -121,8 +149,13 @@ class StatsPostDetail extends Component {
 			noViewsLabel = translate( 'Your post has not received any views yet!' );
 		}
 
+		// Set up for FixedNavigationHeader.
+		const title = this.getTitle();
+		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
+		const className = isFixedNavHeadersEnabled ? 'has-fixed-nav' : undefined;
+
 		return (
-			<Main wideLayout>
+			<Main className={ className } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
@@ -130,14 +163,24 @@ class StatsPostDetail extends Component {
 				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<HeaderCake
-					onClick={ this.goBack }
-					actionIcon={ showViewLink ? 'visible' : null }
-					actionText={ showViewLink ? actionLabel : null }
-					actionOnClick={ showViewLink ? this.openPreview : null }
-				>
-					{ this.getTitle() }
-				</HeaderCake>
+				{ isFixedNavHeadersEnabled ? (
+					<FixedNavigationHeader navigationItems={ this.getNavigationItemsWithTitle( title ) }>
+						{ showViewLink && (
+							<Button onClick={ this.openPreview }>
+								<span>{ actionLabel }</span>
+							</Button>
+						) }
+					</FixedNavigationHeader>
+				) : (
+					<HeaderCake
+						onClick={ this.goBack }
+						actionIcon={ showViewLink ? 'visible' : null }
+						actionText={ showViewLink ? actionLabel : null }
+						actionOnClick={ showViewLink ? this.openPreview : null }
+					>
+						{ title }
+					</HeaderCake>
+				) }
 
 				<StatsPlaceholder isLoading={ isLoading } />
 

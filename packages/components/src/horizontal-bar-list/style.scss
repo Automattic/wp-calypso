@@ -93,3 +93,7 @@
 .horizontal-bar-list-item--indicated {
 	box-shadow: inset $item-indicator-width 0 0 var(--color-primary);
 }
+
+.horizontal-bar-list-item--static {
+	cursor: auto;
+}

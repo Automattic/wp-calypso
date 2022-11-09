@@ -1,0 +1,77 @@
+@import "../styles/typography";
+
+.promo-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 5px; // stylelint-disable-line scales/radii
+
+	// margin: 20px;
+	padding: 20px;
+
+	@media ( min-width: 625px ) {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: flex-start;
+		padding: 48px 64px;
+		gap: 14px;
+	}
+}
+
+.promo-lhs {
+	// Left-hand side.
+	// Contains the WordPress/Jetpack icons and text.
+	margin: initial;
+}
+
+.promo-rhs {
+	// Right-hand side.
+	// Contains the QR code or App Store button.
+	margin: auto 0;
+}
+
+.promo-card__icons {
+	margin-bottom: 24px;
+	.secondary {
+		position: relative;
+		left: -10px;
+	}
+}
+
+.promo-card__title {
+	// Headline
+
+	margin: 0;
+	margin-bottom: 10px;
+
+	/* Xl/Serif */
+	font-family: Recoleta, serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
+	line-height: 40px;
+	letter-spacing: -0.32px;
+
+	/* Gray / Gray 100 */
+	color: #101517;
+}
+
+.promo-card__message {
+	// Details
+
+	margin: 0;
+
+	font-family: "SF Pro Text", serif;
+	font-style: normal;
+	font-weight: 400;
+	font-size: 17px; // stylelint-disable-line declaration-property-unit-allowed-list
+	line-height: 25px;
+	letter-spacing: -0.24px;
+
+	/* Gray / Gray 100 */
+	color: #101517;
+
+	@media ( max-width: 625px ) {
+		margin-bottom: 20px;
+	}
+}

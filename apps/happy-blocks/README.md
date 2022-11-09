@@ -1,6 +1,6 @@
-# Pricing Plans Upgrade Block
+# Happy blocks
 
-This package contains the source code for the Pricing Plans Upgrade Block used in the [Support Forums](https://forums.wordpress.com/) Gutenberg editor.
+This package contains the source code for the blocks used in the [Support Forums](https://forums.wordpress.com/)'s Gutenberg editor and other Happy Tools projects.
 
 ## Development environment
 

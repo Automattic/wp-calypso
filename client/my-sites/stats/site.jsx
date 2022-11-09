@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
@@ -200,11 +201,13 @@ class StatsSite extends Component {
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
 
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
 		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClasses = classNames( { 'stats--new-main-chart': isNewFeatured } );
+
 		return (
-			<div className={ isNewFeatured ? 'stats--new-main-chart' : undefined }>
+			<div>
 				<JetpackBackupCredsBanner event="stats-backup-credentials" />
 				<FormattedHeader
 					brandFont
@@ -230,7 +233,7 @@ class StatsSite extends Component {
 
 				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
-				<div id="my-stats-content">
+				<div id="my-stats-content" className={ wrapperClasses }>
 					{ isNewFeatured ? (
 						<>
 							<StatsPeriodHeader>
@@ -409,6 +412,10 @@ class StatsSite extends Component {
 	render() {
 		const { isJetpack, siteId, showEnableStatsModule } = this.props;
 		const { period } = this.props.period;
+
+		// Track the last viewed tab.
+		// Necessary to properly configure the fixed navigation headers.
+		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
 			<Main wideLayout>
