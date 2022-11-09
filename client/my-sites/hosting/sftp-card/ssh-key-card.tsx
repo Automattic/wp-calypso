@@ -74,7 +74,6 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 				</SSHKeyCard.Date>
 			</SSHKeyCard.Details>
 			<SSHKeyCard.Button
-				scary
 				onClick={ () => detachSshKey( { user_login, name } ) }
 				busy={ isLoading }
 				disabled={ isLoading }
