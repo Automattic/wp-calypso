@@ -39,12 +39,8 @@ const StatsListCard = ( {
 		}
 	};
 
-	let barMaxValue = 0;
-
-	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.
-	data?.forEach( ( item ) => {
-		barMaxValue = item?.value > barMaxValue ? item?.value : barMaxValue;
-	} );
+    // Search doesn't have items sorted by value when there are 'Unknown search terms' present.
+	const barMaxValue = Math.max( ...data?.map( item => item.value ).filter( Number.isFinite ) );
 
 	return (
 		<StatsCard
