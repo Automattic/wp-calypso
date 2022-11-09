@@ -50,38 +50,6 @@ const Container = styled.div`
 	}
 `;
 
-const ColContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: stretch;
-	min-height: 70px;
-
-	@media ( max-width: 660px ) {
-		min-height: 60px;
-	}
-
-	.main.is-wide-layout & {
-		max-width: 1040px;
-		margin: auto;
-	}
-
-	& > *:first-child:not( :only-child ) {
-		margin-top: 24px;
-	}
-`;
-
-const RowContainer = styled.div`
-	margin: 24px 0 0;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	&:only-child {
-		margin-top: 0;
-	}
-`;
-
 const ActionsContainer = styled.div`
 	display: flex;
 	align-items: center;
@@ -94,48 +62,20 @@ interface Props {
 	navigationItems: TBreadcrumbItem[];
 	mobileItem?: TBreadcrumbItem;
 	compactBreadcrumb?: boolean;
-	headerNode?: ReactNode;
-	tabListNode?: ReactNode;
 }
 
 const FixedNavigationHeader = React.forwardRef< HTMLElement, Props >( ( props, ref ) => {
-	const {
-		id,
-		className,
-		children,
-		navigationItems,
-		mobileItem,
-		compactBreadcrumb,
-		headerNode,
-		tabListNode,
-	} = props;
+	const { id, className, children, navigationItems, mobileItem, compactBreadcrumb } = props;
 	return (
 		<Header id={ id } className={ 'fixed-navigation-header__header ' + className } ref={ ref }>
-			{ ! headerNode && (
-				<Container>
-					<Breadcrumb
-						items={ navigationItems }
-						mobileItem={ mobileItem }
-						compact={ compactBreadcrumb }
-					/>
-					<ActionsContainer>{ children }</ActionsContainer>
-				</Container>
-			) }
-			{ headerNode && (
-				<ColContainer>
-					<Breadcrumb
-						items={ navigationItems }
-						mobileItem={ mobileItem }
-						compact={ compactBreadcrumb }
-					/>
-
-					<RowContainer>
-						{ headerNode }
-						<ActionsContainer>{ children }</ActionsContainer>
-					</RowContainer>
-					{ tabListNode }
-				</ColContainer>
-			) }
+			<Container>
+				<Breadcrumb
+					items={ navigationItems }
+					mobileItem={ mobileItem }
+					compact={ compactBreadcrumb }
+				/>
+				<ActionsContainer>{ children }</ActionsContainer>
+			</Container>
 		</Header>
 	);
 } );
