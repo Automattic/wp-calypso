@@ -253,6 +253,20 @@
 		.card.stats-module {
 			margin-bottom: 0;
 		}
+
+		.stats__module-wrapper {
+			display: flex;
+			flex-flow: column nowrap;
+
+			.stats-module,
+			.stats-module__header {
+				width: 100%;
+			}
+
+			.stats-module {
+				flex-grow: 1;
+			}
+		}
 		.stats__module-wrapper--posts,
 		.list-posts {
 			grid-area: posts;
