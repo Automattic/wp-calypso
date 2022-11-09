@@ -1,4 +1,5 @@
 export const SUPPORT_PAGE_PATTERN = /^http[s]?:\/\/(?:www\.)?wordpress\.com(?:.*)?/i;
+const EMBED_CONTENT_MAXLENGTH = 400;
 
 export type SupportPageBlockAttributes = {
 	url: string;
@@ -27,7 +28,12 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 
 	const title = page.parent?.title ? `${ page.parent.title } » ${ page.title }` : page.title;
 
-	return { url, content: stripHtml( page.content ), title };
+	let content = stripHtml( page.content );
+	if ( content.length > EMBED_CONTENT_MAXLENGTH ) {
+		content = content.substring( 0, EMBED_CONTENT_MAXLENGTH );
+	}
+
+	return { url, content: content, title };
 }
 
 function stripHtml( html: string ): string {

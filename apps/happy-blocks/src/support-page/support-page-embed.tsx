@@ -8,7 +8,7 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 				<WordPressIcon variant="large" />
 				<div>
 					<div className="hb-support-page-embed__title">
-						Domains » Change a Domain Name
+						{ props.attributes.title }
 						<span className="hb-support-page-embed__badge">Support article</span>
 					</div>
 					<div className="hb-support-page-embed__source">
