@@ -13,6 +13,7 @@ import {
 	SUPPORT_FORUM,
 	shouldShowHelpCenterToUser,
 } from '@automattic/help-center';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -21,12 +22,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
+import ZendeskChat from 'calypso/components/zendesk-chat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import getSupportLevel from 'calypso/state/happychat/selectors/get-support-level';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
+import isPresalesZendeskChatAvailable from 'calypso/state/happychat/selectors/is-presales-zendesk-chat-available';
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
 import getSupportVariation from 'calypso/state/selectors/get-inline-help-support-variation';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
@@ -156,10 +159,12 @@ export default function CheckoutHelpLink() {
 	const { responseCart } = useShoppingCart( cartKey );
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const {
 		happyChatAvailable,
 		presalesChatAvailable,
+		presalesZendeskChatAvailable,
 		section,
 		userId,
 		supportVariationDetermined,
@@ -168,6 +173,7 @@ export default function CheckoutHelpLink() {
 		return {
 			happyChatAvailable: isHappychatAvailable( state ),
 			presalesChatAvailable: isPresalesChatAvailable( state ),
+			presalesZendeskChatAvailable: isPresalesZendeskChatAvailable( state ),
 			section: getSectionName( state ),
 			userId: getCurrentUserId( state ),
 			supportVariationDetermined: isSupportVariationDetermined( state ),
@@ -176,6 +182,8 @@ export default function CheckoutHelpLink() {
 	} );
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
+	const zendeskChatKey = config( 'zendesk_chat_key' );
+	const isPresalesZendeskChatEligible = presalesZendeskChatAvailable && isEnglishLocale;
 
 	const userAllowedToHelpCenter = !! (
 		userId &&
@@ -199,11 +207,16 @@ export default function CheckoutHelpLink() {
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
+	// Only show the zendesk presales chat button (when available) if user is not elligible for regular chat.
+	const shouldRenderZendeskChatButton =
+		isPresalesZendeskChatEligible && ! isPresalesChatEligible && ! hasDirectSupport;
+
 	// If chat isn't available, use the inline help button instead.
 	return (
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
+			{ shouldRenderZendeskChatButton && <ZendeskChat chatId={ zendeskChatKey } /> }
 			{ shouldRenderPaymentChatButton ? (
 				<PaymentChatButton
 					plan={ presalesEligiblePlanLabel }
