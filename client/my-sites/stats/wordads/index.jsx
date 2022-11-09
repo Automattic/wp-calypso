@@ -115,6 +115,12 @@ class WordAds extends Component {
 		}
 	};
 
+	isPrevArrowHidden = ( period, queryDate ) => {
+		return (
+			[ 'day', 'week' ].includes( period ) && moment( queryDate ).isSameOrBefore( '2018-10-01' )
+		);
+	};
+
 	render() {
 		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
 
@@ -188,10 +194,7 @@ class WordAds extends Component {
 									<StatsPeriodHeader>
 										<StatsPeriodNavigation
 											date={ queryDate }
-											hidePreviousArrow={
-												( 'day' === period || 'week' === period ) &&
-												moment( queryDate ).isSameOrBefore( '2018-10-01' )
-											} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
+											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
 											hideNextArrow={ yesterday === queryDate }
 											period={ period }
 											url={ `/stats/ads/${ period }/${ slug }` }
@@ -241,10 +244,7 @@ class WordAds extends Component {
 									<StickyPanel className="stats__sticky-navigation">
 										<StatsPeriodNavigation
 											date={ queryDate }
-											hidePreviousArrow={
-												( 'day' === period || 'week' === period ) &&
-												moment( queryDate ).isSameOrBefore( '2018-10-01' )
-											} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
+											hidePreviousArrow={ this.isPrevArrowHidden( period, queryDate ) }
 											hideNextArrow={ yesterday === queryDate }
 											period={ period }
 											url={ `/stats/ads/${ period }/${ slug }` }
