@@ -9,7 +9,6 @@ import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -71,27 +70,17 @@ class StoreStats extends Component {
 					<QuerySiteStats statType="statsOrders" siteId={ siteId } query={ orderQuery } />
 				) }
 
-				<FixedNavigationHeader
-					headerNode={
-						<FormattedHeader
-							brandFont
-							className="store-stats__section-header"
-							headerText={ translate( 'Jetpack Stats' ) }
-							align="left"
-							subHeaderText={ translate(
-								'Learn valuable insights about the purchases made on your store.'
-							) }
-						/>
-					}
-					tabListNode={
-						<StatsNavigation
-							selectedItem="store"
-							siteId={ siteId }
-							slug={ slug }
-							interval={ unit }
-						/>
-					}
+				<FormattedHeader
+					brandFont
+					className="store-stats__section-header"
+					headerText={ translate( 'Jetpack Stats' ) }
+					align="left"
+					subHeaderText={ translate(
+						'Learn valuable insights about the purchases made on your store.'
+					) }
 				/>
+
+				<StatsNavigation selectedItem="store" siteId={ siteId } slug={ slug } interval={ unit } />
 
 				<div id="my-stats-content" className={ statsWrapperClass }>
 					{ isNewMainChart ? (
