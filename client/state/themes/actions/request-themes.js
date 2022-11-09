@@ -1,4 +1,5 @@
 import { map, property } from 'lodash';
+import LRU from 'lru';
 import wpcom from 'calypso/lib/wp';
 import { fetchThemesList as fetchWporgThemesList } from 'calypso/lib/wporg';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -12,6 +13,13 @@ import {
 } from 'calypso/state/themes/utils';
 
 import 'calypso/state/themes/init';
+
+function getCacheKey( siteId, query, locale = '' ) {
+	return siteId + locale + JSON.stringify( query );
+}
+
+// Themes cache should only apply on the server, for SSR.
+const themesCache = typeof document === 'undefined' ? new LRU( 500 ) : undefined;
 
 /**
  * Triggers a network request to fetch themes for the specified site and query.
@@ -39,7 +47,10 @@ export function requestThemes( siteId, query = {}, locale ) {
 
 		let request;
 
-		if ( siteId === 'wporg' ) {
+		const themeResponse = themesCache?.get( getCacheKey( siteId, query, locale ) );
+		if ( themeResponse ) {
+			request = () => Promise.resolve( { cached: true, ...themeResponse } );
+		} else if ( siteId === 'wporg' ) {
 			request = () => fetchWporgThemesList( query );
 		} else if ( siteId === 'wpcom' ) {
 			request = () =>
@@ -55,15 +66,21 @@ export function requestThemes( siteId, query = {}, locale ) {
 		// WP.org returns an `info` object containing a `results` number, so we destructure that
 		// and use it as default value for `found`.
 		return request()
-			.then( ( { themes: rawThemes, info: { results } = {}, found = results } ) => {
+			.then( ( { cached = false, themes: rawThemes, info: { results } = {}, found = results } ) => {
 				let themes;
-				if ( siteId === 'wporg' ) {
+				if ( cached ) {
+					themes = rawThemes; // The normalized values were cached and passed.
+				} else if ( siteId === 'wporg' ) {
 					themes = map( rawThemes, normalizeWporgTheme );
 				} else if ( siteId === 'wpcom' ) {
 					themes = map( rawThemes, normalizeWpcomTheme );
 				} else {
 					// Jetpack Site
 					themes = map( rawThemes, normalizeJetpackTheme );
+				}
+
+				if ( ! cached && themes ) {
+					themesCache?.set( getCacheKey( siteId, query, locale ), { themes, found } );
 				}
 
 				if ( ( query.search || query.filter ) && query.page === 1 ) {

@@ -28,11 +28,7 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
-const HOUR_IN_MS = 3600000;
-export const markupCache = new Lru( {
-	max: 3000,
-	maxAge: HOUR_IN_MS,
-} );
+export const markupCache = new Lru( 3000 );
 
 function bumpStat( group, name ) {
 	const statUrl = `http://pixel.wp.com/g.gif?v=wpcom-no-pv&x_${ group }=${ name }&t=${ Math.random() }`;
@@ -103,7 +99,7 @@ function render( element, key, req ) {
 				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
-			markupCache.set( key, renderedLayout );
+			// markupCache.set( key, renderedLayout );
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
@@ -246,7 +242,7 @@ export function serverRender( req, res ) {
 	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
-		performanceMark( req, 'redux store', true );
+		// performanceMark( req, 'redux store', true );
 		attachHead( context );
 
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
@@ -267,10 +263,9 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes, plugins } = context.store.getState();
+			const { documentHead, plugins } = context.store.getState();
 			const serverState = serialize( context.store.getCurrentReducer(), {
 				documentHead,
-				themes,
 				plugins,
 			} );
 			stateCache.set( cacheKey, serverState.get() );
