@@ -17,7 +17,7 @@ describe( 'UpgradeBlock/Save', () => {
 	} );
 
 	test( 'should render', () => {
-		const wrapper = render( <Save /> );
-		expect( wrapper ).toMatchSnapshot();
+		const { container } = render( <Save /> );
+		expect( container ).toMatchSnapshot();
 	} );
 } );
