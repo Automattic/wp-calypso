@@ -840,6 +840,7 @@ function WPLineItem( {
 	onRemoveProduct,
 	onRemoveProductClick,
 	onRemoveProductCancel,
+	hidePrice,
 }: PropsWithChildren< {
 	product: ResponseCartProduct;
 	className?: string;
@@ -852,6 +853,7 @@ function WPLineItem( {
 	onRemoveProduct?: ( label: string ) => void;
 	onRemoveProductClick?: ( label: string ) => void;
 	onRemoveProductCancel?: ( label: string ) => void;
+	hidePrice?: boolean;
 } > ) {
 	const id = product.uuid;
 	const translate = useTranslate();
@@ -911,12 +913,14 @@ function WPLineItem( {
 				{ label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPrice
-					isDiscounted={ isDiscounted }
-					actualAmount={ actualAmountDisplay }
-					originalAmount={ originalAmountDisplay }
-					isSummary={ isSummary }
-				/>
+				{ ! hidePrice && (
+					<LineItemPrice
+						isDiscounted={ isDiscounted }
+						actualAmount={ actualAmountDisplay }
+						originalAmount={ originalAmountDisplay }
+						isSummary={ isSummary }
+					/>
+				) }
 			</span>
 
 			{ product && ! containsPartnerCoupon && (
