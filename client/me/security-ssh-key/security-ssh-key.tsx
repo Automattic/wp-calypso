@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -49,6 +50,7 @@ export const SecuritySSHKey = () => {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const { __ } = useI18n();
+	const queryArgs = getQueryArgs();
 
 	const { addSSHKey, isLoading: isAdding } = useAddSSHKeyMutation( {
 		onMutate: () => {
@@ -99,6 +101,8 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const hasKeys = data && data.length > 0;
+	const redirectToHosting =
+		queryArgs.source && queryArgs.source === 'hosting-config' && queryArgs.siteSlug;
 
 	return (
 		<Main wideLayout className="security">
@@ -107,7 +111,12 @@ export const SecuritySSHKey = () => {
 
 			<FormattedHeader brandFont headerText={ __( 'Security' ) } align="left" />
 
-			<HeaderCake backText={ __( 'Back' ) } backHref="/me/security">
+			<HeaderCake
+				backText={ redirectToHosting ? __( 'Back to Hosting Configuration' ) : __( 'Back' ) }
+				backHref={
+					redirectToHosting ? `/${ queryArgs.source }/${ queryArgs.siteSlug }` : '/me/security'
+				}
+			>
 				{ __( 'SSH Key' ) }
 			</HeaderCake>
 

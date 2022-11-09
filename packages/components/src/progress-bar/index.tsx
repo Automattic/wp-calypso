@@ -13,6 +13,7 @@ export interface Props {
 	className?: string;
 	isPulsing: boolean;
 	canGoBackwards: boolean;
+	style?: React.CSSProperties;
 }
 
 interface State {
@@ -49,11 +50,14 @@ export default class ProgressBar extends React.PureComponent< Props, State > {
 	}
 
 	renderBar() {
-		const { color, title, total, value } = this.props;
+		const { color, title, total, value, style } = this.props;
 
-		const styles: React.CSSProperties = { width: this.getCompletionPercentage() + '%' };
+		let styles: React.CSSProperties = { width: this.getCompletionPercentage() + '%' };
 		if ( color ) {
 			styles.backgroundColor = color;
+		}
+		if ( style ) {
+			styles = { ...styles, ...style };
 		}
 
 		return (

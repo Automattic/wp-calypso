@@ -3,6 +3,7 @@ import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	hasAmountAvailableToRefund,
 	isRefundable,
@@ -176,10 +177,23 @@ export const PreCancellationDialog = ( {
 	 * Click events, buttons tracking and action.
 	 */
 	const clickCancelPlan = () => {
+		recordTracksEvent( 'calypso_pre_cancellation_modal_cancel_plan', {
+			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
+		} );
+
 		removePlan();
 	};
 
 	const clickCloseDialog = () => {
+		recordTracksEvent( 'calypso_pre_cancellation_modal_keep_plan', {
+			product_slug: productSlug,
+			has_domain: hasDomain ? true : false,
+			has_autorenew: isPurchaseAutoRenewing,
+			is_refundable: isPurchaseRefundable,
+		} );
 		closeDialog();
 	};
 

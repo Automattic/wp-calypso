@@ -10,7 +10,7 @@
 
 	--videopress-color-white: #fff;
 
-	--videopress-color-link: #fffc1b;
+	--videopress-color-link: #ffe61c;
 	--videopress-color-link-dark: #004cbf;
 
 	--videopress-color-border-light: #e7e9ea;
@@ -218,7 +218,7 @@
 		letter-spacing: -0.01em;
 
 		.videopress-step-wrapper__header {
-			margin-bottom: 3em;
+			margin-bottom: 2em;
 		}
 
 		.videopress-step-wrapper__subheader-text {
@@ -240,6 +240,45 @@
 			padding-left: 20px;
 			padding-right: 20px;
 			max-width: 600px;
+		}
+	}
+}
+
+.is-videopress-signup {
+	.progress-bar {
+		display: block;
+		border-radius: 0;
+		background-color: #fff3;
+
+		.progress-bar__progress {
+			background-color: var(--videopress-color-link);
+			border-radius: 0;
+		}
+	}
+
+	.signup-header {
+		padding: 0;
+		z-index: 1;
+		margin-top: 0;
+
+		.wordpress-logo {
+			transform: none;
+			margin: 0;
+			height: 24px;
+			width: 24px;
+			inset-block-start: 24px;
+			inset-inline-start: 24px;
+			position: relative;
+			fill: var(--videopress-color-text);
+		}
+
+		h1 {
+			color: var(--videopress-color-text);
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+			font-weight: 400;
+			line-height: 24px;
+			top: 33px;
 		}
 	}
 }

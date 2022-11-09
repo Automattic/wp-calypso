@@ -252,12 +252,15 @@
 	}
 
 	/**
-	 * Jetpack Powered
+	 * Jetpack Powered and VideoPress Powered
 	 */
 	.step-container__jetpack-powered,
-	.step-container__header-jetpack-powered {
+	.step-container__header-jetpack-powered,
+	.step-container__videopress-powered {
 		display: flex;
 		justify-content: center;
+		align-items: center;
+		width: 100%;
 		text-align: center;
 		font-family: "SF Pro Text", $sans;
 		font-size: $font-body-extra-small;
