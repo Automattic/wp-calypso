@@ -6,19 +6,20 @@ import { Save } from './save';
 
 registerBlockType( 'happy-blocks/support-page', {
 	title: __( 'WordPress Guide', 'happy-blocks' ),
-	icon: WordPressIcon,
+	icon: <WordPressIcon variant="small" />,
 	category: 'embed',
 	description: __( 'Embed a page from the WordPress Guide', 'happy-blocks' ),
 	keywords: [ __( 'guide' ), __( 'support' ), __( 'how to' ), __( 'howto' ) ],
 	attributes: {
 		url: {
 			type: 'string',
-			default: '',
 		},
+		// TODO store other attrs in HTML instead of attributes
 		content: {
 			type: 'string',
-			default: '',
-			// TODO store in HTML instead of attributes
+		},
+		title: {
+			type: 'string',
 		},
 	},
 	supports: {

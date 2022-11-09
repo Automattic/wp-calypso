@@ -1,0 +1,34 @@
+.hb-support-page-embed {
+	border-radius: 4px;
+	padding: 29px 30px;
+
+	display: flex;
+	gap: 16px;
+	flex-direction: column;
+
+	background: #ffff;
+	border: 1px solid #eee;
+}
+
+.hb-support-page-embed-icon {
+	background-color: #0675c4; // blue 50
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&__small {
+		width: 24px;
+		height: 24px;
+	}
+
+	&__large {
+		width: 60px;
+		height: 60px;
+
+	}
+
+	svg {
+		min-width: unset !important;
+	}
+}

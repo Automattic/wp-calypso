@@ -51,7 +51,7 @@ function a8c_happyblocks_assets() {
 
 	$style_file = 'dist/editor' . ( is_rtl() ? '.rtl.css' : '.css' );
 	wp_enqueue_style(
-		'a8c-happyblocks-css',
+		'a8c-happyblocks-edit-css',
 		plugins_url( $style_file, __FILE__ ),
 		array( 'wp-edit-blocks' ),
 		$assets['version']

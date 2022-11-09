@@ -2,7 +2,11 @@ export const SUPPORT_PAGE_PATTERN = /^http[s]?:\/\/(?:www\.)?wordpress\.com(?:.*
 
 export type SupportPageBlockAttributes = {
 	url: string;
+	title: string;
 	content: string;
+
+	timeToRead?: string;
+	likes?: number;
 };
 
 export async function fetchPageAttributes( url: string ): Promise< SupportPageBlockAttributes > {
@@ -19,5 +23,5 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 	const page = await pageResponse.json();
 
 	// TODO strip html?
-	return { url, content: page.content };
+	return { url, content: page.content, title: 'Domains » Change a Domain Name' };
 }

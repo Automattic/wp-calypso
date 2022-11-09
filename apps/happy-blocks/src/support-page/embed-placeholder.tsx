@@ -1,7 +1,7 @@
 import { Button, Placeholder } from '@wordpress/components';
 import { _x } from '@wordpress/i18n';
 import classnames from 'classnames';
-import './style.scss';
+import './edit.scss';
 
 type EmbedPlaceHolderProps = {
 	icon: JSX.Element;
@@ -17,7 +17,7 @@ type EmbedPlaceHolderProps = {
 
 export const EmbedPlaceHolder = ( props: EmbedPlaceHolderProps ) => {
 	return (
-		<div className={ classnames( 'wp-block-p2-embed-editmode', props.className ) }>
+		<div className={ classnames( 'hb-support-page-embed-placeholder', props.className ) }>
 			<Placeholder
 				icon={ props.icon }
 				label={ props.label }
