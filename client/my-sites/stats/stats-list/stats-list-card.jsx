@@ -39,6 +39,7 @@ const StatsListCard = ( {
 		}
 	};
 
+	// test
 	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.
 	const barMaxValue = data?.length
 		? Math.max( ...data.map( ( item ) => item?.value || 0 ).filter( Number.isFinite ) )
