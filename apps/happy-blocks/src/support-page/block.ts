@@ -1,4 +1,5 @@
-export const SUPPORT_PAGE_PATTERN = /^http[s]?:\/\/(?:www\.)?wordpress\.com(?:.*)?/i;
+export const SUPPORT_PAGE_PATTERN =
+	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?support\/(?<slug>\S+)$/i;
 const EMBED_CONTENT_MAXLENGTH = 400;
 const AVERAGE_READING_SPEED = 250; // words per minute
 
@@ -12,9 +13,7 @@ export type SupportPageBlockAttributes = {
 };
 
 export async function fetchPageAttributes( url: string ): Promise< SupportPageBlockAttributes > {
-	// http://en.support.wordpress.com/domains/change-a-domain/
-	const blog = 'en.support.wordpress.com';
-	const slug = 'domains/change-a-domain';
+	const { blog, slug } = getSlugFromUrl( url );
 
 	const apiUrl = `https://public-api.wordpress.com/rest/v1.1/sites/${ blog }/posts/slug:${ encodeURIComponent(
 		slug
@@ -44,4 +43,19 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 function stripHtml( html: string ): string {
 	const doc = new DOMParser().parseFromString( html, 'text/html' );
 	return doc.body.textContent || '';
+}
+
+function getSlugFromUrl( url: string ): { blog: string; slug: string } {
+	const urlMatches = url.match( SUPPORT_PAGE_PATTERN );
+	const lang = urlMatches?.groups?.lang ?? 'en';
+	let slug = urlMatches?.groups?.slug ?? '';
+
+	if ( slug.endsWith( '/' ) ) {
+		slug = slug.slice( 0, -1 );
+	}
+
+	return {
+		blog: `${ lang }.support.wordpress.com`,
+		slug,
+	};
 }
