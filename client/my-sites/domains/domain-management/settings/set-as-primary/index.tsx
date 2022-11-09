@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Accordion from 'calypso/components/domains/accordion';
 import { type } from 'calypso/lib/domains/constants';
+import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -54,15 +55,7 @@ const SetAsPrimary = ( { domain, selectedSite }: SetAsPrimaryProps ) => {
 		! domain.isWpcomStagingDomain &&
 		! canSetPrimaryDomain;
 
-	const canSetAsPrimary =
-		! isManagingAllSites &&
-		domain &&
-		domain.canSetAsPrimary &&
-		! domain.isPrimary &&
-		! shouldUpgradeToMakeDomainPrimary &&
-		! domain.aftermarketAuction;
-
-	if ( ! canSetAsPrimary ) {
+	if ( ! canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakeDomainPrimary ) ) {
 		return null;
 	}
 

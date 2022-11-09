@@ -20,6 +20,7 @@ import {
 } from 'calypso/lib/domains';
 import { type as domainTypes, domainInfoContext } from 'calypso/lib/domains/constants';
 import { getEmailForwardsCount, hasEmailForwards } from 'calypso/lib/domains/email-forwarding';
+import { canSetAsPrimary } from 'calypso/lib/domains/utils/can-set-as-primary';
 import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import { getMaxTitanMailboxCount, hasTitanMailWithUs } from 'calypso/lib/titan';
 import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
@@ -334,8 +335,17 @@ class DomainRow extends PureComponent {
 	};
 
 	renderEllipsisMenu() {
-		const { isLoadingDomainDetails, site, domain, showDomainDetails, disabled, isBusy, translate } =
-			this.props;
+		const {
+			disabled,
+			domain,
+			isBusy,
+			isLoadingDomainDetails,
+			isManagingAllSites,
+			shouldUpgradeToMakePrimary,
+			showDomainDetails,
+			site,
+			translate,
+		} = this.props;
 
 		if ( ! showDomainDetails ) {
 			return <div className="domain-row__action-cell"></div>;
@@ -365,7 +375,7 @@ class DomainRow extends PureComponent {
 							? translate( 'View transfer' )
 							: translate( 'View settings' ) }
 					</PopoverMenuItem>
-					{ this.canSetAsPrimary() && (
+					{ canSetAsPrimary( domain, isManagingAllSites, shouldUpgradeToMakePrimary ) && (
 						<PopoverMenuItem onClick={ this.makePrimary }>
 							<Icon icon={ home } size={ 18 } className="gridicon" viewBox="2 2 20 20" />
 							{ translate( 'Make primary site address' ) }
@@ -392,17 +402,6 @@ class DomainRow extends PureComponent {
 				</EllipsisMenu>
 				{ /* eslint-enable wpcalypso/jsx-classname-namespace */ }
 			</div>
-		);
-	}
-
-	canSetAsPrimary() {
-		const { domain, isManagingAllSites, shouldUpgradeToMakePrimary } = this.props;
-		return (
-			! isManagingAllSites &&
-			domain &&
-			domain.canSetAsPrimary &&
-			! domain.isPrimary &&
-			! shouldUpgradeToMakePrimary
 		);
 	}
 
