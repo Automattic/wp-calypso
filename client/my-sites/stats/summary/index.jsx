@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
@@ -223,22 +222,19 @@ class StatsSummary extends Component {
 				break;
 		}
 
-		// Append the site domain as needed.
-		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const domain = this.props.siteSlug;
-		if ( domain?.length > 0 ) {
-			backLink += domain;
-		}
-		// Set up for FixedNavigationHeader.
-		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
-		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
-
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
+		// Set up for FixedNavigationHeader.
+		const domain = this.props.siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
+		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+
 		return (
-			<Main className={ dynamicClassName } wideLayout>
+			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
