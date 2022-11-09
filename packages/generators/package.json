@@ -1,0 +1,35 @@
+{
+	"name": "@automattic/generators",
+	"version": "1.0.0",
+	"description": "Generate a sub-package under wp-calypso",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/generators"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bin": {
+		"wp-generate": "cli.js"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/generators#readme",
+	"type": "module",
+	"engines": {
+		"node": "^16.17.0",
+		"yarn": "^3.1.1"
+	},
+	"scripts": {
+		"generate": "wp-generate"
+	},
+	"dependencies": {
+		"commander": "^5.1.0",
+		"debug": "^4.3.3"
+	},
+	"devDependencies": {
+		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"plop": "^3.1.1"
+	}
+}
