@@ -15,6 +15,9 @@ import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import './style.scss';
 
+// TODO: Replace with something that better handles responsive design.
+// E.g., https://github.com/themustafaomar/jsvectormap
+
 class StatsGeochart extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
@@ -106,8 +109,6 @@ class StatsGeochart extends Component {
 		chartData.addColumn( 'string', translate( 'Country' ).toString() );
 		chartData.addColumn( 'number', translate( 'Views' ).toString() );
 		chartData.addRows( mapData );
-		const node = this.chartRef.current;
-		const width = node.clientWidth;
 
 		// Note that using raw hex values here is an exception due to
 		// IE11 and other older browser not supporting CSS custom props.
@@ -120,8 +121,7 @@ class StatsGeochart extends Component {
 			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
-			width: 100 + '%',
-			height: width <= 480 ? '238' : '480',
+			width: '100%',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
@@ -165,12 +165,11 @@ class StatsGeochart extends Component {
 		} );
 
 		return (
-			<div>
-				<div ref={ this.chartRef } className={ classes } />
+			<>
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+				<div ref={ this.chartRef } className={ classes } />
 				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
-			</div>
+			</>
 		);
 	}
 }
