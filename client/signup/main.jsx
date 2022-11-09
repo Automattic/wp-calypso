@@ -482,6 +482,7 @@ class Signup extends Component {
 			isBlankCanvas: isBlankCanvasDesign( dependencies.selectedDesign ),
 		} );
 		// Add Space So diff is clear
+		// Add Space So diff is clear
 	};
 
 	handleDestination( dependencies, destination ) {
