@@ -11,12 +11,10 @@ export type PromoCardProps = {
 	};
 };
 
-export default function PromoCard( {
-	className,
-	data: { title, message, isMobile },
-}: PromoCardProps ) {
+export default function PromoCard( { className, data }: PromoCardProps ) {
+	const { title, message, isMobile } = data;
 	// ToDo: Fix mobile logic.
-	// Should this maybe come a media query in the CSS?
+	// Should this maybe come via a media query in the CSS?
 	// Also, does it make sense to push one app store over the other?
 	// Might make more sense to have a custom SVG image that goes to wp.com/app.
 	return (
