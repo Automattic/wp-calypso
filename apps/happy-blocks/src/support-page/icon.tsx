@@ -26,7 +26,8 @@ export const WordPressIcon = ( props: WordIconProps ) => {
 				} ) }
 			>
 				{ props.variant === 'raster' ? (
-					<img alt="WP" src={ rasterizedIcon } />
+					// req param required to avoid adding it automatically thus breaking block parsing
+					<img alt="WP" src={ rasterizedIcon + '?m=1' } />
 				) : (
 					<SVG
 						width={ svgSize.width }
