@@ -8,11 +8,11 @@ const ZendeskChat = ( { chatId } ) => {
 			script.type = 'text/javascript';
 			script.id = 'ze-snippet';
 
-			document.body.appendChild( script );
+			document.getElementById( 'zendesk-chat-container' ).appendChild( script );
 		}
 	}, [ chatId ] );
 
-	return null;
+	return <div id="zendesk-chat-container" />;
 };
 
 export default ZendeskChat;
