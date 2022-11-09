@@ -14,7 +14,6 @@ import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getSiteOption,
 	getSiteSlug,
@@ -42,9 +41,7 @@ class StatsPostDetail extends Component {
 		siteSlug: PropTypes.string,
 		showViewLink: PropTypes.bool,
 		previewUrl: PropTypes.string,
-		hasNavigated: PropTypes.bool,
 	};
-	// ToDo: Remove hasNavigated prop.
 
 	state = {
 		showPreview: false,
@@ -227,7 +224,6 @@ const connectComponent = connect( ( state, { postId } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
-		hasNavigated: hasNavigated( state ),
 		siteId,
 	};
 } );
