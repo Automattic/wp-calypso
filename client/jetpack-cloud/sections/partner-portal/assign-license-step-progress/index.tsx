@@ -48,14 +48,14 @@ export default function AssignLicenseStepProgress( { currentStep }: Props ) {
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const sites = useSelector( getSites ).length;
 
-	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new licenses' ) } ];
+	const steps: Step[] = [ { key: 'issueLicense', label: translate( 'Issue new license' ) } ];
 
 	if ( paymentMethodRequired ) {
 		steps.push( { key: 'addPaymentMethod', label: translate( 'Add Payment Method' ) } );
 	}
 
 	if ( sites > 0 ) {
-		steps.push( { key: 'assignLicense', label: translate( 'Assign licenses' ) } );
+		steps.push( { key: 'assignLicense', label: translate( 'Assign license' ) } );
 	}
 
 	// Don't show the breadcrumbs if we have less than 2 as they are not very informative in this case.
