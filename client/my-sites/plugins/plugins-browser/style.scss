@@ -37,8 +37,13 @@
 }
 
 .plugins-browser__no-results {
+	padding-top: 32px;
 	@include breakpoint-deprecated( "<660px" ) {
 		margin: 0 16px;
+	}
+
+	.plugins-browser-list {
+		padding-top: 0;
 	}
 }
 .plugins-browser__main-container {

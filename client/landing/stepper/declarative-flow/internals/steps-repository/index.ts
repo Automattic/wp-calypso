@@ -48,6 +48,8 @@ export { default as senseiSetup } from './sensei-setup';
 export { default as senseiDomain } from './sensei-domain';
 export { default as senseiPlan } from './sensei-plan';
 export { default as senseiLaunch } from './sensei-launch';
+export { default as storeProfiler } from './store-profiler';
+export { default as designCarousel } from './design-carousel';
 
 export type StepPath =
 	| 'courses'
@@ -98,5 +100,7 @@ export type StepPath =
 	| 'senseiPlan'
 	| 'senseiLaunch'
 	| 'getCurrentThemeSoftwareSets'
+	| 'designCarousel'
+	| 'storeProfiler'
 	| 'chooseAPlan'
 	| 'videomakerSetup';

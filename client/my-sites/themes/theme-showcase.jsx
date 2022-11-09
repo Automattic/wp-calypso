@@ -341,6 +341,7 @@ class ThemeShowcase extends Component {
 		];
 
 		const themeProps = {
+			forceWpOrgSearch: true,
 			filter: filter,
 			vertical: this.props.vertical,
 			siteId: this.props.siteId,

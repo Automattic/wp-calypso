@@ -35,11 +35,12 @@
 	@extend %placeholder;
 }
 
-.plugin-details-cta__period {
+.plugin-details-cta__period,
+.plugin-details-cta__notice {
 	font-family: $sans;
 	font-size: $font-body-extra-small;
 	color: var(--studio-gray-50);
-	padding-left: 3px;
+	padding-left: 8px;
 }
 
 .plugin-details-cta__uprade-required {
@@ -89,6 +90,8 @@
 	background-color: var(--color-surface);
 	display: flex;
 	flex-direction: column;
+	border: 1px solid var(--color-neutral-10);
+	border-radius: 4px;
 
 	.button {
 		margin-top: 1rem;
@@ -97,7 +100,6 @@
 }
 .plugin-details-cta__upgrade-required {
 	display: flex;
-	align-items: center;
 
 	.plugin-details-cta__upgrade-required-icon {
 		color: var(--studio-orange-40);

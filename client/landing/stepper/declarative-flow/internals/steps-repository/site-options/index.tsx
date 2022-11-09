@@ -202,8 +202,8 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 
 	return (
 		<StepContainer
-			shouldHideNavButtons={ isVideoPressFlow }
 			stepName="site-options"
+			shouldHideNavButtons={ isVideoPressFlow }
 			className={ `is-step-${ intent }` }
 			headerImageUrl={ headerImage }
 			skipButtonAlign="top"

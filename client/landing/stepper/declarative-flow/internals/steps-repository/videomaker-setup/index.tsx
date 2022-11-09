@@ -57,18 +57,18 @@ const VideomakerSetup: Step = function VideomakerSetup( { navigation } ) {
 
 	return (
 		<StepContainer
-			stepName={ 'videomaker-setup' }
+			stepName="videomaker-setup"
 			isWideLayout={ true }
 			hideBack={ true }
-			flowName={ 'videopress' }
+			flowName="videopress"
 			formattedHeader={
 				<FormattedHeader
-					id={ 'videomaker-setup-header' }
+					id="videomaker-setup-header"
 					headerText={ __( 'Choose a design' ) }
 					subHeaderText={ __(
 						'This is what your homepage will look like. You’ll be able to customize it further at any time.'
 					) }
-					align={ 'center' }
+					align="center"
 				/>
 			}
 			stepContent={ stepContent }

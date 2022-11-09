@@ -1,3 +1,5 @@
+import config from '@automattic/calypso-config';
+import classNames from 'classnames';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -7,6 +9,7 @@ import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -23,6 +26,7 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
+import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import WordAdsEarnings from './earnings';
@@ -126,6 +130,20 @@ class WordAds extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
+		// For period option links
+		const wordads = {
+			label: 'Ads',
+			path: '/stats/ads',
+			showIntervals: true,
+		};
+
+		const slugPath = slug ? `/${ slug }` : '';
+		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
+
+		// New feature gate
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+		const wrapperClasses = classNames( 'wordads', { 'stats--new-main-chart': isNewFeatured } );
+
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<Main wideLayout>
@@ -137,10 +155,11 @@ class WordAds extends Component {
 				<FormattedHeader
 					brandFont
 					className="wordads__section-header"
-					headerText={ translate( 'Stats and Insights' ) }
+					headerText={ translate( 'Jetpack Stats' ) }
 					subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 					align="left"
 				/>
+
 				{ ! canAccessAds && (
 					<EmptyContent
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -153,6 +172,7 @@ class WordAds extends Component {
 						actionURL={ '/earn/ads-settings/' + slug }
 					/>
 				) }
+
 				{ canAccessAds && (
 					<Fragment>
 						<StatsNavigation
@@ -161,40 +181,87 @@ class WordAds extends Component {
 							siteId={ siteId }
 							slug={ slug }
 						/>
-						<div id="my-stats-content" className="wordads">
-							<WordAdsChartTabs
-								activeTab={ getActiveTab( this.props.chartTab ) }
-								activeLegend={ this.state.activeLegend }
-								availableLegend={ this.getAvailableLegend() }
-								onChangeLegend={ this.onChangeLegend }
-								barClick={ this.barClick }
-								switchTab={ this.switchChart }
-								charts={ CHARTS }
-								queryDate={ queryDate }
-								period={ this.props.period }
-								chartTab={ this.props.chartTab }
-							/>
-							<StickyPanel className="stats__sticky-navigation">
-								<StatsPeriodNavigation
-									date={ queryDate }
-									hidePreviousArrow={
-										( 'day' === period || 'week' === period ) &&
-										moment( queryDate ).isSameOrBefore( '2018-10-01' )
-									} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
-									hideNextArrow={ yesterday === queryDate }
-									period={ period }
-									url={ `/stats/ads/${ period }/${ slug }` }
-								>
-									<DatePicker
-										period={ period }
-										date={ queryDate }
-										query={ query }
-										statsType="statsAds"
-										showQueryDate
+
+						<div id="my-stats-content" className={ wrapperClasses }>
+							{ isNewFeatured ? (
+								<>
+									<StatsPeriodHeader>
+										<StatsPeriodNavigation
+											date={ queryDate }
+											hidePreviousArrow={
+												( 'day' === period || 'week' === period ) &&
+												moment( queryDate ).isSameOrBefore( '2018-10-01' )
+											} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
+											hideNextArrow={ yesterday === queryDate }
+											period={ period }
+											url={ `/stats/ads/${ period }/${ slug }` }
+										>
+											<DatePicker
+												period={ period }
+												date={ queryDate }
+												query={ query }
+												statsType="statsAds"
+												showQueryDate
+											/>
+										</StatsPeriodNavigation>
+										<Intervals
+											selected={ period }
+											pathTemplate={ pathTemplate }
+											compact={ false }
+										/>
+									</StatsPeriodHeader>
+
+									<WordAdsChartTabs
+										activeTab={ getActiveTab( this.props.chartTab ) }
+										activeLegend={ this.state.activeLegend }
+										availableLegend={ this.getAvailableLegend() }
+										onChangeLegend={ this.onChangeLegend }
+										barClick={ this.barClick }
+										switchTab={ this.switchChart }
+										charts={ CHARTS }
+										queryDate={ queryDate }
+										period={ this.props.period }
+										chartTab={ this.props.chartTab }
 									/>
-								</StatsPeriodNavigation>
-							</StickyPanel>
-							<div className="stats__module-list">
+								</>
+							) : (
+								<>
+									<WordAdsChartTabs
+										activeTab={ getActiveTab( this.props.chartTab ) }
+										activeLegend={ this.state.activeLegend }
+										availableLegend={ this.getAvailableLegend() }
+										onChangeLegend={ this.onChangeLegend }
+										barClick={ this.barClick }
+										switchTab={ this.switchChart }
+										charts={ CHARTS }
+										queryDate={ queryDate }
+										period={ this.props.period }
+										chartTab={ this.props.chartTab }
+									/>
+									<StickyPanel className="stats__sticky-navigation">
+										<StatsPeriodNavigation
+											date={ queryDate }
+											hidePreviousArrow={
+												( 'day' === period || 'week' === period ) &&
+												moment( queryDate ).isSameOrBefore( '2018-10-01' )
+											} // @TODO is there a more elegant way to do this? Similar to in_array() for php?
+											hideNextArrow={ yesterday === queryDate }
+											period={ period }
+											url={ `/stats/ads/${ period }/${ slug }` }
+										>
+											<DatePicker
+												period={ period }
+												date={ queryDate }
+												query={ query }
+												statsType="statsAds"
+												showQueryDate
+											/>
+										</StatsPeriodNavigation>
+									</StickyPanel>
+								</>
+							) }
+
+							<div className="stats__module-list stats__module-headerless--unified">
 								<WordAdsEarnings site={ site } />
 							</div>
 						</div>

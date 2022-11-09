@@ -9,7 +9,7 @@ import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, useLocation, Redirect } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { SENSEI_FLOW } from 'calypso/../packages/onboarding/src';
 import { setupErrorLogger } from 'calypso/boot/common';
@@ -40,6 +40,7 @@ import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { sensei } from './declarative-flow/sensei';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
+import { ecommerceFlow } from './declarative-flow/tailored-ecommerce-flow';
 import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
@@ -70,9 +71,11 @@ interface configurableFlows {
 
 const availableFlows: Array< configurableFlows > = [
 	{ flowName: 'newsletter', pathToFlow: newsletter },
-	{ flowName: 'videopress', pathToFlow: videopress },
 	{ flowName: SENSEI_FLOW, pathToFlow: sensei },
 	{ flowName: 'import-focused', pathToFlow: importFlow },
+	config.isEnabled( 'videopress/tailored-onboarding' )
+		? { flowName: 'videopress', pathToFlow: videopress }
+		: null,
 	{ flowName: 'link-in-bio', pathToFlow: linkInBio },
 	{ flowName: 'podcasts', pathToFlow: podcasts },
 	{ flowName: 'link-in-bio-post-setup', pathToFlow: linkInBioPostSetup },
@@ -80,25 +83,35 @@ const availableFlows: Array< configurableFlows > = [
 	config.isEnabled( 'themes/plugin-bundling' )
 		? { flowName: 'plugin-bundle', pathToFlow: pluginBundleFlow }
 		: null,
+	config.isEnabled( 'signup/tailored-ecommerce' )
+		? { flowName: 'ecommerce', pathToFlow: ecommerceFlow }
+		: null,
 ].filter( ( item ) => item !== null ) as Array< configurableFlows >;
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
+	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	const location = useLocation();
 	const { anchorFmPodcastId } = useAnchorFmParams();
-	const flowName = useQuery().get( 'flow' );
 
+	const flowNameFromParam = useQuery().get( 'flow' );
+	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
 	let flow = siteSetupFlow;
+
+	// keep supporting the `flow` query param for backwards compatibility
+	if ( availableFlows.find( ( flow ) => flow.flowName === flowNameFromParam ) ) {
+		return <Redirect to={ `/${ flowNameFromParam }` } />;
+	}
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
 	} else {
 		availableFlows.forEach( ( currentFlow ) => {
-			if ( currentFlow.flowName === flowName ) {
+			if ( currentFlow.flowName === flowNameFromPathName ) {
 				flow = currentFlow.pathToFlow;
 			}
 		} );
 	}
 
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
 
 	// console.log(flow);

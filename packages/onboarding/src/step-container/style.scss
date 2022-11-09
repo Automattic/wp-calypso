@@ -255,6 +255,7 @@
 	 * Jetpack Powered and VideoPress Powered
 	 */
 	.step-container__jetpack-powered,
+	.step-container__header-jetpack-powered,
 	.step-container__videopress-powered {
 		display: flex;
 		justify-content: center;
@@ -265,10 +266,25 @@
 		font-size: $font-body-extra-small;
 		font-weight: 400;
 		line-height: 20px;
-		margin: 1rem 0;
 
 		svg {
 			margin-inline-end: 6px;
+		}
+	}
+
+	.step-container__jetpack-powered {
+		margin: 1rem 0;
+		width: 100%;
+	}
+
+	.step-container__header-jetpack-powered {
+		position: absolute;
+		top: 32px;
+		right: 32px;
+		visibility: hidden;
+
+		@include break-small {
+			visibility: visible;
 		}
 	}
 }

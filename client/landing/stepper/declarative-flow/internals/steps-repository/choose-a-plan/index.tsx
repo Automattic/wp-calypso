@@ -121,7 +121,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 				const newSite = getNewSite();
 				setSelectedSite( newSite?.blogid );
-				setIntentOnSite( newSite?.site_slug as string, flow );
+				setIntentOnSite( newSite?.site_slug as string, flow as string );
 				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
 
 				const planObject = supportedPlans.find(
@@ -161,7 +161,7 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				setProgress( 1.0 );
 
 				const redirectTo = encodeURIComponent(
-					`/setup/launchpad?flow=videopress&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+					`/setup/videopress/launchpad?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 				);
 
 				window.location.replace(

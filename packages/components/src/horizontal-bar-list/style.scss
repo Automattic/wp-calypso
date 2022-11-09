@@ -2,22 +2,12 @@
 // Horizontal bar list
 // ==========================================================================
 @import "../styles/typography.scss";
-
-$padding-outside: 24px;
-$space-between-rows: 3px;
-$row-height: 36px;
-$row-font-size: 14px;
-$row-line-height: 20px;
-$bar-left-spacing: 10px;
-$value-column-width: 50px;
-$border-radius: 4px;
-$item-transition: 0.1s ease-out;
-$item-indicator-width: 4px;
+@import "./stats-variables.scss";
 
 .horizontal-bar-list {
 	list-style: none;
 	margin: 0;
-	padding: $padding-outside 0;
+	padding: 0;
 	font-size: $row-font-size;
 	font-weight: 500;
 	line-height: $row-line-height;
@@ -47,7 +37,7 @@ $item-indicator-width: 4px;
 			}
 
 			.horizontal-bar-list--hover-action {
-				visibility: visible;
+				display: block;
 			}
 		}
 	}
@@ -57,8 +47,9 @@ $item-indicator-width: 4px;
 		position: relative;
 		display: flex;
 		height: auto;
-		width: calc(100% - $value-column-width);
+		width: calc(100% - $value-column-width - $bar-left-spacing);
 		align-items: center;
+		flex: 1 0 auto;
 
 		&::before {
 			width: var(--horizontal-bar-list-fill);
@@ -74,7 +65,9 @@ $item-indicator-width: 4px;
 	}
 
 	.horizontal-bar-list--hover-action {
-		visibility: hidden;
+		display: none;
+		position: relative;
+		z-index: 1;
 	}
 
 	.label {
@@ -87,7 +80,7 @@ $item-indicator-width: 4px;
 	}
 
 	.value {
-		flex: 0 1 $value-column-width;
+		flex: 0 0 $value-column-width;
 		text-align: right;
 		align-self: center;
 	}

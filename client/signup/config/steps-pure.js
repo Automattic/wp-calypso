@@ -205,7 +205,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-		// the only unique thing about plans-newsletter is that it provides themeSlugWithRepo and comingSoon dependencies
+
 		'plans-newsletter': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -213,9 +213,12 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				themeSlugWithRepo: 'pub/lettre',
+				launchSite: true,
+			},
 		},
 
-		// the only unique thing about plans-link-in-bio is that it provides themeSlugWithRepo dependency
 		'plans-link-in-bio': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
@@ -223,6 +226,9 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				themeSlugWithRepo: 'pub/lynx',
+			},
 		},
 
 		'plans-new': {

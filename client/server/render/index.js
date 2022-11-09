@@ -8,6 +8,7 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
+import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
@@ -15,6 +16,7 @@ import {
 } from 'calypso/lib/i18n-utils/switch-locale';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
+import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
 import {
 	getDocumentHeadFormattedTitle,
@@ -81,6 +83,13 @@ function render( element, key, req ) {
 		debug( 'cache access for key', key );
 
 		let renderedLayout = markupCache.get( key );
+
+		logServerEvent( req.context.sectionName, {
+			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
+			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+			type: 'counting',
+		} );
+
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -213,6 +222,7 @@ export function attachBuildTimestamp( context ) {
 }
 
 export function serverRender( req, res ) {
+	performanceMark( req, 'serverRender' );
 	const context = req.context;
 
 	let cacheKey = false;
@@ -220,6 +230,7 @@ export function serverRender( req, res ) {
 	attachI18n( context );
 
 	if ( shouldServerSideRender( context ) ) {
+		performanceMark( req, 'render layout', true );
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
@@ -230,12 +241,14 @@ export function serverRender( req, res ) {
 		);
 	}
 
+	performanceMark( req, 'dehydrateQueryClient', true );
 	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
+		performanceMark( req, 'redux store', true );
 		attachHead( context );
 
-		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui' ] : [];
+		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
 		const initialClientStateTrees = [ 'documentHead', ...isomorphicSubtrees ];
 
 		// Send state to client
@@ -253,16 +266,22 @@ export function serverRender( req, res ) {
 		 * (like /es/themes), that applies to every user.
 		 */
 		if ( cacheKey ) {
-			const { documentHead, themes } = context.store.getState();
-			const serverState = serialize( context.store.getCurrentReducer(), { documentHead, themes } );
+			const { documentHead, themes, plugins } = context.store.getState();
+			const serverState = serialize( context.store.getCurrentReducer(), {
+				documentHead,
+				themes,
+				plugins,
+			} );
 			stateCache.set( cacheKey, serverState.get() );
 		}
 	}
+	performanceMark( req, 'final render', true );
 	context.clientData = config.clientData;
 
 	attachBuildTimestamp( context );
 
 	res.send( renderJsx( 'index', context ) );
+	performanceMark( req, 'post-sending JSX' );
 }
 
 /**

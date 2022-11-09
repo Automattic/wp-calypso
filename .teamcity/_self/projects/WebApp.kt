@@ -1006,13 +1006,11 @@ object CalypsoPreReleaseDashboard : BuildType({
 				allure-results.tgz!*.json => allure-results
 			"""
 		}
-		snapshot ( KPIDashboardTests) {
-		}
 	}
 
 	triggers {
 		finishBuildTrigger {
-	    	buildType = "KPIDashboardTests"
+			buildType = "calypso_WebApp_Calypso_E2E_KPI_Dashboard"
 			branchFilter = "+:trunk"
 		}
 	}

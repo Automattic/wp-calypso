@@ -36,6 +36,15 @@
 	padding-left: 25px;
 }
 
+.theme__sheet-bar-soft-launched {
+	color: var(--color-warning-80);
+	font-size: 1.25rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	background-color: var(--color-warning-20);
+	margin-left: 1rem;
+}
+
 .theme__sheet-columns {
 	display: flex;
 	flex-direction: row;
@@ -45,6 +54,9 @@
 	@include breakpoint-deprecated( "<960px" ) {
 		flex-direction: column-reverse;
 	}
+}
+.theme__sheet-columns.is-removed {
+	justify-content: center;
 }
 
 .theme__sheet-column-left,

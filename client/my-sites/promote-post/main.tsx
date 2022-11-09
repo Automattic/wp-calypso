@@ -2,7 +2,6 @@ import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useSelector } from 'react-redux';
-import SitePreview from 'calypso/blocks/site-preview';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
@@ -10,7 +9,11 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import Main from 'calypso/components/main';
 import useCampaignsQuery from 'calypso/data/promote-post/use-promote-post-campaigns-query';
-import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
+import {
+	usePromoteWidget,
+	PromoteWidgetStatus,
+	useCanPromoteProducts,
+} from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import { Post } from 'calypso/my-sites/promote-post/components/post-item';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
@@ -39,6 +42,15 @@ const queryPage = {
 	type: 'page',
 };
 
+const queryProducts = {
+	...queryPost,
+	type: 'product',
+};
+
+export type DSPMessage = {
+	errorCode?: string;
+};
+
 function sortItemsByPublishedDate( items: Post[] ) {
 	return items.slice( 0 ).sort( function ( a, b ) {
 		if ( a.date && b.date ) {
@@ -51,6 +63,8 @@ function sortItemsByPublishedDate( items: Post[] ) {
 		return b.ID - a.ID;
 	} );
 }
+
+const ERROR_NO_LOCAL_USER = 'no_local_user';
 
 export default function PromotedPosts( { tab }: Props ) {
 	const selectedTab = tab === 'campaigns' ? 'campaigns' : 'posts';
@@ -67,15 +81,27 @@ export default function PromotedPosts( { tab }: Props ) {
 		const pages = getPostsForQuery( state, selectedSiteId, queryPage );
 		return pages?.filter( ( page: any ) => ! page.password );
 	} );
+
+	const products = useSelector( ( state ) => {
+		const products = getPostsForQuery( state, selectedSiteId, queryProducts );
+		return products?.filter( ( product: any ) => ! product.password );
+	} );
+
 	const isLoadingPost = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPost )
 	);
 	const isLoadingPage = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPage )
 	);
+	const isLoadingProducts = useSelector( ( state ) =>
+		isRequestingPostsForQuery( state, selectedSiteId, queryProducts )
+	);
 
 	const campaigns = useCampaignsQuery( selectedSiteId ?? 0 );
-	const { isLoading: campaignsIsLoading, data: campaignsData, isError } = campaigns;
+	const { isLoading: campaignsIsLoading, isError, error: campaignError } = campaigns;
+	const { data: campaignsData } = campaigns;
+
+	const hasLocalUser = ( campaignError as DSPMessage )?.errorCode !== ERROR_NO_LOCAL_USER;
 
 	const translate = useTranslate();
 
@@ -88,25 +114,16 @@ export default function PromotedPosts( { tab }: Props ) {
 		page( '/' );
 	}
 
-	const learnMoreLink = <InlineSupportLink supportContext="advertising" showIcon={ false } />;
+	const productsEnabled = useCanPromoteProducts() === PromoteWidgetStatus.ENABLED;
 
-	const subtitle = campaignsData?.length
-		? translate(
-				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: learnMoreLink,
-					},
-				}
-		  )
-		: translate(
-				'Reach more people promoting a post or a page to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-				{
-					components: {
-						learnMoreLink: learnMoreLink,
-					},
-				}
-		  );
+	const subtitle = translate(
+		'Reach new readers and customers by promoting a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
+		{
+			components: {
+				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
+			},
+		}
+	);
 
 	if ( selectedSite?.is_coming_soon ) {
 		return (
@@ -142,29 +159,32 @@ export default function PromotedPosts( { tab }: Props ) {
 		);
 	}
 
-	const content = sortItemsByPublishedDate( [ ...( posts || [] ), ...( pages || [] ) ] );
+	const content = sortItemsByPublishedDate( [
+		...( posts || [] ),
+		...( pages || [] ),
+		...( products || [] ),
+	] );
 
-	const isLoading = isLoadingPage && isLoadingPost;
+	const isLoading = isLoadingPage && isLoadingPost && isLoadingProducts;
 
 	return (
 		<Main wideLayout className="promote-post">
-			<SitePreview />
 			<DocumentHead title={ translate( 'Advertising' ) } />
 
 			<FormattedHeader
 				brandFont
 				className="advertising__page-header"
 				headerText={ translate( 'Advertising' ) }
-				subHeaderText={ campaignsData?.length ? subtitle : '' }
+				subHeaderText={ subtitle }
 				align="left"
 			/>
-			<SitePreview />
 
 			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' && (
 				<CampaignsList
+					hasLocalUser={ hasLocalUser }
 					isError={ isError }
 					isLoading={ campaignsIsLoading }
 					campaigns={ campaignsData || [] }
@@ -173,6 +193,9 @@ export default function PromotedPosts( { tab }: Props ) {
 
 			<QueryPosts siteId={ selectedSiteId } query={ queryPost } postId={ null } />
 			<QueryPosts siteId={ selectedSiteId } query={ queryPage } postId={ null } />
+			{ productsEnabled && (
+				<QueryPosts siteId={ selectedSiteId } query={ queryProducts } postId={ null } />
+			) }
 
 			{ selectedTab === 'posts' && <PostsList content={ content } isLoading={ isLoading } /> }
 		</Main>

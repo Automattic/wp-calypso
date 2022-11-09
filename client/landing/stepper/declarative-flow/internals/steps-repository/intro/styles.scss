@@ -4,44 +4,97 @@
 .intro {
 	&.newsletter {
 		background-color: rgb(162 218 254);
-		background-image:
-			url(calypso/assets/images/onboarding/newsletter-intro-left.png),
-			url(calypso/assets/images/onboarding/newsletter-intro-right.png);
-		background-repeat: no-repeat, no-repeat;
-		background-attachment: fixed;
-		/*!rtl:ignore*/
-		background-position-x: 0%, 100%;
-		background-position-y: 100%, 80px;
-		background-size: auto 30%, auto 50%;
 
+		.step-container {
+			&.is-using-new-intro-design {
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.png);
+				background-repeat: no-repeat;
+				background-attachment: fixed;
+				background-position-x: center;
+				background-position-y: bottom;
+				background-size: contain;
 
-		@include break-huge {
-			background-size: auto 55%, auto 80%;
-			background-position-y: 100%, 136px;
+				@include break-medium {
+					background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
+				}
+
+				@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
+					background-size: cover;
+					background-position-y: 35vh;
+				}
+
+				@include break-huge {
+					background-size: cover;
+					background-position-y: 10vh;
+				}
+			}
+
 			background-image:
-				url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
-				url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
+				url(calypso/assets/images/onboarding/newsletter-intro-left.png),
+				url(calypso/assets/images/onboarding/newsletter-intro-right.png);
+			background-repeat: no-repeat, no-repeat;
+			background-attachment: fixed;
+			/*!rtl:ignore*/
+			background-position-x: 0%, 100%;
+			background-position-y: 100%, 80px;
+			background-size: auto 30%, auto 50%;
+
+
+			@include break-huge {
+				background-size: auto 55%, auto 80%;
+				background-position-y: 100%, 136px;
+				background-image:
+					url(calypso/assets/images/onboarding/newsletter-intro-left-desktop.png),
+					url(calypso/assets/images/onboarding/newsletter-intro-right-desktop.png);
+			}
 		}
 	}
 
 	&.link-in-bio {
 		background-color: #d0cce3;
+
+		.step-container {
+			background-image:
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
+			background-position-y: 85%, 15%;
+			/*!rtl:ignore*/
+			background-position-x: 0, 100%;
+			background-repeat: no-repeat, no-repeat;
+			background-attachment: fixed;
+			background-size: auto 15%, auto 15%;
+
+			@include break-huge {
+				background-size: auto 25%, auto 25%;
+				background-position-y: 85%, 10%;
+				background-image:
+					url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
+					url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
+			}
+		}
+	}
+
+	&.ecommerce {
+		background-color: #fff;
 		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
-			url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
-		background-position-y: 85%, 15%;
+			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
+		background-position-y: -40px, 110%;
 		/*!rtl:ignore*/
-		background-position-x: 0, 100%;
+		background-position-x: 109%, -10%;
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
-		background-size: auto 15%, auto 15%;
+		background-size: auto 15%, auto 25%;
+		padding-top: 0;
 
 		@include break-huge {
-			background-size: auto 25%, auto 25%;
-			background-position-y: 85%, 10%;
+			background-size: auto 15%, auto 35%, auto 50%;
+			background-position-x: 65%, -100px, 120%;
+			background-position-y: 5%, 85%, 125%;
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
-				url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
+				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
 		}
 	}
 
@@ -129,13 +182,24 @@
 		transform: translateY(-50%);
 	}
 
+	.is-using-new-intro-design .intro__content {
+		width: calc(100% - 40px);
+
+		top: 25%;
+		left: 50%;
+		transform: translateX(-50%);
+
+		@include break-medium {
+			top: 35%;
+		}
+	}
+
 	.intro__title {
 		@include onboarding-font-recoleta;
 
 		font-size: 1.75rem;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		line-height: 130%;
-		padding-bottom: 32px;
 
 		@include break-large {
 			font-size: 2.75rem;
@@ -150,6 +214,15 @@
 		span {
 			display: block;
 		}
+	}
+
+	.intro__title + .intro__description,
+	.intro__description + .intro__button {
+		margin-top: 24px;
+	}
+
+	.intro__title + .intro__button {
+		margin-top: 32px;
 	}
 
 	.intro__video {

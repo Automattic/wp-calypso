@@ -1,0 +1,48 @@
+// ==========================================================================
+// Horizontal bar list
+// ==========================================================================
+@import "../styles/typography.scss";
+@import "./stats-variables.scss";
+
+.stats-card {
+	border: 1px solid var(--studio-gray-5);
+	border-radius: $border-radius;
+	padding: $padding-outside 0;
+	font-size: $row-font-size;
+	font-weight: 500;
+	line-height: $row-line-height;
+	color: $font-color;
+	background-color: var(--studio-white);
+
+	.stats-card--header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 0 $padding-outside $header-spacer $padding-outside;
+
+		.stats-card--header--title,
+		.stats-card--header--title:visited {
+			font-size: $header-font-size;
+			line-height: $header-line-height;
+			color: var(--color-text);
+		}
+	}
+
+	.stats-card--body-empty {
+		padding: 0 $padding-outside;
+		font-weight: 400;
+		padding-top: 4px;
+		color: var(--studio-gray-60);
+	}
+
+	.stats-card--footer {
+		font-weight: 600;
+		margin: $padding-outside $padding-outside 0;
+		display: block;
+		color: var(--color-text);
+
+		&:visited {
+			color: $font-color;
+		}
+	}
+}

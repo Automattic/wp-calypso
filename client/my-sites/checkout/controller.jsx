@@ -9,7 +9,6 @@ import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
-import LicensingThankYouManualActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
 import PostCheckoutUpsellExperimentRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
@@ -371,17 +370,6 @@ export function redirectToSupportSession( context ) {
 		page.redirect( `/checkout/offer-support-session/${ receiptId }/${ site }` );
 	}
 	page.redirect( `/checkout/offer-support-session/${ site }` );
-}
-
-export function licensingThankYouManualActivation( context, next ) {
-	const { product } = context.params;
-	const { receiptId } = context.query;
-
-	context.primary = (
-		<LicensingThankYouManualActivation productSlug={ product } receiptId={ receiptId } />
-	);
-
-	next();
 }
 
 export function licensingThankYouManualActivationInstructions( context, next ) {

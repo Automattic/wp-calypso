@@ -140,6 +140,10 @@ export function extractAuthorUrl( authorElementSource ) {
 }
 
 export function extractScreenshots( screenshotsHtml ) {
+	if ( 'undefined' === typeof window ) {
+		return null;
+	}
+
 	const screenshotsDom = parseHtml( screenshotsHtml );
 
 	const list = screenshotsDom && screenshotsDom.querySelectorAll( 'li' );
@@ -460,3 +464,24 @@ export const getPluginPurchased = ( plugin, purchases, isMarketplaceProduct ) =>
 		)
 	);
 };
+
+/**
+ * Gets the SaaS redirect URL of a plugin if it exits and is valid
+ *
+ * @param {plugin} plugin The plugin object  to read the SaaS redirect url from
+ * @param {number} userId The user id
+ * @param {number} siteId The site id
+ * @returns The URL of the SaaS redirect page or null if it doesn't exist or is an invalid URL
+ */
+export function getSaasRedirectUrl( plugin, userId, siteId ) {
+	if ( ! plugin?.saas_landing_page ) {
+		return null;
+	}
+	try {
+		const saasRedirectUrl = new URL( plugin.saas_landing_page );
+		saasRedirectUrl.searchParams.append( 'uuid', `${ userId }+${ siteId }` );
+		return saasRedirectUrl.toString();
+	} catch ( error ) {
+		return null;
+	}
+}

@@ -3,7 +3,6 @@ import React from 'react';
 export type HorizontalBarListProps = {
 	children: React.ReactNode;
 	className?: string;
-	data: Array< StatDataObject >;
 };
 
 export type HorizontalBarListItemProps = {
@@ -37,4 +36,17 @@ type StatDataObject = {
 type StatsActions = {
 	data: string;
 	type: string;
+};
+
+export type StatsCardProps = {
+	children: React.ReactNode;
+	className?: string;
+	title: string;
+	footerAction?: {
+		label?: string;
+		url?: string;
+	};
+	isEmpty?: boolean;
+	emptyMessage?: string;
+	titleURL: string;
 };
