@@ -22,7 +22,7 @@ const Discount = styled.span`
 `;
 
 const Price = styled.span`
-	color: #646970;
+	color: #000;
 `;
 
 const Variant = styled.div`
