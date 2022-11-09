@@ -19,7 +19,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
-import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -208,34 +207,29 @@ class StatsSite extends Component {
 
 		return (
 			<div>
-				<FixedNavigationHeader
-					headerNode={
-						<FormattedHeader
-							brandFont
-							className="stats__section-header"
-							headerText={ translate( 'Jetpack Stats' ) }
-							align="left"
-							subHeaderText={ translate(
-								"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
-								{
-									components: {
-										learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
-									},
-								}
-							) }
-						/>
-					}
-					tabListNode={
-						<StatsNavigation
-							selectedItem="traffic"
-							interval={ period }
-							siteId={ siteId }
-							slug={ slug }
-						/>
-					}
+				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+
+				<FormattedHeader
+					brandFont
+					className="stats__section-header"
+					headerText={ translate( 'Jetpack Stats' ) }
+					align="left"
+					subHeaderText={ translate(
+						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
+						{
+							components: {
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
+							},
+						}
+					) }
 				/>
 
-				<JetpackBackupCredsBanner event="stats-backup-credentials" />
+				<StatsNavigation
+					selectedItem="traffic"
+					interval={ period }
+					siteId={ siteId }
+					slug={ slug }
+				/>
 
 				{ showHighlights && <HighlightsSection siteId={ siteId } /> }
 
