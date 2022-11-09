@@ -134,7 +134,7 @@ describe( 'EditorMediaModal', () => {
 		Modal.setAppElement( container );
 
 		expect( screen.getByTestId( 'image-editor' ) ).toBeVisible();
-		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 0 );
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'should show a Copy to media library button when viewing external media (no selection)', () => {
@@ -167,7 +167,7 @@ describe( 'EditorMediaModal', () => {
 
 		Modal.setAppElement( container );
 
-		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 2 );
 		expect( screen.getByRole( 'button', { name: /copy to media library/i } ) ).toBeVisible();
 	} );
 
@@ -184,7 +184,7 @@ describe( 'EditorMediaModal', () => {
 
 		Modal.setAppElement( container );
 
-		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 2 );
 		expect( screen.getByRole( 'button', { name: /copy to media library/i } ) ).toBeVisible();
 	} );
 
@@ -200,7 +200,7 @@ describe( 'EditorMediaModal', () => {
 
 		Modal.setAppElement( container );
 
-		expect( screen.queryAllByRole( 'button' ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'button' ) ).toHaveLength( 2 );
 		expect( screen.getByRole( 'button', { name: /copy to media library/i } ) ).toBeVisible();
 	} );
 
