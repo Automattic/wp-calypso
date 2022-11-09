@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
-import page from 'page';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -23,21 +22,6 @@ import VideoPressStatsModule from '../videopress-stats-module';
 const StatsStrings = statsStringsFactory();
 
 class StatsSummary extends Component {
-	goBack = () => {
-		const pathParts = this.props.path.split( '/' );
-		const queryString = this.props.context.querystring
-			? '?' + this.props.context.querystring
-			: null;
-
-		if ( history.length ) {
-			history.back();
-		} else {
-			setTimeout( () => {
-				page.show( '/stats/' + pathParts[ pathParts.length - 1 ] + queryString );
-			} );
-		}
-	};
-
 	componentDidMount() {
 		window.scrollTo( 0, 0 );
 	}
