@@ -1,34 +1,7 @@
+@import "@wordpress/base-styles/breakpoints";
 @import "client/my-sites/stats/modernized-tooltip-styles.scss";
 @import "client/my-sites/stats/modernized-chart-tabs-styles.scss";
 @import "client/my-sites/stats/modernized-page-header-styles.scss";
-
-// Module container
-@include breakpoint-deprecated( ">960px" ) {
-	.stats__module-column {
-		float: right;
-		width: calc(50% - 4px);
-
-		&:first-child {
-			float: left;
-		}
-
-		&:last-child {
-			clear: right;
-		}
-	}
-}
-
-@include breakpoint-deprecated( ">1280px" ) {
-	.stats__module-column {
-		width: calc(33% - 3px);
-
-		&:last-child {
-			clear: none;
-			left: -10px;
-			position: relative;
-		}
-	}
-}
 
 .old-stats-link .button .gridicon {
 	margin-bottom: -2px;
@@ -231,6 +204,83 @@
 	.followers-count .button {
 		@include breakpoint-deprecated( "<480px" ) {
 			display: none;
+		}
+	}
+
+	$grid-horizontal-gutters: 24px;
+	$grid-vertical-gutters: 32px;
+	.stats__module-list--traffic {
+		align-items: stretch;
+		display: grid;
+		grid-template-columns: repeat(12, 1fr);
+		grid-template-rows: repeat(4, min-content);
+		gap: $grid-vertical-gutters $grid-horizontal-gutters;
+		grid-template-areas:
+			"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
+			"country country country country country country country country country country country country"
+			"authors authors authors authors searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
+			"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads";
+
+		// Tablets
+		@media ( max-width: $break-large ) {
+			grid-template-columns: repeat(8, 1fr);
+			grid-template-rows: repeat(5, min-content);
+			gap: $grid-vertical-gutters $grid-horizontal-gutters;
+			grid-template-areas:
+				"posts posts posts posts referrers referrers referrers referrers"
+				"country country country country country country country country"
+				"authors authors authors authors searchterms searchterms searchterms searchterms"
+				"clicks clicks clicks clicks videos videos videos videos"
+				"downloads downloads downloads downloads downloads downloads downloads downloads";
+		}
+
+		// Mobile
+		@media ( max-width: $break-medium ) {
+			grid-template-columns: repeat(4, 1fr);
+			grid-template-rows: repeat(8, min-content);
+			gap: $grid-vertical-gutters $grid-horizontal-gutters;
+			grid-template-areas:
+				"posts posts posts posts"
+				"referrers referrers referrers referrers"
+				"country country country country"
+				"authors authors authors authors"
+				"searchterms searchterms searchterms searchterms"
+				"clicks clicks clicks clicks"
+				"videos videos videos videos"
+				"downloads downloads downloads downloads";
+		}
+
+		.card.stats-module {
+			margin-bottom: 0;
+		}
+		.stats__module-wrapper--posts,
+		.list-posts {
+			grid-area: posts;
+		}
+		.stats__module-wrapper--referrers {
+			grid-area: referrers;
+		}
+		.stats__module-wrapper--countryviews,
+		.list-countryviews {
+			grid-area: country;
+		}
+		.stats__module-wrapper--authors {
+			grid-area: authors;
+		}
+		.stats__module-wrapper--searchterms,
+		.list-searchterms {
+			grid-area: searchterms;
+		}
+		.stats__module-wrapper--clicks {
+			grid-area: clicks;
+		}
+		.stats__module-wrapper--videoplays,
+		.list-videoplays {
+			grid-area: videos;
+		}
+		.stats__module-wrapper--filedownloads,
+		.list-filedownloads {
+			grid-area: downloads;
 		}
 	}
 }
