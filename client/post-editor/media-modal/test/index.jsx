@@ -94,8 +94,7 @@ describe( 'EditorMediaModal', () => {
 
 		Modal.setAppElement( container );
 
-		const btn = screen.getByRole( 'button', { name: 'Delete' } );
-		await user.click( btn );
+		await user.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
 		expect( props.deleteMedia ).toHaveBeenCalledWith(
 			DUMMY_SITE.ID,
