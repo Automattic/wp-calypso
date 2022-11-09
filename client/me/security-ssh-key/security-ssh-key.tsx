@@ -101,7 +101,8 @@ export const SecuritySSHKey = () => {
 	} );
 
 	const hasKeys = data && data.length > 0;
-	const redirectToHosting = queryArgs.source && queryArgs.siteSlug;
+	const redirectToHosting =
+		queryArgs.source && queryArgs.source === 'hosting-config' && queryArgs.siteSlug;
 
 	return (
 		<Main wideLayout className="security">

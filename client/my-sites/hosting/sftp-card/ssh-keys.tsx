@@ -79,12 +79,10 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 	const isLoading = isLoadingKeys || isLoadingUserKeys;
 	const showKeysSelect = ! isLoading && ! userKeyIsAttached && userKeys && userKeys.length > 0;
 	const showLinkToAddUserKey = ! isLoading && ! userKeyIsAttached && userKeys?.length === 0;
-	const SSH_ADD_URL = useMemo( () => {
-		return addQueryArgs( '/me/security/ssh-key', {
-			source: 'hosting-config',
-			siteSlug,
-		} );
-	}, [ siteSlug ] );
+	const SSH_ADD_URL = addQueryArgs( '/me/security/ssh-key', {
+		source: 'hosting-config',
+		siteSlug,
+	} );
 
 	return (
 		<div className="ssh-keys">
