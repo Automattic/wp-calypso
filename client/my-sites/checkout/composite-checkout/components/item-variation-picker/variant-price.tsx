@@ -62,10 +62,7 @@ const Variant = styled.div`
 
 const Label = styled.span`
 	display: flex;
-	// MOBILE_BREAKPOINT is <480px, used in useMobileBreakpoint
-	@media ( max-width: 480px ) {
-		flex-direction: column;
-	}
+	flex-direction: column;
 `;
 
 const DiscountPercentage: FunctionComponent< { percent: number } > = ( { percent } ) => {
