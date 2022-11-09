@@ -17,7 +17,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
 	checkIfJetpackSiteGotDisconnected,
-	getPurchasedLicense,
 	getSelectedLicenses,
 	getSelectedLicensesSiteId,
 } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -37,7 +36,7 @@ export default function SitesOverview() {
 	const isMobile = useMobileBreakpoint();
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
-	const purchasedLicense = useSelector( getPurchasedLicense );
+
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
@@ -136,9 +135,10 @@ export default function SitesOverview() {
 	const issueLicenseRedirectUrl = useMemo( () => {
 		return addQueryArgs( `/partner-portal/issue-license/`, {
 			site_id: selectedLicensesSiteId,
-			product_slug: selectedLicenses?.map( ( type: string ) =>
-				getProductSlugFromProductType( type )
-			),
+			product_slug: selectedLicenses
+				?.map( ( type: string ) => getProductSlugFromProductType( type ) )
+				// If multiple products are selected, pass them as a comma-separated list.
+				.join( ',' ),
 			source: 'dashboard',
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
@@ -178,9 +178,7 @@ export default function SitesOverview() {
 				<div className="sites-overview__tabs">
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
-						{ purchasedLicense && data?.sites && (
-							<SiteAddLicenseNotification purchasedLicense={ purchasedLicense } />
-						) }
+						{ data?.sites && <SiteAddLicenseNotification /> }
 						<div className="sites-overview__page-title-container">
 							<div className="sites-overview__page-heading">
 								<h2 className="sites-overview__page-title">{ pageTitle }</h2>

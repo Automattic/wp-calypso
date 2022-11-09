@@ -15,8 +15,10 @@ const HorizontalBarListItem = ( {
 	hasIndicator,
 	leftSideItem,
 	rightSideItem,
+	useShortLabel,
+	isStatic,
 }: HorizontalBarListItemProps ) => {
-	const { label, value } = data;
+	const { label, value, shortLabel } = data;
 	const fillPercentage = maxValue > 0 ? ( value / maxValue ) * 100 : 0;
 	const isLink = url || onClick;
 
@@ -33,15 +35,15 @@ const HorizontalBarListItem = ( {
 	};
 
 	const TagName = isLink ? 'a' : 'div'; // group parents and countries don't use anchors.
-	const labelText = decodeEntities( label );
+	const labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
 
-	// TODO: investivate `label` and `shortLabel`
 	return (
 		<li
 			className={ classnames(
 				`${ BASE_CLASS_NAME }-item`,
 				isLink && `${ BASE_CLASS_NAME }-item--link`,
-				hasIndicator && `${ BASE_CLASS_NAME }-item--indicated`
+				hasIndicator && `${ BASE_CLASS_NAME }-item--indicated`,
+				isStatic && `${ BASE_CLASS_NAME }-item--static`
 			) }
 			style={ {
 				[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
@@ -54,12 +56,11 @@ const HorizontalBarListItem = ( {
 				<TagName className="label" href={ url } tabIndex={ 0 }>
 					{ labelText }
 				</TagName>
-				{ /* // TODO: check if inner action links won't interfere with parent onClick */ }
 				{ rightSideItem && (
 					<span className={ `${ BASE_CLASS_NAME }--hover-action` }>{ rightSideItem }</span>
 				) }
 			</div>
-			<div className="value">{ value }</div>
+			<div className="value">{ value }</div> { /* Add number format */ }
 		</li>
 	);
 };

@@ -15,7 +15,6 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import AllTime from 'calypso/my-sites/stats/all-time/';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import MostPopular from 'calypso/my-sites/stats/most-popular';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import LatestPostSummary from '../post-performance';
@@ -29,10 +28,14 @@ import statsStrings from '../stats-strings';
 import StatsViews from '../stats-views';
 
 const StatsInsights = ( props ) => {
-	const { isJetpack, siteId, siteSlug, translate } = props;
+	const { siteId, siteSlug, translate } = props;
 	const moduleStrings = statsStrings();
 
 	const showNewAnnualHighlights = config.isEnabled( 'stats/new-annual-highlights' );
+
+	// Track the last viewed tab.
+	// Necessary to properly configure the fixed navigation headers.
+	sessionStorage.setItem( 'jp-stats-last-tab', 'insights' );
 
 	// TODO: should be refactored into separate components
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -75,7 +78,7 @@ const StatsInsights = ( props ) => {
 							/>
 
 							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
-							{ ! isJetpack && <StatShares siteId={ siteId } /> }
+							<StatShares siteId={ siteId } />
 						</div>
 						<div className="stats__module-column">
 							<Reach />
@@ -106,7 +109,6 @@ StatsInsights.propTypes = {
 const connectComponent = connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
-		isJetpack: isJetpackSite( state, siteId ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state, siteId ),
 	};

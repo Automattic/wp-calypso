@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import page from 'page';
@@ -5,13 +6,14 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import QueryMedia from 'calypso/components/data/query-media';
+import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import HeaderCake from 'calypso/components/header-cake';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
@@ -48,6 +50,16 @@ class StatsSummary extends Component {
 		let summaryView;
 		let chartTitle;
 		let barChart;
+
+		// Navigation settings. One of the following, depending on the summary view.
+		// Traffic => /stats/day/
+		// Insights => /stats/insights/
+		const localizedTabNames = {
+			traffic: translate( 'Traffic' ),
+			insights: translate( 'Insights' ),
+		};
+		let backLabel = localizedTabNames.traffic;
+		let backLink = `/stats/day/`;
 
 		const { period, endOf } = this.props.period;
 		const query = {
@@ -222,22 +234,40 @@ class StatsSummary extends Component {
 				break;
 			case 'annualstats':
 				title = translate( 'Annual site stats' );
+				backLabel = localizedTabNames.insights;
+				backLink = `/stats/insights/`;
 				summaryView = <AnnualSiteStats key="annualstats" />;
 				break;
 		}
+
+		// Append the site domain as needed.
+		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
+		const domain = this.props.siteSlug;
+		if ( domain?.length > 0 ) {
+			backLink += domain;
+		}
+		// Set up for FixedNavigationHeader.
+		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
+		const dynamicClassName = isFixedNavHeadersEnabled ? 'has-fixed-nav' : '';
 
 		summaryViews.push( summaryView );
 
 		const { module } = this.props.context.params;
 
 		return (
-			<Main wideLayout>
+			<Main className={ dynamicClassName } wideLayout>
 				<PageViewTracker
 					path={ `/stats/${ period }/${ module }/:site` }
 					title={ `Stats > ${ titlecase( period ) } > ${ titlecase( module ) }` }
 				/>
+				{ isFixedNavHeadersEnabled && (
+					<FixedNavigationHeader navigationItems={ navigationItems } />
+				) }
+
 				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
+					{ ! isFixedNavHeadersEnabled && (
+						<HeaderCake onClick={ this.goBack }>{ title }</HeaderCake>
+					) }
 					{ summaryViews }
 				</div>
 				<JetpackColophon />
@@ -250,6 +280,7 @@ export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId: getSelectedSiteId( state ),
+		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 	};
 } )( localize( StatsSummary ) );

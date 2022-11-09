@@ -2,64 +2,51 @@
 .stats--new-main-chart {
 	background-color: var(--color-surface);
 
-	// Store Legend options
-	.store-stats-chart__top {
-		display: flex;
-		justify-content: end;
-		background-color: var(--color-surface);
-		padding-bottom: 16px;
+	// Common Legend options
+	.chart__legend {
+		margin-bottom: 16px;
 
-		.store-stats-chart__title {
-			display: none;
+		.chart__legend-options {
+			text-transform: none;
+		}
+
+		.chart__legend-option {
+			&:not(:first-child) {
+				margin-left: 24px;
+			}
+		}
+
+		.chart__legend-label {
+			color: var(--studio-black);
+			font-size: $font-body-small;
+			font-weight: 400;
+			line-height: 18px;
+			padding: 0;
+
+			.chart__legend-checkbox {
+				width: 20px;
+				height: 20px;
+				background-color: var(--color-surface);
+				border: 1px solid var(--color-neutral-10);
+				border-radius: 2px;
+				margin-right: 8px;
+
+				&:checked::before {
+					margin: 3px auto;
+				}
+			}
+		}
+
+		.chart__legend-color {
+			width: 20px;
+			height: 20px;
+			margin: 0 8px 0 0;
+			border-radius: 4px;
 		}
 	}
 
 	.stats-module__placeholder.is-chart {
 		height: 228px;
-	}
-
-	// Common Legend options
-	.chart__legend {
-		margin: 0;
-	}
-
-
-	.chart__legend-options {
-		text-transform: none;
-	}
-
-	.chart__legend-option {
-		&:not(:first-child) {
-			margin-left: 24px;
-		}
-	}
-
-	.chart__legend-label {
-		color: var(--studio-black);
-		font-size: $font-body-small;
-		font-weight: 400;
-		line-height: 18px;
-		padding: 0;
-	}
-
-	.chart__legend-checkbox {
-		width: 20px;
-		height: 20px;
-		background-color: var(--color-surface);
-		border: 1px solid var(--color-neutral-10);
-		border-radius: 2px;
-		margin-right: 8px;
-
-		&:checked::before {
-			margin: 3px auto;
-		}
-	}
-
-	.chart__legend-color {
-		width: 20px;
-		height: 20px;
-		margin: 0 8px 0 0;
-		border-radius: 4px;
 	}
 
 	// Main Chart

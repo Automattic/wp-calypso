@@ -10,22 +10,26 @@ import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
-import { useCountries } from 'calypso/landing/stepper/hooks/use-countries';
+import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { SITE_STORE, USER_STORE } from '../../../../stores';
+import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
 import './style.scss';
 
 const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
-	const [ vertical, setVertical ] = React.useState( '' );
-	const [ country, setCountry ] = React.useState( '' );
-	// const [ formTouched, setFormTouched ] = React.useState( false );
+	const [ verticalId, setVerticalId ] = React.useState( '' );
+	const [ storeCountryCode, setStoreCountryCode ] = React.useState( '' );
 	const translate = useTranslate();
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const site = { ID: 0 }; // TODO: how to we initialize new site programmatically?
+	const {
+		setSiteTitle: saveSiteTitleToStore,
+		setVerticalId: saveVerticalIdToStore,
+		setStoreLocationCountryCode: saveCountryCodeToStore,
+	} = useDispatch( ONBOARD_STORE );
+
 	const verticals = useSiteVerticalsFeatured();
 	const verticalsOptions = React.useMemo( () => {
 		const sorted = verticals.data?.sort( ( a, b ) => {
@@ -34,56 +38,56 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			}
 			return a.name > b.name ? 1 : -1;
 		} );
-		return sorted?.map( ( v ) => (
+		const options = sorted?.map( ( v ) => (
 			<option value={ v.id } key={ v.id }>
 				{ v.name }
 			</option>
 		) );
-	}, [ verticals ] );
-	// TODO: This may not be the right source for this info.
-	const countries = useCountries();
-	const countriesOptions = React.useMemo( () => {
-		const data = countries.data as Record< string, string >;
-		console.log( data );
-		const options = [];
-		for ( const abbrev in data ) {
-			const country = data[ abbrev ];
-			options.push(
-				<option value={ abbrev } key={ abbrev }>
-					{ country }
-				</option>
-			);
-		}
+		options?.unshift(
+			<option value="" key="">
+				{ translate( '- Select Industry -' ) }
+			</option>
+		);
 		return options;
-	}, [ countries ] );
-
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
-	console.log( { currentUser, newUser } );
+	}, [ verticals, translate ] );
+	const countriesAndStates = useCountriesAndStates();
+	const countriesOptions = React.useMemo( () => {
+		return countriesAndStates.countryOptions.map( ( c ) => (
+			<option value={ c.value } key={ c.value }>
+				{ c.label }
+			</option>
+		) );
+	}, [ countriesAndStates ] );
+	const isLoading = verticals.isLoading || ! countriesAndStates;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
 		event.preventDefault();
-		if ( site ) {
-			await saveSiteSettings( site.ID, {
-				blogname: siteTitle,
-			} );
+		if ( currentUser || newUser ) {
+			saveSiteTitleToStore( siteTitle );
+			saveVerticalIdToStore( verticalId );
+			saveCountryCodeToStore( storeCountryCode );
 			recordTracksEvent( 'calypso_signup_store_profiler_submit', {
 				has_site_title: !! siteTitle,
+				has_vertical: !! verticalId,
+				has_location: !! storeCountryCode,
 			} );
 
-			submit?.( { siteTitle } );
+			submit?.( {
+				siteTitle: siteTitle,
+				verticalId: verticalId,
+				storeLocationCountryCode: storeCountryCode,
+			} );
 		}
 	};
 	const onChange = ( event: React.FormEvent< HTMLInputElement | HTMLSelectElement > ) => {
-		if ( site ) {
-			// setFormTouched( true );
-
+		if ( currentUser || newUser ) {
 			switch ( event.currentTarget.name ) {
 				case 'siteTitle':
 					return setSiteTitle( event.currentTarget.value );
 				case 'siteVertical':
-					return setVertical( event.currentTarget.value );
+					return setVerticalId( event.currentTarget.value );
 				case 'siteCountry':
-					return setCountry( event.currentTarget.value );
+					return setStoreCountryCode( event.currentTarget.value );
 			}
 		}
 	};
@@ -92,7 +96,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 
 	const stepContent = (
 		<form className="store-profiler__form" onSubmit={ handleSubmit }>
-			<FormFieldset disabled={ ! site } className="store-profiler__form-fieldset">
+			<FormFieldset disabled={ isLoading } className="store-profiler__form-fieldset">
 				<FormLabel htmlFor="siteTitle" optional>
 					{ translate( 'Name of your store' ) }{ ' ' }
 				</FormLabel>
@@ -105,24 +109,39 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 				/>
 				{ siteTitleError && <FormInputValidation isError text={ siteTitleError } /> }
 			</FormFieldset>
-			<FormFieldset disabled={ ! site } className="store-profiler__form-fieldset">
+			<FormFieldset disabled={ isLoading } className="store-profiler__form-fieldset">
 				<FormLabel htmlFor="siteVertical" optional>
 					{ translate( 'In which industry does your store operate?' ) }{ ' ' }
 				</FormLabel>
-				<FormSelect name="siteVertical" id="siteVertical" value={ vertical } onChange={ onChange }>
+				<FormSelect
+					name="siteVertical"
+					id="siteVertical"
+					value={ verticalId }
+					onChange={ onChange }
+				>
 					{ verticalsOptions }
 				</FormSelect>
 			</FormFieldset>
-			<FormFieldset disabled={ ! site } className="store-profiler__form-fieldset">
+			<FormFieldset disabled={ isLoading } className="store-profiler__form-fieldset">
 				<FormLabel htmlFor="siteCountry" optional>
 					{ translate( 'Where will your business be located?' ) }{ ' ' }
 				</FormLabel>
-				<FormSelect name="siteCountry" id="siteCountry" value={ country } onChange={ onChange }>
+				<FormSelect
+					name="siteCountry"
+					id="siteCountry"
+					value={ storeCountryCode }
+					onChange={ onChange }
+				>
 					{ countriesOptions }
 				</FormSelect>
 			</FormFieldset>
 
-			<Button disabled={ ! site } className="store-profiler__submit-button" type="submit" primary>
+			<Button
+				disabled={ isLoading }
+				className="store-profiler__submit-button"
+				type="submit"
+				primary
+			>
 				{ translate( 'Continue' ) }
 			</Button>
 		</form>

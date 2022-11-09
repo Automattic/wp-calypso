@@ -40,6 +40,7 @@ export function createReceiptObject( data: RawReceiptData ): ReceiptData {
 				isRootDomainWithUs: Boolean( purchase.is_root_domain_with_us ),
 				isRenewal: Boolean( purchase.is_renewal ),
 				willAutoRenew: Boolean( purchase.will_auto_renew ),
+				saasRedirectUrl: purchase.saas_redirect_url ?? '',
 			};
 		} ),
 		failedPurchases: flattenFailedPurchases( failedPurchases || {} ).map( ( purchase ) => {

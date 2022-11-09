@@ -3,6 +3,23 @@ import { getProductSlugFromContext } from '../utils';
 
 const mockStore = configureStore();
 
+const emptyContext = {
+	params: {
+		domainOrProduct: undefined,
+		product: undefined,
+		productSlug: undefined,
+	},
+	pathname: '',
+	query: {},
+};
+
+function createMockContext( options ) {
+	return {
+		...emptyContext,
+		...options,
+	};
+}
+
 describe( 'getProductSlugFromContext', () => {
 	const domainSiteId = 1;
 	const wpcomSiteId = 2;
@@ -38,122 +55,244 @@ describe( 'getProductSlugFromContext', () => {
 
 	it.each( [
 		{
-			product: newProduct,
-			domainOrProduct: wpcomSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: wpcomSiteSlug,
+				},
+			} ),
 			selectedSite: wpcomStagingSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: undefined,
-			domainOrProduct: wpcomSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: wpcomSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: wpcomStagingSiteSlug,
 			expected: '',
 		},
 		{
-			product: newProduct,
-			domainOrProduct: domainSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: domainSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: domainSiteSlug,
-			domainOrProduct: newProduct,
+			context: createMockContext( {
+				params: {
+					product: domainSiteSlug,
+					domainOrProduct: newProduct,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: newProductWithDomain,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: newProductWithDomain,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDomain,
 		},
 		{
-			product: undefined,
-			domainOrProduct: newProductWithDomain,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: newProductWithDomain,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDomain,
 		},
 		{
-			product: newProductWithDot,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: newProductWithDot,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDot,
 		},
 		{
-			product: undefined,
-			domainOrProduct: newProductWithDot,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: newProductWithDot,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProductWithDot,
 		},
 		{
-			product: newProduct,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: undefined,
 			expected: '',
 		},
 		{
-			product: undefined,
-			domainOrProduct: newProduct,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: newProduct,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: undefined,
 			expected: newProduct,
 		},
 		{
-			product: undefined,
-			domainOrProduct: domainSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: domainSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: '',
 		},
 		{
-			product: domainSiteSlug,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: domainSiteSlug,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: '',
 		},
 		{
-			product: newProduct,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: undefined,
-			domainOrProduct: newProduct,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: newProduct,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: subdomainSiteSlug,
-			domainOrProduct: newProduct,
+			context: createMockContext( {
+				params: {
+					product: subdomainSiteSlug,
+					domainOrProduct: newProduct,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: subdomainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: newProduct,
-			domainOrProduct: subdomainSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: subdomainSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: subdomainSiteSlug,
 			expected: newProduct,
 		},
 		{
-			product: undefined,
-			domainOrProduct: subdomainSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: subdomainSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: subdomainSiteSlug,
 			expected: '',
 		},
 		{
-			product: undefined,
-			domainOrProduct: subdomainSiteSlug,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: subdomainSiteSlug,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: '',
 		},
 		{
-			product: undefined,
-			domainOrProduct: undefined,
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+			} ),
 			selectedSite: domainSiteSlug,
 			expected: '',
+		},
+		{
+			context: createMockContext( {
+				params: {
+					product: undefined,
+					domainOrProduct: undefined,
+					productSlug: newProduct,
+				},
+				pathname: '/checkout/jetpack',
+				query: {
+					flow: 'coming_from_login',
+					purchasetoken: 'testtoken',
+				},
+			} ),
+			selectedSite: undefined,
+			expected: newProduct,
+		},
+		{
+			context: createMockContext( {
+				params: {
+					product: newProduct,
+					domainOrProduct: undefined,
+					productSlug: undefined,
+				},
+				pathname: `/checkout/${ newProduct }/gift/1234`,
+			} ),
+			selectedSite: undefined,
+			expected: newProduct,
 		},
 	] )(
-		`returns '$expected' when :product is '$product' and :domainOrProduct is '$domainOrProduct' and selected site is '$selectedSite'`,
-		( { product, domainOrProduct, selectedSite, expected } ) => {
+		`returns '$expected' when params is '$context.params', path is '$context.pathname', query is '$context.query', and selected site is '$selectedSite'`,
+		( { context, selectedSite, expected } ) => {
 			const store = mockStore( {
 				ui: {
 					selectedSiteId: getSiteIdFromDomain( selectedSite ),
@@ -162,11 +301,8 @@ describe( 'getProductSlugFromContext', () => {
 			} );
 
 			const actual = getProductSlugFromContext( {
+				...context,
 				store,
-				params: {
-					domainOrProduct,
-					product,
-				},
 			} );
 
 			expect( actual ).toEqual( expected );
