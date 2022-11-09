@@ -444,6 +444,9 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'businessInfo' );
 
 				case 'courses':
+					if ( intent === SiteIntent.Build ) {
+						return navigate( 'patternAssemblerStartingPoint' );
+					}
 					return navigate( 'bloggerStartingPoint' );
 
 				case 'designSetup':
@@ -467,6 +470,9 @@ export const siteSetupFlow: Flow = {
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
+
+				case 'patternAssemblerStartingPoint':
+					return navigate( 'patternAssembler' );
 
 				case 'editEmail':
 					return navigate( 'wooVerifyEmail' );
