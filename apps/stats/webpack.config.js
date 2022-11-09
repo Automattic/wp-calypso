@@ -123,6 +123,10 @@ module.exports = {
 		new ExtensiveLodashReplacementPlugin(),
 		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
+		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
+		// The sprite is loaded separately in Jetpack.
+		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
+		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',
