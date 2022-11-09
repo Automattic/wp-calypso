@@ -8,13 +8,6 @@
 	flex-direction: column;
 	padding: 36px 24px;
 
-	&__page-heading {
-		.formatted-header__title {
-			display: flex;
-			flex-wrap: wrap;
-		}
-	}
-
 	& &__domain-illustration {
 		margin-bottom: 36px;
 	}
@@ -44,11 +37,16 @@
 	& &__domain-input {
 		display: flex;
 		flex-direction: column;
+		row-gap: 8px;
 		width: 100%;
-		align-content: stretch;
+		max-width: 370px;
 
-		@include break-mobile {
-			flex-direction: row;
+		.form-text-input {
+			padding: 9px 14px 9px 55px;
+
+			&::placeholder {
+				color: #909398;
+			}
 		}
 
 		&-button {
@@ -56,13 +54,37 @@
 			height: fit-content;
 			width: 100%;
 			margin-right: 0;
+			margin-top: 26px;
 			padding: 8px 31px;
 
 			@include break-mobile {
-				margin-left: 16px;
+				margin-left: 0;
 				width: initial;
 			}
 		}
+	}
+
+	& &__domain-input-note {
+		font-size: $font-body-extra-small;
+		margin-bottom: 0;
+		display: flex;
+		align-items: center;
+
+		&-icon {
+			margin-right: 4px !important;
+
+			path {
+				fill: #000;
+			}
+		}
+	}
+
+	& &__domain-input-fieldset::before {
+		content: "www.";
+		color: #000;
+		position: absolute;
+		left: 16px;
+		top: 10px;
 	}
 }
 

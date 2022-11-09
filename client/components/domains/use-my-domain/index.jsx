@@ -369,7 +369,6 @@ function UseMyDomain( props ) {
 					brandFont
 					className={ baseClassName + '__page-heading' }
 					headerText={ headerText }
-					align="left"
 				/>
 			</>
 		);

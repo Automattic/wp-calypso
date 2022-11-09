@@ -1,12 +1,14 @@
 import { Card, Button, FormInputValidation, Gridicon } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
+import { useLocale } from '@automattic/i18n-utils';
+import { __, hasTranslation } from '@wordpress/i18n';
+import { Icon } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { connect } from 'react-redux';
-import illustration from 'calypso/assets/images/domains/domain.svg';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
+import { bulb } from 'calypso/signup/icons';
 
 import './style.scss';
 
@@ -21,6 +23,7 @@ function UseMyDomainInput( {
 	validationError,
 } ) {
 	const domainNameInput = useRef( null );
+	const locale = useLocale();
 
 	useEffect( () => {
 		shouldSetFocus && domainNameInput.current.focus();
@@ -42,15 +45,27 @@ function UseMyDomainInput( {
 		}
 	};
 
+	const hasDomainInputLabel =
+		[ 'en', 'en-gb' ].includes( locale ) ||
+		hasTranslation( 'Enter the domain you would like to use:' );
+	const domainInputLabel = hasDomainInputLabel
+		? __( 'Enter the domain you would like to use:' )
+		: __( 'Enter your domain here' );
+
+	const hasDomainInputNoteLabel =
+		[ 'en', 'en-gb' ].includes( locale ) ||
+		hasTranslation( 'Enter the domain you would like to use:' );
+	const domainInputNote = hasDomainInputNoteLabel
+		? __( 'This won’t affect your existing site.' )
+		: '';
 	return (
 		<Card className={ baseClassName }>
-			<div className={ baseClassName + '__domain-illustration' }>
-				<img src={ illustration } alt="" width={ 160 } />
-			</div>
 			<div className={ baseClassName + '__domain-input' }>
+				<label>{ domainInputLabel }</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
-						placeholder={ __( 'Enter your domain here' ) }
+						/* translators: This is displayed as www.yoursiteaddress.com, where everything after www. is editable */
+						placeholder={ __( 'yoursiteaddress.com' ) }
 						value={ domainName }
 						onChange={ onChange }
 						onKeyDown={ keyDown }
@@ -72,6 +87,16 @@ function UseMyDomainInput( {
 					) }
 					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
 				</FormFieldset>
+				{ domainInputNote && (
+					<p className={ baseClassName + '__domain-input-note' }>
+						<Icon
+							className={ baseClassName + '__domain-input-note-icon' }
+							icon={ bulb }
+							size={ 14 }
+						/>
+						{ domainInputNote }
+					</p>
+				) }
 				<FormButton
 					className={ baseClassName + '__domain-input-button' }
 					primary
@@ -79,7 +104,7 @@ function UseMyDomainInput( {
 					disabled={ isBusy }
 					onClick={ onNext }
 				>
-					{ __( 'Next' ) }
+					{ __( 'Continue' ) }
 				</FormButton>
 			</div>
 		</Card>
