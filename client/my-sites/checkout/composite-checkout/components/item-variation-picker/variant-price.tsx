@@ -1,5 +1,4 @@
 import formatCurrency from '@automattic/format-currency';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
@@ -7,7 +6,7 @@ import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
 	color: ${ ( props ) => props.theme.colors.discount };
-	margin-right: 8px;
+	display: block;
 
 	.rtl & {
 		margin-right: 0;
@@ -20,21 +19,6 @@ const Discount = styled.span`
 
 	@media ( max-width: 660px ) {
 		width: 100%;
-	}
-`;
-
-const DoNotPayThis = styled.del`
-	text-decoration: line-through;
-	margin-right: 8px;
-	color: #646970;
-
-	.rtl & {
-		margin-right: 0;
-		margin-left: 8px;
-	}
-
-	.item-variant-option--selected & {
-		color: #fff;
 	}
 `;
 
@@ -107,37 +91,47 @@ export function getItemVariantDiscountPercentage(
 	return discountPercentage;
 }
 
+const PriceArea = styled.span`
+	text-align: right;
+`;
+
+const PricePerTermText = styled.div`
+	font-size: small;
+	color: #777;
+`;
+
 export const ItemVariantPrice: FunctionComponent< {
 	variant: WPCOMProductVariant;
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
-	const isMobile = useMobileBreakpoint();
-	const compareToPriceForVariantTerm = getItemVariantCompareToPrice( variant, compareTo );
+	const translate = useTranslate();
 	const discountPercentage = getItemVariantDiscountPercentage( variant, compareTo );
 	const formattedCurrentPrice = formatCurrency( variant.price, variant.currency, {
 		stripZeros: true,
 	} );
-	const formattedCompareToPriceForVariantTerm = compareToPriceForVariantTerm
-		? formatCurrency( compareToPriceForVariantTerm, variant.currency, { stripZeros: true } )
-		: undefined;
+
+	const pricePerYear = variant.pricePerYear;
+	const pricePerYearFormatted = formatCurrency( pricePerYear, variant.currency, {
+		stripZeros: true,
+	} );
+	const perYearText = translate( '%(pricePerYear)s / year x 2', {
+		args: {
+			pricePerYear: pricePerYearFormatted,
+		},
+	} );
 
 	return (
 		<Variant>
 			<Label>
 				{ variant.variantLabel }
-				{ discountPercentage > 0 && isMobile && (
-					<DiscountPercentage percent={ discountPercentage } />
+				{ variant.termIntervalInMonths === 24 && (
+					<PricePerTermText>{ perYearText }</PricePerTermText>
 				) }
 			</Label>
-			<span>
-				{ discountPercentage > 0 && ! isMobile && (
-					<DiscountPercentage percent={ discountPercentage } />
-				) }
-				{ discountPercentage > 0 && (
-					<DoNotPayThis>{ formattedCompareToPriceForVariantTerm }</DoNotPayThis>
-				) }
+			<PriceArea>
 				<Price>{ formattedCurrentPrice }</Price>
-			</span>
+				{ discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
+			</PriceArea>
 		</Variant>
 	);
 };
