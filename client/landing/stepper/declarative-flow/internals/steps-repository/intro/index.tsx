@@ -1,4 +1,9 @@
-import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, ECOMMERCE_FLOW } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	NEWSLETTER_FLOW,
+	ECOMMERCE_FLOW,
+	VIDEOPRESS_FLOW,
+} from '@automattic/onboarding';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -43,6 +48,17 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				buttonText: __( 'Start building your Newsletter' ),
 			};
 		}
+
+		if ( flowName === VIDEOPRESS_FLOW ) {
+			return {
+				title: createInterpolateElement(
+					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
+					{ br: <br /> }
+				),
+				buttonText: __( 'Get started' ),
+			};
+		}
+
 		return {
 			title: createInterpolateElement(
 				__( 'You’re 3 minutes away from<br />a launch-ready Newsletter. ' ),
@@ -56,6 +72,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 const Intro: Step = function Intro( { navigation, flow } ) {
 	const { submit, goBack } = navigation;
 	const introContent = useIntroContent( flow );
+	const isVideoPressFlow = 'videopress' === flow;
 
 	const handleSubmit = () => {
 		submit?.();
@@ -70,6 +87,7 @@ const Intro: Step = function Intro( { navigation, flow } ) {
 			stepContent={ <IntroStep introContent={ introContent } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 			showHeaderJetpackPowered={ flow === NEWSLETTER_FLOW }
+			showVideoPressPowered={ isVideoPressFlow }
 		/>
 	);
 };

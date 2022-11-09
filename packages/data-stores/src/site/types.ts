@@ -271,6 +271,7 @@ export interface Cart {
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface Domain {
 	a_records_required_for_mapping?: string[];
 	primary_domain: boolean;
@@ -326,6 +327,7 @@ export interface Domain {
 export interface SiteSettings {
 	[ key: string ]: any;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export interface SiteLaunchState {
 	status: SiteLaunchStatus;
@@ -454,6 +456,7 @@ export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;
+	video_uploaded?: boolean;
 }
 
 export interface ThemeSetupOptions {

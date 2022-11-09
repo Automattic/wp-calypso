@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
@@ -18,7 +18,13 @@ const LaunchpadSitePreview = ( {
 	const color = useQuery().get( 'color' );
 	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
-	const defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
+
+	if ( isVideoPressFlow ) {
+		const windowWidth = window.innerWidth;
+		defaultDevice = windowWidth >= 1430 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+	}
 
 	function formatPreviewUrl() {
 		if ( ! previewUrl ) {
@@ -32,7 +38,7 @@ const LaunchpadSitePreview = ( {
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: true,
+			do_preview_no_interactions: ! isVideoPressFlow,
 			...( color && { preview_accent_color: color } ),
 		} );
 	}

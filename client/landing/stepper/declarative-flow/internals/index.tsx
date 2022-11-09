@@ -2,7 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,6 +12,7 @@ import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
 import recordStepStart from './analytics/record-step-start';
 import * as Steps from './steps-repository';
+import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow } from './types';
 import type { StepPath } from './steps-repository';
 import './global.scss';
@@ -39,6 +40,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+
+	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
+	const [ previousProgress, setPreviousProgress ] = useState(
+		stepProgress ? stepProgress.progress : 0
+	);
+	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
+
 	const stepNavigation = flow.useStepNavigation( currentRoute, async ( path, extraData = null ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
 		setStepData( {
@@ -52,6 +61,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			: generatePath( `/${ flow.name }/${ path }${ search }` );
 
 		history.push( _path, stepPaths );
+		setPreviousProgress( stepProgress?.progress ?? 0 );
 	} );
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
@@ -75,9 +85,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	const assertCondition = flow.useAssertConditions?.() ?? { state: AssertConditionState.SUCCESS };
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
-	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
-
 	const renderStep = ( path: StepPath ) => {
 		switch ( assertCondition.state ) {
 			case AssertConditionState.CHECKING:
@@ -98,6 +105,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
+	let progressBarExtraStyle: React.CSSProperties = {};
+	if ( 'videopress' === flow.name ) {
+		progressBarExtraStyle = {
+			'--previous-progress': Math.min( 100, Math.ceil( previousProgressValue * 100 ) ) + '%',
+			'--current-progress': Math.min( 100, Math.ceil( progressValue * 100 ) ) + '%',
+		} as React.CSSProperties;
+	}
+
 	return (
 		<>
 			<DocumentHead title={ getDocumentHeadTitle() } />
@@ -106,11 +121,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					return (
 						<Route key={ path } path={ `/${ flow.name }/${ path }` }>
 							<div className={ classnames( flow.name, flow.classnames, kebabCase( path ) ) }>
+								{ 'videopress' === flow.name && 'intro' === path && <VideoPressIntroBackground /> }
 								<ProgressBar
 									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 									className="flow-progress"
 									value={ progressValue * 100 }
 									total={ 100 }
+									style={ progressBarExtraStyle }
 								/>
 								<SignupHeader pageTitle={ flow.title } />
 								{ renderStep( path ) }

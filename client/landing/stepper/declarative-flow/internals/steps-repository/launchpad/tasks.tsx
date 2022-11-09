@@ -49,6 +49,24 @@ export const tasks: Task[] = [
 		disabled: true,
 		taskType: 'blog',
 	},
+	{
+		id: 'videopress_setup',
+		completed: true,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'videopress_upload',
+		completed: false,
+		taskType: 'blog',
+		disabled: false,
+	},
+	{
+		id: 'videopress_launched',
+		completed: false,
+		taskType: 'blog',
+		disabled: true,
+	},
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
@@ -60,4 +78,5 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'links_added',
 		'link_in_bio_launched',
 	],
+	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };

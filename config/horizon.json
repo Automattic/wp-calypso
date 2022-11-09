@@ -134,6 +134,7 @@
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"use-translation-chunks": true,
+		"videopress/tailored-onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true
