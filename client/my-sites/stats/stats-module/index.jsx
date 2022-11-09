@@ -16,6 +16,7 @@ import {
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Geochart from '../geochart';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
@@ -157,7 +158,11 @@ class StatsModule extends Component {
 		const shouldShowNewModule =
 			isEnabled( 'stats/new-stats-module-component' ) &&
 			! summary &&
-			( path === 'posts' || path === 'videoplays' || path === 'filedownloads' );
+			( path === 'posts' ||
+				path === 'videoplays' ||
+				path === 'filedownloads' ||
+				path === 'searchterms' ||
+				path === 'countryviews' );
 
 		return (
 			<>
@@ -184,9 +189,8 @@ class StatsModule extends Component {
 						titleURL={ this.getHref() }
 						error={ hasError && <ErrorPanel /> }
 						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-					>
-						{ this.props.children }
-					</StatsListCard>
+						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+					/>
 				) }
 
 				{ ! shouldShowNewModule && (
