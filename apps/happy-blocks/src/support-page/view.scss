@@ -1,0 +1,115 @@
+@import "@automattic/typography/styles/variables";
+
+.hb-support-page-embed {
+	border-radius: 4px;
+	padding: 29px 30px;
+
+	display: flex;
+	gap: 16px;
+	flex-direction: column;
+
+	background: #fff;
+	border: 1px solid #eee;
+
+	font-family: "SF Pro Text", $sans;
+	font-style: normal;
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 20px;
+
+	a {
+		text-decoration: none !important;
+	}
+
+	&__header {
+		display: flex;
+		gap: 24px;
+	}
+
+	&__title {
+		font-weight: 500;
+		font-size: $font-body;
+		line-height: 24px;
+
+		display: flex;
+		align-items: center;
+		gap: 8px;
+
+		/* Gray / Gray 100 */
+		color: #101517;
+	}
+
+	&__badge {
+		padding: 0 10px;
+		background: #bbe0fa;
+		border-radius: 4px;
+
+		font-family: Inter, $sans;
+		font-weight: 500;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+
+		/* Blue / Blue 80 */
+		color: #02395c;
+	}
+
+	&__source {
+		/* Gray / Gray 60 */
+		color: #50575e;
+		display: flex;
+		gap: 4px;
+	}
+
+	&__time-to-read {
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+
+		/* Gray / Gray 60 */
+		color: #50575e;
+	}
+
+	&__content {
+		/* Gray / Gray 80 */
+		color: #2c3338;
+
+		max-height: 60px; // 3 line of text
+		overflow: hidden;
+
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+	}
+
+	&__reactions {
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+		line-height: 20px;
+
+		/* Gray / Gray 60 */
+		color: #50575e;
+	}
+}
+
+.hb-support-page-embed-icon {
+	background-color: #0675c4; // blue 50
+	border-radius: 2px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&__small {
+		width: 24px;
+		height: 24px;
+	}
+
+	&__large {
+		width: 60px;
+		height: 60px;
+
+	}
+
+	svg {
+		min-width: unset !important;
+	}
+}
