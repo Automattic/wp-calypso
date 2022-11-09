@@ -23,10 +23,6 @@ const Discount = styled.span`
 
 const Price = styled.span`
 	color: #646970;
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
 `;
 
 const Variant = styled.div`
@@ -37,10 +33,6 @@ const Variant = styled.div`
 	justify-content: space-between;
 	line-height: 20px;
 	width: 100%;
-
-	.item-variant-option--selected & {
-		color: #fff;
-	}
 `;
 
 const Label = styled.span`
