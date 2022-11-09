@@ -55,7 +55,9 @@ export const Edit = compose( withNotices )( ( props: EditProps ) => {
 			setAttributes( fetchedAttributes );
 		} catch ( e: any ) {
 			noticeOperations.removeAllNotices();
-			noticeOperations.createErrorNotice( e.message || e || 'Unable to fetch the page, check URL' );
+			noticeOperations.createErrorNotice(
+				e.message || e || __( 'Unable to fetch the page, check URL', 'happy-blocks' )
+			);
 		}
 	};
 

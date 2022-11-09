@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 export const SUPPORT_PAGE_PATTERN =
 	/^https?:\/\/wordpress\.com\/((?<lang>[a-z]{2})\/)?support\/(?<slug>\S+)$/i;
 const EMBED_CONTENT_MAXLENGTH = 400;
@@ -21,7 +23,7 @@ export async function fetchPageAttributes( url: string ): Promise< SupportPageBl
 	const pageResponse = await fetch( apiUrl );
 
 	if ( ! pageResponse.ok ) {
-		throw new Error( 'Failed to load the page. Check URL' );
+		throw new Error( __( 'Failed to load the page. Check URL', 'happy-blocks' ) );
 	}
 
 	const page = await pageResponse.json();
