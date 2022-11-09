@@ -90,7 +90,6 @@
 		"signup/stepper-flow": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/fixed-nav-headers": true,
 		"stats/new-annual-highlights": false,
 		"stats/new-main-chart": false,
 		"stats/new-stats-module-component": false,
