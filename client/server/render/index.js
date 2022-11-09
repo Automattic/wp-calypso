@@ -14,7 +14,6 @@ import {
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
-import { logToLogstash } from 'calypso/lib/logstash';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
@@ -30,7 +29,7 @@ import { serialize } from 'calypso/state/utils';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
-const markupCache = new Lru( {
+export const markupCache = new Lru( {
 	max: 3000,
 	maxAge: HOUR_IN_MS,
 } );
@@ -82,14 +81,8 @@ function render( element, key, req ) {
 		const startTime = Date.now();
 		debug( 'cache access for key', key );
 
-		let renderedLayout = markupCache.get( key );
-
-		logServerEvent( req.context.sectionName, {
-			// Note: "ssr" just categorizes the stat. It doesn't necessarily mean SSR was used for the request.
-			name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
-			type: 'counting',
-		} );
-
+		// If the cached layout was stored earlier in the request, no need to get it again.
+		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -98,7 +91,7 @@ function render( element, key, req ) {
 				config.isEnabled( 'ssr/always-log-cache-misses' )
 			) {
 				// Log 0.1% of cache misses
-				logToLogstash( {
+				req.logger.warn( {
 					feature: 'calypso_ssr',
 					message: 'render cache miss',
 					extra: {
@@ -114,6 +107,18 @@ function render( element, key, req ) {
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
+
+		logServerEvent( req.context.sectionName, [
+			{
+				name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+				type: 'counting',
+			},
+			{
+				name: 'ssr.react_render.duration',
+				type: 'timing',
+				value: rtsTimeMs,
+			},
+		] );
 
 		if ( rtsTimeMs > 100 ) {
 			// Server renders should probably never take longer than 100ms
@@ -234,11 +239,7 @@ export function serverRender( req, res ) {
 		cacheKey = getCacheKey( req );
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
-		context.renderedLayout = render(
-			context.layout,
-			req.error ? req.error.message : cacheKey,
-			req
-		);
+		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
 	}
 
 	performanceMark( req, 'dehydrateQueryClient', true );
@@ -324,7 +325,7 @@ function isServerSideRenderCompatible( context ) {
 	return Boolean(
 		context.section?.isomorphic &&
 			! context.user && // logged out only
-			context.layout
+			( context.layout || context.cachedMarkup ) // A layout was generated or we have one cached.
 	);
 }
 
