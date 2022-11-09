@@ -226,7 +226,7 @@ function WPNonProductLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType={ 'text-button' }
+							buttonType="text-button"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
@@ -779,7 +779,7 @@ function PartnerLogo( { className }: { className?: string } ) {
 	return (
 		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
 			<div>{ translate( 'Included in your IONOS plan' ) }</div>
-			<div className={ 'checkout-line-item__partner-logo-image' }>
+			<div className="checkout-line-item__partner-logo-image">
 				<IonosLogo />
 			</div>
 		</LineItemMeta>
@@ -902,7 +902,6 @@ function WPLineItem( {
 		products: [ product ],
 	} );
 
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
@@ -951,7 +950,7 @@ function WPLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType={ 'text-button' }
+							buttonType="text-button"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
@@ -992,5 +991,4 @@ function WPLineItem( {
 			) }
 		</div>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 }
