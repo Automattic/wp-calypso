@@ -7,6 +7,7 @@ import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types'
 import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import type { State } from '.';
+import type { PatternAssemblerData } from './types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 
@@ -382,6 +383,11 @@ export const setEcommerceFlowRecurType = ( ecommerceFlowRecurType: string ) => (
 	ecommerceFlowRecurType,
 } );
 
+export const setPatternAssemblerData = ( payload: PatternAssemblerData ) => ( {
+	type: 'SET_PATTERN_ASSEMBLER_DATA' as const,
+	payload,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -429,4 +435,5 @@ export type OnboardAction = ReturnType<
 	| typeof setVerticalId
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
+	| typeof setPatternAssemblerData
 >;

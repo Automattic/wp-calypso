@@ -17,3 +17,11 @@ export enum SiteIntent {
 	WpAdmin = 'wpadmin',
 	Import = 'import', // deprecated
 }
+
+export const INITIAL_STATES = {
+	PATTERN_ASSEMBLER_DATA: {
+		header: null,
+		sections: [],
+		footer: null,
+	},
+};

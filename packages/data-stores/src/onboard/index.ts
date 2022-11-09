@@ -10,6 +10,7 @@ import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 export type { State };
 
 export { SiteGoal, SiteIntent } from './constants';
+export * from './types';
 export * as utils from './utils';
 let isRegistered = false;
 
@@ -53,6 +54,7 @@ export function register(): typeof STORE_KEY {
 			'verticalId',
 			'storeLocationCountryCode',
 			'ecommerceFlowRecurType',
+			'patternAssemblerData',
 		],
 	} );
 	isRegistered = true;

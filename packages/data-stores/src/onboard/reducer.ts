@@ -1,8 +1,9 @@
 import { combineReducers } from '@wordpress/data';
-import { SiteGoal } from './constants';
+import { SiteGoal, INITIAL_STATES } from './constants';
 import type { DomainSuggestion } from '../domain-suggestions/types';
 import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
+import type { PatternAssemblerData } from './types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { Reducer } from 'redux';
@@ -407,6 +408,19 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 	return state;
 };
 
+const patternAssemblerData: Reducer< PatternAssemblerData, OnboardAction > = (
+	state = INITIAL_STATES.PATTERN_ASSEMBLER_DATA,
+	action
+) => {
+	if ( action.type === 'SET_PATTERN_ASSEMBLER_DATA' ) {
+		return action.payload;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return INITIAL_STATES.PATTERN_ASSEMBLER_DATA;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -444,6 +458,7 @@ const reducer = combineReducers( {
 	verticalId,
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
+	patternAssemblerData,
 } );
 
 export type State = ReturnType< typeof reducer >;

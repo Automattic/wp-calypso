@@ -1,5 +1,3 @@
-export type Pattern = {
-	id: number;
-	name: string;
-	key?: string;
-};
+import { Onboard } from '@automattic/data-stores';
+
+export type Pattern = Onboard.PatternAssemblerPattern;

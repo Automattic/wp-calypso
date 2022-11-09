@@ -20,10 +20,13 @@ import './style.scss';
 
 const PatternAssembler: Step = ( { navigation } ) => {
 	const translate = useTranslate();
+	const patternAssemblerData = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getPatternAssemblerData()
+	);
 	const [ showPatternSelectorType, setShowPatternSelectorType ] = useState< string | null >( null );
-	const [ header, setHeader ] = useState< Pattern | null >( null );
-	const [ footer, setFooter ] = useState< Pattern | null >( null );
-	const [ sections, setSections ] = useState< Pattern[] >( [] );
+	const [ header, setHeader ] = useState< Pattern | null >( patternAssemblerData.header );
+	const [ footer, setFooter ] = useState< Pattern | null >( patternAssemblerData.footer );
+	const [ sections, setSections ] = useState< Pattern[] >( patternAssemblerData.sections );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
@@ -36,6 +39,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const { setPatternAssemblerData } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
 		// Require to start the flow from the first step
@@ -277,6 +281,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
 										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 								);
+
+								setPatternAssemblerData( { header, sections, footer } );
 
 								trackEventContinue();
 
