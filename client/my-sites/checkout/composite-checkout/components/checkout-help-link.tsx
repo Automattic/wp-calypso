@@ -182,7 +182,7 @@ export default function CheckoutHelpLink() {
 	} );
 	const presalesEligiblePlanLabel = getHighestWpComPlanLabel( plans );
 	const isPresalesChatEligible = presalesChatAvailable && presalesEligiblePlanLabel;
-	const zendeskChatKey = config( 'zendesk_chat_key' );
+	const zendeskPresalesChatKey = config( 'zendesk_presales_chat_key' );
 	const isPresalesZendeskChatEligible = presalesZendeskChatAvailable && isEnglishLocale;
 
 	const userAllowedToHelpCenter = !! (
@@ -216,7 +216,7 @@ export default function CheckoutHelpLink() {
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
-			{ shouldRenderZendeskChatButton && <ZendeskChat chatId={ zendeskChatKey } /> }
+			{ shouldRenderZendeskChatButton && <ZendeskChat chatId={ zendeskPresalesChatKey } /> }
 			{ shouldRenderPaymentChatButton ? (
 				<PaymentChatButton
 					plan={ presalesEligiblePlanLabel }

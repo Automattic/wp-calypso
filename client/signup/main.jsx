@@ -762,7 +762,7 @@ class Signup extends Component {
 		}
 
 		const isReskinned = isReskinnedFlow( this.props.flowName );
-		const zendeskChatKey = config( 'zendesk_chat_key' );
+		const zendeskChatKey = config( 'zendesk_presales_chat_key' );
 		const isEnglishLocale = config( 'english_locales' ).includes( getLocaleSlug() ?? '' );
 
 		return (
