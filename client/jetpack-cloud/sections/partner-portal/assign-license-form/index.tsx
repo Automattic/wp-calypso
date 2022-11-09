@@ -101,14 +101,16 @@ export default function AssignLicenseForm( {
 	const onAssignLicense = useCallback( () => {
 		setIsSubmitting( true );
 		dispatch( removeNotice( notificationId ) );
-		dispatch(
-			recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
-				license_key: licenseKey,
-				selected_site: selectedSite,
-			} )
-		);
-		assignLicense.mutate( { licenseKey, selectedSite } );
-	}, [ dispatch, licenseKey, selectedSite, assignLicense.mutate ] );
+		licenseKeysArray.forEach( ( licenseKey ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_partner_portal_assign_license_submit', {
+					license_key: licenseKey,
+					selected_site: selectedSite,
+				} )
+			);
+			assignLicense.mutate( { licenseKey, selectedSite } );
+		} );
+	}, [ dispatch, licenseKeysArray, selectedSite, assignLicense.mutate ] );
 
 	const onAssignLater = () =>
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
