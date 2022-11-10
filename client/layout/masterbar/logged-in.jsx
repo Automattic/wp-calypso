@@ -258,7 +258,7 @@ class MasterbarLoggedIn extends Component {
 		const {
 			isCheckoutPending,
 			previousPath,
-			siteSlug,
+			currentSelectedSiteSlug,
 			isJetpackNotAtomic,
 			title,
 			loadHelpCenterIcon,
@@ -271,7 +271,7 @@ class MasterbarLoggedIn extends Component {
 				title={ title }
 				isJetpackNotAtomic={ isJetpackNotAtomic }
 				previousPath={ previousPath }
-				siteSlug={ siteSlug }
+				siteSlug={ currentSelectedSiteSlug }
 				isLeavingAllowed={ ! isCheckoutPending }
 				loadHelpCenterIcon={ loadHelpCenterIcon }
 			/>
