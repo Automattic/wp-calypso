@@ -1,4 +1,4 @@
-import { comment, Icon, navigation, people, starEmpty } from '@wordpress/icons';
+import { commentContent, Icon, navigation, people, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
@@ -66,7 +66,7 @@ export default function HighlightCards( {
 				/>
 				<HighlightCard
 					heading={ translate( 'Comments' ) }
-					icon={ <Icon icon={ comment } /> }
+					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }
 					previousCount={ previousCounts?.comments ?? null }
 					onClick={ onClickComments }
