@@ -1,8 +1,9 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/variables";
 @import "../styles/typography";
 
-$header-font: Recoleta, sans-serif;
+$font-recoleta: Recoleta, $sans;
 $vertical-margin: 32px;
 
 .highlight-cards {
@@ -24,7 +25,7 @@ $vertical-margin: 32px;
 	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
-	font-family: $header-font;
+	font-family: $font-recoleta;
 	margin-bottom: math.div($vertical-margin, 2);
 	small {
 		font-size: $font-body-small;
@@ -35,7 +36,14 @@ $vertical-margin: 32px;
 	display: flex;
 	flex-flow: row nowrap;
 	max-width: 100%;
+
+	// Add horizontal scrolling, but without the scrollbar.
 	overflow-x: scroll;
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
 	padding: 1px; // Ensures scrollable content box doesn't cover the highlight card.
 
 	.highlight-card {
@@ -60,16 +68,20 @@ $vertical-margin: 32px;
 .highlight-card-heading {
 	font-weight: 500;
 	line-height: 20px;
-	font-family: $header-font;
+	font-family: $sans;
 	margin-bottom: 4px;
 }
 
 .highlight-card-count {
+	align-items: flex-end;
+	display: flex;
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
-	display: flex;
-	align-items: flex-end;
+}
+
+.highlight-card-count-value {
+	font-family: $font-recoleta;
 }
 
 .highlight-card-difference {
