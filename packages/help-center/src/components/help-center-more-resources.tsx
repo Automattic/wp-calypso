@@ -90,7 +90,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
 						>
 							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video tutorials', __i18n_text_domain__ ) }</span>
+							<span>{ __( 'Video Tutorials', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -113,14 +113,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wpcourses.com/?ref=wpcom-help-more-resources' ) }
+							href="https://wordpress.com/learn/"
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__desktop"
-							onClick={ () => trackMoreResourcesButtonClick( 'courses' ) }
+							onClick={ () => trackMoreResourcesButtonClick( 'starting-guide' ) }
 						>
 							<Icon icon={ desktop } size={ 24 } />
-							<span>{ __( 'Courses', __i18n_text_domain__ ) }</span>
+							<span>{ __( 'Starting Guide', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
@@ -128,14 +128,14 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://www.wordpress.com/support' ) }
+							href={ localizeUrl( 'https://wordpress.com/support' ) }
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__format-list-numbered"
-							onClick={ () => trackMoreResourcesButtonClick( 'guides' ) }
+							onClick={ () => trackMoreResourcesButtonClick( 'support-documentation' ) }
 						>
 							<Icon icon={ formatListNumbered } size={ 24 } />
-							<span>{ __( 'Step-by-step guides', __i18n_text_domain__ ) }</span>
+							<span>{ __( 'Support Documentation', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
