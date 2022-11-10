@@ -102,6 +102,16 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 	}
 `;
 
+const GiftBadge = styled.span`
+	color: #234929;
+	background-color: #b8e6bf;
+	padding: 0 1em;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	font-size: small;
+`;
+
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
@@ -128,6 +138,8 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
 	font-size: 16px;
+	display: flex;
+	gap: 0.5em;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
@@ -909,6 +921,7 @@ function WPLineItem( {
 		>
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
+				{ responseCart.is_gift_purchase && <GiftBadge>{ translate( 'Gift' ) }</GiftBadge> }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
 				<LineItemPrice
