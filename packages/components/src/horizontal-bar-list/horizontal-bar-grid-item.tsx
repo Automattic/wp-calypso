@@ -26,9 +26,16 @@ const HorizontalBarListItem = ( {
 	const hasChildren = !! itemChildren;
 	const [ open, setOpen ] = useState( false );
 
-	const toggleOpen = ( e: React.MouseEvent | React.KeyboardEvent ) => {
+	const toggleOpen = ( e: React.MouseEvent ) => {
 		e?.preventDefault();
 		setOpen( ! open );
+	};
+
+	const toggleOpenKey = ( e: React.KeyboardEvent ) => {
+		if ( e?.key === 'Enter' || e?.key === 'Space' ) {
+			e?.preventDefault();
+			setOpen( ! open );
+		}
 	};
 
 	const onClickHandler = ( e: React.MouseEvent ) => {
@@ -37,7 +44,7 @@ const HorizontalBarListItem = ( {
 	};
 
 	const onKeyDownHandler = ( e: React.KeyboardEvent ) => {
-		if ( e?.key !== 'Escape' && e?.key !== 'Tab' && e?.key !== 'Shift' ) {
+		if ( e?.key === 'Enter' || e?.key === 'Space' ) {
 			e?.preventDefault();
 			onClick?.( e, data );
 		}
@@ -63,10 +70,23 @@ const HorizontalBarListItem = ( {
 			>
 				<div className={ `${ BASE_CLASS_NAME }-item-bar` }>
 					{ leftSideItem && <span>{ leftSideItem }</span> }
-					<TagName className="label" href={ url } tabIndex={ 0 }>
+					<TagName
+						className={ classnames(
+							`${ BASE_CLASS_NAME }-label`,
+							hasChildren && `${ BASE_CLASS_NAME }-label--group-header`
+						) }
+						href={ url }
+						tabIndex={ 0 }
+					>
 						<span>{ labelText }</span>
 						{ hasChildren && (
-							<span role="button" onClick={ toggleOpen } onKeyDown={ toggleOpen } tabIndex={ 0 }>
+							<span
+								className={ `${ BASE_CLASS_NAME }-group-toggle` }
+								role="button"
+								onClick={ toggleOpen }
+								onKeyDown={ toggleOpenKey }
+								tabIndex={ 0 }
+							>
 								<Icon icon={ open ? chevronUp : chevronDown } />
 							</span>
 						) }
@@ -81,7 +101,7 @@ const HorizontalBarListItem = ( {
 			</li>
 			{ itemChildren && open && (
 				<li>
-					<ul style={ { listStyle: 'none', margin: `0 0 24px 0` } }>
+					<ul className={ `${ BASE_CLASS_NAME }-group` }>
 						{ itemChildren?.map( ( child ) => {
 							return (
 								<HorizontalBarListItem
@@ -91,7 +111,6 @@ const HorizontalBarListItem = ( {
 									rightSideItem={ rightSideItem }
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }
-									// leftSideItem={leftSideItem}
 									isStatic={ isStatic }
 								/>
 							);
