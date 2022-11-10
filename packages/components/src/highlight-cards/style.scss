@@ -5,6 +5,9 @@
 
 $font-recoleta: Recoleta, $sans;
 $vertical-margin: 32px;
+// From client/assets/stylesheets/shared/mixins/_breakpoints.scss.
+// Technically deprecated, but majority of Calypso still uses this.
+$custom-mobile-breakpoint: 660px;
 
 .highlight-cards {
 	margin: $vertical-margin 0;
@@ -29,6 +32,7 @@ $vertical-margin: 32px;
 	margin-bottom: math.div($vertical-margin, 2);
 	small {
 		font-size: $font-body-small;
+		line-height: 1.5;
 	}
 }
 
@@ -75,6 +79,7 @@ $vertical-margin: 32px;
 .highlight-card-count {
 	align-items: flex-end;
 	display: flex;
+	flex-wrap: wrap;
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
@@ -82,6 +87,7 @@ $vertical-margin: 32px;
 
 .highlight-card-count-value {
 	font-family: $font-recoleta;
+	margin-right: 8px;
 }
 
 .highlight-card-difference {
@@ -92,7 +98,6 @@ $vertical-margin: 32px;
 	font-size: $font-body-small;
 	font-weight: 600;
 	line-height: 24px;
-	margin-left: 8px;
 	&.highlight-card-difference--positive {
 		color: var(--studio-red-50);
 		fill: var(--studio-red-50);
@@ -108,6 +113,18 @@ $vertical-margin: 32px;
 }
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
+}
+
+@media ( max-width: $custom-mobile-breakpoint ) {
+	.highlight-cards {
+		margin-left: 1em;
+		margin-right: 1em;
+	}
+	// Show count and difference on newlines.
+	.highlight-card-count {
+		align-items: flex-start;
+		flex-flow: column;
+	}
 }
 
 @media ( max-width: $break-small ) {
