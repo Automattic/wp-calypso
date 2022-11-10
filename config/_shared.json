@@ -18,6 +18,7 @@
 	"hotjar_enabled": false,
 	"hostname": false,
 	"i18n_default_locale_slug": "en",
+	"is_running_in_jetpack_site": false,
 	"lasagna_url": "wss://rt-api.wordpress.com/socket",
 	"login_url": false,
 	"logout_url": false,

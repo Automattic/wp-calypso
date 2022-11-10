@@ -318,6 +318,44 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/calypso-stats@workspace:apps/stats":
+  version: 0.0.0-use.local
+  resolution: "@automattic/calypso-stats@workspace:apps/stats"
+  dependencies:
+    "@automattic/babel-plugin-transform-wpcalypso-async": "workspace:^"
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-babel-config": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-polyfills": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
+    "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
+    "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
+    "@wordpress/dependency-extraction-webpack-plugin": ^4.4.0
+    autoprefixer: ^10.2.5
+    calypso: "workspace:^"
+    classnames: ^2.3.1
+    debug: ^4.3.4
+    enzyme: ^3.11.0
+    html-webpack-plugin: ^5.0.0-beta.4
+    jest: ^27.2.4
+    page: ^1.11.5
+    path-browserify: ^1.0.1
+    postcss: ^8.3.11
+    prop-types: ^15.8.1
+    react: ^17.0.2
+    react-dom: ^17.0.2
+    react-query: ^3.32.1
+    react-redux: ^7.2.6
+    redux: ^4.1.2
+    redux-thunk: ^2.3.0
+    webpack: ^5.68.0
+    webpack-bundle-analyzer: ^4.5.0
+    wpcom: "workspace:^"
+    wpcom-proxy-request: "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/calypso-storybook@workspace:^, @automattic/calypso-storybook@workspace:packages/calypso-storybook":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-storybook@workspace:packages/calypso-storybook"
@@ -8983,6 +9021,18 @@ __metadata:
   peerDependencies:
     webpack: ^4.8.3 || ^5.0.0
   checksum: 5a712c1ee8b837542b5c37f6f3dca1653181b8e3fea2c706fda506bc570523a105e808be43501065d61039f6dd5080f1a748fffef6946964d0804ee2fd96cd92
+  languageName: node
+  linkType: hard
+
+"@wordpress/dependency-extraction-webpack-plugin@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@wordpress/dependency-extraction-webpack-plugin@npm:4.4.0"
+  dependencies:
+    json2php: ^0.0.5
+    webpack-sources: ^3.2.2
+  peerDependencies:
+    webpack: ^4.8.3 || ^5.0.0
+  checksum: 9a402783ae313a9155e5bdadea1f6b396214920a5df2ed964d79cf7a110d44e466c019f98ad28e7b32fa2429a489f0f20119c3fd93a3da278c225c8e1b610449
   languageName: node
   linkType: hard
 
@@ -22876,6 +22926,13 @@ __metadata:
   version: 0.0.4
   resolution: "json2php@npm:0.0.4"
   checksum: 772f3bb4ce9ffcbdbed79c4a547933ea8134623c6f337377818921baf096b52e6c23babcfa3598791be4ff8310028684e4f0c396dce37b9baa65458cc46e355e
+  languageName: node
+  linkType: hard
+
+"json2php@npm:^0.0.5":
+  version: 0.0.5
+  resolution: "json2php@npm:0.0.5"
+  checksum: 29033b529c7d7b9ed27d875fbf5c06ec794a228250307931bd72067f7bdee67e3fa87a083e6b9bb15e5b192447901cd6cc5143733a08525e386f6089246ce3e0
   languageName: node
   linkType: hard
 
