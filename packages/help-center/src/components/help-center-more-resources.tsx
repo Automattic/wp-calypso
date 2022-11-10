@@ -90,7 +90,7 @@ export const HelpCenterMoreResources = () => {
 							onClick={ () => trackMoreResourcesButtonClick( 'video' ) }
 						>
 							<Icon icon={ video } size={ 24 } />
-							<span>{ __( 'Video tutorials', __i18n_text_domain__ ) }</span>
+							<span>{ __( 'Video Tutorials', __i18n_text_domain__ ) }</span>
 							<Icon icon={ external } size={ 20 } />
 						</a>
 					</div>
