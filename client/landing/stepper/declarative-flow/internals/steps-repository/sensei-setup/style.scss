@@ -32,6 +32,7 @@ $sensei-color: #43af99;
 		display: flex;
 		flex-direction: column;
 		padding: 0 40px 0 0;
+		position: relative;
 
 		h1 {
 			width: 60%;
@@ -60,10 +61,12 @@ $sensei-color: #43af99;
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-style-4.png);
 		}
 	}
+
 	.sensei-theme-style-selector {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		margin-top: 40px;
+		margin-bottom: auto;
 	}
 
 	.sensei-theme-prompt {
@@ -84,6 +87,7 @@ $sensei-color: #43af99;
 			opacity: 0;
 		}
 	}
+
 	.form-radio-with-thumbnail__thumbnail.checked {
 		box-shadow: 0 0 0 2px $sensei-color, 0 1px 2px var(--color-neutral-0);
 	}
@@ -96,25 +100,44 @@ $sensei-color: #43af99;
 	.sensei-theme {
 		background-size: cover;
 		width: 100%;
-		border-radius: 18px; /* stylelint-disable-line scales/radii */
+		height: 822px;
+		border-radius: 36px; /* stylelint-disable-line scales/radii */
+		border: 15px solid #f8f8f8;
+		box-shadow: 0 15px 20px rgba(0, 0, 0, 0.04), 0 13px 10px rgba(0, 0, 0, 0.03), 0 6px 6px rgba(0, 0, 0, 0.02);
 
 		@media ( max-width: $break-wide ) {
 			background-size: contain;
 			background-repeat: no-repeat;
 			background-position: center;
 		}
+
 		&.green {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green.jpg);
+			@media ( max-width: $break-huge ) {
+				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1200.jpg);
+				height: 912px;
+			}
+			@media ( max-width: $break-wide ) {
+				background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-green-1080.jpg);
+				height: 960px;
+			}
+			@media ( max-width: $break-xlarge ) {
+				height: 759px;
+			}
 		}
+
 		&.blue {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-blue.jpg);
 		}
+
 		&.black {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-black.jpg);
 		}
+
 		&.sepia {
 			background-image: url(calypso/assets/images/sensei-onboarding/sensei-theme-sepia.jpg);
 		}
+
 		@media ( max-width: $break-large ) {
 			display: none;
 		}
@@ -133,6 +156,7 @@ $sensei-color: #43af99;
 			margin-right: 5px;
 		}
 	}
+
 	button {
 		background-color: $sensei-color;
 	}
