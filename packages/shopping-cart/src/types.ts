@@ -316,6 +316,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 * Gift Details
 	 */
 	gift_details?: ResponseCartGiftDetails;
+	is_gift_purchase?: boolean;
 
 	currency: string;
 	allowed_payment_methods: string[];
@@ -595,6 +596,7 @@ export interface ResponseCartProductExtra {
 
 export interface ResponseCartGiftDetails {
 	receiver_blog_id: number;
+	receiver_blog_slug?: string;
 	receiver_blog_url?: string;
 }
 
