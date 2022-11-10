@@ -15,10 +15,6 @@ const Discount = styled.span`
 		margin-right: 0;
 		margin-left: 8px;
 	}
-
-	@media ( max-width: 660px ) {
-		width: 100%;
-	}
 `;
 
 const Price = styled.span`
