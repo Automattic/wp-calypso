@@ -20,11 +20,14 @@
 		@include break-mobile {
 			margin: 0;
 		}
+		.use-my-domain__domain-input-note {
+			color: #8c8f94;
+		}
 
 		button.use-my-domain__domain-input-clear {
 			position: absolute;
 			right: 10px;
-			top: -1px;
+			top: 1px;
 
 			.gridicon.use-my-domain__domain-input-clear-icon {
 				fill: var(--studio-gray-50);
@@ -42,10 +45,11 @@
 		max-width: 370px;
 
 		.form-text-input {
-			padding: 9px 14px 9px 55px;
+			padding: 9px 14px;
+			margin-bottom: 9px;
 
 			&::placeholder {
-				color: #909398;
+				color: #c3c4c7;
 			}
 		}
 
@@ -54,7 +58,7 @@
 			height: fit-content;
 			width: 100%;
 			margin-right: 0;
-			margin-top: 26px;
+			margin-top: 5px;
 			padding: 8px 31px;
 
 			@include break-mobile {
@@ -66,7 +70,8 @@
 
 	& &__domain-input-note {
 		font-size: $font-body-extra-small;
-		margin-bottom: 0;
+		line-height: 1.2;
+		margin: 0 0 14px;
 		display: flex;
 		align-items: center;
 
@@ -77,14 +82,6 @@
 				fill: #000;
 			}
 		}
-	}
-
-	& &__domain-input-fieldset::before {
-		content: "www.";
-		color: #000;
-		position: absolute;
-		left: 16px;
-		top: 10px;
 	}
 }
 

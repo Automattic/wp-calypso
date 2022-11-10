@@ -52,6 +52,15 @@ function UseMyDomainInput( {
 		? __( 'Enter the domain you would like to use:' )
 		: __( 'Enter your domain here' );
 
+	const hasDomainNoteLabel =
+		[ 'en', 'en-gb' ].includes( locale ) ||
+		hasTranslation(
+			'Please enter your site address without “www” or “https://” e.g. mydomain.com'
+		);
+	const domainNote = hasDomainNoteLabel
+		? __( 'Please enter your site address without “www” or “https://” e.g. mydomain.com' )
+		: '';
+
 	const hasDomainInputNoteLabel =
 		[ 'en', 'en-gb' ].includes( locale ) ||
 		hasTranslation( 'Enter the domain you would like to use:' );
@@ -64,8 +73,7 @@ function UseMyDomainInput( {
 				<label>{ domainInputLabel }</label>
 				<FormFieldset className={ baseClassName + '__domain-input-fieldset' }>
 					<FormTextInput
-						/* translators: This is displayed as www.yoursiteaddress.com, where everything after www. is editable */
-						placeholder={ __( 'yoursiteaddress.com' ) }
+						placeholder={ __( 'mydomain.com' ) }
 						value={ domainName }
 						onChange={ onChange }
 						onKeyDown={ keyDown }
@@ -84,6 +92,9 @@ function UseMyDomainInput( {
 								size={ 12 }
 							/>
 						</Button>
+					) }
+					{ domainNote && (
+						<p className={ baseClassName + '__domain-input-note' }>{ domainNote }</p>
 					) }
 					{ validationError && <FormInputValidation isError text={ validationError } icon="" /> }
 				</FormFieldset>
