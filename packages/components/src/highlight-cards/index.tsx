@@ -39,7 +39,7 @@ export default function HighlightCards( {
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
 			<h1 className="highlight-cards-heading">
 				{ translate( '7-day highlights' ) }{ ' ' }
-				<small>{ translate( 'compared to the last seven days' ) }</small>
+				<small>{ translate( 'Compared to previous 7 days' ) }</small>
 			</h1>
 
 			<div className="highlight-cards-list">
