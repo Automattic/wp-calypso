@@ -1,5 +1,6 @@
 $grid-horizontal-gutters: 24px;
 $grid-vertical-gutters: 32px;
+
 .is-section-stats .stats__module-list--traffic {
 	align-items: stretch;
 	display: grid;
@@ -9,7 +10,7 @@ $grid-vertical-gutters: 32px;
 	grid-template-areas:
 		"posts posts posts posts posts posts posts referrers referrers referrers referrers referrers"
 		"country country country country country country country country country country country country"
-		"authors authors authors authors searchterms searchterms searchterms searchterms clicks clicks clicks clicks"
+		"authors authors authors authors search search search search clicks clicks clicks clicks"
 		"videos videos videos videos videos videos downloads downloads downloads downloads downloads downloads";
 
 	// Tablets
@@ -20,7 +21,7 @@ $grid-vertical-gutters: 32px;
 		grid-template-areas:
 			"posts posts posts posts referrers referrers referrers referrers"
 			"country country country country country country country country"
-			"authors authors authors authors searchterms searchterms searchterms searchterms"
+			"authors authors authors authors search search search search"
 			"clicks clicks clicks clicks videos videos videos videos"
 			"downloads downloads downloads downloads downloads downloads downloads downloads";
 	}
@@ -35,7 +36,7 @@ $grid-vertical-gutters: 32px;
 			"referrers referrers referrers referrers"
 			"country country country country"
 			"authors authors authors authors"
-			"searchterms searchterms searchterms searchterms"
+			"search search search search"
 			"clicks clicks clicks clicks"
 			"videos videos videos videos"
 			"downloads downloads downloads downloads";
@@ -43,6 +44,11 @@ $grid-vertical-gutters: 32px;
 
 	.card.stats-module {
 		margin-bottom: 0;
+	}
+
+	.stats__module-wrapper,
+	.stats-card {
+		width: 100%;
 	}
 
 	.stats__module-wrapper {
@@ -74,7 +80,7 @@ $grid-vertical-gutters: 32px;
 	}
 	.stats__module-wrapper--searchterms,
 	.list-searchterms {
-		grid-area: searchterms;
+		grid-area: search;
 	}
 	.stats__module-wrapper--clicks {
 		grid-area: clicks;
@@ -87,5 +93,4 @@ $grid-vertical-gutters: 32px;
 	.list-filedownloads {
 		grid-area: downloads;
 	}
-
 }
