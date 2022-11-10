@@ -16,7 +16,7 @@ const fetchFilters = ( action ) =>
 		action
 	);
 
-const storeFilters = ( action, data ) => {
+export const storeFilters = ( action, data ) => {
 	return { type: THEME_FILTERS_ADD, filters: data };
 };
 

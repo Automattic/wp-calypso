@@ -1,9 +1,12 @@
 import debugFactory from 'debug';
+import LRU from 'lru';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import trackScrollPage from 'calypso/lib/track-scroll-page';
-import { requestThemes, requestThemeFilters } from 'calypso/state/themes/actions';
+import wp from 'calypso/lib/wp/node.js';
+import { storeFilters } from 'calypso/state/data-layer/wpcom/theme-filters';
+import { requestThemes } from 'calypso/state/themes/actions';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
-import { getThemeFilters, getThemesForQuery } from 'calypso/state/themes/selectors';
+import { getThemesForQuery } from 'calypso/state/themes/selectors';
 import { getAnalyticsData } from './helpers';
 import LoggedOutComponent from './logged-out';
 
@@ -72,32 +75,45 @@ export function fetchThemeData( context, next ) {
 	context.store.dispatch( requestThemes( siteId, query, context.lang ) ).then( next ).catch( next );
 }
 
+// Cache filters on the server only.
+const themeFilterCache = typeof document === 'undefined' ? new LRU() : undefined;
+
 export function fetchThemeFilters( context, next ) {
 	if ( context.cachedMarkup ) {
 		debug( 'Skipping theme filter data fetch' );
 		return next();
 	}
 
-	const { store } = context;
-	const hasFilters = Object.keys( getThemeFilters( store.getState() ) ).length > 0;
+	const cacheKey = context.lang ?? '';
+	const cachedFilters = themeFilterCache?.get( cacheKey );
 
 	logServerEvent( 'themes', {
-		name: `ssr.get_theme_filters_fetch_cache.${ hasFilters ? 'hit' : 'miss' }`,
+		name: `ssr.get_theme_filters_fetch_cache.${ cachedFilters ? 'hit' : 'miss' }`,
 		type: 'counting',
 	} );
 
-	if ( hasFilters ) {
+	const finalizeFilters = ( filters ) => {
+		debug( filters );
+		if ( ! cachedFilters ) {
+			themeFilterCache?.set( cacheKey, filters );
+		}
+		// Adds the filters to the data store.
+		context.store.dispatch( storeFilters( {}, filters ) );
+		next();
+	};
+
+	if ( cachedFilters ) {
 		debug( 'found theme filters in cache' );
-		return next();
+		return finalizeFilters( cachedFilters );
 	}
 
-	const unsubscribe = store.subscribe( () => {
-		if ( Object.keys( getThemeFilters( store.getState() ) ).length > 0 ) {
-			unsubscribe();
-			return next();
-		}
-	} );
-	store.dispatch( requestThemeFilters( context.lang ) );
+	// TODO: is error handling necessary?
+	wp.req( {
+		method: 'GET',
+		apiVersion: '1.2',
+		path: '/theme-filters',
+		query: context.lang ? { locale: context.lang } : {},
+	} ).then( finalizeFilters );
 }
 
 // Legacy (Atlas-based Theme Showcase v4) route redirects
