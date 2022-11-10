@@ -33,9 +33,11 @@ export default function IssueMultipleLicensesForm( {
 
 	// If the user comes from the flow for adding a new payment method during an attempt to issue a license
 	// after the payment method is added, we will make an attempt to issue the chosen license automatically.
-	const defaultProducts = getQueryArg( window.location.href, 'products' )?.toString().split( ',' );
+	const defaultProductSlugs = getQueryArg( window.location.href, 'products' )
+		?.toString()
+		.split( ',' );
 
-	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProducts ?? [] );
+	const [ selectedProductSlugs, setSelectedProductSlugs ] = useState( defaultProductSlugs ?? [] );
 	const [ issueLicenses, isLoading ] = useIssueMultipleLicenses(
 		selectedProductSlugs,
 		selectedSite
