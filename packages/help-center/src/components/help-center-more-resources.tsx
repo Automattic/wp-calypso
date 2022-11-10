@@ -113,7 +113,7 @@ export const HelpCenterMoreResources = () => {
 				<li className="inline-help__resource-item">
 					<div className="inline-help__resource-cell">
 						<a
-							href={ localizeUrl( 'https://wordpress.com/learn/' ) }
+							href="https://wordpress.com/learn/"
 							rel="noreferrer"
 							target="_blank"
 							className="inline-help__desktop"
