@@ -1,27 +1,40 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 $icon-size: 80px;
 $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
-
 .site-icon-with-picker__background {
-	width: 100vw;
-	height: 100%;
-	background: #fff;
+	min-height: 60vh;
+	min-width: 100vw;
 	position: absolute;
-	z-index: 2;
-	display: flex;
-	justify-content: center;
-}
-.site-icon-with-picker__image-editor {
-	height: 220px;
-	z-index: 2;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+	padding: 0;
+
+	@include onboarding-break-mobile-landscape {
+		padding: 16px;
+		min-width: 80vw;
+		min-height: 80vh;
+	}
 
 	@include break-medium {
-		width: 800px;
-		height: 400px;
+		padding: 16px;
+		min-width: 50vw;
 	}
+}
+
+.site-icon-with-picker__image-editor {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: calc(100% - 80px);
+	z-index: 2;
 
 	.image-editor__content,
 	.image-editor__crop-background {

@@ -1,3 +1,4 @@
+import { Dialog } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
 import { FormFileUpload } from '@wordpress/components';
 import { Icon, upload } from '@wordpress/icons';
@@ -55,7 +56,15 @@ export function SiteIconWithPicker( {
 	return (
 		<>
 			{ editingFile && imageEditorOpen && (
-				<div className="site-icon-with-picker__background">
+				<Dialog
+					className="site-icon-with-picker__background"
+					isVisible={ true }
+					isBackdropVisible={ false }
+					onClose={ () => {
+						setImageEditorOpen( false );
+					} }
+					shouldCloseOnEsc={ true }
+				>
 					<ImageEditor
 						className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
 						siteId={ site?.ID }
@@ -80,7 +89,7 @@ export function SiteIconWithPicker( {
 						displayOnlyIcon={ true }
 						widthLimit={ 512 }
 					/>
-				</div>
+				</Dialog>
 			) }
 			<FormFieldset
 				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
