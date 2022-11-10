@@ -582,7 +582,9 @@ export default connect(
 				? getSiteSlug( state, currentSelectedSiteId )
 				: undefined,
 			previousPath: getPreviousRoute( state ),
-			isJetpackNotAtomic: isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ),
+			isJetpackNotAtomic:
+				isJetpackSite( state, currentSelectedSiteId ) &&
+				! isAtomicSite( state, currentSelectedSiteId ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
 			hasDismissedThePopover: getPreference( state, MENU_POPOVER_PREFERENCE_KEY ),
 			isFetchingPrefs: isFetchingPreferences( state ),
