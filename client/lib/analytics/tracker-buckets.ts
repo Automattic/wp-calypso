@@ -72,7 +72,7 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 	}
 
 	// Disable advertising trackers on specific urls
-	if ( 'advertising' === bucket && isUrlExcludedForPerformance() ) {
+	if ( Bucket.ADVERTISING === bucket && isUrlExcludedForPerformance() ) {
 		return false;
 	}
 
@@ -85,6 +85,3 @@ export const mayWeTrackByTracker = ( tracker: AdTracker ) => {
 
 	return null !== bucket && mayWeTrackByBucket( bucket );
 };
-
-// TODO: isWpcomGoogleAdsGtagEnabled - decide how to split ( there is also Jetpack GAds )
-// TODO: Sort out trackers for Jetpack / WPCOM enviornments
