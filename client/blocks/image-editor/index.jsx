@@ -51,6 +51,7 @@ class ImageEditor extends Component {
 		setImageEditorDefaultAspectRatio: PropTypes.func,
 		translate: PropTypes.func,
 		isImageLoaded: PropTypes.bool,
+		displayOnlyIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -62,6 +63,7 @@ class ImageEditor extends Component {
 		defaultAspectRatio: AspectRatios.FREE,
 		allowedAspectRatios: AspectRatiosValues,
 		setImageEditorDefaultAspectRatio: noop,
+		displayOnlyIcon: false,
 	};
 
 	state = {
@@ -233,7 +235,7 @@ class ImageEditor extends Component {
 	};
 
 	render() {
-		const { className, siteId, allowedAspectRatios, widthLimit } = this.props;
+		const { className, siteId, allowedAspectRatios, widthLimit, displayOnlyIcon } = this.props;
 
 		const { noticeText } = this.state;
 
@@ -254,7 +256,7 @@ class ImageEditor extends Component {
 						<ImageEditorToolbar
 							onShowNotice={ this.showNotice }
 							allowedAspectRatios={ allowedAspectRatios }
-							displayOnlyIcon={ true }
+							displayOnlyIcon={ displayOnlyIcon }
 						/>
 						<ImageEditorButtons
 							onCancel={ this.props.onCancel && this.onCancel }
