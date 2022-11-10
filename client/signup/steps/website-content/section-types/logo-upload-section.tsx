@@ -53,6 +53,7 @@ export function LogoUploadSection( {
 			</Label>
 			<HorizontalGrid>
 				<WordpressMediaUpload
+					mediaType="IMAGE"
 					mediaIndex={ 0 }
 					site={ site }
 					onMediaUploadStart={ () => dispatch( logoUploadStarted() ) }

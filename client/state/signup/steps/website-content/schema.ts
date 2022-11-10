@@ -6,7 +6,7 @@ export const schema = {
 	title: 'Website content schema',
 	type: 'object',
 	additionalProperties: false,
-	required: [ 'currentIndex', 'websiteContent', 'imageUploadStates' ],
+	required: [ 'currentIndex', 'websiteContent', 'mediaUploadStates' ],
 	properties: {
 		currentIndex: {
 			type: 'number',
@@ -34,13 +34,16 @@ export const schema = {
 							content: {
 								type: 'string',
 							},
-							images: {
+							media: {
 								type: 'array',
 								items: {
 									type: 'object',
 									properties: {
 										caption: { type: 'string' },
 										url: { type: 'string' },
+										thumbnailUrl: { type: 'string' },
+										uploadID: { type: 'string' },
+										mediaType: { type: 'string' },
 									},
 								},
 							},
@@ -73,7 +76,7 @@ export const schema = {
 				},
 			},
 		},
-		imageUploadStates: {
+		mediaUploadStates: {
 			type: 'object',
 		},
 		siteId: {
@@ -82,18 +85,29 @@ export const schema = {
 		},
 	},
 };
+export const LOGO_SECTION_ID = 'logo_section';
 
-export interface ImageData {
+export const MEDIA_UPLOAD_STATES = {
+	UPLOAD_STARTED: 'UPLOAD_STARTED',
+	UPLOAD_COMPLETED: 'UPLOAD_COMPLETED',
+	UPLOAD_FAILED: 'UPLOAD_FAILED',
+	UPLOAD_REMOVED: 'UPLOAD_REMOVED',
+};
+export type MediaUploadType = 'IMAGE' | 'VIDEO';
+
+export type Media = {
 	caption: string;
 	url: string;
+	mediaType: MediaUploadType;
+	thumbnailUrl?: string;
 	uploadID?: string;
-}
+};
 
 export interface PageData {
 	id: PageId;
 	title: string;
 	content: string;
-	images: Array< ImageData >;
+	media: Array< Media >;
 }
 
 export interface ContactPageData extends PageData {
@@ -110,7 +124,7 @@ export type WebsiteContent = {
 export interface WebsiteContentCollection {
 	currentIndex: number;
 	websiteContent: WebsiteContent;
-	imageUploadStates: Record< string, Record< string, string > >;
+	mediaUploadStates: Record< string, Record< string, string > >;
 	siteId: SiteId | null;
 }
 
@@ -121,6 +135,6 @@ export const initialState: WebsiteContentCollection = {
 		siteLogoSection: { siteLogoUrl: '' },
 		feedbackSection: { genericFeedback: '' },
 	},
-	imageUploadStates: {},
+	mediaUploadStates: {},
 	siteId: null,
 };

@@ -4,8 +4,7 @@ import {
 	FeedbackSection,
 	LogoUploadSection,
 } from 'calypso/signup/steps/website-content/section-types';
-import { LOGO_SECTION_ID } from 'calypso/state/signup/steps/website-content/reducer';
-import { WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
+import { LOGO_SECTION_ID, WebsiteContent } from 'calypso/state/signup/steps/website-content/schema';
 import { CONTENT_SUFFIX, DefaultPageDetails } from './section-types/default-page-details';
 import type {
 	AccordionSectionProps,
