@@ -21,6 +21,7 @@ export const getPatternPreviewUrl = ( {
 		site_title: siteTitle,
 		site_tagline: SITE_TAGLINE,
 		stylesheet,
+		remove_assets: true,
 	} );
 };
 
