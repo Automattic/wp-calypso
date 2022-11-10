@@ -6,7 +6,10 @@
 
 	&.disabled {
 		opacity: 0.5;
-		pointer-events: none;
+
+		.license-product-card__inner {
+			cursor: not-allowed;
+		}
 	}
 
 	@include break-xlarge {

@@ -33,6 +33,10 @@ export default function LicenseProductCard( props: Props ) {
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {
+		if ( isDisabled ) {
+			return;
+		}
+
 		if ( isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
 			onSelectProduct?.( product );
 		} else {
