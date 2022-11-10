@@ -7,7 +7,7 @@ $sensei-color: #43af99;
 		background-color: $sensei-color;
 	}
 
-	.css-1l7urtg-Container {
+	.step-container__content > div {
 		height: auto;
 	}
 
@@ -80,7 +80,6 @@ $sensei-color: #43af99;
 
 		.form-radio,
 		.form-radio__label {
-			// display: none;
 			position: absolute;
 			width: 0;
 			height: 0;
