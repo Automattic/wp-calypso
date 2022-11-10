@@ -14,6 +14,15 @@
 	color: $font-color;
 	background-color: var(--studio-white);
 
+	& + &,
+	& + div { // until every module is swapped
+		margin-top: $card-vertical-space;
+	}
+
+	.stats-card--hero {
+		padding-bottom: $card-vertical-space;
+	}
+
 	.stats-card--header {
 		display: flex;
 		justify-content: space-between;

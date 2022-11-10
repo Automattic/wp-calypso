@@ -31,14 +31,66 @@ export const setPatternContent = ( patternContent: string ) => ( {
 	patternContent,
 } );
 
-export interface CreateSiteActionParameters {
+export interface CreateSiteBaseActionParameters {
 	username: string;
 	languageSlug: string;
-	bearerToken?: string;
 	visibility: number;
+}
+
+export interface CreateSiteActionParameters extends CreateSiteBaseActionParameters {
+	bearerToken?: string;
 	anchorFmPodcastId: string | null;
 	anchorFmEpisodeId: string | null;
 	anchorFmSpotifyUrl: string | null;
+}
+
+export function* createVideoPressSite( {
+	username,
+	languageSlug,
+	visibility = Visibility.PublicNotIndexed,
+}: CreateSiteBaseActionParameters ) {
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
+
+	const siteUrl = domain?.domain_name || siteTitle || username;
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const defaultTheme = selectedDesign?.theme || 'premium/videomaker';
+	const siteVertical = 'premium/videomaker' === defaultTheme ? 'videomaker' : 'videomaker-white';
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+
+	const params: CreateSiteParams = {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: blogTitle,
+		public: visibility,
+		options: {
+			site_information: {
+				title: blogTitle,
+			},
+			lang_id: lang_id,
+			site_creation_flow: 'videopress',
+			enable_fse: true,
+			theme: 'pub/twentytwentytwo', // NOTE: keep this a consistent, free theme so post ids during headstart re-run after premium theme switch remain consistent,
+			timezone_string: guessTimezone(),
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
+			use_patterns: true,
+			site_vertical_name: siteVertical,
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+		},
+	};
+
+	const success: NewSiteBlogDetails | undefined = yield dispatch(
+		SITE_STORE,
+		'createSite',
+		params
+	);
+
+	return success;
 }
 
 export function* createSite( {
@@ -262,6 +314,7 @@ export const setStoreAddressValue = (
 	store_address_value,
 } );
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const setPendingAction = ( pendingAction: undefined | ( () => Promise< any > ) ) => ( {
 	type: 'SET_PENDING_ACTION' as const,
 	pendingAction,

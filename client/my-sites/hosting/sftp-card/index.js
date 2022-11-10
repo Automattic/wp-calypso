@@ -34,7 +34,7 @@ import {
 import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
 import { getAtomicHostingSshAccess } from 'calypso/state/selectors/get-atomic-hosting-ssh-access';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import SshKeys from './ssh-keys';
 
 import './style.scss';
@@ -48,6 +48,7 @@ export const SftpCard = ( {
 	username,
 	password,
 	siteId,
+	siteSlug,
 	disabled,
 	currentUserId,
 	requestSftpUsers,
@@ -392,7 +393,7 @@ export const SftpCard = ( {
 						{ () => (
 							<>
 								{ siteHasSshFeature && isSshAccessEnabled && (
-									<SshKeys disabled={ disabled } siteId={ siteId } />
+									<SshKeys disabled={ disabled } siteId={ siteId } siteSlug={ siteSlug } />
 								) }
 							</>
 						) }
@@ -448,6 +449,7 @@ const disableSshAccess = ( siteId ) =>
 export default connect(
 	( state, { disabled } ) => {
 		const siteId = getSelectedSiteId( state );
+		const siteSlug = getSelectedSiteSlug( state );
 		const currentUserId = getCurrentUserId( state );
 		let username;
 		let password;
@@ -469,6 +471,7 @@ export default connect(
 
 		return {
 			siteId,
+			siteSlug,
 			currentUserId,
 			username,
 			password,
