@@ -2,6 +2,16 @@
 
 The Stats App is built to refresh the Stats experience in Jetpack. The counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/stats-admin).
 
+## Hiarachy
+```
+.
+└── src/
+    ├── components/       ← stats app only components. For now there is only a layout component.
+    ├── page-middleware/  ← page.js integration with React and everything
+    ├── app.js            ← entry point
+    └── routes.js         ← page.js routes
+```
+
 ## Routing
 
 It utilizes the [hashbang (#!) in page.js](https://github.com/visionmedia/page.js), however it doesn't work out of the box, because we are using hardcoded paths in Calypso, so some tricks are done in Jetpack to intecept the anchor clicks and covert them to hashbangs.
@@ -28,3 +38,21 @@ $.get("https://widgets.wp.com/calypso-happychat/images/gridicons-506499ddac13811
 	document.body.insertBefore(div, document.body.childNodes[0]);
 });
 ```
+
+## Building
+
+### Production
+
+```bash
+cd apps/stats
+yarn build
+```
+### Development
+
+```bash
+STATS_PACKAGE_PATH=/path/to/jetpack/projects/packages/stats-admin yarn dev
+```
+
+## Uploading to CDN
+
+The path is `widgets.wp.com/calypso-stats`.
