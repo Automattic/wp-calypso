@@ -64,7 +64,7 @@ function getTrackingScriptsToLoad() {
 		scripts.push( GOOGLE_GTAG_SCRIPT_URL + enabledGtags[ 0 ] );
 	}
 
-	if ( mayWeTrackByTracker( 'iconMedia' ) ) {
+	if ( mayWeTrackByTracker( 'bing' ) ) {
 		scripts.push( BING_TRACKING_SCRIPT_URL );
 	}
 
