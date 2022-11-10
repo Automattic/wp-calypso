@@ -1,8 +1,14 @@
-import { LINK_IN_BIO_FLOW, addPlanToCart, createSiteWithCart } from '@automattic/onboarding';
+import {
+	LINK_IN_BIO_FLOW,
+	addPlanToCart,
+	createSiteWithCart,
+	ECOMMERCE_FLOW,
+} from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	retrieveSignupDestination,
 	getSignupCompleteFlowName,
@@ -39,6 +45,13 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 
+	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+	const verticalId = useSelect( ( select ) => select( ONBOARD_STORE ).getVerticalId() );
+	const storeLocationCountryCode = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getStoreLocationCountryCode()
+	);
+
 	async function createSite() {
 		if ( isManageSiteFlow ) {
 			return {
@@ -59,6 +72,19 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow } )
 			username,
 			domainCartItem
 		);
+
+		if ( flow === ECOMMERCE_FLOW && site?.siteId ) {
+			await saveSiteSettings( site.siteId, {
+				blogname: siteTitle,
+				site_vertical_id: verticalId,
+				woocommerce_defaut_country: storeLocationCountryCode,
+			} );
+			recordTracksEvent( 'calypso_signup_site_options_submit', {
+				has_site_title: !! siteTitle,
+				has_vertical_id: !! verticalId,
+				has_country_code: !! storeLocationCountryCode,
+			} );
+		}
 
 		if ( planCartItem ) {
 			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );

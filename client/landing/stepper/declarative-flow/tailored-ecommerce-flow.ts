@@ -24,12 +24,13 @@ export const ecommerceFlow: Flow = {
 		}, [] );
 
 		return [
-			'domains',
-			'siteCreationStep',
-			'processing',
 			'intro',
 			'storeProfiler',
+			'domains',
 			'designCarousel',
+			'siteCreationStep',
+			'processing',
+			'setThemeStep',
 		] as StepPath[];
 	},
 
@@ -39,6 +40,9 @@ export const ecommerceFlow: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+		// eslint-disable-next-line no-console
+		console.log( { selectedDesign } );
 		const locale = useLocale();
 
 		const getStartUrl = () => {
@@ -65,37 +69,34 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing':
-					// Coming from designCarousel Step
-					if ( providedDependencies?.selectedDesign ) {
-						window.location.assign( `/home/${ providedDependencies.siteSlug }` );
+					// Coming from setThemeStep
+					if ( ! providedDependencies?.siteSlug ) {
 						return;
 					}
 
-					if ( providedDependencies?.goToCheckout ) {
-						const destination = `/setup/intro?siteSlug=${ providedDependencies.siteSlug }&flow=${ flowName }`;
+					if ( providedDependencies?.siteSlug ) {
+						const siteSlug = ( providedDependencies?.siteSlug as string ) || '';
+						const destination = `/setup/${ flowName }/intro?siteSlug=${ siteSlug }`;
 						persistSignupDestination( destination );
-						setSignupCompleteSlug( providedDependencies?.siteSlug );
+						setSignupCompleteSlug( siteSlug );
 						setSignupCompleteFlowName( flowName );
 
 						// The site is coming from the checkout already Atomic (and with the new URL)
 						// There's probably a better way of handling this change
 						const returnUrl = encodeURIComponent(
-							`/setup/intro?siteSlug=${ ( providedDependencies?.siteSlug as string )?.replace(
-								'wordpress.com',
-								'wpcomstaging.com'
-							) }&flow=${ flowName }`
+							`/setup/${ flowName }/setThemeStep?siteSlug=${ siteSlug.replace(
+								'.wordpress.com',
+								'.wpcomstaging.com'
+							) }`
 						);
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( providedDependencies?.siteSlug as string ) ?? ''
+								( siteSlug as string ) ?? ''
 							) }?redirect_to=${ returnUrl }&signup=1`
 						);
 					}
-
-					return navigate(
-						`intro?flow=${ flowName }&siteSlug=${ providedDependencies?.siteSlug }`
-					);
+					return navigate( `setThemeStep?siteSlug=${ providedDependencies.siteSlug }` );
 
 				case 'intro':
 					if ( userIsLoggedIn ) {
@@ -107,6 +108,9 @@ export const ecommerceFlow: Flow = {
 					return navigate( 'designCarousel' );
 
 				case 'designCarousel':
+					return navigate( 'domains' );
+
+				case 'setThemeStep':
 					return navigate( 'processing' );
 			}
 			return providedDependencies;

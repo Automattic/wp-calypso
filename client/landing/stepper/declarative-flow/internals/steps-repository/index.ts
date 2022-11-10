@@ -49,6 +49,7 @@ export { default as getCurrentThemeSoftwareSets } from './get-current-theme-soft
 export { default as domains } from './domains';
 export { default as storeProfiler } from './store-profiler';
 export { default as designCarousel } from './design-carousel';
+export { default as setThemeStep } from './set-theme-step';
 
 export type StepPath =
 	| 'courses'
@@ -100,6 +101,7 @@ export type StepPath =
 	| 'domains'
 	| 'getCurrentThemeSoftwareSets'
 	| 'designCarousel'
+	| 'setThemeStep'
 	| 'storeProfiler'
 	| 'chooseAPlan'
 	| 'videomakerSetup';
