@@ -3516,9 +3516,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/get@npm:^1.0.1":
-  version: 1.13.1
-  resolution: "@electron/get@npm:1.13.1"
+"@electron/get@npm:^1.13.0":
+  version: 1.14.1
+  resolution: "@electron/get@npm:1.14.1"
   dependencies:
     debug: ^4.1.1
     env-paths: ^2.2.0
@@ -3534,7 +3534,7 @@ __metadata:
       optional: true
     global-tunnel-ng:
       optional: true
-  checksum: f8a42983fef6c34656bd1d01cf8f72f407879e218b4ffc7bb76d1ed859ab980670af724ebe25f755427bf04b2ca7649c89e1f2be565e717d835e1b3e1e75f8ed
+  checksum: 42b03f6e8134985d5d441f1a3d9e0c984ad120775ced3bbc258a9d9e2740a54a06aab35ad6280658109db456cffeb859c378c0ab28160b41e3d34d3cdfd9e9a6
   languageName: node
   linkType: hard
 
@@ -7142,7 +7142,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.0.10, @types/node@npm:^14.6.2":
+"@types/node@npm:^14.0.10":
   version: 14.17.14
   resolution: "@types/node@npm:14.17.14"
   checksum: 52d8d863fb771dbd667176b3c7c4bf6a2d55e4b4196ee0df4f36383584f2466794ed30da2b030d993d0aeb6fac0a39a4d373105ade6169c320028dfa3718b617
@@ -10222,7 +10222,7 @@ __metadata:
     archiver: ^3.1.1
     copy-webpack-plugin: ^10.1.0
     cross-env: ^7.0.3
-    electron: 12.2.3
+    electron: 18.3.7
     electron-builder: ^22.11.7
     electron-fetch: ^1.7.4
     electron-notarize: ^0.1.1
@@ -16216,16 +16216,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:12.2.3":
-  version: 12.2.3
-  resolution: "electron@npm:12.2.3"
+"electron@npm:18.3.7":
+  version: 18.3.7
+  resolution: "electron@npm:18.3.7"
   dependencies:
-    "@electron/get": ^1.0.1
-    "@types/node": ^14.6.2
+    "@electron/get": ^1.13.0
+    "@types/node": ^16.11.26
     extract-zip: ^1.0.3
   bin:
     electron: cli.js
-  checksum: 5fcf095ad1a27c82507207cf3eae1a47953faaf986996cfd17d5700f0314f88deffa578ab57279361acb5e0e172af0e67ce31acba65548e68c584b1830ef24a5
+  checksum: aa7f3fd20a413d54acc11fdaa3325942590280eb4715497cc658d20490b59edd3ed2152119c47ca4767e4f6d93af9879b6ac3f43c7e4af7665c92e5204c89e39
   languageName: node
   linkType: hard
 
