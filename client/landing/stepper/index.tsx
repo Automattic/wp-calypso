@@ -38,12 +38,12 @@ import { newsletterPostSetup } from './declarative-flow/newsletter-post-setup';
 import { pluginBundleFlow } from './declarative-flow/plugin-bundle-flow';
 import { podcasts } from './declarative-flow/podcasts';
 import { siteSetupFlow } from './declarative-flow/site-setup-flow';
-import { ecommerceFlow } from './declarative-flow/tailored-ecommerce-flow';
+import { ecommerceFlow, ecommerceFlowRecurTypes } from './declarative-flow/tailored-ecommerce-flow';
 import { videopress } from './declarative-flow/videopress';
 import 'calypso/components/environment-badge/style.scss';
 import { useAnchorFmParams } from './hooks/use-anchor-fm-params';
 import { useQuery } from './hooks/use-query';
-import { USER_STORE } from './stores';
+import { ONBOARD_STORE, USER_STORE } from './stores';
 import type { Flow } from './declarative-flow/internals/types';
 
 function generateGetSuperProps() {
@@ -87,11 +87,13 @@ const availableFlows: Array< configurableFlows > = [
 
 const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { user } ) => {
 	const { receiveCurrentUser } = useDispatch( USER_STORE );
+	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
 	const location = useLocation();
 	const { anchorFmPodcastId } = useAnchorFmParams();
 
 	const flowNameFromParam = useQuery().get( 'flow' );
 	const flowNameFromPathName = location.pathname.split( '/' )[ 1 ];
+	const recurType = useQuery().get( 'recur' );
 	let flow = siteSetupFlow;
 
 	// keep supporting the `flow` query param for backwards compatibility
@@ -101,6 +103,15 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined } > = ( { 
 
 	if ( anchorFmPodcastId ) {
 		flow = anchorFmFlow;
+	} else if ( flowNameFromPathName === ecommerceFlow.name ) {
+		flow = ecommerceFlow;
+		const isValidRecurType =
+			recurType && Object.values( ecommerceFlowRecurTypes ).includes( recurType );
+		if ( isValidRecurType ) {
+			setEcommerceFlowRecurType( recurType );
+		} else {
+			setEcommerceFlowRecurType( ecommerceFlowRecurTypes.YEARLY );
+		}
 	} else {
 		availableFlows.forEach( ( currentFlow ) => {
 			if ( currentFlow.flowName === flowNameFromPathName ) {
