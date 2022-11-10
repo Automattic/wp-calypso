@@ -1,15 +1,17 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { getStoredItem, setStoredItem } from 'calypso/lib/browser-storage';
-import { IS_STATE_RANDOMLY_CLEARED_KEY } from 'calypso/state/initial-state';
+import { WAS_STATE_RANDOMLY_CLEARED_KEY } from 'calypso/state/initial-state';
 import { warningNotice } from 'calypso/state/notices/actions';
 
 export function SympathyDevWarning() {
 	const dispatch = useDispatch();
 
 	const maybeNotifyDeveloperAndCleanup = async () => {
-		const isStateRandomlyCleared = await getStoredItem< boolean >( IS_STATE_RANDOMLY_CLEARED_KEY );
-		if ( isStateRandomlyCleared ) {
+		const wasStateRandomlyCleared = await getStoredItem< boolean >(
+			WAS_STATE_RANDOMLY_CLEARED_KEY
+		);
+		if ( wasStateRandomlyCleared ) {
 			setTimeout( () => {
 				// Read more about this (sympathy) :  https://github.com/Automattic/wp-calypso/pull/14121, p4TIVU-6Ed-p2
 				// TLDR: We try to clear state randomly to match closely to the UX of our user i.e. Sympathy.
@@ -23,7 +25,7 @@ export function SympathyDevWarning() {
 					} )
 				);
 			}, 1200 );
-			await setStoredItem( IS_STATE_RANDOMLY_CLEARED_KEY, false );
+			await setStoredItem( WAS_STATE_RANDOMLY_CLEARED_KEY, false );
 		}
 	};
 
