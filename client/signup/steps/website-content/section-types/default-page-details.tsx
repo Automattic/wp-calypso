@@ -106,8 +106,8 @@ export function DefaultPageDetails( {
 				label={ description }
 			/>
 			<Label>
-				{ translate( 'Upload up to 3 images to be used on your %(pageTitle)s page.', {
-					args: { pageTitle },
+				{ translate( 'Upload up to %(noOfImages)d images to be used on your %(pageTitle)s page.', {
+					args: { pageTitle, noOfImages: page.images },
 				} ) }
 			</Label>
 			<HorizontalGrid>
