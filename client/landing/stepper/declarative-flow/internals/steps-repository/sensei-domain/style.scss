@@ -6,15 +6,18 @@ $sensei-mobile-layout-width: 1200px;
 $sensei-color: #43af99;
 
 .sensei.sensei-domain {
-	.css-1l7urtg-Container {
+	.step-container__content > div {
 		height: auto;
 	}
+
 	.progress-bar__progress {
 		background-color: $sensei-color;
 	}
+
 	.sensei-domain.is-wide-layout {
 		max-width: 1160px;
 	}
+
 	.domain-search-results__domain-suggestions {
 		.card {
 			box-shadow: none;
@@ -197,7 +200,6 @@ $sensei-color: #43af99;
 	}
 
 	.domain-suggestion {
-		// margin-bottom: 10px;
 
 		.domain-suggestion__action {
 			border-radius: 4px;
@@ -235,9 +237,11 @@ $sensei-color: #43af99;
 			}
 		}
 	}
+
 	.domain-product-price.is-free-domain .domain-product-price__price {
 		color: #8e9196;
 	}
+
 	.domain-product-price .domain-product-price__free-price {
 		color: $sensei-color;
 	}
@@ -251,6 +255,7 @@ $sensei-color: #43af99;
 	.badge {
 		box-sizing: content-box;
 	}
+
 	.domain-suggestion .premium-badge {
 		padding: 1px 10px;
 
@@ -260,9 +265,11 @@ $sensei-color: #43af99;
 	}
 }
 .search-filters__popover {
-	$accent-blue: #117ac9;
 	.button.is-primary {
-		background: $accent-blue;
-		border-color: $accent-blue;
+		background: $sensei-color;
+		border-color: $sensei-color;
+	}
+	.token-field__suggestion.is-selected {
+		background-color: darken($sensei-color, 10);
 	}
 }
