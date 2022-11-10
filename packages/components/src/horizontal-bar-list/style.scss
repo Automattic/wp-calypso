@@ -77,6 +77,8 @@
 		z-index: 1;
 		color: var(--color-text);
 		flex: 1;
+		display: flex;
+		align-items: center;
 	}
 
 	.value {

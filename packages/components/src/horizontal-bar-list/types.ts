@@ -9,10 +9,10 @@ export type HorizontalBarListItemProps = {
 	data: StatDataObject;
 	maxValue: number;
 	url?: string;
-	onClick?: ( e: React.MouseEvent | React.KeyboardEvent ) => void;
+	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
 	hasIndicator?: boolean;
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
-	rightSideItem?: React.ReactNode | HTMLElement;
+	rightSideItem?: ( data: StatDataObject ) => React.ReactNode | HTMLElement;
 	useShortLabel?: boolean;
 	isStatic?: boolean;
 };

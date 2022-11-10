@@ -11,7 +11,7 @@ import page from 'page';
 import React from 'react';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import OpenLink from './action-link'; // only for downloads
+import OpenLink from './action-link';
 import StatsListActions from './stats-list-actions';
 import StatsListCountryFlag from './stats-list-country-flag';
 
@@ -45,6 +45,23 @@ const StatsListCard = ( {
 		}
 	};
 
+	const getRightItem = ( item, index ) => {
+		let rightSideItem;
+
+		if ( item.link ) {
+			// exception for items without actions
+			rightSideItem = (
+				<StatsListActions>
+					<OpenLink href={ item?.link } key={ `link-${ index }` } moduleName={ moduleType } />
+				</StatsListActions>
+			);
+		} else {
+			rightSideItem = <StatsListActions data={ item } moduleName={ moduleType } />;
+		}
+
+		return rightSideItem;
+	};
+
 	// Search doesn't have items sorted by value when there are 'Unknown search terms' present.
 	const barMaxValue = data?.length
 		? Math.max( ...data.map( ( item ) => item?.value || 0 ).filter( Number.isFinite ) )
@@ -73,19 +90,7 @@ const StatsListCard = ( {
 			<HorizontalBarList>
 				{ data?.map( ( item, index ) => {
 					let leftSideItem;
-					let rightSideItem;
 					const isInteractive = item?.link || item?.page || item?.children;
-
-					if ( moduleType === 'filedownloads' || ( moduleType === 'searchterms' && item.link ) ) {
-						// exception for items without actions
-						rightSideItem = (
-							<StatsListActions>
-								<OpenLink href={ item?.link } key={ `link-${ index }` } moduleName={ moduleType } />
-							</StatsListActions>
-						);
-					} else {
-						rightSideItem = <StatsListActions data={ item } moduleName={ moduleType } />;
-					}
 
 					// left icon visible only for Author avatars and Contry flags.
 					if ( item?.countryCode ) {
@@ -100,11 +105,12 @@ const StatsListCard = ( {
 							data={ item }
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
-							onClick={ ( e ) => localClickHandler( e, item ) }
+							onClick={ localClickHandler }
 							leftSideItem={ leftSideItem }
-							rightSideItem={ rightSideItem }
+							rightSideItem={ ( incomingItem ) => getRightItem( incomingItem, index ) }
 							useShortLabel={ useShortLabel }
 							isStatic={ ! isInteractive }
+							barMaxValue={ barMaxValue }
 						/>
 					);
 				} ) }
