@@ -99,7 +99,7 @@ function render( element, key, req ) {
 				} );
 			}
 			renderedLayout = ReactDomServer.renderToString( element );
-			// markupCache.set( key, renderedLayout );
+			markupCache.set( key, renderedLayout );
 		}
 		const rtsTimeMs = Date.now() - startTime;
 		debug( 'Server render time (ms)', rtsTimeMs );
@@ -242,7 +242,7 @@ export function serverRender( req, res ) {
 	context.initialQueryState = dehydrateQueryClient( context.queryClient );
 
 	if ( context.store ) {
-		// performanceMark( req, 'redux store', true );
+		performanceMark( req, 'redux store', true );
 		attachHead( context );
 
 		const isomorphicSubtrees = context.section?.isomorphic ? [ 'themes', 'ui', 'plugins' ] : [];
