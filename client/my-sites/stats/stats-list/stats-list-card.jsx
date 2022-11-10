@@ -45,7 +45,7 @@ const StatsListCard = ( {
 		}
 	};
 
-	const getRightItem = ( item, index ) => {
+	const outputRightItem = ( item, index ) => {
 		let rightSideItem;
 
 		if ( item.link ) {
@@ -107,7 +107,7 @@ const StatsListCard = ( {
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ localClickHandler }
 							leftSideItem={ leftSideItem }
-							rightSideItem={ ( incomingItem ) => getRightItem( incomingItem, index ) }
+							renderRightSideItem={ ( incomingItem ) => outputRightItem( incomingItem, index ) }
 							useShortLabel={ useShortLabel }
 							isStatic={ ! isInteractive }
 							barMaxValue={ barMaxValue }

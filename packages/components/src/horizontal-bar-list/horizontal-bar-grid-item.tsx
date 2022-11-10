@@ -16,7 +16,7 @@ const HorizontalBarListItem = ( {
 	onClick,
 	hasIndicator,
 	leftSideItem,
-	rightSideItem,
+	renderRightSideItem,
 	useShortLabel,
 	isStatic,
 }: HorizontalBarListItemProps ) => {
@@ -91,9 +91,9 @@ const HorizontalBarListItem = ( {
 							</span>
 						) }
 					</TagName>
-					{ rightSideItem && (
+					{ renderRightSideItem && (
 						<span className={ `${ BASE_CLASS_NAME }--hover-action` }>
-							{ rightSideItem( data ) }
+							{ renderRightSideItem( data ) }
 						</span>
 					) }
 				</div>
@@ -108,7 +108,7 @@ const HorizontalBarListItem = ( {
 									data={ child }
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
-									rightSideItem={ rightSideItem }
+									renderRightSideItem={ renderRightSideItem }
 									onClick={ ( e ) => onClick?.( e, child ) }
 									hasIndicator={ hasIndicator }
 									isStatic={ isStatic }

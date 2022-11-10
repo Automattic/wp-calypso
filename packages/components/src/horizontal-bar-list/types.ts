@@ -12,7 +12,7 @@ export type HorizontalBarListItemProps = {
 	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
 	hasIndicator?: boolean;
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
-	rightSideItem?: ( data: StatDataObject ) => React.ReactNode | HTMLElement;
+	renderRightSideItem?: ( data: StatDataObject ) => React.ReactNode;
 	useShortLabel?: boolean;
 	isStatic?: boolean;
 };
