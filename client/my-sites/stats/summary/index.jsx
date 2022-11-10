@@ -13,7 +13,7 @@ import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Countries from '../stats-countries';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
@@ -242,7 +242,7 @@ class StatsSummary extends Component {
 
 		// Append the site domain as needed.
 		const isFixedNavHeadersEnabled = config.isEnabled( 'stats/fixed-nav-headers' );
-		const domain = this.props.path?.split( '/' ).pop();
+		const domain = this.props.siteSlug;
 		if ( domain?.length > 0 ) {
 			backLink += domain;
 		}
@@ -280,6 +280,7 @@ export default connect( ( state, { context, postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	return {
 		siteId: getSelectedSiteId( state ),
+		siteSlug: getSelectedSiteSlug( state, siteId ),
 		media: context.params.module === 'videodetails' ? getMediaItem( state, siteId, postId ) : false,
 	};
 } )( localize( StatsSummary ) );

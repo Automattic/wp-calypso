@@ -112,8 +112,12 @@ export default function AssignLicenseForm( {
 		} );
 	}, [ dispatch, licenseKeysArray, selectedSite, assignLicense.mutate ] );
 
-	const onAssignLater = () =>
+	const onAssignLater = () => {
+		if ( licenseKeysArray.length > 1 ) {
+			page.redirect( '/partner-portal/licenses' );
+		}
 		page.redirect( addQueryArgs( { highlight: licenseKey }, '/partner-portal/licenses' ) );
+	};
 
 	return (
 		<div className="assign-license-form">
