@@ -11,7 +11,11 @@ let refreshRequest = null;
 export default async function refreshCountryCodeCookieGdpr() {
 	const cookies = cookie.parse( document.cookie );
 	if ( cookies.country_code && cookies.region ) {
-		debug( 'refreshCountryCodeCookieGdpr: country_code cookie is fresh: %s', cookies.country_code );
+		debug(
+			'refreshCountryCodeCookieGdpr: country_code ( value: "%s") and region ( value: "%s") cookies are fresh',
+			cookies.country_code,
+			cookies.region
+		);
 		return;
 	}
 
