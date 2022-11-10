@@ -1,4 +1,4 @@
-export const writingPrompt = {
+export const bloggingPrompt = {
 	type: 'object',
 	additionalProperties: true,
 	properties: {

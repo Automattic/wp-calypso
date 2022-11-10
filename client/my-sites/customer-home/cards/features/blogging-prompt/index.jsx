@@ -3,20 +3,20 @@ import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import CardHeading from 'calypso/components/card-heading';
-import useWritingPrompt from 'calypso/data/writing-prompt/use-writing-prompt';
+import useBloggingPrompt from 'calypso/data/blogging-prompt/use-blogging-prompt';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import LightbulbIcon from './lightbulb-icon';
 import './style.scss';
 
-export const WritingPromptCard = () => {
+export const BloggingPromptCard = () => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
-	const prompt = useWritingPrompt( selectedSiteId );
+	const prompt = useBloggingPrompt( selectedSiteId );
 
-	const trackWritingPromptClick = () => {
+	const trackBloggingPromptClick = () => {
 		dispatch(
 			recordTracksEvent( `calypso_customer_home_answer_prompt`, {
 				site_id: selectedSiteId,
@@ -29,15 +29,18 @@ export const WritingPromptCard = () => {
 	if ( ! prompt ) {
 		return null;
 	}
+
+	const newPostLink = `/post/${ siteSlug }?answer_prompt=${ prompt.id }`;
+
 	return (
-		<div className="writing-prompt">
-			<Card className={ classnames( 'customer-home__card', 'writing-prompt__card' ) }>
+		<div className="blogging-prompt">
+			<Card className={ classnames( 'customer-home__card', 'blogging-prompt__card' ) }>
 				<CardHeading>
 					<LightbulbIcon />
 					{ translate( 'Daily Prompt' ) }
 				</CardHeading>
-				<div className="writing-prompt__prompt-text">{ prompt.text }</div>
-				<Button href={ `/post/${ siteSlug }` } onClick={ trackWritingPromptClick } target="_blank">
+				<div className="blogging-prompt__prompt-text">{ prompt.text }</div>
+				<Button href={ newPostLink } onClick={ trackBloggingPromptClick } target="_blank">
 					{ translate( 'Post Answer' ) }
 				</Button>
 			</Card>
@@ -45,4 +48,4 @@ export const WritingPromptCard = () => {
 	);
 };
 
-export default WritingPromptCard;
+export default BloggingPromptCard;

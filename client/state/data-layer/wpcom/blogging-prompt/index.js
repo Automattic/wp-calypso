@@ -1,9 +1,9 @@
 import moment from 'moment';
-import { WRITING_PROMPT_REQUEST } from 'calypso/state/action-types';
+import { BLOGGING_PROMPT_REQUEST } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { receiveWritingPrompt } from 'calypso/state/writing-prompts/actions';
+import { receiveBloggingPrompt } from 'calypso/state/blogging-prompts/actions';
 const noop = () => {};
 
 // Transform the response to a data / schema calypso understands
@@ -18,7 +18,7 @@ const fromApi = ( payload ) => {
 	};
 };
 
-export const fetchWritingPrompt = ( action ) => {
+export const fetchBloggingPrompt = ( action ) => {
 	const today = moment().format( 'YYYY-MM-DD' );
 	return http(
 		{
@@ -33,17 +33,17 @@ export const fetchWritingPrompt = ( action ) => {
 	);
 };
 
-export const receiveWritingPromptSuccess = ( action, writingPrompt ) => {
-	return receiveWritingPrompt( action.siteId, writingPrompt );
+export const receiveBloggingPromptSuccess = ( action, bloggingPrompt ) => {
+	return receiveBloggingPrompt( action.siteId, bloggingPrompt );
 };
 
-const dispatchWritingPromptRequest = dispatchRequest( {
-	fetch: fetchWritingPrompt,
-	onSuccess: receiveWritingPromptSuccess,
+const dispatchBloggingPromptRequest = dispatchRequest( {
+	fetch: fetchBloggingPrompt,
+	onSuccess: receiveBloggingPromptSuccess,
 	onError: noop,
 	fromApi,
 } );
 
-registerHandlers( 'state/data-layer/wpcom/writing-prompt/index.js', {
-	[ WRITING_PROMPT_REQUEST ]: [ dispatchWritingPromptRequest ],
+registerHandlers( 'state/data-layer/wpcom/blogging-prompt/index.js', {
+	[ BLOGGING_PROMPT_REQUEST ]: [ dispatchBloggingPromptRequest ],
 } );
