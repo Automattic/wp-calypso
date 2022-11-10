@@ -9,16 +9,11 @@ const Template = ( args ) => <PromoCard { ...args } />;
 
 export const Default = Template.bind( {} );
 Default.args = {
-	data: {
-		isMobile: false,
-	},
+	isMobile: false,
 };
 
 export const Mobile = Template.bind( {} );
 Mobile.args = {
-	data: {
-		...Default.args.data,
-		isMobile: true,
-	},
 	className: 'example-extra-classname',
+	isMobile: true,
 };
