@@ -8,6 +8,9 @@ type InlineSkeletonProps = {
 	children: React.ReactNode;
 };
 
+/**
+ * Loading skeleton that takes its sizes from the font size
+ */
 export const InlineSkeleton = ( props: InlineSkeletonProps ) => {
 	if ( props.loaded ) {
 		return <>{ props.children }</>;

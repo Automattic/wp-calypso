@@ -14,6 +14,9 @@ export type SupportPageBlockAttributes = {
 	likes?: number;
 };
 
+/**
+ * Fetch the page content via API and parse its data. Return data as block attributes.
+ */
 export async function fetchPageAttributes( url: string ): Promise< SupportPageBlockAttributes > {
 	const { blog, slug } = getSlugFromUrl( url );
 
@@ -47,6 +50,9 @@ function stripHtml( html: string ): string {
 	return doc.body.textContent || '';
 }
 
+/**
+ * Get WP blog & slug from the page URL
+ */
 function getSlugFromUrl( url: string ): { blog: string; slug: string } {
 	const urlMatches = url.match( SUPPORT_PAGE_PATTERN );
 	const lang = urlMatches?.groups?.lang ?? 'en';

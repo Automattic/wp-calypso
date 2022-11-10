@@ -15,6 +15,9 @@ type EmbedPlaceHolderProps = {
 	updateUrl( s: string ): void;
 };
 
+/**
+ * UI for configuring the embed
+ */
 export const EmbedPlaceHolder = ( props: EmbedPlaceHolderProps ) => {
 	return (
 		<div className={ classnames( 'hb-support-page-embed-placeholder', props.className ) }>

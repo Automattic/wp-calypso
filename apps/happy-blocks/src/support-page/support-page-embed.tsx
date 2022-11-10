@@ -3,6 +3,9 @@ import { SupportPageBlockAttributes } from './block';
 import { WordPressIcon } from './icon';
 import { InlineSkeleton } from './inline-skeleton';
 
+/**
+ * Rendered embed for the Support Page block.
+ */
 export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttributes } ) => {
 	const loaded = !! props.attributes.content;
 
