@@ -6,6 +6,8 @@ import debugFactory from 'debug';
  */
 export const debug = debugFactory( 'calypso:analytics:ad-tracking' );
 
+export const A8C_ANALYTICS_CACHE_VERSION = 1000;
+
 export const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevents.js';
 export const GOOGLE_GTAG_SCRIPT_URL = 'https://www.googletagmanager.com/gtag/js?id=';
 export const BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js';

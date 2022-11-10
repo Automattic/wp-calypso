@@ -1,6 +1,8 @@
 import { loadScript } from '@automattic/load-script';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { debug, A8C_ANALYTICS_CACHE_VERSION } from 'calypso/lib/analytics/ad-tracking/constants';
+import { loadTrackingScripts } from 'calypso/lib/analytics/ad-tracking/load-tracking-scripts';
 
 type A8CAnalyticsConfig = {
 	cookieBanner: unknown; // TODO: Import typing from a8c-analytics.js
@@ -53,6 +55,14 @@ const a8cAnalyticsConfig: A8CAnalyticsConfig = {
 	},
 };
 
+const onA8cAnalyticsLoaded = () => {
+	debug( '[ a8c-analytics.js ] Script has been loaded, Cookie Banner may be displayed' );
+};
+const onA8cTrackersFired = () => {
+	debug( '[ a8c-analytics.js ] Triggering allowed trackers in regard to user consent' );
+	loadTrackingScripts();
+};
+
 /**
  * Component that loads a8c-analytics.js scripts into the React app functionality.
  * That includes:
@@ -63,28 +73,28 @@ const a8cAnalyticsConfig: A8CAnalyticsConfig = {
  * https://opengrok.a8c.com/source/xref/wpcom/wp-content/mu-plugins/a8c-analytics/a8c-analytics.js?r=25b9de55
  */
 const QueryAnalyticsBanners = () => {
-	const onA8cAnalyticsLoaded = () => {
-		// TODO: Handle on load
-	};
-
 	useEffect(
 		() => {
 			// Assign config that will be used by a8c-analytics.js script
 			window.a8cAnalyticsConfig = a8cAnalyticsConfig;
 			// Add listener that will get triggered once a8c-analytics.js will be successfully loaded
 			window.addEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
+			window.addEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
 			// Load the script into the html document
 			loadScript(
-				'//s1.wp.com/wp-content/mu-plugins/a8c-analytics/a8c-analytics.js?v=1',
+				`//s1.wp.com/wp-content/mu-plugins/a8c-analytics/a8c-analytics.js?v=${ A8C_ANALYTICS_CACHE_VERSION }`,
 				( error?: string ) => {
 					if ( error ) {
-						// TODO: Handle error
+						debug(
+							"[ a8c-analytics.js ] Couldn't load the script! Aborting displaying Cookie Banner"
+						);
 					}
 				}
 			);
 
 			return () => {
 				window.removeEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
+				window.removeEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
 			};
 		},
 		[
