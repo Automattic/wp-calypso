@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
@@ -37,12 +36,9 @@ export const siteSetupFlow: Flow = {
 	name: 'site-setup',
 
 	useSteps() {
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
-
 		return [
-			...( isEnabled( 'signup/goals-step' ) && isEnabledFTM ? [ 'goals' ] : [] ),
-			...( isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM ? [ 'vertical' ] : [] ),
+			'goals',
+			'vertical',
 			'intent',
 			'options',
 			'designSetup',
@@ -89,8 +85,6 @@ export const siteSetupFlow: Flow = {
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
 
-		const isEnglishLocale = useIsEnglishLocale();
-		const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
 		const isDesktop = useViewportMatch( 'large' );
@@ -113,8 +107,6 @@ export const siteSetupFlow: Flow = {
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
-		const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
-		const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
 
@@ -137,11 +129,10 @@ export const siteSetupFlow: Flow = {
 						return;
 					}
 
-					const pendingActions = [ setIntentOnSite( siteSlug, intent ) ];
-
-					if ( goalsStepEnabled ) {
-						pendingActions.push( setGoalsOnSite( siteSlug, goals ) );
-					}
+					const pendingActions = [
+						setIntentOnSite( siteSlug, intent ),
+						setGoalsOnSite( siteSlug, goals ),
+					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
 						pendingActions.push(
 							setThemeOnSite(
@@ -278,18 +269,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'difmStartingPoint' );
 					}
 
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					switch ( intent ) {
-						case SiteIntent.Write:
-						case SiteIntent.Sell:
-							return navigate( 'options' );
-						case SiteIntent.Build:
-						default:
-							return navigate( 'designSetup' );
-					}
+					return navigate( 'vertical' );
 				}
 
 				case 'intent': {
@@ -378,21 +358,17 @@ export const siteSetupFlow: Flow = {
 				}
 
 				case 'vertical': {
-					if ( goalsStepEnabled ) {
-						if ( goals.includes( SiteGoal.Import ) ) {
-							return navigate( 'import' );
-						}
-
-						switch ( intent ) {
-							case SiteIntent.Write:
-							case SiteIntent.Sell:
-								return navigate( 'options' );
-							default:
-								return navigate( 'designSetup' );
-						}
+					if ( goals.includes( SiteGoal.Import ) ) {
+						return navigate( 'import' );
 					}
 
-					return navigate( 'intent' );
+					switch ( intent ) {
+						case SiteIntent.Write:
+						case SiteIntent.Sell:
+							return navigate( 'options' );
+						default:
+							return navigate( 'designSetup' );
+					}
 				}
 
 				case 'importReady': {
@@ -437,7 +413,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'options' );
 
 				case 'intent':
-					return navigate( verticalsStepEnabled ? 'vertical' : 'intent' );
+					return navigate( 'vertical' );
 
 				case 'storeFeatures':
 					return navigate( 'options' );
@@ -471,14 +447,7 @@ export const siteSetupFlow: Flow = {
 						return navigate( 'goals' );
 					}
 
-					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
-					}
-
-					return navigate( 'intent' );
+					return navigate( 'vertical' );
 
 				case 'patternAssembler':
 					return navigate( 'designSetup' );
@@ -513,27 +482,16 @@ export const siteSetupFlow: Flow = {
 					if ( intent === 'difm' ) {
 						return navigate( 'difmStartingPoint' );
 					}
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'options':
-					if ( goalsStepEnabled ) {
-						if ( verticalsStepEnabled ) {
-							return navigate( 'vertical' );
-						}
-						return navigate( 'goals' );
-					}
+					return navigate( 'vertical' );
 
 				case 'import':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				case 'difmStartingPoint':
-					if ( goalsStepEnabled ) {
-						return navigate( 'goals' );
-					}
+					return navigate( 'goals' );
 
 				default:
 					return navigate( 'intent' );
@@ -562,11 +520,7 @@ export const siteSetupFlow: Flow = {
 					return navigate( 'importList' );
 
 				case 'difmStartingPoint': {
-					if ( verticalsStepEnabled ) {
-						return navigate( 'vertical' );
-					}
-
-					return navigate( 'designSetup' );
+					return navigate( 'vertical' );
 				}
 
 				default:
