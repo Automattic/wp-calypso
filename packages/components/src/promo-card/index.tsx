@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
-import { AppStoreSVG, JetpackSVG, QRCodeSVG, WordPressSVG } from './svg-icons';
+import { AppStoreSVG, QRCodeSVG, WordPressJetpackSVG } from './svg-icons';
 
 export type PromoCardProps = {
 	className?: string;
@@ -42,8 +42,7 @@ export default function PromoCard( { className, isMobile }: PromoCardProps ) {
 		<div className={ classNames( 'promo-card', className ?? null ) }>
 			<div className="promo-lhs">
 				<div className="promo-card__icons">
-					<WordPressSVG />
-					<JetpackSVG className="secondary" />
+					<WordPressJetpackSVG />
 				</div>
 				<p className="promo-card__title">{ getTitle() }</p>
 				<p className="promo-card__message">{ getMessage() }</p>
