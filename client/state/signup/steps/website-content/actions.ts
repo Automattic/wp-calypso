@@ -1,5 +1,20 @@
 import { TranslateResult } from 'i18n-calypso';
 import {
+	HOME_PAGE,
+	BLOG_PAGE,
+	CONTACT_PAGE,
+	ABOUT_PAGE,
+	PHOTO_GALLERY_PAGE,
+	VIDEO_GALLERY_PAGE,
+	PORTFOLIO_PAGE,
+	FAQ_PAGE,
+	SERVICES_PAGE,
+	TESTIMONIALS_PAGE,
+	PRICING_PAGE,
+	TEAM_PAGE,
+	PageId,
+} from 'calypso/signup/difm/constants';
+import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_COMPLETED,
 	SIGNUP_STEPS_WEBSITE_CONTENT_IMAGE_UPLOAD_STARTED,
@@ -95,20 +110,37 @@ export function updateWebsiteContentCurrentIndex( currentIndex: number ) {
 	};
 }
 
+function getImagePlaceholders( pageId: PageId ) {
+	switch ( pageId ) {
+		case PORTFOLIO_PAGE:
+		case PHOTO_GALLERY_PAGE:
+			return Array( 8 ).fill( { caption: '', url: '' } );
+		case HOME_PAGE:
+		case BLOG_PAGE:
+		case CONTACT_PAGE:
+		case ABOUT_PAGE:
+		case VIDEO_GALLERY_PAGE:
+		case FAQ_PAGE:
+		case SERVICES_PAGE:
+		case TESTIMONIALS_PAGE:
+		case PRICING_PAGE:
+		case TEAM_PAGE:
+		default:
+			return Array( 4 ).fill( { caption: '', url: '' } );
+	}
+}
+
 export function initializePages(
-	pageNames: Array< { id: string; name: TranslateResult } >,
+	pageNames: Array< { id: PageId; name: TranslateResult } >,
 	siteId: SiteId
 ) {
 	const generatedPages = pageNames.map( ( { id, name } ) => ( {
 		id,
 		title: name,
 		content: '',
-		images: [
-			{ caption: '', url: '' },
-			{ caption: '', url: '' },
-			{ caption: '', url: '' },
-		],
+		images: getImagePlaceholders( id ),
 	} ) );
+
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
 		payload: {
