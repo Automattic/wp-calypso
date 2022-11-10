@@ -4,6 +4,10 @@
 .license-product-card {
 	width: 100%;
 
+	&.disabled {
+		opacity: 0.4;
+	}
+
 	@include break-xlarge {
 		width: 50%;
 	}
