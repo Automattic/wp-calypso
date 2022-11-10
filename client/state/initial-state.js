@@ -184,7 +184,7 @@ function getInitialPersistedState( initialReducer, currentUserId ) {
 			 * Decide whether to save a flag that indicates whether
 			 * the persisted state was randomly cleared
 			 */
-			if ( config.isEnable( 'force-sympathy' ) ) {
+			if ( config.isEnabled( 'force-sympathy' ) ) {
 				/**
 				 * If we're forcing the state-clearing we don't
 				 * have to announce it, because someone intentionally
