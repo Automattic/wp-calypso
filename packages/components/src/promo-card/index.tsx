@@ -6,15 +6,12 @@ import { AppStoreSVG, JetpackSVG, QRCodeSVG, WordPressSVG } from './svg-icons';
 export type PromoCardProps = {
 	className?: string;
 	data: {
-		title: string | null;
-		message: string | null;
 		isMobile?: boolean;
 	};
 };
 
 export default function PromoCard( { className, data }: PromoCardProps ) {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { title, message, isMobile } = data;
+	const { isMobile } = data;
 	// Using useTranslate() with interpolation to set up the title/message.
 	// https://wpcalypso.wordpress.com/devdocs/packages/i18n-calypso/README.md
 	const translate = useTranslate();
