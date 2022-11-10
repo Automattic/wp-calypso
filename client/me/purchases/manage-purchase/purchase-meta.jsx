@@ -310,7 +310,7 @@ function PurchaseMetaPrice( { purchase } ) {
 			return translate( 'month' );
 		}
 
-		return translate( 'year' );
+		throw new Error( 'An unexpected error occured' );
 	};
 
 	const getPriceLabel = ( period ) => {
