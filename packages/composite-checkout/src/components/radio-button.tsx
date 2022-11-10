@@ -106,8 +106,9 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
-	align-items: flex-start;
+	align-items: center;
 	font-size: 14px;
+	height: 72px;
 
 	.rtl & {
 		padding: 16px 40px 16px 14px;
@@ -124,7 +125,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
-		top: 19px;
+		top: 28px;
 		left: 16px;
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
@@ -143,7 +144,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		top: 23px;
+		top: 32px;
 		left: 20px;
 		position: absolute;
 		background: ${ getRadioColor };
