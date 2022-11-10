@@ -68,6 +68,7 @@ export default function LicenseProductCard( props: Props ) {
 			role={ isMultiSelect ? 'checkbox' : 'radio' }
 			tabIndex={ tabIndex }
 			aria-checked={ isSelected }
+			aria-disabled={ isDisabled }
 			className={ classNames( {
 				'license-product-card': true,
 				selected: isSelected,
