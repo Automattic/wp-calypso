@@ -113,3 +113,39 @@
 		min-width: unset !important;
 	}
 }
+
+@keyframes hb-support-page_skeleton__animation {
+	0% {
+		opacity: 0.5;
+	}
+
+	50% {
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0.5;
+	}
+}
+
+.hb-support-page-inline-skeleton {
+	display: inline-block;
+	color: #eaeaea;
+	background-color: #eaeaea;
+	width: 20em;
+
+	animation: hb-support-page_skeleton__animation 1.6s ease-in-out infinite;
+
+	&::after {
+		content: "X";
+	}
+
+	&__hidden {
+		visibility: hidden;
+	}
+
+	&__large {
+		width: 34em;
+		height: 40px;
+	}
+}
