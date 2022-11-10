@@ -53,6 +53,17 @@ const HorizontalBarListItem = ( {
 	const TagName = isLink ? 'a' : 'div'; // group parents and countries don't use anchors.
 	const labelText = decodeEntities( useShortLabel ? shortLabel || '' : label ); // shortLabel as an empty string to make TS happy
 
+	let rowClick;
+	let rowKeyPress;
+
+	if ( hasChildren ) {
+		rowClick = toggleOpen;
+		rowKeyPress = toggleOpenKey;
+	} else if ( ! url ) {
+		rowClick = onClickHandler;
+		rowKeyPress = onKeyDownHandler;
+	}
+
 	return (
 		<>
 			<li
@@ -65,8 +76,11 @@ const HorizontalBarListItem = ( {
 				style={ {
 					[ `--${ BASE_CLASS_NAME }-fill` ]: `${ fillPercentage }%`,
 				} }
-				onClick={ ! url ? onClickHandler : undefined } // only execute onClick if url is not defined, otherwise anchor will be ignored
-				onKeyDown={ ! url ? onKeyDownHandler : undefined }
+				onClick={ rowClick } // only execute onClick if url is not defined, otherwise anchor click will be ignored
+				onKeyDown={ rowKeyPress }
+				// eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+				role="button"
+				tabIndex={ 0 }
 			>
 				<div className={ `${ BASE_CLASS_NAME }-item-bar` }>
 					{ leftSideItem && <span>{ leftSideItem }</span> }
@@ -80,13 +94,7 @@ const HorizontalBarListItem = ( {
 					>
 						<span>{ labelText }</span>
 						{ hasChildren && (
-							<span
-								className={ `${ BASE_CLASS_NAME }-group-toggle` }
-								role="button"
-								onClick={ toggleOpen }
-								onKeyDown={ toggleOpenKey }
-								tabIndex={ 0 }
-							>
+							<span className={ `${ BASE_CLASS_NAME }-group-toggle` }>
 								<Icon icon={ open ? chevronUp : chevronDown } />
 							</span>
 						) }
@@ -102,9 +110,10 @@ const HorizontalBarListItem = ( {
 			{ itemChildren && open && (
 				<li>
 					<ul className={ `${ BASE_CLASS_NAME }-group` }>
-						{ itemChildren?.map( ( child ) => {
+						{ itemChildren?.map( ( child, index ) => {
 							return (
 								<HorizontalBarListItem
+									key={ `group-${ child?.id || index }` }
 									data={ child }
 									maxValue={ maxValue }
 									useShortLabel={ useShortLabel }
