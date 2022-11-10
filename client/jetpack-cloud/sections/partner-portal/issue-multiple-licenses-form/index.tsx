@@ -88,7 +88,7 @@ export default function IssueMultipleLicensesForm( {
 				?.filter(
 					( product ) =>
 						product.family_slug === selectedProduct?.family_slug &&
-						selectedProduct.slug !== selectedProduct.slug
+						product.slug !== selectedProduct.slug
 				)
 				.map( ( product ) => product.slug )
 		);
