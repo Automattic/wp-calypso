@@ -56,7 +56,7 @@ export default function HighlightCard( {
 				>
 					{ formatNumber( count ) }
 				</span>{ ' ' }
-				{ difference !== null && difference !== 0 ? (
+				{ difference !== null ? (
 					<span
 						className={ classNames( 'highlight-card-difference', {
 							'highlight-card-difference--positive': difference < 0,
