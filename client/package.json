@@ -13,6 +13,7 @@
 	"main": "server/index.js",
 	"dependencies": {
 		"@automattic/accessible-focus": "workspace:^",
+		"@automattic/blocks-renderer": "workspace:^",
 		"@automattic/browser-data-collector": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-babel-config": "workspace:^",

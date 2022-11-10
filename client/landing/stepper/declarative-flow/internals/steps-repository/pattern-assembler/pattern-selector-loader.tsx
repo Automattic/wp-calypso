@@ -1,6 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import PatternSelector from './pattern-selector';
-import { headerPatterns, footerPatterns, sectionPatterns } from './patterns-data';
+import { HEADER_PATTERN_LIST, FOOTER_PATTERN_LIST, SECTION_PATTERN_LIST } from './patterns-data';
+import useQueryPatterns from './use-query-patterns';
 import type { Pattern } from './types';
 
 type PatternSelectorLoaderProps = {
@@ -17,6 +19,26 @@ const PatternSelectorLoader = ( {
 	selectedPattern,
 }: PatternSelectorLoaderProps ) => {
 	const translate = useTranslate();
+	const { data: patterns } = useQueryPatterns();
+	const { headerPatterns, footerPatterns, sectionPatterns } = useMemo( () => {
+		const patternsById: { [ key: number ]: Pattern } = ( patterns || [] ).reduce(
+			( acc, pattern ) => ( {
+				...acc,
+				[ pattern.ID ]: pattern,
+			} ),
+			{}
+		);
+
+		return {
+			headerPatterns: HEADER_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
+			footerPatterns: FOOTER_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
+			sectionPatterns: SECTION_PATTERN_LIST.map( ( id ) => patternsById[ id ] ).filter( Boolean ),
+		};
+	}, [ patterns ] );
+
+	if ( ! patterns ) {
+		return null;
+	}
 
 	return (
 		<>

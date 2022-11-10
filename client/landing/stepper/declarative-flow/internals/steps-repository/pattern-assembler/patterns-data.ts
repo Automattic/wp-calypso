@@ -183,5 +183,3 @@ const sectionPatterns: Pattern[] = [
 		name: 'Three column text and links',
 	},
 ];
-
-export { headerPatterns, footerPatterns, sectionPatterns };

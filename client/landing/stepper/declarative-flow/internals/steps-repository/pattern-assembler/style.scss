@@ -289,32 +289,24 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__block-list {
-			iframe {
-				width: 1024px;
-				height: 665px;
-				transform: scale(0.268);
-				transform-origin: top left;
-				position: absolute;
-				border-radius: 4px;
-				pointer-events: none;
-				overflow: hidden;
-			}
-
-			div {
+			.pattern-selector__block-list-item {
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
-				min-height: 140px;
 				transform: translateZ(0);
 				overflow: hidden;
 				user-select: none;
 				cursor: pointer;
 				background: #fff;
 
+				iframe {
+					border: none;
+				}
+
 				&:not(:last-child) {
 					margin-bottom: 16px;
 				}
 
-				&.pattern-selector__block-list--selected-pattern {
+				&--selected-pattern {
 					box-shadow: 0 0 0 2px var(--studio-gray);
 				}
 

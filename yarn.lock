@@ -81,13 +81,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/blocks-renderer@workspace:packages/blocks-renderer":
+"@automattic/blocks-renderer@workspace:^, @automattic/blocks-renderer@workspace:packages/blocks-renderer":
   version: 0.0.0-use.local
   resolution: "@automattic/blocks-renderer@workspace:packages/blocks-renderer"
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@automattic/js-utils": "workspace:^"
+    "@wordpress/block-editor": ^9.1.0
+    "@wordpress/block-library": ^7.6.0
+    "@wordpress/blocks": ^11.8.0
+    "@wordpress/edit-site": ^4.6.0
+    "@wordpress/editor": ^12.8.0
     classnames: ^2.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -12555,6 +12561,7 @@ __metadata:
   resolution: "calypso@workspace:client"
   dependencies:
     "@automattic/accessible-focus": "workspace:^"
+    "@automattic/blocks-renderer": "workspace:^"
     "@automattic/browser-data-collector": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
