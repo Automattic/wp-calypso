@@ -47,6 +47,8 @@ export const Edit = compose( withNotices )( ( props: EditProps ) => {
 		}
 
 		try {
+			setAttributes( { url } );
+
 			const fetchedAttributes = await fetchPageAttributes( url );
 
 			noticeOperations.removeAllNotices();
