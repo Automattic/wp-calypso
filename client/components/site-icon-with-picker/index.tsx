@@ -55,42 +55,43 @@ export function SiteIconWithPicker( {
 
 	return (
 		<>
-			{ editingFile && imageEditorOpen && (
-				<Dialog
-					className="site-icon-with-picker__background"
-					isVisible={ true }
-					isBackdropVisible={ false }
-					onClose={ () => {
+			<Dialog
+				className="site-icon-with-picker__background"
+				isVisible={ Boolean( editingFile && imageEditorOpen ) }
+				isBackdropVisible={ true }
+				onClose={ () => {
+					setImageEditorOpen( false );
+				} }
+				shouldCloseOnEsc={ true }
+			>
+				<ImageEditor
+					className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
+					siteId={ site?.ID }
+					media={ {
+						src:
+							editingFile ??
+							'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+					} }
+					allowedAspectRatios={ [ 'ASPECT_1X1' ] }
+					onDone={ ( _error: Error | null, image: Blob ) => {
+						onSelect( new File( [ image ], editingFileName || 'site-logo.png' ) );
+						setSelectedFileUrl( URL.createObjectURL( image ) );
+						setEditingFile( URL.createObjectURL( image ) );
 						setImageEditorOpen( false );
 					} }
-					shouldCloseOnEsc={ true }
-				>
-					<ImageEditor
-						className={ classNames( 'site-icon-with-picker__image-editor', imageEditorClassName ) }
-						siteId={ site?.ID }
-						media={ {
-							src: editingFile,
-						} }
-						allowedAspectRatios={ [ 'ASPECT_1X1' ] }
-						onDone={ ( _error: Error | null, image: Blob ) => {
-							onSelect( new File( [ image ], editingFileName || 'site-logo.png' ) );
-							setSelectedFileUrl( URL.createObjectURL( image ) );
-							setEditingFile( URL.createObjectURL( image ) );
-							setImageEditorOpen( false );
-						} }
-						onCancel={ () => {
-							if ( ! selectedFileUrl ) {
-								setEditingFile( undefined );
-								setEditingFileName( undefined );
-							}
-							setImageEditorOpen( false );
-						} }
-						doneButtonText={ __( ' Apply ' ) }
-						displayOnlyIcon={ true }
-						widthLimit={ 512 }
-					/>
-				</Dialog>
-			) }
+					onCancel={ () => {
+						if ( ! selectedFileUrl ) {
+							setEditingFile( undefined );
+							setEditingFileName( undefined );
+						}
+						setImageEditorOpen( false );
+					} }
+					doneButtonText={ __( ' Apply ' ) }
+					displayOnlyIcon={ true }
+					widthLimit={ 512 }
+				/>
+			</Dialog>
+
 			<FormFieldset
 				className={ classNames( 'site-icon-with-picker__site-icon', uploadFieldClassName ) }
 				disabled={ disabled }

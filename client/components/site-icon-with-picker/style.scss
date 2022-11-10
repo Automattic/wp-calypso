@@ -1,38 +1,33 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/onboarding/styles/mixins";
 
 $icon-size: 80px;
 $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
 .site-icon-with-picker__background {
-	min-height: 60vh;
-	min-width: 100vw;
+	min-width: calc(100vw - 16px);
+	min-height: 95vh;
 	position: absolute;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
+	padding: 16px;
+
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
-	padding: 0;
 
-	@include onboarding-break-mobile-landscape {
-		padding: 16px;
+	@media screen and (orientation: landscape) and ( max-height: 720px ) {
 		min-width: 80vw;
 		min-height: 80vh;
 	}
 
 	@include break-medium {
-		padding: 16px;
 		min-width: 50vw;
+		min-height: 60vh;
 	}
 }
 
 .site-icon-with-picker__image-editor {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
 	height: calc(100% - 80px);
 	z-index: 2;
 
@@ -44,32 +39,46 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 	.image-editor__buttons {
 		position: absolute;
 		top: 100%;
-		right: 0;
+		right: 6px;
 		display: flex;
 		padding: 0;
 		margin-top: 20px;
 		border: none;
-		padding-right: 14px;
+
+		@include break-medium {
+			right: 10px;
+		}
 
 		&.image-editor__buttons-button {
 			width: 78px;
+			margin-left: 8px;
+			padding: 8px 12px;
+
+			@include break-medium {
+				margin-left: 10px;
+				padding: 8px 14px;
+			}
 		}
+
+		button {
+			border-radius: 4px;
+			@include break-medium {
+				width: 85px;
+			}
+		}
+
 		button:nth-child(1) {
 			order: 1;
-			width: 85px;
 		}
+
 		button:nth-child(2) {
 			order: 0;
-			@include break-medium {
-				width: 85px;
-			}
 		}
+
 		button:nth-child(3) {
 			order: 2;
-			@include break-medium {
-				width: 85px;
-			}
 		}
+
 		button:enabled {
 			font-weight: 500;
 			background-color: #fff;
@@ -87,6 +96,12 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 		margin-top: 20px;
 
 		.image-editor__toolbar-button {
+			margin: 0 6px;
+
+			@include break-medium {
+				margin: 0 10px;
+			}
+
 			svg {
 				display: none;
 			}
@@ -134,8 +149,8 @@ button.components-button.site-icon-with-picker__upload-button {
 	}
 
 	img {
-		height: $icon-size - 2;
-		width: $icon-size - 2;
+		height: $icon-size;
+		width: $icon-size;
 		border-radius: $icon-border-radius;
 		position: absolute;
 		top: 0;
