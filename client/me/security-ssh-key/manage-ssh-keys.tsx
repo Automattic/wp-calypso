@@ -8,7 +8,7 @@ import { SSHKeyData } from './use-ssh-key-query';
 
 type SSHKeyProps = { sshKey: SSHKeyData } & Pick<
 	ManageSSHKeyProps,
-	'userLogin' | 'onDelete' | 'keyBeingDeleted' | 'onUpdate'
+	'userLogin' | 'onDelete' | 'keyBeingDeleted' | 'onUpdate' | 'keyBeingUpdated'
 >;
 
 const SSHKeyItemCard = styled( CompactCard )( {
@@ -38,7 +38,14 @@ const SSHKeyAddedDate = styled.span( {
 	color: 'var( --color-text-subtle )',
 } );
 
-const SSHKey = ( { userLogin, sshKey, onDelete, onUpdate, keyBeingDeleted }: SSHKeyProps ) => {
+const SSHKey = ( {
+	userLogin,
+	sshKey,
+	onDelete,
+	onUpdate,
+	keyBeingDeleted,
+	keyBeingUpdated,
+}: SSHKeyProps ) => {
 	const { __ } = useI18n();
 	const handleDeleteClick = () => {
 		accept(
@@ -58,7 +65,7 @@ const SSHKey = ( { userLogin, sshKey, onDelete, onUpdate, keyBeingDeleted }: SSH
 			__( 'Are you sure you want to update this SSH key? It will affect all attached sites.' ),
 			( updated: boolean ) => {
 				if ( updated ) {
-					onUpdate( sshKey.name );
+					onUpdate( sshKey.name, sshKey.key );
 				}
 			}
 		);
@@ -89,7 +96,7 @@ const SSHKey = ( { userLogin, sshKey, onDelete, onUpdate, keyBeingDeleted }: SSH
 			</Button>
 			<Button
 				busy={ keyBeingDeleted === sshKey.name }
-				disabled={ !! keyBeingDeleted }
+				disabled={ !! keyBeingDeleted || !! keyBeingUpdated }
 				scary
 				onClick={ handleDeleteClick }
 				style={ { marginLeft: '10px' } }
@@ -103,8 +110,9 @@ const SSHKey = ( { userLogin, sshKey, onDelete, onUpdate, keyBeingDeleted }: SSH
 interface ManageSSHKeyProps {
 	sshKeys: SSHKeyData[];
 	onDelete( name: string ): void;
-	onUpdate( name: string ): void;
+	onUpdate( name: string, key: string ): void;
 	keyBeingDeleted: string | null;
+	keyBeingUpdated: boolean | null;
 	userLogin: string;
 }
 
@@ -114,6 +122,7 @@ export const ManageSSHKeys = ( {
 	onDelete,
 	onUpdate,
 	keyBeingDeleted,
+	keyBeingUpdated,
 }: ManageSSHKeyProps ) => {
 	return (
 		<>
@@ -125,6 +134,7 @@ export const ManageSSHKeys = ( {
 					onUpdate={ onUpdate }
 					onDelete={ onDelete }
 					keyBeingDeleted={ keyBeingDeleted }
+					keyBeingUpdated={ keyBeingUpdated }
 				/>
 			) ) }
 		</>

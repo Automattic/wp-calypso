@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import { CompactCard, LoadingPlaceholder } from '@automattic/components';
+import { CompactCard, Dialog, LoadingPlaceholder } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
@@ -20,6 +20,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { AddSSHKeyForm } from './add-ssh-key-form';
 import { ManageSSHKeys } from './manage-ssh-keys';
+import { UpdateSSHKeyForm } from './update-ssh-key-form';
 import { useAddSSHKeyMutation } from './use-add-ssh-key-mutation';
 import { useDeleteSSHKeyMutation } from './use-delete-ssh-key-mutation';
 import { useSSHKeyQuery } from './use-ssh-key-query';
@@ -53,6 +54,8 @@ export const SecuritySSHKey = () => {
 	const dispatch = useDispatch();
 	const currentUser = useSelector( getCurrentUser );
 	const [ sshKeyNameToUpdate, setSSHKeyNameToUpdate ] = useState( '' );
+	const [ oldSSHKey, setOldSSHKey ] = useState( '' );
+	const [ showDialog, setShowDialog ] = useState( false );
 
 	const { __ } = useI18n();
 	const queryArgs = getQueryArgs();
@@ -113,6 +116,8 @@ export const SecuritySSHKey = () => {
 			dispatch( recordTracksEvent( 'calypso_security_ssh_key_update_success' ) );
 			dispatch( successNotice( __( 'SSH key updated to account.' ), noticeOptions ) );
 			setSSHKeyNameToUpdate( '' );
+			setOldSSHKey( '' );
+			setShowDialog( false );
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -126,7 +131,7 @@ export const SecuritySSHKey = () => {
 					sprintf( __( 'Failed to update SSH key: %(reason)s' ), { reason: error.message } ),
 					{
 						...noticeOptions,
-						id: sshKeySaveUpdateNoticeId,
+						id: sshKeyUpdateFailureNoticeId,
 					}
 				)
 			);
@@ -187,13 +192,23 @@ export const SecuritySSHKey = () => {
 						) }
 					</p>
 				</div>
-				{ sshKeyNameToUpdate ? (
-					<AddSSHKeyForm
-						addSSHKey={ updateSSHKey }
-						isAdding={ keyBeingUpdated }
-						saveText="Update SSH Key"
-					/>
-				) : null }
+
+				<Dialog
+					isVisible={ showDialog }
+					onClose={ () => setShowDialog( false ) }
+					showCloseIcon={ true }
+					shouldCloseOnEsc={ true }
+				>
+					<div style={ { minWidth: '400px' } }>
+						<UpdateSSHKeyForm
+							oldSSHKey={ oldSSHKey }
+							keyName={ sshKeyNameToUpdate }
+							updateSSHKey={ updateSSHKey }
+							isUpdating={ keyBeingUpdated }
+							updateText="Update SSH Key"
+						/>
+					</div>
+				</Dialog>
 
 				{ isLoading ? (
 					<Placeholders />
@@ -204,12 +219,17 @@ export const SecuritySSHKey = () => {
 					/>
 				) : null }
 			</CompactCard>
-			{ hasKeys && currentUser?.username && ! sshKeyNameToUpdate && (
+			{ hasKeys && currentUser?.username && (
 				<ManageSSHKeys
 					userLogin={ currentUser.username }
 					sshKeys={ data }
 					onDelete={ ( sshKeyName ) => deleteSSHKey( { sshKeyName } ) }
-					onUpdate={ setSSHKeyNameToUpdate }
+					onUpdate={ ( sshKeyName, key ) => {
+						setSSHKeyNameToUpdate( sshKeyName );
+						setOldSSHKey( key );
+						setShowDialog( true );
+					} }
+					keyBeingUpdated={ keyBeingUpdated }
 					keyBeingDeleted={ keyBeingDeleted }
 				/>
 			) }
