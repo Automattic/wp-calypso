@@ -15,11 +15,11 @@ import {
 	OUTBRAIN_SCRIPT_URL,
 	PINTEREST_SCRIPT_URL,
 } from './constants';
-
-// Ensure setup has run.
-import './setup';
+import { setupAllTrackingScripts } from './setup';
 
 export const loadTrackingScripts = attemptLoad( async () => {
+	setupAllTrackingScripts();
+
 	const scripts = getTrackingScriptsToLoad();
 
 	let hasError = false;

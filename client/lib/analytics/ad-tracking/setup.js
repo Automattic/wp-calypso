@@ -7,71 +7,6 @@ import {
 	TRACKING_IDS,
 } from './constants';
 
-if ( typeof window !== 'undefined' ) {
-	if ( mayWeTrackByTracker( 'ga' ) ) {
-		setupGtag();
-	}
-
-	// Facebook
-	if ( mayWeTrackByTracker( 'facebook' ) ) {
-		setupFacebookGlobal();
-	}
-
-	// Bing
-	if ( mayWeTrackByTracker( 'bing' ) && ! window.uetq ) {
-		window.uetq = [];
-	}
-
-	// Criteo
-	if ( mayWeTrackByTracker( 'criteo' ) && ! window.criteo_q ) {
-		window.criteo_q = [];
-	}
-
-	// Quantcast
-	if ( mayWeTrackByTracker( 'quantcast' ) && ! window._qevents ) {
-		window._qevents = [];
-	}
-
-	// Google Ads Gtag for wordpress.com
-	if ( mayWeTrackByTracker( 'googleAds' ) ) {
-		setupWpcomGoogleAdsGtag();
-	}
-
-	if ( mayWeTrackByTracker( 'floodlight' ) ) {
-		setupWpcomFloodlightGtag();
-	}
-
-	// Twitter
-	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		setupTwitterGlobal();
-	}
-
-	// Linkedin
-	if ( mayWeTrackByTracker( 'linkedin' ) ) {
-		setupLinkedinGlobal();
-	}
-
-	// Quora
-	if ( mayWeTrackByTracker( 'quora' ) ) {
-		setupQuoraGlobal();
-	}
-
-	// Outbrain
-	if ( mayWeTrackByTracker( 'outbrain' ) ) {
-		setupOutbrainGlobal();
-	}
-
-	// Pinterest
-	if ( mayWeTrackByTracker( 'pinterest' ) ) {
-		setupPinterestGlobal();
-	}
-
-	// AdRoll
-	if ( mayWeTrackByTracker( 'adroll' ) ) {
-		setupAdRollGlobal();
-	}
-}
-
 /**
  * Initializes Linkedin tracking.
  */
@@ -209,3 +144,72 @@ function setupWpcomFloodlightGtag() {
 
 	window.gtag( 'config', TRACKING_IDS.wpcomFloodlightGtag );
 }
+
+export const setupAllTrackingScripts = () => {
+	if ( typeof window !== 'undefined' ) {
+		if ( mayWeTrackByTracker( 'ga' ) ) {
+			setupGtag();
+		}
+
+		// Facebook
+		if ( mayWeTrackByTracker( 'facebook' ) ) {
+			setupFacebookGlobal();
+		}
+
+		// Bing
+		if ( mayWeTrackByTracker( 'bing' ) && ! window.uetq ) {
+			window.uetq = [];
+		}
+
+		// Criteo
+		if ( mayWeTrackByTracker( 'criteo' ) && ! window.criteo_q ) {
+			window.criteo_q = [];
+		}
+
+		// Quantcast
+		if ( mayWeTrackByTracker( 'quantcast' ) && ! window._qevents ) {
+			window._qevents = [];
+		}
+
+		// Google Ads Gtag for wordpress.com
+		if ( mayWeTrackByTracker( 'googleAds' ) ) {
+			setupWpcomGoogleAdsGtag();
+		}
+
+		if ( mayWeTrackByTracker( 'floodlight' ) ) {
+			setupWpcomFloodlightGtag();
+		}
+
+		// Twitter
+		if ( mayWeTrackByTracker( 'twitter' ) ) {
+			setupTwitterGlobal();
+		}
+
+		// Linkedin
+		if ( mayWeTrackByTracker( 'linkedin' ) ) {
+			setupLinkedinGlobal();
+		}
+
+		// Quora
+		if ( mayWeTrackByTracker( 'quora' ) ) {
+			setupQuoraGlobal();
+		}
+
+		// Outbrain
+		if ( mayWeTrackByTracker( 'outbrain' ) ) {
+			setupOutbrainGlobal();
+		}
+
+		// Pinterest
+		if ( mayWeTrackByTracker( 'pinterest' ) ) {
+			setupPinterestGlobal();
+		}
+
+		// AdRoll
+		if ( mayWeTrackByTracker( 'adroll' ) ) {
+			setupAdRollGlobal();
+		}
+	}
+};
+
+setupAllTrackingScripts();
