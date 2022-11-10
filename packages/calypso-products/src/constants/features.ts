@@ -290,4 +290,3 @@ export const FEATURE_CANCELLATION_SEO_AND_SOCIAL = 'cancellation-seo-social';
 export const FEATURE_CANCELLATION_SFTP_AND_DATABASE = 'cancellation-sfpt-database';
 export const FEATURE_CANCELLATION_SHIPPING_CARRIERS = 'cancellation-shipping-carriers';
 export const FEATURE_CANCELLATION_UNLIMITED_TRAFFIC = 'cancellation-unlimited-traffic';
-export const FEATURE_CANCELLATION_AND_MORE = 'cancellation-and-more';

@@ -1,4 +1,3 @@
-import { FEATURE_CANCELLATION_AND_MORE } from '@automattic/calypso-products';
 import { Dialog, Gridicon } from '@automattic/components';
 import cx from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -36,11 +35,14 @@ export const FeaturesList = ( {
 	isPurchaseRefundable,
 	isPurchaseAutoRenewing,
 }: FeaturesListProps ) => {
+	const translate = useTranslate();
+
 	if ( typeof productSlug !== 'string' ) {
 		return null;
 	}
 
 	const planCancellationFeatures = getPlanCancellationFeatures( productSlug, hasDomain );
+
 	const domainFeature =
 		hasDomain && primaryDomain && wpcomURL ? <p>Debug domain: traffic will be redirected</p> : null;
 
@@ -62,27 +64,25 @@ export const FeaturesList = ( {
 						{ domainFeature }
 					</li>
 				) }
-				{ planCancellationFeatures.map( ( feature ) => {
-					if ( feature === FEATURE_CANCELLATION_AND_MORE ) {
-						return (
-							<li className="pre-cancellation-dialog__item-more" key={ feature }>
-								<span className="pre-cancellation-dialog__item-more-span">
-									{ getFeatureByKey( feature ) }
-								</span>
-							</li>
-						);
-					}
+				{ planCancellationFeatures.featureList.map( ( cancellationFeature ) => {
 					return (
-						<li key={ feature }>
+						<li key={ cancellationFeature }>
 							<Gridicon
 								className="pre-cancellation-dialog__item-cross-small"
 								size={ 24 }
 								icon="cross-small"
 							/>
-							{ getFeatureByKey( feature ) }
+							{ getFeatureByKey( cancellationFeature ) }
 						</li>
 					);
 				} ) }
+				{ planCancellationFeatures.andMore && (
+					<li className="pre-cancellation-dialog__item-more" key="cancellationAndMore">
+						<span className="pre-cancellation-dialog__item-more-span">
+							{ translate( 'and more…' ) }
+						</span>
+					</li>
+				) }
 			</ul>
 		</>
 	);

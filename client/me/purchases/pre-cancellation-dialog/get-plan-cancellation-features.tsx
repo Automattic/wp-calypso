@@ -1,41 +1,59 @@
-import { getPlan, isMonthly } from '@automattic/calypso-products';
+import { CancellationFeatureList, getPlan, isMonthly } from '@automattic/calypso-products';
 
 export default function getPlanCancellationFeatures(
 	productSlug: string | undefined,
 	hasDomain: boolean
-): string[] {
+): CancellationFeatureList {
 	if ( ! productSlug ) {
-		return [];
+		return {
+			featureList: [],
+			andMore: false,
+		};
 	}
 
 	const isMonthlyPlan = isMonthly( productSlug );
 
 	const plan = getPlan( productSlug );
 	if ( ! plan || ! plan.getCancellationFeatureList ) {
-		return [];
+		return {
+			featureList: [],
+			andMore: false,
+		};
 	}
 
-	const featureList = plan.getCancellationFeatureList();
+	const cancellationFeatures = plan.getCancellationFeatureList();
 
 	/**
 	 * Return plan + domain cancellation flow feature list
 	 */
-	if ( hasDomain === true && featureList.withDomain ) {
-		return featureList.withDomain;
+	if ( hasDomain === true && cancellationFeatures.withDomain?.featureList ) {
+		return {
+			featureList: cancellationFeatures.withDomain.featureList,
+			andMore: cancellationFeatures.withDomain.andMore,
+		};
 	}
 
 	/**
 	 * Return monthly or yearly cancellation flow feature list
 	 */
 	// Monthly plan
-	if ( isMonthlyPlan && featureList.monthly ) {
-		return featureList.monthly;
+	if ( isMonthlyPlan && cancellationFeatures.monthly?.featureList ) {
+		return {
+			featureList: cancellationFeatures.monthly.featureList,
+			andMore: cancellationFeatures.monthly.andMore,
+		};
 	}
 
 	// Yearly plan
-	if ( ! isMonthlyPlan && featureList.yearly ) {
-		return featureList.yearly;
+	if ( ! isMonthlyPlan && cancellationFeatures.yearly?.featureList ) {
+		return {
+			featureList: cancellationFeatures.yearly.featureList,
+			andMore: cancellationFeatures.yearly.andMore,
+		};
 	}
 
-	return [];
+	return {
+		featureList: [],
+		andMore: false,
+	};
 }
