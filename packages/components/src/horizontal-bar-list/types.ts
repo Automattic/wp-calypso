@@ -55,3 +55,8 @@ export type StatsCardProps = {
 	metricLabel?: string;
 	heroElement?: React.ReactNode;
 };
+
+export type StatsCardAvatarProps = {
+	url: string;
+	altName?: string;
+};

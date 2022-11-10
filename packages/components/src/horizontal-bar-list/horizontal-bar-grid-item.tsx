@@ -1,5 +1,6 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import classnames from 'classnames';
+import { numberFormat } from 'i18n-calypso';
 import React from 'react';
 import type { HorizontalBarListItemProps } from './types';
 
@@ -60,7 +61,7 @@ const HorizontalBarListItem = ( {
 					<span className={ `${ BASE_CLASS_NAME }--hover-action` }>{ rightSideItem }</span>
 				) }
 			</div>
-			<div className="value">{ value }</div> { /* Add number format */ }
+			<div className="value">{ numberFormat( value, 0 ) }</div>
 		</li>
 	);
 };

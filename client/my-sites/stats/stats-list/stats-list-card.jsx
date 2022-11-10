@@ -1,4 +1,10 @@
-import { HorizontalBarList, HorizontalBarListItem, StatsCard } from '@automattic/components';
+import {
+	HorizontalBarList,
+	HorizontalBarListItem,
+	StatsCard,
+	// eslint-disable-next-line import/named
+	StatsCardAvatar,
+} from '@automattic/components';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -64,8 +70,9 @@ const StatsListCard = ( {
 		>
 			{ !! loader && loader }
 			{ !! error && error }
-			<HorizontalBarList data={ data }>
+			<HorizontalBarList>
 				{ data?.map( ( item, index ) => {
+					let leftSideItem;
 					let rightSideItem;
 					const isInteractive = item?.link || item?.page || item?.children;
 
@@ -80,6 +87,13 @@ const StatsListCard = ( {
 						rightSideItem = <StatsListActions data={ item } moduleName={ moduleType } />;
 					}
 
+					// left icon visible only for Author avatars and Contry flags.
+					if ( item?.countryCode ) {
+						leftSideItem = <StatsListCountryFlag countryCode={ item.countryCode } />;
+					} else if ( moduleType === 'authors' && item?.icon ) {
+						leftSideItem = <StatsCardAvatar url={ item?.icon } altName={ item?.label } />;
+					}
+
 					return (
 						<HorizontalBarListItem
 							key={ item?.id || index } // not every item has an id
@@ -87,9 +101,7 @@ const StatsListCard = ( {
 							maxValue={ barMaxValue }
 							hasIndicator={ item?.className?.includes( 'published' ) }
 							onClick={ ( e ) => localClickHandler( e, item ) }
-							leftSideItem={
-								item?.countryCode && <StatsListCountryFlag countryCode={ item.countryCode } />
-							}
+							leftSideItem={ leftSideItem }
 							rightSideItem={ rightSideItem }
 							useShortLabel={ useShortLabel }
 							isStatic={ ! isInteractive }
