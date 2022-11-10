@@ -158,6 +158,7 @@
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
 		"stats/fixed-nav-headers": true,
+		"stats/new-all-time-highlights": true,
 		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": true,
 		"stats/new-stats-module-component": true,
