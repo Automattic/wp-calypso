@@ -155,14 +155,7 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldShowNewModule =
-			isEnabled( 'stats/new-stats-module-component' ) &&
-			! summary &&
-			( path === 'posts' ||
-				path === 'videoplays' ||
-				path === 'filedownloads' ||
-				path === 'searchterms' ||
-				path === 'countryviews' );
+		const shouldShowNewModule = isEnabled( 'stats/new-stats-module-component' ) && ! summary;
 
 		return (
 			<>
