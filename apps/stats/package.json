@@ -21,7 +21,6 @@
 		"build": "NODE_ENV=production yarn dev",
 		"build:stats": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/calypso-stats",
-		"dev-server": "webpack serve",
 		"show-stats": "NODE_ENV=production EMIT_STATS=true yarn build"
 	},
 	"dependencies": {
@@ -57,7 +56,6 @@
 		"path-browserify": "^1.0.1",
 		"postcss": "^8.3.11",
 		"webpack": "^5.68.0",
-		"webpack-bundle-analyzer": "^4.5.0",
-		"webpack-dev-server": "^4.7.3"
+		"webpack-bundle-analyzer": "^4.5.0"
 	}
 }
