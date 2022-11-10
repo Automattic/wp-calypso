@@ -78,8 +78,8 @@ const QueryAnalyticsBanners = () => {
 			// Assign config that will be used by a8c-analytics.js script
 			window.a8cAnalyticsConfig = a8cAnalyticsConfig;
 			// Add listener that will get triggered once a8c-analytics.js will be successfully loaded
-			window.addEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
-			window.addEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
+			document.addEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
+			document.addEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
 			// Load the script into the html document
 			loadScript(
 				`//s1.wp.com/wp-content/mu-plugins/a8c-analytics/a8c-analytics.js?v=${ A8C_ANALYTICS_CACHE_VERSION }`,
@@ -93,8 +93,8 @@ const QueryAnalyticsBanners = () => {
 			);
 
 			return () => {
-				window.removeEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
-				window.removeEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
+				document.removeEventListener( 'a8c-analytics:loaded', onA8cAnalyticsLoaded );
+				document.removeEventListener( 'a8c-analytics:fire-sensitive-pixels', onA8cTrackersFired );
 			};
 		},
 		[
