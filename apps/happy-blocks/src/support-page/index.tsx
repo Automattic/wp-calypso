@@ -1,5 +1,8 @@
-import { registerBlockType } from '@wordpress/blocks';
+import { BlockInstance, createBlock, registerBlockType } from '@wordpress/blocks';
+import { dispatch } from '@wordpress/data';
+import { renderToString } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { fetchPageAttributes, SUPPORT_PAGE_PATTERN, SupportPageBlockAttributes } from './block';
 import { Edit } from './edit';
 import { WordPressIcon } from './icon';
 import { Save } from './save';
@@ -31,4 +34,44 @@ registerBlockType( 'happy-blocks/support-page', {
 	},
 	edit: Edit,
 	save: Save,
+	transforms: {
+		from: [
+			{
+				type: 'raw',
+				isMatch: ( node: Element ): boolean => {
+					if ( node.nodeName !== 'P' ) {
+						return false;
+					}
+
+					const nodeText = node.textContent?.trim() ?? '';
+					return SUPPORT_PAGE_PATTERN.test( nodeText );
+				},
+				transform: ( node: Element ): BlockInstance => {
+					const nodeText = node.textContent?.trim() ?? '';
+
+					const block = createBlock( 'happy-blocks/support-page', {
+						url: nodeText,
+					} );
+
+					fetchPageAttributes( nodeText ).then( ( attributes ) => {
+						dispatch( 'core/block-editor' ).updateBlockAttributes( block.clientId, attributes );
+					} );
+
+					return block;
+				},
+			},
+		],
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'core/paragraph' ],
+				transform: ( { url }: SupportPageBlockAttributes ) => {
+					const link = <a href={ url }>{ url }</a>;
+					return createBlock( 'core/paragraph', {
+						content: renderToString( link ),
+					} );
+				},
+			},
+		],
+	},
 } );
