@@ -5,12 +5,12 @@ export const SUPPORT_PAGE_PATTERN =
 const EMBED_CONTENT_MAXLENGTH = 400;
 const AVERAGE_READING_SPEED = 250; // words per minute
 
+/** Attributes of the Block */
 export type SupportPageBlockAttributes = {
 	url: string;
 	title: string;
 	content: string;
 	minutesToRead: number | null;
-
 	likes?: number;
 };
 
