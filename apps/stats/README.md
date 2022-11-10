@@ -3,6 +3,7 @@
 The Stats App is built to refresh the Stats experience in Jetpack. The counterpart of the project is in [here](https://github.com/Automattic/jetpack/tree/trunk/projects/packages/stats-admin).
 
 ## Hiarachy
+
 ```
 .
 └── src/
@@ -47,6 +48,7 @@ $.get("https://widgets.wp.com/calypso-happychat/images/gridicons-506499ddac13811
 cd apps/stats
 yarn build
 ```
+
 ### Development
 
 ```bash
