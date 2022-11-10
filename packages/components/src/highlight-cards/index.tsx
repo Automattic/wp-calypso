@@ -1,8 +1,9 @@
-import { commentContent, Icon, navigation, people, starEmpty } from '@wordpress/icons';
+import { commentContent, Icon, people, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import './style.scss';
+import eye from './eye';
 import HighlightCard from './highlight-card';
+import './style.scss';
 
 export type HighlightCardsProps = {
 	className?: string;
@@ -52,7 +53,7 @@ export default function HighlightCards( {
 				/>
 				<HighlightCard
 					heading={ translate( 'Views' ) }
-					icon={ <Icon icon={ navigation } /> }
+					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
 					previousCount={ previousCounts?.views ?? null }
 					onClick={ onClickViews }
