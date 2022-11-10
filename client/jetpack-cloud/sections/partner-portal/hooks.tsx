@@ -378,14 +378,17 @@ export function useIssueMultipleLicenses(
 		selectedProducts.forEach( ( product ) => {
 			issueLicenseRequests.push( issueLicense.mutateAsync( { product } ) );
 		} );
-		const issueLicensePromises = await Promise.allSettled( issueLicenseRequests );
+		const issueLicensePromises: any[] = await Promise.allSettled( issueLicenseRequests );
 
 		if ( ! selectedSiteId ) {
 			let nextStep = partnerPortalBasePath( '/licenses' );
 			if ( sites > 0 ) {
+				const licenseKeys = issueLicensePromises
+					.filter( ( { status } ) => status === 'fulfilled' )
+					.map( ( { value } ) => value.license_key );
 				nextStep = addQueryArgs(
 					{
-						products: selectedProducts.join( ',' ),
+						products: licenseKeys.join( ',' ),
 					},
 					partnerPortalBasePath( '/assign-license' )
 				);
