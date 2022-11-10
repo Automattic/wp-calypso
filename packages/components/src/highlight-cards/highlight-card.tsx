@@ -64,8 +64,8 @@ export default function HighlightCard( {
 						} ) }
 					>
 						<span className="highlight-card-difference-icon" title={ String( difference ) }>
-							{ difference < 0 && <Icon icon={ arrowDown } /> }
-							{ difference > 0 && <Icon icon={ arrowUp } /> }
+							{ difference < 0 && <Icon size={ 18 } icon={ arrowDown } /> }
+							{ difference > 0 && <Icon size={ 18 } icon={ arrowUp } /> }
 						</span>
 						<span className="highlight-card-difference-absolute-value">
 							{ Math.abs( difference ) }
