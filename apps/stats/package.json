@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-stats",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"description": "WordPress.com Stats.",
 	"main": "dist/build.min.js",
 	"sideEffects": true,
