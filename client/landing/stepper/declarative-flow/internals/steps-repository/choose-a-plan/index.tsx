@@ -40,6 +40,9 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const siteDescription = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedSiteDescription()
+	);
 	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
 	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
 
@@ -122,7 +125,10 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 				const newSite = getNewSite();
 				setSelectedSite( newSite?.blogid );
 				setIntentOnSite( newSite?.site_slug as string, flow as string );
-				saveSiteSettings( newSite?.blogid as number, { launchpad_screen: 'full' } );
+				saveSiteSettings( newSite?.blogid as number, {
+					launchpad_screen: 'full',
+					blogdescription: siteDescription,
+				} );
 
 				const planObject = supportedPlans.find(
 					( plan ) => plan.productIds.indexOf( planId as number ) >= 0
