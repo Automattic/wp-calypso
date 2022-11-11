@@ -52,7 +52,7 @@ const StatShares = ( { siteId } ) => {
 								);
 							}
 						} ) }
-					{ ! isLoading && ! siteStats?.stats.shares && (
+					{ ! isLoading && ! siteStats?.stats?.shares && (
 						<ErrorPanel message={ translate( 'No shares recorded' ) } />
 					) }
 				</StatsTabs>

@@ -1,4 +1,6 @@
 $videopress-mobile-layout-width: 700px;
+$videopress-link-color: #c377ff;
+$videopress-background: #010101;
 
 .videopress {
 	.step-container__header {
@@ -51,8 +53,8 @@ $videopress-mobile-layout-width: 700px;
 			&.is-popular {
 				margin-top: 0;
 				.plan-item__badge {
-					background-color: #b8e6bf;
-					color: #00450c;
+					background-color: $videopress-link-color;
+					color: $videopress-background;
 					width: fit-content;
 					text-transform: none;
 					font-weight: 500;
@@ -90,7 +92,7 @@ $videopress-mobile-layout-width: 700px;
 
 				.plan-item__price-discount {
 					text-align: center;
-					color: #1ed15a;
+					color: $videopress-link-color;
 				}
 
 				.components-button.plan-item__select-button.is-primary {
@@ -122,7 +124,7 @@ $videopress-mobile-layout-width: 700px;
 
 					.plans-feature-list__item {
 						.plans-feature-list__item-bullet-icon {
-							color: #1ed15a;
+							color: $videopress-link-color;
 						}
 
 						&.plans-feature-list__item--requires-annual-disabled .plans-feature-list__item-bullet-icon {

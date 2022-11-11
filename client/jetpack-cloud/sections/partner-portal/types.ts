@@ -24,5 +24,5 @@ export enum LicenseSortDirection {
 
 export interface AssignLicenceProps {
 	selectedSite?: { ID: number; domain: string } | null;
-	suggestedProduct?: string | null;
+	suggestedProduct?: string;
 }

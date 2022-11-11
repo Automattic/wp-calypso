@@ -103,7 +103,7 @@ const SenseiPlan: Step = ( { flow } ) => {
 
 			await cartManagerClient.forCartKey( cartKey ).actions.addProductsToCart( productsToAdd );
 			const redirectTo = encodeURIComponent(
-				`/setup/senseiLaunch?flow=sensei&siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+				`/setup/sensei/senseiLaunch?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
 			);
 
 			window.location.replace(

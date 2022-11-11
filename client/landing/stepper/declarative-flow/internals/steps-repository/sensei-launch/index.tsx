@@ -54,9 +54,7 @@ const SenseiLaunch = () => {
 				return;
 			}
 			clearInterval( intervalId );
-			fetch( senseiHomeUrl ).finally( () => {
-				window.location.replace( senseiHomeUrl );
-			} );
+			window.location.replace( senseiHomeUrl );
 		}, 3000 );
 		return () => clearInterval( intervalId );
 	}, [ plugins, senseiHomeUrl, dispatch, siteId ] );

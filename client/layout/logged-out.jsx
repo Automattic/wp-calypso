@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
@@ -117,6 +118,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			{ isJetpackCloud() && (

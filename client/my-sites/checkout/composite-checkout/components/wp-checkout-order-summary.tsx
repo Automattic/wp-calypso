@@ -31,6 +31,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -65,6 +66,7 @@ export default function WPCheckoutOrderSummary( {
 	);
 
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+	const isWcMobile = isWcMobileApp();
 
 	const plan = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasMonthlyPlanInCart = Boolean( plan && isMonthly( plan?.product_slug ) );
@@ -84,7 +86,7 @@ export default function WPCheckoutOrderSummary( {
 					<CheckoutSummaryFeaturesWrapper siteId={ siteId } nextDomainIsFree={ nextDomainIsFree } />
 				) }
 			</CheckoutSummaryFeatures>
-			{ ! isCartUpdating && ! hasRenewalInCart && plan && hasMonthlyPlanInCart && (
+			{ ! isCartUpdating && ! hasRenewalInCart && ! isWcMobile && plan && hasMonthlyPlanInCart && (
 				<CheckoutSummaryAnnualUpsell plan={ plan } onChangePlanLength={ onChangePlanLength } />
 			) }
 			<CheckoutSummaryAmountWrapper>

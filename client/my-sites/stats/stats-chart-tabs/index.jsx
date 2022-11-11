@@ -103,7 +103,6 @@ class StatModuleChartTabs extends Component {
 			{
 				'is-loading': isActiveTabLoading,
 				'stats-module': ! isNewFeatured,
-				'chart-tabs--new-main-chart': isNewFeatured,
 			},
 		];
 

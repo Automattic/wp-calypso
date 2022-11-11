@@ -2,18 +2,6 @@
 .stats--new-main-chart {
 	background-color: var(--color-surface);
 
-	// Store Legend options
-	.store-stats-chart__top {
-		display: flex;
-		justify-content: end;
-		background-color: var(--color-surface);
-		padding-bottom: 16px;
-
-		.store-stats-chart__title {
-			display: none;
-		}
-	}
-
 	// Common Legend options
 	.chart__legend {
 		margin-bottom: 16px;

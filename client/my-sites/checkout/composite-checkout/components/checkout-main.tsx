@@ -87,6 +87,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell,
 	isLoggedOutCart,
 	isNoSiteCart,
+	isGiftPurchase,
 	infoMessage,
 	isInModal,
 	onAfterPaymentComplete,
@@ -110,6 +111,7 @@ export default function CheckoutMain( {
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
+	isGiftPurchase?: boolean;
 	isInModal?: boolean;
 	infoMessage?: JSX.Element;
 	// IMPORTANT NOTE: This will not be called for redirect payment methods like
@@ -179,6 +181,7 @@ export default function CheckoutMain( {
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
+		isGiftPurchase,
 	} );
 
 	const cartKey = useCartKey();

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { write, play, design } from 'calypso/signup/icons';
 
@@ -21,7 +20,6 @@ const useStartingPoints = () => {
 			icon: play,
 			value: 'courses',
 			actionText: translate( 'Start learning' ),
-			hidden: ! isEnabled( 'signup/starting-point-courses' ),
 		},
 		{
 			key: 'design-setup',
