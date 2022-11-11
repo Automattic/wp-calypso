@@ -98,8 +98,16 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet Anti-Spam' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet Anti-Spam' ),
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+			components: {
+				s: <span style={ { whiteSpace: 'nowrap' } } />,
+			},
+		} ),
 		[ PRODUCT_JETPACK_VIDEOPRESS ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: translate( 'VideoPress' ),
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: translate( 'Social' ),
@@ -136,7 +144,11 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const antiSpam = translate( 'Akismet Anti-Spam' );
+	const antiSpam = translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Boost' );
 	const social = translate( 'Social' );
 
@@ -226,7 +238,11 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
-	const antiSpam = translate( 'Get Akismet Anti-Spam' );
+	const antiSpam = translate( 'Get Akismet {{s}}Anti-Spam{{/s}}', {
+		components: {
+			s: <span style={ { whiteSpace: 'nowrap' } } />,
+		},
+	} );
 	const boost = translate( 'Get Boost' );
 	const social = translate( 'Get Social' );
 
