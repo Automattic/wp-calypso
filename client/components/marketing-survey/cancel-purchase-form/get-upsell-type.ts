@@ -25,6 +25,10 @@ export type UpsellType =
 	| 'live-chat:plugins'
 	| 'live-chat:themes'
 	| 'live-chat:domains'
+	| 'education:loading-time'
+	| 'education:seo'
+	| 'education:free-domain'
+	| 'education:domain-connection'
 	| 'upgrade-atomic';
 
 /**
@@ -89,10 +93,15 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 				return '';
 			}
 			return 'upgrade-atomic';
-
+		case 'seoIssues':
+			return 'education:seo';
+		case 'loadingTime':
+			return 'education:loading-time';
 		case 'didNotGetFreeDomain':
-		case 'otherDomainIssues':
+			return 'education:free-domain';
 		case 'domainConnection':
+			return 'education:domain-connection';
+		case 'otherDomainIssues':
 			return liveChatSupported ? 'live-chat:domains' : '';
 	}
 

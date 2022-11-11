@@ -47,6 +47,7 @@ import {
 	nextAdventureOptionsForPurchase,
 } from './options-for-product';
 import PrecancellationChatButton from './precancellation-chat-button';
+import EducationContentStep from './step-components/educational-content-step';
 import FeedbackStep from './step-components/feedback-step';
 import NextAdventureStep from './step-components/next-adventure-step';
 import UpsellStep from './step-components/upsell-step';
@@ -311,7 +312,7 @@ class CancelPurchaseForm extends Component {
 	surveyContent() {
 		const { atomicTransfer, translate, isImport, moment, purchase, site, hasBackupsFeature } =
 			this.props;
-		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep } = this.state;
+		const { atomicRevertCheckOne, atomicRevertCheckTwo, surveyStep, upsell } = this.state;
 
 		if ( surveyStep === FEEDBACK_STEP ) {
 			return (
@@ -329,6 +330,16 @@ class CancelPurchaseForm extends Component {
 		if ( surveyStep === UPSELL_STEP ) {
 			const allSteps = this.getAllSurveySteps();
 			const isLastStep = surveyStep === allSteps[ allSteps.length - 1 ];
+
+			if ( upsell.startsWith( 'education:' ) ) {
+				return (
+					<EducationContentStep
+						type={ upsell }
+						site={ site }
+						onDecline={ isLastStep ? this.onSubmit : this.clickNext }
+					/>
+				);
+			}
 
 			return (
 				<UpsellStep
