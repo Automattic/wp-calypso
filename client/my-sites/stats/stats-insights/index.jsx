@@ -68,27 +68,27 @@ const StatsInsights = ( props ) => {
 					/>
 				) }
 				<div className="stats-insights__nonperiodic has-recent">
+					<div className="stats__module-list stats__module-list--insights stats__module--unified">
+						<Followers path="followers" />
+						<Comments path="comments" />
+						<StatsModule
+							path="tags-categories"
+							moduleStrings={ moduleStrings.tags }
+							statType="statsTags"
+						/>
+					</div>
 					<div className="stats__module-list stats__module--unified">
 						<div className="stats__module-column">
 							<LatestPostSummary />
-							<MostPopular />
-
-							<StatsModule
-								path="tags-categories"
-								moduleStrings={ moduleStrings.tags }
-								statType="statsTags"
-							/>
-
-							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
-							<StatShares siteId={ siteId } />
-						</div>
-						<div className="stats__module-column">
-							<Reach />
-							<Followers path="followers" />
-						</div>
-						<div className="stats__module-column">
 							<AllTime />
-							<Comments path="comments" />
+						</div>
+						<div className="stats__module-column">
+							<StatShares siteId={ siteId } />
+							{ ! showNewAnnualHighlights && <AnnualSiteStats isWidget /> }
+						</div>
+						<div className="stats__module-column">
+							<MostPopular />
+							<Reach />
 							<StatsModule
 								path="publicize"
 								moduleStrings={ moduleStrings.publicize }

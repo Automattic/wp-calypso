@@ -98,3 +98,11 @@ $grid-vertical-gutters: 32px;
 		grid-area: downloads;
 	}
 }
+
+.is-section-stats .stats__module-list--insights {
+	align-items: stretch;
+	display: grid;
+	grid-template-columns: repeat(3, calc(33.3333333% - #{$grid-horizontal-gutters / 2}));
+	grid-template-rows: repeat(6, min-content);
+	gap: $grid-vertical-gutters $grid-horizontal-gutters;
+}
