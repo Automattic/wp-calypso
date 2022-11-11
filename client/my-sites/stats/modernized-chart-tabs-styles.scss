@@ -122,13 +122,20 @@
 				border: 1.5px solid transparent;
 				border-radius: 4px;
 				overflow: hidden;
-				color: var(--color-neutral-60);
+				color: var(--studio-black);
 
 				&:hover {
+					color: var(--studio-black);
 					background-color: var(--color-neutral-0);
+
+					.label,
+					.value {
+						color: var(--studio-black);
+					}
 				}
 
 				.label {
+					color: var(--color-neutral-60);
 					font-size: $font-body-small;
 					line-height: 20px;
 					text-transform: none;
@@ -136,6 +143,7 @@
 				}
 
 				.value {
+					color: var(--studio-black);
 					font-size: $font-title-small;
 					font-weight: 500;
 					line-height: 30px;
@@ -164,10 +172,6 @@
 						.value {
 							color: var(--studio-black);
 						}
-					}
-
-					.value {
-						color: var(--studio-black);
 					}
 				}
 			}
