@@ -1,6 +1,8 @@
 @import "@automattic/typography/styles/variables";
 
 .hb-support-page-embed {
+	--content-line-height: 20px;
+
 	border-radius: 4px;
 	padding: 29px 30px;
 
@@ -15,7 +17,7 @@
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-small;
-	line-height: 20px;
+	line-height: var(--content-line-height);
 
 	a {
 		text-decoration: none !important;
@@ -140,12 +142,12 @@
 		content: "X";
 	}
 
-	&__hidden {
+	&.is-hidden {
 		visibility: hidden;
 	}
 
-	&__large {
+	&.is-large {
 		width: 34em;
-		height: 40px;
+		height: calc(var(--content-line-height) * 3);
 	}
 }

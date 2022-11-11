@@ -18,8 +18,8 @@ export const InlineSkeleton = ( props: InlineSkeletonProps ) => {
 	return (
 		<span
 			className={ classnames( 'hb-support-page-inline-skeleton', {
-				'hb-support-page-inline-skeleton__hidden': props.hidden,
-				'hb-support-page-inline-skeleton__large': props.large,
+				'is-hidden': props.hidden,
+				'is-large': props.large,
 			} ) }
 		></span>
 	);
