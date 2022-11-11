@@ -11,7 +11,7 @@ export const Save = ( props: { attributes: SupportPageBlockAttributes } ) => {
 
 	return (
 		<div { ...blockProps }>
-			<SupportPageEmbed attributes={ attributes } />
+			<SupportPageEmbed attributes={ attributes } clickable />
 		</div>
 	);
 };

@@ -16,21 +16,28 @@
 	gap: 16px;
 	flex-direction: column;
 
-
 	font-family: "SF Pro Text", $sans;
 	font-style: normal;
 	font-weight: 400;
 	font-size: $font-body-small;
 	line-height: var(--line-height-content);
 
+	&__opener {
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+	}
+
 	&__link {
 		text-decoration: none !important;
 		color: $studio-gray-60 !important;
+	}
 
-		&:hover {
-			color: $studio-gray-60 !important;
-			text-decoration: underline !important;
-		}
+	&:hover &__link {
+		color: $studio-gray-60 !important;
+		text-decoration: underline !important;
 	}
 
 	&__header {

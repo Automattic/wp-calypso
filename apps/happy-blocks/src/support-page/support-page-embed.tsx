@@ -6,7 +6,10 @@ import { InlineSkeleton } from './inline-skeleton';
 /**
  * Rendered embed for the Support Page block.
  */
-export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttributes } ) => {
+export const SupportPageEmbed = ( props: {
+	attributes: SupportPageBlockAttributes;
+	clickable?: boolean;
+} ) => {
 	const loaded = !! props.attributes.content;
 
 	const minToRead = sprintf(
@@ -23,6 +26,11 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 
 	return (
 		<div className="hb-support-page-embed">
+			{ /* Only make embed clickable while viewing content for author not to lose unsaved changes */ }
+			{ props.clickable && (
+				<a className="hb-support-page-embed__opener" href={ props.attributes.url } />
+			) }
+
 			<div className="hb-support-page-embed__header">
 				<WordPressIcon variant="raster" />
 				<div>
