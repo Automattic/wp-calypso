@@ -64,25 +64,29 @@ $grid-vertical-gutters: 32px;
 			flex-grow: 1;
 		}
 	}
+
 	.stats__module-wrapper--posts,
 	.list-posts {
 		grid-area: posts;
 	}
-	.stats__module-wrapper--referrers {
+	.stats__module-wrapper--referrers,
+	.list-referrers {
 		grid-area: referrers;
 	}
 	.stats__module-wrapper--countryviews,
 	.list-countryviews {
 		grid-area: country;
 	}
-	.stats__module-wrapper--authors {
+	.stats__module-wrapper--authors,
+	.list-authors {
 		grid-area: authors;
 	}
 	.stats__module-wrapper--searchterms,
 	.list-searchterms {
 		grid-area: search;
 	}
-	.stats__module-wrapper--clicks {
+	.stats__module-wrapper--clicks,
+	.list-clicks {
 		grid-area: clicks;
 	}
 	.stats__module-wrapper--videoplays,
