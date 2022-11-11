@@ -18,11 +18,7 @@ type EditProps = BlockEditProps< SupportPageBlockAttributes > &
 	};
 
 /**
- * The edit function describes the structure of your block in the context of the
- * editor. This represents what the editor will render when the block is used.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#edit
- * @returns {import("@wordpress/element").WPElement} Element to render.
+ * Renders block in the editor
  */
 export const Edit = compose( withNotices )( ( props: EditProps ) => {
 	const { attributes, className, setAttributes, noticeOperations, noticeUI } = props;
@@ -63,9 +59,7 @@ export const Edit = compose( withNotices )( ( props: EditProps ) => {
 		}
 	};
 
-	const blockProps = useBlockProps( {
-		className: 'wp-block-p2-embed',
-	} );
+	const blockProps = useBlockProps();
 
 	return (
 		<div { ...blockProps }>
