@@ -102,6 +102,20 @@ export const CouponLineItem = styled( WPCouponLineItem )< {
 	}
 `;
 
+const GiftBadgeWrapper = styled.span`
+	width: 100%;
+`;
+
+const GiftBadge = styled.span`
+	color: #234929;
+	background-color: #b8e6bf;
+	margin-bottom: 0.1em;
+	padding: 0.1em 0.8em;
+	border-radius: 5px;
+	display: inline-block;
+	font-size: small;
+`;
+
 const LineItemMeta = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorLight };
 	font-size: 14px;
@@ -128,6 +142,8 @@ const LineItemTitle = styled.div< { theme?: Theme; isSummary?: boolean } >`
 	flex: 1;
 	word-break: break-word;
 	font-size: 16px;
+	display: flex;
+	gap: 0.5em;
 `;
 
 const LineItemPriceWrapper = styled.span< { theme?: Theme; isSummary?: boolean } >`
@@ -226,7 +242,7 @@ function WPNonProductLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType={ 'text-button' }
+							buttonType="text-button"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,
@@ -779,7 +795,7 @@ function PartnerLogo( { className }: { className?: string } ) {
 	return (
 		<LineItemMeta className={ joinClasses( [ className, 'jetpack-partner-logo' ] ) }>
 			<div>{ translate( 'Included in your IONOS plan' ) }</div>
-			<div className={ 'checkout-line-item__partner-logo-image' }>
+			<div className="checkout-line-item__partner-logo-image">
 				<IonosLogo />
 			</div>
 		</LineItemMeta>
@@ -907,6 +923,11 @@ function WPLineItem( {
 			data-e2e-product-slug={ productSlug }
 			data-product-type={ isPlan( product ) ? 'plan' : product.product_slug }
 		>
+			{ responseCart.is_gift_purchase && (
+				<GiftBadgeWrapper>
+					<GiftBadge>{ translate( 'Gift' ) }</GiftBadge>
+				</GiftBadgeWrapper>
+			) }
 			<LineItemTitle id={ itemSpanId } isSummary={ isSummary }>
 				{ label }
 			</LineItemTitle>
@@ -947,7 +968,7 @@ function WPLineItem( {
 					<DeleteButtonWrapper>
 						<DeleteButton
 							className="checkout-line-item__remove-product"
-							buttonType={ 'text-button' }
+							buttonType="text-button"
 							aria-label={ String(
 								translate( 'Remove %s from cart', {
 									args: label,

@@ -478,10 +478,7 @@ export class UserStep extends Component {
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
 				headerText={ this.props.translate( "Let's get started" ) }
-				subHeaderText={ this.props.translate(
-					"We'll build your site with Videomaker, our premium theme for video creators. First, let's create your account.",
-					{}
-				) }
+				subHeaderText={ this.props.translate( "First, let's create your account.", {} ) }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
 						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),

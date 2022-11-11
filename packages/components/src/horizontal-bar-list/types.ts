@@ -9,10 +9,10 @@ export type HorizontalBarListItemProps = {
 	data: StatDataObject;
 	maxValue: number;
 	url?: string;
-	onClick?: ( e: React.MouseEvent | React.KeyboardEvent ) => void;
+	onClick?: ( e: React.MouseEvent | React.KeyboardEvent, data: StatDataObject ) => void;
 	hasIndicator?: boolean;
 	leftSideItem?: React.ReactNode | HTMLElement | undefined;
-	rightSideItem?: React.ReactNode | HTMLElement;
+	renderRightSideItem?: ( data: StatDataObject ) => React.ReactNode;
 	useShortLabel?: boolean;
 	isStatic?: boolean;
 };
@@ -54,4 +54,9 @@ export type StatsCardProps = {
 	emptyMessage?: string;
 	metricLabel?: string;
 	heroElement?: React.ReactNode;
+};
+
+export type StatsCardAvatarProps = {
+	url: string;
+	altName?: string;
 };

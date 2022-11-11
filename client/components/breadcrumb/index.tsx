@@ -68,6 +68,9 @@ const HelpBuble = styled( InfoPopover )`
 	& .gridicon {
 		color: var( --studio-gray-30 );
 	}
+	&:focus {
+		outline: thin dotted;
+	}
 `;
 
 const renderHelpBubble = ( item: Item ) => {

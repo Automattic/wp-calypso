@@ -215,6 +215,10 @@
 
 	.button-plain {
 		text-align: left;
+
+		&:focus {
+			outline: thin dotted;
+		}
 	}
 
 	.list__header-column {
