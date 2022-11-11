@@ -172,11 +172,6 @@ export const SecuritySSHKey = () => {
 							'Once added, attach the SSH key to a site with a Business or eCommerce plan to enable SSH key authentication for that site.'
 						) }
 					</p>
-					<p>
-						{ __(
-							"Updating an SSH key, it won't detach it from the sites that particular key is being used."
-						) }
-					</p>
 					<p style={ hasKeys ? { marginBlockEnd: 0 } : undefined }>
 						{ createInterpolateElement(
 							__(

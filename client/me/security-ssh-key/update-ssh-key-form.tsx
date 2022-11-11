@@ -1,8 +1,9 @@
 import { Button, FormInputValidation } from '@automattic/components';
+import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import i18n from 'i18n-calypso';
-import { ChangeEvent, useReducer } from 'react';
+import { ChangeEvent, useReducer, useState } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
@@ -35,6 +36,14 @@ const sshKeyFormReducer = ( state = initialState, action: ReducerAction ): typeo
 	}
 };
 
+const UpdateTextContainer = styled.p`
+	margin-top: 1.5rem;
+`;
+
+const NewSSHFormFieldContainer = styled.div`
+	margin-top: 20px;
+`;
+
 interface UpdateSSHKeyFormProps {
 	updateSSHKey( args: { name: string; key: string } ): void;
 	isUpdating: boolean;
@@ -51,6 +60,7 @@ export const UpdateSSHKeyForm = ( {
 	keyName,
 }: UpdateSSHKeyFormProps ) => {
 	const [ { isValid, touched, value }, dispatch ] = useReducer( sshKeyFormReducer, initialState );
+	const [ initialSSHKeyValue ] = useState( oldSSHKey );
 
 	const { __ } = useI18n();
 	const formats = new Intl.ListFormat( i18n.getLocaleSlug() ?? 'en', {
@@ -61,63 +71,72 @@ export const UpdateSSHKeyForm = ( {
 	const showSSHKeyError = touched && ! isValid;
 
 	return (
-		<form
-			onSubmit={ ( event ) => {
-				event.preventDefault();
-				updateSSHKey( { name: keyName || 'default', key: value } );
-			} }
-		>
-			<FormFieldset>
-				<FormLabel htmlFor={ OLD_PUBLIC_SSH_KEY_INPUT_ID }>
-					{ __( 'Old SSH Public Key' ) }
-				</FormLabel>
+		<>
+			<UpdateTextContainer>
+				{ __(
+					"Updating an SSH key won't detach it from the sites that particular key is being used."
+				) }
+			</UpdateTextContainer>
+			<form
+				onSubmit={ ( event ) => {
+					event.preventDefault();
+					updateSSHKey( { name: keyName || 'default', key: value } );
+				} }
+			>
+				<FormFieldset>
+					<FormLabel htmlFor={ OLD_PUBLIC_SSH_KEY_INPUT_ID }>
+						{ __( 'Old SSH Public Key' ) }
+					</FormLabel>
 
-				<TextareaAutosize
-					required
-					id={ OLD_PUBLIC_SSH_KEY_INPUT_ID }
-					disabled={ true }
-					value={ oldSSHKey }
-				/>
-				<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
-				<TextareaAutosize
-					required
-					id={ PUBLIC_SSH_KEY_INPUT_ID }
-					disabled={ isUpdating }
-					value={ value }
-					isError={ showSSHKeyError }
-					placeholder={ sprintf(
-						// translators: "formats" is a list of SSH-key formats.
-						__( 'Paste your SSH public key here. It should begin with %(formats)s…' ),
+					<TextareaAutosize
+						required
+						id={ OLD_PUBLIC_SSH_KEY_INPUT_ID }
+						disabled={ true }
+						value={ initialSSHKeyValue }
+					/>
+					<NewSSHFormFieldContainer>
+						<FormLabel htmlFor={ PUBLIC_SSH_KEY_INPUT_ID }>{ __( 'SSH Public Key' ) }</FormLabel>
+						<TextareaAutosize
+							required
+							id={ PUBLIC_SSH_KEY_INPUT_ID }
+							disabled={ isUpdating }
+							value={ value }
+							isError={ showSSHKeyError }
+							placeholder={ sprintf(
+								// translators: "formats" is a list of SSH-key formats.
+								__( 'Paste your SSH public key here. It should begin with %(formats)s…' ),
+								{
+									formats,
+								}
+							) }
+							onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
+								dispatch( { type: 'setValue', value: event.target.value } )
+							}
+						/>
+						{ showSSHKeyError && (
+							<FormInputValidation
+								isError
+								text={ sprintf(
+									// translators: "formats" is a list of SSH-key formats.
+									__( 'Invalid SSH public key. It should begin with %(formats)s.' ),
+									{
+										formats,
+									}
+								) }
+							/>
+						) }
+					</NewSSHFormFieldContainer>
+				</FormFieldset>
+				<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
+					{ sprintf(
+						// translators: "sshText" is the text of the ssh save button.
+						__( '%(sshText)s.' ),
 						{
-							formats,
+							sshText: updateText || 'Save SSH Key',
 						}
 					) }
-					onChange={ ( event: ChangeEvent< HTMLTextAreaElement > ) =>
-						dispatch( { type: 'setValue', value: event.target.value } )
-					}
-				/>
-				{ showSSHKeyError && (
-					<FormInputValidation
-						isError
-						text={ sprintf(
-							// translators: "formats" is a list of SSH-key formats.
-							__( 'Invalid SSH public key. It should begin with %(formats)s.' ),
-							{
-								formats,
-							}
-						) }
-					/>
-				) }
-			</FormFieldset>
-			<Button busy={ isUpdating } primary type="submit" disabled={ ! isValid || isUpdating }>
-				{ sprintf(
-					// translators: "sshText" is the text of the ssh save button.
-					__( '%(sshText)s.' ),
-					{
-						sshText: updateText || 'Save SSH Key',
-					}
-				) }
-			</Button>
-		</form>
+				</Button>
+			</form>
+		</>
 	);
 };
