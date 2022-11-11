@@ -35,7 +35,9 @@ export const SupportPageEmbed = ( props: { attributes: SupportPageBlockAttribute
 					<div className="hb-support-page-embed__source">
 						<InlineSkeleton hidden loaded={ loaded }>
 							<span>in</span>
-							<a href={ props.attributes.url }>WordPress.com Support</a>
+							<a className="hb-support-page-embed__link" href={ props.attributes.url }>
+								WordPress.com Support
+							</a>
 						</InlineSkeleton>
 					</div>
 					{ ( ! loaded || props.attributes.minutesToRead ) && (

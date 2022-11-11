@@ -6,15 +6,16 @@
 	--line-height-title: 24px;
 	--color-light-gray: #eee;
 
+	border: 1px solid var(--color-light-gray);
 	border-radius: 4px;
+	background: $studio-white;
 	padding: 29px 30px;
+	cursor: pointer;
 
 	display: flex;
 	gap: 16px;
 	flex-direction: column;
 
-	background: $studio-white;
-	border: 1px solid var(--color-light-gray);
 
 	font-family: "SF Pro Text", $sans;
 	font-style: normal;
@@ -22,8 +23,14 @@
 	font-size: $font-body-small;
 	line-height: var(--line-height-content);
 
-	a {
+	&__link {
 		text-decoration: none !important;
+		color: $studio-gray-60 !important;
+
+		&:hover {
+			color: $studio-gray-60 !important;
+			text-decoration: underline !important;
+		}
 	}
 
 	&__header {
