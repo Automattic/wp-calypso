@@ -39,52 +39,60 @@ export default function SiteAddLicenseNotification() {
 		dispatch( setPurchasedLicense( license.selectedProducts.length ? license : undefined ) );
 	};
 
+	function getMessageArgs(
+		licenses: Array< { name: string; key: string; status: 'rejected' | 'fulfilled' } >
+	) {
+		const licenseNames = licenses.map( ( license ) => license.name );
+		const lastItem = licenseNames.slice( -1 )[ 0 ];
+		const remainingItems = licenseNames.slice( 0, -1 );
+		return {
+			args: {
+				lastItem: lastItem,
+				selectedSite,
+				remainingItems: remainingItems.join( ', ' ),
+			},
+			components: {
+				strong: <strong />,
+				em: <em />,
+			},
+		};
+	}
+
 	return (
 		<>
 			{ assignedLicenses.length > 0 && (
 				<div className="site-add-license-notification__license-banner">
 					<Notice onDismissClick={ () => clearLicenses( 'fulfilled' ) } status="is-success">
-						{ translate(
-							'{{strong}}%(assignedLicenses)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
-							'{{strong}}%(assignedLicenses)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
-
-							{
-								count: assignedLicenses.length,
-								args: {
-									assignedLicenses: assignedLicenses
-										.map( ( license ) => license.name )
-										.join( ', ' ),
-									selectedSite,
-								},
-								components: {
-									strong: <strong />,
-									em: <em />,
-								},
-							}
-						) }
+						{
+							// We are not using the same translate method for plural form since we have different arguments.
+							assignedLicenses.length > 1
+								? translate(
+										'{{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} were succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										getMessageArgs( assignedLicenses )
+								  )
+								: translate(
+										'{{strong}}%(lastItem)s{{/strong}} was succesfully assigned to {{em}}%(selectedSite)s{{/em}}. Please allow a few minutes for your features to activate.',
+										getMessageArgs( assignedLicenses )
+								  )
+						}
 					</Notice>
 				</div>
 			) }
 			{ rejectedLicenses.length > 0 && (
 				<div className="site-add-license-notification__license-banner">
 					<Notice onDismissClick={ () => clearLicenses( 'rejected' ) } status="is-error">
-						{ translate(
-							`An error occurred and your {{strong}}%(rejectedLicenses)s{{/strong}} wasn't assigned to {{em}}%(selectedSite)s{{/em}}.`,
-							`An error occurred and your {{strong}}%(rejectedLicenses)s{{/strong}} weren't assigned to {{em}}%(selectedSite)s{{/em}}.`,
-							{
-								count: rejectedLicenses.length,
-								args: {
-									rejectedLicenses: rejectedLicenses
-										.map( ( license ) => license.name )
-										.join( ', ' ),
-									selectedSite,
-								},
-								components: {
-									strong: <strong />,
-									em: <em />,
-								},
-							}
-						) }
+						{
+							// We are not using the same translate method for plural form since we have different arguments.
+							rejectedLicenses.length > 1
+								? translate(
+										`An error occurred and your {{strong}}%(remainingItems)s and %(lastItem)s{{/strong}} weren't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										getMessageArgs( rejectedLicenses )
+								  )
+								: translate(
+										`An error occurred and your {{strong}}%(lastItem)s{{/strong}} wasn't assigned to {{em}}%(selectedSite)s{{/em}}.`,
+										getMessageArgs( rejectedLicenses )
+								  )
+						}
 					</Notice>
 				</div>
 			) }
