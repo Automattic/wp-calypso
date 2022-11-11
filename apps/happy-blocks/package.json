@@ -20,6 +20,8 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-build": "workspace:^",
+		"@automattic/color-studio": "2.5.0",
+		"@automattic/typography": "workspace:^",
 		"@wordpress/block-editor": "^9.1.0",
 		"@wordpress/blocks": "^11.8.0",
 		"@wordpress/components": "^19.15.0",
