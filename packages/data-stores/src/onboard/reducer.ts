@@ -402,7 +402,7 @@ const ecommerceFlowRecurType: Reducer< string, OnboardAction > = ( state = '', a
 		return action.ecommerceFlowRecurType;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return false;
+		return '';
 	}
 	return state;
 };
