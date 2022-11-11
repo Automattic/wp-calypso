@@ -182,7 +182,7 @@ export class ImageEditorToolbar extends Component {
 				  },
 			{
 				tool: 'flip-vertical',
-				icon: 'flip-horizontal',
+				icon: 'flip-vertical',
 				text: this.props.displayOnlyIcon ? '' : translate( 'Flip' ),
 				onClick: this.flip,
 			},
