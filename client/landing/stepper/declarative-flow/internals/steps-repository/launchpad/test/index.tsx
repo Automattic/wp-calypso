@@ -64,9 +64,7 @@ function renderLaunchpad( props = {}, siteDetails = defaultSiteDetails ): void {
 
 		return (
 			<Provider store={ reduxStore }>
-				<MemoryRouter
-					initialEntries={ [ `/setup/launchpad?flow=link-in-bio&siteSlug=${ siteSlug }` ] }
-				>
+				<MemoryRouter initialEntries={ [ `/setup/link-in-bio/launchpad?siteSlug=${ siteSlug }` ] }>
 					<Launchpad { ...props } />
 				</MemoryRouter>
 			</Provider>

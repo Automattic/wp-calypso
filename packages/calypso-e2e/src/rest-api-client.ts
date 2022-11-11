@@ -18,11 +18,13 @@ import type {
 	NewSiteResponse,
 	NewSiteParams,
 	NewInviteResponse,
+	NewCommentResponse,
 	AllInvitesResponse,
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
 	NewPostResponse,
+	ReaderResponse,
 	Invite,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
@@ -565,6 +567,37 @@ export class RestAPIClient {
 		return await this.sendRequest( this.getRequestURL( '1.1', '/me/preferences' ), params );
 	}
 
+	/* Reader */
+
+	/**
+	 * Gets the latest posts from blogs a user follows.
+	 *
+	 * @returns {Promise<ReaderResponse>} An Array of posts.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getReaderFeed(): Promise< ReaderResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', '/read/following' ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
 	/* Posts */
 
 	/**
@@ -585,6 +618,76 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/* Comments */
+
+	/**
+	 * Creates a comment on the given post.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 * @param {string} comment Details of the new comment.
+	 * @returns {Promise<NewCommentResponse>} Confirmation details of the new comment.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async createComment(
+		siteID: number,
+		postID: number,
+		comment: string
+	): Promise< NewCommentResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( { content: comment } ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/replies/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a given comment from a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 * @returns {Promise< any >} Decoded JSON response.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async deleteComment( siteID: number, commentID: number ): Promise< any > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/comments/${ commentID }/delete` ),
 			params
 		);
 

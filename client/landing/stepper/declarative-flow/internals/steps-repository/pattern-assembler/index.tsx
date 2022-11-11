@@ -1,7 +1,7 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
@@ -27,8 +27,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const incrementIndexRef = useRef( 0 );
 	const [ scrollToSelector, setScrollToSelector ] = useState< string | null >( null );
-	const { goBack, goNext, submit } = navigation;
-	const { setDesignOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
+	const { goBack, goNext, submit, goToStep } = navigation;
+	const { setThemeOnSite, runThemeSetupOnSite, createCustomTemplate } = useDispatch( SITE_STORE );
 	const reduxDispatch = useReduxDispatch();
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
@@ -36,6 +36,13 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+
+	useEffect( () => {
+		// Require to start the flow from the first step
+		if ( ! selectedDesign ) {
+			goToStep?.( 'goals' );
+		}
+	}, [] );
 
 	const getPatterns = () =>
 		[ header, ...sections, footer ].filter( ( pattern ) => pattern ) as Pattern[];
@@ -87,7 +94,9 @@ const PatternAssembler: Step = ( { navigation } ) => {
 
 	const setScrollToSelectorByPosition = ( position: number ) => {
 		const patternPosition = header ? position + 1 : position;
-		setScrollToSelector( `.entry-content > .wp-block-group:nth-child( ${ patternPosition + 1 } )` );
+		setScrollToSelector(
+			`.wp-site-blocks > .wp-block-group > :nth-child( ${ patternPosition + 1 } )`
+		);
 	};
 
 	const addSection = ( pattern: Pattern ) => {
@@ -161,17 +170,27 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	};
 
 	const onBack = () => {
-		if ( showPatternSelectorType ) {
-			setShowPatternSelectorType( null );
-		} else {
-			const patterns = getPatterns();
-			recordTracksEvent( 'calypso_signup_bcpa_back_click', {
-				has_selected_patterns: patterns.length > 0,
-				pattern_count: patterns.length,
-			} );
+		const patterns = getPatterns();
+		recordTracksEvent( 'calypso_signup_bcpa_back_click', {
+			has_selected_patterns: patterns.length > 0,
+			pattern_count: patterns.length,
+		} );
 
-			goBack();
+		goBack();
+	};
+
+	const getSelectedPattern = () => {
+		if ( 'header' === showPatternSelectorType ) {
+			return header;
 		}
+		if ( 'footer' === showPatternSelectorType ) {
+			return footer;
+		}
+		if ( 'section' === showPatternSelectorType && sectionPosition !== null ) {
+			return sections[ sectionPosition ];
+		}
+
+		return null;
 	};
 
 	const stepContent = (
@@ -180,6 +199,8 @@ const PatternAssembler: Step = ( { navigation } ) => {
 				<PatternSelectorLoader
 					showPatternSelectorType={ showPatternSelectorType }
 					onSelect={ onSelect }
+					onBack={ () => setShowPatternSelectorType( null ) }
+					selectedPattern={ getSelectedPattern() }
 				/>
 				{ ! showPatternSelectorType && (
 					<PatternLayout
@@ -202,6 +223,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							trackEventPatternAdd( 'section' );
 							setSectionPosition( null );
 							setShowPatternSelectorType( 'section' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onReplaceSection={ ( position: number ) => {
 							setSectionPosition( position );
@@ -222,10 +244,11 @@ const PatternAssembler: Step = ( { navigation } ) => {
 						onAddFooter={ () => {
 							trackEventPatternAdd( 'footer' );
 							setShowPatternSelectorType( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onReplaceFooter={ () => {
 							setShowPatternSelectorType( 'footer' );
-							setScrollToSelector( 'footer' );
+							setScrollToSelectorByPosition( sections.length );
 						} }
 						onDeleteFooter={ () => {
 							setFooter( null );
@@ -235,16 +258,23 @@ const PatternAssembler: Step = ( { navigation } ) => {
 							if ( siteSlugOrId ) {
 								const design = getDesign();
 								const stylesheet = design.recipe!.stylesheet!;
+								const theme = stylesheet?.split( '/' )[ 1 ] || design.theme;
 
 								setPendingAction( () =>
-									createCustomTemplate(
-										siteSlugOrId,
-										stylesheet,
-										'home',
-										translate( 'Home' ),
-										createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
-									)
-										.then( () => setDesignOnSite( siteSlugOrId, design ) )
+									// We have to switch theme first. Otherwise, the unique suffix might append to
+									// the slug of newly created Home template if the current activated theme has
+									// modified Home template.
+									setThemeOnSite( siteSlugOrId, theme, undefined, false )
+										.then( () =>
+											createCustomTemplate(
+												siteSlugOrId,
+												stylesheet,
+												'home',
+												translate( 'Home' ),
+												createCustomHomeTemplateContent( stylesheet, !! header, !! footer )
+											)
+										)
+										.then( () => runThemeSetupOnSite( siteSlugOrId, design ) )
 										.then( () => reduxDispatch( requestActiveTheme( site?.ID || -1 ) ) )
 								);
 
@@ -268,6 +298,7 @@ const PatternAssembler: Step = ( { navigation } ) => {
 	return (
 		<StepContainer
 			stepName="pattern-assembler"
+			hideBack={ showPatternSelectorType !== null }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }

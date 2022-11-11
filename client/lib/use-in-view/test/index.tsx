@@ -21,7 +21,7 @@ function TestComponent( {
 				( window as any ).intersectionObserverHandler();
 			} );
 		}
-	}, [ ref ] );
+	}, [ ref, totalTimesInView ] );
 
 	return <div ref={ ref } />;
 }
@@ -29,9 +29,15 @@ function TestComponent( {
 describe( 'useInView suite', () => {
 	beforeEach( () => {
 		( window as any ).IntersectionObserver = class IO {
+			disconnected = false;
+
 			constructor( private handler: ( entries: { isIntersecting: boolean }[] ) => void ) {
 				// expose the handler so it can be called in tests
 				( window as any ).intersectionObserverHandler = () => {
+					if ( this.disconnected ) {
+						return;
+					}
+
 					handler( [ { isIntersecting: true } ] );
 				};
 			}
@@ -41,6 +47,7 @@ describe( 'useInView suite', () => {
 			}
 
 			disconnect() {
+				this.disconnected = true;
 				return null;
 			}
 		};
@@ -64,6 +71,16 @@ describe( 'useInView suite', () => {
 		let count = 0;
 		const callback = () => count++;
 		render( <TestComponent totalTimesInView={ 2 } callback={ callback } /> );
+		expect( count ).toBe( 1 );
+	} );
+
+	it( 'Component renders twice, first out view, second in view, event fires once', () => {
+		let count = 0;
+		// The callback is generated in each render, so it's a new function
+		const { rerender } = render(
+			<TestComponent totalTimesInView={ 0 } callback={ () => count++ } />
+		);
+		rerender( <TestComponent totalTimesInView={ 1 } callback={ () => count++ } /> );
 		expect( count ).toBe( 1 );
 	} );
 } );

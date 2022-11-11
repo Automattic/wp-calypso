@@ -15,6 +15,7 @@ import {
 } from 'calypso/state/action-types';
 import { ImageData } from './schema';
 import 'calypso/state/signup/init';
+import type { SiteId } from 'calypso/types';
 
 export function imageUploaded( data: { pageId: string; mediaIndex: number; image: ImageData } ) {
 	return {
@@ -94,7 +95,10 @@ export function updateWebsiteContentCurrentIndex( currentIndex: number ) {
 	};
 }
 
-export function initializePages( pageNames: Array< { id: string; name: TranslateResult } > ) {
+export function initializePages(
+	pageNames: Array< { id: string; name: TranslateResult } >,
+	siteId: SiteId
+) {
 	const generatedPages = pageNames.map( ( { id, name } ) => ( {
 		id,
 		title: name,
@@ -107,6 +111,9 @@ export function initializePages( pageNames: Array< { id: string; name: Translate
 	} ) );
 	return {
 		type: SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES,
-		payload: generatedPages,
+		payload: {
+			pages: generatedPages,
+			siteId,
+		},
 	};
 }

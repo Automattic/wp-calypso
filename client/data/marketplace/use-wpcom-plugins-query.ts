@@ -79,6 +79,16 @@ const fetchWPCOMPlugin = ( slug: string ) => {
 	} );
 };
 
+export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
+	const cacheKey = getCacheKey( slug + '-normalized' );
+	const fetchFn = () =>
+		fetchWPCOMPlugin( slug ).then( ( data: any ) =>
+			normalizePluginData( { detailsFetched: Date.now() }, data )
+		);
+
+	return [ cacheKey, fetchFn ];
+};
+
 /**
  * Returns a marketplace plugin data
  *
@@ -90,8 +100,7 @@ export const useWPCOMPlugin = (
 	slug: string,
 	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult< any > => {
-	return useQuery( getCacheKey( slug ), () => fetchWPCOMPlugin( slug ), {
-		select: ( data ) => normalizePluginData( { detailsFetched: Date.now() }, data ),
+	return useQuery( ...getWPCOMPluginQueryParams( slug ), {
 		enabled: enabled,
 		staleTime: staleTime,
 		refetchOnMount: refetchOnMount,

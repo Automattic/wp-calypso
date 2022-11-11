@@ -1,5 +1,6 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import { findIndex, find } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -14,7 +15,6 @@ import { getWidgetPath, formatValue } from '../utils';
 class StoreStatsChart extends Component {
 	static propTypes = {
 		basePath: PropTypes.string.isRequired,
-		chartTitle: PropTypes.node,
 		data: PropTypes.array.isRequired,
 		renderTabs: PropTypes.func.isRequired,
 		selectedDate: PropTypes.string.isRequired,
@@ -98,7 +98,7 @@ class StoreStatsChart extends Component {
 	buildChartData = ( item, selectedTab, chartFormat ) => {
 		const { selectedDate } = this.props;
 		const { activeCharts } = this.state;
-		const className = classnames( item.classNames.join( ' ' ), {
+		const className = classNames( item.classNames.join( ' ' ), {
 			'is-selected': item.period === selectedDate,
 		} );
 		const nestedValue = item[ activeCharts[ 0 ] ];
@@ -127,19 +127,40 @@ class StoreStatsChart extends Component {
 	};
 
 	render() {
-		const { chartTitle, className, data, renderTabs, selectedDate, tabs, unit } = this.props;
+		const { className, data, renderTabs, selectedDate, tabs, unit } = this.props;
 		const { selectedTabIndex } = this.state;
 		const selectedTab = tabs[ selectedTabIndex ];
 		const isLoading = ! data.length;
 		const chartFormat = UNITS[ unit ].chartFormat;
 		const chartData = data.map( ( item ) => this.buildChartData( item, selectedTab, chartFormat ) );
 		const selectedIndex = findIndex( data, ( d ) => d.period === selectedDate );
-		return (
-			<Card className={ classnames( className, 'stats-module' ) }>
-				<div className="store-stats-chart__top">
-					<div className="store-stats-chart__title">{ chartTitle && chartTitle }</div>
-					{ this.renderLegend( selectedTabIndex ) }
-				</div>
+
+		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
+
+		return isNewFeatured ? (
+			<div>
+				{ this.renderLegend( selectedTabIndex ) }
+				<ElementChart
+					loading={ isLoading }
+					data={ chartData }
+					barClick={ this.barClick }
+					chartXPadding={ 0 }
+					minBarWidth={ 35 }
+				/>
+				{ ! isLoading &&
+					renderTabs( {
+						chartData,
+						selectedIndex,
+						selectedTabIndex,
+						selectedDate,
+						unit,
+						tabClick: this.tabClick,
+						iconSize: 24,
+					} ) }
+			</div>
+		) : (
+			<Card className={ classNames( className, 'stats-module' ) }>
+				{ this.renderLegend( selectedTabIndex ) }
 				<ElementChart loading={ isLoading } data={ chartData } barClick={ this.barClick } />
 				{ ! isLoading &&
 					renderTabs( {

@@ -109,7 +109,7 @@ describe( 'Search view', () => {
 
 	test( 'should show NoResults when there are no results', () => {
 		render( <PluginsBrowser { ...myProps } /> );
-		expect( screen.getByText( /no plugins match your search/i ) ).toBeVisible();
+		expect( screen.getByText( /no matches found/i ) ).toBeVisible();
 	} );
 	test( 'should show plugin list when there are results', () => {
 		mockPlugins = [ {} ];

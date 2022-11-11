@@ -1,13 +1,12 @@
 /* stylelint-disable scss/at-import-no-partial-leading-underscore */
 @import "@wordpress/base-styles/_breakpoints";
 @import "@wordpress/base-styles/_mixins";
+@import "@automattic/onboarding/styles/mixins";
 
 $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "purple", "yellow",
 	"biba", "chloe-currie", "emily", "luis-carvelleda", "mesh-gradient", "paul-nyberg", "tengfai";
 
 .pattern-picker__item {
-	flex: 1;
-
 	// iPhone aspect ratio
 	aspect-ratio: 0.48;
 	display: flex;
@@ -21,16 +20,21 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	cursor: pointer;
 	padding: 0;
 	overflow: hidden;
-	height: calc(65vh - 50px);
+	height: calc(100% - 40px);
 	outline: none;
+
+	@include break-small {
+		height: calc(65vh - 50px);
+	}
+
+	@include onboarding-break-mobile-landscape {
+		margin: 10px 0;
+		height: auto;
+		width: 28vh;
+	}
 
 	@media ( max-height: 375px ) {
 		aspect-ratio: 0.5;
-	}
-
-	// needed for iOS Safari. iOS has
-	@supports ( min-height: 65svh ) {
-		height: calc(65svh - 50px);
 	}
 
 	opacity: 0.5;
@@ -55,9 +59,11 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 		width: auto;
 	}
 
-	.swiper-slide-active .pattern-picker__item {
-		opacity: 1;
-		filter: blur(0);
+	.swiper-slide-active {
+		.pattern-picker__item {
+			opacity: 1;
+			filter: blur(0);
+		}
 	}
 }
 
@@ -65,7 +71,7 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	display: none;
 	position: absolute;
 	width: 100%;
-	top: calc(50% - 20px);
+	top: calc(50% - 3rem);
 	/*!rtl:ignore*/
 	direction: ltr;
 	padding: 20px;
@@ -113,16 +119,9 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 }
 
 .pattern-picker__select {
-	display: flex;
+	display: inline-flex;
 	justify-content: center;
-	text-align: center;
-	width: 100%;
-
-	@include break-small {
-		// seems like a magic number, but the button should be as wide as the designs
-		// and the designs width is tied to the viewport height
-		width: 28vh;
-	}
+	width: 28vh;
 
 	svg {
 		display: none;
@@ -144,10 +143,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 }
 
 .pattern-picker__cta {
-	text-align: center;
-	margin: 10px 20px;
-
-	button {
-		display: inline-flex;
-	}
+	position: absolute;
+	margin-top: 10px;
+	left: 50%;
+	transform: translateX(-50%);
 }

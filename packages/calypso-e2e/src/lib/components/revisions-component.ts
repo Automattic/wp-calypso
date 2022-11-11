@@ -39,22 +39,9 @@ export class RevisionsComponent {
 	}
 
 	/**
-	 * Given a string of text, check whether the text is present in the Revisions modal.
-	 *
-	 * Note that this method does not check the nature of the text (addition, deletion).
-	 *
-	 * @param {string} text Text to check against the diff viewer.
+	 * Loads the currently selected revision
 	 */
-	async validateTextInRevision( text: string ): Promise< void > {
-		await this.page.waitForSelector( selectors.diffViewer( text ) );
-	}
-
-	/**
-	 * Clicks on a button with given text.
-	 *
-	 * @param {string} text Text of the button to click.
-	 */
-	async clickButton( text: string ): Promise< void > {
-		await this.page.click( selectors.button( text ) );
+	async loadSelectedRevision(): Promise< void > {
+		await this.page.click( selectors.button( 'Load' ) );
 	}
 }

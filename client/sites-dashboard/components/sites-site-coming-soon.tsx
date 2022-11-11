@@ -15,7 +15,7 @@ const Root = styled.div( {
 	justifyContent: 'center',
 	backgroundColor: '#117ac9',
 	borderRadius: 4,
-	boxSizing: 'content-box',
+	boxSizing: 'border-box',
 	border: '1px solid rgb(238, 238, 238)',
 	position: 'relative',
 	overflow: 'hidden',

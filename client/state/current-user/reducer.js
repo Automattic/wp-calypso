@@ -1,6 +1,7 @@
 import {
 	CURRENT_USER_RECEIVE,
 	CURRENT_USER_SET_EMAIL_VERIFIED,
+	CURRENT_USER_SET_JETPACK_PARTNER_TYPE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
 } from 'calypso/state/action-types';
@@ -38,6 +39,15 @@ export const user = ( state = null, action ) => {
 			return {
 				...state,
 				email_verified: action.verified,
+			};
+		case CURRENT_USER_SET_JETPACK_PARTNER_TYPE:
+			return {
+				...state,
+				jetpack_partner_types: [
+					...( state.jetpack_partner_types || [] ),
+					action.jetpack_partner_type,
+				],
+				has_jetpack_partner_access: true,
 			};
 	}
 

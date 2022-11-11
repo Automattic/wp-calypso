@@ -34,7 +34,7 @@ export const EmailDifferentDomainOwnerMessage = () => {
 				eventName="calypso_email_providers_nonowner_impression"
 				eventProperties={ { source: 'email-management', context: 'different-owners' } }
 			/>
-			<p className="email-non-domain-owner-message__non-owner-message">
+			<p className="email-non-domain-owner-message__text">
 				{ translate(
 					'Additional mailboxes can only be purchased by the owner of the domain and email subscriptions. ' +
 						'Please {{contactSupportLink}}contact support{{/contactSupportLink}} to make a purchase.',

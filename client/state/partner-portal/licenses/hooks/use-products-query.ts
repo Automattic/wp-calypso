@@ -28,9 +28,14 @@ function queryProducts(): Promise< APIProductFamily[] > {
 				.map( ( family ) => {
 					return {
 						...family,
-						products: family.products.filter( ( product ) => {
-							return exclude.indexOf( product.slug ) === -1;
-						} ),
+						products: family.products
+							.filter( ( product ) => {
+								return exclude.indexOf( product.slug ) === -1;
+							} )
+							.map( ( product ) => ( {
+								...product,
+								family_slug: family.slug,
+							} ) ),
 					};
 				} )
 				.filter( ( family ) => {

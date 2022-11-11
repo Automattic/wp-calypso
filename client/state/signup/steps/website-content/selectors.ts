@@ -15,6 +15,7 @@ export function getWebsiteContent( state: WebsiteContentStateModel ) {
 		state.signup?.steps?.websiteContentCollection?.websiteContent || initialState.websiteContent
 	);
 }
+
 export function getWebsiteContentDataCollectionIndex( state: WebsiteContentStateModel ) {
 	return state.signup?.steps?.websiteContentCollection?.currentIndex || initialState.currentIndex;
 }

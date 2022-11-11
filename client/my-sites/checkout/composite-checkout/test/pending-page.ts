@@ -270,6 +270,15 @@ describe( 'getRedirectFromPendingPage', () => {
 		expect( actual ).toEqual( { url: '/checkout/thank-you/example.com/1234' } );
 	} );
 
+	it( 'returns a saas redirect url if saas redirect url is not empty', () => {
+		const url = 'https://vendor-app-url.com/thank-you-page/?intent-id=234234';
+
+		const actual = getRedirectFromPendingPage( {
+			saasRedirectUrl: url,
+		} );
+		expect( actual ).toEqual( { url: url } );
+	} );
+
 	it( 'returns a checkout url if the transaction has an error', () => {
 		const actual = getRedirectFromPendingPage( {
 			redirectTo: '/home',

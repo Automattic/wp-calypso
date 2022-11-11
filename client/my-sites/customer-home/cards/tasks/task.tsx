@@ -31,6 +31,7 @@ const Task = ( {
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
 	showSkip = true,
+	skipText,
 	enableSkipOptions = true,
 	scary,
 	siteId,
@@ -46,6 +47,7 @@ const Task = ( {
 	isLoading?: boolean;
 	isUrgent?: boolean;
 	showSkip?: boolean;
+	skipText?: ReactNode;
 	enableSkipOptions?: boolean;
 	scary?: boolean;
 	siteId?: number | null;
@@ -176,7 +178,8 @@ const Task = ( {
 							aria-expanded={ enableSkipOptions && areSkipOptionsVisible ? true : undefined }
 							aria-controls={ `popover-menu-${ instanceId }` }
 						>
-							{ enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) }
+							{ skipText ||
+								( enableSkipOptions ? translate( 'Hide this' ) : translate( 'Dismiss' ) ) }
 							{ enableSkipOptions && <Gridicon icon="dropdown" size={ 18 } /> }
 						</Button>
 					) }

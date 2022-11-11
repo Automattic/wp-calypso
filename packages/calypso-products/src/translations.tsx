@@ -39,6 +39,12 @@ import {
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_ONLINE_FORUMS,
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -131,6 +137,38 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	const boost = translate( 'Boost' );
 	const social = translate( 'Social' );
 
+	const text10gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+		comment:
+			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+		count: 10,
+		args: { numberOfGigabytes: 10 },
+	} );
+
+	const text100gb = translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+		comment:
+			'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+		count: 100,
+		args: { numberOfGigabytes: 100 },
+	} );
+
+	const text1tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 1,
+		args: { numberOfTerabytes: 1 },
+	} );
+
+	//Backup Add-on products
+	const backupAddon10gb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text10gb },
+	} );
+	const backupAddon100gb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text100gb },
+	} );
+	const backupAddon1tb = translate( 'Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text1tb },
+	} );
+
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
 		[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: backupDaily,
@@ -156,6 +194,12 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: antiSpam,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: social,
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: social,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: backupAddon10gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: backupAddon100gb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: backupAddon1tb,
 	};
 };
 
@@ -224,7 +268,10 @@ export const getJetpackProductsTaglines = (): Record<
 	const socialTagLine = translate(
 		'Easily share your website content on your social media channels'
 	);
-
+	const backupAddonTagLine = translate( 'Additional storage for your Jetpack Backup plan.' );
+	const backupAddonOwnedTagLine = translate(
+		'Your site has additional storage for Jetpack Backup.'
+	);
 	return {
 		[ PRODUCT_JETPACK_BACKUP_DAILY ]: {
 			default: backupDailyTagline,
@@ -285,6 +332,30 @@ export const getJetpackProductsTaglines = (): Record<
 		[ PRODUCT_JETPACK_VIDEOPRESS_MONTHLY ]: { default: videoPressTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC ]: { default: socialTagLine },
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: { default: socialTagLine },
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: {
+			default: backupAddonTagLine,
+			owned: backupAddonOwnedTagLine,
+		},
 	};
 };
 
@@ -786,6 +857,21 @@ export const useJetpack10GbStorageAmountText = (): TranslateResult => {
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 10,
 				args: { numberOfGigabytes: 10 },
+			} ),
+		[ _translate ]
+	);
+};
+
+export const useJetpack100GbStorageAmountText = (): TranslateResult => {
+	const _translate = useTranslate();
+
+	return useMemo(
+		() =>
+			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: 100,
+				args: { numberOfGigabytes: 100 },
 			} ),
 		[ _translate ]
 	);

@@ -1,4 +1,4 @@
-import { Locator, Page } from 'playwright';
+import { Locator, Page, Frame } from 'playwright';
 import envVariables from './env-variables';
 
 const navTabParent = 'div.section-nav';
@@ -151,6 +151,67 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
 	}
 
 	return blockId;
+}
+
+/**
+ * Waits until DOM mutations for given target element become idle. Can be used
+ * in situations where Playwright auto-waiting is not working for some reason.
+ *
+ * @example
+ * await Promise.all( [
+ *   waitForMutations( page, '.foobars-wrapper' ),
+ *   page.click( 'button.load-foobars' ),
+ * ] );
+ * const foobarsText = await page.innerText( '.foobars' );
+ * @param {Page} page Page object.
+ * @param {string} selector Observer target selector.
+ * @param {object} options
+ * @param {number} options.timeout Maximum time in milliseconds, defaults to 10
+ * seconds, pass 0 to disable timeout.
+ * @param {number} options.debounce Maximum time to wait between consecutive
+ * mutations, defaults to 1 second.
+ * @param {object} options.observe Mutation observation options.
+ */
+export async function waitForMutations(
+	page: Page | Frame,
+	selector: string,
+	options?: {
+		timeout?: number;
+		debounce?: number;
+		observe?: MutationObserverInit;
+	}
+): Promise< void > {
+	const timeout = options?.timeout || 10000;
+	const debounce = options?.debounce || 1000;
+	const observe = options?.observe || { attributes: true, subtree: true, childList: true };
+	const target = await page.waitForSelector( selector );
+
+	await Promise.race( [
+		new Promise( ( resolve, reject ) => {
+			if ( timeout > 0 ) {
+				setTimeout( () => {
+					reject( `Waiting for ${ selector } mutations timed out.` );
+				}, timeout );
+			}
+		} ),
+		page.evaluate(
+			async ( args ) => {
+				await new Promise( ( resolve ) => {
+					const debounceResolve = () => {
+						let timer: NodeJS.Timeout;
+						return () => {
+							clearTimeout( timer );
+							timer = setTimeout( resolve, args.debounce );
+						};
+					};
+
+					const observer = new MutationObserver( debounceResolve() );
+					observer.observe( args.target, args.observe );
+				} );
+			},
+			{ target, debounce, observe }
+		),
+	] );
 }
 
 /**

@@ -8,6 +8,7 @@ import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-brow
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ClearSearchButton from '../plugins-browser/clear-search-button';
+import { PaidPluginsSection } from '../plugins-discovery-page';
 import usePlugins from '../use-plugins';
 
 /**
@@ -142,11 +143,12 @@ const PluginsSearchResultPage = ( {
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<div className="plugins-browser__no-results">
 			<NoResults
-				text={ translate( 'No plugins match your search for {{searchTerm/}}.', {
-					textOnly: true,
-					components: { searchTerm: <em>{ searchTerm }</em> },
-				} ) }
+				text={ translate( 'No matches found' ) }
+				subtitle={ translate(
+					'Try using different keywords or check below our must-have premium plugins'
+				) }
 			/>
+			<PaidPluginsSection noHeader />
 		</div>
 	);
 };

@@ -43,6 +43,7 @@ const SectionContent = styled.div`
 	padding: 0 0 36px 0;
 	@media ( min-width: 600px ) {
 		padding-right: 96px;
+		min-width: 675px;
 	}
 `;
 

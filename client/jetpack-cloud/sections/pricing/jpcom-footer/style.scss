@@ -194,10 +194,6 @@
 }
 .sitemap .store-buttons ul > li > a {
 	display: block;
-	transition: transform 0.1s;
-}
-.sitemap .store-buttons ul > li > a:hover {
-	transform: scale(1.05);
 }
 
 @media ( min-width: 531px ) {

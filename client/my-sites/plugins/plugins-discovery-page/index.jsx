@@ -22,7 +22,7 @@ function filterPopularPlugins( popularPlugins = [], featuredPlugins = [] ) {
 	);
 }
 
-const PaidPluginsSection = ( props ) => {
+export const PaidPluginsSection = ( props ) => {
 	const { plugins: paidPlugins = [], isFetching: isFetchingPaidPlugins } = usePlugins( {
 		category: 'paid',
 	} );

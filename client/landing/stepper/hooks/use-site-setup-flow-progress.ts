@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import type { StepPath } from '../declarative-flow/internals/steps-repository';
 
 const SiteIntent = Onboard.SiteIntent;
@@ -11,16 +10,7 @@ export function useSiteSetupFlowProgress(
 	intent: string,
 	storeType: string
 ) {
-	const isEnglishLocale = useIsEnglishLocale();
-	const isEnabledFTM = isEnabled( 'signup/ftm-flow-non-en' ) || isEnglishLocale;
-	const verticalsStepEnabled = isEnabled( 'signup/site-vertical-step' ) && isEnabledFTM;
-	const goalsStepEnabled = isEnabled( 'signup/goals-step' ) && isEnabledFTM;
-
-	const beginningSteps = [
-		...( goalsStepEnabled ? [ 'goals' ] : [] ),
-		...( verticalsStepEnabled ? [ 'vertical' ] : [] ),
-		...( ! goalsStepEnabled ? [ 'intent' ] : [] ),
-	];
+	const beginningSteps = [ 'goals', 'vertical' ];
 
 	let beginningSegment = ( beginningSteps.length - 1 ) / MAX_STEPS;
 	let middleSegment = 0;

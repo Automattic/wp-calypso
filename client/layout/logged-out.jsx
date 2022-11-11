@@ -7,10 +7,14 @@ import { connect } from 'react-redux';
 import GdprBanner from 'calypso/blocks/gdpr-banner';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
+import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import MasterbarLoggedOut from 'calypso/layout/masterbar/logged-out';
 import MasterbarLogin from 'calypso/layout/masterbar/login';
 import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
+import UniversalNavbarFooter from 'calypso/layout/universal-navbar-footer';
+import UniversalNavbarFooterAutomattic from 'calypso/layout/universal-navbar-footer-automattic';
+import UniversalNavbarHeader from 'calypso/layout/universal-navbar-header';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -96,6 +100,8 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
+	} else if ( sectionName === 'plugins' ) {
+		masterbar = <UniversalNavbarHeader />;
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -112,6 +118,7 @@ const LayoutLoggedOut = ( {
 
 	return (
 		<div className={ classNames( 'layout', classes ) }>
+			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
 			{ masterbar }
 			{ isJetpackCloud() && (
@@ -128,6 +135,12 @@ const LayoutLoggedOut = ( {
 				</div>
 			</div>
 			{ config.isEnabled( 'gdpr-banner' ) && <GdprBanner showGdprBanner={ showGdprBanner } /> }
+			{ sectionName === 'plugins' && (
+				<>
+					<UniversalNavbarFooter />
+					<UniversalNavbarFooterAutomattic />
+				</>
+			) }
 		</div>
 	);
 };

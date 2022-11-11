@@ -24,8 +24,11 @@ export function getEnhancedTasks(
 	const linkInBioLinksEditCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const linkInBioSiteLaunchCompleted =
+	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
+
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
 	tasks &&
 		tasks.map( ( task ) => {
@@ -34,11 +37,10 @@ export function getEnhancedTasks(
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize Newsletter' ),
-						keepActive: true,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace(
-								`/setup/newsletterPostSetup?flow=newsletter-post-setup&siteSlug=${ siteSlug }`
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/newsletter-post-setup/newsletterPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -46,10 +48,9 @@ export function getEnhancedTasks(
 				case 'plan_selected':
 					taskData = {
 						title: translate( 'Choose a Plan' ),
-						keepActive: true,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace( `/plans/${ siteSlug }` );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/plans/${ siteSlug }` );
 						},
 						badgeText: translatedPlanName,
 					};
@@ -57,10 +58,9 @@ export function getEnhancedTasks(
 				case 'subscribers_added':
 					taskData = {
 						title: translate( 'Add Subscribers' ),
-						keepActive: true,
 						actionDispatch: () => {
 							if ( goToStep ) {
-								recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
+								recordTaskClickTracksEvent( flow, task.completed, task.id );
 								goToStep( 'subscribers' );
 							}
 						},
@@ -70,8 +70,8 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace( `/post/${ siteSlug }` );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/post/${ siteSlug }` );
 						},
 					};
 					break;
@@ -83,11 +83,10 @@ export function getEnhancedTasks(
 				case 'setup_link_in_bio':
 					taskData = {
 						title: translate( 'Personalize Link in Bio' ),
-						keepActive: true,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace(
-								`/setup/linkInBioPostSetup?flow=link-in-bio-post-setup&siteSlug=${ siteSlug }`
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								`/setup/link-in-bio-post-setup/linkInBioPostSetup?siteSlug=${ siteSlug }`
 							);
 						},
 					};
@@ -95,19 +94,18 @@ export function getEnhancedTasks(
 				case 'links_added':
 					taskData = {
 						title: translate( 'Add links' ),
+						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-							window.location.replace( `/site-editor/${ siteSlug }` );
+							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
+							window.location.assign( `/site-editor/${ siteSlug }` );
 						},
-						keepActive: true,
-						isCompleted: linkInBioLinksEditCompleted,
 					};
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
 						title: translate( 'Launch Link in bio' ),
-						isCompleted: linkInBioSiteLaunchCompleted,
-						dependencies: [ linkInBioLinksEditCompleted ],
+						completed: siteLaunchCompleted,
+						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -120,8 +118,49 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, task.isCompleted, task.id );
-									window.location.replace( `/home/${ siteSlug }` );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									window.location.assign( `/home/${ siteSlug }` );
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'videopress_setup':
+					taskData = {
+						completed: true,
+						title: translate( 'Set up your Video site' ),
+					};
+					break;
+				case 'videopress_upload':
+					taskData = {
+						title: translate( 'Upload your first video' ),
+						actionUrl: `/site-editor/${ siteSlug }`,
+						completed: videoPressUploadCompleted,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.replace( `/site-editor/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'videopress_launched':
+					taskData = {
+						title: translate( 'Launch Video site' ),
+						completed: siteLaunchCompleted,
+						disabled: ! videoPressUploadCompleted,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching Video Site' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									window.location.replace( `/home/${ siteSlug }?forceLoadLaunchpadData=true` );
 								} );
 
 								submit?.();
@@ -162,26 +201,4 @@ export function getArrayOfFilteredTasks( tasks: Task[], flow: string | null ) {
 			return accumulator;
 		}, [] as Task[] )
 	);
-}
-
-// This function will determine whether we want to disable or enable a task on the checklist
-// If a task depends on the completion of other tasks, we want to check if all dependencies are finished:
-//    ^ If all the dependencies are done ( true ), then the task is enabled
-//    ^ If at least one of the dependencies is unfinished ( false ), then we check the proceeding conditions
-// If a task is set to keepActive, we keep it enabled. It allows a task to be revisited when completed
-// If a task is completed, we disable it
-export function isTaskDisabled( task: Task ) {
-	if ( hasIncompleteDependencies( task ) ) {
-		return true;
-	}
-
-	if ( task.keepActive ) {
-		return false;
-	}
-
-	return task.isCompleted;
-}
-
-export function hasIncompleteDependencies( task: Task ) {
-	return task?.dependencies?.some( ( dependency: boolean ) => dependency === false );
 }

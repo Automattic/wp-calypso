@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { capitalize, get } from 'lodash';
+import { capitalize, get, isEmpty } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -145,6 +145,20 @@ class Login extends Component {
 	handleTwoFactorRequested = ( authType ) => {
 		if ( this.props.onTwoFactorRequested ) {
 			this.props.onTwoFactorRequested( authType );
+		} else if ( this.props.isWoo ) {
+			page(
+				login( {
+					isJetpack: this.props.isJetpack,
+					isGutenboarding: this.props.isGutenboarding,
+					// If no notification is sent, the user is using the authenticator for 2FA by default
+					twoFactorAuthType: authType,
+					locale: this.props.locale,
+					isPartnerSignup: this.props.isPartnerSignup,
+					// Pass oauth2 and redirectTo query params so that we can get the correct signup url for the user
+					oauth2ClientId: this.props.oauth2Client?.id,
+					redirectTo: this.props.redirectTo,
+				} )
+			);
 		} else {
 			page(
 				login( {
@@ -221,8 +235,8 @@ class Login extends Component {
 			return signupUrl;
 		}
 
-		if ( isWoo && ! currentQuery ) {
-			// In 2fa screens, we don't have currentQuery
+		if ( isWoo && isEmpty( currentQuery ) ) {
+			// if query is empty, return to the woo start flow
 			return 'https://woocommerce.com/start/';
 		}
 

@@ -14,7 +14,7 @@ import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_FEEDBACK_CHANGE,
 } from 'calypso/state/action-types';
 import { withSchemaValidation } from 'calypso/state/utils';
-import { schema, initialState, WebsiteContentCollection, PageData } from './schema';
+import { schema, initialState, WebsiteContentCollection } from './schema';
 import type { AnyAction } from 'redux';
 
 export const IMAGE_UPLOAD_STATES = {
@@ -31,17 +31,17 @@ export default withSchemaValidation(
 	( state = initialState, action: AnyAction ): WebsiteContentCollection => {
 		switch ( action.type ) {
 			case SIGNUP_STEPS_WEBSITE_CONTENT_INITIALIZE_PAGES: {
-				// When initializing page we need to leave pages that already exist alone
-				// so that persisted state can load correctly
-				const newPages = action.payload.map( ( page: PageData ) => ( {
-					...page,
-					...state.websiteContent.pages.find( ( oldPage ) => oldPage.id === page.id ),
-				} ) );
+				const { pages, siteId } = action.payload;
+
+				// If the persisted siteId is same as the siteId in the action, do nothing.
+				if ( siteId === state.siteId ) {
+					return state;
+				}
 
 				return {
-					...state,
-					websiteContent: { ...state.websiteContent, pages: newPages },
-					imageUploadStates: {},
+					...initialState,
+					websiteContent: { ...initialState.websiteContent, pages },
+					siteId,
 				};
 			}
 			case SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX:

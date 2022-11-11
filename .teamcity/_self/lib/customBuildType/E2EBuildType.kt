@@ -73,7 +73,7 @@ open class E2EBuildType(
 		maxRunningBuilds = concurrentBuilds
 
 		artifactRules = """
-			logs.tgz => logs.tgz
+			logs => logs.tgz
 			screenshots => screenshots
 			trace => trace
 		""".trimIndent()
@@ -150,7 +150,7 @@ open class E2EBuildType(
 					find test/e2e/results -type f \( -iname \*.webm -o -iname \*.png \) -print0 | xargs -r -0 mv -t screenshots
 
 					mkdir -p logs
-					find test/e2e/ -name '*.log' -print0 | xargs -r -0 tar cvfz logs.tgz
+					find test/e2e/results -name '*.log' -print0 | xargs -r -0 mv -t logs
 
 					mkdir -p trace
 					find test/e2e/results -name '*.zip' -print0 | xargs -r -0 mv -t trace

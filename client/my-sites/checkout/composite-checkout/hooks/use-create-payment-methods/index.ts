@@ -27,7 +27,6 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { createFullCreditsMethod } from '../../payment-methods/full-credits';
 import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
@@ -281,10 +280,6 @@ function useCreateNetbanking(): PaymentMethod {
 	);
 }
 
-function useCreateFullCredits() {
-	return useMemo( () => createFullCreditsMethod(), [] );
-}
-
 function useCreateFree() {
 	return useMemo( createFreePaymentMethod, [] );
 }
@@ -432,8 +427,6 @@ export default function useCreatePaymentMethods( {
 		allowUseForAllSubscriptions,
 	} );
 
-	const fullCreditsPaymentMethod = useCreateFullCredits();
-
 	const freePaymentMethod = useCreateFree();
 
 	const applePayMethod = useCreateApplePay( {
@@ -464,7 +457,6 @@ export default function useCreatePaymentMethods( {
 
 	return [
 		freePaymentMethod,
-		fullCreditsPaymentMethod,
 		...existingCardMethods,
 		applePayMethod,
 		googlePayMethod,

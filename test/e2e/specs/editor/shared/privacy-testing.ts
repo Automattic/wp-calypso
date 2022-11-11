@@ -43,6 +43,10 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 				await testAccount.authenticate( page );
 			} );
 
+			afterAll( async function () {
+				await page.close();
+			} );
+
 			it( 'Start new page', async function () {
 				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
@@ -70,61 +74,69 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			} );
 
 			it( 'Publish page', async function () {
-				// Private articles are published immediately as the option is selected.
-				// In other words, for Private articles the publish action happened in previous step.
+				// Private articles are published immediately as the option is
+				// selected. In other words, for Private articles the publish
+				// action happened in previous step.
 				if ( visibility === 'Private' ) {
 					url = await editorPage.getPublishedURLFromToast();
 				} else {
 					url = await editorPage.publish();
 				}
 			} );
+
+			it( `View published page`, async function () {
+				await page.goto( url.href );
+				const publishedPostPage = new PublishedPostPage( page );
+
+				// Posting user can see all of their pages, regardless of
+				// privacy setting. However, password protected pages still need
+				// to be unlocked.
+				if ( visibility === 'Password' ) {
+					await publishedPostPage.enterPostPassword( pagePassword );
+				}
+				await publishedPostPage.validateTextInPost( pageContent );
+			} );
 		} );
 
-		describe( 'Validate page content', function () {
+		describe( `Validate published ${ visibility } page content for non-authors`, function () {
 			let testPage: Page;
 
 			beforeEach( async function () {
 				testPage = await browser.newPage();
 			} );
 
-			const viewPageAsNonAuthor = async () => {
+			afterEach( async function () {
+				await testPage.close();
+			} );
+
+			const viewPageAsNonAuthor = async ( accountName?: string ) => {
+				if ( accountName ) {
+					const testAccount = new TestAccount( 'defaultUser' );
+					await testAccount.authenticate( testPage );
+				}
+
 				await testPage.goto( url.href );
-				const publishedPostPage = new PublishedPostPage( testPage );
 
-				// If target article is private, only the posting user can see that it even exists.
-				if ( visibility === 'Private' ) {
-					return await publishedPostPage.validateTextInPost( 'Nothing here' );
+				if ( visibility !== 'Private' ) {
+					const publishedPostPage = new PublishedPostPage( testPage );
+					// If target article is password protected, unlock it first.
+					if ( visibility === 'Password' ) {
+						await publishedPostPage.enterPostPassword( pagePassword );
+					}
+					await publishedPostPage.validateTextInPost( pageContent );
+				} else {
+					// If target article is private, only the posting user can
+					// see that it even exists.
+					await testPage.waitForSelector( 'body.error404' );
 				}
-
-				// If target article is password protected, unlock it first.
-				if ( visibility === 'Password' ) {
-					await publishedPostPage.enterPostPassword( pagePassword );
-				}
-				await publishedPostPage.validateTextInPost( pageContent );
 			};
 
-			it( `View ${ visibility } page as 'defaultUser'`, async function () {
-				const testAccount = new TestAccount( 'defaultUser' );
-				await testAccount.authenticate( testPage );
-				await viewPageAsNonAuthor();
+			it( `View page as an authenticated user`, async function () {
+				await viewPageAsNonAuthor( 'defaultUser' );
 			} );
 
-			it( `View ${ visibility } page as a public user that is not logged in.`, async function () {
+			it( `View page as an unauthenticated user`, async function () {
 				await viewPageAsNonAuthor();
-			} );
-
-			it( `View ${ visibility } page as publishing user`, async function () {
-				const testAccount = new TestAccount( accountName );
-				await testAccount.authenticate( testPage );
-				await testPage.goto( url.href );
-				const publishedPostPage = new PublishedPostPage( testPage );
-
-				// Posting user can see all of their pages, regardless of privacy setting.
-				// However, password protected pages still need to be unlocked.
-				if ( visibility === 'Password' ) {
-					await publishedPostPage.enterPostPassword( pagePassword );
-				}
-				await publishedPostPage.validateTextInPost( pageContent );
 			} );
 		} );
 	} );

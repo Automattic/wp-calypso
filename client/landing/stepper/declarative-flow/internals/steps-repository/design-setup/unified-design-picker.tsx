@@ -21,9 +21,10 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumBadge from 'calypso/components/premium-badge';
 import WebPreview from 'calypso/components/web-preview/content';
-import { usePremiumGlobalStyles } from 'calypso/landing/stepper/hooks/use-premium-global-styles';
+import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
@@ -82,8 +83,18 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		)
 	);
 
+	// ********** Logic for vertical
+	const { data: siteVertical, isLoading: isLoadingSiteVertical } =
+		useSiteVerticalQueryById( siteVerticalId );
+
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
+		// Before we retire the old blank canvas, we have both blank-canvas-blocks and blank-canvas-3.
+		// We need to remove the old one first
+		allDesigns.static.designs = allDesigns.static.designs.filter(
+			( design ) => design.slug !== 'blank-canvas-blocks'
+		);
+
 		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into 4th position for the build intent
@@ -126,7 +137,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
 
-	const categorizationOptions = getCategorizationOptions( intent, true );
+	const categorizationOptions = getCategorizationOptions(
+		intent,
+		true,
+		generatedDesigns.length > 0 ? siteVertical?.title : undefined
+	);
+
 	const categorization = useCategorization( staticDesigns, categorizationOptions );
 
 	// ********** Logic for selecting a design and style variation
@@ -266,10 +282,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			);
 		}
 
-		if ( ! isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			return goToCheckout();
-		}
-
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_show', {
 			theme: selectedDesign?.slug,
 		} );
@@ -284,15 +296,9 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 	}
 
 	function goToCheckout() {
-		if ( ! isEnabled( 'signup/design-picker-premium-themes-checkout' ) ) {
-			return null;
-		}
-
-		if ( isEnabled( 'signup/seller-upgrade-modal' ) ) {
-			recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
-				theme: selectedDesign?.slug,
-			} );
-		}
+		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
+			theme: selectedDesign?.slug,
+		} );
 
 		const themeHasWooCommerce = selectedDesign?.software_sets?.find(
 			( set ) => set.slug === 'woo-on-plans'
@@ -430,8 +436,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 	// ********** Main render logic
 
-	// Don't render until we've fetched the designs from the backend.
-	if ( ! site || isLoadingDesigns ) {
+	// Don't render until we've done fetching all the data needed for initial render.
+	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
 		return null;
 	}
 

@@ -63,6 +63,12 @@ const customMiddleware = {
 			window.open( href, '_blank' );
 		},
 	],
+	ANSWER_PROMPT: [
+		( st, { siteId, href } ) => {
+			sendMessage( { action: 'answerPrompt', siteId, href } );
+			window.open( href, '_blank' );
+		},
+	],
 };
 
 const render = ( wpcom ) => {
