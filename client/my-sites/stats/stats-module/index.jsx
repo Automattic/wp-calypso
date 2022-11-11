@@ -128,6 +128,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
+			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -156,13 +157,7 @@ class StatsModule extends Component {
 		} );
 
 		const shouldShowNewModule =
-			isEnabled( 'stats/new-stats-module-component' ) &&
-			! summary &&
-			( path === 'posts' ||
-				path === 'videoplays' ||
-				path === 'filedownloads' ||
-				path === 'searchterms' ||
-				path === 'countryviews' );
+			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
 
 		return (
 			<>
