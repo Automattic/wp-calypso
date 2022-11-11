@@ -142,10 +142,10 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 					<ul>
 						<li>
 							{ translate(
-								'Go to Upgrades → Domains and click {{a}}Add a Domain{{/a}} to register your plans free domain',
+								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plans free domain',
 								{
 									components: {
-										a: <a href={ `/domains/add/${ props.site.slug }` } />,
+										link: <a href={ `/domains/add/${ props.site.slug }` } />,
 									},
 								}
 							) }
@@ -168,7 +168,13 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 								'If you have trouble claiming your free domain, contact us and we’ll assist you.'
 							) }
 						</li>
-						<li>{ translate( 'Read more about domains here.' ) }</li>
+						<li>
+							{ translate( 'Read more about domains {{link}}here{{/link}}.', {
+								components: {
+									link: <a href="https://wordpress.com/support/domains/register-domain/" />,
+								},
+							} ) }
+						</li>
 					</ul>
 				</Content>
 			);
