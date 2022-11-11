@@ -227,7 +227,10 @@ class StatsSite extends Component {
 		const showHighlights = config.isEnabled( 'stats/show-traffic-highlights' );
 
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const wrapperClass = classNames( { 'stats--new-main-chart': isNewMainChart } );
+		const wrapperClass = classNames( {
+			'stats--new-main-chart': isNewMainChart,
+			'is-period-year': period === 'year',
+		} );
 
 		return (
 			<div>

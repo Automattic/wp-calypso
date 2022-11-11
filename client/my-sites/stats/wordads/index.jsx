@@ -156,7 +156,6 @@ class WordAds extends Component {
 		const wordads = {
 			label: 'Ads',
 			path: '/stats/ads',
-			showIntervals: true,
 		};
 
 		const slugPath = slug ? `/${ slug }` : '';
@@ -164,7 +163,10 @@ class WordAds extends Component {
 
 		// New feature gate
 		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
-		const statsWrapperClass = classNames( 'wordads', { 'stats--new-main-chart': isNewMainChart } );
+		const statsWrapperClass = classNames( 'wordads', {
+			'stats--new-main-chart': isNewMainChart,
+			'is-period-year': period === 'year',
+		} );
 		const mainWrapperClass = classNames( {
 			'stats--new-wrapper': isNewMainChart,
 		} );
