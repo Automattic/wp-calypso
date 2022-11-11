@@ -25,8 +25,10 @@ class StatsGeochart extends Component {
 		query: PropTypes.object,
 		data: PropTypes.array,
 	};
+	state = {
+		visualizationsLoaded: false,
+	};
 
-	visualizationsLoaded = false;
 	visualization = null;
 	chartRef = createRef();
 
@@ -44,7 +46,7 @@ class StatsGeochart extends Component {
 	}
 
 	componentDidUpdate() {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	}
@@ -70,7 +72,7 @@ class StatsGeochart extends Component {
 
 	drawRegionsMap = () => {
 		if ( this.chartRef.current ) {
-			this.visualizationsLoaded = true;
+			this.setState( { visualizationsLoaded: true } );
 			this.visualization = new window.google.visualization.GeoChart( this.chartRef.current );
 			window.google.visualization.events.addListener(
 				this.visualization,
@@ -83,7 +85,7 @@ class StatsGeochart extends Component {
 	};
 
 	resize = () => {
-		if ( this.visualizationsLoaded ) {
+		if ( this.state.visualizationsLoaded ) {
 			this.drawData();
 		}
 	};
@@ -121,7 +123,6 @@ class StatsGeochart extends Component {
 			getComputedStyle( document.body ).getPropertyValue( '--color-accent' ).trim() || '#d52c82';
 
 		const options = {
-			width: '100%',
 			keepAspectRatio: true,
 			enableRegionInteractivity: true,
 			region: 'world',
@@ -135,7 +136,7 @@ class StatsGeochart extends Component {
 			options.region = regions[ 0 ];
 		}
 
-		this.visualization.draw( chartData, options );
+		this.visualization?.draw( chartData, options );
 	};
 
 	loadVisualizations = () => {
@@ -158,7 +159,7 @@ class StatsGeochart extends Component {
 
 	render() {
 		const { siteId, statType, query, data } = this.props;
-		const isLoading = ! data;
+		const isLoading = ! data || ! this.state.visualizationsLoaded;
 		const classes = classNames( 'stats-geochart', {
 			'is-loading': isLoading,
 			'has-no-data': data && ! data.length,
@@ -168,7 +169,10 @@ class StatsGeochart extends Component {
 			<>
 				{ siteId && <QuerySiteStats statType={ statType } siteId={ siteId } query={ query } /> }
 				<div ref={ this.chartRef } className={ classes } />
-				<StatsModulePlaceholder className="is-block" isLoading={ isLoading } />
+				<StatsModulePlaceholder
+					className={ classNames( classes, 'is-block' ) }
+					isLoading={ isLoading }
+				/>
 			</>
 		);
 	}

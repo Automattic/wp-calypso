@@ -1,20 +1,20 @@
 @import "@wordpress/base-styles/breakpoints";
 
+$break-large-stats-countries: 1280px;
+
 // Countries
 .stats__module-list--traffic {
 	.stats__module-wrapper--countryviews .stats-module,
 	.list-countryviews {
-		align-items: center;
 		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: min-content min-content;
+		gap: 0 24px;
+		grid-template-columns: 7fr 5fr;
 		grid-template-areas:
 			"map list"
 			"more more";
 
-		@media ( max-width: $break-large ) {
+		@media ( max-width: $break-large-stats-countries ) {
 			grid-template-columns: 1fr;
-			grid-template-rows: repeat(3, min-content);
 			grid-template-areas:
 				"map"
 				"list"
@@ -45,16 +45,12 @@
 		}
 		.stats__list-wrapper {
 			grid-area: list;
-			@media ( max-width: $break-large ) {
-				margin: 0 12px;
-			}
-		}
-
-		.module-content-list:last-child {
-			padding-bottom: 0;
 		}
 		.stats-module__expand {
 			grid-area: more;
+		}
+		.module-content-list:last-child {
+			padding-bottom: 0;
 		}
 	}
 }
