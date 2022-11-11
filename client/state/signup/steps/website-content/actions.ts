@@ -12,7 +12,6 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
-	PageId,
 } from 'calypso/signup/difm/constants';
 import {
 	SIGNUP_STEPS_WEBSITE_CONTENT_UPDATE_CURRENT_INDEX,
@@ -110,7 +109,7 @@ export function updateWebsiteContentCurrentIndex( currentIndex: number ) {
 	};
 }
 
-function getImagePlaceholders( pageId: PageId ) {
+function getImagePlaceholders( pageId: string ) {
 	switch ( pageId ) {
 		case PORTFOLIO_PAGE:
 		case PHOTO_GALLERY_PAGE:
@@ -131,7 +130,7 @@ function getImagePlaceholders( pageId: PageId ) {
 }
 
 export function initializePages(
-	pageNames: Array< { id: PageId; name: TranslateResult } >,
+	pageNames: Array< { id: string; name: TranslateResult } >,
 	siteId: SiteId
 ) {
 	const generatedPages = pageNames.map( ( { id, name } ) => ( {
