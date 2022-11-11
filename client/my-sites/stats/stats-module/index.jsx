@@ -128,6 +128,7 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
+			showNewModules,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -155,7 +156,8 @@ class StatsModule extends Component {
 			'is-refreshing': requesting && ! isLoading,
 		} );
 
-		const shouldShowNewModule = isEnabled( 'stats/new-stats-module-component' ) && ! summary;
+		const shouldShowNewModule =
+			showNewModules && isEnabled( 'stats/new-stats-module-component' ) && ! summary;
 
 		return (
 			<>
