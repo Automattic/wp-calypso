@@ -1,7 +1,12 @@
 import { Button } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useState } from 'react';
-import imgFreeMonth from 'calypso/assets/images/cancellation/free-month.png';
+import imgConnectDomain from 'calypso/assets/images/cancellation/connect-domain.png';
+import imgFreeDomain from 'calypso/assets/images/cancellation/free-domain.png';
+import imgLoadingTime from 'calypso/assets/images/cancellation/loading-time.png';
+import imgSEO from 'calypso/assets/images/cancellation/seo.png';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MaterialIcon from 'calypso/components/material-icon';
 import type { UpsellType } from '../get-upsell-type';
@@ -13,14 +18,21 @@ type ContentProps = {
 	image: string;
 	title: TranslateResult;
 	declineButtonText?: TranslateResult;
+	imgWidth?: number;
 	onAccept?: () => void;
 	onDecline: () => void;
 };
 
-function Content( { image, ...props }: ContentProps ) {
+function Content( { image, imgWidth, ...props }: ContentProps ) {
 	const translate = useTranslate();
 	const declineButtonText = props.declineButtonText || translate( 'Cancel my current plan' );
 	const [ isBusy, setIsBusy ] = useState( false );
+	const styles: Record< string, string > = {};
+
+	if ( imgWidth ) {
+		styles.width = `${ imgWidth }px`;
+		styles.flexBasis = styles.width;
+	}
 
 	return (
 		<div className="cancel-purchase-form__edu">
@@ -31,7 +43,7 @@ function Content( { image, ...props }: ContentProps ) {
 					</div>
 					<FormattedHeader brandFont headerText={ props.title } />
 				</div>
-				<div className="cancel-purchase-form__edu-image-container">
+				<div className="cancel-purchase-form__edu-image-container" style={ styles }>
 					<img className="cancel-purchase-form__edu-image" src={ image } alt="" />
 				</div>
 			</div>
@@ -62,14 +74,15 @@ type StepProps = {
 	onDecline: () => void;
 };
 
-export default function EducationalCotnentStep( { type, ...props }: StepProps ) {
+export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
+	const helpCenter = useDispatch( 'automattic/help-center' );
 
 	switch ( type ) {
 		case 'education:loading-time':
 			return (
 				<Content
-					image={ imgFreeMonth }
+					image={ imgLoadingTime }
 					title={ translate( 'Loading times best practices' ) }
 					onDecline={ props.onDecline }
 				>
@@ -118,7 +131,7 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 									'Read more about how to improve your site’s speed and performance {{link}}here{{/link}}.',
 									{
 										components: {
-											link: <a href="https://wordpress.com/support/site-speed/" />,
+											link: <Button href="https://wordpress.com/support/site-speed/" />,
 										},
 									}
 								) }
@@ -130,7 +143,8 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 		case 'education:free-domain':
 			return (
 				<Content
-					image={ imgFreeMonth }
+					image={ imgFreeDomain }
+					imgWidth={ 185 }
 					title={ translate( 'How to get a free domain' ) }
 					onDecline={ props.onDecline }
 				>
@@ -145,7 +159,7 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 								'Go to Upgrades → Domains and click {{link}}Add a Domain{{/link}} to register your plans free domain',
 								{
 									components: {
-										link: <a href={ `/domains/add/${ props.site.slug }` } />,
+										link: <Button href={ `/domains/add/${ site.slug }` } isLink />,
 									},
 								}
 							) }
@@ -171,7 +185,9 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 						<li>
 							{ translate( 'Read more about domains {{link}}here{{/link}}.', {
 								components: {
-									link: <a href="https://wordpress.com/support/domains/register-domain/" />,
+									link: (
+										<Button href="https://wordpress.com/support/domains/register-domain/" isLink />
+									),
 								},
 							} ) }
 						</li>
@@ -181,24 +197,59 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 		case 'education:domain-connection':
 			return (
 				<Content
-					image={ imgFreeMonth }
-					title={ translate( 'How to get a free domain' ) }
+					image={ imgConnectDomain }
+					imgWidth={ 185 }
+					title={ translate( 'Connect a domain guidelines' ) }
 					onDecline={ props.onDecline }
 				>
 					<p>
 						{ translate(
-							'You can register a free domain name for one year with the purchase of any WordPress.com annual or two-year plan!'
+							'If you’ve already gone through the steps to {{link}}connect your domain{{/link}} to your website and are still having issues, please keep in mind that the DNS changes can take up to 72 hours to fully propagate, during which time the domain might not load properly. You can also:',
+							{
+								components: {
+									link: (
+										<Button
+											href="https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain"
+											isLink
+										/>
+									),
+								},
+							}
 						) }
 					</p>
 					<ul>
 						<li>
 							{ translate(
-								'Go to Upgrades -> Domains and click {{a}}Add a Domain{{/a}} to register your plans free domain'
+								'Try clearing your browser’s cache to ensure your browser is loading the most up‑to‑date information.'
 							) }
 						</li>
 						<li>
 							{ translate(
-								'Choose from all popular extensions including .com, .org, .net, .shop, and .blog.'
+								'Contact your domain registrar to ensure the name servers were correctly changed (and the old ones were removed entirely).'
+							) }
+						</li>
+						<li>
+							{ translate(
+								'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
+								{
+									components: {
+										link: (
+											<Button
+												href="https://wordpress.com/support/domains/connect-existing-domain/"
+												isLink
+											/>
+										),
+										chat: (
+											<Button
+												onClick={ () => {
+													page( `/domains/manage/${ site.slug }` );
+													helpCenter.startHelpCenterChat( site, 'THIS IS A TEST by a11n.' );
+												} }
+												isLink
+											/>
+										),
+									},
+								}
 							) }
 						</li>
 					</ul>
@@ -207,7 +258,7 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 		case 'education:seo':
 			return (
 				<Content
-					image={ imgFreeMonth }
+					image={ imgSEO }
 					title={ translate( 'Improve your SEO guidelines' ) }
 					onDecline={ props.onDecline }
 				>
@@ -266,9 +317,12 @@ export default function EducationalCotnentStep( { type, ...props }: StepProps ) 
 									'Find other tips to optimize your site for search engines {{link}}here{{/link}}. If you’re looking for a full introduction to Search Engine Optimization, you can join our {{seo}}free SEO course{{/seo}}.',
 									{
 										components: {
-											link: <a href="https://wordpress.com/support/seo/" />,
+											link: <Button href="https://wordpress.com/support/seo/" isLink />,
 											seo: (
-												<a href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/" />
+												<Button
+													href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+													isLink
+												/>
 											),
 										},
 									}

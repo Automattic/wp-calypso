@@ -288,8 +288,8 @@
 
 	@include break-small {
 		display: block;
-		width: 160px;
-		flex: 0 0 160px;
+		width: 138px;
+		flex: 0 0 138px;
 	}
 }
 
@@ -328,5 +328,11 @@
 		width: 24px;
 		height: 24px;
 		fill: #fff;
+	}
+}
+
+.cancel-purchase-form__edu-text {
+	.components-button.is-link {
+		font-size: inherit;
 	}
 }
