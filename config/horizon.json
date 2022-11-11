@@ -107,6 +107,7 @@
 		"stats/new-main-chart": false,
 		"stats/new-stats-module-component": false,
 		"stats/show-traffic-highlights": false,
+		"stats/new-all-time-highlights": false,
 		"stats/new-annual-highlights": false,
 		"stepper-woocommerce-poc": true,
 		"subscriber-csv-upload": true,
