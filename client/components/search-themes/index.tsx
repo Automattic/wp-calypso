@@ -1,11 +1,11 @@
 import { Gridicon } from '@automattic/components';
+import { __experimentalUseFocusOutside as useFocusOutside } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import StickyPanel from 'calypso/components/sticky-panel';
-import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
@@ -29,8 +29,6 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 	const [ editedSearchElement, setEditedSearchElement ] = useState( '' );
 	const [ isApplySearch, setIsApplySearch ] = useState( false );
 	const [ isSearchOpen, setIsSearchOpen ] = useState( false );
-
-	useOutsideClickCallback( wrapperRef, () => setIsSearchOpen( false ), true );
 
 	const findTextForSuggestions = ( inputValue: string ) => {
 		const val = inputValue;
@@ -56,6 +54,16 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 		searchRef.current?.focus();
 	};
 
+	const clearSearch = () => {
+		setSearchInput( '' );
+		focusOnInput();
+	};
+
+	const closeSearch = () => {
+		setIsSearchOpen( false );
+		searchRef.current?.blur();
+	};
+
 	const suggest = ( suggestion: string, isTopLevelTerm: boolean ) => {
 		let updatedInput = searchInput;
 
@@ -76,18 +84,8 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 			focusOnInput();
 		} else {
 			updateInput( insertSuggestion( suggestion, searchInput, cursorPosition ) );
-			setIsSearchOpen( false );
-			searchRef.current?.blur();
+			closeSearch();
 		}
-	};
-
-	const clearSearch = () => {
-		setSearchInput( '' );
-		focusOnInput();
-	};
-
-	const onClickInside = () => {
-		focusOnInput();
 	};
 
 	const onKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
@@ -95,13 +93,13 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 	};
 
 	return (
-		<div ref={ wrapperRef }>
+		<div ref={ wrapperRef } { ...useFocusOutside( closeSearch ) }>
 			<StickyPanel>
 				<div
 					className="search-themes-card"
 					role="presentation"
 					data-tip-target="search-themes-card"
-					onClick={ onClickInside }
+					onClick={ focusOnInput }
 				>
 					<Search
 						initialValue={ searchInput }
@@ -115,7 +113,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 						onKeyDown={ onKeyDown }
 						onSearch={ onSearch }
 						onSearchOpen={ () => setIsSearchOpen( true ) }
-						onSearchClose={ () => setIsSearchOpen( false ) }
+						onSearchClose={ closeSearch }
 						onSearchChange={ ( inputValue: string ) => {
 							findTextForSuggestions( inputValue );
 							setSearchInput( inputValue );
