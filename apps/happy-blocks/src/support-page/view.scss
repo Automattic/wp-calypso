@@ -33,11 +33,12 @@
 	&__link {
 		text-decoration: none !important;
 		color: $studio-gray-60 !important;
-	}
+		z-index: 1;
 
-	&:hover &__link {
-		color: $studio-gray-60 !important;
-		text-decoration: underline !important;
+		&:hover {
+			color: $studio-gray-60 !important;
+			text-decoration: underline !important;
+		}
 	}
 
 	&__header {
