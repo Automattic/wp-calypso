@@ -17,12 +17,15 @@ registerBlockType( 'happy-blocks/support-page', {
 		url: {
 			type: 'string',
 		},
-		// TODO store other attrs in HTML instead of attributes
 		content: {
 			type: 'string',
+			source: 'text',
+			selector: '.hb-support-page-embed__content',
 		},
 		title: {
 			type: 'string',
+			source: 'text',
+			selector: '.hb-support-page-embed__title',
 		},
 		minutesToRead: {
 			type: 'number',
