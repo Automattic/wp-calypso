@@ -27,7 +27,7 @@ function percent( part: number | null, whole: number | null ) {
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
-const FORMATTER = new Intl.NumberFormat( 'en-GB', {
+const FORMATTER = new Intl.NumberFormat( 'en-US', {
 	notation: 'compact',
 	compactDisplay: 'short',
 } );
