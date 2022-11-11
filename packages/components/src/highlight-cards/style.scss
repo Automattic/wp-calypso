@@ -31,8 +31,11 @@ $custom-mobile-breakpoint: 660px;
 	font-family: $font-recoleta;
 	margin-bottom: math.div($vertical-margin, 2);
 	small {
+		font-family: $sans;
 		font-size: $font-body-small;
 		line-height: 1.5;
+		color: var(--studio-gray-50);
+		font-weight: 400;
 	}
 }
 
@@ -87,6 +90,7 @@ $custom-mobile-breakpoint: 660px;
 
 .highlight-card-count-value {
 	font-family: $font-recoleta;
+	line-height: 1;
 	margin-right: 8px;
 }
 
