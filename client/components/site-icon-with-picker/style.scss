@@ -16,6 +16,10 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 	background: var(--color-surface);
 	box-shadow: 0 0 0 1px var(--color-border-subtle);
 
+	@supports ( height: 85svh ) {
+		height: 85svh;
+	}
+
 	@media screen and (orientation: landscape) and ( max-height: 720px ) {
 		min-width: 80vw;
 		min-height: 80vh;
