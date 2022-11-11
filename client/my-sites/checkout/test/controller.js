@@ -5,7 +5,7 @@
 import {
 	PLAN_JETPACK_PERSONAL,
 	PRODUCT_JETPACK_ANTI_SPAM,
-	PRODUCT_JETPACK_BACKUP,
+	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 } from '@automattic/calypso-products';
 import * as page from 'page';
 import configureStore from 'redux-mock-store';
@@ -48,7 +48,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	} );
 
 	it( 'should not redirect if the plan is not a Jetpack legacy plan', () => {
-		utils.getProductSlugFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP );
+		utils.getProductSlugFromContext.mockReturnValue( PRODUCT_JETPACK_BACKUP_T1_YEARLY );
 
 		redirectJetpackLegacyPlans( {}, next );
 
@@ -61,7 +61,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 
 		redirectJetpackLegacyPlans( { store }, next );
 
-		const redirectUrl = `/plans/${ siteSlug }?${ COMPARE_PLANS_QUERY_PARAM }=${ PLAN_JETPACK_PERSONAL },${ PRODUCT_JETPACK_BACKUP },${ PRODUCT_JETPACK_ANTI_SPAM }`;
+		const redirectUrl = `/plans/${ siteSlug }?${ COMPARE_PLANS_QUERY_PARAM }=${ PLAN_JETPACK_PERSONAL },${ PRODUCT_JETPACK_BACKUP_T1_YEARLY },${ PRODUCT_JETPACK_ANTI_SPAM }`;
 
 		expect( spy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
