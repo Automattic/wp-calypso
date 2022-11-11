@@ -63,7 +63,7 @@ function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
-	useCachedDomainContactDetails( countries );
+	useCachedDomainContactDetails( { overrideCountryList: countries } );
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom-checkout' ).getContactInfo()
 	);
