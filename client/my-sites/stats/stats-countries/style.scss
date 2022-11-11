@@ -14,7 +14,7 @@ $break-large-stats-countries: 1280px;
 			"more more";
 
 		@media ( max-width: $break-large-stats-countries ) {
-			grid-template-columns: 1fr;
+			grid-template-columns: 100%;
 			grid-template-areas:
 				"map"
 				"list"
