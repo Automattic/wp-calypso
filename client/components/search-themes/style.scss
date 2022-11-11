@@ -4,11 +4,6 @@
 $search-border-radius: 4px;
 
 .search-themes-card {
-	display: flex;
-	align-items: center;
-	background: var(--color-surface);
-	transition: all 0.15s ease-in-out;
-
 	.search {
 		border: 1px solid var(--color-neutral-10);
 		border-radius: $search-border-radius;
@@ -30,7 +25,8 @@ $search-border-radius: 4px;
 			}
 
 			.search__input,
-			.search__icon-navigation {
+			.search__icon-navigation,
+			.search-themes-card__icon {
 				border-radius: $search-border-radius;
 			}
 		}
@@ -46,10 +42,11 @@ $search-border-radius: 4px;
 
 	.search-themes-card__icon {
 		align-items: center;
+		background: var(--color-surface);
 		display: flex;
 		justify-content: center;
 		height: 100%;
-		margin: 0 8px;
+		padding: 0 8px;
 		width: 24px;
 
 		.accessible-focus &:focus {

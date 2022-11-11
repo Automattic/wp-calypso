@@ -8,7 +8,18 @@ import { cosineSimilarity } from 'calypso/lib/trigram';
 
 import './style.scss';
 
-const TAXONOMY_TRANSLATIONS = {
+const SEARCH_THRESHOLD = 0.45;
+const TAXONOMY_ICONS = {
+	feature: typography,
+	subject: (
+		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+			<path d="M4 9h16v2H4V9zm0 4h10v2H4v-2z" />
+		</svg>
+	),
+	column: layout,
+};
+
+const getTaxonomyTranslations = () => ( {
 	feature: i18n.translate( 'Feature', {
 		context: 'Theme Showcase filter name',
 	} ),
@@ -24,19 +35,8 @@ const TAXONOMY_TRANSLATIONS = {
 	style: i18n.translate( 'Style', {
 		context: 'Theme Showcase filter name',
 	} ),
-};
+} );
 
-const TAXONOMY_ICONS = {
-	feature: typography,
-	subject: (
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-			<path d="M4 9h16v2H4V9zm0 4h10v2H4v-2z" />
-		</svg>
-	),
-	column: layout,
-};
-
-const SEARCH_THRESHOLD = 0.45;
 const noop = () => {};
 
 function SuggestionsButtonAll( props ) {
@@ -373,54 +373,51 @@ class KeyedSuggestions extends Component {
 		} );
 	};
 
-	createTopLevelTermsSuggestions = () => {
-		const rendered = [
+	createTopLevelTermsSuggestions = () => (
+		<div className="keyed-suggestions__suggestions">
 			<div className="keyed-suggestions__category" key="search-by">
 				<span className="keyed-suggestions__category-name">
 					{ i18n.translate( 'Search by', {
 						context: 'Theme Showcase filter name',
 					} ) }
 				</span>
-			</div>,
-		];
+			</div>
+			{ Object.keys( this.props.terms ).map( ( key, i ) => {
+				const isSelected = i === this.state.suggestionPosition;
+				const className = classNames( 'keyed-suggestions__value', {
+					'is-selected': isSelected,
+				} );
 
-		Object.keys( this.props.terms ).map( ( key, i ) => {
-			const isSelected = i === this.state.suggestionPosition;
-			const className = classNames( 'keyed-suggestions__value', {
-				'is-selected': isSelected,
-			} );
-
-			rendered.push(
-				/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
-				<span
-					className={ className }
-					onMouseDown={ this.onMouseDown }
-					onMouseOver={ this.onMouseOver }
-					key={ key }
-				>
-					<span className="keyed-suggestions__value-category">{ key + ': ' }</span>
+				return (
+					/* eslint-disable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
 					<span
-						className={ classNames( 'keyed-suggestions__value-icon', {
-							'needs-offset': key === 'feature',
-						} ) }
+						className={ className }
+						onMouseDown={ this.onMouseDown }
+						onMouseOver={ this.onMouseOver }
+						key={ key }
 					>
-						<Icon icon={ TAXONOMY_ICONS[ key ] } size={ 24 } />
-					</span>
-					<span className="keyed-suggestions__value-label">
-						<span className="keyed-suggestions__value-normal">
-							{ TAXONOMY_TRANSLATIONS[ key ] }
+						<span className="keyed-suggestions__value-category">{ key + ': ' }</span>
+						<span
+							className={ classNames( 'keyed-suggestions__value-icon', {
+								'needs-offset': key === 'feature',
+							} ) }
+						>
+							<Icon icon={ TAXONOMY_ICONS[ key ] } size={ 24 } />
+						</span>
+						<span className="keyed-suggestions__value-label">
+							<span className="keyed-suggestions__value-normal">
+								{ getTaxonomyTranslations()[ key ] }
+							</span>
+						</span>
+						<span className="keyed-suggestions__value-description">
+							{ Object.keys( this.props.terms[ key ] ).length.toString() }
 						</span>
 					</span>
-					<span className="keyed-suggestions__value-description">
-						{ Object.keys( this.props.terms[ key ] ).length.toString() }
-					</span>
-				</span>
-				/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
-			);
-		} );
-
-		return <div className="keyed-suggestions__suggestions">{ rendered }</div>;
-	};
+					/* eslint-enable jsx-a11y/no-static-element-interactions, jsx-a11y/mouse-events-have-key-events */
+				);
+			} ) }
+		</div>
+	);
 
 	createSuggestions = ( suggestions ) => {
 		let noOfSuggestions = 0;
@@ -436,7 +433,9 @@ class KeyedSuggestions extends Component {
 			//Add header
 			rendered.push(
 				<div className="keyed-suggestions__category" key={ key }>
-					<span className="keyed-suggestions__category-name">{ TAXONOMY_TRANSLATIONS[ key ] }</span>
+					<span className="keyed-suggestions__category-name">
+						{ getTaxonomyTranslations()[ key ] }
+					</span>
 					<span className="keyed-suggestions__category-counter">
 						{ key === this.state.showAll
 							? total

@@ -1,13 +1,12 @@
 import { Gridicon } from '@automattic/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import KeyedSuggestions from 'calypso/components/keyed-suggestions';
 import Search, { SEARCH_MODE_ON_ENTER } from 'calypso/components/search';
 import StickyPanel from 'calypso/components/sticky-panel';
+import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { getThemeFilters } from 'calypso/state/themes/selectors';
-import useOutsideClickCallback from './use-outside-click-callback';
 import { allowSomeThemeFilters, computeEditedSearchElement, insertSuggestion } from './utils';
 import type { ThemeFilters } from './types';
 import './style.scss';
@@ -96,12 +95,7 @@ const SearchThemes: React.FC< SearchThemesProps > = ( { query, onSearch } ) => {
 	};
 
 	return (
-		<div
-			ref={ wrapperRef }
-			className={ classNames( 'search-themes', {
-				'has-keyed-suggestions': isSearchOpen,
-			} ) }
-		>
+		<div ref={ wrapperRef }>
 			<StickyPanel>
 				<div
 					className="search-themes-card"
