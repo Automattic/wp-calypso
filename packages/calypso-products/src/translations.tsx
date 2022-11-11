@@ -98,12 +98,12 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 		[ PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
 		[ PRODUCT_WPCOM_SEARCH_MONTHLY ]: translate( 'Search' ),
-		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+		[ PRODUCT_JETPACK_ANTI_SPAM ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 			components: {
 				s: <span style={ { whiteSpace: 'nowrap' } } />,
 			},
 		} ),
-		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+		[ PRODUCT_JETPACK_ANTI_SPAM_MONTHLY ]: translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 			components: {
 				s: <span style={ { whiteSpace: 'nowrap' } } />,
 			},
@@ -144,7 +144,7 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		</>
 	);
 	const videoPress = translate( 'VideoPress' );
-	const antiSpam = translate( 'Akismet {{s}}Anti-Spam{{/s}}', {
+	const antiSpam = translate( 'Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
 		},
@@ -238,7 +238,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 	const search = translate( 'Get Site Search' );
 	const scan = translate( 'Get Scan' );
 	const videoPress = translate( 'Get VideoPress' );
-	const antiSpam = translate( 'Get Akismet {{s}}Anti-Spam{{/s}}', {
+	const antiSpam = translate( 'Get Akismet {{s}}Anti-spam{{/s}}', {
 		components: {
 			s: <span style={ { whiteSpace: 'nowrap' } } />,
 		},
