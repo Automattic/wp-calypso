@@ -9,7 +9,10 @@ import ActionButton from './action-button';
 // eslint-disable-next-line no-shadow
 const AnswerPromptButton = ( { answerPrompt, note, translate } ) => {
 	const { site: siteId } = note?.meta?.ids ?? {};
-	const newPostLink = getNewPostLink( note );
+	const isLocalhost = document.location.hostname === 'calypso.localhost';
+	const newPostLink =
+		( isLocalhost ? 'http://calypso.localhost:3000' : 'https://wordpress.com' ) +
+		getNewPostLink( note );
 	return (
 		<ActionButton
 			{ ...{

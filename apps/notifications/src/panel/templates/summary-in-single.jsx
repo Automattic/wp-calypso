@@ -72,7 +72,11 @@ class WritingPromptHeader extends Component {
 		const icon = this.props.site.media[ 0 ];
 		const img_tag = <img src={ icon.url } height={ icon.height } width={ icon.width } alt="" />;
 		const home_url = this.props.site.ranges[ 0 ].url;
-		const settings_url = '/me/notifications#' + withoutHttp( home_url );
+		const isLocalhost = document.location.hostname === 'calypso.localhost';
+		const settings_url =
+			( isLocalhost ? 'http://calypso.localhost:3000' : 'https://wordpress.com' ) +
+			'/me/notifications#' +
+			withoutHttp( home_url );
 
 		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
