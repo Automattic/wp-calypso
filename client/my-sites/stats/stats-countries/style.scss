@@ -36,6 +36,10 @@
 	}
 
 	.stats__module-wrapper--countryviews {
+		.module-content-text {
+			grid-column: map-start / list-end;
+			margin-bottom: 24px;
+		}
 		.stats-geochart {
 			grid-area: map;
 		}
