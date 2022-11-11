@@ -370,7 +370,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	},
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: {
-		product_name: translate( 'Social Premium' ),
+		product_name: translate( 'Social Advanced' ),
 		product_slug: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		type: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		term: TERM_ANNUALLY,
@@ -381,7 +381,7 @@ export const JETPACK_SITE_PRODUCTS_WITH_FEATURES: Record<
 		getStoreSlug: () => PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	},
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: {
-		product_name: translate( 'Social Premium' ),
+		product_name: translate( 'Social Advanced' ),
 		product_slug: PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 		type: PRODUCT_JETPACK_SOCIAL_ADVANCED,
 		term: TERM_MONTHLY,
