@@ -23,11 +23,19 @@ $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-al
 	@media screen and (orientation: landscape) and ( max-height: 720px ) {
 		min-width: 80vw;
 		min-height: 80vh;
+
+		@supports ( height: 80svh ) {
+			height: 80svh;
+		}
 	}
 
 	@include break-medium {
 		min-width: 50vw;
 		min-height: 60vh;
+
+		@supports ( height: 60svh ) {
+			height: 60svh;
+		}
 	}
 }
 
