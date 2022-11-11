@@ -24,14 +24,12 @@ const SenseiSetupStep: Step = ( { navigation } ) => {
 		setChecked?.( event.target.value );
 	};
 
-	const { submit } = navigation;
+	const { goNext } = navigation;
 	const dispatch = useDispatch( ONBOARD_STORE );
 	const handleSubmit = useCallback( () => {
 		dispatch.setSiteTitle( siteTitle );
-		if ( submit ) {
-			submit();
-		}
-	}, [ siteTitle, dispatch, submit ] );
+		goNext?.();
+	}, [ siteTitle, dispatch, goNext ] );
 	const thumbnailImages = [
 		{
 			style: 'green',

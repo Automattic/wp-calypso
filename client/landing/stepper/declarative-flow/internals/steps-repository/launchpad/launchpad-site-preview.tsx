@@ -1,4 +1,4 @@
-import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, SENSEI_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
@@ -20,8 +20,9 @@ const LaunchpadSitePreview = ( {
 	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
 	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
+	const isSenseiFlow = SENSEI_FLOW === flow;
 
-	if ( isVideoPressFlow ) {
+	if ( isVideoPressFlow || isSenseiFlow ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
 	}

@@ -4,6 +4,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { AssertConditionState, Flow } from './internals/types';
 import type { StepPath } from './internals/steps-repository';
@@ -17,13 +18,21 @@ export const sensei: Flow = {
 			recordFullStoryEvent( 'calypso_signup_start_sensei', { flow: this.name } );
 		}, [] );
 
-		return [ 'senseiSetup', 'senseiDomain', 'senseiPlan', 'senseiLaunch' ] as StepPath[];
+		return [
+			'senseiSetup',
+			'senseiDomain',
+			'senseiPlan',
+			'senseiLaunch',
+			'launchpad',
+			'processing',
+		] as StepPath[];
 	},
 
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName } );
+		const siteSlug = useSiteSlug();
 		setStepProgress( flowProgress );
 
 		const goBack = () => {
@@ -36,8 +45,23 @@ export const sensei: Flow = {
 					return navigate( 'senseiDomain' );
 				case 'senseiDomain':
 					return navigate( 'senseiPlan' );
+				case 'launchpad':
+					return window.location.assign( `/view/${ siteSlug }` );
 				default:
-					return navigate( 'senseiSetup' );
+					return navigate( 'launchpad' );
+			}
+		};
+
+		const submit = () => {
+			switch ( _currentStep ) {
+				case 'senseiSetup':
+					return navigate( 'senseiDomain' );
+				case 'senseiDomain':
+					return navigate( 'senseiPlan' );
+				case 'launchpad':
+					return navigate( 'processing' );
+				default:
+					return navigate( 'launchpad' );
 			}
 		};
 
@@ -45,7 +69,7 @@ export const sensei: Flow = {
 			navigate( step );
 		};
 
-		return { goNext, goBack, goToStep, submit: goNext };
+		return { goNext, goBack, goToStep, submit };
 	},
 
 	useAssertConditions() {
@@ -54,7 +78,7 @@ export const sensei: Flow = {
 		const locale = useLocale();
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?redirect_to=/setup/newsletterSetup?flow=${ flowName }`
+				? `/start/account/user/${ locale }?redirect_to=/setup/?flow=${ flowName }`
 				: `/start/account/user?redirect_to=/setup/?flow=${ flowName }`;
 		if ( ! userIsLoggedIn ) {
 			window.location.assign( logInUrl );
