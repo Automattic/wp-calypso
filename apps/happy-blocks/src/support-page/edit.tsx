@@ -78,7 +78,7 @@ export const Edit = compose( withNotices )( ( props: EditProps ) => {
 			{ editing || ! attributes.url ? (
 				<EmbedPlaceHolder
 					className={ className }
-					icon={ <WordPressIcon variant="small" /> }
+					icon={ <WordPressIcon variant="small" marginRight /> }
 					instructions={ instructions }
 					label={ label }
 					url={ url }

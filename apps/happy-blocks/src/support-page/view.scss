@@ -100,15 +100,19 @@
 	align-items: center;
 	justify-content: center;
 
-	&__small {
+	&.is-small {
 		width: 24px;
 		height: 24px;
 	}
 
-	&__large {
+	&.is-large {
 		width: 60px;
 		height: 60px;
 
+	}
+
+	&.is-margin-right {
+		margin-right: 10px;
 	}
 
 	svg {

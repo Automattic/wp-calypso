@@ -5,6 +5,7 @@ import rasterizedIcon from './wordpress.png';
 // Because SVG are disallowed by default KSES policy, we use a raster, image instead for the post content.
 type WordIconProps = {
 	variant: 'small' | 'large' | 'raster';
+	marginRight?: boolean;
 };
 
 export const WordPressIcon = ( props: WordIconProps ) => {
@@ -20,9 +21,9 @@ export const WordPressIcon = ( props: WordIconProps ) => {
 		<>
 			<div
 				className={ classnames( 'hb-support-page-embed-icon', {
-					'hb-support-page-embed-icon__small': props.variant === 'small',
-					'hb-support-page-embed-icon__large':
-						props.variant === 'large' || props.variant === 'raster',
+					'is-small': props.variant === 'small',
+					'is-large': props.variant === 'large' || props.variant === 'raster',
+					'is-margin-right': props.marginRight,
 				} ) }
 			>
 				{ props.variant === 'raster' ? (
