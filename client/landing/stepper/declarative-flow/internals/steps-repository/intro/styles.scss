@@ -81,6 +81,10 @@
 		padding: 0;
 		color: #fff;
 
+		.step-container.intro .step-container__content {
+			min-height: auto;
+		}
+
 		.signup-header {
 			h1 {
 				color: #fff;

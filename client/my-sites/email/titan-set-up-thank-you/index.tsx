@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isFreePlan } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -142,7 +141,7 @@ const TitanSetUpThankYou = ( {
 				stepCta: (
 					<FullWidthButton
 						href={ emailManagementTitanSetUpMailbox( selectedSiteSlug ?? '', domainName ) }
-						primary={ siteNeedsSetup ? ! isEnabled( 'signup/stepper-flow' ) : true }
+						primary={ ! siteNeedsSetup }
 					>
 						{ translate( 'Set up mailbox' ) }
 					</FullWidthButton>
@@ -151,35 +150,22 @@ const TitanSetUpThankYou = ( {
 		];
 
 		if ( siteNeedsSetup ) {
-			if ( isEnabled( 'signup/stepper-flow' ) ) {
-				nextSteps.unshift( {
-					stepKey: 'titan_whats_next_setup_site',
-					stepTitle: translate( 'Site setup' ),
-					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
-					stepCta: (
-						<FullWidthButton
-							href={ addQueryArgs( { siteId: selectedSite?.ID }, '/setup' ) }
-							primary
-							// The section "/setup" is not defined as a page.js routing path, so we
-							// force a non-pushState navigation with rel=external.
-							rel="external"
-						>
-							{ translate( 'Set up your site' ) }
-						</FullWidthButton>
-					),
-				} );
-			} else {
-				nextSteps.push( {
-					stepKey: 'titan_whats_next_go_home',
-					stepTitle: translate( 'Set up your site' ),
-					stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
-					stepCta: (
-						<FullWidthButton href={ `/home/${ selectedSiteSlug }` }>
-							{ translate( 'Go to homepage' ) }
-						</FullWidthButton>
-					),
-				} );
-			}
+			nextSteps.unshift( {
+				stepKey: 'titan_whats_next_setup_site',
+				stepTitle: translate( 'Site setup' ),
+				stepDescription: translate( 'Choose a theme, customize and launch your site.' ),
+				stepCta: (
+					<FullWidthButton
+						href={ addQueryArgs( { siteId: selectedSite?.ID }, '/setup' ) }
+						primary
+						// The section "/setup" is not defined as a page.js routing path, so we
+						// force a non-pushState navigation with rel=external.
+						rel="external"
+					>
+						{ translate( 'Set up your site' ) }
+					</FullWidthButton>
+				),
+			} );
 		}
 	}
 

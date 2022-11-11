@@ -37,21 +37,21 @@ const data = [
 ];
 
 const HorizontalBarListVariations = ( props ) => {
-	const { leftSideItem, rightSideItem, showMore } = props;
+	const { leftSideItem, renderRightSideItem, footerAction } = props;
 	const testData = props.data || data;
 
 	const barMaxValue = testData[ 0 ]?.value;
 
 	return (
 		<div style={ { width: '500px', margin: '0 auto' } }>
-			<StatsCard title="Posts & Pages" showMore={ showMore }>
+			<StatsCard title="Posts & Pages" footerAction={ footerAction }>
 				<HorizontalBarList data={ testData } onClick={ handleClick }>
 					{ testData.map( ( item, idx ) => {
 						const variationProps = {
 							hasIndicator: props.hasIndicator && idx % 3, // omit every 3rd item from being indicated
 							onClick: props.onClick || null,
 							leftSideItem,
-							rightSideItem,
+							renderRightSideItem,
 						};
 
 						return (
@@ -85,7 +85,9 @@ const RedirectSample = () => {
 
 export const Default = () => <HorizontalBarListVariations />;
 export const DefaultWithFooter = () => (
-	<HorizontalBarListVariations showMore={ { url: 'https://wordpress.com/' } } />
+	<HorizontalBarListVariations
+		footerAction={ { url: 'https://wordpress.com/', label: 'Show more' } }
+	/>
 );
 export const Indicated = () => <HorizontalBarListVariations hasIndicator />;
 export const WithClick = () => (
@@ -94,5 +96,5 @@ export const WithClick = () => (
 );
 export const WithLeftItem = () => <HorizontalBarListVariations leftSideItem={ <ImageSample /> } />;
 export const WithRightItem = () => (
-	<HorizontalBarListVariations rightSideItem={ <RedirectSample /> } />
+	<HorizontalBarListVariations renderRightSideItem={ () => <RedirectSample /> } />
 );
