@@ -188,6 +188,8 @@ class StatsSite extends Component {
 
 		const query = memoizedQuery( period, endOf );
 
+		const showNewModules = config.isEnabled( 'stats/new-stats-module-component' );
+
 		// File downloads are not yet supported in Jetpack Stats
 		if ( ! isJetpack ) {
 			fileDownloadList = (
@@ -199,6 +201,7 @@ class StatsSite extends Component {
 					statType="statsFileDownloads"
 					showSummaryLink
 					useShortLabel={ true }
+					showNewModules={ showNewModules }
 				/>
 			);
 		}
@@ -331,6 +334,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsTopPosts"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 							<StatsModule
 								path="searchterms"
@@ -339,6 +343,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsSearchTerms"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 							{ fileDownloadList }
 						</div>
@@ -348,6 +353,7 @@ class StatsSite extends Component {
 								period={ this.props.period }
 								query={ query }
 								summary={ false }
+								showNewModules={ showNewModules }
 							/>
 							<StatsModule
 								path="clicks"
@@ -356,6 +362,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsClicks"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 						</div>
 						<div className="stats__module-column">
@@ -366,6 +373,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsReferrers"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 							<StatsModule
 								path="authors"
@@ -375,6 +383,7 @@ class StatsSite extends Component {
 								statType="statsTopAuthors"
 								className="stats__author-views"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 							<StatsModule
 								path="videoplays"
@@ -383,6 +392,7 @@ class StatsSite extends Component {
 								query={ query }
 								statType="statsVideoPlays"
 								showSummaryLink
+								showNewModules={ showNewModules }
 							/>
 						</div>
 					</div>
