@@ -13,17 +13,30 @@ interface Props {
 	tabIndex: number;
 	product: APIProductFamilyProduct;
 	isSelected: boolean;
+	isDisabled?: boolean;
 	onSelectProduct: ( value: APIProductFamilyProduct | string ) => void | null;
 	suggestedProduct?: string | null;
 	isMultiSelect?: boolean;
 }
 
 export default function LicenseProductCard( props: Props ) {
-	const { tabIndex, product, isSelected, onSelectProduct, suggestedProduct, isMultiSelect } = props;
+	const {
+		tabIndex,
+		product,
+		isSelected,
+		isDisabled,
+		onSelectProduct,
+		suggestedProduct,
+		isMultiSelect,
+	} = props;
 	const productTitle = getProductTitle( product.name );
 	const translate = useTranslate();
 
 	const onSelect = useCallback( () => {
+		if ( isDisabled ) {
+			return;
+		}
+
 		if ( isEnabled( 'jetpack/partner-portal-issue-multiple-licenses' ) ) {
 			onSelectProduct?.( product );
 		} else {
@@ -59,9 +72,11 @@ export default function LicenseProductCard( props: Props ) {
 			role={ isMultiSelect ? 'checkbox' : 'radio' }
 			tabIndex={ tabIndex }
 			aria-checked={ isSelected }
+			aria-disabled={ isDisabled }
 			className={ classNames( {
 				'license-product-card': true,
 				selected: isSelected,
+				disabled: isDisabled,
 			} ) }
 		>
 			<div className="license-product-card__inner">
