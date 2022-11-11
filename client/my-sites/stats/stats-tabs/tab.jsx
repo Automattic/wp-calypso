@@ -1,4 +1,3 @@
-import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -9,8 +8,7 @@ class StatsTabsTab extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
-		gridicon: PropTypes.string,
-		iconSize: PropTypes.number,
+		icon: PropTypes.object,
 		href: PropTypes.string,
 		label: PropTypes.string,
 		loading: PropTypes.bool,
@@ -39,29 +37,18 @@ class StatsTabsTab extends Component {
 	};
 
 	render() {
-		const {
-			className,
-			compact,
-			children,
-			gridicon,
-			iconSize = 18,
-			href,
-			label,
-			loading,
-			selected,
-			tabClick,
-			value,
-		} = this.props;
+		const { className, compact, children, icon, href, label, loading, selected, tabClick, value } =
+			this.props;
 
 		const tabClass = classNames( 'stats-tab', className, {
 			'is-selected': selected,
 			'is-loading': loading,
 			'is-low': ! value,
 			'is-compact': compact,
-			'no-icon': ! gridicon,
+			'no-icon': ! icon,
 		} );
 
-		const tabIcon = gridicon ? <Gridicon icon={ gridicon } size={ iconSize } /> : null;
+		const tabIcon = icon ? icon : null;
 		const tabLabel = <span className="stats-tabs__label label">{ label }</span>;
 		const tabValue = <span className="stats-tabs__value value">{ this.ensureValue( value ) }</span>;
 		const hasClickAction = href || tabClick;

@@ -131,7 +131,6 @@ class StatModuleChartTabs extends Component {
 					selectedTab={ this.props.chartTab }
 					activeIndex={ this.props.queryDate }
 					activeKey="period"
-					iconSize={ 24 }
 				/>
 			</div>
 		) : (
