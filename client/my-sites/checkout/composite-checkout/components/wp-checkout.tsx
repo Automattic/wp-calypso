@@ -42,6 +42,7 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -379,6 +380,10 @@ function CheckoutContactStep( {
 	const { responseCart, updateLocation } = useShoppingCart( cartKey );
 	const reduxDispatch = useReduxDispatch();
 	const contactDetailsType = getContactDetailsType( responseCart );
+	const { isComplete: isAutoValidationComplete } = useCachedDomainContactDetails( {
+		overrideCountryList: countriesList,
+		shouldWait: contactDetailsType === 'none',
+	} );
 
 	const areThereDomainProductsInCart =
 		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
@@ -405,9 +410,15 @@ function CheckoutContactStep( {
 		<CheckoutStep
 			stepId="contact-form"
 			isCompleteCallback={ async () => {
-				setShouldShowContactDetailsValidationErrors( true );
-				// Touch the fields so they display validation errors
-				touchContactFields();
+				// If checkout is still performing initial contact details
+				// validation, then this validation is
+				// useCachedContactDetailsForCheckoutForm trying to auto-complete
+				// the step and we do not want to report validation errors.
+				setShouldShowContactDetailsValidationErrors( isAutoValidationComplete );
+				if ( isAutoValidationComplete ) {
+					// Touch the fields so they display validation errors
+					touchContactFields();
+				}
 
 				const validationResponse = await validateContactDetails(
 					contactInfo,
@@ -418,7 +429,7 @@ function CheckoutContactStep( {
 					clearDomainContactErrorMessages,
 					reduxDispatch,
 					translate,
-					true
+					isAutoValidationComplete
 				);
 
 				if ( validationResponse ) {
