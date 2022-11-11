@@ -61,14 +61,13 @@ const SenseiDomain: Step = ( { navigation } ) => {
 						// vendor={ SENSEI_FLOW }
 						key="domainForm"
 						suggestion={ domainSuggestion }
-						domainsWithPlansOnly
+						domainsWithPlansOnly={ true }
 						isSignupStep={ true }
 						includeWordPressDotCom
 						onAddDomain={ onAddDomain }
 						onSkip={ onSkip }
 						products={ productsList }
 						useProvidedProductsList
-						showSkipButton
 						align="left"
 						isWideLayout={ true }
 					/>
