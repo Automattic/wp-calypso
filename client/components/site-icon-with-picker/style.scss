@@ -1,16 +1,133 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 $icon-size: 80px;
 $icon-border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
 
-.site-icon-with-picker__image-editor {
+.site-icon-with-picker__background {
+	min-width: calc(100vw - 16px);
+	min-height: 85vh;
 	position: absolute;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 2;
-	min-width: 50vw;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	padding: 16px;
 
-	use {
-		fill: #fff;
+	background: var(--color-surface);
+	box-shadow: 0 0 0 1px var(--color-border-subtle);
+
+	@supports ( height: 85svh ) {
+		height: 85svh;
+	}
+
+	@media screen and (orientation: landscape) and ( max-height: 720px ) {
+		min-width: 80vw;
+		min-height: 80vh;
+
+		@supports ( height: 80svh ) {
+			height: 80svh;
+		}
+	}
+
+	@include break-medium {
+		min-width: 50vw;
+		min-height: 60vh;
+
+		@supports ( height: 60svh ) {
+			height: 60svh;
+		}
+	}
+}
+
+.site-icon-with-picker__image-editor {
+	height: calc(100% - 80px);
+	z-index: 2;
+
+	.image-editor__content,
+	.image-editor__crop-background {
+		background-color: #fff;
+	}
+
+	.image-editor__buttons {
+		position: absolute;
+		top: 100%;
+		right: 6px;
+		display: flex;
+		padding: 0;
+		margin-top: 20px;
+		border: none;
+
+		@include break-medium {
+			right: 10px;
+		}
+
+		&.image-editor__buttons-button {
+			width: 78px;
+			margin-left: 8px;
+			padding: 8px 12px;
+
+			@include break-medium {
+				margin-left: 10px;
+				padding: 8px 14px;
+			}
+		}
+
+		button {
+			border-radius: 4px;
+			@include break-medium {
+				width: 85px;
+			}
+		}
+
+		button:nth-child(1) {
+			order: 1;
+		}
+
+		button:nth-child(2) {
+			order: 0;
+		}
+
+		button:nth-child(3) {
+			order: 2;
+		}
+
+		button:enabled {
+			font-weight: 500;
+			background-color: #fff;
+			border: 1px solid #c3c4c7;
+			color: #101517;
+		}
+	}
+
+	.image-editor__toolbar {
+		position: absolute;
+		top: 100%;
+		text-align: left;
+		display: unset;
+		left: 0;
+		margin-top: 20px;
+
+		.image-editor__toolbar-button {
+			margin: 0 6px;
+
+			@include break-medium {
+				margin: 0 10px;
+			}
+
+			svg {
+				display: none;
+			}
+		}
+		button:nth-child(1) {
+			background-image: url(./images/rotate-right.svg);
+			width: 24px;
+			height: 24px;
+		}
+		button:nth-child(2) {
+			background-image: url(./images/flip-horizontal.svg);
+			width: 24px;
+			height: 24px;
+		}
 	}
 }
 
@@ -44,8 +161,8 @@ button.components-button.site-icon-with-picker__upload-button {
 	}
 
 	img {
-		height: $icon-size - 2;
-		width: $icon-size - 2;
+		height: $icon-size;
+		width: $icon-size;
 		border-radius: $icon-border-radius;
 		position: absolute;
 		top: 0;
