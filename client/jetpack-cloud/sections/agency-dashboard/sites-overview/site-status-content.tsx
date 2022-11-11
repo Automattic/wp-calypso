@@ -67,6 +67,11 @@ export default function SiteStatusContent( {
 
 	const handleSelectLicenseAction = () => {
 		dispatch( selectLicense( siteId, type ) );
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_agency_dashboard_add_license', {
+				type: type,
+			} )
+		);
 	};
 
 	const handleDeselectLicenseAction = () => {
