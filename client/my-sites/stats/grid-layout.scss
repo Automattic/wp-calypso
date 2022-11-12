@@ -92,6 +92,15 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--videoplays,
 	.list-videoplays {
 		grid-area: videos;
+
+		// Downloads module is disabled for Jetpack sites.
+		// Expand the Videos module to take up the entire row.
+		&:last-child {
+			grid-row-start: videos;
+			grid-row-end: downloads;
+			grid-column-start: videos;
+			grid-column-end: downloads;
+		}
 	}
 	.stats__module-wrapper--filedownloads,
 	.list-filedownloads {
