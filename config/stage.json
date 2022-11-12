@@ -119,7 +119,6 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/fixed-nav-headers": false,
 		"stats/new-all-time-highlights": false,
 		"stats/new-annual-highlights": true,
 		"stats/new-main-chart": false,
