@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import cookie from 'cookie';
 import { localize } from 'i18n-calypso';
-import { compact, pickBy } from 'lodash';
+import { compact, pickBy, shuffle } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -43,6 +43,7 @@ import RecommendedThemes from './recommended-themes';
 import ThemePreview from './theme-preview';
 import ThemesSearchCard from './themes-magic-search-card';
 import ThemesSelection from './themes-selection';
+import ThemesToolbarGroup from './themes-toolbar-group';
 import TrendingThemes from './trending-themes';
 
 import './theme-showcase.scss';
@@ -59,20 +60,7 @@ class ThemeShowcase extends Component {
 		super( props );
 		this.scrollRef = createRef();
 		this.bookmarkRef = createRef();
-		this.tabFilters = {
-			RECOMMENDED: {
-				key: 'recommended',
-				text: props.translate( 'Recommended' ),
-				order: 1,
-			},
-			TRENDING: { key: 'trending', text: props.translate( 'Trending' ), order: 2 },
-			MYTHEMES: {
-				key: 'my-themes',
-				text: props.translate( 'My Themes' ),
-				order: 3,
-			},
-			ALL: { key: 'all', text: props.translate( 'All Themes' ), order: 4 },
-		};
+		this.tabFilters = this.getTabFilters( props );
 		this.state = {
 			tabFilter:
 				this.props.loggedOutComponent || this.props.search || this.props.filter || this.props.tier
@@ -137,6 +125,39 @@ class ThemeShowcase extends Component {
 			this.scrollToSearchInput();
 		}
 	}
+
+	getTabFilters = () => {
+		const { subjects = {}, translate } = this.props;
+		const subjectFilters = Object.fromEntries(
+			shuffle(
+				Object.entries( subjects ).map( ( [ key, filter ] ) => [ key, { key, text: filter.name } ] )
+			)
+		);
+
+		return {
+			RECOMMENDED: {
+				key: 'recommended',
+				text: translate( 'Recommended' ),
+				order: 1,
+			},
+			TRENDING: {
+				key: 'trending',
+				text: translate( 'Trending' ),
+				order: 2,
+			},
+			MYTHEMES: {
+				key: 'my-themes',
+				text: translate( 'My Themes' ),
+				order: 3,
+			},
+			ALL: {
+				key: 'all',
+				text: translate( 'All Themes' ),
+				order: 4,
+			},
+			...subjectFilters,
+		};
+	};
 
 	scrollToSearchInput = () => {
 		if ( ! this.props.loggedOutComponent && this.scrollRef && this.scrollRef.current ) {
@@ -236,6 +257,42 @@ class ThemeShowcase extends Component {
 		this.setState( { tabFilter }, callback );
 	};
 
+	allThemes = ( { themeProps } ) => {
+		const { isJetpackSite, children } = this.props;
+		if ( isJetpackSite ) {
+			return children;
+		}
+
+		return (
+			<div className="theme-showcase__all-themes">
+				<ThemesSelection { ...themeProps } />
+			</div>
+		);
+	};
+
+	shouldShowTab = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.MYTHEMES.key:
+				return (
+					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
+					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
+				);
+		}
+
+		return true;
+	};
+
+	notificationCount = ( key ) => {
+		switch ( key ) {
+			case this.tabFilters.MYTHEMES.key:
+				return this.props.outdatedThemes.length || null;
+			case this.tabFilters.RECOMMENDED.key:
+			case this.tabFilters.TRENDING.key:
+			case this.tabFilters.ALL.key:
+				return null;
+		}
+	};
+
 	renderBanner = () => {
 		const { loggedOutComponent, isExpertBannerDissmissed, upsellBanner, isUpsellCardDisplayed } =
 			this.props;
@@ -278,40 +335,19 @@ class ThemeShowcase extends Component {
 		return upsellBanner;
 	};
 
-	allThemes = ( { themeProps } ) => {
-		const { isJetpackSite, children } = this.props;
-		if ( isJetpackSite ) {
-			return children;
-		}
-		return (
-			<div className="theme-showcase__all-themes">
-				<ThemesSelection { ...themeProps } />
-			</div>
-		);
-	};
-
-	shouldShowTab = ( key ) => {
-		switch ( key ) {
+	renderThemes = ( themeProps ) => {
+		const tabKey = this.state.tabFilter.key;
+		switch ( tabKey ) {
 			case this.tabFilters.RECOMMENDED.key:
-			case this.tabFilters.TRENDING.key:
-			case this.tabFilters.ALL.key:
-				return true;
+				return <RecommendedThemes { ...themeProps } />;
 			case this.tabFilters.MYTHEMES.key:
-				return (
-					( this.props.isJetpackSite && ! this.props.isAtomicSite ) ||
-					( this.props.isAtomicSite && this.props.siteCanInstallThemes )
-				);
-		}
-	};
-
-	notificationCount = ( key ) => {
-		switch ( key ) {
-			case this.tabFilters.MYTHEMES.key:
-				return this.props.outdatedThemes.length || null;
-			case this.tabFilters.RECOMMENDED.key:
+				return <ThemesSelection { ...themeProps } />;
 			case this.tabFilters.TRENDING.key:
+				return <TrendingThemes { ...themeProps } />;
 			case this.tabFilters.ALL.key:
-				return null;
+				return this.allThemes( { themeProps } );
+			default:
+				return <ThemesSelection { ...themeProps } filter={ tabKey } />;
 		}
 	};
 
@@ -431,18 +467,21 @@ class ThemeShowcase extends Component {
 							</NavTabs>
 						</SectionNav>
 					) }
+					{ isLoggedIn && (
+						<ThemesToolbarGroup
+							items={ Object.values( this.tabFilters ).filter( ( tabFilter ) =>
+								this.shouldShowTab( tabFilter.key )
+							) }
+							selectedKey={ this.state.tabFilter.key }
+							onSelect={ ( key ) =>
+								this.onFilterClick(
+									Object.values( this.tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+								)
+							}
+						/>
+					) }
 					{ this.renderBanner() }
-					{ this.tabFilters.RECOMMENDED.key === this.state.tabFilter.key && (
-						<RecommendedThemes { ...themeProps } />
-					) }
-					{ this.tabFilters.ALL.key === this.state.tabFilter.key &&
-						this.allThemes( { themeProps } ) }
-					{ this.tabFilters.MYTHEMES.key === this.state.tabFilter.key && (
-						<ThemesSelection { ...themeProps } />
-					) }
-					{ this.tabFilters.TRENDING.key === this.state.tabFilter.key && (
-						<TrendingThemes { ...themeProps } />
-					) }
+					{ this.renderThemes( themeProps ) }
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<ThanksModal source="list" />
