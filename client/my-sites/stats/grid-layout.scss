@@ -97,4 +97,18 @@ $grid-vertical-gutters: 32px;
 	.list-filedownloads {
 		grid-area: downloads;
 	}
+
+	// Support for legacy action items
+	// TODO: Remove once all traffic stats modules use StatsListCard in StatsModule component.
+	.stats-list__module-content-list-item-value,
+	.stats-list__module-content-list-item-wrapper span,
+	.module-content-list-item-wrapper span {
+		line-height: 40px;
+	}
+	.module-content-list-item-actions {
+		display: none;
+	}
+	.stats-list__module-content-list-item-wrapper:hover .module-content-list-item-actions {
+		display: inline-block;
+	}
 }
